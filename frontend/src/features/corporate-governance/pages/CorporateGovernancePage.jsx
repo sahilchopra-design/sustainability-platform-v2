@@ -214,7 +214,11 @@ function enrichGov(c, idx) {
    ═══════════════════════════════════════════════════════════════════════════ */
 export default function CorporateGovernancePage() {
   const navigate = useNavigate();
-  const portfolio = useMemo(() => loadLS(LS_PORT), []);
+  const portfolioRaw = useMemo(() => {
+    const saved = localStorage.getItem('ra_portfolio_v1');
+    const data = saved ? JSON.parse(saved) : { portfolios: {}, activePortfolio: null };
+    return data.portfolios?.[data.activePortfolio]?.holdings || [];
+  }, []);
   const [sortCol, setSortCol] = useState('overall');
   const [sortDir, setSortDir] = useState('desc');
   const [activeDim, setActiveDim] = useState(null);
@@ -226,14 +230,14 @@ export default function CorporateGovernancePage() {
 
   /* ── Build holdings ──────────────────────────────────────────────────────── */
   const holdings = useMemo(() => {
-    if (!portfolio || !portfolio.holdings) return GLOBAL_COMPANY_MASTER.slice(0, 40).map((c, i) => enrichGov(c, i));
+    if (!portfolioRaw.length) return GLOBAL_COMPANY_MASTER.slice(0, 40).map((c, i) => enrichGov(c, i));
     const lookup = {};
     GLOBAL_COMPANY_MASTER.forEach(c => { const k = (c.company_name || '').toLowerCase(); lookup[k] = c; });
-    return portfolio.holdings.map((h, i) => {
+    return portfolioRaw.map((h, i) => {
       const master = lookup[(h.company || '').toLowerCase()] || {};
       return enrichGov({ ...master, ...h, company_name: h.company || master.company_name, sector: h.sector || master.sector, countryCode: h.countryCode || master.countryCode || 'IN', esg_score: h.esg_score || master.esg_score || 50, weight: h.weight }, i);
     });
-  }, [portfolio]);
+  }, [portfolioRaw]);
 
   /* ── Aggregates ──────────────────────────────────────────────────────────── */
   const agg = useMemo(() => {
@@ -324,6 +328,15 @@ export default function CorporateGovernancePage() {
   /* ═══════════════════════════════════════════════════════════════════════════
      RENDER
      ═══════════════════════════════════════════════════════════════════════════ */
+  if (!holdings.length && !GLOBAL_COMPANY_MASTER.length) return (
+    <div style={{padding:48,textAlign:'center'}}>
+      <div style={{fontSize:48,marginBottom:16}}>🛡️</div>
+      <div style={{fontSize:18,fontWeight:700,color:T.navy}}>No Company Data Available</div>
+      <div style={{color:T.textSec,marginTop:8}}>Build a portfolio to see governance analysis</div>
+      <button onClick={()=>navigate('/portfolio-manager')} style={{marginTop:16,padding:'8px 24px',background:T.navy,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>Go to Portfolio Manager</button>
+    </div>
+  );
+
   return (
     <div style={{ padding: '24px 32px', background: T.bg, minHeight: '100vh', fontFamily: T.font }}>
       {/* ── HEADER ──────────────────────────────────────────────────────────── */}

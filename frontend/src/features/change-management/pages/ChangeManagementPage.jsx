@@ -114,14 +114,18 @@ const Td = ({ children, style }) => (
    ═══════════════════════════════════════════════════════════════════════════ */
 export default function ChangeManagementPage() {
   const navigate = useNavigate();
-  const portfolio = useMemo(() => loadLS(LS_PORTFOLIO) || [], []);
+  const portfolioRaw = useMemo(() => {
+    const saved = localStorage.getItem('ra_portfolio_v1');
+    const data = saved ? JSON.parse(saved) : { portfolios: {}, activePortfolio: null };
+    return data.portfolios?.[data.activePortfolio]?.holdings || [];
+  }, []);
   const companies = useMemo(() => {
-    if (portfolio.length) {
-      const tickers = new Set(portfolio.map(p => p.ticker || p.symbol).filter(Boolean));
+    if (portfolioRaw.length) {
+      const tickers = new Set(portfolioRaw.map(p => p.ticker || p.symbol).filter(Boolean));
       return GLOBAL_COMPANY_MASTER.filter(c => tickers.has(c.ticker));
     }
     return GLOBAL_COMPANY_MASTER.slice(0, 200);
-  }, [portfolio]);
+  }, [portfolioRaw]);
 
   /* ── State ──────────────────────────────────────────────────────────────── */
   const [changes, setChanges] = useState(() => loadLS(LS_CHANGES) || DEFAULT_CHANGES);

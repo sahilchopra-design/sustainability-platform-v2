@@ -124,14 +124,18 @@ export default function ApprovalWorkflowsPage() {
   const [historyPage, setHistoryPage] = useState(0);
 
   /* ── Portfolio read ─────────────────────────────────────────────────────── */
-  const portfolio = useMemo(() => readLS(LS_PORTFOLIO), []);
+  const portfolioRaw = useMemo(() => {
+    const saved = localStorage.getItem('ra_portfolio_v1');
+    const data = saved ? JSON.parse(saved) : { portfolios: {}, activePortfolio: null };
+    return data.portfolios?.[data.activePortfolio]?.holdings || [];
+  }, []);
   const companies = useMemo(() => {
-    if (portfolio && Array.isArray(portfolio.holdings)) return portfolio.holdings.map(h => {
+    if (portfolioRaw.length) return portfolioRaw.map(h => {
       const master = GLOBAL_COMPANY_MASTER.find(m => m.ticker === h.ticker) || {};
       return { ...master, ...h };
     });
     return GLOBAL_COMPANY_MASTER.slice(0, 40);
-  }, [portfolio]);
+  }, [portfolioRaw]);
 
   /* ── Templates & instances ──────────────────────────────────────────────── */
   const [templates, setTemplates] = useState(() => readLS(LS_TEMPLATES) || DEFAULT_TEMPLATES);
