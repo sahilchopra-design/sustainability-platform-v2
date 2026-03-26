@@ -159,6 +159,13 @@ import LiveFeedManagerPage from './features/live-feed-manager/pages/LiveFeedMana
 import DataLineagePage from './features/data-lineage/pages/DataLineagePage';
 import BrsrBridgePage from './features/brsr-bridge/pages/BrsrBridgePage';
 import DataInfraHubPage from './features/data-infra-hub/pages/DataInfraHubPage';
+// Sprint Q — Taxonomy & Classification Engine
+import EuTaxonomyEnginePage from './features/eu-taxonomy-engine/pages/EuTaxonomyEnginePage';
+import SfdrClassificationPage from './features/sfdr-classification/pages/SfdrClassificationPage';
+import IssbMaterialityPage from './features/issb-materiality/pages/IssbMaterialityPage';
+import GriAlignmentPage from './features/gri-alignment/pages/GriAlignmentPage';
+import FrameworkInteropPage from './features/framework-interop/pages/FrameworkInteropPage';
+import TaxonomyHubPage from './features/taxonomy-hub/pages/TaxonomyHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -251,6 +258,14 @@ const NAV_GROUPS = [
     { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
     { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
     { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
+  ]},
+  { label: 'Taxonomy & Classification', icon: '📋', color: '#6d28d9', items: [
+    { path: '/taxonomy-hub',              label: 'Taxonomy Hub',               badge: 'Hub · EU Tax · SFDR · ISSB · GRI', code: 'EP-Q6' },
+    { path: '/eu-taxonomy-engine',        label: 'EU Taxonomy Engine',         badge: '6 Objectives · 18 Activities · TSC', code: 'EP-Q1' },
+    { path: '/sfdr-classification',       label: 'SFDR Classification',        badge: 'Art 6/8/8+/9 · 14 PAI',           code: 'EP-Q2' },
+    { path: '/issb-materiality',          label: 'ISSB Materiality',           badge: 'SASB · 26 Topics · IFRS S2',       code: 'EP-Q3' },
+    { path: '/gri-alignment',             label: 'GRI Alignment',              badge: '26 Standards · 85 Disclosures',    code: 'EP-Q4' },
+    { path: '/framework-interop',         label: 'Framework Interoperability', badge: '8 Frameworks · 20 Topics',         code: 'EP-Q5' },
   ]},
   { label: 'Data Infrastructure', icon: '🔧', color: '#475569', items: [
     { path: '/data-infra-hub',            label: 'Data Infra Hub',             badge: 'Hub · 10 Sources · 13 Exchanges', code: 'EP-P6' },
@@ -842,6 +857,13 @@ function AppContent() {
             <Route path="/data-lineage"              element={<DataLineagePage />} />
             <Route path="/brsr-bridge"               element={<BrsrBridgePage />} />
             <Route path="/data-infra-hub"            element={<DataInfraHubPage />} />
+            {/* Sprint Q — Taxonomy & Classification */}
+            <Route path="/eu-taxonomy-engine"        element={<EuTaxonomyEnginePage />} />
+            <Route path="/sfdr-classification"       element={<SfdrClassificationPage />} />
+            <Route path="/issb-materiality"          element={<IssbMaterialityPage />} />
+            <Route path="/gri-alignment"             element={<GriAlignmentPage />} />
+            <Route path="/framework-interop"         element={<FrameworkInteropPage />} />
+            <Route path="/taxonomy-hub"              element={<TaxonomyHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
