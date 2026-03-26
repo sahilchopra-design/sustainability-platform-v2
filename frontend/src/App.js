@@ -166,6 +166,13 @@ import IssbMaterialityPage from './features/issb-materiality/pages/IssbMateriali
 import GriAlignmentPage from './features/gri-alignment/pages/GriAlignmentPage';
 import FrameworkInteropPage from './features/framework-interop/pages/FrameworkInteropPage';
 import TaxonomyHubPage from './features/taxonomy-hub/pages/TaxonomyHubPage';
+// Sprint R — Client & Reporting Automation
+import ReportGeneratorPage from './features/report-generator/pages/ReportGeneratorPage';
+import TemplateManagerPage from './features/template-manager/pages/TemplateManagerPage';
+import ClientPortalPage from './features/client-portal/pages/ClientPortalPage';
+import ScheduledReportsPage from './features/scheduled-reports/pages/ScheduledReportsPage';
+import RegulatorySubmissionPage from './features/regulatory-submission/pages/RegulatorySubmissionPage';
+import ReportingHubPage from './features/reporting-hub/pages/ReportingHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -266,6 +273,14 @@ const NAV_GROUPS = [
     { path: '/issb-materiality',          label: 'ISSB Materiality',           badge: 'SASB · 26 Topics · IFRS S2',       code: 'EP-Q3' },
     { path: '/gri-alignment',             label: 'GRI Alignment',              badge: '26 Standards · 85 Disclosures',    code: 'EP-Q4' },
     { path: '/framework-interop',         label: 'Framework Interoperability', badge: '8 Frameworks · 20 Topics',         code: 'EP-Q5' },
+  ]},
+  { label: 'Client & Reporting', icon: '📄', color: '#b45309', items: [
+    { path: '/reporting-hub',              label: 'Reporting Hub',              badge: 'Hub · 12 Types · 8 Clients · 15 Filings', code: 'EP-R6' },
+    { path: '/report-generator',           label: 'Report Generator',           badge: '12 Types · HTML/MD/JSON',              code: 'EP-R1' },
+    { path: '/template-manager',           label: 'Template Manager',           badge: '5 Default · Custom · Branding',        code: 'EP-R2' },
+    { path: '/client-portal',              label: 'Client Portal',              badge: '8 Clients · SLA · Delivery',           code: 'EP-R3' },
+    { path: '/scheduled-reports',          label: 'Scheduled Reports',          badge: 'Auto-Generate · Calendar · SLA',       code: 'EP-R4' },
+    { path: '/regulatory-submission',      label: 'Regulatory Submissions',     badge: '15 Filings · 10 Regulators',           code: 'EP-R5' },
   ]},
   { label: 'Data Infrastructure', icon: '🔧', color: '#475569', items: [
     { path: '/data-infra-hub',            label: 'Data Infra Hub',             badge: 'Hub · 10 Sources · 13 Exchanges', code: 'EP-P6' },
@@ -864,6 +879,13 @@ function AppContent() {
             <Route path="/gri-alignment"             element={<GriAlignmentPage />} />
             <Route path="/framework-interop"         element={<FrameworkInteropPage />} />
             <Route path="/taxonomy-hub"              element={<TaxonomyHubPage />} />
+            {/* Sprint R — Client & Reporting Automation */}
+            <Route path="/report-generator"          element={<ReportGeneratorPage />} />
+            <Route path="/template-manager"          element={<TemplateManagerPage />} />
+            <Route path="/client-portal"             element={<ClientPortalPage />} />
+            <Route path="/scheduled-reports"         element={<ScheduledReportsPage />} />
+            <Route path="/regulatory-submission"     element={<RegulatorySubmissionPage />} />
+            <Route path="/reporting-hub"             element={<ReportingHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
