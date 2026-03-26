@@ -196,6 +196,13 @@ import MaterialityTrendsPage from './features/materiality-trends/pages/Materiali
 import ControversyMaterialityPage from './features/controversy-materiality/pages/ControversyMaterialityPage';
 import MaterialityScenariosPage from './features/materiality-scenarios/pages/MaterialityScenariosPage';
 import MaterialityHubPage from './features/materiality-hub/pages/MaterialityHubPage';
+// Sprint W — AI & NLP Analytics
+import EsgReportParserPage from './features/esg-report-parser/pages/EsgReportParserPage';
+import PredictiveEsgPage from './features/predictive-esg/pages/PredictiveEsgPage';
+import AnomalyDetectionPage from './features/anomaly-detection/pages/AnomalyDetectionPage';
+import AiEngagementPage from './features/ai-engagement/pages/AiEngagementPage';
+import DocumentSimilarityPage from './features/document-similarity/pages/DocumentSimilarityPage';
+import AiHubPage from './features/ai-hub/pages/AiHubPage';
 // Sprint V — Governance & Audit Trail
 import AuditTrailPage from './features/audit-trail/pages/AuditTrailPage';
 import ModelGovernancePage from './features/model-governance/pages/ModelGovernancePage';
@@ -323,6 +330,14 @@ const NAV_GROUPS = [
     { path: '/dme-contagion',     label: 'DME Contagion Network',    badge: 'Interconnection · Propagation',       code: 'EP-U5' },
     { path: '/dme-portfolio',     label: 'DME Portfolio Analytics',  badge: 'DMI · Regime · PCAF · Attribution',   code: 'EP-U6' },
     { path: '/dme-competitive',   label: 'DME Competitive Intel',    badge: 'Peer Benchmarking · 5 Dimensions',    code: 'EP-U7' },
+  ]},
+  { label: 'AI & NLP Analytics', icon: '🤖', color: '#0891b2', items: [
+    { path: '/ai-hub',                  label: 'AI Analytics Hub',          badge: 'Hub · NLP · ML · Anomaly · Clustering',  code: 'EP-W6' },
+    { path: '/esg-report-parser',       label: 'ESG Report Parser',        badge: 'NLP · TF-IDF · Entity Extraction',       code: 'EP-W1' },
+    { path: '/predictive-esg',          label: 'Predictive ESG Model',     badge: '3 Models · Regression · KNN · R²',       code: 'EP-W2' },
+    { path: '/anomaly-detection',       label: 'Anomaly Detection',        badge: 'Z-Score · IQR · Isolation · 10 Fields',  code: 'EP-W3' },
+    { path: '/ai-engagement',           label: 'AI Engagement Advisor',    badge: '20 Rules · Priority · Templates',        code: 'EP-W4' },
+    { path: '/document-similarity',     label: 'Document Similarity',      badge: 'Cosine · K-Means · Boilerplate',         code: 'EP-W5' },
   ]},
   { label: 'Governance & Audit', icon: '🛡️', color: '#4a1d6a', items: [
     { path: '/governance-hub',           label: 'Governance Hub',            badge: 'Hub · 7 Modules · Audit · Models',      code: 'EP-V6' },
@@ -977,6 +992,13 @@ function AppContent() {
             <Route path="/controversy-materiality"   element={<ControversyMaterialityPage />} />
             <Route path="/materiality-scenarios"     element={<MaterialityScenariosPage />} />
             <Route path="/materiality-hub"           element={<MaterialityHubPage />} />
+            {/* Sprint W — AI & NLP Analytics */}
+            <Route path="/esg-report-parser"       element={<EsgReportParserPage />} />
+            <Route path="/predictive-esg"          element={<PredictiveEsgPage />} />
+            <Route path="/anomaly-detection"       element={<AnomalyDetectionPage />} />
+            <Route path="/ai-engagement"           element={<AiEngagementPage />} />
+            <Route path="/document-similarity"     element={<DocumentSimilarityPage />} />
+            <Route path="/ai-hub"                  element={<AiHubPage />} />
             {/* Sprint V — Governance & Audit Trail */}
             <Route path="/audit-trail"              element={<AuditTrailPage />} />
             <Route path="/model-governance"         element={<ModelGovernancePage />} />
