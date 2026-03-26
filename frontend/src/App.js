@@ -131,6 +131,13 @@ import FundOfFundsPage from './features/fund-of-funds/pages/FundOfFundsPage';
 import LpReportingPage from './features/lp-reporting/pages/LpReportingPage';
 import CoInvestmentPage from './features/co-investment/pages/CoInvestmentPage';
 import PrivateMarketsHubPage from './features/private-markets-hub/pages/PrivateMarketsHubPage';
+// Sprint M — Nature & Biodiversity (TNFD)
+import TnfdLeapPage from './features/tnfd-leap/pages/TnfdLeapPage';
+import BiodiversityFootprintPage from './features/biodiversity-footprint/pages/BiodiversityFootprintPage';
+import EcosystemServicesPage from './features/ecosystem-services/pages/EcosystemServicesPage';
+import WaterStressPage from './features/water-stress/pages/WaterStressPage';
+import NatureScenariosPage from './features/nature-scenarios/pages/NatureScenariosPage';
+import NatureHubPage from './features/nature-hub/pages/NatureHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -223,6 +230,14 @@ const NAV_GROUPS = [
     { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
     { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
     { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
+  ]},
+  { label: 'Nature & Biodiversity', icon: '🌿', color: '#059669', items: [
+    { path: '/nature-hub',                label: 'Nature Hub',                 badge: 'Hub · TNFD · ENCORE · MSA',     code: 'EP-M6' },
+    { path: '/tnfd-leap',                 label: 'TNFD LEAP Assessment',       badge: '4 Phases · 14 Disclosures',     code: 'EP-M1' },
+    { path: '/biodiversity-footprint',    label: 'Biodiversity Footprint',     badge: 'MSA · Species · CBD/GBF',       code: 'EP-M2' },
+    { path: '/ecosystem-services',        label: 'Ecosystem Services',          badge: 'ENCORE · 21 Services',          code: 'EP-M3' },
+    { path: '/water-stress',              label: 'Water Stress & Risk',         badge: 'WRI Aqueduct · 14 Countries',   code: 'EP-M4' },
+    { path: '/nature-scenarios',          label: 'Nature Scenarios',            badge: '3 Scenarios · Tipping Points',  code: 'EP-M5' },
   ]},
   { label: 'Private Markets', icon: '🏦', color: '#4338ca', items: [
     { path: '/private-markets-hub',       label: 'Private Markets Hub',        badge: 'Hub · PE/VC · Credit · FoF',    code: 'EP-L6' },
@@ -754,6 +769,13 @@ function AppContent() {
             <Route path="/lp-reporting"              element={<LpReportingPage />} />
             <Route path="/co-investment"             element={<CoInvestmentPage />} />
             <Route path="/private-markets-hub"       element={<PrivateMarketsHubPage />} />
+            {/* Sprint M — Nature & Biodiversity */}
+            <Route path="/tnfd-leap"                 element={<TnfdLeapPage />} />
+            <Route path="/biodiversity-footprint"    element={<BiodiversityFootprintPage />} />
+            <Route path="/ecosystem-services"        element={<EcosystemServicesPage />} />
+            <Route path="/water-stress"              element={<WaterStressPage />} />
+            <Route path="/nature-scenarios"          element={<NatureScenariosPage />} />
+            <Route path="/nature-hub"                element={<NatureHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
