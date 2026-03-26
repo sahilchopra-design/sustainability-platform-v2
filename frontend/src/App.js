@@ -219,6 +219,17 @@ import ChangeManagementPage from './features/change-management/pages/ChangeManag
 import GovernanceHubPage from './features/governance-hub/pages/GovernanceHubPage';
 import CorporateGovernancePage from './features/corporate-governance/pages/CorporateGovernancePage';
 import GeopoliticalAiGovPage from './features/geopolitical-ai-gov/pages/GeopoliticalAiGovPage';
+// Sprint Y — Commodity Lifecycle Intelligence
+import CommodityIntelligencePage from './features/commodity-intelligence/pages/CommodityIntelligencePage';
+import CommodityInventoryPage from './features/commodity-inventory/pages/CommodityInventoryPage';
+import LifecycleAssessmentPage from './features/lifecycle-assessment/pages/LifecycleAssessmentPage';
+import FinancialFlowPage from './features/financial-flow/pages/FinancialFlowPage';
+import EsgValueChainPage from './features/esg-value-chain/pages/EsgValueChainPage';
+import ClimateNatureRepoPage from './features/climate-nature-repo/pages/ClimateNatureRepoPage';
+import MultiFactorIntegrationPage from './features/multi-factor-integration/pages/MultiFactorIntegrationPage';
+import CommodityHubPage from './features/commodity-hub/pages/CommodityHubPage';
+import ProductAnatomyPage from './features/product-anatomy/pages/ProductAnatomyPage';
+import EpdLcaDatabasePage from './features/epd-lca-database/pages/EpdLcaDatabasePage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -353,6 +364,18 @@ const NAV_GROUPS = [
     { path: '/anomaly-detection',       label: 'Anomaly Detection',        badge: 'Z-Score · IQR · Isolation · 10 Fields',  code: 'EP-W3' },
     { path: '/ai-engagement',           label: 'AI Engagement Advisor',    badge: '20 Rules · Priority · Templates',        code: 'EP-W4' },
     { path: '/document-similarity',     label: 'Document Similarity',      badge: 'Cosine · K-Means · Boilerplate',         code: 'EP-W5' },
+  ]},
+  { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
+    { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
+    { path: '/commodity-intelligence',     label: 'Commodity Markets',          badge: '50 Commodities · EODHD · Carbon · Energy',   code: 'EP-Y1' },
+    { path: '/commodity-inventory',        label: 'Global Inventory',           badge: 'Country→Source · Supply Chain · 20 Chains',   code: 'EP-Y2' },
+    { path: '/lifecycle-assessment',       label: 'Lifecycle Assessment',       badge: 'ISO 14040 · 6 Stages · 8 Impact Categories', code: 'EP-Y3' },
+    { path: '/financial-flow',             label: 'Financial Flow',             badge: 'Price→Retail→Scrap · True Cost · Externalities', code: 'EP-Y4' },
+    { path: '/esg-value-chain',            label: 'ESG Value Chain',            badge: '4 Levels · Country→Source · ML Prediction',   code: 'EP-Y5' },
+    { path: '/climate-nature-repo',        label: 'Climate & Nature Repo',      badge: '8 Impacts · Planetary Boundaries · GHG',     code: 'EP-Y6' },
+    { path: '/multi-factor-integration',   label: 'Multi-Factor Integration',   badge: 'Finance×ESG×Climate · ML Ensemble',          code: 'EP-Y7' },
+    { path: '/product-anatomy',            label: 'Product Anatomy',            badge: '15 Products · Material Decomposition',       code: 'EP-Y9' },
+    { path: '/epd-lca-database',           label: 'EPD & LCA Database',         badge: '6 Sources · 50+ EPDs · ISO 14025',           code: 'EP-Y10' },
   ]},
   { label: 'Governance & Audit', icon: '🛡️', color: '#4a1d6a', items: [
     { path: '/governance-hub',           label: 'Governance Hub',            badge: 'Hub · 7 Modules · Audit · Models',      code: 'EP-V6' },
@@ -1021,6 +1044,17 @@ function AppContent() {
             <Route path="/ai-engagement"           element={<AiEngagementPage />} />
             <Route path="/document-similarity"     element={<DocumentSimilarityPage />} />
             <Route path="/ai-hub"                  element={<AiHubPage />} />
+            {/* Sprint Y — Commodity Lifecycle Intelligence */}
+            <Route path="/commodity-intelligence"     element={<CommodityIntelligencePage />} />
+            <Route path="/commodity-inventory"        element={<CommodityInventoryPage />} />
+            <Route path="/lifecycle-assessment"       element={<LifecycleAssessmentPage />} />
+            <Route path="/financial-flow"             element={<FinancialFlowPage />} />
+            <Route path="/esg-value-chain"            element={<EsgValueChainPage />} />
+            <Route path="/climate-nature-repo"        element={<ClimateNatureRepoPage />} />
+            <Route path="/multi-factor-integration"   element={<MultiFactorIntegrationPage />} />
+            <Route path="/commodity-hub"              element={<CommodityHubPage />} />
+            <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
+            <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
             {/* Sprint V — Governance & Audit Trail */}
             <Route path="/audit-trail"              element={<AuditTrailPage />} />
             <Route path="/model-governance"         element={<ModelGovernancePage />} />
