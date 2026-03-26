@@ -196,6 +196,15 @@ import MaterialityTrendsPage from './features/materiality-trends/pages/Materiali
 import ControversyMaterialityPage from './features/controversy-materiality/pages/ControversyMaterialityPage';
 import MaterialityScenariosPage from './features/materiality-scenarios/pages/MaterialityScenariosPage';
 import MaterialityHubPage from './features/materiality-hub/pages/MaterialityHubPage';
+// Sprint V — Governance & Audit Trail
+import AuditTrailPage from './features/audit-trail/pages/AuditTrailPage';
+import ModelGovernancePage from './features/model-governance/pages/ModelGovernancePage';
+import ApprovalWorkflowsPage from './features/approval-workflows/pages/ApprovalWorkflowsPage';
+import ComplianceEvidencePage from './features/compliance-evidence/pages/ComplianceEvidencePage';
+import ChangeManagementPage from './features/change-management/pages/ChangeManagementPage';
+import GovernanceHubPage from './features/governance-hub/pages/GovernanceHubPage';
+import CorporateGovernancePage from './features/corporate-governance/pages/CorporateGovernancePage';
+import GeopoliticalAiGovPage from './features/geopolitical-ai-gov/pages/GeopoliticalAiGovPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -314,6 +323,16 @@ const NAV_GROUPS = [
     { path: '/dme-contagion',     label: 'DME Contagion Network',    badge: 'Interconnection · Propagation',       code: 'EP-U5' },
     { path: '/dme-portfolio',     label: 'DME Portfolio Analytics',  badge: 'DMI · Regime · PCAF · Attribution',   code: 'EP-U6' },
     { path: '/dme-competitive',   label: 'DME Competitive Intel',    badge: 'Peer Benchmarking · 5 Dimensions',    code: 'EP-U7' },
+  ]},
+  { label: 'Governance & Audit', icon: '🛡️', color: '#4a1d6a', items: [
+    { path: '/governance-hub',           label: 'Governance Hub',            badge: 'Hub · 7 Modules · Audit · Models',      code: 'EP-V6' },
+    { path: '/audit-trail',              label: 'Audit Trail',              badge: '8 Categories · Immutable · Regulatory',  code: 'EP-V1' },
+    { path: '/model-governance',         label: 'Model Governance',         badge: '15 Models · SR 11-7 · 3 Tiers',         code: 'EP-V2' },
+    { path: '/approval-workflows',       label: 'Approval Workflows',       badge: '8 Templates · SLA · Multi-Step',         code: 'EP-V3' },
+    { path: '/compliance-evidence',      label: 'Compliance Evidence',      badge: '10 Categories · 20 Regulations',         code: 'EP-V4' },
+    { path: '/change-management',        label: 'Change Management',        badge: '8 Categories · Rollback · Version',      code: 'EP-V5' },
+    { path: '/corporate-governance',     label: 'Corporate Governance',     badge: '40 Indicators · CPI · WGI',              code: 'EP-V7' },
+    { path: '/geopolitical-ai-gov',      label: 'Geopolitical & AI Gov',    badge: '14 Countries · GPR · EU AI Act',         code: 'EP-V8' },
   ]},
   { label: 'Dynamic Materiality', icon: '🎯', color: '#9333ea', items: [
     { path: '/materiality-hub',            label: 'Materiality Hub',            badge: 'Hub · Double · Trends · Scenarios',     code: 'EP-T6' },
@@ -958,6 +977,15 @@ function AppContent() {
             <Route path="/controversy-materiality"   element={<ControversyMaterialityPage />} />
             <Route path="/materiality-scenarios"     element={<MaterialityScenariosPage />} />
             <Route path="/materiality-hub"           element={<MaterialityHubPage />} />
+            {/* Sprint V — Governance & Audit Trail */}
+            <Route path="/audit-trail"              element={<AuditTrailPage />} />
+            <Route path="/model-governance"         element={<ModelGovernancePage />} />
+            <Route path="/approval-workflows"       element={<ApprovalWorkflowsPage />} />
+            <Route path="/compliance-evidence"      element={<ComplianceEvidencePage />} />
+            <Route path="/change-management"        element={<ChangeManagementPage />} />
+            <Route path="/governance-hub"           element={<GovernanceHubPage />} />
+            <Route path="/corporate-governance"     element={<CorporateGovernancePage />} />
+            <Route path="/geopolitical-ai-gov"      element={<GeopoliticalAiGovPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
