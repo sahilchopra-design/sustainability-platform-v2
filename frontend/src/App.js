@@ -173,6 +173,13 @@ import ClientPortalPage from './features/client-portal/pages/ClientPortalPage';
 import ScheduledReportsPage from './features/scheduled-reports/pages/ScheduledReportsPage';
 import RegulatorySubmissionPage from './features/regulatory-submission/pages/RegulatorySubmissionPage';
 import ReportingHubPage from './features/reporting-hub/pages/ReportingHubPage';
+// Sprint S — Data Management Engine (DME)
+import DataValidationPage from './features/data-validation/pages/DataValidationPage';
+import DataReconciliationPage from './features/data-reconciliation/pages/DataReconciliationPage';
+import DataVersioningPage from './features/data-versioning/pages/DataVersioningPage';
+import EtlPipelinePage from './features/etl-pipeline/pages/EtlPipelinePage';
+import DataGovernancePage from './features/data-governance/pages/DataGovernancePage';
+import DmeHubPage from './features/dme-hub/pages/DmeHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -281,6 +288,14 @@ const NAV_GROUPS = [
     { path: '/client-portal',              label: 'Client Portal',              badge: '8 Clients · SLA · Delivery',           code: 'EP-R3' },
     { path: '/scheduled-reports',          label: 'Scheduled Reports',          badge: 'Auto-Generate · Calendar · SLA',       code: 'EP-R4' },
     { path: '/regulatory-submission',      label: 'Regulatory Submissions',     badge: '15 Filings · 10 Regulators',           code: 'EP-R5' },
+  ]},
+  { label: 'Data Management Engine', icon: '⚙️', color: '#334155', items: [
+    { path: '/dme-hub',                    label: 'DME Hub',                    badge: 'Hub · Validation · ETL · Governance',  code: 'EP-S6' },
+    { path: '/data-validation',            label: 'Data Validation',            badge: '50 Rules · Auto-Fix · 656 Companies',  code: 'EP-S1' },
+    { path: '/data-reconciliation',        label: 'Data Reconciliation',        badge: '6 Sources · Conflict Resolution',      code: 'EP-S2' },
+    { path: '/data-versioning',            label: 'Data Versioning',            badge: 'Snapshots · Diff · Rollback',          code: 'EP-S3' },
+    { path: '/etl-pipeline',              label: 'ETL Pipeline',               badge: '8 Extract · 10 Transform · 5 Load',    code: 'EP-S4' },
+    { path: '/data-governance',            label: 'Data Governance',            badge: '15 Policies · 8 Domains · Ownership',  code: 'EP-S5' },
   ]},
   { label: 'Data Infrastructure', icon: '🔧', color: '#475569', items: [
     { path: '/data-infra-hub',            label: 'Data Infra Hub',             badge: 'Hub · 10 Sources · 13 Exchanges', code: 'EP-P6' },
@@ -886,6 +901,13 @@ function AppContent() {
             <Route path="/scheduled-reports"         element={<ScheduledReportsPage />} />
             <Route path="/regulatory-submission"     element={<RegulatorySubmissionPage />} />
             <Route path="/reporting-hub"             element={<ReportingHubPage />} />
+            {/* Sprint S — Data Management Engine */}
+            <Route path="/data-validation"           element={<DataValidationPage />} />
+            <Route path="/data-reconciliation"       element={<DataReconciliationPage />} />
+            <Route path="/data-versioning"           element={<DataVersioningPage />} />
+            <Route path="/etl-pipeline"              element={<EtlPipelinePage />} />
+            <Route path="/data-governance"           element={<DataGovernancePage />} />
+            <Route path="/dme-hub"                   element={<DmeHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
