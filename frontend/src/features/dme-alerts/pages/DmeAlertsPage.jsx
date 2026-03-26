@@ -209,7 +209,11 @@ const SectionHeader = ({ title, sub }) => (
 /* ════════════════════════════════════════════════════════════════════════════ */
 export default function DmeAlertsPage() {
   const navigate = useNavigate();
-  const portfolio = useMemo(() => readLS(LS_PORTFOLIO) || [], []);
+  const portfolio = useMemo(() => {
+    const saved = localStorage.getItem('ra_portfolio_v1');
+    const portfolioData = saved ? JSON.parse(saved) : { portfolios: {}, activePortfolio: null };
+    return portfolioData.portfolios?.[portfolioData.activePortfolio]?.holdings || [];
+  }, []);
   const companies = useMemo(() => (GLOBAL_COMPANY_MASTER || []).slice(0, 120), []);
 
   const [tierFilter, setTierFilter] = useState('All');
@@ -308,6 +312,26 @@ export default function DmeAlertsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = 'dme_pillar_distribution.csv'; a.click(); URL.revokeObjectURL(url);
   }, [pillarPieData]);
+
+  /* ── Empty portfolio guard ─────────────────────────────────────────────── */
+  if (portfolio.length === 0) {
+    return (
+      <div style={{ fontFamily:T.font, background:T.bg, minHeight:'100vh', padding:24, display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <div style={{ textAlign:'center', color:T.mutedFg || '#94a3b8', maxWidth:420 }}>
+          <div style={{ fontSize:48, marginBottom:16 }}>&#9888;</div>
+          <h2 style={{ color:T.fg || '#e2e8f0', marginBottom:8 }}>No Portfolio Found</h2>
+          <p style={{ marginBottom:20, lineHeight:1.6 }}>
+            DME Alerts require an active portfolio with holdings.
+            Add companies in the Portfolio Manager to get started.
+          </p>
+          <button onClick={() => navigate('/portfolio')}
+            style={{ background:T.accent || '#6366f1', color:'#fff', border:'none', borderRadius:8, padding:'10px 24px', cursor:'pointer', fontSize:14, fontWeight:600 }}>
+            Open Portfolio Manager
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   /* ── Render ──────────────────────────────────────────────────────────────── */
   return (
