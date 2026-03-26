@@ -152,6 +152,13 @@ import MacroTransitionPage from './features/macro-transition/pages/MacroTransiti
 import JustTransitionPage from './features/just-transition/pages/JustTransitionPage';
 import ParisAlignmentPage from './features/paris-alignment/pages/ParisAlignmentPage';
 import SovereignHubPage from './features/sovereign-hub/pages/SovereignHubPage';
+// Sprint P — Data Infrastructure & Live Feeds
+import ApiOrchestrationPage from './features/api-orchestration/pages/ApiOrchestrationPage';
+import DataQualityMonitorPage from './features/data-quality-monitor/pages/DataQualityMonitorPage';
+import LiveFeedManagerPage from './features/live-feed-manager/pages/LiveFeedManagerPage';
+import DataLineagePage from './features/data-lineage/pages/DataLineagePage';
+import BrsrBridgePage from './features/brsr-bridge/pages/BrsrBridgePage';
+import DataInfraHubPage from './features/data-infra-hub/pages/DataInfraHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -244,6 +251,14 @@ const NAV_GROUPS = [
     { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
     { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
     { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
+  ]},
+  { label: 'Data Infrastructure', icon: '🔧', color: '#475569', items: [
+    { path: '/data-infra-hub',            label: 'Data Infra Hub',             badge: 'Hub · 10 Sources · 13 Exchanges', code: 'EP-P6' },
+    { path: '/api-orchestration',         label: 'API Orchestration',          badge: '10 Sources · 6 Pipelines',       code: 'EP-P1' },
+    { path: '/data-quality-monitor',      label: 'Data Quality Monitor',       badge: '656 Companies · 6 Dimensions',   code: 'EP-P2' },
+    { path: '/live-feed-manager',         label: 'Live Feed Manager',          badge: 'EODHD · Alpha Vantage · BRSR',   code: 'EP-P3' },
+    { path: '/data-lineage',              label: 'Data Lineage',               badge: 'Source → Transform → Output',    code: 'EP-P4' },
+    { path: '/brsr-bridge',               label: 'BRSR Supabase Bridge',       badge: '1,323 Companies · 9 Principles', code: 'EP-P5' },
   ]},
   { label: 'Sovereign & Macro ESG', icon: '🌐', color: '#1e3a5f', items: [
     { path: '/sovereign-hub',             label: 'Sovereign Hub',              badge: 'Hub · 40 Countries · IEA · Paris', code: 'EP-O6' },
@@ -820,6 +835,13 @@ function AppContent() {
             <Route path="/just-transition"           element={<JustTransitionPage />} />
             <Route path="/paris-alignment"           element={<ParisAlignmentPage />} />
             <Route path="/sovereign-hub"             element={<SovereignHubPage />} />
+            {/* Sprint P — Data Infrastructure */}
+            <Route path="/api-orchestration"         element={<ApiOrchestrationPage />} />
+            <Route path="/data-quality-monitor"      element={<DataQualityMonitorPage />} />
+            <Route path="/live-feed-manager"         element={<LiveFeedManagerPage />} />
+            <Route path="/data-lineage"              element={<DataLineagePage />} />
+            <Route path="/brsr-bridge"               element={<BrsrBridgePage />} />
+            <Route path="/data-infra-hub"            element={<DataInfraHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
