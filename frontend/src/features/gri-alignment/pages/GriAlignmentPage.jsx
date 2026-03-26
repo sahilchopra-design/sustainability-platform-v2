@@ -175,13 +175,16 @@ const GriAlignmentPage = () => {
   /* ── Build holdings from portfolio or company master ──────── */
   const holdings = useMemo(() => {
     const saved = loadLS(LS_PORT);
-    if (saved && saved.holdings && saved.holdings.length) return saved.holdings.map(h => {
-      const master = GLOBAL_COMPANY_MASTER.find(c => c.company_name === h.company_name || c.isin === h.isin);
-      return { ...h, sector: h.sector || (master && master.sector_gics) || 'Financials', country: h.country || (master && master.country_iso2) || 'IN', weight: h.weight || 0 };
+    const portHoldings = saved?.portfolios?.[saved?.activePortfolio]?.holdings || (saved?.holdings) || [];
+    if (portHoldings.length) return portHoldings.map(h => {
+      const c = h.company || {};
+      const master = GLOBAL_COMPANY_MASTER.find(m => m.ticker === c.ticker || m.name === c.name);
+      const resolved = master || c;
+      return { ...h, company_name: c.name || master?.name || h.company_name || 'Unknown', sector: c.sector || master?.sector || h.sector || 'Financials', country: c.exchange === 'NSE/BSE' ? 'IN' : c.exchange === 'NYSE/NASDAQ' ? 'US' : c.exchange === 'LSE' ? 'GB' : 'US', weight: h.weight || 0, isin: c.isin || master?.isin };
     });
     return GLOBAL_COMPANY_MASTER.slice(0, 30).map((c, i) => ({
-      company_name: c.company_name, isin: c.isin, sector: c.sector_gics || SECTORS[i % SECTORS.length],
-      country: c.country_iso2 || 'IN', weight: +(3 + sr(hashStr(c.company_name), 1) * 7).toFixed(2),
+      company_name: c.name || 'Unknown', isin: c.isin, sector: c.sector || SECTORS[i % SECTORS.length],
+      country: c.exchange === 'NSE/BSE' ? 'IN' : 'US', weight: +(3 + sr(hashStr(c.name || ''), 1) * 7).toFixed(2),
     }));
   }, []);
 
