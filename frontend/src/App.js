@@ -180,6 +180,13 @@ import DataVersioningPage from './features/data-versioning/pages/DataVersioningP
 import EtlPipelinePage from './features/etl-pipeline/pages/EtlPipelinePage';
 import DataGovernancePage from './features/data-governance/pages/DataGovernancePage';
 import DmeHubPage from './features/dme-hub/pages/DmeHubPage';
+// Sprint T — Dynamic Materiality Engine
+// DoubleMaterialityPage already imported from Sprint 35 (line 55)
+import StakeholderImpactPage from './features/stakeholder-impact/pages/StakeholderImpactPage';
+import MaterialityTrendsPage from './features/materiality-trends/pages/MaterialityTrendsPage';
+import ControversyMaterialityPage from './features/controversy-materiality/pages/ControversyMaterialityPage';
+import MaterialityScenariosPage from './features/materiality-scenarios/pages/MaterialityScenariosPage';
+import MaterialityHubPage from './features/materiality-hub/pages/MaterialityHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -288,6 +295,14 @@ const NAV_GROUPS = [
     { path: '/client-portal',              label: 'Client Portal',              badge: '8 Clients · SLA · Delivery',           code: 'EP-R3' },
     { path: '/scheduled-reports',          label: 'Scheduled Reports',          badge: 'Auto-Generate · Calendar · SLA',       code: 'EP-R4' },
     { path: '/regulatory-submission',      label: 'Regulatory Submissions',     badge: '15 Filings · 10 Regulators',           code: 'EP-R5' },
+  ]},
+  { label: 'Dynamic Materiality', icon: '🎯', color: '#9333ea', items: [
+    { path: '/materiality-hub',            label: 'Materiality Hub',            badge: 'Hub · Double · Trends · Scenarios',     code: 'EP-T6' },
+    { path: '/double-materiality',         label: 'Double Materiality',         badge: 'CSRD/ESRS · 10 Topics · Financial+Impact', code: 'EP-T1' },
+    { path: '/stakeholder-impact',         label: 'Stakeholder Impact',         badge: '8 Groups · ESRS-aligned · Quantified', code: 'EP-T2' },
+    { path: '/materiality-trends',         label: 'Materiality Trends',         badge: '17 Drivers · Forecast 2025-2035',      code: 'EP-T3' },
+    { path: '/controversy-materiality',    label: 'Controversy-Materiality',    badge: '30 Events · ESRS Mapped · Validation', code: 'EP-T4' },
+    { path: '/materiality-scenarios',      label: 'Materiality Scenarios',      badge: '4 Scenarios · Reclassification',       code: 'EP-T5' },
   ]},
   { label: 'Data Management Engine', icon: '⚙️', color: '#334155', items: [
     { path: '/dme-hub',                    label: 'DME Hub',                    badge: 'Hub · Validation · ETL · Governance',  code: 'EP-S6' },
@@ -908,6 +923,13 @@ function AppContent() {
             <Route path="/etl-pipeline"              element={<EtlPipelinePage />} />
             <Route path="/data-governance"           element={<DataGovernancePage />} />
             <Route path="/dme-hub"                   element={<DmeHubPage />} />
+            {/* Sprint T — Dynamic Materiality Engine */}
+            {/* double-materiality route already exists from Sprint 35 (line 801) */}
+            <Route path="/stakeholder-impact"        element={<StakeholderImpactPage />} />
+            <Route path="/materiality-trends"        element={<MaterialityTrendsPage />} />
+            <Route path="/controversy-materiality"   element={<ControversyMaterialityPage />} />
+            <Route path="/materiality-scenarios"     element={<MaterialityScenariosPage />} />
+            <Route path="/materiality-hub"           element={<MaterialityHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
