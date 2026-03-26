@@ -577,6 +577,265 @@ export default function CoInvestmentPage() {
         </div>
       )}
 
+      {/* ── Detail Panel for Selected Opportunity ────────── */}
+      {selected && tab==='pipeline' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
+            <div>
+              <div style={{ fontSize:18, fontWeight:700, color:T.navy }}>{selected.company}</div>
+              <div style={{ fontSize:13, color:T.textSec, marginTop:2 }}>{selected.sector} | {selected.gpLead} | {selected.geography}</div>
+            </div>
+            <Badge color={stageColor(selected.stage)}>{selected.stage}</Badge>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:14, marginTop:16 }}>
+            <div style={{ background:T.surfaceH, borderRadius:8, padding:12 }}>
+              <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Deal Size</div>
+              <div style={{ fontSize:18, fontWeight:700, color:T.navy }}>{fmtM(selected.dealSize_mn)}</div>
+              <div style={{ fontSize:11, color:T.textSec }}>Pre-money: {fmtM(selected.preMoney_mn)}</div>
+            </div>
+            <div style={{ background:T.surfaceH, borderRadius:8, padding:12 }}>
+              <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Co-Investment</div>
+              <div style={{ fontSize:18, fontWeight:700, color:T.sage }}>{fmtM(selected.coInvest_mn)}</div>
+              <div style={{ fontSize:11, color:T.textSec }}>{pct(selected.coInvestPct)} of deal</div>
+            </div>
+            <div style={{ background:T.surfaceH, borderRadius:8, padding:12 }}>
+              <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>ESG / Governance</div>
+              <div style={{ fontSize:18, fontWeight:700, color:esgColor(selected.esg_score) }}>{selected.esg_score} / {selected.governance_score}</div>
+              <div style={{ fontSize:11, color:T.textSec }}>ESG / Gov scores</div>
+            </div>
+            <div style={{ background:T.surfaceH, borderRadius:8, padding:12 }}>
+              <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Risk Profile</div>
+              <div style={{ display:'flex', gap:8, marginTop:6 }}>
+                <span style={{ fontSize:12 }}><TL level={selected.envRisk} />Env: {selected.envRisk}</span>
+                <span style={{ fontSize:12 }}><TL level={selected.socialRisk} />Soc: {selected.socialRisk}</span>
+              </div>
+              <div style={{ fontSize:11, color:T.textSec, marginTop:4 }}>Flags: {selected.controversyFlags}</div>
+            </div>
+            <div style={{ background:T.surfaceH, borderRadius:8, padding:12 }}>
+              <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>SDG Alignment</div>
+              <div style={{ display:'flex', gap:4, marginTop:6, flexWrap:'wrap' }}>
+                {selected.sdgs.map(s=><Badge key={s} color={T.sage}>SDG {s}</Badge>)}
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop:14, padding:12, background:T.surfaceH, borderRadius:8 }}>
+            <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:4 }}>Impact Thesis</div>
+            <div style={{ fontSize:13, color:T.textSec, lineHeight:1.5 }}>{selected.impactThesis}</div>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginTop:12 }}>
+            <div style={{ padding:12, background:T.red+'08', borderRadius:8, borderLeft:`3px solid ${T.red}` }}>
+              <div style={{ fontSize:12, fontWeight:700, color:T.red }}>Key Risk</div>
+              <div style={{ fontSize:13, color:T.text, marginTop:4 }}>{selected.keyRisk}</div>
+            </div>
+            <div style={{ padding:12, background:T.green+'08', borderRadius:8, borderLeft:`3px solid ${T.green}` }}>
+              <div style={{ fontSize:12, fontWeight:700, color:T.green }}>Mitigant</div>
+              <div style={{ fontSize:13, color:T.text, marginTop:4 }}>{selected.mitigant}</div>
+            </div>
+          </div>
+          <div style={{ marginTop:14 }}>
+            <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:6 }}>Due Diligence Progress</div>
+            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+              <div style={{ flex:1, background:T.surfaceH, borderRadius:6, height:14, overflow:'hidden' }}>
+                <div style={{ background: selected.dd_complete_pct>=80?T.green:selected.dd_complete_pct>=50?T.gold:T.amber, height:'100%', borderRadius:6, width:`${selected.dd_complete_pct}%`, transition:'width 0.3s' }} />
+              </div>
+              <span style={{ fontSize:14, fontWeight:700, color:T.navy, minWidth:45, textAlign:'right' }}>{selected.dd_complete_pct}%</span>
+            </div>
+          </div>
+          <div style={{ display:'flex', gap:8, marginTop:12 }}>
+            <Badge color={selected.exclusionScreenPass?T.green:T.red}>{selected.exclusionScreenPass?'Exclusion Screen: Pass':'Exclusion Screen: Fail'}</Badge>
+            <Badge color={selected.boardSeatOffered?T.sage:T.textMut}>{selected.boardSeatOffered?'Board Seat: Offered':'Board Seat: None'}</Badge>
+            <Badge color={T.navyL}>Round: {selected.round}</Badge>
+          </div>
+        </Card>
+      )}
+
+      {/* ── Sector Distribution Summary ──────────────────── */}
+      {tab==='pipeline' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:12 }}>Pipeline by Sector & Geography</div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
+            <div>
+              <div style={{ fontSize:12, fontWeight:600, color:T.textSec, marginBottom:8 }}>Sector Distribution</div>
+              {SECTORS.map(sector => {
+                const count = data.filter(d=>d.sector===sector).length;
+                const totalCI = data.filter(d=>d.sector===sector).reduce((s,d)=>s+d.coInvest_mn,0);
+                if (count===0) return null;
+                return (
+                  <div key={sector} style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
+                    <div style={{ width:120, fontSize:12, fontWeight:500 }}>{sector}</div>
+                    <div style={{ flex:1, background:T.surfaceH, borderRadius:4, height:8 }}>
+                      <div style={{ background:T.navy, height:8, borderRadius:4, width:`${count/data.length*100}%` }} />
+                    </div>
+                    <div style={{ fontSize:11, color:T.textSec, minWidth:80, textAlign:'right' }}>{count} deal{count>1?'s':''} | {fmtM(totalCI)}</div>
+                  </div>
+                );
+              })}
+            </div>
+            <div>
+              <div style={{ fontSize:12, fontWeight:600, color:T.textSec, marginBottom:8 }}>Geography Distribution</div>
+              {GEOS.map(geo => {
+                const count = data.filter(d=>d.geography===geo).length;
+                const totalCI = data.filter(d=>d.geography===geo).reduce((s,d)=>s+d.coInvest_mn,0);
+                if (count===0) return null;
+                return (
+                  <div key={geo} style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
+                    <div style={{ width:100, fontSize:12, fontWeight:500 }}>{geo}</div>
+                    <div style={{ flex:1, background:T.surfaceH, borderRadius:4, height:8 }}>
+                      <div style={{ background:T.sage, height:8, borderRadius:4, width:`${count/data.length*100}%` }} />
+                    </div>
+                    <div style={{ fontSize:11, color:T.textSec, minWidth:80, textAlign:'right' }}>{count} deal{count>1?'s':''} | {fmtM(totalCI)}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* ── Exclusion Screen Detail Panel ─────────────────── */}
+      {tab==='decision' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:12 }}>Exclusion Screen Criteria</div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12 }}>
+            {CO_INVEST_ESG_CRITERIA.exclusionScreens.items.map((item,i) => (
+              <div key={i} style={{ background:T.surfaceH, borderRadius:8, padding:14, textAlign:'center' }}>
+                <div style={{ fontSize:20, marginBottom:6 }}>{['🔫','🚬','⛏️','🎰','💣'][i]}</div>
+                <div style={{ fontSize:12, fontWeight:600, color:T.navy }}>{item}</div>
+                <div style={{ fontSize:11, color:T.green, marginTop:4 }}>
+                  {data.filter(d=>d.exclusionScreenPass).length}/{data.length} pass
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* ── Pipeline Stage Summary ────────────────────────── */}
+      {tab==='decision' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:12 }}>Pipeline Stage Summary</div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12 }}>
+            {STAGES.map(stage => {
+              const items = data.filter(d=>d.stage===stage);
+              const avgEsg = items.length ? items.reduce((s,d)=>s+d.esg_score,0)/items.length : 0;
+              return (
+                <div key={stage} style={{ background:T.surfaceH, borderRadius:8, padding:14, borderTop:`3px solid ${stageColor(stage)}` }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:stageColor(stage) }}>{stage}</div>
+                  <div style={{ fontSize:24, fontWeight:700, color:T.navy, margin:'8px 0' }}>{items.length}</div>
+                  <div style={{ fontSize:11, color:T.textSec }}>Avg ESG: {fmt(avgEsg,0)}</div>
+                  <div style={{ fontSize:11, color:T.textSec }}>Total: {fmtM(items.reduce((s,d)=>s+d.coInvest_mn,0))}</div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
+      {/* ── ESG Criteria Weights Visual ──────────────────── */}
+      {tab==='radar' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:12 }}>ESG Criteria Weight Breakdown</div>
+          <div style={{ display:'flex', gap:4, alignItems:'flex-end', height:120 }}>
+            {Object.entries(CO_INVEST_ESG_CRITERIA).map(([key,val]) => (
+              <div key={key} style={{ flex:1, textAlign:'center' }}>
+                <div style={{ background:T.navy, borderRadius:'4px 4px 0 0', height:`${val.weight*4}px`, margin:'0 8px', opacity:0.8 }} />
+                <div style={{ fontSize:11, fontWeight:600, color:T.navy, marginTop:6 }}>{val.weight}%</div>
+                <div style={{ fontSize:10, color:T.textSec }}>{key.replace(/([A-Z])/g,' $1').trim()}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* ── GP Comparison Table ───────────────────────────── */}
+      {tab==='gp' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:12 }}>All GP Track Records</div>
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+              <thead>
+                <tr style={{ borderBottom:`2px solid ${T.border}` }}>
+                  {['GP', 'Funds', 'Vintage', 'Avg IRR', 'Avg TVPI', 'ESG Policy', 'PRI', 'ESG Funds'].map(h=>(
+                    <th key={h} style={{ padding:'8px 6px', textAlign:'left', fontWeight:700, color:T.textSec, fontSize:10, textTransform:'uppercase' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(GP_TRACK_RECORDS).map(([name, gp], i)=>(
+                  <tr key={name} style={{ borderBottom:`1px solid ${T.border}`, background:i%2===0?T.surfaceH:'transparent' }}>
+                    <td style={{ padding:'8px 6px', fontWeight:600 }}>{name}</td>
+                    <td style={{ padding:'8px 6px' }}>{gp.fundsRaised}</td>
+                    <td style={{ padding:'8px 6px', fontSize:11 }}>{gp.vintageRange}</td>
+                    <td style={{ padding:'8px 6px', fontWeight:600, color:T.green }}>{gp.avgIRR}%</td>
+                    <td style={{ padding:'8px 6px' }}>{gp.avgTVPI}x</td>
+                    <td style={{ padding:'8px 6px', fontSize:11 }}>{gp.esgPolicy}</td>
+                    <td style={{ padding:'8px 6px' }}><Badge color={gp.priSignatory?T.green:T.amber}>{gp.priSignatory?'Yes':'No'}</Badge></td>
+                    <td style={{ padding:'8px 6px' }}>{gp.esgFunds}/{gp.fundsRaised}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+      {/* ── SDG Impact Detail ─────────────────────────────── */}
+      {tab==='sdg' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:12 }}>SDG-Opportunity Mapping</div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:10 }}>
+            {sdgBar.map(s => {
+              const aligned = data.filter(d=>d.sdgs.includes(parseInt(s.sdg.split(' ')[1])));
+              return (
+                <div key={s.sdg} style={{ background:T.surfaceH, borderRadius:8, padding:12 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
+                    <Badge color={T.sage}>{s.sdg}</Badge>
+                    <span style={{ fontSize:12, fontWeight:700, color:T.navy }}>{s.count} deals</span>
+                  </div>
+                  {aligned.map(d=>(
+                    <div key={d.id} style={{ fontSize:11, color:T.textSec, padding:'2px 0' }}>
+                      {d.company} ({d.sector})
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
+      {/* ── Risk Assessment Summary ───────────────────────── */}
+      {tab==='risk' && (
+        <Card style={{ marginTop:20 }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:12 }}>Key Risk & Mitigant Summary</div>
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+              <thead>
+                <tr style={{ borderBottom:`2px solid ${T.border}` }}>
+                  {['Company','Env Risk','Social Risk','Controversy Flags','Key Risk','Mitigant'].map(h=>(
+                    <th key={h} style={{ padding:'8px 6px', textAlign:'left', fontWeight:700, color:T.textSec, fontSize:10, textTransform:'uppercase' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((d,i)=>(
+                  <tr key={d.id} style={{ borderBottom:`1px solid ${T.border}`, background:i%2===0?T.surfaceH:'transparent' }}>
+                    <td style={{ padding:'8px 6px', fontWeight:600 }}>{d.company}</td>
+                    <td style={{ padding:'8px 6px' }}><TL level={d.envRisk} />{d.envRisk}</td>
+                    <td style={{ padding:'8px 6px' }}><TL level={d.socialRisk} />{d.socialRisk}</td>
+                    <td style={{ padding:'8px 6px', textAlign:'center' }}>
+                      <Badge color={d.controversyFlags===0?T.green:T.red}>{d.controversyFlags}</Badge>
+                    </td>
+                    <td style={{ padding:'8px 6px', fontSize:11, maxWidth:180 }}>{d.keyRisk}</td>
+                    <td style={{ padding:'8px 6px', fontSize:11, maxWidth:180 }}>{d.mitigant}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
       {/* ── Cross-Navigation ──────────────────────────────── */}
       <div style={{ marginTop:28, display:'flex', gap:10, flexWrap:'wrap' }}>
         <Btn variant='ghost' onClick={()=>navigate('/pe-vc-esg')} style={{ fontSize:12 }}>PE/VC DD</Btn>

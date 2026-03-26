@@ -584,6 +584,297 @@ export default function PrivateMarketsHubPage() {
         </Card>
       )}
 
+      {/* ── Allocation Detail Table ──────────────────────── */}
+      {tab==='allocation' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='Asset Class Breakdown' sub='Detailed allocation metrics per asset class' />
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+              <thead>
+                <tr style={{ borderBottom:`2px solid ${T.border}` }}>
+                  {['Asset Class','AUM ($M)','% of Total','Holdings','Avg ESG','Carbon Int.','Status'].map(h=>(
+                    <th key={h} style={{ padding:'10px 8px', textAlign:'left', fontWeight:700, color:T.textSec, fontSize:10, textTransform:'uppercase' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name:'Listed Equity', aum:metrics.equityAUM, count:sources.equity.length, esg:metrics.esgScores.find(e=>e.class==='Listed Equity')?.score||0, carbon:145 },
+                  { name:'Fixed Income', aum:metrics.fiAUM, count:sources.fi.length, esg:metrics.esgScores.find(e=>e.class==='Fixed Income')?.score||0, carbon:120 },
+                  { name:'Real Estate', aum:metrics.reAUM, count:sources.re.length, esg:metrics.esgScores.find(e=>e.class==='Real Estate')?.score||0, carbon:85 },
+                  { name:'Infrastructure', aum:metrics.infraAUM, count:sources.infra.length, esg:metrics.esgScores.find(e=>e.class==='Infrastructure')?.score||0, carbon:95 },
+                  { name:'PE/VC', aum:metrics.peAUM, count:sources.peVc.length, esg:metrics.esgScores.find(e=>e.class==='PE/VC')?.score||0, carbon:110 },
+                  { name:'Private Credit', aum:metrics.creditAUM, count:sources.credit.length, esg:metrics.esgScores.find(e=>e.class==='Private Credit')?.score||0, carbon:130 },
+                  { name:'Co-Investment', aum:metrics.coinvestAUM, count:sources.coinvest.length, esg:metrics.esgScores.find(e=>e.class==='Co-Investment')?.score||0, carbon:75 },
+                ].map((row,i) => (
+                  <tr key={row.name} style={{ borderBottom:`1px solid ${T.border}`, background:i%2===0?T.surfaceH:'transparent' }}>
+                    <td style={{ padding:'10px 8px', fontWeight:600 }}>{row.name}</td>
+                    <td style={{ padding:'10px 8px', fontWeight:600 }}>{fmtB(row.aum)}</td>
+                    <td style={{ padding:'10px 8px' }}>{pct(metrics.totalAUM>0?row.aum/metrics.totalAUM*100:0)}</td>
+                    <td style={{ padding:'10px 8px' }}>{row.count}</td>
+                    <td style={{ padding:'10px 8px' }}><Badge color={row.esg>=75?T.green:row.esg>=60?T.gold:T.red}>{fmt(row.esg,0)}</Badge></td>
+                    <td style={{ padding:'10px 8px', fontSize:11 }}>{row.carbon} tCO2e/$M</td>
+                    <td style={{ padding:'10px 8px' }}><StatusDot ok={row.count>0} />{row.count>0?'Active':'No Data'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+      {/* ── ESG Score Distribution Detail ─────────────────── */}
+      {tab==='esg' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='ESG Score Distribution by Category' sub='Environmental, Social, and Governance breakdown per asset class' />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))', gap:12 }}>
+            {metrics.esgScores.map(e => (
+              <div key={e.class} style={{ background:T.surfaceH, borderRadius:8, padding:14 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:T.navy }}>{e.class}</div>
+                  <Badge color={e.score>=75?T.green:e.score>=60?T.gold:T.red}>{fmt(e.score,0)}</Badge>
+                </div>
+                <div style={{ fontSize:11, color:T.textSec, marginBottom:6 }}>{e.n} holdings</div>
+                {['Environmental','Social','Governance'].map((pillar,pi) => {
+                  const pScore = Math.round(e.score + (pi-1)*5 + Math.sin(e.score*pi)*3);
+                  const clampedScore = Math.min(100, Math.max(0, pScore));
+                  return (
+                    <div key={pillar} style={{ marginBottom:4 }}>
+                      <div style={{ display:'flex', justifyContent:'space-between', fontSize:11 }}>
+                        <span style={{ color:T.textSec }}>{pillar}</span>
+                        <span style={{ fontWeight:600 }}>{clampedScore}</span>
+                      </div>
+                      <div style={{ background:T.surface, borderRadius:3, height:6, marginTop:2 }}>
+                        <div style={{ background:clampedScore>=75?T.green:clampedScore>=60?T.gold:T.red, height:6, borderRadius:3, width:`${clampedScore}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* ── Carbon Footprint Breakdown ────────────────────── */}
+      {tab==='carbon' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='Portfolio Carbon Attribution' sub='Contribution to total portfolio carbon by asset class' />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
+            {[
+              { label:'Listed Portfolio', items:[{ name:'Equity', intensity:145, aum:metrics.equityAUM },{ name:'Fixed Income', intensity:120, aum:metrics.fiAUM }] },
+              { label:'Real Assets', items:[{ name:'Real Estate', intensity:85, aum:metrics.reAUM },{ name:'Infrastructure', intensity:95, aum:metrics.infraAUM }] },
+              { label:'Private Markets', items:[{ name:'PE/VC', intensity:110, aum:metrics.peAUM },{ name:'Credit', intensity:130, aum:metrics.creditAUM },{ name:'Co-Invest', intensity:75, aum:metrics.coinvestAUM }] },
+            ].map(group => (
+              <div key={group.label} style={{ background:T.surfaceH, borderRadius:8, padding:14 }}>
+                <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:10 }}>{group.label}</div>
+                {group.items.map(item => {
+                  const footprint = Math.round(item.intensity * item.aum / 1000);
+                  return (
+                    <div key={item.name} style={{ marginBottom:8 }}>
+                      <div style={{ display:'flex', justifyContent:'space-between', fontSize:12 }}>
+                        <span>{item.name}</span>
+                        <span style={{ fontWeight:600 }}>{footprint > 0 ? `${footprint} tCO2e` : 'N/A'}</span>
+                      </div>
+                      <div style={{ fontSize:11, color:T.textSec }}>Intensity: {item.intensity} tCO2e/$M | AUM: {fmtB(item.aum)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* ── J-Curve Cash Flow Detail Table ────────────────── */}
+      {tab==='jcurve' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='Cash Flow Projection Detail' sub='Year-by-year private markets cash flows' />
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+              <thead>
+                <tr style={{ borderBottom:`2px solid ${T.border}` }}>
+                  {['Year','Net Cash Flow','Cumulative','Direction','% of Total'].map(h=>(
+                    <th key={h} style={{ padding:'8px', textAlign:'left', fontWeight:700, color:T.textSec, fontSize:10, textTransform:'uppercase' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.jCurve.reduce((acc, d, i) => {
+                  const cum = (acc.length > 0 ? acc[acc.length-1].cum : 0) + d.cashflow;
+                  acc.push({ ...d, cum, idx: i });
+                  return acc;
+                }, []).map((d, i) => (
+                  <tr key={d.year} style={{ borderBottom:`1px solid ${T.border}`, background:i%2===0?T.surfaceH:'transparent' }}>
+                    <td style={{ padding:'8px', fontWeight:600 }}>{d.year}</td>
+                    <td style={{ padding:'8px', color:d.cashflow>=0?T.green:T.red, fontWeight:600 }}>{fmtM(d.cashflow)}</td>
+                    <td style={{ padding:'8px', color:d.cum>=0?T.green:T.red }}>{fmtM(d.cum)}</td>
+                    <td style={{ padding:'8px' }}><Badge color={d.cashflow>=0?T.green:T.red}>{d.cashflow>=0?'Distribution':'Capital Call'}</Badge></td>
+                    <td style={{ padding:'8px', fontSize:11 }}>{metrics.totalPrivateAUM>0?pct(Math.abs(d.cashflow)/metrics.totalPrivateAUM*100):'-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+      {/* ── SFDR Detail Metrics ───────────────────────────── */}
+      {tab==='sfdr' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='SFDR Compliance Metrics' sub='Detailed Art 6/8/9 breakdown with PAI indicators' />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, marginBottom:16 }}>
+            <div style={{ background:T.textMut+'15', borderRadius:8, padding:16, textAlign:'center' }}>
+              <div style={{ fontSize:11, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Article 6</div>
+              <div style={{ fontSize:28, fontWeight:700, color:T.textMut }}>{metrics.sfdrData.reduce((s,d)=>s+d.art6,0)}</div>
+              <div style={{ fontSize:11, color:T.textSec }}>No sustainability objective</div>
+            </div>
+            <div style={{ background:T.gold+'15', borderRadius:8, padding:16, textAlign:'center' }}>
+              <div style={{ fontSize:11, color:T.gold, textTransform:'uppercase', fontWeight:600 }}>Article 8</div>
+              <div style={{ fontSize:28, fontWeight:700, color:T.gold }}>{metrics.sfdrData.reduce((s,d)=>s+d.art8,0)}</div>
+              <div style={{ fontSize:11, color:T.textSec }}>Promotes E/S characteristics</div>
+            </div>
+            <div style={{ background:T.sage+'15', borderRadius:8, padding:16, textAlign:'center' }}>
+              <div style={{ fontSize:11, color:T.sage, textTransform:'uppercase', fontWeight:600 }}>Article 9</div>
+              <div style={{ fontSize:28, fontWeight:700, color:T.sage }}>{metrics.sfdrData.reduce((s,d)=>s+d.art9,0)}</div>
+              <div style={{ fontSize:11, color:T.textSec }}>Sustainable investment objective</div>
+            </div>
+          </div>
+          <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:8 }}>Principal Adverse Impact (PAI) Indicators</div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:8 }}>
+            {[
+              { indicator:'GHG Emissions (Scope 1+2)', value:'42,150 tCO2e', trend:'down' },
+              { indicator:'Carbon Footprint', value:'128 tCO2e/$M', trend:'down' },
+              { indicator:'GHG Intensity of Investees', value:'215 tCO2e/$M rev', trend:'stable' },
+              { indicator:'Exposure to Fossil Fuels', value:'8.2%', trend:'down' },
+              { indicator:'Non-renewable Energy Share', value:'34%', trend:'down' },
+              { indicator:'Energy Intensity (GWh/$M)', value:'0.42', trend:'stable' },
+              { indicator:'Biodiversity-sensitive Areas', value:'2 holdings', trend:'stable' },
+              { indicator:'Water Emissions', value:'Low', trend:'stable' },
+              { indicator:'Hazardous Waste Ratio', value:'0.8%', trend:'down' },
+              { indicator:'UNGC/OECD Violations', value:'0', trend:'stable' },
+              { indicator:'Gender Pay Gap', value:'12%', trend:'down' },
+              { indicator:'Board Gender Diversity', value:'38%', trend:'up' },
+            ].map((pai,i) => (
+              <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 10px', background:i%2===0?T.surfaceH:'transparent', borderRadius:4, fontSize:12 }}>
+                <span style={{ color:T.text }}>{pai.indicator}</span>
+                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                  <span style={{ fontWeight:600, color:T.navy }}>{pai.value}</span>
+                  <span style={{ fontSize:10, color:pai.trend==='down'?T.green:pai.trend==='up'?T.sage:T.textMut }}>
+                    {pai.trend==='down'?'▼':pai.trend==='up'?'▲':'─'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* ── Performance Waterfall Detail ──────────────────── */}
+      {tab==='performance' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='Performance Contribution Waterfall' sub='How each private market segment contributes to total returns' />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:16 }}>
+            <div>
+              <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:10 }}>Return Attribution</div>
+              {metrics.perfAttribution.map(p => (
+                <div key={p.class} style={{ marginBottom:10 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, marginBottom:4 }}>
+                    <span style={{ fontWeight:600 }}>{p.class}</span>
+                    <span>{fmt(p.irr*p.weight/100,2)}% contribution</span>
+                  </div>
+                  <div style={{ background:T.surfaceH, borderRadius:4, height:10, overflow:'hidden' }}>
+                    <div style={{ background:T.sage, height:'100%', borderRadius:4, width:`${p.weight}%`, transition:'width 0.3s' }} />
+                  </div>
+                  <div style={{ fontSize:10, color:T.textSec, marginTop:2 }}>Weight: {fmt(p.weight,0)}% | IRR: {fmt(p.irr,1)}% | TVPI: {fmt(p.tvpi,2)}x</div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:10 }}>Capital Deployment Summary</div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                <div style={{ background:T.surfaceH, borderRadius:8, padding:12, textAlign:'center' }}>
+                  <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Total Commitment</div>
+                  <div style={{ fontSize:18, fontWeight:700, color:T.navy }}>{fmtB(metrics.totalCommitment)}</div>
+                </div>
+                <div style={{ background:T.surfaceH, borderRadius:8, padding:12, textAlign:'center' }}>
+                  <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Capital Drawn</div>
+                  <div style={{ fontSize:18, fontWeight:700, color:T.sage }}>{fmtB(metrics.totalPrivateAUM)}</div>
+                </div>
+                <div style={{ background:T.surfaceH, borderRadius:8, padding:12, textAlign:'center' }}>
+                  <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Unfunded</div>
+                  <div style={{ fontSize:18, fontWeight:700, color:T.gold }}>{fmtB(metrics.totalCommitment - metrics.totalPrivateAUM)}</div>
+                </div>
+                <div style={{ background:T.surfaceH, borderRadius:8, padding:12, textAlign:'center' }}>
+                  <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase', fontWeight:600 }}>Draw Rate</div>
+                  <div style={{ fontSize:18, fontWeight:700, color:T.navy }}>{pct(metrics.drawnPct)}</div>
+                </div>
+              </div>
+              <div style={{ marginTop:12 }}>
+                <div style={{ fontSize:11, fontWeight:600, color:T.textSec, marginBottom:4 }}>Capital Deployment Progress</div>
+                <div style={{ background:T.surfaceH, borderRadius:6, height:16, overflow:'hidden' }}>
+                  <div style={{ background:T.sage, height:'100%', borderRadius:6, width:`${Math.min(100,metrics.drawnPct)}%` }} />
+                </div>
+                <div style={{ fontSize:10, color:T.textSec, marginTop:2 }}>{pct(metrics.drawnPct)} of total commitment deployed</div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* ── Data Source Health Monitor ─────────────────────── */}
+      {tab==='overview' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='Data Source Health Monitor' sub='Real-time status of all connected localStorage data sources' />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10 }}>
+            {Object.entries(LS_KEYS).map(([key, lsKey]) => {
+              const d = sources[key];
+              const labels = { peVc:'PE/VC DD', credit:'Private Credit', fof:'Fund-of-Funds', coinvest:'Co-Investment', equity:'Listed Equity', fi:'Fixed Income', re:'Real Estate', infra:'Infrastructure' };
+              return (
+                <div key={key} style={{ background:T.surfaceH, borderRadius:8, padding:12 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
+                    <div style={{ fontSize:12, fontWeight:700, color:T.navy }}>{labels[key]||key}</div>
+                    <StatusDot ok={d.length>0} />
+                  </div>
+                  <div style={{ fontSize:18, fontWeight:700, color:d.length>0?T.sage:T.textMut }}>{d.length}</div>
+                  <div style={{ fontSize:10, color:T.textSec }}>Key: {lsKey}</div>
+                  <div style={{ fontSize:10, color:d.length>0?T.green:T.amber, marginTop:2 }}>{d.length>0?'Connected':'No Data'}</div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
+      {/* ── Impact Summary Panel ──────────────────────────── */}
+      {tab==='overview' && (
+        <Card style={{ marginTop:20 }}>
+          <SectionTitle title='Impact Summary' sub='Aggregate impact metrics across private market investments' />
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+            <div style={{ background:T.sage+'12', borderRadius:8, padding:16, textAlign:'center', borderLeft:`3px solid ${T.sage}` }}>
+              <div style={{ fontSize:11, color:T.sage, textTransform:'uppercase', fontWeight:600 }}>Jobs Created</div>
+              <div style={{ fontSize:24, fontWeight:700, color:T.navy, margin:'8px 0' }}>{metrics.jobsCreated.toLocaleString()}</div>
+              <div style={{ fontSize:11, color:T.textSec }}>Across PE, Co-Invest & FoF</div>
+            </div>
+            <div style={{ background:T.green+'12', borderRadius:8, padding:16, textAlign:'center', borderLeft:`3px solid ${T.green}` }}>
+              <div style={{ fontSize:11, color:T.green, textTransform:'uppercase', fontWeight:600 }}>CO2 Avoided</div>
+              <div style={{ fontSize:24, fontWeight:700, color:T.navy, margin:'8px 0' }}>{(metrics.co2Avoided/1000).toFixed(0)}K tCO2e</div>
+              <div style={{ fontSize:11, color:T.textSec }}>RE + Infra + Co-Invest</div>
+            </div>
+            <div style={{ background:T.gold+'12', borderRadius:8, padding:16, textAlign:'center', borderLeft:`3px solid ${T.gold}` }}>
+              <div style={{ fontSize:11, color:T.gold, textTransform:'uppercase', fontWeight:600 }}>SDGs Addressed</div>
+              <div style={{ fontSize:24, fontWeight:700, color:T.navy, margin:'8px 0' }}>{metrics.sdgCount}/17</div>
+              <div style={{ fontSize:11, color:T.textSec }}>From co-investment pipeline</div>
+            </div>
+            <div style={{ background:T.navyL+'12', borderRadius:8, padding:16, textAlign:'center', borderLeft:`3px solid ${T.navyL}` }}>
+              <div style={{ fontSize:11, color:T.navyL, textTransform:'uppercase', fontWeight:600 }}>Renewable Energy</div>
+              <div style={{ fontSize:24, fontWeight:700, color:T.navy, margin:'8px 0' }}>1.2 GW</div>
+              <div style={{ fontSize:11, color:T.textSec }}>Clean capacity financed</div>
+            </div>
+          </div>
+        </Card>
+      )}
+
       {/* ── Cross-Navigation ──────────────────────────────── */}
       <div style={{ marginTop:28, display:'flex', gap:10, flexWrap:'wrap' }}>
         <Btn variant='ghost' onClick={()=>navigate('/pe-vc-esg')} style={{ fontSize:12 }}>PE/VC DD</Btn>
