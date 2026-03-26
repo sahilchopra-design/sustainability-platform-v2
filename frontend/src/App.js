@@ -138,6 +138,13 @@ import EcosystemServicesPage from './features/ecosystem-services/pages/Ecosystem
 import WaterStressPage from './features/water-stress/pages/WaterStressPage';
 import NatureScenariosPage from './features/nature-scenarios/pages/NatureScenariosPage';
 import NatureHubPage from './features/nature-hub/pages/NatureHubPage';
+// Sprint N — Social & Human Capital Analytics
+import BoardDiversityPage from './features/board-diversity/pages/BoardDiversityPage';
+import LivingWagePage from './features/living-wage/pages/LivingWagePage';
+import HumanRightsDDPage from './features/human-rights-dd/pages/HumanRightsDDPage';
+import EmployeeWellbeingPage from './features/employee-wellbeing/pages/EmployeeWellbeingPage';
+import SocialImpactPage from './features/social-impact/pages/SocialImpactPage';
+import SocialHubPage from './features/social-hub/pages/SocialHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -230,6 +237,14 @@ const NAV_GROUPS = [
     { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
     { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
     { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
+  ]},
+  { label: 'Social & Human Capital', icon: '🧑‍🤝‍🧑', color: '#be185d', items: [
+    { path: '/social-hub',                label: 'Social Hub',                 badge: 'Hub · Diversity · HR · SDG',    code: 'EP-N6' },
+    { path: '/board-diversity',           label: 'Board Diversity',            badge: '12 Regulations · Skills Matrix', code: 'EP-N1' },
+    { path: '/living-wage',               label: 'Living Wage Analyzer',       badge: '13 Countries · ILO · GLWC',     code: 'EP-N2' },
+    { path: '/human-rights-dd',           label: 'Human Rights DD',            badge: 'UNGPs · 8 Issues · 15 DD',      code: 'EP-N3' },
+    { path: '/employee-wellbeing',        label: 'Employee Wellbeing',          badge: '10 Metrics · Safety · Engagement', code: 'EP-N4' },
+    { path: '/social-impact',             label: 'Social Impact & SDG',         badge: '17 SDGs · UNGC · Impact',       code: 'EP-N5' },
   ]},
   { label: 'Nature & Biodiversity', icon: '🌿', color: '#059669', items: [
     { path: '/nature-hub',                label: 'Nature Hub',                 badge: 'Hub · TNFD · ENCORE · MSA',     code: 'EP-M6' },
@@ -776,6 +791,13 @@ function AppContent() {
             <Route path="/water-stress"              element={<WaterStressPage />} />
             <Route path="/nature-scenarios"          element={<NatureScenariosPage />} />
             <Route path="/nature-hub"                element={<NatureHubPage />} />
+            {/* Sprint N — Social & Human Capital */}
+            <Route path="/board-diversity"           element={<BoardDiversityPage />} />
+            <Route path="/living-wage"               element={<LivingWagePage />} />
+            <Route path="/human-rights-dd"           element={<HumanRightsDDPage />} />
+            <Route path="/employee-wellbeing"        element={<EmployeeWellbeingPage />} />
+            <Route path="/social-impact"             element={<SocialImpactPage />} />
+            <Route path="/social-hub"                element={<SocialHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
