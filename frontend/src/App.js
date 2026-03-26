@@ -180,6 +180,15 @@ import DataVersioningPage from './features/data-versioning/pages/DataVersioningP
 import EtlPipelinePage from './features/etl-pipeline/pages/EtlPipelinePage';
 import DataGovernancePage from './features/data-governance/pages/DataGovernancePage';
 import DmeHubPage from './features/dme-hub/pages/DmeHubPage';
+// Sprint U — DME Platform Integration (dme-platform + sentiment-engine + greenium-alpha)
+import DmeRiskEnginePage from './features/dme-risk-engine/pages/DmeRiskEnginePage';
+import DmeEntityPage from './features/dme-entity/pages/DmeEntityPage';
+import DmeScenariosPage from './features/dme-scenarios/pages/DmeScenariosPage';
+import DmeAlertsPage from './features/dme-alerts/pages/DmeAlertsPage';
+import DmeContagionPage from './features/dme-contagion/pages/DmeContagionPage';
+import DmePortfolioPage from './features/dme-portfolio/pages/DmePortfolioPage';
+import DmeCompetitivePage from './features/dme-competitive/pages/DmeCompetitivePage';
+import DmeDashboardPage from './features/dme-dashboard/pages/DmeDashboardPage';
 // Sprint T — Dynamic Materiality Engine
 // DoubleMaterialityPage already imported from Sprint 35 (line 55)
 import StakeholderImpactPage from './features/stakeholder-impact/pages/StakeholderImpactPage';
@@ -295,6 +304,16 @@ const NAV_GROUPS = [
     { path: '/client-portal',              label: 'Client Portal',              badge: '8 Clients · SLA · Delivery',           code: 'EP-R3' },
     { path: '/scheduled-reports',          label: 'Scheduled Reports',          badge: 'Auto-Generate · Calendar · SLA',       code: 'EP-R4' },
     { path: '/regulatory-submission',      label: 'Regulatory Submissions',     badge: '15 Filings · 10 Regulators',           code: 'EP-R5' },
+  ]},
+  { label: 'DME Risk Intelligence', icon: '🏛️', color: '#0c4a6e', items: [
+    { path: '/dme-dashboard',     label: 'DME Dashboard',            badge: 'Executive · 8 Modules · Real-Time',   code: 'EP-U8' },
+    { path: '/dme-risk-engine',   label: 'DME Risk Engine',          badge: '4-Branch PD · VaR · WACC · IFRS 9',  code: 'EP-U1' },
+    { path: '/dme-entity',        label: 'DME Entity Deep-Dive',     badge: 'Full Risk Profile · Scenarios',       code: 'EP-U2' },
+    { path: '/dme-scenarios',     label: 'DME NGFS Scenarios',       badge: '6 NGFS · PD/VaR/WACC per Scenario',  code: 'EP-U3' },
+    { path: '/dme-alerts',        label: 'DME Alert Center',         badge: '4 Tiers · 5 Pillars · Z-Score',      code: 'EP-U4' },
+    { path: '/dme-contagion',     label: 'DME Contagion Network',    badge: 'Interconnection · Propagation',       code: 'EP-U5' },
+    { path: '/dme-portfolio',     label: 'DME Portfolio Analytics',  badge: 'DMI · Regime · PCAF · Attribution',   code: 'EP-U6' },
+    { path: '/dme-competitive',   label: 'DME Competitive Intel',    badge: 'Peer Benchmarking · 5 Dimensions',    code: 'EP-U7' },
   ]},
   { label: 'Dynamic Materiality', icon: '🎯', color: '#9333ea', items: [
     { path: '/materiality-hub',            label: 'Materiality Hub',            badge: 'Hub · Double · Trends · Scenarios',     code: 'EP-T6' },
@@ -923,6 +942,15 @@ function AppContent() {
             <Route path="/etl-pipeline"              element={<EtlPipelinePage />} />
             <Route path="/data-governance"           element={<DataGovernancePage />} />
             <Route path="/dme-hub"                   element={<DmeHubPage />} />
+            {/* Sprint U — DME Platform Integration */}
+            <Route path="/dme-dashboard"     element={<DmeDashboardPage />} />
+            <Route path="/dme-risk-engine"   element={<DmeRiskEnginePage />} />
+            <Route path="/dme-entity"        element={<DmeEntityPage />} />
+            <Route path="/dme-scenarios"     element={<DmeScenariosPage />} />
+            <Route path="/dme-alerts"        element={<DmeAlertsPage />} />
+            <Route path="/dme-contagion"     element={<DmeContagionPage />} />
+            <Route path="/dme-portfolio"     element={<DmePortfolioPage />} />
+            <Route path="/dme-competitive"   element={<DmeCompetitivePage />} />
             {/* Sprint T — Dynamic Materiality Engine */}
             {/* double-materiality route already exists from Sprint 35 (line 801) */}
             <Route path="/stakeholder-impact"        element={<StakeholderImpactPage />} />
