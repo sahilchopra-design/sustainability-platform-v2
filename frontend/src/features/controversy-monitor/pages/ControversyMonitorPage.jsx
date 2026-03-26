@@ -342,7 +342,7 @@ export default function ControversyMonitorPage() {
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={exportControversyReport} style={btnSecondary}>Export Controversy Report</button>
             <button onClick={exportWatchlist} style={btnSecondary}>Export Watchlist</button>
-            <button onClick={() => navigate('/stewardship')} style={btnPrimary}>Stewardship Tracker &rarr;</button>
+            <button onClick={() => navigate('/stewardship-tracker')} style={btnPrimary}>Stewardship Tracker &rarr;</button>
           </div>
         </div>
 

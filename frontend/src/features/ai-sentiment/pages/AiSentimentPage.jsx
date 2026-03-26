@@ -768,7 +768,7 @@ function AiSentimentPage() {
         {holdings.length === 0 ? (
           <div style={{ padding: '32px 0', textAlign: 'center' }}>
             <div style={{ color: T.textMut, fontSize: 14, marginBottom: 12 }}>No portfolio loaded. Save a portfolio via the Portfolio Builder to see sentiment overlay.</div>
-            <button onClick={() => navigate('/portfolio-builder')} style={btnStyle(T.navy, '#fff')}>Go to Portfolio Builder</button>
+            <button onClick={() => navigate('/portfolio-manager')} style={btnStyle(T.navy, '#fff')}>Go to Portfolio Builder</button>
           </div>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>

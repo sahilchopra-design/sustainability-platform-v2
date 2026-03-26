@@ -839,7 +839,7 @@ function EsgBacktestingPage() {
             <button style={sty.navBtn} onClick={() => navigate('/portfolio-optimizer')}>Portfolio Optimizer</button>
             <button style={sty.navBtn} onClick={() => navigate('/monte-carlo-var')}>Monte Carlo VaR</button>
             <button style={sty.navBtn} onClick={() => navigate('/scenario-stress-test')}>Stress Testing</button>
-            <button style={sty.navBtn} onClick={() => navigate('/portfolio-dashboard')}>Portfolio Dashboard</button>
+            <button style={sty.navBtn} onClick={() => navigate('/portfolio-suite')}>Portfolio Dashboard</button>
           </div>
           <div style={{ display:'flex', gap:8 }}>
             <button style={{ ...sty.btn, ...sty.btnSec }} onClick={handleExportCSV} disabled={!results}>CSV Results</button>

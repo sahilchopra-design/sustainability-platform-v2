@@ -6,7 +6,7 @@ import {
   PolarAngleAxis, PolarRadiusAxis, Cell
 } from 'recharts';
 
-const API = 'http://localhost:8002';
+const API = 'http://localhost:8000';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
 const T = {

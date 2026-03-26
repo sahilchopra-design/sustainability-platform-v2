@@ -5,7 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 
-const API = 'http://localhost:8002';
+const API = 'http://localhost:8000';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
 const T = {

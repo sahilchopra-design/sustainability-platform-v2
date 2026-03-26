@@ -117,6 +117,13 @@ import ImpliedTempRegressionPage from './features/implied-temp-regression/pages/
 import CopulaTailRiskPage from './features/copula-tail-risk/pages/CopulaTailRiskPage';
 import StochasticScenariosPage from './features/stochastic-scenarios/pages/StochasticScenariosPage';
 import QuantDashboardPage from './features/quant-dashboard/pages/QuantDashboardPage';
+// Sprint K — Supply Chain & Scope 3
+import Scope3EnginePage from './features/scope3-engine/pages/Scope3EnginePage';
+import SupplyChainMapPage from './features/supply-chain-map/pages/SupplyChainMapPage';
+import CSDDDCompliancePage from './features/csddd-compliance/pages/CSDDDCompliancePage';
+import DeforestationRiskPage from './features/deforestation-risk/pages/DeforestationRiskPage';
+import SupplyChainCarbonPage from './features/supply-chain-carbon/pages/SupplyChainCarbonPage';
+import ValueChainDashboardPage from './features/value-chain-dashboard/pages/ValueChainDashboardPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -209,6 +216,14 @@ const NAV_GROUPS = [
     { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
     { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
     { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
+  ]},
+  { label: 'Supply Chain & Scope 3', icon: '🔗', color: '#7e22ce', items: [
+    { path: '/value-chain-dashboard',     label: 'Value Chain Hub',            badge: 'Hub · Scope 3 · CSDDD · EUDR', code: 'EP-K6' },
+    { path: '/scope3-engine',             label: 'Scope 3 Estimation',         badge: '15 Categories · GHG Protocol',  code: 'EP-K1' },
+    { path: '/supply-chain-map',          label: 'Supply Chain ESG Map',       badge: 'Tier 1/2/3 · 33 Countries',    code: 'EP-K2' },
+    { path: '/csddd-compliance',          label: 'CSDDD Toolkit',              badge: '20 Requirements · 6 Articles',  code: 'EP-K3' },
+    { path: '/deforestation-risk',        label: 'Deforestation Risk',         badge: 'EUDR · 7 Commodities',          code: 'EP-K4' },
+    { path: '/supply-chain-carbon',       label: 'Supply Chain Carbon',        badge: 'Scope 1+2+3 · EEIO Model',     code: 'EP-K5' },
   ]},
   { label: 'Quantitative Analytics & ML', icon: '🔬', color: '#0f172a', items: [
     { path: '/quant-dashboard',           label: 'Quant Analytics Hub',        badge: '5 Models · Composite Risk',     code: 'EP-J6' },
@@ -710,6 +725,13 @@ function AppContent() {
             <Route path="/copula-tail-risk"          element={<CopulaTailRiskPage />} />
             <Route path="/stochastic-scenarios"      element={<StochasticScenariosPage />} />
             <Route path="/quant-dashboard"           element={<QuantDashboardPage />} />
+            {/* Sprint K — Supply Chain & Scope 3 */}
+            <Route path="/scope3-engine"             element={<Scope3EnginePage />} />
+            <Route path="/supply-chain-map"          element={<SupplyChainMapPage />} />
+            <Route path="/csddd-compliance"          element={<CSDDDCompliancePage />} />
+            <Route path="/deforestation-risk"        element={<DeforestationRiskPage />} />
+            <Route path="/supply-chain-carbon"       element={<SupplyChainCarbonPage />} />
+            <Route path="/value-chain-dashboard"     element={<ValueChainDashboardPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />

@@ -3,7 +3,7 @@ import {
   BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip,
 } from 'recharts';
 
-const API = 'http://localhost:8002';
+const API = 'http://localhost:8000';
 
 // -- Theme --------------------------------------------------------------------
 const T = {

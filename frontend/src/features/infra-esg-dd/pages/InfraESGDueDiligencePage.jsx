@@ -435,7 +435,7 @@ export default function InfraESGDueDiligencePage() {
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
                 <button onClick={() => nav('/re-portfolio-dashboard')} style={btnS(T.navy)}>RE Dashboard</button>
-                <button onClick={() => nav('/physical-risk')} style={btnS(T.sage)}>Physical Risk</button>
+                <button onClick={() => nav('/climate-physical-risk')} style={btnS(T.sage)}>Physical Risk</button>
               </div>
             </div>
           </Card>

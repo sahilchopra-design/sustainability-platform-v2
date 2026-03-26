@@ -368,7 +368,7 @@ export default function ClimatePhysicalRiskPage() {
             The Climate Physical Risk Engine requires an active portfolio to assess hazard exposure across your holdings.
             Please configure your portfolio first.
           </p>
-          <button onClick={() => navigate('/portfolio')} style={{ ...btnStyle(true), padding: '10px 28px', fontSize: 14 }}>
+          <button onClick={() => navigate('/portfolio-manager')} style={{ ...btnStyle(true), padding: '10px 28px', fontSize: 14 }}>
             Open Portfolio Manager
           </button>
         </div>

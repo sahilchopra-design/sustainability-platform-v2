@@ -6,7 +6,7 @@ import {
   LineChart, Line, CartesianGrid, Cell, PieChart, Pie,
 } from 'recharts';
 
-const API = 'http://localhost:8002';
+const API = 'http://localhost:8000';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
 const T = {

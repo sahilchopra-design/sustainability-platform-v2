@@ -5,7 +5,7 @@ import {
   Cell,
 } from 'recharts';
 
-const API = 'http://localhost:8002';
+const API = 'http://localhost:8000';
 
 /* ── Deterministic seed helpers ─────────────────────────────────────────── */
 const seededRandom = (seed) => { let x = Math.sin(seed * 9301 + 49297) * 233280; return x - Math.floor(x); };

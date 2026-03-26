@@ -808,7 +808,7 @@ function MonteCarloVarPage() {
             <button style={sty.navBtn} onClick={() => navigate('/esg-backtesting')}>ESG Backtesting</button>
             <button style={sty.navBtn} onClick={() => navigate('/scenario-stress-test')}>Stress Testing</button>
             <button style={sty.navBtn} onClick={() => navigate('/portfolio-climate-var')}>Climate VaR Dashboard</button>
-            <button style={sty.navBtn} onClick={() => navigate('/portfolio-dashboard')}>Portfolio Dashboard</button>
+            <button style={sty.navBtn} onClick={() => navigate('/portfolio-suite')}>Portfolio Dashboard</button>
           </div>
           <div style={{ display:'flex', gap:8 }}>
             <button style={{ ...sty.btn, ...sty.btnSec }} onClick={handleExportCSV} disabled={!results}>CSV Results</button>
