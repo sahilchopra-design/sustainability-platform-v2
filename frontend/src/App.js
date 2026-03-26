@@ -196,6 +196,13 @@ import MaterialityTrendsPage from './features/materiality-trends/pages/Materiali
 import ControversyMaterialityPage from './features/controversy-materiality/pages/ControversyMaterialityPage';
 import MaterialityScenariosPage from './features/materiality-scenarios/pages/MaterialityScenariosPage';
 import MaterialityHubPage from './features/materiality-hub/pages/MaterialityHubPage';
+// Sprint X — Impact Measurement & SDG Finance
+import ImpactWeightedAccountsPage from './features/impact-weighted-accounts/pages/ImpactWeightedAccountsPage';
+import IrisMetricsPage from './features/iris-metrics/pages/IrisMetricsPage';
+import SdgBondImpactPage from './features/sdg-bond-impact/pages/SdgBondImpactPage';
+import BlendedFinancePage from './features/blended-finance/pages/BlendedFinancePage';
+import ImpactVerificationPage from './features/impact-verification/pages/ImpactVerificationPage';
+import ImpactHubPage from './features/impact-hub/pages/ImpactHubPage';
 // Sprint W — AI & NLP Analytics
 import EsgReportParserPage from './features/esg-report-parser/pages/EsgReportParserPage';
 import PredictiveEsgPage from './features/predictive-esg/pages/PredictiveEsgPage';
@@ -330,6 +337,14 @@ const NAV_GROUPS = [
     { path: '/dme-contagion',     label: 'DME Contagion Network',    badge: 'Interconnection · Propagation',       code: 'EP-U5' },
     { path: '/dme-portfolio',     label: 'DME Portfolio Analytics',  badge: 'DMI · Regime · PCAF · Attribution',   code: 'EP-U6' },
     { path: '/dme-competitive',   label: 'DME Competitive Intel',    badge: 'Peer Benchmarking · 5 Dimensions',    code: 'EP-U7' },
+  ]},
+  { label: 'Impact & SDG Finance', icon: '💰', color: '#047857', items: [
+    { path: '/impact-hub',                label: 'Impact Hub',               badge: 'Hub · IWA · IRIS+ · SDG · Blended',     code: 'EP-X6' },
+    { path: '/impact-weighted-accounts',  label: 'Impact-Weighted Accounts', badge: 'Harvard IWA · SCC $51/t · 14 Dimensions', code: 'EP-X1' },
+    { path: '/iris-metrics',              label: 'IRIS+ Metrics',            badge: 'GIIN · 40 Metrics · 5 Dimensions',       code: 'EP-X2' },
+    { path: '/sdg-bond-impact',           label: 'SDG Bond Impact',          badge: '7 Categories · 25 Metrics · ICMA',       code: 'EP-X3' },
+    { path: '/blended-finance',           label: 'Blended Finance',          badge: '6 Instruments · Capital Stack · Leverage', code: 'EP-X4' },
+    { path: '/impact-verification',       label: 'Impact Verification',      badge: 'IMP · Evidence Tiers · Impact Washing',  code: 'EP-X5' },
   ]},
   { label: 'AI & NLP Analytics', icon: '🤖', color: '#0891b2', items: [
     { path: '/ai-hub',                  label: 'AI Analytics Hub',          badge: 'Hub · NLP · ML · Anomaly · Clustering',  code: 'EP-W6' },
@@ -992,6 +1007,13 @@ function AppContent() {
             <Route path="/controversy-materiality"   element={<ControversyMaterialityPage />} />
             <Route path="/materiality-scenarios"     element={<MaterialityScenariosPage />} />
             <Route path="/materiality-hub"           element={<MaterialityHubPage />} />
+            {/* Sprint X — Impact Measurement & SDG Finance */}
+            <Route path="/impact-weighted-accounts"  element={<ImpactWeightedAccountsPage />} />
+            <Route path="/iris-metrics"              element={<IrisMetricsPage />} />
+            <Route path="/sdg-bond-impact"           element={<SdgBondImpactPage />} />
+            <Route path="/blended-finance"           element={<BlendedFinancePage />} />
+            <Route path="/impact-verification"       element={<ImpactVerificationPage />} />
+            <Route path="/impact-hub"                element={<ImpactHubPage />} />
             {/* Sprint W — AI & NLP Analytics */}
             <Route path="/esg-report-parser"       element={<EsgReportParserPage />} />
             <Route path="/predictive-esg"          element={<PredictiveEsgPage />} />
