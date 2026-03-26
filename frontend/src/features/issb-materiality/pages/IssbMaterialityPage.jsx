@@ -162,13 +162,15 @@ const IssbMaterialityPage = () => {
   /* ── Build holdings from portfolio or company master ──────── */
   const holdings = useMemo(() => {
     const saved = loadLS(LS_PORT);
-    if (saved && saved.holdings && saved.holdings.length) return saved.holdings.map(h => {
-      const master = GLOBAL_COMPANY_MASTER.find(c => c.company_name === h.company_name || c.isin === h.isin);
-      return { ...h, sector: h.sector || (master && master.sector_gics) || 'Financials', weight: h.weight || 0 };
+    const portHoldings = saved?.portfolios?.[saved?.activePortfolio]?.holdings || (saved?.holdings) || [];
+    if (portHoldings.length) return portHoldings.map(h => {
+      const c = h.company || {};
+      const master = GLOBAL_COMPANY_MASTER.find(m => m.ticker === c.ticker || m.name === c.name || m.company_name === h.company_name);
+      return { ...h, company_name: c.name || h.company_name || master?.name || 'Unknown', sector: c.sector || h.sector || master?.sector || 'Financials', weight: h.weight || 0, market_value_usd: c.market_cap_usd_mn || master?.market_cap_usd_mn || 500 };
     });
     return GLOBAL_COMPANY_MASTER.slice(0, 30).map((c, i) => ({
-      company_name: c.company_name, isin: c.isin, sector: c.sector_gics || SECTORS[i % SECTORS.length],
-      weight: +(3 + sr(hashStr(c.company_name), 1) * 7).toFixed(2), market_value_usd: c.market_cap_usd_mn || 500,
+      company_name: c.name || c.company_name || 'Unknown', isin: c.isin, sector: c.sector || SECTORS[i % SECTORS.length],
+      weight: +(3 + sr(hashStr(c.name || c.company_name || ''), 1) * 7).toFixed(2), market_value_usd: c.market_cap_usd_mn || 500,
     }));
   }, []);
 
