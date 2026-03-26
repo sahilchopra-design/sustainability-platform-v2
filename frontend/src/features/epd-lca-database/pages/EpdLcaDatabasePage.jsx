@@ -1728,7 +1728,52 @@ export default function EpdLcaDatabasePage(){
           </Card>
         </Section>
 
-        {/* S47: CROSS-NAV + EXPORTS */}
+        {/* S47: RECENTLY ADDED EPDs */}
+        <Section title="Recently Added & Updated EPDs" badge="Latest Additions">
+          <Card>
+            <div style={{overflowX:'auto'}}>
+              <table style={{width:'100%',borderCollapse:'collapse'}}>
+                <thead><tr>
+                  <TH>Product</TH>
+                  <TH>Category</TH>
+                  <TH>GWP</TH>
+                  <TH>Source</TH>
+                  <TH>Date Added</TH>
+                  <TH>Note</TH>
+                </tr></thead>
+                <tbody>
+                  {[
+                    {product:'Green Ammonia (electrolysis)',category:'Chemicals',gwp:120,source:'EPD International',date:'2026-03-24',note:'95% reduction vs grey ammonia'},
+                    {product:'Bamboo Viscose Fabric',category:'Textiles',gwp:3.8,source:'Internal LCA',date:'2026-03-23',note:'Fast-growing fiber alternative'},
+                    {product:'Geothermal Heat Pump',category:'Energy',gwp:320,source:'EPD International',date:'2026-03-22',note:'COP 4-5 ground source'},
+                    {product:'Compostable Packaging (cellulose)',category:'Industrial',gwp:1.2,source:'Internal LCA',date:'2026-03-22',note:'Home compostable alternative'},
+                    {product:'Electric Scooter (shared)',category:'Transport',gwp:110,source:'Academic LCA',date:'2026-03-21',note:'Shared fleet lifecycle'},
+                    {product:'Low-E Triple-Glazed Window',category:'Construction',gwp:38,source:'EC3',date:'2026-03-21',note:'40% better U-value'},
+                    {product:'Farmed Salmon (Atlantic)',category:'Food',gwp:11.9,source:'USDA LCA Commons',date:'2026-03-20',note:'Feed sourcing is primary driver'},
+                    {product:'Carbon Black (tire industry)',category:'Chemicals',gwp:3100,source:'EPD International',date:'2026-03-20',note:'Recovered CB = 80% reduction'},
+                    {product:'Oat Milk (plant-based)',category:'Food',gwp:0.9,source:'Internal LCA',date:'2026-03-19',note:'3.5x lower than dairy'},
+                    {product:'Smartwatch',category:'Electronics',gwp:28,source:'EPD International',date:'2026-03-19',note:'Conflict mineral-intensive'},
+                    {product:'EV SUV (mid-size)',category:'Transport',gwp:12200,source:'Internal LCA',date:'2026-03-18',note:'Larger battery = higher production GWP'},
+                    {product:'Green Hydrogen (PEM)',category:'Energy',gwp:2.5,source:'EPD International',date:'2026-03-18',note:'Grey H2 = 12 kgCO2e'},
+                  ].map((e,i)=>(
+                    <tr key={e.product} style={{background:i%2?T.surfaceH:'transparent'}}>
+                      <TD style={{fontWeight:600}}>{e.product}</TD>
+                      <TD><Badge label={e.category} color={e.category==='Construction'?'blue':e.category==='Energy'?'green':e.category==='Food'?'amber':'gray'}/></TD>
+                      <TD style={{fontWeight:700,color:e.gwp<0?T.green:e.gwp>500?T.red:T.navy}}>{e.gwp} kgCO\u2082e</TD>
+                      <TD style={{fontSize:11}}>{e.source}</TD>
+                      <TD style={{fontSize:11,color:T.textMut}}>{e.date}</TD>
+                      <TD style={{fontSize:10,color:T.textMut}}>{e.note}</TD>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </Section>
+
+        {/* S48: CROSS-NAV + EXPORTS */}
+
+        {/* ================================================================= */}
         <Section title="Related Modules">
           <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
             {[
