@@ -6,7 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 // Sprint 37 — E108–E111
 import RegulatoryCapitalPage from './features/regulatory-capital/pages/RegulatoryCapitalPage';
-import ClimatePolicyPage from './features/climate-policy/pages/ClimatePolicyPage';
+// ClimatePolicyPage moved to Sprint O imports
 import ExportCreditESGPage from './features/export-credit-esg/pages/ExportCreditESGPage';
 import ESGControversyPage from './features/esg-controversy/pages/ESGControversyPage';
 // Sprint 38 — E112–E115
@@ -36,7 +36,7 @@ import ClimateFinancialStatementsPage from './features/climate-financial-stateme
 import EMClimateRiskPage from './features/em-climate-risk/pages/EMClimateRiskPage';
 // Sprint 32 — E88–E91
 import BiodiversityCreditsPage from './features/biodiversity-credits/pages/BiodiversityCreditsPage';
-import JustTransitionPage from './features/just-transition/pages/JustTransitionPage';
+// JustTransitionPage moved to Sprint O imports
 import CarbonRemovalPage from './features/carbon-removal/pages/CarbonRemovalPage';
 import ClimateLitigationPage from './features/climate-litigation/pages/ClimateLitigationPage';
 // Sprint 33 — E92–E95
@@ -145,6 +145,13 @@ import HumanRightsDDPage from './features/human-rights-dd/pages/HumanRightsDDPag
 import EmployeeWellbeingPage from './features/employee-wellbeing/pages/EmployeeWellbeingPage';
 import SocialImpactPage from './features/social-impact/pages/SocialImpactPage';
 import SocialHubPage from './features/social-hub/pages/SocialHubPage';
+// Sprint O — Sovereign & Macro ESG Analytics
+import SovereignEsgPage from './features/sovereign-esg/pages/SovereignEsgPage';
+import ClimatePolicyPage from './features/climate-policy/pages/ClimatePolicyPage';
+import MacroTransitionPage from './features/macro-transition/pages/MacroTransitionPage';
+import JustTransitionPage from './features/just-transition/pages/JustTransitionPage';
+import ParisAlignmentPage from './features/paris-alignment/pages/ParisAlignmentPage';
+import SovereignHubPage from './features/sovereign-hub/pages/SovereignHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -237,6 +244,14 @@ const NAV_GROUPS = [
     { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
     { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
     { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
+  ]},
+  { label: 'Sovereign & Macro ESG', icon: '🌐', color: '#1e3a5f', items: [
+    { path: '/sovereign-hub',             label: 'Sovereign Hub',              badge: 'Hub · 40 Countries · IEA · Paris', code: 'EP-O6' },
+    { path: '/sovereign-esg',             label: 'Sovereign ESG Scorer',       badge: '40 Countries · ND-GAIN · CAT',   code: 'EP-O1' },
+    { path: '/climate-policy',            label: 'Climate Policy Tracker',     badge: 'NDCs · Carbon Pricing · Net Zero', code: 'EP-O2' },
+    { path: '/macro-transition',          label: 'Macro Transition',           badge: 'IEA · 3 Scenarios · Energy Mix',  code: 'EP-O3' },
+    { path: '/just-transition',           label: 'Just Transition',            badge: 'ILO · 5 Dimensions · Workers',    code: 'EP-O4' },
+    { path: '/paris-alignment',           label: 'Paris Alignment',            badge: '1.5°C · Carbon Budget · NDCs',    code: 'EP-O5' },
   ]},
   { label: 'Social & Human Capital', icon: '🧑‍🤝‍🧑', color: '#be185d', items: [
     { path: '/social-hub',                label: 'Social Hub',                 badge: 'Hub · Diversity · HR · SDG',    code: 'EP-N6' },
@@ -798,6 +813,13 @@ function AppContent() {
             <Route path="/employee-wellbeing"        element={<EmployeeWellbeingPage />} />
             <Route path="/social-impact"             element={<SocialImpactPage />} />
             <Route path="/social-hub"                element={<SocialHubPage />} />
+            {/* Sprint O — Sovereign & Macro ESG */}
+            <Route path="/sovereign-esg"             element={<SovereignEsgPage />} />
+            <Route path="/climate-policy"            element={<ClimatePolicyPage />} />
+            <Route path="/macro-transition"          element={<MacroTransitionPage />} />
+            <Route path="/just-transition"           element={<JustTransitionPage />} />
+            <Route path="/paris-alignment"           element={<ParisAlignmentPage />} />
+            <Route path="/sovereign-hub"             element={<SovereignHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
