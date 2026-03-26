@@ -124,6 +124,13 @@ import CSDDDCompliancePage from './features/csddd-compliance/pages/CSDDDComplian
 import DeforestationRiskPage from './features/deforestation-risk/pages/DeforestationRiskPage';
 import SupplyChainCarbonPage from './features/supply-chain-carbon/pages/SupplyChainCarbonPage';
 import ValueChainDashboardPage from './features/value-chain-dashboard/pages/ValueChainDashboardPage';
+// Sprint L — Private Markets & Alternative Assets
+import PeVcEsgPage from './features/pe-vc-esg/pages/PeVcEsgPage';
+import PrivateCreditPage from './features/private-credit/pages/PrivateCreditPage';
+import FundOfFundsPage from './features/fund-of-funds/pages/FundOfFundsPage';
+import LpReportingPage from './features/lp-reporting/pages/LpReportingPage';
+import CoInvestmentPage from './features/co-investment/pages/CoInvestmentPage';
+import PrivateMarketsHubPage from './features/private-markets-hub/pages/PrivateMarketsHubPage';
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
@@ -216,6 +223,14 @@ const NAV_GROUPS = [
     { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
     { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
     { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
+  ]},
+  { label: 'Private Markets', icon: '🏦', color: '#4338ca', items: [
+    { path: '/private-markets-hub',       label: 'Private Markets Hub',        badge: 'Hub · PE/VC · Credit · FoF',    code: 'EP-L6' },
+    { path: '/pe-vc-esg',                 label: 'PE/VC ESG Due Diligence',   badge: '20 Deals · 30 DD Items',        code: 'EP-L1' },
+    { path: '/private-credit',            label: 'Private Credit ESG',         badge: '15 Facilities · ESG-Linked',    code: 'EP-L2' },
+    { path: '/fund-of-funds',             label: 'Fund-of-Funds',              badge: '12 Funds · 5 Asset Classes',    code: 'EP-L3' },
+    { path: '/lp-reporting',              label: 'LP Reporting Engine',         badge: 'EDCI · SFDR · PRI · TCFD',     code: 'EP-L4' },
+    { path: '/co-investment',             label: 'Co-Investment ESG',           badge: '10 Opportunities · Scoring',    code: 'EP-L5' },
   ]},
   { label: 'Supply Chain & Scope 3', icon: '🔗', color: '#7e22ce', items: [
     { path: '/value-chain-dashboard',     label: 'Value Chain Hub',            badge: 'Hub · Scope 3 · CSDDD · EUDR', code: 'EP-K6' },
@@ -732,6 +747,13 @@ function AppContent() {
             <Route path="/deforestation-risk"        element={<DeforestationRiskPage />} />
             <Route path="/supply-chain-carbon"       element={<SupplyChainCarbonPage />} />
             <Route path="/value-chain-dashboard"     element={<ValueChainDashboardPage />} />
+            {/* Sprint L — Private Markets */}
+            <Route path="/pe-vc-esg"                 element={<PeVcEsgPage />} />
+            <Route path="/private-credit"            element={<PrivateCreditPage />} />
+            <Route path="/fund-of-funds"             element={<FundOfFundsPage />} />
+            <Route path="/lp-reporting"              element={<LpReportingPage />} />
+            <Route path="/co-investment"             element={<CoInvestmentPage />} />
+            <Route path="/private-markets-hub"       element={<PrivateMarketsHubPage />} />
             {/* Sprint D — Platform Intelligence */}
             <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
             <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
