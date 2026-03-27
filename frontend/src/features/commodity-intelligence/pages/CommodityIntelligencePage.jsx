@@ -11,6 +11,17 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif"};
 const CAT_COLORS=['#16a34a','#dc2626','#7c3aed','#d97706','#6b7280','#c5a96a','#06b6d4','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#6366f1'];
 
+/* ================================================================= HELPERS (hoisted — used in module-level data init below) */
+function seed(s){let x=Math.sin(s*9973+7)*10000;return x-Math.floor(x)}
+const LS_PORT='ra_portfolio_v1';
+const loadLS=k=>{try{return JSON.parse(localStorage.getItem(k))||null}catch{return null}};
+const saveLS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const fmt=(n,d=1)=>n==null?'\u2014':Number(n).toFixed(d);
+const pct=n=>n==null?'\u2014':`${n>0?'+':''}${Number(n).toFixed(1)}%`;
+const fmtPrice=n=>{if(n==null)return'\u2014';if(n>=1000000)return`$${(n/1000000).toFixed(1)}M`;if(n>=10000)return`$${(n/1000).toFixed(1)}K`;if(n>=1)return`$${Number(n).toFixed(2)}`;return`$${Number(n).toFixed(4)}`};
+const getCache=(ns,k)=>{try{const c=JSON.parse(localStorage.getItem(`ra_cache_${ns}_${k}`));if(c&&Date.now()-c.ts<c.ttl*3600000)return c.data;return null}catch{return null}};
+const setCache=(ns,k,data,ttlH)=>{try{localStorage.setItem(`ra_cache_${ns}_${k}`,JSON.stringify({data,ts:Date.now(),ttl:ttlH}))}catch{}};
+
 /* ================================================================= DATA: 120 COMMODITIES */
 const COMMODITY_UNIVERSE = {
   carbon:{name:'Carbon Markets',color:'#16a34a',icon:'🌿',commodities:[
@@ -497,17 +508,6 @@ const SUBSTITUTION_MAP = [
   {original:'Sand (concrete)',substitute:'Recycled aggregate / geopolymer',readiness:50,impact:'-15% virgin sand by 2035',driver:'EU circular economy regulation'},
 ];
 
-/* ================================================================= HELPERS */
-const LS_PORT='ra_portfolio_v1';
-const loadLS=k=>{try{return JSON.parse(localStorage.getItem(k))||null}catch{return null}};
-const saveLS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
-const seed=s=>{let x=Math.sin(s*9973+7)*10000;return x-Math.floor(x)};
-const fmt=(n,d=1)=>n==null?'\u2014':Number(n).toFixed(d);
-const pct=n=>n==null?'\u2014':`${n>0?'+':''}${Number(n).toFixed(1)}%`;
-const fmtPrice=n=>{if(n==null)return'\u2014';if(n>=1000000)return`$${(n/1000000).toFixed(1)}M`;if(n>=10000)return`$${(n/1000).toFixed(1)}K`;if(n>=1)return`$${Number(n).toFixed(2)}`;return`$${Number(n).toFixed(4)}`};
-const getCache=(ns,k)=>{try{const c=JSON.parse(localStorage.getItem(`ra_cache_${ns}_${k}`));if(c&&Date.now()-c.ts<c.ttl*3600000)return c.data;return null}catch{return null}};
-const setCache=(ns,k,data,ttlH)=>{try{localStorage.setItem(`ra_cache_${ns}_${k}`,JSON.stringify({data,ts:Date.now(),ttl:ttlH}))}catch{}};
-
 async function fetchCommodityPrice(ticker){
   const apiKey=localStorage.getItem('ra_eodhd_api_key')||'';
   if(!apiKey)return null;
@@ -522,7 +522,7 @@ async function fetchCommodityPrice(ticker){
   }catch{return null}
 }
 
-const genPriceHistory=(basePrice,days=30,volatility=0.02,id='X')=>{
+function genPriceHistory(basePrice,days=30,volatility=0.02,id='X'){
   const pts=[];let p=basePrice*(1+seed(id.length*17)*0.1-0.05);
   for(let i=0;i<days;i++){
     p=p*(1+(seed(i*31+id.length*7)*volatility*2-volatility));
@@ -530,10 +530,10 @@ const genPriceHistory=(basePrice,days=30,volatility=0.02,id='X')=>{
     pts.push({date:d.toISOString().slice(0,10),price:Math.round(p*100)/100,day:i+1});
   }
   return pts;
-};
+}
 
 /* ML: Simple linear regression on lagged features for price prediction */
-const mlPredictPrice=(history)=>{
+function mlPredictPrice(history){
   if(!history||history.length<10)return{predicted:null,r2:0,trend:'Unknown',confidence:0};
   const n=history.length;
   const xs=history.map((_,i)=>i);
@@ -552,7 +552,7 @@ const mlPredictPrice=(history)=>{
   const confidence=Math.min(95,Math.max(20,Math.round(Math.abs(r2)*100)));
   const pctChange=history[0].price>0?Math.round((predicted-history[n-1].price)/history[n-1].price*10000)/100:0;
   return{predicted,r2,trend,confidence,slope:Math.round(slope*100)/100,intercept:Math.round(intercept*100)/100,pctChange};
-};
+}
 
 const CORRELATION_COMMODITIES=['WTI','BRENT','NG','GOLD','COPPER','LITHIUM','EUA','WHEAT','IRON_ORE','SILVER','COBALT','PALM_OIL','NICKEL','PLATINUM','COAL'];
 const genCorrelation=()=>{

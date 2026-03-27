@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "risk-analytics-prod",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["frontend/node_modules/serve/build/main.js", "-s", "frontend/build", "-l", "4001"],
+      "port": 4001,
+      "autoPort": false
+    }
+  ]
+}

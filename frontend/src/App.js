@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AF — Quantitative ESG & Portfolio Intelligence
+import EsgPortfolioOptimizerPage from './features/esg-portfolio-optimizer/pages/EsgPortfolioOptimizerPage';
+import CarbonAwareAllocationPage from './features/carbon-aware-allocation/pages/CarbonAwareAllocationPage';
+import EsgMomentumScannerPage from './features/esg-momentum-scanner/pages/EsgMomentumScannerPage';
+import NetZeroPortfolioBuilderPage from './features/net-zero-portfolio-builder/pages/NetZeroPortfolioBuilderPage';
+import EsgFactorAlphaPage from './features/esg-factor-alpha/pages/EsgFactorAlphaPage';
+import QuantEsgHubPage from './features/quant-esg-hub/pages/QuantEsgHubPage';
 // Sprint AE — Corporate Governance & Executive Intelligence
 import BoardCompositionPage from './features/board-composition/pages/BoardCompositionPage';
 import ExecutivePayAnalyticsPage from './features/executive-pay-analytics/pages/ExecutivePayAnalyticsPage';
@@ -426,6 +433,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Quant ESG & Portfolio', icon: '📊', color: '#b45309', items: [
+    { path: '/quant-esg-hub',              label: 'Quant ESG Hub',              badge: '5 Strategies · $2.8T AUM · +312bps Alpha · Live Monitor',  code: 'EP-AF6' },
+    { path: '/esg-portfolio-optimizer',    label: 'ESG Portfolio Optimizer',    badge: 'MVO · ESG Constraints · 24 Holdings · Efficient Frontier', code: 'EP-AF1' },
+    { path: '/carbon-aware-allocation',    label: 'Carbon-Aware Allocation',    badge: 'NGFS IV · Carbon Budget · Sector Tilt · Paris Pathway',    code: 'EP-AF2' },
+    { path: '/esg-momentum-scanner',       label: 'ESG Momentum Scanner',       badge: 'Improvers · 847 Signals · Controversy Recovery · Rotation', code: 'EP-AF3' },
+    { path: '/net-zero-portfolio-builder', label: 'Net Zero Portfolio Builder', badge: 'SBTi · PAII · NZBA · 1.8°C Rating · Paris-Aligned',        code: 'EP-AF4' },
+    { path: '/esg-factor-alpha',           label: 'ESG Factor Alpha Engine',    badge: '10 Factors · +187bps Alpha · IC 0.09 · Barra-Style',       code: 'EP-AF5' },
   ]},
   { label: 'Corporate Governance', icon: '🏛️', color: '#6366f1', items: [
     { path: '/board-composition',          label: 'Board Composition & Effectiveness', badge: '34% Female · 78% Indep · Skills Matrix · Tenure',       code: 'EP-AE1' },
@@ -1152,6 +1167,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AF — Quantitative ESG & Portfolio Intelligence */}
+            <Route path="/esg-portfolio-optimizer"    element={<EsgPortfolioOptimizerPage />} />
+            <Route path="/carbon-aware-allocation"    element={<CarbonAwareAllocationPage />} />
+            <Route path="/esg-momentum-scanner"       element={<EsgMomentumScannerPage />} />
+            <Route path="/net-zero-portfolio-builder" element={<NetZeroPortfolioBuilderPage />} />
+            <Route path="/esg-factor-alpha"           element={<EsgFactorAlphaPage />} />
+            <Route path="/quant-esg-hub"              element={<QuantEsgHubPage />} />
             {/* Sprint AE — Corporate Governance & Executive Intelligence */}
             <Route path="/board-composition"          element={<BoardCompositionPage />} />
             <Route path="/executive-pay-analytics"    element={<ExecutivePayAnalyticsPage />} />
