@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AB — Macro & Systemic Risk Intelligence
+import SystemicESGRiskPage from './features/systemic-esg-risk/pages/SystemicESGRiskPage';
+import ClimatePolicyIntelligencePage from './features/climate-policy-intelligence/pages/ClimatePolicyIntelligencePage';
+import GreenCentralBankingPage from './features/green-central-banking/pages/GreenCentralBankingPage';
+import ESGFactorAttributionPage from './features/esg-factor-attribution/pages/ESGFactorAttributionPage';
+import TransitionScenarioModellerPage from './features/transition-scenario-modeller/pages/TransitionScenarioModellerPage';
+import CrossAssetContagionPage from './features/cross-asset-contagion/pages/CrossAssetContagionPage';
 // Sprint AA — Climate Finance Architecture
 import ClimateFinanceHubPage from './features/climate-finance-hub/pages/ClimateFinanceHubPage';
 import Article6MarketsPage from './features/article6-markets/pages/Article6MarketsPage';
@@ -398,6 +405,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Macro & Systemic Risk', icon: '🌐', color: '#7c3aed', items: [
+    { path: '/systemic-esg-risk',            label: 'Systemic ESG Risk',            badge: '10 SIFIs · $47.2T AUM · Network · Fragility Index',  code: 'EP-AB1' },
+    { path: '/climate-policy-intelligence',  label: 'Climate Policy Intelligence',  badge: '73 Carbon Instruments · NDC · Political Risk',        code: 'EP-AB2' },
+    { path: '/green-central-banking',        label: 'Green Central Banking',        badge: 'NGFS Phase IV · €344bn Green QE · Capital Add-ons',   code: 'EP-AB3' },
+    { path: '/esg-factor-attribution',       label: 'ESG Factor Attribution',       badge: '8 Factors · +187bps Alpha · Barra-Style · Crowding',  code: 'EP-AB4' },
+    { path: '/transition-scenario-modeller', label: 'Transition Scenario Modeller', badge: '5 Pathways · Sector CapEx · Stranded Assets · 2050',  code: 'EP-AB5' },
+    { path: '/cross-asset-contagion',        label: 'Cross-Asset Contagion',        badge: '6 Shocks · 340bps Climate VaR · Correlation Matrix',  code: 'EP-AB6' },
   ]},
   { label: 'Climate Finance Architecture', icon: '🏦', color: '#0f766e', items: [
     { path: '/climate-finance-hub',       label: 'Climate Finance Hub',        badge: 'Hub · Instruments · Pipeline · ICMA · EU GBS', code: 'EP-AA1' },
@@ -1092,6 +1107,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AB — Macro & Systemic Risk Intelligence */}
+            <Route path="/systemic-esg-risk"            element={<SystemicESGRiskPage />} />
+            <Route path="/climate-policy-intelligence"  element={<ClimatePolicyIntelligencePage />} />
+            <Route path="/green-central-banking"        element={<GreenCentralBankingPage />} />
+            <Route path="/esg-factor-attribution"       element={<ESGFactorAttributionPage />} />
+            <Route path="/transition-scenario-modeller" element={<TransitionScenarioModellerPage />} />
+            <Route path="/cross-asset-contagion"        element={<CrossAssetContagionPage />} />
             {/* Sprint AA — Climate Finance Architecture */}
             <Route path="/climate-finance-hub"       element={<ClimateFinanceHubPage />} />
             <Route path="/article6-markets"          element={<Article6MarketsPage />} />
