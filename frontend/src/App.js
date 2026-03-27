@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AC — Nature, Environment & Physical Risk
+import NatureLossRiskPage from './features/nature-loss-risk/pages/NatureLossRiskPage';
+import WaterRiskAnalyticsPage from './features/water-risk-analytics/pages/WaterRiskAnalyticsPage';
+import LandUseDeforestationPage from './features/land-use-deforestation/pages/LandUseDeforestationPage';
+import OceanMarineRiskPage from './features/ocean-marine-risk/pages/OceanMarineRiskPage';
+import CircularEconomyTrackerPage from './features/circular-economy-tracker/pages/CircularEconomyTrackerPage';
+import AirQualityHealthRiskPage from './features/air-quality-health-risk/pages/AirQualityHealthRiskPage';
 // Sprint AB — Macro & Systemic Risk Intelligence
 import SystemicESGRiskPage from './features/systemic-esg-risk/pages/SystemicESGRiskPage';
 import ClimatePolicyIntelligencePage from './features/climate-policy-intelligence/pages/ClimatePolicyIntelligencePage';
@@ -405,6 +412,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Nature & Physical Risk', icon: '🌿', color: '#16a34a', items: [
+    { path: '/nature-loss-risk',        label: 'Nature & Biodiversity Risk',    badge: '847 Species · $44T GDP · TNFD LEAP · LEAP Framework',   code: 'EP-AC1' },
+    { path: '/water-risk-analytics',    label: 'Water Risk & Scarcity',         badge: '3.6B Stressed · 10 Basins · Aqueduct · CDP Water',      code: 'EP-AC2' },
+    { path: '/land-use-deforestation',  label: 'Land Use & Deforestation',      badge: 'EUDR 2025 · 7 Commodities · 4.7M Ha Lost · REDD+',      code: 'EP-AC3' },
+    { path: '/ocean-marine-risk',       label: 'Ocean & Marine Risk',           badge: '$2.5T Blue Economy · Coral · BBNJ · 8 Chokepoints',     code: 'EP-AC4' },
+    { path: '/circular-economy-tracker',label: 'Circular Economy & Waste',      badge: '9.7% Circularity · UN Plastics Treaty · CSRD KPIs',     code: 'EP-AC5' },
+    { path: '/air-quality-health-risk', label: 'Air Quality & Health Risk',     badge: '7M Deaths/yr · PM2.5 · WHO AQG · $8.1T Cost',           code: 'EP-AC6' },
   ]},
   { label: 'Macro & Systemic Risk', icon: '🌐', color: '#7c3aed', items: [
     { path: '/systemic-esg-risk',            label: 'Systemic ESG Risk',            badge: '10 SIFIs · $47.2T AUM · Network · Fragility Index',  code: 'EP-AB1' },
@@ -1107,6 +1122,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AC — Nature, Environment & Physical Risk */}
+            <Route path="/nature-loss-risk"         element={<NatureLossRiskPage />} />
+            <Route path="/water-risk-analytics"     element={<WaterRiskAnalyticsPage />} />
+            <Route path="/land-use-deforestation"   element={<LandUseDeforestationPage />} />
+            <Route path="/ocean-marine-risk"        element={<OceanMarineRiskPage />} />
+            <Route path="/circular-economy-tracker" element={<CircularEconomyTrackerPage />} />
+            <Route path="/air-quality-health-risk"  element={<AirQualityHealthRiskPage />} />
             {/* Sprint AB — Macro & Systemic Risk Intelligence */}
             <Route path="/systemic-esg-risk"            element={<SystemicESGRiskPage />} />
             <Route path="/climate-policy-intelligence"  element={<ClimatePolicyIntelligencePage />} />
