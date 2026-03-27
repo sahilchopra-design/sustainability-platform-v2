@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AE — Corporate Governance & Executive Intelligence
+import BoardCompositionPage from './features/board-composition/pages/BoardCompositionPage';
+import ExecutivePayAnalyticsPage from './features/executive-pay-analytics/pages/ExecutivePayAnalyticsPage';
+import ShareholderActivismPage from './features/shareholder-activism/pages/ShareholderActivismPage';
+import AntiCorruptionPage from './features/anti-corruption/pages/AntiCorruptionPage';
+import ProxyVotingIntelPage from './features/proxy-voting-intel/pages/ProxyVotingIntelPage';
+import DiversityEquityInclusionPage from './features/diversity-equity-inclusion/pages/DiversityEquityInclusionPage';
 // Sprint AD — Social & Just Transition
 import JustTransitionFinancePage from './features/just-transition-finance/pages/JustTransitionFinancePage';
 import HumanRightsRiskPage from './features/human-rights-risk/pages/HumanRightsRiskPage';
@@ -419,6 +426,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Corporate Governance', icon: '🏛️', color: '#6366f1', items: [
+    { path: '/board-composition',          label: 'Board Composition & Effectiveness', badge: '34% Female · 78% Indep · Skills Matrix · Tenure',       code: 'EP-AE1' },
+    { path: '/executive-pay-analytics',    label: 'Executive Pay Analytics',           badge: 'CEO Ratio 324x · ESG Pay 68% · Say-on-Pay · LTIP',     code: 'EP-AE2' },
+    { path: '/shareholder-activism',       label: 'Shareholder Activism & Engagement', badge: '847 Campaigns · Engine No.1 · ESG Resolutions · 43%',   code: 'EP-AE3' },
+    { path: '/anti-corruption',            label: 'Anti-Corruption & Bribery Intel',   badge: 'CPI 43/100 · FCPA $2.8bn · ISO 37001 · Sapin II',       code: 'EP-AE4' },
+    { path: '/proxy-voting-intel',         label: 'Proxy Voting & Stewardship',        badge: '21,000 Meetings · ISS · Glass Lewis · PRI Blueprint',   code: 'EP-AE5' },
+    { path: '/diversity-equity-inclusion', label: 'Diversity, Equity & Inclusion',     badge: '29% Women Leaders · Pay Gap · CEI · Parker Review',     code: 'EP-AE6' },
   ]},
   { label: 'Social & Just Transition', icon: '🤝', color: '#f97316', items: [
     { path: '/just-transition-finance',  label: 'Just Transition Finance',        badge: '$2.4T Need · 45 Funds · 800M Workers · ILO Guidelines',  code: 'EP-AD1' },
@@ -1137,6 +1152,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AE — Corporate Governance & Executive Intelligence */}
+            <Route path="/board-composition"          element={<BoardCompositionPage />} />
+            <Route path="/executive-pay-analytics"    element={<ExecutivePayAnalyticsPage />} />
+            <Route path="/shareholder-activism"       element={<ShareholderActivismPage />} />
+            <Route path="/anti-corruption"            element={<AntiCorruptionPage />} />
+            <Route path="/proxy-voting-intel"         element={<ProxyVotingIntelPage />} />
+            <Route path="/diversity-equity-inclusion" element={<DiversityEquityInclusionPage />} />
             {/* Sprint AD — Social & Just Transition */}
             <Route path="/just-transition-finance"  element={<JustTransitionFinancePage />} />
             <Route path="/human-rights-risk"        element={<HumanRightsRiskPage />} />
