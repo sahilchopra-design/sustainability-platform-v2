@@ -1,372 +1,741 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  AreaChart, Area, LineChart, Line, PieChart, Pie, Cell, RadialBarChart, RadialBar, ReferenceLine,
+  BarChart, Bar, Cell, LineChart, Line,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
+import { SDA_PATHWAYS, NGFS_PHASE4 } from '../../../services/climateRiskDataService';
 
-const API = 'http://localhost:8001';
-const hashStr = (s) => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-const seededRandom = (seed) => { let x = Math.sin(Math.abs(seed) * 9301 + 49297) * 233280; return x - Math.floor(x); };
-const sr = (seed, offset = 0) => seededRandom(seed + offset);
-const PIE_COLORS = ['#ef4444', '#f59e0b', '#059669', '#3b82f6', '#8b5cf6', '#06b6d4'];
-
-const KpiCard = ({ label, value, sub, accent }) => (
-  <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
-    <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
-    {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
-  </div>
-);
-const Btn = ({ children, onClick }) => (
-  <button onClick={onClick} style={{ padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#059669', color: 'white', fontWeight: 600, fontSize: 14 }}>{children}</button>
-);
-const Inp = ({ label, value, onChange, type = 'text' }) => (
-  <div style={{ marginBottom: 12 }}>
-    {label && <div style={{ fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 4 }}>{label}</div>}
-    <input type={type} value={value} onChange={e => onChange(e.target.value)}
-      style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, background: 'white', boxSizing: 'border-box' }} />
-  </div>
-);
-const Sel = ({ label, value, onChange, options }) => (
-  <div style={{ marginBottom: 12 }}>
-    {label && <div style={{ fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 4 }}>{label}</div>}
-    <select value={value} onChange={e => onChange(e.target.value)}
-      style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, background: 'white' }}>
-      {options.map(o => <option key={o.value || o} value={o.value || o}>{o.label || o}</option>)}
-    </select>
-  </div>
-);
-const Section = ({ title, children }) => (
-  <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
-    {children}
-  </div>
-);
-const Row = ({ children, gap = 12 }) => (
-  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${React.Children.count(children)},1fr)`, gap }}>{children}</div>
-);
-const Badge = ({ label, color }) => {
-  const colors = { green: { bg: '#d1fae5', text: '#065f46' }, yellow: { bg: '#fef3c7', text: '#92400e' }, red: { bg: '#fee2e2', text: '#991b1b' }, blue: { bg: '#dbeafe', text: '#1e40af' }, gray: { bg: '#f3f4f6', text: '#374151' } };
-  const c = colors[color] || colors.gray;
-  return <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 12, fontWeight: 700, background: c.bg, color: c.text }}>{label}</span>;
+/* ── Theme ─────────────────────────────────────────────────────────────────── */
+const T = {
+  bg:'#0f172a', surface:'#1e293b', border:'#334155', navy:'#1e3a5f',
+  gold:'#f59e0b', sage:'#10b981', text:'#f1f5f9', textSec:'#94a3b8',
+  textMut:'#64748b', red:'#ef4444', green:'#10b981', amber:'#f59e0b',
+  teal:'#14b8a6', font:"'Inter',sans-serif",
 };
+const ACCENT = '#f97316';
 
-const TABS = ['Portfolio Temperature', 'WACI by Sector', 'SBTi FI Criteria', 'PACTA Alignment', 'Engagement Priority'];
+/* ── Deterministic seed ─────────────────────────────────────────────────────── */
+const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
 
-const SECTORS_8 = ['Energy', 'Utilities', 'Materials', 'Industrials', 'Transport', 'Real Estate', 'Finance', 'Agriculture'];
-const PARIS_WACI = [45, 38, 55, 32, 72, 28, 18, 85];
+/* ── IPCC AR6 Carbon Budgets (Table SPM.2) ──────────────────────────────────── */
+const IPCC_BUDGETS = [
+  { temp:1.5, probability:50, remaining:500  },
+  { temp:1.5, probability:67, remaining:400  },
+  { temp:1.7, probability:67, remaining:700  },
+  { temp:2.0, probability:67, remaining:1150 },
+  { temp:2.0, probability:83, remaining:900  },
+  { temp:2.5, probability:50, remaining:2300 },
+];
+const GLOBAL_EMISSIONS_RATE = 36.8; // GtCO2/yr (2023 IEA)
 
-const SBTI_CRITERIA = [
-  { criterion: 'Scope 1+2 near-term target', weight: 20 },
-  { criterion: 'Scope 3 coverage ≥67%', weight: 20 },
-  { criterion: 'Financed emissions baseline', weight: 15 },
-  { criterion: 'Sector-specific method (SDA)', weight: 15 },
-  { criterion: 'Long-term net-zero target', weight: 20 },
-  { criterion: 'Annual progress reporting', weight: 10 },
+/* ── Portfolio Holdings ─────────────────────────────────────────────────────── */
+const HOLDINGS = [
+  { name:'Reliance Industries', sector:'chemicals', country:'IN', scope1:14.2,  scope2:8.4,  scope3:42.0,  revenue:88,  nzTarget:2070, sbti:false, weight:0.12 },
+  { name:'Coal India',          sector:'mining',    country:'IN', scope1:98.4,  scope2:4.2,  scope3:180.0, revenue:14,  nzTarget:null, sbti:false, weight:0.08 },
+  { name:'NTPC',                sector:'power',     country:'IN', scope1:82.1,  scope2:2.8,  scope3:12.0,  revenue:18,  nzTarget:2070, sbti:false, weight:0.10 },
+  { name:'Adani Green Energy',  sector:'power',     country:'IN', scope1:0.2,   scope2:0.4,  scope3:1.2,   revenue:4,   nzTarget:2050, sbti:true,  weight:0.07 },
+  { name:'JSW Steel',           sector:'steel',     country:'IN', scope1:42.8,  scope2:6.2,  scope3:18.0,  revenue:22,  nzTarget:2050, sbti:false, weight:0.09 },
+  { name:'Rio Tinto',           sector:'mining',    country:'AU', scope1:28.4,  scope2:8.8,  scope3:420.0, revenue:55,  nzTarget:2050, sbti:true,  weight:0.10 },
+  { name:'Shell plc',           sector:'chemicals', country:'GB', scope1:68.2,  scope2:12.4, scope3:680.0, revenue:380, nzTarget:2050, sbti:false, weight:0.12 },
+  { name:'Siemens Energy',      sector:'power',     country:'DE', scope1:0.8,   scope2:1.2,  scope3:8.4,   revenue:32,  nzTarget:2040, sbti:true,  weight:0.06 },
+  { name:'ArcelorMittal',       sector:'steel',     country:'BE', scope1:140.0, scope2:18.2, scope3:42.0,  revenue:79,  nzTarget:2050, sbti:true,  weight:0.08 },
+  { name:'EDF Group',           sector:'power',     country:'FR', scope1:22.4,  scope2:4.2,  scope3:14.0,  revenue:84,  nzTarget:2050, sbti:true,  weight:0.06 },
+  { name:'Tata Motors',         sector:'road',      country:'IN', scope1:4.2,   scope2:2.8,  scope3:84.0,  revenue:42,  nzTarget:2050, sbti:false, weight:0.04 },
+  { name:'ArcelorMittal 2',     sector:'steel',     country:'BE', scope1:62.0,  scope2:8.4,  scope3:22.0,  revenue:35,  nzTarget:2050, sbti:false, weight:0.08 },
 ];
 
-const MOCK_HOLDINGS = [
-  { name: 'ExxonMobil', sector: 'Energy' },
-  { name: 'NextEra Energy', sector: 'Utilities' },
-  { name: 'BASF', sector: 'Materials' },
-  { name: 'Siemens', sector: 'Industrials' },
-  { name: 'Delta Air Lines', sector: 'Transport' },
-  { name: 'Prologis', sector: 'Real Estate' },
-  { name: 'JPMorgan Chase', sector: 'Finance' },
-  { name: 'Bunge Global', sector: 'Agriculture' },
-  { name: 'TotalEnergies', sector: 'Energy' },
-  { name: 'Vestas Wind', sector: 'Utilities' },
+/* ── IPCC Budget-based ITR ──────────────────────────────────────────────────── */
+function computeITR(scope1, scope2, revenue, nzTarget) {
+  const annualEmissions = scope1 + scope2;
+  const yearsToNetZero = nzTarget ? nzTarget - 2024 : 76;
+  const impliedCumulative = annualEmissions * yearsToNetZero * 0.5;
+  if (impliedCumulative < 400000) return 1.5;
+  if (impliedCumulative < 700000) return 1.5 + (impliedCumulative - 400000) / 600000 * 0.2;
+  if (impliedCumulative < 1150000) return 1.7 + (impliedCumulative - 700000) / 900000 * 0.3;
+  if (impliedCumulative < 2300000) return 2.0 + (impliedCumulative - 1150000) / 2300000 * 0.5;
+  return Math.min(4.5, 2.5 + (impliedCumulative - 2300000) / 5000000);
+}
+
+/* ── Derived data ───────────────────────────────────────────────────────────── */
+const holdingsWithITR = HOLDINGS.map(h => ({
+  ...h,
+  itr: +computeITR(h.scope1, h.scope2, h.revenue, h.nzTarget).toFixed(2),
+  waci: +((h.scope1 + h.scope2) / h.revenue * 1000).toFixed(1),
+  totalEmissions: h.scope1 + h.scope2 + h.scope3,
+}));
+
+const portfolioITR = holdingsWithITR.reduce((s, h) => s + h.weight * h.itr, 0);
+const sbtiCount = HOLDINGS.filter(h => h.sbti).length;
+const nz2050Count = HOLDINGS.filter(h => h.nzTarget && h.nzTarget <= 2050).length;
+const portfolioWACI = holdingsWithITR.reduce((s, h) => s + h.weight * h.waci, 0);
+
+const portfolioTotalAnnual = holdingsWithITR.reduce((s, h) => s + h.weight * (h.scope1 + h.scope2), 0);
+const portfolioGlobalShare = portfolioTotalAnnual / (GLOBAL_EMISSIONS_RATE * 1000);
+const portfolioBudgetShare = portfolioGlobalShare * 400 * 1000; // MtCO2
+const yearsToExhaustion = portfolioTotalAnnual > 0 ? +(portfolioBudgetShare / portfolioTotalAnnual).toFixed(1) : 999;
+const totalOvershoot = +holdingsWithITR.reduce((s, h) => {
+  const annualE = (h.scope1 + h.scope2);
+  const yearsNZ = h.nzTarget ? h.nzTarget - 2024 : 76;
+  const cum = annualE * yearsNZ * 0.5;
+  const budget15 = portfolioGlobalShare * 400000;
+  return s + Math.max(0, cum - budget15);
+}, 0).toFixed(0);
+
+/* ── PARIS WACI benchmarks by sector ───────────────────────────────────────── */
+const SECTOR_WACI_BENCH = { power:12, steel:580, chemicals:180, road:85, mining:95 };
+
+/* ── SDA sector mapping ─────────────────────────────────────────────────────── */
+const SECTOR_TO_SDA = { power:'power', steel:'steel', chemicals:'cement', road:'road', mining:'shipping' };
+
+/* ── Shared Styles ──────────────────────────────────────────────────────────── */
+const card = { background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:'16px' };
+const statCard = (color) => ({ ...card, borderLeft:`3px solid ${color}`, flex:1, minWidth:140 });
+const tableCell = { padding:'8px 12px', borderBottom:`1px solid ${T.border}`, color:T.text, fontSize:12 };
+const tableHead = { padding:'8px 12px', color:T.textSec, fontSize:11, fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', borderBottom:`1px solid ${T.border}` };
+
+const itrColor = v => v <= 1.7 ? T.green : v <= 3.0 ? T.amber : T.red;
+const waciColor = v => v > 2000 ? T.red : v > 500 ? T.amber : T.green;
+
+/* ── Tab labels ─────────────────────────────────────────────────────────────── */
+const TABS = [
+  'Portfolio Dashboard',
+  'IPCC Budget Breakdown',
+  'WACI & Financed Emissions',
+  'SDA Sector Pathways',
+  'SBTi & Net Zero Tracker',
+  'Engagement Priorities',
 ];
 
-const TRAJECTORY_YEARS = [2025, 2030, 2035, 2040, 2045, 2050];
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 1 — Portfolio Temperature Dashboard
+══════════════════════════════════════════════════════════════════════════════ */
+function Tab1() {
+  const barData = holdingsWithITR.map(h => ({ name: h.name.split(' ')[0], itr: h.itr, color: itrColor(h.itr) }));
+  const exhaustYear = 2024 + Math.round(yearsToExhaustion);
 
-function buildData(portfolio, fiType, aumStr, methodology) {
-  const seed = hashStr(portfolio + fiType + aumStr + methodology);
-  const aum = parseFloat(aumStr) || 10;
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+      <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
+        <div style={statCard(ACCENT)}>
+          <div style={{ fontSize:11, color:T.textSec, marginBottom:4 }}>Portfolio ITR</div>
+          <div style={{ fontSize:26, fontWeight:700, color:ACCENT }}>{portfolioITR.toFixed(2)}°C</div>
+          <div style={{ fontSize:11, color:T.textMut }}>Implied Temperature Rise</div>
+        </div>
+        <div style={statCard(T.teal)}>
+          <div style={{ fontSize:11, color:T.textSec, marginBottom:4 }}>SBTi Aligned</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.teal }}>{sbtiCount}/12</div>
+          <div style={{ fontSize:11, color:T.textMut }}>Holdings with validated targets</div>
+        </div>
+        <div style={statCard(T.green)}>
+          <div style={{ fontSize:11, color:T.textSec, marginBottom:4 }}>Net Zero by 2050</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.green }}>{nz2050Count}/12</div>
+          <div style={{ fontSize:11, color:T.textMut }}>Holdings committed ≤ 2050</div>
+        </div>
+        <div style={statCard(T.red)}>
+          <div style={{ fontSize:11, color:T.textSec, marginBottom:4 }}>Carbon Budget Overshoot</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.red }}>{(totalOvershoot/1000).toFixed(0)} GtCO2</div>
+          <div style={{ fontSize:11, color:T.textMut }}>Above portfolio 1.5°C share</div>
+        </div>
+      </div>
 
-  const itr = parseFloat((sr(seed, 1) * 1.5 + 1.4).toFixed(2));
-  const itrColor = itr < 1.8 ? 'green' : itr <= 2.5 ? 'yellow' : 'red';
-  const parisAligned = itr <= 1.8;
-  const waci = parseFloat((sr(seed, 3) * 150 + 80).toFixed(1));
-  const dqs = parseFloat((sr(seed, 5) * 1.5 + 2.5).toFixed(1));
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Implied Temperature Rise per Holding (IPCC AR6 Budget Method)
+        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={barData} margin={{ top:4, right:16, left:0, bottom:48 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} angle={-35} textAnchor="end" interval={0} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} domain={[0, 5]} tickFormatter={v => `${v}°C`} />
+            <Tooltip formatter={v => [`${v}°C`, 'ITR']} contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Bar dataKey="itr" radius={[3,3,0,0]}>
+              {barData.map((d, i) => <Cell key={i} fill={d.color} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+        <div style={{ display:'flex', gap:16, marginTop:8, fontSize:11, color:T.textSec }}>
+          <span style={{ color:T.green }}>● ≤1.7°C Aligned</span>
+          <span style={{ color:T.amber }}>● 1.7–3.0°C Transition Risk</span>
+          <span style={{ color:T.red }}>● >3.0°C High Risk</span>
+        </div>
+      </div>
 
-  const trajectoryData = TRAJECTORY_YEARS.map((yr, i) => {
-    const decay = 1 - i * 0.12;
+      <div style={{ ...card, borderLeft:`3px solid ${T.red}` }}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:8 }}>
+          IPCC 1.5°C Carbon Budget Depletion (Portfolio Share)
+        </div>
+        <div style={{ display:'flex', gap:32, flexWrap:'wrap' }}>
+          <div>
+            <div style={{ fontSize:11, color:T.textSec }}>Portfolio Global Emissions Share</div>
+            <div style={{ fontSize:18, fontWeight:700, color:ACCENT }}>{(portfolioGlobalShare * 100).toFixed(4)}%</div>
+          </div>
+          <div>
+            <div style={{ fontSize:11, color:T.textSec }}>Portfolio Budget Allocation</div>
+            <div style={{ fontSize:18, fontWeight:700, color:T.amber }}>{(portfolioBudgetShare/1000).toFixed(3)} GtCO2</div>
+          </div>
+          <div>
+            <div style={{ fontSize:11, color:T.textSec }}>Budget Exhausted By</div>
+            <div style={{ fontSize:18, fontWeight:700, color:T.red }}>{exhaustYear}</div>
+          </div>
+          <div>
+            <div style={{ fontSize:11, color:T.textSec }}>Years Remaining</div>
+            <div style={{ fontSize:18, fontWeight:700, color:T.red }}>{yearsToExhaustion} yrs</div>
+          </div>
+        </div>
+        <div style={{ fontSize:11, color:T.textMut, marginTop:8 }}>
+          Based on IPCC AR6 WG1 Table SPM.2 — 67% probability 1.5°C budget of 400 GtCO2 from Jan 2020.
+          Portfolio's proportional share computed from Scope 1+2 annual emissions vs global 36.8 GtCO2/yr.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 2 — IPCC Carbon Budget Breakdown
+══════════════════════════════════════════════════════════════════════════════ */
+function Tab2() {
+  const portfolioAnnualGt = portfolioTotalAnnual / 1000;
+  const budgetBarData = IPCC_BUDGETS.map(b => ({
+    label: `${b.temp}°C/${b.probability}%`,
+    remaining: b.remaining,
+    years: +(b.remaining / GLOBAL_EMISSIONS_RATE).toFixed(1),
+    peakYear: Math.round(2024 + b.remaining / GLOBAL_EMISSIONS_RATE * 0.7),
+    portfolioShare: +((portfolioAnnualGt / GLOBAL_EMISSIONS_RATE) * b.remaining).toFixed(2),
+    color: b.temp <= 1.5 ? T.green : b.temp <= 1.7 ? T.teal : b.temp <= 2.0 ? T.amber : T.red,
+  }));
+
+  const years = Array.from({ length: 16 }, (_, i) => 2024 + i * 5);
+  const drawdownData = years.map(yr => {
+    const elapsed = yr - 2024;
     return {
       year: yr,
-      portfolio: parseFloat((itr * (1 - i * 0.05 * sr(seed, i * 7 + 10))).toFixed(2)),
-      path15c: parseFloat((1.5 * decay).toFixed(2)),
-      path2c: parseFloat((2.0 * decay).toFixed(2)),
-      ndc: parseFloat((2.8 * (1 - i * 0.06)).toFixed(2)),
+      b15_67: Math.max(0, +(400 - GLOBAL_EMISSIONS_RATE * elapsed).toFixed(0)),
+      b20_67: Math.max(0, +(1150 - GLOBAL_EMISSIONS_RATE * elapsed).toFixed(0)),
     };
   });
 
-  const waciSectors = SECTORS_8.map((name, i) => ({
-    name, waci: parseFloat((sr(seed, i * 11 + 30) * 120 + 20).toFixed(1)),
-    parisThreshold: PARIS_WACI[i],
-  }));
-
-  const sbtiData = SBTI_CRITERIA.map((c, i) => ({
-    ...c,
-    score: Math.round(sr(seed, i * 13 + 50) * 40 + 45),
-    gap: parseFloat((sr(seed, i * 17 + 55) * 0.4).toFixed(2)),
-  }));
-  const sbtiOverall = Math.round(sbtiData.reduce((s, c) => s + c.score * c.weight / 100, 0));
-  const nearTermTarget = parseFloat((itr * 0.85).toFixed(2));
-  const longTermTarget = 1.5;
-  const sbtiRadial = [{ name: 'SBTi FI Score', value: sbtiOverall, fill: sbtiOverall >= 70 ? '#059669' : sbtiOverall >= 50 ? '#f59e0b' : '#ef4444' }];
-
-  const pactaSectors = SECTORS_8.map((name, i) => ({
-    name,
-    aligned: Math.round(sr(seed, i * 19 + 70) * 50 + 20),
-    currentPolicy: Math.round(sr(seed, i * 23 + 75) * 40 + 10),
-  }));
-
-  const pactaTrajectory = TRAJECTORY_YEARS.map((yr, i) => ({
-    year: yr,
-    current: parseFloat((100 - i * sr(seed, i * 29 + 80) * 8).toFixed(1)),
-    paris: parseFloat((100 - i * 14).toFixed(1)),
-  }));
-
-  const holdings = MOCK_HOLDINGS.map((h, i) => {
-    const hItr = parseFloat((sr(seed, i * 31 + 90) * 2 + 1.2).toFixed(2));
-    const exposure = parseFloat((sr(seed, i * 37 + 95) * 4 + 0.5).toFixed(1));
-    const priority = hItr > 2.5 ? 'High' : hItr > 1.8 ? 'Medium' : 'Low';
-    return { ...h, itr: hItr, exposure, priority };
-  });
-
-  const engagementSplit = [
-    { name: 'High Priority', value: Math.round(sr(seed, 101) * 20 + 30) },
-    { name: 'Medium Priority', value: Math.round(sr(seed, 103) * 20 + 35) },
-    { name: 'Low Priority', value: Math.round(sr(seed, 107) * 15 + 15) },
-  ];
-
-  const scope123 = [
-    { scope: 'Scope 1', emissions: parseFloat((sr(seed, 111) * 40 + 20).toFixed(1)) },
-    { scope: 'Scope 2', emissions: parseFloat((sr(seed, 113) * 25 + 15).toFixed(1)) },
-    { scope: 'Scope 3', emissions: parseFloat((sr(seed, 117) * 80 + 40).toFixed(1)) },
-  ];
-
-  return { itr, itrColor, parisAligned, waci, dqs, trajectoryData, waciSectors, sbtiData, sbtiOverall, nearTermTarget, longTermTarget, sbtiRadial, pactaSectors, pactaTrajectory, holdings, engagementSplit, scope123 };
-}
-
-export default function TemperatureAlignmentPage() {
-  const [tab, setTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [portfolio, setPortfolio] = useState('Global Climate Fund');
-  const [fiType, setFiType] = useState('asset_manager');
-  const [aum, setAum] = useState('25');
-  const [methodology, setMethodology] = useState('PCAF_SBTI');
-
-  const d = buildData(portfolio, fiType, aum, methodology);
-
-  const runAssess = async () => {
-    setLoading(true); setError('');
-    try {
-      await axios.post(`${API}/api/v1/temperature-alignment/assess`, { portfolio_name: portfolio, fi_type: fiType, total_aum_bn: parseFloat(aum), methodology });
-    } catch { setError('API unavailable — demo mode.'); }
-    finally { setLoading(false); }
-  };
-
   return (
-    <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Temperature Alignment & Paris Pathway</h1>
-        <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>PCAF-SBTi FI · PACTA · WACI · SDA · Implied Temperature Rise · Portfolio Decarbonisation Trajectory</p>
+    <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          IPCC AR6 Remaining Carbon Budgets (from Jan 2020, GtCO2)
+        </div>
+        <table style={{ width:'100%', borderCollapse:'collapse' }}>
+          <thead>
+            <tr>
+              {['Temp Threshold','Probability','Remaining (GtCO2)','Yrs at Current Rate','Implied Peak Year','Portfolio Share (GtCO2)'].map(h => (
+                <th key={h} style={{ ...tableHead, textAlign:'left' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {budgetBarData.map((b, i) => (
+              <tr key={i} style={{ background: i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
+                <td style={tableCell}><span style={{ color:b.color, fontWeight:600 }}>{b.label.split('/')[0]}</span></td>
+                <td style={tableCell}>{b.label.split('/')[1]}</td>
+                <td style={{ ...tableCell, fontWeight:600, color:b.color }}>{b.remaining.toLocaleString()}</td>
+                <td style={tableCell}>{b.years} yrs</td>
+                <td style={tableCell}>{b.peakYear}</td>
+                <td style={{ ...tableCell, color:T.amber }}>{b.portfolioShare}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <button key={i} onClick={() => setTab(i)} style={{ padding: '10px 14px', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, background: 'none', color: tab === i ? '#059669' : '#6b7280', borderBottom: tab === i ? '2px solid #059669' : '2px solid transparent' }}>{t}</button>
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Remaining Budget by Temperature Threshold (GtCO2)
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={budgetBarData} margin={{ top:4, right:16, left:0, bottom:8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="label" tick={{ fill:T.textSec, fontSize:10 }} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} tickFormatter={v => `${v} Gt`} />
+            <Tooltip formatter={v => [`${v} GtCO2`, 'Remaining Budget']} contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Bar dataKey="remaining" radius={[3,3,0,0]}>
+              {budgetBarData.map((d, i) => <Cell key={i} fill={d.color} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Budget Drawdown Trajectory 2024–2100 (at 36.8 GtCO2/yr)
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart data={drawdownData} margin={{ top:4, right:16, left:0, bottom:8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="year" tick={{ fill:T.textSec, fontSize:10 }} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} tickFormatter={v => `${v} Gt`} />
+            <Tooltip contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Legend wrapperStyle={{ fontSize:11, color:T.textSec }} />
+            <Line type="monotone" dataKey="b15_67" name="1.5°C / 67%" stroke={T.green} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="b20_67" name="2.0°C / 67%" stroke={T.amber} strokeWidth={2} dot={false} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 3 — WACI & Financed Emissions
+══════════════════════════════════════════════════════════════════════════════ */
+function Tab3() {
+  const waciBarData = holdingsWithITR.map(h => ({
+    name: h.name.split(' ')[0],
+    waci: h.waci,
+    bench: SECTOR_WACI_BENCH[h.sector] || 200,
+    color: waciColor(h.waci),
+  }));
+
+  const top5 = [...holdingsWithITR].sort((a,b) => b.totalEmissions - a.totalEmissions).slice(0, 5).map(h => ({
+    name: h.name.split(' ')[0],
+    scope1: h.scope1,
+    scope2: h.scope2,
+    scope3: h.scope3,
+  }));
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+      <div style={{ display:'flex', gap:12 }}>
+        <div style={statCard(T.teal)}>
+          <div style={{ fontSize:11, color:T.textSec }}>Portfolio WACI</div>
+          <div style={{ fontSize:24, fontWeight:700, color:T.teal }}>{portfolioWACI.toFixed(0)}</div>
+          <div style={{ fontSize:11, color:T.textMut }}>tCO2/$M revenue (weighted avg)</div>
+        </div>
+        <div style={statCard(T.amber)}>
+          <div style={{ fontSize:11, color:T.textSec }}>Holdings Above Sector Bench</div>
+          <div style={{ fontSize:24, fontWeight:700, color:T.amber }}>
+            {holdingsWithITR.filter(h => h.waci > (SECTOR_WACI_BENCH[h.sector]||200)).length}/12
+          </div>
+          <div style={{ fontSize:11, color:T.textMut }}>Exceed IEA NZE WACI target</div>
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          WACI per Holding vs Paris Benchmark (tCO2/$M revenue)
+        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={waciBarData} margin={{ top:4, right:16, left:0, bottom:48 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} angle={-35} textAnchor="end" interval={0} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} />
+            <Tooltip formatter={(v,n) => [v.toLocaleString(), n]} contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Bar dataKey="waci" name="WACI" radius={[3,3,0,0]}>
+              {waciBarData.map((d, i) => <Cell key={i} fill={d.color} />)}
+            </Bar>
+            <Bar dataKey="bench" name="Sector Bench" radius={[3,3,0,0]} fill={T.teal} opacity={0.4} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Scope 1 + 2 + 3 Emissions — Top 5 Holdings (MtCO2/yr)
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={top5} margin={{ top:4, right:16, left:0, bottom:8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} tickFormatter={v => `${v} Mt`} />
+            <Tooltip formatter={v => [`${v} MtCO2`, '']} contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Legend wrapperStyle={{ fontSize:11, color:T.textSec }} />
+            <Bar dataKey="scope1" name="Scope 1" stackId="s" fill={T.red} />
+            <Bar dataKey="scope2" name="Scope 2" stackId="s" fill={T.amber} />
+            <Bar dataKey="scope3" name="Scope 3" stackId="s" fill={T.teal} radius={[3,3,0,0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          WACI Alignment Gap vs IEA NZE Sector Benchmark
+        </div>
+        <table style={{ width:'100%', borderCollapse:'collapse' }}>
+          <thead>
+            <tr>
+              {['Holding','Sector','WACI','Bench','Gap','Status'].map(h => (
+                <th key={h} style={{ ...tableHead, textAlign:'left' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {holdingsWithITR.map((h, i) => {
+              const bench = SECTOR_WACI_BENCH[h.sector] || 200;
+              const gap = h.waci - bench;
+              const aligned = gap <= 0;
+              return (
+                <tr key={i} style={{ background: i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
+                  <td style={{ ...tableCell, fontWeight:500 }}>{h.name}</td>
+                  <td style={tableCell}>{h.sector}</td>
+                  <td style={{ ...tableCell, color:waciColor(h.waci), fontWeight:600 }}>{h.waci.toFixed(0)}</td>
+                  <td style={tableCell}>{bench}</td>
+                  <td style={{ ...tableCell, color: aligned ? T.green : T.red }}>
+                    {aligned ? '—' : `+${gap.toFixed(0)}`}
+                  </td>
+                  <td style={{ ...tableCell, color: aligned ? T.green : T.red }}>
+                    {aligned ? 'Aligned' : 'Off-track'}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 4 — SDA Sector Pathways
+══════════════════════════════════════════════════════════════════════════════ */
+const ON_TRACK = new Set(['Adani Green Energy','Siemens Energy','EDF Group','ArcelorMittal']);
+
+function Tab4() {
+  const [selectedSDA, setSelectedSDA] = useState('power');
+  const pathway = SDA_PATHWAYS.find(p => p.sector === selectedSDA) || SDA_PATHWAYS[0];
+
+  const sdaGapData = holdingsWithITR.map(h => {
+    const sdaSector = SECTOR_TO_SDA[h.sector] || 'road';
+    const sdaPath = SDA_PATHWAYS.find(p => p.sector === sdaSector);
+    const bench = sdaPath ? sdaPath.target2030 : 1;
+    const currentIntensity = sdaPath ? sdaPath.current : 1;
+    const overshoot = +((currentIntensity / bench - 1) * 100).toFixed(1);
+    return {
+      name: h.name.split(' ')[0],
+      overshoot: Math.max(0, overshoot),
+      onTrack: ON_TRACK.has(h.name),
+      color: ON_TRACK.has(h.name) ? T.green : overshoot > 50 ? T.red : T.amber,
+    };
+  });
+
+  const sectorLineData = [
+    { year: 2020, value: pathway.baseline2020, target: pathway.baseline2020 },
+    { year: 2030, value: pathway.current,      target: pathway.target2030 },
+    { year: 2040, value: pathway.current * 0.6, target: pathway.target2040 },
+    { year: 2050, value: pathway.current * 0.2, target: pathway.target2050 },
+  ];
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+      <div style={{ display:'flex', gap:12 }}>
+        <div style={statCard(T.green)}>
+          <div style={{ fontSize:11, color:T.textSec }}>On SDA Track</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.green }}>4/12</div>
+          <div style={{ fontSize:11, color:T.textMut }}>Adani Green, Siemens, EDF, ArcelorMittal</div>
+        </div>
+        <div style={statCard(T.red)}>
+          <div style={{ fontSize:11, color:T.textSec }}>Off SDA Track</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.red }}>8/12</div>
+          <div style={{ fontSize:11, color:T.textMut }}>Require intensity reduction plan</div>
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          SDA 2030 Pathway Overshoot % per Holding
+        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={sdaGapData} margin={{ top:4, right:16, left:0, bottom:48 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} angle={-35} textAnchor="end" interval={0} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} tickFormatter={v => `${v}%`} />
+            <Tooltip formatter={v => [`${v}%`, 'SDA Overshoot']} contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Bar dataKey="overshoot" name="Overshoot %" radius={[3,3,0,0]}>
+              {sdaGapData.map((d, i) => <Cell key={i} fill={d.color} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={card}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+          <div style={{ fontSize:13, fontWeight:600, color:T.text }}>
+            Sector Decarbonization Pathway — {pathway.label} ({pathway.unit})
+          </div>
+          <select
+            value={selectedSDA}
+            onChange={e => setSelectedSDA(e.target.value)}
+            style={{ background:T.bg, border:`1px solid ${T.border}`, color:T.text, borderRadius:4, padding:'4px 8px', fontSize:12 }}
+          >
+            {SDA_PATHWAYS.map(p => <option key={p.sector} value={p.sector}>{p.label}</option>)}
+          </select>
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart data={sectorLineData} margin={{ top:4, right:16, left:0, bottom:8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="year" tick={{ fill:T.textSec, fontSize:10 }} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} />
+            <Tooltip contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Legend wrapperStyle={{ fontSize:11, color:T.textSec }} />
+            <Line type="monotone" dataKey="target" name="SDA Target" stroke={T.green} strokeWidth={2} strokeDasharray="6 3" dot={{ r:4 }} />
+            <Line type="monotone" dataKey="value" name="Global Avg Trajectory" stroke={T.amber} strokeWidth={2} dot={{ r:4 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 5 — SBTi & Net Zero Target Tracker
+══════════════════════════════════════════════════════════════════════════════ */
+const SBTI_STATUS = {
+  'Adani Green Energy':'Validated', 'Rio Tinto':'Validated', 'Siemens Energy':'Validated',
+  'ArcelorMittal':'Validated', 'EDF Group':'Validated',
+  'Reliance Industries':'Not Committed', 'Coal India':'Not Committed',
+  'NTPC':'Not Committed', 'JSW Steel':'Committed', 'Shell plc':'Committed',
+  'Tata Motors':'Committed', 'ArcelorMittal 2':'Not Committed',
+};
+const INTERIM_2030 = { power:55, steel:30, chemicals:25, mining:28, road:20 };
+
+function Tab5() {
+  const nzBarData = holdingsWithITR.map(h => ({
+    name: h.name.split(' ')[0],
+    years: h.nzTarget ? h.nzTarget - 2024 : 100,
+    color: !h.nzTarget ? T.red : h.nzTarget <= 2050 ? T.green : h.nzTarget <= 2060 ? T.amber : T.red,
+    label: h.nzTarget ? `${h.nzTarget}` : 'No Target',
+  }));
+
+  const validated = Object.values(SBTI_STATUS).filter(s => s==='Validated').length;
+  const committed = Object.values(SBTI_STATUS).filter(s => s==='Committed').length;
+  const notCommitted = Object.values(SBTI_STATUS).filter(s => s==='Not Committed').length;
+
+  const sbtiCriteria = [
+    { criterion:'Scope 1+2 Near-term Target',  coverage:58 },
+    { criterion:'Scope 3 Near-term Target',    coverage:33 },
+    { criterion:'Long-term Absolute Target',   coverage:50 },
+    { criterion:'Base Year Established',       coverage:75 },
+    { criterion:'Boundary Coverage >95%',      coverage:67 },
+    { criterion:'Third-party Verification',    coverage:42 },
+  ];
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+      <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
+        <div style={statCard(T.green)}>
+          <div style={{ fontSize:11, color:T.textSec }}>SBTi Validated</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.green }}>{validated}</div>
+        </div>
+        <div style={statCard(T.amber)}>
+          <div style={{ fontSize:11, color:T.textSec }}>SBTi Committed</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.amber }}>{committed}</div>
+        </div>
+        <div style={statCard(T.red)}>
+          <div style={{ fontSize:11, color:T.textSec }}>No Target</div>
+          <div style={{ fontSize:26, fontWeight:700, color:T.red }}>{notCommitted}</div>
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Years to Net Zero per Holding (from 2024)
+        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={nzBarData} margin={{ top:4, right:16, left:0, bottom:48 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} angle={-35} textAnchor="end" interval={0} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} domain={[0, 110]} tickFormatter={v => `${v} yrs`} />
+            <Tooltip formatter={(v,n,p) => [`${p.payload.label}`, 'NZ Target Year']} contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Bar dataKey="years" name="Years to Net Zero" radius={[3,3,0,0]}>
+              {nzBarData.map((d, i) => <Cell key={i} fill={d.color} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          SBTi Criteria — Portfolio Coverage
+        </div>
+        <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+          {sbtiCriteria.map((c, i) => (
+            <div key={i} style={{ display:'flex', alignItems:'center', gap:12 }}>
+              <div style={{ flex:'0 0 220px', fontSize:12, color:T.textSec }}>{c.criterion}</div>
+              <div style={{ flex:1, background:T.bg, borderRadius:4, height:8, overflow:'hidden' }}>
+                <div style={{ width:`${c.coverage}%`, height:'100%', background: c.coverage>=67 ? T.green : c.coverage>=40 ? T.amber : T.red, borderRadius:4 }} />
+              </div>
+              <div style={{ fontSize:12, fontWeight:600, color: c.coverage>=67 ? T.green : c.coverage>=40 ? T.amber : T.red, width:36, textAlign:'right' }}>{c.coverage}%</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Holding-level SBTi & Net Zero Summary
+        </div>
+        <table style={{ width:'100%', borderCollapse:'collapse' }}>
+          <thead>
+            <tr>
+              {['Holding','SBTi Status','NZ Target','2030 Reduction','ITR'].map(h => (
+                <th key={h} style={{ ...tableHead, textAlign:'left' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {holdingsWithITR.map((h, i) => {
+              const status = SBTI_STATUS[h.name] || 'Not Committed';
+              const statusColor = status==='Validated' ? T.green : status==='Committed' ? T.amber : T.red;
+              const red2030 = INTERIM_2030[h.sector] || 25;
+              return (
+                <tr key={i} style={{ background: i%2===0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
+                  <td style={{ ...tableCell, fontWeight:500 }}>{h.name}</td>
+                  <td style={{ ...tableCell, color:statusColor, fontWeight:600 }}>{status}</td>
+                  <td style={{ ...tableCell, color: h.nzTarget ? (h.nzTarget<=2050?T.green:T.amber) : T.red }}>
+                    {h.nzTarget || 'None'}
+                  </td>
+                  <td style={{ ...tableCell, color:T.teal }}>{red2030}%</td>
+                  <td style={{ ...tableCell, color:itrColor(h.itr), fontWeight:600 }}>{h.itr}°C</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 6 — Engagement Priorities
+══════════════════════════════════════════════════════════════════════════════ */
+const ENGAGE_ASKS = {
+  'Coal India':          { ask:'Publish net-zero roadmap & commit to SBTi by 2026',     timeline:'12 months', impact:'−0.8°C ITR if adopted' },
+  'NTPC':                { ask:'Accelerate renewable capacity to 60 GW by 2032',         timeline:'18 months', impact:'−0.5°C ITR' },
+  'Shell plc':           { ask:'Strengthen Scope 3 absolute reduction target to −40%',   timeline:'6 months',  impact:'−0.3°C ITR' },
+  'ArcelorMittal 2':     { ask:'Align to SBTi and publish interim 2030 steel intensity', timeline:'12 months', impact:'−0.4°C ITR' },
+  'Reliance Industries': { ask:'Set SBTi-aligned net-zero target with Scope 3 pathway',  timeline:'12 months', impact:'−0.3°C ITR' },
+};
+
+function Tab6() {
+  const engageData = holdingsWithITR.map(h => {
+    const sdaSector = SECTOR_TO_SDA[h.sector] || 'road';
+    const sdaPath = SDA_PATHWAYS.find(p => p.sector === sdaSector);
+    const sdaGap = sdaPath ? Math.max(0, (sdaPath.current / sdaPath.target2030 - 1) * 100) : 50;
+    const score = +( h.itr * h.weight * (h.sbti ? 0.5 : 1.5) * sdaGap / 100 ).toFixed(4);
+    return { ...h, engageScore: score, sdaGap, color: score > 0.3 ? T.red : score > 0.15 ? T.amber : T.green };
+  }).sort((a,b) => b.engageScore - a.engageScore);
+
+  const top5 = engageData.slice(0, 5);
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+      <div style={card}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Engagement Priority Score = ITR × Weight × (SBTi?0.5:1.5) × SDA Gap/100
+        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart
+            data={engageData.map(h => ({ name: h.name.split(' ')[0], score: h.engageScore, color: h.color }))}
+            margin={{ top:4, right:16, left:0, bottom:48 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} angle={-35} textAnchor="end" interval={0} />
+            <YAxis tick={{ fill:T.textSec, fontSize:10 }} tickFormatter={v => v.toFixed(2)} />
+            <Tooltip formatter={v => [v.toFixed(4), 'Priority Score']} contentStyle={{ background:T.surface, border:`1px solid ${T.border}` }} labelStyle={{ color:T.text }} />
+            <Bar dataKey="score" name="Priority Score" radius={[3,3,0,0]}>
+              {engageData.map((d, i) => <Cell key={i} fill={d.color} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+        <div style={{ display:'flex', gap:16, marginTop:8, fontSize:11, color:T.textSec }}>
+          <span style={{ color:T.red }}>● >0.30 High Priority</span>
+          <span style={{ color:T.amber }}>● 0.15–0.30 Medium</span>
+          <span style={{ color:T.green }}>● ≤0.15 Monitoring</span>
+        </div>
+      </div>
+
+      <div style={{ fontSize:13, fontWeight:600, color:T.text }}>Top 5 Engagement Actions</div>
+      <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+        {top5.map((h, i) => {
+          const action = ENGAGE_ASKS[h.name] || {
+            ask: 'Commit to SBTi near-term target and disclose Scope 3 emissions',
+            timeline: '12 months',
+            impact: `−${(h.itr * 0.1).toFixed(1)}°C ITR if adopted`,
+          };
+          return (
+            <div key={i} style={{ ...card, borderLeft:`3px solid ${h.color}`, display:'flex', gap:16, alignItems:'flex-start' }}>
+              <div style={{ flex:'0 0 24px', width:24, height:24, borderRadius:'50%', background:h.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, color:'#000', flexShrink:0 }}>
+                {i+1}
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontWeight:600, color:T.text, fontSize:13, marginBottom:4 }}>{h.name}</div>
+                <div style={{ fontSize:12, color:T.textSec, marginBottom:6 }}>{action.ask}</div>
+                <div style={{ display:'flex', gap:20, fontSize:11, flexWrap:'wrap' }}>
+                  <span style={{ color:T.amber }}>Timeline: {action.timeline}</span>
+                  <span style={{ color:T.green }}>Impact: {action.impact}</span>
+                  <span style={{ color:T.textMut }}>ITR: {h.itr}°C</span>
+                  <span style={{ color:T.textMut }}>Weight: {(h.weight*100).toFixed(0)}%</span>
+                </div>
+              </div>
+              <div style={{ fontSize:18, fontWeight:700, color:h.color }}>{h.engageScore.toFixed(3)}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ ...card, background:'rgba(249,115,22,0.08)', borderColor:ACCENT, borderLeft:`3px solid ${ACCENT}` }}>
+        <div style={{ fontSize:12, color:T.textSec, marginBottom:4 }}>Cross-module Analysis</div>
+        <div style={{ fontSize:13, color:T.text }}>
+          See Portfolio Climate VaR →{' '}
+          <a href="/portfolio-climate-var" style={{ color:ACCENT, textDecoration:'none' }}>/portfolio-climate-var</a>
+          {'  |  '}
+          Implied Temp Regression →{' '}
+          <a href="/implied-temp-regression" style={{ color:ACCENT, textDecoration:'none' }}>/implied-temp-regression</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   ROOT COMPONENT
+══════════════════════════════════════════════════════════════════════════════ */
+export default function TemperatureAlignmentPage() {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const tabContent = [<Tab1 />, <Tab2 />, <Tab3 />, <Tab4 />, <Tab5 />, <Tab6 />];
+
+  return (
+    <div style={{ fontFamily:T.font, background:T.bg, minHeight:'100vh', padding:'24px', color:T.text }}>
+      <div style={{ marginBottom:20 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:6 }}>
+          <div style={{ width:4, height:24, background:ACCENT, borderRadius:2 }} />
+          <h1 style={{ margin:0, fontSize:20, fontWeight:700, color:T.text }}>Temperature Alignment</h1>
+          <span style={{ fontSize:11, background:'rgba(249,115,22,0.15)', color:ACCENT, padding:'2px 8px', borderRadius:4, fontWeight:600 }}>
+            IPCC AR6 · SDA · SBTi
+          </span>
+        </div>
+        <p style={{ margin:0, fontSize:12, color:T.textSec }}>
+          Portfolio ITR computed from IPCC AR6 WG1 Table SPM.2 carbon budgets · Science-Based Decarbonization pathways · 12 holdings
+        </p>
+      </div>
+
+      <div style={{ display:'flex', gap:4, marginBottom:20, flexWrap:'wrap', borderBottom:`1px solid ${T.border}` }}>
+        {TABS.map((tab, i) => (
+          <button
+            key={i}
+            onClick={() => setActiveTab(i)}
+            style={{
+              padding:'8px 14px', fontSize:12, fontWeight:500, border:'none', cursor:'pointer', borderRadius:'4px 4px 0 0',
+              background: activeTab===i ? T.surface : 'transparent',
+              color: activeTab===i ? T.text : T.textMut,
+              borderBottom: activeTab===i ? `2px solid ${ACCENT}` : '2px solid transparent',
+              transition:'all 0.15s',
+            }}
+          >
+            {tab}
+          </button>
         ))}
       </div>
 
-      {error && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 6, padding: 12, marginBottom: 16, color: '#dc2626', fontSize: 14 }}>{error}</div>}
-
-      <Section title="Inputs">
-        <Row>
-          <Inp label="Portfolio Name" value={portfolio} onChange={setPortfolio} />
-          <Sel label="FI Type" value={fiType} onChange={setFiType} options={[{ value: 'bank', label: 'Bank' }, { value: 'insurer', label: 'Insurer' }, { value: 'asset_manager', label: 'Asset Manager' }, { value: 'pension', label: 'Pension Fund' }, { value: 'sovereign_wealth', label: 'Sovereign Wealth' }]} />
-          <Inp label="Total AUM $bn" value={aum} onChange={setAum} type="number" />
-          <Sel label="Methodology" value={methodology} onChange={setMethodology} options={[{ value: 'PCAF_SBTI', label: 'PCAF-SBTi' }, { value: 'PACTA', label: 'PACTA' }, { value: 'WACI', label: 'WACI' }, { value: 'SDA', label: 'SDA' }]} />
-        </Row>
-        <Btn onClick={runAssess}>{loading ? 'Assessing…' : 'Run Temperature Assessment'}</Btn>
-      </Section>
-
-      {tab === 0 && (
-        <div>
-          <Section title="Portfolio Temperature Summary">
-            <Row gap={12}>
-              <KpiCard label="Portfolio ITR (°C)" value={<span style={{ color: d.itrColor === 'green' ? '#059669' : d.itrColor === 'yellow' ? '#d97706' : '#dc2626' }}>{d.itr}°C</span>} sub="Implied Temperature Rise" accent />
-              <KpiCard label="WACI (tCO₂/$mn)" value={`${d.waci}`} sub="Weighted Average Carbon Intensity" />
-              <KpiCard label="Paris Aligned" value={<Badge label={d.parisAligned ? 'Aligned ≤1.8°C' : 'Not Aligned'} color={d.parisAligned ? 'green' : 'red'} />} sub="1.5°C / 2°C pathway" />
-              <KpiCard label="PCAF DQS" value={`${d.dqs}/5`} sub="Data Quality Score (1=best)" />
-            </Row>
-          </Section>
-          <Section title="Portfolio ITR Trajectory vs Paris Pathways (2025–2050)">
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={d.trajectoryData}>
-                <defs>
-                  <linearGradient id="gradPort" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis unit="°C" domain={[1, 3.5]} />
-                <Tooltip formatter={(val) => `${val}°C`} />
-                <Legend />
-                <Area type="monotone" dataKey="portfolio" stroke="#6366f1" fill="url(#gradPort)" name="Portfolio ITR" strokeWidth={2} />
-                <Line type="monotone" dataKey="path15c" stroke="#059669" name="1.5°C Pathway" strokeDasharray="4 4" dot={false} />
-                <Line type="monotone" dataKey="path2c" stroke="#f59e0b" name="2°C Pathway" strokeDasharray="4 4" dot={false} />
-                <Line type="monotone" dataKey="ndc" stroke="#ef4444" name="NDC Pathway" strokeDasharray="2 4" dot={false} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </Section>
-        </div>
-      )}
-
-      {tab === 1 && (
-        <div>
-          <Section title="WACI by Sector vs Paris-Aligned Threshold (tCO₂/$mn)">
-            <ResponsiveContainer width="100%" height={340}>
-              <BarChart data={d.waciSectors} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" unit=" t" />
-                <YAxis type="category" dataKey="name" width={90} tick={{ fontSize: 11 }} />
-                <Tooltip formatter={(val, name) => [`${val} tCO₂/$mn`, name]} />
-                <Legend />
-                <Bar dataKey="waci" name="Portfolio WACI" radius={[0, 4, 4, 0]}>
-                  {d.waciSectors.map((s, i) => <Cell key={i} fill={s.waci <= s.parisThreshold ? '#059669' : s.waci <= s.parisThreshold * 1.5 ? '#f59e0b' : '#ef4444'} />)}
-                </Bar>
-                <Bar dataKey="parisThreshold" name="Paris Threshold" fill="#d1d5db" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-        </div>
-      )}
-
-      {tab === 2 && (
-        <div>
-          <Row>
-            <Section title="SBTi FI Score Gauge">
-              <ResponsiveContainer width="100%" height={280}>
-                <RadialBarChart innerRadius={50} outerRadius={130} data={d.sbtiRadial} startAngle={180} endAngle={0}>
-                  <RadialBar minAngle={10} dataKey="value" nameKey="name" label={{ fill: '#374151', fontSize: 13 }} background={{ fill: '#f3f4f6' }} />
-                  <Tooltip formatter={(val) => `${val}/100`} />
-                  <Legend />
-                </RadialBarChart>
-              </ResponsiveContainer>
-              <div style={{ textAlign: 'center', fontSize: 13, color: '#6b7280', marginTop: -4 }}>
-                Near-term target: <strong style={{ color: '#059669' }}>{d.nearTermTarget}°C</strong> · Long-term: <strong style={{ color: '#059669' }}>{d.longTermTarget}°C</strong>
-              </div>
-            </Section>
-            <Section title="SBTi FI Criteria Detail">
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                <thead><tr style={{ background: '#f9fafb' }}>
-                  {['Criterion', 'Score', 'Status', 'Gap %'].map(h => <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>)}
-                </tr></thead>
-                <tbody>
-                  {d.sbtiData.map((c, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '8px 12px', color: '#374151', fontSize: 12 }}>{c.criterion}</td>
-                      <td style={{ padding: '8px 12px', fontWeight: 700, color: c.score >= 70 ? '#059669' : c.score >= 50 ? '#d97706' : '#dc2626' }}>{c.score}/100</td>
-                      <td style={{ padding: '8px 12px' }}><Badge label={c.score >= 70 ? 'Met' : c.score >= 50 ? 'Partial' : 'Gap'} color={c.score >= 70 ? 'green' : c.score >= 50 ? 'yellow' : 'red'} /></td>
-                      <td style={{ padding: '8px 12px', color: '#374151' }}>{(c.gap * 100).toFixed(0)}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Section>
-          </Row>
-        </div>
-      )}
-
-      {tab === 3 && (
-        <div>
-          <Section title="PACTA Sector Alignment — % Aligned with NZE vs Current Policy">
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={d.pactaSectors}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-12} textAnchor="end" height={45} />
-                <YAxis unit="%" domain={[0, 100]} />
-                <Tooltip formatter={(val) => `${val}%`} />
-                <Legend />
-                <Bar dataKey="aligned" name="NZE Aligned %" fill="#059669" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="currentPolicy" name="Current Policy %" fill="#d1d5db" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-          <Section title="Sector Pathway — Current vs Paris Target 2025–2050 (Index)">
-            <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={d.pactaTrajectory}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis unit="" domain={[0, 110]} />
-                <Tooltip />
-                <Legend />
-                <ReferenceLine y={0} stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Net Zero', position: 'right', fontSize: 11 }} />
-                <Line type="monotone" dataKey="current" stroke="#6366f1" name="Current Trajectory" strokeWidth={2} />
-                <Line type="monotone" dataKey="paris" stroke="#059669" name="Paris Target" strokeDasharray="5 5" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </Section>
-        </div>
-      )}
-
-      {tab === 4 && (
-        <div>
-          <Section title="Top Holdings — Engagement Priority">
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead><tr style={{ background: '#f9fafb' }}>
-                {['Holding', 'Sector', 'ITR (°C)', 'Exposure %', 'Priority'].map(h => <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>)}
-              </tr></thead>
-              <tbody>
-                {d.holdings.map((h, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#111827' }}>{h.name}</td>
-                    <td style={{ padding: '8px 12px', color: '#374151' }}>{h.sector}</td>
-                    <td style={{ padding: '8px 12px', fontWeight: 700, color: h.itr > 2.5 ? '#dc2626' : h.itr > 1.8 ? '#d97706' : '#059669' }}>{h.itr}°C</td>
-                    <td style={{ padding: '8px 12px', color: '#374151' }}>{h.exposure}%</td>
-                    <td style={{ padding: '8px 12px' }}><Badge label={h.priority} color={h.priority === 'High' ? 'red' : h.priority === 'Medium' ? 'yellow' : 'green'} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Section>
-          <Row>
-            <Section title="Engagement Priority Split (AUM)">
-              <ResponsiveContainer width="100%" height={240}>
-                <PieChart>
-                  <Pie data={d.engagementSplit} cx="50%" cy="50%" innerRadius={55} outerRadius={95} dataKey="value" nameKey="name"
-                    label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}>
-                    {d.engagementSplit.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip formatter={(val) => `${val}%`} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </Section>
-            <Section title="Financed Emissions — Scope 1/2/3 (MtCO₂e)">
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={d.scope123}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="scope" />
-                  <YAxis unit=" Mt" />
-                  <Tooltip formatter={(val) => `${val} MtCO₂e`} />
-                  <Bar dataKey="emissions" name="Financed Emissions" radius={[4, 4, 0, 0]}>
-                    {d.scope123.map((_, i) => <Cell key={i} fill={['#059669', '#3b82f6', '#f59e0b'][i]} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </Section>
-          </Row>
-        </div>
-      )}
+      <div>{tabContent[activeTab]}</div>
     </div>
   );
 }
