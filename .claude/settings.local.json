@@ -1656,7 +1656,9 @@
       "Bash(sed -i 's/useState\\(''''NZ2050''''\\)/useState\\(''''nz2050''''\\)/g' ngfs-scenarios/pages/NGFSScenariosPage.jsx)",
       "Bash(sed -i \"s/useState\\(\\\\[''NZ2050'', ''DT'', ''CP''\\\\]\\)/useState\\([''nz2050'', ''dt'', ''cp'']\\)/g\" ngfs-scenarios/pages/NGFSScenariosPage.jsx)",
       "Bash(sed -i \"s/scen\\\\.id===''NZ2050''/scen.id===''nz2050''/g; s/scen\\\\.id===''CP''/scen.id===''cp''/g\" climate-transition-risk/pages/ClimateTransitionRiskPage.jsx)",
-      "Bash(ls \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\quant-esg-hub\\\\pages\"\" 2>/dev/null || echo \"DIR_NOT_FOUND \")"
+      "Bash(ls \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\quant-esg-hub\\\\pages\"\" 2>/dev/null || echo \"DIR_NOT_FOUND \")",
+      "Bash(copy \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\private-markets-hub\\\\pages\\\\PrivateMarketsHubPage.jsx\" \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\private-markets-esg-hub\\\\pages\\\\PrivateMarketsEsgHubPage.jsx\")",
+      "Bash(ls -la build/static/js/main.*.js)"
     ]
   }
 }

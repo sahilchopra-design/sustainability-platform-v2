@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AG — Private Markets & Alternative Credit ESG
+import PeEsgDiligencePage from './features/pe-esg-diligence/pages/PeEsgDiligencePage';
+import PrivateCreditClimatePage from './features/private-credit-climate/pages/PrivateCreditClimatePage';
+import InfrastructureEsgPage from './features/infrastructure-esg/pages/InfrastructureEsgPage';
+import RealAssetsClimatePage from './features/real-assets-climate/pages/RealAssetsClimatePage';
+import VcImpactPage from './features/vc-impact/pages/VcImpactPage';
+import PrivateMarketsEsgHubPage from './features/private-markets-esg-hub/pages/PrivateMarketsEsgHubPage';
 // Sprint AF — Quantitative ESG & Portfolio Intelligence
 import EsgPortfolioOptimizerPage from './features/esg-portfolio-optimizer/pages/EsgPortfolioOptimizerPage';
 import CarbonAwareAllocationPage from './features/carbon-aware-allocation/pages/CarbonAwareAllocationPage';
@@ -433,6 +440,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Private Markets ESG', icon: '🏢', color: '#0369a1', items: [
+    { path: '/private-markets-esg-hub', label: 'Private Markets ESG Hub',    badge: 'Hub · PE+Credit+Infra+RE+VC · $8.4T AUM · ESG DD',        code: 'EP-AG6' },
+    { path: '/pe-esg-diligence',      label: 'Private Equity ESG Diligence', badge: 'ILPA ESG · 24 GPs · DD Questionnaire · Red Flag Engine',   code: 'EP-AG1' },
+    { path: '/private-credit-climate',label: 'Private Credit Climate Risk',  badge: 'Direct Lending · $1.7T · EBA DD · CLO Tranche Risk',       code: 'EP-AG2' },
+    { path: '/infrastructure-esg',    label: 'Infrastructure ESG Rating',    badge: 'GRESB Infra · IFC PS 1-8 · Social Licence · $15T Gap',     code: 'EP-AG3' },
+    { path: '/real-assets-climate',   label: 'Real Assets Climate Valuation',badge: 'CRREM+ · Physical Risk NOI · Stranded 2034 · $180bn',      code: 'EP-AG4' },
+    { path: '/vc-impact',             label: 'Venture Capital Impact Tracker',badge: 'Climate Tech · IMP 5D · $500bn VC · 248 MtCO2e/yr',       code: 'EP-AG5' },
   ]},
   { label: 'Quant ESG & Portfolio', icon: '📊', color: '#b45309', items: [
     { path: '/quant-esg-hub',              label: 'Quant ESG Hub',              badge: '5 Strategies · $2.8T AUM · +312bps Alpha · Live Monitor',  code: 'EP-AF6' },
@@ -1167,6 +1182,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AG — Private Markets & Alternative Credit ESG */}
+            <Route path="/private-markets-esg-hub" element={<PrivateMarketsEsgHubPage />} />
+            <Route path="/pe-esg-diligence"        element={<PeEsgDiligencePage />} />
+            <Route path="/private-credit-climate" element={<PrivateCreditClimatePage />} />
+            <Route path="/infrastructure-esg"     element={<InfrastructureEsgPage />} />
+            <Route path="/real-assets-climate"    element={<RealAssetsClimatePage />} />
+            <Route path="/vc-impact"              element={<VcImpactPage />} />
             {/* Sprint AF — Quantitative ESG & Portfolio Intelligence */}
             <Route path="/esg-portfolio-optimizer"    element={<EsgPortfolioOptimizerPage />} />
             <Route path="/carbon-aware-allocation"    element={<CarbonAwareAllocationPage />} />
