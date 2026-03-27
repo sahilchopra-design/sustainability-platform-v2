@@ -17,6 +17,26 @@
 import { resolveIdentifiers, lookupISIN, lookupCUSIP, enrichBondISINs, getCacheStats } from './openFigiService';
 import { CBI_TAXONOMY, CBI_CERTIFIED_BONDS, classifyCBISector, getCBIStats, searchCBIBonds } from './cbiTaxonomy';
 import { fetchGreenBondData, SOVEREIGN_ESG_DB, getSovereignESG, getAllSovereignESG, getGreenBondMarketSummary } from './imfClimateService';
+import { CommodityData } from './commodityDataService';
+import { ConsumerCarbonData } from './consumerCarbonService';
+
+// ── External Data Sources (10 free APIs from 105-source registry) ──
+import {
+  fetchWorldBankIndicator, fetchWorldBankCountryProfile,
+  fetchFREDSeries, fetchFREDSeriesInfo,
+  fetchECBData, fetchECBExchangeRate,
+  fetchLEI,
+  fetchSECFilings, searchSECCompanies,
+  fetchFinnhubNews, fetchFinnhubProfile,
+  fetchOECDData,
+  searchSanctions,
+  fetchGDELTNews, fetchGDELTToneline,
+  fetchSBTiTargets, searchSBTiTargets,
+  EXTERNAL_DATA_REGISTRY,
+  checkExternalDataHealth,
+  getExternalAPIKey, setExternalAPIKey, getAPIKeyStatus,
+  clearExternalCache, getExternalCacheStats,
+} from './externalDataSources';
 
 // ── FINRA TRACE API integration ──
 const FINRA_BASE = 'https://api.finra.org/data/group/fixedIncomeMarket/name/treasuryWeeklyAggregates';
@@ -95,6 +115,21 @@ export const DATA_SOURCES = [
   { id: 'lgx', name: 'LGX DataHub', type: 'free', url: 'https://www.luxse.com/lgx-datahub', description: '23,000+ GSSS bond reference (dashboard)', coverage: '4,000+ issuers', refreshRate: 'Manual reference', status: 'reference' },
   { id: 'eodhd', name: 'EODHD Bond Fundamentals', type: 'paid', url: 'https://eodhd.com', description: 'Bond fundamentals via ISIN/CUSIP', coverage: 'Global', refreshRate: 'On-demand', status: 'planned', cost: '$80/mo' },
   { id: 'cbonds', name: 'Cbonds', type: 'paid', url: 'https://cbonds.com/api', description: '1M+ bonds, 100+ fields, 160 exchanges', coverage: 'Global', refreshRate: 'Real-time', status: 'planned', cost: '$350-1000/mo' },
+  // ── 10 New External Data Sources (free APIs) ──
+  { id: 'worldbank', name: 'World Bank Open Data', type: 'free', url: 'https://api.worldbank.org/v2', description: 'GDP, HDI, Gini, governance, CO₂ — 6 indicator families', coverage: 'Global (200+ countries)', refreshRate: '24hr cache', status: 'active' },
+  { id: 'fred', name: 'Federal Reserve FRED', type: 'free', url: 'https://api.stlouisfed.org/fred', description: 'Interest rates, inflation, GDP, unemployment — 800K+ series', coverage: 'US', refreshRate: '24hr cache', status: 'active' },
+  { id: 'ecb', name: 'ECB Statistical Data', type: 'free', url: 'https://data-api.ecb.europa.eu', description: 'Exchange rates, interest rates, monetary aggregates', coverage: 'Eurozone', refreshRate: '24hr cache', status: 'active' },
+  { id: 'gleif', name: 'GLEIF LEI Registry', type: 'free', url: 'https://api.gleif.org/api/v1', description: 'Legal Entity Identifiers — 2.5M+ entities', coverage: 'Global', refreshRate: '7-day cache', status: 'active' },
+  { id: 'sec_edgar', name: 'SEC EDGAR', type: 'free', url: 'https://data.sec.gov', description: 'Company filings, 10-K, 10-Q, 8-K — all public US issuers', coverage: 'US', refreshRate: '24hr cache', status: 'active' },
+  { id: 'finnhub', name: 'Finnhub', type: 'free', url: 'https://finnhub.io/api/v1', description: 'Company news sentiment, profiles, market data', coverage: 'Global', refreshRate: '4hr cache', status: 'active' },
+  { id: 'oecd', name: 'OECD Data', type: 'free', url: 'https://sdmx.oecd.org/public/rest', description: 'GDP, key economic indicators, employment, trade', coverage: 'OECD (38 countries)', refreshRate: '7-day cache', status: 'active' },
+  { id: 'opensanctions', name: 'OpenSanctions', type: 'free', url: 'https://api.opensanctions.org', description: 'Sanctions, PEPs, debarment — compliance screening', coverage: 'Global', refreshRate: '24hr cache', status: 'active' },
+  { id: 'gdelt', name: 'GDELT Project', type: 'free', url: 'https://api.gdeltproject.org', description: 'Real-time global news & event monitoring + tone analysis', coverage: 'Global', refreshRate: '4hr cache', status: 'active' },
+  { id: 'sbti', name: 'SBTi Dashboard', type: 'free', url: 'https://sciencebasedtargets.org', description: 'Science Based Targets — corporate climate commitments', coverage: 'Global (4,000+ companies)', refreshRate: '7-day cache', status: 'active' },
+  // ── Commodity Data Sources ──
+  { id: 'commodity_eodhd', name: 'EODHD Commodities', type: 'paid', url: 'https://eodhd.com/api/eod', description: 'Real-time & historical commodity prices — 40+ futures contracts', coverage: 'Global (50 commodities)', refreshRate: '24hr cache', status: 'active', cost: '$80/mo' },
+  { id: 'commodity_av', name: 'Alpha Vantage Commodities', type: 'free', url: 'https://www.alphavantage.co/query', description: 'Commodity prices — WTI, Brent, NG, metals, agriculture', coverage: 'Global (10 commodities)', refreshRate: '24hr cache', status: 'active' },
+  { id: 'commodity_wb', name: 'World Bank Commodity Prices', type: 'free', url: 'https://api.worldbank.org/v2', description: 'Commodity price indices & historical data from World Bank Pink Sheet', coverage: 'Global (25+ indicators)', refreshRate: '24hr cache', status: 'active' },
 ];
 
 // ── Master Reference Data Object ──
@@ -125,6 +160,49 @@ export const ReferenceData = {
 
   // KAPSARC
   fetchKAPSARCData,
+
+  // ── External Data Sources (10 free APIs) ──
+  // World Bank
+  fetchWorldBankIndicator,
+  fetchWorldBankCountryProfile,
+  // FRED
+  fetchFREDSeries,
+  fetchFREDSeriesInfo,
+  // ECB
+  fetchECBData,
+  fetchECBExchangeRate,
+  // GLEIF LEI
+  fetchLEI,
+  // SEC EDGAR
+  fetchSECFilings,
+  searchSECCompanies,
+  // Finnhub
+  fetchFinnhubNews,
+  fetchFinnhubProfile,
+  // OECD
+  fetchOECDData,
+  // OpenSanctions
+  searchSanctions,
+  // GDELT
+  fetchGDELTNews,
+  fetchGDELTToneline,
+  // SBTi
+  fetchSBTiTargets,
+  searchSBTiTargets,
+  // ── Commodity Data ──
+  CommodityData,
+
+  // ── Consumer Carbon Intelligence (Sprint Z) ──
+  ConsumerCarbonData,
+
+  // Registry & utilities
+  EXTERNAL_DATA_REGISTRY,
+  checkExternalDataHealth,
+  getExternalAPIKey,
+  setExternalAPIKey,
+  getAPIKeyStatus,
+  clearExternalCache,
+  getExternalCacheStats,
 
   // Metadata
   DATA_SOURCES,
@@ -185,6 +263,14 @@ export const ReferenceData = {
 
     // Sovereign
     results.sovereign = { status: 'healthy', countries: SOVEREIGN_ESG_DB.length, lastCheck: new Date().toISOString() };
+
+    // External data sources (10 new APIs)
+    try {
+      const extHealth = await checkExternalDataHealth();
+      results.external = extHealth;
+    } catch {
+      results.external = { status: 'check_failed', lastCheck: new Date().toISOString() };
+    }
 
     return results;
   },

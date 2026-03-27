@@ -219,6 +219,13 @@ import ChangeManagementPage from './features/change-management/pages/ChangeManag
 import GovernanceHubPage from './features/governance-hub/pages/GovernanceHubPage';
 import CorporateGovernancePage from './features/corporate-governance/pages/CorporateGovernancePage';
 import GeopoliticalAiGovPage from './features/geopolitical-ai-gov/pages/GeopoliticalAiGovPage';
+// Sprint Z — Consumer Carbon Intelligence
+import CarbonCalculatorPage from './features/carbon-calculator/pages/CarbonCalculatorPage';
+import CarbonWalletPage from './features/carbon-wallet/pages/CarbonWalletPage';
+import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage';
+import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
+import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
+import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
 // Sprint Y — Commodity Lifecycle Intelligence
 import CommodityIntelligencePage from './features/commodity-intelligence/pages/CommodityIntelligencePage';
 import CommodityInventoryPage from './features/commodity-inventory/pages/CommodityInventoryPage';
@@ -376,6 +383,14 @@ const NAV_GROUPS = [
     { path: '/multi-factor-integration',   label: 'Multi-Factor Integration',   badge: '25 Commodities · ML Ensemble · PCA · K-Means · Regulatory', code: 'EP-Y7' },
     { path: '/product-anatomy',            label: 'Product Anatomy',            badge: '30 Products · ESG Score · Sustainable Alts',  code: 'EP-Y9' },
     { path: '/epd-lca-database',           label: 'EPD & LCA Database',         badge: '6 Sources · 50+ EPDs · ISO 14025',           code: 'EP-Y10' },
+  ]},
+  { label: 'Consumer Carbon Intelligence', icon: '🌱', color: '#065f46', items: [
+    { path: '/consumer-carbon-hub',        label: 'Carbon Hub',               badge: 'Hub · Calculator · Wallet · Economy',     code: 'EP-Z6' },
+    { path: '/carbon-calculator',          label: 'Carbon Calculator',        badge: '200+ Products · Compare · Budget',        code: 'EP-Z1' },
+    { path: '/carbon-wallet',              label: 'Carbon Wallet',            badge: 'Track · Budget · Achievements',           code: 'EP-Z2' },
+    { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
+    { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
+    { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
   ]},
   { label: 'Governance & Audit', icon: '🛡️', color: '#4a1d6a', items: [
     { path: '/governance-hub',           label: 'Governance Hub',            badge: 'Hub · 7 Modules · Audit · Models',      code: 'EP-V6' },
@@ -1037,6 +1052,13 @@ function AppContent() {
             <Route path="/blended-finance"           element={<BlendedFinancePage />} />
             <Route path="/impact-verification"       element={<ImpactVerificationPage />} />
             <Route path="/impact-hub"                element={<ImpactHubPage />} />
+            {/* Sprint Z — Consumer Carbon Intelligence */}
+            <Route path="/carbon-calculator"          element={<CarbonCalculatorPage />} />
+            <Route path="/carbon-wallet"              element={<CarbonWalletPage />} />
+            <Route path="/invoice-parser"             element={<InvoiceParserPage />} />
+            <Route path="/spending-carbon"            element={<SpendingCarbonPage />} />
+            <Route path="/carbon-economy"             element={<CarbonEconomyPage />} />
+            <Route path="/consumer-carbon-hub"        element={<ConsumerCarbonHubPage />} />
             {/* Sprint W — AI & NLP Analytics */}
             <Route path="/esg-report-parser"       element={<EsgReportParserPage />} />
             <Route path="/predictive-esg"          element={<PredictiveEsgPage />} />
