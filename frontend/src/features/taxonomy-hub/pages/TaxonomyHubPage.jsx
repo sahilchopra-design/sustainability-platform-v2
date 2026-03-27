@@ -863,7 +863,7 @@ export default function TaxonomyHubPage() {
         <SectionTitle sub="Platform-wide taxonomy and classification intelligence summary">Summary Statistics</SectionTitle>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
           {[
-            { label: 'Total Holdings Assessed', value: holdingsData.length, icon: '\u{1F4CA}' },
+            { label: 'Total Holdings Assessed', value: holdingsData.length, icon: '📊' },
             { label: 'Tax-Eligible Holdings', value: holdingsData.filter(h => h.eu_tax_eligible).length, color: '#059669' },
             { label: 'Tax-Aligned Holdings', value: holdingsData.filter(h => h.eu_tax_aligned).length, color: T.green },
             { label: 'SFDR Art 9 Holdings', value: holdingsData.filter(h => h.sfdr_art === 'Art 9').length, color: '#059669' },

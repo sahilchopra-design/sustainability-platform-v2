@@ -14,23 +14,23 @@ const seed = (s) => { let x = Math.sin(s * 2.7183 + 1) * 10000; return x - Math.
    SDG FRAMEWORK — 17 Goals
    ══════════════════════════════════════════════════════════════ */
 const SDG_FRAMEWORK = [
-  { id: 1, name: 'No Poverty', icon: '\u{1F3E0}', color: '#E5243B', metrics: ['Living wage coverage %', 'Financial inclusion products'], sectors: ['Financials', 'Consumer Staples'] },
-  { id: 2, name: 'Zero Hunger', icon: '\u{1F33E}', color: '#DDA63A', metrics: ['Sustainable agriculture %', 'Food waste reduction'], sectors: ['Consumer Staples'] },
-  { id: 3, name: 'Good Health', icon: '\u{1F48A}', color: '#4C9F38', metrics: ['Patients served', 'R&D in neglected diseases', 'Drug affordability'], sectors: ['Health Care'] },
-  { id: 4, name: 'Quality Education', icon: '\u{1F4DA}', color: '#C5192D', metrics: ['Employee training hours', 'Education products reach'], sectors: ['Communication Services', 'IT'] },
-  { id: 5, name: 'Gender Equality', icon: '\u2696\uFE0F', color: '#FF3A21', metrics: ['Female workforce %', 'Board diversity %', 'Pay equity ratio'], sectors: ['All'] },
-  { id: 6, name: 'Clean Water', icon: '\u{1F4A7}', color: '#26BDE2', metrics: ['Water recycled %', 'Water treatment capacity'], sectors: ['Utilities', 'Materials'] },
+  { id: 1, name: 'No Poverty', icon: '🏠', color: '#E5243B', metrics: ['Living wage coverage %', 'Financial inclusion products'], sectors: ['Financials', 'Consumer Staples'] },
+  { id: 2, name: 'Zero Hunger', icon: '🌾', color: '#DDA63A', metrics: ['Sustainable agriculture %', 'Food waste reduction'], sectors: ['Consumer Staples'] },
+  { id: 3, name: 'Good Health', icon: '💊', color: '#4C9F38', metrics: ['Patients served', 'R&D in neglected diseases', 'Drug affordability'], sectors: ['Health Care'] },
+  { id: 4, name: 'Quality Education', icon: '📚', color: '#C5192D', metrics: ['Employee training hours', 'Education products reach'], sectors: ['Communication Services', 'IT'] },
+  { id: 5, name: 'Gender Equality', icon: '⚖', color: '#FF3A21', metrics: ['Female workforce %', 'Board diversity %', 'Pay equity ratio'], sectors: ['All'] },
+  { id: 6, name: 'Clean Water', icon: '💧', color: '#26BDE2', metrics: ['Water recycled %', 'Water treatment capacity'], sectors: ['Utilities', 'Materials'] },
   { id: 7, name: 'Affordable Energy', icon: '\u26A1', color: '#FCC30B', metrics: ['Renewable capacity GW', 'Energy access (off-grid solar)'], sectors: ['Energy', 'Utilities'] },
-  { id: 8, name: 'Decent Work', icon: '\u{1F4BC}', color: '#A21942', metrics: ['Jobs created', 'Living wage', 'Safety record'], sectors: ['All'] },
-  { id: 9, name: 'Industry Innovation', icon: '\u{1F3ED}', color: '#FD6925', metrics: ['R&D spend %', 'Patents (green)', 'Infrastructure investment'], sectors: ['IT', 'Industrials'] },
-  { id: 10, name: 'Reduced Inequality', icon: '\u{1F4CA}', color: '#DD1367', metrics: ['Pay ratio (CEO:median)', 'Community investment', 'Tax transparency'], sectors: ['Financials', 'All'] },
-  { id: 11, name: 'Sustainable Cities', icon: '\u{1F3D9}\uFE0F', color: '#FD9D24', metrics: ['Green buildings', 'Public transport investment', 'Smart city tech'], sectors: ['Real Estate', 'Industrials', 'IT'] },
-  { id: 12, name: 'Responsible Consumption', icon: '\u267B\uFE0F', color: '#BF8B2E', metrics: ['Circular economy %', 'Packaging reduction', 'Product lifecycle'], sectors: ['Consumer Staples', 'Consumer Discretionary', 'Materials'] },
-  { id: 13, name: 'Climate Action', icon: '\u{1F321}\uFE0F', color: '#3F7E44', metrics: ['SBTi target', 'Net zero year', 'Carbon reduction %'], sectors: ['All'] },
-  { id: 14, name: 'Life Below Water', icon: '\u{1F40B}', color: '#0A97D9', metrics: ['Marine pollution reduction', 'Sustainable fishing', 'Plastic waste'], sectors: ['Consumer Staples', 'Energy'] },
-  { id: 15, name: 'Life on Land', icon: '\u{1F333}', color: '#56C02B', metrics: ['Deforestation-free sourcing', 'Biodiversity offset', 'Land restoration'], sectors: ['Consumer Staples', 'Materials', 'Energy'] },
-  { id: 16, name: 'Peace & Justice', icon: '\u{1F54A}\uFE0F', color: '#00689D', metrics: ['Anti-corruption policy', 'Tax transparency', 'Whistleblower mechanism'], sectors: ['All'] },
-  { id: 17, name: 'Partnerships', icon: '\u{1F91D}', color: '#19486A', metrics: ['Industry collaboration', 'Cross-sector partnerships', 'Open data sharing'], sectors: ['All'] },
+  { id: 8, name: 'Decent Work', icon: '💼', color: '#A21942', metrics: ['Jobs created', 'Living wage', 'Safety record'], sectors: ['All'] },
+  { id: 9, name: 'Industry Innovation', icon: '🏭', color: '#FD6925', metrics: ['R&D spend %', 'Patents (green)', 'Infrastructure investment'], sectors: ['IT', 'Industrials'] },
+  { id: 10, name: 'Reduced Inequality', icon: '📊', color: '#DD1367', metrics: ['Pay ratio (CEO:median)', 'Community investment', 'Tax transparency'], sectors: ['Financials', 'All'] },
+  { id: 11, name: 'Sustainable Cities', icon: '🏙', color: '#FD9D24', metrics: ['Green buildings', 'Public transport investment', 'Smart city tech'], sectors: ['Real Estate', 'Industrials', 'IT'] },
+  { id: 12, name: 'Responsible Consumption', icon: '♻', color: '#BF8B2E', metrics: ['Circular economy %', 'Packaging reduction', 'Product lifecycle'], sectors: ['Consumer Staples', 'Consumer Discretionary', 'Materials'] },
+  { id: 13, name: 'Climate Action', icon: '🌡', color: '#3F7E44', metrics: ['SBTi target', 'Net zero year', 'Carbon reduction %'], sectors: ['All'] },
+  { id: 14, name: 'Life Below Water', icon: '🐋', color: '#0A97D9', metrics: ['Marine pollution reduction', 'Sustainable fishing', 'Plastic waste'], sectors: ['Consumer Staples', 'Energy'] },
+  { id: 15, name: 'Life on Land', icon: '🌳', color: '#56C02B', metrics: ['Deforestation-free sourcing', 'Biodiversity offset', 'Land restoration'], sectors: ['Consumer Staples', 'Materials', 'Energy'] },
+  { id: 16, name: 'Peace & Justice', icon: '🕊', color: '#00689D', metrics: ['Anti-corruption policy', 'Tax transparency', 'Whistleblower mechanism'], sectors: ['All'] },
+  { id: 17, name: 'Partnerships', icon: '🤝', color: '#19486A', metrics: ['Industry collaboration', 'Cross-sector partnerships', 'Open data sharing'], sectors: ['All'] },
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -258,14 +258,14 @@ export default function SocialImpactPage() {
   const impactMetrics = useMemo(() => {
     const n = enriched.length;
     return [
-      { metric: 'Jobs Supported', value: Math.round(n * seed(99) * 12000 + 50000), unit: '', icon: '\u{1F4BC}' },
-      { metric: 'Patients Served (est.)', value: Math.round(n * seed(101) * 8000 + 20000), unit: '', icon: '\u{1F48A}' },
+      { metric: 'Jobs Supported', value: Math.round(n * seed(99) * 12000 + 50000), unit: '', icon: '💼' },
+      { metric: 'Patients Served (est.)', value: Math.round(n * seed(101) * 8000 + 20000), unit: '', icon: '💊' },
       { metric: 'Clean Energy Capacity', value: (n * seed(103) * 0.8 + 2.1).toFixed(1), unit: 'GW', icon: '\u26A1' },
-      { metric: 'Water Treated', value: Math.round(n * seed(107) * 50 + 100), unit: 'ML/yr', icon: '\u{1F4A7}' },
-      { metric: 'Hectares Restored', value: Math.round(n * seed(109) * 3000 + 5000), unit: 'ha', icon: '\u{1F333}' },
-      { metric: 'Training Hours', value: Math.round(n * seed(113) * 40000 + 100000), unit: 'hrs/yr', icon: '\u{1F4DA}' },
-      { metric: 'Community Investment', value: Math.round(n * seed(117) * 50 + 30), unit: 'USD Mn', icon: '\u{1F91D}' },
-      { metric: 'Green Patents', value: Math.round(n * seed(119) * 200 + 150), unit: '', icon: '\u{1F3ED}' },
+      { metric: 'Water Treated', value: Math.round(n * seed(107) * 50 + 100), unit: 'ML/yr', icon: '💧' },
+      { metric: 'Hectares Restored', value: Math.round(n * seed(109) * 3000 + 5000), unit: 'ha', icon: '🌳' },
+      { metric: 'Training Hours', value: Math.round(n * seed(113) * 40000 + 100000), unit: 'hrs/yr', icon: '📚' },
+      { metric: 'Community Investment', value: Math.round(n * seed(117) * 50 + 30), unit: 'USD Mn', icon: '🤝' },
+      { metric: 'Green Patents', value: Math.round(n * seed(119) * 200 + 150), unit: '', icon: '🏭' },
     ];
   }, [enriched]);
 
@@ -874,14 +874,14 @@ export default function SocialImpactPage() {
         <Section title="Related Modules" sub="navigate to other Sprint N analytics">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
             {[
-              { label: 'Board Diversity', path: '/board-diversity', icon: '\u{1F465}', desc: 'Governance & board composition' },
-              { label: 'Living Wage Analysis', path: '/living-wage', icon: '\u{1F4B0}', desc: 'Wage equity & living wage gaps' },
-              { label: 'Human Rights DD', path: '/human-rights-dd', icon: '\u{1F6E1}\uFE0F', desc: 'UNGP & CSDDD due diligence' },
-              { label: 'Nature & Biodiversity', path: '/corporate-nature-strategy', icon: '\u{1F333}', desc: 'TNFD & biodiversity risk' },
-              { label: 'Employee Wellbeing', path: '/employee-wellbeing', icon: '\u2764\uFE0F', desc: 'Safety, engagement, turnover' },
-              { label: 'Social Hub', path: '/social-hub', icon: '\u{1F4CA}', desc: 'Aggregated social intelligence' },
-              { label: 'Stewardship Tracker', path: '/stewardship-tracker', icon: '\u{1F4DD}', desc: 'Engagement & voting' },
-              { label: 'ESG Controversy', path: '/esg-controversy', icon: '\u26A0\uFE0F', desc: 'Social controversy monitor' },
+              { label: 'Board Diversity', path: '/board-diversity', icon: '👥', desc: 'Governance & board composition' },
+              { label: 'Living Wage Analysis', path: '/living-wage', icon: '💰', desc: 'Wage equity & living wage gaps' },
+              { label: 'Human Rights DD', path: '/human-rights-dd', icon: '🛡', desc: 'UNGP & CSDDD due diligence' },
+              { label: 'Nature & Biodiversity', path: '/corporate-nature-strategy', icon: '🌳', desc: 'TNFD & biodiversity risk' },
+              { label: 'Employee Wellbeing', path: '/employee-wellbeing', icon: '❤', desc: 'Safety, engagement, turnover' },
+              { label: 'Social Hub', path: '/social-hub', icon: '📊', desc: 'Aggregated social intelligence' },
+              { label: 'Stewardship Tracker', path: '/stewardship-tracker', icon: '📝', desc: 'Engagement & voting' },
+              { label: 'ESG Controversy', path: '/esg-controversy', icon: '⚠', desc: 'Social controversy monitor' },
             ].map((item, i) => (
               <Card key={i} style={{ cursor: 'pointer', transition: 'box-shadow .15s' }} onClick={() => navigate(item.path)}>
                 <div style={{ fontSize: 20, marginBottom: 6 }}>{item.icon}</div>

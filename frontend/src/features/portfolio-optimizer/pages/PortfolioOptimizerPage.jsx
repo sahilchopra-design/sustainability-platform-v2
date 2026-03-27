@@ -29,12 +29,15 @@ const PRESETS = {
 };
 
 /* ── Master lookup for enrichment ─────────────────────────────────────── */
-const masterLookup = {};
-GLOBAL_COMPANY_MASTER.forEach(c => { masterLookup[c.ticker] = c; });
+let _masterLookup = null;
+function getMasterLookup() {
+  if (!_masterLookup) { _masterLookup = {}; GLOBAL_COMPANY_MASTER.forEach(c => { _masterLookup[c.ticker] = c; }); }
+  return _masterLookup;
+}
 
 function enrichHolding(h) {
   const ticker = h.company?.ticker;
-  const master = ticker ? masterLookup[ticker] : null;
+  const master = ticker ? getMasterLookup()[ticker] : null;
   if (!master) return h;
   return { ...h, company: { ...h.company, ...master, ...h.company } };
 }

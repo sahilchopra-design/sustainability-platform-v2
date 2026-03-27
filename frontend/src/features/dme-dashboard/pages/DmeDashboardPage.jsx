@@ -74,7 +74,9 @@ function enrichEntity(c, idx) {
   };
 }
 
-const ENTITIES = GLOBAL_COMPANY_MASTER.map((c, i) => enrichEntity(c, i));
+/* Lazy init to avoid TDZ issues with module initialization order */
+let _ENTITIES_CACHE = null;
+function getEntities() { if (!_ENTITIES_CACHE) _ENTITIES_CACHE = GLOBAL_COMPANY_MASTER.map((c, i) => enrichEntity(c, i)); return _ENTITIES_CACHE; }
 
 /* ── NGFS Scenarios ───────────────────────────────────────────────────────── */
 const NGFS_SCENARIOS = [
@@ -164,31 +166,31 @@ export default function DmeDashboardPage() {
 
   /* ── Hero metrics ──────────────────────────────────────────────────────── */
   const totalAUM = useMemo(() => {
-    const sum = ENTITIES.reduce((s, e) => s + (e.market_cap || 0), 0);
+    const sum = getEntities().reduce((s, e) => s + (e.market_cap || 0), 0);
     return Math.round(sum / 1000);
   }, []);
 
   const portfolioDMI = useMemo(() => {
-    const n = Math.min(ENTITIES.length, 50);
-    const subset = ENTITIES.slice(0, n);
+    const n = Math.min(getEntities().length, 50);
+    const subset = getEntities().slice(0, n);
     return Math.round(subset.reduce((s, e) => s + e.dmi, 0) / n * 10) / 10;
   }, []);
 
-  const criticalCount = useMemo(() => ENTITIES.filter(e => e.regime === 'Critical' || e.regime === 'Extreme').length, []);
+  const criticalCount = useMemo(() => getEntities().filter(e => e.regime === 'Critical' || e.regime === 'Extreme').length, []);
 
-  const alerts = useMemo(() => generateAlerts(ENTITIES), []);
+  const alerts = useMemo(() => generateAlerts(getEntities()), []);
 
   /* ── Regime distribution ───────────────────────────────────────────────── */
   const regimeDistribution = useMemo(() => {
     const map = { Normal: 0, Elevated: 0, Critical: 0, Extreme: 0 };
-    ENTITIES.forEach(e => { map[e.regime] = (map[e.regime] || 0) + 1; });
+    getEntities().forEach(e => { map[e.regime] = (map[e.regime] || 0) + 1; });
     return Object.entries(map).map(([name, value]) => ({ name, value, fill: REGIME_COLORS[name] }));
   }, []);
 
   /* ── Pillar risk scores ────────────────────────────────────────────────── */
   const pillarScores = useMemo(() => {
-    const n = Math.min(ENTITIES.length, 100);
-    const subset = ENTITIES.slice(0, n);
+    const n = Math.min(getEntities().length, 100);
+    const subset = getEntities().slice(0, n);
     return [
       { pillar: 'E', label: 'Environmental', score: Math.round(subset.reduce((s, e) => s + (e.ghg_intensity || 0) / 10, 0) / n * 10) / 10 },
       { pillar: 'S', label: 'Social', score: Math.round(subset.reduce((s, e) => s + (100 - (e.esg_score || 50)) * 0.3, 0) / n * 10) / 10 },
@@ -200,8 +202,8 @@ export default function DmeDashboardPage() {
 
   /* ── Risk traffic light ────────────────────────────────────────────────── */
   const riskChannels = useMemo(() => {
-    const n = Math.min(ENTITIES.length, 100);
-    const subset = ENTITIES.slice(0, n);
+    const n = Math.min(getEntities().length, 100);
+    const subset = getEntities().slice(0, n);
     const avgPD = subset.reduce((s, e) => s + e.pd_1y, 0) / n;
     const avgVaR = subset.reduce((s, e) => s + e.var_95, 0) / n;
     const avgWACC = subset.reduce((s, e) => s + e.wacc_spread, 0) / n;
@@ -219,7 +221,7 @@ export default function DmeDashboardPage() {
 
   /* ── Top 10 entities by DMI ────────────────────────────────────────────── */
   const top10 = useMemo(() => {
-    const arr = [...ENTITIES];
+    const arr = [...getEntities()];
     arr.sort((a, b) => {
       const av = a[sortCol], bv = b[sortCol];
       if (typeof av === 'number' && typeof bv === 'number') return sortDir === 'asc' ? av - bv : bv - av;
@@ -232,20 +234,20 @@ export default function DmeDashboardPage() {
 
   /* ── Module KPIs ───────────────────────────────────────────────────────── */
   const moduleKPIs = useMemo(() => ({
-    risk: `${ENTITIES.length} entities scored`,
-    entity: `${ENTITIES.filter(e => e.regime === 'Critical' || e.regime === 'Extreme').length} critical`,
+    risk: `${getEntities().length} entities scored`,
+    entity: `${getEntities().filter(e => e.regime === 'Critical' || e.regime === 'Extreme').length} critical`,
     scenarios: '6 NGFS pathways',
     alerts: `${alerts.length} active alerts`,
-    contagion: `${new Set(ENTITIES.map(e => e.sector)).size} sectors mapped`,
+    contagion: `${new Set(getEntities().map(e => e.sector)).size} sectors mapped`,
     portfolio: `${portfolioHoldings.length || 25} holdings`,
-    competitive: `${ENTITIES.length} companies benchmarked`,
+    competitive: `${getEntities().length} companies benchmarked`,
     dashboard: 'Executive hub',
   }), [alerts, portfolioHoldings]);
 
   /* ── Sector breakdown ───────────────────────────────────────────────────── */
   const sectorBreakdown = useMemo(() => {
     const map = {};
-    ENTITIES.forEach(e => {
+    getEntities().forEach(e => {
       if (!map[e.sector]) map[e.sector] = { sector: e.sector, count: 0, avgDMI: 0, avgESG: 0, critCount: 0, totalCap: 0 };
       const m = map[e.sector];
       m.count += 1;
@@ -265,21 +267,21 @@ export default function DmeDashboardPage() {
 
   /* ── Coverage stats ────────────────────────────────────────────────────── */
   const coverageStats = useMemo(() => {
-    const hasESG = ENTITIES.filter(e => e.esg_score > 0).length;
-    const hasEmissions = ENTITIES.filter(e => e.ghg_intensity > 0).length;
-    const hasTemp = ENTITIES.filter(e => e.implied_temp > 0).length;
-    const hasPD = ENTITIES.filter(e => e.pd_1y > 0).length;
+    const hasESG = getEntities().filter(e => e.esg_score > 0).length;
+    const hasEmissions = getEntities().filter(e => e.ghg_intensity > 0).length;
+    const hasTemp = getEntities().filter(e => e.implied_temp > 0).length;
+    const hasPD = getEntities().filter(e => e.pd_1y > 0).length;
     return [
-      { metric: 'ESG Score Coverage', covered: hasESG, total: ENTITIES.length, pct: Math.round(hasESG / ENTITIES.length * 100) },
-      { metric: 'GHG Emissions Coverage', covered: hasEmissions, total: ENTITIES.length, pct: Math.round(hasEmissions / ENTITIES.length * 100) },
-      { metric: 'Temperature Alignment', covered: hasTemp, total: ENTITIES.length, pct: Math.round(hasTemp / ENTITIES.length * 100) },
-      { metric: 'Credit Risk (PD)', covered: hasPD, total: ENTITIES.length, pct: Math.round(hasPD / ENTITIES.length * 100) },
+      { metric: 'ESG Score Coverage', covered: hasESG, total: getEntities().length, pct: Math.round(hasESG / getEntities().length * 100) },
+      { metric: 'GHG Emissions Coverage', covered: hasEmissions, total: getEntities().length, pct: Math.round(hasEmissions / getEntities().length * 100) },
+      { metric: 'Temperature Alignment', covered: hasTemp, total: getEntities().length, pct: Math.round(hasTemp / getEntities().length * 100) },
+      { metric: 'Credit Risk (PD)', covered: hasPD, total: getEntities().length, pct: Math.round(hasPD / getEntities().length * 100) },
     ];
   }, []);
 
   /* ── Risk vs return quadrant data ──────────────────────────────────────── */
   const riskReturnQuadrant = useMemo(() => {
-    return ENTITIES.slice(0, 50).map(e => ({
+    return getEntities().slice(0, 50).map(e => ({
       name: e.company_name,
       risk: e.dmi,
       return: e.esg_score,
@@ -314,7 +316,7 @@ export default function DmeDashboardPage() {
       { label: '81-100', count: 0 },
     ];
     const ranges = [[0, 20], [21, 40], [41, 60], [61, 80], [81, 100]];
-    ENTITIES.forEach(e => {
+    getEntities().forEach(e => {
       const idx = ranges.findIndex(r => e.esg_score >= r[0] && e.esg_score <= r[1]);
       if (idx >= 0) buckets[idx].count += 1;
     });
@@ -330,7 +332,7 @@ export default function DmeDashboardPage() {
       { label: '2.5-3.0\u00b0C', min: 2.5, max: 3.0, count: 0, fill: '#f97316' },
       { label: '> 3.0\u00b0C', min: 3.0, max: 99, count: 0, fill: T.red },
     ];
-    ENTITIES.forEach(e => {
+    getEntities().forEach(e => {
       const r = ranges.find(r => e.implied_temp >= r.min && e.implied_temp < r.max);
       if (r) r.count += 1;
     });
@@ -339,29 +341,29 @@ export default function DmeDashboardPage() {
 
   /* ── Platform metrics ──────────────────────────────────────────────────── */
   const platformMetrics = useMemo(() => ({
-    entities: ENTITIES.length,
-    sectors: new Set(ENTITIES.map(e => e.sector)).size,
-    exchanges: new Set(ENTITIES.map(e => e.exchange).filter(Boolean)).size,
-    avgESG: Math.round(ENTITIES.reduce((s, e) => s + e.esg_score, 0) / ENTITIES.length),
-    avgDMI: Math.round(ENTITIES.reduce((s, e) => s + e.dmi, 0) / ENTITIES.length * 10) / 10,
-    medianDMI: (() => { const sorted = [...ENTITIES].sort((a, b) => a.dmi - b.dmi); const mid = Math.floor(sorted.length / 2); return sorted.length % 2 ? sorted[mid].dmi : Math.round((sorted[mid - 1].dmi + sorted[mid].dmi) / 2 * 10) / 10; })(),
-    pctAboveBenchmark: Math.round(ENTITIES.filter(e => e.dmi > 50).length / ENTITIES.length * 100),
-    pctParisAligned: Math.round(ENTITIES.filter(e => e.implied_temp <= 2).length / ENTITIES.length * 100),
+    entities: getEntities().length,
+    sectors: new Set(getEntities().map(e => e.sector)).size,
+    exchanges: new Set(getEntities().map(e => e.exchange).filter(Boolean)).size,
+    avgESG: Math.round(getEntities().reduce((s, e) => s + e.esg_score, 0) / getEntities().length),
+    avgDMI: Math.round(getEntities().reduce((s, e) => s + e.dmi, 0) / getEntities().length * 10) / 10,
+    medianDMI: (() => { const sorted = [...getEntities()].sort((a, b) => a.dmi - b.dmi); const mid = Math.floor(sorted.length / 2); return sorted.length % 2 ? sorted[mid].dmi : Math.round((sorted[mid - 1].dmi + sorted[mid].dmi) / 2 * 10) / 10; })(),
+    pctAboveBenchmark: Math.round(getEntities().filter(e => e.dmi > 50).length / getEntities().length * 100),
+    pctParisAligned: Math.round(getEntities().filter(e => e.implied_temp <= 2).length / getEntities().length * 100),
   }), []);
 
   /* ── Portfolio quick stats ─────────────────────────────────────────────── */
   const quickStats = useMemo(() => {
-    const sectors = new Set(ENTITIES.map(e => e.sector).filter(Boolean));
-    const exchanges = new Set(ENTITIES.map(e => e.exchange).filter(Boolean));
-    const avgTemp = ENTITIES.slice(0, 50).reduce((s, e) => s + (e.implied_temp || 2), 0) / 50;
-    const avgIntensity = ENTITIES.slice(0, 50).reduce((s, e) => s + (e.ghg_intensity || 0), 0) / 50;
-    return { holdings: ENTITIES.length, sectors: sectors.size, exchanges: exchanges.size, waci: Math.round(avgIntensity), temp: Math.round(avgTemp * 100) / 100 };
+    const sectors = new Set(getEntities().map(e => e.sector).filter(Boolean));
+    const exchanges = new Set(getEntities().map(e => e.exchange).filter(Boolean));
+    const avgTemp = getEntities().slice(0, 50).reduce((s, e) => s + (e.implied_temp || 2), 0) / 50;
+    const avgIntensity = getEntities().slice(0, 50).reduce((s, e) => s + (e.ghg_intensity || 0), 0) / 50;
+    return { holdings: getEntities().length, sectors: sectors.size, exchanges: exchanges.size, waci: Math.round(avgIntensity), temp: Math.round(avgTemp * 100) / 100 };
   }, []);
 
   /* ── Exports ───────────────────────────────────────────────────────────── */
   const exportCSV = useCallback(() => {
     const headers = ['Entity','Sector','DMI','Regime','ESG','GHGIntensity','PD','VaR','ImpliedTemp','MarketCap'];
-    const rows = ENTITIES.slice(0, 200).map(e => [e.company_name, e.sector, e.dmi, e.regime, e.esg_score, e.ghg_intensity, e.pd_1y.toFixed(2), e.var_95.toFixed(1), e.implied_temp.toFixed(2), e.market_cap].join(','));
+    const rows = getEntities().slice(0, 200).map(e => [e.company_name, e.sector, e.dmi, e.regime, e.esg_score, e.ghg_intensity, e.pd_1y.toFixed(2), e.var_95.toFixed(1), e.implied_temp.toFixed(2), e.market_cap].join(','));
     const csv = [headers.join(','), ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'dme_dashboard_export.csv'; a.click(); URL.revokeObjectURL(url);
@@ -404,10 +406,10 @@ export default function DmeDashboardPage() {
       {/* ── 4 HERO METRICS ───────────────────────────────────────────────────── */}
       <Section title="Platform Overview" badge="Key Metrics">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-          <KpiCard label="Total AUM" value={`$${fmt(totalAUM)}B`} sub={`${ENTITIES.length} entities`} accent={T.navy} />
+          <KpiCard label="Total AUM" value={`$${fmt(totalAUM)}B`} sub={`${getEntities().length} entities`} accent={T.navy} />
           <KpiCard label="Portfolio DMI" value={fmt(portfolioDMI)} sub={portfolioDMI > 50 ? 'Above benchmark' : 'Below benchmark'} accent={portfolioDMI > 60 ? T.red : T.gold} />
           <KpiCard label="Critical Alerts" value={alerts.length} sub={`${alerts.filter(a => a.tier === 'CRITICAL').length} critical tier`} accent={T.red} />
-          <KpiCard label="Critical/Extreme Entities" value={criticalCount} sub={`${(criticalCount / ENTITIES.length * 100).toFixed(1)}% of portfolio`} accent={criticalCount > 50 ? T.red : T.amber} />
+          <KpiCard label="Critical/Extreme Entities" value={criticalCount} sub={`${(criticalCount / getEntities().length * 100).toFixed(1)}% of portfolio`} accent={criticalCount > 50 ? T.red : T.amber} />
         </div>
       </Section>
 
@@ -447,7 +449,7 @@ export default function DmeDashboardPage() {
       </Section>
 
       {/* ── REGIME DISTRIBUTION PIE ──────────────────────────────────────────── */}
-      <Section title="Entity Regime Distribution" badge={`${ENTITIES.length} entities`}>
+      <Section title="Entity Regime Distribution" badge={`${getEntities().length} entities`}>
         <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 16 }}>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
@@ -478,7 +480,7 @@ export default function DmeDashboardPage() {
         </div>
       </Section>
 
-      {/* ── TOP 10 ENTITIES BY DMI ───────────────────────────────────────────── */}
+      {/* ── TOP 10 getEntities() BY DMI ───────────────────────────────────────────── */}
       <Section title="Top 10 Entities by Risk" badge="Sortable">
         <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 16, overflowX: 'auto' }}>
           <table style={tbl}>
@@ -556,7 +558,7 @@ export default function DmeDashboardPage() {
       {/* ── PLATFORM METRICS ─────────────────────────────────────────────────── */}
       <Section title="Platform Metrics" badge="Aggregate intelligence">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 14 }}>
-          <KpiCard label="Avg ESG Score" value={platformMetrics.avgESG} sub={`${ENTITIES.length} entities`} />
+          <KpiCard label="Avg ESG Score" value={platformMetrics.avgESG} sub={`${getEntities().length} entities`} />
           <KpiCard label="Avg DMI" value={fmt(platformMetrics.avgDMI)} sub={`Median: ${fmt(platformMetrics.medianDMI)}`} />
           <KpiCard label="Above Benchmark" value={`${platformMetrics.pctAboveBenchmark}%`} sub="DMI > 50" accent={platformMetrics.pctAboveBenchmark > 50 ? T.red : T.sage} />
           <KpiCard label="Paris-Aligned" value={`${platformMetrics.pctParisAligned}%`} sub="Implied temp \u2264 2\u00b0C" accent={platformMetrics.pctParisAligned > 50 ? T.sage : T.red} />
@@ -620,12 +622,12 @@ export default function DmeDashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
             {(() => {
               const exMap = {};
-              ENTITIES.forEach(e => { const ex = e.exchange || 'Other'; exMap[ex] = (exMap[ex] || 0) + 1; });
+              getEntities().forEach(e => { const ex = e.exchange || 'Other'; exMap[ex] = (exMap[ex] || 0) + 1; });
               return Object.entries(exMap).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([ex, count], i) => (
                 <div key={ex} style={{ padding: 10, borderRadius: 8, background: T.surfaceH, border: `1px solid ${T.border}` }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: T.navy }}>{ex}</div>
                   <div style={{ fontSize: 18, fontWeight: 800, color: COLORS[i % COLORS.length], marginTop: 2 }}>{count}</div>
-                  <div style={{ fontSize: 10, color: T.textMut }}>{Math.round(count / ENTITIES.length * 100)}% coverage</div>
+                  <div style={{ fontSize: 10, color: T.textMut }}>{Math.round(count / getEntities().length * 100)}% coverage</div>
                 </div>
               ));
             })()}
@@ -647,7 +649,7 @@ export default function DmeDashboardPage() {
             <tbody>
               {(() => {
                 const matrix = {};
-                ENTITIES.forEach(e => {
+                getEntities().forEach(e => {
                   if (!matrix[e.sector]) matrix[e.sector] = { Normal: 0, Elevated: 0, Critical: 0, Extreme: 0, total: 0 };
                   matrix[e.sector][e.regime] = (matrix[e.sector][e.regime] || 0) + 1;
                   matrix[e.sector].total += 1;
@@ -672,12 +674,12 @@ export default function DmeDashboardPage() {
       <Section title="Key Risk Indicators" badge="Threshold monitoring">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           {[
-            { kri: 'Entities with PD > 5%', value: ENTITIES.filter(e => e.pd_1y > 5).length, threshold: '< 20', breached: ENTITIES.filter(e => e.pd_1y > 5).length > 20 },
-            { kri: 'Entities with VaR > 15%', value: ENTITIES.filter(e => e.var_95 > 15).length, threshold: '< 30', breached: ENTITIES.filter(e => e.var_95 > 15).length > 30 },
-            { kri: 'Extreme Regime Count', value: ENTITIES.filter(e => e.regime === 'Extreme').length, threshold: '< 10', breached: ENTITIES.filter(e => e.regime === 'Extreme').length > 10 },
-            { kri: 'Avg Implied Temp > 2.5\u00b0C', value: `${Math.round(ENTITIES.filter(e => e.implied_temp > 2.5).length / ENTITIES.length * 100)}%`, threshold: '< 25%', breached: ENTITIES.filter(e => e.implied_temp > 2.5).length / ENTITIES.length > 0.25 },
-            { kri: 'Low ESG (< 30) Count', value: ENTITIES.filter(e => e.esg_score < 30).length, threshold: '< 15', breached: ENTITIES.filter(e => e.esg_score < 30).length > 15 },
-            { kri: 'High GHG Intensity (>500)', value: ENTITIES.filter(e => e.ghg_intensity > 500).length, threshold: '< 25', breached: ENTITIES.filter(e => e.ghg_intensity > 500).length > 25 },
+            { kri: 'Entities with PD > 5%', value: getEntities().filter(e => e.pd_1y > 5).length, threshold: '< 20', breached: getEntities().filter(e => e.pd_1y > 5).length > 20 },
+            { kri: 'Entities with VaR > 15%', value: getEntities().filter(e => e.var_95 > 15).length, threshold: '< 30', breached: getEntities().filter(e => e.var_95 > 15).length > 30 },
+            { kri: 'Extreme Regime Count', value: getEntities().filter(e => e.regime === 'Extreme').length, threshold: '< 10', breached: getEntities().filter(e => e.regime === 'Extreme').length > 10 },
+            { kri: 'Avg Implied Temp > 2.5\u00b0C', value: `${Math.round(getEntities().filter(e => e.implied_temp > 2.5).length / getEntities().length * 100)}%`, threshold: '< 25%', breached: getEntities().filter(e => e.implied_temp > 2.5).length / getEntities().length > 0.25 },
+            { kri: 'Low ESG (< 30) Count', value: getEntities().filter(e => e.esg_score < 30).length, threshold: '< 15', breached: getEntities().filter(e => e.esg_score < 30).length > 15 },
+            { kri: 'High GHG Intensity (>500)', value: getEntities().filter(e => e.ghg_intensity > 500).length, threshold: '< 25', breached: getEntities().filter(e => e.ghg_intensity > 500).length > 25 },
           ].map(kri => (
             <div key={kri.kri} style={{ background: T.surface, border: `1px solid ${kri.breached ? T.red : T.border}`, borderRadius: 10, padding: 12, borderLeft: `3px solid ${kri.breached ? T.red : T.sage}` }}>
               <div style={{ fontSize: 11, color: T.textMut, textTransform: 'uppercase' }}>{kri.kri}</div>
@@ -758,7 +760,7 @@ export default function DmeDashboardPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 14 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: T.red, marginBottom: 10 }}>Largest DMI Increases (Deteriorating)</div>
-            {ENTITIES.slice(0, 5).map((e, i) => {
+            {getEntities().slice(0, 5).map((e, i) => {
               const change = Math.round((5 + sRand(seed(e.company_name + 'mov')) * 15) * 10) / 10;
               return (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${T.border}` }}>
@@ -770,7 +772,7 @@ export default function DmeDashboardPage() {
           </div>
           <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 14 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: T.sage, marginBottom: 10 }}>Largest DMI Decreases (Improving)</div>
-            {ENTITIES.slice(5, 10).map((e, i) => {
+            {getEntities().slice(5, 10).map((e, i) => {
               const change = Math.round((3 + sRand(seed(e.company_name + 'imp')) * 12) * 10) / 10;
               return (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${T.border}` }}>
@@ -813,11 +815,11 @@ export default function DmeDashboardPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             {[
               { metric: 'Portfolio DMI', current: portfolioDMI, limit: 60, unit: '', desc: 'Maximum weighted average DMI across all holdings' },
-              { metric: 'Critical/Extreme Weight', current: Math.round(ENTITIES.filter(e => e.regime === 'Critical' || e.regime === 'Extreme').length / ENTITIES.length * 100), limit: 25, unit: '%', desc: 'Maximum portfolio weight in distressed regimes' },
+              { metric: 'Critical/Extreme Weight', current: Math.round(getEntities().filter(e => e.regime === 'Critical' || e.regime === 'Extreme').length / getEntities().length * 100), limit: 25, unit: '%', desc: 'Maximum portfolio weight in distressed regimes' },
               { metric: 'WACI', current: quickStats.waci, limit: 500, unit: ' tCO2e/$M', desc: 'Maximum weighted average carbon intensity' },
               { metric: 'Implied Temperature', current: quickStats.temp, limit: 2.5, unit: '\u00b0C', desc: 'Maximum portfolio implied temperature rise' },
-              { metric: 'Single Name Concentration', current: (() => { const maxCap = Math.max(...ENTITIES.slice(0, 50).map(e => e.market_cap)); return Math.round(maxCap / ENTITIES.slice(0, 50).reduce((s, e) => s + e.market_cap, 0) * 100); })(), limit: 10, unit: '%', desc: 'Maximum weight in any single entity' },
-              { metric: 'Average PD', current: Math.round(ENTITIES.slice(0, 50).reduce((s, e) => s + e.pd_1y, 0) / 50 * 100) / 100, limit: 5, unit: '%', desc: 'Maximum average 1-year probability of default' },
+              { metric: 'Single Name Concentration', current: (() => { const maxCap = Math.max(...getEntities().slice(0, 50).map(e => e.market_cap)); return Math.round(maxCap / getEntities().slice(0, 50).reduce((s, e) => s + e.market_cap, 0) * 100); })(), limit: 10, unit: '%', desc: 'Maximum weight in any single entity' },
+              { metric: 'Average PD', current: Math.round(getEntities().slice(0, 50).reduce((s, e) => s + e.pd_1y, 0) / 50 * 100) / 100, limit: 5, unit: '%', desc: 'Maximum average 1-year probability of default' },
             ].map(ra => {
               const utilization = ra.current / ra.limit * 100;
               const breached = utilization > 100;

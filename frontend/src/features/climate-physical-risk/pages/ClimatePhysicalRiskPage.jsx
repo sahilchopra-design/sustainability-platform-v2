@@ -21,12 +21,12 @@ const T = {
 
 /* ── Physical Hazards ────────────────────────────────────────────────────────── */
 const HAZARDS = [
-  { id:'flood', name:'River & Coastal Flooding', icon:'\u{1F30A}', type:'Acute', color:'#2563eb', description:'Fluvial and coastal flood events from extreme precipitation and storm surge' },
-  { id:'cyclone', name:'Tropical Cyclones', icon:'\u{1F300}', type:'Acute', color:'#7c3aed', description:'Hurricanes, typhoons, cyclonic wind damage and storm surge' },
-  { id:'wildfire', name:'Wildfire', icon:'\u{1F525}', type:'Acute', color:'#ef4444', description:'Forest and bushfire events driven by drought and heat extremes' },
-  { id:'heatwave', name:'Extreme Heat', icon:'\u{1F321}\uFE0F', type:'Chronic', color:'#f97316', description:'Heatwave frequency, cooling demand, labour productivity loss' },
-  { id:'drought', name:'Water Stress & Drought', icon:'\u{1F4A7}', type:'Chronic', color:'#d97706', description:'Precipitation decline, groundwater depletion, agricultural water stress' },
-  { id:'sealevel', name:'Sea Level Rise', icon:'\u{1F3D6}\uFE0F', type:'Chronic', color:'#0891b2', description:'Coastal inundation from thermal expansion and ice sheet melt' },
+  { id:'flood', name:'River & Coastal Flooding', icon:'🌊', type:'Acute', color:'#2563eb', description:'Fluvial and coastal flood events from extreme precipitation and storm surge' },
+  { id:'cyclone', name:'Tropical Cyclones', icon:'🌀', type:'Acute', color:'#7c3aed', description:'Hurricanes, typhoons, cyclonic wind damage and storm surge' },
+  { id:'wildfire', name:'Wildfire', icon:'🔥', type:'Acute', color:'#ef4444', description:'Forest and bushfire events driven by drought and heat extremes' },
+  { id:'heatwave', name:'Extreme Heat', icon:'🌡', type:'Chronic', color:'#f97316', description:'Heatwave frequency, cooling demand, labour productivity loss' },
+  { id:'drought', name:'Water Stress & Drought', icon:'💧', type:'Chronic', color:'#d97706', description:'Precipitation decline, groundwater depletion, agricultural water stress' },
+  { id:'sealevel', name:'Sea Level Rise', icon:'🏖', type:'Chronic', color:'#0891b2', description:'Coastal inundation from thermal expansion and ice sheet melt' },
 ];
 
 /* ── Country-Level Physical Risk Scores ──────────────────────────────────────── */
@@ -362,7 +362,7 @@ export default function ClimatePhysicalRiskPage() {
     return (
       <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ ...card, maxWidth: 520, textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>{'\u{1F30D}'}</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>{'🌍'}</div>
           <h2 style={{ color: T.navy, fontSize: 22, marginBottom: 8 }}>No Portfolio Loaded</h2>
           <p style={{ color: T.textSec, fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>
             The Climate Physical Risk Engine requires an active portfolio to assess hazard exposure across your holdings.
@@ -397,7 +397,7 @@ export default function ClimatePhysicalRiskPage() {
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button onClick={handleExport} style={{ ...btnStyle(false), display: 'flex', alignItems: 'center', gap: 6 }}>
-            {'\u{1F4E5}'} Export Physical Risk Report
+            {'📥'} Export Physical Risk Report
           </button>
         </div>
       </div>
@@ -504,7 +504,7 @@ export default function ClimatePhysicalRiskPage() {
           </ResponsiveContainer>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 8 }}>
             <span style={{ fontSize: 11, color: T.textSec }}>{'\u26A1'} <strong>Acute:</strong> Flood, Cyclone, Wildfire</span>
-            <span style={{ fontSize: 11, color: T.textSec }}>{'\u{1F552}'} <strong>Chronic:</strong> Heat, Drought, Sea Level</span>
+            <span style={{ fontSize: 11, color: T.textSec }}>{'🕒'} <strong>Chronic:</strong> Heat, Drought, Sea Level</span>
           </div>
         </div>
       </div>
@@ -726,10 +726,10 @@ export default function ClimatePhysicalRiskPage() {
       {/* ── 14. CROSS-MODULE LINKS ───────────────────────────────────────────── */}
       <div style={{ display: 'flex', gap: 14, marginTop: 12, flexWrap: 'wrap' }}>
         <button onClick={() => navigate('/climate-transition-risk')} style={{ ...btnStyle(false), display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
-          {'\u{1F30D}'} View Transition Risk {'\u2192'}
+          {'🌍'} View Transition Risk {'\u2192'}
         </button>
         <button onClick={() => navigate('/scenario-stress-test')} style={{ ...btnStyle(false), display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
-          {'\u{1F4CA}'} View Scenario Stress Test {'\u2192'}
+          {'📊'} View Scenario Stress Test {'\u2192'}
         </button>
       </div>
 

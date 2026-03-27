@@ -1137,12 +1137,12 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px">
       <thead><tr style="background:#1b3a5c"><th style="padding:8px 10px;color:#fff;text-align:left;font-size:10px">Dimension</th><th style="padding:8px 10px;color:#fff;text-align:left;font-size:10px">Key Metric</th><th style="padding:8px 10px;color:#fff;text-align:right;font-size:10px">Value</th><th style="padding:8px 10px;color:#fff;text-align:center;font-size:10px">Assessment</th></tr></thead>
       <tbody>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Climate</td><td style="padding:9px">Climate VaR (95% CI)</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.cvarPct.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.cvarPct > 15 ? '\u{1F534} High' : advancedKPIs.cvarPct > 8 ? '\u{1F7E1} Moderate' : '\u{1F7E2} Low'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Transition</td><td style="padding:9px">Readiness Index</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.transitionReadinessIndex.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.transitionReadinessIndex > 60 ? '\u{1F7E2} Strong' : '\u{1F7E1} Developing'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Nature</td><td style="padding:9px">Dependency Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.natureDependencyScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.natureDependencyScore > 60 ? '\u{1F7E1} High Dependency' : '\u{1F7E2} Low Dependency'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Social</td><td style="padding:9px">Board Diversity</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.boardDiversity.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.boardDiversity > 30 ? '\u{1F7E2} Above 30%' : '\u{1F7E1} Below target'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Governance</td><td style="padding:9px">ESG Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.esgScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.esgScore > 70 ? '\u{1F7E2} Strong' : '\u{1F7E1} Average'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Risk</td><td style="padding:9px">HHI Concentration</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.hhi.toFixed(0)}</td><td style="padding:9px;text-align:center">${advancedKPIs.hhi < 1500 ? '\u{1F7E2} Diversified' : '\u{1F7E1} Moderate'}</td></tr>
+        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Climate</td><td style="padding:9px">Climate VaR (95% CI)</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.cvarPct.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.cvarPct > 15 ? '🔴 High' : advancedKPIs.cvarPct > 8 ? '🟡 Moderate' : '🟢 Low'}</td></tr>
+        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Transition</td><td style="padding:9px">Readiness Index</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.transitionReadinessIndex.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.transitionReadinessIndex > 60 ? '🟢 Strong' : '🟡 Developing'}</td></tr>
+        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Nature</td><td style="padding:9px">Dependency Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.natureDependencyScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.natureDependencyScore > 60 ? '🟡 High Dependency' : '🟢 Low Dependency'}</td></tr>
+        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Social</td><td style="padding:9px">Board Diversity</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.boardDiversity.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.boardDiversity > 30 ? '🟢 Above 30%' : '🟡 Below target'}</td></tr>
+        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Governance</td><td style="padding:9px">ESG Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.esgScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.esgScore > 70 ? '🟢 Strong' : '🟡 Average'}</td></tr>
+        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Risk</td><td style="padding:9px">HHI Concentration</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.hhi.toFixed(0)}</td><td style="padding:9px;text-align:center">${advancedKPIs.hhi < 1500 ? '🟢 Diversified' : '🟡 Moderate'}</td></tr>
       </tbody>
     </table>
   </div>
@@ -2201,7 +2201,7 @@ export default function AdvancedReportStudioPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
 
                 {/* DIMENSION 1: CLIMATE */}
-                {renderDimensionCard('\u{1F321}\uFE0F', 'Climate Metrics', '#ef4444', [
+                {renderDimensionCard('🌡', 'Climate Metrics', '#ef4444', [
                   { label: 'Carbon Efficiency', value: `${advancedKPIs.carbonEfficiency.toFixed(2)}`, unit: 'USD Mn / kt CO\u2082e', gauge: Math.min(100, advancedKPIs.carbonEfficiency * 10), good: 'higher' },
                   { label: 'Climate VaR (95% CI)', value: `${advancedKPIs.cvarPct.toFixed(1)}%`, unit: `${advancedKPIs.cvarUsdMn.toFixed(1)} USD Mn`, gauge: Math.min(100, 100 - advancedKPIs.cvarPct), good: 'lower', alert: advancedKPIs.cvarPct > 15 },
                   { label: 'Annual Decarbonisation Rate Required', value: `\u2212${advancedKPIs.requiredAnnualDecline.toFixed(1)}%`, unit: 'per year for 1.5\u00b0C', gauge: Math.min(100, 100 - advancedKPIs.requiredAnnualDecline * 5), good: 'lower' },
@@ -2217,29 +2217,29 @@ export default function AdvancedReportStudioPage() {
                 ])}
 
                 {/* DIMENSION 3: NATURE & BIODIVERSITY */}
-                {renderDimensionCard('\u{1F33F}', 'Nature & Biodiversity', '#059669', [
+                {renderDimensionCard('🌿', 'Nature & Biodiversity', '#059669', [
                   { label: 'Nature Dependency Score', value: `${advancedKPIs.natureDependencyScore.toFixed(0)}/100`, unit: 'ENCORE-weighted', gauge: Math.max(0, 100 - advancedKPIs.natureDependencyScore), good: 'lower' },
                   { label: 'Water Stress Exposure', value: `${advancedKPIs.waterStressExposure.toFixed(1)}%`, unit: 'high-water sectors', gauge: Math.max(0, 100 - advancedKPIs.waterStressExposure * 2), good: 'lower' },
                   { label: 'Deforestation Risk', value: `${advancedKPIs.deforestationRisk.toFixed(1)}%`, unit: 'forest-sensitive sectors', gauge: Math.max(0, 100 - advancedKPIs.deforestationRisk * 3), good: 'lower' },
                 ])}
 
                 {/* DIMENSION 4: SOCIAL */}
-                {renderDimensionCard('\u{1F465}', 'Social Metrics', '#7c3aed', [
+                {renderDimensionCard('👥', 'Social Metrics', '#7c3aed', [
                   { label: 'Board Gender Diversity', value: `${advancedKPIs.boardDiversity.toFixed(1)}%`, unit: 'avg female representation', gauge: advancedKPIs.boardDiversity * 2, good: 'higher' },
                   { label: 'Controversial Holdings', value: `${advancedKPIs.controversialPct.toFixed(0)}%`, unit: 'T-Risk > 80', gauge: Math.max(0, 100 - advancedKPIs.controversialPct * 5), good: 'lower', alert: advancedKPIs.controversialPct > 10 },
                   { label: 'Low-Wage Sector Exposure', value: `${advancedKPIs.lowWageExposure.toFixed(1)}%`, unit: 'ConsDisc + ConsStpl + Indust', gauge: Math.max(0, 100 - advancedKPIs.lowWageExposure * 1.5), good: 'lower' },
                 ])}
 
                 {/* DIMENSION 5: GOVERNANCE & DATA */}
-                {renderDimensionCard('\u{1F6E1}\uFE0F', 'Governance & Data Quality', '#1e40af', [
+                {renderDimensionCard('🛡', 'Governance & Data Quality', '#1e40af', [
                   { label: 'Portfolio ESG Score', value: `${advancedKPIs.esgScore.toFixed(0)}/100`, unit: 'weighted average', gauge: advancedKPIs.esgScore, good: 'higher' },
                   { label: 'ESG Score Dispersion', value: `\u03C3 = ${advancedKPIs.esgStdDev.toFixed(1)}`, unit: 'cross-holding std dev', gauge: Math.max(0, 100 - advancedKPIs.esgStdDev * 3), good: 'lower' },
                   { label: 'GHG Data Quality', value: `${advancedKPIs.dataQualityScore.toFixed(0)}%`, unit: 'holdings with reported data', gauge: advancedKPIs.dataQualityScore, good: 'higher', alert: advancedKPIs.dataQualityScore < 50 },
                 ])}
 
                 {/* DIMENSION 6: PORTFOLIO RISK */}
-                {renderDimensionCard('\u{1F4D0}', 'Concentration & Risk', '#9f1239', [
-                  { label: 'HHI Concentration', value: `${advancedKPIs.hhi.toFixed(0)}`, unit: advancedKPIs.hhi < 1500 ? '\u2705 Diversified' : advancedKPIs.hhi < 2500 ? '\u26A0\uFE0F Moderate' : '\u{1F534} Concentrated', gauge: Math.max(0, 100 - advancedKPIs.hhi / 50), good: 'lower', alert: advancedKPIs.hhi > 2500 },
+                {renderDimensionCard('📐', 'Concentration & Risk', '#9f1239', [
+                  { label: 'HHI Concentration', value: `${advancedKPIs.hhi.toFixed(0)}`, unit: advancedKPIs.hhi < 1500 ? '\u2705 Diversified' : advancedKPIs.hhi < 2500 ? '⚠ Moderate' : '🔴 Concentrated', gauge: Math.max(0, 100 - advancedKPIs.hhi / 50), good: 'lower', alert: advancedKPIs.hhi > 2500 },
                   { label: 'Top 3 Sector Weight', value: `${advancedKPIs.top3SectorConcentration.toFixed(1)}%`, unit: 'sector concentration', gauge: Math.max(0, 100 - advancedKPIs.top3SectorConcentration), good: 'lower' },
                   { label: 'Largest Single Position', value: `${advancedKPIs.maxWeight.toFixed(1)}%`, unit: 'single name risk', gauge: Math.max(0, 100 - advancedKPIs.maxWeight * 3), good: 'lower', alert: advancedKPIs.maxWeight > 20 },
                   { label: 'Exchange Diversification', value: `${advancedKPIs.uniqueExchanges}`, unit: 'unique exchanges', gauge: Math.min(100, advancedKPIs.uniqueExchanges * 10), good: 'higher' },
@@ -2280,12 +2280,12 @@ export default function AdvancedReportStudioPage() {
                   </thead>
                   <tbody>
                     {[
-                      { dim: '\u{1F321}\uFE0F Climate', score: Math.max(0, 100 - advancedKPIs.cvarPct * 3).toFixed(0), driver: `CVaR ${advancedKPIs.cvarPct.toFixed(1)}%`, trend: advancedKPIs.carbonBudgetOvershoot > 50 ? '\u2197 Rising' : '\u2192 Stable' },
+                      { dim: '🌡 Climate', score: Math.max(0, 100 - advancedKPIs.cvarPct * 3).toFixed(0), driver: `CVaR ${advancedKPIs.cvarPct.toFixed(1)}%`, trend: advancedKPIs.carbonBudgetOvershoot > 50 ? '\u2197 Rising' : '\u2192 Stable' },
                       { dim: '\u26A1 Transition', score: advancedKPIs.transitionReadinessIndex.toFixed(0), driver: `TRI ${advancedKPIs.transitionReadinessIndex.toFixed(0)}/100`, trend: advancedKPIs.transitionReadinessIndex > 40 ? '\u2197 Improving' : '\u2192 Lagging' },
-                      { dim: '\u{1F33F} Nature', score: Math.max(0, 100 - advancedKPIs.natureDependencyScore).toFixed(0), driver: `Dep. ${advancedKPIs.natureDependencyScore.toFixed(0)}/100`, trend: '\u2192 Stable' },
-                      { dim: '\u{1F465} Social', score: Math.max(0, 100 - advancedKPIs.controversialPct * 5).toFixed(0), driver: `Diversity ${advancedKPIs.boardDiversity.toFixed(0)}%`, trend: '\u2197 Improving' },
-                      { dim: '\u{1F6E1}\uFE0F Governance', score: advancedKPIs.esgScore.toFixed(0), driver: `ESG ${advancedKPIs.esgScore.toFixed(0)}/100`, trend: '\u2192 Stable' },
-                      { dim: '\u{1F4D0} Risk', score: (advancedKPIs.hhi < 1500 ? 80 : advancedKPIs.hhi < 2500 ? 50 : 20).toFixed(0), driver: `HHI ${advancedKPIs.hhi.toFixed(0)}`, trend: advancedKPIs.hhi < 1500 ? '\u2705 Healthy' : '\u26A0\uFE0F Monitor' },
+                      { dim: '🌿 Nature', score: Math.max(0, 100 - advancedKPIs.natureDependencyScore).toFixed(0), driver: `Dep. ${advancedKPIs.natureDependencyScore.toFixed(0)}/100`, trend: '\u2192 Stable' },
+                      { dim: '👥 Social', score: Math.max(0, 100 - advancedKPIs.controversialPct * 5).toFixed(0), driver: `Diversity ${advancedKPIs.boardDiversity.toFixed(0)}%`, trend: '\u2197 Improving' },
+                      { dim: '🛡 Governance', score: advancedKPIs.esgScore.toFixed(0), driver: `ESG ${advancedKPIs.esgScore.toFixed(0)}/100`, trend: '\u2192 Stable' },
+                      { dim: '📐 Risk', score: (advancedKPIs.hhi < 1500 ? 80 : advancedKPIs.hhi < 2500 ? 50 : 20).toFixed(0), driver: `HHI ${advancedKPIs.hhi.toFixed(0)}`, trend: advancedKPIs.hhi < 1500 ? '\u2705 Healthy' : '⚠ Monitor' },
                     ].map((row, i) => (
                       <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 ? T.surface : 'transparent' }}>
                         <td style={{ padding: '10px', fontWeight: 700, color: T.navy }}>{row.dim}</td>

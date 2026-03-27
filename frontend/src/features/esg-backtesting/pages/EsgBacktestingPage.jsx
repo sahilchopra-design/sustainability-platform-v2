@@ -283,8 +283,11 @@ function runBacktest(selectedFactors, weights, lookbackYears, rebalanceFreq) {
 }
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
-const masterLookup = {};
-GLOBAL_COMPANY_MASTER.forEach(c => { masterLookup[c.ticker] = c; });
+let _masterLookup = null;
+function getMasterLookup() {
+  if (!_masterLookup) { _masterLookup = {}; GLOBAL_COMPANY_MASTER.forEach(c => { _masterLookup[c.ticker] = c; }); }
+  return _masterLookup;
+}
 
 function downloadCSV(filename, rows) {
   if (!rows.length) return;

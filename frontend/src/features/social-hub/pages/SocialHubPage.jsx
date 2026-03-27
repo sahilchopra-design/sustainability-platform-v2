@@ -14,11 +14,11 @@ const seed = (s) => { let x = Math.sin(s * 2.7183 + 1) * 10000; return x - Math.
    MODULE DEFINITIONS — 5 Sprint N sub-modules
    ══════════════════════════════════════════════════════════════ */
 const MODULES = [
-  { id: 'board-diversity', name: 'Board Diversity & Governance', icon: '\u{1F465}', path: '/board-diversity', color: '#6366f1', kpiLabel: 'Female Board %', kpiKey: 'femaleBoard' },
-  { id: 'living-wage', name: 'Living Wage Analysis', icon: '\u{1F4B0}', path: '/living-wage', color: T.gold, kpiLabel: 'Living Wage Gap', kpiKey: 'livingWageGap' },
-  { id: 'human-rights-dd', name: 'Human Rights Due Diligence', icon: '\u{1F6E1}\uFE0F', path: '/human-rights-dd', color: T.red, kpiLabel: 'HR Risk Score', kpiKey: 'hrRisk' },
-  { id: 'employee-wellbeing', name: 'Employee Wellbeing', icon: '\u2764\uFE0F', path: '/employee-wellbeing', color: '#ec4899', kpiLabel: 'Engagement Score', kpiKey: 'engagement' },
-  { id: 'social-impact', name: 'Social Impact & SDG Tracker', icon: '\u{1F30D}', path: '/social-impact', color: T.sage, kpiLabel: 'SDG Alignment', kpiKey: 'sdgAlignment' },
+  { id: 'board-diversity', name: 'Board Diversity & Governance', icon: '👥', path: '/board-diversity', color: '#6366f1', kpiLabel: 'Female Board %', kpiKey: 'femaleBoard' },
+  { id: 'living-wage', name: 'Living Wage Analysis', icon: '💰', path: '/living-wage', color: T.gold, kpiLabel: 'Living Wage Gap', kpiKey: 'livingWageGap' },
+  { id: 'human-rights-dd', name: 'Human Rights Due Diligence', icon: '🛡', path: '/human-rights-dd', color: T.red, kpiLabel: 'HR Risk Score', kpiKey: 'hrRisk' },
+  { id: 'employee-wellbeing', name: 'Employee Wellbeing', icon: '❤', path: '/employee-wellbeing', color: '#ec4899', kpiLabel: 'Engagement Score', kpiKey: 'engagement' },
+  { id: 'social-impact', name: 'Social Impact & SDG Tracker', icon: '🌍', path: '/social-impact', color: T.sage, kpiLabel: 'SDG Alignment', kpiKey: 'sdgAlignment' },
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -863,14 +863,14 @@ export default function SocialHubPage() {
         <Section title="Connected Modules" sub="explore related analytics across the platform">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
             {[
-              { label: 'Board Diversity', path: '/board-diversity', icon: '\u{1F465}', desc: 'Governance & board composition' },
-              { label: 'Living Wage', path: '/living-wage', icon: '\u{1F4B0}', desc: 'Wage equity analysis' },
-              { label: 'Human Rights DD', path: '/human-rights-dd', icon: '\u{1F6E1}\uFE0F', desc: 'UNGP & CSDDD compliance' },
-              { label: 'Employee Wellbeing', path: '/employee-wellbeing', icon: '\u2764\uFE0F', desc: 'Safety & engagement' },
-              { label: 'Social Impact & SDG', path: '/social-impact', icon: '\u{1F30D}', desc: '17 SDGs tracker' },
-              { label: 'ESG Dashboard', path: '/portfolio-dashboard', icon: '\u{1F4CA}', desc: 'Integrated ESG view' },
-              { label: 'Stewardship Tracker', path: '/stewardship-tracker', icon: '\u{1F4DD}', desc: 'Engagement & voting' },
-              { label: 'Regulatory Gap', path: '/regulatory-gap', icon: '\u{1F4CB}', desc: 'Compliance gaps' },
+              { label: 'Board Diversity', path: '/board-diversity', icon: '👥', desc: 'Governance & board composition' },
+              { label: 'Living Wage', path: '/living-wage', icon: '💰', desc: 'Wage equity analysis' },
+              { label: 'Human Rights DD', path: '/human-rights-dd', icon: '🛡', desc: 'UNGP & CSDDD compliance' },
+              { label: 'Employee Wellbeing', path: '/employee-wellbeing', icon: '❤', desc: 'Safety & engagement' },
+              { label: 'Social Impact & SDG', path: '/social-impact', icon: '🌍', desc: '17 SDGs tracker' },
+              { label: 'ESG Dashboard', path: '/portfolio-dashboard', icon: '📊', desc: 'Integrated ESG view' },
+              { label: 'Stewardship Tracker', path: '/stewardship-tracker', icon: '📝', desc: 'Engagement & voting' },
+              { label: 'Regulatory Gap', path: '/regulatory-gap', icon: '📋', desc: 'Compliance gaps' },
             ].map((item, i) => (
               <Card key={i} onClick={() => navigate(item.path)}>
                 <div style={{ fontSize: 20, marginBottom: 6 }}>{item.icon}</div>

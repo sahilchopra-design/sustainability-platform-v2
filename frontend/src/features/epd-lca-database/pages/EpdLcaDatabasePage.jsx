@@ -1181,16 +1181,16 @@ export default function EpdLcaDatabasePage(){
           <Card>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:10,marginBottom:16}}>
               {[
-                {mode:'Train (electric)',gwp:0.006,unit:'kgCO2e/pkm',icon:'\u{1F686}',color:T.green,note:'Best mass transit'},
-                {mode:'Container Ship',gwp:0.008,unit:'kgCO2e/TEU-km',icon:'\u{1F6A2}',color:T.navyL,note:'Best freight mode'},
-                {mode:'E-Bike',gwp:0.005,unit:'kgCO2e/km',icon:'\u{1F6B2}',color:T.green,note:'Best personal'},
-                {mode:'Bicycle',gwp:0.002,unit:'kgCO2e/km',icon:'\u{1F6B4}',color:T.green,note:'Near-zero'},
-                {mode:'EV Sedan',gwp:0.043,unit:'kgCO2e/km',icon:'\u{1F697}',color:T.sage,note:'EU grid mix'},
-                {mode:'Diesel Truck',gwp:0.062,unit:'kgCO2e/tkm',icon:'\u{1F69A}',color:T.amber,note:'Freight baseline'},
-                {mode:'Electric Bus',gwp:0.053,unit:'kgCO2e/pkm',icon:'\u{1F68C}',color:T.sage,note:'Per passenger'},
+                {mode:'Train (electric)',gwp:0.006,unit:'kgCO2e/pkm',icon:'🚆',color:T.green,note:'Best mass transit'},
+                {mode:'Container Ship',gwp:0.008,unit:'kgCO2e/TEU-km',icon:'🚢',color:T.navyL,note:'Best freight mode'},
+                {mode:'E-Bike',gwp:0.005,unit:'kgCO2e/km',icon:'🚲',color:T.green,note:'Best personal'},
+                {mode:'Bicycle',gwp:0.002,unit:'kgCO2e/km',icon:'🚴',color:T.green,note:'Near-zero'},
+                {mode:'EV Sedan',gwp:0.043,unit:'kgCO2e/km',icon:'🚗',color:T.sage,note:'EU grid mix'},
+                {mode:'Diesel Truck',gwp:0.062,unit:'kgCO2e/tkm',icon:'🚚',color:T.amber,note:'Freight baseline'},
+                {mode:'Electric Bus',gwp:0.053,unit:'kgCO2e/pkm',icon:'🚌',color:T.sage,note:'Per passenger'},
                 {mode:'Aviation',gwp:0.255,unit:'kgCO2e/pkm',icon:'\u2708',color:T.red,note:'Worst mass mode'},
-                {mode:'E-Scooter (shared)',gwp:0.073,unit:'kgCO2e/km',icon:'\u{1F6F4}',color:T.amber,note:'Short lifespan'},
-                {mode:'EV SUV',gwp:0.061,unit:'kgCO2e/km',icon:'\u{1F699}',color:T.sage,note:'Larger battery'},
+                {mode:'E-Scooter (shared)',gwp:0.073,unit:'kgCO2e/km',icon:'🛴',color:T.amber,note:'Short lifespan'},
+                {mode:'EV SUV',gwp:0.061,unit:'kgCO2e/km',icon:'🚙',color:T.sage,note:'Larger battery'},
               ].map(t=>(
                 <div key={t.mode} style={{padding:12,borderRadius:8,border:`1px solid ${T.borderL}`,background:T.surfaceH,textAlign:'center'}}>
                   <div style={{fontSize:24}}>{t.icon}</div>
@@ -1276,14 +1276,14 @@ export default function EpdLcaDatabasePage(){
           <Card>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))',gap:8}}>
               {[
-                {region:'Global',count:allEPDs.filter(e=>e.country==='Global'||!e.country).length,flag:'\u{1F30D}'},
-                {region:'EU',count:allEPDs.filter(e=>['DE','FR','SE','DK','NL','IT','ES','FI','AT'].includes(e.country)).length,flag:'\u{1F1EA}\u{1F1FA}'},
-                {region:'Sweden',count:allEPDs.filter(e=>e.country==='SE').length,flag:'\u{1F1F8}\u{1F1EA}'},
-                {region:'Germany',count:allEPDs.filter(e=>e.country==='DE').length,flag:'\u{1F1E9}\u{1F1EA}'},
-                {region:'Denmark',count:allEPDs.filter(e=>e.country==='DK').length,flag:'\u{1F1E9}\u{1F1F0}'},
-                {region:'USA',count:allEPDs.filter(e=>e.country==='US').length,flag:'\u{1F1FA}\u{1F1F8}'},
-                {region:'China',count:allEPDs.filter(e=>e.country==='CN').length,flag:'\u{1F1E8}\u{1F1F3}'},
-                {region:'Others',count:allEPDs.filter(e=>e.country&&!['Global','SE','DE','DK','US','CN','FR','NL'].includes(e.country)).length,flag:'\u{1F30F}'},
+                {region:'Global',count:allEPDs.filter(e=>e.country==='Global'||!e.country).length,flag:'🌍'},
+                {region:'EU',count:allEPDs.filter(e=>['DE','FR','SE','DK','NL','IT','ES','FI','AT'].includes(e.country)).length,flag:'🇪🇺'},
+                {region:'Sweden',count:allEPDs.filter(e=>e.country==='SE').length,flag:'🇸🇪'},
+                {region:'Germany',count:allEPDs.filter(e=>e.country==='DE').length,flag:'🇩🇪'},
+                {region:'Denmark',count:allEPDs.filter(e=>e.country==='DK').length,flag:'🇩🇰'},
+                {region:'USA',count:allEPDs.filter(e=>e.country==='US').length,flag:'🇺🇸'},
+                {region:'China',count:allEPDs.filter(e=>e.country==='CN').length,flag:'🇨🇳'},
+                {region:'Others',count:allEPDs.filter(e=>e.country&&!['Global','SE','DE','DK','US','CN','FR','NL'].includes(e.country)).length,flag:'🌏'},
               ].map(r=>(
                 <div key={r.region} style={{padding:10,borderRadius:8,border:`1px solid ${T.borderL}`,textAlign:'center',background:T.surfaceH}}>
                   <div style={{fontSize:20}}>{r.flag}</div>
@@ -1301,14 +1301,14 @@ export default function EpdLcaDatabasePage(){
           <Card>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:12}}>
               {[
-                {insight:'Beef uses 164 m\u00B2 per kg',detail:'23x more land than chicken (7.1 m\u00B2/kg). Single biggest driver of agricultural deforestation.',color:T.red,icon:'\u{1F42E}'},
-                {insight:'Oat milk: 72% less GWP',detail:'0.9 vs 3.2 kgCO2e/L for dairy. Also 92% less water. Fastest-growing dairy alternative.',color:T.green,icon:'\u{1F33E}'},
-                {insight:'Chocolate: child labor risk',detail:'19 kgCO2e/kg. Cocoa supply chains in West Africa have documented child labor. EUDR-relevant.',color:T.red,icon:'\u{1F36B}'},
-                {insight:'Rice: methane from paddies',detail:'2.7 kgCO2e/kg but significant methane from anaerobic decomposition in flooded fields.',color:T.amber,icon:'\u{1F35A}'},
+                {insight:'Beef uses 164 m\u00B2 per kg',detail:'23x more land than chicken (7.1 m\u00B2/kg). Single biggest driver of agricultural deforestation.',color:T.red,icon:'🐮'},
+                {insight:'Oat milk: 72% less GWP',detail:'0.9 vs 3.2 kgCO2e/L for dairy. Also 92% less water. Fastest-growing dairy alternative.',color:T.green,icon:'🌾'},
+                {insight:'Chocolate: child labor risk',detail:'19 kgCO2e/kg. Cocoa supply chains in West Africa have documented child labor. EUDR-relevant.',color:T.red,icon:'🍫'},
+                {insight:'Rice: methane from paddies',detail:'2.7 kgCO2e/kg but significant methane from anaerobic decomposition in flooded fields.',color:T.amber,icon:'🍚'},
                 {insight:'Coffee: 18,900L water/kg',detail:'Highest water footprint among beverages. Price volatility +8.2% YoY. Fair trade certification growing.',color:T.navyL,icon:'\u2615'},
-                {insight:'Palm oil: critical biodiversity',detail:'8.5 kgCO2e/kg but massive biodiversity loss from plantation expansion. EUDR deadline Dec 2025.',color:T.red,icon:'\u{1F334}'},
-                {insight:'Farmed salmon: feed sourcing',detail:'11.9 kgCO2e/kg. Primary impact from fish feed (soy-based). Marine eutrophication concern.',color:T.amber,icon:'\u{1F41F}'},
-                {insight:'Apples: low-impact protein alt',detail:'0.43 kgCO2e/kg. Among lowest GWP foods. Seasonal + local = even lower.',color:T.green,icon:'\u{1F34E}'},
+                {insight:'Palm oil: critical biodiversity',detail:'8.5 kgCO2e/kg but massive biodiversity loss from plantation expansion. EUDR deadline Dec 2025.',color:T.red,icon:'🌴'},
+                {insight:'Farmed salmon: feed sourcing',detail:'11.9 kgCO2e/kg. Primary impact from fish feed (soy-based). Marine eutrophication concern.',color:T.amber,icon:'🐟'},
+                {insight:'Apples: low-impact protein alt',detail:'0.43 kgCO2e/kg. Among lowest GWP foods. Seasonal + local = even lower.',color:T.green,icon:'🍎'},
               ].map(i=>(
                 <div key={i.insight} style={{padding:12,borderRadius:8,border:`1px solid ${T.borderL}`,borderLeft:`3px solid ${i.color}`}}>
                   <div style={{fontSize:20,marginBottom:4}}>{i.icon}</div>
@@ -1554,13 +1554,13 @@ export default function EpdLcaDatabasePage(){
           <Card>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:12}}>
               {[
-                {category:'Construction',icon:'\u{1F3D7}',strategies:['Use recycled aggregate concrete (RAC)','Specify green steel (H2-DRI or EAF)','Design for disassembly (DfD)','Bio-based insulation (wood fiber, hemp)','Geopolymer binders vs OPC cement'],reduction:'30-80% embodied carbon',color:T.navyL},
-                {category:'Food',icon:'\u{1F33E}',strategies:['Shift from beef to plant proteins','Source deforestation-free supply chains','Reduce food waste (30% of production)','Local + seasonal sourcing','Regenerative agriculture practices'],reduction:'25-90% per dietary shift',color:T.amber},
-                {category:'Textiles',icon:'\u{1F455}',strategies:['Use recycled polyester (rPET)','Switch to organic cotton or hemp','Extend product lifetime (repair programs)','Fiber-to-fiber recycling systems','Eliminate microplastic release'],reduction:'23-62% per garment',color:'#7c3aed'},
-                {category:'Electronics',icon:'\u{1F4F1}',strategies:['Extend device lifetime (+2 years = -30% GWP)','Modular design for repair','Conflict-free mineral sourcing','E-waste urban mining programs','Right-to-repair legislation support'],reduction:'25-40% per device',color:'#0891b2'},
+                {category:'Construction',icon:'🏗',strategies:['Use recycled aggregate concrete (RAC)','Specify green steel (H2-DRI or EAF)','Design for disassembly (DfD)','Bio-based insulation (wood fiber, hemp)','Geopolymer binders vs OPC cement'],reduction:'30-80% embodied carbon',color:T.navyL},
+                {category:'Food',icon:'🌾',strategies:['Shift from beef to plant proteins','Source deforestation-free supply chains','Reduce food waste (30% of production)','Local + seasonal sourcing','Regenerative agriculture practices'],reduction:'25-90% per dietary shift',color:T.amber},
+                {category:'Textiles',icon:'👕',strategies:['Use recycled polyester (rPET)','Switch to organic cotton or hemp','Extend product lifetime (repair programs)','Fiber-to-fiber recycling systems','Eliminate microplastic release'],reduction:'23-62% per garment',color:'#7c3aed'},
+                {category:'Electronics',icon:'📱',strategies:['Extend device lifetime (+2 years = -30% GWP)','Modular design for repair','Conflict-free mineral sourcing','E-waste urban mining programs','Right-to-repair legislation support'],reduction:'25-40% per device',color:'#0891b2'},
                 {category:'Energy',icon:'\u26A1',strategies:['Maximize solar/wind capacity factors','LFP over NMC batteries (no cobalt)','Second-life battery applications','Green hydrogen for hard-to-abate sectors','Grid-scale flow batteries for storage'],reduction:'50-95% vs fossil baseline',color:T.green},
-                {category:'Packaging',icon:'\u{1F4E6}',strategies:['Replace plastic with recycled cardboard','Aluminum cans (infinite recyclability)','Compostable packaging for food','Reusable container systems','Design for recyclability standards'],reduction:'16-95% per material switch',color:T.sage},
-                {category:'Transport',icon:'\u{1F697}',strategies:['Electrify fleet (EV transition)','E-bike/rail for short/medium distance','SAF (sustainable aviation fuel) for long-haul','Shipping to ammonia/methanol','Active mobility infrastructure'],reduction:'50-98% per mode shift',color:'#0d9488'},
+                {category:'Packaging',icon:'📦',strategies:['Replace plastic with recycled cardboard','Aluminum cans (infinite recyclability)','Compostable packaging for food','Reusable container systems','Design for recyclability standards'],reduction:'16-95% per material switch',color:T.sage},
+                {category:'Transport',icon:'🚗',strategies:['Electrify fleet (EV transition)','E-bike/rail for short/medium distance','SAF (sustainable aviation fuel) for long-haul','Shipping to ammonia/methanol','Active mobility infrastructure'],reduction:'50-98% per mode shift',color:'#0d9488'},
                 {category:'Chemicals',icon:'\u2697',strategies:['Green ammonia via electrolysis','Bio-based feedstocks for plastics','Process electrification (heat pumps)','Carbon capture on point sources','Closed-loop chemical recycling'],reduction:'30-95% per process',color:T.red},
               ].map(cat=>(
                 <div key={cat.category} style={{padding:14,borderRadius:10,border:`1px solid ${T.borderL}`,borderTop:`3px solid ${cat.color}`}}>

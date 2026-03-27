@@ -16,12 +16,12 @@ const T = {
 
 /* ── Hazards ──────────────────────────────────────────────────────────────────── */
 const HAZARDS = [
-  { id:'flood', name:'River & Coastal Flooding', icon:'\u{1F30A}', type:'Acute', color:'#2563eb' },
-  { id:'cyclone', name:'Tropical Cyclones', icon:'\u{1F300}', type:'Acute', color:'#7c3aed' },
-  { id:'wildfire', name:'Wildfire', icon:'\u{1F525}', type:'Acute', color:'#ef4444' },
-  { id:'heatwave', name:'Extreme Heat', icon:'\u{1F321}\uFE0F', type:'Chronic', color:'#f97316' },
-  { id:'drought', name:'Water Stress & Drought', icon:'\u{1F4A7}', type:'Chronic', color:'#d97706' },
-  { id:'sealevel', name:'Sea Level Rise', icon:'\u{1F3D6}\uFE0F', type:'Chronic', color:'#0891b2' },
+  { id:'flood', name:'River & Coastal Flooding', icon:'🌊', type:'Acute', color:'#2563eb' },
+  { id:'cyclone', name:'Tropical Cyclones', icon:'🌀', type:'Acute', color:'#7c3aed' },
+  { id:'wildfire', name:'Wildfire', icon:'🔥', type:'Acute', color:'#ef4444' },
+  { id:'heatwave', name:'Extreme Heat', icon:'🌡', type:'Chronic', color:'#f97316' },
+  { id:'drought', name:'Water Stress & Drought', icon:'💧', type:'Chronic', color:'#d97706' },
+  { id:'sealevel', name:'Sea Level Rise', icon:'🏖', type:'Chronic', color:'#0891b2' },
 ];
 
 /* ── SSP & Time Horizon Multipliers ───────────────────────────────────────────── */
@@ -1238,7 +1238,7 @@ export default function PropertyPhysicalRiskPage() {
                 <span style={{ fontSize:11, color:T.textSec, flex:1 }}>{r.metric}</span>
                 <span style={{ fontSize:11, color:T.textMut, width:60, textAlign:'center' }}>{r.threshold}</span>
                 <span style={{ fontSize:12, fontWeight:700, color: r.breach ? T.red : T.green, width:60, textAlign:'right' }}>{r.actual}</span>
-                <span style={{ marginLeft:8, fontSize:14 }}>{r.breach ? '\u26A0\uFE0F' : '\u2705'}</span>
+                <span style={{ marginLeft:8, fontSize:14 }}>{r.breach ? '⚠' : '\u2705'}</span>
               </div>
             ))}
           </div>

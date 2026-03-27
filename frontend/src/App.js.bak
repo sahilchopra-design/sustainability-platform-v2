@@ -226,13 +226,6 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
-// Sprint AA — Climate Finance Architecture
-import ClimateFinanceHubPage from './features/climate-finance-hub/pages/ClimateFinanceHubPage';
-import Article6MarketsPage from './features/article6-markets/pages/Article6MarketsPage';
-import CbamCompliancePage from './features/cbam-compliance/pages/CbamCompliancePage';
-import ClimateFinanceTrackerPage from './features/climate-finance-tracker/pages/ClimateFinanceTrackerPage';
-import GreenTaxonomyNavigatorPage from './features/green-taxonomy-navigator/pages/GreenTaxonomyNavigatorPage';
-import ClimateSovereignBondsPage from './features/climate-sovereign-bonds/pages/ClimateSovereignBondsPage';
 // Sprint Y — Commodity Lifecycle Intelligence
 import CommodityIntelligencePage from './features/commodity-intelligence/pages/CommodityIntelligencePage';
 import CommodityInventoryPage from './features/commodity-inventory/pages/CommodityInventoryPage';
@@ -398,14 +391,6 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
-  ]},
-  { label: 'Climate Finance Architecture', icon: '🏦', color: '#0f766e', items: [
-    { path: '/climate-finance-hub',       label: 'Climate Finance Hub',        badge: 'Hub · Instruments · Pipeline · ICMA · EU GBS', code: 'EP-AA1' },
-    { path: '/article6-markets',          label: 'Article 6 Carbon Markets',   badge: 'PA Art 6.2 · ITMO · Art 6.4 · CORSIA',        code: 'EP-AA2' },
-    { path: '/cbam-compliance',           label: 'CBAM Compliance Engine',     badge: 'EU 2023/956 · 6 Sectors · Cert Calculator',    code: 'EP-AA3' },
-    { path: '/climate-finance-tracker',   label: 'Climate Finance Tracker',    badge: '$100bn COP · GCF · Adaptation Gap · NCQG',    code: 'EP-AA4' },
-    { path: '/green-taxonomy-navigator',  label: 'Green Taxonomy Navigator',   badge: '8 Jurisdictions · IPSF · Transition Categories', code: 'EP-AA5' },
-    { path: '/climate-sovereign-bonds',   label: 'Climate Sovereign Bonds',    badge: 'Green Gilts · EU GBS · 47 Issuers · Greenium', code: 'EP-AA6' },
   ]},
   { label: 'Governance & Audit', icon: '🛡️', color: '#4a1d6a', items: [
     { path: '/governance-hub',           label: 'Governance Hub',            badge: 'Hub · 7 Modules · Audit · Models',      code: 'EP-V6' },
@@ -1092,13 +1077,6 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
-            {/* Sprint AA — Climate Finance Architecture */}
-            <Route path="/climate-finance-hub"       element={<ClimateFinanceHubPage />} />
-            <Route path="/article6-markets"          element={<Article6MarketsPage />} />
-            <Route path="/cbam-compliance"           element={<CbamCompliancePage />} />
-            <Route path="/climate-finance-tracker"   element={<ClimateFinanceTrackerPage />} />
-            <Route path="/green-taxonomy-navigator"  element={<GreenTaxonomyNavigatorPage />} />
-            <Route path="/climate-sovereign-bonds"   element={<ClimateSovereignBondsPage />} />
             {/* Sprint V — Governance & Audit Trail */}
             <Route path="/audit-trail"              element={<AuditTrailPage />} />
             <Route path="/model-governance"         element={<ModelGovernancePage />} />

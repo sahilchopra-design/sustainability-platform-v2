@@ -25,7 +25,7 @@ const esgColor=v=>v>=80?ESG_COLORS.critical:v>=60?ESG_COLORS.high:v>=40?ESG_COLO
 
 /* ================================================================= 30 PRODUCTS */
 const PRODUCT_ANATOMY = {
-  smartphone:{name:'Smartphone (avg flagship)',icon:'\u{1F4F1}',retail_price:999,weight_g:185,lifespan_years:3,category:'Electronics',
+  smartphone:{name:'Smartphone (avg flagship)',icon:'📱',retail_price:999,weight_g:185,lifespan_years:3,category:'Electronics',
     components:[
       {material:'Lithium',component:'Battery',quantity_g:0.8,cost_usd:0.01,pct_of_cost:0.001,source_countries:['AU','CL','CN'],esg_risk:55,carbon_g:12,water_l:1.6,child_labor_risk:'Low',conflict_mineral:false,recyclable:true,recycling_rate:0.05,commodity_id:'LITHIUM'},
       {material:'Cobalt',component:'Battery cathode',quantity_g:6.3,cost_usd:0.18,pct_of_cost:0.02,source_countries:['CD','AU'],esg_risk:85,carbon_g:45,water_l:8.5,child_labor_risk:'Critical (DRC artisanal)',conflict_mineral:true,recyclable:true,recycling_rate:0.15,commodity_id:'COBALT'},
@@ -45,7 +45,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0.185,recycled_pct:17,landfill_pct:83,toxic_materials:['Lithium (fire risk)','Cobalt (toxic)','Lead (solder)'],total_recoverable_usd:3.20,recycling_cost_usd:5.00},
     externalities:{carbon_total_kg:70,water_total_l:12700,land_total_m2:0.2,conflict_minerals_count:4,child_labor_exposure:true,e_waste_contribution:true}},
-  electric_car:{name:'Electric Vehicle (compact)',icon:'\u{1F697}',retail_price:42000,weight_g:1800000,lifespan_years:15,category:'Transport',
+  electric_car:{name:'Electric Vehicle (compact)',icon:'🚗',retail_price:42000,weight_g:1800000,lifespan_years:15,category:'Transport',
     components:[
       {material:'Lithium',component:'Battery pack',quantity_g:8000,cost_usd:96,pct_of_cost:0.23,source_countries:['AU','CL','CN','AR'],esg_risk:55,carbon_g:96000,water_l:12800,child_labor_risk:'Low',conflict_mineral:false,recyclable:true,recycling_rate:0.05,commodity_id:'LITHIUM'},
       {material:'Cobalt',component:'Battery cathode (NMC)',quantity_g:6400,cost_usd:179,pct_of_cost:0.43,source_countries:['CD','AU'],esg_risk:85,carbon_g:288000,water_l:54400,child_labor_risk:'Critical (DRC)',conflict_mineral:true,recyclable:true,recycling_rate:0.15,commodity_id:'COBALT'},
@@ -65,7 +65,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:350,recycled_pct:65,landfill_pct:20,toxic_materials:['Lithium (fire risk)','Cobalt','Coolant fluids'],total_recoverable_usd:2800,recycling_cost_usd:1500},
     externalities:{carbon_total_kg:8500,water_total_l:8750000,land_total_m2:35,conflict_minerals_count:2,child_labor_exposure:true,e_waste_contribution:true}},
-  fast_fashion_tshirt:{name:'Fast Fashion T-Shirt',icon:'\u{1F455}',retail_price:12,weight_g:150,lifespan_years:1,category:'Textiles',
+  fast_fashion_tshirt:{name:'Fast Fashion T-Shirt',icon:'👕',retail_price:12,weight_g:150,lifespan_years:1,category:'Textiles',
     components:[
       {material:'Cotton',component:'Fabric (conventional)',quantity_g:120,cost_usd:0.36,pct_of_cost:3.0,source_countries:['IN','CN','US','UZ'],esg_risk:60,carbon_g:2400,water_l:2160,child_labor_risk:'Medium (India, Uzbekistan)',recyclable:true,recycling_rate:0.12},
       {material:'Polyester',component:'Blend fabric',quantity_g:30,cost_usd:0.06,pct_of_cost:0.5,source_countries:['CN','IN','TW'],esg_risk:55,carbon_g:1100,water_l:12,recyclable:false},
@@ -78,7 +78,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:12,landfill_pct:73,incinerated_pct:15,toxic_materials:['Dye chemicals','Microplastics'],total_recoverable_usd:0.02,recycling_cost_usd:0.50},
     externalities:{carbon_total_kg:6.5,water_total_l:2700,land_total_m2:5.5,conflict_minerals_count:0,child_labor_exposure:true}},
-  chocolate_bar:{name:'Chocolate Bar (100g)',icon:'\u{1F36B}',retail_price:3.50,weight_g:100,lifespan_years:0.5,category:'Food',
+  chocolate_bar:{name:'Chocolate Bar (100g)',icon:'🍫',retail_price:3.50,weight_g:100,lifespan_years:0.5,category:'Food',
     components:[
       {material:'Cocoa beans',component:'Chocolate mass',quantity_g:35,cost_usd:0.30,pct_of_cost:8.6,source_countries:['CI','GH','ID'],esg_risk:80,carbon_g:665,water_l:560,child_labor_risk:'High (West Africa)',commodity_id:'COCOA'},
       {material:'Cocoa butter',component:'Fat base',quantity_g:20,cost_usd:0.25,pct_of_cost:7.1,source_countries:['CI','GH'],esg_risk:75,carbon_g:380,water_l:320},
@@ -91,7 +91,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:55,landfill_pct:40,toxic_materials:[],total_recoverable_usd:0.01,recycling_cost_usd:0.02},
     externalities:{carbon_total_kg:19.0,water_total_l:1700,land_total_m2:4.2,conflict_minerals_count:0,child_labor_exposure:true}},
-  laptop:{name:'Laptop Computer',icon:'\u{1F4BB}',retail_price:1299,weight_g:1400,lifespan_years:5,category:'Electronics',
+  laptop:{name:'Laptop Computer',icon:'💻',retail_price:1299,weight_g:1400,lifespan_years:5,category:'Electronics',
     components:[
       {material:'Lithium',component:'Battery',quantity_g:4.5,cost_usd:0.05,pct_of_cost:0.004,source_countries:['AU','CL','CN'],esg_risk:55,carbon_g:54,water_l:7.2,recyclable:true,recycling_rate:0.05,commodity_id:'LITHIUM'},
       {material:'Cobalt',component:'Battery cathode',quantity_g:22,cost_usd:0.62,pct_of_cost:0.05,source_countries:['CD','AU'],esg_risk:85,carbon_g:155,water_l:29,child_labor_risk:'Critical (DRC)',conflict_mineral:true,commodity_id:'COBALT'},
@@ -110,7 +110,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:1.4,recycled_pct:22,landfill_pct:78,toxic_materials:['Lithium','Mercury (backlight)','Cobalt','Lead'],total_recoverable_usd:18.00,recycling_cost_usd:12.00},
     externalities:{carbon_total_kg:350,water_total_l:190000,land_total_m2:0.5,conflict_minerals_count:4,child_labor_exposure:true,e_waste_contribution:true}},
-  solar_panel:{name:'Solar Panel (400W mono)',icon:'\u2600\uFE0F',retail_price:280,weight_g:22000,lifespan_years:30,category:'Energy',
+  solar_panel:{name:'Solar Panel (400W mono)',icon:'☀',retail_price:280,weight_g:22000,lifespan_years:30,category:'Energy',
     components:[
       {material:'Silicon (polysilicon)',component:'Solar cells',quantity_g:1200,cost_usd:10.20,pct_of_cost:3.6,source_countries:['CN (80%)','US','DE'],esg_risk:50,carbon_g:14400,water_l:192000},
       {material:'Silver',component:'Cell contacts',quantity_g:12,cost_usd:11.40,pct_of_cost:4.07,source_countries:['MX','PE','CN'],esg_risk:45,carbon_g:36,water_l:1440},
@@ -125,7 +125,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:22,recycled_pct:30,landfill_pct:65,toxic_materials:['Lead (solder)','Cadmium (some thin-film)'],total_recoverable_usd:8.50,recycling_cost_usd:15.00},
     externalities:{carbon_total_kg:1200,water_total_l:210000,land_total_m2:2.0,conflict_minerals_count:1,child_labor_exposure:false}},
-  concrete_building:{name:'Concrete Building (1 m\u00B3)',icon:'\u{1F3D7}\uFE0F',retail_price:150,weight_g:2400000,lifespan_years:75,category:'Construction',
+  concrete_building:{name:'Concrete Building (1 m\u00B3)',icon:'🏗',retail_price:150,weight_g:2400000,lifespan_years:75,category:'Construction',
     components:[
       {material:'Portland Cement',component:'Binder',quantity_g:350000,cost_usd:43.75,pct_of_cost:29.2,source_countries:['Local','CN','IN'],esg_risk:65,carbon_g:297500,water_l:175,commodity_id:'CEMENT'},
       {material:'Sand & Gravel',component:'Aggregates',quantity_g:1850000,cost_usd:22.20,pct_of_cost:14.8,source_countries:['Local'],esg_risk:45,carbon_g:37000,water_l:1850},
@@ -136,7 +136,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:40,landfill_pct:55,toxic_materials:['Chromium VI (cement dust)'],total_recoverable_usd:5.00,recycling_cost_usd:8.00},
     externalities:{carbon_total_kg:520,water_total_l:30000,land_total_m2:0,conflict_minerals_count:0,child_labor_exposure:false}},
-  leather_shoes:{name:'Leather Shoes (pair)',icon:'\u{1F45E}',retail_price:120,weight_g:700,lifespan_years:3,category:'Textiles',
+  leather_shoes:{name:'Leather Shoes (pair)',icon:'👞',retail_price:120,weight_g:700,lifespan_years:3,category:'Textiles',
     components:[
       {material:'Bovine Leather',component:'Upper, lining',quantity_g:350,cost_usd:8.75,pct_of_cost:7.3,source_countries:['IT','BR','IN','CN'],esg_risk:70,carbon_g:5950,water_l:5810,commodity_id:'CATTLE'},
       {material:'Rubber',component:'Sole',quantity_g:200,cost_usd:1.20,pct_of_cost:1.0,source_countries:['TH','ID','VN'],esg_risk:50,carbon_g:400,water_l:400},
@@ -159,7 +159,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:1,landfill_pct:92,incinerated_pct:7,toxic_materials:['Polystyrene (styrene)'],total_recoverable_usd:0.001,recycling_cost_usd:0.05},
     externalities:{carbon_total_kg:0.11,water_total_l:5.5,land_total_m2:0.003,conflict_minerals_count:0,child_labor_exposure:false}},
-  washing_machine:{name:'Washing Machine',icon:'\u{1F9FA}',retail_price:650,weight_g:70000,lifespan_years:12,category:'Appliances',
+  washing_machine:{name:'Washing Machine',icon:'🧺',retail_price:650,weight_g:70000,lifespan_years:12,category:'Appliances',
     components:[
       {material:'Steel',component:'Drum, frame, panels',quantity_g:45000,cost_usd:30.60,pct_of_cost:4.71,source_countries:['CN','KR','TR'],esg_risk:50,carbon_g:81000,water_l:9000,recyclable:true,recycling_rate:0.90,commodity_id:'STEEL'},
       {material:'Copper',component:'Motor windings, wiring',quantity_g:3000,cost_usd:26.85,pct_of_cost:4.13,source_countries:['CL','PE'],esg_risk:55,carbon_g:15000,water_l:9000,recyclable:true,recycling_rate:0.50,commodity_id:'COPPER'},
@@ -175,7 +175,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:70,recycled_pct:60,landfill_pct:35,toxic_materials:['PCB chemicals','Refrigerants'],total_recoverable_usd:25.00,recycling_cost_usd:18.00},
     externalities:{carbon_total_kg:185,water_total_l:45000,land_total_m2:0.5,conflict_minerals_count:0,child_labor_exposure:false}},
-  wind_turbine:{name:'Wind Turbine Blade (1 blade)',icon:'\u{1F32C}\uFE0F',retail_price:150000,weight_g:12000000,lifespan_years:25,category:'Energy',
+  wind_turbine:{name:'Wind Turbine Blade (1 blade)',icon:'🌬',retail_price:150000,weight_g:12000000,lifespan_years:25,category:'Energy',
     components:[
       {material:'Fiberglass (GFRP)',component:'Blade shell',quantity_g:8000000,cost_usd:32000,pct_of_cost:21.3,source_countries:['CN','US','DK'],esg_risk:40,carbon_g:32000000,water_l:16000000,recyclable:false},
       {material:'Epoxy Resin',component:'Matrix binder',quantity_g:2500000,cost_usd:18750,pct_of_cost:12.5,source_countries:['US','DE','CN'],esg_risk:45,carbon_g:12500000,water_l:5000000,recyclable:false},
@@ -189,7 +189,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:15,landfill_pct:75,incinerated_pct:10,toxic_materials:['Epoxy dust','BPA (resin)'],total_recoverable_usd:500,recycling_cost_usd:8000},
     externalities:{carbon_total_kg:53000,water_total_l:22000000,land_total_m2:5,conflict_minerals_count:0,child_labor_exposure:false}},
-  lithium_battery_pack:{name:'Li-Ion Battery Pack (50 kWh)',icon:'\u{1F50B}',retail_price:7500,weight_g:350000,lifespan_years:10,category:'Energy',
+  lithium_battery_pack:{name:'Li-Ion Battery Pack (50 kWh)',icon:'🔋',retail_price:7500,weight_g:350000,lifespan_years:10,category:'Energy',
     components:[
       {material:'Lithium Carbonate',component:'Cathode active material',quantity_g:6000,cost_usd:75,pct_of_cost:1.0,source_countries:['AU','CL','CN','AR'],esg_risk:55,carbon_g:72000,water_l:9600,recyclable:true,recycling_rate:0.05,commodity_id:'LITHIUM'},
       {material:'Cobalt',component:'Cathode (NMC)',quantity_g:5500,cost_usd:154,pct_of_cost:2.05,source_countries:['CD','AU'],esg_risk:85,carbon_g:247500,water_l:46750,child_labor_risk:'Critical (DRC)',conflict_mineral:true,commodity_id:'COBALT'},
@@ -207,7 +207,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:350,recycled_pct:5,landfill_pct:85,toxic_materials:['Lithium (fire/explosive)','Cobalt (toxic)','Electrolyte (HF gas)','Nickel'],total_recoverable_usd:1200,recycling_cost_usd:800},
     externalities:{carbon_total_kg:3250,water_total_l:1500000,land_total_m2:2,conflict_minerals_count:1,child_labor_exposure:true}},
-  palm_oil_soap:{name:'Palm Oil Soap Bar',icon:'\u{1F9FC}',retail_price:4.00,weight_g:100,lifespan_years:0.2,category:'Consumer Goods',
+  palm_oil_soap:{name:'Palm Oil Soap Bar',icon:'🧼',retail_price:4.00,weight_g:100,lifespan_years:0.2,category:'Consumer Goods',
     components:[
       {material:'Palm Oil',component:'Base fat (saponified)',quantity_g:60,cost_usd:0.05,pct_of_cost:1.25,source_countries:['ID','MY'],esg_risk:85,carbon_g:510,water_l:60,commodity_id:'PALM_OIL'},
       {material:'Coconut Oil',component:'Lathering agent',quantity_g:15,cost_usd:0.02,pct_of_cost:0.5,source_countries:['PH','ID','IN'],esg_risk:40,carbon_g:30,water_l:15},
@@ -219,7 +219,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:70,landfill_pct:25,toxic_materials:[],total_recoverable_usd:0.002,recycling_cost_usd:0.01},
     externalities:{carbon_total_kg:8.5,water_total_l:2500,land_total_m2:2.0,conflict_minerals_count:0,child_labor_exposure:false}},
-  steel_bridge:{name:'Steel Bridge (per tonne)',icon:'\u{1F309}',retail_price:4500,weight_g:1000000,lifespan_years:100,category:'Construction',
+  steel_bridge:{name:'Steel Bridge (per tonne)',icon:'🌉',retail_price:4500,weight_g:1000000,lifespan_years:100,category:'Construction',
     components:[
       {material:'Structural Steel',component:'Main girders, deck',quantity_g:850000,cost_usd:1445,pct_of_cost:32.1,source_countries:['CN','JP','KR','US'],esg_risk:55,carbon_g:1572500,water_l:23800000,recyclable:true,recycling_rate:0.90,commodity_id:'STEEL'},
       {material:'High-Strength Bolts',component:'Connections',quantity_g:30000,cost_usd:150,pct_of_cost:3.3,source_countries:['JP','US','DE'],esg_risk:45,carbon_g:55500,recyclable:true},
@@ -231,7 +231,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:90,landfill_pct:5,toxic_materials:['Lead (old paint)','Cadmium (coatings)'],total_recoverable_usd:350,recycling_cost_usd:120},
     externalities:{carbon_total_kg:1850,water_total_l:24000000,land_total_m2:0,conflict_minerals_count:0,child_labor_exposure:false}},
-  pharmaceutical_pill:{name:'Pharmaceutical Pill (1 dose)',icon:'\u{1F48A}',retail_price:15.00,weight_g:0.5,lifespan_years:2,category:'Healthcare',
+  pharmaceutical_pill:{name:'Pharmaceutical Pill (1 dose)',icon:'💊',retail_price:15.00,weight_g:0.5,lifespan_years:2,category:'Healthcare',
     components:[
       {material:'Active Pharmaceutical Ingredient',component:'Drug compound',quantity_g:0.05,cost_usd:0.25,pct_of_cost:1.67,source_countries:['IN','CN','US','IE'],esg_risk:45,carbon_g:0.5,water_l:5},
       {material:'Excipients (lactose, starch)',component:'Filler, binder',quantity_g:0.35,cost_usd:0.005,pct_of_cost:0.03,source_countries:['US','EU','IN'],esg_risk:20,carbon_g:0.2,water_l:0.5},
@@ -245,7 +245,7 @@ const PRODUCT_ANATOMY = {
     end_of_life:{e_waste_kg:0,recycled_pct:10,landfill_pct:85,toxic_materials:['Pharmaceutical residues (water contamination)','PVC (blister)'],total_recoverable_usd:0.001,recycling_cost_usd:0.10},
     externalities:{carbon_total_kg:0.05,water_total_l:8,land_total_m2:0.001,conflict_minerals_count:0,child_labor_exposure:false}},
   // ─── NEW PRODUCTS ──────────────────────────────────────────────────────────
-  refrigerator:{name:'Refrigerator',icon:'\u{1F9CA}',retail_price:900,weight_g:75000,lifespan_years:15,category:'Appliances',
+  refrigerator:{name:'Refrigerator',icon:'🧊',retail_price:900,weight_g:75000,lifespan_years:15,category:'Appliances',
     components:[
       {material:'Steel',component:'Cabinet, shelves, compressor',quantity_g:40000,cost_usd:27.20,pct_of_cost:3.02,source_countries:['CN','KR','MX'],esg_risk:50,carbon_g:72000,water_l:8000,recyclable:true,recycling_rate:0.90,commodity_id:'STEEL'},
       {material:'Copper',component:'Compressor motor, tubing',quantity_g:2500,cost_usd:22.38,pct_of_cost:2.49,source_countries:['CL','PE'],esg_risk:55,carbon_g:12500,water_l:7500,recyclable:true,recycling_rate:0.55,commodity_id:'COPPER'},
@@ -261,7 +261,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:75,recycled_pct:55,landfill_pct:35,toxic_materials:['Refrigerant','Polyurethane (blowing agents)','PCB chemicals'],total_recoverable_usd:30.00,recycling_cost_usd:25.00},
     externalities:{carbon_total_kg:210,water_total_l:52000,land_total_m2:0.5,conflict_minerals_count:0,child_labor_exposure:false}},
-  bicycle:{name:'Bicycle (commuter)',icon:'\u{1F6B2}',retail_price:500,weight_g:12000,lifespan_years:10,category:'Transport',
+  bicycle:{name:'Bicycle (commuter)',icon:'🚲',retail_price:500,weight_g:12000,lifespan_years:10,category:'Transport',
     components:[
       {material:'Steel',component:'Frame, fork',quantity_g:6000,cost_usd:40.80,pct_of_cost:8.16,source_countries:['TW','CN','JP'],esg_risk:50,carbon_g:11100,water_l:1200,recyclable:true,recycling_rate:0.90,commodity_id:'STEEL'},
       {material:'Aluminum',component:'Handlebars, rims, seatpost',quantity_g:2500,cost_usd:5.88,pct_of_cost:1.18,source_countries:['TW','CN'],esg_risk:55,carbon_g:22500,water_l:1250,recyclable:true,recycling_rate:0.75,commodity_id:'ALUMINUM'},
@@ -275,7 +275,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:75,landfill_pct:15,incinerated_pct:10,toxic_materials:['Rubber (tire burning)'],total_recoverable_usd:15.00,recycling_cost_usd:5.00},
     externalities:{carbon_total_kg:45,water_total_l:5000,land_total_m2:0.1,conflict_minerals_count:0,child_labor_exposure:false}},
-  electric_scooter:{name:'Electric Scooter',icon:'\u{1F6F4}',retail_price:450,weight_g:14000,lifespan_years:4,category:'Transport',
+  electric_scooter:{name:'Electric Scooter',icon:'🛴',retail_price:450,weight_g:14000,lifespan_years:4,category:'Transport',
     components:[
       {material:'Aluminum',component:'Frame, deck',quantity_g:5000,cost_usd:11.75,pct_of_cost:2.61,source_countries:['CN'],esg_risk:55,carbon_g:45000,water_l:2500,recyclable:true,recycling_rate:0.75,commodity_id:'ALUMINUM'},
       {material:'Lithium',component:'Battery cells',quantity_g:150,cost_usd:1.80,pct_of_cost:0.40,source_countries:['CN','AU'],esg_risk:55,carbon_g:1800,water_l:240,recyclable:true,recycling_rate:0.05,commodity_id:'LITHIUM'},
@@ -290,7 +290,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:14,recycled_pct:30,landfill_pct:60,toxic_materials:['Lithium (fire risk)','Cobalt'],total_recoverable_usd:8.00,recycling_cost_usd:10.00},
     externalities:{carbon_total_kg:75,water_total_l:15000,land_total_m2:0.1,conflict_minerals_count:1,child_labor_exposure:true}},
-  yoga_mat:{name:'Yoga Mat (PVC)',icon:'\u{1F9D8}',retail_price:25,weight_g:1200,lifespan_years:3,category:'Consumer Goods',
+  yoga_mat:{name:'Yoga Mat (PVC)',icon:'🧘',retail_price:25,weight_g:1200,lifespan_years:3,category:'Consumer Goods',
     components:[
       {material:'PVC (polyvinyl chloride)',component:'Mat body',quantity_g:900,cost_usd:1.80,pct_of_cost:7.2,source_countries:['CN','TW'],esg_risk:65,carbon_g:2700,water_l:450,recyclable:false},
       {material:'Plasticizers (DOP/DINP)',component:'Softening agent',quantity_g:200,cost_usd:0.40,pct_of_cost:1.6,source_countries:['CN'],esg_risk:60,carbon_g:400,water_l:100},
@@ -304,7 +304,7 @@ const PRODUCT_ANATOMY = {
     end_of_life:{e_waste_kg:0,recycled_pct:2,landfill_pct:90,incinerated_pct:8,toxic_materials:['PVC (dioxins when burned)','Phthalates'],total_recoverable_usd:0.01,recycling_cost_usd:0.50},
     externalities:{carbon_total_kg:4.2,water_total_l:800,land_total_m2:0.01,conflict_minerals_count:0,child_labor_exposure:false},
     sustainable_alt:{name:'Natural Rubber/Cork Yoga Mat',benefit:'No PVC or phthalates, biodegradable, 40% lower carbon',price_premium:'+60%'}},
-  ceramic_tile:{name:'Ceramic Tile (1 m\u00B2)',icon:'\u{1F3E0}',retail_price:20,weight_g:18000,lifespan_years:50,category:'Construction',
+  ceramic_tile:{name:'Ceramic Tile (1 m\u00B2)',icon:'🏠',retail_price:20,weight_g:18000,lifespan_years:50,category:'Construction',
     components:[
       {material:'Clay',component:'Tile body',quantity_g:14000,cost_usd:1.40,pct_of_cost:7.0,source_countries:['IT','ES','CN','BR'],esg_risk:30,carbon_g:14000,water_l:2800},
       {material:'Feldspar',component:'Flux agent',quantity_g:2000,cost_usd:0.30,pct_of_cost:1.5,source_countries:['TR','IT','CN'],esg_risk:25,carbon_g:2000,water_l:400},
@@ -318,7 +318,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:20,landfill_pct:75,toxic_materials:['Lead (some glazes)'],total_recoverable_usd:0.50,recycling_cost_usd:1.00},
     externalities:{carbon_total_kg:28,water_total_l:4500,land_total_m2:0.5,conflict_minerals_count:0,child_labor_exposure:false}},
-  paint_can:{name:'Paint Can (1 gallon)',icon:'\u{1F3A8}',retail_price:35,weight_g:5500,lifespan_years:5,category:'Consumer Goods',
+  paint_can:{name:'Paint Can (1 gallon)',icon:'🎨',retail_price:35,weight_g:5500,lifespan_years:5,category:'Consumer Goods',
     components:[
       {material:'Titanium Dioxide (TiO2)',component:'White pigment',quantity_g:800,cost_usd:2.40,pct_of_cost:6.86,source_countries:['AU','ZA','CN'],esg_risk:50,carbon_g:4000,water_l:4800},
       {material:'Acrylic/Latex Resin',component:'Binder',quantity_g:1500,cost_usd:3.00,pct_of_cost:8.57,source_countries:['US','DE','CN'],esg_risk:45,carbon_g:4500,water_l:1500},
@@ -332,7 +332,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:15,landfill_pct:75,toxic_materials:['TiO2 nanoparticles','Biocides','VOCs (oil-based)'],total_recoverable_usd:0.10,recycling_cost_usd:1.00},
     externalities:{carbon_total_kg:12,water_total_l:8000,land_total_m2:0.05,conflict_minerals_count:0,child_labor_exposure:false}},
-  prescription_glasses:{name:'Prescription Glasses',icon:'\u{1F453}',retail_price:300,weight_g:30,lifespan_years:2,category:'Healthcare',
+  prescription_glasses:{name:'Prescription Glasses',icon:'👓',retail_price:300,weight_g:30,lifespan_years:2,category:'Healthcare',
     components:[
       {material:'Polycarbonate',component:'Lenses',quantity_g:8,cost_usd:5.00,pct_of_cost:1.67,source_countries:['US','JP','CN'],esg_risk:35,carbon_g:24,water_l:8},
       {material:'Acetate (cellulose)',component:'Frame',quantity_g:15,cost_usd:3.00,pct_of_cost:1.00,source_countries:['IT','CN','JP'],esg_risk:30,carbon_g:30,water_l:15},
@@ -346,7 +346,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:5,landfill_pct:90,toxic_materials:['Nickel (allergen)'],total_recoverable_usd:0.10,recycling_cost_usd:0.50},
     externalities:{carbon_total_kg:0.5,water_total_l:50,land_total_m2:0.001,conflict_minerals_count:0,child_labor_exposure:false}},
-  baby_diaper:{name:'Baby Diaper (single use)',icon:'\u{1F476}',retail_price:0.30,weight_g:45,lifespan_years:0.0003,category:'Consumer Goods',
+  baby_diaper:{name:'Baby Diaper (single use)',icon:'👶',retail_price:0.30,weight_g:45,lifespan_years:0.0003,category:'Consumer Goods',
     components:[
       {material:'Fluff Pulp',component:'Absorbent core',quantity_g:15,cost_usd:0.03,pct_of_cost:10.0,source_countries:['US','CA','BR','SE'],esg_risk:35,carbon_g:15,water_l:15},
       {material:'SAP (sodium polyacrylate)',component:'Super absorbent polymer',quantity_g:10,cost_usd:0.04,pct_of_cost:13.3,source_countries:['JP','DE','CN'],esg_risk:40,carbon_g:30,water_l:20},
@@ -361,7 +361,7 @@ const PRODUCT_ANATOMY = {
     end_of_life:{e_waste_kg:0,recycled_pct:0,landfill_pct:95,incinerated_pct:5,toxic_materials:['SAP (non-biodegradable)','Dioxins (incineration)'],total_recoverable_usd:0,recycling_cost_usd:0.02},
     externalities:{carbon_total_kg:0.55,water_total_l:50,land_total_m2:0.01,conflict_minerals_count:0,child_labor_exposure:false},
     sustainable_alt:{name:'Cloth/Reusable Diaper',benefit:'500x less landfill waste, 30% lower lifetime carbon',price_premium:'+300% upfront, -60% lifetime'}},
-  paper_book:{name:'Paper Book (300 pages)',icon:'\u{1F4D6}',retail_price:18,weight_g:400,lifespan_years:50,category:'Consumer Goods',
+  paper_book:{name:'Paper Book (300 pages)',icon:'📖',retail_price:18,weight_g:400,lifespan_years:50,category:'Consumer Goods',
     components:[
       {material:'Paper (wood pulp)',component:'Pages',quantity_g:350,cost_usd:0.70,pct_of_cost:3.89,source_countries:['US','CA','FI','BR'],esg_risk:35,carbon_g:350,water_l:3500},
       {material:'Printing Ink',component:'Text and images',quantity_g:15,cost_usd:0.30,pct_of_cost:1.67,source_countries:['US','DE','JP'],esg_risk:30,carbon_g:30},
@@ -373,7 +373,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:68,landfill_pct:27,incinerated_pct:5,toxic_materials:['Ink chemicals (minor)'],total_recoverable_usd:0.05,recycling_cost_usd:0.02},
     externalities:{carbon_total_kg:1.2,water_total_l:4500,land_total_m2:1.5,conflict_minerals_count:0,child_labor_exposure:false}},
-  led_lightbulb:{name:'LED Lightbulb (10W)',icon:'\u{1F4A1}',retail_price:5,weight_g:70,lifespan_years:11,category:'Electronics',
+  led_lightbulb:{name:'LED Lightbulb (10W)',icon:'💡',retail_price:5,weight_g:70,lifespan_years:11,category:'Electronics',
     components:[
       {material:'LED Chip (GaN/InGaN)',component:'Light emitter',quantity_g:0.5,cost_usd:0.30,pct_of_cost:6.0,source_countries:['CN','JP','KR','US'],esg_risk:40,carbon_g:5,water_l:50},
       {material:'Aluminum',component:'Heat sink',quantity_g:20,cost_usd:0.05,pct_of_cost:1.0,source_countries:['CN'],esg_risk:55,carbon_g:180,water_l:10,recyclable:true,recycling_rate:0.75,commodity_id:'ALUMINUM'},
@@ -388,7 +388,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0.07,recycled_pct:10,landfill_pct:85,toxic_materials:['Lead (solder)','Gallium compounds'],total_recoverable_usd:0.02,recycling_cost_usd:0.20},
     externalities:{carbon_total_kg:0.8,water_total_l:250,land_total_m2:0.001,conflict_minerals_count:1,child_labor_exposure:false}},
-  office_chair:{name:'Office Chair (ergonomic)',icon:'\u{1FA91}',retail_price:400,weight_g:18000,lifespan_years:10,category:'Industrial',
+  office_chair:{name:'Office Chair (ergonomic)',icon:'🪑',retail_price:400,weight_g:18000,lifespan_years:10,category:'Industrial',
     components:[
       {material:'Steel',component:'Base, gas cylinder, mechanism',quantity_g:8000,cost_usd:5.44,pct_of_cost:1.36,source_countries:['CN','TW'],esg_risk:50,carbon_g:14800,water_l:1600,recyclable:true,recycling_rate:0.90,commodity_id:'STEEL'},
       {material:'Aluminum',component:'Armrests, star base',quantity_g:2000,cost_usd:4.70,pct_of_cost:1.18,source_countries:['CN'],esg_risk:55,carbon_g:18000,water_l:1000,recyclable:true,recycling_rate:0.75,commodity_id:'ALUMINUM'},
@@ -403,7 +403,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:30,landfill_pct:60,incinerated_pct:10,toxic_materials:['PU foam (isocyanates)','Gas cylinder oil'],total_recoverable_usd:5.00,recycling_cost_usd:8.00},
     externalities:{carbon_total_kg:60,water_total_l:12000,land_total_m2:0.1,conflict_minerals_count:0,child_labor_exposure:false}},
-  running_shoes:{name:'Running Shoes (pair)',icon:'\u{1F45F}',retail_price:130,weight_g:520,lifespan_years:1.5,category:'Textiles',
+  running_shoes:{name:'Running Shoes (pair)',icon:'👟',retail_price:130,weight_g:520,lifespan_years:1.5,category:'Textiles',
     components:[
       {material:'EVA Foam',component:'Midsole',quantity_g:200,cost_usd:2.00,pct_of_cost:1.54,source_countries:['VN','CN','ID'],esg_risk:40,carbon_g:600,water_l:200},
       {material:'Rubber',component:'Outsole',quantity_g:120,cost_usd:1.20,pct_of_cost:0.92,source_countries:['TH','VN'],esg_risk:45,carbon_g:240,water_l:24},
@@ -419,7 +419,7 @@ const PRODUCT_ANATOMY = {
     end_of_life:{e_waste_kg:0,recycled_pct:5,landfill_pct:88,incinerated_pct:7,toxic_materials:['Adhesive VOCs','EVA decomposition'],total_recoverable_usd:0.02,recycling_cost_usd:0.80},
     externalities:{carbon_total_kg:14,water_total_l:800,land_total_m2:0.5,conflict_minerals_count:0,child_labor_exposure:false},
     sustainable_alt:{name:'Allbirds / Plant-Based Running Shoe',benefit:'Bio-based materials, 30% lower carbon, carbon neutral',price_premium:'+15%'}},
-  lipstick:{name:'Lipstick (cosmetic)',icon:'\u{1F484}',retail_price:28,weight_g:15,lifespan_years:1,category:'Consumer Goods',
+  lipstick:{name:'Lipstick (cosmetic)',icon:'💄',retail_price:28,weight_g:15,lifespan_years:1,category:'Consumer Goods',
     components:[
       {material:'Wax (beeswax/carnauba)',component:'Structure base',quantity_g:4,cost_usd:0.20,pct_of_cost:0.71,source_countries:['BR','CN','US'],esg_risk:30,carbon_g:8,water_l:4},
       {material:'Oils (castor, jojoba)',component:'Moisturizing base',quantity_g:3,cost_usd:0.15,pct_of_cost:0.54,source_countries:['IN','US','IL'],esg_risk:25,carbon_g:6,water_l:30},
@@ -435,7 +435,7 @@ const PRODUCT_ANATOMY = {
     ],
     end_of_life:{e_waste_kg:0,recycled_pct:2,landfill_pct:95,toxic_materials:['Microplastics','Fragrance chemicals'],total_recoverable_usd:0.01,recycling_cost_usd:0.15},
     externalities:{carbon_total_kg:0.8,water_total_l:120,land_total_m2:0.01,conflict_minerals_count:0,child_labor_exposure:true}},
-  wooden_furniture:{name:'Wooden Desk',icon:'\u{1FA91}',retail_price:350,weight_g:25000,lifespan_years:20,category:'Industrial',
+  wooden_furniture:{name:'Wooden Desk',icon:'🪑',retail_price:350,weight_g:25000,lifespan_years:20,category:'Industrial',
     components:[
       {material:'Oak/Pine Wood',component:'Desktop, legs, frame',quantity_g:20000,cost_usd:40.00,pct_of_cost:11.4,source_countries:['US','RU','CA','DE'],esg_risk:35,carbon_g:6000,water_l:40000,commodity_id:'TIMBER'},
       {material:'MDF/Particleboard',component:'Shelves, drawer bottoms',quantity_g:3000,cost_usd:3.00,pct_of_cost:0.86,source_countries:['CN','EU'],esg_risk:40,carbon_g:3000,water_l:3000},

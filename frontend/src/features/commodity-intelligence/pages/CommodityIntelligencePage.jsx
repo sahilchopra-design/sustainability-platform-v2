@@ -13,7 +13,7 @@ const CAT_COLORS=['#16a34a','#dc2626','#7c3aed','#d97706','#6b7280','#c5a96a','#
 
 /* ================================================================= DATA: 120 COMMODITIES */
 const COMMODITY_UNIVERSE = {
-  carbon:{name:'Carbon Markets',color:'#16a34a',icon:'\u{1F33F}',commodities:[
+  carbon:{name:'Carbon Markets',color:'#16a34a',icon:'🌿',commodities:[
     {id:'EUA',name:'EU ETS Carbon (EUA)',unit:'EUR/tCO\u2082e',price:88.50,ytd_change:12.5,eodhd_ticker:'EUA.COMM',category:'Compliance',global_volume_mt:1400,description:'EU Emissions Trading System allowance',vintage_2020:25.0,vintage_2021:52.0,vintage_2022:80.0,vintage_2023:85.0,vintage_2024:88.5,supply_mt:1400,demand_mt:1350,balance_mt:50,vol_30d:18.2},
     {id:'UKA',name:'UK ETS Carbon (UKA)',unit:'GBP/tCO\u2082e',price:42.30,ytd_change:-5.2,category:'Compliance',global_volume_mt:120,vintage_2023:48.0,vintage_2024:42.3,supply_mt:120,demand_mt:115,balance_mt:5,vol_30d:22.1},
     {id:'CCA',name:'California Carbon (CCA)',unit:'USD/tCO\u2082e',price:38.50,ytd_change:8.1,category:'Compliance',global_volume_mt:320,vintage_2023:35.0,vintage_2024:38.5,supply_mt:320,demand_mt:310,balance_mt:10,vol_30d:12.5},
@@ -68,7 +68,7 @@ const COMMODITY_UNIVERSE = {
     {id:'LITHIUM_HYDROXIDE',name:'Lithium Hydroxide',unit:'USD/t',price:14200,ytd_change:-60.0,ev_relevance:'High-nickel battery cathode',supply_mt:85,demand_mt:80,balance_mt:5,vol_30d:40.0},
     {id:'SPODUMENE',name:'Spodumene Concentrate',unit:'USD/t',price:1050,ytd_change:-72.0,ev_relevance:'Lithium feedstock',supply_mt:65,demand_mt:60,balance_mt:5,vol_30d:45.0},
   ]},
-  agricultural_deforestation:{name:'Agricultural (EUDR)',color:'#d97706',icon:'\u{1F33E}',commodities:[
+  agricultural_deforestation:{name:'Agricultural (EUDR)',color:'#d97706',icon:'🌾',commodities:[
     {id:'PALM_OIL',name:'Palm Oil',unit:'USD/t',price:850,ytd_change:12.0,deforestation_risk:'Very High',eudr_regulated:true,top_producers:['ID','MY'],annual_deforestation_ha:680000,supply_mt:77000,demand_mt:75000,balance_mt:2000,vol_30d:18.0},
     {id:'SOY',name:'Soybean',unit:'USD/bushel',price:10.25,ytd_change:-5.0,eodhd_ticker:'ZS.COMM',deforestation_risk:'High',eudr_regulated:true,top_producers:['BR','US','AR'],supply_mt:395000,demand_mt:380000,balance_mt:15000,vol_30d:15.0},
     {id:'COCOA',name:'Cocoa',unit:'USD/t',price:8500,ytd_change:120.0,deforestation_risk:'High',eudr_regulated:true,child_labor_risk:'High',top_producers:['CI','GH','ID'],supply_mt:5200,demand_mt:5400,balance_mt:-200,vol_30d:38.0},
@@ -82,7 +82,7 @@ const COMMODITY_UNIVERSE = {
     {id:'CANOLA',name:'Canola / Rapeseed',unit:'CAD/t',price:620,ytd_change:-10.0,supply_mt:87000,demand_mt:85000,balance_mt:2000,vol_30d:18.0},
     {id:'SUNFLOWER',name:'Sunflower Oil',unit:'USD/t',price:920,ytd_change:-12.0,supply_mt:21000,demand_mt:20000,balance_mt:1000,vol_30d:20.0},
   ]},
-  metals:{name:'Industrial Metals',color:'#6b7280',icon:'\u{1F529}',commodities:[
+  metals:{name:'Industrial Metals',color:'#6b7280',icon:'🔩',commodities:[
     {id:'STEEL',name:'Steel (HRC)',unit:'USD/t',price:680,ytd_change:-12.0,green_premium:25,h2_steel_price:850,supply_mt:1900000,demand_mt:1850000,balance_mt:50000,vol_30d:15.0},
     {id:'ALUMINUM',name:'Aluminum',unit:'USD/t',price:2350,ytd_change:3.5,eodhd_ticker:'AL.COMM',green_premium:15,supply_mt:70000,demand_mt:69000,balance_mt:1000,vol_30d:14.0},
     {id:'IRON_ORE',name:'Iron Ore (62% Fe)',unit:'USD/t',price:110,ytd_change:-18.0,eodhd_ticker:'TIO.COMM',supply_mt:2400000,demand_mt:2300000,balance_mt:100000,vol_30d:22.0},
@@ -96,7 +96,7 @@ const COMMODITY_UNIVERSE = {
     {id:'BISMUTH',name:'Bismuth',unit:'USD/lb',price:6.50,ytd_change:10.0,supply_mt:18,demand_mt:16,balance_mt:2,vol_30d:12.0},
     {id:'STAINLESS_STEEL',name:'Stainless Steel (304)',unit:'USD/t',price:2450,ytd_change:-5.0,supply_mt:58000,demand_mt:56000,balance_mt:2000,vol_30d:14.0},
   ]},
-  precious:{name:'Precious Metals',color:'#c5a96a',icon:'\u{1F947}',commodities:[
+  precious:{name:'Precious Metals',color:'#c5a96a',icon:'🥇',commodities:[
     {id:'GOLD',name:'Gold',unit:'USD/oz',price:2650,ytd_change:28.0,eodhd_ticker:'GC.COMM',av_function:'GOLD',supply_mt:3.6,demand_mt:4.9,balance_mt:-1.3,vol_30d:12.0},
     {id:'SILVER',name:'Silver',unit:'USD/oz',price:31.50,ytd_change:32.0,eodhd_ticker:'SI.COMM',av_function:'SILVER',supply_mt:26,demand_mt:30,balance_mt:-4,vol_30d:22.0},
     {id:'PLATINUM',name:'Platinum',unit:'USD/oz',price:985,ytd_change:-5.0,ev_relevance:'Fuel cell catalysts',supply_mt:0.19,demand_mt:0.24,balance_mt:-0.05,vol_30d:18.0},
@@ -105,7 +105,7 @@ const COMMODITY_UNIVERSE = {
     {id:'IRIDIUM',name:'Iridium',unit:'USD/oz',price:4900,ytd_change:5.0,ev_relevance:'PEM electrolyzers for H2',supply_mt:0.007,demand_mt:0.008,balance_mt:-0.001,vol_30d:15.0},
     {id:'RUTHENIUM',name:'Ruthenium',unit:'USD/oz',price:450,ytd_change:10.0,supply_mt:0.03,demand_mt:0.028,balance_mt:0.002,vol_30d:18.0},
   ]},
-  water_food:{name:'Water & Food',color:'#06b6d4',icon:'\u{1F4A7}',commodities:[
+  water_food:{name:'Water & Food',color:'#06b6d4',icon:'💧',commodities:[
     {id:'WHEAT',name:'Wheat',unit:'USD/bushel',price:5.85,ytd_change:-10.0,eodhd_ticker:'ZW.COMM',food_security:'Critical',climate_sensitivity:'Very High',supply_mt:800000,demand_mt:795000,balance_mt:5000,vol_30d:20.0},
     {id:'CORN',name:'Corn',unit:'USD/bushel',price:4.35,ytd_change:-8.0,eodhd_ticker:'ZC.COMM',food_security:'Critical',supply_mt:1200000,demand_mt:1180000,balance_mt:20000,vol_30d:18.0},
     {id:'RICE',name:'Rice',unit:'USD/cwt',price:15.20,ytd_change:5.0,food_security:'Critical',populations_dependent:'3.5B',supply_mt:520000,demand_mt:515000,balance_mt:5000,vol_30d:12.0},
@@ -131,7 +131,7 @@ const COMMODITY_UNIVERSE = {
     {id:'PEPPER',name:'Black Pepper',unit:'USD/t',price:5200,ytd_change:45.0,supply_mt:550,demand_mt:580,balance_mt:-30,vol_30d:25.0},
     {id:'CASHEW',name:'Cashew Nuts',unit:'USD/lb',price:4.50,ytd_change:12.0,supply_mt:3600,demand_mt:3500,balance_mt:100,vol_30d:16.0},
   ]},
-  construction:{name:'Construction',color:'#8b5cf6',icon:'\u{1F3D7}\uFE0F',commodities:[
+  construction:{name:'Construction',color:'#8b5cf6',icon:'🏗',commodities:[
     {id:'CEMENT',name:'Cement',unit:'USD/t',price:125,ytd_change:3.0,co2_per_tonne:0.62,eu_taxonomy_threshold:0.469,supply_mt:4200000,demand_mt:4100000,balance_mt:100000,vol_30d:8.0},
     {id:'SAND',name:'Sand & Gravel',unit:'USD/t',price:12,ytd_change:2.0,ecosystem_impact:'River erosion, habitat destruction',supply_mt:50000000,demand_mt:48000000,balance_mt:2000000,vol_30d:5.0},
     {id:'GLASS',name:'Flat Glass',unit:'USD/t',price:450,ytd_change:5.0,recycling_rate:0.34,supply_mt:75000,demand_mt:73000,balance_mt:2000,vol_30d:10.0},
@@ -141,7 +141,7 @@ const COMMODITY_UNIVERSE = {
     {id:'REBAR',name:'Steel Rebar',unit:'USD/t',price:580,ytd_change:-8.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:14.0},
     {id:'CONCRETE',name:'Ready-Mix Concrete',unit:'USD/m3',price:150,ytd_change:5.0,co2_per_tonne:0.30,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:6.0},
   ]},
-  energy_transition:{name:'Energy Transition',color:'#14b8a6',icon:'\u{1F50B}',commodities:[
+  energy_transition:{name:'Energy Transition',color:'#14b8a6',icon:'🔋',commodities:[
     {id:'SOLAR_POLY',name:'Polysilicon (Solar Grade)',unit:'USD/kg',price:7.20,ytd_change:-30.0,supply_mt:1200,demand_mt:1100,balance_mt:100,vol_30d:28.0},
     {id:'SOLAR_WAFER',name:'Solar Wafer (182mm)',unit:'USD/pc',price:0.18,ytd_change:-40.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:32.0},
     {id:'SOLAR_CELL',name:'Solar Cell (PERC)',unit:'USD/W',price:0.035,ytd_change:-35.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:30.0},
@@ -158,14 +158,14 @@ const COMMODITY_UNIVERSE = {
     {id:'SAF',name:'Sustainable Aviation Fuel',unit:'USD/gal',price:6.50,ytd_change:5.0,supply_mt:0.3,demand_mt:0.5,balance_mt:-0.2,vol_30d:18.0},
     {id:'BIOCHAR',name:'Biochar (Carbon Removal)',unit:'USD/t',price:250,ytd_change:15.0,supply_mt:0.1,demand_mt:0.15,balance_mt:-0.05,vol_30d:22.0},
   ]},
-  shipping_freight:{name:'Shipping & Freight',color:'#ec4899',icon:'\u{1F6A2}',commodities:[
+  shipping_freight:{name:'Shipping & Freight',color:'#ec4899',icon:'🚢',commodities:[
     {id:'BDI',name:'Baltic Dry Index',unit:'Index',price:1420,ytd_change:-15.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:30.0},
     {id:'VLCC',name:'VLCC Tanker Rate',unit:'USD/day',price:42000,ytd_change:10.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:35.0},
     {id:'CONTAINER_40FT',name:'Container Rate (40ft FEU)',unit:'USD/FEU',price:3200,ytd_change:65.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:40.0},
     {id:'BUNKER_VLSFO',name:'Bunker Fuel (VLSFO)',unit:'USD/t',price:580,ytd_change:-8.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:18.0},
     {id:'SCFI',name:'Shanghai Container Freight Index',unit:'Index',price:2100,ytd_change:55.0,supply_mt:0,demand_mt:0,balance_mt:0,vol_30d:38.0},
   ]},
-  chemicals:{name:'Chemicals & Polymers',color:'#f59e0b',icon:'\u{2697}\uFE0F',commodities:[
+  chemicals:{name:'Chemicals & Polymers',color:'#f59e0b',icon:'⚗',commodities:[
     {id:'ETHYLENE',name:'Ethylene',unit:'USD/t',price:980,ytd_change:-8.0,supply_mt:210000,demand_mt:205000,balance_mt:5000,vol_30d:16.0},
     {id:'PROPYLENE',name:'Propylene',unit:'USD/t',price:920,ytd_change:-5.0,supply_mt:130000,demand_mt:128000,balance_mt:2000,vol_30d:14.0},
     {id:'BENZENE',name:'Benzene',unit:'USD/gal',price:3.20,ytd_change:5.0,supply_mt:55000,demand_mt:54000,balance_mt:1000,vol_30d:18.0},

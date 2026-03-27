@@ -31,12 +31,15 @@ const TIME_PERIODS = {
 };
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
-const masterLookup = {};
-GLOBAL_COMPANY_MASTER.forEach(c => { masterLookup[c.ticker] = c; });
+let _masterLookup = null;
+function getMasterLookup() {
+  if (!_masterLookup) { _masterLookup = {}; GLOBAL_COMPANY_MASTER.forEach(c => { _masterLookup[c.ticker] = c; }); }
+  return _masterLookup;
+}
 
 function enrichFromMaster(holding) {
   const ticker = holding.company?.ticker;
-  const master = ticker ? masterLookup[ticker] : null;
+  const master = ticker ? getMasterLookup()[ticker] : null;
   if (!master) return holding;
   return {
     ...holding,

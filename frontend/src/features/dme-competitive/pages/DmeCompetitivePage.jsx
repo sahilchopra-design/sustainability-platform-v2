@@ -99,9 +99,11 @@ function estimateRatings(composite) {
   return { msci, sustainalytics, spGlobal };
 }
 
-/* ── Get unique sectors ──────────────────────────────────────────────────── */
-const ALL_SECTORS = [...new Set(GLOBAL_COMPANY_MASTER.map(c => c.sector).filter(Boolean))].sort();
-const ENRICHED_MASTER = GLOBAL_COMPANY_MASTER.map((c, i) => enrichCompany(c, i));
+/* ── Get unique sectors (lazy to avoid TDZ issues with module init order) ─ */
+let _SECTORS_CACHE = null;
+let _ENRICHED_CACHE = null;
+function getAllSectors() { if (!_SECTORS_CACHE) _SECTORS_CACHE = [...new Set(GLOBAL_COMPANY_MASTER.map(c => c.sector).filter(Boolean))].sort(); return _SECTORS_CACHE; }
+function getEnrichedMaster() { if (!_ENRICHED_CACHE) _ENRICHED_CACHE = GLOBAL_COMPANY_MASTER.map((c, i) => enrichCompany(c, i)); return _ENRICHED_CACHE; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -115,16 +117,16 @@ export default function DmeCompetitivePage() {
   const [sortDir, setSortDir] = useState('desc');
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return ENRICHED_MASTER.slice(0, 20);
+    if (!search.trim()) return getEnrichedMaster().slice(0, 20);
     const q = search.toLowerCase();
-    return ENRICHED_MASTER.filter(c => (c.company_name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q) || (c.sector || '').toLowerCase().includes(q)).slice(0, 50);
+    return getEnrichedMaster().filter(c => (c.company_name || '').toLowerCase().includes(q) || (c.ticker || '').toLowerCase().includes(q) || (c.sector || '').toLowerCase().includes(q)).slice(0, 50);
   }, [search]);
 
-  const selected = useMemo(() => filtered[selectedIdx] || ENRICHED_MASTER[0], [filtered, selectedIdx]);
+  const selected = useMemo(() => filtered[selectedIdx] || getEnrichedMaster()[0], [filtered, selectedIdx]);
 
   /* ── Sector peers ──────────────────────────────────────────────────────── */
   const sectorPeers = useMemo(() => {
-    return ENRICHED_MASTER.filter(c => c.sector === selected.sector);
+    return getEnrichedMaster().filter(c => c.sector === selected.sector);
   }, [selected]);
 
   /* ── Competitive score ─────────────────────────────────────────────────── */
@@ -191,7 +193,7 @@ export default function DmeCompetitivePage() {
   /* ── Cross-sector comparison ───────────────────────────────────────────── */
   const crossSectorScore = useMemo(() => {
     if (!crossSector) return null;
-    const crossPeers = ENRICHED_MASTER.filter(c => c.sector === crossSector);
+    const crossPeers = getEnrichedMaster().filter(c => c.sector === crossSector);
     if (crossPeers.length === 0) return null;
     return computeCompetitiveScore(selected, crossPeers);
   }, [selected, crossSector]);
@@ -574,7 +576,7 @@ export default function DmeCompetitivePage() {
               <div style={{ fontSize: 11, fontWeight: 600, color: T.textSec, marginBottom: 4, textTransform: 'uppercase' }}>Benchmark Sector</div>
               <select value={crossSector} onChange={e => setCrossSector(e.target.value)} style={{ width: '100%', padding: '8px 12px', border: `1px solid ${T.border}`, borderRadius: 8, fontSize: 13, background: T.surface, color: T.text, fontFamily: T.font }}>
                 <option value="">-- Select sector --</option>
-                {ALL_SECTORS.filter(s => s !== selected.sector).map(s => <option key={s} value={s}>{s}</option>)}
+                {getAllSectors().filter(s => s !== selected.sector).map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             {crossSectorScore ? (
