@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AD — Social & Just Transition
+import JustTransitionFinancePage from './features/just-transition-finance/pages/JustTransitionFinancePage';
+import HumanRightsRiskPage from './features/human-rights-risk/pages/HumanRightsRiskPage';
+import LivingWageTrackerPage from './features/living-wage-tracker/pages/LivingWageTrackerPage';
+import ModernSlaveryIntelPage from './features/modern-slavery-intel/pages/ModernSlaveryIntelPage';
+import CommunityImpactPage from './features/community-impact/pages/CommunityImpactPage';
+import WorkplaceHealthSafetyPage from './features/workplace-health-safety/pages/WorkplaceHealthSafetyPage';
 // Sprint AC — Nature, Environment & Physical Risk
 import NatureLossRiskPage from './features/nature-loss-risk/pages/NatureLossRiskPage';
 import WaterRiskAnalyticsPage from './features/water-risk-analytics/pages/WaterRiskAnalyticsPage';
@@ -412,6 +419,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Social & Just Transition', icon: '🤝', color: '#f97316', items: [
+    { path: '/just-transition-finance',  label: 'Just Transition Finance',        badge: '$2.4T Need · 45 Funds · 800M Workers · ILO Guidelines',  code: 'EP-AD1' },
+    { path: '/human-rights-risk',        label: 'Human Rights & Supply Chain',    badge: '40.3M Modern Slaves · CSDDD · UNGPs · LkSG',             code: 'EP-AD2' },
+    { path: '/living-wage-tracker',      label: 'Living Wage & Labour Standards', badge: 'Anker Benchmark · 67 Countries · Pay Transparency 2026',  code: 'EP-AD3' },
+    { path: '/modern-slavery-intel',     label: 'Modern Slavery Intelligence',    badge: '$236bn Profit · UFLPA · Walk Free · 11 ILO Indicators',   code: 'EP-AD4' },
+    { path: '/community-impact',         label: 'Community Impact & Social Value',badge: 'SROI 3.2x · FPIC · $780bn Spend · B Impact',              code: 'EP-AD5' },
+    { path: '/workplace-health-safety',  label: 'Workplace Health & Safety',      badge: '2.78M Deaths/yr · TRIR · ISO 45001 · Mental Health',      code: 'EP-AD6' },
   ]},
   { label: 'Nature & Physical Risk', icon: '🌿', color: '#16a34a', items: [
     { path: '/nature-loss-risk',        label: 'Nature & Biodiversity Risk',    badge: '847 Species · $44T GDP · TNFD LEAP · LEAP Framework',   code: 'EP-AC1' },
@@ -1122,6 +1137,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AD — Social & Just Transition */}
+            <Route path="/just-transition-finance"  element={<JustTransitionFinancePage />} />
+            <Route path="/human-rights-risk"        element={<HumanRightsRiskPage />} />
+            <Route path="/living-wage-tracker"      element={<LivingWageTrackerPage />} />
+            <Route path="/modern-slavery-intel"     element={<ModernSlaveryIntelPage />} />
+            <Route path="/community-impact"         element={<CommunityImpactPage />} />
+            <Route path="/workplace-health-safety"  element={<WorkplaceHealthSafetyPage />} />
             {/* Sprint AC — Nature, Environment & Physical Risk */}
             <Route path="/nature-loss-risk"         element={<NatureLossRiskPage />} />
             <Route path="/water-risk-analytics"     element={<WaterRiskAnalyticsPage />} />
