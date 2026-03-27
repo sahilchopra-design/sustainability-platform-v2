@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area, ScatterChart, Scatter, ZAxis } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
 
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', navy:'#1b3a5c', gold:'#c5a96a', sage:'#5a8a6a', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', teal:'#0f766e', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
@@ -108,7 +108,7 @@ export default function ClimateSovereignBondsPage() {
                   <YAxis tick={{ fontSize: 10, fill: T.textMut }} axisLine={false} tickLine={false} />
                   <Tooltip formatter={v => `$${v}bn`} contentStyle={tip} />
                   <Bar dataKey="outstanding" name="Outstanding ($bn)" radius={[4, 4, 0, 0]}>
-                    {SOVEREIGN_ISSUERS.map((s, i) => <Bar key={i} fill={s.region === 'Europe' ? T.teal : T.gold} />)}
+                    {SOVEREIGN_ISSUERS.map((s, i) => <Cell key={i} fill={s.region === 'Europe' ? T.teal : T.gold} />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>

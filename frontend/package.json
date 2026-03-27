@@ -28,6 +28,7 @@
     ]
   },
   "devDependencies": {
-    "react-app-rewired": "^2.2.1"
+    "react-app-rewired": "^2.2.1",
+    "serve": "^14.2.6"
   }
 }
