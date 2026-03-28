@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AH — Regulatory Reporting & Disclosure Automation
+import CsrdEsrsAutomationPage from './features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage';
+import SfdrV2ReportingPage from './features/sfdr-v2-reporting/pages/SfdrV2ReportingPage';
+import IssbDisclosurePage from './features/issb-disclosure/pages/IssbDisclosurePage';
+import UkSdrPage from './features/uk-sdr/pages/UkSdrPage';
+import SecClimateRulePage from './features/sec-climate-rule/pages/SecClimateRulePage';
+import DisclosureHubPage from './features/disclosure-hub/pages/DisclosureHubPage';
 // Sprint AG — Private Markets & Alternative Credit ESG
 import PeEsgDiligencePage from './features/pe-esg-diligence/pages/PeEsgDiligencePage';
 import PrivateCreditClimatePage from './features/private-credit-climate/pages/PrivateCreditClimatePage';
@@ -440,6 +447,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Regulatory Reporting & Disclosure', icon: '📋', color: '#7c3aed', items: [
+    { path: '/disclosure-hub',        label: 'Disclosure Hub',               badge: 'Hub · CSRD+SFDR+ISSB+SEC+UK · Audit Trail · Cross-Framework', code: 'EP-AH6' },
+    { path: '/csrd-esrs-automation',  label: 'CSRD / ESRS Automation',       badge: 'ESRS 2025 · iXBRL · 50k Cos · Double Materiality · Gap',      code: 'EP-AH1' },
+    { path: '/sfdr-v2-reporting',     label: 'SFDR v2 Reporting Engine',     badge: 'Art 6/8/9 · 18 PAIs · v2 Reform · RTS · Fund Classifier',     code: 'EP-AH2' },
+    { path: '/issb-disclosure',       label: 'ISSB / IFRS S1-S2 Disclosure', badge: 'IFRS S1/S2 · 20+ Jurisdictions · TCFD Superseded · Metrics',  code: 'EP-AH3' },
+    { path: '/uk-sdr',                label: 'UK SDR Labelling Engine',       badge: 'FCA 4 Labels · Anti-Greenwash · KPIs · SDR Compliance',        code: 'EP-AH4' },
+    { path: '/sec-climate-rule',      label: 'SEC Climate Rule Compliance',  badge: 'Reg S-K/S-X · March 2024 · Scopes · Financial Impact',         code: 'EP-AH5' },
   ]},
   { label: 'Private Markets ESG', icon: '🏢', color: '#0369a1', items: [
     { path: '/private-markets-esg-hub', label: 'Private Markets ESG Hub',    badge: 'Hub · PE+Credit+Infra+RE+VC · $8.4T AUM · ESG DD',        code: 'EP-AG6' },
@@ -1182,6 +1197,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AH — Regulatory Reporting & Disclosure Automation */}
+            <Route path="/disclosure-hub"       element={<DisclosureHubPage />} />
+            <Route path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />
+            <Route path="/sfdr-v2-reporting"    element={<SfdrV2ReportingPage />} />
+            <Route path="/issb-disclosure"      element={<IssbDisclosurePage />} />
+            <Route path="/uk-sdr"               element={<UkSdrPage />} />
+            <Route path="/sec-climate-rule"     element={<SecClimateRulePage />} />
             {/* Sprint AG — Private Markets & Alternative Credit ESG */}
             <Route path="/private-markets-esg-hub" element={<PrivateMarketsEsgHubPage />} />
             <Route path="/pe-esg-diligence"        element={<PeEsgDiligencePage />} />
