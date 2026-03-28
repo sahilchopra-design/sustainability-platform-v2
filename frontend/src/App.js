@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AO — Scope 4 / Avoided Emissions & Climate Solutions
+import Scope4AvoidedEmissionsPage from './features/scope4-avoided-emissions/pages/Scope4AvoidedEmissionsPage';
+import ProductCarbonHandprintPage from './features/product-carbon-handprint/pages/ProductCarbonHandprintPage';
+import EnablementMethodologyPage from './features/enablement-methodology/pages/EnablementMethodologyPage';
+import AvoidedEmissionsPortfolioPage from './features/avoided-emissions-portfolio/pages/AvoidedEmissionsPortfolioPage';
+import ClimateSolutionTaxonomyPage from './features/climate-solution-taxonomy/pages/ClimateSolutionTaxonomyPage';
+import AvoidedEmissionsHubPage from './features/avoided-emissions-hub/pages/AvoidedEmissionsHubPage';
 // Sprint AN — Sustainable Transport & Logistics Decarbonisation
 import MaritimeImoCompliancePage from './features/maritime-imo-compliance/pages/MaritimeImoCompliancePage';
 import AviationCorsiaPage from './features/aviation-corsia/pages/AviationCorsiaPage';
@@ -520,6 +527,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Avoided Emissions & Climate Solutions', icon: '💚', color: '#065f46', items: [
+    { path: '/avoided-emissions-hub',        label: 'Avoided Emissions Hub',        badge: 'Hub · Scope 4 · Handprint · Enablement · Taxonomy · Board',      code: 'EP-AO6' },
+    { path: '/scope4-avoided-emissions',     label: 'Scope 4 Avoided Emissions',    badge: '120 Cos · 10 Categories · WRI/ICF · Credibility · Calculator',    code: 'EP-AO1' },
+    { path: '/product-carbon-handprint',     label: 'Product Carbon Handprint',     badge: '80 Products · ISO 14067 · 6 Lifecycle Stages · Benchmarks',       code: 'EP-AO2' },
+    { path: '/enablement-methodology',       label: 'Enablement Methodology',       badge: '100 Products · PCAF Part C · Additionality · Portfolio',           code: 'EP-AO3' },
+    { path: '/avoided-emissions-portfolio',  label: 'Avoided Emissions Portfolio',  badge: '150 Holdings · Net Impact · Solution Exposure · Attribution',      code: 'EP-AO4' },
+    { path: '/climate-solution-taxonomy',    label: 'Climate Solution Taxonomy',    badge: '150 Cos · EU/CBI/FTSE · 12 Categories · Screening',               code: 'EP-AO5' },
   ]},
   { label: 'Sustainable Transport & Logistics', icon: '🚢', color: '#1e3a5f', items: [
     { path: '/sustainable-transport-hub',    label: 'Sustainable Transport Hub',    badge: 'Hub · Maritime+Aviation+EV+SAF · 200 Assets · CRM · Board',     code: 'EP-AN6' },
@@ -1384,6 +1399,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AO — Scope 4 / Avoided Emissions & Climate Solutions */}
+            <Route path="/avoided-emissions-hub"       element={<AvoidedEmissionsHubPage />} />
+            <Route path="/scope4-avoided-emissions"    element={<Scope4AvoidedEmissionsPage />} />
+            <Route path="/product-carbon-handprint"    element={<ProductCarbonHandprintPage />} />
+            <Route path="/enablement-methodology"      element={<EnablementMethodologyPage />} />
+            <Route path="/avoided-emissions-portfolio" element={<AvoidedEmissionsPortfolioPage />} />
+            <Route path="/climate-solution-taxonomy"   element={<ClimateSolutionTaxonomyPage />} />
             {/* Sprint AN — Sustainable Transport & Logistics Decarbonisation */}
             <Route path="/sustainable-transport-hub"  element={<SustainableTransportHubPage />} />
             <Route path="/maritime-imo-compliance"    element={<MaritimeImoCompliancePage />} />
