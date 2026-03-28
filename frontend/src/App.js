@@ -333,7 +333,7 @@ const T = {
 const PASTEL = ['#4a7faa','#5a9aaa','#5a8a6a','#7ba67d','#8a7a5a','#a08a5a','#c5a96a'];
 
 /* ═══════════════════════════════════════════════════════════════════
-   NAVIGATION DATA — 7 domains, 45 modules
+   NAVIGATION DATA — 38 domains, 180+ modules
    ═══════════════════════════════════════════════════════════════════ */
 const NAV_GROUPS = [
   { label: 'Climate Risk & Stress Testing', icon: '\u26A0\uFE0F', color: PASTEL[0], items: [
@@ -701,7 +701,7 @@ function Dashboard() {
         <div>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: T.navy, margin: 0, letterSpacing: '-0.02em' }}>Platform Overview</h1>
           <p style={{ color: T.textSec, fontSize: 13, marginTop: 6 }}>
-            AA Impact Inc. — A2 Intelligence Risk Analytics | 45 modules across 7 domains | 10 global regions
+            AA Impact Inc. — A2 Intelligence Risk Analytics | 180+ modules across 38 domains | 10 global regions
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eaf5ee', padding: '6px 14px', borderRadius: 20, border: '1px solid #c5e0cc' }}>
@@ -713,9 +713,9 @@ function Dashboard() {
       {/* KPI Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14, marginBottom: 28 }}>
         {[
-          { label: 'Active Modules', value: '45', sub: 'E76 — E120' },
-          { label: 'Regulatory Frameworks', value: '38+', sub: 'Global multi-jurisdictional' },
-          { label: 'API Endpoints', value: '250+', sub: 'FastAPI v0.110' },
+          { label: 'Active Modules', value: '180+', sub: 'Sprints A–AJ · 38 domains' },
+          { label: 'Regulatory Frameworks', value: '60+', sub: 'CSRD · SFDR · ISSB · SEC · TCFD' },
+          { label: 'API Endpoints', value: '400+', sub: 'FastAPI v0.110 · Supabase PG' },
           { label: 'Regions', value: '10', sub: 'APAC / GCC / Americas' },
           { label: 'Data Points', value: '1,222', sub: 'ESRS datapoints mapped' },
         ].map((s) => (
@@ -817,7 +817,7 @@ function Dashboard() {
       </div>
 
       {/* All Modules */}
-      <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 14 }}>All 45 Modules</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 14 }}>All {ALL_ITEMS.length} Modules</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 10 }}>
         {ALL_ITEMS.map(n => {
           const grp = NAV_GROUPS.find(g => g.items.includes(n));
@@ -911,7 +911,7 @@ function Sidebar({ search, setSearch, sidebarOpen }) {
 
       {/* Footer */}
       <div style={{ padding: '10px 14px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>45 Modules | 10 Regions</div>
+        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>{ALL_ITEMS.length} Modules | 10 Regions</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: T.sageL }} />
           <span style={{ fontSize: 9, color: T.sageL }}>LIVE</span>
@@ -1004,10 +1004,10 @@ function StatusBar() {
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL }} />
         CONNECTED
       </div>
-      <span>45 MODULES</span>
-      <span>30 PERSONAS</span>
+      <span>{ALL_ITEMS.length} MODULES</span>
+      <span>38 DOMAINS</span>
       <span>10 REGIONS</span>
-      <span>119 NOTION PAGES</span>
+      <span>60+ FRAMEWORKS</span>
       {current && <span style={{ color: T.goldL }}>{current.badge}</span>}
       <span style={{ marginLeft: 'auto', color: T.gold, fontWeight: 600 }}>AA IMPACT INC.</span>
     </div>
