@@ -233,6 +233,13 @@ import AbatementCostCurvePage from './features/abatement-cost-curve/pages/Abatem
 import EnergyTransitionAnalyticsPage from './features/energy-transition-analytics/pages/EnergyTransitionAnalyticsPage';
 import CarbonReductionProjectsPage from './features/carbon-reduction-projects/pages/CarbonReductionProjectsPage';
 import DecarbonisationHubPage from './features/decarbonisation-hub/pages/DecarbonisationHubPage';
+// Sprint AJ — Financed Emissions & Climate Banking Analytics
+import PcafFinancedEmissionsPage from './features/pcaf-financed-emissions/pages/PcafFinancedEmissionsPage';
+import ClimateStressTestPage from './features/climate-stress-test/pages/ClimateStressTestPage';
+import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRatioPage';
+import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
+import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
+import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
 // Sprint AH — Regulatory Reporting & Disclosure Automation
 import CsrdEsrsAutomationPage from './features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage';
 import SfdrV2ReportingPage from './features/sfdr-v2-reporting/pages/SfdrV2ReportingPage';
@@ -462,6 +469,14 @@ const NAV_GROUPS = [
     { path: '/abatement-cost-curve',          label: 'Abatement Cost Curve Builder',   badge: 'MACC · 30 Measures · 38 GtCO2e · $130/t Viable · 8 Sectors', code: 'EP-AI3' },
     { path: '/energy-transition-analytics',   label: 'Energy Transition Analytics',    badge: 'RE100 · 58% Renewable · 2,840 MW PPA · EV100 · EP100',        code: 'EP-AI4' },
     { path: '/carbon-reduction-projects',     label: 'Carbon Reduction Projects',      badge: '24 Projects · 847 ktCO2e/yr · $1.84bn · $54/tCO2e Avg',      code: 'EP-AI5' },
+  ]},
+  { label: 'Financed Emissions & Climate Banking', icon: '🏦', color: '#0c4a6e', items: [
+    { path: '/climate-banking-hub',          label: 'Climate Banking Hub',           badge: 'Hub · PCAF · GAR · Stress Test · Board Dashboard · NZBA',      code: 'EP-AJ6' },
+    { path: '/pcaf-financed-emissions',      label: 'PCAF Financed Emissions',       badge: 'PCAF v2 · 5 Asset Classes · DQS · 847 ktCO2e · WACI 312',     code: 'EP-AJ1' },
+    { path: '/climate-stress-test',          label: 'Climate Stress Test',           badge: 'NGFS IV · ECB/BoE · PD Migration · CET1 -2.8% · Delayed',      code: 'EP-AJ2' },
+    { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
+    { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
+    { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
   ]},
   { label: 'Regulatory Reporting & Disclosure', icon: '📋', color: '#7c3aed', items: [
     { path: '/disclosure-hub',        label: 'Disclosure Hub',               badge: 'Hub · CSRD+SFDR+ISSB+SEC+UK · Audit Trail · Cross-Framework', code: 'EP-AH6' },
@@ -1219,6 +1234,13 @@ function AppContent() {
             <Route path="/abatement-cost-curve"        element={<AbatementCostCurvePage />} />
             <Route path="/energy-transition-analytics" element={<EnergyTransitionAnalyticsPage />} />
             <Route path="/carbon-reduction-projects"   element={<CarbonReductionProjectsPage />} />
+            {/* Sprint AJ — Financed Emissions & Climate Banking Analytics */}
+            <Route path="/climate-banking-hub"           element={<ClimateBankingHubPage />} />
+            <Route path="/pcaf-financed-emissions"       element={<PcafFinancedEmissionsPage />} />
+            <Route path="/climate-stress-test"           element={<ClimateStressTestPage />} />
+            <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
+            <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
+            <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
             {/* Sprint AH — Regulatory Reporting & Disclosure Automation */}
             <Route path="/disclosure-hub"       element={<DisclosureHubPage />} />
             <Route path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />
