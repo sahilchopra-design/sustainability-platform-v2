@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AN — Sustainable Transport & Logistics Decarbonisation
+import MaritimeImoCompliancePage from './features/maritime-imo-compliance/pages/MaritimeImoCompliancePage';
+import AviationCorsiaPage from './features/aviation-corsia/pages/AviationCorsiaPage';
+import EvFleetFinancePage from './features/ev-fleet-finance/pages/EvFleetFinancePage';
+import SustainableAviationFuelPage from './features/sustainable-aviation-fuel/pages/SustainableAviationFuelPage';
+import TransportDecarbonisationPage from './features/transport-decarbonisation/pages/TransportDecarbonisationPage';
+import SustainableTransportHubPage from './features/sustainable-transport-hub/pages/SustainableTransportHubPage';
 // Sprint AM — Climate Fintech & Digital MRV Intelligence
 import DigitalMrvPage from './features/digital-mrv/pages/DigitalMrvPage';
 import SatelliteClimateMonitorPage from './features/satellite-climate-monitor/pages/SatelliteClimateMonitorPage';
@@ -513,6 +520,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Sustainable Transport & Logistics', icon: '🚢', color: '#1e3a5f', items: [
+    { path: '/sustainable-transport-hub',    label: 'Sustainable Transport Hub',    badge: 'Hub · Maritime+Aviation+EV+SAF · 200 Assets · CRM · Board',     code: 'EP-AN6' },
+    { path: '/maritime-imo-compliance',      label: 'Maritime IMO Compliance',      badge: '150 Vessels · CII A-E · EEXI · Poseidon · 10 Fuels · FuelEU',   code: 'EP-AN1' },
+    { path: '/aviation-corsia',              label: 'Aviation CORSIA',             badge: '120 Airlines · CORSIA Phases · Fleet Renewal · EU ETS Aviation',  code: 'EP-AN2' },
+    { path: '/ev-fleet-finance',             label: 'EV Fleet Finance',            badge: '90 Operators · TCO · 40 Charging Sites · Battery Economics',      code: 'EP-AN3' },
+    { path: '/sustainable-aviation-fuel',    label: 'Sustainable Aviation Fuel',   badge: '60 Producers · 8 Pathways · ReFuelEU · 30 Offtakes · CORSIA',    code: 'EP-AN4' },
+    { path: '/transport-decarbonisation',    label: 'Transport Decarbonisation',   badge: '100 Cos · 50 Routes · Modal Shift · GLEC · 8 Levers',            code: 'EP-AN5' },
   ]},
   { label: 'Climate Fintech & Digital MRV', icon: '📡', color: '#7c2d12', items: [
     { path: '/climate-fintech-hub',          label: 'Climate Fintech Hub',          badge: 'Hub · MRV+Satellite+Blockchain+IoT · Tech Landscape · Board',    code: 'EP-AM6' },
@@ -1369,6 +1384,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AN — Sustainable Transport & Logistics Decarbonisation */}
+            <Route path="/sustainable-transport-hub"  element={<SustainableTransportHubPage />} />
+            <Route path="/maritime-imo-compliance"    element={<MaritimeImoCompliancePage />} />
+            <Route path="/aviation-corsia"            element={<AviationCorsiaPage />} />
+            <Route path="/ev-fleet-finance"           element={<EvFleetFinancePage />} />
+            <Route path="/sustainable-aviation-fuel"  element={<SustainableAviationFuelPage />} />
+            <Route path="/transport-decarbonisation"  element={<TransportDecarbonisationPage />} />
             {/* Sprint AM — Climate Fintech & Digital MRV Intelligence */}
             <Route path="/climate-fintech-hub"        element={<ClimateFintechHubPage />} />
             <Route path="/digital-mrv"                element={<DigitalMrvPage />} />
