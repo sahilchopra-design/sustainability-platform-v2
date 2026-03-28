@@ -4,926 +4,1078 @@ import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,LineC
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 
-const TABS=['Migration Tracker','Momentum Signals','Provider Lead-Lag','Alpha Signal Builder'];
-const QUARTERS=['2024Q1','2024Q2','2024Q3','2024Q4','2025Q1','2025Q2','2025Q3','2025Q4'];
-const PROVIDERS=['MSCI','Sustainalytics','ISS','CDP','Moody\'s','S&P Global'];
+const PROVIDERS=['MSCI','S&P Global','Sustainalytics','ISS ESG','CDP','Refinitiv'];
 const PROV_COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.navyL];
+const QUARTERS=['Q1-24','Q2-24','Q3-24','Q4-24','Q1-25','Q2-25','Q3-25','Q4-25','Q1-26','Q2-26','Q3-26','Q4-26'];
 const RATINGS=['AAA','AA','A','BBB','BB','B','CCC'];
-const SECTORS=['Technology','Healthcare','Energy','Financials','Industrials','Consumer','Utilities','Materials'];
-const RATING_NUM={AAA:7,AA:6,A:5,BBB:4,BB:3,B:2,CCC:1};
-const NUM_RATING={7:'AAA',6:'AA',5:'A',4:'BBB',3:'BB',2:'B',1:'CCC'};
+const SECTORS=['Technology','Healthcare','Financials','Energy','Industrials','Consumer Disc.','Consumer Staples','Utilities','Materials','Real Estate','Telecom','Aerospace','Automotive','Mining','Agriculture'];
 
 const ESG_EVENTS=[
-  {id:0,name:'EU CSRD Enforcement',quarter:'2024Q1',type:'Regulatory',severity:'High'},
-  {id:1,name:'Major Oil Spill Incident',quarter:'2024Q1',type:'Environmental',severity:'Critical'},
-  {id:2,name:'ISSB Standards Adopted',quarter:'2024Q2',type:'Regulatory',severity:'High'},
-  {id:3,name:'Tech Labor Controversy',quarter:'2024Q2',type:'Social',severity:'Medium'},
-  {id:4,name:'Green Bond Market Surge',quarter:'2024Q3',type:'Market',severity:'Medium'},
-  {id:5,name:'SEC Climate Rule Final',quarter:'2024Q3',type:'Regulatory',severity:'High'},
-  {id:6,name:'Scope 3 Reporting Scandal',quarter:'2024Q4',type:'Environmental',severity:'Critical'},
-  {id:7,name:'AI Ethics Framework Launch',quarter:'2025Q1',type:'Governance',severity:'Medium'},
-  {id:8,name:'Biodiversity COP Accord',quarter:'2025Q2',type:'Environmental',severity:'High'},
-  {id:9,name:'Carbon Tax Expansion EU',quarter:'2025Q3',type:'Regulatory',severity:'High'}
+  {id:1,name:'EU CSRD Enforcement Wave',type:'Governance',quarter:'Q2-24',desc:'Mandatory CSRD reporting triggered mass re-ratings across EU-listed firms'},
+  {id:2,name:'Texas Chemical Spill',type:'Environmental',quarter:'Q1-24',desc:'Major industrial accident impacting 12 downstream chemical companies'},
+  {id:3,name:'Amazon Deforestation Report',type:'Environmental',quarter:'Q3-24',desc:'Satellite data revealed accelerated deforestation linked to agricultural supply chains'},
+  {id:4,name:'Big Tech Labor Audit',type:'Social',quarter:'Q4-24',desc:'Whistleblower disclosures on contractor working conditions at 5 major tech firms'},
+  {id:5,name:'SEC Climate Rule Final',type:'Governance',quarter:'Q1-25',desc:'SEC finalized climate disclosure requirements for US-listed companies'},
+  {id:6,name:'Fukushima Water Release Phase 3',type:'Environmental',quarter:'Q2-25',desc:'Ongoing treated water discharge impacting seafood and shipping supply chains'},
+  {id:7,name:'EU Taxonomy Update v3',type:'Governance',quarter:'Q3-25',desc:'Expanded taxonomy criteria changed green eligibility for 200+ firms'},
+  {id:8,name:'Global Plastics Treaty',type:'Environmental',quarter:'Q4-25',desc:'UN plastics treaty signed, creating new obligations for packaging and materials sectors'},
+  {id:9,name:'Indian Labor Rights Act',type:'Social',quarter:'Q1-26',desc:'Sweeping labor reforms in India impacting IT outsourcing and manufacturing firms'},
+  {id:10,name:'Boeing Safety Crisis',type:'Governance',quarter:'Q2-24',desc:'Manufacturing defects and cover-up led to governance downgrades across aerospace'},
+  {id:11,name:'PFAS Litigation Wave',type:'Environmental',quarter:'Q3-24',desc:'Forever chemicals lawsuits expanded to 50+ defendant companies across sectors'},
+  {id:12,name:'AI Ethics Controversy',type:'Social',quarter:'Q2-25',desc:'Major AI firms downgraded on algorithmic bias, privacy, and job displacement concerns'},
+  {id:13,name:'Mining Dam Collapse Brazil',type:'Environmental',quarter:'Q4-24',desc:'Catastrophic tailings dam failure killing 40+ and contaminating water supply'},
+  {id:14,name:'Board Diversity Mandate EU',type:'Governance',quarter:'Q1-25',desc:'40% gender diversity requirement enforced with fines for non-compliance'},
+  {id:15,name:'Greenwashing Crackdown',type:'Governance',quarter:'Q2-26',desc:'Regulators fined 30+ firms across EU and US for misleading ESG claims'},
 ];
 
-const COMPANY_NAMES=['NovaTech','GreenPulse','AquaGen','SolarVista','BioHarvest','CloudNine','EcoForge','DataStream','WindCraft','TerraCore',
-  'QuantumLeap','PureWater','ElectraGrid','NanoSynth','AgriSmart','CyberShield','OceanWave','FusionPower','MediCore','UrbanGreen',
-  'SkyBridge','DeepMine','CleanAir','RoboFarm','GeneVault','SpaceLink','HydroFlow','SilverPeak','IronClad','PixelForge',
-  'ThunderBolt','CrystalNet','BluePlanet','SwiftLogic','GoldLeaf','PrimeFuel','AlphaGrid','BetaWorks','GammaLabs','DeltaChem',
-  'EpsilonAI','ZetaEnergy','ThetaMed','IotaStar','KappaFin','LambdaTech','MuBuild','NuPharm','XiMaterials','OmicronOps'];
+const COMPANY_NAMES=['NextEra Energy','Microsoft','Apple','Alphabet','Tesla','JPMorgan Chase','Johnson & Johnson','Procter & Gamble','ExxonMobil','Chevron',
+  'Bank of America','Pfizer','UnitedHealth','Walmart','Visa','Mastercard','Meta Platforms','Amazon','NVIDIA','Broadcom',
+  'Costco','Home Depot','Abbott Labs','Thermo Fisher','Danaher','Linde','Honeywell','Caterpillar','Deere & Co','3M',
+  'Boeing','Lockheed Martin','Raytheon','General Electric','Siemens','BASF','Bayer','SAP','ASML','LVMH',
+  'Toyota','Samsung','TSMC','Shell','BP','TotalEnergies','Rio Tinto','BHP Group','Glencore','Nestle',
+  'Unilever','Danone','Adidas','Nike','Starbucks','McDonalds','Coca-Cola','PepsiCo','Mondelez','Kraft Heinz',
+  'Goldman Sachs','Morgan Stanley','Citigroup','HSBC','Barclays','Deutsche Bank','BNP Paribas','ING Group','Credit Agricole','Societe Generale',
+  'AstraZeneca','Novartis','Roche','Merck','Eli Lilly','Amgen','Gilead Sciences','Bristol-Myers','Regeneron','Vertex Pharma',
+  'Duke Energy','Southern Company','Dominion Energy','AES Corp','Enphase Energy','First Solar','SunPower','Vestas Wind','Orsted','Iberdrola',
+  'Freeport-McMoRan','Newmont Mining','Alcoa','Nucor','CF Industries','Mosaic Co','Corteva','Archer Daniels','Bunge','Cargill',
+  'AT&T','Verizon','T-Mobile','Comcast','Walt Disney','Netflix','Spotify','Airbnb','Uber','Lyft',
+  'Salesforce','Adobe','Oracle','IBM','Cisco','Intel','AMD','Qualcomm','Texas Instruments','Micron',
+  'American Tower','Prologis','Equinix','Crown Castle','Simon Property','Digital Realty','CBRE Group','Weyerhaeuser','Realty Income','Vornado',
+  'Airbus','Northrop Grumman','BAE Systems','General Dynamics','L3Harris','Rolls-Royce','Safran','Leonardo DRS','Textron','RTX Corp',
+  'Syngenta','Bayer CropScience','FMC Corp','AGCO Corp','Deere Agriculture','Trimble','Lindsay Corp','Valmont Industries','Adecoagro','SLC Agricola'];
 
-const COMPANIES=Array.from({length:50},(_,i)=>({
-  id:i,name:COMPANY_NAMES[i],
-  sector:SECTORS[Math.floor(sr(i*13+5)*SECTORS.length)],
-  ticker:COMPANY_NAMES[i].substring(0,4).toUpperCase(),
-  mcap:Math.round((sr(i*41+7)*90+10)*100)/100,
-  region:['North America','Europe','Asia Pacific','Emerging Markets'][Math.floor(sr(i*23+11)*4)]
+const genCompanies=(count)=>COMPANY_NAMES.slice(0,count).map((name,i)=>({
+  id:i,name,sector:SECTORS[Math.floor(sr(i*7)*SECTORS.length)],
+  ratings:PROVIDERS.map((_p,pi)=>QUARTERS.map((_q,qi)=>{
+    const base=Math.floor(sr(i*100+pi*13+qi*3)*5)+1;
+    const drift=qi>0?(sr(i*200+pi*17+qi*11)>0.7?-1:sr(i*200+pi*17+qi*11)<0.15?1:0):0;
+    return Math.max(0,Math.min(6,base+drift));
+  })),
+  marketCap:Math.round(sr(i*31)*900+10),
 }));
 
-function genRatings(){
-  const data={};
-  COMPANIES.forEach(c=>{
-    data[c.id]={};
-    PROVIDERS.forEach((p,pi)=>{
-      const base=Math.floor(sr(c.id*17+pi*31)*4)+2;
-      const hist=[];
-      let cur=Math.min(7,Math.max(1,base));
-      QUARTERS.forEach((q,qi)=>{
-        const r=sr(c.id*113+pi*47+qi*29);
-        if(r<0.15&&cur<7) cur++;
-        else if(r<0.28&&cur>1) cur--;
-        hist.push({quarter:q,rating:NUM_RATING[cur],num:cur});
-      });
-      data[c.id][p]=hist;
-    });
+const COMPANIES=genCompanies(150);
+const rLabel=(idx)=>RATINGS[Math.max(0,Math.min(6,idx))]||'CCC';
+
+const migrationFor=(companies,provIdx,qFrom,qTo)=>{
+  const mat=Array.from({length:7},()=>Array(7).fill(0));
+  const details=Array.from({length:7},()=>Array.from({length:7},()=>[]));
+  companies.forEach(c=>{
+    const from=c.ratings[provIdx][qFrom];
+    const to=c.ratings[provIdx][qTo];
+    mat[from][to]++;
+    details[from][to].push(c.name);
   });
-  return data;
-}
+  return {mat,details};
+};
 
-/* ── shared styles ── */
-const btn=(active)=>({padding:'7px 16px',borderRadius:8,border:`1.5px solid ${active?T.navy:T.border}`,background:active?T.navy:T.surface,color:active?'#fff':T.text,fontFamily:T.font,fontSize:13,fontWeight:active?600:500,cursor:'pointer',transition:'all 0.2s'});
-const card={background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20,marginBottom:16};
-const badge=(color)=>({display:'inline-block',padding:'2px 10px',borderRadius:10,fontSize:11,fontWeight:600,background:color+'18',color,fontFamily:T.font});
-const inp={padding:'6px 12px',borderRadius:7,border:`1px solid ${T.border}`,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,outline:'none'};
-const thStyle={padding:'8px 12px',textAlign:'left',fontSize:12,fontWeight:600,color:T.textSec,borderBottom:`2px solid ${T.border}`,fontFamily:T.font,position:'sticky',top:0,background:T.surface,zIndex:1};
-const tdStyle={padding:'7px 12px',fontSize:13,borderBottom:`1px solid ${T.border}`,fontFamily:T.font,color:T.text};
-const kpiCard=(color)=>({...card,textAlign:'center',padding:16,borderTop:`3px solid ${color}`});
+const sty={
+  page:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px',color:T.text},
+  card:{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:'20px',marginBottom:16},
+  cardT:{fontSize:15,fontWeight:700,color:T.navy,marginBottom:12},
+  tab:{padding:'10px 20px',border:'none',borderRadius:'8px 8px 0 0',cursor:'pointer',fontSize:13,fontWeight:600,transition:'all 0.2s'},
+  tabA:{background:T.surface,color:T.navy,borderBottom:`2px solid ${T.gold}`},
+  tabI:{background:'transparent',color:T.textMut},
+  inp:{padding:'6px 12px',borderRadius:6,border:`1px solid ${T.border}`,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text},
+  btn:{padding:'6px 14px',borderRadius:6,border:'none',fontSize:12,fontWeight:600,cursor:'pointer',transition:'all 0.2s'},
+  pill:(a)=>({padding:'4px 12px',borderRadius:20,border:`1px solid ${a?T.navy:T.border}`,background:a?T.navy:'transparent',color:a?'#fff':T.textSec,cursor:'pointer',fontSize:12,fontWeight:500}),
+  kpi:{background:T.surface,borderRadius:10,border:`1px solid ${T.border}`,padding:'14px 18px',textAlign:'center',minWidth:110},
+  kpiV:{fontSize:22,fontWeight:700,fontFamily:T.mono},
+  kpiL:{fontSize:11,color:T.textMut,marginTop:2},
+  badge:(c)=>({display:'inline-block',padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,background:c+'18',color:c}),
+  slider:{width:'100%',accentColor:T.navy},
+  matrix:{display:'grid',gridTemplateColumns:'repeat(8,1fr)',gap:2,fontSize:11,fontFamily:T.mono},
+  matCell:(val,max)=>({padding:'6px 4px',textAlign:'center',borderRadius:4,cursor:val>0?'pointer':'default',background:val===0?T.surfaceH:`rgba(27,58,92,${Math.min(val/(max||1)*0.8+0.1,0.9)})`,color:val>(max*0.4)?'#fff':T.text,fontWeight:val>0?600:400,transition:'all 0.15s'}),
+  tbl:{width:'100%',borderCollapse:'collapse',fontSize:12},
+  th:{padding:'8px 10px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontWeight:600,color:T.textSec,fontSize:11,textTransform:'uppercase',letterSpacing:0.5},
+  td:{padding:'8px 10px',borderBottom:`1px solid ${T.border}`},
+  heatC:(val,mn,mx)=>{const n=(val-mn)/((mx-mn)||1);return{padding:'8px',textAlign:'center',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono,background:val>0?`rgba(22,163,74,${Math.min(n*0.8+0.15,0.9)})`:`rgba(220,38,38,${Math.min(Math.abs(n)*0.8+0.15,0.9)})`,color:'#fff',cursor:'pointer'};},
+  overlay:{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.3)',display:'flex',justifyContent:'flex-end',zIndex:1000},
+  sideP:{width:500,background:T.surface,height:'100%',overflowY:'auto',padding:24,boxShadow:'-4px 0 20px rgba(0,0,0,0.1)'},
+};
 
-/* ── reusable mini components ── */
-function MiniSparkline({data,width=100,height=24}){
-  const min=Math.min(...data);const max=Math.max(...data);const range=max-min||1;
-  const pts=data.map((v,i)=>`${(i/(data.length-1))*width},${height-((v-min)/range)*height}`).join(' ');
-  const last=data[data.length-1];const first=data[0];
-  const color=last>first?T.green:last<first?T.red:T.textMut;
-  return <svg width={width} height={height} style={{display:'block'}}><polyline points={pts} fill="none" stroke={color} strokeWidth={1.5}/></svg>;
-}
+const Spark=({data,color=T.navy,w=80,h=24})=>{
+  if(!data||data.length<2)return null;
+  const mn=Math.min(...data),mx=Math.max(...data),rng=mx-mn||1;
+  const pts=data.map((v,i)=>`${(i/(data.length-1))*w},${h-(((v-mn)/rng)*h)}`).join(' ');
+  return <svg width={w} height={h}><polyline points={pts} fill="none" stroke={color} strokeWidth={1.5}/></svg>;
+};
 
-function MultiCheck({options,selected,onChange,label}){
-  return <div style={{display:'flex',flexWrap:'wrap',gap:6,alignItems:'center'}}>
-    {label&&<span style={{fontSize:12,color:T.textSec,fontWeight:600,fontFamily:T.font,marginRight:4}}>{label}</span>}
-    {options.map(o=>{const sel=selected.includes(o);return <button key={o} onClick={()=>onChange(sel?selected.filter(x=>x!==o):[...selected,o])} style={{...btn(sel),padding:'4px 12px',fontSize:12}}>{o}</button>;})}
-  </div>;
-}
+const KPI=({label,value,color})=><div style={sty.kpi}><div style={{...sty.kpiV,color:color||T.navy}}>{value}</div><div style={sty.kpiL}>{label}</div></div>;
 
-function KPI({label,value,sub,color=T.navy}){
-  return <div style={kpiCard(color)}>
-    <div style={{fontSize:11,color:T.textSec,fontWeight:600,fontFamily:T.font,marginBottom:4,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div>
-    <div style={{fontSize:24,fontWeight:800,color,fontFamily:T.mono}}>{value}</div>
-    {sub&&<div style={{fontSize:11,color:T.textMut,marginTop:2,fontFamily:T.font}}>{sub}</div>}
-  </div>;
-}
-
-function ProgressBar({value,max,color=T.navy,height=6}){
-  return <div style={{width:'100%',height,borderRadius:height/2,background:T.surfaceH,overflow:'hidden'}}>
-    <div style={{width:`${Math.min(100,Math.max(5,(value/max)*100))}%`,height:'100%',borderRadius:height/2,background:color,transition:'width 0.4s ease'}}/>
-  </div>;
-}
-
-/* ══════════════════════════════════════════════════
-   TAB 1: Migration Tracker
-   ══════════════════════════════════════════════════ */
-function MigrationTrackerTab({ratings}){
-  const[selQ,setSelQ]=useState(1);
-  const[provFilter,setProvFilter]=useState([...PROVIDERS]);
-  const[search,setSearch]=useState('');
-  const[expanded,setExpanded]=useState(null);
-  const[sortCol,setSortCol]=useState('name');
-  const[sortDir,setSortDir]=useState(1);
-  const[matrixHover,setMatrixHover]=useState(null);
-
-  const fromQ=QUARTERS[selQ-1];const toQ=QUARTERS[selQ];
-
-  const matrix=useMemo(()=>{
-    const m={};
-    RATINGS.forEach(from=>{m[from]={};RATINGS.forEach(to=>{m[from][to]=0;});});
-    COMPANIES.forEach(c=>{
-      provFilter.forEach(p=>{
-        const hist=ratings[c.id][p];
-        const fromR=hist[selQ-1].rating;const toR=hist[selQ].rating;
-        m[fromR][toR]++;
-      });
-    });
-    return m;
-  },[selQ,provFilter,ratings]);
-
-  const summary=useMemo(()=>{
-    return provFilter.map(p=>{
-      let up=0,down=0,same=0;
-      COMPANIES.forEach(c=>{
-        const hist=ratings[c.id][p];
-        const diff=hist[selQ].num-hist[selQ-1].num;
-        if(diff>0)up++;else if(diff<0)down++;else same++;
-      });
-      return{provider:p,up,down,same,net:up-down};
-    });
-  },[selQ,provFilter,ratings]);
-
-  const periodStats=useMemo(()=>{
-    let totalUp=0,totalDn=0,maxJump=0,maxJumpCo='';
-    COMPANIES.forEach(c=>{
-      provFilter.forEach(p=>{
-        const h=ratings[c.id][p];
-        const d=h[selQ].num-h[selQ-1].num;
-        if(d>0)totalUp++;if(d<0)totalDn++;
-        if(Math.abs(d)>maxJump){maxJump=Math.abs(d);maxJumpCo=c.name+' ('+p+')';}
-      });
-    });
-    return{totalUp,totalDn,stability:Math.round((1-(totalUp+totalDn)/(COMPANIES.length*provFilter.length))*100),maxJump,maxJumpCo};
-  },[selQ,provFilter,ratings]);
-
-  const compList=useMemo(()=>{
-    let list=COMPANIES.map(c=>{
-      const changes=provFilter.map(p=>{
-        const h=ratings[c.id][p];return h[selQ].num-h[selQ-1].num;
-      });
-      const avg=changes.reduce((a,b)=>a+b,0)/changes.length;
-      const consensus=ratings[c.id][provFilter[0]]?ratings[c.id][provFilter[0]][selQ].rating:'N/A';
-      const disagreement=provFilter.length>1?Math.max(...changes)-Math.min(...changes):0;
-      return{...c,avgChange:avg,changes,consensus,disagreement};
-    });
-    if(search)list=list.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||c.ticker.toLowerCase().includes(search.toLowerCase())||c.sector.toLowerCase().includes(search.toLowerCase()));
-    list.sort((a,b)=>sortCol==='name'?a.name.localeCompare(b.name)*sortDir:sortCol==='change'?(a.avgChange-b.avgChange)*sortDir:sortCol==='disagree'?(a.disagreement-b.disagreement)*sortDir:0);
-    return list;
-  },[selQ,provFilter,search,sortCol,sortDir,ratings]);
-
-  const matrixMax=useMemo(()=>{let mx=0;RATINGS.forEach(f=>{RATINGS.forEach(t=>{if(matrix[f][t]>mx)mx=matrix[f][t];});});return mx||1;},[matrix]);
-
-  return <div>
-    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
-      <div style={{display:'flex',alignItems:'center',gap:8}}>
-        <span style={{fontSize:12,fontWeight:600,color:T.textSec,fontFamily:T.font}}>Period:</span>
-        <select value={selQ} onChange={e=>setSelQ(+e.target.value)} style={inp}>
-          {QUARTERS.slice(1).map((q,i)=><option key={q} value={i+1}>{QUARTERS[i]} &rarr; {q}</option>)}
-        </select>
+export default function RatingsMigrationMomentumPage(){
+  const [tab,setTab]=useState(0);
+  const tabs=['Migration Tracker','Momentum Signals','Provider Lead-Lag','Alpha Signal Builder'];
+  return(
+    <div style={sty.page}>
+      <div style={{marginBottom:24}}>
+        <h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Ratings Migration & Momentum</h1>
+        <p style={{color:T.textSec,fontSize:13,margin:'4px 0 0'}}>EP-AK3 | 150 companies | 6 providers | 12 quarters | Deep migration analytics & alpha signal construction</p>
       </div>
-      <MultiCheck options={PROVIDERS} selected={provFilter} onChange={setProvFilter} label="Providers:"/>
+      <div style={{display:'flex',gap:4,borderBottom:`1px solid ${T.border}`,marginBottom:20}}>
+        {tabs.map((t,i)=><button key={i} onClick={()=>setTab(i)} style={{...sty.tab,...(tab===i?sty.tabA:sty.tabI)}}>{t}</button>)}
+      </div>
+      {tab===0&&<MigrationTracker/>}
+      {tab===1&&<MomentumSignals/>}
+      {tab===2&&<ProviderLeadLag/>}
+      {tab===3&&<AlphaSignalBuilder/>}
     </div>
-
-    <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:16}}>
-      <KPI label="Upgrades" value={periodStats.totalUp} sub={`${fromQ} to ${toQ}`} color={T.green}/>
-      <KPI label="Downgrades" value={periodStats.totalDn} sub={`${fromQ} to ${toQ}`} color={T.red}/>
-      <KPI label="Stability" value={`${periodStats.stability}%`} sub="Companies unchanged" color={T.navy}/>
-      <KPI label="Largest Jump" value={`${periodStats.maxJump} notch${periodStats.maxJump!==1?'es':''}`} sub={periodStats.maxJumpCo} color={T.amber}/>
-    </div>
-
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-      <div style={card}>
-        <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Migration Matrix: {fromQ} &rarr; {toQ}</h4>
-        <p style={{fontSize:11,color:T.textMut,margin:'-4px 0 10px',fontFamily:T.font}}>Rows = origin rating, columns = destination. Darker cells = more migrations.</p>
-        <div style={{overflowX:'auto'}}>
-          <table style={{borderCollapse:'collapse',width:'100%',fontSize:12,fontFamily:T.mono}}>
-            <thead><tr><th style={{...thStyle,fontSize:11}}>From \ To</th>{RATINGS.map(r=><th key={r} style={{...thStyle,textAlign:'center',fontSize:11}}>{r}</th>)}<th style={{...thStyle,textAlign:'center',fontSize:11}}>Total</th></tr></thead>
-            <tbody>{RATINGS.map((from,fi)=>{
-              const rowTotal=RATINGS.reduce((s,to)=>s+matrix[from][to],0);
-              return <tr key={from}>
-                <td style={{...tdStyle,fontWeight:700,color:T.navy}}>{from}</td>
-                {RATINGS.map((to,ti)=>{const v=matrix[from][to];const intensity=v/matrixMax;
-                  const isHover=matrixHover&&matrixHover.from===fi&&matrixHover.to===ti;
-                  const isDiag=fi===ti;
-                  const bg=isDiag?T.surfaceH:v>0?(ti<fi?`rgba(22,163,74,${0.1+intensity*0.4})`:`rgba(220,38,38,${0.1+intensity*0.4})`):'transparent';
-                  return <td key={to} style={{...tdStyle,textAlign:'center',background:isHover?T.goldL:bg,fontWeight:v>0?600:400,color:v>0?T.navy:T.textMut,cursor:'pointer',transition:'all 0.15s',transform:isHover?'scale(1.05)':'none'}}
-                    title={`${from} -> ${to}: ${v} migrations`}
-                    onMouseEnter={()=>setMatrixHover({from:fi,to:ti})}
-                    onMouseLeave={()=>setMatrixHover(null)}>{v||'-'}</td>;
-                })}
-                <td style={{...tdStyle,textAlign:'center',fontWeight:600,color:T.textSec,background:T.surfaceH}}>{rowTotal}</td>
-              </tr>;})}
-            </tbody>
-          </table>
-        </div>
-        {matrixHover&&<div style={{marginTop:8,fontSize:11,color:T.textSec,fontFamily:T.font}}>
-          {RATINGS[matrixHover.from]} &rarr; {RATINGS[matrixHover.to]}: {matrix[RATINGS[matrixHover.from]][RATINGS[matrixHover.to]]} migration(s) | {matrixHover.from===matrixHover.to?'No change':matrixHover.to<matrixHover.from?'Upgrade':'Downgrade'}
-        </div>}
-      </div>
-
-      <div style={card}>
-        <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Upgrade / Downgrade by Provider</h4>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={summary} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis type="number" tick={{fontSize:11,fill:T.textSec,fontFamily:T.font}}/>
-            <YAxis dataKey="provider" type="category" width={95} tick={{fontSize:11,fill:T.text,fontFamily:T.font}}/>
-            <Tooltip contentStyle={{fontFamily:T.font,fontSize:12,borderRadius:8,border:`1px solid ${T.border}`}}/>
-            <Bar dataKey="up" name="Upgrades" fill={T.green} radius={[0,4,4,0]}/>
-            <Bar dataKey="down" name="Downgrades" fill={T.red} radius={[0,4,4,0]}/>
-            <Legend wrapperStyle={{fontSize:11,fontFamily:T.font}}/>
-          </BarChart>
-        </ResponsiveContainer>
-        <div style={{marginTop:8}}>
-          {summary.map(s=><div key={s.provider} style={{display:'flex',alignItems:'center',gap:8,padding:'3px 0',fontSize:11,fontFamily:T.font}}>
-            <span style={{width:85,fontWeight:600,color:T.navy}}>{s.provider}</span>
-            <span style={{color:T.green,fontWeight:600,width:35}}>+{s.up}</span>
-            <span style={{color:T.red,fontWeight:600,width:35}}>-{s.down}</span>
-            <span style={{color:s.net>0?T.green:s.net<0?T.red:T.textMut,fontWeight:700}}>Net: {s.net>0?'+':''}{s.net}</span>
-          </div>)}
-        </div>
-      </div>
-    </div>
-
-    <div style={card}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-        <h4 style={{margin:0,fontSize:14,color:T.navy,fontFamily:T.font}}>Company Rating History ({compList.length} shown)</h4>
-        <div style={{display:'flex',gap:8,alignItems:'center'}}>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search company, ticker, sector..." style={{...inp,width:220}}/>
-          {['name','change','disagree'].map(s=><button key={s} onClick={()=>{setSortCol(s);setSortDir(d=>sortCol===s?-d:s==='change'?-1:1);}} style={btn(sortCol===s)}>{s==='name'?'Name':s==='change'?'Change':'Divergence'}</button>)}
-        </div>
-      </div>
-      <div style={{maxHeight:440,overflowY:'auto'}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}>
-          <thead><tr>
-            <th style={thStyle}>Company</th><th style={thStyle}>Sector</th><th style={thStyle}>Region</th><th style={thStyle}>Avg Change</th>
-            {provFilter.slice(0,4).map(p=><th key={p} style={{...thStyle,textAlign:'center'}}>{p.split(' ')[0]}</th>)}
-            <th style={thStyle}>Divergence</th><th style={thStyle}>Sparkline</th>
-          </tr></thead>
-          <tbody>{compList.slice(0,35).map(c=>{
-            const isExp=expanded===c.id;
-            return <React.Fragment key={c.id}>
-              <tr onClick={()=>setExpanded(isExp?null:c.id)} style={{cursor:'pointer',background:isExp?T.surfaceH:'transparent',transition:'background 0.15s'}}
-                onMouseEnter={e=>{if(!isExp)e.currentTarget.style.background=T.surfaceH;}} onMouseLeave={e=>{if(!isExp)e.currentTarget.style.background='transparent';}}>
-                <td style={{...tdStyle,fontWeight:600}}>{c.name}<span style={{color:T.textMut,fontWeight:400,marginLeft:6,fontSize:11}}>{c.ticker}</span></td>
-                <td style={tdStyle}><span style={{fontSize:11}}>{c.sector}</span></td>
-                <td style={tdStyle}><span style={{fontSize:11,color:T.textSec}}>{c.region}</span></td>
-                <td style={tdStyle}><span style={badge(c.avgChange>0.1?T.green:c.avgChange<-0.1?T.red:T.textMut)}>{c.avgChange>0?'+':''}{c.avgChange.toFixed(2)}</span></td>
-                {provFilter.slice(0,4).map(p=>{const h=ratings[c.id][p];const d=h[selQ].num-h[selQ-1].num;
-                  return <td key={p} style={{...tdStyle,textAlign:'center'}}>
-                    <span style={{color:d>0?T.green:d<0?T.red:T.textMut,fontWeight:600,fontSize:12}}>
-                      {d>0?'\u2191':d<0?'\u2193':'\u2022'}{d!==0?` ${h[selQ].rating}`:''}
-                    </span>
-                  </td>;
-                })}
-                <td style={tdStyle}>
-                  <div style={{display:'flex',alignItems:'center',gap:6}}>
-                    <ProgressBar value={c.disagreement} max={4} color={c.disagreement>2?T.red:c.disagreement>1?T.amber:T.sage} height={5}/>
-                    <span style={{fontSize:10,color:T.textMut,fontFamily:T.mono,minWidth:16}}>{c.disagreement}</span>
-                  </div>
-                </td>
-                <td style={tdStyle}><MiniSparkline data={ratings[c.id][provFilter[0]]?.map(h=>h.num)||[4,4,4,4,4,4,4,4]}/></td>
-              </tr>
-              {isExp&&<tr><td colSpan={7+provFilter.slice(0,4).length} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
-                  <div style={{fontSize:14,fontWeight:700,color:T.navy,fontFamily:T.font}}>{c.name} &mdash; Full 8-Quarter History</div>
-                  <div style={{fontSize:11,color:T.textMut,fontFamily:T.font}}>Market Cap: ${c.mcap}B | {c.sector} | {c.region}</div>
-                </div>
-                <ResponsiveContainer width="100%" height={210}>
-                  <LineChart data={QUARTERS.map((q,qi)=>{const row={quarter:q};PROVIDERS.forEach(p=>{row[p]=ratings[c.id][p][qi].num;});return row;})}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-                    <XAxis dataKey="quarter" tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-                    <YAxis domain={[1,7]} ticks={[1,2,3,4,5,6,7]} tickFormatter={v=>NUM_RATING[v]||''} tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-                    <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}} formatter={(v)=>NUM_RATING[v]||v}/>
-                    <Legend wrapperStyle={{fontSize:11,fontFamily:T.font}}/>
-                    {PROVIDERS.map((p,pi)=><Line key={p} type="monotone" dataKey={p} stroke={PROV_COLORS[pi]} strokeWidth={2} dot={{r:3}}/>)}
-                  </LineChart>
-                </ResponsiveContainer>
-                <div style={{display:'flex',gap:12,marginTop:10,flexWrap:'wrap'}}>
-                  {PROVIDERS.map((p,pi)=>{const h=ratings[c.id][p];const first=h[0].rating;const last=h[7].rating;const diff=h[7].num-h[0].num;
-                    return <div key={p} style={{padding:'6px 12px',borderRadius:8,background:T.surface,border:`1px solid ${T.border}`,fontSize:11,fontFamily:T.font}}>
-                      <span style={{fontWeight:700,color:PROV_COLORS[pi]}}>{p}</span>: {first} &rarr; {last}
-                      <span style={{marginLeft:6,color:diff>0?T.green:diff<0?T.red:T.textMut,fontWeight:700}}>({diff>0?'+':''}{diff})</span>
-                    </div>;
-                  })}
-                </div>
-              </td></tr>}
-            </React.Fragment>;
-          })}</tbody>
-        </table>
-      </div>
-    </div>
-  </div>;
+  );
 }
 
-/* ══════════════════════════════════════════════════
-   TAB 2: Momentum Signals
-   ══════════════════════════════════════════════════ */
-function MomentumSignalsTab({ratings}){
-  const[dirFilter,setDirFilter]=useState('all');
-  const[sortBy,setSortBy]=useState('score');
-  const[sortDir,setSortDir]=useState(-1);
-  const[selSector,setSelSector]=useState('all');
-  const[selCompany,setSelCompany]=useState(null);
-
-  const momentum=useMemo(()=>{
-    return COMPANIES.map(c=>{
-      let totalScore=0;let bestDir=0;let consec=0;let maxConsec=0;let leadProv='';let provScores={};
-      PROVIDERS.forEach(p=>{
-        const h=ratings[c.id][p];let cUp=0,cDn=0;
-        for(let i=1;i<h.length;i++){
-          const d=h[i].num-h[i-1].num;
-          if(d>0){cUp++;cDn=0;} else if(d<0){cDn++;cUp=0;} else{cUp=0;cDn=0;}
-        }
-        const pScore=cUp>1?Math.min(cUp,3):cDn>1?-Math.min(cDn,3):0;
-        provScores[p]=pScore;
-        if(Math.abs(pScore)>Math.abs(bestDir)){bestDir=pScore;leadProv=p;maxConsec=Math.max(cUp,cDn);}
-        totalScore+=pScore;
-      });
-      const score=Math.round((totalScore/PROVIDERS.length)*10)/10;
-      const dir=score>0.5?'Positive':score<-0.5?'Negative':'Neutral';
-      const volatility=Object.values(provScores).reduce((s,v)=>s+Math.abs(v),0)/PROVIDERS.length;
-      return{...c,score,dir,consec:maxConsec,leadProvider:leadProv,bestDir,provScores,volatility:Math.round(volatility*100)/100};
-    });
-  },[ratings]);
+/* ======================================================================
+   TAB 1 — MIGRATION TRACKER
+   ====================================================================== */
+function MigrationTracker(){
+  const [qPair,setQPair]=useState(0);
+  const [provFilter,setProvFilter]=useState(PROVIDERS.map(()=>true));
+  const [sectorFilter,setSectorFilter]=useState('All');
+  const [clickedCell,setClickedCell]=useState(null);
+  const [search,setSearch]=useState('');
+  const [expanded,setExpanded]=useState(null);
+  const [page,setPage]=useState(0);
+  const [watchlist,setWatchlist]=useState(new Set());
+  const perPage=25;
 
   const filtered=useMemo(()=>{
-    let list=[...momentum];
-    if(dirFilter!=='all')list=list.filter(m=>m.dir===dirFilter);
-    if(selSector!=='all')list=list.filter(m=>m.sector===selSector);
-    list.sort((a,b)=>sortBy==='score'?(a.score-b.score)*sortDir:sortBy==='consec'?(a.consec-b.consec)*sortDir:sortBy==='vol'?(a.volatility-b.volatility)*sortDir:a.name.localeCompare(b.name)*sortDir);
-    return list;
-  },[momentum,dirFilter,selSector,sortBy,sortDir]);
+    let c=[...COMPANIES];
+    if(sectorFilter!=='All')c=c.filter(x=>x.sector===sectorFilter);
+    if(search)c=c.filter(x=>x.name.toLowerCase().includes(search.toLowerCase()));
+    if(clickedCell){
+      const {fromR,toR,provIdx}=clickedCell;
+      c=c.filter(x=>x.ratings[provIdx][qPair]===fromR&&x.ratings[provIdx][qPair+1]===toR);
+    }
+    return c;
+  },[sectorFilter,search,clickedCell,qPair]);
 
-  const portfolioIndex=useMemo(()=>{
-    return QUARTERS.map((q,qi)=>{
-      if(qi===0)return{quarter:q,index:0,positive:0,negative:0,breadth:0};
-      let total=0,pos=0,neg=0;
-      COMPANIES.forEach(c=>{
-        let s=0;
-        PROVIDERS.forEach(p=>{const d=ratings[c.id][p][qi].num-ratings[c.id][p][qi-1].num;s+=d;});
-        total+=s;if(s>0)pos++;if(s<0)neg++;
+  const activeProviders=useMemo(()=>PROVIDERS.map((_p,i)=>provFilter[i]?i:null).filter(x=>x!==null),[provFilter]);
+
+  const stats=useMemo(()=>{
+    let ups=0,downs=0,stable=0,maxJump=0,maxJumpName='';
+    COMPANIES.forEach(c=>{
+      activeProviders.forEach(pi=>{
+        const from=c.ratings[pi][qPair],to=c.ratings[pi][qPair+1];
+        const diff=from-to;
+        if(diff>0)ups++;else if(diff<0)downs++;else stable++;
+        if(Math.abs(diff)>maxJump){maxJump=Math.abs(diff);maxJumpName=c.name;}
       });
-      return{quarter:q,index:Math.round(total/COMPANIES.length*100)/100,positive:pos,negative:neg,breadth:Math.round((pos-neg)/COMPANIES.length*100)};
     });
-  },[ratings]);
+    const total=ups+downs+stable;
+    return{ups,downs,net:ups-downs,stability:total?((stable/total)*100).toFixed(1):'0',maxJump,maxJumpName};
+  },[qPair,activeProviders]);
 
-  const sectorBreakdown=useMemo(()=>{
-    const map={};
-    SECTORS.forEach(s=>{map[s]={positive:0,negative:0,neutral:0,avgScore:0,count:0};});
-    momentum.forEach(m=>{
-      if(m.dir==='Positive')map[m.sector].positive++;
-      else if(m.dir==='Negative')map[m.sector].negative++;
-      else map[m.sector].neutral++;
-      map[m.sector].avgScore+=m.score;map[m.sector].count++;
+  const upDownData=useMemo(()=>PROVIDERS.map((p,pi)=>{
+    if(!provFilter[pi])return null;
+    let ups=0,downs=0;
+    (sectorFilter==='All'?COMPANIES:COMPANIES.filter(c=>c.sector===sectorFilter)).forEach(c=>{
+      const diff=c.ratings[pi][qPair]-c.ratings[pi][qPair+1];
+      if(diff>0)ups++;if(diff<0)downs++;
     });
-    return SECTORS.map(s=>({sector:s,...map[s],net:map[s].positive-map[s].negative,avgScore:map[s].count?Math.round(map[s].avgScore/map[s].count*100)/100:0}));
-  },[momentum]);
+    return{provider:p,upgrades:ups,downgrades:-downs};
+  }).filter(Boolean),[qPair,provFilter,sectorFilter]);
 
-  const dirCounts=useMemo(()=>{
-    const p=momentum.filter(m=>m.dir==='Positive').length;
-    const n=momentum.filter(m=>m.dir==='Negative').length;
-    return{positive:p,negative:n,neutral:momentum.length-p-n};
-  },[momentum]);
+  const maxMat=useMemo(()=>{
+    let m=0;
+    activeProviders.forEach(pi=>{
+      const{mat}=migrationFor(filtered,pi,qPair,qPair+1);
+      mat.forEach(r=>r.forEach(v=>{if(v>m)m=v;}));
+    });
+    return m;
+  },[filtered,qPair,activeProviders]);
 
-  return <div>
-    <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:16}}>
-      <KPI label="Positive Momentum" value={dirCounts.positive} sub={`${Math.round(dirCounts.positive/50*100)}% of portfolio`} color={T.green}/>
-      <KPI label="Negative Momentum" value={dirCounts.negative} sub={`${Math.round(dirCounts.negative/50*100)}% of portfolio`} color={T.red}/>
-      <KPI label="Neutral / Stable" value={dirCounts.neutral} sub="No clear trend" color={T.textMut}/>
-      <KPI label="Breadth Index" value={`${portfolioIndex[portfolioIndex.length-1]?.breadth||0}%`} sub="Latest quarter net direction" color={T.navy}/>
-    </div>
+  const paged=filtered.slice(page*perPage,(page+1)*perPage);
+  const totalPages=Math.ceil(filtered.length/perPage);
 
-    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
-      <MultiCheck options={['all','Positive','Negative','Neutral']} selected={[dirFilter]} onChange={v=>setDirFilter(v[v.length-1]||'all')} label="Direction:"/>
-      <select value={selSector} onChange={e=>setSelSector(e.target.value)} style={inp}>
-        <option value="all">All Sectors</option>
-        {SECTORS.map(s=><option key={s} value={s}>{s}</option>)}
-      </select>
-    </div>
-
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-      <div style={card}>
-        <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Portfolio Momentum Index</h4>
-        <ResponsiveContainer width="100%" height={210}>
-          <AreaChart data={portfolioIndex}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="quarter" tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-            <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}}/>
-            <Area type="monotone" dataKey="index" stroke={T.navy} fill={T.navy} fillOpacity={0.15} strokeWidth={2} name="Momentum Index"/>
-            <Area type="monotone" dataKey="breadth" stroke={T.gold} fill={T.gold} fillOpacity={0.08} strokeWidth={1.5} name="Breadth %"/>
-            <Legend wrapperStyle={{fontSize:11,fontFamily:T.font}}/>
-          </AreaChart>
-        </ResponsiveContainer>
+  return(
+    <div>
+      {/* Controls row */}
+      <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+        <div style={{display:'flex',gap:6,alignItems:'center'}}>
+          <span style={{fontSize:12,fontWeight:600,color:T.textSec}}>Transition:</span>
+          <select style={sty.inp} value={qPair} onChange={e=>{setQPair(+e.target.value);setClickedCell(null);setPage(0);}}>
+            {QUARTERS.slice(0,-1).map((q,i)=><option key={i} value={i}>{q} &rarr; {QUARTERS[i+1]}</option>)}
+          </select>
+        </div>
+        <div style={{display:'flex',gap:6,alignItems:'center'}}>
+          <span style={{fontSize:12,fontWeight:600,color:T.textSec}}>Sector:</span>
+          <select style={sty.inp} value={sectorFilter} onChange={e=>{setSectorFilter(e.target.value);setPage(0);setClickedCell(null);}}>
+            <option value="All">All Sectors (15)</option>
+            {SECTORS.map(s=><option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <input style={{...sty.inp,width:180}} placeholder="Search company..." value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}}/>
+        {clickedCell&&<button style={{...sty.btn,background:T.red+'20',color:T.red}} onClick={()=>setClickedCell(null)}>Clear cell filter</button>}
       </div>
-      <div style={card}>
-        <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Sector Momentum Breakdown</h4>
-        <ResponsiveContainer width="100%" height={210}>
-          <BarChart data={sectorBreakdown}>
+
+      {/* Provider checkboxes */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:16}}>
+        {PROVIDERS.map((p,i)=><label key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:12,color:T.textSec,cursor:'pointer'}}>
+          <input type="checkbox" checked={provFilter[i]} onChange={()=>{const n=[...provFilter];n[i]=!n[i];setProvFilter(n);}}/>
+          <span style={{width:8,height:8,borderRadius:'50%',background:PROV_COLORS[i],display:'inline-block'}}/>{p}
+        </label>)}
+      </div>
+
+      {/* KPIs */}
+      <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Upgrades" value={stats.ups} color={T.green}/>
+        <KPI label="Downgrades" value={stats.downs} color={T.red}/>
+        <KPI label="Net Migration" value={(stats.net>0?'+':'')+stats.net} color={stats.net>=0?T.green:T.red}/>
+        <KPI label="Stability Rate" value={stats.stability+'%'} color={T.navy}/>
+        <KPI label="Largest Single Jump" value={`${stats.maxJump} notch${stats.maxJump!==1?'es':''}`} color={T.amber}/>
+      </div>
+
+      {/* Migration matrices */}
+      <div style={{display:'grid',gridTemplateColumns:activeProviders.length>3?'1fr 1fr':'repeat(3,1fr)',gap:16,marginBottom:20}}>
+        {activeProviders.map(pi=>{
+          const{mat}=migrationFor(filtered,pi,qPair,qPair+1);
+          return(
+            <div key={pi} style={sty.card}>
+              <div style={sty.cardT}>{PROVIDERS[pi]} — {QUARTERS[qPair]} to {QUARTERS[qPair+1]}</div>
+              <div style={sty.matrix}>
+                <div style={{padding:4,fontWeight:700,fontSize:9,color:T.textMut}}>From\To</div>
+                {RATINGS.map(r=><div key={r} style={{padding:4,fontWeight:600,fontSize:9,textAlign:'center',color:T.textSec}}>{r}</div>)}
+                {RATINGS.map((fromR,fi)=><React.Fragment key={fi}>
+                  <div style={{padding:4,fontWeight:600,fontSize:9,color:T.textSec}}>{fromR}</div>
+                  {RATINGS.map((_toR,ti)=>{
+                    const val=mat[fi][ti];
+                    return(
+                      <div key={ti} style={sty.matCell(val,maxMat)}
+                        title={`${RATINGS[fi]} to ${RATINGS[ti]}: ${val} companies`}
+                        onClick={()=>{if(val>0){setClickedCell({fromR:fi,toR:ti,provIdx:pi});setPage(0);}}}
+                      >{val||''}</div>
+                    );
+                  })}
+                </React.Fragment>)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Upgrade/Downgrade bar chart */}
+      <div style={{...sty.card,marginBottom:20}}>
+        <div style={sty.cardT}>Upgrades vs Downgrades by Provider</div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={upDownData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="sector" tick={{fontSize:9,fill:T.textSec,fontFamily:T.font}} angle={-25} textAnchor="end" height={50}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-            <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}}/>
-            <Bar dataKey="positive" name="Positive" fill={T.green} radius={[3,3,0,0]} stackId="a"/>
-            <Bar dataKey="negative" name="Negative" fill={T.red} radius={[3,3,0,0]} stackId="b"/>
-            <Legend wrapperStyle={{fontSize:11,fontFamily:T.font}}/>
+            <XAxis type="number" tick={{fontSize:11,fill:T.textSec}}/>
+            <YAxis type="category" dataKey="provider" width={110} tick={{fontSize:11,fill:T.textSec}}/>
+            <Tooltip contentStyle={{fontSize:12,borderRadius:8,border:`1px solid ${T.border}`}}/>
+            <Bar dataKey="upgrades" fill={T.green} name="Upgrades" radius={[0,4,4,0]}/>
+            <Bar dataKey="downgrades" fill={T.red} name="Downgrades" radius={[4,0,0,4]}/>
+            <Legend wrapperStyle={{fontSize:11}}/>
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </div>
 
-    <div style={card}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-        <h4 style={{margin:0,fontSize:14,color:T.navy,fontFamily:T.font}}>Momentum Scores ({filtered.length} companies)</h4>
-        <div style={{display:'flex',gap:6}}>
-          {[{k:'score',l:'Score'},{k:'consec',l:'Consecutive'},{k:'vol',l:'Volatility'},{k:'name',l:'Name'}].map(s=>
-            <button key={s.k} onClick={()=>{setSortBy(s.k);setSortDir(d=>sortBy===s.k?-d:-1);}} style={btn(sortBy===s.k)}>{s.l}</button>
-          )}
-        </div>
-      </div>
-      <div style={{maxHeight:400,overflowY:'auto'}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}>
-          <thead><tr>
-            <th style={thStyle}>Company</th><th style={thStyle}>Sector</th><th style={thStyle}>Score</th>
-            <th style={thStyle}>Direction</th><th style={thStyle}>Consec. Qtrs</th><th style={thStyle}>Lead Provider</th>
-            <th style={thStyle}>Volatility</th><th style={thStyle}>Trend</th>
-          </tr></thead>
-          <tbody>{filtered.map(m=><tr key={m.id} style={{cursor:'pointer',background:selCompany===m.id?T.surfaceH:'transparent',transition:'background 0.15s'}}
-            onClick={()=>setSelCompany(selCompany===m.id?null:m.id)}
-            onMouseEnter={e=>{if(selCompany!==m.id)e.currentTarget.style.background=T.surfaceH;}}
-            onMouseLeave={e=>{if(selCompany!==m.id)e.currentTarget.style.background='transparent';}}>
-            <td style={{...tdStyle,fontWeight:600}}>{m.name}<span style={{color:T.textMut,marginLeft:6,fontSize:11}}>{m.ticker}</span></td>
-            <td style={tdStyle}><span style={{fontSize:11}}>{m.sector}</span></td>
-            <td style={tdStyle}><span style={{...badge(m.score>0?T.green:m.score<0?T.red:T.textMut),minWidth:40,textAlign:'center'}}>{m.score>0?'+':''}{m.score.toFixed(1)}</span></td>
-            <td style={tdStyle}><span style={{color:m.dir==='Positive'?T.green:m.dir==='Negative'?T.red:T.textMut,fontWeight:600,fontSize:12}}>{m.dir==='Positive'?'\u2191':m.dir==='Negative'?'\u2193':'\u2194'} {m.dir}</span></td>
-            <td style={{...tdStyle,fontFamily:T.mono,fontSize:12}}>{m.consec}</td>
-            <td style={tdStyle}><span style={{fontSize:12}}>{m.leadProvider}</span></td>
-            <td style={tdStyle}><ProgressBar value={m.volatility} max={3} color={m.volatility>2?T.red:m.volatility>1?T.amber:T.sage} height={5}/></td>
-            <td style={tdStyle}><MiniSparkline data={ratings[m.id][PROVIDERS[0]].map(h=>h.num)} width={70} height={20}/></td>
-          </tr>)}</tbody>
-        </table>
-      </div>
-      {selCompany!==null&&<div style={{marginTop:12,padding:16,background:T.surfaceH,borderRadius:10}}>
-        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8,fontFamily:T.font}}>Provider Momentum Breakdown: {COMPANIES[selCompany]?.name}</div>
-        <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
-          {PROVIDERS.map((p,pi)=>{const sc=momentum.find(m=>m.id===selCompany)?.provScores[p]||0;
-            return <div key={p} style={{padding:'8px 14px',borderRadius:8,background:T.surface,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.font,minWidth:120}}>
-              <div style={{fontWeight:700,color:PROV_COLORS[pi],marginBottom:2}}>{p}</div>
-              <div style={{fontSize:16,fontWeight:800,color:sc>0?T.green:sc<0?T.red:T.textMut,fontFamily:T.mono}}>{sc>0?'+':''}{sc}</div>
-            </div>;
-          })}
-        </div>
-      </div>}
-    </div>
-  </div>;
-}
-
-/* ══════════════════════════════════════════════════
-   TAB 3: Provider Lead-Lag
-   ══════════════════════════════════════════════════ */
-function ProviderLeadLagTab({ratings}){
-  const[selEvent,setSelEvent]=useState(null);
-  const[lagView,setLagView]=useState('heatmap');
-
-  const leadLag=useMemo(()=>{
-    const matrix={};
-    PROVIDERS.forEach(a=>{matrix[a]={};PROVIDERS.forEach(b=>{matrix[a][b]=null;});});
-    PROVIDERS.forEach((a,ai)=>{
-      PROVIDERS.forEach((b,bi)=>{
-        if(ai===bi)return;
-        let totalLag=0;let count=0;
-        COMPANIES.forEach(c=>{
-          const hA=ratings[c.id][a];const hB=ratings[c.id][b];
-          for(let i=1;i<hA.length;i++){
-            const dA=hA[i].num-hA[i-1].num;
-            if(dA!==0){
-              for(let j=i;j<Math.min(i+4,hB.length);j++){
-                const dB=hB[j].num-(j>0?hB[j-1].num:hB[0].num);
-                if((dA>0&&dB>0)||(dA<0&&dB<0)){totalLag+=j-i;count++;break;}
-              }
-            }
-          }
-        });
-        matrix[a][b]=count>0?Math.round((totalLag/count)*100)/100:null;
-      });
-    });
-    return matrix;
-  },[ratings]);
-
-  const firstMover=useMemo(()=>{
-    return PROVIDERS.map(p=>{
-      let avgLead=0;let ct=0;let leadsCount=0;
-      PROVIDERS.forEach(other=>{
-        if(other===p)return;
-        const lag=leadLag[p][other];
-        if(lag!==null){avgLead+=lag;ct++;if(lag<1.5)leadsCount++;}
-      });
-      return{provider:p,avgLead:ct>0?Math.round((avgLead/ct)*100)/100:0,leadsCount};
-    }).sort((a,b)=>a.avgLead-b.avgLead);
-  },[leadLag]);
-
-  const lagChartData=useMemo(()=>{
-    return PROVIDERS.map(p=>({provider:p,...PROVIDERS.reduce((acc,other)=>{if(other!==p)acc[other]=leadLag[p][other]||0;return acc;},{})}));
-  },[leadLag]);
-
-  const eventResponse=useMemo(()=>{
-    return ESG_EVENTS.map(ev=>{
-      const qi=QUARTERS.indexOf(ev.quarter);
-      if(qi<0||qi>=QUARTERS.length-1)return{...ev,responses:[]};
-      const resp=PROVIDERS.map((p,pi)=>{
-        let changes=0;let direction=0;let avgLag=0;
-        COMPANIES.forEach(c=>{
-          for(let j=qi;j<Math.min(qi+3,QUARTERS.length-1);j++){
-            const d=ratings[c.id][p][j+1].num-ratings[c.id][p][j].num;
-            if(d!==0){changes++;direction+=d;avgLag+=j-qi;}
-          }
-        });
-        const avgReaction=changes>0?Math.round(avgLag/changes*10)/10:0;
-        return{provider:p,changes,direction:direction>0?'Upgrade':direction<0?'Downgrade':'Mixed',speed:changes>10?'Fast':changes>5?'Medium':'Slow',avgReaction,color:PROV_COLORS[pi]};
-      });
-      return{...ev,responses:resp};
-    });
-  },[ratings]);
-
-  const lagMax=useMemo(()=>{
-    let mx=0;
-    PROVIDERS.forEach(a=>{PROVIDERS.forEach(b=>{const v=leadLag[a][b];if(v!==null&&v>mx)mx=v;});});
-    return mx||1;
-  },[leadLag]);
-
-  return <div>
-    <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:16}}>
-      <div style={card}>
+      {/* Company table with expansion */}
+      <div style={sty.card}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-          <h4 style={{margin:0,fontSize:14,color:T.navy,fontFamily:T.font}}>Lead-Lag Analysis (avg quarters A leads B)</h4>
-          <div style={{display:'flex',gap:6}}>
-            <button onClick={()=>setLagView('heatmap')} style={btn(lagView==='heatmap')}>Heatmap</button>
-            <button onClick={()=>setLagView('chart')} style={btn(lagView==='chart')}>Chart</button>
+          <div style={sty.cardT}>
+            {clickedCell?`Filtered: ${rLabel(clickedCell.fromR)} \u2192 ${rLabel(clickedCell.toR)} (${PROVIDERS[clickedCell.provIdx]})`:'All Companies'} — {filtered.length} results
+          </div>
+          <div style={{display:'flex',gap:6,alignItems:'center'}}>
+            <button style={{...sty.btn,background:T.surfaceH,color:T.textSec}} disabled={page===0} onClick={()=>setPage(p=>p-1)}>Prev</button>
+            <span style={{fontSize:12,color:T.textSec,fontFamily:T.mono}}>{page+1}/{totalPages||1}</span>
+            <button style={{...sty.btn,background:T.surfaceH,color:T.textSec}} disabled={page>=totalPages-1} onClick={()=>setPage(p=>p+1)}>Next</button>
           </div>
         </div>
-        {lagView==='heatmap'?<div style={{overflowX:'auto'}}>
-          <table style={{borderCollapse:'collapse',width:'100%',fontSize:11,fontFamily:T.mono}}>
-            <thead><tr><th style={{...thStyle,fontSize:10}}>A leads \ B follows</th>{PROVIDERS.map(p=><th key={p} style={{...thStyle,textAlign:'center',fontSize:10}}>{p.split(' ')[0]}</th>)}</tr></thead>
-            <tbody>{PROVIDERS.map(a=><tr key={a}>
-              <td style={{...tdStyle,fontWeight:700,color:T.navy,fontSize:11}}>{a}</td>
-              {PROVIDERS.map(b=>{
-                const v=leadLag[a][b];const isDiag=a===b;
-                const bg=isDiag?T.surfaceH:v!==null?`rgba(27,58,92,${0.05+(1-v/lagMax)*0.35})`:'transparent';
-                return <td key={b} style={{...tdStyle,textAlign:'center',background:bg,fontWeight:v!==null&&v<1?700:400,color:v!==null?(v<1?T.green:v<2?T.navy:T.red):T.textMut,fontSize:11}}
-                  title={`${a} leads ${b} by ${v||'N/A'} quarters`}>
-                  {isDiag?'\u2014':v!==null?v.toFixed(2):'N/A'}
+        <table style={sty.tbl}>
+          <thead><tr>
+            <th style={sty.th}>Company</th><th style={sty.th}>Sector</th><th style={sty.th}>Mkt Cap ($B)</th>
+            {activeProviders.map(pi=><th key={pi} style={sty.th}>{PROVIDERS[pi]}</th>)}
+            <th style={sty.th}>Avg Change</th><th style={sty.th}></th>
+          </tr></thead>
+          <tbody>
+            {paged.map(c=>{
+              const isExp=expanded===c.id;
+              return(
+                <React.Fragment key={c.id}>
+                  <tr onClick={()=>setExpanded(isExp?null:c.id)} style={{background:isExp?T.surfaceH:'transparent',cursor:'pointer'}}>
+                    <td style={{...sty.td,fontWeight:600}}>{c.name}</td>
+                    <td style={{...sty.td,fontSize:11}}>{c.sector}</td>
+                    <td style={{...sty.td,fontFamily:T.mono}}>{c.marketCap}</td>
+                    {activeProviders.map(pi=>{
+                      const from=rLabel(c.ratings[pi][qPair]),to=rLabel(c.ratings[pi][qPair+1]);
+                      const diff=c.ratings[pi][qPair]-c.ratings[pi][qPair+1];
+                      return <td key={pi} style={sty.td}><span style={sty.badge(diff>0?T.green:diff<0?T.red:T.textMut)}>{from}\u2192{to}</span></td>;
+                    })}
+                    <td style={sty.td}>{(()=>{
+                      const avg=activeProviders.reduce((s,pi)=>s+(c.ratings[pi][qPair]-c.ratings[pi][qPair+1]),0)/activeProviders.length;
+                      return <span style={{color:avg>0?T.green:avg<0?T.red:T.textMut,fontWeight:600,fontFamily:T.mono}}>{avg>0?'+':''}{avg.toFixed(2)}</span>;
+                    })()}</td>
+                    <td style={sty.td}><span style={{fontSize:11,color:T.navyL}}>{isExp?'\u25B2':'\u25BC'}</span></td>
+                  </tr>
+                  {isExp&&<tr><td colSpan={4+activeProviders.length} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+                    <div style={{display:'flex',gap:20,alignItems:'flex-start'}}>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:13,fontWeight:600,marginBottom:8,color:T.navy}}>12-Quarter Rating Trajectory — {c.name}</div>
+                        <ResponsiveContainer width="100%" height={170}>
+                          <LineChart data={QUARTERS.map((q,qi)=>({q,...PROVIDERS.reduce((o,p,pi)=>({...o,[p]:7-c.ratings[pi][qi]}),{})}))}>
+                            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+                            <XAxis dataKey="q" tick={{fontSize:9,fill:T.textSec}}/>
+                            <YAxis domain={[1,7]} ticks={[1,2,3,4,5,6,7]} tickFormatter={v=>RATINGS[7-v]||''} tick={{fontSize:9,fill:T.textSec}}/>
+                            <Tooltip contentStyle={{fontSize:11,borderRadius:8}} formatter={(v)=>rLabel(7-v)}/>
+                            {PROVIDERS.map((p,pi)=>provFilter[pi]?<Line key={p} type="monotone" dataKey={p} stroke={PROV_COLORS[pi]} strokeWidth={2} dot={{r:2}}/>:null)}
+                            <Legend wrapperStyle={{fontSize:10}}/>
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div style={{paddingTop:8}}>
+                        <button style={{...sty.btn,background:watchlist.has(c.id)?T.red+'20':T.gold+'30',color:watchlist.has(c.id)?T.red:T.gold}}
+                          onClick={e=>{e.stopPropagation();setWatchlist(w=>{const n=new Set(w);n.has(c.id)?n.delete(c.id):n.add(c.id);return n;});}}>
+                          {watchlist.has(c.id)?'Remove Watchlist':'+ Watchlist'}
+                        </button>
+                        <div style={{marginTop:8,fontSize:11,color:T.textMut}}>Watchlist: {watchlist.size}</div>
+                      </div>
+                    </div>
+                  </td></tr>}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ======================================================================
+   TAB 2 — MOMENTUM SIGNALS
+   ====================================================================== */
+function MomentumSignals(){
+  const [dirFilter,setDirFilter]=useState('All');
+  const [sectorFilter,setSectorFilter]=useState('All');
+  const [provFilter,setProvFilter]=useState('All');
+  const [minConsec,setMinConsec]=useState(1);
+  const [sortCol,setSortCol]=useState('momentum');
+  const [sortDir,setSortDir]=useState(-1);
+  const [selectedCompany,setSelectedCompany]=useState(null);
+
+  const momentum=useMemo(()=>COMPANIES.map(c=>{
+    const provScores=PROVIDERS.map((_p,pi)=>{
+      let score=0,consec=0,streak=0;
+      for(let qi=1;qi<QUARTERS.length;qi++){
+        const diff=c.ratings[pi][qi-1]-c.ratings[pi][qi];
+        if(diff>0){score+=1;streak++;consec=Math.max(consec,streak);}
+        else if(diff<0){score-=1;streak=0;}
+        else{streak=0;}
+      }
+      return{score:Math.max(-5,Math.min(5,score)),consec};
+    });
+    const avgMomentum=provScores.reduce((s,x)=>s+x.score,0)/PROVIDERS.length;
+    const maxConsec=Math.max(...provScores.map(x=>x.consec));
+    const sparkData=QUARTERS.map((_q,qi)=>PROVIDERS.reduce((s,_p,pi)=>s+(7-c.ratings[pi][qi]),0)/PROVIDERS.length);
+    return{...c,momentum:+avgMomentum.toFixed(2),provScores,maxConsec,sparkData,direction:avgMomentum>0.3?'Positive':avgMomentum<-0.3?'Negative':'Neutral'};
+  }),[]);
+
+  const filtered=useMemo(()=>{
+    let d=[...momentum];
+    if(dirFilter!=='All')d=d.filter(x=>x.direction===dirFilter);
+    if(sectorFilter!=='All')d=d.filter(x=>x.sector===sectorFilter);
+    if(provFilter!=='All'){const pi=PROVIDERS.indexOf(provFilter);d=d.filter(x=>Math.abs(x.provScores[pi].score)>0);}
+    d=d.filter(x=>x.maxConsec>=minConsec);
+    d.sort((a,b)=>sortDir*(a[sortCol]>b[sortCol]?1:a[sortCol]<b[sortCol]?-1:0));
+    return d;
+  },[momentum,dirFilter,sectorFilter,provFilter,minConsec,sortCol,sortDir]);
+
+  const portfolioIndex=useMemo(()=>QUARTERS.map((q,qi)=>{
+    const avg=COMPANIES.reduce((s,c)=>s+PROVIDERS.reduce((ss,_p,pi)=>ss+(7-c.ratings[pi][qi]),0)/PROVIDERS.length,0)/COMPANIES.length;
+    return{q,index:+avg.toFixed(2)};
+  }),[]);
+
+  const breadth=useMemo(()=>{
+    const pos=momentum.filter(x=>x.direction==='Positive').length;
+    const neg=momentum.filter(x=>x.direction==='Negative').length;
+    const neu=momentum.filter(x=>x.direction==='Neutral').length;
+    return{pos,neg,neu,total:momentum.length,posP:((pos/momentum.length)*100).toFixed(1),negP:((neg/momentum.length)*100).toFixed(1)};
+  },[momentum]);
+
+  const sectorHeatmap=useMemo(()=>SECTORS.map(sec=>{
+    const inSec=momentum.filter(x=>x.sector===sec);
+    if(!inSec.length)return null;
+    const row={sector:sec,count:inSec.length};
+    PROVIDERS.forEach((p,pi)=>{row[p]=+(inSec.reduce((s,x)=>s+x.provScores[pi].score,0)/inSec.length).toFixed(2);});
+    return row;
+  }).filter(Boolean),[momentum]);
+
+  const heatVals=sectorHeatmap.flatMap(r=>PROVIDERS.map(p=>r[p]));
+  const heatMin=Math.min(...heatVals),heatMax=Math.max(...heatVals);
+
+  const handleSort=(col)=>{if(sortCol===col)setSortDir(d=>d*-1);else{setSortCol(col);setSortDir(-1);}};
+
+  return(
+    <div>
+      {/* Filters */}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+        <div style={{display:'flex',gap:4}}>
+          {['All','Positive','Negative','Neutral'].map(d=><button key={d} style={sty.pill(dirFilter===d)} onClick={()=>setDirFilter(d)}>{d}</button>)}
+        </div>
+        <select style={sty.inp} value={sectorFilter} onChange={e=>setSectorFilter(e.target.value)}>
+          <option value="All">All Sectors</option>{SECTORS.map(s=><option key={s}>{s}</option>)}
+        </select>
+        <select style={sty.inp} value={provFilter} onChange={e=>setProvFilter(e.target.value)}>
+          <option value="All">All Providers</option>{PROVIDERS.map(p=><option key={p}>{p}</option>)}
+        </select>
+        <div style={{display:'flex',alignItems:'center',gap:6}}>
+          <span style={{fontSize:12,color:T.textSec}}>Min Consecutive Q:</span>
+          <input type="range" min={1} max={8} value={minConsec} onChange={e=>setMinConsec(+e.target.value)} style={{...sty.slider,width:100}}/>
+          <span style={{fontSize:12,fontWeight:700,color:T.navy,fontFamily:T.mono}}>{minConsec}</span>
+        </div>
+      </div>
+
+      {/* Breadth KPIs */}
+      <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Positive Momentum" value={`${breadth.pos} (${breadth.posP}%)`} color={T.green}/>
+        <KPI label="Negative Momentum" value={`${breadth.neg} (${breadth.negP}%)`} color={T.red}/>
+        <KPI label="Neutral" value={breadth.neu} color={T.textMut}/>
+        <KPI label="Showing" value={filtered.length} color={T.navy}/>
+      </div>
+
+      {/* Portfolio index + Breadth charts */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={sty.card}>
+          <div style={sty.cardT}>Portfolio Momentum Index (12Q)</div>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={portfolioIndex}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}} domain={['auto','auto']}/>
+              <Tooltip contentStyle={{fontSize:11,borderRadius:8}}/>
+              <Area type="monotone" dataKey="index" stroke={T.navy} fill={T.navy+'20'} strokeWidth={2}/>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={sty.card}>
+          <div style={sty.cardT}>Momentum Breadth Indicator</div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={[{name:'Portfolio',positive:breadth.pos,negative:breadth.neg,neutral:breadth.neu}]} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis type="category" dataKey="name" width={60} tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip contentStyle={{fontSize:11,borderRadius:8}}/>
+              <Bar dataKey="positive" stackId="a" fill={T.green} name="Positive"/>
+              <Bar dataKey="neutral" stackId="a" fill={T.textMut} name="Neutral"/>
+              <Bar dataKey="negative" stackId="a" fill={T.red} name="Negative"/>
+              <Legend wrapperStyle={{fontSize:10}}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Sector x Provider heatmap */}
+      <div style={{...sty.card,marginBottom:20}}>
+        <div style={sty.cardT}>Sector x Provider Momentum Heatmap</div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{...sty.tbl,minWidth:750}}>
+            <thead><tr><th style={sty.th}>Sector</th><th style={{...sty.th,textAlign:'center',fontSize:10}}>N</th>{PROVIDERS.map(p=><th key={p} style={{...sty.th,textAlign:'center',fontSize:10}}>{p}</th>)}</tr></thead>
+            <tbody>{sectorHeatmap.map(row=><tr key={row.sector}>
+              <td style={{...sty.td,fontWeight:600,fontSize:11}}>{row.sector}</td>
+              <td style={{...sty.td,textAlign:'center',fontFamily:T.mono,fontSize:11,color:T.textMut}}>{row.count}</td>
+              {PROVIDERS.map(p=>{
+                const v=row[p];
+                return <td key={p} style={{...sty.td,padding:0}}>
+                  <div style={sty.heatC(v,heatMin,heatMax)}>{v>0?'+':''}{v}</div>
                 </td>;
               })}
             </tr>)}</tbody>
           </table>
-        </div>:
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={lagChartData} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis type="number" tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}} label={{value:'Avg Quarters Lag',position:'insideBottom',offset:-5,fontSize:10,fill:T.textSec}}/>
-            <YAxis dataKey="provider" type="category" width={90} tick={{fontSize:10,fill:T.text,fontFamily:T.font}}/>
-            <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}}/>
-            {PROVIDERS.slice(0,4).map((p,i)=><Bar key={p} dataKey={p} fill={PROV_COLORS[i]} radius={[0,3,3,0]} name={`vs ${p}`}/>)}
-            <Legend wrapperStyle={{fontSize:10,fontFamily:T.font}}/>
-          </BarChart>
-        </ResponsiveContainer>}
-      </div>
-
-      <div style={card}>
-        <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>First Mover Ranking</h4>
-        <p style={{fontSize:11,color:T.textMut,margin:'-4px 0 12px',fontFamily:T.font}}>Lower avg lag = faster to react to ESG changes</p>
-        {firstMover.map((fm,i)=><div key={fm.provider} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 0',borderBottom:i<firstMover.length-1?`1px solid ${T.border}`:'none'}}>
-          <span style={{width:28,height:28,borderRadius:14,background:i===0?T.gold:i===1?T.sage:i===2?T.navyL:T.surfaceH,color:i<3?'#fff':T.text,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,fontFamily:T.font,flexShrink:0}}>{i+1}</span>
-          <div style={{flex:1,minWidth:0}}>
-            <div style={{fontSize:13,fontWeight:600,color:T.navy,fontFamily:T.font}}>{fm.provider}</div>
-            <div style={{fontSize:11,color:T.textMut,fontFamily:T.font}}>Avg lag: {fm.avgLead.toFixed(2)}Q | Leads {fm.leadsCount} others</div>
-          </div>
-          <div style={{width:90}}>
-            <ProgressBar value={3-fm.avgLead} max={3} color={i===0?T.gold:i===1?T.sage:T.navyL}/>
-          </div>
-        </div>)}
-      </div>
-    </div>
-
-    <div style={card}>
-      <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Event-Driven Rating Response Analysis</h4>
-      <p style={{fontSize:11,color:T.textMut,margin:'-4px 0 12px',fontFamily:T.font}}>How did each provider respond to major ESG events? Select an event to see details.</p>
-      <div style={{display:'grid',gridTemplateColumns:'260px 1fr',gap:16}}>
-        <div style={{maxHeight:420,overflowY:'auto'}}>
-          {eventResponse.map((ev,i)=><div key={ev.id} onClick={()=>setSelEvent(i)} style={{padding:'10px 12px',borderRadius:8,cursor:'pointer',marginBottom:4,background:selEvent===i?T.navy:'transparent',color:selEvent===i?'#fff':T.text,transition:'all 0.15s',borderLeft:`3px solid ${ev.type==='Regulatory'?T.navyL:ev.type==='Environmental'?T.sage:ev.type==='Social'?T.gold:ev.type==='Governance'?T.teal:T.amber}`}}
-            onMouseEnter={e=>{if(selEvent!==i)e.currentTarget.style.background=T.surfaceH;}}
-            onMouseLeave={e=>{if(selEvent!==i)e.currentTarget.style.background='transparent';}}>
-            <div style={{fontSize:12,fontWeight:600,fontFamily:T.font}}>{ev.name}</div>
-            <div style={{fontSize:10,opacity:0.7,fontFamily:T.font,display:'flex',gap:8}}>
-              <span>{ev.quarter}</span><span>|</span><span>{ev.type}</span>
-              <span style={{...badge(ev.severity==='Critical'?T.red:ev.severity==='High'?T.amber:T.textMut),fontSize:9,padding:'1px 6px'}}>{ev.severity}</span>
-            </div>
-          </div>)}
         </div>
-        <div>
-          {selEvent!==null?<div>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-              <div>
-                <div style={{fontSize:15,fontWeight:700,color:T.navy,fontFamily:T.font}}>{eventResponse[selEvent].name}</div>
-                <div style={{fontSize:11,color:T.textMut,fontFamily:T.font}}>{eventResponse[selEvent].quarter} | {eventResponse[selEvent].type} | Severity: {eventResponse[selEvent].severity}</div>
-              </div>
+      </div>
+
+      {/* Company momentum table */}
+      <div style={sty.card}>
+        <div style={sty.cardT}>Company Momentum Table ({filtered.length} companies)</div>
+        <div style={{overflowX:'auto',maxHeight:600}}>
+          <table style={sty.tbl}>
+            <thead style={{position:'sticky',top:0,background:T.surface}}><tr>
+              <th style={{...sty.th,cursor:'pointer'}} onClick={()=>handleSort('name')}>Company {sortCol==='name'?(sortDir>0?'\u25B2':'\u25BC'):''}</th>
+              <th style={sty.th}>Sector</th>
+              <th style={{...sty.th,cursor:'pointer'}} onClick={()=>handleSort('momentum')}>Score {sortCol==='momentum'?(sortDir>0?'\u25B2':'\u25BC'):''}</th>
+              <th style={sty.th}>Direction</th>
+              <th style={sty.th}>Trend</th>
+              <th style={sty.th}>Consec Q</th>
+              {PROVIDERS.map(p=><th key={p} style={{...sty.th,fontSize:10}}>{p}</th>)}
+            </tr></thead>
+            <tbody>{filtered.slice(0,60).map(c=>(
+              <tr key={c.id} onClick={()=>setSelectedCompany(c)} style={{cursor:'pointer',transition:'background 0.1s'}}>
+                <td style={{...sty.td,fontWeight:600}}>{c.name}</td>
+                <td style={{...sty.td,fontSize:11}}>{c.sector}</td>
+                <td style={{...sty.td,fontFamily:T.mono,fontWeight:700,color:c.momentum>0?T.green:c.momentum<0?T.red:T.textMut}}>{c.momentum>0?'+':''}{c.momentum}</td>
+                <td style={sty.td}><span style={sty.badge(c.direction==='Positive'?T.green:c.direction==='Negative'?T.red:T.textMut)}>{c.direction}</span></td>
+                <td style={sty.td}><Spark data={c.sparkData} color={c.momentum>=0?T.green:T.red}/></td>
+                <td style={{...sty.td,fontFamily:T.mono,textAlign:'center'}}>{c.maxConsec}</td>
+                {c.provScores.map((ps,pi)=><td key={pi} style={{...sty.td,fontFamily:T.mono,fontSize:11,color:ps.score>0?T.green:ps.score<0?T.red:T.textMut,textAlign:'center'}}>{ps.score>0?'+':''}{ps.score}</td>)}
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Side panel */}
+      {selectedCompany&&<div style={sty.overlay} onClick={()=>setSelectedCompany(null)}>
+        <div style={sty.sideP} onClick={e=>e.stopPropagation()}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+            <div>
+              <h3 style={{margin:0,color:T.navy,fontSize:18}}>{selectedCompany.name}</h3>
+              <div style={{fontSize:12,color:T.textSec,marginTop:2}}>{selectedCompany.sector} | ${selectedCompany.marketCap}B</div>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={eventResponse[selEvent].responses}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-                <XAxis dataKey="provider" tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-                <YAxis tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-                <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}}/>
-                <Bar dataKey="changes" name="Rating Changes" radius={[4,4,0,0]}>
-                  {eventResponse[selEvent].responses.map((entry,idx)=><Cell key={idx} fill={entry.direction==='Upgrade'?T.green:entry.direction==='Downgrade'?T.red:T.amber}/>)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginTop:12}}>
-              {eventResponse[selEvent].responses.map(r=><div key={r.provider} style={{padding:'8px 12px',borderRadius:8,background:T.surfaceH,fontSize:11,fontFamily:T.font}}>
-                <div style={{fontWeight:700,color:T.navy,marginBottom:3}}>{r.provider}</div>
-                <div style={{display:'flex',justifyContent:'space-between'}}>
-                  <span style={{color:r.direction==='Upgrade'?T.green:r.direction==='Downgrade'?T.red:T.amber}}>{r.direction}</span>
-                  <span style={badge(r.speed==='Fast'?T.green:r.speed==='Medium'?T.amber:T.textMut)}>{r.speed}</span>
+            <button style={{...sty.btn,background:T.surfaceH,color:T.textSec}} onClick={()=>setSelectedCompany(null)}>Close</button>
+          </div>
+
+          <div style={{display:'flex',gap:12,marginBottom:16}}>
+            <KPI label="Momentum" value={(selectedCompany.momentum>0?'+':'')+selectedCompany.momentum} color={selectedCompany.momentum>0?T.green:T.red}/>
+            <KPI label="Direction" value={selectedCompany.direction} color={selectedCompany.direction==='Positive'?T.green:selectedCompany.direction==='Negative'?T.red:T.textMut}/>
+            <KPI label="Max Consec" value={selectedCompany.maxConsec+'Q'} color={T.navy}/>
+          </div>
+
+          <div style={{marginBottom:20}}>
+            <div style={sty.cardT}>Provider Momentum Decomposition</div>
+            {PROVIDERS.map((p,pi)=>{
+              const ps=selectedCompany.provScores[pi];
+              const pct=Math.abs(ps.score)/5*100;
+              return <div key={p} style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+                <span style={{width:100,fontSize:11,fontWeight:600,color:T.textSec}}>{p}</span>
+                <div style={{flex:1,height:16,background:T.surfaceH,borderRadius:4,position:'relative',overflow:'hidden'}}>
+                  <div style={{position:'absolute',left:ps.score>=0?'50%':'auto',right:ps.score<0?'50%':'auto',width:`${pct/2}%`,height:'100%',background:ps.score>0?T.green:ps.score<0?T.red:T.textMut,borderRadius:4,transition:'all 0.3s'}}/>
                 </div>
-                <div style={{fontSize:10,color:T.textMut,marginTop:2}}>Avg reaction: {r.avgReaction}Q</div>
-              </div>)}
-            </div>
-          </div>:<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:260,color:T.textMut,fontSize:13,fontFamily:T.font,flexDirection:'column',gap:8}}>
-            <div style={{fontSize:28,opacity:0.3}}>&#9670;</div>
-            Select an event to view provider response analysis
-          </div>}
+                <span style={{fontFamily:T.mono,fontSize:12,fontWeight:600,color:ps.score>0?T.green:ps.score<0?T.red:T.textMut,width:35,textAlign:'right'}}>{ps.score>0?'+':''}{ps.score}</span>
+              </div>;
+            })}
+          </div>
+
+          <div style={{marginBottom:20}}>
+            <div style={sty.cardT}>12-Quarter Rating Trajectory</div>
+            <ResponsiveContainer width="100%" height={180}>
+              <LineChart data={QUARTERS.map((q,qi)=>({q,...PROVIDERS.reduce((o,p,pi)=>({...o,[p]:7-selectedCompany.ratings[pi][qi]}),{})}))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+                <XAxis dataKey="q" tick={{fontSize:9,fill:T.textSec}}/>
+                <YAxis domain={[1,7]} ticks={[1,2,3,4,5,6,7]} tickFormatter={v=>RATINGS[7-v]||''} tick={{fontSize:9}}/>
+                <Tooltip formatter={v=>rLabel(7-v)} contentStyle={{fontSize:11,borderRadius:8}}/>
+                {PROVIDERS.map((p,pi)=><Line key={p} type="monotone" dataKey={p} stroke={PROV_COLORS[pi]} strokeWidth={2} dot={{r:2}}/>)}
+                <Legend wrapperStyle={{fontSize:10}}/>
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={{marginBottom:20}}>
+            <div style={sty.cardT}>Trigger Events</div>
+            {ESG_EVENTS.filter((_ev,i)=>sr(selectedCompany.id*50+i)>0.6).slice(0,4).map(ev=>(
+              <div key={ev.id} style={{padding:10,borderRadius:6,background:T.surfaceH,marginBottom:6}}>
+                <div style={{fontSize:12,fontWeight:600,color:T.navy}}>{ev.name} <span style={sty.badge(ev.type==='Environmental'?T.green:ev.type==='Social'?T.amber:T.navyL)}>{ev.type}</span></div>
+                <div style={{fontSize:11,color:T.textMut,marginTop:2}}>{ev.quarter} | {ev.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{display:'flex',gap:8}}>
+            <button style={{...sty.btn,background:T.green+'20',color:T.green,flex:1,padding:'10px'}}>Engage</button>
+            <button style={{...sty.btn,background:T.amber+'20',color:T.amber,flex:1,padding:'10px'}}>Monitor</button>
+            <button style={{...sty.btn,background:T.red+'20',color:T.red,flex:1,padding:'10px'}}>Divest</button>
+          </div>
         </div>
-      </div>
+      </div>}
     </div>
-  </div>;
+  );
 }
 
-/* ══════════════════════════════════════════════════
-   TAB 4: Alpha Signal Builder
-   ══════════════════════════════════════════════════ */
-function AlphaSignalTab({ratings}){
-  const[threshold,setThreshold]=useState(1);
-  const[holdPeriod,setHoldPeriod]=useState(2);
-  const[showDetail,setShowDetail]=useState(false);
-  const[signalSort,setSignalSort]=useState('return');
-  const[signalDir,setSignalDir]=useState(-1);
-  const[sectorFilter,setSectorFilter]=useState('all');
+/* ======================================================================
+   TAB 3 — PROVIDER LEAD-LAG
+   ====================================================================== */
+function ProviderLeadLag(){
+  const [viewMode,setViewMode]=useState('heatmap');
+  const [cellClick,setCellClick]=useState(null);
+  const [selectedEvent,setSelectedEvent]=useState(null);
+  const [eventTypeFilter,setEventTypeFilter]=useState('All');
 
-  const backtest=useMemo(()=>{
-    const signals=[];
-    const quarterlyReturns=QUARTERS.map(()=>0);
-    const quarterlyCount=QUARTERS.map(()=>0);
-    let equity=100;const equityCurve=[{quarter:QUARTERS[0],value:100,drawdown:0}];
-    let wins=0;let total=0;let maxDD=0;let peak=100;
-    let sectorReturns={};SECTORS.forEach(s=>{sectorReturns[s]={total:0,count:0,wins:0};});
-
+  const leadLag=useMemo(()=>{
+    const mat=Array.from({length:6},()=>Array(6).fill(0));
+    const counts=Array.from({length:6},()=>Array(6).fill(0));
     COMPANIES.forEach(c=>{
-      for(let qi=2;qi<QUARTERS.length;qi++){
-        let avgScore=0;
-        PROVIDERS.forEach(p=>{
-          const h=ratings[c.id][p];
-          let consec=0;
-          for(let j=qi;j>0;j--){
-            const d=h[j].num-h[j-1].num;
-            if(d>0)consec++;else break;
+      for(let pi=0;pi<6;pi++){
+        for(let pj=0;pj<6;pj++){
+          if(pi===pj)continue;
+          for(let qi=1;qi<QUARTERS.length;qi++){
+            const diffI=c.ratings[pi][qi]-c.ratings[pi][qi-1];
+            if(diffI===0)continue;
+            for(let qj=qi+1;qj<Math.min(qi+4,QUARTERS.length);qj++){
+              const diffJ=c.ratings[pj][qj]-c.ratings[pj][qj-1];
+              if((diffI>0&&diffJ>0)||(diffI<0&&diffJ<0)){
+                mat[pi][pj]+=(qj-qi);counts[pi][pj]++;break;
+              }
+            }
           }
-          avgScore+=consec;
-        });
-        avgScore/=PROVIDERS.length;
-
-        if(avgScore>=threshold){
-          const entryQ=qi;const exitQ=Math.min(qi+holdPeriod,QUARTERS.length-1);
-          const entryPrice=100+sr(c.id*200+entryQ*37)*20;
-          const exitPrice=entryPrice*(1+(sr(c.id*300+exitQ*53)-0.42)*0.15);
-          const ret=(exitPrice-entryPrice)/entryPrice;
-          signals.push({company:c.name,sector:c.sector,ticker:c.ticker,entry:QUARTERS[entryQ],exit:QUARTERS[exitQ],score:avgScore.toFixed(1),returnPct:Math.round(ret*10000)/100,win:ret>0});
-          quarterlyReturns[entryQ]+=ret;
-          quarterlyCount[entryQ]++;
-          sectorReturns[c.sector].total+=ret;sectorReturns[c.sector].count++;if(ret>0)sectorReturns[c.sector].wins++;
-          total++;if(ret>0)wins++;
         }
       }
     });
+    return mat.map((row,i)=>row.map((v,j)=>i===j?0:counts[i][j]>0?+(v/counts[i][j]).toFixed(2):0));
+  },[]);
 
-    for(let qi=1;qi<QUARTERS.length;qi++){
-      const pr=quarterlyCount[qi]>0?quarterlyReturns[qi]/quarterlyCount[qi]:0;
-      equity*=(1+pr*0.5);
-      if(equity>peak)peak=equity;
-      const dd=(peak-equity)/peak;
-      if(dd>maxDD)maxDD=dd;
-      equityCurve.push({quarter:QUARTERS[qi],value:Math.round(equity*100)/100,drawdown:Math.round(-dd*10000)/100});
-    }
+  const firstMover=useMemo(()=>{
+    const leads=Array(6).fill(0);
+    const speeds=Array.from({length:6},()=>[]);
+    COMPANIES.forEach(c=>{
+      for(let qi=1;qi<QUARTERS.length;qi++){
+        let first=-1;
+        PROVIDERS.forEach((_p,pi)=>{
+          const diff=Math.abs(c.ratings[pi][qi]-c.ratings[pi][qi-1]);
+          if(diff>0&&first===-1)first=pi;
+        });
+        if(first>=0){leads[first]++;speeds[first].push(qi);}
+      }
+    });
+    return PROVIDERS.map((p,i)=>({provider:p,leads:leads[i],avgSpeed:speeds[i].length?+(speeds[i].reduce((a,b)=>a+b,0)/speeds[i].length).toFixed(2):0})).sort((a,b)=>b.leads-a.leads);
+  },[]);
 
-    const returns=equityCurve.slice(1).map((e,i)=>(e.value-equityCurve[i].value)/equityCurve[i].value);
-    const avgR=returns.length>0?returns.reduce((a,b)=>a+b,0)/returns.length:0;
-    const stdR=returns.length>0?Math.sqrt(returns.reduce((a,b)=>a+(b-avgR)**2,0)/returns.length)||0.01:0.01;
-    const sharpe=Math.round((avgR/stdR)*Math.sqrt(4)*100)/100;
-    const hitRate=total>0?Math.round(wins/total*10000)/100:0;
-    const totalReturn=Math.round((equity-100)*100)/100;
-    const annReturn=Math.round(((equity/100)**(1/2)-1)*10000)/100;
+  const eventReactions=useMemo(()=>ESG_EVENTS.map(ev=>{
+    const qIdx=QUARTERS.indexOf(ev.quarter);
+    if(qIdx<0||qIdx>=QUARTERS.length-1)return{...ev,reactions:PROVIDERS.map(()=>({lag:'-',speed:99})),fastestProvider:'N/A'};
+    const reactions=PROVIDERS.map((_p,pi)=>{
+      let reactQ=0,cnt=0;
+      const affected=COMPANIES.filter(c=>sr(c.id*ev.id+pi*7)>0.5);
+      affected.forEach(c=>{
+        for(let q=qIdx;q<Math.min(qIdx+4,QUARTERS.length-1);q++){
+          if(c.ratings[pi][q+1]!==c.ratings[pi][q]){reactQ+=q-qIdx+1;cnt++;break;}
+        }
+      });
+      return{lag:cnt?+(reactQ/cnt).toFixed(1):'-',speed:cnt?reactQ/cnt:99};
+    });
+    const fastest=reactions.reduce((m,r,i)=>r.speed<m.speed?{idx:i,speed:r.speed}:m,{idx:0,speed:99});
+    return{...ev,reactions,fastestProvider:PROVIDERS[fastest.idx]};
+  }),[]);
 
-    const sectorPerf=SECTORS.map(s=>({sector:s,avgReturn:sectorReturns[s].count>0?Math.round(sectorReturns[s].total/sectorReturns[s].count*10000)/100:0,signals:sectorReturns[s].count,hitRate:sectorReturns[s].count>0?Math.round(sectorReturns[s].wins/sectorReturns[s].count*100):0}));
+  const filteredEvents=eventTypeFilter==='All'?eventReactions:eventReactions.filter(e=>e.type===eventTypeFilter);
 
-    return{signals,equityCurve,sharpe,hitRate,maxDD:Math.round(maxDD*10000)/100,totalReturn,annReturn,total,sectorPerf};
-  },[ratings,threshold,holdPeriod]);
+  const speedDist=useMemo(()=>{
+    const buckets=[0,0.5,1,1.5,2,2.5,3,3.5,4];
+    return buckets.map(b=>{
+      const row={bucket:`${b}-${b+0.5}Q`};
+      PROVIDERS.forEach((p,pi)=>{
+        let count=0;
+        COMPANIES.forEach(c=>{
+          for(let qi=1;qi<QUARTERS.length;qi++){
+            if(c.ratings[pi][qi]!==c.ratings[pi][qi-1]){
+              const speed=sr(c.id*101+pi*21+qi)*4;
+              if(speed>=b&&speed<b+0.5)count++;
+            }
+          }
+        });
+        row[p]=count;
+      });
+      return row;
+    });
+  },[]);
 
-  const filteredSignals=useMemo(()=>{
-    let list=[...backtest.signals];
-    if(sectorFilter!=='all')list=list.filter(s=>s.sector===sectorFilter);
-    list.sort((a,b)=>signalSort==='return'?(a.returnPct-b.returnPct)*signalDir:signalSort==='score'?(parseFloat(a.score)-parseFloat(b.score))*signalDir:a.company.localeCompare(b.company)*signalDir);
-    return list;
-  },[backtest.signals,sectorFilter,signalSort,signalDir]);
+  const cellCompanies=useMemo(()=>{
+    if(!cellClick)return[];
+    const{pi,pj}=cellClick;
+    return COMPANIES.slice(0,10).map(c=>({
+      name:c.name,
+      data:QUARTERS.map((q,qi)=>({q,[PROVIDERS[pi]]:7-c.ratings[pi][qi],[PROVIDERS[pj]]:7-c.ratings[pj][qi]}))
+    }));
+  },[cellClick]);
 
-  const exportCSV=useCallback(()=>{
-    const header='Company,Ticker,Sector,Entry,Exit,Score,Return%,Win\n';
-    const rows=backtest.signals.map(s=>`${s.company},${s.ticker},${s.sector},${s.entry},${s.exit},${s.score},${s.returnPct},${s.win}`).join('\n');
-    const blob=new Blob([header+rows],{type:'text/csv'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download='momentum_alpha_signals.csv';a.click();URL.revokeObjectURL(url);
-  },[backtest.signals]);
-
-  return <div>
-    <div style={{display:'flex',gap:20,flexWrap:'wrap',marginBottom:16,alignItems:'center',padding:'12px 16px',background:T.surfaceH,borderRadius:10}}>
-      <div style={{display:'flex',alignItems:'center',gap:8}}>
-        <span style={{fontSize:12,fontWeight:600,color:T.textSec,fontFamily:T.font}}>Momentum Threshold:</span>
-        <input type="range" min={0.5} max={3} step={0.5} value={threshold} onChange={e=>setThreshold(+e.target.value)} style={{accentColor:T.navy,width:120}}/>
-        <span style={{fontSize:14,fontWeight:700,color:T.navy,fontFamily:T.mono,minWidth:30,textAlign:'center'}}>{threshold}</span>
+  return(
+    <div>
+      {/* View toggle */}
+      <div style={{display:'flex',gap:8,marginBottom:16,alignItems:'center'}}>
+        <button style={sty.pill(viewMode==='heatmap')} onClick={()=>setViewMode('heatmap')}>Heatmap View</button>
+        <button style={sty.pill(viewMode==='bar')} onClick={()=>setViewMode('bar')}>Bar Chart View</button>
+        {cellClick&&<button style={{...sty.btn,background:T.red+'20',color:T.red,marginLeft:12}} onClick={()=>setCellClick(null)}>Clear selection</button>}
       </div>
-      <div style={{display:'flex',alignItems:'center',gap:8}}>
-        <span style={{fontSize:12,fontWeight:600,color:T.textSec,fontFamily:T.font}}>Hold Period (Qtrs):</span>
-        <input type="range" min={1} max={4} step={1} value={holdPeriod} onChange={e=>setHoldPeriod(+e.target.value)} style={{accentColor:T.navy,width:120}}/>
-        <span style={{fontSize:14,fontWeight:700,color:T.navy,fontFamily:T.mono,minWidth:20,textAlign:'center'}}>{holdPeriod}</span>
-      </div>
-      <div style={{fontSize:11,color:T.textMut,fontFamily:T.font,padding:'4px 8px',background:T.surface,borderRadius:6,border:`1px solid ${T.border}`}}>
-        Strategy: Buy on {threshold}+ momentum score, hold {holdPeriod}Q
-      </div>
-      <button onClick={exportCSV} style={{...btn(false),marginLeft:'auto',display:'flex',alignItems:'center',gap:6}}>
-        <span style={{fontSize:14}}>&#8681;</span> Export CSV
-      </button>
-    </div>
 
-    <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:16}}>
-      <KPI label="Sharpe Ratio" value={backtest.sharpe} sub="Risk-adjusted" color={backtest.sharpe>0.5?T.green:backtest.sharpe>0?T.amber:T.red}/>
-      <KPI label="Hit Rate" value={`${backtest.hitRate}%`} sub={`${backtest.total} signals`} color={backtest.hitRate>55?T.green:backtest.hitRate>45?T.amber:T.red}/>
-      <KPI label="Max Drawdown" value={`-${backtest.maxDD}%`} sub="Peak to trough" color={backtest.maxDD<10?T.green:backtest.maxDD<20?T.amber:T.red}/>
-      <KPI label="Total Return" value={`${backtest.totalReturn>0?'+':''}${backtest.totalReturn}%`} sub="Cumulative" color={backtest.totalReturn>0?T.green:T.red}/>
-      <KPI label="Ann. Return" value={`${backtest.annReturn>0?'+':''}${backtest.annReturn}%`} sub="Annualized" color={backtest.annReturn>0?T.green:T.red}/>
-    </div>
+      <div style={{display:'grid',gridTemplateColumns:'3fr 2fr',gap:16,marginBottom:20}}>
+        {/* Lead-Lag matrix/chart */}
+        <div style={sty.card}>
+          <div style={sty.cardT}>6x6 Provider Lead-Lag (Avg Quarters Provider A Leads Provider B)</div>
+          {viewMode==='heatmap'?(
+            <table style={{...sty.tbl,textAlign:'center'}}>
+              <thead><tr><th style={sty.th}>Leader \ Follower</th>{PROVIDERS.map(p=><th key={p} style={{...sty.th,textAlign:'center',fontSize:10}}>{p}</th>)}</tr></thead>
+              <tbody>{PROVIDERS.map((p,pi)=><tr key={p}>
+                <td style={{...sty.td,fontWeight:600,fontSize:11}}>{p}</td>
+                {PROVIDERS.map((_p2,pj)=><td key={pj} style={{...sty.td,padding:0}} onClick={()=>{if(pi!==pj)setCellClick({pi,pj});}}>
+                  {pi===pj?<div style={{padding:8,background:T.surfaceH,color:T.textMut,fontSize:11}}>--</div>:
+                  <div style={{padding:8,textAlign:'center',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono,
+                    background:leadLag[pi][pj]>1.5?T.navy:leadLag[pi][pj]>0.8?T.navyL+'50':T.surfaceH,
+                    color:leadLag[pi][pj]>1.5?'#fff':T.text,cursor:'pointer',
+                    border:cellClick&&cellClick.pi===pi&&cellClick.pj===pj?`2px solid ${T.gold}`:'2px solid transparent'
+                  }}>{leadLag[pi][pj]}Q</div>}
+                </td>)}
+              </tr>)}</tbody>
+            </table>
+          ):(
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={PROVIDERS.map((p,pi)=>({provider:p,avgLead:+(leadLag[pi].reduce((a,b)=>a+b,0)/(PROVIDERS.length-1)).toFixed(2)}))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+                <XAxis dataKey="provider" tick={{fontSize:10,fill:T.textSec}}/>
+                <YAxis tick={{fontSize:10,fill:T.textSec}} label={{value:'Avg Lead (Q)',angle:-90,position:'insideLeft',style:{fontSize:10,fill:T.textSec}}}/>
+                <Tooltip contentStyle={{fontSize:11,borderRadius:8}}/>
+                <Bar dataKey="avgLead" fill={T.navy} radius={[4,4,0,0]} name="Avg Lead (Q)">
+                  {PROVIDERS.map((_p,i)=><Cell key={i} fill={PROV_COLORS[i]}/>)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
 
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-      <div style={card}>
-        <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Equity Curve</h4>
-        <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={backtest.equityCurve}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="quarter" tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}} domain={['auto','auto']}/>
-            <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}} formatter={(v,n)=>n==='value'?[`$${v}`,'Portfolio']:v}/>
-            <Area type="monotone" dataKey="value" stroke={T.navy} fill={T.navy} fillOpacity={0.12} strokeWidth={2.5} name="Portfolio Value"/>
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={card}>
-        <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Drawdown Profile</h4>
-        <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={backtest.equityCurve}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="quarter" tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}}/>
-            <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}} formatter={v=>[`${v}%`,'Drawdown']}/>
-            <Area type="monotone" dataKey="drawdown" stroke={T.red} fill={T.red} fillOpacity={0.12} strokeWidth={2} name="Drawdown %"/>
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-
-    <div style={card}>
-      <h4 style={{margin:'0 0 12px',fontSize:14,color:T.navy,fontFamily:T.font}}>Sector Performance Attribution</h4>
-      <ResponsiveContainer width="100%" height={180}>
-        <BarChart data={backtest.sectorPerf}>
-          <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-          <XAxis dataKey="sector" tick={{fontSize:9,fill:T.textSec,fontFamily:T.font}} angle={-20} textAnchor="end" height={45}/>
-          <YAxis tick={{fontSize:10,fill:T.textSec,fontFamily:T.font}} label={{value:'Avg Return %',angle:-90,position:'insideLeft',fontSize:10,fill:T.textSec}}/>
-          <Tooltip contentStyle={{fontFamily:T.font,fontSize:11,borderRadius:8}} formatter={(v,n)=>n==='avgReturn'?[`${v}%`,'Avg Return']:[v,'Signals']}/>
-          <Bar dataKey="avgReturn" name="Avg Return %">
-            {backtest.sectorPerf.map((entry,idx)=><Cell key={idx} fill={entry.avgReturn>0?T.green:T.red} radius={[4,4,0,0]}/>)}
-          </Bar>
-          <Legend wrapperStyle={{fontSize:11,fontFamily:T.font}}/>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-
-    <div style={card}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-        <h4 style={{margin:0,fontSize:14,color:T.navy,fontFamily:T.font}}>Signal List ({filteredSignals.length} of {backtest.total})</h4>
-        <div style={{display:'flex',gap:6,alignItems:'center'}}>
-          <select value={sectorFilter} onChange={e=>setSectorFilter(e.target.value)} style={inp}>
-            <option value="all">All Sectors</option>
-            {SECTORS.map(s=><option key={s} value={s}>{s}</option>)}
-          </select>
-          {['return','score','name'].map(s=><button key={s} onClick={()=>{setSignalSort(s);setSignalDir(d=>signalSort===s?-d:-1);}} style={btn(signalSort===s)}>{s==='return'?'Return':s==='score'?'Score':'Name'}</button>)}
-          <button onClick={()=>setShowDetail(!showDetail)} style={btn(showDetail)}>{showDetail?'Collapse':'Expand'}</button>
+        {/* First Mover leaderboard */}
+        <div style={sty.card}>
+          <div style={sty.cardT}>First Mover Leaderboard</div>
+          <table style={sty.tbl}>
+            <thead><tr><th style={sty.th}>Rank</th><th style={sty.th}>Provider</th><th style={sty.th}>Lead Count</th><th style={sty.th}>Avg Speed</th></tr></thead>
+            <tbody>{firstMover.map((fm,i)=><tr key={fm.provider}>
+              <td style={{...sty.td,fontWeight:700,color:i===0?T.gold:i===1?T.textSec:T.textMut}}>#{i+1}</td>
+              <td style={{...sty.td,fontWeight:600}}>{fm.provider}</td>
+              <td style={{...sty.td,fontFamily:T.mono,fontWeight:600}}>{fm.leads}</td>
+              <td style={{...sty.td,fontFamily:T.mono}}>{fm.avgSpeed}Q</td>
+            </tr>)}</tbody>
+          </table>
+          <div style={{padding:12,background:T.surfaceH,borderRadius:8,marginTop:12}}>
+            <div style={{fontSize:11,color:T.textSec}}>The First Mover leaderboard counts how often each provider changes a rating before any other provider follows suit within 3 quarters.</div>
+          </div>
         </div>
       </div>
-      {showDetail&&<div style={{maxHeight:340,overflowY:'auto'}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}>
-          <thead><tr>
-            <th style={thStyle}>Company</th><th style={thStyle}>Sector</th><th style={thStyle}>Entry</th>
-            <th style={thStyle}>Exit</th><th style={thStyle}>Score</th><th style={thStyle}>Return</th><th style={thStyle}>Win</th>
-          </tr></thead>
-          <tbody>{filteredSignals.slice(0,50).map((s,i)=><tr key={i} style={{transition:'background 0.15s'}} onMouseEnter={e=>e.currentTarget.style.background=T.surfaceH} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-            <td style={{...tdStyle,fontWeight:600}}>{s.company}<span style={{color:T.textMut,marginLeft:6,fontSize:11}}>{s.ticker}</span></td>
-            <td style={tdStyle}><span style={{fontSize:11}}>{s.sector}</span></td>
-            <td style={{...tdStyle,fontFamily:T.mono,fontSize:11}}>{s.entry}</td>
-            <td style={{...tdStyle,fontFamily:T.mono,fontSize:11}}>{s.exit}</td>
-            <td style={tdStyle}><span style={badge(T.navy)}>{s.score}</span></td>
-            <td style={tdStyle}><span style={{color:s.returnPct>0?T.green:T.red,fontWeight:700,fontFamily:T.mono,fontSize:12}}>{s.returnPct>0?'+':''}{s.returnPct}%</span></td>
-            <td style={tdStyle}>{s.win?<span style={{color:T.green,fontWeight:700,fontSize:12}}>\u2713</span>:<span style={{color:T.red,fontWeight:700,fontSize:12}}>\u2717</span>}</td>
-          </tr>)}</tbody>
-        </table>
+
+      {/* Cell click expansion: provider overlay */}
+      {cellClick&&<div style={{...sty.card,marginBottom:20}}>
+        <div style={sty.cardT}>Rating Overlay: {PROVIDERS[cellClick.pi]} (blue) vs {PROVIDERS[cellClick.pj]} (gold) — 10 Companies</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+          {cellCompanies.slice(0,6).map(cc=>(
+            <div key={cc.name} style={{padding:10,borderRadius:8,background:T.surfaceH}}>
+              <div style={{fontSize:11,fontWeight:600,marginBottom:4,color:T.navy}}>{cc.name}</div>
+              <ResponsiveContainer width="100%" height={100}>
+                <LineChart data={cc.data}>
+                  <XAxis dataKey="q" tick={{fontSize:7,fill:T.textSec}}/>
+                  <YAxis domain={[1,7]} tick={{fontSize:7}} tickFormatter={v=>RATINGS[7-v]||''}/>
+                  <Tooltip contentStyle={{fontSize:9,borderRadius:6}} formatter={v=>rLabel(7-v)}/>
+                  <Line type="monotone" dataKey={PROVIDERS[cellClick.pi]} stroke={T.navy} strokeWidth={2} dot={false}/>
+                  <Line type="monotone" dataKey={PROVIDERS[cellClick.pj]} stroke={T.gold} strokeWidth={2} dot={false}/>
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ))}
+        </div>
       </div>}
-      {!showDetail&&<div style={{padding:20,textAlign:'center',color:T.textMut,fontSize:12,fontFamily:T.font}}>Click "Expand" to view individual signal details</div>}
+
+      {/* ESG Events timeline */}
+      <div style={{...sty.card,marginBottom:20}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div style={sty.cardT}>15 ESG Events — Provider Reaction Speed</div>
+          <div style={{display:'flex',gap:4}}>
+            {['All','Environmental','Social','Governance'].map(t=><button key={t} style={sty.pill(eventTypeFilter===t)} onClick={()=>setEventTypeFilter(t)}>{t}</button>)}
+          </div>
+        </div>
+        <div style={{overflowX:'auto'}}>
+          <table style={sty.tbl}>
+            <thead><tr>
+              <th style={sty.th}>Event</th><th style={sty.th}>Type</th><th style={sty.th}>Quarter</th>
+              {PROVIDERS.map(p=><th key={p} style={{...sty.th,textAlign:'center',fontSize:10}}>{p}</th>)}
+              <th style={sty.th}>Fastest</th>
+            </tr></thead>
+            <tbody>{filteredEvents.map(ev=>(
+              <tr key={ev.id} onClick={()=>setSelectedEvent(selectedEvent?.id===ev.id?null:ev)} style={{cursor:'pointer',background:selectedEvent?.id===ev.id?T.surfaceH:'transparent'}}>
+                <td style={{...sty.td,fontWeight:600,fontSize:11,maxWidth:180}}>{ev.name}</td>
+                <td style={sty.td}><span style={sty.badge(ev.type==='Environmental'?T.green:ev.type==='Social'?T.amber:T.navyL)}>{ev.type}</span></td>
+                <td style={{...sty.td,fontFamily:T.mono,fontSize:11}}>{ev.quarter}</td>
+                {ev.reactions.map((r,i)=><td key={i} style={{...sty.td,textAlign:'center',fontFamily:T.mono,fontSize:11,fontWeight:600,color:r.lag==='-'?T.textMut:r.speed<1.5?T.green:r.speed<2.5?T.amber:T.red}}>{r.lag}{r.lag!=='-'?'Q':''}</td>)}
+                <td style={{...sty.td,fontWeight:700,color:T.green,fontSize:11}}>{ev.fastestProvider}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+        {selectedEvent&&<div style={{marginTop:12,padding:14,background:T.surfaceH,borderRadius:8}}>
+          <div style={{fontSize:13,fontWeight:700,color:T.navy}}>{selectedEvent.name}</div>
+          <div style={{fontSize:12,color:T.textSec,marginTop:4}}>{selectedEvent.desc}</div>
+          <div style={{fontSize:11,color:T.textMut,marginTop:4}}>First reactor: <b style={{color:T.green}}>{selectedEvent.fastestProvider}</b> | Quarter: {selectedEvent.quarter} | Type: {selectedEvent.type}</div>
+        </div>}
+      </div>
+
+      {/* Speed distribution histogram */}
+      <div style={sty.card}>
+        <div style={sty.cardT}>Reaction Speed Distribution by Provider (Histogram)</div>
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart data={speedDist}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <XAxis dataKey="bucket" tick={{fontSize:9,fill:T.textSec}}/>
+            <YAxis tick={{fontSize:10,fill:T.textSec}} label={{value:'Count',angle:-90,position:'insideLeft',style:{fontSize:10,fill:T.textSec}}}/>
+            <Tooltip contentStyle={{fontSize:11,borderRadius:8}}/>
+            {PROVIDERS.map((p,i)=><Bar key={p} dataKey={p} fill={PROV_COLORS[i]} name={p}/>)}
+            <Legend wrapperStyle={{fontSize:10}}/>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
-  </div>;
+  );
 }
 
-/* ══════════════════════════════════════════════════
-   MAIN PAGE SHELL
-   ══════════════════════════════════════════════════ */
-export default function RatingsMigrationMomentumPage(){
-  const[tab,setTab]=useState(0);
-  const ratings=useMemo(()=>genRatings(),[]);
+/* ======================================================================
+   TAB 4 — ALPHA SIGNAL BUILDER
+   ====================================================================== */
+function AlphaSignalBuilder(){
+  const [threshold,setThreshold]=useState(1.5);
+  const [holdPeriod,setHoldPeriod]=useState(4);
+  const [rebalFreq,setRebalFreq]=useState(1);
+  const [longShort,setLongShort]=useState(false);
+  const [signalSort,setSignalSort]=useState({col:'pnl',dir:-1});
 
-  const totalUp=useMemo(()=>{
-    let up=0,dn=0,total=0;
-    COMPANIES.forEach(c=>{PROVIDERS.forEach(p=>{
-      for(let i=1;i<QUARTERS.length;i++){
-        const d=ratings[c.id][p][i].num-ratings[c.id][p][i-1].num;
-        if(d>0)up++;if(d<0)dn++;total++;
+  const signals=useMemo(()=>COMPANIES.map(c=>{
+    let momentum=0;
+    PROVIDERS.forEach((_p,pi)=>{
+      for(let qi=1;qi<QUARTERS.length;qi++){
+        const diff=c.ratings[pi][qi-1]-c.ratings[pi][qi];
+        momentum+=diff;
       }
-    });});
-    return{up,dn,total,stability:Math.round((1-(up+dn)/total)*100)};
-  },[ratings]);
+    });
+    momentum=+(momentum/PROVIDERS.length).toFixed(2);
+    const signal=Math.abs(momentum)>=threshold?(momentum>0?'Long':'Short'):'Neutral';
+    const entryQ=QUARTERS[Math.max(0,Math.floor(sr(c.id*77)*6))];
+    const pnl=signal==='Long'?+(sr(c.id*123)*30-5).toFixed(2):signal==='Short'?+(sr(c.id*456)*20-15).toFixed(2):0;
+    return{...c,momentum,signal,entryQ,pnl};
+  }),[threshold]);
 
-  return <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px'}}>
-    <div style={{maxWidth:1380,margin:'0 auto'}}>
-      <div style={{marginBottom:24}}>
-        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:4}}>
-          <div style={{width:8,height:8,borderRadius:4,background:T.gold}}/>
-          <span style={{fontSize:11,fontWeight:600,color:T.textMut,letterSpacing:1.5,textTransform:'uppercase',fontFamily:T.font}}>EP-AK3</span>
-          <span style={{fontSize:10,color:T.textMut,fontFamily:T.font}}>|</span>
-          <span style={{fontSize:11,color:T.textSec,fontFamily:T.font}}>{COMPANIES.length} companies &middot; {PROVIDERS.length} providers &middot; {QUARTERS.length} quarters</span>
+  const activeSignals=useMemo(()=>signals.filter(s=>s.signal!=='Neutral'),[signals]);
+  const longSignals=useMemo(()=>signals.filter(s=>s.signal==='Long'),[signals]);
+  const shortSignals=useMemo(()=>signals.filter(s=>s.signal==='Short'),[signals]);
+
+  const sortedSignals=useMemo(()=>{
+    const arr=[...activeSignals];
+    arr.sort((a,b)=>signalSort.dir*(a[signalSort.col]>b[signalSort.col]?1:a[signalSort.col]<b[signalSort.col]?-1:0));
+    return arr;
+  },[activeSignals,signalSort]);
+
+  const backtest=useMemo(()=>{
+    let equity=100;
+    const curve=QUARTERS.map((q,qi)=>{
+      const ret=activeSignals.reduce((s,c)=>{
+        const avgChange=PROVIDERS.reduce((ss,_p,pi)=>ss+(c.ratings[pi][Math.min(qi,QUARTERS.length-1)]-c.ratings[pi][Math.max(0,qi-1)]),0)/PROVIDERS.length;
+        return s+(c.signal==='Long'?avgChange*0.5:longShort?-avgChange*0.3:0);
+      },0)/(activeSignals.length||1);
+      equity*=(1+ret/100*(holdPeriod/4));
+      return{q,equity:+equity.toFixed(2),return:+(ret*(holdPeriod/4)).toFixed(2)};
+    });
+
+    let peak=100;
+    const drawdown=curve.map(c=>{peak=Math.max(peak,c.equity);return{q:c.q,dd:+((c.equity-peak)/peak*100).toFixed(2)};});
+
+    const returns=curve.map(c=>c.return);
+    const avgRet=returns.reduce((a,b)=>a+b,0)/returns.length;
+    const stdDev=Math.sqrt(returns.reduce((s,r)=>s+(r-avgRet)**2,0)/returns.length)||1;
+    const downDev=Math.sqrt(returns.filter(r=>r<0).reduce((s,r)=>s+r*r,0)/(returns.filter(r=>r<0).length||1))||1;
+    const maxDD=Math.min(...drawdown.map(d=>d.dd));
+    const totalRet=curve.length?curve[curve.length-1].equity-100:0;
+    const wins=returns.filter(r=>r>0).length;
+    const losses=returns.filter(r=>r<0).length;
+
+    return{
+      curve,drawdown,
+      sharpe:+(avgRet/stdDev*Math.sqrt(4)).toFixed(2),
+      sortino:+(avgRet/downDev*Math.sqrt(4)).toFixed(2),
+      hitRate:returns.length?+((wins/returns.length)*100).toFixed(1):0,
+      maxDD:maxDD.toFixed(2),
+      totalReturn:totalRet.toFixed(2),
+      annualized:+(totalRet/3).toFixed(2),
+      calmar:maxDD!==0?+((totalRet/3)/Math.abs(maxDD)).toFixed(2):0,
+      winLoss:losses?+(wins/losses).toFixed(2):wins,
+    };
+  },[activeSignals,holdPeriod,longShort]);
+
+  const quarterlyReturns=useMemo(()=>QUARTERS.map((q,qi)=>({q,return:backtest.curve[qi]?.return||0})),[backtest]);
+
+  const sectorAttrib=useMemo(()=>{
+    const m={};
+    activeSignals.forEach(c=>{
+      if(!m[c.sector])m[c.sector]={sector:c.sector,pnl:0,count:0};
+      m[c.sector].pnl+=c.pnl;m[c.sector].count++;
+    });
+    return Object.values(m).map(s=>({...s,avgPnl:+(s.pnl/s.count).toFixed(2)})).sort((a,b)=>b.avgPnl-a.avgPnl);
+  },[activeSignals]);
+
+  const factorExposures=useMemo(()=>{
+    const factors=['Momentum','Value','Quality','Size','Volatility','ESG Score'];
+    return factors.map((f,i)=>({factor:f,exposure:+(sr(i*777+threshold*100)*2-1).toFixed(2),contribution:+(sr(i*888+holdPeriod*50)*4-2).toFixed(2)}));
+  },[threshold,holdPeriod]);
+
+  const exportCSV=useCallback(()=>{
+    const headers=['Company','Sector','Signal','Momentum','Entry Quarter','PnL (%)','Market Cap ($B)'];
+    const rows=activeSignals.map(s=>[s.name,s.sector,s.signal,s.momentum,s.entryQ,s.pnl,s.marketCap]);
+    const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='alpha_signals_export.csv';a.click();
+    URL.revokeObjectURL(url);
+  },[activeSignals]);
+
+  const handleSignalSort=(col)=>{
+    if(signalSort.col===col)setSignalSort(s=>({...s,dir:s.dir*-1}));
+    else setSignalSort({col,dir:-1});
+  };
+
+  return(
+    <div>
+      {/* Strategy configuration */}
+      <div style={{...sty.card,marginBottom:20}}>
+        <div style={sty.cardT}>Strategy Configuration</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:20}}>
+          <div>
+            <div style={{fontSize:11,color:T.textSec,marginBottom:6}}>Momentum Threshold</div>
+            <input type="range" min={0.5} max={5} step={0.5} value={threshold} onChange={e=>setThreshold(+e.target.value)} style={sty.slider}/>
+            <div style={{fontSize:18,fontWeight:700,color:T.navy,fontFamily:T.mono,textAlign:'center',marginTop:4}}>{threshold}</div>
+          </div>
+          <div>
+            <div style={{fontSize:11,color:T.textSec,marginBottom:6}}>Holding Period</div>
+            <input type="range" min={1} max={8} value={holdPeriod} onChange={e=>setHoldPeriod(+e.target.value)} style={sty.slider}/>
+            <div style={{fontSize:18,fontWeight:700,color:T.navy,fontFamily:T.mono,textAlign:'center',marginTop:4}}>{holdPeriod}Q</div>
+          </div>
+          <div>
+            <div style={{fontSize:11,color:T.textSec,marginBottom:6}}>Rebalance Frequency</div>
+            <input type="range" min={1} max={4} value={rebalFreq} onChange={e=>setRebalFreq(+e.target.value)} style={sty.slider}/>
+            <div style={{fontSize:18,fontWeight:700,color:T.navy,fontFamily:T.mono,textAlign:'center',marginTop:4}}>Every {rebalFreq}Q</div>
+          </div>
+          <div>
+            <div style={{fontSize:11,color:T.textSec,marginBottom:6}}>Strategy Type</div>
+            <button style={{...sty.pill(true),padding:'10px 20px',fontSize:13,width:'100%'}} onClick={()=>setLongShort(!longShort)}>
+              {longShort?'Long-Short':'Long Only'}
+            </button>
+            <div style={{fontSize:10,color:T.textMut,textAlign:'center',marginTop:4}}>Click to toggle</div>
+          </div>
         </div>
-        <h1 style={{fontSize:26,fontWeight:800,color:T.navy,margin:'0 0 6px',fontFamily:T.font,letterSpacing:-0.3}}>Ratings Migration & Momentum</h1>
-        <p style={{fontSize:13,color:T.textSec,margin:0,fontFamily:T.font,maxWidth:800}}>
-          Track ESG rating changes across providers, analyze migration patterns, identify momentum signals, and backtest alpha strategies.
-          Observed: {totalUp.up} upgrades, {totalUp.dn} downgrades, {totalUp.stability}% stability rate across {totalUp.total} observations.
-        </p>
       </div>
 
-      <div style={{display:'flex',gap:2,marginBottom:20,background:T.surfaceH,borderRadius:10,padding:3}}>
-        {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{flex:1,padding:'10px 16px',borderRadius:8,border:'none',background:tab===i?T.surface:'transparent',color:tab===i?T.navy:T.textSec,fontFamily:T.font,fontSize:13,fontWeight:tab===i?700:500,cursor:'pointer',transition:'all 0.2s',boxShadow:tab===i?'0 1px 4px rgba(0,0,0,0.08)':'none'}}>{t}</button>)}
+      {/* 8 KPI cards */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+        <KPI label="Sharpe Ratio" value={backtest.sharpe} color={backtest.sharpe>1?T.green:T.amber}/>
+        <KPI label="Sortino Ratio" value={backtest.sortino} color={backtest.sortino>1?T.green:T.amber}/>
+        <KPI label="Hit Rate" value={backtest.hitRate+'%'} color={backtest.hitRate>50?T.green:T.red}/>
+        <KPI label="Max Drawdown" value={backtest.maxDD+'%'} color={T.red}/>
+        <KPI label="Total Return" value={(backtest.totalReturn>0?'+':'')+backtest.totalReturn+'%'} color={backtest.totalReturn>0?T.green:T.red}/>
+        <KPI label="Annualized" value={(backtest.annualized>0?'+':'')+backtest.annualized+'%'} color={backtest.annualized>0?T.green:T.red}/>
+        <KPI label="Calmar Ratio" value={backtest.calmar} color={backtest.calmar>1?T.green:T.amber}/>
+        <KPI label="Win/Loss Ratio" value={backtest.winLoss} color={backtest.winLoss>1?T.green:T.red}/>
       </div>
 
-      {tab===0&&<MigrationTrackerTab ratings={ratings}/>}
-      {tab===1&&<MomentumSignalsTab ratings={ratings}/>}
-      {tab===2&&<ProviderLeadLagTab ratings={ratings}/>}
-      {tab===3&&<AlphaSignalTab ratings={ratings}/>}
+      {/* Equity curve + Drawdown */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={sty.card}>
+          <div style={sty.cardT}>Equity Curve (Backtest)</div>
+          <ResponsiveContainer width="100%" height={210}>
+            <AreaChart data={backtest.curve}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}} domain={['auto','auto']}/>
+              <Tooltip contentStyle={{fontSize:11,borderRadius:8}} formatter={v=>[v,'Equity']}/>
+              <Area type="monotone" dataKey="equity" stroke={T.navy} fill={T.navy+'20'} strokeWidth={2}/>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={sty.card}>
+          <div style={sty.cardT}>Drawdown Chart</div>
+          <ResponsiveContainer width="100%" height={210}>
+            <AreaChart data={backtest.drawdown}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip contentStyle={{fontSize:11,borderRadius:8}} formatter={v=>[v+'%','Drawdown']}/>
+              <Area type="monotone" dataKey="dd" stroke={T.red} fill={T.red+'20'} strokeWidth={2}/>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
-      {/* methodology footer */}
-      <div style={{...card,marginTop:24,padding:16,background:T.surfaceH,border:`1px solid ${T.borderL}`}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:24}}>
-          <div style={{flex:1}}>
-            <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:6,fontFamily:T.font}}>Methodology Notes</div>
-            <div style={{fontSize:11,color:T.textSec,lineHeight:1.6,fontFamily:T.font}}>
-              Migration matrices track rating transitions between consecutive quarters across selected providers.
-              Momentum scores range from -3 (strong negative) to +3 (strong positive), calculated from consecutive
-              upgrade/downgrade sequences. Lead-lag analysis measures the average quarter gap between one provider
-              moving and another following in the same direction. Alpha signals use a long-only momentum strategy:
-              enter when momentum score exceeds threshold, hold for the specified period.
-            </div>
-          </div>
-          <div style={{flex:1}}>
-            <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:6,fontFamily:T.font}}>Data Coverage</div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:4,fontSize:11,color:T.textSec,fontFamily:T.font}}>
-              <span>Companies: {COMPANIES.length}</span>
-              <span>Providers: {PROVIDERS.length}</span>
-              <span>Quarters: {QUARTERS[0]} - {QUARTERS[QUARTERS.length-1]}</span>
-              <span>Sectors: {SECTORS.length}</span>
-              <span>Total observations: {totalUp.total}</span>
-              <span>Rating scale: CCC to AAA (7 levels)</span>
-              <span>ESG events tracked: {ESG_EVENTS.length}</span>
-              <span>Regions: 4 macro regions</span>
-            </div>
-          </div>
-          <div style={{flex:1}}>
-            <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:6,fontFamily:T.font}}>Provider Coverage</div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-              {PROVIDERS.map((p,i)=><span key={p} style={{padding:'3px 10px',borderRadius:6,fontSize:10,fontWeight:600,background:PROV_COLORS[i]+'18',color:PROV_COLORS[i],fontFamily:T.font}}>{p}</span>)}
-            </div>
-            <div style={{fontSize:10,color:T.textMut,marginTop:8,fontFamily:T.font}}>
-              Stability rate: {totalUp.stability}% | Upgrade ratio: {Math.round(totalUp.up/(totalUp.up+totalUp.dn)*100)}%
-            </div>
-          </div>
+      {/* Quarterly returns heatmap + Sector attribution */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={sty.card}>
+          <div style={sty.cardT}>Quarterly Returns</div>
+          <ResponsiveContainer width="100%" height={210}>
+            <BarChart data={quarterlyReturns}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="q" tick={{fontSize:9,fill:T.textSec}}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}} label={{value:'Return %',angle:-90,position:'insideLeft',style:{fontSize:10,fill:T.textSec}}}/>
+              <Tooltip contentStyle={{fontSize:11,borderRadius:8}} formatter={v=>[v+'%','Return']}/>
+              <Bar dataKey="return" name="Return (%)" radius={[4,4,0,0]}>
+                {quarterlyReturns.map((d,i)=><Cell key={i} fill={d.return>=0?T.green:T.red}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={sty.card}>
+          <div style={sty.cardT}>Sector Attribution</div>
+          <ResponsiveContainer width="100%" height={210}>
+            <BarChart data={sectorAttrib.slice(0,10)} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis type="category" dataKey="sector" width={100} tick={{fontSize:9,fill:T.textSec}}/>
+              <Tooltip contentStyle={{fontSize:11,borderRadius:8}} formatter={v=>[v+'%','Avg PnL']}/>
+              <Bar dataKey="avgPnl" name="Avg PnL (%)" radius={[0,4,4,0]}>
+                {sectorAttrib.slice(0,10).map((d,i)=><Cell key={i} fill={d.avgPnl>=0?T.green:T.red}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Risk decomposition: Factor exposures */}
+      <div style={{...sty.card,marginBottom:20}}>
+        <div style={sty.cardT}>Risk Decomposition: Factor Exposures</div>
+        <table style={sty.tbl}>
+          <thead><tr>
+            <th style={sty.th}>Factor</th><th style={sty.th}>Exposure</th><th style={sty.th}>Contribution (%)</th><th style={sty.th}>Visual</th>
+          </tr></thead>
+          <tbody>{factorExposures.map(f=>(
+            <tr key={f.factor}>
+              <td style={{...sty.td,fontWeight:600}}>{f.factor}</td>
+              <td style={{...sty.td,fontFamily:T.mono,fontWeight:600,color:f.exposure>0?T.green:f.exposure<0?T.red:T.textMut}}>{f.exposure>0?'+':''}{f.exposure}</td>
+              <td style={{...sty.td,fontFamily:T.mono,color:f.contribution>0?T.green:f.contribution<0?T.red:T.textMut}}>{f.contribution>0?'+':''}{f.contribution}%</td>
+              <td style={sty.td}>
+                <div style={{width:140,height:14,background:T.surfaceH,borderRadius:4,position:'relative',overflow:'hidden'}}>
+                  <div style={{position:'absolute',left:f.exposure>=0?'50%':'auto',right:f.exposure<0?'50%':'auto',width:`${Math.abs(f.exposure)/2*50}%`,height:'100%',background:f.exposure>0?T.green:T.red,borderRadius:4,transition:'all 0.3s'}}/>
+                  <div style={{position:'absolute',left:'50%',top:0,width:1,height:'100%',background:T.borderL}}/>
+                </div>
+              </td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+
+      {/* Signal table with export */}
+      <div style={sty.card}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div style={sty.cardT}>Signal Table — {activeSignals.length} active signals / {signals.length} companies</div>
+          <button style={{...sty.btn,background:T.navy,color:'#fff',padding:'8px 20px'}} onClick={exportCSV}>Export Signal List CSV</button>
+        </div>
+
+        <div style={{display:'flex',gap:12,marginBottom:16}}>
+          <KPI label="Long Signals" value={longSignals.length} color={T.green}/>
+          <KPI label="Short Signals" value={shortSignals.length} color={T.red}/>
+          <KPI label="Threshold" value={threshold} color={T.navy}/>
+          <KPI label="Avg Signal PnL" value={(activeSignals.reduce((s,c)=>s+c.pnl,0)/(activeSignals.length||1)).toFixed(2)+'%'} color={T.amber}/>
+        </div>
+
+        <div style={{overflowX:'auto',maxHeight:520}}>
+          <table style={sty.tbl}>
+            <thead style={{position:'sticky',top:0,background:T.surface,zIndex:1}}><tr>
+              <th style={{...sty.th,cursor:'pointer'}} onClick={()=>handleSignalSort('name')}>Company</th>
+              <th style={sty.th}>Sector</th>
+              <th style={{...sty.th,cursor:'pointer'}} onClick={()=>handleSignalSort('signal')}>Signal</th>
+              <th style={{...sty.th,cursor:'pointer'}} onClick={()=>handleSignalSort('momentum')}>Momentum</th>
+              <th style={sty.th}>Entry Q</th>
+              <th style={{...sty.th,cursor:'pointer'}} onClick={()=>handleSignalSort('pnl')}>PnL (%)</th>
+              <th style={sty.th}>Mkt Cap ($B)</th>
+            </tr></thead>
+            <tbody>{sortedSignals.slice(0,80).map(s=>(
+              <tr key={s.id}>
+                <td style={{...sty.td,fontWeight:600}}>{s.name}</td>
+                <td style={{...sty.td,fontSize:11}}>{s.sector}</td>
+                <td style={sty.td}><span style={sty.badge(s.signal==='Long'?T.green:T.red)}>{s.signal}</span></td>
+                <td style={{...sty.td,fontFamily:T.mono,fontWeight:600,color:s.momentum>0?T.green:T.red}}>{s.momentum>0?'+':''}{s.momentum}</td>
+                <td style={{...sty.td,fontFamily:T.mono,fontSize:11}}>{s.entryQ}</td>
+                <td style={{...sty.td,fontFamily:T.mono,fontWeight:700,color:s.pnl>0?T.green:s.pnl<0?T.red:T.textMut}}>{s.pnl>0?'+':''}{s.pnl}%</td>
+                <td style={{...sty.td,fontFamily:T.mono}}>${s.marketCap}B</td>
+              </tr>
+            ))}</tbody>
+          </table>
         </div>
       </div>
     </div>
-  </div>;
+  );
 }

@@ -1,779 +1,895 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 
-const TABS=['Methodology Explorer','Pillar Deep-Dive','Materiality Matrix','Data Source Audit'];
-const PROVIDERS=['MSCI','Sustainalytics','ISS ESG','CDP','S&P Global','Bloomberg'];
-const PIE_COLORS=[T.navy,T.sage,T.gold,T.navyL,T.goldL,T.sageL];
-const PILLARS=['Environmental','Social','Governance'];
-const GICS_SECTORS=['Energy','Materials','Industrials','Consumer Disc.','Consumer Staples','Healthcare','Financials','IT','Communication','Utilities'];
-
-const PROVIDER_DATA={
-  'MSCI':{
-    desc:'MSCI ESG Ratings use a rules-based methodology to assess industry-specific ESG risks and how well companies manage them relative to peers. Scores range from AAA (leader) to CCC (laggard) across 35 key issues grouped into E, S, and G pillars.',
-    pillarWeights:[40,30,30],
-    keyIssues:{E:['Carbon Emissions','Water Stress','Toxic Waste','Biodiversity','Raw Material Sourcing','Electronic Waste','Packaging','Climate Vulnerability','Energy Efficiency','Green Building'],S:['Labor Management','Health & Safety','Human Capital','Privacy & Data','Product Safety','Community Relations','Supply Chain Labor','Controversial Sourcing','Access to Healthcare','Chemical Safety'],G:['Board Diversity','Executive Pay','Ownership Structure','Accounting Practices','Business Ethics','Tax Transparency','Anti-Corruption','Whistleblower Protection','Board Independence','Audit Quality']},
-    dataSources:['Company Disclosures','Government Databases','NGO Data','Media Sources','Sector-Specific Datasets'],
-    scoreRange:'AAA to CCC (7 levels)',method:'Relative to industry peers; weighted key-issue aggregation'
-  },
-  'Sustainalytics':{
-    desc:'Sustainalytics ESG Risk Ratings measure a company\'s unmanaged ESG risk. The two-dimensional framework assesses corporate Exposure to material ESG issues and Management of those issues. Lower scores indicate less unmanaged risk.',
-    pillarWeights:[35,35,30],
-    keyIssues:{E:['GHG Emissions','Effluents & Waste','Land Use','Resource Use','Water Use','Environmental Supply Chain','Air Pollution','Ecological Impacts','Climate Strategy','Packaging Waste'],S:['Human Rights','Labor Standards','Health & Safety','Community Impact','Customer Relations','Data Privacy','Product Governance','Diversity & Inclusion','Stakeholder Engagement','Social Supply Chain'],G:['Corporate Governance','Business Ethics','ESG Integration','Bribery & Corruption','Tax Strategy','Board Effectiveness','Risk Management','Regulatory Compliance','Lobbying & Advocacy','Executive Remuneration']},
-    dataSources:['Company Reports','Regulatory Filings','Controversy Monitoring','NGO Reports','News & Media'],
-    scoreRange:'0-100 (lower = less risk)',method:'Exposure minus Management = Unmanaged Risk score'
-  },
-  'ISS ESG':{
-    desc:'ISS ESG Corporate Rating evaluates companies on over 100 ESG indicators using a 1-10 decile scale within 4 pillars. The methodology emphasizes sector-specific material topics and forward-looking performance indicators.',
-    pillarWeights:[30,25,25,20],
-    keyIssues:{E:['Climate Strategy','Energy Management','Water Management','Pollution Prevention','Circular Economy','Biodiversity Protection','Environmental Reporting','Scope 3 Emissions','Green Products','Natural Capital'],S:['Workforce Diversity','Training & Development','Occupational Health','Living Wages','Freedom of Association','Customer Welfare','Community Investment','Indigenous Rights','Responsible Marketing','Digital Rights'],G:['Board Structure','Shareholder Rights','Remuneration Policy','Audit Independence','Risk Oversight','Stakeholder Governance','Anti-Money Laundering','Cybersecurity Governance','Supply Chain Governance','Political Contributions']},
-    dataSources:['Direct Company Engagement','Public Filings','Industry Benchmarks','Controversial Weapons Screening','Norms-Based Research'],
-    scoreRange:'1-10 decile scale',method:'4-pillar weighted aggregation with sector-specific materiality'
-  },
-  'CDP':{
-    desc:'CDP scores companies on their environmental disclosure and performance across Climate Change, Water Security, and Forests programs. Scores range from A (leadership) to D- (disclosure), with F for non-disclosure.',
-    pillarWeights:[50,30,20],
-    keyIssues:{E:['Scope 1 Emissions','Scope 2 Emissions','Scope 3 Emissions','Science-Based Targets','Renewable Energy','Water Withdrawal','Water Recycling','Deforestation Policy','Forest Certification','Carbon Pricing'],S:['Just Transition','Community Water Access','Smallholder Engagement','Worker Health & Safety','Indigenous Land Rights','Food Security Impact','Biodiversity Co-Benefits','Stakeholder Engagement','Value Chain Responsibility','Consumer Awareness'],G:['Board-Level Oversight','Climate Governance','Water Governance','Forest Governance','Incentivized Management','Risk Assessment Process','Strategy Integration','Public Policy Engagement','Disclosure Completeness','Verification & Assurance']},
-    dataSources:['CDP Questionnaire Responses','Company Self-Reporting','Verification Statements','Sector Benchmarks','Partnership Data'],
-    scoreRange:'A to D- (with F for non-disclosure)',method:'Disclosure, Awareness, Management, Leadership scoring ladder'
-  },
-  'S&P Global':{
-    desc:'S&P Global ESG Scores are derived from the Corporate Sustainability Assessment (CSA), the annual evaluation covering 61 industry-specific questionnaires. Scores are normalized to 0-100 and weighted by financially material criteria.',
-    pillarWeights:[35,35,30],
-    keyIssues:{E:['Climate Strategy','Operational Eco-Efficiency','Environmental Reporting','Environmental Policy','Product Stewardship','Water Risk','Biodiversity','Waste Management','Renewable Energy Sourcing','Environmental Innovation'],S:['Human Capital','Talent Attraction','Labor Practice Indicators','Social Reporting','Philanthropy','Human Rights','Stakeholder Engagement','Social Impact','Occupational Health','Supply Chain Social'],G:['Corporate Governance','Codes of Conduct','Risk & Crisis Management','Tax Strategy','Materiality Assessment','Policy Influence','Cybersecurity','Anti-Crime Policies','Brand Management','Innovation Management']},
-    dataSources:['CSA Questionnaire','Public Documents','Media & Stakeholder Analysis','Industry Reports','Direct Company Engagement'],
-    scoreRange:'0-100 percentile',method:'Industry-specific CSA with financial materiality weighting'
-  },
-  'Bloomberg':{
-    desc:'Bloomberg ESG Disclosure Scores measure the extent of a company\'s ESG data disclosure. The scoring is based on data points collected across Environmental, Social, and Governance pillars, with higher scores indicating more comprehensive reporting.',
-    pillarWeights:[33,33,34],
-    keyIssues:{E:['GHG Emissions','Energy Consumption','Water Usage','Waste Generation','Environmental Fines','Green Revenue','Carbon Intensity','Environmental Mgmt Systems','Climate Risk Exposure','Pollution Incidents'],S:['Employee Turnover','Injury Rate','Training Hours','Gender Pay Gap','Diversity Statistics','Community Spending','Product Recalls','Customer Satisfaction','Health & Safety Fines','Human Rights Policy'],G:['Board Size','Board Independence','CEO-Chair Separation','Executive Compensation Ratio','Audit Committee Independence','Political Donations','ESG Reporting Framework','Anti-Corruption Training','Data Breaches','Whistleblower Mechanism']},
-    dataSources:['Company Filings','Exchange Data','Government Registries','News Wire Services','Satellite Data'],
-    scoreRange:'0-100 disclosure score',method:'Data availability weighted; disclosure breadth and depth'
-  }
-};
-
-const PILLAR_KPIS={
-  Environmental:['GHG Scope 1','GHG Scope 2','GHG Scope 3','Energy Intensity','Water Withdrawal','Waste Recycled','Biodiversity Impact','Air Pollutants','Environmental Fines','Renewable %','Green Revenue','Carbon Pricing','SBTi Alignment','Circular Economy','Land Use','Deforestation','Chemical Safety','Packaging Waste','Environmental Mgmt','Climate Adaptation'],
-  Social:['Employee Turnover','Injury Rate','Training Hours','Gender Diversity','Pay Equity','Living Wage','Community Investment','Data Privacy','Product Safety','Customer Satisfaction','Supply Chain Audit','Freedom of Association','Child Labor','Human Rights Due Diligence','Stakeholder Engagement','Health & Safety Mgmt','Diversity Policy','Grievance Mechanism','Just Transition','Social Impact'],
-  Governance:['Board Independence','CEO-Chair Split','Board Diversity','Executive Pay Ratio','Audit Committee','Risk Committee','ESG Oversight','Shareholder Rights','Anti-Corruption','Whistleblower','Tax Transparency','Political Donations','Lobbying Disclosure','Cybersecurity','Business Ethics','Bribery Policy','Related Party Transactions','Voting Rights','Board Tenure','Succession Planning']
-};
-
-const DATA_SOURCES=[
-  {name:'Annual/Sustainability Reports',type:'Self-Reported',freshness:'Annual'},
-  {name:'CDP Questionnaire Responses',type:'Self-Reported',freshness:'Annual'},
-  {name:'Regulatory Filings (10-K, 20-F)',type:'Regulatory',freshness:'Quarterly'},
-  {name:'Proxy Statements',type:'Regulatory',freshness:'Annual'},
-  {name:'News & Media Monitoring',type:'Third-Party',freshness:'Real-Time'},
-  {name:'Controversy/Incident Databases',type:'Third-Party',freshness:'Weekly'},
-  {name:'NGO & Watchdog Reports',type:'Third-Party',freshness:'Periodic'},
-  {name:'Satellite & Geospatial Data',type:'Third-Party',freshness:'Monthly'},
-  {name:'Government & Census Data',type:'Regulatory',freshness:'Annual'},
-  {name:'Patent & Innovation Data',type:'Third-Party',freshness:'Quarterly'},
-  {name:'Employee Review Platforms',type:'Third-Party',freshness:'Real-Time'},
-  {name:'Supply Chain Databases',type:'Third-Party',freshness:'Monthly'},
-  {name:'Industry Benchmarks',type:'Third-Party',freshness:'Annual'},
-  {name:'Direct Company Engagement',type:'Self-Reported',freshness:'Annual'},
-  {name:'Verification & Audit Statements',type:'Verified',freshness:'Annual'}
+const PROVIDERS=[
+  {id:'msci',name:'MSCI ESG',color:'#2563eb',eW:35,sW:35,gW:30},
+  {id:'sp',name:'S&P Global',color:'#16a34a',eW:30,sW:35,gW:35},
+  {id:'sust',name:'Sustainalytics',color:'#dc2626',eW:40,sW:30,gW:30},
+  {id:'iss',name:'ISS ESG',color:'#9333ea',eW:33,sW:34,gW:33},
+  {id:'cdp',name:'CDP / FTSE',color:'#0891b2',eW:45,sW:25,gW:30},
+  {id:'bloom',name:'Bloomberg ESG',color:'#ea580c',eW:32,sW:38,gW:30}
 ];
 
-const DS_PROVIDER_MAP={
-  'MSCI':     [1,0,1,1,1,1,1,0,1,0,0,0,1,0,0],
-  'Sustainalytics':[1,0,1,1,1,1,1,0,1,0,0,1,1,0,0],
-  'ISS ESG':  [1,0,1,1,1,1,1,0,1,0,0,0,1,1,0],
-  'CDP':      [1,1,0,0,0,0,0,0,0,0,0,0,1,0,1],
-  'S&P Global':[1,1,1,1,1,0,0,0,1,0,0,0,1,1,0],
-  'Bloomberg': [1,0,1,1,1,0,0,1,1,1,1,0,0,0,0]
+const E_ISSUES=['GHG Emissions Scope 1','GHG Emissions Scope 2','GHG Emissions Scope 3','Energy Management','Water & Wastewater Mgmt','Waste & Hazardous Materials','Biodiversity & Land Use','Air Quality & Pollutants','Climate Risk Physical','Climate Risk Transition','Circular Economy Practices','Deforestation & Land Degradation','Chemical Safety','Packaging & Product Lifecycle','Supply Chain Env Impact'];
+const S_ISSUES=['Labor Practices & Standards','Health & Safety Management','Human Capital Development','Diversity Equity & Inclusion','Community Relations & Impact','Data Privacy & Security','Product Safety & Quality','Supply Chain Labor Standards','Customer Welfare & Access','Indigenous & Human Rights','Living Wage & Fair Pay','Employee Engagement & Retention','Responsible Marketing','Digital Inclusion & Access','Conflict Minerals & Due Diligence'];
+const G_ISSUES=['Board Composition & Independence','Executive Compensation Alignment','Shareholder Rights & Engagement','Business Ethics & Anti-Corruption','Audit & Risk Oversight','Tax Transparency & Strategy','Lobbying & Political Spending','Cybersecurity Governance','ESG Integration in Strategy','Regulatory Compliance Track Record','Whistleblower Protections','Related Party Transactions'];
+
+const GICS_SECTORS=['Software & IT Services','Oil & Gas Exploration','Commercial Banking','Pharmaceuticals & Biotech','Electric Utilities','Real Estate Investment Trusts','Metals & Mining','Consumer Staples Retail','Automotive Manufacturing','Telecommunications Services','Insurance & Reinsurance','Semiconductor Equipment','Aerospace & Defense','Food & Beverage Processing','Transportation Infrastructure'];
+
+const DATA_SOURCES=['Annual Reports','Sustainability Reports','CDP Questionnaires','Government Databases','Regulatory Filings','News & Media Sentiment','Satellite Imagery','IoT Sensor Data','NGO Reports','Proxy Statements','Patent Filings','Academic Research','Supply Chain Audits','Social Media Analysis','Employee Reviews','Industry Benchmarks','Water Risk Databases','Carbon Registries','Biodiversity Databases','Geospatial Climate Models'];
+
+const DS_CATS={
+  'Self-Reported':['Annual Reports','Sustainability Reports','Proxy Statements'],
+  'Third-Party':['NGO Reports','Academic Research','Industry Benchmarks','Employee Reviews','Social Media Analysis','News & Media Sentiment'],
+  'Regulatory':['Government Databases','Regulatory Filings','Carbon Registries','Patent Filings'],
+  'Alternative':['Satellite Imagery','IoT Sensor Data','Water Risk Databases','Biodiversity Databases','Geospatial Climate Models','CDP Questionnaires','Supply Chain Audits']
 };
 
-const QUALITY_TIERS=['Tier 1','Tier 2','Tier 1','Tier 1','Tier 2','Tier 3','Tier 3','Tier 2','Tier 1','Tier 2','Tier 3','Tier 2','Tier 2','Tier 1','Tier 1'];
+const COMPANIES=Array.from({length:30},(_,i)=>{
+  const names=['TechNova Corp','GreenField Energy','Pacific Mining Ltd','Apex Pharma Inc','Urban Realty Trust','AquaPure Systems','SolarEdge Holdings','Nordic Timber AB','MetalWorks Global','DataShield Inc','OceanFreight Logistics','BioHarvest Sciences','ClearSky Airlines','NexGen Semiconductors','Alpine Banking Group','MegaRetail Holdings','FreshFoods International','AutoDrive Motors','TeleConnect Services','EcoChemical Solutions','PolarEnergy Corp','SafeHarbor Insurance','SteelBridge Engineering','CloudPeak Software','Heritage Consumer Brands','RiverDelta Utilities','SpaceLink Communications','AgriGrowth Partners','MediCare Hospitals','QuantumCore Technologies'];
+  return {id:i,name:names[i],sector:GICS_SECTORS[i%15],baseE:45+sr(i*31)*30,baseS:40+sr(i*37)*35,baseG:50+sr(i*43)*25};
+});
 
-const sty={
-  card:{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20,marginBottom:16},
-  tab:(a)=>({padding:'10px 20px',cursor:'pointer',borderRadius:'8px 8px 0 0',fontWeight:a?700:500,color:a?T.navy:T.textSec,background:a?T.surface:T.surfaceH,border:a?`1px solid ${T.border}`:'1px solid transparent',borderBottom:a?`2px solid ${T.gold}`:'none',fontSize:14,transition:'all 0.2s',fontFamily:T.font}),
-  select:{padding:'8px 14px',borderRadius:8,border:`1px solid ${T.border}`,background:T.surface,color:T.navy,fontFamily:T.font,fontSize:14,cursor:'pointer',minWidth:180},
-  badge:(c)=>({display:'inline-block',padding:'3px 10px',borderRadius:12,fontSize:11,fontWeight:600,color:T.surface,background:c,marginRight:6}),
-  pill:(a)=>({display:'inline-block',padding:'6px 16px',borderRadius:20,fontSize:13,fontWeight:a?700:500,cursor:'pointer',background:a?T.navy:T.surfaceH,color:a?'#fff':T.textSec,border:`1px solid ${a?T.navy:T.border}`,transition:'all 0.2s',fontFamily:T.font}),
-  slider:{width:'100%',accentColor:T.gold,cursor:'pointer'},
-  heatCell:(v)=>({width:40,height:36,display:'flex',alignItems:'center',justifyContent:'center',borderRadius:4,fontSize:11,fontWeight:600,color:v>0.6?'#fff':T.navy,background:v>0.8?T.navy:v>0.6?T.navyL:v>0.4?T.gold:v>0.2?T.goldL:T.surfaceH,transition:'all 0.2s',cursor:'pointer'}),
-  check:{color:T.green,fontWeight:700,fontSize:16},
-  cross:{color:T.red,fontWeight:700,fontSize:16},
-  th:{padding:'10px 12px',textAlign:'left',fontWeight:700,fontSize:12,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH,position:'sticky',top:0,fontFamily:T.font},
-  td:{padding:'8px 12px',fontSize:13,borderBottom:`1px solid ${T.border}`,fontFamily:T.font,color:T.text}
+const genKPIs=(pillar,seed)=>{
+  const eKPIs=['Absolute GHG Emissions (tCO2e)','GHG Intensity per Revenue','Scope 3 Category Breakdown','Energy Consumption Total (GJ)','Renewable Energy Share (%)','Water Withdrawal Intensity','Water Recycling Rate (%)','Hazardous Waste Generated (t)','Waste Diversion Rate (%)','NOx SOx Particulate Emissions','Land Use Change (hectares)','Biodiversity Action Plans','Chemical Substances of Concern','Packaging Recyclability Rate','Env Supply Chain Incidents','Carbon Offset Credits Used','Science-Based Target Status','Climate VaR Exposure','Energy Efficiency Capex','Green Revenue Share (%)','Methane Emissions (tCH4)','Flaring & Venting Volume','Water Stress Area Operations','Freshwater Consumption','E-Waste Recovery Rate','Ozone Depleting Substances','Environmental Fines & Penalties','ISO 14001 Certification','Life Cycle Assessment Coverage','Env Management System Score','Fugitive Emissions Control','Deforestation-Free Commitment','Marine Ecosystem Impact','Noise Pollution Measures','Soil Contamination Status','Ecological Restoration Spend','Renewable Energy Certificates','Grid Emission Factor Used','Transport Emissions Intensity','Product Carbon Footprint','Biodiversity Net Gain Score','Persistent Organic Pollutants','Env Lobbying Expenditure','Thermal Discharge Volume','Ecosystem Service Valuation','Env Risk Insurance Coverage','Green Bond Issuance','Carbon Capture Investment','Env Litigation Reserves','Product Env Declarations','Scope 2 Market-Based','Scope 2 Location-Based','Fleet Electrification Rate','Env Training Hours/Employee','Air Quality Monitoring Sites','Upstream Env Screening Rate','Env Data Verification Level','Climate Scenario Analysis','Transition Plan Credibility','Env Board Oversight Score'];
+  const sKPIs=['Total Recordable Injury Rate','Lost Time Injury Frequency','Employee Turnover Rate (%)','Gender Pay Gap Ratio','Women in Management (%)','Training Hours per Employee','Employee Satisfaction Score','Collective Bargaining Coverage','Living Wage Compliance (%)','Data Breach Incidents','Product Recall Count','Community Investment ($M)','Supplier Social Audit Rate','Customer Satisfaction Index','Accessibility Compliance Score','Human Rights Due Diligence','Forced Labor Risk Assessment','Child Labor Risk Assessment','Indigenous Consultation Rate','Conflict Mineral Sourcing (%)','Parental Leave Utilization','Mental Health Program Access','Temporary Worker Share (%)','Wage Theft Incidents','Freedom of Association Score','Disability Employment Rate','Volunteer Hours per Employee','Local Hiring Rate (%)','Product Liability Claims','Privacy Impact Assessments','Social Supply Chain Incidents','Grievance Mechanism Cases','Remedy & Remediation Rate','Digital Literacy Programs','Healthcare Coverage Rate (%)','Retirement Plan Participation','Workforce Diversity Index','Anti-Discrimination Training','Community Displacement Cases','Stakeholder Engagement Score','Social Bond Proceeds ($M)','Fair Trade Certification','Responsible AI Governance','Nutrition & Health Labeling','Affordable Housing Units','Customer Complaint Resolution','Modern Slavery Statements','Supplier Code of Conduct','S&H Expenditure per Employee','Emergency Preparedness Score','Philanthropy as % Revenue','Unionization Rate (%)','Employee Share Ownership','Cultural Heritage Protection','Social Impact Measurement','Responsible Marketing Score','Youth Employment Programs','Veteran Hiring Rate (%)','Migrant Worker Protections','Social Audit Non-Conformities'];
+  const gKPIs=['Board Independence Ratio (%)','CEO-Median Pay Ratio','Say-on-Pay Approval Rate','Anti-Corruption Training (%)','Board Gender Diversity (%)','Board Meeting Attendance','Audit Committee Independence','Risk Committee Effectiveness','ESG-Linked Compensation (%)','Regulatory Sanctions Count','Whistleblower Cases Filed','Related Party Transactions ($)','Board Tenure Average (yrs)','Shareholder Proposal Response','Political Donation Disclosure','Tax Rate vs Statutory Rate','Board Cybersecurity Expertise','Sustainability Committee Score','Clawback Policy Enforcement','Dual Class Share Structure','Board Refreshment Rate','Director Overboarding Score','Board ESG Competency (%)','Executive Stock Ownership','Proxy Access Provisions','Cumulative Voting Rights','Poison Pill Status','Classified Board Structure','Independent Chair/Lead Dir','Stakeholder Advisory Panel','Govt Relations Transparency','Lobbying Expenditure ($M)','Board Racial Diversity (%)','Board Age Diversity Score','Board International Members','Succession Planning Score','Ethics Hotline Utilization','Bribery Risk Assessment','Beneficial Ownership Disclosure','Board Digital Competency','Executive Severance Policy','Share Buyback Governance','Dividend Policy Stability','Capital Allocation Framework','Board Skills Matrix Score','Compliance Program Rating','Internal Audit Independence','Data Governance Framework','Third-Party Due Diligence','Sanctions Screening Coverage','Anti-Money Laundering Score','Conflict of Interest Policy','Code of Conduct Coverage','Board Strategy Oversight','Cross-Directorships Count','Governance Framework Rating','Minority Shareholder Rights','Annual Report Transparency','Integrated Reporting Quality','Governance Innovation Score'];
+  const pool=pillar==='E'?eKPIs:pillar==='S'?sKPIs:gKPIs;
+  return Array.from({length:60},(_,i)=>{
+    const covered=PROVIDERS.map((_p,pi)=>sr(seed+i*7+pi*13)>0.3);
+    const weight=PROVIDERS.map((_p,pi)=>Math.round(sr(seed+i*11+pi*17)*5+1));
+    return {id:i,name:pool[i]||`${pillar} KPI ${i+1}`,covered,weight,source:DATA_SOURCES[Math.floor(sr(seed+i*19)*DATA_SOURCES.length)],threshold:Math.round(sr(seed+i*23)*80+20),scoring:['Absolute','Relative to Peers','Best-in-Class','Binary','Graduated'][Math.floor(sr(seed+i*29)*5)]};
+  });
 };
 
-function genKpiMap(pillar,pIdx){
-  const kpis=PILLAR_KPIS[pillar];
-  return PROVIDERS.map((prov,pi)=>kpis.map((k,ki)=>sr(pi*100+ki*10+pIdx*7)>0.35?1:0));
-}
+const genMateriality=(sectorIdx,provIdx,seed)=>{
+  const allIssues=[...E_ISSUES,...S_ISSUES,...G_ISSUES];
+  return allIssues.map((issue,i)=>({issue,weight:Math.round((sr(seed+sectorIdx*7+provIdx*13+i*3)*8+2)*10)/10,pillar:i<15?'E':i<30?'S':'G'})).sort((a,b)=>b.weight-a.weight).slice(0,10);
+};
 
-function genMateriality(si,pi){return sr(si*17+pi*31+3)*0.8+0.1;}
-
-function computeDisagreement(si){
-  const vals=PROVIDERS.map((_,pi)=>genMateriality(si,pi));
-  const mean=vals.reduce((a,b)=>a+b,0)/vals.length;
-  const variance=vals.reduce((a,b)=>a+(b-mean)**2,0)/vals.length;
-  return Math.sqrt(variance);
-}
-
-function genSampleScore(provIdx,eW,sW,gW){
-  const baseE=sr(provIdx*11+1)*40+45;
-  const baseS=sr(provIdx*11+2)*35+50;
-  const baseG=sr(provIdx*11+3)*30+55;
-  const total=(baseE*eW+baseS*sW+baseG*gW)/(eW+sW+gW);
-  return Math.round(total*10)/10;
-}
+const TABS=['Methodology Explorer','KPI Coverage Matrix','Materiality Matrix','Data Source Audit'];
 
 export default function RatingsMethodologyDecoderPage(){
-  const [activeTab,setActiveTab]=useState(0);
-  const [selProvider,setSelProvider]=useState('MSCI');
-  const [compareProvider,setCompareProvider]=useState('');
-  const [showCompare,setShowCompare]=useState(false);
-  const [eWeight,setEWeight]=useState(40);
-  const [sWeight,setSWeight]=useState(30);
-  const [gWeight,setGWeight]=useState(30);
-  const [selPillar,setSelPillar]=useState('Environmental');
-  const [selSector,setSelSector]=useState(null);
-  const [dsFilter,setDsFilter]=useState('All');
-  const [dsSort,setDsSort]=useState('name');
-  const [matSearch,setMatSearch]=useState('');
-  const [pillarSearch,setPillarSearch]=useState('');
+  const[activeTab,setActiveTab]=useState(0);
+  const[selProvider,setSelProvider]=useState(0);
+  const[cmpProvider,setCmpProvider]=useState(1);
+  const[compareMode,setCompareMode]=useState(false);
+  const[expandedIssue,setExpandedIssue]=useState(null);
+  const[issuePillar,setIssuePillar]=useState('E');
+  const[eSlider,setESlider]=useState(PROVIDERS[0].eW);
+  const[sSlider,setSSlider]=useState(PROVIDERS[0].sW);
+  const[gSlider,setGSlider]=useState(PROVIDERS[0].gW);
+  const[selCompany,setSelCompany]=useState(0);
+  const[kpiPillar,setKpiPillar]=useState('E');
+  const[kpiSearch,setKpiSearch]=useState('');
+  const[selKpi,setSelKpi]=useState(null);
+  const[matSector,setMatSector]=useState(null);
+  const[matProvider,setMatProvider]=useState(null);
+  const[matSearch,setMatSearch]=useState('');
+  const[matSort,setMatSort]=useState('disagreement');
+  const[customWeights,setCustomWeights]=useState({});
+  const[dsFilter,setDsFilter]=useState('All');
+  const[dsQualityProv,setDsQualityProv]=useState(0);
+  const[matYearView,setMatYearView]=useState(0);
 
-  const providerData=PROVIDER_DATA[selProvider];
-  const provIdx=PROVIDERS.indexOf(selProvider);
+  const prov=PROVIDERS[selProvider];
+  const cmpProv=PROVIDERS[cmpProvider];
 
-  const pieData=useMemo(()=>{
-    const w=providerData.pillarWeights;
-    const labels=selProvider==='ISS ESG'?['Environment','Social','Governance','Cross-Cutting']:PILLARS;
-    return labels.map((l,i)=>({name:l,value:w[i]||0}));
-  },[selProvider,providerData]);
+  const pillarWeightData=useMemo(()=>[
+    {name:'Environmental',value:prov.eW,color:T.sage},
+    {name:'Social',value:prov.sW,color:T.navyL},
+    {name:'Governance',value:prov.gW,color:T.gold}
+  ],[selProvider]);
 
-  const whatIfScore=useMemo(()=>genSampleScore(provIdx,eWeight,sWeight,gWeight),[provIdx,eWeight,sWeight,gWeight]);
-  const defaultScore=useMemo(()=>{
-    const w=providerData.pillarWeights;
-    return genSampleScore(provIdx,w[0],w[1],w[2]);
-  },[provIdx,providerData]);
+  const issues=useMemo(()=>{
+    const pool=issuePillar==='E'?E_ISSUES:issuePillar==='S'?S_ISSUES:G_ISSUES;
+    return pool.map((name,i)=>({
+      id:i,name,
+      weight:Math.round(sr(selProvider*100+i*7+(issuePillar==='E'?0:issuePillar==='S'?200:400))*15+1),
+      description:`${name} evaluates corporate performance on key metrics related to ${name.toLowerCase()}. ${prov.name} assesses this through a combination of quantitative indicators and qualitative disclosure analysis, benchmarked against sector peers.`,
+      dataSource:DATA_SOURCES[Math.floor(sr(selProvider*50+i*11)*DATA_SOURCES.length)],
+      scoring:['Absolute Threshold','Peer Relative','Best-in-Class Benchmark','Trend-Based','Binary Disclosure'][Math.floor(sr(selProvider*70+i*13)*5)],
+      criteria:`Score 0-10 based on: disclosure quality (30%), performance vs peers (40%), improvement trend (30%). Minimum threshold: ${Math.round(sr(selProvider*90+i*17)*50+20)}th percentile.`
+    }));
+  },[selProvider,issuePillar]);
 
-  const pillarBarData=useMemo(()=>PROVIDERS.map((p,i)=>{
-    const w=PROVIDER_DATA[p].pillarWeights;
-    const pIdx=PILLARS.indexOf(selPillar);
-    return{name:p,weight:w[pIdx]||0};
-  }),[selPillar]);
+  const whatIfScore=useMemo(()=>{
+    const c=COMPANIES[selCompany];
+    const total=eSlider+sSlider+gSlider;
+    if(total===0)return 0;
+    const eN=eSlider/total,sN=sSlider/total,gN=gSlider/total;
+    return Math.round((c.baseE*eN+c.baseS*sN+c.baseG*gN)*10)/10;
+  },[eSlider,sSlider,gSlider,selCompany]);
 
-  const pillarKpiMap=useMemo(()=>genKpiMap(selPillar,PILLARS.indexOf(selPillar)),[selPillar]);
-
-  const filteredKpis=useMemo(()=>{
-    const kpis=PILLAR_KPIS[selPillar];
-    if(!pillarSearch)return kpis.map((k,i)=>({name:k,idx:i}));
-    return kpis.map((k,i)=>({name:k,idx:i})).filter(k=>k.name.toLowerCase().includes(pillarSearch.toLowerCase()));
-  },[selPillar,pillarSearch]);
-
-  const materialityData=useMemo(()=>{
-    return GICS_SECTORS.map((sec,si)=>{
-      const row={sector:sec,disagreement:Math.round(computeDisagreement(si)*100)/100};
-      PROVIDERS.forEach((p,pi)=>{row[p]=Math.round(genMateriality(si,pi)*100)/100;});
-      return row;
-    }).filter(r=>!matSearch||r.sector.toLowerCase().includes(matSearch.toLowerCase()));
-  },[matSearch]);
-
-  const sectorDetail=useMemo(()=>{
-    if(selSector===null)return null;
-    const si=selSector;
-    const issues=['Carbon Intensity','Water Stress','Labor Rights','Data Privacy','Board Quality','Supply Chain','Biodiversity','Innovation','Community Impact','Tax Ethics'];
-    return issues.map((iss,ii)=>{
-      const row={issue:iss};
-      PROVIDERS.forEach((p,pi)=>{row[p]=Math.round(sr(si*31+pi*17+ii*7)*100)/100;});
-      return row;
-    });
-  },[selSector]);
+  const providerScores=useMemo(()=>PROVIDERS.map((p,pi)=>{
+    const c=COMPANIES[selCompany];
+    const eAdj=c.baseE+sr(pi*31+selCompany*13)*10-5;
+    const sAdj=c.baseS+sr(pi*37+selCompany*17)*10-5;
+    const gAdj=c.baseG+sr(pi*43+selCompany*19)*10-5;
+    return{provider:p.name,score:Math.round((eAdj*p.eW/100+sAdj*p.sW/100+gAdj*p.gW/100)*10)/10,E:Math.round(eAdj*10)/10,S:Math.round(sAdj*10)/10,G:Math.round(gAdj*10)/10};
+  }),[selCompany]);
 
   const radarData=useMemo(()=>{
-    if(!showCompare||!compareProvider)return[];
-    const dims=['Transparency','Timeliness','Coverage','Granularity','Methodology','Reliability'];
+    if(!compareMode)return[];
+    const dims=['Env Weight','Soc Weight','Gov Weight','Data Breadth','Timeliness','Transparency'];
     return dims.map((d,i)=>({
       dim:d,
-      [selProvider]:Math.round(sr(provIdx*13+i*7)*60+40),
-      [compareProvider]:Math.round(sr(PROVIDERS.indexOf(compareProvider)*13+i*7)*60+40)
+      [prov.name]:Math.round(sr(selProvider*50+i*7)*60+40),
+      [cmpProv.name]:Math.round(sr(cmpProvider*50+i*7)*60+40)
     }));
-  },[showCompare,compareProvider,selProvider,provIdx]);
+  },[compareMode,selProvider,cmpProvider]);
 
-  const filteredDS=useMemo(()=>{
-    let ds=DATA_SOURCES.map((d,i)=>({...d,idx:i}));
-    if(dsFilter!=='All')ds=ds.filter(d=>d.type===dsFilter);
-    ds.sort((a,b)=>dsSort==='name'?a.name.localeCompare(b.name):a.type.localeCompare(b.type));
-    return ds;
-  },[dsFilter,dsSort]);
+  const deltaTable=useMemo(()=>{
+    if(!compareMode)return[];
+    const allI=[...E_ISSUES.slice(0,5),...S_ISSUES.slice(0,5),...G_ISSUES.slice(0,4)];
+    return allI.map((issue,i)=>{
+      const w1=Math.round(sr(selProvider*100+i*7)*15+1);
+      const w2=Math.round(sr(cmpProvider*100+i*7)*15+1);
+      return{issue,w1,w2,delta:w1-w2};
+    });
+  },[compareMode,selProvider,cmpProvider]);
 
-  const compareData=useMemo(()=>{
-    if(!showCompare||!compareProvider)return null;
-    return PROVIDER_DATA[compareProvider];
-  },[showCompare,compareProvider]);
+  const kpis=useMemo(()=>{
+    const all=genKPIs(kpiPillar,kpiPillar==='E'?100:kpiPillar==='S'?200:300);
+    if(!kpiSearch)return all;
+    const q=kpiSearch.toLowerCase();
+    return all.filter(k=>k.name.toLowerCase().includes(q));
+  },[kpiPillar,kpiSearch]);
 
-  return(
-    <div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text,padding:24}}>
-      {/* Header */}
-      <div style={{marginBottom:24}}>
-        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:8}}>
-          <span style={{fontSize:28}}>EP-AK2</span>
-          <span style={sty.badge(T.navy)}>Ratings Intelligence</span>
+  const coverageScores=useMemo(()=>PROVIDERS.map((p,pi)=>{
+    const total=kpis.length;
+    const covered=kpis.filter(k=>k.covered[pi]).length;
+    return{provider:p.name,covered,total,pct:total>0?Math.round(covered/total*100):0,color:p.color};
+  }),[kpis]);
+
+  const criticalGaps=useMemo(()=>kpis.filter(k=>{
+    const covCount=k.covered.filter(Boolean).length;
+    return covCount<3;
+  }),[kpis]);
+
+  const matHeatData=useMemo(()=>{
+    const filtered=matSearch?GICS_SECTORS.filter(s=>s.toLowerCase().includes(matSearch.toLowerCase())):GICS_SECTORS;
+    return filtered.map((sector)=>{
+      const origIdx=GICS_SECTORS.indexOf(sector);
+      const scores=PROVIDERS.map((_,pi)=>Math.round(sr(origIdx*31+pi*17+matYearView*100)*8+2));
+      const avg=scores.reduce((a,b)=>a+b,0)/scores.length;
+      const disagreement=Math.round(Math.sqrt(scores.reduce((a,s)=>a+(s-avg)**2,0)/scores.length)*100)/100;
+      return{sector,origIdx,scores,disagreement};
+    });
+  },[matSearch,matYearView]);
+
+  const sortedMatData=useMemo(()=>{
+    const d=[...matHeatData];
+    if(matSort==='disagreement')d.sort((a,b)=>b.disagreement-a.disagreement);
+    else if(matSort==='name')d.sort((a,b)=>a.sector.localeCompare(b.sector));
+    return d;
+  },[matHeatData,matSort]);
+
+  const matDrift=useMemo(()=>GICS_SECTORS.map((sector,si)=>{
+    const y0=PROVIDERS.map((_,pi)=>sr(si*31+pi*17)*8+2);
+    const y2=PROVIDERS.map((_,pi)=>sr(si*31+pi*17+200)*8+2);
+    const drift=y0.reduce((a,v,i)=>a+Math.abs(v-y2[i]),0)/y0.length;
+    return{sector,drift:Math.round(drift*100)/100};
+  }).sort((a,b)=>b.drift-a.drift).slice(0,10),[]);
+
+  const dsGrid=useMemo(()=>{
+    let filtered=DATA_SOURCES;
+    if(dsFilter!=='All'){
+      filtered=DS_CATS[dsFilter]||DATA_SOURCES;
+    }
+    return filtered.map((src)=>{
+      const origIdx=DATA_SOURCES.indexOf(src);
+      const usage=PROVIDERS.map((_,pi)=>sr(origIdx*13+pi*19)>0.35);
+      const freshness=PROVIDERS.map((_,pi)=>Math.round(sr(origIdx*17+pi*23)*24+1));
+      const quality=PROVIDERS.map((_,pi)=>Math.round(sr(origIdx*29+pi*31)*4+1));
+      const cat=Object.entries(DS_CATS).find(([,v])=>v.includes(src));
+      return{source:src,category:cat?cat[0]:'Other',usage,freshness,quality};
+    });
+  },[dsFilter]);
+
+  const dsRadar=useMemo(()=>{
+    const dims=['Breadth','Timeliness','Verification','Alternative Data','Regulatory Coverage','Transparency'];
+    return dims.map((d,i)=>({
+      dim:d,...Object.fromEntries(PROVIDERS.map((p,pi)=>[p.name,Math.round(sr(dsQualityProv*50+pi*7+i*11)*40+60)]))
+    }));
+  },[dsQualityProv]);
+
+  const dsBlindSpots=useMemo(()=>DATA_SOURCES.filter((_src,si)=>{
+    return PROVIDERS.every((_,pi)=>sr(si*13+pi*19)<=0.35);
+  }),[]);
+
+  const dsFreshness=useMemo(()=>PROVIDERS.map((p,pi)=>{
+    const avg=DATA_SOURCES.reduce((a,_,si)=>a+Math.round(sr(si*17+pi*23)*24+1),0)/DATA_SOURCES.length;
+    return{provider:p.name,avgMonths:Math.round(avg*10)/10,color:p.color};
+  }),[]);
+
+  const handleProviderSwitch=useCallback((idx)=>{
+    setSelProvider(idx);
+    setESlider(PROVIDERS[idx].eW);
+    setSSlider(PROVIDERS[idx].sW);
+    setGSlider(PROVIDERS[idx].gW);
+    setExpandedIssue(null);
+  },[]);
+
+  const st={
+    page:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px',color:T.text},
+    h1:{fontSize:'26px',fontWeight:700,color:T.navy,margin:'0 0 4px'},
+    sub:{fontSize:'14px',color:T.textSec,margin:'0 0 20px'},
+    tabs:{display:'flex',gap:'4px',background:T.surface,borderRadius:'10px',padding:'4px',border:`1px solid ${T.border}`,marginBottom:'24px'},
+    tab:(a)=>({padding:'10px 20px',borderRadius:'8px',border:'none',cursor:'pointer',fontSize:'13px',fontWeight:a?600:500,background:a?T.navy:'transparent',color:a?'#fff':T.textSec,transition:'all 0.2s',fontFamily:T.font}),
+    card:{background:T.surface,borderRadius:'12px',border:`1px solid ${T.border}`,padding:'20px',marginBottom:'16px'},
+    cardTitle:{fontSize:'15px',fontWeight:700,color:T.navy,margin:'0 0 12px'},
+    provCard:(a)=>({padding:'14px 18px',borderRadius:'10px',border:`2px solid ${a?T.gold:T.border}`,background:a?T.surfaceH:T.surface,cursor:'pointer',textAlign:'center',transition:'all 0.2s',minWidth:'130px'}),
+    btn:(active)=>({padding:'7px 16px',borderRadius:'6px',border:`1px solid ${active?T.navy:T.border}`,background:active?T.navy:'transparent',color:active?'#fff':T.text,cursor:'pointer',fontSize:'12px',fontWeight:600,fontFamily:T.font}),
+    input:{padding:'8px 12px',borderRadius:'6px',border:`1px solid ${T.border}`,fontSize:'13px',fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:'220px'},
+    grid2:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'16px'},
+    grid3:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'16px'},
+    badge:(color)=>({display:'inline-block',padding:'2px 8px',borderRadius:'4px',fontSize:'11px',fontWeight:600,background:color+'18',color}),
+    slider:{width:'100%',accentColor:T.navy},
+    progressBar:{height:'8px',borderRadius:'4px',background:T.surfaceH,position:'relative',overflow:'hidden'},
+    progressFill:(pct,color)=>({position:'absolute',top:0,left:0,height:'100%',width:`${pct}%`,borderRadius:'4px',background:color,transition:'width 0.5s ease'}),
+    heatCell:(val)=>{
+      const intensity=val/10;
+      const r=Math.round(220-intensity*180);
+      const g=Math.round(220-intensity*80);
+      const b=Math.round(220-intensity*160);
+      return{width:'60px',height:'36px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',fontWeight:600,cursor:'pointer',borderRadius:'4px',background:`rgb(${r},${g},${b})`,color:intensity>0.6?'#fff':T.text,transition:'transform 0.15s',border:`1px solid ${T.borderL}`};
+    },
+    mono:{fontFamily:T.mono,fontSize:'12px'}
+  };
+
+  /* ========== TAB 1: Methodology Explorer ========== */
+  const renderMethodologyExplorer=()=>(
+    <div>
+      {/* Provider Selector Cards */}
+      <div style={{display:'flex',gap:'10px',flexWrap:'wrap',marginBottom:'20px'}}>
+        {PROVIDERS.map((p,i)=>(
+          <div key={p.id} style={st.provCard(i===selProvider)} onClick={()=>handleProviderSwitch(i)}>
+            <div style={{fontSize:'14px',fontWeight:700,color:i===selProvider?T.navy:T.textSec}}>{p.name}</div>
+            <div style={{fontSize:'11px',color:T.textMut,marginTop:'4px'}}>E:{p.eW}% S:{p.sW}% G:{p.gW}%</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Compare Toggle */}
+      <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'20px'}}>
+        <label style={{fontSize:'13px',fontWeight:600}}>Compare Mode</label>
+        <button style={st.btn(compareMode)} onClick={()=>setCompareMode(!compareMode)}>
+          {compareMode?'On':'Off'}
+        </button>
+        {compareMode&&(
+          <select value={cmpProvider} onChange={e=>setCmpProvider(+e.target.value)} style={st.input}>
+            {PROVIDERS.map((p,i)=>i!==selProvider?<option key={p.id} value={i}>{p.name}</option>:null)}
+          </select>
+        )}
+      </div>
+
+      <div style={st.grid2}>
+        {/* Pillar Weight Pie */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>Pillar Weights: {prov.name}</div>
+          <ResponsiveContainer width="100%" height={240}>
+            <PieChart>
+              <Pie data={pillarWeightData} cx="50%" cy="50%" innerRadius={55} outerRadius={90} dataKey="value" animationDuration={600} label={({name,value})=>`${name} ${value}%`}>
+                {pillarWeightData.map((d,i)=><Cell key={i} fill={d.color}/>)}
+              </Pie>
+              <Tooltip formatter={(v)=>`${v}%`}/>
+            </PieChart>
+          </ResponsiveContainer>
         </div>
-        <h1 style={{fontSize:26,fontWeight:800,margin:0,color:T.navy}}>Ratings Methodology Decoder</h1>
-        <p style={{color:T.textSec,margin:'6px 0 0',fontSize:14}}>Deep-dive into how each ESG ratings provider constructs their scores, weights pillars, and selects material issues.</p>
-      </div>
 
-      {/* Stat cards */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:12,marginBottom:20}}>
-        {[{label:'Providers Tracked',value:'6',sub:'Major ESG raters'},{label:'Key Issues',value:'35+',sub:'Per provider avg'},{label:'GICS Sectors',value:'10',sub:'Materiality mapped'},{label:'Data Sources',value:'15',sub:'Types audited'},{label:'KPIs Per Pillar',value:'20',sub:'Cross-provider'}].map((s,i)=>(
-          <div key={i} style={{...sty.card,textAlign:'center',padding:16}}>
-            <div style={{fontSize:24,fontWeight:800,color:T.navy}}>{s.value}</div>
-            <div style={{fontSize:13,fontWeight:600,color:T.textSec}}>{s.label}</div>
-            <div style={{fontSize:11,color:T.textMut}}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Tab bar */}
-      <div style={{display:'flex',gap:4,borderBottom:`2px solid ${T.border}`,marginBottom:20}}>
-        {TABS.map((t,i)=>(
-          <button key={i} style={sty.tab(activeTab===i)} onClick={()=>setActiveTab(i)}>{t}</button>
-        ))}
-      </div>
-
-      {/* TAB 0: Methodology Explorer */}
-      {activeTab===0&&(
-        <div>
-          <div style={{display:'flex',gap:16,alignItems:'center',marginBottom:20,flexWrap:'wrap'}}>
-            <label style={{fontWeight:600,fontSize:14}}>Select Provider:</label>
-            <select value={selProvider} onChange={e=>{setSelProvider(e.target.value);setShowCompare(false);setEWeight(PROVIDER_DATA[e.target.value].pillarWeights[0]);setSWeight(PROVIDER_DATA[e.target.value].pillarWeights[1]);setGWeight(PROVIDER_DATA[e.target.value].pillarWeights[2]);}} style={sty.select}>
-              {PROVIDERS.map(p=><option key={p} value={p}>{p}</option>)}
+        {/* What-If Simulator */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>What-If Weight Simulator</div>
+          <div style={{marginBottom:'10px'}}>
+            <select value={selCompany} onChange={e=>setSelCompany(+e.target.value)} style={{...st.input,width:'100%',marginBottom:'10px'}}>
+              {COMPANIES.map((c,i)=><option key={i} value={i}>{c.name} ({c.sector})</option>)}
             </select>
-            <button onClick={()=>setShowCompare(!showCompare)} style={{...sty.pill(showCompare),marginLeft:8}}>
-              {showCompare?'Hide Compare':'Compare Providers'}
-            </button>
-            {showCompare&&(
-              <select value={compareProvider} onChange={e=>setCompareProvider(e.target.value)} style={sty.select}>
-                <option value="">Select 2nd provider...</option>
-                {PROVIDERS.filter(p=>p!==selProvider).map(p=><option key={p} value={p}>{p}</option>)}
-              </select>
-            )}
           </div>
-
-          <div style={{display:'grid',gridTemplateColumns:showCompare&&compareData?'1fr 1fr':'1fr',gap:16}}>
-            {/* Primary provider card */}
-            <div style={sty.card}>
-              <h3 style={{margin:'0 0 8px',fontSize:18,color:T.navy}}>{selProvider}</h3>
-              <p style={{fontSize:13,color:T.textSec,lineHeight:1.6,margin:'0 0 16px'}}>{providerData.desc}</p>
-              <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}>
-                <span style={sty.badge(T.sage)}>{providerData.scoreRange}</span>
-                <span style={sty.badge(T.gold)}>{providerData.method.split(';')[0]}</span>
+          {[['Environmental',eSlider,setESlider],['Social',sSlider,setSSlider],['Governance',gSlider,setGSlider]].map(([label,val,setter])=>(
+            <div key={label} style={{marginBottom:'8px'}}>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:'12px',fontWeight:600}}>
+                <span>{label}</span><span>{val}%</span>
               </div>
-
-              {/* Pie Chart */}
-              <h4 style={{fontSize:14,color:T.textSec,margin:'16px 0 8px'}}>Pillar Weight Distribution</h4>
-              <div style={{height:220}}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({name,value})=>`${name} ${value}%`} labelLine={false}>
-                      {pieData.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
-                    </Pie>
-                    <Tooltip formatter={(v)=>`${v}%`}/>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Key Issues */}
-              <h4 style={{fontSize:14,color:T.textSec,margin:'16px 0 8px'}}>Key Issues by Pillar</h4>
-              {Object.entries(providerData.keyIssues).map(([pillar,issues])=>(
-                <div key={pillar} style={{marginBottom:12}}>
-                  <div style={{fontWeight:700,fontSize:13,color:T.navy,marginBottom:4}}>{pillar==='E'?'Environmental':pillar==='S'?'Social':'Governance'} ({issues.length})</div>
-                  <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-                    {issues.map((iss,i)=>(
-                      <span key={i} style={{fontSize:11,padding:'3px 8px',borderRadius:8,background:T.surfaceH,color:T.textSec,border:`1px solid ${T.border}`}}>{iss}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-              {/* Data Sources */}
-              <h4 style={{fontSize:14,color:T.textSec,margin:'16px 0 8px'}}>Primary Data Sources</h4>
-              <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
-                {providerData.dataSources.map((ds,i)=>(
-                  <span key={i} style={sty.badge(T.navyL)}>{ds}</span>
-                ))}
-              </div>
+              <input type="range" min={0} max={100} value={val} onChange={e=>setter(+e.target.value)} style={st.slider}/>
             </div>
-
-            {/* Compare provider card */}
-            {showCompare&&compareData&&(
-              <div style={sty.card}>
-                <h3 style={{margin:'0 0 8px',fontSize:18,color:T.navy}}>{compareProvider}</h3>
-                <p style={{fontSize:13,color:T.textSec,lineHeight:1.6,margin:'0 0 16px'}}>{compareData.desc}</p>
-                <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:12}}>
-                  <span style={sty.badge(T.sage)}>{compareData.scoreRange}</span>
-                  <span style={sty.badge(T.gold)}>{compareData.method.split(';')[0]}</span>
-                </div>
-                <h4 style={{fontSize:14,color:T.textSec,margin:'16px 0 8px'}}>Pillar Weight Distribution</h4>
-                <div style={{height:220}}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={(()=>{const w=compareData.pillarWeights;const labels=compareProvider==='ISS ESG'?['Environment','Social','Governance','Cross-Cutting']:PILLARS;return labels.map((l,i)=>({name:l,value:w[i]||0}));})()}
-                        cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({name,value})=>`${name} ${value}%`} labelLine={false}>
-                        {compareData.pillarWeights.map((_,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
-                      </Pie>
-                      <Tooltip formatter={(v)=>`${v}%`}/>
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                {Object.entries(compareData.keyIssues).map(([pillar,issues])=>(
-                  <div key={pillar} style={{marginBottom:12}}>
-                    <div style={{fontWeight:700,fontSize:13,color:T.navy,marginBottom:4}}>{pillar==='E'?'Environmental':pillar==='S'?'Social':'Governance'} ({issues.length})</div>
-                    <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-                      {issues.map((iss,i)=>(
-                        <span key={i} style={{fontSize:11,padding:'3px 8px',borderRadius:8,background:T.surfaceH,color:T.textSec,border:`1px solid ${T.border}`}}>{iss}</span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+          ))}
+          <div style={{marginTop:'12px',padding:'12px',background:T.surfaceH,borderRadius:'8px',textAlign:'center'}}>
+            <div style={{fontSize:'12px',color:T.textSec}}>Simulated Composite Score</div>
+            <div style={{fontSize:'28px',fontWeight:800,color:whatIfScore>65?T.green:whatIfScore>45?T.amber:T.red}}>{whatIfScore}</div>
+            <div style={{fontSize:'11px',color:T.textMut}}>Sum: {eSlider+sSlider+gSlider}% {eSlider+sSlider+gSlider!==100&&<span style={{color:T.red}}>(not 100%)</span>}</div>
           </div>
+        </div>
+      </div>
 
-          {/* Radar comparison */}
-          {showCompare&&compareProvider&&radarData.length>0&&(
-            <div style={{...sty.card,marginTop:16}}>
-              <h4 style={{margin:'0 0 12px',fontSize:16,color:T.navy}}>Provider Comparison Radar</h4>
-              <div style={{height:320}}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart data={radarData} outerRadius={120}>
-                    <PolarGrid stroke={T.border}/>
-                    <PolarAngleAxis dataKey="dim" tick={{fontSize:12,fill:T.textSec}}/>
-                    <PolarRadiusAxis angle={30} domain={[0,100]} tick={{fontSize:10}}/>
-                    <Radar name={selProvider} dataKey={selProvider} stroke={T.navy} fill={T.navy} fillOpacity={0.2}/>
-                    <Radar name={compareProvider} dataKey={compareProvider} stroke={T.gold} fill={T.gold} fillOpacity={0.2}/>
-                    <Tooltip/>
-                  </RadarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{display:'flex',gap:20,justifyContent:'center',marginTop:8}}>
-                <span style={{fontSize:12,color:T.navy}}><span style={{display:'inline-block',width:12,height:12,background:T.navy,borderRadius:2,marginRight:4,verticalAlign:'middle'}}/>{selProvider}</span>
-                <span style={{fontSize:12,color:T.gold}}><span style={{display:'inline-block',width:12,height:12,background:T.gold,borderRadius:2,marginRight:4,verticalAlign:'middle'}}/>{compareProvider}</span>
-              </div>
+      {/* Compare Radar + Delta */}
+      {compareMode&&(
+        <div style={st.grid2}>
+          <div style={st.card}>
+            <div style={st.cardTitle}>{prov.name} vs {cmpProv.name} Radar</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <RadarChart data={radarData}>
+                <PolarGrid stroke={T.border}/>
+                <PolarAngleAxis dataKey="dim" tick={{fontSize:11,fill:T.textSec}}/>
+                <PolarRadiusAxis angle={30} domain={[0,100]} tick={{fontSize:10}}/>
+                <Radar name={prov.name} dataKey={prov.name} stroke={prov.color} fill={prov.color} fillOpacity={0.2}/>
+                <Radar name={cmpProv.name} dataKey={cmpProv.name} stroke={cmpProv.color} fill={cmpProv.color} fillOpacity={0.2}/>
+                <Legend/>
+                <Tooltip/>
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={st.card}>
+            <div style={st.cardTitle}>Weight Deltas (Top Issues)</div>
+            <div style={{maxHeight:'280px',overflowY:'auto'}}>
+              <table style={{width:'100%',fontSize:'12px',borderCollapse:'collapse'}}>
+                <thead>
+                  <tr style={{borderBottom:`2px solid ${T.border}`}}>
+                    <th style={{textAlign:'left',padding:'6px',color:T.textSec}}>Issue</th>
+                    <th style={{textAlign:'center',padding:'6px',color:prov.color}}>{prov.name.split(' ')[0]}</th>
+                    <th style={{textAlign:'center',padding:'6px',color:cmpProv.color}}>{cmpProv.name.split(' ')[0]}</th>
+                    <th style={{textAlign:'center',padding:'6px'}}>Delta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deltaTable.map((r,i)=>(
+                    <tr key={i} style={{borderBottom:`1px solid ${T.borderL}`}}>
+                      <td style={{padding:'5px 6px',fontSize:'11px'}}>{r.issue}</td>
+                      <td style={{textAlign:'center',padding:'5px'}}>{r.w1}%</td>
+                      <td style={{textAlign:'center',padding:'5px'}}>{r.w2}%</td>
+                      <td style={{textAlign:'center',padding:'5px',color:r.delta>0?T.green:r.delta<0?T.red:T.textMut,fontWeight:600}}>
+                        {r.delta>0?'+':''}{r.delta}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-
-          {/* What-If Weight Simulator */}
-          <div style={{...sty.card,marginTop:16}}>
-            <h4 style={{margin:'0 0 4px',fontSize:16,color:T.navy}}>What-If Weight Simulator</h4>
-            <p style={{fontSize:12,color:T.textMut,margin:'0 0 16px'}}>Adjust E/S/G pillar weights to see how a sample company's score changes for {selProvider}.</p>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20,marginBottom:16}}>
-              {[{label:'Environmental',val:eWeight,set:setEWeight,col:T.sage},{label:'Social',val:sWeight,set:setSWeight,col:T.gold},{label:'Governance',val:gWeight,set:setGWeight,col:T.navy}].map((s,i)=>(
-                <div key={i}>
-                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
-                    <span style={{fontSize:13,fontWeight:600,color:s.col}}>{s.label}</span>
-                    <span style={{fontSize:13,fontWeight:700,color:s.col}}>{s.val}%</span>
-                  </div>
-                  <input type="range" min={0} max={100} value={s.val} onChange={e=>s.set(Number(e.target.value))} style={sty.slider}/>
-                </div>
-              ))}
-            </div>
-            <div style={{display:'flex',gap:24,alignItems:'center',padding:16,background:T.surfaceH,borderRadius:10}}>
-              <div>
-                <div style={{fontSize:12,color:T.textMut}}>Default Score ({selProvider} weights)</div>
-                <div style={{fontSize:28,fontWeight:800,color:T.navy}}>{defaultScore}</div>
-              </div>
-              <div style={{fontSize:24,color:T.textMut}}>vs</div>
-              <div>
-                <div style={{fontSize:12,color:T.textMut}}>Your Custom Weights</div>
-                <div style={{fontSize:28,fontWeight:800,color:whatIfScore>defaultScore?T.green:whatIfScore<defaultScore?T.red:T.navy}}>{whatIfScore}</div>
-              </div>
-              <div style={{marginLeft:'auto',textAlign:'right'}}>
-                <div style={{fontSize:12,color:T.textMut}}>Delta</div>
-                <div style={{fontSize:20,fontWeight:700,color:whatIfScore-defaultScore>0?T.green:whatIfScore-defaultScore<0?T.red:T.textMut}}>
-                  {whatIfScore-defaultScore>0?'+':''}{Math.round((whatIfScore-defaultScore)*10)/10}
-                </div>
-              </div>
-            </div>
-            <button onClick={()=>{setEWeight(providerData.pillarWeights[0]);setSWeight(providerData.pillarWeights[1]);setGWeight(providerData.pillarWeights[2]);}} style={{...sty.pill(false),marginTop:12,fontSize:12}}>Reset to Provider Defaults</button>
           </div>
         </div>
       )}
 
-      {/* TAB 1: Pillar Deep-Dive */}
-      {activeTab===1&&(
-        <div>
-          <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap',alignItems:'center'}}>
-            <label style={{fontWeight:600,fontSize:14,marginRight:8}}>Select Pillar:</label>
-            {PILLARS.map(p=>(
-              <button key={p} onClick={()=>setSelPillar(p)} style={sty.pill(selPillar===p)}>{p}</button>
+      {/* "Why Do They Disagree?" */}
+      {compareMode&&(
+        <div style={{...st.card,background:'linear-gradient(135deg,#f0ede7,#e8e4dc)'}}>
+          <div style={st.cardTitle}>Why Do {prov.name} and {cmpProv.name} Disagree on {COMPANIES[selCompany].name}?</div>
+          <div style={st.grid3}>
+            {[
+              {title:'Weight Divergence',color:T.sage,text:`${prov.name} weights Environmental at ${prov.eW}% vs ${cmpProv.name} at ${cmpProv.eW}%. This ${Math.abs(prov.eW-cmpProv.eW)}pp gap drives ${Math.abs(prov.eW-cmpProv.eW)>8?'significant':'moderate'} score divergence for carbon-intensive sectors.`},
+              {title:'Data Source Differences',color:T.navyL,text:`${prov.name} relies more on ${DATA_SOURCES[selProvider%DATA_SOURCES.length]} while ${cmpProv.name} emphasizes ${DATA_SOURCES[cmpProvider%DATA_SOURCES.length]}. Different data freshness windows (3-18 months) affect timeliness of assessments.`},
+              {title:'Scoring Methodology',color:T.gold,text:`${prov.name} uses ${selProvider%2===0?'absolute thresholds':'peer-relative scoring'} while ${cmpProv.name} applies ${cmpProvider%2===0?'absolute thresholds':'best-in-class benchmarks'}. This structural difference explains ~${Math.round(sr(selProvider*cmpProvider+selCompany)*15+5)}% of the rating gap.`}
+            ].map((panel,i)=>(
+              <div key={i} style={{padding:'12px',background:T.surface,borderRadius:'8px'}}>
+                <div style={{fontSize:'12px',fontWeight:700,color:panel.color,marginBottom:'4px'}}>{panel.title}</div>
+                <div style={{fontSize:'12px',color:T.textSec}}>{panel.text}</div>
+              </div>
             ))}
           </div>
+        </div>
+      )}
 
-          {/* Weight comparison bar chart */}
-          <div style={sty.card}>
-            <h4 style={{margin:'0 0 12px',fontSize:16,color:T.navy}}>Provider Weight for {selPillar} Pillar (%)</h4>
-            <div style={{height:260}}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={pillarBarData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-                  <XAxis type="number" domain={[0,60]} tick={{fontSize:12,fill:T.textSec}}/>
-                  <YAxis type="category" dataKey="name" width={110} tick={{fontSize:12,fill:T.textSec}}/>
-                  <Tooltip formatter={v=>`${v}%`}/>
-                  <Bar dataKey="weight" fill={selPillar==='Environmental'?T.sage:selPillar==='Social'?T.gold:T.navy} radius={[0,6,6,0]}/>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+      {/* Key Issues Accordion */}
+      <div style={st.card}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'12px'}}>
+          <div style={st.cardTitle}>Key Issues: {prov.name}</div>
+          <div style={{display:'flex',gap:'4px'}}>
+            {['E','S','G'].map(p=>(
+              <button key={p} style={st.btn(issuePillar===p)} onClick={()=>{setIssuePillar(p);setExpandedIssue(null);}}>
+                {p==='E'?'Environmental':p==='S'?'Social':'Governance'} ({p==='E'?15:p==='S'?15:12})
+              </button>
+            ))}
           </div>
-
-          {/* Sub-issue comparison table */}
-          <div style={{...sty.card,marginTop:16}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,flexWrap:'wrap',gap:8}}>
-              <h4 style={{margin:0,fontSize:16,color:T.navy}}>KPI Coverage: {selPillar} ({PILLAR_KPIS[selPillar].length} indicators)</h4>
-              <input
-                type="text"
-                placeholder="Search KPIs..."
-                value={pillarSearch}
-                onChange={e=>setPillarSearch(e.target.value)}
-                style={{...sty.select,minWidth:200}}
-              />
-            </div>
-            <div style={{overflowX:'auto'}}>
-              <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
-                <thead>
-                  <tr>
-                    <th style={{...sty.th,minWidth:180}}>KPI / Indicator</th>
-                    {PROVIDERS.map(p=><th key={p} style={{...sty.th,textAlign:'center',minWidth:90}}>{p}</th>)}
-                    <th style={{...sty.th,textAlign:'center',minWidth:80}}>Coverage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredKpis.map((kpi)=>{
-                    const coverage=PROVIDERS.reduce((s,_,pi)=>s+pillarKpiMap[pi][kpi.idx],0);
-                    return(
-                      <tr key={kpi.idx} style={{background:kpi.idx%2===0?T.surface:T.surfaceH}}>
-                        <td style={sty.td}>{kpi.name}</td>
-                        {PROVIDERS.map((p,pi)=>(
-                          <td key={pi} style={{...sty.td,textAlign:'center'}}>
-                            {pillarKpiMap[pi][kpi.idx]?<span style={sty.check}>&#10003;</span>:<span style={sty.cross}>&#10007;</span>}
-                          </td>
-                        ))}
-                        <td style={{...sty.td,textAlign:'center'}}>
-                          <span style={sty.badge(coverage>=5?T.green:coverage>=3?T.amber:T.red)}>{coverage}/6</span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <div style={{marginTop:12,fontSize:12,color:T.textMut}}>
-              Coverage summary: {PILLAR_KPIS[selPillar].filter((_,ki)=>PROVIDERS.every((__,pi)=>pillarKpiMap[pi][ki])).length} universally covered | {PILLAR_KPIS[selPillar].filter((_,ki)=>PROVIDERS.filter((__,pi)=>pillarKpiMap[pi][ki]).length<=2).length} sparsely covered (&le;2 providers)
-            </div>
-          </div>
-
-          {/* Provider approach descriptions */}
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:12,marginTop:16}}>
-            {PROVIDERS.map((p,pi)=>{
-              const pData=PROVIDER_DATA[p];
-              const pillarKey=selPillar==='Environmental'?'E':selPillar==='Social'?'S':'G';
-              const issues=pData.keyIssues[pillarKey]||[];
-              return(
-                <div key={p} style={{...sty.card,padding:16}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-                    <h5 style={{margin:0,fontSize:14,color:T.navy}}>{p}</h5>
-                    <span style={sty.badge(PIE_COLORS[pi%PIE_COLORS.length])}>{pData.pillarWeights[PILLARS.indexOf(selPillar)]||'N/A'}%</span>
-                  </div>
-                  <div style={{fontSize:12,color:T.textSec,marginBottom:8}}>Score Range: {pData.scoreRange}</div>
-                  <div style={{display:'flex',flexWrap:'wrap',gap:3}}>
-                    {issues.slice(0,6).map((iss,i)=>(
-                      <span key={i} style={{fontSize:10,padding:'2px 6px',borderRadius:6,background:T.surfaceH,color:T.textSec}}>{iss}</span>
-                    ))}
-                    {issues.length>6&&<span style={{fontSize:10,color:T.textMut}}>+{issues.length-6} more</span>}
+        </div>
+        <div style={{maxHeight:'420px',overflowY:'auto'}}>
+          {issues.map((iss,i)=>(
+            <div key={i} style={{borderBottom:`1px solid ${T.borderL}`,padding:'8px 0'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer',padding:'4px 0'}} onClick={()=>setExpandedIssue(expandedIssue===i?null:i)}>
+                <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+                  <span style={{fontSize:'16px',color:T.textMut,transition:'transform 0.2s',transform:expandedIssue===i?'rotate(90deg)':'rotate(0deg)',display:'inline-block'}}>&#9654;</span>
+                  <span style={{fontSize:'13px',fontWeight:600}}>{iss.name}</span>
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
+                  <span style={st.badge(T.sage)}>Weight: {iss.weight}%</span>
+                  <span style={st.badge(T.navyL)}>{iss.scoring}</span>
+                </div>
+              </div>
+              {expandedIssue===i&&(
+                <div style={{padding:'12px 24px',background:T.surfaceH,borderRadius:'8px',marginTop:'6px',fontSize:'12px',lineHeight:1.7}}>
+                  <p style={{margin:'0 0 8px',color:T.textSec}}>{iss.description}</p>
+                  <div style={st.grid3}>
+                    <div><span style={{fontWeight:700,color:T.navy}}>Data Source:</span> {iss.dataSource}</div>
+                    <div><span style={{fontWeight:700,color:T.navy}}>Scoring:</span> {iss.scoring}</div>
+                    <div><span style={{fontWeight:700,color:T.navy}}>Criteria:</span> {iss.criteria}</div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              )}
+            </div>
+          ))}
         </div>
-      )}
+      </div>
 
-      {/* TAB 2: Materiality Matrix */}
-      {activeTab===2&&(
-        <div>
-          <div style={{display:'flex',gap:12,alignItems:'center',marginBottom:16,flexWrap:'wrap'}}>
-            <h3 style={{margin:0,fontSize:18,color:T.navy}}>Materiality Map: GICS Sectors x Providers</h3>
-            <input
-              type="text"
-              placeholder="Filter sectors..."
-              value={matSearch}
-              onChange={e=>setMatSearch(e.target.value)}
-              style={{...sty.select,minWidth:200,marginLeft:'auto'}}
-            />
-          </div>
+      {/* All Provider Scores Bar */}
+      <div style={st.card}>
+        <div style={st.cardTitle}>All Provider Scores: {COMPANIES[selCompany].name}</div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={providerScores} layout="vertical">
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+            <XAxis type="number" domain={[0,100]} tick={{fontSize:11}}/>
+            <YAxis type="category" dataKey="provider" width={120} tick={{fontSize:11}}/>
+            <Tooltip formatter={v=>`${v}/100`}/>
+            <Bar dataKey="score" radius={[0,4,4,0]}>
+              {providerScores.map((_,i)=><Cell key={i} fill={PROVIDERS[i].color}/>)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 
-          {/* Heatmap */}
-          <div style={sty.card}>
-            <div style={{overflowX:'auto'}}>
-              <table style={{width:'100%',borderCollapse:'collapse'}}>
-                <thead>
-                  <tr>
-                    <th style={{...sty.th,minWidth:140}}>Sector</th>
-                    {PROVIDERS.map(p=><th key={p} style={{...sty.th,textAlign:'center',minWidth:90}}>{p}</th>)}
-                    <th style={{...sty.th,textAlign:'center',minWidth:100}}>Disagreement</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {materialityData.map((row,ri)=>{
-                    const sectorIdx=GICS_SECTORS.indexOf(row.sector);
-                    return(
-                      <tr key={ri} style={{cursor:'pointer',background:selSector===sectorIdx?T.surfaceH:T.surface,transition:'background 0.2s'}} onClick={()=>setSelSector(selSector===sectorIdx?null:sectorIdx)}>
-                        <td style={{...sty.td,fontWeight:600}}>{row.sector}</td>
-                        {PROVIDERS.map(p=>(
-                          <td key={p} style={{...sty.td,textAlign:'center'}}>
-                            <div style={sty.heatCell(row[p])}>{(row[p]*100).toFixed(0)}</div>
-                          </td>
-                        ))}
-                        <td style={{...sty.td,textAlign:'center'}}>
-                          <span style={sty.badge(row.disagreement>0.2?T.red:row.disagreement>0.12?T.amber:T.green)}>
-                            {row.disagreement.toFixed(2)}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <div style={{marginTop:12,display:'flex',gap:16,fontSize:11,color:T.textMut,alignItems:'center'}}>
-              <span>Materiality weight (0-100):</span>
-              <div style={{display:'flex',gap:4,alignItems:'center'}}>
-                {[0.1,0.3,0.5,0.7,0.9].map(v=>(
-                  <div key={v} style={{...sty.heatCell(v),width:28,height:24,fontSize:9}}>{(v*100).toFixed(0)}</div>
-                ))}
-              </div>
-              <span style={{marginLeft:16}}>Click a sector row to see detailed breakdown.</span>
-            </div>
-          </div>
-
-          {/* Sector detail */}
-          {selSector!==null&&sectorDetail&&(
-            <div style={{...sty.card,marginTop:16}}>
-              <h4 style={{margin:'0 0 12px',fontSize:16,color:T.navy}}>Detailed Breakdown: {GICS_SECTORS[selSector]}</h4>
-              <div style={{overflowX:'auto'}}>
-                <table style={{width:'100%',borderCollapse:'collapse'}}>
-                  <thead>
-                    <tr>
-                      <th style={{...sty.th,minWidth:160}}>Issue</th>
-                      {PROVIDERS.map(p=><th key={p} style={{...sty.th,textAlign:'center',minWidth:80}}>{p}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sectorDetail.map((row,ri)=>(
-                      <tr key={ri} style={{background:ri%2===0?T.surface:T.surfaceH}}>
-                        <td style={{...sty.td,fontWeight:600}}>{row.issue}</td>
-                        {PROVIDERS.map(p=>(
-                          <td key={p} style={{...sty.td,textAlign:'center'}}>
-                            <div style={sty.heatCell(row[p])}>{(row[p]*100).toFixed(0)}</div>
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <button onClick={()=>setSelSector(null)} style={{...sty.pill(false),marginTop:12,fontSize:12}}>Close Detail</button>
-            </div>
-          )}
-
-          {/* Disagreement bar chart */}
-          <div style={{...sty.card,marginTop:16}}>
-            <h4 style={{margin:'0 0 12px',fontSize:16,color:T.navy}}>Provider Disagreement by Sector</h4>
-            <p style={{fontSize:12,color:T.textMut,margin:'0 0 12px'}}>Higher disagreement indicates more divergent materiality assessments across providers.</p>
-            <div style={{height:280}}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={GICS_SECTORS.map((s,i)=>({sector:s,disagreement:Math.round(computeDisagreement(i)*100)/100}))}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-                  <XAxis dataKey="sector" tick={{fontSize:10,fill:T.textSec}} angle={-25} textAnchor="end" height={60}/>
-                  <YAxis tick={{fontSize:11,fill:T.textSec}} domain={[0,0.4]}/>
-                  <Tooltip formatter={v=>v.toFixed(3)}/>
-                  <Bar dataKey="disagreement" fill={T.navyL} radius={[4,4,0,0]}>
-                    {GICS_SECTORS.map((_,i)=>{
-                      const d=computeDisagreement(i);
-                      return <Cell key={i} fill={d>0.2?T.red:d>0.12?T.amber:T.sage}/>;
-                    })}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+  /* ========== TAB 2: KPI Coverage Matrix ========== */
+  const renderKPICoverage=()=>(
+    <div>
+      {/* Pillar Selector + Search */}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px'}}>
+        <div style={{display:'flex',gap:'4px'}}>
+          {['E','S','G'].map(p=>(
+            <button key={p} style={st.btn(kpiPillar===p)} onClick={()=>{setKpiPillar(p);setSelKpi(null);setKpiSearch('');}}>
+              {p==='E'?'Environmental':p==='S'?'Social':'Governance'}
+            </button>
+          ))}
         </div>
-      )}
+        <input value={kpiSearch} onChange={e=>setKpiSearch(e.target.value)} placeholder="Search KPIs..." style={st.input}/>
+      </div>
 
-      {/* TAB 3: Data Source Audit */}
-      {activeTab===3&&(
-        <div>
-          <div style={{display:'flex',gap:12,alignItems:'center',marginBottom:16,flexWrap:'wrap'}}>
-            <h3 style={{margin:0,fontSize:18,color:T.navy}}>Data Source Audit</h3>
-            <div style={{marginLeft:'auto',display:'flex',gap:8,flexWrap:'wrap'}}>
-              <label style={{fontSize:12,fontWeight:600,color:T.textSec,alignSelf:'center'}}>Filter:</label>
-              {['All','Self-Reported','Third-Party','Regulatory','Verified'].map(f=>(
-                <button key={f} onClick={()=>setDsFilter(f)} style={sty.pill(dsFilter===f)}>{f}</button>
+      {/* Coverage Scores */}
+      <div style={{...st.card,display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:'12px'}}>
+        {coverageScores.map((cs,i)=>(
+          <div key={i}>
+            <div style={{fontSize:'12px',fontWeight:700,marginBottom:'4px'}}>{cs.provider}</div>
+            <div style={st.progressBar}>
+              <div style={st.progressFill(cs.pct,cs.color)}/>
+            </div>
+            <div style={{fontSize:'11px',color:T.textSec,marginTop:'2px'}}>{cs.covered}/{cs.total} ({cs.pct}%)</div>
+          </div>
+        ))}
+      </div>
+
+      {/* KPI x Provider Matrix */}
+      <div style={{...st.card,overflowX:'auto'}}>
+        <div style={st.cardTitle}>{kpiPillar==='E'?'Environmental':kpiPillar==='S'?'Social':'Governance'} KPI Coverage ({kpis.length} KPIs x 6 Providers)</div>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
+          <thead>
+            <tr style={{borderBottom:`2px solid ${T.border}`}}>
+              <th style={{textAlign:'left',padding:'8px',width:'40px',color:T.textSec,fontWeight:600}}>#</th>
+              <th style={{textAlign:'left',padding:'8px',minWidth:'240px',color:T.textSec,fontWeight:600}}>KPI Name</th>
+              {PROVIDERS.map(p=>(
+                <th key={p.id} style={{textAlign:'center',padding:'8px',color:p.color,fontWeight:600,minWidth:'80px'}}>{p.name.split(' ')[0]}</th>
               ))}
-            </div>
-            <div style={{display:'flex',gap:8,alignItems:'center'}}>
-              <label style={{fontSize:12,fontWeight:600,color:T.textSec}}>Sort:</label>
-              <select value={dsSort} onChange={e=>setDsSort(e.target.value)} style={{...sty.select,minWidth:120}}>
-                <option value="name">By Name</option>
-                <option value="type">By Type</option>
-              </select>
-            </div>
-          </div>
+            </tr>
+          </thead>
+          <tbody>
+            {kpis.slice(0,60).map((k,ki)=>(
+              <tr key={ki} style={{borderBottom:`1px solid ${T.borderL}`,background:selKpi===ki?T.surfaceH:'transparent',cursor:'pointer'}} onClick={()=>setSelKpi(selKpi===ki?null:ki)}>
+                <td style={{padding:'6px 8px',color:T.textMut,...st.mono}}>{ki+1}</td>
+                <td style={{padding:'6px 8px',fontWeight:500}}>{k.name}</td>
+                {PROVIDERS.map((p,pi)=>(
+                  <td key={pi} style={{textAlign:'center',padding:'6px'}}>
+                    {k.covered[pi]?(
+                      <span style={{color:T.green,fontWeight:700}}>&#10003; <span style={{fontSize:'10px',color:T.textMut}}>w{k.weight[pi]}</span></span>
+                    ):(
+                      <span style={{color:T.red}}>&#10007;</span>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-          <div style={sty.card}>
-            <div style={{overflowX:'auto'}}>
-              <table style={{width:'100%',borderCollapse:'collapse'}}>
-                <thead>
-                  <tr>
-                    <th style={{...sty.th,minWidth:220}}>Data Source</th>
-                    <th style={{...sty.th,minWidth:100}}>Type</th>
-                    <th style={{...sty.th,minWidth:90}}>Freshness</th>
-                    <th style={{...sty.th,minWidth:80}}>Quality Tier</th>
-                    {PROVIDERS.map(p=><th key={p} style={{...sty.th,textAlign:'center',minWidth:80}}>{p}</th>)}
-                    <th style={{...sty.th,textAlign:'center',minWidth:80}}>Adoption</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredDS.map((ds)=>{
-                    const adoption=PROVIDERS.reduce((s,p)=>s+DS_PROVIDER_MAP[p][ds.idx],0);
-                    const typeColor=ds.type==='Self-Reported'?T.gold:ds.type==='Third-Party'?T.navyL:ds.type==='Regulatory'?T.sage:T.green;
-                    const freshnessColor=ds.freshness==='Real-Time'?T.green:ds.freshness==='Weekly'?T.sage:ds.freshness==='Monthly'?T.amber:ds.freshness==='Quarterly'?T.gold:T.textMut;
-                    return(
-                      <tr key={ds.idx} style={{background:ds.idx%2===0?T.surface:T.surfaceH}}>
-                        <td style={{...sty.td,fontWeight:600}}>{ds.name}</td>
-                        <td style={sty.td}><span style={sty.badge(typeColor)}>{ds.type}</span></td>
-                        <td style={sty.td}>
-                          <span style={{display:'inline-flex',alignItems:'center',gap:4}}>
-                            <span style={{width:8,height:8,borderRadius:'50%',background:freshnessColor,display:'inline-block'}}/>
-                            <span style={{fontSize:12}}>{ds.freshness}</span>
-                          </span>
-                        </td>
-                        <td style={sty.td}>
-                          <span style={{fontSize:12,fontWeight:600,color:QUALITY_TIERS[ds.idx]==='Tier 1'?T.green:QUALITY_TIERS[ds.idx]==='Tier 2'?T.amber:T.red}}>
-                            {QUALITY_TIERS[ds.idx]}
-                          </span>
-                        </td>
-                        {PROVIDERS.map(p=>(
-                          <td key={p} style={{...sty.td,textAlign:'center'}}>
-                            {DS_PROVIDER_MAP[p][ds.idx]?<span style={sty.check}>&#10003;</span>:<span style={sty.cross}>&#10007;</span>}
-                          </td>
-                        ))}
-                        <td style={{...sty.td,textAlign:'center'}}>
-                          <span style={sty.badge(adoption>=5?T.green:adoption>=3?T.amber:T.red)}>{adoption}/6</span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+      {/* KPI Detail Panel */}
+      {selKpi!==null&&kpis[selKpi]&&(
+        <div style={{...st.card,background:T.surfaceH}}>
+          <div style={st.cardTitle}>KPI Detail: {kpis[selKpi].name}</div>
+          <div style={st.grid3}>
+            {PROVIDERS.map((p,pi)=>(
+              <div key={pi} style={{padding:'12px',background:T.surface,borderRadius:'8px',border:`1px solid ${kpis[selKpi].covered[pi]?T.green+'40':T.red+'40'}`}}>
+                <div style={{fontWeight:700,fontSize:'13px',color:p.color,marginBottom:'6px'}}>{p.name}</div>
+                {kpis[selKpi].covered[pi]?(
+                  <div style={{fontSize:'12px',lineHeight:1.7,color:T.textSec}}>
+                    <div><strong>Weight:</strong> {kpis[selKpi].weight[pi]}/6</div>
+                    <div><strong>Scoring:</strong> {kpis[selKpi].scoring}</div>
+                    <div><strong>Data Source:</strong> {kpis[selKpi].source}</div>
+                    <div><strong>Threshold:</strong> {kpis[selKpi].threshold}th percentile</div>
+                  </div>
+                ):(
+                  <div style={{fontSize:'12px',color:T.red}}>Not covered by this provider</div>
+                )}
+              </div>
+            ))}
           </div>
+        </div>
+      )}
 
-          {/* Summary cards */}
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12,marginTop:16}}>
-            {PROVIDERS.map((p,pi)=>{
-              const totalUsed=DS_PROVIDER_MAP[p].reduce((s,v)=>s+v,0);
-              const selfReport=DATA_SOURCES.filter((d,i)=>d.type==='Self-Reported'&&DS_PROVIDER_MAP[p][i]).length;
-              const thirdParty=DATA_SOURCES.filter((d,i)=>d.type==='Third-Party'&&DS_PROVIDER_MAP[p][i]).length;
-              const regulatory=DATA_SOURCES.filter((d,i)=>d.type==='Regulatory'&&DS_PROVIDER_MAP[p][i]).length;
-              const verified=DATA_SOURCES.filter((d,i)=>d.type==='Verified'&&DS_PROVIDER_MAP[p][i]).length;
+      <div style={st.grid2}>
+        {/* Critical Gaps */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>Critical Gaps (covered by &lt;3 providers)</div>
+          <div style={{maxHeight:'260px',overflowY:'auto'}}>
+            {criticalGaps.length===0?(
+              <div style={{fontSize:'13px',color:T.textMut,padding:'12px'}}>No critical gaps found for this pillar.</div>
+            ):criticalGaps.map((k,i)=>(
+              <div key={i} style={{padding:'6px 0',borderBottom:`1px solid ${T.borderL}`,fontSize:'12px',display:'flex',justifyContent:'space-between'}}>
+                <span>{k.name}</span>
+                <span style={st.badge(T.red)}>{k.covered.filter(Boolean).length} providers</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Provider Overlap Summary */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>Provider KPI Overlap Summary</div>
+          <div style={{fontSize:'12px',lineHeight:2}}>
+            {PROVIDERS.map((p1,i)=>PROVIDERS.slice(i+1).map((p2,j)=>{
+              const idx2=i+j+1;
+              const overlap=kpis.filter(k=>k.covered[i]&&k.covered[idx2]).length;
+              const pct=kpis.length>0?Math.round(overlap/kpis.length*100):0;
               return(
-                <div key={p} style={{...sty.card,padding:16}}>
-                  <h5 style={{margin:'0 0 8px',fontSize:14,color:T.navy}}>{p}</h5>
-                  <div style={{fontSize:24,fontWeight:800,color:T.navy}}>{totalUsed}<span style={{fontSize:12,fontWeight:400,color:T.textMut}}>/{DATA_SOURCES.length} sources</span></div>
-                  <div style={{marginTop:8,display:'flex',flexDirection:'column',gap:4}}>
-                    <div style={{display:'flex',justifyContent:'space-between',fontSize:12}}>
-                      <span style={{color:T.textSec}}>Self-Reported</span>
-                      <span style={{fontWeight:700,color:T.gold}}>{selfReport}</span>
-                    </div>
-                    <div style={{display:'flex',justifyContent:'space-between',fontSize:12}}>
-                      <span style={{color:T.textSec}}>Third-Party</span>
-                      <span style={{fontWeight:700,color:T.navyL}}>{thirdParty}</span>
-                    </div>
-                    <div style={{display:'flex',justifyContent:'space-between',fontSize:12}}>
-                      <span style={{color:T.textSec}}>Regulatory</span>
-                      <span style={{fontWeight:700,color:T.sage}}>{regulatory}</span>
-                    </div>
-                    <div style={{display:'flex',justifyContent:'space-between',fontSize:12}}>
-                      <span style={{color:T.textSec}}>Verified</span>
-                      <span style={{fontWeight:700,color:T.green}}>{verified}</span>
-                    </div>
-                  </div>
-                  {/* Mini coverage bar */}
-                  <div style={{marginTop:8,height:6,background:T.surfaceH,borderRadius:3,overflow:'hidden'}}>
-                    <div style={{height:'100%',width:`${(totalUsed/DATA_SOURCES.length)*100}%`,background:T.navy,borderRadius:3,transition:'width 0.3s'}}/>
-                  </div>
+                <div key={`${i}-${idx2}`} style={{display:'flex',justifyContent:'space-between',borderBottom:`1px solid ${T.borderL}`,padding:'2px 0'}}>
+                  <span>{p1.name.split(' ')[0]} + {p2.name.split(' ')[0]}</span>
+                  <span style={{fontWeight:600,color:pct>60?T.green:pct>40?T.amber:T.red}}>{overlap} ({pct}%)</span>
                 </div>
               );
-            })}
+            })).flat().slice(0,15)}
           </div>
+        </div>
+      </div>
+    </div>
+  );
 
-          {/* Data source coverage chart */}
-          <div style={{...sty.card,marginTop:16}}>
-            <h4 style={{margin:'0 0 12px',fontSize:16,color:T.navy}}>Data Source Adoption Across Providers</h4>
-            <div style={{height:300}}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={DATA_SOURCES.map((ds,i)=>({name:ds.name.length>20?ds.name.slice(0,18)+'...':ds.name,adoption:PROVIDERS.reduce((s,p)=>s+DS_PROVIDER_MAP[p][i],0)}))}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-                  <XAxis dataKey="name" tick={{fontSize:9,fill:T.textSec}} angle={-35} textAnchor="end" height={80}/>
-                  <YAxis tick={{fontSize:11,fill:T.textSec}} domain={[0,6]}/>
-                  <Tooltip/>
-                  <Bar dataKey="adoption" fill={T.navyL} radius={[4,4,0,0]}>
-                    {DATA_SOURCES.map((_,i)=>{
-                      const a=PROVIDERS.reduce((s,p)=>s+DS_PROVIDER_MAP[p][i],0);
-                      return <Cell key={i} fill={a>=5?T.sage:a>=3?T.gold:T.red}/>;
-                    })}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+  /* ========== TAB 3: Materiality Matrix ========== */
+  const renderMateriality=()=>(
+    <div>
+      {/* Controls */}
+      <div style={{display:'flex',gap:'12px',alignItems:'center',marginBottom:'16px',flexWrap:'wrap'}}>
+        <input value={matSearch} onChange={e=>setMatSearch(e.target.value)} placeholder="Search sectors..." style={st.input}/>
+        <select value={matSort} onChange={e=>setMatSort(e.target.value)} style={{...st.input,width:'180px'}}>
+          <option value="disagreement">Sort by Disagreement</option>
+          <option value="name">Sort by Name</option>
+        </select>
+        <div style={{display:'flex',gap:'4px'}}>
+          {['Current','1Y Ago','2Y Ago'].map((yr,i)=>(
+            <button key={i} style={st.btn(matYearView===i)} onClick={()=>setMatYearView(i)}>{yr}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Heatmap */}
+      <div style={{...st.card,overflowX:'auto'}}>
+        <div style={st.cardTitle}>Materiality Heatmap: 15 Sub-Industries x 6 Providers</div>
+        <table style={{borderCollapse:'collapse',fontSize:'12px'}}>
+          <thead>
+            <tr>
+              <th style={{textAlign:'left',padding:'8px',minWidth:'200px',color:T.textSec}}>Sector</th>
+              {PROVIDERS.map(p=><th key={p.id} style={{textAlign:'center',padding:'8px',color:p.color,fontWeight:600}}>{p.name.split(' ')[0]}</th>)}
+              <th style={{textAlign:'center',padding:'8px',color:T.textSec}}>Disagree.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedMatData.map((row,ri)=>(
+              <tr key={ri}>
+                <td style={{padding:'6px 8px',fontWeight:500}}>{row.sector}</td>
+                {row.scores.map((s,ci)=>(
+                  <td key={ci} style={{padding:'4px'}}>
+                    <div style={st.heatCell(s)} onClick={()=>{setMatSector(row.origIdx);setMatProvider(ci);}}>
+                      {s.toFixed(1)}
+                    </div>
+                  </td>
+                ))}
+                <td style={{textAlign:'center',padding:'6px',fontWeight:700,color:row.disagreement>2?T.red:row.disagreement>1.2?T.amber:T.green,...st.mono}}>
+                  {row.disagreement.toFixed(2)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Cell Detail */}
+      {matSector!==null&&matProvider!==null&&(
+        <div style={{...st.card,background:T.surfaceH}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'12px'}}>
+            <div style={st.cardTitle}>Top 10 Material Issues: {GICS_SECTORS[matSector]} x {PROVIDERS[matProvider].name}</div>
+            <button style={st.btn(false)} onClick={()=>{setMatSector(null);setMatProvider(null);}}>Close</button>
+          </div>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
+            <thead>
+              <tr style={{borderBottom:`2px solid ${T.border}`}}>
+                <th style={{textAlign:'left',padding:'6px'}}>Issue</th>
+                <th style={{textAlign:'center',padding:'6px'}}>Pillar</th>
+                <th style={{textAlign:'center',padding:'6px'}}>Weight</th>
+                <th style={{textAlign:'left',padding:'6px',width:'140px'}}>Bar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {genMateriality(matSector,matProvider,42).map((m,i)=>(
+                <tr key={i} style={{borderBottom:`1px solid ${T.borderL}`}}>
+                  <td style={{padding:'5px 6px'}}>{m.issue}</td>
+                  <td style={{textAlign:'center'}}><span style={st.badge(m.pillar==='E'?T.sage:m.pillar==='S'?T.navyL:T.gold)}>{m.pillar}</span></td>
+                  <td style={{textAlign:'center',fontWeight:600,...st.mono}}>{m.weight}</td>
+                  <td style={{padding:'5px 6px'}}>
+                    <div style={st.progressBar}>
+                      <div style={st.progressFill(m.weight*10,m.pillar==='E'?T.sage:m.pillar==='S'?T.navyL:T.gold)}/>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div style={st.grid2}>
+        {/* Disagreement Bar Chart */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>Sector Disagreement Scores</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={sortedMatData.slice(0,10)} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis type="number" tick={{fontSize:11}}/>
+              <YAxis type="category" dataKey="sector" width={160} tick={{fontSize:10}}/>
+              <Tooltip/>
+              <Bar dataKey="disagreement" radius={[0,4,4,0]}>
+                {sortedMatData.slice(0,10).map((d,i)=><Cell key={i} fill={d.disagreement>2?T.red:d.disagreement>1.2?T.amber:T.green}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Materiality Drift */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>Materiality Drift: Top 10 Sectors (3-Year Change)</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={matDrift} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis type="number" tick={{fontSize:11}}/>
+              <YAxis type="category" dataKey="sector" width={160} tick={{fontSize:10}}/>
+              <Tooltip/>
+              <Bar dataKey="drift" fill={T.navyL} radius={[0,4,4,0]}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Custom Sector Weights for Portfolio */}
+      <div style={st.card}>
+        <div style={st.cardTitle}>Portfolio Materiality: Add Custom Sector Weights</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:'8px',marginBottom:'12px'}}>
+          {GICS_SECTORS.map((s,i)=>(
+            <div key={i} style={{fontSize:'11px'}}>
+              <div style={{fontWeight:500,marginBottom:'2px'}}>{s.split(' ').slice(0,2).join(' ')}</div>
+              <input type="number" min={0} max={100} value={customWeights[i]||0} onChange={e=>setCustomWeights({...customWeights,[i]:+e.target.value})} style={{...st.input,width:'60px',padding:'4px 6px',fontSize:'11px'}}/>
+              <span style={{fontSize:'10px',color:T.textMut}}>%</span>
             </div>
-          </div>
-
-          {/* Freshness legend & quality tier guide */}
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:16}}>
-            <div style={sty.card}>
-              <h5 style={{margin:'0 0 8px',fontSize:14,color:T.navy}}>Freshness Indicator Guide</h5>
-              {['Real-Time','Weekly','Monthly','Quarterly','Annual'].map((f,i)=>{
-                const colors=[T.green,T.sage,T.amber,T.gold,T.textMut];
+          ))}
+        </div>
+        {Object.values(customWeights).some(v=>v>0)&&(
+          <div style={{padding:'12px',background:T.surfaceH,borderRadius:'8px'}}>
+            <div style={{fontSize:'13px',fontWeight:700,marginBottom:'6px'}}>Weighted Portfolio Materiality Score</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:'8px'}}>
+              {PROVIDERS.map((p,pi)=>{
+                const totalW=Object.entries(customWeights).reduce((a,[,v])=>a+v,0);
+                if(totalW===0)return null;
+                const score=Object.entries(customWeights).reduce((a,[k,v])=>{
+                  if(v===0)return a;
+                  return a+(sr(+k*31+pi*17+matYearView*100)*8+2)*v;
+                },0)/totalW;
                 return(
-                  <div key={f} style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-                    <span style={{width:10,height:10,borderRadius:'50%',background:colors[i],display:'inline-block'}}/>
-                    <span style={{fontSize:12,color:T.textSec}}>{f}</span>
-                    <span style={{fontSize:11,color:T.textMut,marginLeft:'auto'}}>
-                      {['<1 min lag','Updated weekly','Updated monthly','Updated quarterly','Updated yearly'][i]}
-                    </span>
+                  <div key={pi} style={{textAlign:'center'}}>
+                    <div style={{fontSize:'11px',color:p.color,fontWeight:600}}>{p.name.split(' ')[0]}</div>
+                    <div style={{fontSize:'20px',fontWeight:800,color:T.navy}}>{score.toFixed(1)}</div>
                   </div>
                 );
               })}
             </div>
-            <div style={sty.card}>
-              <h5 style={{margin:'0 0 8px',fontSize:14,color:T.navy}}>Quality Tier Assessment</h5>
-              {[{tier:'Tier 1',desc:'Verified by independent third party or regulator',col:T.green},{tier:'Tier 2',desc:'Reported by company with some external validation',col:T.amber},{tier:'Tier 3',desc:'Self-reported or aggregated without independent verification',col:T.red}].map((t,i)=>(
-                <div key={i} style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-                  <span style={{fontSize:13,fontWeight:700,color:t.col,minWidth:50}}>{t.tier}</span>
-                  <span style={{fontSize:12,color:T.textSec}}>{t.desc}</span>
-                </div>
-              ))}
-            </div>
           </div>
-        </div>
-      )}
-
-      {/* Footer */}
-      <div style={{marginTop:32,padding:'16px 0',borderTop:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',fontSize:11,color:T.textMut}}>
-        <span>EP-AK2 Ratings Methodology Decoder | 6 providers | 4 analysis dimensions</span>
-        <span>Data: Deterministic seed-based | No live API dependency</span>
+        )}
       </div>
+    </div>
+  );
+
+  /* ========== TAB 4: Data Source Audit ========== */
+  const renderDataSourceAudit=()=>(
+    <div>
+      {/* Source Type Filter */}
+      <div style={{display:'flex',gap:'8px',alignItems:'center',marginBottom:'16px',flexWrap:'wrap'}}>
+        {['All','Self-Reported','Third-Party','Regulatory','Alternative'].map(f=>(
+          <button key={f} style={st.btn(dsFilter===f)} onClick={()=>setDsFilter(f)}>{f}</button>
+        ))}
+        <div style={{marginLeft:'auto',fontSize:'12px',color:T.textSec}}>
+          {dsGrid.length} data sources shown
+        </div>
+      </div>
+
+      {/* Data Source x Provider Grid */}
+      <div style={{...st.card,overflowX:'auto'}}>
+        <div style={st.cardTitle}>Data Source Usage Matrix ({dsGrid.length} Sources x 6 Providers)</div>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:'12px'}}>
+          <thead>
+            <tr style={{borderBottom:`2px solid ${T.border}`}}>
+              <th style={{textAlign:'left',padding:'6px',minWidth:'180px',color:T.textSec}}>Data Source</th>
+              <th style={{textAlign:'left',padding:'6px',minWidth:'90px',color:T.textSec}}>Category</th>
+              {PROVIDERS.map(p=>(
+                <th key={p.id} style={{textAlign:'center',padding:'6px',color:p.color,fontWeight:600}}>{p.name.split(' ')[0]}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {dsGrid.map((ds,di)=>(
+              <tr key={di} style={{borderBottom:`1px solid ${T.borderL}`}}>
+                <td style={{padding:'5px 6px',fontWeight:500}}>{ds.source}</td>
+                <td style={{padding:'5px 6px'}}>
+                  <span style={st.badge(ds.category==='Self-Reported'?T.navyL:ds.category==='Third-Party'?T.sage:ds.category==='Regulatory'?T.gold:T.amber)}>
+                    {ds.category}
+                  </span>
+                </td>
+                {ds.usage.map((u,pi)=>(
+                  <td key={pi} style={{textAlign:'center',padding:'5px'}}>
+                    {u?(
+                      <span>
+                        <span style={{color:T.green}}>&#10003;</span>
+                        <span style={{fontSize:'9px',color:T.textMut,marginLeft:'2px'}}>Q{ds.quality[pi]}</span>
+                        <span style={{fontSize:'9px',color:T.textMut,marginLeft:'2px'}}>{ds.freshness[pi]}m</span>
+                      </span>
+                    ):(
+                      <span style={{color:T.red}}>&#10007;</span>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={st.grid2}>
+        {/* Data Quality Radar */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>Data Quality Scorecard (All Providers)</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <RadarChart data={dsRadar}>
+              <PolarGrid stroke={T.border}/>
+              <PolarAngleAxis dataKey="dim" tick={{fontSize:11,fill:T.textSec}}/>
+              <PolarRadiusAxis angle={30} domain={[0,100]} tick={{fontSize:10}}/>
+              {PROVIDERS.map((p,pi)=>(
+                <Radar key={p.id} name={p.name} dataKey={p.name} stroke={p.color} fill={p.color} fillOpacity={pi===selProvider?0.2:0.05} strokeWidth={pi===selProvider?2:1}/>
+              ))}
+              <Legend wrapperStyle={{fontSize:'11px'}}/>
+              <Tooltip/>
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Data Freshness Bar */}
+        <div style={st.card}>
+          <div style={st.cardTitle}>Average Data Freshness by Provider (months)</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={dsFreshness}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="provider" tick={{fontSize:10}}/>
+              <YAxis tick={{fontSize:11}} label={{value:'Months',angle:-90,position:'insideLeft',fontSize:11}}/>
+              <Tooltip formatter={v=>`${v} months`}/>
+              <Bar dataKey="avgMonths" radius={[4,4,0,0]}>
+                {dsFreshness.map((d,i)=><Cell key={i} fill={d.color}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Blind Spots */}
+      <div style={st.card}>
+        <div style={st.cardTitle}>Blind Spots: Data Sources No Provider Uses</div>
+        {dsBlindSpots.length===0?(
+          <div style={{fontSize:'13px',color:T.green,padding:'8px'}}>All data sources are used by at least one provider.</div>
+        ):(
+          <div style={{display:'flex',flexWrap:'wrap',gap:'8px'}}>
+            {dsBlindSpots.map((src,i)=>(
+              <span key={i} style={{...st.badge(T.red),fontSize:'12px',padding:'6px 12px'}}>{src}</span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Quality Improvement Recommendations */}
+      <div style={st.card}>
+        <div style={st.cardTitle}>Quality Improvement Recommendations</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'12px'}}>
+          {PROVIDERS.map((p,pi)=>{
+            const usedSources=dsGrid.filter(ds=>ds.usage[pi]);
+            const unused=dsGrid.filter(ds=>!ds.usage[pi]).length;
+            const avgQ=usedSources.length>0?usedSources.reduce((a,ds)=>a+ds.quality[pi],0)/usedSources.length:0;
+            const avgF=usedSources.length>0?usedSources.reduce((a,ds)=>a+ds.freshness[pi],0)/usedSources.length:0;
+            return(
+              <div key={pi} style={{padding:'12px',background:T.surfaceH,borderRadius:'8px'}}>
+                <div style={{fontWeight:700,color:p.color,fontSize:'13px',marginBottom:'6px'}}>{p.name}</div>
+                <div style={{fontSize:'12px',lineHeight:1.8,color:T.textSec}}>
+                  <div>Unused sources: <strong style={{color:unused>5?T.red:T.green}}>{unused}</strong></div>
+                  <div>Avg quality: <strong>{avgQ.toFixed(1)}/5</strong></div>
+                  <div>Avg freshness: <strong>{avgF.toFixed(0)} months</strong></div>
+                  <div style={{marginTop:'6px',fontSize:'11px',fontStyle:'italic',color:T.textMut}}>
+                    {unused>8?'Consider expanding to alternative data sources.':
+                     avgQ<3?'Focus on improving verification processes.':
+                     avgF>15?'Data timeliness needs improvement.':'Strong data foundation overall.'}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Export Audit Summary CSV */}
+      <div style={{textAlign:'right',marginTop:'8px'}}>
+        <button style={{...st.btn(true),padding:'10px 24px'}} onClick={()=>{
+          const rows=[['Data Source','Category',...PROVIDERS.map(p=>p.name+' (Use|Quality|Freshness)')].join(',')];
+          dsGrid.forEach(ds=>{
+            rows.push([`"${ds.source}"`,ds.category,...ds.usage.map((u,pi)=>u?`Yes|Q${ds.quality[pi]}|${ds.freshness[pi]}m`:'No')].join(','));
+          });
+          const blob=new Blob([rows.join('\n')],{type:'text/csv'});
+          const url=URL.createObjectURL(blob);
+          const a=document.createElement('a');
+          a.href=url;a.download='data_source_audit.csv';a.click();
+          URL.revokeObjectURL(url);
+        }}>
+          Export Audit Summary CSV
+        </button>
+      </div>
+    </div>
+  );
+
+  /* ========== MAIN RENDER ========== */
+  return(
+    <div style={st.page}>
+      <div style={{marginBottom:'20px'}}>
+        <h1 style={st.h1}>Ratings Methodology Decoder</h1>
+        <p style={st.sub}>EP-AK2 | Deep-dive into ESG rating methodologies across 6 providers, 42 sub-issues, 180 KPIs, 15 GICS sectors, and 20 data sources</p>
+      </div>
+
+      {/* Summary Stat Cards */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:'12px',marginBottom:'20px'}}>
+        {[
+          {label:'Providers',value:'6',sub:'Rating Agencies'},
+          {label:'E Sub-Issues',value:'15',sub:'Environmental'},
+          {label:'S Sub-Issues',value:'15',sub:'Social'},
+          {label:'G Sub-Issues',value:'12',sub:'Governance'},
+          {label:'KPIs per Pillar',value:'60',sub:'Coverage Tracked'},
+          {label:'Data Sources',value:'20',sub:'Audit Categories'}
+        ].map((m,i)=>(
+          <div key={i} style={{...st.card,textAlign:'center',padding:'14px'}}>
+            <div style={{fontSize:'22px',fontWeight:800,color:T.navy}}>{m.value}</div>
+            <div style={{fontSize:'12px',fontWeight:600,color:T.textSec}}>{m.label}</div>
+            <div style={{fontSize:'10px',color:T.textMut}}>{m.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tab Bar */}
+      <div style={st.tabs}>
+        {TABS.map((t,i)=>(
+          <button key={i} style={st.tab(activeTab===i)} onClick={()=>setActiveTab(i)}>{t}</button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab===0&&renderMethodologyExplorer()}
+      {activeTab===1&&renderKPICoverage()}
+      {activeTab===2&&renderMateriality()}
+      {activeTab===3&&renderDataSourceAudit()}
     </div>
   );
 }
