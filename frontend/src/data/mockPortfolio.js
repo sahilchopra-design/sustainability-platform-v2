@@ -6,7 +6,7 @@
  *                  5 Project Finance, 5 Commercial Real Estate
  *
  * Deterministic seed: NO Math.random(). All generated values use sr(seed).
- * companyId = index into GLOBAL_COMPANY_MASTER array (0-based)
+ * companyId = "CO-XXXX" string matching masterUniverse.COMPANY_UNIVERSE[].id
  */
 
 // Deterministic PRNG — sine-based, seeded
@@ -178,8 +178,11 @@ function generateHolding(idx, companyId) {
     ? Math.round(50 + r(19) * 950)
     : null;
 
+  // Convert numeric index to masterUniverse "CO-XXXX" string format
+  const universeId = typeof companyId === 'number' ? `CO-${String(companyId + 1).padStart(4, '0')}` : companyId;
+
   return {
-    companyId,
+    companyId: universeId,
     weight,
     shares,
     costBasis,

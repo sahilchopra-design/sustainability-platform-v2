@@ -35,9 +35,42 @@ const ts = () => '2026-03-28T04:00:00Z';
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const round2 = (v) => Math.round(v * 100) / 100;
 const round4 = (v) => Math.round(v * 10000) / 10000;
+const numId = (id) => typeof id === 'number' ? id : (typeof id === 'string' ? parseInt(id.replace(/\D/g,''),10)||0 : 0);
 const fmtMn = (v) => `${round2(v / 1e6)}M`;
 const fmtBn = (v) => `${round2(v / 1e9)}B`;
 const pct = (v) => `${round2(v * 100)}%`;
+
+// ── Field adapter: normalizes masterUniverse (camelCase) → legacy (snake_case) ──
+function adaptCompany(c) {
+  if (!c || c._adapted) return c;
+  return Object.assign({}, c, {
+    _adapted: true,
+    ghg_scope1: c.ghg_scope1 || c.scope1 || 0,
+    ghg_scope2: c.ghg_scope2 || c.scope2 || 0,
+    ghg_scope3_total: c.ghg_scope3_total || c.scope3 || 0,
+    evic_usd_mn: c.evic_usd_mn || (c.marketCap ? c.marketCap * 1000 * 1.1 : 0),
+    revenue_usd_mn: c.revenue_usd_mn || (c.revenue ? c.revenue * 1000 : 0),
+    sbti_status: c.sbti_status || c.sbtiStatus || 'none',
+    net_zero_target_year: c.net_zero_target_year || c.netZeroYear || null,
+    emission_reduction_target_pct: c.emission_reduction_target_pct || (c.sbtiTarget ? 42 : 0),
+    physical_risk_score: c.physical_risk_score || c.physicalRiskScore || 0,
+    transition_risk_score: c.transition_risk_score || c.transitionRiskScore || 0,
+    taxonomy_alignment_pct: c.taxonomy_alignment_pct || c.euTaxonomyAlignedPct || 0,
+    green_revenue_pct: c.green_revenue_pct || c.greenRevenuePct || 0,
+    capex_green_pct: c.capex_green_pct || c.capexGreenPct || 0,
+    renewable_energy_pct: c.renewable_energy_pct || (c.greenRevenuePct ? c.greenRevenuePct * 0.6 : 0),
+    has_internal_carbon_price: c.has_internal_carbon_price || c.sbtiStatus === 'validated',
+    controversy_count: c.controversy_count || c.controversyCount || 0,
+    controversy_severity: c.controversy_severity || c.controversySeverity || 0,
+    board_independence_pct: c.board_independence_pct || c.boardIndependencePct || 0,
+    female_board_pct: c.female_board_pct || c.femaleBoardPct || 0,
+    temperature_score: c.temperature_score || c.temperatureScore || 2.5,
+    transition_plan_status: c.transition_plan_status || c.transitionPlanStatus || 'none',
+    act_grade: c.act_grade || c.actGrade || 'D',
+    avoided_emissions: c.avoided_emissions || c.avoidedEmissions || 0,
+    total_emissions: c.total_emissions || c.totalEmissions || ((c.scope1||0)+(c.scope2||0)+(c.scope3||0)),
+  });
+}
 
 // ── PCAF Data Quality Score mapping ──────────────────────────────────────────
 const DQS_MAP = {
@@ -188,7 +221,7 @@ const gradeFromScore = (s) => {
  * @returns {Array<Object>} financed emissions per holding with lineage
  */
 export function computeFinancedEmissions(holdings, universe) {
-  const universeMap = new Map((universe || []).map(c => [c.id || c.cin, c]));
+  const universeMap = new Map((universe || []).map(c => { const a = adaptCompany(c); return [a.id || a.cin, a]; }));
   const results = [];
 
   for (const h of (holdings || [])) {
@@ -196,14 +229,17 @@ export function computeFinancedEmissions(holdings, universe) {
     if (!company) continue;
 
     const outstanding = h.outstandingAmount || 0;
+    // Support both field naming conventions (masterUniverse vs globalCompanyMaster)
     const evic = company.evic_usd_mn
       ? company.evic_usd_mn * 1e6
-      : (company.evic_inr_cr ? company.evic_inr_cr * 1e7 * 0.012 : 0);
+      : company.marketCap
+        ? company.marketCap * 1e9 * 1.1 // EVIC ≈ market cap × 1.1 (debt adjustment)
+        : (company.evic_inr_cr ? company.evic_inr_cr * 1e7 * 0.012 : 0);
     if (evic === 0) continue;
 
-    const scope1 = company.ghg_scope1 || getSectorIntensity(company.sector) * (company.revenue_usd_mn || 500) * 0.6;
-    const scope2 = company.ghg_scope2 || getSectorIntensity(company.sector) * (company.revenue_usd_mn || 500) * 0.25;
-    const scope3 = company.ghg_scope3_total || getSectorIntensity(company.sector) * (company.revenue_usd_mn || 500) * 1.8;
+    const scope1 = company.ghg_scope1 || company.scope1 || getSectorIntensity(company.sector) * (company.revenue_usd_mn || company.revenue || 500) * 0.6;
+    const scope2 = company.ghg_scope2 || company.scope2 || getSectorIntensity(company.sector) * (company.revenue_usd_mn || company.revenue || 500) * 0.25;
+    const scope3 = company.ghg_scope3_total || company.scope3 || getSectorIntensity(company.sector) * (company.revenue_usd_mn || company.revenue || 500) * 1.8;
 
     const attributionFactor = outstanding / evic;
     const financedS1 = round2(attributionFactor * scope1);
@@ -281,7 +317,7 @@ export function computeFinancedEmissions(holdings, universe) {
  * @returns {Object} portfolio temperature with sector decomposition + lineage
  */
 export function computePortfolioTemperature(holdings, universe) {
-  const universeMap = new Map((universe || []).map(c => [c.id || c.cin, c]));
+  const universeMap = new Map((universe || []).map(c => { const a = adaptCompany(c); return [a.id || a.cin, a]; }));
   const sectorBuckets = {};
   let totalWeight = 0;
   let weightedTempSum = 0;
@@ -300,13 +336,13 @@ export function computePortfolioTemperature(holdings, universe) {
 
     let companyTemp;
     if (hasSBTi && hasNetZero && intensityReduction >= 42) {
-      companyTemp = 1.3 + sr(h.companyId || _seed++) * 0.3;
+      companyTemp = 1.3 + sr(numId(h.companyId) || _seed++) * 0.3;
     } else if (hasSBTi || intensityReduction >= 25) {
-      companyTemp = 1.7 + sr((h.companyId || _seed++) + 7) * 0.4;
+      companyTemp = 1.7 + sr((numId(h.companyId) || _seed++) + 7) * 0.4;
     } else if (intensityReduction > 0) {
-      companyTemp = 2.2 + sr((h.companyId || _seed++) + 13) * 0.5;
+      companyTemp = 2.2 + sr((numId(h.companyId) || _seed++) + 13) * 0.5;
     } else {
-      companyTemp = 2.8 + sr((h.companyId || _seed++) + 19) * 0.6;
+      companyTemp = 2.8 + sr((numId(h.companyId) || _seed++) + 19) * 0.6;
     }
     companyTemp = round2(companyTemp);
 
@@ -372,7 +408,7 @@ export function computePortfolioTemperature(holdings, universe) {
  * @returns {Object} portfolio CVaR decomposition + lineage
  */
 export function computeClimateVaR(holdings, universe, scenario = 'disorderly') {
-  const universeMap = new Map((universe || []).map(c => [c.id || c.cin, c]));
+  const universeMap = new Map((universe || []).map(c => { const a = adaptCompany(c); return [a.id || a.cin, a]; }));
   const params = NGFS_SCENARIOS[scenario] || NGFS_SCENARIOS.disorderly;
 
   const holdingResults = [];
@@ -389,7 +425,7 @@ export function computeClimateVaR(holdings, universe, scenario = 'disorderly') {
 
     // Physical risk — based on geography, sector exposure, asset vulnerability
     const physicalExposure = company.physical_risk_score
-      || (0.15 + sr((h.companyId || _seed++) + 31) * 0.35);
+      || (0.15 + sr((numId(h.companyId) || _seed++) + 31) * 0.35);
     const physicalVaR = round2(mv * physicalExposure * params.physicalRiskMult * 0.01);
 
     // Transition risk — carbon cost + stranded asset + demand destruction
@@ -467,7 +503,7 @@ export function computeClimateVaR(holdings, universe, scenario = 'disorderly') {
  * @returns {Object} GAR with breakdown by objective + lineage
  */
 export function computeGreenAssetRatio(holdings, universe) {
-  const universeMap = new Map((universe || []).map(c => [c.id || c.cin, c]));
+  const universeMap = new Map((universe || []).map(c => { const a = adaptCompany(c); return [a.id || a.cin, a]; }));
 
   let totalCovered = 0;
   let totalAligned = 0;
@@ -817,7 +853,7 @@ export function computeAvoidedEmissions(company) {
  * @returns {Object} climate-adjusted PD, ECL, delta + lineage
  */
 export function computeCreditRisk(holding, universe, scenario = 'disorderly') {
-  const universeMap = new Map((universe || []).map(c => [c.id || c.cin, c]));
+  const universeMap = new Map((universe || []).map(c => { const a = adaptCompany(c); return [a.id || a.cin, a]; }));
   const company = universeMap.get(holding.companyId);
   const params = NGFS_SCENARIOS[scenario] || NGFS_SCENARIOS.disorderly;
 
