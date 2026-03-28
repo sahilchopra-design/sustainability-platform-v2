@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AM — Climate Fintech & Digital MRV Intelligence
+import DigitalMrvPage from './features/digital-mrv/pages/DigitalMrvPage';
+import SatelliteClimateMonitorPage from './features/satellite-climate-monitor/pages/SatelliteClimateMonitorPage';
+import BlockchainCarbonRegistryPage from './features/blockchain-carbon-registry/pages/BlockchainCarbonRegistryPage';
+import ClimateDataMarketplacePage from './features/climate-data-marketplace/pages/ClimateDataMarketplacePage';
+import IotEmissionsTrackerPage from './features/iot-emissions-tracker/pages/IotEmissionsTrackerPage';
+import ClimateFintechHubPage from './features/climate-fintech-hub/pages/ClimateFintechHubPage';
 // Sprint AL — Transition Planning & Net Zero Alignment Intelligence
 import TransitionPlanBuilderPage from './features/transition-plan-builder/pages/TransitionPlanBuilderPage';
 import GfanzSectorPathwaysPage from './features/gfanz-sector-pathways/pages/GfanzSectorPathwaysPage';
@@ -506,6 +513,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Climate Fintech & Digital MRV', icon: '📡', color: '#7c2d12', items: [
+    { path: '/climate-fintech-hub',          label: 'Climate Fintech Hub',          badge: 'Hub · MRV+Satellite+Blockchain+IoT · Tech Landscape · Board',    code: 'EP-AM6' },
+    { path: '/digital-mrv',                  label: 'Digital MRV Platform',         badge: '80 Projects · Satellite+IoT+AI · Verification Certificates',     code: 'EP-AM1' },
+    { path: '/satellite-climate-monitor',    label: 'Satellite Climate Monitor',    badge: '100 Assets · Methane · Deforestation · EUDR · Discrepancy',      code: 'EP-AM2' },
+    { path: '/blockchain-carbon-registry',   label: 'Blockchain Carbon Registry',   badge: '200 Credits · Verra/GS/ACR/CAR · Tokenization · Integrity',      code: 'EP-AM3' },
+    { path: '/climate-data-marketplace',     label: 'Climate Data Marketplace',     badge: '60 Providers · Quality Radar · Coverage Gap · Stack Builder',     code: 'EP-AM4' },
+    { path: '/iot-emissions-tracker',        label: 'IoT Emissions Tracker',        badge: '60 Facilities · 200 Sensors · Anomaly Detection · Compliance',   code: 'EP-AM5' },
   ]},
   { label: 'Transition Planning & Net Zero', icon: '🧭', color: '#0e7490', items: [
     { path: '/transition-planning-hub',       label: 'Transition Planning Hub',       badge: 'Hub · TPT+GFANZ+ACT+NZAM · Credibility · Board Pack',          code: 'EP-AL6' },
@@ -1354,6 +1369,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AM — Climate Fintech & Digital MRV Intelligence */}
+            <Route path="/climate-fintech-hub"        element={<ClimateFintechHubPage />} />
+            <Route path="/digital-mrv"                element={<DigitalMrvPage />} />
+            <Route path="/satellite-climate-monitor"  element={<SatelliteClimateMonitorPage />} />
+            <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
+            <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
+            <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
             {/* Sprint AL — Transition Planning & Net Zero Alignment */}
             <Route path="/transition-planning-hub"     element={<TransitionPlanningHubPage />} />
             <Route path="/transition-plan-builder"     element={<TransitionPlanBuilderPage />} />
