@@ -1,285 +1,310 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import React,{useState,useMemo} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Cell,Legend} from 'recharts';
 
-const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', navy:'#1b3a5c', gold:'#c5a96a', sage:'#5a8a6a', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', teal:'#0f766e', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const tip = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text, fontSize: 11 };
+const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 
-const JURISDICTIONS = [
-  { name: 'EU Taxonomy',     region: 'Europe',    status: 'In Force',  year: 2020, envObj: 6,  activities: 1018, screening: 'Mandatory', transitional: true,  dnsh: true,  socialMin: true,  interop: 85, color: '#1e40af' },
-  { name: 'UK Green Tax.',   region: 'UK',         status: 'In Force',  year: 2023, envObj: 4,  activities: 196,  screening: 'Voluntary', transitional: true,  dnsh: true,  socialMin: false, interop: 80, color: '#be185d' },
-  { name: 'Singapore GTF',   region: 'APAC',       status: 'In Force',  year: 2023, envObj: 4,  activities: 270,  screening: 'Voluntary', transitional: true,  dnsh: false, socialMin: false, interop: 70, color: '#0891b2' },
-  { name: 'China GTaxonomy', region: 'Asia',       status: 'In Force',  year: 2021, envObj: 3,  activities: 211,  screening: 'Mandatory', transitional: false, dnsh: false, socialMin: false, interop: 60, color: '#dc2626' },
-  { name: 'India GTaxonomy', region: 'Asia',       status: 'Developing',year: 2024, envObj: 3,  activities: 150,  screening: 'Proposed',  transitional: true,  dnsh: false, socialMin: false, interop: 55, color: '#f59e0b' },
-  { name: 'Malaysia GTax.',  region: 'APAC',       status: 'In Force',  year: 2022, envObj: 5,  activities: 166,  screening: 'Voluntary', transitional: true,  dnsh: false, socialMin: false, interop: 65, color: '#059669' },
-  { name: 'Canada SFAF',     region: 'Americas',   status: 'In Force',  year: 2024, envObj: 4,  activities: 82,   screening: 'Voluntary', transitional: true,  dnsh: false, socialMin: false, interop: 72, color: '#7c3aed' },
-  { name: 'South Africa',    region: 'Africa',     status: 'Developing',year: 2024, envObj: 3,  activities: 65,   screening: 'Proposed',  transitional: true,  dnsh: false, socialMin: false, interop: 48, color: '#78350f' },
+const TABS=['Taxonomy Comparison','Activity Classifier','Interoperability Map','Portfolio Taxonomy Screening'];
+const COLORS=[T.navy,T.sage,T.gold,'#7c3aed',T.red,T.green,T.amber,'#0ea5e9'];
+
+const TAXONOMIES=[
+  {id:'eu',name:'EU Taxonomy',region:'Europe',status:'In Force',year:2020,envObj:6,activities:1018,screening:'Mandatory',transitional:true,dnsh:true,socialMin:true,interop:85,color:'#1e40af'},
+  {id:'cn',name:'China Green Bond Catalogue',region:'Asia',status:'In Force',year:2021,envObj:3,activities:211,screening:'Mandatory',transitional:false,dnsh:false,socialMin:false,interop:60,color:'#dc2626'},
+  {id:'asean',name:'ASEAN Taxonomy',region:'ASEAN',status:'In Force',year:2023,envObj:4,activities:270,screening:'Voluntary',transitional:true,dnsh:false,socialMin:false,interop:68,color:'#0891b2'},
+  {id:'za',name:'South Africa Green Finance',region:'Africa',status:'Developing',year:2024,envObj:3,activities:65,screening:'Proposed',transitional:true,dnsh:false,socialMin:false,interop:48,color:'#78350f'},
+  {id:'co',name:'Colombia Green Taxonomy',region:'LatAm',status:'In Force',year:2022,envObj:5,activities:132,screening:'Voluntary',transitional:true,dnsh:true,socialMin:false,interop:55,color:'#f59e0b'},
+  {id:'uk',name:'UK Green Taxonomy',region:'UK',status:'In Force',year:2023,envObj:4,activities:196,screening:'Voluntary',transitional:true,dnsh:true,socialMin:false,interop:80,color:'#be185d'},
+  {id:'ca',name:'Canada SFAF',region:'Americas',status:'In Force',year:2024,envObj:4,activities:82,screening:'Voluntary',transitional:true,dnsh:false,socialMin:false,interop:72,color:'#7c3aed'},
+  {id:'in',name:'India Green Taxonomy',region:'Asia',status:'Developing',year:2024,envObj:3,activities:150,screening:'Proposed',transitional:true,dnsh:false,socialMin:false,interop:55,color:'#f97316'},
 ];
 
-const ACTIVITIES_COMPARE = [
-  { activity: 'Solar PV',           eu: 'Eligible', uk: 'Eligible', sg: 'Eligible', cn: 'Eligible', in_: 'Proposed', my: 'Eligible' },
-  { activity: 'Wind Power',         eu: 'Eligible', uk: 'Eligible', sg: 'Eligible', cn: 'Eligible', in_: 'Proposed', my: 'Eligible' },
-  { activity: 'Natural Gas CCGT',   eu: 'Transition', uk: 'Review', sg: 'Amber', cn: 'Eligible', in_: 'Eligible', my: 'Amber' },
-  { activity: 'Nuclear Power',      eu: 'Transition', uk: 'Eligible', sg: 'N/A', cn: 'N/A', in_: 'Eligible', my: 'N/A' },
-  { activity: 'Green Hydrogen',     eu: 'Eligible', uk: 'Eligible', sg: 'Eligible', cn: 'Eligible', in_: 'Proposed', my: 'Eligible' },
-  { activity: 'EV Manufacturing',   eu: 'Eligible', uk: 'Eligible', sg: 'Eligible', cn: 'Eligible', in_: 'Proposed', my: 'Eligible' },
-  { activity: 'Sustainable Agri.',  eu: 'Eligible', uk: 'Review', sg: 'Amber', cn: 'Eligible', in_: 'Proposed', my: 'Eligible' },
-  { activity: 'Coal Power',         eu: 'Not Eligible', uk: 'Not Eligible', sg: 'Not Eligible', cn: 'Excluded', in_: 'Amber', my: 'Not Eligible' },
-  { activity: 'Green Buildings',    eu: 'Eligible', uk: 'Eligible', sg: 'Eligible', cn: 'Eligible', in_: 'Proposed', my: 'Eligible' },
-  { activity: 'Blue Hydrogen',      eu: 'Transition', uk: 'Transition', sg: 'Amber', cn: 'Eligible', in_: 'Eligible', my: 'Amber' },
+const ACTIVITIES=[
+  {name:'Solar PV',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Wind Power (Onshore)',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Wind Power (Offshore)',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'N/A',co:'N/A',uk:'Eligible',ca:'Eligible',in:'N/A'},
+  {name:'Nuclear Power',sector:'Energy',eu:'Transition',cn:'N/A',asean:'N/A',za:'N/A',co:'N/A',uk:'Eligible',ca:'Eligible',in:'Eligible'},
+  {name:'Natural Gas CCGT',sector:'Energy',eu:'Transition',cn:'Eligible',asean:'Amber',za:'Amber',co:'Amber',uk:'Review',ca:'Transition',in:'Eligible'},
+  {name:'Green Hydrogen',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Blue Hydrogen',sector:'Energy',eu:'Transition',cn:'Eligible',asean:'Amber',za:'N/A',co:'Amber',uk:'Transition',ca:'Transition',in:'Eligible'},
+  {name:'Hydropower',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Eligible',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Eligible'},
+  {name:'Geothermal',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Biomass Power',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Amber',za:'N/A',co:'Eligible',uk:'Review',ca:'Transition',in:'N/A'},
+  {name:'Coal Power',sector:'Energy',eu:'Not Eligible',cn:'Excluded',asean:'Not Eligible',za:'Not Eligible',co:'Not Eligible',uk:'Not Eligible',ca:'Not Eligible',in:'Amber'},
+  {name:'EV Manufacturing',sector:'Transport',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'N/A',co:'N/A',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Rail Infrastructure',sector:'Transport',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Eligible'},
+  {name:'Green Buildings',sector:'Buildings',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Building Renovation',sector:'Buildings',eu:'Eligible',cn:'Eligible',asean:'Amber',za:'N/A',co:'Eligible',uk:'Eligible',ca:'Transition',in:'N/A'},
+  {name:'Sustainable Agriculture',sector:'Agriculture',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Eligible',co:'Eligible',uk:'Review',ca:'Transition',in:'Eligible'},
+  {name:'Sustainable Forestry',sector:'Agriculture',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Eligible',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Waste Management',sector:'Industry',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Water Treatment',sector:'Industry',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'Proposed',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Carbon Capture (CCS)',sector:'Industry',eu:'Eligible',cn:'N/A',asean:'N/A',za:'N/A',co:'N/A',uk:'Eligible',ca:'Eligible',in:'N/A'},
+  {name:'Cement (low-carbon)',sector:'Industry',eu:'Transition',cn:'Eligible',asean:'Amber',za:'N/A',co:'Amber',uk:'Review',ca:'Transition',in:'Amber'},
+  {name:'Steel (DRI/EAF)',sector:'Industry',eu:'Transition',cn:'Eligible',asean:'Amber',za:'N/A',co:'N/A',uk:'Review',ca:'Transition',in:'Amber'},
+  {name:'Battery Storage',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'N/A',co:'Eligible',uk:'Eligible',ca:'Eligible',in:'Proposed'},
+  {name:'Smart Grid Tech',sector:'Energy',eu:'Eligible',cn:'Eligible',asean:'Eligible',za:'N/A',co:'N/A',uk:'Eligible',ca:'Eligible',in:'N/A'},
+  {name:'Marine Energy',sector:'Energy',eu:'Eligible',cn:'N/A',asean:'Eligible',za:'N/A',co:'N/A',uk:'Eligible',ca:'Eligible',in:'N/A'},
 ];
 
-const TRANSITION_CATEGORIES = [
-  { name: 'EU Taxonomy — Enabling Activities', criteria: 'Activities enabling other activities to substantially contribute to at least one environmental objective', examples: 'Smart grid tech, EV charging, energy storage, digital twins for energy', color: T.teal },
-  { name: 'EU Taxonomy — Transitional Activities', criteria: 'Activities with best-available technology performance & credible transition pathway to net zero', examples: 'Natural gas (until 2030/2035), nuclear, cement with CCS pathway', color: T.gold },
-  { name: 'Singapore — Amber Category', criteria: 'Activities in transition; time-limited recognition pending sector decarbonisation roadmap', examples: 'LNG import terminals, new gas power (sunset 2030), aviation biofuels', color: T.amber },
-  { name: 'UK GTF — Amber / Watch', criteria: 'Activities under review; recognised for limited period while awaiting TSC finalisation', examples: 'Biomass power, natural gas CCS, aviation SAF', color: '#be185d' },
-  { name: 'China — Restricted Category', criteria: 'Activities transitioning from coal but not yet clean; green bond proceeds cannot fund new coal', examples: 'Coal clean combustion upgrades, coal-fired co-generation with CHP', color: T.red },
-  { name: 'IPSF Common Ground — "Eligible in Both"', criteria: 'Activity eligible under both EU and China taxonomies — highest capital allocation confidence', examples: 'Solar, wind, hydro, EV, rail, bioenergy, energy efficiency in buildings', color: T.sage },
+const PORTFOLIO=[
+  {company:'Enel SpA',sector:'Energy',value:850,activities:['Solar PV','Wind Power (Onshore)','Green Buildings']},
+  {company:'Orsted A/S',sector:'Energy',value:620,activities:['Wind Power (Offshore)','Green Hydrogen','Battery Storage']},
+  {company:'Schneider Electric',sector:'Industry',value:480,activities:['Smart Grid Tech','Building Renovation','EV Manufacturing']},
+  {company:'Iberdrola SA',sector:'Energy',value:720,activities:['Wind Power (Onshore)','Hydropower','Green Hydrogen']},
+  {company:'Vestas Wind',sector:'Industry',value:340,activities:['Wind Power (Onshore)','Wind Power (Offshore)']},
+  {company:'BASF SE',sector:'Chemicals',value:560,activities:['Carbon Capture (CCS)','Battery Storage','Green Hydrogen']},
+  {company:'Holcim Ltd',sector:'Materials',value:420,activities:['Cement (low-carbon)','Building Renovation','Waste Management']},
+  {company:'Suzano SA',sector:'Forestry',value:280,activities:['Sustainable Forestry','Biomass Power']},
+  {company:'Siemens Gamesa',sector:'Energy',value:390,activities:['Wind Power (Onshore)','Wind Power (Offshore)','Marine Energy']},
+  {company:'NextEra Energy',sector:'Energy',value:910,activities:['Solar PV','Wind Power (Onshore)','Battery Storage']},
+  {company:'Air Liquide',sector:'Industry',value:450,activities:['Green Hydrogen','Blue Hydrogen','Carbon Capture (CCS)']},
+  {company:'Linde PLC',sector:'Industry',value:520,activities:['Green Hydrogen','Carbon Capture (CCS)']},
+  {company:'Xylem Inc',sector:'Utilities',value:210,activities:['Water Treatment','Smart Grid Tech']},
+  {company:'Veolia Env',sector:'Utilities',value:380,activities:['Water Treatment','Waste Management']},
+  {company:'Danone SA',sector:'Food',value:310,activities:['Sustainable Agriculture','Green Buildings']},
 ];
 
-const INTEROP_DATA = JURISDICTIONS.map(j => ({ jurisdiction: j.name, score: j.interop }));
+const taxKeys=TAXONOMIES.map(t=>t.id);
+const statusColor=s=>s==='Eligible'?'green':s==='Transition'||s==='Amber'?'amber':s==='Not Eligible'||s==='Excluded'?'red':s==='Review'?'navy':'sage';
 
-const TABS = ['Overview', 'Jurisdiction Comparison', 'Activity Screener', 'Transition Categories', 'IPSF Interoperability'];
+const tipS={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font,color:T.text}};
+const Stat=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:'18px 20px',borderTop:`3px solid ${color||T.sage}`}}>
+  <div style={{fontSize:10,color:T.textMut,textTransform:'uppercase',letterSpacing:'0.1em',fontWeight:600,marginBottom:6,fontFamily:T.font}}>{label}</div>
+  <div style={{fontSize:26,fontWeight:800,color:T.navy,fontFamily:T.font}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:3}}>{sub}</div>}</div>);
+const Badge=({children,color})=>{const m={green:{bg:'#dcfce7',fg:T.green},red:{bg:'#fee2e2',fg:T.red},amber:{bg:'#fef3c7',fg:T.amber},navy:{bg:'#dbeafe',fg:T.navy},sage:{bg:'#d1fae5',fg:T.sage}};const c=m[color]||m.sage;return <span style={{padding:'2px 8px',borderRadius:4,fontSize:10,fontWeight:700,background:c.bg,color:c.fg}}>{children}</span>;};
+const exportCSV=(rows,name)=>{if(!rows.length)return;const keys=Object.keys(rows[0]).filter(k=>typeof rows[0][k]!=='object');const csv=[keys.join(','),...rows.map(r=>keys.map(k=>`"${Array.isArray(r[k])?r[k].join(';'):r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`${name}.csv`;a.click();URL.revokeObjectURL(u);};
+const thS={padding:'8px 12px',fontSize:11,fontWeight:600,color:T.textSec,textAlign:'left',borderBottom:`2px solid ${T.border}`,cursor:'pointer',fontFamily:T.font,background:T.surfaceH,position:'sticky',top:0};
+const tdS={padding:'8px 12px',fontSize:12,color:T.text,borderBottom:`1px solid ${T.border}`,fontFamily:T.font};
+const tdM={...tdS,fontFamily:T.mono,fontWeight:600};
 
-const STAT = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: '18px 20px', borderTop: `3px solid ${color || T.sage}` }}>
-    <div style={{ fontSize: 10, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 800, color: T.navy }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 3 }}>{sub}</div>}
-  </div>
-);
+export default function GreenTaxonomyNavigatorPage(){
+  const [tab,setTab]=useState(0);
+  const [selectedTaxonomies,setSelectedTaxonomies]=useState(['eu','uk','cn']);
+  const [activitySearch,setActivitySearch]=useState('');
+  const [sectorFilter,setSectorFilter]=useState('All');
+  const [selectedActivity,setSelectedActivity]=useState(null);
+  const [interopPair,setInteropPair]=useState(['eu','uk']);
+  const [showPanel,setShowPanel]=useState(false);
+  const [panelTax,setPanelTax]=useState(null);
+  const [portfolioSearch,setPortfolioSearch]=useState('');
+  const [screenTaxonomies,setScreenTaxonomies]=useState(['eu','uk','cn','asean']);
+  const [expanded,setExpanded]=useState(null);
 
-export default function GreenTaxonomyNavigatorPage() {
-  const [tab, setTab] = useState(0);
-  const [selectedActivity, setSelectedActivity] = useState(null);
+  const sectors=[...new Set(ACTIVITIES.map(a=>a.sector))];
 
-  const statusColor = s => ({ 'In Force': T.sage, 'Developing': T.amber, 'Proposed': T.textMut }[s] || T.textMut);
-  const eligColor = s => ({ Eligible: T.sage, Transition: T.amber, Amber: T.amber, 'Not Eligible': T.red, Excluded: T.red, Proposed: T.textMut, 'N/A': T.textMut, Review: '#0891b2' }[s] || T.textMut);
+  const filteredActivities=useMemo(()=>{let d=[...ACTIVITIES];if(activitySearch)d=d.filter(a=>a.name.toLowerCase().includes(activitySearch.toLowerCase()));if(sectorFilter!=='All')d=d.filter(a=>a.sector===sectorFilter);return d;},[activitySearch,sectorFilter]);
 
-  return (
-    <div style={{ padding: '28px 32px', maxWidth: 1400, margin: '0 auto', fontFamily: T.font }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#05996918', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>📋</div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: T.navy, margin: 0 }}>Green Taxonomy Navigator</h1>
-            <span style={{ fontSize: 10, background: '#05996918', color: '#059669', padding: '3px 8px', borderRadius: 20, fontWeight: 700 }}>EP-AA5</span>
-          </div>
-          <p style={{ color: T.textSec, fontSize: 13, margin: 0 }}>8 Jurisdictions · EU · UK · Singapore · China · India · Malaysia · Canada · South Africa · IPSF Interoperability</p>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[{ label: '8 Jurisdictions', color: T.sage }, { label: 'IPSF Common Ground', color: '#059669' }, { label: 'Transition Categories', color: T.amber }].map(b => (
-            <span key={b.label} style={{ fontSize: 10, background: b.color + '18', color: b.color, padding: '4px 10px', borderRadius: 20, fontWeight: 700 }}>{b.label}</span>
-          ))}
-        </div>
+  const toggleTax=(id)=>{setSelectedTaxonomies(prev=>prev.includes(id)?prev.filter(t=>t!==id):[...prev,id]);};
+  const toggleScreenTax=(id)=>{setScreenTaxonomies(prev=>prev.includes(id)?prev.filter(t=>t!==id):[...prev,id]);};
+
+  const comparisonData=useMemo(()=>TAXONOMIES.filter(t=>selectedTaxonomies.includes(t.id)),[selectedTaxonomies]);
+
+  const interopMatrix=useMemo(()=>{const result=[];TAXONOMIES.forEach(t1=>{TAXONOMIES.forEach(t2=>{if(t1.id!==t2.id){const overlap=ACTIVITIES.filter(a=>a[t1.id]==='Eligible'&&a[t2.id]==='Eligible').length;result.push({from:t1.name,to:t2.name,fromId:t1.id,toId:t2.id,overlap,pct:Math.round(overlap/ACTIVITIES.length*100)});}});});return result;},[]);
+
+  const pairOverlap=useMemo(()=>{const [a,b]=interopPair;return ACTIVITIES.map(act=>({activity:act.name,taxA:act[a]||'N/A',taxB:act[b]||'N/A',aligned:act[a]===act[b]&&act[a]==='Eligible'}));},[interopPair]);
+
+  const portfolioScreened=useMemo(()=>{return PORTFOLIO.filter(p=>!portfolioSearch||p.company.toLowerCase().includes(portfolioSearch.toLowerCase())).map(p=>{const results={};screenTaxonomies.forEach(tid=>{let eligible=0;let total=p.activities.length;p.activities.forEach(act=>{const a=ACTIVITIES.find(x=>x.name===act);if(a&&(a[tid]==='Eligible'||a[tid]==='Transition'))eligible++;});results[tid]=Math.round(eligible/total*100);});return {...p,...results};});},[portfolioSearch,screenTaxonomies]);
+
+  const radarData=useMemo(()=>{const dims=['Activities','Env Objectives','DNSH','Social Min','Interop','Maturity'];return dims.map(d=>{const obj={dim:d};comparisonData.forEach(t=>{obj[t.id]=d==='Activities'?Math.round(t.activities/1018*100):d==='Env Objectives'?Math.round(t.envObj/6*100):d==='DNSH'?t.dnsh?90:30:d==='Social Min'?t.socialMin?90:30:d==='Interop'?t.interop:d==='Maturity'?(2026-t.year)*15:50;});return obj;});},[comparisonData]);
+
+  return (<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
+    <div style={{maxWidth:1400,margin:'0 auto',padding:'24px 32px'}}>
+      <div style={{marginBottom:24}}>
+        <h1 style={{fontSize:28,fontWeight:800,color:T.navy,margin:0}}>Green Taxonomy Navigator</h1>
+        <p style={{fontSize:13,color:T.textSec,margin:'4px 0 0'}}>8 global taxonomies -- EU, China, ASEAN, South Africa, Colombia, UK, Canada, India</p>
       </div>
 
-      <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: `1px solid ${T.border}` }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 16px', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: tab === i ? '#059669' : T.textSec, borderBottom: tab === i ? '2px solid #059669' : '2px solid transparent', marginBottom: -1, transition: 'color 0.15s' }}>{t}</button>
-        ))}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
+        <Stat label="Taxonomies" value="8" sub="Global coverage" color={T.navy}/>
+        <Stat label="Activities Mapped" value="25" sub="Cross-taxonomy" color={T.sage}/>
+        <Stat label="Portfolio Companies" value="15" sub="Screened" color={T.gold}/>
+        <Stat label="Avg Interoperability" value={`${Math.round(TAXONOMIES.reduce((s,t)=>s+t.interop,0)/8)}%`} sub="Cross-recognition" color={T.amber}/>
       </div>
 
-      {tab === 0 && (
-        <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14, marginBottom: 24 }}>
-            <STAT label="Jurisdictions Tracked" value="8" sub="EU, UK, SG, CN, IN, MY, CA, ZA" color={T.sage} />
-            <STAT label="Total Activities Mapped" value="2,158" sub="Cross-jurisdiction with overlap" color={T.teal} />
-            <STAT label="IPSF Common Ground" value="80+" sub="Activities eligible in EU and China both" color="#059669" />
-            <STAT label="Highest Interoperability" value="EU–UK" sub="85/100 alignment score" color="#be185d" />
-            <STAT label="Transition Categories" value="6" sub="Time-limited transitional activity rules" color={T.amber} />
-          </div>
+      <div style={{display:'flex',gap:0,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>
+        {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'12px 24px',fontSize:13,fontWeight:tab===i?700:500,color:tab===i?T.navy:T.textMut,background:'none',border:'none',borderBottom:tab===i?`3px solid ${T.navy}`:'3px solid transparent',cursor:'pointer',fontFamily:T.font}}>{t}</button>)}
+      </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
-            {JURISDICTIONS.map(j => (
-              <div key={j.name} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: '14px 16px', borderLeft: `4px solid ${j.color}` }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>{j.name}</div>
-                  <span style={{ fontSize: 10, background: statusColor(j.status) + '18', color: statusColor(j.status), padding: '2px 8px', borderRadius: 10, fontWeight: 700 }}>{j.status}</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 11, color: T.textSec }}>
-                  <div>Env. Objectives: <strong style={{ color: T.navy }}>{j.envObj}</strong></div>
-                  <div>Activities: <strong style={{ color: T.navy }}>{j.activities}</strong></div>
-                  <div>Year: <strong style={{ color: T.navy }}>{j.year}</strong></div>
-                  <div>DNSH: <strong style={{ color: j.dnsh ? T.sage : T.textMut }}>{j.dnsh ? '✅ Yes' : '❌ No'}</strong></div>
-                </div>
-                <div style={{ marginTop: 8, height: 4, background: T.border, borderRadius: 2 }}>
-                  <div style={{ height: '100%', width: `${j.interop}%`, background: j.color, borderRadius: 2 }} />
-                </div>
-                <div style={{ fontSize: 10, color: T.textMut, marginTop: 3 }}>EU interoperability: {j.interop}/100</div>
-              </div>
-            ))}
-          </div>
+      {tab===0&&(<div>
+        <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
+          {TAXONOMIES.map(t=><button key={t.id} onClick={()=>toggleTax(t.id)} style={{padding:'6px 14px',background:selectedTaxonomies.includes(t.id)?t.color:'transparent',color:selectedTaxonomies.includes(t.id)?'#fff':T.text,border:`1px solid ${selectedTaxonomies.includes(t.id)?t.color:T.border}`,borderRadius:20,fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>{t.name}</button>)}
+        </div>
 
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Interoperability Score vs EU Taxonomy</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={INTEROP_DATA} margin={{ bottom: 40 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="jurisdiction" tick={{ fontSize: 9, fill: T.textMut }} angle={-20} textAnchor="end" interval={0} />
-                <YAxis tick={{ fontSize: 10, fill: T.textMut }} domain={[0, 100]} axisLine={false} tickLine={false} />
-                <Tooltip formatter={v => `${v}/100`} contentStyle={tip} />
-                <Bar dataKey="score" name="Interoperability Score" radius={[4, 4, 0, 0]}>
-                  {INTEROP_DATA.map((d, i) => <Cell key={i} fill={JURISDICTIONS[i].color} />)}
-                </Bar>
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,overflow:'hidden',marginBottom:20}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>{['Taxonomy','Region','Status','Year','Env Objectives','Activities','Screening','Transitional','DNSH','Social Min','Interop Score'].map(h=><th key={h} style={thS}>{h}</th>)}</tr></thead>
+            <tbody>{comparisonData.map(t=><tr key={t.id} onClick={()=>{setPanelTax(t);setShowPanel(true);}} style={{cursor:'pointer'}}>
+              <td style={{...tdS,fontWeight:700}}><span style={{display:'inline-block',width:8,height:8,borderRadius:4,background:t.color,marginRight:8}}/>{t.name}</td>
+              <td style={tdS}>{t.region}</td><td style={tdS}><Badge color={t.status==='In Force'?'green':'amber'}>{t.status}</Badge></td>
+              <td style={tdM}>{t.year}</td><td style={tdM}>{t.envObj}</td><td style={tdM}>{t.activities}</td>
+              <td style={tdS}><Badge color={t.screening==='Mandatory'?'red':t.screening==='Voluntary'?'green':'amber'}>{t.screening}</Badge></td>
+              <td style={tdS}><Badge color={t.transitional?'green':'red'}>{t.transitional?'Yes':'No'}</Badge></td>
+              <td style={tdS}><Badge color={t.dnsh?'green':'red'}>{t.dnsh?'Yes':'No'}</Badge></td>
+              <td style={tdS}><Badge color={t.socialMin?'green':'red'}>{t.socialMin?'Yes':'No'}</Badge></td>
+              <td style={tdM}>{t.interop}%</td>
+            </tr>)}</tbody>
+          </table>
+        </div>
+
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+          <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Taxonomy Comparison Radar</div>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadarChart data={radarData}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:10,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:9}}/>
+                {comparisonData.map(t=><Radar key={t.id} dataKey={t.id} stroke={t.color} fill={t.color} fillOpacity={0.1} name={t.name}/>)}<Legend/>
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Activity Coverage</div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={comparisonData.map(t=>({name:t.name.length>15?t.name.slice(0,14)+'..':t.name,activities:t.activities,color:t.color}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tipS}/>
+                <Bar dataKey="activities" radius={[4,4,0,0]}>{comparisonData.map((t,i)=><Cell key={i} fill={t.color}/>)}</Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
-      )}
+      </div>)}
 
-      {tab === 1 && (
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Jurisdiction Comparison — Environmental Objectives & Key Features</div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: '#f6f4f0' }}>
-                  {['Taxonomy', 'Region', 'Status', 'Env. Obj.', 'Activities', 'Screening', 'DNSH', 'Social Min.', 'Transitional', 'EU Interop.'].map(h => (
-                    <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-                  ))}
+      {tab===1&&(<div>
+        <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+          <input value={activitySearch} onChange={e=>setActivitySearch(e.target.value)} placeholder="Search activity..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,width:260,outline:'none',background:T.surface}}/>
+          <select value={sectorFilter} onChange={e=>setSectorFilter(e.target.value)} style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface}}>
+            <option value="All">All Sectors</option>{sectors.map(s=><option key={s} value={s}>{s}</option>)}
+          </select>
+          <button onClick={()=>exportCSV(filteredActivities,'activity_classification')} style={{padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer'}}>Export CSV</button>
+          <span style={{fontSize:11,color:T.textMut,marginLeft:'auto'}}>{filteredActivities.length} activities</span>
+        </div>
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,overflow:'hidden'}}>
+          <div style={{maxHeight:500,overflowY:'auto'}}>
+            <table style={{width:'100%',borderCollapse:'collapse'}}>
+              <thead><tr><th style={thS}>Activity</th><th style={thS}>Sector</th>{TAXONOMIES.map(t=><th key={t.id} style={{...thS,textAlign:'center'}}><span style={{display:'inline-block',width:6,height:6,borderRadius:3,background:t.color,marginRight:4}}/>{t.name.split(' ')[0]}</th>)}</tr></thead>
+              <tbody>{filteredActivities.map((a,i)=><React.Fragment key={i}>
+                <tr onClick={()=>setSelectedActivity(selectedActivity===i?null:i)} style={{cursor:'pointer',background:selectedActivity===i?T.surfaceH:'transparent'}}>
+                  <td style={{...tdS,fontWeight:600}}>{a.name}</td><td style={tdS}>{a.sector}</td>
+                  {TAXONOMIES.map(t=><td key={t.id} style={{...tdS,textAlign:'center'}}><Badge color={statusColor(a[t.id])}>{a[t.id]}</Badge></td>)}
                 </tr>
-              </thead>
-              <tbody>
-                {JURISDICTIONS.map((j, i) => (
-                  <tr key={j.name} style={{ background: i % 2 === 0 ? T.surface : '#fafaf8', borderBottom: `1px solid ${T.border}` }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 700, color: j.color }}>{j.name}</td>
-                    <td style={{ padding: '10px 12px', color: T.textSec }}>{j.region}</td>
-                    <td style={{ padding: '10px 12px' }}><span style={{ fontSize: 10, background: statusColor(j.status) + '18', color: statusColor(j.status), padding: '2px 8px', borderRadius: 10, fontWeight: 700 }}>{j.status}</span></td>
-                    <td style={{ padding: '10px 12px', fontWeight: 700 }}>{j.envObj}</td>
-                    <td style={{ padding: '10px 12px' }}>{j.activities}</td>
-                    <td style={{ padding: '10px 12px', fontSize: 11, color: T.textSec }}>{j.screening}</td>
-                    <td style={{ padding: '10px 12px', color: j.dnsh ? T.sage : T.red }}>{j.dnsh ? '✅' : '❌'}</td>
-                    <td style={{ padding: '10px 12px', color: j.socialMin ? T.sage : T.red }}>{j.socialMin ? '✅' : '❌'}</td>
-                    <td style={{ padding: '10px 12px', color: j.transitional ? T.amber : T.textMut }}>{j.transitional ? '✅' : '❌'}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <div style={{ height: 6, width: 60, background: T.border, borderRadius: 3 }}>
-                          <div style={{ height: '100%', width: `${j.interop}%`, background: j.color, borderRadius: 3 }} />
-                        </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: j.color }}>{j.interop}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+                {selectedActivity===i&&<tr><td colSpan={TAXONOMIES.length+2} style={{padding:16,background:T.surfaceH}}>
+                  <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>{a.name} -- Detailed Classification</div>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12}}>
+                    {TAXONOMIES.map(t=><div key={t.id} style={{padding:10,background:T.surface,borderRadius:8,border:`1px solid ${T.border}`}}>
+                      <div style={{fontSize:10,color:T.textMut,fontWeight:600}}>{t.name}</div>
+                      <div style={{fontSize:14,fontWeight:700,marginTop:4}}><Badge color={statusColor(a[t.id])}>{a[t.id]}</Badge></div>
+                      <div style={{fontSize:10,color:T.textSec,marginTop:4}}>{a[t.id]==='Eligible'?'Meets all TSC criteria':a[t.id]==='Transition'?'Time-limited transitional':a[t.id]==='Amber'?'Under review / conditional':a[t.id]==='Not Eligible'||a[t.id]==='Excluded'?'Does not meet criteria':a[t.id]==='Review'?'Pending assessment':'Not yet covered'}</div>
+                    </div>)}
+                  </div>
+                </td></tr>}
+              </React.Fragment>)}</tbody>
             </table>
           </div>
         </div>
-      )}
+      </div>)}
 
-      {tab === 2 && (
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Activity Screener — Cross-Jurisdiction Eligibility</div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: '#f6f4f0' }}>
-                  {['Activity', 'EU Taxonomy', 'UK GTF', 'Singapore GTF', 'China GTaxonomy', 'India (Prop.)', 'Malaysia'].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 10, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ACTIVITIES_COMPARE.map((r, i) => (
-                  <tr key={r.activity} onClick={() => setSelectedActivity(selectedActivity === r.activity ? null : r.activity)} style={{ background: selectedActivity === r.activity ? '#f0f9f4' : i % 2 === 0 ? T.surface : '#fafaf8', borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }}>
-                    <td style={{ padding: '10px 14px', fontWeight: 700, color: T.navy }}>{r.activity}</td>
-                    {[r.eu, r.uk, r.sg, r.cn, r.in_, r.my].map((v, j) => (
-                      <td key={j} style={{ padding: '10px 14px' }}>
-                        <span style={{ fontSize: 10, background: eligColor(v) + '18', color: eligColor(v), padding: '2px 8px', borderRadius: 10, fontWeight: 700 }}>{v}</span>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
+      {tab===2&&(<div>
+        <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+          <span style={{fontSize:12,color:T.textSec}}>Compare:</span>
+          <select value={interopPair[0]} onChange={e=>setInteropPair([e.target.value,interopPair[1]])} style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface}}>
+            {TAXONOMIES.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
+          </select>
+          <span style={{fontSize:12,color:T.textMut}}>vs</span>
+          <select value={interopPair[1]} onChange={e=>setInteropPair([interopPair[0],e.target.value])} style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface}}>
+            {TAXONOMIES.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
+          </select>
+        </div>
+
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+          <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Interoperability Scores</div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={TAXONOMIES.map(t=>({name:t.name.split(' ')[0],interop:t.interop,color:t.color}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:10,fill:T.textSec}}/><YAxis domain={[0,100]} tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tipS}/>
+                <Bar dataKey="interop" radius={[4,4,0,0]}>{TAXONOMIES.map((t,i)=><Cell key={i} fill={t.color}/>)}</Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Pairwise Activity Overlap</div>
+            <div style={{fontSize:12,color:T.textSec,marginBottom:8}}>
+              {TAXONOMIES.find(t=>t.id===interopPair[0])?.name} vs {TAXONOMIES.find(t=>t.id===interopPair[1])?.name}: {pairOverlap.filter(p=>p.aligned).length} of {ACTIVITIES.length} activities aligned
+            </div>
+            <div style={{maxHeight:240,overflowY:'auto'}}>
+              {pairOverlap.map((p,i)=><div key={i} style={{display:'flex',justifyContent:'space-between',padding:'4px 8px',borderBottom:`1px solid ${T.border}`,fontSize:11,background:p.aligned?'#dcfce7':'transparent'}}>
+                <span>{p.activity}</span>
+                <span><Badge color={statusColor(p.taxA)}>{p.taxA}</Badge> / <Badge color={statusColor(p.taxB)}>{p.taxB}</Badge></span>
+              </div>)}
+            </div>
+          </div>
+        </div>
+
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Cross-Taxonomy Overlap Matrix (Eligible Activities)</div>
+          <div style={{overflowX:'auto'}}>
+            <table style={{borderCollapse:'collapse'}}>
+              <thead><tr><th style={thS}></th>{TAXONOMIES.map(t=><th key={t.id} style={{...thS,textAlign:'center',fontSize:9}}>{t.name.split(' ')[0]}</th>)}</tr></thead>
+              <tbody>{TAXONOMIES.map(t1=><tr key={t1.id}>
+                <td style={{...tdS,fontWeight:700,fontSize:10}}>{t1.name.split(' ')[0]}</td>
+                {TAXONOMIES.map(t2=>{const r=interopMatrix.find(m=>m.fromId===t1.id&&m.toId===t2.id);return <td key={t2.id} style={{...tdM,textAlign:'center',background:t1.id===t2.id?T.surfaceH:r&&r.pct>40?'#dcfce7':r&&r.pct>20?'#fef3c7':'#fee2e2'}}>{t1.id===t2.id?'-':r?`${r.pct}%`:'-'}</td>;})}
+              </tr>)}</tbody>
             </table>
           </div>
-          <div style={{ marginTop: 14, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {[{ label: 'Eligible', color: T.sage }, { label: 'Transition/Amber', color: T.amber }, { label: 'Not Eligible', color: T.red }, { label: 'Proposed', color: T.textMut }, { label: 'Under Review', color: '#0891b2' }, { label: 'N/A', color: T.border }].map(l => (
-              <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: T.textSec }}>
-                <div style={{ width: 10, height: 10, borderRadius: 3, background: l.color + '80' }} />
-                {l.label}
-              </div>
-            ))}
+        </div>
+      </div>)}
+
+      {tab===3&&(<div>
+        <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}>
+          <input value={portfolioSearch} onChange={e=>setPortfolioSearch(e.target.value)} placeholder="Search company..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,width:220,outline:'none',background:T.surface}}/>
+          <span style={{fontSize:11,color:T.textSec}}>Screen against:</span>
+          {TAXONOMIES.map(t=><label key={t.id} style={{display:'flex',alignItems:'center',gap:4,fontSize:11,cursor:'pointer'}}>
+            <input type="checkbox" checked={screenTaxonomies.includes(t.id)} onChange={()=>toggleScreenTax(t.id)}/><span style={{color:t.color,fontWeight:600}}>{t.name.split(' ')[0]}</span>
+          </label>)}
+          <button onClick={()=>exportCSV(portfolioScreened,'portfolio_screening')} style={{padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',marginLeft:'auto'}}>Export CSV</button>
+        </div>
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,overflow:'hidden',marginBottom:20}}>
+          <div style={{maxHeight:440,overflowY:'auto'}}>
+            <table style={{width:'100%',borderCollapse:'collapse'}}>
+              <thead><tr><th style={thS}>Company</th><th style={thS}>Sector</th><th style={thS}>Value ($M)</th><th style={thS}>Activities</th>
+                {screenTaxonomies.map(tid=>{const t=TAXONOMIES.find(x=>x.id===tid);return <th key={tid} style={{...thS,textAlign:'center'}}><span style={{color:t?.color}}>{t?.name.split(' ')[0]} %</span></th>;})}
+              </tr></thead>
+              <tbody>{portfolioScreened.map((p,i)=><React.Fragment key={i}>
+                <tr onClick={()=>setExpanded(expanded===i?null:i)} style={{cursor:'pointer',background:expanded===i?T.surfaceH:'transparent'}}>
+                  <td style={{...tdS,fontWeight:700}}>{p.company}</td><td style={tdS}>{p.sector}</td><td style={tdM}>{p.value}</td>
+                  <td style={{...tdS,fontSize:11}}>{p.activities.length}</td>
+                  {screenTaxonomies.map(tid=><td key={tid} style={{...tdM,textAlign:'center'}}><Badge color={p[tid]>=80?'green':p[tid]>=50?'amber':'red'}>{p[tid]}%</Badge></td>)}
+                </tr>
+                {expanded===i&&<tr><td colSpan={4+screenTaxonomies.length} style={{padding:16,background:T.surfaceH}}>
+                  <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Activities Detail</div>
+                  {p.activities.map((act,j)=>{const a=ACTIVITIES.find(x=>x.name===act);return <div key={j} style={{display:'flex',gap:12,padding:'4px 0',borderBottom:`1px solid ${T.border}`,fontSize:11,alignItems:'center'}}>
+                    <span style={{width:160,fontWeight:600}}>{act}</span>
+                    {screenTaxonomies.map(tid=><span key={tid}><Badge color={statusColor(a?.[tid]||'N/A')}>{a?.[tid]||'N/A'}</Badge></span>)}
+                  </div>;})}
+                </td></tr>}
+              </React.Fragment>)}</tbody>
+            </table>
           </div>
         </div>
-      )}
-
-      {tab === 3 && (
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Transition & Amber Categories by Jurisdiction</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {TRANSITION_CATEGORIES.map(c => (
-              <div key={c.name} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: '16px 20px', borderLeft: `4px solid ${c.color}` }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 6 }}>{c.name}</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div>
-                    <div style={{ fontSize: 11, color: T.textMut, fontWeight: 600, marginBottom: 3 }}>CRITERIA</div>
-                    <div style={{ fontSize: 12, color: T.textSec }}>{c.criteria}</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 11, color: T.textMut, fontWeight: 600, marginBottom: 3 }}>EXAMPLES</div>
-                    <div style={{ fontSize: 12, color: T.textSec }}>{c.examples}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Portfolio Alignment by Taxonomy</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={portfolioScreened}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="company" tick={{fontSize:9,fill:T.textSec}} angle={-25} textAnchor="end" height={60}/><YAxis domain={[0,100]} tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tipS}/>
+              {screenTaxonomies.map((tid,i)=>{const t=TAXONOMIES.find(x=>x.id===tid);return <Bar key={tid} dataKey={tid} fill={t?.color} name={t?.name.split(' ')[0]} opacity={0.8}/>;})}
+              <Legend/>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
-      )}
+      </div>)}
 
-      {tab === 4 && (
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 14 }}>IPSF — International Platform on Sustainable Finance: Common Ground Taxonomy</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>IPSF CGT Phase 2 — EU × China Mapping</div>
-              {[
-                { category: 'Fully aligned activities', count: 83, desc: 'Eligible under both EU Taxonomy and China Green Bond Catalogue without conditions' },
-                { category: 'Conditionally aligned', count: 24, desc: 'Eligible in both with additional screening criteria or time limits' },
-                { category: 'Divergent approaches', count: 41, desc: 'Activity eligible in one taxonomy but not the other — mainly nuclear, gas, and coal transition' },
-                { category: 'EU only', count: 870, desc: 'Activities in EU Taxonomy not covered by China CGT — biodiversity, water, circular economy' },
-                { category: 'China only', count: 103, desc: 'Activities in China CGT not in EU Taxonomy — some manufacturing, coal clean tech' },
-              ].map(r => (
-                <div key={r.category} style={{ padding: '8px 0', borderBottom: `1px solid ${T.border}` }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: T.navy }}>{r.category}</span>
-                    <span style={{ fontSize: 13, fontWeight: 800, color: T.sage }}>{r.count}</span>
-                  </div>
-                  <div style={{ fontSize: 11, color: T.textMut }}>{r.desc}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>Interoperability Score by Jurisdiction (vs EU)</div>
-              <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={JURISDICTIONS.filter(j => j.name !== 'EU Taxonomy')} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: T.textMut }} />
-                  <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10, fill: T.textSec }} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={v => `${v}/100`} contentStyle={tip} />
-                  <Bar dataKey="interop" name="Interop Score" radius={[0, 4, 4, 0]}>
-                    {JURISDICTIONS.filter(j => j.name !== 'EU Taxonomy').map((j, i) => (
-                      <Cell key={i} fill={j.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div style={{ background: T.sage + '10', border: `1px solid ${T.sage}40`, borderRadius: 12, padding: '16px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.sage, marginBottom: 10 }}>IPSF Platform — 26 Member Jurisdictions</div>
-            <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>The International Platform on Sustainable Finance brings together jurisdictions responsible for over 55% of global greenhouse gas emissions. The CGT report published in 2021 mapped the EU and China taxonomies — Phase 2 expanded to India, Malaysia, and Singapore in 2023.</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {['EU', 'China', 'India', 'Japan', 'UK', 'Singapore', 'Canada', 'South Africa', 'Kenya', 'Brazil', 'Mexico', 'Indonesia', 'Norway', 'New Zealand', 'Australia', 'Switzerland', 'Morocco', 'Georgia', 'Serbia', 'North Macedonia'].map(m => (
-                <span key={m} style={{ fontSize: 11, background: T.border, color: T.textSec, padding: '3px 10px', borderRadius: 12 }}>{m}</span>
-              ))}
-            </div>
-          </div>
+      {showPanel&&panelTax&&<div style={{position:'fixed',top:0,right:0,width:480,height:'100vh',background:T.surface,borderLeft:`2px solid ${T.border}`,boxShadow:'-4px 0 24px rgba(0,0,0,0.08)',zIndex:1000,overflowY:'auto',padding:24}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{fontSize:18,fontWeight:800,color:T.navy,margin:0}}>{panelTax.name}</h2>
+          <button onClick={()=>setShowPanel(false)} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button>
         </div>
-      )}
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+          {[{l:'Region',v:panelTax.region},{l:'Status',v:panelTax.status},{l:'Year',v:panelTax.year},{l:'Env Objectives',v:panelTax.envObj},{l:'Activities',v:panelTax.activities},{l:'Screening',v:panelTax.screening},{l:'Transitional',v:panelTax.transitional?'Yes':'No'},{l:'DNSH',v:panelTax.dnsh?'Yes':'No'},{l:'Social Min Safeguards',v:panelTax.socialMin?'Yes':'No'},{l:'Interop Score',v:`${panelTax.interop}%`}].map((d,i)=><div key={i}><div style={{fontSize:10,color:T.textMut}}>{d.l}</div><div style={{fontWeight:700}}>{d.v}</div></div>)}
+        </div>
+        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Eligible Activities in This Taxonomy</div>
+        {ACTIVITIES.filter(a=>a[panelTax.id]==='Eligible').map((a,i)=><div key={i} style={{padding:'4px 0',borderBottom:`1px solid ${T.border}`,fontSize:12}}>{a.name} <Badge color="green">Eligible</Badge></div>)}
+        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginTop:16,marginBottom:8}}>Transitional Activities</div>
+        {ACTIVITIES.filter(a=>a[panelTax.id]==='Transition'||a[panelTax.id]==='Amber').map((a,i)=><div key={i} style={{padding:'4px 0',borderBottom:`1px solid ${T.border}`,fontSize:12}}>{a.name} <Badge color="amber">{a[panelTax.id]}</Badge></div>)}
+      </div>}
     </div>
-  );
+  </div>);
 }

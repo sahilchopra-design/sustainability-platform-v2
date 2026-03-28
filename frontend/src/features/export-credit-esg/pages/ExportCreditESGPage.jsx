@@ -1,277 +1,294 @@
-import React, { useState, useCallback } from 'react';
-import axios from 'axios';
-import {
-  BarChart, Bar, PieChart, Pie, Cell,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-} from 'recharts';
+import React,{useState,useMemo} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 
-const Section = ({title,children})=>(<div style={{marginBottom:24}}><h2 style={{fontSize:17,fontWeight:600,color:'#111827',marginBottom:12,borderBottom:'2px solid #059669',paddingBottom:4}}>{title}</h2>{children}</div>);
-const KpiCard = ({label,value,sub})=>(<div style={{background:'#fff',border:'1px solid #e5e7eb',borderRadius:10,padding:16,borderLeft:'3px solid #059669'}}><div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>{label}</div><div style={{fontSize:24,fontWeight:700,color:'#111827'}}>{value}</div>{sub&&<div style={{fontSize:11,color:'#059669',marginTop:4}}>{sub}</div>}</div>);
-const Row = ({children})=>(<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:12,marginBottom:16}}>{children}</div>);
-const Inp = ({label,...p})=>(<div style={{display:'flex',flexDirection:'column',gap:4}}><label style={{fontSize:11,color:'#6b7280'}}>{label}</label><input style={{border:'1px solid #d1d5db',borderRadius:6,padding:'7px 12px',fontSize:13,outline:'none',width:'100%',boxSizing:'border-box'}} {...p}/></div>);
-const Sel = ({label,children,...p})=>(<div style={{display:'flex',flexDirection:'column',gap:4}}><label style={{fontSize:11,color:'#6b7280'}}>{label}</label><select style={{border:'1px solid #d1d5db',borderRadius:6,padding:'7px 12px',fontSize:13,outline:'none',width:'100%',boxSizing:'border-box'}} {...p}>{children}</select></div>);
-const Btn = ({children,...p})=>(<button style={{background:'#059669',color:'#fff',padding:'8px 16px',borderRadius:6,fontSize:13,fontWeight:500,border:'none',cursor:'pointer'}} {...p}>{children}</button>);
-const Badge = ({children,color='green'})=>{ const c={green:{background:'#d1fae5',color:'#065f46'},red:{background:'#fee2e2',color:'#991b1b'},yellow:{background:'#fef3c7',color:'#92400e'},blue:{background:'#dbeafe',color:'#1e40af'},gray:{background:'#f3f4f6',color:'#374151'}}; const s=c[color]||c.green; return(<span style={{padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,...s}}>{children}</span>); };
+const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 
-const seed = 110;
-const rng = (i,s=seed) => Math.abs(Math.sin(i*9301+s*49297)*233280)%233280/233280;
-const COLORS = ['#059669','#10b981','#34d399','#6ee7b7','#f59e0b','#0284c7'];
+const TABS=['Transaction Pipeline','Environmental Review','Country ESG Risk','Portfolio Analytics'];
+const COLORS=[T.navy,T.sage,T.gold,T.red,T.green,T.amber,'#7c3aed','#0ea5e9'];
+const SECTORS=['Renewable Energy','Infrastructure','Manufacturing','Oil & Gas','Mining','Agriculture','Defence','Shipping','Aviation','Chemicals','Telecom','Power Generation'];
+const ECA_NAMES=['Euler Hermes (DE)','Bpifrance (FR)','US EXIM (US)','UKEF (GB)','NEXI (JP)','K-EXIM (KR)','SACE (IT)','CESCE (ES)','Atradius (NL)','EDC (CA)','Sinosure (CN)','EKN (SE)','SERV (CH)','OeKB (AT)','EKF (DK)'];
+const ESG_CATS=['A','B','C'];
+const IFC_PS=['PS1 Assessment','PS2 Labour','PS3 Pollution','PS4 Community','PS5 Land Resettlement','PS6 Biodiversity','PS7 Indigenous','PS8 Cultural Heritage'];
+const EP_CATS=['Category A','Category B','Category C'];
+const PROJ_NAMES=['Mekong Solar Farm','Trans-Saharan Pipeline','Baltic Wind Park','Andean Copper Mine','Jakarta Mass Transit','Lagos Port Expansion','Patagonia Wind Complex','Nile Irrigation System','Caspian Gas Platform','Borneo Palm Refinery','Rhine Bridge Upgrade','Mumbai Metro Line 4','Atacama Lithium Mine','Great Barrier Reef Desalin','Congo Hydro Dam','Arabian Solar Mega','Volga Nuclear Station','Amazon Agri-Hub','Nordic Data Centre','Cape Town Wind','Queensland LNG','Suez Canal Widening','Danube Flood Wall','Kenya Geothermal','Panama Canal Lock','Chile Green H2','Egypt Nuclear','Morocco Solar Noor','Turkmen Gas','Uzbek Solar','Thai Rail Link','Vietnam Wind','Indo Steel Mill','Peru Copper','Tanzania Gold','Ethiopia Dam','Uganda Oil Pipeline','Mozambique LNG','Nigeria Refinery','Angola Solar','Ghana Cocoa','Ivory Coast Port','Senegal Wind','Cameroon Hydro','DRC Cobalt','Zambia Solar','Zimbabwe Lithium','Mali Gold','Sierra Leone Iron','Madagascar Nickel'];
 
-const EXPORTER_COUNTRIES = ['Germany','France','USA','UK','Japan','South Korea','Italy','Spain','Netherlands','Canada','China','Sweden','Switzerland','Austria','Denmark','Finland','Norway','Belgium','Australia','Singapore'];
-const SECTORS = ['Renewable Energy','Infrastructure','Manufacturing','Oil & Gas','Mining','Agriculture','Defence','Shipping','Aviation','Chemicals','Telecom','Power Generation'];
-const ECA_NAMES = ['Euler Hermes (DE)','Bpifrance (FR)','US EXIM (US)','UK Export Finance','NEXI (JP)','K-EXIM (KR)','SACE (IT)','CESCE (ES)','Atradius (NL)','EDC (CA)','Sinosure (CN)','EKN (SE)','SERV (CH)','OeKB (AT)','EKF (DK)'];
-const TABS = ['ECA ESG Profile','OECD Common Approaches','Fossil Fuel Classification','Equator Principles','Green Classification'];
+const transactions=Array.from({length:50},(_,i)=>{const s=sr(i*7);const s2=sr(i*13);const s3=sr(i*19);const s4=sr(i*23);
+  const sector=SECTORS[Math.floor(s*SECTORS.length)];const eca=ECA_NAMES[Math.floor(s2*ECA_NAMES.length)];
+  const esgCat=ESG_CATS[Math.floor(s3*3)];const epCat=EP_CATS[Math.floor(s4*3)];
+  const country=['Germany','France','USA','UK','Japan','South Korea','Italy','Spain','Netherlands','Canada','China','Sweden','Brazil','India','Australia','Mexico','Turkey','Saudi Arabia','UAE','South Africa','Nigeria','Kenya','Egypt','Morocco','Indonesia'][Math.floor(sr(i*29)*25)];
+  const hostCountry=['Bangladesh','Indonesia','Ethiopia','Philippines','Mozambique','Peru','Pakistan','Cambodia','Vietnam','Thailand','India','Brazil','Mexico','Nigeria','Kenya','Egypt','Morocco','Colombia','Chile','Argentina','South Africa','Ghana','Tanzania','Uganda','Zambia','Turkey','Saudi Arabia','UAE','Iraq','Kazakhstan','Uzbekistan','Myanmar','Laos','Sri Lanka','Nepal','Mongolia','Papua New Guinea','Fiji','Samoa','Tonga'][Math.floor(sr(i*31)*40)];
+  return {id:i+1,project:PROJ_NAMES[i%PROJ_NAMES.length],sector,eca,esgCat,epCat,exporterCountry:country,hostCountry,
+    valueMn:Math.round(50+s*950),tenorYrs:Math.round(3+s2*12),
+    ifcScreening:IFC_PS.map((ps,j)=>({standard:ps,status:sr(i*37+j)>0.3?'Compliant':sr(i*37+j)>0.15?'Partial':'Gap',score:Math.round(40+sr(i*41+j)*55)})),
+    oecdScore:Math.round(50+s3*45),eScore:Math.round(40+sr(i*43)*55),sScore:Math.round(45+sr(i*47)*50),gScore:Math.round(50+sr(i*51)*45),
+    carbonIntensity:Math.round(20+s*800),waterRisk:['Low','Medium','High','Very High'][Math.floor(sr(i*53)*4)],
+    biodiversityRisk:sr(i*57)<0.3?'Critical':sr(i*57)<0.6?'High':'Moderate',
+    status:['Pipeline','Under Review','Approved','Disbursing','Monitoring'][Math.floor(sr(i*59)*5)],
+    lastAssessment:`2025-${String(1+Math.floor(sr(i*61)*12)).padStart(2,'0')}-${String(1+Math.floor(sr(i*63)*28)).padStart(2,'0')}`,
+    covenants:Math.round(2+s4*6),mitigationMeasures:Math.round(1+s*8)};
+});
 
-const tblStyle = {width:'100%',fontSize:13,borderCollapse:'collapse'};
-const thStyle = {border:'1px solid #e5e7eb',padding:'6px 8px',fontSize:11,textAlign:'left',fontWeight:500,color:'#6b7280',background:'#f9fafb'};
-const tdStyle = {border:'1px solid #e5e7eb',padding:'6px 8px'};
-const errStyle = {marginBottom:12,padding:'8px 12px',background:'#fffbeb',border:'1px solid #fde68a',borderRadius:6,fontSize:13,color:'#92400e'};
+const countries=Array.from({length:40},(_,i)=>{const s=sr(i*11);const s2=sr(i*17);
+  const name=['Bangladesh','Indonesia','Ethiopia','Philippines','Mozambique','Peru','Pakistan','Cambodia','Vietnam','Thailand','India','Brazil','Mexico','Nigeria','Kenya','Egypt','Morocco','Colombia','Chile','Argentina','South Africa','Ghana','Tanzania','Uganda','Zambia','Turkey','Saudi Arabia','UAE','Iraq','Kazakhstan','Uzbekistan','Myanmar','Laos','Sri Lanka','Nepal','Mongolia','Papua New Guinea','Fiji','Samoa','Tonga'][i];
+  return {country:name,oecdRisk:Math.round(1+s*6),eScore:Math.round(30+s*60),sScore:Math.round(35+s2*55),gScore:Math.round(40+sr(i*23)*50),
+    climatVuln:Math.round(20+s2*70),conflictRisk:['Low','Medium','High'][Math.floor(sr(i*29)*3)],
+    humanRights:['Adequate','Concern','Serious'][Math.floor(sr(i*31)*3)],corruptionIdx:Math.round(20+sr(i*37)*60),
+    region:['South Asia','SE Asia','East Africa','SE Asia','Southern Africa','South America','South Asia','SE Asia','SE Asia','SE Asia','South Asia','South America','Central America','West Africa','East Africa','North Africa','North Africa','South America','South America','South America','Southern Africa','West Africa','East Africa','East Africa','Southern Africa','West Asia','Middle East','Middle East','Middle East','Central Asia','Central Asia','SE Asia','SE Asia','South Asia','South Asia','East Asia','Oceania','Oceania','Oceania','Oceania'][i]};
+});
 
-function Tab1({exporterCountry,sector,ecaName}) {
-  const [result,setResult]=useState(null); const [loading,setLoading]=useState(false); const [error,setError]=useState(null);
-  const dims = ['E&S Policy','Due Diligence','Monitoring','Reporting','Stakeholder'];
-  const radarData = dims.map((d,i)=>({dim:d, score: Math.round(40+rng(i+1)*55)}));
-  const complianceRows = [
-    {req:'OECD Common Approaches (2012)',    status: rng(10)>0.2?'Compliant':'Partial'},
-    {req:'Paris Alignment Commitment (2021)',status: rng(11)>0.3?'Compliant':'Non-Compliant'},
-    {req:'IPFD Climate Commitments',         status: rng(12)>0.25?'Compliant':'Partial'},
-    {req:'Equator Principles (as EPFI)',      status: rng(13)>0.4?'Compliant':'Partial'},
-    {req:'OECD Coal Exclusion (2022)',        status: rng(14)>0.2?'Compliant':'Non-Compliant'},
-    {req:'UN SDG Alignment Reporting',       status: rng(15)>0.35?'Compliant':'Partial'},
-  ];
-  const statusColor = s => s==='Compliant'?'green':s==='Partial'?'yellow':'red';
-  const run = useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/export-credit-esg/assess',{exporter_country:exporterCountry,sector,eca_name:ecaName}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[exporterCountry,sector,ecaName]);
-  return (
-    <div>
-      <Section title="ECA ESG Assessment">
-        {error&&<div style={errStyle}>{error}</div>}
-        <Btn onClick={run} disabled={loading}>{loading?'Assessing…':'Assess ECA ESG Profile'}</Btn>
-      </Section>
-      <Row>
-        <KpiCard label="ESG Score" value={`${Math.round(radarData.reduce((s,d)=>s+d.score,0)/radarData.length)}/100`} sub={`${ecaName} composite`} />
-        <KpiCard label="OECD Tier" value={rng(20)>0.5?'Full Adherence':'Partial Adherence'} sub="Common Approaches compliance" />
-        <KpiCard label="Paris Aligned" value={rng(21)>0.4?'Yes':'Partial'} sub="Fossil fuel exclusion progress" />
-        <KpiCard label="TPF Exclusions" value={`${Math.round(2+rng(22)*8)} sectors`} sub="Third-party facilitated restrictions" />
-      </Row>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
-        <Section title="5-Dimension ECA ESG Radar">
-          <ResponsiveContainer width="100%" height={280}>
-            <RadarChart data={radarData}>
-              <PolarGrid stroke="#e5e7eb" />
-              <PolarAngleAxis dataKey="dim" tick={{fontSize:11}} />
-              <PolarRadiusAxis angle={90} domain={[0,100]} tick={{fontSize:9}} />
-              <Radar name="ESG Score" dataKey="score" stroke="#059669" fill="#059669" fillOpacity={0.3} />
-              <Tooltip />
-            </RadarChart>
-          </ResponsiveContainer>
-        </Section>
-        <Section title="ECA Compliance Status Table">
-          <table style={tblStyle}>
-            <thead><tr>{['Requirement','Status'].map(h=><th key={h} style={thStyle}>{h}</th>)}</tr></thead>
-            <tbody>{complianceRows.map((r,i)=>(<tr key={i}><td style={{...tdStyle,fontSize:12}}>{r.req}</td><td style={tdStyle}><Badge color={statusColor(r.status)}>{r.status}</Badge></td></tr>))}</tbody>
-          </table>
-        </Section>
+const tipS={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font,color:T.text}};
+const Stat=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:'18px 20px',borderTop:`3px solid ${color||T.sage}`}}>
+  <div style={{fontSize:10,color:T.textMut,textTransform:'uppercase',letterSpacing:'0.1em',fontWeight:600,marginBottom:6,fontFamily:T.font}}>{label}</div>
+  <div style={{fontSize:26,fontWeight:800,color:T.navy,fontFamily:T.font}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:3}}>{sub}</div>}</div>);
+const Badge=({children,color})=>{const m={green:{bg:'#dcfce7',fg:T.green},red:{bg:'#fee2e2',fg:T.red},amber:{bg:'#fef3c7',fg:T.amber},navy:{bg:'#dbeafe',fg:T.navy},sage:{bg:'#d1fae5',fg:T.sage}};const c=m[color]||m.sage;return <span style={{padding:'2px 8px',borderRadius:4,fontSize:10,fontWeight:700,background:c.bg,color:c.fg}}>{children}</span>;};
+const exportCSV=(rows,name)=>{if(!rows.length)return;const keys=Object.keys(rows[0]).filter(k=>typeof rows[0][k]!=='object');const csv=[keys.join(','),...rows.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`${name}.csv`;a.click();URL.revokeObjectURL(u);};
+
+const thS={padding:'8px 12px',fontSize:11,fontWeight:600,color:T.textSec,textAlign:'left',borderBottom:`2px solid ${T.border}`,cursor:'pointer',fontFamily:T.font,background:T.surfaceH,position:'sticky',top:0};
+const tdS={padding:'8px 12px',fontSize:12,color:T.text,borderBottom:`1px solid ${T.border}`,fontFamily:T.font};
+const tdM={...tdS,fontFamily:T.mono,fontWeight:600};
+
+export default function ExportCreditESGPage(){
+  const [tab,setTab]=useState(0);
+  const [search,setSearch]=useState('');
+  const [sortCol,setSortCol]=useState('valueMn');
+  const [sortDir,setSortDir]=useState('desc');
+  const [filterSector,setFilterSector]=useState('All');
+  const [filterCat,setFilterCat]=useState('All');
+  const [expanded,setExpanded]=useState(null);
+  const [selectedTx,setSelectedTx]=useState(null);
+  const [showPanel,setShowPanel]=useState(false);
+  const [countrySearch,setCountrySearch]=useState('');
+  const [countrySortCol,setCountrySortCol]=useState('oecdRisk');
+  const [countrySortDir,setCountrySortDir]=useState('desc');
+  const [regionFilter,setRegionFilter]=useState('All');
+  const [analyticsView,setAnalyticsView]=useState('sector');
+
+  const toggleSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}};
+  const toggleCountrySort=(col)=>{if(countrySortCol===col)setCountrySortDir(d=>d==='asc'?'desc':'asc');else{setCountrySortCol(col);setCountrySortDir('desc');}};
+
+  const filtered=useMemo(()=>{let d=[...transactions];if(search)d=d.filter(r=>r.project.toLowerCase().includes(search.toLowerCase())||r.eca.toLowerCase().includes(search.toLowerCase()));if(filterSector!=='All')d=d.filter(r=>r.sector===filterSector);if(filterCat!=='All')d=d.filter(r=>r.esgCat===filterCat);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,filterSector,filterCat,sortCol,sortDir]);
+
+  const filteredCountries=useMemo(()=>{let d=[...countries];if(countrySearch)d=d.filter(r=>r.country.toLowerCase().includes(countrySearch.toLowerCase()));if(regionFilter!=='All')d=d.filter(r=>r.region===regionFilter);d.sort((a,b)=>countrySortDir==='asc'?(a[countrySortCol]>b[countrySortCol]?1:-1):(a[countrySortCol]<b[countrySortCol]?1:-1));return d;},[countrySearch,regionFilter,countrySortCol,countrySortDir]);
+
+  const totalValue=transactions.reduce((s,t)=>s+t.valueMn,0);
+  const catACnt=transactions.filter(t=>t.esgCat==='A').length;
+  const avgOecd=Math.round(transactions.reduce((s,t)=>s+t.oecdScore,0)/50);
+
+  const sectorAgg=useMemo(()=>SECTORS.map(s=>{const ts=transactions.filter(t=>t.sector===s);return {sector:s,count:ts.length,value:ts.reduce((a,t)=>a+t.valueMn,0)};}).filter(s=>s.count>0),[]);
+  const geoAgg=useMemo(()=>{const m={};transactions.forEach(t=>{if(!m[t.hostCountry])m[t.hostCountry]={country:t.hostCountry,count:0,value:0};m[t.hostCountry].count++;m[t.hostCountry].value+=t.valueMn;});return Object.values(m).sort((a,b)=>b.value-a.value).slice(0,15);},[]);
+  const riskDist=useMemo(()=>[{cat:'Category A',count:catACnt},{cat:'Category B',count:transactions.filter(t=>t.esgCat==='B').length},{cat:'Category C',count:transactions.filter(t=>t.esgCat==='C').length}],[]);
+  const regions=[...new Set(countries.map(c=>c.region))].sort();
+
+  return (<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
+    <div style={{maxWidth:1400,margin:'0 auto',padding:'24px 32px'}}>
+      <div style={{marginBottom:24}}>
+        <h1 style={{fontSize:28,fontWeight:800,color:T.navy,margin:0}}>Export Credit ESG Analytics</h1>
+        <p style={{fontSize:13,color:T.textSec,margin:'4px 0 0'}}>50 export credit transactions -- IFC Performance Standards, Equator Principles, OECD Common Approaches</p>
       </div>
-    </div>
-  );
-}
 
-function Tab2({sector,transactionValue}) {
-  const tv = parseFloat(transactionValue)||50;
-  const category = tv>=100&&sector==='Oil & Gas'?'A': tv>=10?'B':'C';
-  const ifcPS = [
-    {ps:'PS 1: Assessment & Management of E&S Risks', required: category!=='C', status: rng(30)>0.3},
-    {ps:'PS 2: Labour & Working Conditions',          required: true,           status: rng(31)>0.25},
-    {ps:'PS 3: Resource Efficiency & Pollution',      required: category!=='C', status: rng(32)>0.35},
-    {ps:'PS 4: Community Health & Safety',            required: category==='A', status: rng(33)>0.4},
-    {ps:'PS 5: Land Acquisition',                     required: category==='A', status: rng(34)>0.45},
-    {ps:'PS 6: Biodiversity Conservation',            required: category!=='C', status: rng(35)>0.3},
-    {ps:'PS 7: Indigenous Peoples',                   required: category==='A', status: rng(36)>0.5},
-    {ps:'PS 8: Cultural Heritage',                    required: category==='A', status: rng(37)>0.55},
-  ];
-  const catColor = c=>c==='A'?'red':c==='B'?'yellow':'green';
-  return (
-    <div>
-      <Row>
-        <KpiCard label="OECD Category" value={`Category ${category}`} sub="Common Approaches 2012" />
-        <KpiCard label="ESIA Required" value={category!=='C'?'Yes':'No'} sub="Environmental & Social Impact Assessment" />
-        <KpiCard label="IFC PS Applicable" value={`${ifcPS.filter(p=>p.required).length}/8`} sub="Performance Standards required" />
-        <KpiCard label="Monitoring Period" value={category==='A'?'Annual':'Bi-annual'} sub="E&S monitoring requirement" />
-      </Row>
-      <div style={{marginBottom:16,display:'flex',alignItems:'center',gap:12}}>
-        <span style={{fontSize:13,color:'#6b7280'}}>Determination:</span>
-        <Badge color={catColor(category)}>Category {category} — {category==='A'?'High Risk':category==='B'?'Limited Risk':'Low Risk'}</Badge>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:24}}>
+        <Stat label="Transactions" value="50" sub="Active pipeline" color={T.navy}/>
+        <Stat label="Total Value" value={`$${(totalValue/1000).toFixed(1)}B`} sub="All ECAs" color={T.sage}/>
+        <Stat label="Cat A (High Risk)" value={catACnt} sub="Require full ESIA" color={T.red}/>
+        <Stat label="Avg OECD Score" value={`${avgOecd}%`} sub="Common Approaches" color={T.gold}/>
+        <Stat label="Countries" value="40" sub="Host country coverage" color={T.amber}/>
       </div>
-      <Section title="IFC Performance Standards Checklist">
-        <table style={tblStyle}>
-          <thead><tr>{['Performance Standard','Required','Compliant'].map(h=><th key={h} style={thStyle}>{h}</th>)}</tr></thead>
-          <tbody>{ifcPS.map((p,i)=>(<tr key={i} style={{opacity:p.required?1:0.5}}>
-            <td style={{...tdStyle,fontSize:12}}>{p.ps}</td>
-            <td style={tdStyle}><Badge color={p.required?'blue':'gray'}>{p.required?'Required':'N/A'}</Badge></td>
-            <td style={tdStyle}><Badge color={p.status?'green':p.required?'red':'gray'}>{p.status?'Yes':p.required?'Gap':'—'}</Badge></td>
-          </tr>))}</tbody>
-        </table>
-      </Section>
-    </div>
-  );
-}
 
-function Tab3() {
-  const ecas = ['Euler Hermes','Bpifrance','US EXIM','UKEF','NEXI'].slice(0,5);
-  const subsectors = ['Thermal Coal','Coal Power','Natural Gas E&P','LNG','Oil Sands','Conventional Oil','Gas-to-Power','Offshore Wind'];
-  const getStatus = (eca,sub,i,j) => {
-    const v = rng(i*8+j+40);
-    if(sub.includes('Coal')) return 'Excluded';
-    if(v>0.7) return 'Eligible';
-    if(v>0.4) return 'Conditional';
-    return 'Under Review';
-  };
-  const statusColor = s=>s==='Excluded'?'red':s==='Eligible'?'green':s==='Conditional'?'yellow':'blue';
-  return (
-    <div>
-      <Section title="Fossil Fuel Classification Matrix — ECA x Subsector">
-        <div style={{overflowX:'auto'}}>
-          <table style={tblStyle}>
-            <thead><tr>
-              <th style={thStyle}>Subsector</th>
-              {ecas.map(e=><th key={e} style={{...thStyle,textAlign:'center'}}>{e}</th>)}
-            </tr></thead>
-            <tbody>{subsectors.map((sub,i)=>(<tr key={i}>
-              <td style={{...tdStyle,fontWeight:500,fontSize:12}}>{sub}</td>
-              {ecas.map((eca,j)=>{const s=getStatus(eca,sub,i,j); return(<td key={j} style={{...tdStyle,textAlign:'center'}}><Badge color={statusColor(s)}>{s}</Badge></td>);})}
-            </tr>))}</tbody>
-          </table>
-        </div>
-      </Section>
-    </div>
-  );
-}
-
-function Tab4() {
-  const principles = [
-    'EP1: Review and Categorisation','EP2: Environmental & Social Assessment','EP3: Applicable Environmental & Social Standards',
-    'EP4: Environmental & Social Management System','EP5: Stakeholder Engagement','EP6: Grievance Mechanism',
-    'EP7: Independent Review','EP8: Covenants','EP9: Independent Monitoring & Reporting','EP10: Reporting & Transparency',
-  ];
-  const results = principles.map((p,i)=>({ principle: p, pass: rng(i+60)>0.25, doc: rng(i+61)>0.3?'Provided':'Pending' }));
-  const docs = ['ESIA Report','Environmental Management Plan','Stakeholder Engagement Plan','Grievance Mechanism Procedures','Monitoring Reports','Financial Covenant (EP clause)','Third Party Audit Report','Annual E&S Reporting Template'];
-  return (
-    <div>
-      <Row>
-        <KpiCard label="EP Principles Met" value={`${results.filter(r=>r.pass).length}/10`} sub="Equator Principles v4 (2020)" />
-        <KpiCard label="EP Category" value={`Cat ${rng(70)>0.5?'A':'B'}`} sub="Project risk classification" />
-        <KpiCard label="Doc Package" value={`${results.filter(r=>r.doc==='Provided').length}/10`} sub="Documentation provided" />
-        <KpiCard label="EPFI Signatory" value="Yes" sub="130+ banks globally" />
-      </Row>
-      <Section title="10 Equator Principles — Pass/Fail + Documentation">
-        <table style={tblStyle}>
-          <thead><tr>{['Principle','Status','Documentation'].map(h=><th key={h} style={thStyle}>{h}</th>)}</tr></thead>
-          <tbody>{results.map((r,i)=>(<tr key={i}>
-            <td style={{...tdStyle,fontSize:12}}>{r.principle}</td>
-            <td style={tdStyle}><Badge color={r.pass?'green':'red'}>{r.pass?'Pass':'Fail'}</Badge></td>
-            <td style={tdStyle}><Badge color={r.doc==='Provided'?'blue':'yellow'}>{r.doc}</Badge></td>
-          </tr>))}</tbody>
-        </table>
-      </Section>
-      <Section title="Required Documentation">
-        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>
-          {docs.map((d,i)=>{
-            const ok = rng(i+80)>0.4;
-            return (<div key={i} style={{padding:'8px',borderRadius:6,border:`1px solid ${ok?'#a7f3d0':'#fde68a'}`,background:ok?'#ecfdf5':'#fffbeb',fontSize:12,fontWeight:500,color:ok?'#065f46':'#92400e'}}>{d}</div>);
-          })}
-        </div>
-      </Section>
-    </div>
-  );
-}
-
-function Tab5({sector}) {
-  const proceeds = [
-    {name:'Renewable Energy', value:Math.round(20+rng(90)*40)},
-    {name:'Green Buildings', value:Math.round(10+rng(91)*25)},
-    {name:'Clean Transport', value:Math.round(8+rng(92)*20)},
-    {name:'Water & Waste', value:Math.round(5+rng(93)*15)},
-    {name:'Biodiversity', value:Math.round(3+rng(94)*12)},
-    {name:'Other Green', value:Math.round(2+rng(95)*10)},
-  ];
-  const totalProceeds = proceeds.reduce((s,p)=>s+p.value,0);
-  const greenEligible = rng(96)>0.25;
-  const icmaCat = rng(97)>0.5?'Use of Proceeds Bond':'Sustainability-Linked Bond';
-  return (
-    <div>
-      <Row>
-        <KpiCard label="Green Eligible" value={greenEligible?'Yes':'Partial'} sub="ICMA Green Bond Principles 2021" />
-        <KpiCard label="Instrument Type" value={icmaCat} sub="Classification" />
-        <KpiCard label="Taxonomy Aligned" value={`${Math.round(40+rng(98)*50)}%`} sub="EU Taxonomy Art. 6 / DNSH" />
-        <KpiCard label="SPO Required" value="Yes" sub="Second Party Opinion needed" />
-      </Row>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
-        <Section title="Use of Proceeds by Category (%)">
-          <ResponsiveContainer width="100%" height={280}>
-            <PieChart>
-              <Pie data={proceeds} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({name,percent})=>`${(percent*100).toFixed(0)}%`}>
-                {proceeds.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]} />)}
-              </Pie>
-              <Tooltip formatter={v=>`${v}%`} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </Section>
-        <Section title="Green Eligibility Assessment">
-          <table style={tblStyle}>
-            <thead><tr>{['Category','Allocation %','EU Taxonomy','ICMA GBP'].map(h=><th key={h} style={thStyle}>{h}</th>)}</tr></thead>
-            <tbody>{proceeds.map((p,i)=>(<tr key={i}>
-              <td style={{...tdStyle,fontWeight:500,fontSize:12}}>{p.name}</td>
-              <td style={{...tdStyle,fontFamily:'monospace'}}>{((p.value/totalProceeds)*100).toFixed(0)}%</td>
-              <td style={tdStyle}><Badge color={rng(i+100)>0.3?'green':'yellow'}>{rng(i+100)>0.3?'Aligned':'Partial'}</Badge></td>
-              <td style={tdStyle}><Badge color={rng(i+101)>0.2?'green':'yellow'}>{rng(i+101)>0.2?'Eligible':'Review'}</Badge></td>
-            </tr>))}</tbody>
-          </table>
-        </Section>
+      <div style={{display:'flex',gap:0,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>
+        {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'12px 24px',fontSize:13,fontWeight:tab===i?700:500,color:tab===i?T.navy:T.textMut,background:'none',border:'none',borderBottom:tab===i?`3px solid ${T.navy}`:'3px solid transparent',cursor:'pointer',fontFamily:T.font}}>{t}</button>)}
       </div>
-    </div>
-  );
-}
 
-export default function ExportCreditESGPage() {
-  const [activeTab,setActiveTab]=useState(0);
-  const [exporterCountry,setExporterCountry]=useState('Germany');
-  const [sector,setSector]=useState('Renewable Energy');
-  const [transactionValue,setTransactionValue]=useState('75');
-  const [ecaName,setEcaName]=useState('Euler Hermes (DE)');
-  const panels=[
-    <Tab1 exporterCountry={exporterCountry} sector={sector} ecaName={ecaName}/>,
-    <Tab2 sector={sector} transactionValue={transactionValue}/>,
-    <Tab3/>,<Tab4/>,
-    <Tab5 sector={sector}/>,
-  ];
-  return (
-    <div style={{minHeight:'100vh',background:'#f9fafb',padding:24}}>
-      <div style={{maxWidth:1200,margin:'0 auto'}}>
-        <div style={{marginBottom:24}}>
-          <h1 style={{fontSize:24,fontWeight:700,color:'#111827',margin:0}}>Export Credit ESG Engine</h1>
-          <p style={{fontSize:13,color:'#6b7280',marginTop:4}}>OECD Common Approaches · IFC Performance Standards · Equator Principles v4 · ECA Fossil Fuel Classification · ICMA GBP · E110</p>
+      {tab===0&&(<div>
+        <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search project or ECA..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,width:260,outline:'none',background:T.surface}}/>
+          <select value={filterSector} onChange={e=>setFilterSector(e.target.value)} style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface}}>
+            <option value="All">All Sectors</option>{SECTORS.map(s=><option key={s} value={s}>{s}</option>)}
+          </select>
+          <select value={filterCat} onChange={e=>setFilterCat(e.target.value)} style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface}}>
+            <option value="All">All Categories</option>{ESG_CATS.map(c=><option key={c} value={c}>Category {c}</option>)}
+          </select>
+          <button onClick={()=>exportCSV(filtered,'export_credit_pipeline')} style={{padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Export CSV</button>
+          <span style={{fontSize:11,color:T.textMut,marginLeft:'auto'}}>{filtered.length} of 50</span>
         </div>
-        <div style={{background:'white',border:'1px solid #e5e7eb',borderRadius:10,padding:16,marginBottom:24}}>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:16}}>
-            <Sel label="Exporter Country" value={exporterCountry} onChange={e=>setExporterCountry(e.target.value)}>
-              {EXPORTER_COUNTRIES.map(o=><option key={o}>{o}</option>)}
-            </Sel>
-            <Sel label="Sector" value={sector} onChange={e=>setSector(e.target.value)}>
-              {SECTORS.map(o=><option key={o}>{o}</option>)}
-            </Sel>
-            <Inp label="Transaction Value (USD M)" type="number" value={transactionValue} onChange={e=>setTransactionValue(e.target.value)} />
-            <Sel label="ECA Name" value={ecaName} onChange={e=>setEcaName(e.target.value)}>
-              {ECA_NAMES.map(o=><option key={o}>{o}</option>)}
-            </Sel>
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,overflow:'hidden'}}>
+          <div style={{maxHeight:480,overflowY:'auto'}}>
+            <table style={{width:'100%',borderCollapse:'collapse'}}>
+              <thead><tr>{[{k:'id',l:'#'},{k:'project',l:'Project'},{k:'sector',l:'Sector'},{k:'eca',l:'ECA'},{k:'hostCountry',l:'Host Country'},{k:'valueMn',l:'Value ($M)'},{k:'esgCat',l:'ESG Cat'},{k:'epCat',l:'EP Cat'},{k:'oecdScore',l:'OECD %'},{k:'status',l:'Status'}].map(c=>
+                <th key={c.k} onClick={()=>toggleSort(c.k)} style={{...thS,color:sortCol===c.k?T.navy:T.textSec}}>{c.l}{sortCol===c.k?(sortDir==='asc'?' ^':' v'):''}</th>
+              )}</tr></thead>
+              <tbody>{filtered.map(t=><React.Fragment key={t.id}>
+                <tr onClick={()=>setExpanded(expanded===t.id?null:t.id)} style={{cursor:'pointer',background:expanded===t.id?T.surfaceH:'transparent'}}>
+                  <td style={tdM}>{t.id}</td><td style={tdS}>{t.project}</td><td style={tdS}>{t.sector}</td><td style={{...tdS,fontSize:11}}>{t.eca}</td>
+                  <td style={tdS}>{t.hostCountry}</td><td style={tdM}>{t.valueMn}</td>
+                  <td style={tdS}><Badge color={t.esgCat==='A'?'red':t.esgCat==='B'?'amber':'green'}>{t.esgCat}</Badge></td>
+                  <td style={tdS}><Badge color={t.epCat==='Category A'?'red':t.epCat==='Category B'?'amber':'green'}>{t.epCat}</Badge></td>
+                  <td style={tdM}>{t.oecdScore}</td><td style={tdS}><Badge color={t.status==='Disbursing'?'green':t.status==='Approved'?'sage':'navy'}>{t.status}</Badge></td>
+                </tr>
+                {expanded===t.id&&<tr><td colSpan={10} style={{padding:16,background:T.surfaceH}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
+                    <div><span style={{fontSize:10,color:T.textMut}}>Exporter</span><div style={{fontWeight:700}}>{t.exporterCountry}</div></div>
+                    <div><span style={{fontSize:10,color:T.textMut}}>Tenor</span><div style={{fontWeight:700}}>{t.tenorYrs}Y</div></div>
+                    <div><span style={{fontSize:10,color:T.textMut}}>Carbon Intensity</span><div style={{fontWeight:700}}>{t.carbonIntensity} tCO2e/$M</div></div>
+                    <div><span style={{fontSize:10,color:T.textMut}}>Water Risk</span><div><Badge color={t.waterRisk==='Low'?'green':t.waterRisk==='Medium'?'amber':'red'}>{t.waterRisk}</Badge></div></div>
+                    <div><span style={{fontSize:10,color:T.textMut}}>Biodiversity</span><div><Badge color={t.biodiversityRisk==='Moderate'?'green':t.biodiversityRisk==='High'?'amber':'red'}>{t.biodiversityRisk}</Badge></div></div>
+                    <div><span style={{fontSize:10,color:T.textMut}}>E Score</span><div style={{fontWeight:700}}>{t.eScore}%</div></div>
+                    <div><span style={{fontSize:10,color:T.textMut}}>S Score</span><div style={{fontWeight:700}}>{t.sScore}%</div></div>
+                    <div><span style={{fontSize:10,color:T.textMut}}>G Score</span><div style={{fontWeight:700}}>{t.gScore}%</div></div>
+                  </div>
+                  <button onClick={(e)=>{e.stopPropagation();setSelectedTx(t);setShowPanel(true);}} style={{padding:'6px 14px',background:T.navy,color:'#fff',border:'none',borderRadius:6,fontSize:11,cursor:'pointer'}}>View Full Assessment</button>
+                </td></tr>}
+              </React.Fragment>)}</tbody>
+            </table>
           </div>
         </div>
-        <div style={{display:'flex',gap:8,marginBottom:24,borderBottom:'1px solid #e5e7eb',overflowX:'auto'}}>
-          {TABS.map((t,i)=>(<button key={i} onClick={()=>setActiveTab(i)} style={{padding:'8px 16px',fontSize:13,fontWeight:500,whiteSpace:'nowrap',background:'none',border:'none',cursor:'pointer',borderBottom:activeTab===i?'2px solid #059669':'2px solid transparent',color:activeTab===i?'#059669':'#6b7280',transition:'color 0.15s'}}>{t}</button>))}
+      </div>)}
+
+      {tab===1&&(<div>
+        <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+          <select onChange={e=>setSelectedTx(transactions.find(t=>t.id===+e.target.value)||null)} style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface,minWidth:300}}>
+            <option value="">Select a transaction...</option>{transactions.map(t=><option key={t.id} value={t.id}>{t.project} ({t.sector})</option>)}
+          </select>
         </div>
-        <div style={{background:'white',borderRadius:12,border:'1px solid #e5e7eb',padding:24}}>{panels[activeTab]}</div>
-      </div>
+        {selectedTx&&(<div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>IFC Performance Standards Screening</div>
+              <table style={{width:'100%',borderCollapse:'collapse'}}>
+                <thead><tr>{['Standard','Status','Score'].map(h=><th key={h} style={thS}>{h}</th>)}</tr></thead>
+                <tbody>{selectedTx.ifcScreening.map((s,i)=><tr key={i}>
+                  <td style={tdS}>{s.standard}</td><td style={tdS}><Badge color={s.status==='Compliant'?'green':s.status==='Partial'?'amber':'red'}>{s.status}</Badge></td><td style={tdM}>{s.score}%</td>
+                </tr>)}</tbody>
+              </table>
+            </div>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>ESG Radar Profile</div>
+              <ResponsiveContainer width="100%" height={280}>
+                <RadarChart data={[{dim:'Environmental',v:selectedTx.eScore},{dim:'Social',v:selectedTx.sScore},{dim:'Governance',v:selectedTx.gScore},{dim:'OECD',v:selectedTx.oecdScore},{dim:'Biodiversity',v:selectedTx.biodiversityRisk==='Moderate'?80:selectedTx.biodiversityRisk==='High'?50:30}]}>
+                  <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:10,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:9}}/><Radar dataKey="v" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/>
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Equator Principles Assessment</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12}}>
+              <div><span style={{fontSize:10,color:T.textMut}}>EP Category</span><div style={{fontWeight:700}}>{selectedTx.epCat}</div></div>
+              <div><span style={{fontSize:10,color:T.textMut}}>ESIA Required</span><div style={{fontWeight:700}}>{selectedTx.epCat==='Category A'?'Full ESIA':selectedTx.epCat==='Category B'?'Limited ESIA':'Screening Only'}</div></div>
+              <div><span style={{fontSize:10,color:T.textMut}}>Stakeholder Engagement</span><div style={{fontWeight:700}}>{selectedTx.epCat==='Category A'?'Mandatory':'Recommended'}</div></div>
+              <div><span style={{fontSize:10,color:T.textMut}}>Covenants</span><div style={{fontWeight:700}}>{selectedTx.covenants} active</div></div>
+            </div>
+          </div>
+        </div>)}
+        {!selectedTx&&<div style={{padding:40,textAlign:'center',color:T.textMut,fontSize:13}}>Select a transaction above to view its environmental review</div>}
+      </div>)}
+
+      {tab===2&&(<div>
+        <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+          <input value={countrySearch} onChange={e=>setCountrySearch(e.target.value)} placeholder="Search country..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,width:220,outline:'none',background:T.surface}}/>
+          <select value={regionFilter} onChange={e=>setRegionFilter(e.target.value)} style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface}}>
+            <option value="All">All Regions</option>{regions.map(r=><option key={r} value={r}>{r}</option>)}
+          </select>
+          <button onClick={()=>exportCSV(filteredCountries,'country_esg_risk')} style={{padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Export CSV</button>
+          <span style={{fontSize:11,color:T.textMut,marginLeft:'auto'}}>{filteredCountries.length} countries</span>
+        </div>
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,overflow:'hidden',marginBottom:20}}>
+          <div style={{maxHeight:460,overflowY:'auto'}}>
+            <table style={{width:'100%',borderCollapse:'collapse'}}>
+              <thead><tr>{[{k:'country',l:'Country'},{k:'region',l:'Region'},{k:'oecdRisk',l:'OECD Risk'},{k:'eScore',l:'E Score'},{k:'sScore',l:'S Score'},{k:'gScore',l:'G Score'},{k:'climatVuln',l:'Climate Vuln'},{k:'conflictRisk',l:'Conflict'},{k:'humanRights',l:'HR Status'},{k:'corruptionIdx',l:'CPI'}].map(c=>
+                <th key={c.k} onClick={()=>toggleCountrySort(c.k)} style={{...thS,color:countrySortCol===c.k?T.navy:T.textSec}}>{c.l}{countrySortCol===c.k?(countrySortDir==='asc'?' ^':' v'):''}</th>
+              )}</tr></thead>
+              <tbody>{filteredCountries.map(c=><tr key={c.country}>
+                <td style={{...tdS,fontWeight:700}}>{c.country}</td><td style={tdS}>{c.region}</td>
+                <td style={tdM}><Badge color={c.oecdRisk<=2?'green':c.oecdRisk<=4?'amber':'red'}>{c.oecdRisk}/7</Badge></td>
+                <td style={tdM}>{c.eScore}%</td><td style={tdM}>{c.sScore}%</td><td style={tdM}>{c.gScore}%</td>
+                <td style={tdM}><Badge color={c.climatVuln<40?'green':c.climatVuln<60?'amber':'red'}>{c.climatVuln}%</Badge></td>
+                <td style={tdS}><Badge color={c.conflictRisk==='Low'?'green':c.conflictRisk==='Medium'?'amber':'red'}>{c.conflictRisk}</Badge></td>
+                <td style={tdS}><Badge color={c.humanRights==='Adequate'?'green':c.humanRights==='Concern'?'amber':'red'}>{c.humanRights}</Badge></td>
+                <td style={tdM}>{c.corruptionIdx}</td>
+              </tr>)}</tbody>
+            </table>
+          </div>
+        </div>
+        <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Climate Vulnerability vs Governance Score</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={filteredCountries.slice(0,20)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:10,fill:T.textSec}}/><YAxis dataKey="country" type="category" tick={{fontSize:9,fill:T.textSec}} width={100}/><Tooltip {...tipS}/>
+              <Bar dataKey="climatVuln" fill={T.red} name="Climate Vuln" opacity={0.7}/><Bar dataKey="gScore" fill={T.sage} name="G Score" opacity={0.7}/><Legend/>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>)}
+
+      {tab===3&&(<div>
+        <div style={{display:'flex',gap:8,marginBottom:16}}>
+          {['sector','geography','risk'].map(v=><button key={v} onClick={()=>setAnalyticsView(v)} style={{padding:'8px 16px',background:analyticsView===v?T.navy:T.surface,color:analyticsView===v?'#fff':T.text,border:`1px solid ${T.border}`,borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font,textTransform:'capitalize'}}>{v}</button>)}
+          <button onClick={()=>exportCSV(transactions.map(t=>({project:t.project,sector:t.sector,value:t.valueMn,esgCat:t.esgCat,hostCountry:t.hostCountry,status:t.status})),'portfolio_analytics')} style={{padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font,marginLeft:'auto'}}>Export All</button>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+          {analyticsView==='sector'&&<>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Value by Sector ($M)</div>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={sectorAgg}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9,fill:T.textSec}} angle={-30} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tipS}/><Bar dataKey="value" fill={T.navy} radius={[4,4,0,0]}>{sectorAgg.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Bar></BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Transaction Count by Sector</div>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart><Pie data={sectorAgg} dataKey="count" nameKey="sector" cx="50%" cy="50%" outerRadius={110} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} style={{fontSize:9}}>{sectorAgg.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip {...tipS}/></PieChart>
+              </ResponsiveContainer>
+            </div>
+          </>}
+          {analyticsView==='geography'&&<>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Top 15 Host Countries by Value</div>
+              <ResponsiveContainer width="100%" height={380}>
+                <BarChart data={geoAgg} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/><YAxis dataKey="country" type="category" tick={{fontSize:9,fill:T.textSec}} width={100}/><Tooltip {...tipS}/><Bar dataKey="value" fill={T.sage} radius={[0,4,4,0]}/></BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Regional Distribution</div>
+              <ResponsiveContainer width="100%" height={380}>
+                <PieChart><Pie data={(() => {const m={};transactions.forEach(t=>{const r=countries.find(c=>c.country===t.hostCountry);const reg=r?r.region:'Other';if(!m[reg])m[reg]={region:reg,value:0};m[reg].value+=t.valueMn;});return Object.values(m).sort((a,b)=>b.value-a.value);})()}
+                  dataKey="value" nameKey="region" cx="50%" cy="50%" outerRadius={120} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} style={{fontSize:9}}>
+                  {Array.from({length:10},(_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip {...tipS}/></PieChart>
+              </ResponsiveContainer>
+            </div>
+          </>}
+          {analyticsView==='risk'&&<>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>ESG Category Distribution</div>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart><Pie data={riskDist} dataKey="count" nameKey="cat" cx="50%" cy="50%" outerRadius={110} label>{riskDist.map((e,i)=><Cell key={i} fill={[T.red,T.amber,T.green][i]}/>)}</Pie><Tooltip {...tipS}/><Legend/></PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Avg ESG Scores by Sector</div>
+              <ResponsiveContainer width="100%" height={300}>
+                <RadarChart data={SECTORS.slice(0,8).map((s,i)=>{const ts=transactions.filter(t=>t.sector===s);const avg=(k)=>ts.length?Math.round(ts.reduce((a,t)=>a+t[k],0)/ts.length):0;return {sector:s,E:avg('eScore'),S:avg('sScore'),G:avg('gScore')};})}>
+                  <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="sector" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:9}}/>
+                  <Radar dataKey="E" stroke={T.sage} fill={T.sage} fillOpacity={0.2} name="E"/><Radar dataKey="S" stroke={T.gold} fill={T.gold} fillOpacity={0.2} name="S"/><Radar dataKey="G" stroke={T.navy} fill={T.navy} fillOpacity={0.2} name="G"/><Legend/>
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </>}
+        </div>
+      </div>)}
+
+      {showPanel&&selectedTx&&<div style={{position:'fixed',top:0,right:0,width:500,height:'100vh',background:T.surface,borderLeft:`2px solid ${T.border}`,boxShadow:'-4px 0 24px rgba(0,0,0,0.08)',zIndex:1000,overflowY:'auto',padding:24}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <h2 style={{fontSize:18,fontWeight:800,color:T.navy,margin:0}}>{selectedTx.project}</h2>
+          <button onClick={()=>setShowPanel(false)} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+          {[{l:'Sector',v:selectedTx.sector},{l:'ECA',v:selectedTx.eca},{l:'Host Country',v:selectedTx.hostCountry},{l:'Value',v:`$${selectedTx.valueMn}M`},{l:'Tenor',v:`${selectedTx.tenorYrs}Y`},{l:'ESG Cat',v:selectedTx.esgCat},{l:'EP Cat',v:selectedTx.epCat},{l:'Status',v:selectedTx.status},{l:'Carbon',v:`${selectedTx.carbonIntensity} tCO2e/$M`},{l:'Water Risk',v:selectedTx.waterRisk},{l:'Biodiversity',v:selectedTx.biodiversityRisk},{l:'Last Assessment',v:selectedTx.lastAssessment}].map((d,i)=><div key={i}><div style={{fontSize:10,color:T.textMut}}>{d.l}</div><div style={{fontWeight:700,fontSize:13}}>{d.v}</div></div>)}
+        </div>
+        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>IFC PS Scores</div>
+        {selectedTx.ifcScreening.map((s,i)=><div key={i} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',borderBottom:`1px solid ${T.border}`,fontSize:12}}>
+          <span>{s.standard}</span><span><Badge color={s.status==='Compliant'?'green':s.status==='Partial'?'amber':'red'}>{s.score}%</Badge></span>
+        </div>)}
+      </div>}
     </div>
-  );
+  </div>);
 }
