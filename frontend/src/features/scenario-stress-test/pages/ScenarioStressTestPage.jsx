@@ -7,19 +7,25 @@ import { NGFS_PHASE4, SECTOR_PD_UPLIFT, SECTOR_LGD_UPLIFT } from '../../../servi
 
 // ─── Theme ───────────────────────────────────────────────────────────────────
 const T = {
-  bg:'#0f172a', surface:'#1e293b', border:'#334155', navy:'#1e3a5f',
-  gold:'#f59e0b', sage:'#10b981', text:'#f1f5f9', textSec:'#94a3b8',
-  textMut:'#64748b', red:'#ef4444', green:'#10b981', amber:'#f59e0b',
-  teal:'#14b8a6', font:"'Inter',sans-serif",
+  bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
+  border:'#e5e0d8', borderL:'#d5cfc5',
+  navy:'#1b3a5c', navyL:'#2c5a8c',
+  gold:'#c5a96a', goldL:'#d4be8a',
+  sage:'#5a8a6a', sageL:'#7ba67d', teal:'#5a8a6a',
+  text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae',
+  red:'#dc2626', green:'#16a34a', amber:'#d97706',
+  card:'0 1px 4px rgba(27,58,92,0.06)',
+  cardH:'0 4px 16px rgba(27,58,92,0.1)',
+  font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
 };
-const ACCENT = '#ef4444';
+const ACCENT = '#dc2626';
 
 // ─── Seeded random ────────────────────────────────────────────────────────────
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 // ─── NGFS Phase IV scenarios (aligned to data service) ───────────────────────
 const SCENARIOS = [
-  { id:'nz2050', name:'Net Zero 2050',        category:'Orderly',    color:'#10b981',
+  { id:'nz2050', name:'Net Zero 2050',        category:'Orderly',    color:'#5a8a6a',
     temp:1.5,  carbon2030:130, carbon2050:450, gdp:-1.1, physRisk:2.8, transRisk:8.2,
     compoundFactor:0.04, urgency:1.0 },
   { id:'b2c',   name:'Below 2°C',             category:'Orderly',    color:'#3b82f6',
@@ -34,7 +40,7 @@ const SCENARIOS = [
   { id:'ndc',   name:'Nationally Determined', category:'Hot House',  color:'#a78bfa',
     temp:2.5,  carbon2030:45,  carbon2050:190, gdp:-5.5, physRisk:7.4, transRisk:5.2,
     compoundFactor:0.07, urgency:1.2 },
-  { id:'cp',    name:'Current Policies',      category:'Hot House',  color:'#ef4444',
+  { id:'cp',    name:'Current Policies',      category:'Hot House',  color:'#dc2626',
     temp:3.0,  carbon2030:30,  carbon2050:120, gdp:-8.1, physRisk:9.5, transRisk:3.1,
     compoundFactor:0.09, urgency:0.7 },
 ];
@@ -82,13 +88,13 @@ const CREDIT_SECTORS = SECTOR_PD_UPLIFT.map((pd, i) => ({
 
 // ─── Transmission channels ────────────────────────────────────────────────────
 const CHANNELS = [
-  { id:'carbon',   label:'Carbon Price',       color:'#f59e0b',
+  { id:'carbon',   label:'Carbon Price',       color:'#c5a96a',
     desc:'Rising carbon costs compress margins for high-emission corporates, reducing cash flow and creditworthiness.',
     affected:'Oil & Gas, Coal, Cement, Steel', leadTime:'2025–2030', base:28 },
-  { id:'stranded', label:'Stranded Assets',    color:'#ef4444',
+  { id:'stranded', label:'Stranded Assets',    color:'#dc2626',
     desc:'Fossil fuel reserves and infrastructure become uneconomical; balance sheet impairments accelerate.',
     affected:'Coal, Oil & Gas, Utilities (Fossil)', leadTime:'2028–2035', base:22 },
-  { id:'physical', label:'Physical Damage',    color:'#14b8a6',
+  { id:'physical', label:'Physical Damage',    color:'#5a8a6a',
     desc:'Direct asset damage from extreme weather and chronic physical risks disrupt operations.',
     affected:'Agriculture, Real Estate, Insurance', leadTime:'2030–2050', base:18 },
   { id:'macro',    label:'Macro/GDP',          color:'#a78bfa',
@@ -283,9 +289,9 @@ export default function ScenarioStressTestPage() {
   const esVarRatio = +(maxES.es975 / maxES.var99).toFixed(2);
 
   const tailDecomp = [
-    { name:'Equity Repricing', value:42, color:'#ef4444' },
-    { name:'Credit Migration', value:28, color:'#f59e0b' },
-    { name:'Physical Damage',  value:18, color:'#14b8a6' },
+    { name:'Equity Repricing', value:42, color:'#dc2626' },
+    { name:'Credit Migration', value:28, color:'#c5a96a' },
+    { name:'Physical Damage',  value:18, color:'#5a8a6a' },
     { name:'Macro Contagion',  value:12, color:'#a78bfa' },
   ];
 

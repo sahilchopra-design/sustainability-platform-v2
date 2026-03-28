@@ -6,10 +6,16 @@ import {
 import { NGFS_PHASE4, SECTOR_PD_UPLIFT, getCountryPhysicalRisk } from '../../../services/climateRiskDataService';
 
 const T = {
-  bg: '#0f172a', surface: '#1e293b', border: '#334155', navy: '#1e3a5f',
-  gold: '#f59e0b', sage: '#10b981', text: '#f1f5f9', textSec: '#94a3b8',
-  textMut: '#64748b', red: '#ef4444', green: '#10b981', amber: '#f59e0b',
-  teal: '#14b8a6', font: "'Inter',sans-serif",
+  bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
+  border:'#e5e0d8', borderL:'#d5cfc5',
+  navy:'#1b3a5c', navyL:'#2c5a8c',
+  gold:'#c5a96a', goldL:'#d4be8a',
+  sage:'#5a8a6a', sageL:'#7ba67d', teal:'#5a8a6a',
+  text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae',
+  red:'#dc2626', green:'#16a34a', amber:'#d97706',
+  card:'0 1px 4px rgba(27,58,92,0.06)',
+  cardH:'0 4px 16px rgba(27,58,92,0.1)',
+  font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
 };
 const ACCENT = '#0f766e';
 
@@ -565,10 +571,10 @@ function Tab6({ scenario }) {
         <div style={{ color: T.textSec, fontSize: 12, lineHeight: 1.8 }}>
           Cross-module analysis — See:{' '}
           <span style={{ color: T.teal }}>Stress Test Orchestrator</span>{' '}
-          <code style={{ color: T.gold, background: '#0f172a', padding: '1px 5px', borderRadius: 3 }}>/stress-test-orchestrator</code>
+          <code style={{ color: T.gold, background: '#f6f4f0', padding: '1px 5px', borderRadius: 3 }}>/stress-test-orchestrator</code>
           {' | '}
           <span style={{ color: T.teal }}>Copula Tail Risk</span>{' '}
-          <code style={{ color: T.gold, background: '#0f172a', padding: '1px 5px', borderRadius: 3 }}>/copula-tail-risk</code>
+          <code style={{ color: T.gold, background: '#f6f4f0', padding: '1px 5px', borderRadius: 3 }}>/copula-tail-risk</code>
         </div>
       </div>
     </div>

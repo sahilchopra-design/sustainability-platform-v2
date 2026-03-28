@@ -8,10 +8,16 @@ import { NGFS_PHASE4, SECTOR_PD_UPLIFT, SECTOR_LGD_UPLIFT } from '../../../servi
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
-  bg: '#0f172a', surface: '#1e293b', border: '#334155', navy: '#1e3a5f',
-  gold: '#f59e0b', sage: '#10b981', text: '#f1f5f9', textSec: '#94a3b8',
-  textMut: '#64748b', red: '#ef4444', green: '#10b981', amber: '#f59e0b',
-  teal: '#14b8a6', font: "'Inter',sans-serif",
+  bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
+  border:'#e5e0d8', borderL:'#d5cfc5',
+  navy:'#1b3a5c', navyL:'#2c5a8c',
+  gold:'#c5a96a', goldL:'#d4be8a',
+  sage:'#5a8a6a', sageL:'#7ba67d', teal:'#5a8a6a',
+  text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae',
+  red:'#dc2626', green:'#16a34a', amber:'#d97706',
+  card:'0 1px 4px rgba(27,58,92,0.06)',
+  cardH:'0 4px 16px rgba(27,58,92,0.1)',
+  font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
 };
 const ACCENT = '#7c3aed';
 
@@ -31,8 +37,8 @@ const SCENARIO_LABELS = {
   dt: 'Delayed Trans.', ndc: 'Nationally Det.', cp: 'Current Policies',
 };
 const SCENARIO_COLORS = {
-  nz2050: '#10b981', b2c: '#14b8a6', dnz: '#f59e0b',
-  dt: '#f97316', ndc: '#ef4444', cp: '#7f1d1d',
+  nz2050: '#5a8a6a', b2c: '#5a8a6a', dnz: '#c5a96a',
+  dt: '#f97316', ndc: '#dc2626', cp: '#7f1d1d',
 };
 // Map local lowercase IDs to NGFS_PHASE4 array index
 const NGFS_IDX = { nz2050: 0, b2c: 1, dnz: 4, dt: 3, ndc: 5, cp: 5 };
