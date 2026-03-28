@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AP — Supply Chain ESG & Scope 3 Value Chain Intelligence
+import Scope3UpstreamTrackerPage from './features/scope3-upstream-tracker/pages/Scope3UpstreamTrackerPage';
+import SupplierEngagementPage from './features/supplier-engagement/pages/SupplierEngagementPage';
+import CommodityDeforestationPage from './features/commodity-deforestation/pages/CommodityDeforestationPage';
+import ConflictMineralsPage from './features/conflict-minerals/pages/ConflictMineralsPage';
+import SupplyChainResiliencePage from './features/supply-chain-resilience/pages/SupplyChainResiliencePage';
+import SupplyChainEsgHubPage from './features/supply-chain-esg-hub/pages/SupplyChainEsgHubPage';
 // Sprint AO — Scope 4 / Avoided Emissions & Climate Solutions
 import Scope4AvoidedEmissionsPage from './features/scope4-avoided-emissions/pages/Scope4AvoidedEmissionsPage';
 import ProductCarbonHandprintPage from './features/product-carbon-handprint/pages/ProductCarbonHandprintPage';
@@ -527,6 +534,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Supply Chain ESG & Scope 3', icon: '🔗', color: '#4a1d96', items: [
+    { path: '/supply-chain-esg-hub',       label: 'Supply Chain ESG Hub',       badge: 'Hub · Scope3+Suppliers+EUDR+Minerals+Resilience · Board',          code: 'EP-AP6' },
+    { path: '/scope3-upstream-tracker',    label: 'Scope 3 Upstream Tracker',   badge: 'GHG Cat 1-8 · 120 Cos · 200 Suppliers · Spend/Activity/Specific', code: 'EP-AP1' },
+    { path: '/supplier-engagement',        label: 'Supplier Engagement',        badge: 'CRM · 150 Suppliers · 6-Dim ESG · Corrective Actions · CDP',      code: 'EP-AP2' },
+    { path: '/commodity-deforestation',    label: 'Commodity Deforestation',    badge: 'EUDR · 7 Commodities · 100 Cos · 15 Certifications · Satellite',  code: 'EP-AP3' },
+    { path: '/conflict-minerals',          label: 'Conflict Minerals',          badge: 'CRMA · 12 Minerals · OECD DD · 40 Smelters · RMAP · Recycling',   code: 'EP-AP4' },
+    { path: '/supply-chain-resilience',    label: 'Supply Chain Resilience',    badge: '100 Nodes · 8 Hazards · Disruption Model · Adaptation ROI',       code: 'EP-AP5' },
   ]},
   { label: 'Avoided Emissions & Climate Solutions', icon: '💚', color: '#065f46', items: [
     { path: '/avoided-emissions-hub',        label: 'Avoided Emissions Hub',        badge: 'Hub · Scope 4 · Handprint · Enablement · Taxonomy · Board',      code: 'EP-AO6' },
@@ -1399,6 +1414,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AP — Supply Chain ESG & Scope 3 Value Chain Intelligence */}
+            <Route path="/supply-chain-esg-hub"       element={<SupplyChainEsgHubPage />} />
+            <Route path="/scope3-upstream-tracker"    element={<Scope3UpstreamTrackerPage />} />
+            <Route path="/supplier-engagement"        element={<SupplierEngagementPage />} />
+            <Route path="/commodity-deforestation"    element={<CommodityDeforestationPage />} />
+            <Route path="/conflict-minerals"          element={<ConflictMineralsPage />} />
+            <Route path="/supply-chain-resilience"    element={<SupplyChainResiliencePage />} />
             {/* Sprint AO — Scope 4 / Avoided Emissions & Climate Solutions */}
             <Route path="/avoided-emissions-hub"       element={<AvoidedEmissionsHubPage />} />
             <Route path="/scope4-avoided-emissions"    element={<Scope4AvoidedEmissionsPage />} />
