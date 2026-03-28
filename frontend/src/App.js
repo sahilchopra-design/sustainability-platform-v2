@@ -309,8 +309,16 @@ import ProductAnatomyPage from './features/product-anatomy/pages/ProductAnatomyP
 import EpdLcaDatabasePage from './features/epd-lca-database/pages/EpdLcaDatabasePage';
 
 /* ═══════════════════════════════════════════════════════════════════
-   THEME — Light Pastel · Navy / Gold / Sage (AA Impact Inc. brand)
+   THEME — Institutional Light · Navy / Gold / Sage (AA Impact brand)
+   Font: DM Sans (headlines) + JetBrains Mono (data)
    ═══════════════════════════════════════════════════════════════════ */
+// Font loader — non-blocking Google Fonts injection
+if (typeof window !== 'undefined' && !document.querySelector('link[href*="DM+Sans"]')) {
+  const _fl = document.createElement('link'); _fl.rel = 'stylesheet';
+  _fl.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300..800&family=JetBrains+Mono:wght@400;500;600;700&display=swap';
+  document.head.appendChild(_fl);
+}
+
 const T = {
   bg:       '#f6f4f0',       // warm cream
   surface:  '#ffffff',
@@ -318,17 +326,24 @@ const T = {
   border:   '#e5e0d8',
   borderL:  '#d5cfc5',
   navy:     '#1b3a5c',       // brand primary
+  navyD:    '#122a44',       // deep navy
   navyL:    '#2c5a8c',
   gold:     '#c5a96a',       // brand accent
   goldL:    '#d4be8a',
+  goldD:    '#a8903a',
   sage:     '#5a8a6a',       // leaf green
   sageL:    '#7ba67d',
+  teal:     '#5a8a6a',       // alias for backward compat
   text:     '#1b3a5c',       // navy text
   textSec:  '#5c6b7e',
   textMut:  '#9aa3ae',
-  card:     '0 1px 4px rgba(27,58,92,0.06)',
-  cardH:    '0 4px 16px rgba(27,58,92,0.1)',
-  font:     "'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif",
+  red:      '#dc2626',
+  green:    '#16a34a',
+  amber:    '#d97706',
+  card:     '0 1px 3px rgba(27,58,92,0.04), 0 0 0 1px rgba(27,58,92,0.03)',
+  cardH:    '0 8px 24px rgba(27,58,92,0.08), 0 0 0 1px rgba(27,58,92,0.06)',
+  font:     "'DM Sans', 'SF Pro Display', system-ui, -apple-system, sans-serif",
+  mono:     "'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace",
 };
 const PASTEL = ['#4a7faa','#5a9aaa','#5a8a6a','#7ba67d','#8a7a5a','#a08a5a','#c5a96a'];
 
@@ -689,148 +704,187 @@ const TREND_DATA = Array.from({length: 12}, (_, i) => ({
   coverage: Math.round(55 + i * 3.5 + Math.cos(i) * 2),
 }));
 
+/* ── Shared tooltip style ── */
+const TIP = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 4, color: T.text, fontSize: 11, fontFamily: T.mono, boxShadow: '0 4px 12px rgba(27,58,92,0.08)' };
+/* ── Panel wrapper ── */
+const Panel = ({ children, style, pad = true }) => (
+  <div style={{
+    background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, boxShadow: T.card,
+    ...(pad ? { padding: '16px 18px' } : {}), ...style,
+  }}>{children}</div>
+);
+/* ── Section label ── */
+const SectionLabel = ({ children, count, right }) => (
+  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
+    <span style={{ fontSize: 10, fontWeight: 700, color: T.navy, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{children}</span>
+    {count != null && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.gold, fontWeight: 600 }}>{count}</span>}
+    {right && <span style={{ marginLeft: 'auto', fontSize: 10, color: T.textMut }}>{right}</span>}
+  </div>
+);
+
 function Dashboard() {
   const navigate = useNavigate();
-  const pieData = NAV_GROUPS.map((g, i) => ({ name: g.label.split(' ')[0], value: g.items.length, color: PASTEL[i] }));
-  const tipStyle = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text, fontSize: 12 };
+  const [domainFilter, setDomainFilter] = useState('');
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+  const pieData = NAV_GROUPS.map((g, i) => ({ name: g.label.split('&')[0].trim().split(' ').slice(0,2).join(' '), value: g.items.length, color: g.color || PASTEL[i % PASTEL.length] }));
+  const filteredGroups = domainFilter ? NAV_GROUPS.filter(g => g.label.toLowerCase().includes(domainFilter.toLowerCase()) || g.items.some(i => i.label.toLowerCase().includes(domainFilter.toLowerCase()))) : NAV_GROUPS;
 
   return (
-    <div style={{ padding: '28px 32px', maxWidth: 1400, margin: '0 auto' }}>
-      {/* Hero */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
+    <div style={{ padding: '20px 24px', maxWidth: 1480, margin: '0 auto' }}>
+      {/* ── Command Center Header ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, color: T.navy, margin: 0, letterSpacing: '-0.02em' }}>Platform Overview</h1>
-          <p style={{ color: T.textSec, fontSize: 13, marginTop: 6 }}>
-            AA Impact Inc. — A2 Intelligence Risk Analytics | 180+ modules across 38 domains | 10 global regions
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: T.navy, margin: 0, letterSpacing: '-0.03em' }}>Platform Command Center</h1>
+            <div style={{ height: 16, width: 1, background: T.border }} />
+            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMut, fontWeight: 500 }}>{dateStr}</span>
+          </div>
+          <p style={{ color: T.textSec, fontSize: 12, marginTop: 4, fontWeight: 400 }}>
+            AA Impact Inc. — A2 Intelligence Risk Analytics
           </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eaf5ee', padding: '6px 14px', borderRadius: 20, border: '1px solid #c5e0cc' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.sage }} />
-          <span style={{ fontSize: 11, color: T.sage, fontWeight: 600, letterSpacing: '0.06em' }}>ALL SYSTEMS ONLINE</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 4, border: `1px solid ${T.border}`, background: T.surface }}>
+            <div style={{ width: 7, height: 7, borderRadius: '50%', background: T.sage, boxShadow: `0 0 6px ${T.sage}` }} />
+            <span style={{ fontSize: 10, fontFamily: T.mono, color: T.sage, fontWeight: 600, letterSpacing: '0.06em' }}>SYSTEMS NOMINAL</span>
+          </div>
         </div>
       </div>
 
-      {/* KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14, marginBottom: 28 }}>
+      {/* ── KPI Strip ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10, marginBottom: 20 }}>
         {[
-          { label: 'Active Modules', value: '180+', sub: 'Sprints A–AJ · 38 domains' },
-          { label: 'Regulatory Frameworks', value: '60+', sub: 'CSRD · SFDR · ISSB · SEC · TCFD' },
-          { label: 'API Endpoints', value: '400+', sub: 'FastAPI v0.110 · Supabase PG' },
-          { label: 'Regions', value: '10', sub: 'APAC / GCC / Americas' },
-          { label: 'Data Points', value: '1,222', sub: 'ESRS datapoints mapped' },
+          { label: 'MODULES', value: ALL_ITEMS.length, delta: '+6', deltaUp: true, sub: 'Sprint AJ' },
+          { label: 'DOMAINS', value: NAV_GROUPS.length, delta: null, sub: '10 Regions' },
+          { label: 'FRAMEWORKS', value: '60+', delta: '+4', deltaUp: true, sub: 'CSRD·SFDR·ISSB' },
+          { label: 'API ENDPOINTS', value: '400+', delta: null, sub: 'FastAPI v0.110' },
+          { label: 'ESRS DATAPOINTS', value: '1,222', delta: null, sub: 'Mapped & Validated' },
+          { label: 'COVERAGE', value: '82%', delta: '+3%', deltaUp: true, sub: 'Regulatory avg.' },
         ].map((s) => (
           <div key={s.label} style={{
-            background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: '18px 20px',
-            borderTop: `3px solid ${T.gold}`, boxShadow: T.card, transition: 'box-shadow 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.boxShadow = T.cardH}
-          onMouseLeave={e => e.currentTarget.style.boxShadow = T.card}>
-            <div style={{ fontSize: 10, color: T.textSec, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 8 }}>{s.label}</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: T.navy, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: T.textMut, marginTop: 4 }}>{s.sub}</div>
+            background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 16px',
+            borderBottom: `2px solid ${T.gold}`, boxShadow: T.card,
+          }}>
+            <div style={{ fontSize: 9, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 6 }}>{s.label}</div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <span style={{ fontSize: 24, fontWeight: 700, color: T.navy, fontFamily: T.mono, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{s.value}</span>
+              {s.delta && <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 600, color: s.deltaUp ? T.sage : T.red }}>{s.delta}</span>}
+            </div>
+            <div style={{ fontSize: 10, color: T.textMut, marginTop: 4 }}>{s.sub}</div>
           </div>
         ))}
       </div>
 
-      {/* Charts Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 28 }}>
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, boxShadow: T.card }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Module Distribution</div>
-          <ResponsiveContainer width="100%" height={180}>
+      {/* ── Charts Row ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr 1fr', gap: 12, marginBottom: 20 }}>
+        {/* Module Distribution */}
+        <Panel>
+          <SectionLabel>Distribution</SectionLabel>
+          <ResponsiveContainer width="100%" height={160}>
             <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={2} stroke={T.surface} strokeWidth={2}>
-                {pieData.map((e, i) => <Cell key={i} fill={e.color} />)}
+              <Pie data={pieData.slice(0,10)} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={36} outerRadius={64} paddingAngle={1} stroke={T.surface} strokeWidth={2}>
+                {pieData.slice(0,10).map((e, i) => <Cell key={i} fill={e.color} />)}
               </Pie>
-              <Tooltip formatter={(val, name) => [`${val} modules`, name]} contentStyle={tipStyle} />
+              <Tooltip formatter={(val, name) => [`${val}`, name]} contentStyle={TIP} />
             </PieChart>
           </ResponsiveContainer>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 14px', marginTop: 6 }}>
-            {pieData.map(d => (
-              <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: T.textSec }}>
-                <div style={{ width: 8, height: 8, borderRadius: 2, background: d.color }} />
-                {d.name} ({d.value})
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 8px', marginTop: 4 }}>
+            {pieData.slice(0,10).map(d => (
+              <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, color: T.textSec, overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                <div style={{ width: 6, height: 6, borderRadius: 1, background: d.color, flexShrink: 0 }} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.name}</span>
+                <span style={{ fontFamily: T.mono, color: T.textMut, fontWeight: 600, marginLeft: 'auto' }}>{d.value}</span>
               </div>
             ))}
           </div>
-        </div>
+        </Panel>
 
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, boxShadow: T.card }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Regional Regulatory Coverage %</div>
-          <ResponsiveContainer width="100%" height={200}>
+        {/* Regional Coverage */}
+        <Panel>
+          <SectionLabel right="% Regulatory Alignment">Regional Coverage</SectionLabel>
+          <ResponsiveContainer width="100%" height={220}>
             <BarChart data={COVERAGE_DATA} layout="vertical" margin={{ left: 0 }}>
-              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: T.textMut }} axisLine={{ stroke: T.border }} tickLine={false} />
-              <YAxis type="category" dataKey="region" width={65} tick={{ fontSize: 10, fill: T.textSec }} axisLine={false} tickLine={false} />
-              <Tooltip formatter={(v) => `${v}%`} contentStyle={tipStyle} />
-              <Bar dataKey="coverage" radius={[0, 4, 4, 0]}>
-                {COVERAGE_DATA.map((e, i) => <Cell key={i} fill={e.coverage >= 85 ? T.sage : e.coverage >= 75 ? T.gold : T.textMut} />)}
+              <CartesianGrid horizontal={false} stroke={T.border} strokeDasharray="2 4" />
+              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 9, fill: T.textMut, fontFamily: T.mono }} axisLine={{ stroke: T.border }} tickLine={false} />
+              <YAxis type="category" dataKey="region" width={60} tick={{ fontSize: 10, fill: T.textSec, fontWeight: 500 }} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => [`${v}%`, 'Coverage']} contentStyle={TIP} />
+              <Bar dataKey="coverage" radius={[0, 2, 2, 0]} barSize={14}>
+                {COVERAGE_DATA.map((e, i) => <Cell key={i} fill={e.coverage >= 85 ? T.sage : e.coverage >= 75 ? T.gold : '#bec5cc'} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </Panel>
 
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 20, boxShadow: T.card }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Platform Growth Trend</div>
-          <ResponsiveContainer width="100%" height={200}>
+        {/* Growth Trend */}
+        <Panel>
+          <SectionLabel right="12-Month Rolling">Growth Trajectory</SectionLabel>
+          <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={TREND_DATA}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: T.textMut }} axisLine={{ stroke: T.border }} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: T.textMut }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={tipStyle} />
-              <Area type="monotone" dataKey="modules" stroke={T.sage} fill="rgba(90,138,106,0.12)" name="Modules" strokeWidth={2} />
-              <Area type="monotone" dataKey="coverage" stroke={T.gold} fill="rgba(197,169,106,0.1)" name="Coverage %" strokeWidth={2} />
+              <CartesianGrid strokeDasharray="2 4" stroke={T.border} vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 9, fill: T.textMut, fontFamily: T.mono }} axisLine={{ stroke: T.border }} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: T.textMut, fontFamily: T.mono }} axisLine={false} tickLine={false} width={30} />
+              <Tooltip contentStyle={TIP} />
+              <Area type="monotone" dataKey="modules" stroke={T.navy} fill="rgba(27,58,92,0.06)" name="Modules" strokeWidth={2} dot={false} />
+              <Area type="monotone" dataKey="coverage" stroke={T.gold} fill="rgba(197,169,106,0.06)" name="Coverage %" strokeWidth={2} dot={false} />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+        </Panel>
       </div>
 
-      {/* Domain Cards */}
-      <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Domains</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 14, marginBottom: 32 }}>
-        {NAV_GROUPS.map((g) => (
-          <div key={g.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, overflow: 'hidden', boxShadow: T.card, transition: 'box-shadow 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.boxShadow = T.cardH}
-            onMouseLeave={e => e.currentTarget.style.boxShadow = T.card}>
-            <div style={{ padding: '14px 16px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', gap: 10, background: `${g.color}0a` }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: `${g.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>{g.icon}</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>{g.label}</div>
-                <div style={{ fontSize: 11, color: T.textMut }}>{g.items.length} modules</div>
+      {/* ── Domain Grid ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+        <SectionLabel count={NAV_GROUPS.length}>Domains</SectionLabel>
+        <input type="text" placeholder="Filter domains..." value={domainFilter} onChange={e => setDomainFilter(e.target.value)}
+          style={{ padding: '5px 10px', fontSize: 11, borderRadius: 4, border: `1px solid ${T.border}`, background: T.surface, color: T.text, fontFamily: T.font, outline: 'none', width: 180 }}
+          onFocus={e => e.target.style.borderColor = T.gold} onBlur={e => e.target.style.borderColor = T.border} />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10, marginBottom: 28 }}>
+        {filteredGroups.map((g) => (
+          <div key={g.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, overflow: 'hidden', boxShadow: T.card, transition: 'box-shadow 0.18s, transform 0.18s', borderLeft: `3px solid ${g.color}` }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = T.cardH; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = T.card; e.currentTarget.style.transform = 'none'; }}>
+            <div style={{ padding: '12px 14px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 14 }}>{g.icon}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: T.navy }}>{g.label}</span>
               </div>
+              <span style={{ fontSize: 16, fontFamily: T.mono, fontWeight: 700, color: g.color }}>{g.items.length}</span>
             </div>
-            <div style={{ padding: '8px 12px' }}>
-              {g.items.slice(0, 4).map(item => (
+            <div style={{ padding: '6px 10px' }}>
+              {g.items.slice(0, 3).map(item => (
                 <div key={item.path} onClick={() => navigate(item.path)} style={{
-                  padding: '7px 8px', borderRadius: 6, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  fontSize: 12, color: T.textSec, transition: 'background 0.15s, color 0.15s',
-                }} onMouseEnter={e => { e.currentTarget.style.background = T.surfaceH; e.currentTarget.style.color = T.navy; }}
-                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = T.textSec; }}>
-                  <span>{item.label}</span>
-                  <span style={{ fontSize: 9, color: g.color, fontWeight: 700, background: `${g.color}14`, padding: '2px 6px', borderRadius: 4 }}>{item.code}</span>
+                  padding: '5px 6px', borderRadius: 3, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  fontSize: 11, color: T.textSec, transition: 'background 0.12s',
+                }} onMouseEnter={e => { e.currentTarget.style.background = T.surfaceH; }}
+                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>{item.label}</span>
+                  <span style={{ fontSize: 8, fontFamily: T.mono, color: g.color, fontWeight: 700, flexShrink: 0 }}>{item.code}</span>
                 </div>
               ))}
-              {g.items.length > 4 && (
-                <div style={{ padding: '4px 8px', fontSize: 11, color: T.textMut }}>+{g.items.length - 4} more</div>
+              {g.items.length > 3 && (
+                <div onClick={() => navigate(g.items[0].path)} style={{ padding: '4px 6px', fontSize: 10, fontFamily: T.mono, color: T.textMut, cursor: 'pointer' }}>+{g.items.length - 3} more →</div>
               )}
             </div>
           </div>
         ))}
       </div>
 
-      {/* All Modules */}
-      <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 14 }}>All {ALL_ITEMS.length} Modules</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 10 }}>
+      {/* ── Full Module Registry ── */}
+      <SectionLabel count={ALL_ITEMS.length}>Module Registry</SectionLabel>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 6 }}>
         {ALL_ITEMS.map(n => {
           const grp = NAV_GROUPS.find(g => g.items.includes(n));
           return (
             <div key={n.path} onClick={() => navigate(n.path)} style={{
-              padding: '12px 14px', borderRadius: 10, border: `1px solid ${T.border}`, background: T.surface, cursor: 'pointer',
-              borderLeft: `3px solid ${grp?.color || T.textMut}`, transition: 'box-shadow 0.2s', boxShadow: T.card,
-            }} onMouseEnter={e => e.currentTarget.style.boxShadow = T.cardH}
-               onMouseLeave={e => e.currentTarget.style.boxShadow = T.card}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: T.navy, marginBottom: 3 }}>{n.label}</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 10, color: T.textMut }}>{n.badge}</span>
-                <span style={{ fontSize: 9, color: grp?.color, fontWeight: 700 }}>{n.code}</span>
+              padding: '10px 12px', borderRadius: 4, border: `1px solid ${T.border}`, background: T.surface, cursor: 'pointer',
+              borderLeft: `3px solid ${grp?.color || T.textMut}`, transition: 'box-shadow 0.15s, background 0.15s', boxShadow: 'none',
+            }} onMouseEnter={e => { e.currentTarget.style.boxShadow = T.cardH; e.currentTarget.style.background = T.surfaceH; }}
+               onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = T.surface; }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: T.navy, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.label}</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 9, color: T.textMut, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '70%' }}>{n.badge}</span>
+                <span style={{ fontSize: 8, fontFamily: T.mono, color: grp?.color, fontWeight: 700 }}>{n.code}</span>
               </div>
             </div>
           );
@@ -841,7 +895,7 @@ function Dashboard() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   SIDEBAR — Navy with gold accents
+   SIDEBAR — Institutional Navy · Gold accent · Terminal density
    ═══════════════════════════════════════════════════════════════════ */
 function Sidebar({ search, setSearch, sidebarOpen }) {
   const location = useLocation();
@@ -860,61 +914,72 @@ function Sidebar({ search, setSearch, sidebarOpen }) {
 
   return (
     <nav style={{
-      width: 255, background: T.navy, flexShrink: 0, display: 'flex', flexDirection: 'column',
-      borderRight: '1px solid #244a6e', height: '100%', overflow: 'hidden',
+      width: 252, background: T.navy, flexShrink: 0, display: 'flex', flexDirection: 'column',
+      borderRight: `1px solid ${T.navyD}`, height: '100%', overflow: 'hidden',
     }}>
       {/* Search */}
-      <div style={{ padding: '14px 12px 8px' }}>
-        <input type="text" placeholder="Search modules..." value={search} onChange={e => setSearch(e.target.value)}
-          style={{
-            width: '100%', padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
-            color: '#e8e4dd', fontSize: 12, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-          }}
-          onFocus={e => e.target.style.borderColor = T.gold}
-          onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.12)'}
-        />
+      <div style={{ padding: '10px 10px 6px' }}>
+        <div style={{ position: 'relative' }}>
+          <span style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 11, color: 'rgba(255,255,255,0.25)', pointerEvents: 'none' }}>⌕</span>
+          <input type="text" placeholder="Search modules..." value={search} onChange={e => setSearch(e.target.value)}
+            style={{
+              width: '100%', padding: '7px 10px 7px 26px', borderRadius: 4, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
+              color: '#e0dcd4', fontSize: 11, outline: 'none', fontFamily: T.font, boxSizing: 'border-box', transition: 'border-color 0.15s, background 0.15s',
+            }}
+            onFocus={e => { e.target.style.borderColor = T.gold; e.target.style.background = 'rgba(255,255,255,0.1)'; }}
+            onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; e.target.style.background = 'rgba(255,255,255,0.06)'; }}
+          />
+        </div>
+        {search && <div style={{ fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.3)', padding: '4px 2px 0', letterSpacing: '0.04em' }}>{filtered.reduce((a,g) => a + g.items.length, 0)} results</div>}
       </div>
 
-      {/* Nav */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 6px 16px' }}>
-        {filtered.map(group => (
-          <div key={group.label} style={{ marginBottom: 2 }}>
-            <div onClick={() => toggle(group.label)} style={{
-              padding: '8px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
-              borderRadius: 6, userSelect: 'none',
-            }}>
-              <span style={{ fontSize: 13 }}>{group.icon}</span>
-              <span style={{ fontSize: 11, fontWeight: 600, color: T.goldL, flex: 1 }}>{group.label}</span>
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 600, background: 'rgba(255,255,255,0.06)', padding: '1px 6px', borderRadius: 4 }}>{group.items.length}</span>
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', transform: collapsed[group.label] ? 'rotate(-90deg)' : '', transition: 'transform 0.15s' }}>{'\u25BE'}</span>
+      {/* Nav Groups */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 6px 12px' }}>
+        {filtered.map(group => {
+          const isGroupActive = group.items.some(i => i.path === location.pathname);
+          return (
+            <div key={group.label} style={{ marginBottom: 1 }}>
+              <div onClick={() => toggle(group.label)} style={{
+                padding: '7px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
+                borderRadius: 4, userSelect: 'none', borderLeft: isGroupActive ? `2px solid ${T.gold}` : '2px solid transparent',
+                transition: 'background 0.12s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                <span style={{ fontSize: 12, width: 18, textAlign: 'center' }}>{group.icon}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: isGroupActive ? T.gold : 'rgba(255,255,255,0.6)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.label}</span>
+                <span style={{ fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.3)', fontWeight: 600, minWidth: 16, textAlign: 'right' }}>{group.items.length}</span>
+                <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.2)', transform: collapsed[group.label] ? 'rotate(-90deg)' : '', transition: 'transform 0.12s', marginLeft: 2 }}>▾</span>
+              </div>
+              {!collapsed[group.label] && group.items.map(n => {
+                const isActive = location.pathname === n.path;
+                return (
+                  <NavLink key={n.path} to={n.path} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '5px 8px 5px 30px', borderRadius: 3, marginBottom: 0, textDecoration: 'none',
+                    background: isActive ? 'rgba(197,169,106,0.15)' : 'transparent',
+                    borderLeft: isActive ? `2px solid ${T.gold}` : '2px solid transparent',
+                    transition: 'background 0.1s, border-color 0.1s',
+                  }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <span style={{ fontSize: 11, fontWeight: isActive ? 600 : 400, color: isActive ? T.gold : 'rgba(255,255,255,0.55)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.label}</span>
+                    <span style={{ fontSize: 8, fontFamily: T.mono, fontWeight: 600, color: isActive ? T.gold : 'rgba(255,255,255,0.18)', flexShrink: 0, marginLeft: 6 }}>{n.code}</span>
+                  </NavLink>
+                );
+              })}
             </div>
-            {!collapsed[group.label] && group.items.map(n => {
-              const isActive = location.pathname === n.path;
-              return (
-                <NavLink key={n.path} to={n.path} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '6px 8px 6px 32px', borderRadius: 6, marginBottom: 1, textDecoration: 'none',
-                  background: isActive ? T.gold : 'transparent',
-                  transition: 'background 0.12s',
-                }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
-                >
-                  <span style={{ fontSize: 12, fontWeight: isActive ? 700 : 400, color: isActive ? T.navy : 'rgba(255,255,255,0.65)' }}>{n.label}</span>
-                  <span style={{ fontSize: 9, fontWeight: 600, color: isActive ? T.navy : 'rgba(255,255,255,0.25)' }}>{n.code}</span>
-                </NavLink>
-              );
-            })}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Footer */}
-      <div style={{ padding: '10px 14px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>{ALL_ITEMS.length} Modules | 10 Regions</div>
+      <div style={{ padding: '8px 12px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em' }}>{ALL_ITEMS.length} MOD · {NAV_GROUPS.length} DOM · 10 REG</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: T.sageL }} />
-          <span style={{ fontSize: 9, color: T.sageL }}>LIVE</span>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL, boxShadow: `0 0 4px ${T.sageL}` }} />
+          <span style={{ fontSize: 8, fontFamily: T.mono, color: T.sageL, letterSpacing: '0.08em' }}>LIVE</span>
         </div>
       </div>
     </nav>
@@ -922,7 +987,7 @@ function Sidebar({ search, setSearch, sidebarOpen }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   HEADER BAR — Navy with brand identity
+   HEADER BAR — Institutional Navy · Gold accent line · Terminal data
    ═══════════════════════════════════════════════════════════════════ */
 function HeaderBar({ sidebarOpen, setSidebarOpen }) {
   const [time, setTime] = useState('');
@@ -931,85 +996,103 @@ function HeaderBar({ sidebarOpen, setSidebarOpen }) {
   const group = current ? NAV_GROUPS.find(g => g.items.includes(current)) : null;
 
   useEffect(() => {
-    const tick = () => setTime(new Date().toLocaleTimeString());
+    const tick = () => setTime(new Date().toLocaleTimeString('en-GB', { hour12: false }));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <header style={{
-      height: 48, background: T.navy, borderBottom: `1px solid #244a6e`,
-      display: 'flex', alignItems: 'center', padding: '0 18px', gap: 14, flexShrink: 0,
-    }}>
-      {/* Toggle */}
-      <button onClick={() => setSidebarOpen(o => !o)} style={{
-        background: 'none', border: 'none', color: T.goldL, cursor: 'pointer', fontSize: 16, padding: '4px 6px',
-      }}>{'\u2630'}</button>
+    <header style={{ flexShrink: 0 }}>
+      <div style={{
+        height: 44, background: T.navy,
+        display: 'flex', alignItems: 'center', padding: '0 16px', gap: 12,
+      }}>
+        {/* Toggle */}
+        <button onClick={() => setSidebarOpen(o => !o)} style={{
+          background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 14, padding: '4px 6px',
+          transition: 'color 0.15s',
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = T.gold}
+        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+        >{'\u2630'}</button>
 
-      {/* Brand */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: 16 }}>
-        <div style={{
-          width: 28, height: 28, borderRadius: 6, background: T.gold,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 10, fontWeight: 900, color: T.navy, letterSpacing: '0.02em',
-        }}>AA</div>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, lineHeight: 1, letterSpacing: '0.02em' }}>AA Impact Inc.</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', lineHeight: 1.3 }}>A2 Intelligence Risk Analytics</div>
+        {/* Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: 14 }}>
+          <div style={{
+            width: 26, height: 26, borderRadius: 4, background: `linear-gradient(135deg, ${T.gold}, ${T.goldD})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 9, fontWeight: 800, color: T.navy, fontFamily: T.mono,
+          }}>AA</div>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '0.03em' }}>AA Impact</div>
+            <div style={{ fontSize: 8, fontFamily: T.mono, color: 'rgba(255,255,255,0.35)', lineHeight: 1.4, letterSpacing: '0.06em' }}>A2 INTELLIGENCE</div>
+          </div>
+        </div>
+
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, flex: 1, minWidth: 0 }}>
+          {current ? (
+            <>
+              <NavLink to="/" style={{ fontSize: 10, fontFamily: T.mono, color: 'rgba(255,255,255,0.4)', textDecoration: 'none', letterSpacing: '0.02em' }}>HOME</NavLink>
+              <span style={{ color: 'rgba(255,255,255,0.15)', fontSize: 10, fontFamily: T.mono }}>/</span>
+              <span style={{ fontSize: 10, fontFamily: T.mono, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group?.label?.toUpperCase()}</span>
+              <span style={{ color: 'rgba(255,255,255,0.15)', fontSize: 10, fontFamily: T.mono }}>/</span>
+              <span style={{ fontSize: 11, color: '#fff', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{current.label}</span>
+              <span style={{
+                fontSize: 8, fontFamily: T.mono, fontWeight: 700, color: T.gold, background: 'rgba(197,169,106,0.18)', padding: '2px 6px', borderRadius: 3, marginLeft: 4, flexShrink: 0, letterSpacing: '0.04em',
+              }}>{current.code}</span>
+            </>
+          ) : (
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#fff', letterSpacing: '0.02em' }}>Command Center</span>
+          )}
+        </div>
+
+        {/* Status Indicators */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL, boxShadow: `0 0 4px ${T.sageL}` }} />
+            <span style={{ color: T.sageL, fontWeight: 600 }}>API</span>
+          </div>
+          <span>:8001</span>
+          <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{time}</span>
         </div>
       </div>
-
-      {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
-        {current ? (
-          <>
-            <NavLink to="/" style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>Dashboard</NavLink>
-            <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 10 }}>/</span>
-            <span style={{ fontSize: 11, color: T.goldL, fontWeight: 600 }}>{group?.label}</span>
-            <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 10 }}>/</span>
-            <span style={{ fontSize: 11, color: '#fff', fontWeight: 600 }}>{current.label}</span>
-            <span style={{
-              fontSize: 9, fontWeight: 700, color: T.gold, background: 'rgba(197,169,106,0.2)', padding: '2px 6px', borderRadius: 4, marginLeft: 4,
-            }}>{current.code}</span>
-          </>
-        ) : (
-          <span style={{ fontSize: 12, fontWeight: 600, color: '#fff' }}>Dashboard</span>
-        )}
-      </div>
-
-      {/* Status */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
-        <span>API <span style={{ color: T.sageL, fontWeight: 600 }}>LIVE</span></span>
-        <span>:8001</span>
-        <span>{time}</span>
-      </div>
+      {/* Gold accent line */}
+      <div style={{ height: 2, background: `linear-gradient(90deg, ${T.gold}, ${T.goldL} 40%, transparent 80%)` }} />
     </header>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   STATUS BAR
+   STATUS BAR — Terminal-style data strip
    ═══════════════════════════════════════════════════════════════════ */
 function StatusBar() {
   const location = useLocation();
   const current = ALL_ITEMS.find(i => i.path === location.pathname);
   return (
     <div style={{
-      height: 26, background: T.navy, borderTop: '1px solid #244a6e',
-      display: 'flex', alignItems: 'center', padding: '0 18px', gap: 20,
-      fontSize: 10, color: 'rgba(255,255,255,0.35)', flexShrink: 0, letterSpacing: '0.03em',
+      height: 24, background: T.navy, borderTop: `1px solid ${T.navyD}`,
+      display: 'flex', alignItems: 'center', padding: '0 14px', gap: 3,
+      fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.3)', flexShrink: 0, letterSpacing: '0.04em',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL }} />
-        CONNECTED
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginRight: 8 }}>
+        <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL, boxShadow: `0 0 3px ${T.sageL}` }} />
+        <span style={{ color: T.sageL, fontWeight: 600 }}>CONNECTED</span>
       </div>
-      <span>{ALL_ITEMS.length} MODULES</span>
-      <span>38 DOMAINS</span>
-      <span>10 REGIONS</span>
-      <span>60+ FRAMEWORKS</span>
-      {current && <span style={{ color: T.goldL }}>{current.badge}</span>}
-      <span style={{ marginLeft: 'auto', color: T.gold, fontWeight: 600 }}>AA IMPACT INC.</span>
+      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+      <span style={{ padding: '0 6px' }}>{ALL_ITEMS.length} MODULES</span>
+      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+      <span style={{ padding: '0 6px' }}>{NAV_GROUPS.length} DOMAINS</span>
+      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+      <span style={{ padding: '0 6px' }}>10 REGIONS</span>
+      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+      <span style={{ padding: '0 6px' }}>60+ FW</span>
+      {current && <>
+        <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+        <span style={{ padding: '0 6px', color: T.goldL, fontWeight: 500, maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{current.badge}</span>
+      </>}
+      <span style={{ marginLeft: 'auto', color: T.gold, fontWeight: 600, letterSpacing: '0.08em' }}>AA IMPACT</span>
     </div>
   );
 }
