@@ -226,6 +226,13 @@ import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage
 import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
 import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
 import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+// Sprint AI — Corporate Decarbonisation & SBTi Intelligence
+import SbtiTargetSetterPage from './features/sbti-target-setter/pages/SbtiTargetSetterPage';
+import DecarbonisationRoadmapPage from './features/decarbonisation-roadmap/pages/DecarbonisationRoadmapPage';
+import AbatementCostCurvePage from './features/abatement-cost-curve/pages/AbatementCostCurvePage';
+import EnergyTransitionAnalyticsPage from './features/energy-transition-analytics/pages/EnergyTransitionAnalyticsPage';
+import CarbonReductionProjectsPage from './features/carbon-reduction-projects/pages/CarbonReductionProjectsPage';
+import DecarbonisationHubPage from './features/decarbonisation-hub/pages/DecarbonisationHubPage';
 // Sprint AH — Regulatory Reporting & Disclosure Automation
 import CsrdEsrsAutomationPage from './features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage';
 import SfdrV2ReportingPage from './features/sfdr-v2-reporting/pages/SfdrV2ReportingPage';
@@ -447,6 +454,14 @@ const NAV_GROUPS = [
     { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
     { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
     { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
+  ]},
+  { label: 'Corporate Decarbonisation & SBTi', icon: '🌿', color: '#059669', items: [
+    { path: '/decarbonisation-hub',           label: 'Decarbonisation Hub',            badge: 'Hub · SBTi+RE100+EV100 · 1.9°C · $840M NPV · Board Pack',   code: 'EP-AI6' },
+    { path: '/sbti-target-setter',            label: 'SBTi Target Setter',             badge: 'ACA/SDA/TRM · 20 Cos · 1.8°C · 67% Scope 3 Coverage',        code: 'EP-AI1' },
+    { path: '/decarbonisation-roadmap',       label: 'Decarbonisation Roadmap Builder',badge: '25 Measures · $2.4bn CapEx · -46% S1+2 · 2048 Net-Zero',      code: 'EP-AI2' },
+    { path: '/abatement-cost-curve',          label: 'Abatement Cost Curve Builder',   badge: 'MACC · 30 Measures · 38 GtCO2e · $130/t Viable · 8 Sectors', code: 'EP-AI3' },
+    { path: '/energy-transition-analytics',   label: 'Energy Transition Analytics',    badge: 'RE100 · 58% Renewable · 2,840 MW PPA · EV100 · EP100',        code: 'EP-AI4' },
+    { path: '/carbon-reduction-projects',     label: 'Carbon Reduction Projects',      badge: '24 Projects · 847 ktCO2e/yr · $1.84bn · $54/tCO2e Avg',      code: 'EP-AI5' },
   ]},
   { label: 'Regulatory Reporting & Disclosure', icon: '📋', color: '#7c3aed', items: [
     { path: '/disclosure-hub',        label: 'Disclosure Hub',               badge: 'Hub · CSRD+SFDR+ISSB+SEC+UK · Audit Trail · Cross-Framework', code: 'EP-AH6' },
@@ -1197,6 +1212,13 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            {/* Sprint AI — Corporate Decarbonisation & SBTi Intelligence */}
+            <Route path="/decarbonisation-hub"         element={<DecarbonisationHubPage />} />
+            <Route path="/sbti-target-setter"          element={<SbtiTargetSetterPage />} />
+            <Route path="/decarbonisation-roadmap"     element={<DecarbonisationRoadmapPage />} />
+            <Route path="/abatement-cost-curve"        element={<AbatementCostCurvePage />} />
+            <Route path="/energy-transition-analytics" element={<EnergyTransitionAnalyticsPage />} />
+            <Route path="/carbon-reduction-projects"   element={<CarbonReductionProjectsPage />} />
             {/* Sprint AH — Regulatory Reporting & Disclosure Automation */}
             <Route path="/disclosure-hub"       element={<DisclosureHubPage />} />
             <Route path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />
