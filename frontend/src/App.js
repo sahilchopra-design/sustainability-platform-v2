@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AL — Transition Planning & Net Zero Alignment Intelligence
+import TransitionPlanBuilderPage from './features/transition-plan-builder/pages/TransitionPlanBuilderPage';
+import GfanzSectorPathwaysPage from './features/gfanz-sector-pathways/pages/GfanzSectorPathwaysPage';
+import ActAssessmentPage from './features/act-assessment/pages/ActAssessmentPage';
+import NetZeroCommitmentTrackerPage from './features/net-zero-commitment-tracker/pages/NetZeroCommitmentTrackerPage';
+import TransitionCredibilityPage from './features/transition-credibility/pages/TransitionCredibilityPage';
+import TransitionPlanningHubPage from './features/transition-planning-hub/pages/TransitionPlanningHubPage';
 // Sprint AK — ESG Ratings Intelligence & Provider Analytics
 import EsgRatingsComparatorPage from './features/esg-ratings-comparator/pages/EsgRatingsComparatorPage';
 import RatingsMethodologyDecoderPage from './features/ratings-methodology-decoder/pages/RatingsMethodologyDecoderPage';
@@ -499,6 +506,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Transition Planning & Net Zero', icon: '🧭', color: '#0e7490', items: [
+    { path: '/transition-planning-hub',       label: 'Transition Planning Hub',       badge: 'Hub · TPT+GFANZ+ACT+NZAM · Credibility · Board Pack',          code: 'EP-AL6' },
+    { path: '/transition-plan-builder',       label: 'Transition Plan Builder',       badge: 'TPT Framework · 5 Elements · 10 Sectors · Readiness Score',     code: 'EP-AL1' },
+    { path: '/gfanz-sector-pathways',         label: 'GFANZ Sector Pathways',        badge: 'GFANZ · IEA NZE · 8 Sectors · Milestones · Gap Analysis',       code: 'EP-AL2' },
+    { path: '/act-assessment',                label: 'ACT Assessment & Maturity',    badge: 'ACT/CDP · 6 Dimensions · 15 Sectors · A-E Grades · Credibility',code: 'EP-AL3' },
+    { path: '/net-zero-commitment-tracker',   label: 'Net Zero Commitment Tracker',  badge: 'NZAM 315 · NZAOA 88 · NZBA 144 · $128T · Progress Monitor',    code: 'EP-AL4' },
+    { path: '/transition-credibility',        label: 'Transition Credibility Engine', badge: 'CA100+ · CapEx Alignment · Lobbying · 12 KPIs · Say-Do Gap',   code: 'EP-AL5' },
   ]},
   { label: 'ESG Ratings Intelligence', icon: '⭐', color: '#b45309', items: [
     { path: '/esg-ratings-hub',             label: 'ESG Ratings Hub',              badge: 'Hub · 6 Providers · Consensus · Coverage · Alert Engine',        code: 'EP-AK6' },
@@ -1339,6 +1354,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AL — Transition Planning & Net Zero Alignment */}
+            <Route path="/transition-planning-hub"     element={<TransitionPlanningHubPage />} />
+            <Route path="/transition-plan-builder"     element={<TransitionPlanBuilderPage />} />
+            <Route path="/gfanz-sector-pathways"       element={<GfanzSectorPathwaysPage />} />
+            <Route path="/act-assessment"              element={<ActAssessmentPage />} />
+            <Route path="/net-zero-commitment-tracker" element={<NetZeroCommitmentTrackerPage />} />
+            <Route path="/transition-credibility"      element={<TransitionCredibilityPage />} />
             {/* Sprint AK — ESG Ratings Intelligence & Provider Analytics */}
             <Route path="/esg-ratings-hub"             element={<EsgRatingsHubPage />} />
             <Route path="/esg-ratings-comparator"      element={<EsgRatingsComparatorPage />} />
