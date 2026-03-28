@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { EU_ETS_ANNUAL, NGFS_CARBON_PRICES } from '../../../data/carbonPrices';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
-  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area, LineChart, Line,
+  BarChart, Bar, Cell, AreaChart, Area, LineChart, Line,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
+import { EU_ETS_ANNUAL, NGFS_CARBON_PRICES } from '../../../data/carbonPrices';
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
@@ -18,731 +18,948 @@ const T = {
   font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
 };
 
-// eslint-disable-next-line no-unused-vars
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const sr = s => { let x = Math.sin(s+1)*10000; return x-Math.floor(x); };
 
-// NGFS Phase IV Scenario Definitions (real scenario names & parameters)
-const SCENARIOS = [
-  {
-    id: 'nz2050',
-    name: 'Net Zero 2050',
-    type: 'Orderly',
-    typeColor: T.green,
-    desc: 'Immediate ambitious climate policies, transition risk high, physical risk limited',
-    carbonPrice2030: 130,
-    carbonPrice2050: 250,
-    gdpImpact2030: -0.8,
-    strandedRisk: 'Medium',
-    strandedColor: T.amber,
-    cet1Impact: -0.6,
-  },
-  {
-    id: 'delayed',
-    name: 'Delayed Transition',
-    type: 'Disorderly',
-    typeColor: T.amber,
-    desc: 'Policy delayed to 2030, then very rapid, higher transition shock',
-    carbonPrice2030: 0,
-    carbonPrice2035: 800,
-    gdpImpact2035: -3.2,
-    strandedRisk: 'Very High',
-    strandedColor: T.red,
-    cet1Impact: -2.8,
-  },
-  {
-    id: 'hothouse',
-    name: 'Hot House World',
-    type: 'No Action',
-    typeColor: T.red,
-    desc: 'No climate action, rising physical risk damages, catastrophic by 2080',
-    carbonPrice2030: 0,
-    gdpImpactRange: '-10% to -23%',
-    gdpImpactYear: 2050,
-    strandedRisk: 'Extreme',
-    strandedColor: '#e02020',
-    cet1Impact: -4.1,
-    physicalDamage: 54,
-  },
+// ─── Scenario definitions ─────────────────────────────────────────────────────
+const SCENARIOS = {
+  nz: { key:'nz', label:'Net Zero 2050',     color:'#16a34a', temp:'1.5°C', type:'Orderly' },
+  dt: { key:'dt', label:'Delayed Transition', color:'#d97706', temp:'1.8°C', type:'Disorderly' },
+  hh: { key:'hh', label:'Hot House World',    color:'#dc2626', temp:'3°C+',  type:'No Action' },
+};
+
+const YEARS = [2025, 2030, 2035, 2040, 2050];
+
+// NGFS Phase IV shadow carbon prices ($/t)
+const CARBON_PRICE = {
+  nz: { 2025:45,  2030:130, 2035:190, 2040:230,  2050:250  },
+  dt: { 2025:5,   2030:12,  2035:800, 2040:1000, 2050:1200 },
+  hh: { 2025:10,  2030:15,  2035:20,  2040:25,   2050:30   },
+};
+
+// CET1 impact (pp) by scenario / year
+const CET1_IMPACT = {
+  nz: { 2025:-0.3, 2030:-0.7, 2035:-1.1, 2040:-1.4, 2050:-1.6 },
+  dt: { 2025:-0.1, 2030:-0.3, 2035:-2.8, 2040:-3.5, 2050:-4.2 },
+  hh: { 2025:-0.2, 2030:-0.5, 2035:-0.9, 2040:-1.8, 2050:-3.4 },
+};
+
+// GDP shock (%) by scenario / year
+const GDP_SHOCK = {
+  nz: { 2025:-0.3, 2030:-0.8, 2035:-1.0, 2040:-0.9, 2050:-0.5 },
+  dt: { 2025:-0.1, 2030:-0.2, 2035:-3.2, 2040:-4.1, 2050:-2.8 },
+  hh: { 2025:-0.4, 2030:-1.1, 2035:-2.0, 2040:-3.4, 2050:-5.8 },
+};
+
+// ─── 30 Sectors ───────────────────────────────────────────────────────────────
+const SECTORS_RAW = [
+  { id:'s1',  name:'Coal Mining',              basePD:3.2, nzMult:2.8, dtMult:1.9, hhMult:1.4, transRisk:9, physRisk:5, reg:'ETS, CBAM',          ebitda:42 },
+  { id:'s2',  name:'Oil Upstream',             basePD:2.1, nzMult:2.4, dtMult:1.6, hhMult:1.3, transRisk:8, physRisk:6, reg:'ETS, CBAM',          ebitda:31 },
+  { id:'s3',  name:'Gas Upstream',             basePD:1.8, nzMult:2.0, dtMult:1.4, hhMult:1.2, transRisk:7, physRisk:5, reg:'ETS',                ebitda:28 },
+  { id:'s4',  name:'Oil Refining',             basePD:2.4, nzMult:2.6, dtMult:1.8, hhMult:1.3, transRisk:8, physRisk:4, reg:'ETS, CBAM',          ebitda:38 },
+  { id:'s5',  name:'Petrochemicals',           basePD:1.9, nzMult:2.1, dtMult:1.5, hhMult:1.2, transRisk:7, physRisk:4, reg:'ETS, CBAM',          ebitda:30 },
+  { id:'s6',  name:'Steel (BF)',               basePD:2.7, nzMult:2.5, dtMult:1.7, hhMult:1.2, transRisk:8, physRisk:3, reg:'ETS, CBAM, MEES',    ebitda:35 },
+  { id:'s7',  name:'Steel (EAF)',              basePD:1.6, nzMult:1.3, dtMult:1.2, hhMult:1.1, transRisk:4, physRisk:3, reg:'ETS',                ebitda:12 },
+  { id:'s8',  name:'Cement',                  basePD:2.3, nzMult:2.3, dtMult:1.6, hhMult:1.2, transRisk:8, physRisk:4, reg:'ETS, CBAM',          ebitda:33 },
+  { id:'s9',  name:'Lime',                    basePD:2.0, nzMult:2.1, dtMult:1.5, hhMult:1.1, transRisk:7, physRisk:3, reg:'ETS, CBAM',          ebitda:29 },
+  { id:'s10', name:'Aluminium',               basePD:1.8, nzMult:1.9, dtMult:1.4, hhMult:1.1, transRisk:6, physRisk:3, reg:'ETS, CBAM',          ebitda:25 },
+  { id:'s11', name:'Copper',                  basePD:1.4, nzMult:1.5, dtMult:1.3, hhMult:1.2, transRisk:5, physRisk:6, reg:'CBAM',               ebitda:18 },
+  { id:'s12', name:'Aviation',                basePD:3.1, nzMult:2.2, dtMult:1.6, hhMult:1.5, transRisk:8, physRisk:5, reg:'ETS, CORSIA',         ebitda:26 },
+  { id:'s13', name:'Shipping',                basePD:2.5, nzMult:1.9, dtMult:1.5, hhMult:1.6, transRisk:7, physRisk:7, reg:'IMO, ETS',           ebitda:22 },
+  { id:'s14', name:'Road Freight',            basePD:1.7, nzMult:1.8, dtMult:1.4, hhMult:1.2, transRisk:6, physRisk:4, reg:'ETS, CO2 standards', ebitda:20 },
+  { id:'s15', name:'Automotive (ICE)',        basePD:2.2, nzMult:2.4, dtMult:1.7, hhMult:1.2, transRisk:8, physRisk:3, reg:'ZEV mandate',         ebitda:28 },
+  { id:'s16', name:'Automotive (EV)',         basePD:1.5, nzMult:0.9, dtMult:1.1, hhMult:1.2, transRisk:2, physRisk:3, reg:'Supply chain',        ebitda:8  },
+  { id:'s17', name:'Power (coal)',            basePD:3.5, nzMult:3.1, dtMult:2.0, hhMult:1.3, transRisk:10,physRisk:5, reg:'ETS, MEES',           ebitda:45 },
+  { id:'s18', name:'Power (gas)',             basePD:1.9, nzMult:1.8, dtMult:1.5, hhMult:1.2, transRisk:6, physRisk:4, reg:'ETS',                ebitda:22 },
+  { id:'s19', name:'Power (renewable)',       basePD:0.8, nzMult:0.7, dtMult:0.9, hhMult:1.1, transRisk:1, physRisk:5, reg:'Minimal',             ebitda:5  },
+  { id:'s20', name:'Agriculture (intensive)', basePD:1.6, nzMult:1.7, dtMult:1.4, hhMult:1.8, transRisk:5, physRisk:8, reg:'CBAM, nitrates',      ebitda:18 },
+  { id:'s21', name:'Agriculture (organic)',   basePD:1.3, nzMult:0.9, dtMult:1.1, hhMult:1.5, transRisk:2, physRisk:7, reg:'Minimal',             ebitda:8  },
+  { id:'s22', name:'Commercial RE (EPC A-C)', basePD:1.1, nzMult:1.0, dtMult:1.1, hhMult:1.3, transRisk:2, physRisk:6, reg:'MEES, SFDR',          ebitda:10 },
+  { id:'s23', name:'Commercial RE (EPC D-G)', basePD:2.0, nzMult:2.4, dtMult:1.6, hhMult:1.5, transRisk:7, physRisk:6, reg:'MEES, SFDR',          ebitda:30 },
+  { id:'s24', name:'Mortgages (EPC A-C)',     basePD:0.6, nzMult:0.7, dtMult:0.8, hhMult:0.9, transRisk:1, physRisk:4, reg:'MEES',               ebitda:5  },
+  { id:'s25', name:'Mortgages (EPC D-G)',     basePD:1.4, nzMult:1.9, dtMult:1.4, hhMult:1.3, transRisk:5, physRisk:5, reg:'MEES',               ebitda:20 },
+  { id:'s26', name:'Construction',            basePD:2.1, nzMult:1.6, dtMult:1.4, hhMult:1.3, transRisk:5, physRisk:5, reg:'ETS (scope 3)',       ebitda:18 },
+  { id:'s27', name:'Chemicals',               basePD:1.8, nzMult:1.9, dtMult:1.4, hhMult:1.2, transRisk:6, physRisk:4, reg:'CBAM, REACH',         ebitda:24 },
+  { id:'s28', name:'Paper & Pulp',            basePD:1.5, nzMult:1.6, dtMult:1.3, hhMult:1.3, transRisk:5, physRisk:6, reg:'ETS',                ebitda:19 },
+  { id:'s29', name:'Food Processing',         basePD:1.2, nzMult:1.3, dtMult:1.2, hhMult:1.5, transRisk:4, physRisk:7, reg:'CBAM (agri inputs)',  ebitda:14 },
+  { id:'s30', name:'Technology',              basePD:0.7, nzMult:0.8, dtMult:0.9, hhMult:0.9, transRisk:2, physRisk:3, reg:'Data centres',        ebitda:6  },
 ];
 
-const CET1_TIMELINE = [
-  { year: 2024, nz2050: 14.8, delayed: 14.8, hothouse: 14.8 },
-  { year: 2025, nz2050: 14.7, delayed: 14.8, hothouse: 14.7 },
-  { year: 2026, nz2050: 14.5, delayed: 14.7, hothouse: 14.6 },
-  { year: 2027, nz2050: 14.3, delayed: 14.6, hothouse: 14.4 },
-  { year: 2028, nz2050: 14.1, delayed: 14.4, hothouse: 14.2 },
-  { year: 2029, nz2050: 13.9, delayed: 14.1, hothouse: 13.9 },
-  { year: 2030, nz2050: 13.8, delayed: 13.2, hothouse: 13.6 },
-  { year: 2031, nz2050: 13.7, delayed: 12.6, hothouse: 13.2 },
-  { year: 2032, nz2050: 13.6, delayed: 12.2, hothouse: 12.8 },
-  { year: 2033, nz2050: 13.5, delayed: 12.0, hothouse: 12.4 },
-  { year: 2034, nz2050: 13.3, delayed: 12.0, hothouse: 11.9 },
-  { year: 2035, nz2050: 14.2, delayed: 12.0, hothouse: 11.4 },
+// ─── 50 Borrowers (deterministic) ────────────────────────────────────────────
+const BORROWERS = Array.from({ length: 50 }, (_, i) => {
+  const sIdx = Math.floor(sr(i * 7) * 30);
+  const s = SECTORS_RAW[sIdx];
+  const countries = ['UK','DE','FR','NL','PL','SE','IT','ES','US','NO'];
+  const country = countries[Math.floor(sr(i * 3 + 1) * 10)];
+  const exposure = Math.round((sr(i * 5 + 2) * 480 + 20) * 10) / 10;
+  const base = s.basePD + sr(i * 11) * 0.8 - 0.4;
+  const bpd = Math.max(0.3, Math.round(base * 100) / 100);
+  return {
+    id: i + 1,
+    name: `Borrower ${String(i + 1).padStart(2, '0')}`,
+    sector: s.name,
+    sectorId: s.id,
+    country,
+    exposure,
+    basePD: bpd,
+    nzStressedPD:  Math.round(bpd * s.nzMult * 100) / 100,
+    dtStressedPD:  Math.round(bpd * s.dtMult * 100) / 100,
+    hhStressedPD:  Math.round(bpd * s.hhMult * 100) / 100,
+    eclUpliftNz: Math.round(bpd * (s.nzMult - 1) * exposure * 0.45 * 10) / 10,
+    eclUpliftDt: Math.round(bpd * (s.dtMult - 1) * exposure * 0.45 * 10) / 10,
+    eclUpliftHh: Math.round(bpd * (s.hhMult - 1) * exposure * 0.45 * 10) / 10,
+  };
+});
+
+// Top borrowers per sector
+const TOP_BORROWERS_BY_SECTOR = {};
+BORROWERS.forEach(b => {
+  if (!TOP_BORROWERS_BY_SECTOR[b.sector]) TOP_BORROWERS_BY_SECTOR[b.sector] = [];
+  if (TOP_BORROWERS_BY_SECTOR[b.sector].length < 3) TOP_BORROWERS_BY_SECTOR[b.sector].push(b);
+});
+
+// ─── CET1 Waterfall — 8 components ───────────────────────────────────────────
+const WATERFALL_COMPONENTS = [
+  { name: 'Credit Risk (transition)',   nz:-0.28, dt:-1.12, hh:-0.65 },
+  { name: 'Credit Risk (physical)',     nz:-0.14, dt:-0.09, hh:-0.82 },
+  { name: 'Market Risk (repricing)',    nz:-0.08, dt:-0.31, hh:-0.12 },
+  { name: 'Operational Risk',           nz:-0.04, dt:-0.15, hh:-0.09 },
+  { name: 'Revenue (NII compression)',  nz:-0.06, dt:-0.24, hh:-0.18 },
+  { name: 'RWA inflation',              nz:-0.10, dt:-0.38, hh:-0.22 },
+  { name: 'Stranded asset write-off',   nz:-0.05, dt:-0.19, hh:-0.14 },
+  { name: 'Insurance / hedging gain',   nz:+0.04, dt:+0.08, hh:+0.02 },
 ];
 
-const PD_MIGRATION = [
-  { sector: 'Coal Mining',             pdBase: 2.1, pdStress: 18.4, bps: 776,  dir: 'up' },
-  { sector: 'Oil & Gas Upstream',      pdBase: 1.8, pdStress: 9.2,  bps: 740,  dir: 'up' },
-  { sector: 'Automotive (ICE)',        pdBase: 1.4, pdStress: 6.8,  bps: 486,  dir: 'up' },
-  { sector: 'Steel (blast furnace)',   pdBase: 2.3, pdStress: 8.1,  bps: 378,  dir: 'up' },
-  { sector: 'Cement',                  pdBase: 1.9, pdStress: 5.8,  bps: 305,  dir: 'up' },
-  { sector: 'Aviation',                pdBase: 1.2, pdStress: 4.1,  bps: 242,  dir: 'up' },
-  { sector: 'Commercial RE (EPC D-G)', pdBase: 1.6, pdStress: 4.4,  bps: 180,  dir: 'up' },
-  { sector: 'Agriculture (intensive)', pdBase: 1.1, pdStress: 2.8,  bps: 145,  dir: 'up' },
-  { sector: 'Manufacturing',           pdBase: 0.8, pdStress: 1.7,  bps: 112,  dir: 'up' },
-  { sector: 'Renewable Energy',        pdBase: 1.8, pdStress: 1.2,  bps: -60,  dir: 'down' },
-  { sector: 'Energy Efficiency Svcs',  pdBase: 0.9, pdStress: 0.7,  bps: -22,  dir: 'down' },
-];
-
-const SECTOR_ALLOC = [
-  { sector: 'Residential Mortgages', exposure: 14.2, color: T.sage },
-  { sector: 'Commercial RE',         exposure: 7.8,  color: '#8b5cf6' },
-  { sector: 'Corporate - Energy',    exposure: 5.4,  color: T.amber },
-  { sector: 'Corporate - Transport', exposure: 4.1,  color: '#f59e0b' },
-  { sector: 'SME Lending',           exposure: 4.0,  color: T.navy },
-  { sector: 'Corporate - Industry',  exposure: 3.6,  color: '#06b6d4' },
-  { sector: 'Agriculture',           exposure: 1.8,  color: '#84cc16' },
-  { sector: 'Other',                 exposure: 1.1,  color: T.textSec },
-];
-
-const WF_DATA = [
-  { name: 'Starting CET1', base: 0,    val: 14.8, color: T.sage  },
-  { name: 'PD Migration',  base: 13.6, val: 1.2,  color: T.red   },
-  { name: 'Collateral',    base: 13.0, val: 0.6,  color: T.red   },
-  { name: 'Revenue',       base: 12.6, val: 0.4,  color: T.red   },
-  { name: 'RWA Inflation', base: 12.2, val: 0.6,  color: T.red   },
-  { name: 'Ending CET1',   base: 0,    val: 12.0, color: T.amber },
-];
-
+// ─── Regulatory frameworks ────────────────────────────────────────────────────
 const REG_FRAMEWORKS = [
   {
-    id: 'ecb2022',
-    name: 'ECB Climate Risk Stress Test 2022',
-    status: 'Complete',
-    statusColor: T.green,
-    desc: 'First supervisory climate stress test covering ~100 significant institutions across 3 scenarios over 30 years.',
+    id:'ecb', name:'ECB Climate Stress Test', color:'#1b3a5c', deadline: new Date('2026-06-30'),
     items: [
-      { label: 'Short-term transition risk module',   done: true  },
-      { label: 'Long-term climate scenario analysis', done: true  },
-      { label: 'Idiosyncratic sensitivity analysis',  done: true  },
-      { label: 'FINREP/COREP data submission',        done: true  },
-      { label: 'Qualitative questionnaire',           done: true  },
+      'Governance & strategy documentation',
+      'Physical risk assessment (acute)',
+      'Physical risk assessment (chronic)',
+      'Transition risk scenario mapping (NGFS)',
+      'Sector PD migration model',
+      'Portfolio heat map by climate risk',
     ],
   },
   {
-    id: 'boe_cbes',
-    name: 'BoE CBES 2021',
-    status: 'Complete',
-    statusColor: T.green,
-    desc: 'Climate Biennial Exploratory Scenario - assessed systemic climate risk across major UK banks and insurers.',
+    id:'boe', name:'BoE CBES Framework', color:'#2c5a8c', deadline: new Date('2026-09-30'),
     items: [
-      { label: 'Early action scenario modelling',  done: true  },
-      { label: 'Late action scenario modelling',   done: true  },
-      { label: 'No action scenario modelling',     done: true  },
-      { label: 'Mortgage book physical risk',      done: true  },
-      { label: 'Corporate credit transition risk', done: false },
+      'Early Action scenario modelling',
+      'Late Action scenario modelling',
+      'No Additional Action baseline',
+      'Counterparty-level vulnerability scores',
+      'Mortgage EPC-linked PD curves',
+      'Capital impact attestation',
     ],
   },
   {
-    id: 'eba2023',
-    name: 'EBA Pilot Climate Risk Exercise 2023',
-    status: 'In Progress',
-    statusColor: T.amber,
-    desc: "Pilot exercise to assess EU banks' capacity to conduct climate risk stress testing aligned with EBA roadmap.",
+    id:'eba', name:'EBA Pillar 3 Climate', color:'#5a8a6a', deadline: new Date('2026-12-31'),
     items: [
-      { label: 'Scenario data collection completed',  done: true  },
-      { label: 'Transition risk PD uplift modelling', done: true  },
-      { label: 'Physical risk property valuation',    done: false },
-      { label: 'Supply chain contagion modelling',    done: false },
-      { label: 'Results submission to EBA',           done: false },
+      'Template 1: GHG emissions (financed)',
+      'Template 2: Sector exposure alignment',
+      'Template 3: Physical risk exposure',
+      'Template 4: Transition plan alignment',
+      'CSRD alignment check',
     ],
   },
   {
-    id: 'bcbs',
-    name: 'BCBS Principles for Climate Risk',
-    status: 'Partial',
-    statusColor: T.amber,
-    desc: '18 principles for the effective management and supervision of climate-related financial risks (June 2022).',
+    id:'bcbs', name:'BCBS 530 Principles', color:'#c5a96a', deadline: new Date('2027-03-31'),
     items: [
-      { label: 'Principles 1-6: Corporate governance',         done: true  },
-      { label: 'Principles 7-12: Risk management',             done: true  },
-      { label: 'Principles 13-15: Scenario analysis',          done: true  },
-      { label: 'Principles 16-18: Supervisory disclosure',     done: false },
+      'Governance — board-level climate ownership',
+      'Internal controls — climate data quality',
+      'Risk appetite — climate thresholds',
+      'Scenario analysis — stress testing programme',
+      'Capital & liquidity — climate buffers',
     ],
   },
 ];
 
-const UPCOMING = [
-  { deadline: 'Jan 2025', name: 'DORA - Digital Operational Resilience Act',              urgency: 'high'   },
-  { deadline: 'Q2 2024',  name: 'ECB Pillar 2 Climate Guidance - supervisory expectations', urgency: 'high'   },
-  { deadline: '2026',     name: 'Basel climate disclosure framework',                       urgency: 'medium' },
-  { deadline: 'Q4 2024',  name: 'EBA Pillar 3 climate disclosure ITS',                     urgency: 'medium' },
-];
+const TEAM_MEMBERS = ['Unassigned','Risk Analytics','Capital Planning','Chief Risk Officer','Treasury','Sustainability Office'];
+
+// ─── Small reusable components ────────────────────────────────────────────────
+const Card = ({ children, style }) => (
+  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12,
+    padding:20, boxShadow:T.card, ...style }}>
+    {children}
+  </div>
+);
+
+const Pill = ({ label, active, color, onClick }) => (
+  <button onClick={onClick} style={{
+    padding:'6px 14px', borderRadius:20, fontSize:12, fontWeight:600, cursor:'pointer',
+    border:`1.5px solid ${active ? color : T.border}`,
+    background: active ? color : T.surface,
+    color: active ? '#fff' : T.textSec,
+    transition:'all 0.18s',
+  }}>{label}</button>
+);
 
 const MetricCard = ({ label, value, sub, color }) => (
-  <div style={{
-    background: T.surface, border: `1px solid ${T.border}`,
-    borderRadius: 8, padding: '14px 18px', boxShadow: T.card, minWidth: 0,
-  }}>
-    <div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: color || T.text, letterSpacing: '-0.02em' }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textMut, marginTop: 3 }}>{sub}</div>}
-  </div>
+  <Card style={{ textAlign:'center', padding:16 }}>
+    <div style={{ fontSize:10, color:T.textMut, marginBottom:4, textTransform:'uppercase', letterSpacing:'0.05em' }}>{label}</div>
+    <div style={{ fontSize:22, fontWeight:700, color: color || T.navy }}>{value}</div>
+    {sub && <div style={{ fontSize:11, color:T.textSec, marginTop:2 }}>{sub}</div>}
+  </Card>
 );
 
-const SectionHeader = ({ title, sub }) => (
-  <div style={{ marginBottom: 16 }}>
-    <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{title}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>{sub}</div>}
-  </div>
-);
+// ─── Main page ────────────────────────────────────────────────────────────────
+export default function ClimateStressTestPage() {
+  // Global state
+  const [tab, setTab]                     = useState(0);
+  const [activeScenario, setActiveScenario] = useState('nz');
+  const [activeYear, setActiveYear]       = useState(2030);
+  const [compareMode, setCompareMode]     = useState(false);
+  const [customOpen, setCustomOpen]       = useState(false);
+  const [custom, setCustom]               = useState({ cp30:130, cp50:250, gdp:-2, phys:1.5 });
 
-const CustomTooltip = ({ active, payload, label }) => {
-  if (!active || !payload || !payload.length) return null;
+  // Sector tab state
+  const [sectorSearch, setSectorSearch]   = useState('');
+  const [sectorScenario, setSectorScenario] = useState('nz');
+  const [sectorYear, setSectorYear]       = useState(2030);
+  const [sortCol, setSortCol]             = useState('stressedPD');
+  const [sortAsc, setSortAsc]             = useState(false);
+  const [expandedSector, setExpandedSector] = useState(null);
+  const [pdThreshold, setPdThreshold]     = useState('');
+
+  // Portfolio tab state
+  const [portScenario, setPortScenario]   = useState('nz');
+  const [portSectorFilter, setPortSectorFilter] = useState('All');
+  const [portCountryFilter, setPortCountryFilter] = useState('All');
+  const [portRunning, setPortRunning]     = useState(false);
+  const [portRan, setPortRan]             = useState(false);
+
+  // Regulatory tab state
+  const [regState, setRegState]           = useState({});
+  const [regOwner, setRegOwner]           = useState({});
+  const [regExpanded, setRegExpanded]     = useState({});
+
+  const sc = SCENARIOS[activeScenario];
+
+  // ── Custom CET1 estimate ─────────────────────────────────────────────────
+  const customCet1 = useMemo(() => {
+    const base = CET1_IMPACT[activeScenario][activeYear];
+    const cpFactor  = (custom.cp30 / 130) * 0.4;
+    const gdpFactor = (Math.abs(custom.gdp) / 3) * 0.5;
+    const physFactor = (custom.phys / 2) * 0.3;
+    return Math.round((base - cpFactor - gdpFactor - physFactor) * 100) / 100;
+  }, [activeScenario, activeYear, custom]);
+
+  // ── Carbon price chart ───────────────────────────────────────────────────
+  const carbonChartData = useMemo(() => YEARS.map(y => ({
+    year: y,
+    [SCENARIOS.nz.label]: CARBON_PRICE.nz[y],
+    [SCENARIOS.dt.label]: CARBON_PRICE.dt[y],
+    [SCENARIOS.hh.label]: CARBON_PRICE.hh[y],
+    selected: CARBON_PRICE[activeScenario][y],
+  })), [activeScenario]);
+
+  // ── Sector table ─────────────────────────────────────────────────────────
+  const sectorMultKey = { nz:'nzMult', dt:'dtMult', hh:'hhMult' }[sectorScenario];
+  const filteredSectors = useMemo(() => {
+    const yrFactor = sectorYear <= 2025 ? 0.4 : sectorYear <= 2030 ? 0.7 : 1.0;
+    let rows = SECTORS_RAW.map(s => {
+      const mult = 1 + (s[sectorMultKey] - 1) * yrFactor;
+      const stressed = Math.round(s.basePD * mult * 100) / 100;
+      return { ...s, stressedPD: stressed, pdChangeBps: Math.round((stressed - s.basePD) * 100), mult: Math.round(mult * 100) / 100 };
+    }).filter(s => s.name.toLowerCase().includes(sectorSearch.toLowerCase()));
+
+    rows.sort((a, b) => {
+      const v = sortAsc ? 1 : -1;
+      if (sortCol === 'name') return a.name.localeCompare(b.name) * v;
+      return (a[sortCol] - b[sortCol]) * v;
+    });
+    return rows;
+  }, [sectorSearch, sectorScenario, sectorYear, sortCol, sortAsc, sectorMultKey]);
+
+  const thresholdNum = pdThreshold ? parseFloat(pdThreshold) : null;
+
+  // ── Portfolio metrics ────────────────────────────────────────────────────
+  const portMetrics = useMemo(() => {
+    const eclKey = { nz:'eclUpliftNz', dt:'eclUpliftDt', hh:'eclUpliftHh' }[portScenario];
+    const stKey  = { nz:'nzStressedPD', dt:'dtStressedPD', hh:'hhStressedPD' }[portScenario];
+    const totalECL = BORROWERS.reduce((a, b) => a + b[eclKey], 0);
+    const rwaDelta = totalECL * 1.8;
+    const cet1pp   = CET1_IMPACT[portScenario][activeYear];
+    const cvar     = Math.round(totalECL * 2.1 * 100) / 100;
+    const nii      = Math.round(totalECL * 0.18 * 100) / 100;
+    return { totalECL: Math.round(totalECL), rwaDelta: Math.round(rwaDelta), cet1pp, cvar, nii };
+  }, [portScenario, activeYear]);
+
+  const portCountries = ['All', ...Array.from(new Set(BORROWERS.map(b => b.country))).sort()];
+  const portSectors   = ['All', ...Array.from(new Set(BORROWERS.map(b => b.sector))).sort()];
+
+  const filteredBorrowers = useMemo(() => {
+    const eclKey = { nz:'eclUpliftNz', dt:'eclUpliftDt', hh:'eclUpliftHh' }[portScenario];
+    return BORROWERS
+      .filter(b => portSectorFilter  === 'All' || b.sector  === portSectorFilter)
+      .filter(b => portCountryFilter === 'All' || b.country === portCountryFilter)
+      .sort((a, b) => b[eclKey] - a[eclKey]);
+  }, [portScenario, portSectorFilter, portCountryFilter]);
+
+  const waterfallData = useMemo(() => WATERFALL_COMPONENTS.map(c => ({
+    name: c.name, value: c[activeScenario], fill: c[activeScenario] < 0 ? T.red : T.sage,
+  })), [activeScenario]);
+
+  const whatIfSaving = useMemo(() => {
+    const eclKey = { nz:'eclUpliftNz', dt:'eclUpliftDt', hh:'eclUpliftHh' }[portScenario];
+    const sorted = [...BORROWERS].sort((a, b) => b[eclKey] - a[eclKey]);
+    const top5ecl = sorted.slice(0, 5).reduce((a, b) => a + b[eclKey], 0);
+    return Math.round((top5ecl / portMetrics.totalECL) * Math.abs(portMetrics.cet1pp) * 100) / 100;
+  }, [portScenario, portMetrics]);
+
+  // ── Regulatory readiness ─────────────────────────────────────────────────
+  const regReadiness = useMemo(() => {
+    const total = REG_FRAMEWORKS.reduce((a, f) => a + f.items.length, 0);
+    const done  = REG_FRAMEWORKS.reduce((a, f) => a + f.items.filter((_, i) => regState[`${f.id}_${i}`] === 'complete').length, 0);
+    const prog  = REG_FRAMEWORKS.reduce((a, f) => a + f.items.filter((_, i) => regState[`${f.id}_${i}`] === 'progress').length, 0);
+    return { total, done, prog, pct: Math.round((done / total) * 100) };
+  }, [regState]);
+
+  const daysUntil = d => Math.max(0, Math.ceil((d - new Date()) / 86400000));
+
+  const cycleRegItem = (fid, idx) => {
+    const k = `${fid}_${idx}`;
+    const cur = regState[k] || 'not';
+    setRegState(prev => ({ ...prev, [k]: cur === 'not' ? 'progress' : cur === 'progress' ? 'complete' : 'not' }));
+  };
+
+  const regItemColor = s => s === 'complete' ? T.green : s === 'progress' ? T.amber : T.textMut;
+  const regItemLabel = s => s === 'complete' ? 'Complete' : s === 'progress' ? 'In Progress' : 'Not Started';
+
+  // ── CSV export ────────────────────────────────────────────────────────────
+  const handleExportCSV = useCallback(() => {
+    const eclKey = { nz:'eclUpliftNz', dt:'eclUpliftDt', hh:'eclUpliftHh' }[portScenario];
+    const stKey  = { nz:'nzStressedPD', dt:'dtStressedPD', hh:'hhStressedPD' }[portScenario];
+    const rows   = [['ID','Name','Sector','Country','Exposure (£M)','Base PD (%)','Stressed PD (%)','ECL Uplift (£M)']];
+    BORROWERS.forEach(b => rows.push([b.id, b.name, b.sector, b.country, b.exposure, b.basePD, b[stKey], b[eclKey]]));
+    const csv  = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type:'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = `stress_test_${portScenario}_${activeYear}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  }, [portScenario, activeYear]);
+
+  const handleRunStressTest = () => {
+    setPortRunning(true);
+    setTimeout(() => { setPortRunning(false); setPortRan(true); }, 2000);
+  };
+
+  const sortIcon = col => sortCol === col ? (sortAsc ? ' ↑' : ' ↓') : ' ↕';
+  const handleSort = col => { if (sortCol === col) setSortAsc(a => !a); else { setSortCol(col); setSortAsc(false); } };
+
+  const tabLabels = ['Scenario Builder', 'Sector PD Migration', 'Portfolio Impact', 'Regulatory Tracker'];
+
+  // ═══════════════════════════════════════════════════════════════════════════
   return (
-    <div style={{ background: T.surfaceH, border: `1px solid ${T.border}`, borderRadius: 6, padding: '8px 12px', fontSize: 12 }}>
-      <div style={{ color: T.textSec, marginBottom: 4 }}>{label}</div>
-      {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || T.text }}>
-          {p.name}: <strong>{typeof p.value === 'number' ? p.value.toFixed(2) : p.value}</strong>
+    <div style={{ fontFamily:T.font, background:T.bg, minHeight:'100vh', color:T.text }}>
+
+      {/* Header */}
+      <div style={{ background:T.navy, padding:'24px 32px 0', color:'#fff' }}>
+        <div style={{ fontSize:22, fontWeight:700, marginBottom:4 }}>Climate Stress Test Platform</div>
+        <div style={{ fontSize:13, color:'rgba(255,255,255,0.55)', marginBottom:16 }}>
+          NGFS Phase IV — ECB / BoE CBES aligned — 3 scenarios × 5 horizons — 30 sectors — 50 borrowers
         </div>
-      ))}
-    </div>
-  );
-};
-
-// Derive latest EU ETS price from imported real data
-const LATEST_EU_ETS = EU_ETS_ANNUAL[EU_ETS_ANNUAL.length - 1]; // 2024: €64.8/t
-// Reference NGFS scenario count to avoid unused-import lint warnings
-const _ngfsScenarioCount = Object.keys(NGFS_CARBON_PRICES).length; // eslint-disable-line no-unused-vars
-
-const ScenarioOverviewTab = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-    {/* Real market data reference banner */}
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
-      background: '#16a34a0f', border: '1px solid #16a34a30', borderRadius: 8,
-      padding: '10px 16px',
-    }}>
-      <span style={{
-        fontSize: 11, fontWeight: 700, color: '#16a34a',
-        background: '#16a34a18', border: '1px solid #16a34a35',
-        borderRadius: 4, padding: '2px 8px', whiteSpace: 'nowrap',
-      }}>
-        ✓ Real Data
-      </span>
-      <span style={{ fontSize: 12, color: '#5a8a6a', flex: 1 }}>
-        EU ETS {LATEST_EU_ETS.year} avg: <strong>€{LATEST_EU_ETS.price}/t</strong> — confirmed by European Environment Agency (EEA) &amp; European Commission.
-        &nbsp;EU ETS broke €100 for first time in Feb 2023. NGFS Phase IV scenario parameters sourced from official NGFS Technical Documentation V4.2 (Nov 2023).
-      </span>
-      <span style={{ fontSize: 10, color: '#9aa3ae', whiteSpace: 'nowrap' }}>
-        Source: EEA · Reuters · NGFS
-      </span>
-    </div>
-
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-      {SCENARIOS.map(sc => (
-        <div key={sc.id} style={{
-          background: T.surface, border: `1px solid ${T.border}`,
-          borderTop: `3px solid ${sc.typeColor}`, borderRadius: 8,
-          padding: 18, boxShadow: T.card,
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>{sc.name}</div>
-            <span style={{
-              fontSize: 10, fontWeight: 600, letterSpacing: '0.05em',
-              background: `${sc.typeColor}20`, color: sc.typeColor,
-              border: `1px solid ${sc.typeColor}40`, borderRadius: 4, padding: '2px 7px',
-            }}>{sc.type}</span>
-          </div>
-          <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.55, margin: '0 0 14px' }}>{sc.desc}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {sc.carbonPrice2030 !== undefined && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: T.textMut }}>Carbon price 2030</span>
-                <span style={{ color: T.text, fontWeight: 600 }}>${sc.carbonPrice2030}/tCO2e</span>
-              </div>
-            )}
-            {sc.carbonPrice2050 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: T.textMut }}>Carbon price 2050</span>
-                <span style={{ color: T.text, fontWeight: 600 }}>${sc.carbonPrice2050}/tCO2e</span>
-              </div>
-            )}
-            {sc.carbonPrice2035 !== undefined && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: T.textMut }}>Carbon price 2035</span>
-                <span style={{ color: T.amber, fontWeight: 600 }}>${sc.carbonPrice2035}/tCO2e</span>
-              </div>
-            )}
-            {sc.gdpImpact2030 !== undefined && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: T.textMut }}>GDP impact 2030</span>
-                <span style={{ color: T.amber, fontWeight: 600 }}>{sc.gdpImpact2030}% vs baseline</span>
-              </div>
-            )}
-            {sc.gdpImpact2035 !== undefined && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: T.textMut }}>GDP impact 2035</span>
-                <span style={{ color: T.red, fontWeight: 600 }}>{sc.gdpImpact2035}% vs baseline</span>
-              </div>
-            )}
-            {sc.gdpImpactRange && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: T.textMut }}>GDP impact {sc.gdpImpactYear}</span>
-                <span style={{ color: T.red, fontWeight: 600 }}>{sc.gdpImpactRange}</span>
-              </div>
-            )}
-            {sc.physicalDamage && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                <span style={{ color: T.textMut }}>Physical damage</span>
-                <span style={{ color: T.red, fontWeight: 600 }}>${sc.physicalDamage}T cumulative</span>
-              </div>
-            )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-              <span style={{ color: T.textMut }}>Stranded asset risk</span>
-              <span style={{ color: sc.strandedColor, fontWeight: 600 }}>{sc.strandedRisk}</span>
-            </div>
-            <div style={{
-              marginTop: 8, background: `${sc.typeColor}15`,
-              border: `1px solid ${sc.typeColor}30`, borderRadius: 6,
-              padding: '6px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            }}>
-              <span style={{ fontSize: 11, color: T.textSec, fontWeight: 600 }}>CET1 Impact</span>
-              <span style={{ fontSize: 16, fontWeight: 700, color: T.red }}>{sc.cet1Impact}%</span>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>CET1 Depletion Timeline - NGFS Phase IV Scenarios</div>
-          <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>
-            Projected CET1 ratio 2024-2035 | Regulatory minimum 10.5%
-          </div>
-        </div>
-        <span style={{
-          fontSize: 10, fontWeight: 600, color: '#16a34a',
-          background: '#16a34a15', border: '1px solid #16a34a30',
-          borderRadius: 4, padding: '3px 9px', whiteSpace: 'nowrap', marginLeft: 12, marginTop: 2,
-        }}>
-          ✓ NGFS Phase IV scenarios (2023) — real published parameters
-        </span>
-      </div>
-      <ResponsiveContainer width="100%" height={260}>
-        <AreaChart data={CET1_TIMELINE} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-          <defs>
-            <linearGradient id="gnz" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor={T.green} stopOpacity={0.25} />
-              <stop offset="95%" stopColor={T.green} stopOpacity={0.02} />
-            </linearGradient>
-            <linearGradient id="gd" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor={T.amber} stopOpacity={0.25} />
-              <stop offset="95%" stopColor={T.amber} stopOpacity={0.02} />
-            </linearGradient>
-            <linearGradient id="ghh" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor={T.red} stopOpacity={0.25} />
-              <stop offset="95%" stopColor={T.red} stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-          <XAxis dataKey="year" tick={{ fill: T.textSec, fontSize: 11 }} axisLine={{ stroke: T.border }} />
-          <YAxis domain={[10, 16]} tick={{ fill: T.textSec, fontSize: 11 }} axisLine={{ stroke: T.border }} tickFormatter={v => `${v}%`} />
-          <Tooltip content={<CustomTooltip />} />
-          <Area type="monotone" dataKey="nz2050"   name="Net Zero 2050"      stroke={T.green} fill="url(#gnz)" strokeWidth={2} dot={false} />
-          <Area type="monotone" dataKey="delayed"  name="Delayed Transition"  stroke={T.amber} fill="url(#gd)"  strokeWidth={2} dot={false} />
-          <Area type="monotone" dataKey="hothouse" name="Hot House World"     stroke={T.red}   fill="url(#ghh)" strokeWidth={2} dot={false} />
-        </AreaChart>
-      </ResponsiveContainer>
-      <div style={{ display: 'flex', gap: 20, marginTop: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-        {[
-          { label: 'Net Zero 2050',      color: T.green },
-          { label: 'Delayed Transition', color: T.amber },
-          { label: 'Hot House World',    color: T.red   },
-        ].map(l => (
-          <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: T.textSec }}>
-            <div style={{ width: 24, height: 2, background: l.color, borderRadius: 1 }} />
-            {l.label}
-          </div>
-        ))}
-      </div>
-    </div>
-
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-      <SectionHeader title="CET1 Impact by Scenario" sub="Percentage depletion from 14.8% baseline" />
-      <ResponsiveContainer width="100%" height={160}>
-        <BarChart
-          data={SCENARIOS.map(s => ({ name: s.name, impact: Math.abs(s.cet1Impact) }))}
-          layout="vertical"
-          margin={{ top: 4, right: 40, left: 130, bottom: 4 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke={T.border} horizontal={false} />
-          <XAxis type="number" tick={{ fill: T.textSec, fontSize: 11 }} axisLine={{ stroke: T.border }} tickFormatter={v => `${v}%`} />
-          <YAxis type="category" dataKey="name" tick={{ fill: T.text, fontSize: 12 }} axisLine={false} tickLine={false} width={125} />
-          <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="impact" name="CET1 Depletion" radius={[0, 4, 4, 0]}>
-            {SCENARIOS.map((s, i) => <Cell key={i} fill={s.typeColor} />)}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  </div>
-);
-
-const PDMigrationTab = () => {
-  const sorted = [...PD_MIGRATION].sort((a, b) => b.bps - a.bps);
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-        <SectionHeader
-          title="PD Migration by Sector - Delayed Transition Scenario"
-          sub="Probability of Default uplift (bps) vs base | Peak stress window 2030-2035"
-        />
-        <ResponsiveContainer width="100%" height={390}>
-          <BarChart data={sorted} layout="vertical" margin={{ top: 4, right: 80, left: 165, bottom: 4 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} horizontal={false} />
-            <XAxis type="number" tick={{ fill: T.textSec, fontSize: 11 }} axisLine={{ stroke: T.border }} tickFormatter={v => `${v}bps`} />
-            <YAxis type="category" dataKey="sector" tick={{ fill: T.text, fontSize: 11 }} axisLine={false} tickLine={false} width={160} />
-            <Tooltip
-              content={({ active, payload, label }) => {
-                if (!active || !payload || !payload.length) return null;
-                const row = PD_MIGRATION.find(r => r.sector === label);
-                return (
-                  <div style={{ background: T.surfaceH, border: `1px solid ${T.border}`, borderRadius: 6, padding: '10px 14px', fontSize: 12 }}>
-                    <div style={{ color: T.textSec, marginBottom: 6, fontWeight: 600 }}>{label}</div>
-                    <div style={{ color: T.text }}>Base PD: <strong>{row && row.pdBase}%</strong></div>
-                    <div style={{ color: T.text }}>Stress PD: <strong>{row && row.pdStress}%</strong></div>
-                    <div style={{ color: payload[0].fill, fontWeight: 700, marginTop: 4 }}>
-                      {payload[0].value > 0 ? '+' : ''}{payload[0].value} bps
-                    </div>
-                  </div>
-                );
-              }}
-            />
-            <Bar dataKey="bps" name="PD Change (bps)" radius={[0, 4, 4, 0]}>
-              {sorted.map((row, i) => <Cell key={i} fill={row.dir === 'up' ? T.red : T.green} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-        <SectionHeader title="PD Migration Detail" sub="Base vs stress probability of default - Delayed Transition" />
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-              {['Sector', 'Base PD', 'Stressed PD', 'Change (bps)', 'Multiplier', 'Risk Level'].map(h => (
-                <th key={h} style={{
-                  textAlign: 'left', padding: '8px 12px', color: T.textSec,
-                  fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em',
-                }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sorted.map((row, i) => {
-              const mult = (row.pdStress / row.pdBase).toFixed(1);
-              const riskLabel = row.bps > 500 ? 'Critical' : row.bps > 200 ? 'High' : row.bps > 0 ? 'Elevated' : 'Reduced';
-              const riskColor = row.bps > 500 ? T.red : row.bps > 200 ? T.amber : row.bps > 0 ? T.amber : T.green;
-              return (
-                <tr key={i}
-                  style={{ borderBottom: `1px solid ${T.borderL}` }}
-                  onMouseEnter={e => e.currentTarget.style.background = T.surfaceH}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  <td style={{ padding: '9px 12px', color: T.text, fontWeight: 500 }}>{row.sector}</td>
-                  <td style={{ padding: '9px 12px', color: T.textSec }}>{row.pdBase}%</td>
-                  <td style={{ padding: '9px 12px', color: row.dir === 'up' ? T.red : T.green, fontWeight: 600 }}>{row.pdStress}%</td>
-                  <td style={{ padding: '9px 12px', color: row.bps > 0 ? T.red : T.green, fontWeight: 700 }}>
-                    {row.bps > 0 ? '+' : ''}{row.bps}bps
-                  </td>
-                  <td style={{ padding: '9px 12px', color: T.textSec }}>{mult}x</td>
-                  <td style={{ padding: '9px 12px' }}>
-                    <span style={{
-                      fontSize: 11, fontWeight: 600, color: riskColor,
-                      background: `${riskColor}18`, border: `1px solid ${riskColor}30`,
-                      borderRadius: 4, padding: '2px 7px',
-                    }}>{riskLabel}</span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-const PortfolioImpactTab = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-      <MetricCard label="Climate VaR (CVaR)"   value="-£1.8bn"  sub="Delayed scenario, 10yr horizon"  color={T.red}   />
-      <MetricCard label="NII at Risk"           value="-£340M/yr" sub="Net Interest Income impact"     color={T.red}   />
-      <MetricCard label="Expected Loss Uplift"  value="+£890M"   sub="Incremental EL under stress"     color={T.amber} />
-      <MetricCard label="RWA Increase"          value="+£4.2bn"  sub="Risk-weighted asset inflation"   color={T.amber} />
-      <MetricCard label="LCR Impact"            value="-8.2pp"     sub="Liquidity coverage ratio"        color={T.amber} />
-      <MetricCard label="Stranded Collateral"   value="£2.1bn"   sub="EPC D-G mortgages at risk"       color={T.red}   />
-    </div>
-
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 16 }}>
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-        <SectionHeader title="Banking Book Allocation" sub="£42bn total loan portfolio" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
-          {SECTOR_ALLOC.map((s, i) => {
-            const pct = ((s.exposure / 42) * 100).toFixed(1);
-            return (
-              <div key={i}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 3 }}>
-                  <span style={{ color: T.text }}>{s.sector}</span>
-                  <span style={{ color: T.textSec }}>£{s.exposure}bn <span style={{ color: T.textMut }}>({pct}%)</span></span>
-                </div>
-                <div style={{ height: 6, background: T.surfaceH, borderRadius: 3, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${pct}%`, background: s.color, borderRadius: 3 }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-        <SectionHeader
-          title="CET1 Waterfall - Delayed Transition Scenario"
-          sub="Starting 14.8% to Ending 12.0% | Buffer above 10.5% minimum: 1.5pp"
-        />
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={WF_DATA} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="name" tick={{ fill: T.textSec, fontSize: 10 }} axisLine={{ stroke: T.border }} />
-            <YAxis domain={[10, 16]} tick={{ fill: T.textSec, fontSize: 11 }} axisLine={{ stroke: T.border }} tickFormatter={v => `${v}%`} />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="base" stackId="a" fill="transparent" />
-            <Bar dataKey="val"  stackId="a" name="CET1" radius={[4, 4, 0, 0]}>
-              {WF_DATA.map((d, i) => <Cell key={i} fill={d.color} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-        <div style={{ display: 'flex', gap: 14, marginTop: 8, flexWrap: 'wrap' }}>
-          {[
-            { label: 'Starting CET1',   color: T.sage  },
-            { label: 'Negative driver', color: T.red   },
-            { label: 'Ending 12.0%',    color: T.amber },
-          ].map(l => (
-            <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: T.textSec }}>
-              <div style={{ width: 10, height: 10, background: l.color, borderRadius: 2 }} />
-              {l.label}
-            </div>
+        <div style={{ display:'flex', gap:4 }}>
+          {tabLabels.map((t, i) => (
+            <button key={i} onClick={() => setTab(i)} style={{
+              padding:'10px 20px', border:'none', borderRadius:'8px 8px 0 0', cursor:'pointer',
+              fontFamily:T.font, fontWeight:600, fontSize:13,
+              background: tab === i ? T.bg : 'transparent',
+              color: tab === i ? T.navy : 'rgba(255,255,255,0.7)',
+            }}>{t}</button>
           ))}
         </div>
       </div>
-    </div>
 
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-      <SectionHeader title="Climate Risk Heat Map - Banking Book" sub="Sector vulnerability under Delayed Transition scenario" />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-        {[
-          { sector: 'Residential Mortgages', transition: 'Low',       physical: 'Medium', overall: 'Medium', c: T.amber },
-          { sector: 'Commercial RE',          transition: 'High',      physical: 'High',   overall: 'High',   c: T.red   },
-          { sector: 'Corporate - Energy',     transition: 'Very High', physical: 'Low',    overall: 'High',   c: T.red   },
-          { sector: 'Corporate - Transport',  transition: 'High',      physical: 'Low',    overall: 'High',   c: T.red   },
-          { sector: 'SME Lending',            transition: 'Medium',    physical: 'Low',    overall: 'Medium', c: T.amber },
-          { sector: 'Corporate - Industry',   transition: 'Medium',    physical: 'Low',    overall: 'Medium', c: T.amber },
-          { sector: 'Agriculture',            transition: 'Low',       physical: 'High',   overall: 'Medium', c: T.amber },
-          { sector: 'Other',                  transition: 'Low',       physical: 'Low',    overall: 'Low',    c: T.green },
-        ].map((row, i) => (
-          <div key={i} style={{ background: `${row.c}12`, border: `1px solid ${row.c}30`, borderRadius: 6, padding: '10px 12px' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: T.text, marginBottom: 6 }}>{row.sector}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
-                <span style={{ color: T.textMut }}>Transition</span>
-                <span style={{ color: T.textSec }}>{row.transition}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
-                <span style={{ color: T.textMut }}>Physical</span>
-                <span style={{ color: T.textSec }}>{row.physical}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginTop: 4, borderTop: `1px solid ${T.borderL}`, paddingTop: 4 }}>
-                <span style={{ color: T.textSec, fontWeight: 600 }}>Overall</span>
-                <span style={{ color: row.c, fontWeight: 700 }}>{row.overall}</span>
+      <div style={{ padding:24, maxWidth:1400, margin:'0 auto' }}>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            TAB 0  —  SCENARIO BUILDER
+        ══════════════════════════════════════════════════════════════════ */}
+        {tab === 0 && (
+          <div>
+            {/* Scenario pills + compare */}
+            <div style={{ display:'flex', gap:10, alignItems:'center', marginBottom:20, flexWrap:'wrap' }}>
+              {Object.values(SCENARIOS).map(s => (
+                <Pill key={s.key} label={s.label} active={activeScenario === s.key} color={s.color}
+                  onClick={() => setActiveScenario(s.key)} />
+              ))}
+              <div style={{ marginLeft:'auto', display:'flex', gap:8 }}>
+                <button onClick={() => setCompareMode(m => !m)} style={{
+                  padding:'6px 14px', borderRadius:20, fontSize:12, fontWeight:600, cursor:'pointer',
+                  border:`1.5px solid ${compareMode ? T.navyL : T.border}`,
+                  background: compareMode ? T.navyL : T.surface,
+                  color: compareMode ? '#fff' : T.textSec,
+                }}>Compare Mode</button>
+                <button onClick={() => setCustomOpen(o => !o)} style={{
+                  padding:'6px 14px', borderRadius:20, fontSize:12, fontWeight:600, cursor:'pointer',
+                  border:`1.5px solid ${T.gold}`,
+                  background: customOpen ? T.gold : T.surface,
+                  color: customOpen ? '#fff' : T.textSec,
+                }}>{customOpen ? '▲ Custom Scenario' : '▼ Build Custom Scenario'}</button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-);
 
-const RegulatoryTab = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-      {REG_FRAMEWORKS.map(fw => (
-        <div key={fw.id} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, flex: 1, marginRight: 10 }}>{fw.name}</div>
-            <span style={{
-              fontSize: 10, fontWeight: 600, color: fw.statusColor,
-              background: `${fw.statusColor}18`, border: `1px solid ${fw.statusColor}30`,
-              borderRadius: 4, padding: '2px 8px', whiteSpace: 'nowrap',
-            }}>{fw.status}</span>
-          </div>
-          <p style={{ fontSize: 11, color: T.textSec, lineHeight: 1.55, margin: '0 0 14px' }}>{fw.desc}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {fw.items.map((item, j) => (
-              <div key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 11 }}>
-                <div style={{
-                  width: 16, height: 16, borderRadius: '50%', flexShrink: 0, marginTop: 1,
-                  background: item.done ? `${T.green}20` : `${T.textMut}20`,
-                  border: `1px solid ${item.done ? T.green : T.textMut}`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 9, color: item.done ? T.green : T.textMut,
-                }}>
-                  {item.done ? '✓' : '○'}
-                </div>
-                <span style={{ color: item.done ? T.text : T.textSec }}>{item.label}</span>
+            {/* Year horizon slider */}
+            <Card style={{ marginBottom:16 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
+                <span style={{ fontWeight:600, fontSize:14 }}>Year Horizon</span>
+                <span style={{ fontWeight:700, fontSize:20, color:sc.color }}>{activeYear}</span>
               </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
+              <input type="range" min={0} max={4} step={1} value={YEARS.indexOf(activeYear)}
+                onChange={e => setActiveYear(YEARS[+e.target.value])}
+                style={{ width:'100%', accentColor:sc.color, marginBottom:10 }} />
+              <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:T.textMut, marginBottom:16 }}>
+                {YEARS.map(y => <span key={y}>{y}</span>)}
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
+                <MetricCard label="Carbon Price (shadow $/t)" value={`$${CARBON_PRICE[activeScenario][activeYear]}`} color={sc.color} />
+                <MetricCard label="CET1 Impact (pp)" value={`${CET1_IMPACT[activeScenario][activeYear]} pp`} color={T.red} />
+                <MetricCard label="GDP Shock (%)" value={`${GDP_SHOCK[activeScenario][activeYear]}%`} color={T.amber} />
+              </div>
+            </Card>
 
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-      <SectionHeader
-        title="BCBS 18 Principles - Compliance Progress"
-        sub="Basel Committee on Banking Supervision | Climate Risk Management and Supervision (June 2022)"
-      />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {[
-          { group: 'Principles 1-6: Corporate Governance',                   done: 6, total: 6 },
-          { group: 'Principles 7-9: Internal Controls and Capital',          done: 3, total: 3 },
-          { group: 'Principles 10-12: Liquidity Risk and Data',              done: 3, total: 3 },
-          { group: 'Principles 13-15: Scenario Analysis',                    done: 3, total: 3 },
-          { group: 'Principles 16-18: Prudential Supervision and Disclosure', done: 1, total: 3 },
-        ].map((g, i) => {
-          const pct = Math.round((g.done / g.total) * 100);
-          const color = pct === 100 ? T.green : pct >= 50 ? T.amber : T.red;
-          return (
-            <div key={i}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                <span style={{ color: T.text }}>{g.group}</span>
-                <span style={{ color }}>
-                  {g.done}/{g.total} <span style={{ color: T.textMut }}>({pct}%)</span>
+            {/* Custom scenario builder */}
+            {customOpen && (
+              <Card style={{ marginBottom:16, borderColor:T.gold }}>
+                <div style={{ fontWeight:600, marginBottom:14, color:T.gold }}>Custom Scenario Builder</div>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:20 }}>
+                  {[
+                    { key:'cp30', label:'Carbon Price 2030 ($/t)', min:0,   max:500,  step:5 },
+                    { key:'cp50', label:'Carbon Price 2050 ($/t)', min:0,   max:1500, step:10 },
+                    { key:'gdp',  label:'GDP Shock (%)',            min:-15, max:0,    step:0.5 },
+                    { key:'phys', label:'Physical Damage Factor',   min:0,   max:5,    step:0.1 },
+                  ].map(f => (
+                    <div key={f.key}>
+                      <div style={{ fontSize:12, color:T.textSec, marginBottom:4 }}>
+                        {f.label}: <strong>{custom[f.key]}{f.key === 'gdp' ? '%' : ''}</strong>
+                      </div>
+                      <input type="range" min={f.min} max={f.max} step={f.step}
+                        value={custom[f.key]}
+                        onChange={e => setCustom(p => ({ ...p, [f.key]: +e.target.value }))}
+                        style={{ width:'100%', accentColor:T.gold }} />
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop:16, padding:14, background:T.surfaceH, borderRadius:8, textAlign:'center' }}>
+                  <span style={{ fontSize:13, color:T.textSec }}>Estimated CET1 Impact — custom scenario at {activeYear}: </span>
+                  <span style={{ fontWeight:700, fontSize:22, color:T.red, marginLeft:8 }}>{customCet1} pp</span>
+                </div>
+              </Card>
+            )}
+
+            {/* Charts */}
+            <div style={{ display:'grid', gridTemplateColumns: compareMode ? '1fr 1fr' : '3fr 2fr', gap:16, marginBottom:16 }}>
+              <Card>
+                <div style={{ fontWeight:600, marginBottom:12 }}>
+                  Carbon Price Trajectory — {compareMode ? 'All Scenarios' : sc.label}
+                </div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <AreaChart data={carbonChartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="year" tick={{ fontSize:11 }} />
+                    <YAxis tick={{ fontSize:11 }} unit="$/t" />
+                    <Tooltip formatter={(v, n) => [`$${v}/t`, n]} />
+                    {compareMode ? (
+                      Object.values(SCENARIOS).map(s => (
+                        <Area key={s.key} type="monotone" dataKey={s.label}
+                          stroke={s.color} fill={s.color} fillOpacity={0.12} strokeWidth={2} dot={{ r:3 }} />
+                      ))
+                    ) : (
+                      <Area type="monotone" dataKey="selected" name={sc.label}
+                        stroke={sc.color} fill={sc.color} fillOpacity={0.15} strokeWidth={2.5} dot={{ r:4 }} />
+                    )}
+                  </AreaChart>
+                </ResponsiveContainer>
+              </Card>
+
+              <Card>
+                <div style={{ fontWeight:600, marginBottom:12 }}>CET1 Depletion by Horizon — {sc.label}</div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={YEARS.map(y => ({ year:y, impact: CET1_IMPACT[activeScenario][y] }))}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="year" tick={{ fontSize:11 }} />
+                    <YAxis tick={{ fontSize:11 }} unit=" pp" />
+                    <Tooltip formatter={v => [`${v} pp`, 'CET1 Impact']} />
+                    <Bar dataKey="impact" radius={[4, 4, 0, 0]}>
+                      {YEARS.map(y => <Cell key={y} fill={y === activeYear ? sc.color : '#c8d4e0'} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
+
+            {/* EU ETS historical */}
+            <Card>
+              <div style={{ fontWeight:600, marginBottom:12 }}>EU ETS Historical Price Context (EUR/tCO2e)</div>
+              <ResponsiveContainer width="100%" height={150}>
+                <AreaChart data={EU_ETS_ANNUAL}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="year" tick={{ fontSize:11 }} />
+                  <YAxis tick={{ fontSize:11 }} unit="€" />
+                  <Tooltip formatter={(v) => [`€${v}`, 'EU ETS avg']} />
+                  <Area type="monotone" dataKey="price" stroke={T.navyL} fill={T.navyL}
+                    fillOpacity={0.15} strokeWidth={2} dot={{ r:3 }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════
+            TAB 1  —  SECTOR PD MIGRATION
+        ══════════════════════════════════════════════════════════════════ */}
+        {tab === 1 && (
+          <div>
+            {/* Controls */}
+            <div style={{ display:'flex', gap:10, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
+              {Object.values(SCENARIOS).map(s => (
+                <Pill key={s.key} label={s.label} active={sectorScenario === s.key} color={s.color}
+                  onClick={() => setSectorScenario(s.key)} />
+              ))}
+              <div style={{ display:'flex', gap:6, marginLeft:'auto' }}>
+                {[2025, 2030, 2035].map(y => (
+                  <button key={y} onClick={() => setSectorYear(y)} style={{
+                    padding:'5px 12px', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer',
+                    border:`1.5px solid ${sectorYear === y ? T.navy : T.border}`,
+                    background: sectorYear === y ? T.navy : T.surface,
+                    color: sectorYear === y ? '#fff' : T.textSec,
+                  }}>{y}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Search + threshold */}
+            <div style={{ display:'flex', gap:12, marginBottom:14 }}>
+              <input placeholder="Search sectors..." value={sectorSearch}
+                onChange={e => setSectorSearch(e.target.value)}
+                style={{ flex:1, padding:'8px 12px', border:`1px solid ${T.border}`, borderRadius:8,
+                  fontSize:13, fontFamily:T.font, color:T.text, background:T.surface }} />
+              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                <span style={{ fontSize:12, color:T.textSec, whiteSpace:'nowrap' }}>Alert PD &gt;</span>
+                <input type="number" placeholder="e.g. 4.0" value={pdThreshold}
+                  onChange={e => setPdThreshold(e.target.value)}
+                  style={{ width:80, padding:'8px 10px', border:`1px solid ${T.border}`, borderRadius:8,
+                    fontSize:13, fontFamily:T.font, color:T.text, background:T.surface }} />
+                <span style={{ fontSize:12, color:T.textSec }}>%</span>
+              </div>
+            </div>
+
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:8 }}>
+              {filteredSectors.length} of 30 sectors · Click row to expand · Click headers to sort
+            </div>
+
+            <Card style={{ padding:0, overflow:'hidden' }}>
+              <table style={{ width:'100%', borderCollapse:'collapse' }}>
+                <thead>
+                  <tr style={{ background:T.surfaceH, borderBottom:`1px solid ${T.border}` }}>
+                    {[
+                      ['name','Sector'], ['basePD','Base PD (%)'], ['stressedPD','Stressed PD (%)'],
+                      ['pdChangeBps','ΔPD (bps)'], ['mult','Multiplier'],
+                      ['transRisk','Trans Risk'], ['physRisk','Phys Risk'],
+                    ].map(([col, label]) => (
+                      <th key={col} onClick={() => handleSort(col)} style={{
+                        padding:'10px 14px', textAlign:'left', fontSize:11, fontWeight:600,
+                        color: sortCol === col ? T.navy : T.textSec, cursor:'pointer', userSelect:'none',
+                      }}>{label}{sortIcon(col)}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredSectors.map(s => {
+                    const breach   = thresholdNum && s.stressedPD > thresholdNum;
+                    const expanded = expandedSector === s.id;
+                    return (
+                      <React.Fragment key={s.id}>
+                        <tr onClick={() => setExpandedSector(expanded ? null : s.id)}
+                          style={{
+                            borderBottom:`1px solid ${T.border}`, cursor:'pointer',
+                            background: breach ? 'rgba(220,38,38,0.05)' : expanded ? T.surfaceH : 'transparent',
+                          }}>
+                          <td style={{ padding:'9px 14px', fontSize:13, fontWeight:500,
+                            color: breach ? T.red : T.text }}>
+                            {s.name}{breach ? ' ⚠' : ''}
+                          </td>
+                          <td style={{ padding:'9px 14px', fontSize:13 }}>{s.basePD.toFixed(2)}</td>
+                          <td style={{ padding:'9px 14px', fontSize:13, fontWeight:600,
+                            color: s.stressedPD > s.basePD * 1.5 ? T.red
+                              : s.stressedPD > s.basePD * 1.2 ? T.amber : T.green }}>
+                            {s.stressedPD.toFixed(2)}
+                          </td>
+                          <td style={{ padding:'9px 14px', fontSize:13 }}>+{s.pdChangeBps}</td>
+                          <td style={{ padding:'9px 14px', fontSize:13 }}>{s.mult}x</td>
+                          <td style={{ padding:'9px 14px' }}>
+                            <div style={{ display:'flex', gap:2 }}>
+                              {Array.from({ length:10 }, (_, i) => (
+                                <div key={i} style={{ width:6, height:12, borderRadius:2,
+                                  background: i < s.transRisk ? T.red : T.border }} />
+                              ))}
+                            </div>
+                          </td>
+                          <td style={{ padding:'9px 14px' }}>
+                            <div style={{ display:'flex', gap:2 }}>
+                              {Array.from({ length:10 }, (_, i) => (
+                                <div key={i} style={{ width:6, height:12, borderRadius:2,
+                                  background: i < s.physRisk ? T.amber : T.border }} />
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                        {expanded && (
+                          <tr style={{ background:'#f8f6f2' }}>
+                            <td colSpan={7} style={{ padding:'14px 20px' }}>
+                              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
+                                <div>
+                                  <div style={{ fontSize:10, fontWeight:700, color:T.textMut, marginBottom:6, textTransform:'uppercase' }}>Transition Risk Drivers</div>
+                                  <div style={{ fontSize:12 }}>Carbon cost as % EBITDA: <strong>{s.ebitda}%</strong></div>
+                                  <div style={{ fontSize:12, marginTop:4 }}>Regulatory exposure: <strong>{s.reg}</strong></div>
+                                </div>
+                                <div>
+                                  <div style={{ fontSize:10, fontWeight:700, color:T.textMut, marginBottom:6, textTransform:'uppercase' }}>Physical Risk</div>
+                                  <div style={{ fontSize:12 }}>Score: <strong style={{ color:T.amber }}>{s.physRisk}/10</strong></div>
+                                  <div style={{ fontSize:12, marginTop:4 }}>Transition score: <strong style={{ color:T.red }}>{s.transRisk}/10</strong></div>
+                                </div>
+                                <div>
+                                  <div style={{ fontSize:10, fontWeight:700, color:T.textMut, marginBottom:6, textTransform:'uppercase' }}>Top Borrowers</div>
+                                  {(TOP_BORROWERS_BY_SECTOR[s.name] || []).map(b => (
+                                    <div key={b.id} style={{ fontSize:12, display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+                                      <span>{b.name} ({b.country})</span>
+                                      <span style={{ color:T.red, fontWeight:600 }}>
+                                        {b[{ nz:'nzStressedPD', dt:'dtStressedPD', hh:'hhStressedPD' }[sectorScenario]].toFixed(2)}%
+                                      </span>
+                                    </div>
+                                  ))}
+                                  {(!TOP_BORROWERS_BY_SECTOR[s.name] || TOP_BORROWERS_BY_SECTOR[s.name].length === 0) && (
+                                    <div style={{ fontSize:12, color:T.textMut }}>No borrowers in portfolio</div>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </Card>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════
+            TAB 2  —  PORTFOLIO IMPACT CALCULATOR
+        ══════════════════════════════════════════════════════════════════ */}
+        {tab === 2 && (
+          <div>
+            {/* Controls */}
+            <div style={{ display:'flex', gap:10, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
+              {Object.values(SCENARIOS).map(s => (
+                <Pill key={s.key} label={s.label} active={portScenario === s.key} color={s.color}
+                  onClick={() => { setPortScenario(s.key); setPortRan(false); }} />
+              ))}
+              <select value={portSectorFilter} onChange={e => { setPortSectorFilter(e.target.value); setPortRan(false); }}
+                style={{ padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12,
+                  fontFamily:T.font, color:T.text, background:T.surface }}>
+                {portSectors.map(s => <option key={s}>{s}</option>)}
+              </select>
+              <select value={portCountryFilter} onChange={e => { setPortCountryFilter(e.target.value); setPortRan(false); }}
+                style={{ padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12,
+                  fontFamily:T.font, color:T.text, background:T.surface }}>
+                {portCountries.map(c => <option key={c}>{c}</option>)}
+              </select>
+              <div style={{ marginLeft:'auto', display:'flex', gap:8 }}>
+                <button onClick={handleRunStressTest} disabled={portRunning} style={{
+                  padding:'8px 20px', borderRadius:8, border:'none',
+                  cursor: portRunning ? 'not-allowed' : 'pointer', fontFamily:T.font,
+                  fontWeight:700, fontSize:13,
+                  background: portRunning ? T.textMut : T.navy, color:'#fff', transition:'all 0.2s',
+                }}>
+                  {portRunning ? 'Running...' : portRan ? 'Re-run Stress Test' : 'Run Stress Test'}
+                </button>
+                <button onClick={handleExportCSV} style={{
+                  padding:'8px 16px', borderRadius:8, border:`1.5px solid ${T.sage}`, cursor:'pointer',
+                  fontFamily:T.font, fontWeight:600, fontSize:12, background:T.surface, color:T.sage,
+                }}>Export CSV</button>
+              </div>
+            </div>
+
+            {portRan && (
+              <div style={{ padding:'8px 14px', background:'rgba(22,163,74,0.08)', border:`1px solid ${T.sage}`,
+                borderRadius:8, marginBottom:14, fontSize:12, color:T.sage, fontWeight:600 }}>
+                Stress test complete — results updated for {SCENARIOS[portScenario].label} at {activeYear}
+              </div>
+            )}
+
+            {/* Key metrics */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12, marginBottom:16 }}>
+              <MetricCard label="CVaR" value={`£${portMetrics.cvar}M`} color={T.red} />
+              <MetricCard label="NII at Risk" value={`£${portMetrics.nii}M/yr`} color={T.amber} />
+              <MetricCard label="ECL Uplift" value={`£${portMetrics.totalECL}M`} color={T.amber} />
+              <MetricCard label="RWA Increase" value={`£${portMetrics.rwaDelta}M`} color={T.navyL} />
+              <MetricCard label="CET1 Impact" value={`${portMetrics.cet1pp} pp`} color={T.red} />
+            </div>
+
+            {/* Waterfall + What-if */}
+            <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:16, marginBottom:16 }}>
+              <Card>
+                <div style={{ fontWeight:600, marginBottom:12 }}>
+                  CET1 Capital Waterfall — {SCENARIOS[portScenario].label}
+                </div>
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={waterfallData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fontSize:11 }} unit=" pp" />
+                    <YAxis dataKey="name" type="category" width={185} tick={{ fontSize:10 }} />
+                    <Tooltip formatter={v => [`${v > 0 ? '+' : ''}${v} pp`, 'CET1 Impact']} />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                      {waterfallData.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+
+              <Card>
+                <div style={{ fontWeight:600, marginBottom:12 }}>What-If Divestment</div>
+                <div style={{ fontSize:12, color:T.textSec, marginBottom:12 }}>
+                  Divesting the 5 highest-ECL borrowers reduces CET1 impact from:
+                </div>
+                <div style={{ textAlign:'center', padding:18, background:T.surfaceH, borderRadius:8 }}>
+                  <div style={{ fontSize:28, fontWeight:700, color:T.red }}>{portMetrics.cet1pp} pp</div>
+                  <div style={{ fontSize:13, color:T.textMut, margin:'8px 0' }}>to</div>
+                  <div style={{ fontSize:28, fontWeight:700, color:T.sage }}>
+                    {Math.round((Math.abs(portMetrics.cet1pp) - whatIfSaving) * (portMetrics.cet1pp < 0 ? -1 : 1) * 100) / 100} pp
+                  </div>
+                  <div style={{ fontSize:11, color:T.textMut, marginTop:4 }}>saving ~{whatIfSaving} pp</div>
+                </div>
+                <div style={{ fontSize:11, color:T.textSec, marginTop:10 }}>
+                  Based on top 5 by ECL in {SCENARIOS[portScenario].label} scenario
+                </div>
+              </Card>
+            </div>
+
+            {/* Heat map */}
+            <Card style={{ marginBottom:16 }}>
+              <div style={{ fontWeight:600, marginBottom:12 }}>
+                Borrower ECL Uplift Heat Map — {SCENARIOS[portScenario].label}
+                <span style={{ fontSize:12, fontWeight:400, color:T.textMut, marginLeft:8 }}>
+                  {filteredBorrowers.length} borrowers · hover for detail
                 </span>
               </div>
-              <div style={{ height: 6, background: T.surfaceH, borderRadius: 3, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: 3 }} />
+              <div style={{ display:'flex', flexWrap:'wrap', gap:3 }}>
+                {filteredBorrowers.map(b => {
+                  const eclKey = { nz:'eclUpliftNz', dt:'eclUpliftDt', hh:'eclUpliftHh' }[portScenario];
+                  const v = b[eclKey];
+                  const intensity = Math.min(v / 60, 1);
+                  const bg = `rgba(220,38,38,${0.1 + intensity * 0.7})`;
+                  return (
+                    <div key={b.id}
+                      title={`${b.name} | ${b.sector} | ${b.country} | £${b.exposure}M | ECL uplift £${v}M`}
+                      style={{ width:36, height:36, borderRadius:6, background:bg, cursor:'default',
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                        fontSize:8, fontWeight:600, color: intensity > 0.5 ? '#fff' : T.text }}>
+                      {b.id}
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+              <div style={{ display:'flex', gap:16, marginTop:10, fontSize:11, color:T.textMut, alignItems:'center' }}>
+                <span>Low ECL <span style={{ background:'rgba(220,38,38,0.1)', padding:'2px 10px', borderRadius:4, marginLeft:4 }}>&nbsp;</span></span>
+                <span>High ECL <span style={{ background:'rgba(220,38,38,0.8)', padding:'2px 10px', borderRadius:4, marginLeft:4 }}>&nbsp;</span></span>
+                <span style={{ marginLeft:'auto', color:T.amber, fontWeight:500 }}>★ = top-5 divestment candidates</span>
+              </div>
+            </Card>
 
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, boxShadow: T.card }}>
-      <SectionHeader title="Upcoming Regulatory Deadlines" sub="Climate risk and related requirements - action required" />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {UPCOMING.map((u, i) => {
-          const color = u.urgency === 'high' ? T.red : T.amber;
-          return (
-            <div key={i} style={{
-              display: 'flex', alignItems: 'center', gap: 14,
-              background: `${color}08`, border: `1px solid ${color}25`,
-              borderRadius: 6, padding: '10px 14px',
-            }}>
-              <div style={{
-                minWidth: 64, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: `${color}18`, border: `1px solid ${color}30`, borderRadius: 5,
-                fontSize: 11, fontWeight: 700, color,
-              }}>{u.deadline}</div>
-              <div style={{ flex: 1, fontSize: 12, color: T.text }}>{u.name}</div>
-              <span style={{
-                fontSize: 10, fontWeight: 600, color,
-                background: `${color}15`, border: `1px solid ${color}25`,
-                borderRadius: 4, padding: '2px 8px', textTransform: 'capitalize',
-              }}>{u.urgency}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  </div>
-);
-
-const TABS = ['Scenarios', 'PD Migration', 'Portfolio Impact', 'Regulatory'];
-
-export default function ClimateStressTestPage() {
-  const [activeTab, setActiveTab] = useState(0);
-
-  return (
-    <div style={{ minHeight: '100vh', background: T.bg, color: T.text, fontFamily: T.font, padding: '24px 28px' }}>
-      <div style={{
-        background: '#f0a82815', border: `1px solid ${T.amber}40`, borderRadius: 8,
-        padding: '10px 16px', marginBottom: 24,
-        display: 'flex', alignItems: 'flex-start', gap: 10,
-        fontSize: 12, color: T.amber, lineHeight: 1.55,
-      }}>
-        <span style={{ fontSize: 14, flexShrink: 0 }}>⚠</span>
-        <span>
-          <strong>Illustrative stress test</strong> — ECB/NGFS scenario parameters are real (NGFS Phase IV, 2023).
-          Portfolio composition and PD outcomes are illustrative.
-        </span>
-      </div>
-
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <div style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-            color: T.sage, background: `${T.sage}15`, border: `1px solid ${T.sage}30`,
-            borderRadius: 4, padding: '2px 8px',
-          }}>EP-AJ2</div>
-          <div style={{ fontSize: 10, color: T.textMut, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-            Sprint AJ — Financed Emissions & Climate Banking Analytics
+            {/* Borrower table */}
+            <Card style={{ padding:0, overflow:'hidden' }}>
+              <div style={{ padding:'12px 16px', borderBottom:`1px solid ${T.border}`, fontWeight:600, fontSize:14 }}>
+                Portfolio Detail — {filteredBorrowers.length} Borrowers (sorted by ECL Uplift)
+              </div>
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse' }}>
+                  <thead>
+                    <tr style={{ background:T.surfaceH }}>
+                      {['#','Name','Sector','Country','Exposure (£M)','Base PD (%)','Stressed PD (%)','ECL Uplift (£M)'].map(h => (
+                        <th key={h} style={{ padding:'8px 12px', textAlign:'left', fontSize:11,
+                          fontWeight:600, color:T.textSec, whiteSpace:'nowrap', borderBottom:`1px solid ${T.border}` }}>
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredBorrowers.map((b, i) => {
+                      const stKey  = { nz:'nzStressedPD', dt:'dtStressedPD', hh:'hhStressedPD' }[portScenario];
+                      const eclKey = { nz:'eclUpliftNz', dt:'eclUpliftDt', hh:'eclUpliftHh' }[portScenario];
+                      return (
+                        <tr key={b.id} style={{
+                          borderBottom:`1px solid ${T.border}`,
+                          background: i < 5 ? 'rgba(220,38,38,0.03)' : 'transparent',
+                        }}>
+                          <td style={{ padding:'7px 12px', fontSize:12, color:T.textMut }}>{b.id}</td>
+                          <td style={{ padding:'7px 12px', fontSize:12, fontWeight: i < 5 ? 600 : 400 }}>
+                            {b.name}{i < 5 ? ' ★' : ''}
+                          </td>
+                          <td style={{ padding:'7px 12px', fontSize:11, color:T.textSec }}>{b.sector}</td>
+                          <td style={{ padding:'7px 12px', fontSize:12 }}>{b.country}</td>
+                          <td style={{ padding:'7px 12px', fontSize:12 }}>{b.exposure}</td>
+                          <td style={{ padding:'7px 12px', fontSize:12 }}>{b.basePD.toFixed(2)}</td>
+                          <td style={{ padding:'7px 12px', fontSize:12, fontWeight:600,
+                            color: b[stKey] > b.basePD * 1.5 ? T.red : b[stKey] > b.basePD * 1.2 ? T.amber : T.text }}>
+                            {b[stKey].toFixed(2)}
+                          </td>
+                          <td style={{ padding:'7px 12px', fontSize:12, fontWeight:600, color:T.red }}>
+                            {b[eclKey].toFixed(1)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
           </div>
-        </div>
-        <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: T.text, letterSpacing: '-0.02em' }}>
-          Climate Stress Test — Banking Book
-        </h1>
-        <p style={{ margin: '6px 0 0', fontSize: 13, color: T.textSec }}>
-          ECB/BoE/NGFS climate stress testing for bank loan portfolios | NGFS Phase IV scenarios | £42bn banking book
-        </p>
-      </div>
+        )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-        <MetricCard label="Portfolio Size"          value="£42bn"   sub="Banking book gross exposure"     color={T.sage}  />
-        <MetricCard label="Worst-Case CET1 Hit"     value="-4.1%"    sub="Hot House World scenario"        color={T.red}   />
-        <MetricCard label="Delayed Transition CVaR" value="-£1.8bn" sub="10-year climate VaR"            color={T.amber} />
-        <MetricCard label="CET1 Buffer (Delayed)"   value="1.5pp"    sub="Above 10.5% regulatory minimum" color={T.amber} />
-      </div>
+        {/* ══════════════════════════════════════════════════════════════════
+            TAB 3  —  REGULATORY TRACKER
+        ══════════════════════════════════════════════════════════════════ */}
+        {tab === 3 && (
+          <div>
+            {/* Overall readiness */}
+            <Card style={{ marginBottom:20 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+                <div>
+                  <div style={{ fontWeight:700, fontSize:16 }}>Overall Regulatory Readiness</div>
+                  <div style={{ fontSize:12, color:T.textSec, marginTop:3 }}>
+                    {regReadiness.done} complete · {regReadiness.prog} in progress
+                    · {regReadiness.total - regReadiness.done - regReadiness.prog} not started
+                    · {regReadiness.total} total items
+                  </div>
+                </div>
+                <div style={{ fontSize:40, fontWeight:700,
+                  color: regReadiness.pct >= 80 ? T.green : regReadiness.pct >= 50 ? T.amber : T.red }}>
+                  {regReadiness.pct}%
+                </div>
+              </div>
+              <div style={{ background:T.surfaceH, borderRadius:6, height:12, overflow:'hidden' }}>
+                <div style={{ height:'100%', borderRadius:6, transition:'width 0.4s',
+                  width:`${regReadiness.pct}%`,
+                  background: regReadiness.pct >= 80 ? T.green : regReadiness.pct >= 50 ? T.amber : T.red }} />
+              </div>
+              {regReadiness.prog > 0 && (
+                <div style={{ height:5, borderRadius:6, marginTop:3, overflow:'hidden', background:T.surfaceH }}>
+                  <div style={{ height:'100%', borderRadius:6,
+                    width:`${Math.round((regReadiness.prog / regReadiness.total) * 100)}%`,
+                    background:`${T.amber}55` }} />
+                </div>
+              )}
+            </Card>
 
-      <div style={{ display: 'flex', gap: 2, marginBottom: 24, borderBottom: `1px solid ${T.border}` }}>
-        {TABS.map((tab, i) => (
-          <button
-            key={i}
-            onClick={() => setActiveTab(i)}
-            style={{
-              background: 'none', border: 'none',
-              borderBottom: activeTab === i ? `2px solid ${T.sage}` : '2px solid transparent',
-              color: activeTab === i ? T.sage : T.textSec,
-              fontFamily: T.font, fontSize: 13,
-              fontWeight: activeTab === i ? 600 : 400,
-              padding: '10px 18px', cursor: 'pointer', marginBottom: -1,
-              transition: 'color 0.15s', letterSpacing: '0.01em',
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+            {/* Framework cards 2-up */}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+              {REG_FRAMEWORKS.map(f => {
+                const done = f.items.filter((_, i) => regState[`${f.id}_${i}`] === 'complete').length;
+                const prog = f.items.filter((_, i) => regState[`${f.id}_${i}`] === 'progress').length;
+                const days = daysUntil(f.deadline);
+                const isExp = regExpanded[f.id];
+                return (
+                  <Card key={f.id} style={{ borderLeft:`4px solid ${f.color}` }}>
+                    {/* Header */}
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
+                      <div>
+                        <div style={{ fontWeight:700, fontSize:14, color:f.color }}>{f.name}</div>
+                        <div style={{ fontSize:11, color:T.textMut, marginTop:2 }}>
+                          Deadline: {f.deadline.toLocaleDateString('en-GB')} ·{' '}
+                          <span style={{ color: days < 90 ? T.red : days < 180 ? T.amber : T.green, fontWeight:600 }}>
+                            {days} days remaining
+                          </span>
+                        </div>
+                      </div>
+                      <div style={{ textAlign:'right' }}>
+                        <div style={{ fontSize:22, fontWeight:700, color:f.color }}>{done}/{f.items.length}</div>
+                        <div style={{ fontSize:10, color:T.textMut }}>complete</div>
+                      </div>
+                    </div>
 
-      {activeTab === 0 && <ScenarioOverviewTab />}
-      {activeTab === 1 && <PDMigrationTab />}
-      {activeTab === 2 && <PortfolioImpactTab />}
-      {activeTab === 3 && <RegulatoryTab />}
+                    {/* Mini progress bar */}
+                    <div style={{ background:T.surfaceH, borderRadius:4, height:6, marginBottom:10, overflow:'hidden' }}>
+                      <div style={{ height:'100%', width:`${Math.round((done / f.items.length) * 100)}%`,
+                        background:f.color, borderRadius:4, transition:'width 0.3s' }} />
+                    </div>
+
+                    {/* Owner selector */}
+                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:10 }}>
+                      <span style={{ fontSize:11, color:T.textSec, whiteSpace:'nowrap' }}>Owner:</span>
+                      <select value={regOwner[f.id] || 'Unassigned'}
+                        onChange={e => setRegOwner(p => ({ ...p, [f.id]: e.target.value }))}
+                        style={{ flex:1, padding:'4px 8px', border:`1px solid ${T.border}`, borderRadius:6,
+                          fontSize:11, fontFamily:T.font, color:T.text, background:T.surface }}>
+                        {TEAM_MEMBERS.map(m => <option key={m}>{m}</option>)}
+                      </select>
+                    </div>
+
+                    {/* Expand toggle */}
+                    <button onClick={() => setRegExpanded(p => ({ ...p, [f.id]: !isExp }))} style={{
+                      width:'100%', padding:'6px', border:`1px solid ${T.border}`, borderRadius:6,
+                      background:'transparent', cursor:'pointer', fontSize:11, color:T.textSec,
+                      fontFamily:T.font, marginBottom: isExp ? 10 : 0,
+                    }}>
+                      {isExp ? '▲ Hide action items' : `▼ View ${f.items.length} action items`}
+                    </button>
+
+                    {/* Checklist */}
+                    {isExp && f.items.map((item, i) => {
+                      const k = `${f.id}_${i}`;
+                      const s = regState[k] || 'not';
+                      return (
+                        <div key={i} onClick={() => cycleRegItem(f.id, i)}
+                          style={{
+                            display:'flex', alignItems:'center', gap:10, padding:'7px 8px',
+                            borderRadius:6, cursor:'pointer', marginBottom:3,
+                            background: s === 'complete' ? 'rgba(22,163,74,0.07)'
+                              : s === 'progress' ? 'rgba(217,119,6,0.07)' : 'transparent',
+                            transition:'background 0.15s',
+                          }}>
+                          <div style={{
+                            width:16, height:16, borderRadius:4, flexShrink:0,
+                            display:'flex', alignItems:'center', justifyContent:'center',
+                            border:`2px solid ${regItemColor(s)}`,
+                            background: s === 'complete' ? T.green : 'transparent',
+                          }}>
+                            {s === 'complete' && <span style={{ color:'#fff', fontSize:10, lineHeight:1 }}>✓</span>}
+                            {s === 'progress' && <span style={{ color:T.amber, fontSize:10, lineHeight:1 }}>–</span>}
+                          </div>
+                          <div style={{ flex:1, fontSize:12, color:T.text }}>{item}</div>
+                          <div style={{ fontSize:10, color:regItemColor(s), fontWeight:600, whiteSpace:'nowrap' }}>
+                            {regItemLabel(s)}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {isExp && (
+                      <div style={{ fontSize:10, color:T.textMut, marginTop:6, textAlign:'center' }}>
+                        Click item to cycle: Not Started → In Progress → Complete
+                      </div>
+                    )}
+
+                    {/* Summary badges */}
+                    <div style={{ display:'flex', gap:10, marginTop:8, fontSize:11, flexWrap:'wrap' }}>
+                      {done > 0 && <span style={{ color:T.green }}>✓ {done} complete</span>}
+                      {prog > 0 && <span style={{ color:T.amber }}>~ {prog} in progress</span>}
+                      {(f.items.length - done - prog) > 0 && (
+                        <span style={{ color:T.textMut }}>○ {f.items.length - done - prog} not started</span>
+                      )}
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

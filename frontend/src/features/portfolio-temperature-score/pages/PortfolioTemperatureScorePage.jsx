@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
+  LineChart, Line, CartesianGrid,
 } from 'recharts';
 
-// ── Theme ────────────────────────────────────────────────────────────────────
+// ── Theme ─────────────────────────────────────────────────────────────────────
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
   border:'#e5e0d8', borderL:'#d5cfc5',
@@ -18,647 +19,1030 @@ const T = {
   font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
 };
 
-// ── Deterministic seed helper ─────────────────────────────────────────────────
+// ── Deterministic helpers ─────────────────────────────────────────────────────
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 // ── Static data ───────────────────────────────────────────────────────────────
-
-const TEMP_DISTRIBUTION = [
-  { range: '≤1.5°C', count: 8, pct: 16, color: T.green },
-  { range: '1.5–2°C', count: 14, pct: 28, color: '#4ade80' },
-  { range: '2–2.5°C', count: 12, pct: 24, color: T.amber },
-  { range: '2.5–3°C', count: 9, pct: 18, color: '#f97316' },
-  { range: '>3°C', count: 7, pct: 14, color: T.red },
+const METHODOLOGIES = [
+  { id:'pacta', label:'PACTA', temp:2.7 },
+  { id:'sbti',  label:'SBTi Temperature Score', temp:2.4 },
+  { id:'tpi',   label:'TPI', temp:2.9 },
+  { id:'wa',    label:'Weighted Average', temp:2.6 },
 ];
 
-const PACTA_SECTORS = [
-  {
-    sector: 'Power',
-    tempScore: 3.8,
-    current: 'Coal: 45% (2,840 MW)',
-    target: '0% coal by 2030 (NGFS NZ)',
-    aligned: 890,
-    portfolio: 2840,
-    gap: '+1,950 MW',
-    unit: 'MW',
-    radarScore: 28,
-  },
-  {
-    sector: 'Automotive',
-    tempScore: 2.4,
-    current: 'EV share: 38%',
-    target: '85% EV by 2030 (NGFS NZ)',
-    aligned: 52,
-    portfolio: 38,
-    gap: '-14pp',
-    unit: '%',
-    radarScore: 55,
-  },
-  {
-    sector: 'Oil & Gas',
-    tempScore: 3.2,
-    current: '840 mboe/d production',
-    target: 'IEA NZE: 690 mboe/d by 2025',
-    aligned: 690,
-    portfolio: 840,
-    gap: '+150 mboe/d',
-    unit: 'mboe/d',
-    radarScore: 35,
-  },
-  {
-    sector: 'Steel',
-    tempScore: 2.8,
-    current: 'EAF share: 42%',
-    target: '58% EAF by 2030',
-    aligned: 58,
-    portfolio: 42,
-    gap: '-16pp',
-    unit: '%',
-    radarScore: 48,
-  },
-  {
-    sector: 'Cement',
-    tempScore: 2.6,
-    current: 'Clinker ratio: 74%',
-    target: '≤65% clinker ratio by 2030',
-    aligned: 65,
-    portfolio: 74,
-    gap: '+9pp',
-    unit: '%',
-    radarScore: 52,
-  },
-];
+const YEAR_FILTERS = ['Q4 2023','Q4 2024','Forward to 2030'];
+const YEAR_DELTAS  = { 'Q4 2023':0, 'Q4 2024':-0.1, 'Forward to 2030':+0.3 };
 
-const RADAR_DATA = PACTA_SECTORS.map(s => ({ subject: s.sector, score: s.radarScore, fullMark: 100 }));
+const SECTORS = ['Energy','Utilities','Materials','Industrials','Consumer Staples',
+  'Consumer Discretionary','Health Care','Financials','Technology','Communication',
+  'Real Estate','Automotive','Cement','Steel','Oil & Gas'];
 
-const HOLDINGS_ALIGNED = [
-  { rank: 1, name: 'Ørsted', temp: 1.2, sector: 'Power', weight: 1.8, sbti: 'Approved', engagement: 'Monitoring' },
-  { rank: 2, name: 'NextEra Energy', temp: 1.3, sector: 'Power', weight: 2.1, sbti: 'Approved', engagement: 'Monitoring' },
-  { rank: 3, name: 'Tesla', temp: 1.4, sector: 'Automotive', weight: 1.5, sbti: 'Committed', engagement: 'Monitoring' },
-  { rank: 4, name: 'Vestas', temp: 1.4, sector: 'Power', weight: 0.9, sbti: 'Approved', engagement: 'Monitoring' },
-  { rank: 5, name: 'Siemens Energy', temp: 1.5, sector: 'Industrials', weight: 1.1, sbti: 'Approved', engagement: 'Monitoring' },
-  { rank: 6, name: 'Iberdrola', temp: 1.6, sector: 'Power', weight: 2.4, sbti: 'Approved', engagement: 'Monitoring' },
-  { rank: 7, name: 'Enphase Energy', temp: 1.7, sector: 'Technology', weight: 0.7, sbti: 'Committed', engagement: 'Monitoring' },
-  { rank: 8, name: 'First Solar', temp: 1.8, sector: 'Power', weight: 0.8, sbti: 'Approved', engagement: 'Monitoring' },
-  { rank: 9, name: 'Enel SpA', temp: 1.9, sector: 'Power', weight: 3.3, sbti: 'Approved', engagement: 'Monitoring' },
-  { rank: 10, name: 'BYD Co Ltd', temp: 2.0, sector: 'Automotive', weight: 2.6, sbti: 'Committed', engagement: 'Active' },
-];
+const COUNTRIES = ['USA','GBR','DEU','JPN','CHN','AUS','CAN','FRA','IND','BRA',
+  'KOR','NLD','NOR','SWE','CHE'];
 
-const HOLDINGS_MISALIGNED = [
-  { rank: 1, name: 'Saudi Aramco', temp: 4.8, sector: 'Oil & Gas', weight: 1.9, sbti: 'None', engagement: 'Priority 2' },
-  { rank: 2, name: 'Glencore', temp: 4.2, sector: 'Mining', weight: 2.8, sbti: 'None', engagement: 'Priority 1' },
-  { rank: 3, name: 'China Shenhua', temp: 4.1, sector: 'Power', weight: 1.2, sbti: 'None', engagement: 'Priority 5' },
-  { rank: 4, name: 'Thyssenkrupp Steel', temp: 3.8, sector: 'Steel', weight: 1.4, sbti: 'None', engagement: 'Priority 3' },
-  { rank: 5, name: 'Lufthansa', temp: 3.6, sector: 'Aviation', weight: 1.6, sbti: 'Committed', engagement: 'Priority 4' },
-  { rank: 6, name: 'Vale SA', temp: 3.5, sector: 'Mining', weight: 1.3, sbti: 'None', engagement: 'Queued' },
-  { rank: 7, name: 'Nippon Steel', temp: 3.4, sector: 'Steel', weight: 1.9, sbti: 'None', engagement: 'Queued' },
-];
+const SBTI_STATUSES = ['Approved','Committed','No target'];
+const ENG_STATUSES  = ['Active','Pending','Not started'];
 
-const ENGAGEMENT_QUEUE = [
-  { priority: 1, name: 'Glencore', weight: 2.8, temp: 4.2, sector: 'Mining', action: 'Coal phase-out timeline request', deadline: 'Q2 2026', status: 'In Progress' },
-  { priority: 2, name: 'Saudi Aramco', weight: 1.9, temp: 4.8, sector: 'Oil & Gas', action: 'Scope 3 targets request', deadline: 'Q3 2026', status: 'Initiated' },
-  { priority: 3, name: 'Thyssenkrupp Steel', weight: 1.4, temp: 3.8, sector: 'Steel', action: 'Green steel transition plan', deadline: 'Q3 2026', status: 'Initiated' },
-  { priority: 4, name: 'Lufthansa', weight: 1.6, temp: 3.6, sector: 'Aviation', action: 'SAF adoption roadmap', deadline: 'Q4 2026', status: 'Queued' },
-  { priority: 5, name: 'China Shenhua', weight: 1.2, temp: 4.1, sector: 'Power', action: 'Coal capacity reduction plan', deadline: 'Q4 2026', status: 'Queued' },
-  { priority: 6, name: 'Vale SA', weight: 1.3, temp: 3.5, sector: 'Mining', action: 'Net-zero roadmap by 2050', deadline: 'Q1 2027', status: 'Queued' },
-  { priority: 7, name: 'Nippon Steel', weight: 1.9, temp: 3.4, sector: 'Steel', action: 'EAF transition investment plan', deadline: 'Q1 2027', status: 'Queued' },
-  { priority: 8, name: 'AES Corporation', weight: 3.0, temp: 3.1, sector: 'Power', action: 'Coal exit accelerated schedule', deadline: 'Q2 2027', status: 'Queued' },
-  { priority: 9, name: 'MSC Group', weight: 1.6, temp: 3.3, sector: 'Shipping', action: 'Zero-carbon fuel pathway', deadline: 'Q2 2027', status: 'Queued' },
-  { priority: 10, name: 'Delta Air Lines', weight: 1.2, temp: 3.2, sector: 'Aviation', action: 'SAF blending commitment 10%', deadline: 'Q3 2027', status: 'Queued' },
-];
-
-const SCENARIOS = [
-  { name: 'Current Portfolio', temp: 2.7, color: T.amber },
-  { name: 'Divest Top 3 Misaligned', temp: 2.4, color: '#f97316' },
-  { name: '+10% Renewable Allocation', temp: 2.5, color: T.sage },
-  { name: 'SBTi Engagement (>3°C)', temp: 2.3, color: T.navy },
-  { name: 'Combined Paris-Aligned', temp: 1.7, color: T.green },
-  { name: 'Paris 1.5°C Target', temp: 1.5, color: '#4ade80' },
-];
-
-// ── Style helpers ─────────────────────────────────────────────────────────────
-const s = {
-  page: { background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '24px' },
-  header: { marginBottom: 24 },
-  title: { fontSize: 22, fontWeight: 700, color: T.text, margin: 0, letterSpacing: '-0.3px' },
-  sub: { fontSize: 13, color: T.textSec, marginTop: 4 },
-  badgeRow: { display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' },
-  badge: (bg, col) => ({ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 4, background: bg, color: col, border: `1px solid ${col}33` }),
-  tabs: { display: 'flex', gap: 0, borderBottom: `1px solid ${T.border}`, marginBottom: 24 },
-  tab: (active) => ({
-    padding: '9px 18px', fontSize: 13, fontWeight: active ? 600 : 400,
-    color: active ? T.navy : T.textSec, cursor: 'pointer',
-    borderBottom: active ? `2px solid ${T.navy}` : '2px solid transparent',
-    background: 'none', border: 'none', outline: 'none',
-    transition: 'color 0.15s',
-  }),
-  grid: (cols) => ({ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 16, marginBottom: 20 }),
-  card: (extra) => ({ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, boxShadow: T.card, ...extra }),
-  kpiVal: { fontSize: 32, fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1 },
-  kpiLabel: { fontSize: 11, color: T.textSec, textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: 6 },
-  kpiSub: { fontSize: 12, color: T.textSec, marginTop: 6 },
-  sectionLabel: { fontSize: 11, fontWeight: 600, color: T.textSec, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 12 },
-  tableWrap: { overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse', fontSize: 12 },
-  th: { padding: '7px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px' },
-  td: { padding: '7px 10px', borderBottom: `1px solid ${T.borderL}`, verticalAlign: 'middle' },
-};
-
-// ── Temperature colour helper ─────────────────────────────────────────────────
-const tempColor = (t) => {
-  if (t <= 1.5) return T.green;
-  if (t <= 2.0) return '#4ade80';
-  if (t <= 2.5) return T.amber;
-  if (t <= 3.0) return '#f97316';
-  return T.red;
-};
-
-// ── Gauge bar component ───────────────────────────────────────────────────────
-const TempGauge = ({ value, max = 5 }) => {
-  const pct = Math.min((value / max) * 100, 100);
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ flex: 1, height: 6, background: T.borderL, borderRadius: 3, overflow: 'hidden' }}>
-        <div style={{ width: `${pct}%`, height: '100%', background: tempColor(value), borderRadius: 3, transition: 'width 0.3s' }} />
-      </div>
-      <span style={{ fontSize: 12, fontWeight: 700, color: tempColor(value), minWidth: 36 }}>{value}°C</span>
-    </div>
-  );
-};
-
-// ── Temperature spectrum bar ──────────────────────────────────────────────────
-const SpectrumBar = ({ value }) => {
-  const pct = ((value - 1.0) / (5.0 - 1.0)) * 100;
-  return (
-    <div style={{ marginBottom: 8 }}>
-      <div style={{ position: 'relative', height: 20, borderRadius: 10, overflow: 'hidden',
-        background: 'linear-gradient(to right, #06c896, #4ade80, #f0a828, #f97316, #f04060)' }}>
-        <div style={{
-          position: 'absolute', top: 0, left: `${pct}%`, transform: 'translateX(-50%)',
-          width: 4, height: '100%', background: '#fff', borderRadius: 2, boxShadow: '0 0 6px rgba(255,255,255,0.8)',
-        }} />
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: T.textMut, marginTop: 3 }}>
-        <span>1.0°C</span><span>1.5°C (Paris)</span><span>2°C</span><span>3°C</span><span>5°C</span>
-      </div>
-    </div>
-  );
-};
-
-// ── Custom tooltip ────────────────────────────────────────────────────────────
-const CustomTooltip = ({ active, payload, label }) => {
-  if (!active || !payload || !payload.length) return null;
-  return (
-    <div style={{ background: T.surfaceH, border: `1px solid ${T.border}`, borderRadius: 6, padding: '8px 12px', fontSize: 12 }}>
-      <div style={{ color: T.textSec, marginBottom: 4 }}>{label}</div>
-      {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || T.text }}>
-          {p.name}: <strong>{p.value}</strong>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-// ── TAB 1: Portfolio Temperature Score ────────────────────────────────────────
-const TabTemperatureScore = () => (
-  <div>
-    {/* KPI row */}
-    <div style={s.grid(4)}>
-      <div style={s.card()}>
-        <div style={{ ...s.kpiVal, color: T.amber }}>2.7°C</div>
-        <div style={s.kpiLabel}>Portfolio Implied Temp Rise</div>
-        <div style={s.kpiSub}>Previous: 3.1°C — improved 0.4°C</div>
-      </div>
-      <div style={s.card()}>
-        <div style={{ ...s.kpiVal, color: T.textSec }}>2.9°C</div>
-        <div style={s.kpiLabel}>Peer Median</div>
-        <div style={s.kpiSub}>Portfolio outperforms peers by 0.2°C</div>
-      </div>
-      <div style={s.card()}>
-        <div style={{ ...s.kpiVal, color: T.green }}>≤1.5°C</div>
-        <div style={s.kpiLabel}>Paris-Aligned Target</div>
-        <div style={s.kpiSub}>Net Zero target: 1.5°C by 2050</div>
-      </div>
-      <div style={s.card()}>
-        <div style={{ ...s.kpiVal, color: T.sage }}>50</div>
-        <div style={s.kpiLabel}>Holdings Assessed</div>
-        <div style={s.kpiSub}>PACTA + SBTi methodology</div>
-      </div>
-    </div>
-
-    {/* Spectrum bar */}
-    <div style={s.card({ marginBottom: 20 })}>
-      <div style={s.sectionLabel}>Portfolio Temperature Position</div>
-      <SpectrumBar value={2.7} />
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
-        <div style={{ width: 10, height: 10, borderRadius: '50%', background: T.amber }} />
-        <span style={{ fontSize: 12, color: T.textSec }}>Portfolio at <strong style={{ color: T.amber }}>2.7°C</strong> — 1.2°C above Paris 1.5°C target</span>
-      </div>
-    </div>
-
-    {/* Distribution */}
-    <div style={s.grid(2)}>
-      <div style={s.card()}>
-        <div style={s.sectionLabel}>Temperature Distribution — 50 Holdings</div>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={TEMP_DISTRIBUTION} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-            <XAxis dataKey="range" tick={{ fill: T.textSec, fontSize: 11 }} axisLine={{ stroke: T.border }} tickLine={false} />
-            <YAxis tick={{ fill: T.textSec, fontSize: 11 }} axisLine={false} tickLine={false} />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="count" radius={[3, 3, 0, 0]}>
-              {TEMP_DISTRIBUTION.map((d, i) => <Cell key={i} fill={d.color} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={s.card()}>
-        <div style={s.sectionLabel}>Alignment Breakdown</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
-          {TEMP_DISTRIBUTION.map((d, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 12, height: 12, borderRadius: 2, background: d.color, flexShrink: 0 }} />
-              <div style={{ fontSize: 12, color: T.text, flex: 1 }}>{d.range}</div>
-              <div style={{ fontSize: 12, color: T.textSec, minWidth: 60 }}>{d.count} holdings</div>
-              <div style={{ flex: 1, height: 6, background: T.borderL, borderRadius: 3 }}>
-                <div style={{ width: `${d.pct}%`, height: '100%', background: d.color, borderRadius: 3 }} />
-              </div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: d.color, minWidth: 36, textAlign: 'right' }}>{d.pct}%</div>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: 16, padding: '10px 12px', background: T.bg, borderRadius: 6, border: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 11, color: T.textSec }}>Paris-aligned (≤1.5°C)</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: T.green, marginTop: 2 }}>8 holdings — 16% of portfolio</div>
-          <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>Misaligned (&gt;3°C): 7 holdings — 14% of portfolio</div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-// ── TAB 2: PACTA Sector Analysis ──────────────────────────────────────────────
-const TabPactaSectors = () => (
-  <div>
-    <div style={s.grid(2)}>
-      <div style={s.card()}>
-        <div style={s.sectionLabel}>Sector Alignment Radar — PACTA Score (0–100)</div>
-        <ResponsiveContainer width="100%" height={260}>
-          <RadarChart data={RADAR_DATA} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-            <PolarGrid stroke={T.border} />
-            <PolarAngleAxis dataKey="subject" tick={{ fill: T.textSec, fontSize: 12 }} />
-            <Radar name="Portfolio" dataKey="score" stroke={T.sage} fill={T.sage} fillOpacity={0.2} dot={{ fill: T.sage, r: 3 }} />
-            <Radar name="Paris-Aligned" dataKey="fullMark" stroke={T.green} fill="none" strokeDasharray="4 4" strokeOpacity={0.4} />
-            <Tooltip content={<CustomTooltip />} />
-          </RadarChart>
-        </ResponsiveContainer>
-        <div style={{ fontSize: 11, color: T.textMut, textAlign: 'center' }}>Higher score = closer to Paris alignment</div>
-      </div>
-      <div style={s.card()}>
-        <div style={s.sectionLabel}>Sector Temperature Contributions</div>
-        <ResponsiveContainer width="100%" height={260}>
-          <BarChart data={PACTA_SECTORS} layout="vertical" margin={{ top: 4, right: 40, left: 60, bottom: 4 }}>
-            <XAxis type="number" domain={[0, 5]} tick={{ fill: T.textSec, fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis dataKey="sector" type="category" tick={{ fill: T.textSec, fontSize: 12 }} axisLine={false} tickLine={false} />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="tempScore" name="Temp Score (°C)" radius={[0, 3, 3, 0]}>
-              {PACTA_SECTORS.map((d, i) => <Cell key={i} fill={tempColor(d.tempScore)} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-
-    {/* Sector detail cards */}
-    <div style={s.sectionLabel}>Sector-Level PACTA Detail</div>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {PACTA_SECTORS.map((sec, i) => (
-        <div key={i} style={{ ...s.card(), display: 'grid', gridTemplateColumns: '160px 1fr 1fr 1fr 120px', gap: 16, alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: T.text }}>{sec.sector}</div>
-            <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>PACTA sector</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: T.textSec }}>Current Portfolio</div>
-            <div style={{ fontSize: 13, color: T.text, marginTop: 2 }}>{sec.current}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: T.textSec }}>Target</div>
-            <div style={{ fontSize: 13, color: T.textSec, marginTop: 2 }}>{sec.target}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: T.textSec }}>Gap</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.red, marginTop: 2 }}>{sec.gap}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: T.textSec }}>Temp Contribution</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: tempColor(sec.tempScore), marginTop: 2 }}>{sec.tempScore}°C</div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-// ── TAB 3: Holdings Ranking ───────────────────────────────────────────────────
-const StatusBadge = ({ status }) => {
-  const colorMap = {
-    'Approved': { bg: '#06c89622', color: T.green },
-    'Committed': { bg: '#0ea5e922', color: T.sage },
-    'None': { bg: '#f0406022', color: T.red },
+// 60 holdings
+const ALL_HOLDINGS = Array.from({length:60}, (_,i) => {
+  const companies = [
+    'Shell plc','BP plc','TotalEnergies','Chevron Corp','ExxonMobil',
+    'NextEra Energy','Orsted A/S','Iberdrola','Enel SpA','RWE AG',
+    'Toyota Motor','Volkswagen AG','Ford Motor','General Motors','Stellantis',
+    'ArcelorMittal','ThyssenKrupp','Nucor Corp','POSCO Holdings','Tata Steel',
+    'HeidelbergMaterials','LafargeHolcim','CRH plc','Cemex','Votorantim',
+    'Alibaba Group','Tencent Holdings','Samsung Electronics','TSMC','ASML',
+    'Nestlé SA','Unilever plc','Procter & Gamble','Danone SA','Pepsico',
+    'BNP Paribas','HSBC Holdings','JPMorgan Chase','Deutsche Bank','Citigroup',
+    'Apple Inc','Microsoft Corp','Alphabet Inc','Meta Platforms','Amazon',
+    'Siemens AG','Schneider Electric','ABB Ltd','Honeywell','Emerson Electric',
+    'Glencore plc','Rio Tinto','BHP Group','Vale SA','Anglo American',
+    'Vattenfall','Engie SA','Duke Energy','Southern Company','American Electric',
+  ];
+  const s = i + 7;
+  const temp = 1.2 + sr(s * 3) * 3.6;
+  const weight = 0.4 + sr(s * 7) * 3.2;
+  const sbtiIdx = Math.floor(sr(s * 11) * 3);
+  const engIdx  = Math.floor(sr(s * 13) * 3);
+  const sectorIdx = Math.floor(sr(s * 5) * SECTORS.length);
+  const countryIdx = Math.floor(sr(s * 9) * COUNTRIES.length);
+  const nearYear = 2025 + Math.floor(sr(s * 17) * 6);
+  const nzYear   = 2040 + Math.floor(sr(s * 19) * 11);
+  const lastEng  = `2025-${String(Math.floor(sr(s*23)*12+1)).padStart(2,'0')}-${String(Math.floor(sr(s*29)*28+1)).padStart(2,'0')}`;
+  const emissions = [
+    +(180 + sr(s*31)*320).toFixed(1),
+    +(160 + sr(s*37)*300).toFixed(1),
+    +(140 + sr(s*41)*280).toFixed(1),
+  ];
+  const sectorPath = [
+    +(150 + sr(s*43)*200).toFixed(1),
+    +(130 + sr(s*47)*180).toFixed(1),
+    +(100 + sr(s*53)*150).toFixed(1),
+  ];
+  const notes = [
+    `Initial outreach sent ${lastEng}. Awaiting board-level response.`,
+    `Follow-up call scheduled. CFO confirmed net-zero commitment in principle.`,
+    `SBTi submission draft reviewed. Target year confirmed as ${nearYear}.`,
+  ];
+  return {
+    id: i,
+    company: companies[i] || `Company ${i+1}`,
+    sector: SECTORS[sectorIdx],
+    country: COUNTRIES[countryIdx],
+    weight: +weight.toFixed(2),
+    temp: +temp.toFixed(2),
+    sbti: SBTI_STATUSES[sbtiIdx],
+    nearYear,
+    nzYear,
+    engagement: ENG_STATUSES[engIdx],
+    lastEng,
+    emissions,
+    sectorPath,
+    notes,
+    sbtiDelta: +(sr(s*59) * 0.4).toFixed(2),
   };
-  const c = colorMap[status] || { bg: T.borderL, color: T.textSec };
-  return (
-    <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 3, background: c.bg, color: c.color }}>
-      {status}
-    </span>
-  );
-};
+});
 
-const EngagementBadge = ({ status }) => {
-  const isActive = status.startsWith('Priority');
-  return (
-    <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 3,
-      background: isActive ? '#f0a82822' : T.borderL,
-      color: isActive ? T.amber : T.textMut }}>
-      {status}
-    </span>
-  );
-};
+// PACTA sectors
+const PACTA_SECTORS = [
+  { id:'power',    label:'Power',     tempScore:3.8, radarScore:28, unit:'GW',
+    port:[2.84,3.1,3.4,3.5,3.6,3.7,3.7,3.8,3.8,3.9,4.0],
+    path15:[2.84,2.5,2.1,1.7,1.3,0.9,0.6,0.4,0.2,0.1,0.0],
+    path2: [2.84,2.6,2.3,2.0,1.7,1.4,1.1,0.9,0.7,0.5,0.3],
+    pathNdc:[2.84,2.7,2.6,2.5,2.4,2.3,2.2,2.1,2.0,1.9,1.8],
+    gap:'Divest 65% coal by 2030', companies:[
+      'NextEra Energy','RWE AG','Enel SpA','Iberdrola','Orsted A/S',
+      'Duke Energy','Southern Company','Vattenfall','Engie SA','American Electric',
+    ]},
+  { id:'auto',     label:'Automotive',tempScore:2.4, radarScore:55, unit:'% EV',
+    port:[38,41,44,47,50,52,55,57,59,61,63],
+    path15:[38,45,53,61,69,77,85,88,91,94,97],
+    path2: [38,43,48,53,58,63,68,72,76,80,84],
+    pathNdc:[38,40,43,46,50,53,57,60,63,66,70],
+    gap:'Increase EV exposure to 85% by 2030', companies:[
+      'Toyota Motor','Volkswagen AG','Ford Motor','General Motors','Stellantis',
+    ]},
+  { id:'oilgas',   label:'Oil & Gas', tempScore:3.2, radarScore:35, unit:'mboe/d',
+    port:[840,855,862,870,875,880,878,876,874,872,870],
+    path15:[840,810,775,735,690,645,595,540,480,415,345],
+    path2: [840,820,798,774,748,720,690,658,624,588,550],
+    pathNdc:[840,835,830,825,820,815,810,806,802,798,795],
+    gap:'Reduce production by 18% vs. current trajectory', companies:[
+      'Shell plc','BP plc','TotalEnergies','Chevron Corp','ExxonMobil',
+      'Glencore plc','Rio Tinto','BHP Group','Vale SA','Anglo American',
+    ]},
+  { id:'steel',    label:'Steel',     tempScore:2.8, radarScore:48, unit:'% EAF',
+    port:[42,43,44,46,47,49,50,52,53,55,56],
+    path15:[42,46,51,55,60,64,69,73,78,82,87],
+    path2: [42,45,48,51,54,57,60,63,66,69,72],
+    pathNdc:[42,43,45,46,47,49,50,51,53,54,55],
+    gap:'Increase EAF share to 58% by 2030', companies:[
+      'ArcelorMittal','ThyssenKrupp','Nucor Corp','POSCO Holdings','Tata Steel',
+    ]},
+  { id:'cement',   label:'Cement',    tempScore:3.5, radarScore:32, unit:'kgCO₂/t',
+    port:[820,825,830,835,838,840,842,843,844,845,846],
+    path15:[820,780,735,685,630,570,505,435,360,280,195],
+    path2: [820,795,768,739,708,675,640,602,562,520,475],
+    pathNdc:[820,812,803,794,785,776,767,758,749,740,731],
+    gap:'Reduce clinker intensity by 28% vs. 2024 level', companies:[
+      'HeidelbergMaterials','LafargeHolcim','CRH plc','Cemex','Votorantim',
+    ]},
+];
 
-const TabHoldingsRanking = () => (
-  <div>
-    <div style={s.grid(2)}>
-      {/* Best aligned */}
-      <div style={s.card()}>
-        <div style={{ ...s.sectionLabel, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: T.green }}>▲</span> Top Aligned Holdings (≤2.0°C)
-        </div>
-        <div style={s.tableWrap}>
-          <table style={s.table}>
-            <thead>
-              <tr>
-                <th style={s.th}>#</th>
-                <th style={s.th}>Company</th>
-                <th style={s.th}>Sector</th>
-                <th style={s.th}>Wt%</th>
-                <th style={s.th}>SBTi</th>
-                <th style={s.th}>Temperature</th>
-              </tr>
-            </thead>
-            <tbody>
-              {HOLDINGS_ALIGNED.map((h, i) => (
-                <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : `${T.surfaceH}44` }}>
-                  <td style={{ ...s.td, color: T.textMut }}>{h.rank}</td>
-                  <td style={{ ...s.td, fontWeight: 600, color: T.text }}>{h.name}</td>
-                  <td style={{ ...s.td, color: T.textSec }}>{h.sector}</td>
-                  <td style={{ ...s.td, color: T.textSec }}>{h.weight}%</td>
-                  <td style={s.td}><StatusBadge status={h.sbti} /></td>
-                  <td style={{ ...s.td, minWidth: 110 }}><TempGauge value={h.temp} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+const YEARS = [2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030];
 
-      {/* Most misaligned */}
-      <div style={s.card()}>
-        <div style={{ ...s.sectionLabel, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: T.red }}>▼</span> Most Misaligned Holdings (&gt;3.0°C)
-        </div>
-        <div style={s.tableWrap}>
-          <table style={s.table}>
-            <thead>
-              <tr>
-                <th style={s.th}>#</th>
-                <th style={s.th}>Company</th>
-                <th style={s.th}>Sector</th>
-                <th style={s.th}>Wt%</th>
-                <th style={s.th}>SBTi</th>
-                <th style={s.th}>Temperature</th>
-              </tr>
-            </thead>
-            <tbody>
-              {HOLDINGS_MISALIGNED.map((h, i) => (
-                <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : `${T.surfaceH}44` }}>
-                  <td style={{ ...s.td, color: T.textMut }}>{h.rank}</td>
-                  <td style={{ ...s.td, fontWeight: 600, color: T.text }}>{h.name}</td>
-                  <td style={{ ...s.td, color: T.textSec }}>{h.sector}</td>
-                  <td style={{ ...s.td, color: T.textSec }}>{h.weight}%</td>
-                  <td style={s.td}><StatusBadge status={h.sbti} /></td>
-                  <td style={{ ...s.td, minWidth: 110 }}><TempGauge value={h.temp} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+// Engagement queue (20 companies)
+const INITIAL_ENGAGEMENTS = Array.from({length:20}, (_,i) => {
+  const holding = ALL_HOLDINGS[i * 3];
+  const statuses = ['Not Started','Letter Sent','Response Received','Meeting Scheduled','Commitment Made','Closed'];
+  const types = ['Climate','Social','Governance','Climate','Climate','Governance','Social','Climate','Climate','Governance'];
+  const owners = ['Sarah Chen','James Liu','Maria Rossi','Tariq Hassan','Emma Patel'];
+  const si = i + 41;
+  return {
+    id: i,
+    priority: Math.floor(sr(si*7)*5)+1,
+    company: holding.company,
+    issue: ['Net-zero commitment','SBTi target adoption','Coal phase-out','EV transition','Methane reduction',
+      'Carbon disclosure','TCFD alignment','Scope 3 reporting','Green capex plan','Deforestation policy'][i%10],
+    tempGap: +(holding.temp - 1.5).toFixed(2),
+    weight: holding.weight,
+    status: statuses[Math.floor(sr(si*11)*6)],
+    owner: owners[Math.floor(sr(si*13)*5)],
+    nextAction: `2026-${String(Math.floor(sr(si*17)*11+1)).padStart(2,'0')}-${String(Math.floor(sr(si*19)*27+1)).padStart(2,'0')}`,
+    lastContact: holding.lastEng,
+    theme: types[i%10],
+    log: [
+      { date:'2025-09-01', type:'Letter', outcome:'Initial outreach, no response yet', next:'Follow up in 30 days' },
+      { date:'2025-10-05', type:'Call',   outcome:'CFO available, positive response', next:'Schedule board meeting' },
+      { date:'2025-11-14', type:'Meeting',outcome:'Board committed to SBTi review',   next:'Submit commitment letter' },
+    ].slice(0, Math.floor(sr(si*23)*3)+1),
+  };
+});
 
-        <div style={{ marginTop: 14, padding: '10px 12px', background: T.bg, borderRadius: 6, border: `1px solid ${T.border}` }}>
-          <div style={{ fontSize: 11, color: T.textSec }}>Combined weight of misaligned holdings (&gt;3°C)</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: T.red, marginTop: 2 }}>
-            {HOLDINGS_MISALIGNED.reduce((a, h) => a + h.weight, 0).toFixed(1)}% of portfolio
-          </div>
-          <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>Temperature drag: +0.8°C vs. divested scenario</div>
-        </div>
-      </div>
-    </div>
-
-    {/* Summary distribution by engagement status */}
-    <div style={s.card()}>
-      <div style={s.sectionLabel}>Engagement Status Across All Holdings</div>
-      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-        {[
-          { label: 'Paris-Aligned (≤1.5°C)', count: 8, color: T.green },
-          { label: 'Near-Aligned (1.5–2°C)', count: 14, color: '#4ade80' },
-          { label: 'Moderate Gap (2–2.5°C)', count: 12, color: T.amber },
-          { label: 'Significant Gap (2.5–3°C)', count: 9, color: '#f97316' },
-          { label: 'Misaligned (>3°C)', count: 7, color: T.red },
-        ].map((item, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
-            <span style={{ fontSize: 12, color: T.textSec }}>{item.label}</span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: item.color }}>{item.count}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
+// ── Shared UI atoms ───────────────────────────────────────────────────────────
+const Btn = ({ active, onClick, children, style={} }) => (
+  <button onClick={onClick} style={{
+    padding:'6px 14px', borderRadius:6, border:`1px solid ${active ? T.navy : T.border}`,
+    background: active ? T.navy : T.surface, color: active ? '#fff' : T.textSec,
+    fontSize:13, fontWeight: active ? 600 : 400, cursor:'pointer',
+    transition:'all .15s', ...style,
+  }}>{children}</button>
 );
 
-// ── TAB 4: Engagement & Alignment Plan ───────────────────────────────────────
-const TabEngagement = () => (
-  <div>
-    <div style={s.grid(2)}>
-      {/* Scenario impact */}
-      <div style={s.card()}>
-        <div style={s.sectionLabel}>Portfolio Re-Alignment Scenarios</div>
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={SCENARIOS} layout="vertical" margin={{ top: 4, right: 50, left: 10, bottom: 4 }}>
-            <XAxis type="number" domain={[1, 3.5]} tick={{ fill: T.textSec, fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis dataKey="name" type="category" tick={{ fill: T.textSec, fontSize: 11 }} axisLine={false} tickLine={false} width={160} />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="temp" name="Implied Temp (°C)" radius={[0, 3, 3, 0]}>
-              {SCENARIOS.map((d, i) => <Cell key={i} fill={d.color} />)}
+const Card = ({ children, style={} }) => (
+  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12,
+    padding:20, boxShadow:T.card, ...style }}>{children}</div>
+);
+
+const Badge = ({ val, color }) => (
+  <span style={{ background: color+'22', color, fontSize:11, fontWeight:600,
+    padding:'2px 8px', borderRadius:20 }}>{val}</span>
+);
+
+const tempColor = t => t <= 1.5 ? T.green : t <= 2.0 ? '#4ade80' : t <= 2.5 ? T.amber : t <= 3.0 ? '#f97316' : T.red;
+
+// ── TAB 1: Dashboard ──────────────────────────────────────────────────────────
+function DashboardTab({ methodology, setMethodology, attribution, setAttribution,
+  scope3, setScope3, yearFilter, setYearFilter, portfolioTemp }) {
+
+  const markerPct = Math.min(100, Math.max(0, ((portfolioTemp - 1) / 3) * 100));
+  const distData = useMemo(() => {
+    const base = [
+      { range:'≤1.5°C', count:8,  color:T.green },
+      { range:'1.5–2°C',count:14, color:'#4ade80' },
+      { range:'2–2.5°C',count:12, color:T.amber },
+      { range:'2.5–3°C',count:9,  color:'#f97316' },
+      { range:'>3°C',   count:7,  color:T.red },
+    ];
+    const delta = { pacta:0, sbti:-1, tpi:2, wa:1 };
+    const d = delta[methodology] || 0;
+    return base.map((b,i) => ({ ...b, count: Math.max(1, b.count + (i===d ? 2 : i===(4-d)%5 ? -1 : 0)) }));
+  }, [methodology]);
+
+  const methDesc = {
+    pacta:'PACTA assesses forward-looking production plans against NGFS climate scenarios.',
+    sbti:'SBTi Temperature Score maps corporate targets to global temperature outcomes.',
+    tpi:'TPI evaluates management quality and carbon performance against sectoral pathways.',
+    wa:'Weighted Average Temperature Score using EVIC-based portfolio aggregation.',
+  };
+
+  return (
+    <div style={{ display:'grid', gap:20 }}>
+      {/* Controls row */}
+      <Card>
+        <div style={{ display:'flex', flexWrap:'wrap', gap:20, alignItems:'flex-start' }}>
+          <div>
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:6 }}>METHODOLOGY</div>
+            <div style={{ display:'flex', gap:6 }}>
+              {METHODOLOGIES.map(m => (
+                <Btn key={m.id} active={methodology===m.id} onClick={() => setMethodology(m.id)}>{m.label}</Btn>
+              ))}
+            </div>
+            <div style={{ fontSize:11, color:T.textSec, marginTop:6, fontStyle:'italic' }}>{methDesc[methodology]}</div>
+          </div>
+          <div>
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:6 }}>ATTRIBUTION</div>
+            <div style={{ display:'flex', gap:6 }}>
+              {['EVIC-weighted','Revenue-weighted','Equal-weighted'].map(a => (
+                <Btn key={a} active={attribution===a} onClick={() => setAttribution(a)}>{a}</Btn>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:6 }}>PERIOD</div>
+            <div style={{ display:'flex', gap:6 }}>
+              {YEAR_FILTERS.map(y => (
+                <Btn key={y} active={yearFilter===y} onClick={() => setYearFilter(y)}>{y}</Btn>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Headline + spectrum */}
+      <div style={{ display:'grid', gridTemplateColumns:'280px 1fr', gap:20 }}>
+        <Card style={{ textAlign:'center' }}>
+          <div style={{ fontSize:13, color:T.textMut, marginBottom:4 }}>Portfolio Temperature</div>
+          <div style={{ fontSize:56, fontWeight:800, color:tempColor(portfolioTemp), lineHeight:1 }}>
+            {portfolioTemp.toFixed(1)}°C
+          </div>
+          <div style={{ fontSize:13, color:T.textSec, marginTop:4 }}>{METHODOLOGIES.find(m=>m.id===methodology)?.label}</div>
+          <div style={{ marginTop:16, display:'flex', alignItems:'center', justifyContent:'center', gap:10 }}>
+            <span style={{ fontSize:12, color:T.textMut }}>Scope 3</span>
+            <button onClick={() => setScope3(v => !v)} style={{
+              width:44, height:24, borderRadius:12, border:'none', cursor:'pointer',
+              background: scope3 ? T.navy : T.border, position:'relative', transition:'background .2s',
+            }}>
+              <span style={{
+                position:'absolute', top:3, left: scope3 ? 22 : 3, width:18, height:18,
+                borderRadius:'50%', background:'#fff', transition:'left .2s',
+              }}/>
+            </button>
+            <span style={{ fontSize:12, color: scope3 ? T.navy : T.textMut, fontWeight:600 }}>
+              {scope3 ? 'Included' : 'Excl.'}
+            </span>
+          </div>
+          <div style={{ marginTop:8, fontSize:12, color:T.textSec }}>
+            {scope3 ? 'Scope 1+2+3 emissions' : 'Scope 1+2 only (−0.3°C)'}
+          </div>
+        </Card>
+
+        <Card>
+          <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:16 }}>Temperature Spectrum</div>
+          <div style={{ position:'relative', marginBottom:24 }}>
+            <div style={{
+              height:24, borderRadius:12,
+              background:'linear-gradient(to right, #16a34a, #4ade80, #d97706, #f97316, #dc2626)',
+            }}/>
+            <div style={{
+              position:'absolute', top:-6, left:`${markerPct}%`,
+              transform:'translateX(-50%)',
+            }}>
+              <div style={{ width:2, height:36, background:T.navy, margin:'0 auto' }}/>
+              <div style={{ background:T.navy, color:'#fff', fontSize:11, fontWeight:700,
+                padding:'2px 6px', borderRadius:4, whiteSpace:'nowrap', marginTop:2 }}>
+                {portfolioTemp.toFixed(1)}°C
+              </div>
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', marginTop:32, fontSize:11, color:T.textMut }}>
+              <span>1°C</span><span>1.5°C</span><span>2°C</span><span>2.5°C</span><span>3°C</span><span>4°C</span>
+            </div>
+          </div>
+          <div style={{ display:'flex', gap:16, fontSize:12 }}>
+            {METHODOLOGIES.map(m => (
+              <div key={m.id} style={{ display:'flex', alignItems:'center', gap:6 }}>
+                <span style={{ width:10, height:10, borderRadius:'50%', background:tempColor(m.temp), display:'block' }}/>
+                <span style={{ color:T.textSec }}>{m.label}: <strong style={{ color:tempColor(m.temp) }}>{m.temp}°C</strong></span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Distribution */}
+      <Card>
+        <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>
+          Holdings Temperature Distribution (60 holdings)
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={distData}>
+            <XAxis dataKey="range" tick={{ fontSize:12, fill:T.textSec }} />
+            <YAxis tick={{ fontSize:12, fill:T.textSec }} />
+            <Tooltip formatter={v => [`${v} holdings`,'Count']} />
+            <Bar dataKey="count" radius={[4,4,0,0]}>
+              {distData.map((d,i) => <Cell key={i} fill={d.color} />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {SCENARIOS.map((sc, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <div style={{ width: 8, height: 8, borderRadius: 2, background: sc.color }} />
-                <span style={{ color: T.textSec }}>{sc.name}</span>
-              </div>
-              <span style={{ fontWeight: 700, color: sc.color }}>{sc.temp}°C</span>
+      </Card>
+    </div>
+  );
+}
+
+// ── TAB 2: Holdings Screener ──────────────────────────────────────────────────
+function HoldingsTab() {
+  const [search, setSearch] = useState('');
+  const [tempMin, setTempMin] = useState(1.0);
+  const [tempMax, setTempMax] = useState(5.0);
+  const [sectorFilter, setSectorFilter] = useState([]);
+  const [countryFilter, setCountryFilter] = useState([]);
+  const [sbtiFilter, setSbtiFilter] = useState([]);
+  const [engFilter, setEngFilter] = useState([]);
+  const [weightMin, setWeightMin] = useState(0);
+  const [sortBy, setSortBy] = useState('temp');
+  const [sortDir, setSortDir] = useState('desc');
+  const [expanded, setExpanded] = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [filterOpen, setFilterOpen] = useState(true);
+  const [whatIfId, setWhatIfId] = useState(null);
+  const [bulkAction, setBulkAction] = useState('');
+
+  const filtered = useMemo(() => {
+    let h = ALL_HOLDINGS.filter(r =>
+      (search==='' || r.company.toLowerCase().includes(search.toLowerCase())) &&
+      r.temp >= tempMin && r.temp <= tempMax &&
+      r.weight >= weightMin &&
+      (sectorFilter.length===0 || sectorFilter.includes(r.sector)) &&
+      (countryFilter.length===0 || countryFilter.includes(r.country)) &&
+      (sbtiFilter.length===0 || sbtiFilter.includes(r.sbti)) &&
+      (engFilter.length===0 || engFilter.includes(r.engagement))
+    );
+    h.sort((a,b) => {
+      const v = sortDir==='asc' ? 1 : -1;
+      if(sortBy==='temp') return (a.temp-b.temp)*v;
+      if(sortBy==='weight') return (a.weight-b.weight)*v;
+      if(sortBy==='company') return a.company.localeCompare(b.company)*v;
+      if(sortBy==='sbti') return a.sbti.localeCompare(b.sbti)*v;
+      if(sortBy==='lastEng') return a.lastEng.localeCompare(b.lastEng)*v;
+      return 0;
+    });
+    return h;
+  }, [search,tempMin,tempMax,weightMin,sectorFilter,countryFilter,sbtiFilter,engFilter,sortBy,sortDir]);
+
+  const totalWeight = ALL_HOLDINGS.reduce((s,h) => s+h.weight, 0);
+  const whatIfDelta = whatIfId !== null ? (ALL_HOLDINGS.find(h=>h.id===whatIfId)?.sbtiDelta || 0) : 0;
+  const portfolioBaseTemp = 2.7;
+  const whatIfTemp = +(portfolioBaseTemp - (selected.length>0
+    ? selected.reduce((s,id) => s + (ALL_HOLDINGS.find(h=>h.id===id)?.sbtiDelta||0), 0) / selected.length
+    : 0)).toFixed(2);
+
+  const toggleSort = col => {
+    if(sortBy===col) setSortDir(d => d==='asc' ? 'desc' : 'asc');
+    else { setSortBy(col); setSortDir('desc'); }
+  };
+
+  const toggleSector = s => setSectorFilter(f => f.includes(s) ? f.filter(x=>x!==s) : [...f,s]);
+  const toggleSbti   = s => setSbtiFilter(f  => f.includes(s) ? f.filter(x=>x!==s) : [...f,s]);
+  const toggleEng    = s => setEngFilter(f   => f.includes(s) ? f.filter(x=>x!==s) : [...f,s]);
+
+  const SortArrow = ({ col }) => sortBy===col
+    ? <span style={{ marginLeft:4 }}>{sortDir==='asc' ? '▲' : '▼'}</span> : null;
+
+  const EngStatusColors = { Active:T.green, Pending:T.amber, 'Not started':T.textMut };
+  const SbtiColors = { Approved:T.green, Committed:T.amber, 'No target':T.red };
+
+  return (
+    <div style={{ display:'flex', gap:20 }}>
+      {/* Filter panel */}
+      {filterOpen && (
+        <div style={{ width:220, flexShrink:0 }}>
+          <Card style={{ padding:16 }}>
+            <div style={{ fontSize:13, fontWeight:700, color:T.text, marginBottom:12 }}>Filters</div>
+
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:4 }}>Temperature (°C)</div>
+            <div style={{ display:'flex', gap:6, marginBottom:12 }}>
+              <input type="number" value={tempMin} step={0.1} min={1} max={tempMax}
+                onChange={e=>setTempMin(+e.target.value)}
+                style={{ width:60, padding:'4px 6px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12 }}/>
+              <span style={{ color:T.textMut, lineHeight:'28px' }}>–</span>
+              <input type="number" value={tempMax} step={0.1} min={tempMin} max={5}
+                onChange={e=>setTempMax(+e.target.value)}
+                style={{ width:60, padding:'4px 6px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12 }}/>
             </div>
+
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:4 }}>Min Weight (%)</div>
+            <input type="number" value={weightMin} step={0.1} min={0}
+              onChange={e=>setWeightMin(+e.target.value)}
+              style={{ width:80, padding:'4px 6px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12, marginBottom:12 }}/>
+
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:6 }}>Sector</div>
+            <div style={{ maxHeight:120, overflowY:'auto', marginBottom:12 }}>
+              {SECTORS.map(s => (
+                <label key={s} style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3, cursor:'pointer' }}>
+                  <input type="checkbox" checked={sectorFilter.includes(s)} onChange={()=>toggleSector(s)}/>
+                  <span style={{ fontSize:11, color:T.textSec }}>{s}</span>
+                </label>
+              ))}
+            </div>
+
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:6 }}>SBTi Status</div>
+            <div style={{ marginBottom:12 }}>
+              {SBTI_STATUSES.map(s => (
+                <label key={s} style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3, cursor:'pointer' }}>
+                  <input type="checkbox" checked={sbtiFilter.includes(s)} onChange={()=>toggleSbti(s)}/>
+                  <span style={{ fontSize:11, color:T.textSec }}>{s}</span>
+                </label>
+              ))}
+            </div>
+
+            <div style={{ fontSize:12, color:T.textMut, marginBottom:6 }}>Engagement</div>
+            <div>
+              {ENG_STATUSES.map(s => (
+                <label key={s} style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3, cursor:'pointer' }}>
+                  <input type="checkbox" checked={engFilter.includes(s)} onChange={()=>toggleEng(s)}/>
+                  <span style={{ fontSize:11, color:T.textSec }}>{s}</span>
+                </label>
+              ))}
+            </div>
+
+            <button onClick={() => { setSectorFilter([]); setSbtiFilter([]); setEngFilter([]);
+              setTempMin(1); setTempMax(5); setWeightMin(0); setSearch(''); }}
+              style={{ marginTop:12, fontSize:11, color:T.navyL, background:'none', border:'none',
+                cursor:'pointer', textDecoration:'underline' }}>Clear all</button>
+          </Card>
+        </div>
+      )}
+
+      <div style={{ flex:1, minWidth:0 }}>
+        {/* Toolbar */}
+        <Card style={{ marginBottom:16, padding:12 }}>
+          <div style={{ display:'flex', gap:10, alignItems:'center', flexWrap:'wrap' }}>
+            <button onClick={()=>setFilterOpen(v=>!v)} style={{ fontSize:12, padding:'6px 12px',
+              border:`1px solid ${T.border}`, borderRadius:6, background:T.surface, cursor:'pointer', color:T.textSec }}>
+              {filterOpen ? '◀ Hide Filters' : '▶ Show Filters'}
+            </button>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search company…"
+              style={{ flex:1, minWidth:180, padding:'7px 12px', border:`1px solid ${T.border}`,
+                borderRadius:6, fontSize:13, outline:'none' }}/>
+            <span style={{ fontSize:12, color:T.textMut }}>{filtered.length} / 60 holdings</span>
+            {selected.length>0 && (
+              <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+                <span style={{ fontSize:12, color:T.textSec }}>{selected.length} selected</span>
+                <select value={bulkAction} onChange={e=>setBulkAction(e.target.value)}
+                  style={{ fontSize:12, padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:6 }}>
+                  <option value=''>Bulk action…</option>
+                  <option>Start Engagement</option>
+                  <option>Request SBTi</option>
+                  <option>Flag for Exclusion</option>
+                </select>
+                <Btn onClick={()=>{ setSelected([]); setBulkAction(''); }} style={{ fontSize:11, padding:'4px 10px' }}>Clear</Btn>
+              </div>
+            )}
+            {selected.length>0 && (
+              <div style={{ fontSize:12, color:T.textSec }}>
+                What if selected adopt SBTi? <strong style={{ color:tempColor(whatIfTemp) }}>{whatIfTemp}°C</strong>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Table */}
+        <Card style={{ padding:0, overflow:'hidden' }}>
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+              <thead>
+                <tr style={{ background:T.surfaceH }}>
+                  <th style={{ padding:'10px 12px', textAlign:'left', width:32 }}>
+                    <input type="checkbox" checked={selected.length===filtered.length && filtered.length>0}
+                      onChange={e => setSelected(e.target.checked ? filtered.map(h=>h.id) : [])}/>
+                  </th>
+                  {[['company','Company'],['sector','Sector'],['weight','Weight'],
+                    ['temp','Temp°C'],['sbti','SBTi'],['engagement','Engagement'],['lastEng','Last Eng']].map(([col,lbl]) => (
+                    <th key={col} onClick={()=>toggleSort(col)} style={{ padding:'10px 12px',
+                      textAlign:'left', color:T.textSec, fontWeight:600, cursor:'pointer',
+                      borderBottom:`1px solid ${T.border}`, whiteSpace:'nowrap' }}>
+                      {lbl}<SortArrow col={col}/>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((h, ri) => (
+                  <React.Fragment key={h.id}>
+                    <tr onClick={()=>setExpanded(expanded===h.id ? null : h.id)}
+                      style={{ cursor:'pointer', background: expanded===h.id ? T.surfaceH :
+                        ri%2===0 ? T.surface : '#faf9f7',
+                        borderBottom:`1px solid ${T.border}` }}>
+                      <td style={{ padding:'8px 12px' }} onClick={e=>e.stopPropagation()}>
+                        <input type="checkbox" checked={selected.includes(h.id)}
+                          onChange={e => setSelected(sel => e.target.checked ? [...sel,h.id] : sel.filter(x=>x!==h.id))}/>
+                      </td>
+                      <td style={{ padding:'8px 12px', fontWeight:500, color:T.text }}>{h.company}</td>
+                      <td style={{ padding:'8px 12px', color:T.textSec }}>{h.sector}</td>
+                      <td style={{ padding:'8px 12px', color:T.textSec }}>{h.weight.toFixed(2)}%</td>
+                      <td style={{ padding:'8px 12px' }}>
+                        <span style={{ color:tempColor(h.temp), fontWeight:700 }}>{h.temp.toFixed(2)}°C</span>
+                      </td>
+                      <td style={{ padding:'8px 12px' }}>
+                        <Badge val={h.sbti} color={SbtiColors[h.sbti]}/>
+                      </td>
+                      <td style={{ padding:'8px 12px' }}>
+                        <Badge val={h.engagement} color={EngStatusColors[h.engagement]}/>
+                      </td>
+                      <td style={{ padding:'8px 12px', color:T.textMut }}>{h.lastEng}</td>
+                    </tr>
+                    {expanded===h.id && (
+                      <tr style={{ background:T.surfaceH }}>
+                        <td colSpan={8} style={{ padding:20, borderBottom:`1px solid ${T.border}` }}>
+                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:16 }}>
+                            <div>
+                              <div style={{ fontSize:12, fontWeight:600, color:T.text, marginBottom:8 }}>Emission Intensity (tCO₂e/€M)</div>
+                              <ResponsiveContainer width="100%" height={100}>
+                                <LineChart data={[2022,2023,2024].map((yr,i) => ({ yr, val:h.emissions[i] }))}>
+                                  <Line type="monotone" dataKey="val" stroke={T.navy} dot={false} strokeWidth={2}/>
+                                  <XAxis dataKey="yr" tick={{ fontSize:10 }}/>
+                                  <YAxis tick={{ fontSize:10 }}/>
+                                  <Tooltip/>
+                                </LineChart>
+                              </ResponsiveContainer>
+                            </div>
+                            <div>
+                              <div style={{ fontSize:12, fontWeight:600, color:T.text, marginBottom:8 }}>vs. Sector Pathway</div>
+                              <ResponsiveContainer width="100%" height={100}>
+                                <LineChart data={[2022,2023,2024].map((yr,i) => ({ yr, company:h.emissions[i], sector:h.sectorPath[i] }))}>
+                                  <Line type="monotone" dataKey="company" stroke={T.red} dot={false} strokeWidth={2} name="Company"/>
+                                  <Line type="monotone" dataKey="sector"  stroke={T.green} dot={false} strokeWidth={2} name="Pathway"/>
+                                  <XAxis dataKey="yr" tick={{ fontSize:10 }}/>
+                                  <YAxis tick={{ fontSize:10 }}/>
+                                  <Tooltip/>
+                                </LineChart>
+                              </ResponsiveContainer>
+                            </div>
+                            <div>
+                              <div style={{ fontSize:12, fontWeight:600, color:T.text, marginBottom:8 }}>Engagement Notes</div>
+                              {h.notes.slice(0,3).map((n,ni) => (
+                                <div key={ni} style={{ fontSize:11, color:T.textSec, marginBottom:6, paddingLeft:8,
+                                  borderLeft:`2px solid ${T.gold}` }}>{n}</div>
+                              ))}
+                            </div>
+                          </div>
+                          <div style={{ display:'flex', gap:8, marginTop:12 }}>
+                            {['Start Engagement','Request SBTi Commitment','Flag for Exclusion','Add Note'].map(a => (
+                              <Btn key={a} style={{ fontSize:11, padding:'4px 10px' }}>{a}</Btn>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// ── TAB 3: PACTA Sector Analysis ──────────────────────────────────────────────
+function PactaTab() {
+  const [activeSector, setActiveSector] = useState('power');
+  const [scenario, setScenario] = useState('path15');
+
+  const sector = PACTA_SECTORS.find(s => s.id === activeSector);
+  const lineData = YEARS.map((yr, i) => ({
+    yr, Portfolio: sector.port[i],
+    '1.5°C': sector.path15[i],
+    '2°C': sector.path2[i],
+    'NDC Policies': sector.pathNdc[i],
+  }));
+
+  const radarData = PACTA_SECTORS.map(s => ({ sector:s.label, score:s.radarScore }));
+  const ScenarioColors = { path15:T.green, path2:T.amber, pathNdc:T.red };
+
+  return (
+    <div style={{ display:'grid', gap:20 }}>
+      {/* Sector tabs */}
+      <Card style={{ padding:12 }}>
+        <div style={{ display:'flex', gap:8 }}>
+          {PACTA_SECTORS.map(s => (
+            <Btn key={s.id} active={activeSector===s.id} onClick={()=>setActiveSector(s.id)}>
+              {s.label}
+            </Btn>
           ))}
         </div>
-      </div>
+      </Card>
 
-      {/* Engagement impact summary */}
-      <div style={s.card()}>
-        <div style={s.sectionLabel}>Pathway to Paris Alignment</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {[
-            { action: 'Divest Top 3 Misaligned', impact: '-0.3°C', from: 2.7, to: 2.4, color: '#f97316' },
-            { action: '+10% Renewable Allocation', impact: '-0.2°C', from: 2.7, to: 2.5, color: T.sage },
-            { action: 'SBTi Engagement (>3°C holdings)', impact: '-0.4°C', from: 2.7, to: 2.3, color: T.navy },
-            { action: 'Combined Paris-Aligned Construction', impact: '-1.0°C', from: 2.7, to: 1.7, color: T.green },
-          ].map((item, i) => (
-            <div key={i} style={{ padding: '10px 12px', background: T.bg, borderRadius: 6, border: `1px solid ${T.border}` }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ fontSize: 13, color: T.text, fontWeight: 500 }}>{item.action}</div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: item.color }}>{item.impact}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                <span style={{ fontSize: 11, color: T.textSec }}>{item.from}°C</span>
-                <div style={{ flex: 1, height: 4, background: T.borderL, borderRadius: 2 }}>
-                  <div style={{ width: `${((item.from - item.to) / item.from) * 100}%`, height: '100%', background: item.color, borderRadius: 2 }} />
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 320px', gap:20 }}>
+        <div style={{ display:'grid', gap:16 }}>
+          {/* Scenario selector */}
+          <Card style={{ padding:12 }}>
+            <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+              <span style={{ fontSize:12, color:T.textMut }}>Scenario:</span>
+              {[['path15','1.5°C NZ'],['path2','2°C'],['pathNdc','NDC Policies']].map(([id,lbl]) => (
+                <Btn key={id} active={scenario===id} onClick={()=>setScenario(id)}
+                  style={{ borderColor: scenario===id ? ScenarioColors[id] : T.border,
+                    background: scenario===id ? ScenarioColors[id]+'22' : T.surface,
+                    color: scenario===id ? ScenarioColors[id] : T.textSec }}>{lbl}</Btn>
+              ))}
+            </div>
+          </Card>
+
+          {/* Production chart */}
+          <Card>
+            <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:4 }}>
+              {sector.label} — Portfolio Production vs. NGFS Pathways ({sector.unit})
+            </div>
+            <div style={{ fontSize:11, color:T.textMut, marginBottom:12 }}>
+              Temperature score: <strong style={{ color:tempColor(sector.tempScore) }}>{sector.tempScore}°C</strong>
+              &nbsp;·&nbsp;Alignment gap: {sector.gap}
+            </div>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={lineData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+                <XAxis dataKey="yr" tick={{ fontSize:11, fill:T.textSec }}/>
+                <YAxis tick={{ fontSize:11, fill:T.textSec }}/>
+                <Tooltip/>
+                <Line type="monotone" dataKey="Portfolio" stroke={T.navy} strokeWidth={2.5} dot={false}/>
+                <Line type="monotone" dataKey="1.5°C"     stroke={T.green} strokeWidth={1.5} strokeDasharray="5 3" dot={false}/>
+                <Line type="monotone" dataKey="2°C"        stroke={T.amber} strokeWidth={1.5} strokeDasharray="5 3" dot={false}/>
+                <Line type="monotone" dataKey="NDC Policies" stroke={T.red} strokeWidth={1.5} strokeDasharray="5 3" dot={false}/>
+              </LineChart>
+            </ResponsiveContainer>
+          </Card>
+
+          {/* Company cards */}
+          <Card>
+            <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:12 }}>Companies in Sector</div>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))', gap:10 }}>
+              {sector.companies.map((c,ci) => {
+                const h = ALL_HOLDINGS.find(h => h.company===c) ||
+                  { temp: 2.0 + sr((ci+sector.id.length)*7)*2.5, sbti: SBTI_STATUSES[ci%3] };
+                return (
+                  <div key={c} style={{ padding:10, border:`1px solid ${T.border}`, borderRadius:8,
+                    background:T.surface, boxShadow:T.card }}>
+                    <div style={{ fontSize:12, fontWeight:600, color:T.text, marginBottom:4 }}>{c}</div>
+                    <div style={{ fontSize:20, fontWeight:800, color:tempColor(h.temp) }}>{h.temp.toFixed(1)}°C</div>
+                    <Badge val={h.sbti} color={SbtiColors[h.sbti]}/>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        </div>
+
+        {/* Radar */}
+        <div style={{ display:'grid', gap:16 }}>
+          <Card>
+            <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:8 }}>Cross-Sector Alignment</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <RadarChart data={radarData}>
+                <PolarGrid stroke={T.border}/>
+                <PolarAngleAxis dataKey="sector" tick={{ fontSize:11, fill:T.textSec }}/>
+                <Radar name="Score" dataKey="score" stroke={T.navy} fill={T.navy} fillOpacity={0.25}/>
+              </RadarChart>
+            </ResponsiveContainer>
+            <div style={{ fontSize:11, color:T.textMut, textAlign:'center' }}>
+              Higher = better alignment. Max 100.
+            </div>
+          </Card>
+          <Card>
+            <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:10 }}>Sector Scorecard</div>
+            {PACTA_SECTORS.map(s => (
+              <div key={s.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center',
+                padding:'7px 0', borderBottom:`1px solid ${T.border}` }}>
+                <span style={{ fontSize:12, color:T.text }}>{s.label}</span>
+                <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+                  <div style={{ width:60, height:6, borderRadius:3, background:T.border, overflow:'hidden' }}>
+                    <div style={{ width:`${s.radarScore}%`, height:'100%',
+                      background:s.radarScore>60 ? T.green : s.radarScore>40 ? T.amber : T.red }}/>
+                  </div>
+                  <span style={{ fontSize:12, fontWeight:700, color:tempColor(s.tempScore) }}>{s.tempScore}°C</span>
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: item.color }}>{item.to}°C</span>
               </div>
-            </div>
+            ))}
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const SbtiColors = { Approved:T.green, Committed:T.amber, 'No target':T.red };
+
+// ── TAB 4: Engagement Tracker ─────────────────────────────────────────────────
+function EngagementTab() {
+  const [engagements, setEngagements] = useState(INITIAL_ENGAGEMENTS);
+  const [showForm, setShowForm] = useState(false);
+  const [expandedEng, setExpandedEng] = useState(null);
+  const [calDays, setCalDays] = useState(30);
+  const [sortEng, setSortEng] = useState('priority');
+  const [divestSel, setDivestSel] = useState([]);
+  const [form, setForm] = useState({
+    company:'', type:'Letter', objective:'', theme:'Climate', targetDate:''
+  });
+
+  const STATUSES = ['Not Started','Letter Sent','Response Received','Meeting Scheduled','Commitment Made','Closed'];
+  const StatusColors = {
+    'Not Started':T.textMut,'Letter Sent':T.amber,'Response Received':'#0ea5e9',
+    'Meeting Scheduled':T.gold,'Commitment Made':T.sage,'Closed':T.green
+  };
+
+  const sorted = useMemo(() => [...engagements].sort((a,b) => {
+    if(sortEng==='priority') return a.priority - b.priority;
+    if(sortEng==='tempGap')  return b.tempGap - a.tempGap;
+    if(sortEng==='weight')   return b.weight - a.weight;
+    return a.nextAction.localeCompare(b.nextAction);
+  }), [engagements, sortEng]);
+
+  const today = new Date('2026-03-28');
+  const calItems = engagements.filter(e => {
+    const d = new Date(e.nextAction);
+    const diff = (d - today) / 86400000;
+    return diff >= 0 && diff <= calDays;
+  }).sort((a,b) => a.nextAction.localeCompare(b.nextAction));
+
+  const divestTemp = divestSel.length === 0 ? 2.7 :
+    +(2.7 - divestSel.reduce((s,id) => {
+      const e = engagements.find(x=>x.id===id);
+      return s + (e ? e.tempGap * e.weight / 100 * 0.12 : 0);
+    }, 0)).toFixed(2);
+
+  const advanceStatus = id => {
+    setEngagements(prev => prev.map(e => {
+      if(e.id!==id) return e;
+      const idx = STATUSES.indexOf(e.status);
+      return { ...e, status: STATUSES[Math.min(idx+1, STATUSES.length-1)] };
+    }));
+  };
+
+  const submitForm = () => {
+    if(!form.company) return;
+    const newEng = {
+      id: engagements.length,
+      priority: 3,
+      company: form.company,
+      issue: form.objective || 'Climate alignment',
+      tempGap: 1.2,
+      weight: 0.8,
+      status: 'Not Started',
+      owner: 'Sarah Chen',
+      nextAction: form.targetDate || '2026-04-30',
+      lastContact: '2026-03-28',
+      theme: form.theme,
+      log: [],
+    };
+    setEngagements(prev => [newEng, ...prev]);
+    setForm({ company:'', type:'Letter', objective:'', theme:'Climate', targetDate:'' });
+    setShowForm(false);
+  };
+
+  return (
+    <div style={{ display:'grid', gap:20 }}>
+      {/* Header controls */}
+      <div style={{ display:'flex', gap:12, flexWrap:'wrap', alignItems:'center' }}>
+        <button onClick={()=>setShowForm(v=>!v)} style={{
+          padding:'8px 16px', borderRadius:8, border:'none',
+          background:T.navy, color:'#fff', fontSize:13, fontWeight:600, cursor:'pointer' }}>
+          + Add Engagement
+        </button>
+        <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+          <span style={{ fontSize:12, color:T.textMut }}>Sort by:</span>
+          {[['priority','Priority'],['tempGap','Temp Gap'],['weight','Weight'],['nextAction','Next Action']].map(([v,l]) => (
+            <Btn key={v} active={sortEng===v} onClick={()=>setSortEng(v)} style={{ fontSize:11, padding:'4px 10px' }}>{l}</Btn>
           ))}
         </div>
       </div>
-    </div>
 
-    {/* Engagement queue table */}
-    <div style={s.card()}>
-      <div style={s.sectionLabel}>Engagement Queue — Top 10 Priority Companies</div>
-      <div style={s.tableWrap}>
-        <table style={s.table}>
-          <thead>
-            <tr>
-              <th style={s.th}>Priority</th>
-              <th style={s.th}>Company</th>
-              <th style={s.th}>Sector</th>
-              <th style={s.th}>Weight</th>
-              <th style={s.th}>Temp Score</th>
-              <th style={s.th}>Engagement Action</th>
-              <th style={s.th}>Deadline</th>
-              <th style={s.th}>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ENGAGEMENT_QUEUE.map((e, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : `${T.surfaceH}44` }}>
-                <td style={{ ...s.td, fontWeight: 700, color: e.priority <= 3 ? T.red : T.amber }}>
-                  P{e.priority}
-                </td>
-                <td style={{ ...s.td, fontWeight: 600, color: T.text }}>{e.name}</td>
-                <td style={{ ...s.td, color: T.textSec }}>{e.sector}</td>
-                <td style={{ ...s.td, color: T.textSec }}>{e.weight}%</td>
-                <td style={{ ...s.td, fontWeight: 700, color: tempColor(e.temp) }}>{e.temp}°C</td>
-                <td style={{ ...s.td, color: T.textSec, maxWidth: 220 }}>{e.action}</td>
-                <td style={{ ...s.td, color: T.textSec, whiteSpace: 'nowrap' }}>{e.deadline}</td>
-                <td style={s.td}>
-                  <span style={{
-                    fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 3,
-                    background: e.status === 'In Progress' ? '#06c89622' : e.status === 'Initiated' ? '#0ea5e922' : T.borderL,
-                    color: e.status === 'In Progress' ? T.green : e.status === 'Initiated' ? T.sage : T.textMut,
-                  }}>{e.status}</span>
-                </td>
-              </tr>
+      {/* New engagement form */}
+      {showForm && (
+        <Card style={{ border:`2px solid ${T.gold}` }}>
+          <div style={{ fontSize:14, fontWeight:700, color:T.text, marginBottom:16 }}>New Engagement</div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:12 }}>
+            {[
+              ['Company','company','text'],['Objective','objective','text'],['Target Date','targetDate','date']
+            ].map(([lbl,key,type]) => (
+              <div key={key}>
+                <div style={{ fontSize:11, color:T.textMut, marginBottom:4 }}>{lbl}</div>
+                <input type={type} value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}
+                  style={{ width:'100%', padding:'7px 10px', border:`1px solid ${T.border}`,
+                    borderRadius:6, fontSize:13, boxSizing:'border-box' }}/>
+              </div>
             ))}
-          </tbody>
-        </table>
+            <div>
+              <div style={{ fontSize:11, color:T.textMut, marginBottom:4 }}>ESG Theme</div>
+              <select value={form.theme} onChange={e=>setForm(f=>({...f,theme:e.target.value}))}
+                style={{ width:'100%', padding:'7px 10px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:13 }}>
+                {['Climate','Social','Governance'].map(t => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+          </div>
+          <div style={{ display:'flex', gap:8, marginTop:16 }}>
+            <Btn active onClick={submitForm}>Submit</Btn>
+            <Btn onClick={()=>setShowForm(false)}>Cancel</Btn>
+          </div>
+        </Card>
+      )}
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 300px', gap:20 }}>
+        {/* Engagement queue */}
+        <div>
+          <Card style={{ padding:0, overflow:'hidden' }}>
+            <div style={{ overflowX:'auto' }}>
+              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                <thead>
+                  <tr style={{ background:T.surfaceH }}>
+                    {['P','Company','Issue','°C Gap','Weight','Status','Owner','Next Action'].map(h => (
+                      <th key={h} style={{ padding:'10px 12px', textAlign:'left',
+                        color:T.textSec, fontWeight:600, borderBottom:`1px solid ${T.border}`, whiteSpace:'nowrap' }}>{h}</th>
+                    ))}
+                    <th style={{ padding:'10px 12px', borderBottom:`1px solid ${T.border}` }}/>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((e, ri) => (
+                    <React.Fragment key={e.id}>
+                      <tr onClick={()=>setExpandedEng(expandedEng===e.id ? null : e.id)}
+                        style={{ cursor:'pointer', background: expandedEng===e.id ? T.surfaceH :
+                          ri%2===0 ? T.surface : '#faf9f7', borderBottom:`1px solid ${T.border}` }}>
+                        <td style={{ padding:'8px 12px', fontWeight:700, color:T.text }}>{e.priority}</td>
+                        <td style={{ padding:'8px 12px', fontWeight:500, color:T.text }}>{e.company}</td>
+                        <td style={{ padding:'8px 12px', color:T.textSec }}>{e.issue}</td>
+                        <td style={{ padding:'8px 12px', fontWeight:700,
+                          color:e.tempGap > 1.5 ? T.red : e.tempGap > 0.8 ? T.amber : T.amber }}>
+                          +{e.tempGap.toFixed(2)}°C
+                        </td>
+                        <td style={{ padding:'8px 12px', color:T.textSec }}>{e.weight.toFixed(2)}%</td>
+                        <td style={{ padding:'8px 12px' }}>
+                          <span style={{ fontSize:11, fontWeight:600, color:StatusColors[e.status],
+                            background:StatusColors[e.status]+'22', padding:'2px 8px', borderRadius:20 }}>
+                            {e.status}
+                          </span>
+                        </td>
+                        <td style={{ padding:'8px 12px', color:T.textSec }}>{e.owner}</td>
+                        <td style={{ padding:'8px 12px', color:T.textMut }}>{e.nextAction}</td>
+                        <td style={{ padding:'8px 12px' }}>
+                          <button onClick={ev=>{ ev.stopPropagation(); advanceStatus(e.id); }}
+                            style={{ fontSize:10, padding:'3px 8px', border:`1px solid ${T.border}`,
+                              borderRadius:4, cursor:'pointer', background:T.surface, color:T.textSec }}>
+                            Advance ▶
+                          </button>
+                        </td>
+                      </tr>
+                      {expandedEng===e.id && (
+                        <tr style={{ background:T.surfaceH }}>
+                          <td colSpan={9} style={{ padding:16, borderBottom:`1px solid ${T.border}` }}>
+                            <div style={{ fontSize:12, fontWeight:600, color:T.text, marginBottom:8 }}>Engagement Log</div>
+                            {e.log.map((l,li) => (
+                              <div key={li} style={{ display:'grid', gridTemplateColumns:'100px 100px 1fr 1fr',
+                                gap:8, padding:'6px 0', borderBottom:`1px solid ${T.border}`, fontSize:11 }}>
+                                <span style={{ color:T.textMut }}>{l.date}</span>
+                                <Badge val={l.type} color={T.gold}/>
+                                <span style={{ color:T.textSec }}>{l.outcome}</span>
+                                <span style={{ color:T.navyL }}>→ {l.next}</span>
+                              </div>
+                            ))}
+                            {e.log.length===0 && (
+                              <div style={{ fontSize:11, color:T.textMut }}>No interactions logged yet.</div>
+                            )}
+                            {/* Status stepper */}
+                            <div style={{ display:'flex', alignItems:'center', gap:0, marginTop:12 }}>
+                              {STATUSES.map((s,si) => (
+                                <React.Fragment key={s}>
+                                  <div style={{ padding:'4px 8px', borderRadius:4, fontSize:10, fontWeight:600,
+                                    background: STATUSES.indexOf(e.status) >= si ? T.navy : T.border,
+                                    color: STATUSES.indexOf(e.status) >= si ? '#fff' : T.textMut,
+                                    whiteSpace:'nowrap' }}>{s}</div>
+                                  {si < STATUSES.length-1 && (
+                                    <div style={{ width:20, height:2,
+                                      background: STATUSES.indexOf(e.status) > si ? T.navy : T.border }}/>
+                                  )}
+                                </React.Fragment>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+
+        {/* Side panels */}
+        <div style={{ display:'grid', gap:16 }}>
+          {/* Calendar */}
+          <Card>
+            <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:10 }}>Upcoming Actions</div>
+            <div style={{ display:'flex', gap:6, marginBottom:12 }}>
+              {[30,60,90].map(d => (
+                <Btn key={d} active={calDays===d} onClick={()=>setCalDays(d)} style={{ fontSize:11, padding:'3px 10px' }}>
+                  {d}d
+                </Btn>
+              ))}
+            </div>
+            {calItems.length===0 && (
+              <div style={{ fontSize:12, color:T.textMut }}>No actions in next {calDays} days.</div>
+            )}
+            {calItems.slice(0,6).map(e => (
+              <div key={e.id} style={{ display:'flex', justifyContent:'space-between',
+                padding:'7px 0', borderBottom:`1px solid ${T.border}` }}>
+                <div>
+                  <div style={{ fontSize:12, fontWeight:600, color:T.text }}>{e.company}</div>
+                  <div style={{ fontSize:11, color:T.textSec }}>{e.issue}</div>
+                </div>
+                <div style={{ fontSize:11, color:T.textMut }}>{e.nextAction}</div>
+              </div>
+            ))}
+          </Card>
+
+          {/* Re-alignment scenario */}
+          <Card>
+            <div style={{ fontSize:13, fontWeight:600, color:T.text, marginBottom:8 }}>Divestment Scenario</div>
+            <div style={{ fontSize:11, color:T.textMut, marginBottom:10 }}>
+              Select companies to divest — see portfolio temperature impact
+            </div>
+            {engagements.slice(0,8).map(e => (
+              <label key={e.id} style={{ display:'flex', alignItems:'center', gap:8,
+                marginBottom:6, cursor:'pointer' }}>
+                <input type="checkbox" checked={divestSel.includes(e.id)}
+                  onChange={ev => setDivestSel(s => ev.target.checked ? [...s,e.id] : s.filter(x=>x!==e.id))}/>
+                <span style={{ fontSize:11, color:T.textSec, flex:1 }}>{e.company}</span>
+                <span style={{ fontSize:11, fontWeight:700, color:tempColor(e.tempGap+1.5) }}>
+                  +{e.tempGap.toFixed(1)}°C
+                </span>
+              </label>
+            ))}
+            <div style={{ marginTop:12, padding:10, background:T.surfaceH, borderRadius:8,
+              textAlign:'center' }}>
+              <div style={{ fontSize:11, color:T.textMut }}>Resulting Portfolio Temp</div>
+              <div style={{ fontSize:28, fontWeight:800, color:tempColor(divestTemp) }}>
+                {divestTemp}°C
+              </div>
+              {divestSel.length>0 && (
+                <div style={{ fontSize:11, color:T.green }}>
+                  ↓ {(2.7-divestTemp).toFixed(2)}°C reduction
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
+  );
+}
 
-    {/* Engagement metrics summary */}
-    <div style={s.grid(4)}>
-      {[
-        { label: 'Total Engagements', value: '10', sub: 'Active queue', color: T.text },
-        { label: 'In Progress', value: '1', sub: 'Glencore', color: T.green },
-        { label: 'Initiated', value: '2', sub: 'Aramco + Thyssenkrupp', color: T.sage },
-        { label: 'Portfolio Temp if All Succeed', value: '2.1°C', sub: 'Optimistic scenario', color: T.amber },
-      ].map((m, i) => (
-        <div key={i} style={s.card()}>
-          <div style={{ ...s.kpiVal, fontSize: 24, color: m.color }}>{m.value}</div>
-          <div style={s.kpiLabel}>{m.label}</div>
-          <div style={s.kpiSub}>{m.sub}</div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-// ── Main component ────────────────────────────────────────────────────────────
-const TABS = ['Temperature Score', 'PACTA Sectors', 'Holdings Ranking', 'Engagement Plan'];
-
-// suppress unused warning for sr helper (used for deterministic seeding if needed)
-void sr;
+// ── Root page ─────────────────────────────────────────────────────────────────
+const TABS = [
+  { id:'dashboard', label:'Portfolio Temperature Dashboard' },
+  { id:'holdings',  label:'Holdings Screener' },
+  { id:'pacta',     label:'PACTA Sector Analysis' },
+  { id:'engagement',label:'Engagement Tracker' },
+];
 
 export default function PortfolioTemperatureScorePage() {
-  const [activeTab, setActiveTab] = useState(0);
+  const [tab,          setTab]          = useState('dashboard');
+  const [methodology,  setMethodology]  = useState('pacta');
+  const [attribution,  setAttribution]  = useState('EVIC-weighted');
+  const [scope3,       setScope3]       = useState(true);
+  const [yearFilter,   setYearFilter]   = useState('Q4 2024');
 
-  const tabContent = [
-    <TabTemperatureScore key="t1" />,
-    <TabPactaSectors key="t2" />,
-    <TabHoldingsRanking key="t3" />,
-    <TabEngagement key="t4" />,
-  ];
+  const portfolioTemp = useMemo(() => {
+    const base = METHODOLOGIES.find(m => m.id===methodology)?.temp ?? 2.7;
+    const scope3Adj = scope3 ? 0 : -0.3;
+    const yearAdj   = YEAR_DELTAS[yearFilter] ?? 0;
+    return +(base + scope3Adj + yearAdj).toFixed(2);
+  }, [methodology, scope3, yearFilter]);
 
   return (
-    <div style={s.page}>
+    <div style={{ minHeight:'100vh', background:T.bg, fontFamily:T.font, padding:24 }}>
       {/* Header */}
-      <div style={s.header}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <h1 style={s.title}>Portfolio Temperature Score — PACTA &amp; TCFD Alignment</h1>
-            <p style={s.sub}>EP-AJ4 · Sprint AJ — Financed Emissions &amp; Climate Banking Analytics · PACTA + SBTi Temperature Score v1.2</p>
-            <div style={s.badgeRow}>
-              <span style={s.badge('#06c89618', T.green)}>✓ Methodology: PACTA (2° Investing Initiative) · SBTi Temperature Score v1.2</span>
-              <span style={s.badge('#f0a82818', T.amber)}>⚠️ Portfolio holdings are illustrative</span>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 11, color: T.textSec }}>Assessment Date</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>Q1 2026</div>
-            </div>
-            <div style={{ width: 1, height: 36, background: T.border }} />
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 11, color: T.textSec }}>Portfolio Temp</div>
-              <div style={{ fontSize: 22, fontWeight: 700, color: T.amber }}>2.7°C</div>
-            </div>
-          </div>
-        </div>
+      <div style={{ marginBottom:24 }}>
+        <h1 style={{ margin:0, fontSize:24, fontWeight:800, color:T.navy }}>
+          Portfolio Temperature Score
+        </h1>
+        <p style={{ margin:'4px 0 0', fontSize:14, color:T.textSec }}>
+          PACTA · SBTi · TPI multi-methodology temperature assessment across 60 holdings
+        </p>
       </div>
 
-      {/* Tabs */}
-      <div style={s.tabs}>
-        {TABS.map((tab, i) => (
-          <button key={i} style={s.tab(activeTab === i)} onClick={() => setActiveTab(i)}>
-            {tab}
-          </button>
+      {/* Tab bar */}
+      <div style={{ display:'flex', gap:4, marginBottom:24, borderBottom:`2px solid ${T.border}`, paddingBottom:0 }}>
+        {TABS.map(t => (
+          <button key={t.id} onClick={()=>setTab(t.id)} style={{
+            padding:'10px 20px', border:'none', background:'none', cursor:'pointer',
+            fontSize:13, fontWeight: tab===t.id ? 700 : 400,
+            color: tab===t.id ? T.navy : T.textSec,
+            borderBottom: tab===t.id ? `2px solid ${T.navy}` : '2px solid transparent',
+            marginBottom:-2, transition:'all .15s',
+          }}>{t.label}</button>
         ))}
       </div>
 
       {/* Tab content */}
-      {tabContent[activeTab]}
+      {tab==='dashboard'  && (
+        <DashboardTab methodology={methodology} setMethodology={setMethodology}
+          attribution={attribution} setAttribution={setAttribution}
+          scope3={scope3} setScope3={setScope3}
+          yearFilter={yearFilter} setYearFilter={setYearFilter}
+          portfolioTemp={portfolioTemp}/>
+      )}
+      {tab==='holdings'   && <HoldingsTab/>}
+      {tab==='pacta'      && <PactaTab/>}
+      {tab==='engagement' && <EngagementTab/>}
     </div>
   );
 }
