@@ -5,6 +5,8 @@ import {
   AreaChart, Area,
   ResponsiveContainer,
 } from 'recharts';
+import { GRID_INTENSITY_2022, GRID_INTENSITY_TREND, getGridIntensity, intensityTier } from '../../../data/gridIntensity';
+import { ENERGY_FACTORS } from '../../../data/emissionFactors';
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
@@ -178,6 +180,18 @@ export default function EnergyTransitionAnalyticsPage() {
             <p style={{ margin: '6px 0 0', fontSize: 13, color: 'rgba(255,255,255,0.6)', maxWidth: 560 }}>
               Corporate energy mix tracking, renewable procurement, RE100/EV100/EP100 commitment monitoring and energy intensity benchmarking across 18 portfolio companies.
             </p>
+            {/* Data quality badges — real published sources */}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
+              {[
+                { text: `\u2713 Grid intensity: Ember 2023 (CC BY 4.0) — ${GRID_INTENSITY_2022.length} countries` },
+                { text: `\u2713 UK grid: ${ENERGY_FACTORS.ukGrid2023.factor} kgCO\u2082/kWh (DEFRA / National Grid ESO 2023)` },
+                { text: '\u2713 Source: Ember Global Electricity Review 2023' },
+              ].map((b, i) => (
+                <span key={i} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(197,169,106,0.4)', borderRadius: 12, padding: '3px 10px', fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
+                  {b.text}
+                </span>
+              ))}
+            </div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginBottom: 2 }}>Portfolio Renewable Electricity</div>

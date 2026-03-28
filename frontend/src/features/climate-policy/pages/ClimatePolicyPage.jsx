@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, PieChart, Pie, LineChart, Line } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
+import { EMISSIONS_TARGETS, DATASET_METADATA } from '../../../data/countryEmissions';
 
 /* ══════════════════════════════════════════════════════════════
    THEME
@@ -309,6 +310,52 @@ const ClimatePolicyPage = () => {
               <Bar dataKey="target" name="2030 Target %" fill={T.gold} opacity={0.5} radius={[4,4,0,0]} />
             </BarChart>
           </ResponsiveContainer></Card>
+        </Section>
+
+        {/* NDC Targets Reference — real Paris Agreement pledges (OWID / IEA / UNFCCC) */}
+        <Section title="Real NDC Targets — Paris Agreement Pledges" sub={`Source: ${DATASET_METADATA.primarySource} · UNFCCC NDC Registry · CC BY 4.0`}>
+          <Card>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, padding: '8px 12px', background: '#16a34a15', border: '1px solid #16a34a55', borderRadius: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#16a34a' }}>✓ Real NDC data: UNFCCC / Climate Action Tracker / OWID 2023</span>
+              <span style={{ fontSize: 11, color: '#5c6b7e', marginLeft: 'auto' }}>{EMISSIONS_TARGETS.length} major emitters tracked</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
+              {EMISSIONS_TARGETS.map((t, i) => (
+                <div key={t.iso3 || i} style={{ border: `1px solid #e5e0d8`, borderRadius: 8, padding: 14, background: '#f6f4f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                    <div style={{ fontWeight: 700, color: '#1b3a5c', fontSize: 14 }}>{t.country}</div>
+                    <span style={{
+                      fontSize: 10, fontWeight: 700,
+                      color: t.onTrack === true ? '#16a34a' : t.onTrack === false ? '#dc2626' : '#d97706',
+                      background: t.onTrack === true ? '#16a34a15' : t.onTrack === false ? '#dc262615' : '#d9770615',
+                      border: `1px solid ${t.onTrack === true ? '#16a34a55' : t.onTrack === false ? '#dc262655' : '#d9770655'}`,
+                      borderRadius: 4, padding: '2px 7px',
+                    }}>
+                      {t.onTrack === true ? 'On Track' : t.onTrack === false ? 'Off Track' : 'Partial'}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#2c5a8c', marginBottom: 6 }}>{t.target}</div>
+                  <div style={{ display: 'flex', gap: 16, marginBottom: 8 }}>
+                    <div>
+                      <div style={{ fontSize: 10, color: '#9aa3ae' }}>Net Zero</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: t.netZero <= 2050 ? '#16a34a' : '#d97706' }}>{t.netZero}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, color: '#9aa3ae' }}>Reduction</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#1b3a5c' }}>{t.reductionPct}%</div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 10, color: '#9aa3ae' }}>Legislation</div>
+                      <div style={{ fontSize: 11, color: '#5c6b7e' }}>{t.legislation}</div>
+                    </div>
+                  </div>
+                  {t.notes && (
+                    <div style={{ fontSize: 11, color: '#5c6b7e', lineHeight: 1.5, borderTop: '1px solid #e5e0d8', paddingTop: 8 }}>{t.notes}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Card>
         </Section>
 
         {/* Climate Finance */}

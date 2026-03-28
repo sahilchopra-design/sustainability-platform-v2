@@ -4,6 +4,7 @@ import {
   LineChart, Line, AreaChart, Area, ResponsiveContainer,
 } from 'recharts';
 import { NGFS_PHASE4, CARBON_PRICE_PATHS, SECTOR_PD_UPLIFT } from '../../../services/climateRiskDataService';
+import { COUNTRY_EMISSIONS_2022, WORLD_CO2_TREND, DATASET_METADATA } from '../../../data/countryEmissions';
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = {
@@ -74,6 +75,78 @@ function Tab1() {
         <span style={{ fontWeight: 700, color: ACCENT }}>NGFS Phase IV — Nov 2023 · 6 Updated Scenarios</span>
         <span style={{ marginLeft: 'auto', fontSize: 12, color: T.textSec }}>Source: Network for Greening the Financial System</span>
       </div>
+
+      {/* Real Data provenance badge */}
+      <div style={{ background: `${T.green}15`, border: `1px solid ${T.green}55`, borderRadius: 8, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: T.green }}>✓ Country emissions: OWID / IEA / EDGAR 2022</span>
+        <span style={{ fontSize: 11, color: T.textSec }}>
+          Real data · {COUNTRY_EMISSIONS_2022.length} countries · World total {WORLD_CO2_TREND[WORLD_CO2_TREND.length - 1].totalMtCO2.toLocaleString()} MtCO₂ (2022)
+        </span>
+        <span style={{ marginLeft: 'auto', fontSize: 10, color: T.textMut }}>
+          {DATASET_METADATA.primarySource} · {DATASET_METADATA.license}
+        </span>
+      </div>
+
+      {/* Global emissions trend (real OWID/IEA data) */}
+      {card(
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+            <div>
+              <div style={{ fontWeight: 700, color: T.text, fontSize: 13 }}>Global CO₂ Emissions Trend 1990–2022 (MtCO₂)</div>
+              <div style={{ fontSize: 11, color: T.textMut, marginTop: 2 }}>Fossil fuels + industry · Source: OWID / IEA / EDGAR · CC BY 4.0</div>
+            </div>
+            <div style={{ display: 'flex', gap: 16 }}>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: T.red }}>37,500</div>
+                <div style={{ fontSize: 10, color: T.textMut }}>MtCO₂ in 2022</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: T.amber }}>+65%</div>
+                <div style={{ fontSize: 10, color: T.textMut }}>since 1990</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: T.sage }}>4.7</div>
+                <div style={{ fontSize: 10, color: T.textMut }}>t per person 2022</div>
+              </div>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={WORLD_CO2_TREND} margin={{ top: 0, right: 10, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="co2Grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={T.red} stopOpacity={0.25} />
+                  <stop offset="95%" stopColor={T.red} stopOpacity={0.03} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="year" tick={{ fill: T.textMut, fontSize: 10 }} />
+              <YAxis domain={[20000, 42000]} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fill: T.textMut, fontSize: 10 }} />
+              <Tooltip
+                contentStyle={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}
+                formatter={(v, n) => [n === 'totalMtCO2' ? `${v.toLocaleString()} MtCO₂` : `${v} t/person`, n === 'totalMtCO2' ? 'Total emissions' : 'Per capita']}
+                labelStyle={{ color: T.text, fontWeight: 600 }}
+              />
+              <Area type="monotone" dataKey="totalMtCO2" name="totalMtCO2" stroke={T.red} fill="url(#co2Grad)" strokeWidth={2} dot={{ r: 3, fill: T.red }} />
+            </AreaChart>
+          </ResponsiveContainer>
+
+          {/* Top emitters mini-table */}
+          <div style={{ marginTop: 16 }}>
+            <div style={{ fontWeight: 600, color: T.textSec, fontSize: 12, marginBottom: 8 }}>Top 10 Emitters 2022 (real IEA/EDGAR data)</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+              {COUNTRY_EMISSIONS_2022.slice(0, 10).map((c, i) => (
+                <div key={c.iso3} style={{ background: T.surfaceH, borderRadius: 6, padding: '8px 10px' }}>
+                  <div style={{ fontSize: 10, color: T.textMut }}>{i + 1}. {c.country}</div>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: i < 3 ? T.red : i < 6 ? T.amber : T.text }}>
+                    {c.totalMtCO2.toLocaleString()} Mt
+                  </div>
+                  <div style={{ fontSize: 10, color: T.textMut }}>{c.shareOfWorld}% of world</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Scenario cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
