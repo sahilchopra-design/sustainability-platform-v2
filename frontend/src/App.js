@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AK — ESG Ratings Intelligence & Provider Analytics
+import EsgRatingsComparatorPage from './features/esg-ratings-comparator/pages/EsgRatingsComparatorPage';
+import RatingsMethodologyDecoderPage from './features/ratings-methodology-decoder/pages/RatingsMethodologyDecoderPage';
+import RatingsMigrationMomentumPage from './features/ratings-migration-momentum/pages/RatingsMigrationMomentumPage';
+import ControversyRatingImpactPage from './features/controversy-rating-impact/pages/ControversyRatingImpactPage';
+import GreenwashingDetectorPage from './features/greenwashing-detector/pages/GreenwashingDetectorPage';
+import EsgRatingsHubPage from './features/esg-ratings-hub/pages/EsgRatingsHubPage';
 // Sprint AH — Regulatory Reporting & Disclosure Automation
 import CsrdEsrsAutomationPage from './features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage';
 import SfdrV2ReportingPage from './features/sfdr-v2-reporting/pages/SfdrV2ReportingPage';
@@ -492,6 +499,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'ESG Ratings Intelligence', icon: '⭐', color: '#b45309', items: [
+    { path: '/esg-ratings-hub',             label: 'ESG Ratings Hub',              badge: 'Hub · 6 Providers · Consensus · Coverage · Alert Engine',        code: 'EP-AK6' },
+    { path: '/esg-ratings-comparator',      label: 'ESG Ratings Comparator',       badge: 'MSCI/Sust/ISS/CDP/S&P/BBG · Divergence · Correlation',           code: 'EP-AK1' },
+    { path: '/ratings-methodology-decoder', label: 'Ratings Methodology Decoder',  badge: 'Pillar Weights · Materiality Maps · 200+ KPIs · What-If',        code: 'EP-AK2' },
+    { path: '/ratings-migration-momentum',  label: 'Ratings Migration & Momentum', badge: 'Upgrade/Downgrade · Lead-Lag · Alpha Signals · Backtest',         code: 'EP-AK3' },
+    { path: '/controversy-rating-impact',   label: 'Controversy-Rating Impact',    badge: 'RepRisk · Severity-to-Score · Recovery Curves · Prediction',      code: 'EP-AK4' },
+    { path: '/greenwashing-detector',       label: 'Greenwashing & Integrity',     badge: 'Disclosure Gap · Self-Report Bias · Red Flags · EU Reg 2024',     code: 'EP-AK5' },
   ]},
   { label: 'Regulatory Reporting & Disclosure', icon: '📋', color: '#7c3aed', items: [
     { path: '/disclosure-hub',        label: 'Disclosure Hub',               badge: 'Hub · CSRD+SFDR+ISSB+SEC+UK · Audit Trail · Cross-Framework', code: 'EP-AH6' },
@@ -1324,6 +1339,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AK — ESG Ratings Intelligence & Provider Analytics */}
+            <Route path="/esg-ratings-hub"             element={<EsgRatingsHubPage />} />
+            <Route path="/esg-ratings-comparator"      element={<EsgRatingsComparatorPage />} />
+            <Route path="/ratings-methodology-decoder" element={<RatingsMethodologyDecoderPage />} />
+            <Route path="/ratings-migration-momentum"  element={<RatingsMigrationMomentumPage />} />
+            <Route path="/controversy-rating-impact"   element={<ControversyRatingImpactPage />} />
+            <Route path="/greenwashing-detector"       element={<GreenwashingDetectorPage />} />
             {/* Sprint AH — Regulatory Reporting & Disclosure Automation */}
             <Route path="/disclosure-hub"       element={<DisclosureHubPage />} />
             <Route path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />
