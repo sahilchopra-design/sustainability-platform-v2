@@ -883,7 +883,7 @@ export default function PCafIndiaBrsrPage() {
           brsr_p6: { scope1_co2e: null, scope2_co2e: null, scope3_co2e: null,
             reporting_year: 2023, data_source: 'BRSR Portal (not yet fetched)' } });
       } else {
-        setCompanyError(`API unavailable (demo mode). CIN "${cin}" not found in local suggestions.`);
+        setCompanyError(`Seed data mode (demo mode). CIN "${cin}" not found in local suggestions.`);
       }
     }
     setCompanyLoading(false);

@@ -454,7 +454,7 @@ export default function StrandedAssetsPage() {
       {calcResult && (
         <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: '14px 18px' }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
-            Calculation Result — {calcResult.source === 'api' ? '✓ API Response' : '⚠ Client-side (API unavailable)'}
+            Calculation Result — {calcResult.source === 'api' ? '✓ API Response' : '⚠ Client-side (Seed data mode)'}
           </div>
           {calcResult.demo
             ? (

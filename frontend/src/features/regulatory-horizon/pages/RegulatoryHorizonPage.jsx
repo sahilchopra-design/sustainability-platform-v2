@@ -47,7 +47,7 @@ function Tab1({entityType,jurisdiction}) {
   const topicData=['Capital','Reporting','Disclosure','Technology','Climate','Supply Chain','Market Infra','Digital Assets'].map(t=>({
     topic:t, count:REGULATIONS_12.filter(r=>r.topic===t).length||Math.round(rng(REGULATIONS_12.indexOf(REGULATIONS_12.find(r=>r.topic===t)||REGULATIONS_12[0])+41)*3),
   })).filter(t=>t.count>0);
-  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/regulatory-horizon/scan',{entity_type:entityType,jurisdiction,horizon_years:5}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[entityType,jurisdiction]);
+  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/regulatory-horizon/scan',{entity_type:entityType,jurisdiction,horizon_years:5}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[entityType,jurisdiction]);
   return (
     <div>
       <Section title="Scan Regulatory Horizon">

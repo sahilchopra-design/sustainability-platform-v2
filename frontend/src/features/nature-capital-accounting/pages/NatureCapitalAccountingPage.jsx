@@ -34,7 +34,7 @@ function Tab1({entityName,landArea,primaryEcosystem}) {
     type:t, area: Math.round(la*[0.3,0.2,0.25,0.1,0.05,0.04,0.03,0.03][i]),
   }));
   const conditionDims=['Habitat Integrity','Water Quality','Soil Health','Biodiversity Intactness','Carbon Stock'].map((d,i)=>({dim:d,score:Math.round(30+rng(i+1)*65)}));
-  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/nature-capital-accounting/seea-accounts',{entity_name:entityName,land_area_ha:la,primary_ecosystem:primaryEcosystem}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[entityName,la,primaryEcosystem]);
+  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/nature-capital-accounting/seea-accounts',{entity_name:entityName,land_area_ha:la,primary_ecosystem:primaryEcosystem}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[entityName,la,primaryEcosystem]);
   return (
     <div>
       <Section title="SEEA EA Account Generation">

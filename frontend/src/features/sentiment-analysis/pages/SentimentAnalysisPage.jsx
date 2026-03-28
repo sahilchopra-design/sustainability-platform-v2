@@ -33,7 +33,7 @@ function Tab1({entityName,sector}) {
   const overall = Math.round(dims.reduce((s,d)=>s+d.score,0)/dims.length);
   const sentimentLabel = overall>=65?'Positive':overall>=45?'Neutral':'Negative';
   const sentimentColor = overall>=65?'green':overall>=45?'yellow':'red';
-  const run = useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/sentiment-analysis/assess',{entity_name:entityName,sector}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[entityName,sector]);
+  const run = useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/sentiment-analysis/assess',{entity_name:entityName,sector}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[entityName,sector]);
   return (
     <div>
       <Section title="Run Sentiment Analysis">

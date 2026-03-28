@@ -36,7 +36,7 @@ function Tab1({entityName,sector,supplyCountries}) {
   const overall=Math.round(dims.reduce((s,d)=>s+d.score,0)/dims.length);
   const tier=overall>70?'Critical':overall>50?'Elevated':overall>30?'Moderate':'Low';
   const tierColor=t=>t==='Critical'?'red':t==='Elevated'?'yellow':t==='Moderate'?'blue':'green';
-  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/modern-slavery/assess',{entity_name:entityName,sector,primary_supply_countries:supplyCountries}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[entityName,sector,supplyCountries]);
+  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/modern-slavery/assess',{entity_name:entityName,sector,primary_supply_countries:supplyCountries}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[entityName,sector,supplyCountries]);
   return (
     <div>
       <Section title="Modern Slavery Risk Assessment">

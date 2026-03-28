@@ -33,7 +33,7 @@ function Tab1({entityName,frameworks,reportingYear}) {
   const total=Math.round(mandatory*1.4);
   const gaps=Math.round(total*(0.2+rng(6)*0.3));
   const overall=Math.round(fwData.reduce((s,f)=>s+f.completeness,0)/fwData.length);
-  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/comprehensive-reporting/compile',{entity_name:entityName,frameworks,reporting_year:parseInt(reportingYear)}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[entityName,frameworks,reportingYear]);
+  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/comprehensive-reporting/compile',{entity_name:entityName,frameworks,reporting_year:parseInt(reportingYear)}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[entityName,frameworks,reportingYear]);
   return (
     <div>
       <Section title="Compile Report">

@@ -1102,6 +1102,82 @@ const ReportingClaims=()=>{
         </BarChart>
       </ResponsiveContainer>
     </div>
+
+    {/* Methodology Reference Panel */}
+    <div style={card}>
+      <div style={hdr}>Methodology Reference & Data Quality</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+        <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>ISO 14067 Framework</div>
+          <div style={{fontSize:11,color:T.textSec,lineHeight:1.7}}>
+            <div>Clause 6.3: System boundary definition</div>
+            <div>Clause 6.4.6: Allocation procedures</div>
+            <div>Clause 6.4.9: Biogenic carbon accounting</div>
+            <div>Clause 6.5.4: Avoided emissions</div>
+            <div>Clause 7: Communication requirements</div>
+            <div>Annex A: Reporting template</div>
+          </div>
+        </div>
+        <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Data Quality Indicators</div>
+          <div style={{fontSize:11,color:T.textSec,lineHeight:1.7}}>
+            {[['Technological Repr.',sr(selProd*17)*5],['Geographical Repr.',sr(selProd*19)*5],['Time-related Repr.',sr(selProd*23)*5],['Completeness',sr(selProd*29)*5],['Precision',sr(selProd*31)*5]].map(([label,score],i)=>(
+              <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span>{label}</span>
+                <div style={{display:'flex',gap:2}}>
+                  {[1,2,3,4,5].map(s=>(
+                    <div key={s} style={{width:8,height:8,borderRadius:'50%',background:s<=Math.ceil(score)?T.green:T.border}}/>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Complementary Standards</div>
+          <div style={{fontSize:11,color:T.textSec,lineHeight:1.7}}>
+            <div>ISO 14040/14044: LCA framework</div>
+            <div>ISO 14046: Water footprint</div>
+            <div>GHG Protocol: Product standard</div>
+            <div>PAS 2050: Product carbon footprint</div>
+            <div>EU PEF: Product Environmental Footprint</div>
+            <div>WBCSD: Avoided Emissions Guidance</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Cross-Company Certification Summary */}
+    <div style={card}>
+      <div style={hdr}>Certification Status Across All Products</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
+        {['Gold','Silver','Bronze','Pending'].map((level)=>{
+          const count=PRODUCTS.filter(p=>p.certLevel===level).length;
+          const color=level==='Gold'?T.gold:level==='Silver'?T.textSec:level==='Bronze'?T.amber:T.textMut;
+          const avgHP=PRODUCTS.filter(p=>p.certLevel===level).reduce((a,p)=>a+p.handprint,0)/Math.max(count,1);
+          return(
+            <div key={level} style={{background:color+'10',borderRadius:8,padding:12,textAlign:'center',border:`1px solid ${color}30`}}>
+              <div style={{fontSize:22,fontWeight:700,color}}>{count}</div>
+              <div style={{fontSize:12,fontWeight:600,color}}>{level}</div>
+              <div style={{fontSize:10,color:T.textMut,marginTop:4}}>Avg HP: {avgHP.toFixed(1)} kgCO2e</div>
+            </div>
+          );
+        })}
+      </div>
+      <ResponsiveContainer width="100%" height={180}>
+        <PieChart>
+          <Pie data={[
+            {name:'Gold',value:PRODUCTS.filter(p=>p.certLevel==='Gold').length,fill:T.gold},
+            {name:'Silver',value:PRODUCTS.filter(p=>p.certLevel==='Silver').length,fill:T.textSec},
+            {name:'Bronze',value:PRODUCTS.filter(p=>p.certLevel==='Bronze').length,fill:T.amber},
+            {name:'Pending',value:PRODUCTS.filter(p=>p.certLevel==='Pending').length,fill:T.textMut},
+          ]} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={65} innerRadius={35}>
+            {[T.gold,T.textSec,T.amber,T.textMut].map((c,i)=><Cell key={i} fill={c}/>)}
+          </Pie>
+          <Tooltip content={<CustomTooltip/>}/><Legend wrapperStyle={{fontSize:10}}/>
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   </div>);
 };
 

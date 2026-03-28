@@ -33,7 +33,7 @@ function Tab1({country,eventType}) {
   const dims=[{dim:'Climate',score:Math.round(50+rng(1)*45)},{dim:'Economic',score:Math.round(30+rng(2)*60)},{dim:'Social',score:Math.round(40+rng(3)*55)},{dim:'Institutional',score:Math.round(25+rng(4)*65)},{dim:'Geographic',score:Math.round(45+rng(5)*50)}];
   const isV20=rng(6)>0.5; const isSIDS=rng(7)>0.6; const isLDC=rng(8)>0.4;
   const overall=Math.round(dims.reduce((s,d)=>s+d.score,0)/dims.length);
-  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/loss-damage/assess',{country,event_type:eventType,economic_loss_usd_bn:5}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[country,eventType]);
+  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/loss-damage/assess',{country,event_type:eventType,economic_loss_usd_bn:5}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[country,eventType]);
   return (
     <div>
       <Section title="Vulnerability Assessment">

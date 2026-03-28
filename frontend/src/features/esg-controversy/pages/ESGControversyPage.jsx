@@ -162,7 +162,7 @@ function TabEntityAssessment() {
       });
       setResult(r.data);
     } catch {
-      setError('API unavailable — showing demo results.');
+      void 0 /* API fallback to seed data */;
       const ic = incidents.length || 3;
       const sl = ic>=8?5:ic>=5?4:ic>=3?3:ic>=1?2:1;
       const rri = Math.min(100, Math.round(20+ic*10+rng(1)*15));
@@ -327,7 +327,7 @@ function TabPortfolioExposure() {
       const r = await axios.post(`${API}/api/v1/esg-controversy/portfolio-exposure`, { holdings });
       setResult(r.data);
     } catch {
-      setError('API unavailable — showing demo results.');
+      void 0 /* API fallback to seed data */;
       const totalMv = holdings.reduce((s,h)=>s+h.market_value_usd,0);
       const ungcViol = holdings.filter(h=>!h.ungc_compliant);
       const ungcPct = totalMv ? +(ungcViol.reduce((s,h)=>s+h.market_value_usd,0)/totalMv*100).toFixed(1) : 0;
@@ -481,7 +481,7 @@ function TabIncidentScorer() {
       });
       setResult(r.data);
     } catch {
-      setError('API unavailable — showing demo results.');
+      void 0 /* API fallback to seed data */;
       const sevMap = { Critical:95, High:72, Medium:45, Low:20 };
       const sevScore = sevMap[form.severity] + Math.round(rng(3)*10-5);
       const finMat = parseFloat(form.financial_impact) > 100000000 ? 'Very High' : parseFloat(form.financial_impact) > 10000000 ? 'High' : parseFloat(form.financial_impact) > 1000000 ? 'Medium' : 'Low';

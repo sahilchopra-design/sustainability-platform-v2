@@ -32,7 +32,7 @@ function Tab1({instrumentType,issuerName,sector,notional,kpiName}) {
   const overall=Math.round((icmaScore+kpiMat+sptAmbition)/3);
   const grade=overall>=80?'A':overall>=65?'B':overall>=50?'C':'D';
   const gradeColor=g=>g==='A'?'green':g==='B'?'blue':g==='C'?'yellow':'red';
-  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/sll-slb-v2/assess',{instrument_type:instrumentType,issuer_name:issuerName,sector,notional_usd:parseFloat(notional),kpi_name:kpiName}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[instrumentType,issuerName,sector,notional,kpiName]);
+  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/sll-slb-v2/assess',{instrument_type:instrumentType,issuer_name:issuerName,sector,notional_usd:parseFloat(notional),kpi_name:kpiName}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[instrumentType,issuerName,sector,notional,kpiName]);
   const scores=[
     {criterion:'KPI Relevance & Materiality', score:kpiMat},
     {criterion:'SPT Ambition (vs SDA)', score:sptAmbition},

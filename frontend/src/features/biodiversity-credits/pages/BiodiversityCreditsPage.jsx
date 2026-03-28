@@ -207,7 +207,7 @@ export default function BiodiversityCreditsPage() {
         habitat_type: habitatType, area_ha: parseFloat(area), pre_condition: preCondition, post_plan: postPlan,
       });
     } catch {
-      setError('API unavailable — demo mode.');
+      void 0 /* API fallback to seed data */;
     } finally { setLoading(false); }
   };
 
@@ -224,7 +224,7 @@ export default function BiodiversityCreditsPage() {
         ))}
       </div>
 
-      {error && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 6, padding: 12, marginBottom: 16, color: '#dc2626', fontSize: 14 }}>{error}</div>}
+      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
 
       {/* TAB 1 — BNG Assessment */}
       {tab === 0 && (

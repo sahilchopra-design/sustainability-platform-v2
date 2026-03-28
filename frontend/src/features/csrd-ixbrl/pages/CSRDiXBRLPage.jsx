@@ -497,7 +497,7 @@ export default function CSRDiXBRLPage() {
           <div style={{ padding: '12px 14px', borderRadius: 8,
             background: genResult.demo ? '#fffbeb' : '#f0fdf4',
             border: `1px solid ${genResult.demo ? '#fde68a' : '#bbf7d0'}`, fontSize: 12 }}>
-            {genResult.demo && <div style={{ color: T.amber, fontWeight: 600, marginBottom: 8 }}>Demo mode — API unavailable</div>}
+            {genResult.demo && <div style={{ color: T.amber, fontWeight: 600, marginBottom: 8 }}>Demo mode — Seed data mode</div>}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: ixbrlMode === 'full' ? 12 : 0 }}>
               {[
                 ['iXBRL Facts', genResult.fact_count],

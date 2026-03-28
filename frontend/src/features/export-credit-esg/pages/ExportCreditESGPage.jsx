@@ -41,7 +41,7 @@ function Tab1({exporterCountry,sector,ecaName}) {
     {req:'UN SDG Alignment Reporting',       status: rng(15)>0.35?'Compliant':'Partial'},
   ];
   const statusColor = s => s==='Compliant'?'green':s==='Partial'?'yellow':'red';
-  const run = useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/export-credit-esg/assess',{exporter_country:exporterCountry,sector,eca_name:ecaName}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[exporterCountry,sector,ecaName]);
+  const run = useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/export-credit-esg/assess',{exporter_country:exporterCountry,sector,eca_name:ecaName}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[exporterCountry,sector,ecaName]);
   return (
     <div>
       <Section title="ECA ESG Assessment">

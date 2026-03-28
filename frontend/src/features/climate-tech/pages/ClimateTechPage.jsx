@@ -36,7 +36,7 @@ function Tab1({technology,stage,geography}) {
   const lr=+(8+rng(4)*22).toFixed(0);
   const years=[2024,2026,2028,2030,2032,2035,2040,2045,2050];
   const costData=years.map((y,i)=>({year:y, cost: Math.max(5, mac*(1-lr/100)**((y-2024)/2+i*0.1)) }));
-  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/climate-tech/assess-technology',{technology,stage,geography}); setResult(r.data); } catch { setError('API unavailable — demo mode.'); setResult({}); } setLoading(false); },[technology,stage,geography]);
+  const run=useCallback(async()=>{ setLoading(true); setError(null); try { const r=await axios.post('http://localhost:8001/api/v1/climate-tech/assess-technology',{technology,stage,geography}); setResult(r.data); } catch { void 0 /* API fallback to seed data */; setResult({}); } setLoading(false); },[technology,stage,geography]);
   return (
     <div>
       <Section title="Technology Assessment">

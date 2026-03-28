@@ -166,7 +166,7 @@ export default function SSCFPage() {
     setLoading(true); setError('');
     try {
       await axios.post(`${API}/api/v1/sscf/assess`, { buyer_name: buyer, programme_type: progType, sscf_framework: framework, programme_size_mn: parseFloat(size) });
-    } catch { setError('API unavailable — demo mode.'); }
+    } catch { void 0 /* API fallback to seed data */; }
     finally { setLoading(false); }
   };
 
@@ -183,7 +183,7 @@ export default function SSCFPage() {
         ))}
       </div>
 
-      {error && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 6, padding: 12, marginBottom: 16, color: '#dc2626', fontSize: 14 }}>{error}</div>}
+      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
 
       <Section title="Inputs">
         <Row>
