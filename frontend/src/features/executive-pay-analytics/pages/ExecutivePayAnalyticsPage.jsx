@@ -1,399 +1,99 @@
-import React, { useState } from 'react';
-import {
-  AreaChart, Area, BarChart, Bar, Cell, LineChart, Line,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
-} from 'recharts';
-
+import React,{useState,useMemo} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,ScatterChart,Scatter,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const ACCENT = '#c5a96a';
-const tip = {
-  contentStyle: { background: T.surface, border: '1px solid ' + T.border, borderRadius: 8, color: T.text },
-  labelStyle: { color: T.textSec }
-};
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-
-const COMPANIES = ['Alpha Corp', 'Beta Group', 'Gamma Inc', 'Delta Ltd', 'Epsilon Plc', 'Zeta Co', 'Eta Corp', 'Theta Industries'];
-const SHORT = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-
-const overviewTable = COMPANIES.map((name, i) => ({
-  name,
-  ceoPay: +(8 + sr(i * 3) * 18).toFixed(1),
-  medianPay: +(52 + sr(i * 7) * 60).toFixed(0),
-  payRatio: Math.round(180 + sr(i * 11) * 260),
-  sayOnPay: +(72 + sr(i * 13) * 27).toFixed(1),
-  esgLinked: i % 3 !== 2 ? 'Y' : 'N',
-}));
-
-const ratioTrend = Array.from({ length: 24 }, (_, i) => ({
-  month: `M${i + 1}`,
-  ratio: Math.round(280 + sr(i * 5) * 100),
-}));
-
-const payStructure = COMPANIES.map((name, i) => {
-  const base = Math.round(10 + sr(i * 2) * 10);
-  const bonus = Math.round(20 + sr(i * 4) * 15);
-  const ltip = Math.round(50 + sr(i * 6) * 15);
-  const other = 100 - base - bonus - ltip;
-  return { name, short: SHORT[i], base, bonus, ltip, other, totalComp: +(8 + sr(i * 3) * 18).toFixed(1) };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontFamily:T.font},labelStyle:{color:T.textSec}};
+const CC=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899'];
+const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const TABS=['Pay Overview','CEO Pay Ratio','ESG-Linked Comp','Say-on-Pay'];
+const PAGE_SIZE=12;
+const SECTORS=['All','Technology','Financial Services','Healthcare','Energy','Consumer','Industrial'];
+const COMPANIES=Array.from({length:80},(_,i)=>{
+  const names=['Apple','Microsoft','Amazon','Alphabet','Meta','Tesla','NVIDIA','JPMorgan','Berkshire','UnitedHealth','J&J','Visa','P&G','Mastercard','Chevron','Eli Lilly','AbbVie','Pfizer','Merck','Costco','PepsiCo','Coca-Cola','Broadcom','Cisco','Netflix','AMD','Intel','Qualcomm','Honeywell','Goldman Sachs','Morgan Stanley','Citigroup','Wells Fargo','BofA','Caterpillar','3M','IBM','Salesforce','Oracle','Adobe','Accenture','PayPal','Intuit','ServiceNow','Snowflake','Palantir','Uber','Airbnb','DoorDash','Coinbase','Block','Rivian','Lucid','Zoom','Shopify','Spotify','Roblox','Unity','Datadog','CrowdStrike','Fortinet','Palo Alto','Zscaler','Okta','MongoDB','Confluent','Elastic','HashiCorp','Twilio','HubSpot','Atlassian','Workday','Veeva','Splunk','Dynatrace','New Relic','Fastly','Cloudflare','Akamai','F5'];
+  const sects=['Technology','Technology','Technology','Technology','Technology','Technology','Technology','Financial Services','Financial Services','Healthcare','Healthcare','Financial Services','Consumer','Financial Services','Energy','Healthcare','Healthcare','Healthcare','Healthcare','Consumer','Consumer','Consumer','Technology','Technology','Technology','Technology','Technology','Technology','Industrial','Financial Services','Financial Services','Financial Services','Financial Services','Financial Services','Industrial','Industrial','Technology','Technology','Technology','Technology','Technology','Financial Services','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Financial Services','Financial Services','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology','Technology'];
+  return{id:i+1,company:names[i],sector:sects[i],
+    ceoTotalComp:+(sr(i*7)*30+5).toFixed(1),baseSalary:+(sr(i*11)*1.5+0.8).toFixed(2),bonus:+(sr(i*13)*10+1).toFixed(1),stockAwards:+(sr(i*17)*15+2).toFixed(1),optionAwards:+(sr(i*19)*8+0.5).toFixed(1),
+    payRatio:Math.round(sr(i*23)*400+50),medianWorkerPay:Math.round(sr(i*29)*40+30),
+    esgLinkedPct:+(sr(i*31)*30+5).toFixed(0),esgMetrics:Math.round(sr(i*37)*5+1),climateKPI:sr(i*41)>0.5?'Yes':'No',diversityKPI:sr(i*43)>0.5?'Yes':'No',
+    sayOnPayPct:+(sr(i*47)*20+75).toFixed(1),sayOnPayResult:sr(i*47)*20+75>85?'Passed':'Contested',
+    tsr3yr:+((sr(i*53)-0.3)*60).toFixed(1),performanceAlignment:+(sr(i*59)*40+40).toFixed(0),
+    clawbackPolicy:sr(i*61)>0.3?'Yes':'No',hedgingPolicy:sr(i*67)>0.4?'Prohibited':'Allowed',
+    peerGroupSize:Math.round(sr(i*71)*15+8),peerRank:Math.round(sr(i*73)*100),
+    realizedPay:+(sr(i*79)*25+3).toFixed(1),payForPerformance:sr(i*83)>0.5?'Aligned':'Misaligned'
+  };
 });
+const TRENDS=Array.from({length:8},(_,i)=>({year:2017+i,avgCeoPay:+(sr(i*89)*5+15).toFixed(1),medianRatio:Math.round(sr(i*97)*50+180),esgLinked:+(sr(i*101)*10+10+i*2).toFixed(0),sayOnPay:+(sr(i*103)*5+82).toFixed(1)}));
 
-const compBarData = payStructure.map(d => ({ name: d.short, comp: d.totalComp }));
+export default function ExecutivePayAnalyticsPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sortCol,setSortCol]=useState('ceoTotalComp');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(0);const[selected,setSelected]=useState(null);const[sectorFilter,setSectorFilter]=useState('All');const[minPay,setMinPay]=useState(0);
+  const doSort=(d,c,dir)=>[...d].sort((a,b)=>dir==='asc'?(a[c]>b[c]?1:-1):(a[c]<b[c]?1:-1));
+  const tog=(col,cur,setC,dir,setD)=>{if(cur===col)setD(dir==='asc'?'desc':'asc');else{setC(col);setD('desc');}};
+  const SH=({label,col,cc,dir,onClick})=>(<th onClick={()=>onClick(col)} style={{padding:'10px 12px',textAlign:'left',cursor:'pointer',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',background:T.surfaceH}}>{label}{cc===col?(dir==='asc'?' \u25B2':' \u25BC'):''}</th>);
+  const kpi=(l,v,s)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:1,minWidth:170}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:26,fontWeight:700,color:T.navy,marginTop:4}}>{v}</div>{s&&<div style={{fontSize:12,color:T.textSec,marginTop:2}}>{s}</div>}</div>);
+  const csvE=(data,fn)=>{const h=Object.keys(data[0]);const c=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
+  const filtered=useMemo(()=>{let d=COMPANIES.filter(c=>c.company.toLowerCase().includes(search.toLowerCase()));if(sectorFilter!=='All')d=d.filter(c=>c.sector===sectorFilter);d=d.filter(c=>c.ceoTotalComp>=minPay);return doSort(d,sortCol,sortDir);},[search,sectorFilter,minPay,sortCol,sortDir]);
+  const paged=filtered.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);const tp=Math.ceil(filtered.length/PAGE_SIZE);
 
-const ESG_METRICS = [
-  { metric: 'GHG Reduction', adoption: 82, weight: 22, period: 'Annual', verified: 74 },
-  { metric: 'Safety (TRIR)', adoption: 71, weight: 18, period: 'Annual', verified: 61 },
-  { metric: 'Employee Engagement', adoption: 65, weight: 14, period: 'Annual', verified: 48 },
-  { metric: 'Diversity Targets', adoption: 58, weight: 12, period: 'Annual', verified: 52 },
-  { metric: 'Customer Satisfaction', adoption: 44, weight: 10, period: 'Annual', verified: 35 },
-  { metric: 'Supplier Conduct', adoption: 37, weight: 9, period: 'Biannual', verified: 28 },
-  { metric: 'Water Intensity', adoption: 29, weight: 8, period: 'Annual', verified: 22 },
-  { metric: 'Social Impact Score', adoption: 21, weight: 7, period: 'Annual', verified: 18 },
-];
-
-const esgTrend = Array.from({ length: 24 }, (_, i) => ({
-  month: `M${i + 1}`,
-  linked: Math.round(40 + sr(i * 9) * 35),
-}));
-
-const VOTES = COMPANIES.map((name, i) => {
-  const support = +(72 + sr(i * 17) * 27).toFixed(1);
-  const outcome = support >= 90 ? 'Passed' : support >= 75 ? 'Passed' : i === 3 ? 'Failed' : i === 6 ? 'Withdrawn' : 'Passed';
-  const concerns = ['Pay quantum', 'LTIP structure', 'Peer benchmarking', 'ESG weighting', 'Disclosure quality', 'Clawback policy', 'Ratio disclosure', 'Bonus targets'][i];
-  return { name, short: SHORT[i], support, opposition: +(100 - support).toFixed(1), concerns, outcome };
-});
-
-const proxyAdvisors = [
-  { company: 'Alpha Corp', iss: 'For', gl: 'For', outcome: 'Passed' },
-  { company: 'Beta Group', iss: 'For', gl: 'For', outcome: 'Passed' },
-  { company: 'Gamma Inc', iss: 'Against', gl: 'For', outcome: 'Passed' },
-  { company: 'Delta Ltd', iss: 'Against', gl: 'Against', outcome: 'Failed' },
-  { company: 'Epsilon Plc', iss: 'For', gl: 'For', outcome: 'Passed' },
-  { company: 'Zeta Co', iss: 'Against', gl: 'For', outcome: 'Passed' },
-  { company: 'Eta Corp', iss: 'For', gl: 'Abstain', outcome: 'Withdrawn' },
-  { company: 'Theta Industries', iss: 'For', gl: 'For', outcome: 'Passed' },
-];
-
-const REGULATIONS = [
-  { name: 'EU Shareholders Rights Dir. II', jurisdiction: 'EU', disclosure: 'CEO pay ratio, individual director pay', vote: 'Advisory', penalty: '€500k / 5% revenue', effective: '2020' },
-  { name: "UK Directors' Remuneration Report", jurisdiction: 'UK', disclosure: 'Full pay policy & single figure table', vote: 'Binding (policy)', penalty: 'Criminal liability', effective: '2013' },
-  { name: 'SEC Pay vs Performance Rule', jurisdiction: 'US', disclosure: 'Pay vs company financial performance', vote: 'Advisory', penalty: 'SEC enforcement', effective: '2023' },
-  { name: 'Dodd-Frank Pay Ratio Rule', jurisdiction: 'US', disclosure: 'CEO-to-median employee pay ratio', vote: 'Advisory', penalty: 'SEC enforcement', effective: '2018' },
-  { name: 'Australian Remuneration Report', jurisdiction: 'AUS', disclosure: 'KMP remuneration full disclosure', vote: 'Advisory (two-strikes)', penalty: 'Board spill', effective: '2004' },
-  { name: 'Say-on-Pay (Various)', jurisdiction: 'Global', disclosure: 'Remuneration policy vote', vote: 'Advisory / Binding', penalty: 'Varies', effective: 'Varies' },
-];
-
-const complianceData = [
-  { name: 'EU', rate: 84 }, { name: 'UK', rate: 91 }, { name: 'US (PvP)', rate: 78 },
-  { name: 'US (Ratio)', rate: 88 }, { name: 'AUS', rate: 93 }, { name: 'Global', rate: 67 },
-];
-
-const TABS = ['Overview', 'Pay Structure', 'ESG Linkage', 'Shareholder Voting', 'Regulatory'];
-
-const StatCard = ({ label, value }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: '18px 20px', flex: 1, minWidth: 160 }}>
-    <div style={{ color: T.textSec, fontSize: 12, marginBottom: 6 }}>{label}</div>
-    <div style={{ color: ACCENT, fontSize: 22, fontWeight: 700 }}>{value}</div>
-  </div>
-);
-
-const Badge = ({ val }) => {
-  const color = val === 'Passed' ? T.green : val === 'Failed' ? T.red : T.amber;
-  return <span style={{ background: color + '22', color, border: `1px solid ${color}`, borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 600 }}>{val}</span>;
-};
-
-export default function ExecutivePayAnalyticsPage() {
-  const [tab, setTab] = useState(0);
-
-  return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '24px 28px' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Executive Pay & Remuneration Analytics</h1>
-      <p style={{ color: T.textSec, fontSize: 13, marginBottom: 24 }}>CEO compensation ratios, ESG pay linkage, shareholder voting outcomes and regulatory compliance.</p>
-
-      {/* Tab bar */}
-      <div style={{ display: 'flex', gap: 4, borderBottom: `1px solid ${T.border}`, marginBottom: 28 }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{
-            background: 'none', border: 'none', padding: '10px 18px', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-            color: tab === i ? ACCENT : T.textSec,
-            borderBottom: tab === i ? `2px solid ${ACCENT}` : '2px solid transparent',
-            transition: 'color .2s'
-          }}>{t}</button>
-        ))}
-      </div>
-
-      {/* Tab 1 — Overview */}
-      {tab === 0 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            <StatCard label="CEO-Median Pay Ratio" value="324x" />
-            <StatCard label="Say-on-Pay Pass Rate" value="89%" />
-            <StatCard label="ESG-Linked Pay" value="68%" />
-            <StatCard label="Avg LTIP Vesting" value="3.2 yrs" />
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>CEO Compensation Overview</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Company', 'CEO Total ($M)', 'Median Pay ($k)', 'Pay Ratio', 'Say-on-Pay %', 'ESG Linked'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textSec, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {overviewTable.map((r, i) => (
-                  <tr key={r.name} style={{ borderBottom: `1px solid ${T.border}22`, background: i % 2 ? T.bg + '60' : 'transparent' }}>
-                    <td style={{ padding: '8px 10px', fontWeight: 600 }}>{r.name}</td>
-                    <td style={{ padding: '8px 10px', color: ACCENT }}>${r.ceoPay}M</td>
-                    <td style={{ padding: '8px 10px' }}>${r.medianPay}k</td>
-                    <td style={{ padding: '8px 10px', color: r.payRatio > 300 ? T.red : T.amber }}>{r.payRatio}x</td>
-                    <td style={{ padding: '8px 10px' }}>{r.sayOnPay}%</td>
-                    <td style={{ padding: '8px 10px' }}><Badge val={r.esgLinked === 'Y' ? 'Passed' : 'Failed'} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>CEO Pay Ratio — 24-Month Trend</h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={ratioTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill: T.textSec, fontSize: 11 }} interval={3} />
-                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} domain={[250, 400]} />
-                <Tooltip {...tip} />
-                <Area type="monotone" dataKey="ratio" stroke={ACCENT} fill={ACCENT + '22'} strokeWidth={2} name="Pay Ratio (x)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2 — Pay Structure Breakdown */}
-      {tab === 1 && (
-        <div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Compensation Mix by Company</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Company', 'Base %', 'Annual Bonus %', 'LTIP %', 'Other %'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textSec, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {payStructure.map((r, i) => (
-                  <tr key={r.name} style={{ borderBottom: `1px solid ${T.border}22`, background: i % 2 ? T.bg + '60' : 'transparent' }}>
-                    <td style={{ padding: '8px 10px', fontWeight: 600 }}>{r.name}</td>
-                    {[{ val: r.base, color: T.teal }, { val: r.bonus, color: ACCENT }, { val: r.ltip, color: T.green }, { val: r.other, color: T.textSec }].map(({ val, color }, j) => (
-                      <td key={j} style={{ padding: '8px 10px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 60, height: 8, background: T.border, borderRadius: 4, overflow: 'hidden' }}>
-                            <div style={{ width: `${val}%`, height: '100%', background: color, borderRadius: 4 }} />
-                          </div>
-                          <span style={{ color }}>{val}%</span>
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
-            <StatCard label="Avg ESG Weight in Bonus" value="18%" />
-            <StatCard label="Avg LTIP Performance Period" value="3.2 yrs" />
-            <StatCard label="Clawback Provision Adoption" value="74%" />
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Total CEO Compensation by Company ($M)</h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={compBarData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill: T.textSec, fontSize: 11 }} />
-                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} />
-                <Tooltip {...tip} formatter={v => [`$${v}M`, 'Total Comp']} />
-                <Bar dataKey="comp" name="Total Comp ($M)" radius={[4, 4, 0, 0]}>
-                  {compBarData.map((d, i) => (
-                    <Cell key={i} fill={d.comp > 20 ? T.red : d.comp > 10 ? T.amber : T.green} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3 — ESG Pay Linkage */}
-      {tab === 2 && (
-        <div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>ESG Metrics Used in Executive Pay</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Metric', 'Companies Using (%)', 'Avg Bonus Weight (%)', 'Period', '3rd Party Verified (%)'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textSec, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ESG_METRICS.map((r, i) => (
-                  <tr key={r.metric} style={{ borderBottom: `1px solid ${T.border}22`, background: i % 2 ? T.bg + '60' : 'transparent' }}>
-                    <td style={{ padding: '8px 10px', fontWeight: 600 }}>{r.metric}</td>
-                    <td style={{ padding: '8px 10px', color: r.adoption > 60 ? T.green : r.adoption > 30 ? T.amber : T.red }}>{r.adoption}%</td>
-                    <td style={{ padding: '8px 10px' }}>{r.weight}%</td>
-                    <td style={{ padding: '8px 10px', color: T.textSec }}>{r.period}</td>
-                    <td style={{ padding: '8px 10px' }}>{r.verified}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>ESG Metric Adoption in Pay (%)</h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={ESG_METRICS.map(d => ({ name: d.metric.split(' ')[0], adoption: d.adoption }))}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill: T.textSec, fontSize: 11 }} />
-                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} domain={[0, 100]} />
-                <Tooltip {...tip} formatter={v => [`${v}%`, 'Adoption']} />
-                <Bar dataKey="adoption" name="Adoption %" radius={[4, 4, 0, 0]}>
-                  {ESG_METRICS.map((d, i) => (
-                    <Cell key={i} fill={d.adoption > 60 ? T.green : d.adoption > 30 ? T.amber : ACCENT} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>ESG Pay Linkage Trend — 24 Months (%)</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={esgTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill: T.textSec, fontSize: 11 }} interval={3} />
-                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} domain={[30, 80]} />
-                <Tooltip {...tip} formatter={v => [`${v}%`, 'ESG Linked']} />
-                <Line type="monotone" dataKey="linked" stroke={T.green} strokeWidth={2} dot={false} name="ESG Linked %" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4 — Shareholder Voting */}
-      {tab === 3 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            <StatCard label="Avg Say-on-Pay Support" value="89%" />
-            <StatCard label="Failed Votes" value="3%" />
-            <StatCard label="Investor Groups Voting Against (avg)" value="12%" />
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>2024 AGM Say-on-Pay Results</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Company', 'Support %', 'Opposition %', 'Key Concern', 'Outcome'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textSec, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {VOTES.map((r, i) => (
-                  <tr key={r.name} style={{ borderBottom: `1px solid ${T.border}22`, background: i % 2 ? T.bg + '60' : 'transparent' }}>
-                    <td style={{ padding: '8px 10px', fontWeight: 600 }}>{r.name}</td>
-                    <td style={{ padding: '8px 10px', color: r.support > 90 ? T.green : r.support > 75 ? T.amber : T.red }}>{r.support}%</td>
-                    <td style={{ padding: '8px 10px', color: T.red }}>{r.opposition}%</td>
-                    <td style={{ padding: '8px 10px', color: T.textSec }}>{r.concerns}</td>
-                    <td style={{ padding: '8px 10px' }}><Badge val={r.outcome} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Say-on-Pay Support % by Company</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={VOTES.map(d => ({ name: d.short, support: d.support }))}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill: T.textSec, fontSize: 11 }} />
-                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} domain={[60, 100]} />
-                <Tooltip {...tip} formatter={v => [`${v}%`, 'Support']} />
-                <Bar dataKey="support" name="Support %" radius={[4, 4, 0, 0]}>
-                  {VOTES.map((d, i) => (
-                    <Cell key={i} fill={d.support > 90 ? T.green : d.support > 75 ? T.amber : T.red} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Proxy Advisor Recommendations</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Company', 'ISS', 'Glass Lewis', 'Outcome'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textSec, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {proxyAdvisors.map((r, i) => (
-                  <tr key={r.company} style={{ borderBottom: `1px solid ${T.border}22`, background: i % 2 ? T.bg + '60' : 'transparent' }}>
-                    <td style={{ padding: '8px 10px', fontWeight: 600 }}>{r.company}</td>
-                    <td style={{ padding: '8px 10px', color: r.iss === 'For' ? T.green : r.iss === 'Against' ? T.red : T.amber }}>{r.iss}</td>
-                    <td style={{ padding: '8px 10px', color: r.gl === 'For' ? T.green : r.gl === 'Against' ? T.red : T.amber }}>{r.gl}</td>
-                    <td style={{ padding: '8px 10px' }}><Badge val={r.outcome} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5 — Regulatory Landscape */}
-      {tab === 4 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            <StatCard label="Mandatory Say-on-Pay Jurisdictions" value="32" />
-            <StatCard label="Avg Vote Frequency" value="Annual" />
-            <StatCard label="Binding Vote Jurisdictions" value="8" />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(340px,1fr))', gap: 14, marginBottom: 24 }}>
-            {REGULATIONS.map((r, i) => (
-              <div key={i} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: T.text, flex: 1, marginRight: 8 }}>{r.name}</span>
-                  <span style={{ background: ACCENT + '22', color: ACCENT, border: `1px solid ${ACCENT}`, borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>{r.jurisdiction}</span>
-                </div>
-                <div style={{ fontSize: 11, color: T.textSec, marginBottom: 6 }}><span style={{ color: T.textMut }}>Disclosure:</span> {r.disclosure}</div>
-                <div style={{ fontSize: 11, color: T.textSec, marginBottom: 6 }}><span style={{ color: T.textMut }}>Vote Type:</span> <span style={{ color: r.vote.includes('Binding') ? T.red : T.amber }}>{r.vote}</span></div>
-                <div style={{ fontSize: 11, color: T.textSec, marginBottom: 6 }}><span style={{ color: T.textMut }}>Penalty:</span> {r.penalty}</div>
-                <div style={{ fontSize: 11, color: T.textSec }}><span style={{ color: T.textMut }}>Effective:</span> {r.effective}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Compliance Rate by Jurisdiction (%)</h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={complianceData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill: T.textSec, fontSize: 11 }} />
-                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} domain={[50, 100]} />
-                <Tooltip {...tip} formatter={v => [`${v}%`, 'Compliance Rate']} />
-                <Bar dataKey="rate" name="Compliance %" radius={[4, 4, 0, 0]}>
-                  {complianceData.map((d, i) => (
-                    <Cell key={i} fill={d.rate >= 90 ? T.green : d.rate >= 75 ? T.amber : T.red} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
+  const renderOverview=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Companies',filtered.length)}{kpi('Avg CEO Pay','$'+(filtered.reduce((a,c)=>a+c.ceoTotalComp,0)/filtered.length||0).toFixed(1)+'M')}{kpi('Avg Pay Ratio',Math.round(filtered.reduce((a,c)=>a+c.payRatio,0)/filtered.length||0)+':1')}{kpi('ESG-Linked Avg',(filtered.reduce((a,c)=>a+parseFloat(c.esgLinkedPct),0)/filtered.length||0).toFixed(0)+'%')}{kpi('Avg Say-on-Pay',(filtered.reduce((a,c)=>a+c.sayOnPayPct,0)/filtered.length||0).toFixed(1)+'%')}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+      <input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search companies..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
+      <select value={sectorFilter} onChange={e=>{setSectorFilter(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select>
+      <div style={{fontSize:12,color:T.textSec,display:'flex',alignItems:'center',gap:8}}>Min pay: ${minPay}M<input type="range" min={0} max={30} value={minPay} onChange={e=>setMinPay(+e.target.value)} style={{width:100}}/></div>
+      <button onClick={()=>csvE(filtered,'executive_pay.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
     </div>
-  );
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>CEO Total Comp ($M) - Top 20</div><ResponsiveContainer width="100%" height={300}><BarChart data={filtered.slice(0,20)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="company" tick={{fontSize:8,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="ceoTotalComp" fill={T.navy} name="Total Comp $M"/></BarChart></ResponsiveContainer></div>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Comp Breakdown (Avg)</div><ResponsiveContainer width="100%" height={300}><PieChart><Pie data={[{name:'Base',value:+(filtered.reduce((a,c)=>a+c.baseSalary,0)/filtered.length).toFixed(1)},{name:'Bonus',value:+(filtered.reduce((a,c)=>a+c.bonus,0)/filtered.length).toFixed(1)},{name:'Stock',value:+(filtered.reduce((a,c)=>a+c.stockAwards,0)/filtered.length).toFixed(1)},{name:'Options',value:+(filtered.reduce((a,c)=>a+c.optionAwards,0)/filtered.length).toFixed(1)}]} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} style={{fontSize:10}}>{[0,1,2,3].map(j=><Cell key={j} fill={CC[j]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div>
+    <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
+      <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}><thead><tr>
+        {[['Company','company'],['Sector','sector'],['Total $M','ceoTotalComp'],['Base $M','baseSalary'],['Stock $M','stockAwards'],['Pay Ratio','payRatio'],['ESG %','esgLinkedPct'],['Say-on-Pay','sayOnPayPct'],['P4P','payForPerformance']].map(([l,c])=><SH key={c} label={l} col={c} cc={sortCol} dir={sortDir} onClick={c2=>tog(c2,sortCol,setSortCol,sortDir,setSortDir)}/>)}
+      </tr></thead><tbody>
+        {paged.map((c,i)=>(<React.Fragment key={c.id}>
+          <tr onClick={()=>setSelected(selected===c.id?null:c.id)} style={{cursor:'pointer',background:selected===c.id?T.surfaceH:i%2===0?T.surface:'#fafaf8'}}>
+            <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{c.company}</td><td style={{padding:'10px 12px',fontSize:12,color:T.textSec}}>{c.sector}</td>
+            <td style={{padding:'10px 12px',fontFamily:T.mono,fontWeight:600}}>${c.ceoTotalComp}M</td><td style={{padding:'10px 12px',fontFamily:T.mono}}>${c.baseSalary}M</td>
+            <td style={{padding:'10px 12px',fontFamily:T.mono}}>${c.stockAwards}M</td><td style={{padding:'10px 12px',fontFamily:T.mono}}>{c.payRatio}:1</td>
+            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{c.esgLinkedPct}%</td><td style={{padding:'10px 12px',fontFamily:T.mono,color:c.sayOnPayPct>=85?T.green:c.sayOnPayPct>=70?T.amber:T.red}}>{c.sayOnPayPct}%</td>
+            <td style={{padding:'10px 12px'}}><span style={{color:c.payForPerformance==='Aligned'?T.green:T.red}}>{c.payForPerformance}</span></td>
+          </tr>
+          {selected===c.id&&(<tr><td colSpan={9} style={{padding:20,background:T.surfaceH,borderTop:`1px solid ${T.border}`}}><div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12}}>
+            {[['Bonus $M',c.bonus+'M'],['Options $M',c.optionAwards+'M'],['Climate KPI',c.climateKPI],['Diversity KPI',c.diversityKPI],['TSR 3yr',c.tsr3yr+'%'],['Realized $M',c.realizedPay+'M'],['Clawback',c.clawbackPolicy],['Hedging',c.hedgingPolicy],['Peer Rank',c.peerRank+'th'],['ESG Metrics',c.esgMetrics]].map(([l,v])=><div key={l}><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{l}</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{v}</div></div>)}
+          </div></td></tr>)}
+        </React.Fragment>))}
+      </tbody></table>
+    </div>
+    <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><span style={{fontSize:12,color:T.textMut}}>{filtered.length} companies</span><div style={{display:'flex',gap:6}}><button disabled={page===0} onClick={()=>setPage(page-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,opacity:page===0?0.4:1,cursor:page===0?'default':'pointer'}}>Prev</button><span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{page+1}/{tp||1}</span><button disabled={page>=tp-1} onClick={()=>setPage(page+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,opacity:page>=tp-1?0.4:1,cursor:page>=tp-1?'default':'pointer'}}>Next</button></div></div>
+  </div>);
+
+  const renderPayRatio=()=>(<div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Pay Ratio Distribution</div><ResponsiveContainer width="100%" height={300}><BarChart data={filtered.slice(0,20).sort((a,b)=>b.payRatio-a.payRatio)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="company" tick={{fontSize:8,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="payRatio" name="Pay Ratio">{filtered.slice(0,20).sort((a,b)=>b.payRatio-a.payRatio).map((c,i)=><Cell key={i} fill={c.payRatio>300?T.red:c.payRatio>200?T.amber:T.green}/>)}</Bar></BarChart></ResponsiveContainer></div>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Pay Ratio Trend</div><ResponsiveContainer width="100%" height={300}><LineChart data={TRENDS}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Line type="monotone" dataKey="medianRatio" stroke={T.navy} strokeWidth={2} name="Median Ratio"/></LineChart></ResponsiveContainer></div>
+    </div>
+    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>CEO Pay vs Worker Pay Scatter</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="medianWorkerPay" name="Median Worker $K" tick={{fontSize:10,fill:T.textSec}}/><YAxis dataKey="ceoTotalComp" name="CEO Comp $M" tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered} fill={T.navy} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer></div>
+  </div>);
+
+  const renderEsgComp=()=>(<div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>ESG-Linked Comp Trend</div><ResponsiveContainer width="100%" height={300}><AreaChart data={TRENDS}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="esgLinked" stroke={T.sage} fill={T.sage} fillOpacity={0.15} name="ESG-Linked %"/></AreaChart></ResponsiveContainer></div>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>ESG KPI Coverage</div><ResponsiveContainer width="100%" height={300}><PieChart><Pie data={[{name:'Climate KPI',value:filtered.filter(c=>c.climateKPI==='Yes').length},{name:'Diversity KPI',value:filtered.filter(c=>c.diversityKPI==='Yes').length},{name:'Neither',value:filtered.filter(c=>c.climateKPI==='No'&&c.diversityKPI==='No').length}]} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({name,value})=>`${name}: ${value}`} style={{fontSize:10}}>{[0,1,2].map(j=><Cell key={j} fill={CC[j]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div>
+    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>ESG Linked % by Company</div><ResponsiveContainer width="100%" height={250}><BarChart data={filtered.sort((a,b)=>parseFloat(b.esgLinkedPct)-parseFloat(a.esgLinkedPct)).slice(0,20)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="company" tick={{fontSize:8,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="esgLinkedPct" fill={T.sage} name="ESG Linked %"/></BarChart></ResponsiveContainer></div>
+  </div>);
+
+  const renderSayOnPay=()=>(<div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Say-on-Pay Results</div><ResponsiveContainer width="100%" height={300}><BarChart data={filtered.sort((a,b)=>a.sayOnPayPct-b.sayOnPayPct).slice(0,20)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="company" tick={{fontSize:8,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}} domain={[60,100]}/><Tooltip {...tip}/><Bar dataKey="sayOnPayPct" name="Approval %">{filtered.sort((a,b)=>a.sayOnPayPct-b.sayOnPayPct).slice(0,20).map((c,i)=><Cell key={i} fill={c.sayOnPayPct>=85?T.green:c.sayOnPayPct>=70?T.amber:T.red}/>)}</Bar></BarChart></ResponsiveContainer></div>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Say-on-Pay Trend</div><ResponsiveContainer width="100%" height={300}><LineChart data={TRENDS}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}} domain={[75,95]}/><Tooltip {...tip}/><Line type="monotone" dataKey="sayOnPay" stroke={T.gold} strokeWidth={2} name="Avg Say-on-Pay %"/></LineChart></ResponsiveContainer></div>
+    </div>
+    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Performance Alignment vs TSR</div><ResponsiveContainer width="100%" height={250}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="tsr3yr" name="TSR 3yr %" tick={{fontSize:10,fill:T.textSec}}/><YAxis dataKey="ceoTotalComp" name="CEO Pay $M" tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered} fill={T.gold} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer></div>
+  </div>);
+
+  return(<div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px',color:T.text}}>
+    <div style={{marginBottom:24}}><div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,letterSpacing:1,textTransform:'uppercase'}}>Corporate Governance Intelligence</div><h1 style={{fontSize:28,fontWeight:700,color:T.navy,margin:'4px 0 0'}}>Executive Pay Analytics</h1></div>
+    <div style={{display:'flex',gap:4,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${T.gold}`:'2px solid transparent',background:tab===i?T.surface:'transparent',color:tab===i?T.navy:T.textSec,fontFamily:T.font,fontSize:13,fontWeight:tab===i?600:400,cursor:'pointer',marginBottom:-2}}>{t}</button>)}</div>
+    {tab===0&&renderOverview()}{tab===1&&renderPayRatio()}{tab===2&&renderEsgComp()}{tab===3&&renderSayOnPay()}
+  </div>);
 }

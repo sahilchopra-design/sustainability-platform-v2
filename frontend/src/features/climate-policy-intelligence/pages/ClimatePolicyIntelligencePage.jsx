@@ -1,397 +1,172 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,ZAxis,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const tip = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text, fontSize: 11 };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#0ea5e9';
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const TABS=['Dashboard','Country Tracker','Carbon Pricing','Regulatory Timeline'];
+const REGIONS=['All','Europe','Asia Pacific','North America','Latin America','Africa','Middle East'];
+const NDC_STATUS=['All','On Track','Partially On Track','Off Track','Insufficient'];
+const PAGE_SIZE=12;
 
-const THEME = '#7c3aed';
+const COUNTRIES=(()=>{
+  const names=['United States','China','India','European Union','Japan','United Kingdom','Germany','France','Canada','Australia','Brazil','South Korea','Indonesia','Mexico','Russia','Saudi Arabia','South Africa','Turkey','Argentina','Colombia','Nigeria','Egypt','Thailand','Vietnam','Philippines','Bangladesh','Pakistan','Chile','Kenya','Morocco','Norway','Sweden','Denmark','Finland','Netherlands','Switzerland','New Zealand','Singapore','UAE','Israel','Poland','Czech Republic','Hungary','Romania','Greece','Portugal','Ireland','Austria','Belgium','Costa Rica'];
+  const regs=['North America','Asia Pacific','Asia Pacific','Europe','Asia Pacific','Europe','Europe','Europe','North America','Asia Pacific','Latin America','Asia Pacific','Asia Pacific','Latin America','Europe','Middle East','Africa','Europe','Latin America','Latin America','Africa','Africa','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Latin America','Africa','Africa','Europe','Europe','Europe','Europe','Europe','Europe','Asia Pacific','Asia Pacific','Middle East','Middle East','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Latin America'];
+  return names.map((n,i)=>({id:i+1,country:n,region:regs[i],ndcTarget:Math.round(20+sr(i*7)*50),ndcProgress:Math.round(10+sr(i*11)*80),carbonPrice:Math.round(sr(i*13)*120),etsActive:sr(i*17)>0.45?'Yes':'No',carbonTax:sr(i*19)>0.55?'Yes':'No',netZeroTarget:2030+Math.floor(sr(i*23)*25),renewableTarget:Math.round(20+sr(i*29)*60),coalPhaseOut:sr(i*31)>0.4?'Committed':'No Plan',adaptationSpend:+(0.1+sr(i*37)*2.5).toFixed(1),climateFinance:Math.round(50+sr(i*41)*4950),policyStrength:Math.round(15+sr(i*43)*80),implementationGap:Math.round(5+sr(i*47)*45),ndcStatus:sr(i*7)<0.2?'On Track':sr(i*7)<0.45?'Partially On Track':sr(i*7)<0.75?'Off Track':'Insufficient',ghgEmissions:Math.round(50+sr(i*53)*15000),emissionsPerCapita:+(2+sr(i*59)*18).toFixed(1),fossilSubsidies:+(0.1+sr(i*61)*8).toFixed(1),deforestationRate:+(sr(i*67)*5).toFixed(2),greenBondIssued:Math.round(sr(i*71)*50000)}));})();
 
-const CARBON_PRICES = [
-  { jurisdiction: 'EU ETS',       price: 68.4,  yearChange: +12.3, coverage: 40, mechanism: 'ETS',    trend: 'up'   },
-  { jurisdiction: 'UK ETS',       price: 54.2,  yearChange: +8.1,  coverage: 28, mechanism: 'ETS',    trend: 'up'   },
-  { jurisdiction: 'California',   price: 31.8,  yearChange: +4.2,  coverage: 85, mechanism: 'ETS',    trend: 'up'   },
-  { jurisdiction: 'RGGI',         price: 14.6,  yearChange: +2.1,  coverage: 18, mechanism: 'ETS',    trend: 'flat' },
-  { jurisdiction: 'China',        price: 8.7,   yearChange: +1.4,  coverage: 40, mechanism: 'ETS',    trend: 'up'   },
-  { jurisdiction: 'Canada',       price: 65.0,  yearChange: +15.0, coverage: 78, mechanism: 'Tax',    trend: 'up'   },
-  { jurisdiction: 'Australia',    price: 22.5,  yearChange: -1.2,  coverage: 28, mechanism: 'Hybrid', trend: 'down' },
-  { jurisdiction: 'New Zealand',  price: 38.9,  yearChange: +5.7,  coverage: 49, mechanism: 'ETS',    trend: 'up'   },
-  { jurisdiction: 'Switzerland',  price: 130.0, yearChange: +10.0, coverage: 10, mechanism: 'Tax',    trend: 'up'   },
-  { jurisdiction: 'South Korea',  price: 16.2,  yearChange: +0.9,  coverage: 73, mechanism: 'ETS',    trend: 'flat' },
-  { jurisdiction: 'Japan',        price: 2.4,   yearChange: +0.3,  coverage: 35, mechanism: 'ETS',    trend: 'up'   },
-  { jurisdiction: 'Singapore',    price: 25.0,  yearChange: +10.0, coverage: 80, mechanism: 'Tax',    trend: 'up'   },
-];
+const CARBON_PRICING=(()=>{return['EU ETS','UK ETS','California CaT','RGGI','China ETS','Korea ETS','New Zealand ETS','Switzerland ETS','Canada Federal','Japan Carbon Tax','Sweden Carbon Tax','Finland Carbon Tax','Norway Carbon Tax','Denmark Carbon Tax','France Carbon Tax','Ireland Carbon Tax','Germany ETS','Mexico Carbon Tax','Colombia Carbon Tax','Chile Carbon Tax','Singapore Carbon Tax','South Africa Carbon Tax','Ukraine Carbon Tax','Estonia Carbon Tax','Latvia Carbon Tax','Portugal Carbon Tax','Spain Carbon Tax','Netherlands Carbon Tax','Poland Carbon Tax','Argentina Carbon Tax'].map((n,i)=>({id:i+1,scheme:n,type:n.includes('ETS')||n.includes('CaT')?'ETS':'Carbon Tax',price:Math.round(5+sr(i*7)*90),coverage:Math.round(20+sr(i*11)*60),revenue:Math.round(100+sr(i*13)*9900),yearStarted:2005+Math.floor(sr(i*17)*17),jurisdiction:n.split(' ')[0],emissionsCovered:Math.round(50+sr(i*19)*2000),allowanceVolume:Math.round(100+sr(i*23)*5000),auctionShare:Math.round(10+sr(i*29)*80),freeAllocation:Math.round(5+sr(i*31)*50),offsetsAllowed:sr(i*37)>0.5?'Yes':'Limited',priceFloor:Math.round(sr(i*41)*30),priceCeiling:sr(i*43)>0.6?Math.round(50+sr(i*47)*100):'None',leakageProtection:sr(i*53)>0.4?'Yes':'Partial'}));})();
 
-const NDC_TRACKER = [
-  { economy: 'European Union',  target: 55, baseYear: 1990, currentProgress: 47, gap: 8,  onTrack: true,  updatedYear: 2023 },
-  { economy: 'United States',   target: 50, baseYear: 2005, currentProgress: 21, gap: 29, onTrack: false, updatedYear: 2022 },
-  { economy: 'China',           target: 65, baseYear: 2005, currentProgress: 38, gap: 27, onTrack: false, updatedYear: 2022 },
-  { economy: 'India',           target: 45, baseYear: 2005, currentProgress: 33, gap: 12, onTrack: true,  updatedYear: 2023 },
-  { economy: 'Japan',           target: 46, baseYear: 2013, currentProgress: 24, gap: 22, onTrack: false, updatedYear: 2022 },
-  { economy: 'United Kingdom',  target: 68, baseYear: 1990, currentProgress: 51, gap: 17, onTrack: true,  updatedYear: 2023 },
-  { economy: 'Brazil',          target: 43, baseYear: 2005, currentProgress: 18, gap: 25, onTrack: false, updatedYear: 2022 },
-  { economy: 'Australia',       target: 43, baseYear: 2005, currentProgress: 20, gap: 23, onTrack: false, updatedYear: 2023 },
-];
+const TIMELINE=Array.from({length:36},(_,i)=>({month:`${2024+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,newPolicies:Math.round(3+sr(i*7)*12),amendments:Math.round(2+sr(i*11)*8),carbonPriceAvg:Math.round(20+sr(i*13)*40+i*0.5),etsVolume:Math.round(500+sr(i*17)*300)}));
 
-const POLICY_PIPELINE = [
-  { policy: 'EU Carbon Border Adjustment Mechanism', jurisdiction: 'EU',          stage: 'Implemented',  effectiveDate: '2026-01', sector: 'Trade/Industry',   financialImpact: '$14bn/yr'  },
-  { policy: 'US Clean Electricity Performance Plan', jurisdiction: 'USA',         stage: 'Proposed',     effectiveDate: '2027-06', sector: 'Power',             financialImpact: '$150bn/yr' },
-  { policy: 'UK Green Finance Strategy Update',      jurisdiction: 'UK',          stage: 'Consultation', effectiveDate: '2026-04', sector: 'Finance',           financialImpact: '$8bn/yr'   },
-  { policy: 'China ETS Phase III Expansion',         jurisdiction: 'China',       stage: 'Enacted',      effectiveDate: '2026-07', sector: 'Industry/Power',    financialImpact: '$22bn/yr'  },
-  { policy: 'Canada Carbon Tax Escalation C$170',    jurisdiction: 'Canada',      stage: 'Enacted',      effectiveDate: '2030-01', sector: 'Economy-wide',      financialImpact: '$35bn/yr'  },
-  { policy: 'Singapore Carbon Tax Increase $50',     jurisdiction: 'Singapore',   stage: 'Enacted',      effectiveDate: '2026-01', sector: 'Industry',          financialImpact: '$1.2bn/yr' },
-  { policy: 'Australia Safeguard Mechanism Reform',  jurisdiction: 'Australia',   stage: 'Implemented',  effectiveDate: '2025-07', sector: 'Heavy Industry',    financialImpact: '$3.4bn/yr' },
-  { policy: 'Japan GX Green Transformation Bond',   jurisdiction: 'Japan',       stage: 'Enacted',      effectiveDate: '2026-03', sector: 'Energy/Industry',   financialImpact: '$10bn/yr'  },
-  { policy: 'India Carbon Credit Framework',         jurisdiction: 'India',       stage: 'Consultation', effectiveDate: '2027-01', sector: 'Economy-wide',      financialImpact: '$5bn/yr'   },
-  { policy: 'CORSIA Aviation Carbon Offsetting',     jurisdiction: 'Global',      stage: 'Implemented',  effectiveDate: '2027-01', sector: 'Aviation',          financialImpact: '$2.8bn/yr' },
-];
+const badge=(val,thresholds)=>{const[lo,mid,hi]=thresholds;const bg=val>=hi?'rgba(22,163,74,0.12)':val>=mid?'rgba(197,169,106,0.12)':val>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const color=val>=hi?T.green:val>=mid?T.gold:val>=lo?T.amber:T.red;return{background:bg,color,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const statusBadge=(s)=>{const m={'On Track':{bg:'rgba(22,163,74,0.12)',c:T.green},'Partially On Track':{bg:'rgba(197,169,106,0.15)',c:T.gold},'Off Track':{bg:'rgba(217,119,6,0.12)',c:T.amber},'Insufficient':{bg:'rgba(220,38,38,0.12)',c:T.red}};const v=m[s]||m.Insufficient;return{background:v.bg,color:v.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
 
-const POLITICAL_RISK = [
-  { region: 'Europe',        politicalRisk: 2.1, policyStability: 8.4, climateAmbition: 8.9, regulatoryRisk: 1.8 },
-  { region: 'North America', politicalRisk: 5.6, policyStability: 5.2, climateAmbition: 5.8, regulatoryRisk: 4.9 },
-  { region: 'Asia Pacific',  politicalRisk: 4.2, policyStability: 6.1, climateAmbition: 5.5, regulatoryRisk: 4.0 },
-  { region: 'Latin America', politicalRisk: 6.8, policyStability: 3.9, climateAmbition: 4.2, regulatoryRisk: 6.1 },
-  { region: 'Middle East',   politicalRisk: 7.4, policyStability: 4.5, climateAmbition: 2.8, regulatoryRisk: 7.0 },
-  { region: 'Africa',        politicalRisk: 6.1, policyStability: 4.0, climateAmbition: 3.9, regulatoryRisk: 5.8 },
-];
+export default function ClimatePolicyIntelligencePage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[regionF,setRegionF]=useState('All');const[ndcF,setNdcF]=useState('All');const[sortCol,setSortCol]=useState('policyStrength');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const[cpSearch,setCpSearch]=useState('');const[cpSort,setCpSort]=useState('price');const[cpDir,setCpDir]=useState('desc');const[cpPage,setCpPage]=useState(1);const[cpSelected,setCpSelected]=useState(null);
 
-// 24-month carbon price trend
-const CARBON_PRICE_TREND = Array.from({ length: 24 }, (_, i) => ({
-  month: i === 0 ? 'Mar\'24' : i === 6 ? 'Sep\'24' : i === 12 ? 'Mar\'25' : i === 18 ? 'Sep\'25' : i === 23 ? 'Feb\'26' : '',
-  euEts:      +(48 + sr(i * 3.1) * 28 + i * 0.85).toFixed(1),
-  california: +(25 + sr(i * 2.7) * 10 + i * 0.30).toFixed(1),
-  ukEts:      +(38 + sr(i * 3.7) * 22 + i * 0.72).toFixed(1),
-}));
+  const filtered=useMemo(()=>{let d=[...COUNTRIES];if(search)d=d.filter(r=>r.country.toLowerCase().includes(search.toLowerCase()));if(regionF!=='All')d=d.filter(r=>r.region===regionF);if(ndcF!=='All')d=d.filter(r=>r.ndcStatus===ndcF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,regionF,ndcF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);
+  const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
 
-const TABS = ['Overview', 'Carbon Pricing Tracker', 'NDC Monitor', 'Policy Pipeline', 'Political Risk'];
+  const cpFiltered=useMemo(()=>{let d=[...CARBON_PRICING];if(cpSearch)d=d.filter(r=>r.scheme.toLowerCase().includes(cpSearch.toLowerCase()));d.sort((a,b)=>cpDir==='asc'?(a[cpSort]>b[cpSort]?1:-1):(a[cpSort]<b[cpSort]?1:-1));return d;},[cpSearch,cpSort,cpDir]);
+  const cpPaged=useMemo(()=>cpFiltered.slice((cpPage-1)*PAGE_SIZE,cpPage*PAGE_SIZE),[cpFiltered,cpPage]);
+  const cpTotalPages=Math.ceil(cpFiltered.length/PAGE_SIZE);
 
-const STAGE_COLORS = {
-  Proposed:     '#6366f1',
-  Consultation: T.amber,
-  Enacted:      T.teal,
-  Implemented:  T.green,
-};
+  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
+  const doCpSort=(col)=>{if(cpSort===col)setCpDir(d=>d==='asc'?'desc':'asc');else{setCpSort(col);setCpDir('desc');}setCpPage(1);};
 
-const riskColor = v => v <= 3 ? T.green : v <= 5.5 ? T.amber : T.red;
-const stabilityColor = v => v >= 7 ? T.green : v >= 5 ? T.amber : T.red;
+  const stats=useMemo(()=>{const d=filtered;return{total:d.length,avgPolicy:(d.reduce((s,r)=>s+r.policyStrength,0)/d.length||0).toFixed(1),onTrack:d.filter(r=>r.ndcStatus==='On Track').length,avgCarbon:(d.reduce((s,r)=>s+r.carbonPrice,0)/d.length||0).toFixed(0),etsCount:d.filter(r=>r.etsActive==='Yes').length,avgRenewable:(d.reduce((s,r)=>s+r.renewableTarget,0)/d.length||0).toFixed(0)};},[filtered]);
 
-const Stat = ({ label, value, sub, accent }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 140 }}>
-    <div style={{ fontSize: 22, fontWeight: 700, color: accent || THEME }}>{value}</div>
-    <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginTop: 2 }}>{label}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textMut, marginTop: 2 }}>{sub}</div>}
-  </div>
-);
+  const ndcDist=useMemo(()=>{const order=['On Track','Partially On Track','Off Track','Insufficient'];const m={};filtered.forEach(r=>{m[r.ndcStatus]=(m[r.ndcStatus]||0)+1;});return order.filter(k=>m[k]).map(k=>({name:k,value:m[k]}));},[filtered]);
+  const regionAvg=useMemo(()=>{const m={};filtered.forEach(r=>{if(!m[r.region])m[r.region]={sum:0,cnt:0};m[r.region].sum+=r.policyStrength;m[r.region].cnt++;});return Object.entries(m).map(([k,v])=>({region:k,avg:+(v.sum/v.cnt).toFixed(1)})).sort((a,b)=>b.avg-a.avg);},[filtered]);
 
-const Badge = ({ label, color }) => (
-  <span style={{ background: color + '18', color, border: `1px solid ${color}40`, borderRadius: 4, padding: '2px 7px', fontSize: 10, fontWeight: 700 }}>{label}</span>
-);
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const k=Object.keys(data[0]);const csv=[k.join(','),...data.map(r=>k.map(c=>`"${r[c]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
 
-export default function ClimatePolicyIntelligencePage() {
-  const [tab, setTab] = useState(0);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
+  const th={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
+  const td={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
+  const inp={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
+  const sel={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btn=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});
+  const pb={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
+  const card={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
 
-  const top8 = [...CARBON_PRICES].sort((a, b) => b.price - a.price).slice(0, 8);
-
-  return (
-    <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh', padding: '28px 32px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 8, background: THEME, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontSize: 16 }}>⚖</span>
-          </div>
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: T.text }}>Climate Policy Intelligence</div>
-            <div style={{ fontSize: 12, color: T.textMut }}>EP-AB2 · Carbon pricing, NDC tracking, policy pipeline & political risk</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: `1px solid ${T.border}`, paddingBottom: 0 }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{
-            background: 'none', border: 'none', borderBottom: tab === i ? `2px solid ${THEME}` : '2px solid transparent',
-            color: tab === i ? THEME : T.textSec, fontWeight: tab === i ? 700 : 500,
-            fontSize: 13, padding: '8px 16px', cursor: 'pointer', fontFamily: T.font, marginBottom: -1,
-          }}>{t}</button>
-        ))}
-      </div>
-
-      {/* ── TAB 0: Overview ── */}
-      {tab === 0 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            <Stat label="Active Carbon Pricing Instruments" value="73" sub="Globally operational" accent={THEME} />
-            <Stat label="Carbon Market Value" value="$909bn" sub="Total 2025 market cap" accent={T.teal} />
-            <Stat label="Global Emissions Covered" value="23%" sub="By carbon pricing" accent={T.sage} />
-            <Stat label="Avg Carbon Price" value="$41/t" sub="Weighted average" accent={T.amber} />
-          </div>
-
-          {/* Top 8 carbon prices bar chart */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14 }}>Top 8 Jurisdictions by Carbon Price ($/tCO₂)</div>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={top8} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false} />
-                <XAxis dataKey="jurisdiction" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis tick={{ fontSize: 11, fill: T.textSec }} tickFormatter={v => `$${v}`} />
-                <Tooltip contentStyle={tip} formatter={v => [`$${v}/t`, 'Price']} />
-                <Bar dataKey="price" radius={[4, 4, 0, 0]}>
-                  {top8.map((d, i) => (
-                    <Cell key={i} fill={i === 0 ? THEME : i < 3 ? '#9f68f5' : '#c4a8f8'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* NDC Summary Table */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12 }}>NDC Progress Summary</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Economy', 'Target', 'Progress', 'Gap', 'On Track', 'Updated'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textMut, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {NDC_TRACKER.map((r, i) => (
-                  <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? 'transparent' : T.bg }}>
-                    <td style={{ padding: '7px 10px', fontWeight: 600, color: T.text }}>{r.economy}</td>
-                    <td style={{ padding: '7px 10px', color: T.textSec }}>{r.target}% vs {r.baseYear}</td>
-                    <td style={{ padding: '7px 10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 80, height: 6, background: T.border, borderRadius: 3, overflow: 'hidden' }}>
-                          <div style={{ width: `${(r.currentProgress / r.target) * 100}%`, height: '100%', background: r.onTrack ? T.green : T.amber, borderRadius: 3 }} />
-                        </div>
-                        <span style={{ color: T.textSec }}>{r.currentProgress}%</span>
-                      </div>
-                    </td>
-                    <td style={{ padding: '7px 10px', color: r.gap > 20 ? T.red : T.amber, fontWeight: 600 }}>{r.gap}pp</td>
-                    <td style={{ padding: '7px 10px' }}><Badge label={r.onTrack ? 'Yes' : 'No'} color={r.onTrack ? T.green : T.red} /></td>
-                    <td style={{ padding: '7px 10px', color: T.textMut }}>{r.updatedYear}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ── TAB 1: Carbon Pricing Tracker ── */}
-      {tab === 1 && (
-        <div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12 }}>All Carbon Pricing Jurisdictions</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Jurisdiction', 'Price ($/t)', 'YoY Change', 'Coverage', 'Mechanism', 'Trend'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textMut, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {CARBON_PRICES.map((r, i) => (
-                  <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? 'transparent' : T.bg }}>
-                    <td style={{ padding: '7px 10px', fontWeight: 600, color: T.text }}>{r.jurisdiction}</td>
-                    <td style={{ padding: '7px 10px', fontWeight: 700, color: THEME }}>${r.price.toFixed(1)}</td>
-                    <td style={{ padding: '7px 10px', color: r.yearChange >= 0 ? T.green : T.red, fontWeight: 600 }}>
-                      {r.yearChange >= 0 ? '+' : ''}{r.yearChange.toFixed(1)}
-                    </td>
-                    <td style={{ padding: '7px 10px', color: T.textSec }}>{r.coverage}%</td>
-                    <td style={{ padding: '7px 10px' }}>
-                      <Badge label={r.mechanism} color={r.mechanism === 'ETS' ? THEME : r.mechanism === 'Tax' ? T.teal : T.amber} />
-                    </td>
-                    <td style={{ padding: '7px 10px' }}>
-                      <span style={{ fontSize: 14 }}>{r.trend === 'up' ? '↑' : r.trend === 'down' ? '↓' : '→'}</span>
-                      <span style={{ marginLeft: 4, color: r.trend === 'up' ? T.green : r.trend === 'down' ? T.red : T.textMut, fontSize: 11 }}>{r.trend}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 24-month trend area chart */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4 }}>24-Month Carbon Price Trend ($/tCO₂)</div>
-            <div style={{ display: 'flex', gap: 16, marginBottom: 14 }}>
-              {[['EU ETS', THEME], ['UK ETS', T.teal], ['California', T.amber]].map(([lbl, col]) => (
-                <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
-                  <div style={{ width: 12, height: 3, background: col, borderRadius: 2 }} />
-                  <span style={{ color: T.textSec }}>{lbl}</span>
-                </div>
-              ))}
-            </div>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={CARBON_PRICE_TREND} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
-                <defs>
-                  <linearGradient id="euGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={THEME} stopOpacity={0.18} />
-                    <stop offset="95%" stopColor={THEME} stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="ukGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={T.teal} stopOpacity={0.14} />
-                    <stop offset="95%" stopColor={T.teal} stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={T.amber} stopOpacity={0.14} />
-                    <stop offset="95%" stopColor={T.amber} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: T.textSec }} />
-                <YAxis tick={{ fontSize: 10, fill: T.textSec }} tickFormatter={v => `$${v}`} />
-                <Tooltip contentStyle={tip} formatter={v => [`$${v}/t`]} />
-                <Area type="monotone" dataKey="euEts"      stroke={THEME}   fill="url(#euGrad)" strokeWidth={2} dot={false} name="EU ETS" />
-                <Area type="monotone" dataKey="ukEts"      stroke={T.teal}  fill="url(#ukGrad)" strokeWidth={2} dot={false} name="UK ETS" />
-                <Area type="monotone" dataKey="california" stroke={T.amber} fill="url(#caGrad)" strokeWidth={2} dot={false} name="California" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* ── TAB 2: NDC Monitor ── */}
-      {tab === 2 && (
-        <div>
-          <div style={{ fontSize: 13, color: T.textSec, marginBottom: 18 }}>
-            Progress toward Nationally Determined Contributions (NDCs) submitted under the Paris Agreement.
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {NDC_TRACKER.map((r, i) => (
-              <div key={i} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 18 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <div>
-                    <span style={{ fontWeight: 700, color: T.text, fontSize: 14 }}>{r.economy}</span>
-                    <span style={{ marginLeft: 10, fontSize: 11, color: T.textMut }}>Updated {r.updatedYear}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <Badge label={r.onTrack ? 'On Track' : 'Off Track'} color={r.onTrack ? T.green : T.red} />
-                    <span style={{ fontSize: 12, color: T.textSec }}>Gap: <strong style={{ color: r.gap > 20 ? T.red : T.amber }}>{r.gap}pp</strong></span>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 24, fontSize: 12, color: T.textSec, marginBottom: 8 }}>
-                  <span>Target: <strong style={{ color: T.text }}>{r.target}% reduction vs {r.baseYear}</strong></span>
-                  <span>Current: <strong style={{ color: T.text }}>{r.currentProgress}%</strong></span>
-                </div>
-                {/* Progress bar */}
-                <div style={{ position: 'relative', height: 14, background: T.bg, borderRadius: 7, overflow: 'hidden', border: `1px solid ${T.border}` }}>
-                  <div style={{ width: `${(r.currentProgress / r.target) * 100}%`, height: '100%', background: r.onTrack ? T.green : T.amber, borderRadius: 7, transition: 'width 0.6s' }} />
-                  {/* Target marker */}
-                  <div style={{ position: 'absolute', top: 0, left: '100%', width: 2, height: '100%', background: T.navy, opacity: 0.4 }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 10, color: T.textMut }}>
-                  <span>0%</span>
-                  <span>{Math.round((r.currentProgress / r.target) * 100)}% of target achieved</span>
-                  <span>{r.target}%</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── TAB 3: Policy Pipeline ── */}
-      {tab === 3 && (
-        <div>
-          {['Implemented', 'Enacted', 'Consultation', 'Proposed'].map(stage => {
-            const items = POLICY_PIPELINE.filter(p => p.stage === stage);
-            if (items.length === 0) return null;
-            return (
-              <div key={stage} style={{ marginBottom: 24 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: STAGE_COLORS[stage] }} />
-                  <span style={{ fontWeight: 700, color: T.text, fontSize: 14 }}>{stage}</span>
-                  <span style={{ fontSize: 12, color: T.textMut }}>({items.length} policies)</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {items.map((p, i) => (
-                    <div key={i} style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${STAGE_COLORS[stage]}`, borderRadius: '0 8px 8px 0', padding: '14px 18px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                        <span style={{ fontWeight: 700, color: T.text, fontSize: 13 }}>{p.policy}</span>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: THEME, whiteSpace: 'nowrap', marginLeft: 12 }}>{p.financialImpact}</span>
-                      </div>
-                      <div style={{ display: 'flex', gap: 14, fontSize: 11, color: T.textSec }}>
-                        <span>Jurisdiction: <strong>{p.jurisdiction}</strong></span>
-                        <span>Effective: <strong>{p.effectiveDate}</strong></span>
-                        <span>Sector: <strong>{p.sector}</strong></span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* ── TAB 4: Political Risk ── */}
-      {tab === 4 && (
-        <div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 12 }}>Regional Climate Policy Risk Matrix</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                  {['Region', 'Political Risk', 'Policy Stability', 'Climate Ambition', 'Regulatory Risk'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '6px 10px', color: T.textMut, fontWeight: 600 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {POLITICAL_RISK.map((r, i) => (
-                  <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? 'transparent' : T.bg }}>
-                    <td style={{ padding: '9px 10px', fontWeight: 700, color: T.text }}>{r.region}</td>
-                    <td style={{ padding: '9px 10px' }}>
-                      <span style={{ fontWeight: 700, color: riskColor(r.politicalRisk) }}>{r.politicalRisk.toFixed(1)}</span>
-                      <span style={{ color: T.textMut, fontSize: 10 }}>/10</span>
-                    </td>
-                    <td style={{ padding: '9px 10px' }}>
-                      <span style={{ fontWeight: 700, color: stabilityColor(r.policyStability) }}>{r.policyStability.toFixed(1)}</span>
-                      <span style={{ color: T.textMut, fontSize: 10 }}>/10</span>
-                    </td>
-                    <td style={{ padding: '9px 10px' }}>
-                      <span style={{ fontWeight: 700, color: stabilityColor(r.climateAmbition) }}>{r.climateAmbition.toFixed(1)}</span>
-                      <span style={{ color: T.textMut, fontSize: 10 }}>/10</span>
-                    </td>
-                    <td style={{ padding: '9px 10px' }}>
-                      <span style={{ fontWeight: 700, color: riskColor(r.regulatoryRisk) }}>{r.regulatoryRisk.toFixed(1)}</span>
-                      <span style={{ color: T.textMut, fontSize: 10 }}>/10</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={{ marginTop: 12, display: 'flex', gap: 16, fontSize: 11, color: T.textMut }}>
-              <span>Risk scores: <span style={{ color: T.green }}>Low (≤3)</span> | <span style={{ color: T.amber }}>Med (3–5.5)</span> | <span style={{ color: T.red }}>High (&gt;5.5)</span></span>
-              <span>Stability/Ambition: <span style={{ color: T.green }}>High (≥7)</span> | <span style={{ color: T.amber }}>Med (5–7)</span> | <span style={{ color: T.red }}>Low (&lt;5)</span></span>
-            </div>
-          </div>
-
-          {/* Region comparison bar chart */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 14 }}>Climate Ambition Score by Region</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={POLITICAL_RISK} layout="vertical" margin={{ top: 4, right: 30, left: 10, bottom: 4 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} horizontal={false} />
-                <XAxis type="number" domain={[0, 10]} tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis type="category" dataKey="region" tick={{ fontSize: 11, fill: T.textSec }} width={90} />
-                <Tooltip contentStyle={tip} formatter={v => [v.toFixed(1), 'Score']} />
-                <Bar dataKey="climateAmbition" radius={[0, 4, 4, 0]}>
-                  {POLITICAL_RISK.map((r, i) => (
-                    <Cell key={i} fill={r.climateAmbition >= 7 ? T.green : r.climateAmbition >= 5 ? THEME : T.amber} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
+  const Panel=({item,onClose,type})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
+    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{type==='country'?item.country:item.scheme}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button></div>
+    <div style={{padding:'16px 24px'}}>
+      {type==='country'&&(<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        {[['NDC Target',item.ndcTarget+'%'],['NDC Progress',item.ndcProgress+'%'],['Carbon Price','$'+item.carbonPrice],['ETS Active',item.etsActive],['Carbon Tax',item.carbonTax],['Net Zero Target',item.netZeroTarget],['Renewable Target',item.renewableTarget+'%'],['Coal Phase-Out',item.coalPhaseOut],['Adaptation Spend',item.adaptationSpend+'%GDP'],['Climate Finance','$'+item.climateFinance+'M'],['Policy Strength',item.policyStrength],['Implementation Gap',item.implementationGap+'%'],['GHG Emissions',item.ghgEmissions+'MtCO2'],['Per Capita',item.emissionsPerCapita+'tCO2'],['Fossil Subsidies','$'+item.fossilSubsidies+'B'],['Green Bonds','$'+item.greenBondIssued+'M']].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
+      </div>)}
+      {type==='carbon'&&(<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        {[['Type',item.type],['Price','$'+item.price+'/tCO2'],['Coverage',item.coverage+'%'],['Revenue','$'+item.revenue+'M'],['Started',item.yearStarted],['Emissions Covered',item.emissionsCovered+'Mt'],['Auction Share',item.auctionShare+'%'],['Free Allocation',item.freeAllocation+'%'],['Offsets',item.offsetsAllowed],['Price Floor','$'+item.priceFloor],['Price Ceiling',item.priceCeiling],['Leakage Protection',item.leakageProtection]].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
+      </div>)}
     </div>
-  );
+  </div>);};
+
+  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
+    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}><div style={{fontSize:20,fontWeight:700,color:T.navy}}>Climate Policy Intelligence</div><div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>NDC Tracker &middot; Carbon Pricing &middot; {COUNTRIES.length} Countries &middot; {CARBON_PRICING.length} Pricing Mechanisms</div></div>
+    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>{TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);setCpSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}</div>
+    <div style={{padding:'20px 28px'}}>
+
+    {tab===0&&(<div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
+        {[['Countries',stats.total,T.navy],['Avg Policy Score',stats.avgPolicy,ACCENT],['On Track NDCs',stats.onTrack,T.green],['Avg Carbon Price','$'+stats.avgCarbon,T.gold],['Active ETS',stats.etsCount,T.sage],['Avg Renewable',stats.avgRenewable+'%',T.amber]].map(([l,v,c],i)=>(<div key={i} style={card}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Policy & Carbon Price Trend (36M)</div>
+          <ResponsiveContainer width="100%" height={220}><AreaChart data={TIMELINE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="carbonPriceAvg" stroke={ACCENT} fill={ACCENT} fillOpacity={0.15} name="Avg Carbon $/t"/><Area type="monotone" dataKey="newPolicies" stroke={T.green} fill={T.green} fillOpacity={0.1} name="New Policies"/></AreaChart></ResponsiveContainer>
+        </div>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>NDC Status</div>
+          <ResponsiveContainer width="100%" height={220}><PieChart><Pie data={ndcDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={40} label={({name,value})=>`${name}: ${value}`} style={{fontSize:9}}>{ndcDist.map((_,i)=>(<Cell key={i} fill={[T.green,T.gold,T.amber,T.red][i%4]}/>))}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
+        </div>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Regional Policy Strength</div>
+          <ResponsiveContainer width="100%" height={220}><BarChart data={regionAvg} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><YAxis dataKey="region" type="category" tick={{fontSize:9,fill:T.textMut}} width={90}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
+        </div>
+      </div>
+      <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Policy Strength vs Carbon Price</div>
+        <ResponsiveContainer width="100%" height={240}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Policy Strength" tick={{fontSize:9}}/><YAxis dataKey="y" name="Carbon Price" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={filtered.map(r=>({name:r.country,x:r.policyStrength,y:r.carbonPrice}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
+      </div>
+    </div>)}
+
+    {tab===1&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search countries..." style={inp}/>
+        <select value={regionF} onChange={e=>{setRegionF(e.target.value);setPage(1);}} style={sel}>{REGIONS.map(r=>(<option key={r}>{r}</option>))}</select>
+        <select value={ndcF} onChange={e=>{setNdcF(e.target.value);setPage(1);}} style={sel}>{NDC_STATUS.map(r=>(<option key={r}>{r}</option>))}</select>
+        <button onClick={()=>exportCSV(filtered,'climate_policy_countries.csv')} style={btn(false)}>Export CSV</button>
+        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length} countries</span>
+      </div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['country','Country'],['region','Region'],['policyStrength','Policy Score'],['ndcTarget','NDC Target%'],['ndcProgress','Progress%'],['carbonPrice','Carbon $/t'],['etsActive','ETS'],['netZeroTarget','Net Zero'],['renewableTarget','Renew.%'],['ndcStatus','Status']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={th}>{l}{si(k,sortCol,sortDir)}</th>))}
+        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
+          <td style={{...td,fontWeight:600,color:T.navy}}>{r.country}</td><td style={td}>{r.region}</td>
+          <td style={td}><span style={badge(r.policyStrength,[25,50,70])}>{r.policyStrength}</span></td>
+          <td style={td}>{r.ndcTarget}%</td><td style={td}>{r.ndcProgress}%</td><td style={td}>${r.carbonPrice}</td>
+          <td style={td}><span style={{color:r.etsActive==='Yes'?T.green:T.textMut}}>{r.etsActive}</span></td>
+          <td style={td}>{r.netZeroTarget}</td><td style={td}>{r.renewableTarget}%</td>
+          <td style={td}><span style={statusBadge(r.ndcStatus)}>{r.ndcStatus}</span></td>
+        </tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12}}>
+        <button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pb}>Prev</button>
+        <span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page} of {totalPages}</span>
+        <button disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)} style={pb}>Next</button>
+      </div>
+      <Panel item={selected} onClose={()=>setSelected(null)} type="country"/>
+    </div>)}
+
+    {tab===2&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}>
+        <input value={cpSearch} onChange={e=>{setCpSearch(e.target.value);setCpPage(1);}} placeholder="Search schemes..." style={inp}/>
+        <button onClick={()=>exportCSV(cpFiltered,'carbon_pricing.csv')} style={btn(false)}>Export CSV</button>
+        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{cpFiltered.length} schemes</span>
+      </div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['scheme','Scheme'],['type','Type'],['price','Price $/t'],['coverage','Coverage%'],['revenue','Revenue $M'],['yearStarted','Started'],['auctionShare','Auction%'],['offsetsAllowed','Offsets'],['leakageProtection','Leakage Prot.']].map(([k,l])=>(<th key={k} onClick={()=>doCpSort(k)} style={th}>{l}{si(k,cpSort,cpDir)}</th>))}
+        </tr></thead><tbody>{cpPaged.map(r=>(<tr key={r.id} onClick={()=>setCpSelected(r)} style={{cursor:'pointer',background:cpSelected?.id===r.id?T.surfaceH:'transparent'}}>
+          <td style={{...td,fontWeight:600,color:T.navy}}>{r.scheme}</td><td style={td}><span style={{padding:'2px 6px',borderRadius:4,fontSize:10,background:r.type==='ETS'?'rgba(14,165,233,0.12)':'rgba(197,169,106,0.15)',color:r.type==='ETS'?ACCENT:T.gold}}>{r.type}</span></td>
+          <td style={td}><span style={{fontFamily:T.mono,fontWeight:700}}>${r.price}</span></td>
+          <td style={td}>{r.coverage}%</td><td style={td}>${r.revenue}M</td><td style={td}>{r.yearStarted}</td>
+          <td style={td}>{r.auctionShare}%</td><td style={td}>{r.offsetsAllowed}</td><td style={td}>{r.leakageProtection}</td>
+        </tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12}}>
+        <button disabled={cpPage<=1} onClick={()=>setCpPage(p=>p-1)} style={pb}>Prev</button>
+        <span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {cpPage} of {cpTotalPages}</span>
+        <button disabled={cpPage>=cpTotalPages} onClick={()=>setCpPage(p=>p+1)} style={pb}>Next</button>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:16}}>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Carbon Prices by Scheme</div>
+          <ResponsiveContainer width="100%" height={280}><BarChart data={[...cpFiltered].sort((a,b)=>b.price-a.price).slice(0,12)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="scheme" tick={{fontSize:7,fill:T.textMut}} angle={-30} textAnchor="end" height={60}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="price" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer>
+        </div>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>ETS vs Carbon Tax Distribution</div>
+          <ResponsiveContainer width="100%" height={280}><PieChart><Pie data={[{name:'ETS',value:cpFiltered.filter(r=>r.type==='ETS').length},{name:'Carbon Tax',value:cpFiltered.filter(r=>r.type==='Carbon Tax').length}]} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} innerRadius={35} label={({name,value})=>`${name}: ${value}`} style={{fontSize:10}}><Cell fill={ACCENT}/><Cell fill={T.gold}/></Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
+        </div>
+      </div>
+      <Panel item={cpSelected} onClose={()=>setCpSelected(null)} type="carbon"/>
+    </div>)}
+
+    {tab===3&&(<div>
+      <div style={{...card,marginBottom:16}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Regulatory Activity Timeline (36M)</div>
+        <ResponsiveContainer width="100%" height={280}><AreaChart data={TIMELINE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="newPolicies" stroke={ACCENT} fill={ACCENT} fillOpacity={0.2} name="New Policies"/><Area type="monotone" dataKey="amendments" stroke={T.gold} fill={T.gold} fillOpacity={0.15} name="Amendments"/></AreaChart></ResponsiveContainer>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Carbon Price Evolution</div>
+          <ResponsiveContainer width="100%" height={260}><AreaChart data={TIMELINE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="carbonPriceAvg" stroke={T.green} fill={T.green} fillOpacity={0.15} name="Avg $/tCO2"/></AreaChart></ResponsiveContainer>
+        </div>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>ETS Volume Trend</div>
+          <ResponsiveContainer width="100%" height={260}><BarChart data={TIMELINE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="etsVolume" fill={ACCENT} name="Volume (Mt)" opacity={0.7}/></BarChart></ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{marginTop:16}}>
+        <button onClick={()=>exportCSV(TIMELINE,'regulatory_timeline.csv')} style={btn(false)}>Export Timeline CSV</button>
+      </div>
+    </div>)}
+
+    </div>
+  </div>);
 }

@@ -4,8 +4,8 @@
     {
       "name": "frontend-serve",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["node_modules/serve/build/main.js", "-s", "build", "-l", "4001"],
-      "port": 4001
+      "runtimeArgs": ["/tmp/serve_build.js"],
+      "port": 4000
     }
   ]
 }

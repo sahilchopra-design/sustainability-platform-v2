@@ -771,6 +771,73 @@ export const UI_AUDIT_SUMMARY = {
     { priority: 'P3', action: 'Remove "Sprint X" prefixes from user-facing navigation labels', effort: 'Trivial', impact: 'Professional presentation' },
   ],
 
+  // Design system analysis
+  designSystemAudit: {
+    typography: {
+      primaryFont: 'DM Sans (via Google Fonts, 300-800 weight range)',
+      monoFont: 'JetBrains Mono (400-700 weight)',
+      fallbacks: 'SF Pro Display, system-ui, -apple-system, sans-serif',
+      usage: 'DM Sans for all UI labels, headings, body text. JetBrains Mono for data values, code badges, status indicators, timestamps.',
+      finding: 'Typography is consistent and well-chosen. DM Sans provides excellent readability at small sizes (9-12px range used extensively). JetBrains Mono ensures tabular number alignment.',
+      issue: 'Font loading via JS createElement rather than HTML preload — potential FOUT on first visit.',
+    },
+    colorPalette: {
+      primary: { navy: '#1b3a5c', gold: '#c5a96a', sage: '#5a8a6a' },
+      semantic: { red: '#dc2626', green: '#16a34a', amber: '#d97706' },
+      surfaces: { bg: '#f6f4f0', surface: '#ffffff', surfaceH: '#f0ede7', border: '#e5e0d8' },
+      finding: 'Navy/gold/sage palette is distinctive and professional. Warm cream background (#f6f4f0) avoids cold clinical feel. Gold accent line is a signature design element. Semantic colors are standard and accessible.',
+      issue: 'Domain-specific ACCENT colors are defined per module but some reuse the same hex value across unrelated domains.',
+    },
+    spacing: {
+      finding: 'Spacing is primarily inline with ad-hoc pixel values (4, 6, 8, 10, 12, 14, 16, 20, 24, 28px). No spacing scale or design tokens. Consistency maintained through copy-paste pattern rather than system.',
+      issue: 'No spacing scale or design tokens — values are magic numbers repeated across 265+ files.',
+    },
+    shadows: {
+      card: '0 1px 3px rgba(27,58,92,0.04), 0 0 0 1px rgba(27,58,92,0.03)',
+      cardHover: '0 8px 24px rgba(27,58,92,0.08), 0 0 0 1px rgba(27,58,92,0.06)',
+      finding: 'Subtle shadow system with navy-tinted rgba values. Hover states provide clear elevation feedback. Consistent across all card components.',
+    },
+    borderRadius: {
+      values: '3px (inner elements), 4px (inputs, small cards), 6px (panels, cards), 8px (some inputs), 10px (large cards)',
+      finding: 'Multiple radius values used without clear system. Most cards use 6-10px, inputs use 4-8px.',
+      issue: 'No standardized border-radius tokens.',
+    },
+  },
+
+  // Interaction pattern catalog
+  interactionPatterns: {
+    tabNavigation: {
+      pattern: 'Horizontal tab bar below page header. Array of strings mapped to buttons. Active tab has bottom border in ACCENT color. Tab index stored in useState(0).',
+      prevalence: 'Used in all 265+ module pages',
+      strengths: ['Consistent visual treatment', 'Clear active state', 'Simple mental model'],
+      weaknesses: ['Not URL-persisted', 'No keyboard shortcuts (Ctrl+1/2/3)', 'Cannot deep-link to specific tab'],
+    },
+    sortableTable: {
+      pattern: 'HTML table with thead th elements as sort triggers. Click toggles asc/desc. Sort indicator (triangle) shown on active column.',
+      prevalence: 'Used in all analytics modules',
+      strengths: ['Clear sort indicators', 'Toggle behavior is intuitive', 'Monospace numeric alignment'],
+      weaknesses: ['No multi-column sort', 'No frozen headers', 'No column resize or hide/show', 'No row selection beyond single click'],
+    },
+    detailPanel: {
+      pattern: 'Fixed-position slide-out panel from right (420px wide). Opens on table row click. Contains grid of KPI cells and optional radar chart.',
+      prevalence: 'Present in approximately 80% of modules',
+      strengths: ['Contextual detail without leaving table view', 'Radar chart provides instant visual profile', 'Consistent grid layout'],
+      weaknesses: ['Not closeable via Escape key', 'Overlays content without backdrop', 'Cannot open multiple panels for comparison', 'Not responsive below 1024px'],
+    },
+    csvExport: {
+      pattern: 'Button triggers in-browser CSV generation using Blob API and URL.createObjectURL. Downloads immediately.',
+      prevalence: 'All analytics modules',
+      strengths: ['Works without server', 'Includes all visible columns', 'Immediate download'],
+      weaknesses: ['No export confirmation', 'No format options (xlsx, pdf)', 'No column selection', 'Large datasets may freeze browser briefly'],
+    },
+    filterBar: {
+      pattern: 'Horizontal flex row with search input, 1-3 select dropdowns, export button, result count. All filters trigger useMemo recomputation.',
+      prevalence: 'All analytics modules',
+      strengths: ['Real-time filtering', 'Compact layout', 'Result count feedback'],
+      weaknesses: ['No filter chips showing active filters', 'No "clear all" button', 'Cannot save filter presets'],
+    },
+  },
+
   // Detailed component-level architecture analysis
   componentArchitecture: {
     shellComponents: {
@@ -880,5 +947,46 @@ export const UI_AUDIT_SUMMARY = {
       'PCAF module has 60 positions with real institution names and detailed PCAF-specific data',
     ],
     recommendation: 'Create a shared company universe of 200-500 companies with consistent ESG scores, financials, and risk ratings that all modules reference. Use TestDataContext (already exists in codebase) to provide this shared state.',
+  },
+
+  // Information architecture scoring per nav group
+  informationArchitectureScores: [
+    { group: 'Climate Risk & Stress Testing', coherence: 9, discoverability: 8, labelClarity: 9, moduleCount: 7, score: 87 },
+    { group: 'Carbon & Emissions', coherence: 9, discoverability: 8, labelClarity: 9, moduleCount: 5, score: 87 },
+    { group: 'Sustainable Finance', coherence: 8, discoverability: 7, labelClarity: 8, moduleCount: 8, score: 77 },
+    { group: 'Biodiversity & Nature', coherence: 7, discoverability: 6, labelClarity: 8, moduleCount: 6, score: 70 },
+    { group: 'Regulatory & Compliance', coherence: 7, discoverability: 7, labelClarity: 8, moduleCount: 11, score: 73 },
+    { group: 'Reporting & Data Quality', coherence: 6, discoverability: 7, labelClarity: 7, moduleCount: 8, score: 67 },
+    { group: 'Governance & Supply Chain', coherence: 4, discoverability: 5, labelClarity: 4, moduleCount: 7, score: 43 },
+    { group: 'Taxonomy & Classification', coherence: 9, discoverability: 8, labelClarity: 9, moduleCount: 6, score: 87 },
+    { group: 'Client & Reporting', coherence: 9, discoverability: 8, labelClarity: 9, moduleCount: 6, score: 87 },
+    { group: 'DME Risk Intelligence', coherence: 10, discoverability: 8, labelClarity: 9, moduleCount: 8, score: 90 },
+    { group: 'Impact & SDG Finance', coherence: 9, discoverability: 7, labelClarity: 9, moduleCount: 6, score: 83 },
+    { group: 'AI & NLP Analytics', coherence: 9, discoverability: 8, labelClarity: 8, moduleCount: 6, score: 83 },
+    { group: 'Corporate Decarbonisation', coherence: 10, discoverability: 8, labelClarity: 9, moduleCount: 6, score: 90 },
+    { group: 'Financed Emissions', coherence: 10, discoverability: 8, labelClarity: 9, moduleCount: 6, score: 90 },
+    { group: 'ESG Ratings Intelligence', coherence: 10, discoverability: 8, labelClarity: 9, moduleCount: 6, score: 90 },
+    { group: 'Transition Planning', coherence: 10, discoverability: 8, labelClarity: 9, moduleCount: 6, score: 90 },
+    { group: 'Corporate Governance', coherence: 9, discoverability: 8, labelClarity: 9, moduleCount: 6, score: 87 },
+    { group: 'Social & Just Transition', coherence: 9, discoverability: 7, labelClarity: 9, moduleCount: 6, score: 83 },
+    { group: 'Nature & Physical Risk', coherence: 8, discoverability: 6, labelClarity: 8, moduleCount: 6, score: 73 },
+    { group: 'Macro & Systemic Risk', coherence: 9, discoverability: 7, labelClarity: 8, moduleCount: 6, score: 80 },
+    { group: 'Climate Finance Architecture', coherence: 9, discoverability: 7, labelClarity: 9, moduleCount: 6, score: 83 },
+    { group: 'Sprint F — Portfolio Intel', coherence: 8, discoverability: 4, labelClarity: 4, moduleCount: 5, score: 53 },
+    { group: 'Sprint E — Market Intel', coherence: 8, discoverability: 4, labelClarity: 4, moduleCount: 2, score: 53 },
+    { group: 'Sprint D — Platform Intel', coherence: 6, discoverability: 4, labelClarity: 4, moduleCount: 6, score: 47 },
+  ],
+
+  // Phase 8 certification
+  certification: {
+    phase: 'Phase 8 — UI Arrangement Audit',
+    status: 'COMPLETE',
+    evaluationsCompleted: 12,
+    journeysMapped: 15,
+    issuesLogged: 45,
+    navigationReviewed: true,
+    overallGrade: 'B-',
+    signoff: 'Automated analysis complete. Platform demonstrates strong visual design consistency and domain coverage. Critical gaps in error handling, state management, help/documentation, and navigation architecture must be addressed before enterprise deployment.',
+    nextPhase: 'Phase 9 — Remediation Sprint: Error boundaries, URL state, nav consolidation, help tooltips',
   },
 };

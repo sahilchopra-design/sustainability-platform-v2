@@ -820,7 +820,61 @@ export const ENGINE_IDENTITY_CARDS = [
       acceptanceThreshold: '< 20 bps deviation on transition PD uplift; < 5% on physical ECL overlay',
       factorVersionLock: 'IFRS 9 (2018); ECB climate risk guide (2024); EPC haircuts per MEES 2028 proposals',
     },
+
+    auditTrail: {
+      createdDate: '2025-05-01',
+      lastModified: '2026-03-17',
+      changeLog: [
+        { date: '2025-05-01', change: 'Initial transition risk PD uplift model with 10 sectors, 4 carbon price presets' },
+        { date: '2025-08-15', change: 'Added physical risk module with 8 peril types and 54 borrowers; weighted scoring' },
+        { date: '2025-11-01', change: 'Added IFRS 9 staging overlay (Stage 1/2/3 ECL); MEES stranded asset module; EPC haircuts' },
+        { date: '2026-03-17', change: 'Expanded to 30 transition borrowers; 20 CRE properties; disclosure checklist (15 items); sector rollup view' },
+      ],
+      regulatoryAlignmentNotes: 'IFRS 9 climate overlay per ECB expectations (2024). EBA Pillar 3 ESG Templates 1-4. BCBS 530 climate risk principles. UK MEES 2028 proposals for EPC minimum C.',
+      dataLineageCertification: 'Carbon intensity from CDP/annual reports. Physical risk scores from peril models (XDI, Jupiter, internal). EPC data from national registers (UK EPC, FR DPE, NL RVO).',
+    },
   },
+];
+
+/**
+ * Engine cross-reference index — maps engine outputs to downstream consumers
+ * for rapid dependency tracing during model governance reviews.
+ */
+export const ENGINE_DEPENDENCY_GRAPH = {
+  'E-001': { produces: ['financedEmissions', 'attrFactor', 'waci', 'portfolioFE'], consumedBy: ['E-002', 'E-003', 'E-006', 'E-007'] },
+  'E-002': { produces: ['portfolioTemp', 'holdingTemp', 'temperatureGap'], consumedBy: ['E-003'] },
+  'E-003': { produces: ['stressedPD', 'eclUplift', 'cvar', 'cet1Impact'], consumedBy: ['E-010'] },
+  'E-004': { produces: ['gar', 'alignedExposure', 'garByObjective'], consumedBy: [] },
+  'E-005': { produces: ['consensus', 'divergence', 'correlationMatrix'], consumedBy: [] },
+  'E-006': { produces: ['waci', 'holdingIntensity'], consumedBy: ['E-001'] },
+  'E-007': { produces: ['categoryEmissions', 'totalUpstream', 'hotspotMatrix'], consumedBy: ['E-001'] },
+  'E-008': { produces: ['ciiGrade', 'aer', 'fleetComplianceRate', 'retrofitROI'], consumedBy: [] },
+  'E-009': { produces: ['netAvoided', 'avoidedToEmittedRatio', 'credibilityScore'], consumedBy: [] },
+  'E-010': { produces: ['pdUplift', 'eclOverlay', 'strandedAssetExposure', 'ragFlag'], consumedBy: ['E-003'] },
+};
+
+/**
+ * Regulatory coverage matrix — which regulations each engine supports.
+ */
+export const REGULATORY_COVERAGE = [
+  { regulation: 'SFDR PAI (Table 1)',        engines: ['E-001', 'E-006', 'E-007'] },
+  { regulation: 'EU Taxonomy (Art. 449a)',    engines: ['E-004'] },
+  { regulation: 'CSRD ESRS E1',              engines: ['E-001', 'E-006', 'E-007', 'E-009'] },
+  { regulation: 'ECB Climate Stress Test',    engines: ['E-003', 'E-010'] },
+  { regulation: 'BoE CBES',                  engines: ['E-003', 'E-010'] },
+  { regulation: 'EBA Pillar 3 ESG',          engines: ['E-003', 'E-004', 'E-010'] },
+  { regulation: 'TCFD Recommendations',       engines: ['E-001', 'E-002', 'E-006'] },
+  { regulation: 'ISSB IFRS S2',              engines: ['E-001', 'E-002', 'E-003', 'E-009'] },
+  { regulation: 'IFRS 9 Climate Overlay',     engines: ['E-010'] },
+  { regulation: 'IMO MEPC CII',              engines: ['E-008'] },
+  { regulation: 'PCAF Standard v2',           engines: ['E-001', 'E-006'] },
+  { regulation: 'SBTi Framework',             engines: ['E-002'] },
+  { regulation: 'GHG Protocol Scope 3',       engines: ['E-007'] },
+  { regulation: 'Poseidon Principles',        engines: ['E-008'] },
+  { regulation: 'WRI Avoided Emissions',      engines: ['E-009'] },
+  { regulation: 'UK MEES',                    engines: ['E-010'] },
+  { regulation: 'BCBS 530',                   engines: ['E-003', 'E-010'] },
+  { regulation: 'SEC Climate Rule',           engines: ['E-001', 'E-003'] },
 ];
 
 export default ENGINE_IDENTITY_CARDS;

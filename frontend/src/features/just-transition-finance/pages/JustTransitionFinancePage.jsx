@@ -1,364 +1,134 @@
-import React, { useState } from 'react';
-import {
-  AreaChart, Area, BarChart, Bar, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
-} from 'recharts';
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const ACCENT = '#f97316';
-const tip = {
-  contentStyle:{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, color:T.text },
-  labelStyle:{ color:T.textSec }
-};
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#b45309';
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const TABS=['Dashboard','Project Tracker','Worker Retraining','Community Funds'];
+const TYPES=['All','Coal Transition','Renewable Deployment','Grid Modernization','Industrial Conversion','Skills Training','Community Development'];
+const STATUSES=['All','Active','Pipeline','Completed','Suspended'];
+const PAGE_SIZE=10;
 
-const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
+const PROJECTS=(()=>{
+  const names=['Silesia Coal Transition','Appalachia Clean Energy','Lusatia Structural Change','Humber Net Zero','South Wales Industrial','Asturias Green Hydrogen','Alberta Just Transition','Jharkhand Reskilling','Mpumalanga Repurpose','Shanxi Clean Coal','Ruhr Valley 2.0','Hazelwood Transition','Taranaki Green Hub','Jiu Valley Renewal','Ostrava Green District','Meghalaya Solar Skills','Tuzla Green Industry','Karaganda Transition','Donetsk Reconstruction','Zonguldak Wind Hub','Upper Silesia Smart','Peñarroya Solar Farm','Powder River Clean','Hunter Valley Renewal','Bełchatów Conversion','Maritsa Decarbonise','Ptolemaida Green','Kozani Solar Park','Western Macedonia','Velenje Green Lake','Trbovlje Heritage','Kemerovo Clean Tech','Kuzbass Hydrogen Hub','Nova Scotia Tide','Cape Breton Green','Limburg Circular','Borinage Innovation','Nord-Pas Solar','Aachen Battery Hub','Saarland Steel Green'];
+  const types=['Coal Transition','Renewable Deployment','Industrial Conversion','Grid Modernization','Industrial Conversion','Renewable Deployment','Coal Transition','Skills Training','Coal Transition','Coal Transition','Industrial Conversion','Coal Transition','Renewable Deployment','Coal Transition','Community Development','Skills Training','Industrial Conversion','Coal Transition','Community Development','Renewable Deployment','Grid Modernization','Renewable Deployment','Coal Transition','Coal Transition','Industrial Conversion','Coal Transition','Renewable Deployment','Renewable Deployment','Community Development','Community Development','Community Development','Industrial Conversion','Renewable Deployment','Renewable Deployment','Community Development','Industrial Conversion','Community Development','Renewable Deployment','Grid Modernization','Industrial Conversion'];
+  return names.map((n,i)=>({id:i+1,name:n,type:types[i],status:sr(i*7)<0.45?'Active':sr(i*7)<0.65?'Pipeline':sr(i*7)<0.85?'Completed':'Suspended',totalInvestment:Math.round(50+sr(i*11)*950),workersImpacted:Math.round(200+sr(i*13)*9800),workersRetrained:Math.round(50+sr(i*17)*4950),retrainingRate:Math.round(20+sr(i*19)*75),newJobsCreated:Math.round(100+sr(i*23)*4900),avgWageChange:Math.round(-20+sr(i*29)*40),communityFund:Math.round(5+sr(i*31)*195),socialDialogue:Math.round(20+sr(i*37)*75),stakeholderEngagement:Math.round(25+sr(i*41)*70),genderEquity:Math.round(15+sr(i*43)*75),youthInclusion:Math.round(10+sr(i*47)*65),healthServices:Math.round(20+sr(i*53)*75),housingSupport:Math.round(10+sr(i*59)*60),transitionScore:Math.round(15+sr(i*61)*80),rating:sr(i*7)<0.15?'Excellent':sr(i*7)<0.35?'Good':sr(i*7)<0.6?'Adequate':sr(i*7)<0.85?'Poor':'Critical'}));})();
 
-const TABS = ['Overview','Fund Tracker','Worker & Community','Policy Frameworks','Finance Gap'];
+const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,investment:Math.round(200+i*20+sr(i*7)*100),retrained:Math.round(500+i*100+sr(i*11)*200),newJobs:Math.round(300+i*80+sr(i*13)*150)}));
 
-const REGIONS = [
-  { region:'European Union', fundSize:55.0, workersRisk:12.4, coalDep:18, ilo:92 },
-  { region:'Sub-Saharan Africa', fundSize:8.2, workersRisk:45.0, coalDep:62, ilo:54 },
-  { region:'South Asia', fundSize:12.6, workersRisk:210.0, coalDep:71, ilo:48 },
-  { region:'East Asia & Pacific', fundSize:22.4, workersRisk:180.0, coalDep:65, ilo:61 },
-  { region:'Latin America', fundSize:9.8, workersRisk:38.0, coalDep:24, ilo:72 },
-  { region:'Middle East & N. Africa', fundSize:4.1, workersRisk:22.0, coalDep:11, ilo:43 },
-  { region:'North America', fundSize:48.0, workersRisk:1.8, coalDep:9, ilo:84 },
-  { region:'Central & Eastern Europe', fundSize:18.3, workersRisk:14.6, coalDep:44, ilo:77 },
-];
+const badge=(val,thresholds)=>{const[lo,mid,hi]=thresholds;const bg=val>=hi?'rgba(22,163,74,0.12)':val>=mid?'rgba(197,169,106,0.12)':val>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=val>=hi?T.green:val>=mid?T.gold:val>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const rBadge=(r)=>{const m={Excellent:{bg:'rgba(22,163,74,0.12)',c:T.green},Good:{bg:'rgba(90,138,106,0.12)',c:T.sage},Adequate:{bg:'rgba(197,169,106,0.15)',c:T.gold},Poor:{bg:'rgba(217,119,6,0.12)',c:T.amber},Critical:{bg:'rgba(220,38,38,0.12)',c:T.red}};return{background:(m[r]||m.Adequate).bg,color:(m[r]||m.Adequate).c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
 
-const FLOWS = Array.from({ length:24 }, (_, i) => ({
-  month: `M${i+1}`,
-  committed: +(4.2 + sr(i*3)*6 + i*0.18).toFixed(2),
-  disbursed: +(2.1 + sr(i*3+1)*3.5 + i*0.09).toFixed(2),
-}));
+export default function JustTransitionFinancePage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[typeF,setTypeF]=useState('All');const[statusF,setStatusF]=useState('All');const[sortCol,setSortCol]=useState('transitionScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const[wSearch,setWSearch]=useState('');const[wSort,setWSort]=useState('workersRetrained');const[wDir,setWDir]=useState('desc');const[wPage,setWPage]=useState(1);
+  const[cSearch,setCSearch]=useState('');const[cSort,setCSort]=useState('communityFund');const[cDir,setCDir]=useState('desc');const[cPage,setCPage]=useState(1);
 
-const FUNDS = [
-  { name:'EU Just Transition Fund', size:55.0, region:'European Union', beneficiaries:12.4, disburse:38, status:'Active' },
-  { name:'UK Just Transition', size:3.2, region:'United Kingdom', beneficiaries:0.8, disburse:22, status:'Active' },
-  { name:'SA Presidential Climate Commission', size:4.7, region:'South Africa', beneficiaries:4.2, disburse:14, status:'Active' },
-  { name:'ILO Transition Fund', size:1.1, region:'Global', beneficiaries:18.0, disburse:61, status:'Active' },
-  { name:'GCF JT Window', size:2.8, region:'Global', beneficiaries:25.0, disburse:19, status:'Active' },
-  { name:'Asian Development Bank JT', size:8.5, region:'Asia-Pacific', beneficiaries:55.0, disburse:27, status:'Active' },
-  { name:'Chile Green Hydrogen Fund', size:1.6, region:'Chile', beneficiaries:0.3, disburse:8, status:'Pilot' },
-  { name:'India Coal Worker Fund', size:5.3, region:'India', beneficiaries:62.0, disburse:11, status:'Active' },
-  { name:'US IRA Communities', size:48.0, region:'North America', beneficiaries:1.8, disburse:31, status:'Active' },
-  { name:'Colombia Energy Transition', size:0.9, region:'Colombia', beneficiaries:0.6, disburse:5, status:'Pilot' },
-];
+  const filtered=useMemo(()=>{let d=[...PROJECTS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(typeF!=='All')d=d.filter(r=>r.type===typeF);if(statusF!=='All')d=d.filter(r=>r.status===statusF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,typeF,statusF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);const tP=Math.ceil(filtered.length/PAGE_SIZE);
 
-const SECTORS = [
-  { sector:'Coal Mining', workers:250.0, retrainCost:22.4, timeline:8, communityFund:18.0, union:78 },
-  { sector:'Steel', workers:80.0, retrainCost:14.8, timeline:10, communityFund:6.2, union:82 },
-  { sector:'Cement', workers:40.0, retrainCost:11.2, timeline:9, communityFund:3.1, union:65 },
-  { sector:'Auto Manufacturing', workers:55.0, retrainCost:18.6, timeline:7, communityFund:4.8, union:88 },
-  { sector:'Oil Refining', workers:35.0, retrainCost:24.1, timeline:12, communityFund:5.5, union:74 },
-  { sector:'Shipping', workers:28.0, retrainCost:16.3, timeline:8, communityFund:2.4, union:69 },
-  { sector:'Agriculture', workers:200.0, retrainCost:8.7, timeline:6, communityFund:14.0, union:41 },
-  { sector:'Textiles', workers:112.0, retrainCost:6.4, timeline:5, communityFund:7.8, union:38 },
-];
+  const wData=useMemo(()=>{let d=filtered.map(r=>({name:r.name,type:r.type,workersImpacted:r.workersImpacted,workersRetrained:r.workersRetrained,retrainingRate:r.retrainingRate,newJobsCreated:r.newJobsCreated,avgWageChange:r.avgWageChange}));if(wSearch)d=d.filter(r=>r.name.toLowerCase().includes(wSearch.toLowerCase()));d.sort((a,b)=>wDir==='asc'?(a[wSort]>b[wSort]?1:-1):(a[wSort]<b[wSort]?1:-1));return d;},[filtered,wSearch,wSort,wDir]);
+  const wPaged=useMemo(()=>wData.slice((wPage-1)*PAGE_SIZE,wPage*PAGE_SIZE),[wData,wPage]);const wTP=Math.ceil(wData.length/PAGE_SIZE);
 
-const FRAMEWORKS = [
-  { name:'ILO Just Transition Guidelines', jurisdiction:'Global', year:2015, countries:187, workersCov:3200, score:74,
-    principles:['Social dialogue as cornerstone','Decent work & labour rights','Green economy linkage'] },
-  { name:'EU Green Deal JT Mechanism', jurisdiction:'European Union', year:2020, countries:27, workersCov:12, score:88,
-    principles:['Territorial just transition plans','Coal & carbon-intensive regions','Blended finance instruments'] },
-  { name:'Paris Agreement Art.2.1c', jurisdiction:'Global', year:2015, countries:196, workersCov:3800, score:61,
-    principles:['Climate-consistent finance flows','Adaptation & mitigation balance','Developing nation support'] },
-  { name:'African Union JT Framework', jurisdiction:'Africa', year:2022, countries:55, workersCov:420, score:42,
-    principles:['Fossil fuel dependency management','Domestic resource mobilisation','Regional solidarity'] },
-  { name:'G7 JT Partnership (JETP)', jurisdiction:'G7+', year:2021, countries:38, workersCov:280, score:55,
-    principles:['Country-led transition plans','$8.5bn South Africa deal model','Blended public-private finance'] },
-  { name:'UN SDG 8 Decent Work', jurisdiction:'Global', year:2015, countries:193, workersCov:3500, score:67,
-    principles:['Full productive employment','Labour rights & social protection','Youth employment emphasis'] },
-];
+  const cData=useMemo(()=>{let d=filtered.map(r=>({name:r.name,type:r.type,communityFund:r.communityFund,socialDialogue:r.socialDialogue,genderEquity:r.genderEquity,youthInclusion:r.youthInclusion,healthServices:r.healthServices,housingSupport:r.housingSupport}));if(cSearch)d=d.filter(r=>r.name.toLowerCase().includes(cSearch.toLowerCase()));d.sort((a,b)=>cDir==='asc'?(a[cSort]>b[cSort]?1:-1):(a[cSort]<b[cSort]?1:-1));return d;},[filtered,cSearch,cSort,cDir]);
+  const cPaged=useMemo(()=>cData.slice((cPage-1)*PAGE_SIZE,cPage*PAGE_SIZE),[cData,cPage]);const cTP=Math.ceil(cData.length/PAGE_SIZE);
 
-const GAP_REGIONS = [
-  { region:'EU', required:42, committed:38 },
-  { region:'Africa', required:95, committed:12 },
-  { region:'Asia-Pacific', required:380, committed:88 },
-  { region:'Latin America', required:72, committed:18 },
-  { region:'Middle East', required:38, committed:8 },
-  { region:'North America', required:55, committed:48 },
-];
+  const doSort=(c)=>{if(sortCol===c)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(c);setSortDir('desc');}setPage(1);};
+  const doWSort=(c)=>{if(wSort===c)setWDir(d=>d==='asc'?'desc':'asc');else{setWSort(c);setWDir('desc');}setWPage(1);};
+  const doCSort=(c)=>{if(cSort===c)setCDir(d=>d==='asc'?'desc':'asc');else{setCSort(c);setCDir('desc');}setCPage(1);};
 
-const INSTRUMENTS = [
-  { instrument:'Green Bonds', mobilisation:420, suitability:82 },
-  { instrument:'Blended Finance', mobilisation:185, suitability:91 },
-  { instrument:'MDB Loans', mobilisation:310, suitability:78 },
-  { instrument:'Carbon Revenue', mobilisation:95, suitability:64 },
-  { instrument:'Public Grants', mobilisation:230, suitability:88 },
-  { instrument:'Insurance', mobilisation:58, suitability:55 },
-];
+  const stats=useMemo(()=>({total:filtered.length,totalInvest:filtered.reduce((s,r)=>s+r.totalInvestment,0),totalWorkers:filtered.reduce((s,r)=>s+r.workersImpacted,0),retrained:filtered.reduce((s,r)=>s+r.workersRetrained,0),newJobs:filtered.reduce((s,r)=>s+r.newJobsCreated,0),avgScore:(filtered.reduce((s,r)=>s+r.transitionScore,0)/filtered.length||0).toFixed(1)}),[filtered]);
 
-const card = (label, val) => (
-  <div key={label} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:'18px 22px', flex:1, minWidth:160 }}>
-    <div style={{ color:T.textSec, fontSize:12, marginBottom:6 }}>{label}</div>
-    <div style={{ color:ACCENT, fontSize:22, fontWeight:700 }}>{val}</div>
-  </div>
-);
+  const typeDist=useMemo(()=>{const m={};filtered.forEach(r=>{m[r.type]=(m[r.type]||0)+1;});return Object.entries(m).map(([k,v])=>({name:k,value:v})).sort((a,b)=>b.value-a.value);},[filtered]);
 
-const badge = (status) => {
-  const c = status === 'Active' ? T.green : T.amber;
-  return <span style={{ background:c+'22', color:c, borderRadius:4, padding:'2px 8px', fontSize:11, fontWeight:600 }}>{status}</span>;
-};
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const k=Object.keys(data[0]);const csv=[k.join(','),...data.map(r=>k.map(c=>`"${r[c]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
 
-export default function JustTransitionFinancePage() {
-  const [tab, setTab] = useState(0);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
+  const th={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
+  const td_={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
+  const inp={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
+  const sel_={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer'});
+  const pb={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
+  const card={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
 
-  return (
-    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font, color:T.text, padding:'28px 32px' }}>
-      <div style={{ marginBottom:24 }}>
-        <h1 style={{ margin:0, fontSize:24, fontWeight:700 }}>Just Transition Finance <span style={{ color:ACCENT }}>EP-AD1</span></h1>
-        <p style={{ color:T.textSec, margin:'6px 0 0', fontSize:14 }}>
-          Tracking finance flows, worker impacts and policy frameworks for an equitable low-carbon transition.
-        </p>
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
+    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button></div>
+    <div style={{padding:'16px 24px'}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+      {[['Investment','$'+item.totalInvestment+'M'],['Workers Impacted',item.workersImpacted],['Retrained',item.workersRetrained],['Retraining Rate',item.retrainingRate+'%'],['New Jobs',item.newJobsCreated],['Wage Change',(item.avgWageChange>0?'+':'')+item.avgWageChange+'%'],['Community Fund','$'+item.communityFund+'M'],['Social Dialogue',item.socialDialogue],['Gender Equity',item.genderEquity],['Youth Inclusion',item.youthInclusion],['Health Services',item.healthServices],['Housing Support',item.housingSupport],['Transition Score',item.transitionScore],['Stakeholder Engage.',item.stakeholderEngagement]].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
+    </div><span style={rBadge(item.rating)}>{item.rating}</span>
+    <div style={{height:180,marginTop:12}}><ResponsiveContainer width="100%" height="100%"><RadarChart data={[{d:'Retraining',v:item.retrainingRate},{d:'Jobs',v:Math.min(item.newJobsCreated/50,100)},{d:'Social Dialogue',v:item.socialDialogue},{d:'Gender',v:item.genderEquity},{d:'Youth',v:item.youthInclusion},{d:'Health',v:item.healthServices}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={ACCENT} fill={ACCENT} fillOpacity={0.2}/></RadarChart></ResponsiveContainer></div>
+    </div></div>);};
+
+  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
+    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}><div style={{fontSize:20,fontWeight:700,color:T.navy}}>Just Transition Finance</div><div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>Worker Retraining &middot; Community Transition Funds &middot; {PROJECTS.length} Projects</div></div>
+    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>{TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}</div>
+    <div style={{padding:'20px 28px'}}>
+
+    {tab===0&&(<div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
+        {[['Projects',stats.total,T.navy],['Total Invest.','$'+(stats.totalInvest/1000).toFixed(1)+'B',ACCENT],['Workers Impacted',(stats.totalWorkers/1000).toFixed(1)+'K',T.gold],['Retrained',(stats.retrained/1000).toFixed(1)+'K',T.green],['New Jobs',(stats.newJobs/1000).toFixed(1)+'K',T.sage],['Avg Score',stats.avgScore,T.amber]].map(([l,v,c],i)=>(<div key={i} style={card}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
       </div>
-
-      {/* Tab bar */}
-      <div style={{ display:'flex', gap:4, borderBottom:'1px solid '+T.border, marginBottom:24 }}>
-        {TABS.map((t,i) => (
-          <button key={t} onClick={() => setTab(i)} style={{
-            background:'none', border:'none', color: i===tab ? T.text : T.textSec,
-            fontFamily:T.font, fontSize:13, fontWeight: i===tab ? 700 : 400,
-            padding:'10px 16px', cursor:'pointer',
-            borderBottom: i===tab ? '2px solid '+ACCENT : '2px solid transparent'
-          }}>{t}</button>
-        ))}
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:16}}>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Investment & Jobs Trend (24M)</div>
+          <ResponsiveContainer width="100%" height={220}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Area type="monotone" dataKey="investment" stroke={ACCENT} fill={ACCENT} fillOpacity={0.15} name="Investment $M"/><Area type="monotone" dataKey="newJobs" stroke={T.green} fill={T.green} fillOpacity={0.1} name="New Jobs"/></AreaChart></ResponsiveContainer>
+        </div>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Project Types</div>
+          <ResponsiveContainer width="100%" height={220}><PieChart><Pie data={typeDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={40} label={({name,value})=>`${value}`} style={{fontSize:9}}>{typeDist.map((_,i)=>(<Cell key={i} fill={[ACCENT,T.green,T.sage,T.gold,T.amber,T.navy][i%6]}/>))}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
+        </div>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Investment vs Workers</div>
+          <ResponsiveContainer width="100%" height={220}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Invest $M" tick={{fontSize:9}}/><YAxis dataKey="y" name="Workers" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={filtered.map(r=>({x:r.totalInvestment,y:r.workersImpacted}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
+        </div>
       </div>
+    </div>)}
 
-      {/* TAB 0 — Overview */}
-      {tab === 0 && (
-        <div>
-          <div style={{ display:'flex', gap:14, marginBottom:24, flexWrap:'wrap' }}>
-            {card('Annual Finance Need','$2.4T')}
-            {card('JT Funds Active','45')}
-            {card('Workers Affected','800M')}
-            {card('ILO Guidelines Since','2015')}
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20, marginBottom:24 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>Regional Just Transition Overview</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['Region','Fund Size ($bn)','Workers at Risk (M)','Coal Dep. %','ILO Score'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {REGIONS.map((r,i) => (
-                  <tr key={r.region} style={{ borderBottom:'1px solid '+T.border+'55', background: i%2===0 ? 'transparent' : T.bg+'88' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:500 }}>{r.region}</td>
-                    <td style={{ padding:'8px 10px', color:ACCENT }}>{r.fundSize.toFixed(1)}</td>
-                    <td style={{ padding:'8px 10px' }}>{r.workersRisk.toFixed(1)}</td>
-                    <td style={{ padding:'8px 10px', color: r.coalDep>50 ? T.red : T.amber }}>{r.coalDep}%</td>
-                    <td style={{ padding:'8px 10px', color: r.ilo>75 ? T.green : r.ilo>55 ? T.amber : T.red }}>{r.ilo}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>24-Month JT Finance Flows ($bn)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={FLOWS} margin={{ top:5, right:20, left:0, bottom:5 }}>
-                <defs>
-                  <linearGradient id="gComm" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={ACCENT} stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor={ACCENT} stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="gDisb" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={T.green} stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor={T.green} stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill:T.textMut, fontSize:11 }} />
-                <YAxis tick={{ fill:T.textMut, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Legend wrapperStyle={{ color:T.textSec, fontSize:12 }} />
-                <Area type="monotone" dataKey="committed" stroke={ACCENT} fill="url(#gComm)" name="Committed" strokeWidth={2} />
-                <Area type="monotone" dataKey="disbursed" stroke={T.green} fill="url(#gDisb)" name="Disbursed" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
+    {tab===1&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search projects..." style={inp}/>
+        <select value={typeF} onChange={e=>{setTypeF(e.target.value);setPage(1);}} style={sel_}>{TYPES.map(s=>(<option key={s}>{s}</option>))}</select>
+        <select value={statusF} onChange={e=>{setStatusF(e.target.value);setPage(1);}} style={sel_}>{STATUSES.map(s=>(<option key={s}>{s}</option>))}</select>
+        <button onClick={()=>exportCSV(filtered,'just_transition.csv')} style={btnS(false)}>Export CSV</button>
+        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length}</span>
+      </div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['name','Project'],['type','Type'],['status','Status'],['transitionScore','Score'],['totalInvestment','Invest $M'],['workersImpacted','Workers'],['newJobsCreated','New Jobs'],['retrainingRate','Retrain%'],['rating','Rating']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={th}>{l}{si(k,sortCol,sortDir)}</th>))}
+        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
+          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.type}</td><td style={td_}>{r.status}</td>
+          <td style={td_}><span style={badge(r.transitionScore,[25,50,70])}>{r.transitionScore}</span></td>
+          <td style={td_}>${r.totalInvestment}M</td><td style={td_}>{r.workersImpacted.toLocaleString()}</td>
+          <td style={td_}>{r.newJobsCreated.toLocaleString()}</td><td style={td_}>{r.retrainingRate}%</td>
+          <td style={td_}><span style={rBadge(r.rating)}>{r.rating}</span></td>
+        </tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page}/{tP}</span><button disabled={page>=tP} onClick={()=>setPage(p=>p+1)} style={pb}>Next</button></div>
+      <Panel item={selected} onClose={()=>setSelected(null)}/>
+    </div>)}
 
-      {/* TAB 1 — Fund Tracker */}
-      {tab === 1 && (
-        <div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20, marginBottom:24 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>Fund Size by Institution ($bn)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={FUNDS} margin={{ top:5, right:20, left:0, bottom:60 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill:T.textMut, fontSize:10 }} angle={-35} textAnchor="end" interval={0} />
-                <YAxis tick={{ fill:T.textMut, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="size" name="Fund Size ($bn)" radius={[4,4,0,0]}>
-                  {FUNDS.map((f,i) => (
-                    <Cell key={i} fill={f.size > 10 ? T.green : f.size > 2 ? T.amber : ACCENT} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>Active Fund Directory</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['Fund','Size ($bn)','Region','Beneficiaries (M)','Disburse %','Status'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {FUNDS.map((f,i) => (
-                  <tr key={f.name} style={{ borderBottom:'1px solid '+T.border+'55', background: i%2===0 ? 'transparent' : T.bg+'88' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:500 }}>{f.name}</td>
-                    <td style={{ padding:'8px 10px', color:ACCENT }}>{f.size.toFixed(1)}</td>
-                    <td style={{ padding:'8px 10px', color:T.textSec }}>{f.region}</td>
-                    <td style={{ padding:'8px 10px' }}>{f.beneficiaries.toFixed(1)}</td>
-                    <td style={{ padding:'8px 10px' }}>{f.disburse}%</td>
-                    <td style={{ padding:'8px 10px' }}>{badge(f.status)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+    {tab===2&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={wSearch} onChange={e=>{setWSearch(e.target.value);setWPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(wData,'worker_retraining.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{wData.length}</span></div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['name','Project'],['type','Type'],['workersImpacted','Impacted'],['workersRetrained','Retrained'],['retrainingRate','Rate%'],['newJobsCreated','New Jobs'],['avgWageChange','Wage Chg%']].map(([k,l])=>(<th key={k} onClick={()=>doWSort(k)} style={th}>{l}{si(k,wSort,wDir)}</th>))}
+        </tr></thead><tbody>{wPaged.map((r,i)=>(<tr key={i}><td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.type}</td><td style={td_}>{r.workersImpacted.toLocaleString()}</td><td style={td_}>{r.workersRetrained.toLocaleString()}</td><td style={td_}><span style={badge(r.retrainingRate,[25,50,70])}>{r.retrainingRate}%</span></td><td style={td_}>{r.newJobsCreated.toLocaleString()}</td><td style={td_}><span style={{color:r.avgWageChange>=0?T.green:T.red,fontWeight:600}}>{r.avgWageChange>0?'+':''}{r.avgWageChange}%</span></td></tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={wPage<=1} onClick={()=>setWPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {wPage}/{wTP}</span><button disabled={wPage>=wTP} onClick={()=>setWPage(p=>p+1)} style={pb}>Next</button></div>
+    </div>)}
 
-      {/* TAB 2 — Worker & Community */}
-      {tab === 2 && (
-        <div>
-          <div style={{ display:'flex', gap:14, marginBottom:24, flexWrap:'wrap' }}>
-            {card('Total Workers at Risk','800M')}
-            {card('Avg Retraining Cost','$18k/worker')}
-            {card('Successful Transition Rate','34%')}
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20, marginBottom:24 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>Workers at Risk by Sector (Millions)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={SECTORS} margin={{ top:5, right:20, left:0, bottom:5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="sector" tick={{ fill:T.textMut, fontSize:11 }} />
-                <YAxis tick={{ fill:T.textMut, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="workers" name="Workers (M)" radius={[4,4,0,0]}>
-                  {SECTORS.map((s,i) => (
-                    <Cell key={i} fill={s.workers > 150 ? T.red : s.workers > 60 ? T.amber : ACCENT} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>Sector Transition Detail</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['Sector','Workers (M)','Retrain Cost ($bn)','Timeline (yrs)','Community Fund ($bn)','Union Score'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {SECTORS.map((s,i) => (
-                  <tr key={s.sector} style={{ borderBottom:'1px solid '+T.border+'55', background: i%2===0 ? 'transparent' : T.bg+'88' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:500 }}>{s.sector}</td>
-                    <td style={{ padding:'8px 10px', color: s.workers>150?T.red:ACCENT }}>{s.workers.toFixed(1)}</td>
-                    <td style={{ padding:'8px 10px' }}>{s.retrainCost.toFixed(1)}</td>
-                    <td style={{ padding:'8px 10px', color:T.textSec }}>{s.timeline}</td>
-                    <td style={{ padding:'8px 10px' }}>{s.communityFund.toFixed(1)}</td>
-                    <td style={{ padding:'8px 10px', color: s.union>70?T.green:T.amber }}>{s.union}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+    {tab===3&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={cSearch} onChange={e=>{setCSearch(e.target.value);setCPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(cData,'community_funds.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{cData.length}</span></div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['name','Project'],['type','Type'],['communityFund','Fund $M'],['socialDialogue','Dialogue'],['genderEquity','Gender'],['youthInclusion','Youth'],['healthServices','Health'],['housingSupport','Housing']].map(([k,l])=>(<th key={k} onClick={()=>doCSort(k)} style={th}>{l}{si(k,cSort,cDir)}</th>))}
+        </tr></thead><tbody>{cPaged.map((r,i)=>(<tr key={i}><td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.type}</td><td style={td_}>${r.communityFund}M</td><td style={td_}>{r.socialDialogue}</td><td style={td_}>{r.genderEquity}</td><td style={td_}>{r.youthInclusion}</td><td style={td_}>{r.healthServices}</td><td style={td_}>{r.housingSupport}</td></tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={cPage<=1} onClick={()=>setCPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {cPage}/{cTP}</span><button disabled={cPage>=cTP} onClick={()=>setCPage(p=>p+1)} style={pb}>Next</button></div>
+      <div style={{...card,marginTop:16}}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Community Fund vs Social Dialogue</div>
+        <ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Fund $M" tick={{fontSize:9}}/><YAxis dataKey="y" name="Dialogue Score" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={cData.map(r=>({name:r.name,x:r.communityFund,y:r.socialDialogue}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
+      </div>
+    </div>)}
 
-      {/* TAB 3 — Policy Frameworks */}
-      {tab === 3 && (
-        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-          {FRAMEWORKS.map(f => (
-            <div key={f.name} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
-                <div>
-                  <div style={{ fontWeight:700, fontSize:15, marginBottom:4 }}>{f.name}</div>
-                  <div style={{ color:T.textSec, fontSize:12 }}>{f.jurisdiction} · Adopted {f.year} · {f.countries} countries · {f.workersCov}M workers</div>
-                </div>
-                <div style={{ color:ACCENT, fontWeight:700, fontSize:18 }}>{f.score}</div>
-              </div>
-              <ul style={{ margin:'0 0 12px 0', paddingLeft:20, color:T.textSec, fontSize:13 }}>
-                {f.principles.map(p => <li key={p} style={{ marginBottom:3 }}>{p}</li>)}
-              </ul>
-              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <div style={{ flex:1, background:T.border, borderRadius:4, height:7 }}>
-                  <div style={{ width:f.score+'%', background: f.score>75?T.green:f.score>55?T.amber:T.red, height:'100%', borderRadius:4 }} />
-                </div>
-                <span style={{ color:T.textSec, fontSize:12, minWidth:50 }}>Impl. {f.score}%</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* TAB 4 — Finance Gap */}
-      {tab === 4 && (
-        <div>
-          <div style={{ display:'flex', gap:14, marginBottom:24, flexWrap:'wrap' }}>
-            {card('Total Annual Gap','$1.6T/yr')}
-            {card('Adaptation Share','35%')}
-            {card('Community Investment','22%')}
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20, marginBottom:24 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>Required vs Committed Finance by Region ($bn)</div>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={GAP_REGIONS} margin={{ top:5, right:20, left:0, bottom:5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="region" tick={{ fill:T.textMut, fontSize:12 }} />
-                <YAxis tick={{ fill:T.textMut, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Legend wrapperStyle={{ color:T.textSec, fontSize:12 }} />
-                <Bar dataKey="required" name="Required ($bn)" fill={T.red} radius={[4,4,0,0]} opacity={0.85} />
-                <Bar dataKey="committed" name="Committed ($bn)" fill={T.green} radius={[4,4,0,0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-            <div style={{ fontWeight:600, marginBottom:14 }}>Financing Instruments</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['Instrument','Mobilisation Capacity ($bn)','Suitability Score'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {INSTRUMENTS.map((ins,i) => (
-                  <tr key={ins.instrument} style={{ borderBottom:'1px solid '+T.border+'55', background: i%2===0 ? 'transparent' : T.bg+'88' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:500 }}>{ins.instrument}</td>
-                    <td style={{ padding:'8px 10px', color:ACCENT }}>{ins.mobilisation}</td>
-                    <td style={{ padding:'8px 10px' }}>
-                      <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                        <div style={{ flex:1, background:T.border, borderRadius:4, height:6 }}>
-                          <div style={{ width:ins.suitability+'%', background: ins.suitability>80?T.green:ins.suitability>60?T.amber:T.red, height:'100%', borderRadius:4 }} />
-                        </div>
-                        <span style={{ color:T.textSec, fontSize:12, minWidth:30 }}>{ins.suitability}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
     </div>
-  );
+  </div>);
 }

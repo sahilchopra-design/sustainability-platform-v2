@@ -1,420 +1,141 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const tip = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text, fontSize: 11 };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#0e7490';
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const TABS=['Dashboard','Central Bank Profiles','Green QE & Reserves','Climate Mandates'];
+const REGIONS=['All','Europe','Asia Pacific','North America','Latin America','Africa','Middle East'];
+const NGFS_STATUS=['All','Member','Observer','Non-Member'];
+const PAGE_SIZE=10;
 
-const PURPLE = '#7c3aed';
-const PURPLE_LIGHT = '#ede9fe';
+const BANKS=(()=>{
+  const names=['ECB','Federal Reserve','Bank of Japan','People\'s Bank of China','Bank of England','Swiss National Bank','Reserve Bank of Australia','Bank of Canada','Riksbank Sweden','Norges Bank','Deutsche Bundesbank','Banque de France','Banca d\'Italia','Banco de España','De Nederlandsche Bank','Reserve Bank of India','Bank Indonesia','Bank of Korea','Monetary Auth. Singapore','Bank Negara Malaysia','Central Bank of Brazil','Banco de México','Central Bank of Chile','Central Bank of Colombia','South African Reserve','Central Bank of Nigeria','Bank of Thailand','State Bank of Vietnam','Central Bank of Philippines','Central Bank of Egypt'];
+  const regs=['Europe','North America','Asia Pacific','Asia Pacific','Europe','Europe','Asia Pacific','North America','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Latin America','Latin America','Latin America','Latin America','Africa','Africa','Asia Pacific','Asia Pacific','Asia Pacific','Africa'];
+  return names.map((n,i)=>({id:i+1,name:n,region:regs[i],ngfsStatus:sr(i*7)<0.6?'Member':sr(i*7)<0.85?'Observer':'Non-Member',greenQE:sr(i*11)<0.35,climateMandateExplicit:sr(i*13)<0.4,greenBondHoldings:Math.round(sr(i*17)*80000),reserveESGIntegration:Math.round(10+sr(i*19)*80),climateStressTest:sr(i*23)<0.5?'Conducted':sr(i*23)<0.8?'Planned':'None',taxonomyAdopted:sr(i*29)<0.45?'Yes':'No',disclosureRequirement:sr(i*31)<0.55?'Mandatory':sr(i*31)<0.8?'Recommended':'None',collateralPolicy:sr(i*37)<0.35?'Green-Adjusted':'Standard',prudentialClimate:Math.round(15+sr(i*41)*80),researchOutput:Math.round(5+sr(i*43)*45),greenFinancePolicy:Math.round(10+sr(i*47)*85),supervisoryExpectation:sr(i*53)<0.4?'Published':sr(i*53)<0.7?'Drafting':'None',policyRate:+(0.5+sr(i*59)*8).toFixed(2),balanceSheet:Math.round(100+sr(i*61)*8000),greenAssetRatio:+(sr(i*67)*15).toFixed(1),carbonFootprint:Math.round(50+sr(i*71)*450),overallScore:Math.round(10+sr(i*73)*85)}));})();
 
-const CENTRAL_BANKS = [
-  { bank: 'ECB',      jurisdiction: 'Eurozone',    greenMandate: true,  climateStressTest: true,  greenBondPurchases: 141, ngfsAlignment: 'High',   capitalAddOn: 30, status: 'Active' },
-  { bank: 'BoE',      jurisdiction: 'UK',           greenMandate: true,  climateStressTest: true,  greenBondPurchases: 38,  ngfsAlignment: 'High',   capitalAddOn: 25, status: 'Active' },
-  { bank: 'Fed',      jurisdiction: 'USA',          greenMandate: false, climateStressTest: false, greenBondPurchases: 0,   ngfsAlignment: 'Low',    capitalAddOn: 0,  status: 'Limited' },
-  { bank: 'PBoC',     jurisdiction: 'China',        greenMandate: true,  climateStressTest: true,  greenBondPurchases: 62,  ngfsAlignment: 'Medium', capitalAddOn: 20, status: 'Active' },
-  { bank: 'RBA',      jurisdiction: 'Australia',    greenMandate: false, climateStressTest: true,  greenBondPurchases: 8,   ngfsAlignment: 'Medium', capitalAddOn: 15, status: 'Developing' },
-  { bank: 'BoC',      jurisdiction: 'Canada',       greenMandate: true,  climateStressTest: true,  greenBondPurchases: 14,  ngfsAlignment: 'High',   capitalAddOn: 20, status: 'Active' },
-  { bank: 'SNB',      jurisdiction: 'Switzerland',  greenMandate: false, climateStressTest: false, greenBondPurchases: 5,   ngfsAlignment: 'Low',    capitalAddOn: 0,  status: 'Limited' },
-  { bank: 'Riksbank', jurisdiction: 'Sweden',       greenMandate: true,  climateStressTest: true,  greenBondPurchases: 22,  ngfsAlignment: 'High',   capitalAddOn: 28, status: 'Active' },
-  { bank: 'DNB',      jurisdiction: 'Netherlands',  greenMandate: true,  climateStressTest: true,  greenBondPurchases: 18,  ngfsAlignment: 'High',   capitalAddOn: 25, status: 'Active' },
-  { bank: 'HKMA',     jurisdiction: 'Hong Kong',    greenMandate: true,  climateStressTest: true,  greenBondPurchases: 36,  ngfsAlignment: 'Medium', capitalAddOn: 18, status: 'Developing' },
-];
+const MANDATES=(()=>BANKS.map((b,i)=>({id:i+1,bank:b.name,region:b.region,priceStability:sr(i*7)<0.9,financialStability:sr(i*11)<0.7,climateRisk:sr(i*13)<0.45,greenTransition:sr(i*17)<0.35,biodiversity:sr(i*19)<0.15,socialObjective:sr(i*23)<0.25,mandateScore:Math.round(20+sr(i*29)*75),legalBasis:sr(i*31)<0.4?'Primary Legislation':sr(i*31)<0.7?'Secondary Mandate':'Interpretive',lastUpdated:`202${Math.floor(3+sr(i*37)*3)}`})))();
 
-const NGFS_SCENARIOS = [
-  { scenario: 'Net Zero 2050',          category: 'Orderly',     tempBy2100: 1.5, physicalRisk: 'Low',    transitionRisk: 'High',   gdpImpact2050: -1.4, financialStability: 'Manageable' },
-  { scenario: 'Divergent Net Zero',     category: 'Disorderly',  tempBy2100: 1.6, physicalRisk: 'Low',    transitionRisk: 'V.High', gdpImpact2050: -2.5, financialStability: 'Stressed' },
-  { scenario: 'Too Little Too Late',    category: 'Disorderly',  tempBy2100: 2.6, physicalRisk: 'High',   transitionRisk: 'High',   gdpImpact2050: -4.8, financialStability: 'At Risk' },
-  { scenario: 'Hot House World',        category: 'Hot House',   tempBy2100: 3.2, physicalRisk: 'V.High', transitionRisk: 'Low',    gdpImpact2050: -8.1, financialStability: 'Severe' },
-];
+const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,greenBonds:Math.round(200+i*15+sr(i*7)*50),stressTests:Math.round(3+sr(i*11)*5),newPolicies:Math.round(1+sr(i*13)*4),ngfsMembers:Math.round(100+i*2+sr(i*17)*3)}));
 
-const GREEN_QE = [
-  { bank: 'ECB',      greenHoldings: 141, pctOfQE: 22, tiltingStrategy: 'Climate tilt + exclusions', carbonReduction: 35 },
-  { bank: 'PBoC',     greenHoldings: 62,  pctOfQE: 18, tiltingStrategy: 'Green lending facilities',  carbonReduction: 28 },
-  { bank: 'BoE',      greenHoldings: 38,  pctOfQE: 12, tiltingStrategy: 'Green gilt preference',     carbonReduction: 22 },
-  { bank: 'HKMA',     greenHoldings: 36,  pctOfQE: 14, tiltingStrategy: 'ESG-tilted reserves',       carbonReduction: 18 },
-  { bank: 'BoC',      greenHoldings: 14,  pctOfQE: 9,  tiltingStrategy: 'Sustainability criteria',   carbonReduction: 15 },
-  { bank: 'Riksbank', greenHoldings: 22,  pctOfQE: 16, tiltingStrategy: 'Green bond tilting',        carbonReduction: 25 },
-];
+const badge=(val,thresholds)=>{const[lo,mid,hi]=thresholds;const bg=val>=hi?'rgba(22,163,74,0.12)':val>=mid?'rgba(197,169,106,0.12)':val>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=val>=hi?T.green:val>=mid?T.gold:val>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
 
-const CAPITAL_ADDONS = [
-  { jurisdiction: 'EU',          proposedBps: 30, implementationYear: 2026, scope: 'All credit institutions', regulatoryBasis: 'CRR3 / CRDVI' },
-  { jurisdiction: 'UK',          proposedBps: 25, implementationYear: 2025, scope: 'Systemically important',  regulatoryBasis: 'PRA SS3/19' },
-  { jurisdiction: 'Switzerland', proposedBps: 18, implementationYear: 2027, scope: 'Pillar 2 discretion',     regulatoryBasis: 'FINMA Circ 2023' },
-  { jurisdiction: 'Canada',      proposedBps: 20, implementationYear: 2026, scope: 'D-SIBs',                  regulatoryBasis: 'OSFI B-15' },
-  { jurisdiction: 'China',       proposedBps: 20, implementationYear: 2025, scope: 'Major commercial banks',  regulatoryBasis: 'PBoC Directive' },
-  { jurisdiction: 'Australia',   proposedBps: 15, implementationYear: 2027, scope: 'Pillar 2 guidance',       regulatoryBasis: 'APRA CPG 229' },
-];
+export default function GreenCentralBankingPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[regionF,setRegionF]=useState('All');const[ngfsF,setNgfsF]=useState('All');const[sortCol,setSortCol]=useState('overallScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const[qSearch,setQSearch]=useState('');const[qSort,setQSort]=useState('greenBondHoldings');const[qDir,setQDir]=useState('desc');const[qPage,setQPage]=useState(1);
+  const[mSearch,setMSearch]=useState('');const[mSort,setMSort]=useState('mandateScore');const[mDir,setMDir]=useState('desc');const[mPage,setMPage]=useState(1);
 
-const STRESS_TREND = Array.from({ length: 18 }, (_, i) => ({
-  month: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'][i] + (i < 12 ? ' 25' : ' 26'),
-  score: +(28 + sr(i * 3) * 18 + i * 0.6).toFixed(1),
-  threshold: 45,
-}));
+  const filtered=useMemo(()=>{let d=[...BANKS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(regionF!=='All')d=d.filter(r=>r.region===regionF);if(ngfsF!=='All')d=d.filter(r=>r.ngfsStatus===ngfsF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,regionF,ngfsF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);const tP=Math.ceil(filtered.length/PAGE_SIZE);
 
-const TABS = ['Overview', 'NGFS Scenarios', 'Supervisory Mandates', 'Green QE & CSPP', 'Capital Add-ons'];
+  const qData=useMemo(()=>{let d=filtered.map(r=>({name:r.name,region:r.region,greenBondHoldings:r.greenBondHoldings,reserveESGIntegration:r.reserveESGIntegration,greenAssetRatio:r.greenAssetRatio,collateralPolicy:r.collateralPolicy,balanceSheet:r.balanceSheet}));if(qSearch)d=d.filter(r=>r.name.toLowerCase().includes(qSearch.toLowerCase()));d.sort((a,b)=>qDir==='asc'?(a[qSort]>b[qSort]?1:-1):(a[qSort]<b[qSort]?1:-1));return d;},[filtered,qSearch,qSort,qDir]);
+  const qPaged=useMemo(()=>qData.slice((qPage-1)*PAGE_SIZE,qPage*PAGE_SIZE),[qData,qPage]);const qTP=Math.ceil(qData.length/PAGE_SIZE);
 
-const KPI = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 150 }}>
-    <div style={{ fontSize: 11, color: T.textMut, marginBottom: 4, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 700, color: color || PURPLE, lineHeight: 1.1 }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 4 }}>{sub}</div>}
-  </div>
-);
+  const mData=useMemo(()=>{let d=[...MANDATES];if(mSearch)d=d.filter(r=>r.bank.toLowerCase().includes(mSearch.toLowerCase()));d.sort((a,b)=>mDir==='asc'?(a[mSort]>b[mSort]?1:-1):(a[mSort]<b[mSort]?1:-1));return d;},[mSearch,mSort,mDir]);
+  const mPaged=useMemo(()=>mData.slice((mPage-1)*PAGE_SIZE,mPage*PAGE_SIZE),[mData,mPage]);const mTP=Math.ceil(mData.length/PAGE_SIZE);
 
-const Badge = ({ v, map }) => {
-  const cfg = map[v] || { bg: '#f3f4f6', color: T.textSec };
-  return <span style={{ background: cfg.bg, color: cfg.color, borderRadius: 5, padding: '2px 8px', fontSize: 11, fontWeight: 600 }}>{v}</span>;
-};
+  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
+  const doQSort=(col)=>{if(qSort===col)setQDir(d=>d==='asc'?'desc':'asc');else{setQSort(col);setQDir('desc');}setQPage(1);};
+  const doMSort=(col)=>{if(mSort===col)setMDir(d=>d==='asc'?'desc':'asc');else{setMSort(col);setMDir('desc');}setMPage(1);};
 
-const statusMap = {
-  'Active':     { bg: '#dcfce7', color: T.green },
-  'Developing': { bg: '#fef9c3', color: T.amber },
-  'Limited':    { bg: '#fee2e2', color: T.red },
-};
-const alignMap = {
-  'High':   { bg: '#ede9fe', color: PURPLE },
-  'Medium': { bg: '#fef9c3', color: T.amber },
-  'Low':    { bg: '#fee2e2', color: T.red },
-};
-const fsMap = {
-  'Manageable': { bg: '#dcfce7', color: T.green },
-  'Stressed':   { bg: '#fef9c3', color: T.amber },
-  'At Risk':    { bg: '#fed7aa', color: '#c2410c' },
-  'Severe':     { bg: '#fee2e2', color: T.red },
-};
-const catMap = {
-  'Orderly':   { bg: '#dcfce7', color: T.green },
-  'Disorderly':{ bg: '#fed7aa', color: '#c2410c' },
-  'Hot House': { bg: '#fee2e2', color: T.red },
-};
+  const stats=useMemo(()=>({total:filtered.length,ngfs:filtered.filter(r=>r.ngfsStatus==='Member').length,avgScore:(filtered.reduce((s,r)=>s+r.overallScore,0)/filtered.length||0).toFixed(1),stressTest:filtered.filter(r=>r.climateStressTest==='Conducted').length,greenQE:filtered.filter(r=>r.greenQE).length,totalGreen:filtered.reduce((s,r)=>s+r.greenBondHoldings,0)}),[filtered]);
 
-function OverviewTab() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-        <KPI label="CBs with Climate Mandate" value="83%" sub="of NGFS member central banks" color={PURPLE} />
-        <KPI label="Green Bonds in CB Portfolios" value="€344bn" sub="across 6 major central banks" color={T.teal} />
-        <KPI label="Climate Stress Test Frameworks" value="42" sub="jurisdictions globally" color={T.sage} />
-        <KPI label="Avg Proposed Capital Add-on" value="25 bps" sub="Pillar 2 climate risk buffer" color={T.gold} />
+  const ngfsDist=useMemo(()=>{const m={};filtered.forEach(r=>{m[r.ngfsStatus]=(m[r.ngfsStatus]||0)+1;});return Object.entries(m).map(([k,v])=>({name:k,value:v}));},[filtered]);
+  const regionAvg=useMemo(()=>{const m={};filtered.forEach(r=>{if(!m[r.region])m[r.region]={s:0,c:0};m[r.region].s+=r.overallScore;m[r.region].c++;});return Object.entries(m).map(([k,v])=>({region:k,avg:+(v.s/v.c).toFixed(1)})).sort((a,b)=>b.avg-a.avg);},[filtered]);
+
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const k=Object.keys(data[0]);const csv=[k.join(','),...data.map(r=>k.map(c=>`"${r[c]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
+
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
+  const th={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
+  const td_={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
+  const inp={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
+  const sel_={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer'});
+  const pb={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
+  const card={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
+    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button></div>
+    <div style={{padding:'16px 24px'}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+      {[['NGFS Status',item.ngfsStatus],['Overall Score',item.overallScore],['Green QE',item.greenQE?'Yes':'No'],['Climate Mandate',item.climateMandateExplicit?'Explicit':'Implicit'],['Green Bonds','$'+item.greenBondHoldings+'M'],['ESG Integration',item.reserveESGIntegration+'%'],['Stress Test',item.climateStressTest],['Taxonomy',item.taxonomyAdopted],['Disclosure',item.disclosureRequirement],['Collateral',item.collateralPolicy],['Prudential',item.prudentialClimate],['Research Papers',item.researchOutput],['Green Finance',item.greenFinancePolicy],['Supervisory',item.supervisoryExpectation],['Policy Rate',item.policyRate+'%'],['Balance Sheet','$'+item.balanceSheet+'B']].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
+    </div></div>
+  </div>);};
+
+  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
+    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}><div style={{fontSize:20,fontWeight:700,color:T.navy}}>Green Central Banking</div><div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>NGFS &middot; Green QE &middot; Climate Stress Testing &middot; {BANKS.length} Central Banks</div></div>
+    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>{TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}</div>
+    <div style={{padding:'20px 28px'}}>
+
+    {tab===0&&(<div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
+        {[['Central Banks',stats.total,T.navy],['NGFS Members',stats.ngfs,ACCENT],['Avg Score',stats.avgScore,T.green],['Stress Tests Done',stats.stressTest,T.gold],['Green QE Active',stats.greenQE,T.sage],['Total Green','$'+(stats.totalGreen/1000).toFixed(0)+'B',T.amber]].map(([l,v,c],i)=>(<div key={i} style={card}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
       </div>
-
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        <div style={{ flex: 2, minWidth: 300, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 14 }}>Systemic Climate Stress Score — 18-Month Trend</div>
-          <ResponsiveContainer width="100%" height={190}>
-            <AreaChart data={STRESS_TREND} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: T.textMut }} interval={2} />
-              <YAxis tick={{ fontSize: 10, fill: T.textMut }} domain={[20, 60]} />
-              <Tooltip contentStyle={tip} />
-              <Area type="monotone" dataKey="score" stroke={PURPLE} fill={PURPLE_LIGHT} strokeWidth={2} name="Stress Score" />
-              <Area type="monotone" dataKey="threshold" stroke={T.amber} fill="none" strokeDasharray="5 3" strokeWidth={1.5} name="Alert Threshold" />
-            </AreaChart>
-          </ResponsiveContainer>
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:16}}>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Green Finance Trend (24M)</div>
+          <ResponsiveContainer width="100%" height={220}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Area type="monotone" dataKey="greenBonds" stroke={ACCENT} fill={ACCENT} fillOpacity={0.15} name="Green Bond Holdings ($B)"/><Area type="monotone" dataKey="ngfsMembers" stroke={T.sage} fill={T.sage} fillOpacity={0.1} name="NGFS Members"/></AreaChart></ResponsiveContainer>
         </div>
-
-        <div style={{ flex: 1, minWidth: 240, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 14 }}>Green Bond Holdings ($bn)</div>
-          <ResponsiveContainer width="100%" height={190}>
-            <BarChart data={GREEN_QE} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="bank" tick={{ fontSize: 10, fill: T.textMut }} />
-              <YAxis tick={{ fontSize: 10, fill: T.textMut }} />
-              <Tooltip contentStyle={tip} />
-              <Bar dataKey="greenHoldings" name="Holdings $bn" radius={[4,4,0,0]}>
-                {GREEN_QE.map((_, i) => <Cell key={i} fill={i === 0 ? PURPLE : i === 1 ? T.teal : T.sage} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>NGFS Status</div>
+          <ResponsiveContainer width="100%" height={220}><PieChart><Pie data={ngfsDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={40} label={({name,value})=>`${name}: ${value}`} style={{fontSize:9}}>{ngfsDist.map((_,i)=>(<Cell key={i} fill={[T.green,T.gold,T.red][i%3]}/>))}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
+        </div>
+        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Regional Scores</div>
+          <ResponsiveContainer width="100%" height={220}><BarChart data={regionAvg} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9}} domain={[0,100]}/><YAxis dataKey="region" type="category" tick={{fontSize:9}} width={85}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
         </div>
       </div>
+    </div>)}
 
-      <div style={{ background: PURPLE_LIGHT, border: `1px solid #c4b5fd`, borderRadius: 10, padding: '14px 18px' }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: PURPLE, marginBottom: 6 }}>EP-AB3 — Green Central Banking Monitor</div>
-        <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.7 }}>
-          Tracks NGFS Phase IV scenario alignment, supervisory climate mandates, green quantitative easing programmes, and
-          proposed Pillar 2 climate capital add-ons across 10 major central banks. Data sourced from NGFS, BIS, TCFD and
-          individual central bank disclosures updated quarterly.
-        </div>
+    {tab===1&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search banks..." style={inp}/>
+        <select value={regionF} onChange={e=>{setRegionF(e.target.value);setPage(1);}} style={sel_}>{REGIONS.map(r=>(<option key={r}>{r}</option>))}</select>
+        <select value={ngfsF} onChange={e=>{setNgfsF(e.target.value);setPage(1);}} style={sel_}>{NGFS_STATUS.map(r=>(<option key={r}>{r}</option>))}</select>
+        <button onClick={()=>exportCSV(filtered,'central_banks.csv')} style={btnS(false)}>Export CSV</button>
+        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length}</span>
       </div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['name','Central Bank'],['region','Region'],['ngfsStatus','NGFS'],['overallScore','Score'],['climateStressTest','Stress Test'],['greenFinancePolicy','Green Policy'],['prudentialClimate','Prudential'],['disclosureRequirement','Disclosure'],['taxonomyAdopted','Taxonomy']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={th}>{l}{si(k,sortCol,sortDir)}</th>))}
+        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
+          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.region}</td>
+          <td style={td_}><span style={{padding:'2px 6px',borderRadius:4,fontSize:10,background:r.ngfsStatus==='Member'?'rgba(22,163,74,0.12)':'rgba(217,119,6,0.12)',color:r.ngfsStatus==='Member'?T.green:T.amber}}>{r.ngfsStatus}</span></td>
+          <td style={td_}><span style={badge(r.overallScore,[25,50,70])}>{r.overallScore}</span></td>
+          <td style={td_}>{r.climateStressTest}</td><td style={td_}>{r.greenFinancePolicy}</td>
+          <td style={td_}>{r.prudentialClimate}</td><td style={td_}>{r.disclosureRequirement}</td><td style={td_}>{r.taxonomyAdopted}</td>
+        </tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page}/{tP}</span><button disabled={page>=tP} onClick={()=>setPage(p=>p+1)} style={pb}>Next</button></div>
+      <Panel item={selected} onClose={()=>setSelected(null)}/>
+    </div>)}
+
+    {tab===2&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={qSearch} onChange={e=>{setQSearch(e.target.value);setQPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(qData,'green_qe.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{qData.length}</span></div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['name','Bank'],['region','Region'],['greenBondHoldings','Green Bonds $M'],['reserveESGIntegration','ESG Integ.%'],['greenAssetRatio','Green Asset%'],['collateralPolicy','Collateral'],['balanceSheet','Balance $B']].map(([k,l])=>(<th key={k} onClick={()=>doQSort(k)} style={th}>{l}{si(k,qSort,qDir)}</th>))}
+        </tr></thead><tbody>{qPaged.map((r,i)=>(<tr key={i}><td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.region}</td><td style={td_}>${r.greenBondHoldings}M</td><td style={td_}>{r.reserveESGIntegration}%</td><td style={td_}>{r.greenAssetRatio}%</td><td style={td_}>{r.collateralPolicy}</td><td style={td_}>${r.balanceSheet}B</td></tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={qPage<=1} onClick={()=>setQPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {qPage}/{qTP}</span><button disabled={qPage>=qTP} onClick={()=>setQPage(p=>p+1)} style={pb}>Next</button></div>
+      <div style={{...card,marginTop:16}}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Green Bond Holdings vs ESG Integration</div>
+        <ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Green Bonds $M" tick={{fontSize:9}}/><YAxis dataKey="y" name="ESG %" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={qData.map(r=>({name:r.name,x:r.greenBondHoldings,y:r.reserveESGIntegration}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
+      </div>
+    </div>)}
+
+    {tab===3&&(<div>
+      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={mSearch} onChange={e=>{setMSearch(e.target.value);setMPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(mData,'climate_mandates.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{mData.length}</span></div>
+      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
+        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+          {[['bank','Bank'],['region','Region'],['mandateScore','Score'],['legalBasis','Legal Basis'],['lastUpdated','Updated']].map(([k,l])=>(<th key={k} onClick={()=>doMSort(k)} style={th}>{l}{si(k,mSort,mDir)}</th>))}
+          {['Price Stability','Financial Stability','Climate Risk','Green Transition','Biodiversity','Social'].map(l=>(<th key={l} style={{...th,cursor:'default'}}>{l}</th>))}
+        </tr></thead><tbody>{mPaged.map(r=>(<tr key={r.id}>
+          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.bank}</td><td style={td_}>{r.region}</td>
+          <td style={td_}><span style={badge(r.mandateScore,[25,50,70])}>{r.mandateScore}</span></td>
+          <td style={td_}>{r.legalBasis}</td><td style={td_}>{r.lastUpdated}</td>
+          {[r.priceStability,r.financialStability,r.climateRisk,r.greenTransition,r.biodiversity,r.socialObjective].map((v,j)=>(<td key={j} style={td_}><span style={{color:v?T.green:T.textMut,fontWeight:600}}>{v?'Yes':'--'}</span></td>))}
+        </tr>))}</tbody></table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={mPage<=1} onClick={()=>setMPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {mPage}/{mTP}</span><button disabled={mPage>=mTP} onClick={()=>setMPage(p=>p+1)} style={pb}>Next</button></div>
+    </div>)}
+
     </div>
-  );
-}
-
-function NgfsScenariosTab() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, overflow: 'hidden' }}>
-        <div style={{ padding: '14px 18px', borderBottom: `1px solid ${T.border}`, fontSize: 13, fontWeight: 700, color: T.text }}>
-          NGFS Phase IV Scenario Analysis
-        </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr style={{ background: T.surfaceH }}>
-              {['Scenario','Category','Temp by 2100','Physical Risk','Transition Risk','GDP Impact 2050','Financial Stability'].map(h => (
-                <th key={h} style={{ padding: '10px 14px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {NGFS_SCENARIOS.map((s, i) => (
-              <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.surface : T.surfaceH }}>
-                <td style={{ padding: '10px 14px', fontWeight: 600, color: T.text }}>{s.scenario}</td>
-                <td style={{ padding: '10px 14px' }}><Badge v={s.category} map={catMap} /></td>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: s.tempBy2100 <= 1.6 ? T.green : s.tempBy2100 <= 2.6 ? T.amber : T.red }}>{s.tempBy2100}°C</td>
-                <td style={{ padding: '10px 14px' }}><Badge v={s.physicalRisk} map={{ 'Low':{ bg:'#dcfce7',color:T.green },'High':{ bg:'#fed7aa',color:'#c2410c' },'V.High':{ bg:'#fee2e2',color:T.red } }} /></td>
-                <td style={{ padding: '10px 14px' }}><Badge v={s.transitionRisk} map={{ 'High':{ bg:'#fef9c3',color:T.amber },'V.High':{ bg:'#fee2e2',color:T.red },'Low':{ bg:'#dcfce7',color:T.green } }} /></td>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: s.gdpImpact2050 > -2 ? T.amber : T.red }}>{s.gdpImpact2050}%</td>
-                <td style={{ padding: '10px 14px' }}><Badge v={s.financialStability} map={fsMap} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 14 }}>GDP Impact by Scenario (%, 2050)</div>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={NGFS_SCENARIOS} margin={{ top: 4, right: 16, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="scenario" tick={{ fontSize: 10, fill: T.textMut }} width={80} />
-            <YAxis tick={{ fontSize: 10, fill: T.textMut }} domain={[-10, 0]} />
-            <Tooltip contentStyle={tip} />
-            <Bar dataKey="gdpImpact2050" name="GDP Impact %" radius={[4,4,0,0]}>
-              {NGFS_SCENARIOS.map((s, i) => (
-                <Cell key={i} fill={s.gdpImpact2050 > -2 ? T.amber : s.gdpImpact2050 > -5 ? '#f97316' : T.red} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
-
-function SupervisoryMandatesTab() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, overflow: 'hidden' }}>
-        <div style={{ padding: '14px 18px', borderBottom: `1px solid ${T.border}`, fontSize: 13, fontWeight: 700, color: T.text }}>
-          Central Bank Climate Supervisory Landscape
-        </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr style={{ background: T.surfaceH }}>
-              {['Central Bank','Jurisdiction','Green Mandate','Climate Stress Test','NGFS Alignment','Capital Add-on (bps)','Status'].map(h => (
-                <th key={h} style={{ padding: '10px 14px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {CENTRAL_BANKS.map((cb, i) => (
-              <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.surface : T.surfaceH }}>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: T.text }}>{cb.bank}</td>
-                <td style={{ padding: '10px 14px', color: T.textSec }}>{cb.jurisdiction}</td>
-                <td style={{ padding: '10px 14px' }}>
-                  <span style={{ color: cb.greenMandate ? T.green : T.red, fontWeight: 700 }}>{cb.greenMandate ? '✓ Yes' : '✗ No'}</span>
-                </td>
-                <td style={{ padding: '10px 14px' }}>
-                  <span style={{ color: cb.climateStressTest ? T.green : T.red, fontWeight: 700 }}>{cb.climateStressTest ? '✓ Yes' : '✗ No'}</span>
-                </td>
-                <td style={{ padding: '10px 14px' }}><Badge v={cb.ngfsAlignment} map={alignMap} /></td>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: cb.capitalAddOn > 0 ? PURPLE : T.textMut }}>{cb.capitalAddOn > 0 ? cb.capitalAddOn : '—'}</td>
-                <td style={{ padding: '10px 14px' }}><Badge v={cb.status} map={statusMap} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div style={{ display: 'flex', gap: 14 }}>
-        {[
-          { label: 'Active Mandates', value: CENTRAL_BANKS.filter(c => c.greenMandate).length, total: CENTRAL_BANKS.length, color: PURPLE },
-          { label: 'Stress Test Active', value: CENTRAL_BANKS.filter(c => c.climateStressTest).length, total: CENTRAL_BANKS.length, color: T.teal },
-          { label: 'High NGFS Alignment', value: CENTRAL_BANKS.filter(c => c.ngfsAlignment === 'High').length, total: CENTRAL_BANKS.length, color: T.sage },
-        ].map((s, i) => (
-          <div key={i} style={{ flex: 1, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: '16px 20px', textAlign: 'center' }}>
-            <div style={{ fontSize: 28, fontWeight: 800, color: s.color }}>{s.value}/{s.total}</div>
-            <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function GreenQeTab() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 280, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 14 }}>Green Holdings as % of Total QE</div>
-          <ResponsiveContainer width="100%" height={210}>
-            <BarChart data={GREEN_QE} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="bank" tick={{ fontSize: 11, fill: T.textMut }} />
-              <YAxis tick={{ fontSize: 10, fill: T.textMut }} unit="%" />
-              <Tooltip contentStyle={tip} formatter={v => `${v}%`} />
-              <Bar dataKey="pctOfQE" name="% of Total QE" radius={[4,4,0,0]}>
-                {GREEN_QE.map((_, i) => <Cell key={i} fill={[PURPLE, T.teal, T.sage, T.gold, '#f97316', '#0ea5e9'][i % 6]} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div style={{ flex: 1, minWidth: 280, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 14 }}>Carbon Intensity Reduction from Tilting (%)</div>
-          <ResponsiveContainer width="100%" height={210}>
-            <BarChart data={GREEN_QE} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="bank" tick={{ fontSize: 11, fill: T.textMut }} />
-              <YAxis tick={{ fontSize: 10, fill: T.textMut }} unit="%" />
-              <Tooltip contentStyle={tip} formatter={v => `${v}%`} />
-              <Bar dataKey="carbonReduction" name="Carbon Reduction %" radius={[4,4,0,0]}>
-                {GREEN_QE.map((_, i) => <Cell key={i} fill={T.sage} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, overflow: 'hidden' }}>
-        <div style={{ padding: '14px 18px', borderBottom: `1px solid ${T.border}`, fontSize: 13, fontWeight: 700, color: T.text }}>
-          Green QE & CSPP Detail
-        </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr style={{ background: T.surfaceH }}>
-              {['Central Bank','Green Holdings ($bn)','% of Total QE','Tilting Strategy','Carbon Reduction'].map(h => (
-                <th key={h} style={{ padding: '10px 14px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {GREEN_QE.map((g, i) => (
-              <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.surface : T.surfaceH }}>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: T.text }}>{g.bank}</td>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: PURPLE }}>${g.greenHoldings}bn</td>
-                <td style={{ padding: '10px 14px' }}>{g.pctOfQE}%</td>
-                <td style={{ padding: '10px 14px', color: T.textSec }}>{g.tiltingStrategy}</td>
-                <td style={{ padding: '10px 14px' }}>
-                  <span style={{ color: T.green, fontWeight: 700 }}>-{g.carbonReduction}%</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-function CapitalAddOnsTab() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 14 }}>Proposed Climate Capital Add-ons by Jurisdiction (bps)</div>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={CAPITAL_ADDONS} margin={{ top: 4, right: 16, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="jurisdiction" tick={{ fontSize: 11, fill: T.textMut }} />
-            <YAxis tick={{ fontSize: 10, fill: T.textMut }} unit=" bps" domain={[0, 40]} />
-            <Tooltip contentStyle={tip} formatter={v => `${v} bps`} />
-            <Bar dataKey="proposedBps" name="Capital Add-on (bps)" radius={[4,4,0,0]}>
-              {CAPITAL_ADDONS.map((_, i) => (
-                <Cell key={i} fill={_.proposedBps >= 28 ? PURPLE : _.proposedBps >= 20 ? T.teal : T.sage} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, overflow: 'hidden' }}>
-        <div style={{ padding: '14px 18px', borderBottom: `1px solid ${T.border}`, fontSize: 13, fontWeight: 700, color: T.text }}>
-          Pillar 2 Climate Capital Add-on Tracker
-        </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr style={{ background: T.surfaceH }}>
-              {['Jurisdiction','Proposed Add-on','Implementation','Scope','Regulatory Basis'].map(h => (
-                <th key={h} style={{ padding: '10px 14px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {CAPITAL_ADDONS.map((c, i) => (
-              <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.surface : T.surfaceH }}>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: T.text }}>{c.jurisdiction}</td>
-                <td style={{ padding: '10px 14px', fontWeight: 700, color: PURPLE }}>{c.proposedBps} bps</td>
-                <td style={{ padding: '10px 14px', color: T.textSec }}>{c.implementationYear}</td>
-                <td style={{ padding: '10px 14px', color: T.textSec }}>{c.scope}</td>
-                <td style={{ padding: '10px 14px' }}>
-                  <span style={{ background: PURPLE_LIGHT, color: PURPLE, borderRadius: 5, padding: '2px 8px', fontSize: 11, fontWeight: 600 }}>{c.regulatoryBasis}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div style={{ display: 'flex', gap: 14 }}>
-        <KPI label="Avg Capital Add-on" value="25 bps" sub="across 6 jurisdictions" color={PURPLE} />
-        <KPI label="Earliest Implementation" value="2025" sub="UK (PRA) & China (PBoC)" color={T.teal} />
-        <KPI label="Highest Proposed" value="30 bps" sub="EU — CRR3 / CRDVI" color={T.amber} />
-        <KPI label="Jurisdictions Tracked" value={CAPITAL_ADDONS.length} sub="with active proposals" color={T.sage} />
-      </div>
-    </div>
-  );
-}
-
-export default function GreenCentralBankingPage() {
-  const [activeTab, setActiveTab] = useState(0);
-
-  const tabContent = [
-    <OverviewTab key="overview" />,
-    <NgfsScenariosTab key="ngfs" />,
-    <SupervisoryMandatesTab key="supervisory" />,
-    <GreenQeTab key="greenqe" />,
-    <CapitalAddOnsTab key="capital" />,
-  ];
-
-  return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, padding: '24px 28px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <div style={{ background: PURPLE, borderRadius: 8, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontSize: 16 }}>🏦</span>
-          </div>
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: T.text, letterSpacing: '-0.02em' }}>Green Central Banking</div>
-            <div style={{ fontSize: 12, color: T.textSec }}>EP-AB3 — NGFS Scenarios · Supervisory Mandates · Green QE · Capital Add-ons</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: `2px solid ${T.border}`, paddingBottom: 0 }}>
-        {TABS.map((tab, i) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(i)}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              padding: '8px 16px', fontSize: 13, fontWeight: activeTab === i ? 700 : 500,
-              color: activeTab === i ? PURPLE : T.textSec,
-              borderBottom: activeTab === i ? `2px solid ${PURPLE}` : '2px solid transparent',
-              marginBottom: -2, transition: 'all 0.15s', fontFamily: T.font,
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      {tabContent[activeTab]}
-    </div>
-  );
+  </div>);
 }

@@ -1,383 +1,477 @@
-import React, { useState } from 'react';
-import {
-  AreaChart, Area, BarChart, Bar, Cell, LineChart, Line,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from 'recharts';
+import React,{useState,useMemo} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,ScatterChart,Scatter,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const SLATE = '#6366f1';
-const tip = { contentStyle:{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, color:T.text }, labelStyle:{ color:T.textSec } };
-const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontFamily:T.font},labelStyle:{color:T.textSec}};
+const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,T.sageL,'#8b5cf6','#ec4899','#06b6d4'];
+const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const TABS=['City Dashboard','Pollutant Analysis','Health Economics','Regulatory Tracker'];
+const REGIONS=['All','South Asia','East Asia','Southeast Asia','Middle East','Africa','Europe','Americas'];
 
-const TABS = ['Overview','Pollutant Monitor','Corporate Liability','Health Economics','Regulatory Framework'];
+const CITIES=Array.from({length:50},(_,i)=>{
+  const names=['Delhi','Lahore','Dhaka','Kolkata','Chengdu','Jakarta','Karachi','Mumbai','Beijing','Cairo','Lagos','Hanoi','Bangkok','Lima','Santiago','Bogota','Manila','Riyadh','Tehran','Kabul','Accra','Nairobi','Addis Ababa','Ulaanbaatar','Almaty','Tashkent','Kathmandu','Colombo','Yangon','Phnom Penh','Ho Chi Minh','Kuala Lumpur','Singapore','Tokyo','Seoul','Shanghai','Guangzhou','Shenzhen','Taipei','Hong Kong','London','Paris','Berlin','Madrid','Rome','Warsaw','Istanbul','Moscow','Mexico City','Sao Paulo'];
+  const regions=['South Asia','South Asia','South Asia','South Asia','East Asia','Southeast Asia','South Asia','South Asia','East Asia','Middle East','Africa','Southeast Asia','Southeast Asia','Americas','Americas','Americas','Southeast Asia','Middle East','Middle East','South Asia','Africa','Africa','Africa','East Asia','East Asia','East Asia','South Asia','South Asia','Southeast Asia','Southeast Asia','Southeast Asia','Southeast Asia','Southeast Asia','East Asia','East Asia','East Asia','East Asia','East Asia','East Asia','East Asia','Europe','Europe','Europe','Europe','Europe','Europe','Middle East','Europe','Americas','Americas'];
+  const basePM=95-i*1.4+sr(i*7)*12;
+  const baseNO2=48-i*0.6+sr(i*11)*10;
+  const baseSO2=35-i*0.5+sr(i*13)*8;
+  const baseO3=80+sr(i*17)*40;
+  return {
+    id:i+1,city:names[i],region:regions[i],
+    pm25:+basePM.toFixed(1),no2:+baseNO2.toFixed(1),so2:+baseSO2.toFixed(1),o3:+baseO3.toFixed(1),
+    aqi:Math.round(basePM*3.5+sr(i*3)*40),
+    whoCompliant:basePM<15?'Yes':'No',
+    healthCostBn:+(sr(i*19)*25+2).toFixed(1),
+    prematureDeaths:Math.round(sr(i*23)*15000+500),
+    asthmaCases:Math.round(sr(i*29)*80000+5000),
+    copd:Math.round(sr(i*31)*20000+1000),
+    pop:+(sr(i*37)*25+1).toFixed(1),
+    trend:sr(i*41)>0.6?'Improving':sr(i*41)<0.3?'Worsening':'Stable',
+    yoy:+((sr(i*43)-0.5)*12).toFixed(1),
+    regulatoryScore:+(sr(i*47)*40+50).toFixed(0),
+    enforcementGrade:['A','A-','B+','B','B-','C+','C','D'][Math.floor(sr(i*53)*8)]
+  };
+});
 
-const CITIES = [
-  { city:'Delhi',    pm25:92.9, aqi:374, who:0,  hcost:36.2, trend:'▲' },
-  { city:'Lahore',   pm25:86.5, aqi:358, who:0,  hcost:18.7, trend:'▲' },
-  { city:'Dhaka',    pm25:79.9, aqi:312, who:0,  hcost:14.3, trend:'▲' },
-  { city:'Kolkata',  pm25:67.3, aqi:271, who:0,  hcost:12.1, trend:'→' },
-  { city:'Chengdu',  pm25:55.1, aqi:224, who:0,  hcost:21.8, trend:'▼' },
-  { city:'Jakarta',  pm25:49.4, aqi:196, who:0,  hcost:17.4, trend:'→' },
-  { city:'Karachi',  pm25:73.2, aqi:291, who:0,  hcost:11.5, trend:'▲' },
-  { city:'Mumbai',   pm25:46.8, aqi:183, who:2,  hcost:15.9, trend:'▼' },
-];
-
-const PM25_TREND = Array.from({ length:24 }, (_, i) => ({
-  month: `M${i+1}`,
-  pm25: +(25 + sr(i*3)*35).toFixed(1),
+const POLLUTANTS=['PM2.5','PM10','NO2','SO2','O3','CO','Lead','Benzene'];
+const MONTHLY=Array.from({length:36},(_,i)=>({
+  month:`${2023+Math.floor(i/12)}-${String(i%12+1).padStart(2,'0')}`,
+  pm25:+(25+sr(i*3)*45).toFixed(1),no2:+(15+sr(i*7)*30).toFixed(1),
+  so2:+(8+sr(i*11)*20).toFixed(1),o3:+(60+sr(i*13)*50).toFixed(1),
+  aqi:Math.round(100+sr(i*17)*200),whoLimit:5
 }));
 
-const POLLUTANTS = [
-  { name:'PM2.5', source:'Combustion/dust',  avg:35.6, who:5,   ratio:7.12, effect:'Respiratory & cardiovascular disease' },
-  { name:'PM10',  source:'Dust/construction', avg:49.8, who:15,  ratio:3.32, effect:'Lung irritation, reduced function' },
-  { name:'NO₂',   source:'Vehicle emissions', avg:25.3, who:10,  ratio:2.53, effect:'Airway inflammation, asthma' },
-  { name:'SO₂',   source:'Coal/industrial',   avg:18.7, who:40,  ratio:0.47, effect:'Respiratory damage, acid rain' },
-  { name:'O₃',    source:'Photochemical',     avg:102,  who:100, ratio:1.02, effect:'Lung damage, reduced capacity' },
-  { name:'CO',    source:'Incomplete comb.',  avg:2.1,  who:4,   ratio:0.53, effect:'Oxygen deprivation, cardiac' },
-];
-
-const NO2_TREND = Array.from({ length:24 }, (_, i) => ({
-  month: `M${i+1}`,
-  no2: +(15 + sr(i*7+2)*22).toFixed(1),
+const HEALTH_ECON=Array.from({length:50},(_,i)=>({
+  city:CITIES[i].city,region:CITIES[i].region,
+  dalys:Math.round(sr(i*61)*500+50),
+  healthSpend:+(sr(i*67)*8+0.5).toFixed(1),
+  prodLoss:+(sr(i*71)*12+1).toFixed(1),
+  mortalityRate:+(sr(i*73)*15+2).toFixed(1),
+  childAsthma:+(sr(i*79)*25+5).toFixed(1),
+  elderlyImpact:+(sr(i*83)*30+10).toFixed(1),
+  costPerCapita:Math.round(sr(i*89)*800+50),
+  insurancePrem:+(sr(i*97)*35+5).toFixed(1)
 }));
 
-const INDUSTRIES = [
-  { name:'Power & Utilities', ei:8.4, exc:34, lit:82, eu:41, mort:2.3 },
-  { name:'Steel & Metals',    ei:7.1, exc:28, lit:74, eu:55, mort:1.9 },
-  { name:'Cement',            ei:6.8, exc:31, lit:69, eu:47, mort:1.7 },
-  { name:'Chemicals',         ei:5.9, exc:22, lit:63, eu:62, mort:1.4 },
-  { name:'Oil & Gas',         ei:5.2, exc:19, lit:71, eu:68, mort:1.6 },
-  { name:'Transport',         ei:3.8, exc:14, lit:58, eu:72, mort:1.1 },
-  { name:'Agriculture',       ei:2.9, exc:9,  lit:31, eu:81, mort:0.7 },
-  { name:'Mining',            ei:4.6, exc:26, lit:55, eu:53, mort:1.2 },
-];
+const REGULATIONS=Array.from({length:40},(_,i)=>{
+  const countries=['India','Pakistan','Bangladesh','China','Indonesia','Egypt','Nigeria','Vietnam','Thailand','Peru','Chile','Colombia','Philippines','Saudi Arabia','Iran','Afghanistan','Ghana','Kenya','Ethiopia','Mongolia','Kazakhstan','Uzbekistan','Nepal','Sri Lanka','Myanmar','Cambodia','Malaysia','Singapore','Japan','South Korea','UK','France','Germany','Spain','Italy','Poland','Turkey','Brazil','Mexico','USA'];
+  return {
+    id:i+1,country:countries[i],
+    pm25Standard:+(sr(i*101)*40+10).toFixed(0),
+    no2Standard:+(sr(i*103)*30+20).toFixed(0),
+    whoGap:+(sr(i*107)*35).toFixed(1),
+    enforcementScore:+(sr(i*109)*60+30).toFixed(0),
+    penalties:sr(i*113)>0.5?'Strong':'Weak',
+    monitoring:Math.round(sr(i*117)*500+10),
+    lastUpdated:2018+Math.floor(sr(i*119)*8),
+    emissionTradingScheme:sr(i*121)>0.6?'Active':sr(i*121)>0.3?'Planned':'None',
+    cleanAirZones:Math.round(sr(i*127)*20),
+    vehicleStandard:['Euro 6','Euro 5','Euro 4','Euro 3','Euro 2'][Math.floor(sr(i*131)*5)]
+  };
+});
 
-const HEALTH_OUTCOMES = [
-  { name:'Premature Mortality',    burden:6.7,  cost:3420, link:91, avoidable:72 },
-  { name:'Respiratory Disease',    burden:212,  cost:890,  link:78, avoidable:65 },
-  { name:'Cardiovascular Disease', burden:89,   cost:1240, link:62, avoidable:48 },
-  { name:'Lung Cancer',            burden:2.3,  cost:310,  link:29, avoidable:41 },
-  { name:'Child Cognitive Dev.',   burden:44,   cost:580,  link:55, avoidable:58 },
-  { name:'Lost Workdays',          burden:1800, cost:670,  link:43, avoidable:62 },
-];
+const PAGE_SIZE=12;
 
-const ROI_SCENARIOS = [
-  { level:'Moderate (25% reduction)', invest:120, return_:2800, lives:1.2, timeline:'2025–2030' },
-  { level:'Ambitious (50% reduction)', invest:340, return_:7400, lives:3.1, timeline:'2025–2035' },
-  { level:'WHO-Compliant (75% reduc.)', invest:820, return_:18200, lives:5.8, timeline:'2025–2040' },
-];
+export default function AirQualityHealthRiskPage(){
+  const [tab,setTab]=useState(0);
+  const [search,setSearch]=useState('');
+  const [sortCol,setSortCol]=useState('pm25');
+  const [sortDir,setSortDir]=useState('desc');
+  const [regionFilter,setRegionFilter]=useState('All');
+  const [page,setPage]=useState(0);
+  const [selected,setSelected]=useState(null);
+  const [whoOnly,setWhoOnly]=useState(false);
+  const [pollutant,setPollutant]=useState('pm25');
+  const [pmThreshold,setPmThreshold]=useState(35);
+  const [regSearch,setRegSearch]=useState('');
+  const [regSort,setRegSort]=useState('whoGap');
+  const [regDir,setRegDir]=useState('desc');
+  const [regPage,setRegPage]=useState(0);
+  const [healthSort,setHealthSort]=useState('dalys');
+  const [healthDir,setHealthDir]=useState('desc');
+  const [healthPage,setHealthPage]=useState(0);
 
-const REGULATIONS = [
-  { name:'EU Ambient Air Quality Directive', pm25limit:'10 μg/m³', year:2024, enforcement:'Infringement proceedings', timeline:'2030', penalty:'Up to €25M/yr' },
-  { name:'WHO AQG 2021',                     pm25limit:'5 μg/m³',  year:2021, enforcement:'Voluntary / treaty pressure', timeline:'Immediate', penalty:'Reputational' },
-  { name:'US NAAQS',                         pm25limit:'9 μg/m³',  year:2024, enforcement:'EPA enforcement actions', timeline:'2032', penalty:'Up to $70K/day' },
-  { name:'China Air Pollution Prevention',   pm25limit:'35 μg/m³', year:2023, enforcement:'State inspections & fines', timeline:'2025', penalty:'Up to ¥1M/event' },
-  { name:'India NCAP',                       pm25limit:'40 μg/m³', year:2019, enforcement:'CPCB directives', timeline:'2026', penalty:'Facility closure' },
-  { name:'UK Clean Air Strategy',            pm25limit:'10 μg/m³', year:2023, enforcement:'Environment Agency', timeline:'2040', penalty:'Up to £300K' },
-];
+  const doSort=(data,col,dir)=>[...data].sort((a,b)=>dir==='asc'?(a[col]>b[col]?1:-1):(a[col]<b[col]?1:-1));
+  const toggleSort=(col,current,setC,dir,setD)=>{if(current===col)setD(dir==='asc'?'desc':'asc');else{setC(col);setD('desc');}};
 
-const card = (label, value, sub) => (
-  <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:'16px 20px', flex:1, minWidth:160 }}>
-    <div style={{ color:T.textSec, fontSize:11, textTransform:'uppercase', letterSpacing:1 }}>{label}</div>
-    <div style={{ color:T.text, fontSize:22, fontWeight:700, margin:'6px 0 2px' }}>{value}</div>
-    {sub && <div style={{ color:T.textMut, fontSize:11 }}>{sub}</div>}
-  </div>
-);
+  const filteredCities=useMemo(()=>{
+    let d=CITIES.filter(c=>c.city.toLowerCase().includes(search.toLowerCase()));
+    if(regionFilter!=='All')d=d.filter(c=>c.region===regionFilter);
+    if(whoOnly)d=d.filter(c=>c.whoCompliant==='Yes');
+    d=d.filter(c=>c.pm25>=pmThreshold-30);
+    return doSort(d,sortCol,sortDir);
+  },[search,regionFilter,whoOnly,pmThreshold,sortCol,sortDir]);
 
-export default function AirQualityHealthRiskPage() {
-  const [tab, setTab] = useState(0);
+  const pagedCities=filteredCities.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
+  const totalPages=Math.ceil(filteredCities.length/PAGE_SIZE);
 
-  return (
-    <div style={{ background:T.bg, minHeight:'100vh', color:T.text, fontFamily:T.font, padding:24 }}>
-      <div style={{ marginBottom:20 }}>
-        <div style={{ fontSize:22, fontWeight:700, color:T.text }}>Air Quality & Health Risk Analytics</div>
-        <div style={{ color:T.textSec, fontSize:13, marginTop:4 }}>EP-AC6 — Global pollution burden, corporate liability & regulatory compliance</div>
+  const filteredRegs=useMemo(()=>{
+    let d=REGULATIONS.filter(r=>r.country.toLowerCase().includes(regSearch.toLowerCase()));
+    return doSort(d,regSort,regDir);
+  },[regSearch,regSort,regDir]);
+  const pagedRegs=filteredRegs.slice(regPage*PAGE_SIZE,(regPage+1)*PAGE_SIZE);
+  const totalRegPages=Math.ceil(filteredRegs.length/PAGE_SIZE);
+
+  const filteredHealth=useMemo(()=>{
+    let d=HEALTH_ECON.filter(h=>h.city.toLowerCase().includes(search.toLowerCase()));
+    if(regionFilter!=='All')d=d.filter(h=>h.region===regionFilter);
+    return doSort(d,healthSort,healthDir);
+  },[search,regionFilter,healthSort,healthDir]);
+  const pagedHealth=filteredHealth.slice(healthPage*PAGE_SIZE,(healthPage+1)*PAGE_SIZE);
+  const totalHealthPages=Math.ceil(filteredHealth.length/PAGE_SIZE);
+
+  const csvExport=(data,filename)=>{
+    const headers=Object.keys(data[0]);
+    const csv=[headers.join(','),...data.map(r=>headers.map(h=>JSON.stringify(r[h]??'')).join(','))].join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+  };
+
+  const kpi=(label,value,sub)=>(
+    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:1,minWidth:170}}>
+      <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{label}</div>
+      <div style={{fontSize:26,fontWeight:700,color:T.navy,marginTop:4}}>{value}</div>
+      {sub&&<div style={{fontSize:12,color:T.textSec,marginTop:2}}>{sub}</div>}
+    </div>
+  );
+
+  const SortHeader=({label,col,currentCol,dir,onClick})=>(
+    <th onClick={()=>onClick(col)} style={{padding:'10px 12px',textAlign:'left',cursor:'pointer',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',background:T.surfaceH}}>
+      {label}{currentCol===col?(dir==='asc'?' \u25B2':' \u25BC'):''}
+    </th>
+  );
+
+  const renderCityDashboard=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
+        {kpi('Cities Monitored',filteredCities.length)}
+        {kpi('Avg PM2.5',fmt(filteredCities.reduce((a,c)=>a+c.pm25,0)/filteredCities.length||0)+' ug/m3','WHO limit: 5 ug/m3')}
+        {kpi('Total Health Cost','$'+fmt(filteredCities.reduce((a,c)=>a+c.healthCostBn,0))+'B')}
+        {kpi('Premature Deaths',fmt(filteredCities.reduce((a,c)=>a+c.prematureDeaths,0)))}
+        {kpi('WHO Compliant',filteredCities.filter(c=>c.whoCompliant==='Yes').length+'/'+filteredCities.length)}
       </div>
 
-      {/* Tab Bar */}
-      <div style={{ display:'flex', gap:4, borderBottom:'1px solid '+T.border, marginBottom:24 }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{
-            background:'none', border:'none', cursor:'pointer', padding:'10px 16px', fontSize:13, fontWeight:600,
-            color: tab===i ? T.text : T.textSec,
-            borderBottom: tab===i ? '2px solid '+SLATE : '2px solid transparent',
-          }}>{t}</button>
+      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search cities..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
+        <select value={regionFilter} onChange={e=>{setRegionFilter(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text}}>
+          {REGIONS.map(r=><option key={r}>{r}</option>)}
+        </select>
+        <label style={{fontSize:13,color:T.textSec,display:'flex',alignItems:'center',gap:6}}>
+          <input type="checkbox" checked={whoOnly} onChange={e=>setWhoOnly(e.target.checked)}/> WHO compliant only
+        </label>
+        <div style={{fontSize:12,color:T.textSec,display:'flex',alignItems:'center',gap:8}}>
+          PM2.5 min: {pmThreshold} ug/m3
+          <input type="range" min={0} max={80} value={pmThreshold} onChange={e=>setPmThreshold(+e.target.value)} style={{width:120}}/>
+        </div>
+        <button onClick={()=>csvExport(filteredCities,'air_quality_cities.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>PM2.5 by City (Top 20)</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={filteredCities.slice(0,20)} margin={{left:10,right:10}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="city" tick={{fontSize:9,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="pm25" name="PM2.5">{filteredCities.slice(0,20).map((c,i)=><Cell key={i} fill={c.pm25>50?T.red:c.pm25>25?T.amber:T.green}/>)}</Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>AQI vs Health Cost Scatter</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <ScatterChart margin={{left:10,right:10}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="aqi" name="AQI" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis dataKey="healthCostBn" name="Health Cost ($B)" tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip} formatter={(v,n)=>[fmt(v),n]}/>
+              <Scatter data={filteredCities} fill={T.navy} fillOpacity={0.7}/>
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}>
+          <thead>
+            <tr>
+              {[['City','city'],['Region','region'],['PM2.5','pm25'],['NO2','no2'],['AQI','aqi'],['WHO','whoCompliant'],['Health Cost $B','healthCostBn'],['Deaths','prematureDeaths'],['Trend','trend'],['YoY %','yoy']].map(([l,c])=>
+                <SortHeader key={c} label={l} col={c} currentCol={sortCol} dir={sortDir} onClick={c2=>toggleSort(c2,sortCol,setSortCol,sortDir,setSortDir)}/>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {pagedCities.map((c,i)=>(
+              <React.Fragment key={c.id}>
+                <tr onClick={()=>setSelected(selected===c.id?null:c.id)} style={{cursor:'pointer',background:selected===c.id?T.surfaceH:i%2===0?T.surface:'#fafaf8',transition:'background 0.15s'}}>
+                  <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{c.city}</td>
+                  <td style={{padding:'10px 12px',color:T.textSec}}>{c.region}</td>
+                  <td style={{padding:'10px 12px',color:c.pm25>50?T.red:c.pm25>25?T.amber:T.green,fontFamily:T.mono,fontWeight:600}}>{c.pm25}</td>
+                  <td style={{padding:'10px 12px',fontFamily:T.mono}}>{c.no2}</td>
+                  <td style={{padding:'10px 12px',fontFamily:T.mono,color:c.aqi>200?T.red:c.aqi>100?T.amber:T.green}}>{c.aqi}</td>
+                  <td style={{padding:'10px 12px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:11,fontWeight:600,background:c.whoCompliant==='Yes'?'#dcfce7':'#fef2f2',color:c.whoCompliant==='Yes'?T.green:T.red}}>{c.whoCompliant}</span></td>
+                  <td style={{padding:'10px 12px',fontFamily:T.mono}}>${c.healthCostBn}B</td>
+                  <td style={{padding:'10px 12px',fontFamily:T.mono}}>{fmt(c.prematureDeaths)}</td>
+                  <td style={{padding:'10px 12px'}}><span style={{color:c.trend==='Improving'?T.green:c.trend==='Worsening'?T.red:T.amber}}>{c.trend}</span></td>
+                  <td style={{padding:'10px 12px',fontFamily:T.mono,color:c.yoy<0?T.green:T.red}}>{c.yoy>0?'+':''}{c.yoy}%</td>
+                </tr>
+                {selected===c.id&&(
+                  <tr><td colSpan={10} style={{padding:20,background:T.surfaceH,borderTop:`1px solid ${T.border}`}}>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>SO2</span><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{c.so2} ug/m3</div></div>
+                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>O3</span><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{c.o3} ug/m3</div></div>
+                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Population</span><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{c.pop}M</div></div>
+                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Asthma Cases</span><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{fmt(c.asthmaCases)}</div></div>
+                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>COPD Cases</span><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{fmt(c.copd)}</div></div>
+                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Regulatory Score</span><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{c.regulatoryScore}/100</div></div>
+                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Enforcement</span><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{c.enforcementGrade}</div></div>
+                    </div>
+                  </td></tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12}}>
+        <span style={{fontSize:12,color:T.textMut}}>{filteredCities.length} cities</span>
+        <div style={{display:'flex',gap:6}}>
+          <button disabled={page===0} onClick={()=>setPage(page-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:page===0?'default':'pointer',opacity:page===0?0.4:1,fontFamily:T.mono,fontSize:12}}>Prev</button>
+          <span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{page+1}/{totalPages||1}</span>
+          <button disabled={page>=totalPages-1} onClick={()=>setPage(page+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:page>=totalPages-1?'default':'pointer',opacity:page>=totalPages-1?0.4:1,fontFamily:T.mono,fontSize:12}}>Next</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPollutantAnalysis=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+        <select value={pollutant} onChange={e=>setPollutant(e.target.value)} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text}}>
+          {[['pm25','PM2.5'],['no2','NO2'],['so2','SO2'],['o3','O3']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
+        </select>
+        <button onClick={()=>csvExport(MONTHLY,'pollutant_trends.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Monthly Trend: {pollutant.toUpperCase()}</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={MONTHLY}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="month" tick={{fontSize:9,fill:T.textSec}} interval={5}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Area type="monotone" dataKey={pollutant} stroke={T.navy} fill={T.navy} fillOpacity={0.15}/>
+              {pollutant==='pm25'&&<Area type="monotone" dataKey="whoLimit" stroke={T.red} fill="none" strokeDasharray="5 5"/>}
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>AQI Trend</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={MONTHLY}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="month" tick={{fontSize:9,fill:T.textSec}} interval={5}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Line type="monotone" dataKey="aqi" stroke={T.red} strokeWidth={2} dot={false}/>
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Multi-Pollutant Comparison</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={MONTHLY.filter((_,i)=>i%6===0)}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="month" tick={{fontSize:9,fill:T.textSec}}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="pm25" fill={T.navy} name="PM2.5"/>
+              <Bar dataKey="no2" fill={T.gold} name="NO2"/>
+              <Bar dataKey="so2" fill={T.sage} name="SO2"/>
+              <Legend/>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Regional Pollutant Radar</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <RadarChart data={REGIONS.filter(r=>r!=='All').map(r=>{const rc=CITIES.filter(c=>c.region===r);return {region:r,pm25:rc.reduce((a,c)=>a+c.pm25,0)/(rc.length||1),no2:rc.reduce((a,c)=>a+c.no2,0)/(rc.length||1),so2:rc.reduce((a,c)=>a+c.so2,0)/(rc.length||1)};})}>
+              <PolarGrid stroke={T.borderL}/>
+              <PolarAngleAxis dataKey="region" tick={{fontSize:9,fill:T.textSec}}/>
+              <PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}}/>
+              <Radar name="PM2.5" dataKey="pm25" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/>
+              <Radar name="NO2" dataKey="no2" stroke={T.gold} fill={T.gold} fillOpacity={0.2}/>
+              <Legend/>
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderHealthEconomics=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        {kpi('Total DALYs',fmt(filteredHealth.reduce((a,h)=>a+h.dalys,0)))}
+        {kpi('Avg Health Spend','$'+fmt(filteredHealth.reduce((a,h)=>a+parseFloat(h.healthSpend),0)/filteredHealth.length||0)+'B')}
+        {kpi('Total Prod Loss','$'+fmt(filteredHealth.reduce((a,h)=>a+parseFloat(h.prodLoss),0))+'B')}
+      </div>
+      <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+        <button onClick={()=>csvExport(filteredHealth,'health_economics.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>DALYs by City (Top 15)</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={filteredHealth.slice(0,15)} layout="vertical" margin={{left:80}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis type="category" dataKey="city" tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="dalys" fill={T.navy}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Cost per Capita vs Mortality</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <ScatterChart>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="costPerCapita" name="Cost/Capita $" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis dataKey="mortalityRate" name="Mortality Rate" tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Scatter data={filteredHealth} fill={T.red} fillOpacity={0.6}/>
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}>
+          <thead>
+            <tr>
+              {[['City','city'],['DALYs','dalys'],['Health $B','healthSpend'],['Prod Loss $B','prodLoss'],['Mortality','mortalityRate'],['Child Asthma %','childAsthma'],['Elderly %','elderlyImpact'],['$/Capita','costPerCapita']].map(([l,c])=>
+                <SortHeader key={c} label={l} col={c} currentCol={healthSort} dir={healthDir} onClick={c2=>toggleSort(c2,healthSort,setHealthSort,healthDir,setHealthDir)}/>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {pagedHealth.map((h,i)=>(
+              <tr key={h.city} style={{background:i%2===0?T.surface:'#fafaf8'}}>
+                <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{h.city}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{h.dalys}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>${h.healthSpend}B</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>${h.prodLoss}B</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono,color:parseFloat(h.mortalityRate)>10?T.red:T.amber}}>{h.mortalityRate}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{h.childAsthma}%</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{h.elderlyImpact}%</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>${h.costPerCapita}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}>
+        <span style={{fontSize:12,color:T.textMut}}>{filteredHealth.length} records</span>
+        <div style={{display:'flex',gap:6}}>
+          <button disabled={healthPage===0} onClick={()=>setHealthPage(healthPage-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:healthPage===0?'default':'pointer',opacity:healthPage===0?0.4:1,fontFamily:T.mono,fontSize:12}}>Prev</button>
+          <span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{healthPage+1}/{totalHealthPages||1}</span>
+          <button disabled={healthPage>=totalHealthPages-1} onClick={()=>setHealthPage(healthPage+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:healthPage>=totalHealthPages-1?'default':'pointer',opacity:healthPage>=totalHealthPages-1?0.4:1,fontFamily:T.mono,fontSize:12}}>Next</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderRegulatoryTracker=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+        <input value={regSearch} onChange={e=>{setRegSearch(e.target.value);setRegPage(0);}} placeholder="Search countries..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
+        <button onClick={()=>csvExport(filteredRegs,'regulations.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>WHO Gap by Country</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={filteredRegs.slice(0,15)}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="country" tick={{fontSize:9,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/>
+              <YAxis tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="whoGap" name="WHO Gap">{filteredRegs.slice(0,15).map((r,i)=><Cell key={i} fill={parseFloat(r.whoGap)>20?T.red:parseFloat(r.whoGap)>10?T.amber:T.green}/>)}</Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Enforcement vs Standards</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <ScatterChart>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
+              <XAxis dataKey="pm25Standard" name="PM2.5 Standard" tick={{fontSize:10,fill:T.textSec}}/>
+              <YAxis dataKey="enforcementScore" name="Enforcement" tick={{fontSize:10,fill:T.textSec}}/>
+              <Tooltip {...tip}/>
+              <Scatter data={filteredRegs} fill={T.sage} fillOpacity={0.7}/>
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}>
+          <thead>
+            <tr>
+              {[['Country','country'],['PM2.5 Std','pm25Standard'],['NO2 Std','no2Standard'],['WHO Gap','whoGap'],['Enforcement','enforcementScore'],['Penalties','penalties'],['Monitors','monitoring'],['Updated','lastUpdated'],['ETS','emissionTradingScheme'],['Vehicle Std','vehicleStandard']].map(([l,c])=>
+                <SortHeader key={c} label={l} col={c} currentCol={regSort} dir={regDir} onClick={c2=>toggleSort(c2,regSort,setRegSort,regDir,setRegDir)}/>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {pagedRegs.map((r,i)=>(
+              <tr key={r.id} style={{background:i%2===0?T.surface:'#fafaf8'}}>
+                <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{r.country}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{r.pm25Standard}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{r.no2Standard}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono,color:parseFloat(r.whoGap)>20?T.red:T.amber}}>{r.whoGap}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{r.enforcementScore}</td>
+                <td style={{padding:'10px 12px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:11,fontWeight:600,background:r.penalties==='Strong'?'#dcfce7':'#fef2f2',color:r.penalties==='Strong'?T.green:T.red}}>{r.penalties}</span></td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{r.monitoring}</td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{r.lastUpdated}</td>
+                <td style={{padding:'10px 12px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:11,background:r.emissionTradingScheme==='Active'?'#dcfce7':r.emissionTradingScheme==='Planned'?'#fef9c3':'#f3f4f6',color:r.emissionTradingScheme==='Active'?T.green:r.emissionTradingScheme==='Planned'?T.amber:T.textMut}}>{r.emissionTradingScheme}</span></td>
+                <td style={{padding:'10px 12px',fontFamily:T.mono,fontSize:11}}>{r.vehicleStandard}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}>
+        <span style={{fontSize:12,color:T.textMut}}>{filteredRegs.length} countries</span>
+        <div style={{display:'flex',gap:6}}>
+          <button disabled={regPage===0} onClick={()=>setRegPage(regPage-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:regPage===0?'default':'pointer',opacity:regPage===0?0.4:1,fontFamily:T.mono,fontSize:12}}>Prev</button>
+          <span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{regPage+1}/{totalRegPages||1}</span>
+          <button disabled={regPage>=totalRegPages-1} onClick={()=>setRegPage(regPage+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:regPage>=totalRegPages-1?'default':'pointer',opacity:regPage>=totalRegPages-1?0.4:1,fontFamily:T.mono,fontSize:12}}>Next</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return(
+    <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px',color:T.text}}>
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,letterSpacing:1,textTransform:'uppercase'}}>Environmental Health Intelligence</div>
+        <h1 style={{fontSize:28,fontWeight:700,color:T.navy,margin:'4px 0 0'}}>Air Quality & Health Risk</h1>
+      </div>
+      <div style={{display:'flex',gap:4,marginBottom:24,borderBottom:`2px solid ${T.border}`,paddingBottom:0}}>
+        {TABS.map((t,i)=>(
+          <button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${T.gold}`:'2px solid transparent',background:tab===i?T.surface:'transparent',color:tab===i?T.navy:T.textSec,fontFamily:T.font,fontSize:13,fontWeight:tab===i?600:400,cursor:'pointer',transition:'all 0.2s',marginBottom:-2}}>{t}</button>
         ))}
       </div>
-
-      {/* Tab 1 — Overview */}
-      {tab===0 && (
-        <div>
-          <div style={{ display:'flex', gap:14, marginBottom:24, flexWrap:'wrap' }}>
-            {card('Deaths/Year (WHO)','7M','Air pollution-attributable')}
-            {card('Economic Cost','$8.1T','Annual global burden')}
-            {card('PM2.5 Exposure','99%','Population above WHO guideline')}
-            {card('WHO AQG Compliance','3%','Countries meeting guidelines')}
-          </div>
-
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20, marginBottom:24 }}>
-            <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>City Air Quality Index — PM2.5 Hotspots</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['City','PM2.5 (μg/m³)','AQI','WHO %','Health Cost ($bn/yr)','Trend'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {CITIES.map((r,i) => (
-                  <tr key={r.city} style={{ borderBottom:'1px solid '+T.border, background: i%2===0?'transparent':'rgba(255,255,255,0.02)' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:600 }}>{r.city}</td>
-                    <td style={{ padding:'8px 10px', color:T.red }}>{r.pm25}</td>
-                    <td style={{ padding:'8px 10px', color:T.amber }}>{r.aqi}</td>
-                    <td style={{ padding:'8px 10px', color:r.who>10?T.green:T.red }}>{r.who}%</td>
-                    <td style={{ padding:'8px 10px' }}>${r.hcost}bn</td>
-                    <td style={{ padding:'8px 10px', color:r.trend==='▲'?T.red:r.trend==='▼'?T.green:T.amber }}>{r.trend}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-            <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>Global PM2.5 Concentration Trend (24 months)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={PM25_TREND}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill:T.textSec, fontSize:11 }} interval={3} />
-                <YAxis tick={{ fill:T.textSec, fontSize:11 }} domain={[20,65]} unit=" μg" />
-                <Tooltip {...tip} />
-                <Area type="monotone" dataKey="pm25" stroke={SLATE} fill={SLATE+'33'} strokeWidth={2} name="PM2.5" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2 — Pollutant Monitor */}
-      {tab===1 && (
-        <div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20, marginBottom:24 }}>
-            <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>Pollutant Profiles & WHO Exceedance</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['Pollutant','Primary Source','Global Avg','WHO Guideline','Exceedance Ratio','Health Effect'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {POLLUTANTS.map((p,i) => (
-                  <tr key={p.name} style={{ borderBottom:'1px solid '+T.border, background: i%2===0?'transparent':'rgba(255,255,255,0.02)' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:600, color:SLATE }}>{p.name}</td>
-                    <td style={{ padding:'8px 10px', color:T.textSec }}>{p.source}</td>
-                    <td style={{ padding:'8px 10px' }}>{p.avg}</td>
-                    <td style={{ padding:'8px 10px', color:T.green }}>{p.who}</td>
-                    <td style={{ padding:'8px 10px', color:p.ratio>5?T.red:p.ratio>2?T.amber:T.green, fontWeight:700 }}>{p.ratio}x</td>
-                    <td style={{ padding:'8px 10px', color:T.textSec, fontSize:12 }}>{p.effect}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
-            <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-              <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>WHO Exceedance Ratio by Pollutant</div>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={POLLUTANTS} margin={{ left:-10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
-                  <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="x" />
-                  <Tooltip {...tip} />
-                  <Bar dataKey="ratio" name="Exceedance Ratio">
-                    {POLLUTANTS.map((p,i) => (
-                      <Cell key={i} fill={p.ratio>5?T.red:p.ratio>2?T.amber:T.green} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-              <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>NO₂ Concentration Trend (24 months)</div>
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={NO2_TREND}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="month" tick={{ fill:T.textSec, fontSize:11 }} interval={3} />
-                  <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit=" μg" />
-                  <Tooltip {...tip} />
-                  <Line type="monotone" dataKey="no2" stroke={T.amber} strokeWidth={2} dot={false} name="NO₂" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3 — Corporate Liability */}
-      {tab===2 && (
-        <div>
-          <div style={{ display:'flex', gap:14, marginBottom:24, flexWrap:'wrap' }}>
-            {card('Annual Corporate Fines','$47bn','Air quality violations')}
-            {card('Pending Litigation','312 cases','Active air quality suits')}
-            {card('Avg Settlement','$180M','Per resolved case')}
-          </div>
-
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20, marginBottom:24 }}>
-            <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>Industry Air Emission Liability Metrics</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['Industry','Emission Intensity (t/$M rev)','Reg. Exceedances %','Litigation Risk','EU IPPC %','Mortality/$bn output'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {INDUSTRIES.map((r,i) => (
-                  <tr key={r.name} style={{ borderBottom:'1px solid '+T.border, background: i%2===0?'transparent':'rgba(255,255,255,0.02)' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:600 }}>{r.name}</td>
-                    <td style={{ padding:'8px 10px', color:r.ei>6?T.red:r.ei>4?T.amber:T.green }}>{r.ei}</td>
-                    <td style={{ padding:'8px 10px', color:r.exc>25?T.red:T.amber }}>{r.exc}%</td>
-                    <td style={{ padding:'8px 10px' }}>
-                      <div style={{ background:T.border, borderRadius:4, height:6, width:'100%' }}>
-                        <div style={{ background:r.lit>70?T.red:r.lit>50?T.amber:T.green, borderRadius:4, height:6, width:r.lit+'%' }} />
-                      </div>
-                      <span style={{ fontSize:11, color:T.textSec }}>{r.lit}/100</span>
-                    </td>
-                    <td style={{ padding:'8px 10px', color:r.eu>65?T.green:T.amber }}>{r.eu}%</td>
-                    <td style={{ padding:'8px 10px', color:T.red }}>{r.mort}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-            <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>Emission Intensity by Industry (t/$M revenue)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={INDUSTRIES} margin={{ left:-10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} interval={0} angle={-15} textAnchor="end" height={50} />
-                <YAxis tick={{ fill:T.textSec, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="ei" name="Emission Intensity">
-                  {INDUSTRIES.map((r,i) => (
-                    <Cell key={i} fill={r.ei>6?T.red:r.ei>4?T.amber:T.green} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4 — Health Economics */}
-      {tab===3 && (
-        <div>
-          <div style={{ background:T.navy, border:'1px solid '+T.border, borderRadius:10, padding:16, marginBottom:20, display:'flex', alignItems:'center', gap:12 }}>
-            <div style={{ fontSize:28, fontWeight:800, color:T.gold }}>$30</div>
-            <div>
-              <div style={{ fontWeight:600, color:T.text }}>Return for every $1 invested in clean air (WHO)</div>
-              <div style={{ color:T.textSec, fontSize:12 }}>Benefits from reduced mortality, healthcare costs and productivity gains</div>
-            </div>
-          </div>
-
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:24 }}>
-            <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-              <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>Health Outcomes — Economic Cost ($bn/yr)</div>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={HEALTH_OUTCOMES} layout="vertical" margin={{ left:10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis type="number" tick={{ fill:T.textSec, fontSize:11 }} unit="bn" />
-                  <YAxis type="category" dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} width={130} />
-                  <Tooltip {...tip} />
-                  <Bar dataKey="cost" name="Economic Cost ($bn)">
-                    {HEALTH_OUTCOMES.map((h,i) => (
-                      <Cell key={i} fill={[SLATE,T.red,T.amber,T.teal,T.sage,T.gold][i%6]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-              <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>Health Burden Summary</div>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-                <thead>
-                  <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                    {['Outcome','Pollution Link %','Avoidable %'].map(h => (
-                      <th key={h} style={{ textAlign:'left', padding:'5px 8px', fontWeight:500 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {HEALTH_OUTCOMES.map((h,i) => (
-                    <tr key={h.name} style={{ borderBottom:'1px solid '+T.border }}>
-                      <td style={{ padding:'7px 8px', fontSize:11 }}>{h.name}</td>
-                      <td style={{ padding:'7px 8px', color:h.link>70?T.red:h.link>40?T.amber:T.green }}>{h.link}%</td>
-                      <td style={{ padding:'7px 8px', color:T.sage }}>{h.avoidable}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:20 }}>
-            <div style={{ fontWeight:600, marginBottom:14, fontSize:14 }}>Clean Air Investment ROI Scenarios</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
-              <thead>
-                <tr style={{ color:T.textSec, borderBottom:'1px solid '+T.border }}>
-                  {['Intervention Level','Investment ($bn)','Return ($bn)','Lives Saved (M)','Timeline'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', fontWeight:500 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ROI_SCENARIOS.map((s,i) => (
-                  <tr key={i} style={{ borderBottom:'1px solid '+T.border, background: i%2===0?'transparent':'rgba(255,255,255,0.02)' }}>
-                    <td style={{ padding:'8px 10px', fontWeight:600 }}>{s.level}</td>
-                    <td style={{ padding:'8px 10px', color:T.amber }}>${s.invest}bn</td>
-                    <td style={{ padding:'8px 10px', color:T.green }}>${s.return_}bn</td>
-                    <td style={{ padding:'8px 10px', color:T.teal }}>{s.lives}M</td>
-                    <td style={{ padding:'8px 10px', color:T.textSec }}>{s.timeline}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5 — Regulatory Framework */}
-      {tab===4 && (
-        <div>
-          <div style={{ display:'flex', gap:14, marginBottom:24, flexWrap:'wrap' }}>
-            {card('WHO AQG Compliance','3%','Jurisdictions meeting guidelines')}
-            {card('Binding Standards','142','Countries with PM2.5 rules')}
-            {card('Global Investment','$340bn/yr','Clean air compliance spend')}
-          </div>
-
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-            {REGULATIONS.map((r,i) => (
-              <div key={i} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:10, padding:18 }}>
-                <div style={{ fontWeight:700, fontSize:13, color:T.text, marginBottom:8 }}>{r.name}</div>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6, fontSize:12 }}>
-                  <div><span style={{ color:T.textSec }}>PM2.5 Limit: </span><span style={{ color:T.green, fontWeight:600 }}>{r.pm25limit}</span></div>
-                  <div><span style={{ color:T.textSec }}>Revised: </span><span style={{ color:T.text }}>{r.year}</span></div>
-                  <div style={{ gridColumn:'1/-1' }}><span style={{ color:T.textSec }}>Enforcement: </span><span style={{ color:T.amber }}>{r.enforcement}</span></div>
-                  <div><span style={{ color:T.textSec }}>Timeline: </span><span style={{ color:SLATE }}>{r.timeline}</span></div>
-                  <div><span style={{ color:T.textSec }}>Penalty: </span><span style={{ color:T.red, fontSize:11 }}>{r.penalty}</span></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {tab===0&&renderCityDashboard()}
+      {tab===1&&renderPollutantAnalysis()}
+      {tab===2&&renderHealthEconomics()}
+      {tab===3&&renderRegulatoryTracker()}
     </div>
   );
 }
