@@ -308,7 +308,7 @@ export default function CalculationEngineMonitorPage() {
                     <div style={{fontSize:11,color:T.textMut,marginBottom:8}}>{eng.desc}</div>
                     <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,fontSize:10}}>
                       <div><span style={{color:T.textMut}}>Avg: </span><span style={sty.mono}>{fmtMs(eng.avgDuration)}</span></div>
-                      <div><span style={{color:T.textMut}}>Success: </span><span style={{color:eng.successRate>=95?T.green:eng.successRate>=85?T.amber:T.red,fontWeight:600}}>{eng.successRate.toFixed(1)}%</span></div>
+                      <div><span style={{color:T.textMut}}>Success: </span><span style={{color:(eng.successRate||0)>=95?T.green:(eng.successRate||0)>=85?T.amber:T.red,fontWeight:600}}>{(eng.successRate||0).toFixed(1)}%</span></div>
                       <div><span style={{color:T.textMut}}>Last: </span><span style={sty.mono}>{timeAgo(eng.lastExec)}</span></div>
                       <div><span style={{color:T.textMut}}>Input: </span><span style={{color:eng.inputReady?T.green:T.red}}>{eng.inputReady?'Ready':'Stale'}</span></div>
                     </div>
@@ -352,7 +352,7 @@ export default function CalculationEngineMonitorPage() {
                         <td style={{...sty.td,fontFamily:T.font}}>{eng.name}</td>
                         <td style={sty.td}><span style={sty.tag(T.navyL)}>{eng.category}</span></td>
                         <td style={sty.td}><span style={sty.badge(STATUS_COLORS[status])}>{status}</span></td>
-                        <td style={sty.td}><span style={{color:eng.successRate>=95?T.green:T.amber}}>{eng.successRate.toFixed(1)}%</span></td>
+                        <td style={sty.td}><span style={{color:(eng.successRate||0)>=95?T.green:T.amber}}>{(eng.successRate||0).toFixed(1)}%</span></td>
                         <td style={sty.td}>{fmtMs(eng.avgDuration)}</td>
                         <td style={sty.td}>{timeAgo(eng.lastExec)}</td>
                         <td style={sty.td}><button style={{...sty.btn(false),padding:'3px 8px',fontSize:10}} onClick={()=>runEngine(eng.id)} disabled={isRunning}>{isRunning?'...':'Run'}</button></td>
@@ -593,9 +593,9 @@ export default function CalculationEngineMonitorPage() {
                       <td style={{...sty.td,fontFamily:T.font}}>{t.engineName}</td>
                       <td style={sty.td}>{t.entity}</td>
                       <td style={sty.td}><span style={sty.tag(T.navyL)}>{t.metric}</span></td>
-                      <td style={sty.td}>{t.expected.toFixed(4)}</td>
-                      <td style={sty.td}>{t.actual.toFixed(4)}</td>
-                      <td style={sty.td}><span style={{color:t.pass?T.green:T.red,fontWeight:600}}>{t.delta.toFixed(4)}</span></td>
+                      <td style={sty.td}>{(t.expected||0).toFixed(4)}</td>
+                      <td style={sty.td}>{(t.actual||0).toFixed(4)}</td>
+                      <td style={sty.td}><span style={{color:t.pass?T.green:T.red,fontWeight:600}}>{(t.delta||0).toFixed(4)}</span></td>
                       <td style={sty.td}>{(t.tolerance*100).toFixed(0)}%</td>
                       <td style={sty.td}><span style={sty.badge(t.pass?T.green:T.red)}>{t.pass?'PASS':'FAIL'}</span></td>
                     </tr>
