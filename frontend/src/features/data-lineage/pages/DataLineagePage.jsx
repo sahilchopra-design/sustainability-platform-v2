@@ -8,6 +8,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
    ══════════════════════════════════════════════════════════════ */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
 const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 const LS_PORTFOLIO = 'ra_portfolio_v1';
@@ -107,11 +110,11 @@ const generateAuditEntries = () => {
   const sources = ['BRSR Sync','EODHD API','Manual Override','Computed','Alpha Vantage'];
   const baseDate = new Date('2025-03-25T12:00:00Z');
   for (let i = 0; i < 40; i++) {
-    const d = new Date(baseDate.getTime() - i * 3600000 * (Math.random()*12+1));
-    const field = fields[Math.floor(Math.random()*fields.length)];
-    const prevVal = (Math.random()*80+10).toFixed(1);
-    const newVal = (parseFloat(prevVal) + (Math.random()-0.5)*20).toFixed(1);
-    entries.push({ timestamp:d.toISOString(), company:companies[Math.floor(Math.random()*companies.length)], field, source:sources[Math.floor(Math.random()*sources.length)], prev_value:prevVal, new_value:newVal, change_pct:((newVal-prevVal)/prevVal*100).toFixed(1) });
+    const d = new Date(baseDate.getTime() - i * 3600000 * (sr(_sc++)*12+1));
+    const field = fields[Math.floor(sr(_sc++)*fields.length)];
+    const prevVal = (sr(_sc++)*80+10).toFixed(1);
+    const newVal = (parseFloat(prevVal) + (sr(_sc++)-0.5)*20).toFixed(1);
+    entries.push({ timestamp:d.toISOString(), company:companies[Math.floor(sr(_sc++)*companies.length)], field, source:sources[Math.floor(sr(_sc++)*sources.length)], prev_value:prevVal, new_value:newVal, change_pct:((newVal-prevVal)/prevVal*100).toFixed(1) });
   }
   return entries.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 };

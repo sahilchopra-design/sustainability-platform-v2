@@ -11,6 +11,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
    ═══════════════════════════════════════════════════════════════ */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const PIE_COLORS = ['#1b3a5c','#c5a96a','#5a8a6a','#0284c7','#7c3aed','#0d9488','#d97706','#dc2626','#2563eb','#ec4899','#f59e0b','#4b5563','#6b7280','#16a34a','#9333ea'];
 const ESG_TIER_COLORS = { high:T.green, medium:T.gold, low:T.red };
 
@@ -405,7 +408,7 @@ export default function PrivateCreditPage() {
               <div style={{ marginTop:10 }}>
                 <div style={{ fontSize:11, fontWeight:600, color:T.textSec, marginBottom:4 }}>Sustainability Performance Targets (SPTs):</div>
                 {f.esg_kpis.map((kpi, i) => {
-                  const onTrack = Math.random() > 0.3;
+                  const onTrack = sr(_sc++) > 0.3;
                   return (
                     <div key={i} style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
                       <span style={{ width:16, height:16, borderRadius:'50%', background: onTrack ? T.green : T.red, display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:10, color:'#fff' }}>

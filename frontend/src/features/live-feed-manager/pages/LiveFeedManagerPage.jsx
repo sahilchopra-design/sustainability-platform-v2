@@ -8,6 +8,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
    ══════════════════════════════════════════════════════════════ */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
 const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 const LS_PORTFOLIO = 'ra_portfolio_v1';
@@ -154,7 +157,7 @@ export default function LiveFeedManagerPage() {
     setRefreshing(prev => ({ ...prev, [exch]:true }));
     setTimeout(() => {
       setRefreshing(prev => ({ ...prev, [exch]:false }));
-      setFeedLog(prev => [{ timestamp:new Date().toISOString(), exchange:exch, records:Math.floor(Math.random()*50)+10, duration:`${(Math.random()*3+0.5).toFixed(1)}s`, status:'success' }, ...prev]);
+      setFeedLog(prev => [{ timestamp:new Date().toISOString(), exchange:exch, records:Math.floor(sr(_sc++)*50)+10, duration:`${(sr(_sc++)*3+0.5).toFixed(1)}s`, status:'success' }, ...prev]);
     }, 2000);
   };
 
@@ -791,7 +794,7 @@ export default function LiveFeedManagerPage() {
             </thead>
             <tbody>
               {EXCHANGE_FEEDS.map((f, i) => {
-                const days = Array(7).fill(0).map(() => Math.random() > 0.08 ? 'ok' : Math.random() > 0.5 ? 'slow' : 'fail');
+                const days = Array(7).fill(0).map(() => sr(_sc++) > 0.08 ? 'ok' : sr(_sc++) > 0.5 ? 'slow' : 'fail');
                 const successPct = Math.round(days.filter(d => d === 'ok').length / 7 * 100);
                 return (
                   <tr key={i} style={{ background:i%2===0?'transparent':T.surfaceH }}>
@@ -1003,13 +1006,13 @@ function generateInitialLog() {
   const log = [];
   const baseDate = new Date('2025-03-25T06:00:00Z');
   for (let i = 0; i < 30; i++) {
-    const d = new Date(baseDate.getTime() - i * 3600000 * (Math.random() * 4 + 1));
+    const d = new Date(baseDate.getTime() - i * 3600000 * (sr(_sc++) * 4 + 1));
     log.push({
       timestamp: d.toISOString(),
-      exchange: exchanges[Math.floor(Math.random() * exchanges.length)],
-      records: Math.floor(Math.random() * 80) + 5,
-      duration: `${(Math.random() * 4 + 0.3).toFixed(1)}s`,
-      status: Math.random() > 0.1 ? 'success' : 'error',
+      exchange: exchanges[Math.floor(sr(_sc++) * exchanges.length)],
+      records: Math.floor(sr(_sc++) * 80) + 5,
+      duration: `${(sr(_sc++) * 4 + 0.3).toFixed(1)}s`,
+      status: sr(_sc++) > 0.1 ? 'success' : 'error',
     });
   }
   return log.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));

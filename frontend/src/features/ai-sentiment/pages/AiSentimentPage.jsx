@@ -5,6 +5,9 @@ import { GLOBAL_COMPANY_MASTER, EXCHANGES, globalSearch } from '../../../data/gl
 
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ── Static seed articles ───────────────────────────────────────── */
 const SEED_ARTICLES = [
   { id:'S001', date:'2025-03-20', company:'Reliance Industries', ticker:'RELIANCE', sector:'Energy', headline:'Reliance announces $10B green hydrogen investment in Gujarat', sentiment:0.85, category:'E', keywords:['green hydrogen','renewable','investment'], source:'Bloomberg' },
@@ -53,7 +56,7 @@ const generatePortfolioSentiment = (holdings) => {
       headline: isPositive
         ? `${c.name || h.name} ESG score at ${c.esg_score || 'N/A'}/100 ${c.sbti_committed ? '- SBTi validated' : '- improving trajectory'}`
         : `${c.name || h.name} faces climate transition challenges - T-Risk score ${c.transition_risk_score || 'N/A'}/100`,
-      sentiment: isPositive ? 0.3 + Math.random() * 0.5 : -0.2 - Math.random() * 0.5,
+      sentiment: isPositive ? 0.3 + sr(_sc++) * 0.5 : -0.2 - sr(_sc++) * 0.5,
       category: 'E',
       keywords: isPositive ? ['ESG leader', 'SBTi', 'transition'] : ['transition risk', 'high carbon', 'engagement needed'],
       source: 'Portfolio Analysis',

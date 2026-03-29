@@ -9,6 +9,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 /* ── Theme ──────────────────────────────────────────────────────────────────── */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ── Data Source Registry ───────────────────────────────────────────────────── */
 const DATA_SOURCES = [
   { id: 'eodhd', name: 'EODHD Financial Data', type: 'REST API', status: 'active', tier: 'free', url: 'https://eodhd.com/api', endpoints: ['fundamentals', 'eod-prices', 'bulk-fundamentals', 'bond-fundamentals'], coverage: '70+ exchanges, 100K+ instruments', refresh_rate: 'Daily EOD', cache_ttl_hrs: 24, rate_limit: '20 req/day (free)', auth: 'API Key', data_fields: ['revenue', 'market_cap', 'employees', 'esg_score', 'description', 'sector', 'industry'], companies_covered: 656, last_call: null, errors_24h: 0, avg_latency_ms: 450 },
@@ -65,9 +68,9 @@ const KPICard = ({ label, value, sub, color = T.navy, icon }) => (
 /* ── Generate simulated timeline data ───────────────────────────────────────── */
 const genTimeline = () => Array.from({ length: 24 }, (_, i) => ({
   hour: `${String(i).padStart(2, '0')}:00`,
-  latency: 200 + Math.round(Math.random() * 400 + Math.sin(i / 3) * 150),
-  errors: Math.random() < 0.15 ? Math.ceil(Math.random() * 3) : 0,
-  calls: 5 + Math.round(Math.random() * 15),
+  latency: 200 + Math.round(sr(_sc++) * 400 + Math.sin(i / 3) * 150),
+  errors: sr(_sc++) < 0.15 ? Math.ceil(sr(_sc++) * 3) : 0,
+  calls: 5 + Math.round(sr(_sc++) * 15),
 }));
 
 /* ── Data Coverage Fields ───────────────────────────────────────────────────── */
@@ -109,7 +112,7 @@ export default function ApiOrchestrationPage() {
 
   /* Computed stats --------------------------------------------------------- */
   const activeSources = sources.filter(s => s.status === 'active').length;
-  const totalCalls24 = sources.reduce((s, d) => s + (d.calls_24h || Math.round(Math.random() * 20)), 0);
+  const totalCalls24 = sources.reduce((s, d) => s + (d.calls_24h || Math.round(sr(_sc++) * 20)), 0);
   const totalErrors24 = sources.reduce((s, d) => s + d.errors_24h, 0);
   const avgLatency = Math.round(sources.filter(s => s.avg_latency_ms > 0).reduce((a, s) => a + s.avg_latency_ms, 0) / Math.max(1, sources.filter(s => s.avg_latency_ms > 0).length));
   const companiesCov = sources.filter(s => typeof s.companies_covered === 'number').reduce((a, s) => a + s.companies_covered, 0);
@@ -122,24 +125,24 @@ export default function ApiOrchestrationPage() {
   /* Rate limit simulation ------------------------------------------------- */
   const rateLimits = useMemo(() => sources.filter(s => s.status !== 'planned').map(s => {
     const max = s.id === 'eodhd' ? 20 : s.id === 'alphavantage' ? 500 : s.id === 'openfigi' ? 1200 : 9999;
-    const used = Math.round(Math.random() * max * 0.6);
+    const used = Math.round(sr(_sc++) * max * 0.6);
     return { id: s.id, name: s.name, used, max, pct: Math.round(used / max * 100) };
   }), [sources]);
 
   /* Cache management ------------------------------------------------------- */
   const cacheInfo = useMemo(() => sources.filter(s => s.cache_ttl_hrs > 0).map(s => {
-    const size = Math.round(Math.random() * 500 + 50);
-    return { id: s.id, name: s.name, ttl: s.cache_ttl_hrs, size_kb: size, hit_rate: Math.round(60 + Math.random() * 35), last_cleared: null };
+    const size = Math.round(sr(_sc++) * 500 + 50);
+    return { id: s.id, name: s.name, ttl: s.cache_ttl_hrs, size_kb: size, hit_rate: Math.round(60 + sr(_sc++) * 35), last_cleared: null };
   }), [sources]);
 
   /* Pipeline Run ----------------------------------------------------------- */
   const runPipeline = useCallback((pipeId) => {
     setRunningPipe(pipeId);
     setPipelines(prev => prev.map(p => p.id === pipeId ? { ...p, status: 'running', last_run: nowISO() } : p));
-    const dur = 1500 + Math.round(Math.random() * 3000);
+    const dur = 1500 + Math.round(sr(_sc++) * 3000);
     setTimeout(() => {
-      const records = 50 + Math.round(Math.random() * 500);
-      const hasErr = Math.random() < 0.1;
+      const records = 50 + Math.round(sr(_sc++) * 500);
+      const hasErr = sr(_sc++) < 0.1;
       const status = hasErr ? 'error' : 'success';
       setPipelines(prev => prev.map(p => p.id === pipeId ? { ...p, status, records_processed: p.records_processed + records, errors: p.errors + (hasErr ? 1 : 0), duration_ms: dur } : p));
       setPipelineLog(prev => [...prev, { id: Date.now(), pipeline: pipeId, timestamp: nowISO(), status, records, duration_ms: dur, errors: hasErr ? 1 : 0 }]);
@@ -780,7 +783,7 @@ export default function ApiOrchestrationPage() {
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={sources.filter(s => s.status !== 'planned').map(s => ({
             name: s.name.split(' ')[0],
-            calls: s.calls_24h || Math.round(Math.random() * 20 + 2),
+            calls: s.calls_24h || Math.round(sr(_sc++) * 20 + 2),
             errors: s.errors_24h,
             latency: s.avg_latency_ms,
           }))}>
@@ -848,7 +851,7 @@ export default function ApiOrchestrationPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
           {sources.filter(s => s.status !== 'planned').map(s => {
             const errorRate = s.errors_24h;
-            const totalCalls = s.calls_24h || Math.round(Math.random() * 20 + 2);
+            const totalCalls = s.calls_24h || Math.round(sr(_sc++) * 20 + 2);
             const errPct = totalCalls > 0 ? (errorRate / totalCalls * 100).toFixed(1) : '0.0';
             const healthStatus = errorRate === 0 ? 'Healthy' : errorRate < 3 ? 'Warning' : 'Critical';
             const healthColor = errorRate === 0 ? T.green : errorRate < 3 ? T.amber : T.red;

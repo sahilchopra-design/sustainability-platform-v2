@@ -11,6 +11,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
    ══════════════════════════════════════════════════════════════ */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
 const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 const LS_PORT = 'ra_portfolio_v1';
@@ -250,7 +253,7 @@ export default function ScheduledReportsPage() {
 
   /* ── Actions ── */
   const runNow = useCallback((schedId) => {
-    const entry = { schedule_id: schedId, timestamp: new Date().toISOString(), status: 'completed', duration_sec: Math.round(60 + Math.random() * 200), report_size_kb: Math.round(1000 + Math.random() * 5000), error: null };
+    const entry = { schedule_id: schedId, timestamp: new Date().toISOString(), status: 'completed', duration_sec: Math.round(60 + sr(_sc++) * 200), report_size_kb: Math.round(1000 + sr(_sc++) * 5000), error: null };
     setExecLog(prev => [entry, ...prev]);
     setSchedules(prev => prev.map(s => s.id === schedId ? { ...s, last_run: new Date().toISOString(), status: 'scheduled' } : s));
   }, []);

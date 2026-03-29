@@ -23,6 +23,9 @@ const T = {
   amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
 };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ── Transition Recommendations ── */
 const TRANSITION_PATHS = [
   { from: 'Beef 2x/week', to: 'Chicken 2x/week', carbon_save_annual_kg: 1050, cost_save_annual_usd: 200, difficulty: 'Easy', health_impact: 'Neutral', category: 'Food' },
@@ -96,16 +99,16 @@ function generateDemoTransactions() {
   const txns = [];
   for (let m = 1; m <= 12; m++) {
     const month = String(m).padStart(2, '0');
-    const count = 8 + Math.floor(Math.random() * 8);
+    const count = 8 + Math.floor(sr(_sc++) * 8);
     for (let i = 0; i < count; i++) {
-      const cat = cats[Math.floor(Math.random() * cats.length)];
-      const desc = descs[cat][Math.floor(Math.random() * descs[cat].length)];
-      const amt = +(5 + Math.random() * 150).toFixed(2);
+      const cat = cats[Math.floor(sr(_sc++) * cats.length)];
+      const desc = descs[cat][Math.floor(sr(_sc++) * descs[cat].length)];
+      const amt = +(5 + sr(_sc++) * 150).toFixed(2);
       const carbonBase = cat === 'Food' ? 0.8 : cat === 'Transport' ? 1.2 : cat === 'Home' ? 0.5 : cat === 'Shopping' ? 0.3 : 0.15;
-      const carbon = +(amt * carbonBase * (0.5 + Math.random())).toFixed(2);
+      const carbon = +(amt * carbonBase * (0.5 + sr(_sc++))).toFixed(2);
       txns.push({
         id: `demo-${m}-${i}`,
-        date: `2024-${month}-${String(1 + Math.floor(Math.random() * 28)).padStart(2, '0')}`,
+        date: `2024-${month}-${String(1 + Math.floor(sr(_sc++) * 28)).padStart(2, '0')}`,
         description: desc, category: cat, amount_usd: amt, carbon_kg: carbon, source: 'demo',
       });
     }

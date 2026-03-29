@@ -5,6 +5,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ── Feature Definitions ──────────────────────────────────────── */
 const FEATURES = [
   { id: 'ghg_intensity', name: 'GHG Intensity', desc: 'tCO2e per USD Mn revenue', weight: 0.20, direction: 'lower_better', min: 0, max: 500, default: 100 },
@@ -201,7 +204,7 @@ export default function PredictiveEsgPage() {
     if (rows.length < 10) return;
 
     // Shuffle and split 80/20
-    const shuffled = [...rows].sort(() => Math.random() - 0.5);
+    const shuffled = [...rows].sort(() => sr(_sc++) - 0.5);
     const splitIdx = Math.floor(shuffled.length * 0.8);
     const trainRows = shuffled.slice(0, splitIdx);
     const testRows = shuffled.slice(splitIdx);
@@ -295,9 +298,9 @@ export default function PredictiveEsgPage() {
       const drift = (r.predicted - r.esgScore) * 0.3;
       return {
         ...r,
-        esg2026: clamp(r.esgScore + drift + (Math.random() - 0.5) * 3, 10, 95),
-        esg2027: clamp(r.esgScore + drift * 2 + (Math.random() - 0.5) * 5, 10, 95),
-        esg2028: clamp(r.esgScore + drift * 3 + (Math.random() - 0.5) * 7, 10, 95),
+        esg2026: clamp(r.esgScore + drift + (sr(_sc++) - 0.5) * 3, 10, 95),
+        esg2027: clamp(r.esgScore + drift * 2 + (sr(_sc++) - 0.5) * 5, 10, 95),
+        esg2028: clamp(r.esgScore + drift * 3 + (sr(_sc++) - 0.5) * 7, 10, 95),
         confLow: clamp(r.predicted - result.rmse_test * 1.5, 0, 100),
         confHigh: clamp(r.predicted + result.rmse_test * 1.5, 0, 100),
       };

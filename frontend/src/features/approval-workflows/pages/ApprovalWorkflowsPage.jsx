@@ -30,7 +30,8 @@ const LS_WORKFLOWS = 'ra_workflow_instances_v1';
 const LS_TEMPLATES = 'ra_workflow_templates_v1';
 const fmtDate = d => d ? new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '—';
 const fmtDateTime = d => d ? new Date(d).toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
-const uid = () => 'WFI-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+let _uidSeed=9000;
+const uid = () => 'WFI-' + Date.now() + '-' + sr(_uidSeed++).toString(36).slice(2, 6);
 
 /* ── Workflow Templates ───────────────────────────────────────────────────── */
 const DEFAULT_TEMPLATES = [

@@ -8,6 +8,9 @@ import DataUploadPanel from '../../../components/DataUploadPanel';
 import { useTestData } from '../../../context/TestDataContext';
 
 const API = 'http://localhost:8001';
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const T = {
   bg: '#f6f4f0', navy: '#1b3a5c', gold: '#c5a96a', sage: '#5a8a6a',
   card: '#ffffff', border: '#e2ddd5', text: '#2c2c2c', sub: '#6b7280',
@@ -129,10 +132,10 @@ export default function PipelineDashboardPage() {
     ctx.setPipelineTrigger(pipelineId);
 
     // Simulate log stream
-    const fakeStatus = Math.random() > 0.15 ? 'success' : 'failed';
+    const fakeStatus = sr(_sc++) > 0.15 ? 'success' : 'failed';
     const lines = genLogLines(pipelineId, fakeStatus);
     for (let i = 0; i < lines.length; i++) {
-      await new Promise(r => setTimeout(r, 350 + Math.random() * 200));
+      await new Promise(r => setTimeout(r, 350 + sr(_sc++) * 200));
       setLogLines(prev => [...prev, lines[i]]);
     }
 
@@ -145,8 +148,8 @@ export default function PipelineDashboardPage() {
       run_id: `run-${Date.now()}`, pipeline_id: pipelineId,
       started_at: new Date().toISOString(),
       status: fakeStatus,
-      records_processed: Math.round(800 + Math.random() * 600),
-      duration_ms: Math.round(2000 + Math.random() * 4000),
+      records_processed: Math.round(800 + sr(_sc++) * 600),
+      duration_ms: Math.round(2000 + sr(_sc++) * 4000),
       error_count: fakeStatus === 'failed' ? 1 : 0,
     };
     setHistory(prev => [newRun, ...prev]);

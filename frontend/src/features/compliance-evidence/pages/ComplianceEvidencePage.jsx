@@ -29,7 +29,8 @@ const LS_PORTFOLIO = 'ra_portfolio_v1';
 const LS_EVIDENCE = 'ra_compliance_evidence_v1';
 const LS_AUDITS = 'ra_compliance_audits_v1';
 const fmtDate = d => d ? new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '\u2014';
-const uid = () => 'EVI-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+let _uidSeed=9000;
+const uid = () => 'EVI-' + Date.now() + '-' + sr(_uidSeed++).toString(36).slice(2, 6);
 
 /* ── Evidence Categories ──────────────────────────────────────────────────── */
 const EVIDENCE_CATEGORIES = [

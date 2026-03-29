@@ -38,7 +38,9 @@ const MILESTONES = ['Initial Contact', 'Response Received', 'Commitment Made', '
 const OUTCOMES = ['Pending', 'Positive', 'Partial', 'No Change', 'Escalated', 'Resolved', 'Negative'];
 const PIE_COLORS = ['#1b3a5c', '#c5a96a', '#5a8a6a', '#dc2626', '#d97706', '#2563eb', '#7c3aed', '#0d9488'];
 
-const uid = () => Math.random().toString(36).slice(2, 10);
+let _sc=1000;
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const uid = () => sr(_sc++).toString(36).slice(2, 10);
 
 /* ── Sample engagements (15+) ────────────────────────────────────────────────── */
 const SAMPLE_ENGAGEMENTS = [

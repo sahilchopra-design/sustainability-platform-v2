@@ -9,6 +9,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 /* ── Theme ──────────────────────────────────────────────────────────────────── */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ── LocalStorage Keys ─────────────────────────────────────────────────────── */
 const LS_CUSTOM = 'ra_etl_custom_v1';
 const LS_SCHED = 'ra_etl_schedule_v1';
@@ -89,14 +92,14 @@ const buildSeedLogs = () => {
       stage_name: s.name,
       type: s.type,
       started: ts,
-      duration_ms: Math.round((s.avg_duration_ms || 500) * (0.7 + Math.random() * 0.6)),
+      duration_ms: Math.round((s.avg_duration_ms || 500) * (0.7 + sr(_sc++) * 0.6)),
       records_in: typeof s.records === 'number' ? s.records : 50,
-      records_out: typeof s.records === 'number' ? s.records - Math.floor(Math.random() * 3) : 48,
-      status: Math.random() < (s.error_rate || 0) / 100 * 3 ? 'error' : 'success',
+      records_out: typeof s.records === 'number' ? s.records - Math.floor(sr(_sc++) * 3) : 48,
+      status: sr(_sc++) < (s.error_rate || 0) / 100 * 3 ? 'error' : 'success',
       error_msg: null,
     }));
     stageRuns.filter(s => s.status === 'error').forEach(s => {
-      s.error_msg = ['Timeout after 30s', 'Rate limit exceeded', 'Invalid response format', 'Connection refused', 'Data validation failed'][Math.floor(Math.random() * 5)];
+      s.error_msg = ['Timeout after 30s', 'Rate limit exceeded', 'Invalid response format', 'Connection refused', 'Data validation failed'][Math.floor(sr(_sc++) * 5)];
     });
     runs.push(...stageRuns);
   }
@@ -238,10 +241,10 @@ export default function EtlPipelinePage() {
           stage_name: s.name,
           type: s.type,
           started: nowISO(),
-          duration_ms: Math.round((s.avg_duration_ms || 500) * (0.8 + Math.random() * 0.4)),
+          duration_ms: Math.round((s.avg_duration_ms || 500) * (0.8 + sr(_sc++) * 0.4)),
           records_in: typeof s.records === 'number' ? s.records : 50,
           records_out: typeof s.records === 'number' ? s.records : 48,
-          status: Math.random() < 0.05 ? 'error' : 'success',
+          status: sr(_sc++) < 0.05 ? 'error' : 'success',
           error_msg: null,
         }));
         newRun.filter(r => r.status === 'error').forEach(r => { r.error_msg = 'Simulated error during pipeline run'; });

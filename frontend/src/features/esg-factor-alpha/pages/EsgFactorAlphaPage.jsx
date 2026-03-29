@@ -4,6 +4,9 @@ import {
   Tooltip, Legend, ResponsiveContainer, Cell, ReferenceLine,
 } from 'recharts';
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
   border:'#e5e0d8', borderL:'#d5cfc5',
@@ -103,7 +106,7 @@ const CROWDING_TREND = Array.from({length:21}, (_,i) => {
   const yr = 2020 + Math.floor(i/4);
   const q  = (i%4)+1;
   const base = 3.2 + i*0.25;
-  return { period:`${yr}-Q${q}`, score: +Math.min(8.2, base + (Math.random()*0.3-0.15)).toFixed(1) };
+  return { period:`${yr}-Q${q}`, score: +Math.min(8.2, base + (sr(_sc++)*0.3-0.15)).toFixed(1) };
 }).map((d,i,arr) => ({ ...d, score: i===20 ? 8.2 : arr[i].score }));
 
 const PORTFOLIO_HOLDINGS = [
@@ -138,7 +141,7 @@ const generateLiveData = () => {
   for (let d = 0; d < 60; d++) {
     const row = { day: d+1 };
     Object.keys(bases).forEach(k => {
-      row[k] = +(bases[k]/60*d + (Math.random()-0.49)*0.18).toFixed(2);
+      row[k] = +(bases[k]/60*d + (sr(_sc++)-0.49)*0.18).toFixed(2);
     });
     data.push(row);
   }

@@ -4,6 +4,9 @@ import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContai
 
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ─── Carbon Budget Framework ─── */
 const CARBON_BUDGETS = {
   paris_1_5: { annual_tonnes:2.3, daily_kg:6.3, label:'1.5\°C pathway', color:'#16a34a', description:'To limit warming to 1.5\°C, each person on Earth gets 2.3 tonnes CO\₂e per year' },
@@ -66,20 +69,20 @@ function generateDemoTransactions() {
   const descs = { groceries:['Whole Foods groceries','Trader Joe\'s run','Farmers market','Weekly shop'], restaurants:['Lunch at cafe','Dinner out','Pizza delivery','Sushi takeaway'], fuel:['Gas station fill-up','Shell petrol','BP diesel'], public_transport:['Metro pass','Bus fare','Train ticket'], airlines:['Flight to Mumbai','Domestic flight','Weekend getaway flight'], electricity:['Monthly electricity bill','Quarterly power bill'], clothing:['New jeans','T-shirt purchase','Shoes online','Winter coat'], electronics:['USB-C cable','Earbuds','Phone case'], home_improvement:['Paint supplies','Light fixtures','Garden tools'], healthcare:['Doctor visit copay','Pharmacy'], entertainment:['Movie tickets','Concert','Museum visit'], subscriptions:['Netflix','Spotify','Cloud storage'] };
   const txns = [];
   for (let i = 0; i < 45; i++) {
-    const cat = cats[Math.floor(Math.random() * cats.length)];
+    const cat = cats[Math.floor(sr(_sc++) * cats.length)];
     const info = SPENDING_CARBON_INTENSITY[cat];
-    const amount = +(5 + Math.random() * 120).toFixed(2);
-    const daysAgo = Math.floor(Math.random() * 180);
+    const amount = +(5 + sr(_sc++) * 120).toFixed(2);
+    const daysAgo = Math.floor(sr(_sc++) * 180);
     const d = new Date(); d.setDate(d.getDate() - daysAgo);
     const descArr = descs[cat] || ['Purchase'];
     txns.push({
       id: `TXN-${Date.now()}-${i}`,
       date: d.toISOString(),
-      description: descArr[Math.floor(Math.random() * descArr.length)],
+      description: descArr[Math.floor(sr(_sc++) * descArr.length)],
       amount_usd: amount,
       category: cat,
       carbon_kg: +(amount * info.carbon_per_usd).toFixed(1),
-      method: ['manual','card_import','calculator'][Math.floor(Math.random() * 3)],
+      method: ['manual','card_import','calculator'][Math.floor(sr(_sc++) * 3)],
       items: [],
       offset: false,
       notes: '',
@@ -284,7 +287,7 @@ export default function CarbonWalletPage() {
         else if (descLower.match(/hospital|pharmacy|doctor|medical/)) matchedCat = 'healthcare';
         const info = SPENDING_CARBON_INTENSITY[matchedCat];
         newTxns.push({
-          id: `TXN-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          id: `TXN-${Date.now()}-${sr(_sc++).toString(36).slice(2, 6)}`,
           date: new Date(dateStr).toISOString() || new Date().toISOString(),
           description: desc,
           amount_usd: amt,

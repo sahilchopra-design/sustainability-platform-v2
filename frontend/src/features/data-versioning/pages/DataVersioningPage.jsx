@@ -9,6 +9,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 /* ── Theme ──────────────────────────────────────────────────────────────────── */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ── LocalStorage Keys ─────────────────────────────────────────────────────── */
 const LS_SNAP = 'ra_data_snapshots_v1';
 const LS_AUDIT = 'ra_snapshot_audit_v1';
@@ -25,7 +28,7 @@ const fmtDate = iso => iso ? new Date(iso).toLocaleString() : 'Never';
 const fmtSize = kb => kb < 1024 ? `${kb.toFixed(1)} KB` : `${(kb / 1024).toFixed(2)} MB`;
 const hashStr = s => { let h = 0; for (let i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; } return Math.abs(h).toString(16).padStart(8, '0'); };
 const nowISO = () => new Date().toISOString();
-const uid = () => `snap_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+const uid = () => `snap_${Date.now()}_${sr(_sc++).toString(36).slice(2, 8)}`;
 
 /* ── Tracked Fields ─────────────────────────────────────────────────────────── */
 const TRACKED_FIELDS = [
@@ -79,8 +82,8 @@ const buildSeedSnapshots = () => {
   const base = Date.now();
   return Array.from({ length: 5 }, (_, i) => {
     const ts = new Date(base - (5 - i) * 7 * 24 * 3600000).toISOString();
-    const cc = companies.length - Math.floor(Math.random() * 8);
-    const fc = TRACKED_FIELDS.length - Math.floor(Math.random() * 3);
+    const cc = companies.length - Math.floor(sr(_sc++) * 8);
+    const fc = TRACKED_FIELDS.length - Math.floor(sr(_sc++) * 3);
     return {
       id: `snap_seed_${i}`,
       timestamp: ts,
@@ -89,7 +92,7 @@ const buildSeedSnapshots = () => {
       data_hash: hashStr(ts + cc),
       company_count: cc,
       fields_count: fc,
-      size_kb: Math.round(120 + cc * 0.18 + Math.random() * 40),
+      size_kb: Math.round(120 + cc * 0.18 + sr(_sc++) * 40),
       source: ['import', 'brsr_sync', 'eodhd', 'enrichment', 'auto'][i],
       rollback_count: 0,
       created_by: 'system'
@@ -102,12 +105,12 @@ const buildSeedAudit = (snapshots) => {
   const companies = Object.keys(GLOBAL_COMPANY_MASTER || {}).slice(0, 40);
   const entries = [];
   for (let i = 1; i < snapshots.length; i++) {
-    const count = 8 + Math.floor(Math.random() * 20);
+    const count = 8 + Math.floor(sr(_sc++) * 20);
     for (let j = 0; j < count; j++) {
-      const co = companies[Math.floor(Math.random() * companies.length)];
-      const field = TRACKED_FIELDS[Math.floor(Math.random() * TRACKED_FIELDS.length)];
-      const oldVal = (Math.random() * 100).toFixed(2);
-      const changePct = (-15 + Math.random() * 30);
+      const co = companies[Math.floor(sr(_sc++) * companies.length)];
+      const field = TRACKED_FIELDS[Math.floor(sr(_sc++) * TRACKED_FIELDS.length)];
+      const oldVal = (sr(_sc++) * 100).toFixed(2);
+      const changePct = (-15 + sr(_sc++) * 30);
       const newVal = (parseFloat(oldVal) * (1 + changePct / 100)).toFixed(2);
       entries.push({
         id: `audit_${i}_${j}`,
@@ -118,9 +121,9 @@ const buildSeedAudit = (snapshots) => {
         old_value: oldVal,
         new_value: newVal,
         change_pct: changePct.toFixed(1),
-        source: DATA_SOURCES_VERSIONED[Math.floor(Math.random() * DATA_SOURCES_VERSIONED.length)],
+        source: DATA_SOURCES_VERSIONED[Math.floor(sr(_sc++) * DATA_SOURCES_VERSIONED.length)],
         timestamp: snapshots[i].timestamp,
-        changed_by: ['system', 'enrichment', 'manual', 'brsr_sync'][Math.floor(Math.random() * 4)]
+        changed_by: ['system', 'enrichment', 'manual', 'brsr_sync'][Math.floor(sr(_sc++) * 4)]
       });
     }
   }
@@ -232,9 +235,9 @@ export default function DataVersioningPage() {
       snapshot_to: newSnap.id,
       company: co,
       field: TRACKED_FIELDS[idx % TRACKED_FIELDS.length],
-      old_value: (Math.random() * 100).toFixed(2),
-      new_value: (Math.random() * 100).toFixed(2),
-      change_pct: (-5 + Math.random() * 10).toFixed(1),
+      old_value: (sr(_sc++) * 100).toFixed(2),
+      new_value: (sr(_sc++) * 100).toFixed(2),
+      change_pct: (-5 + sr(_sc++) * 10).toFixed(1),
       source: 'manual',
       timestamp: newSnap.timestamp,
       changed_by: 'user'
@@ -267,7 +270,7 @@ export default function DataVersioningPage() {
       data_hash: hashStr(nowISO()),
       company_count: companies.length,
       fields_count: TRACKED_FIELDS.length,
-      size_kb: Math.round(100 + Math.random() * 50),
+      size_kb: Math.round(100 + sr(_sc++) * 50),
       source: 'auto_rollback',
       rollback_count: 0,
       created_by: 'system'

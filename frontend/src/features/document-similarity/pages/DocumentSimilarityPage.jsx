@@ -5,6 +5,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 /* ── NLP Utilities ──────────────────────────────────────────────── */
 function cosineSimilarity(vec1, vec2) {
   const dot = vec1.reduce((s, v, i) => s + v * (vec2[i] || 0), 0);
@@ -798,9 +801,9 @@ function DocumentSimilarityPage() {
           const baseAvg = analysis.avgSim;
           const trendData = Array.from({ length: 8 }, (_, i) => ({
             cycle: `FY${2020 + i}`,
-            templated: Math.min(0.95, baseAvg + i * 0.025 + (Math.random() - 0.5) * 0.02),
-            differentiated: Math.max(0.15, baseAvg - i * 0.035 + (Math.random() - 0.5) * 0.02),
-            current: baseAvg + (Math.random() - 0.5) * 0.04,
+            templated: Math.min(0.95, baseAvg + i * 0.025 + (sr(_sc++) - 0.5) * 0.02),
+            differentiated: Math.max(0.15, baseAvg - i * 0.035 + (sr(_sc++) - 0.5) * 0.02),
+            current: baseAvg + (sr(_sc++) - 0.5) * 0.04,
           }));
           return (
             <ResponsiveContainer width="100%" height={280}>

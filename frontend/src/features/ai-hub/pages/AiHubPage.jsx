@@ -5,6 +5,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const MODULE_DEFS = [
   { id: 'report-parser', name: 'ESG Report Parser', icon: 'P', desc: 'NLP extraction of ESG metrics from sustainability reports', color: T.navy, accuracy: 89.2, dataSize: 1247, lastTrained: '2026-03-22', modelType: 'NLP/NER' },
   { id: 'predictive-esg', name: 'Predictive ESG Scoring', icon: 'E', desc: 'ML-based forward-looking ESG score prediction', color: T.sage, accuracy: 84.7, dataSize: 2340, lastTrained: '2026-03-20', modelType: 'Gradient Boost' },
@@ -31,7 +34,7 @@ const generateActivityFeed = (portfolioHoldings) => {
     const action = actions[i % actions.length];
     const company = companies[i % companies.length];
     const minutesAgo = i * 17 + Math.floor(i * 3.7);
-    return { id: `ACT-${i}`, ...action, company, time: `${minutesAgo}m ago`, status: i < 3 ? 'running' : 'complete', confidence: (75 + Math.random() * 20).toFixed(1) };
+    return { id: `ACT-${i}`, ...action, company, time: `${minutesAgo}m ago`, status: i < 3 ? 'running' : 'complete', confidence: (75 + sr(_sc++) * 20).toFixed(1) };
   });
 };
 
@@ -43,7 +46,7 @@ const generateEngagementPriority = (holdings) => {
       return {
         name: c.name || h.name || h.ticker,
         sector: c.sector || h.sector || 'Unknown',
-        esg: c.esg_score || Math.round(30 + Math.random() * 50),
+        esg: c.esg_score || Math.round(30 + sr(_sc++) * 50),
         urgency: c.transition_risk_score > 60 ? 'Critical' : c.esg_score < 40 ? 'High' : c.esg_score < 60 ? 'Medium' : 'Low',
         topic: c.sbti_committed ? 'Target Validation' : c.transition_risk_score > 50 ? 'Transition Plan' : 'Disclosure Quality',
       };
@@ -60,10 +63,10 @@ const generateAnomalyAlerts = (holdings) => {
   const base = holdings.length > 0
     ? holdings.filter(h => (h.company?.transition_risk_score || 0) > 50 || (h.company?.esg_score || 100) < 35).slice(0, 8).map(h => ({
       company: h.company?.name || h.name || h.ticker,
-      metric: ['Scope 1 Emissions', 'Water Usage', 'Board Diversity', 'Waste Generation', 'Safety Incidents', 'GHG Intensity'][Math.floor(Math.random() * 6)],
-      deviation: (2 + Math.random() * 4).toFixed(1),
-      direction: Math.random() > 0.3 ? 'spike' : 'drop',
-      severity: Math.random() > 0.5 ? 'critical' : 'warning'
+      metric: ['Scope 1 Emissions', 'Water Usage', 'Board Diversity', 'Waste Generation', 'Safety Incidents', 'GHG Intensity'][Math.floor(sr(_sc++) * 6)],
+      deviation: (2 + sr(_sc++) * 4).toFixed(1),
+      direction: sr(_sc++) > 0.3 ? 'spike' : 'drop',
+      severity: sr(_sc++) > 0.5 ? 'critical' : 'warning'
     }))
     : [];
 
@@ -176,9 +179,9 @@ function AiHubPage() {
   /* ── AI Confidence per module ────────────────────────────────── */
   const confidenceData = useMemo(() => MODULE_DEFS.map(m => ({
     module: m.name.split(' ').slice(0, 2).join(' '),
-    confidence: Math.round(m.accuracy - 2 + Math.random() * 6),
-    dataSufficiency: Math.round(70 + Math.random() * 25),
-    reliability: Math.round(m.accuracy - 5 + Math.random() * 10),
+    confidence: Math.round(m.accuracy - 2 + sr(_sc++) * 6),
+    dataSufficiency: Math.round(70 + sr(_sc++) * 25),
+    reliability: Math.round(m.accuracy - 5 + sr(_sc++) * 10),
     color: m.color,
   })), []);
 
@@ -570,9 +573,9 @@ function AiHubPage() {
             return Array.from({ length: 6 }, (_, i) => ({
               model: m.name.split(' ').slice(0, 2).join(' '),
               date: `2026-0${Math.max(1, 3 - Math.floor(i / 2))}-${String(1 + (i % 2) * 15).padStart(2, '0')}`,
-              accuracy: Math.max(70, m.accuracy - 8 + i * 1.5 + (Math.random() - 0.5) * 3).toFixed(1),
+              accuracy: Math.max(70, m.accuracy - 8 + i * 1.5 + (sr(_sc++) - 0.5) * 3).toFixed(1),
               dataSize: Math.round(m.dataSize * (0.5 + i * 0.1)),
-              trainingTime: `${Math.round(12 + Math.random() * 30)}min`,
+              trainingTime: `${Math.round(12 + sr(_sc++) * 30)}min`,
               color: m.color,
             }));
           });
@@ -580,7 +583,7 @@ function AiHubPage() {
             const row = { date: `W${i + 1}` };
             MODULE_DEFS.forEach(m => {
               const key = m.name.split(' ').slice(0, 2).join(' ');
-              row[key] = parseFloat((m.accuracy - 8 + i * 1.5 + (Math.random() - 0.5) * 2).toFixed(1));
+              row[key] = parseFloat((m.accuracy - 8 + i * 1.5 + (sr(_sc++) - 0.5) * 2).toFixed(1));
             });
             return row;
           });
@@ -642,7 +645,7 @@ function AiHubPage() {
           const coverageMap = companies.map((c, i) => {
             const modules = MODULE_DEFS.map(m => ({
               name: m.icon,
-              covered: Math.random() > (i < 5 ? 0.15 : 0.35),
+              covered: sr(_sc++) > (i < 5 ? 0.15 : 0.35),
               color: m.color,
             }));
             const total = modules.filter(m => m.covered).length;
@@ -778,7 +781,7 @@ function AiHubPage() {
             modules.map((to, j) => {
               if (i === j) return 'self';
               if (Math.abs(i - j) === 1 || (i === 0 && j === modules.length - 1)) return 'active';
-              if (Math.random() > 0.5) return 'planned';
+              if (sr(_sc++) > 0.5) return 'planned';
               return 'none';
             })
           );

@@ -7,12 +7,13 @@ import {
 } from 'recharts';
 
 const API = 'http://localhost:8001';
+const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.floor(x); };
 
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -37,7 +38,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -199,7 +200,7 @@ export default function AdaptationFinancePage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Adaptation Finance</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Adaptation Finance</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>GFMA · GARI · Resilience Delta · MDB Facilities · NAP/NDC Alignment · E83</p>
       </div>
 
@@ -266,7 +267,7 @@ export default function AdaptationFinancePage() {
               <tbody>
                 {coBenefits.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.category}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.category}</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{r.ecosystemServices}</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{r.social}</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{r.economic}</td>
@@ -324,7 +325,7 @@ export default function AdaptationFinancePage() {
                   const pct = Math.round((reduction / r.baseline) * 100);
                   return (
                     <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.hazard}</td>
+                      <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.hazard}</td>
                       <td style={{ padding: '10px 12px', color: '#dc2626', fontWeight: 600 }}>{r.baseline}</td>
                       <td style={{ padding: '10px 12px', color: '#059669', fontWeight: 600 }}>{r.postInvest}</td>
                       <td style={{ padding: '10px 12px' }}>
@@ -459,7 +460,7 @@ export default function AdaptationFinancePage() {
               <tbody>
                 {mdbFacilities.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: r.eligible ? 'white' : '#fafafa' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.name}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.name}</td>
                     <td style={{ padding: '10px 12px', color: '#6b7280' }}>{r.tier}</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>€ {r.minSize}M</td>
                     <td style={{ padding: '10px 12px' }}>

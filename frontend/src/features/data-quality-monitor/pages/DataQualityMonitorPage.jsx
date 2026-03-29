@@ -11,6 +11,9 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 /* ── Theme ──────────────────────────────────────────────────────────────────── */
 const T = { bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7', border:'#e5e0d8', borderL:'#d5cfc5', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a', sageL:'#7ba67d', text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif" };
 
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+let _sc=1000;
+
 const LS_PORT = 'ra_portfolio_v1';
 const loadJSON = (key, fb) => { try { return JSON.parse(localStorage.getItem(key)) || fb; } catch { return fb; } };
 const fmt = v => v == null ? '--' : typeof v === 'number' ? v.toLocaleString() : String(v);
@@ -55,7 +58,7 @@ function computeCompanyDQ(company) {
 
   const accuracy = violations.length === 0 ? 100 : Math.max(0, 100 - violations.length * 15);
   const timeliness = 85;
-  const consistency = 80 + (company._displayExchange === 'NSE/BSE' ? 10 : Math.random() * 10);
+  const consistency = 80 + (company._displayExchange === 'NSE/BSE' ? 10 : sr(_sc++) * 10);
   const uniqueness = 98;
   const validity = violations.length === 0 ? 100 : Math.max(50, 100 - violations.length * 10);
 
@@ -222,9 +225,9 @@ export default function DataQualityMonitorPage() {
   const trendData = useMemo(() => {
     return Array.from({ length: 12 }, (_, i) => ({
       month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
-      completeness: Math.min(100, 45 + i * 4.5 + Math.random() * 3),
-      accuracy: Math.min(100, 70 + i * 2.2 + Math.random() * 2),
-      composite: Math.min(100, 55 + i * 3.5 + Math.random() * 2.5),
+      completeness: Math.min(100, 45 + i * 4.5 + sr(_sc++) * 3),
+      accuracy: Math.min(100, 70 + i * 2.2 + sr(_sc++) * 2),
+      composite: Math.min(100, 55 + i * 3.5 + sr(_sc++) * 2.5),
     }));
   }, []);
 
