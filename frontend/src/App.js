@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { TestDataProvider } from './context/TestDataContext';
 import { CompanyEnrichmentProvider } from './context/CompanyEnrichmentContext';
+import { PortfolioProvider } from './context/PortfolioContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
 // Sprint 37 — E108–E111
@@ -1685,9 +1686,11 @@ export default function App() {
   return (
     <TestDataProvider>
       <CompanyEnrichmentProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
+        <PortfolioProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </PortfolioProvider>
       </CompanyEnrichmentProvider>
     </TestDataProvider>
   );

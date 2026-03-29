@@ -4,6 +4,7 @@ import {
   AreaChart, Area, ReferenceLine, Cell,
 } from 'recharts';
 import { NGFS_PHASE4, SECTOR_PD_UPLIFT, SECTOR_LGD_UPLIFT } from '../../../services/climateRiskDataService';
+import { NGFS_SCENARIOS, CARBON_PRICES } from '../../../data/referenceData';
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
