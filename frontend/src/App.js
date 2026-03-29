@@ -5,6 +5,9 @@ import { CompanyEnrichmentProvider } from './context/CompanyEnrichmentContext';
 import { PortfolioProvider } from './context/PortfolioContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
+// Platform Admin & Data Management
+const DataSourceManagerPage = React.lazy(() => import("./features/data-source-manager/pages/DataSourceManagerPage"));
+const DbExplorerPage = React.lazy(() => import("./features/db-explorer/pages/DbExplorerPage"));
 // Sprint 37 — E108–E111
 const RegulatoryCapitalPage = React.lazy(() => import("./features/regulatory-capital/pages/RegulatoryCapitalPage"));
 // ClimatePolicyPage moved to Sprint O imports
@@ -587,6 +590,10 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Platform Administration', icon: '⚙️', color: '#475569', items: [
+    { path: '/data-source-manager',     label: 'Data Source Manager',     badge: '47 Sources · EODHD+AV · Field Mapper · Engine Lineage · Sync',   code: 'ADM-01' },
+    { path: '/db-explorer',             label: 'DB Explorer & SQL',       badge: '40+ Tables · SQL Editor · Lineage · Migration Tracker',           code: 'ADM-02' },
   ]},
   { label: 'Geopolitical Risk & Climate Security', icon: '🌐', color: '#7f1d1d', items: [
     { path: '/geopolitical-esg-hub',          label: 'Geopolitical ESG Hub',          badge: 'Hub · Sanctions+Energy+Minerals+Trade+Migration · Scenarios',       code: 'EP-AV6' },
@@ -1517,6 +1524,9 @@ function AppContent() {
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
             {/* Sprint AV — Geopolitical Risk & Climate Security Intelligence */}
+            {/* Platform Administration */}
+            <Route path="/data-source-manager"     element={<DataSourceManagerPage />} />
+            <Route path="/db-explorer"             element={<DbExplorerPage />} />
             <Route path="/geopolitical-esg-hub"          element={<GeopoliticalEsgHubPage />} />
             <Route path="/sanctions-climate-finance"     element={<SanctionsClimateFinancePage />} />
             <Route path="/energy-security-transition"    element={<EnergySecurityTransitionPage />} />
