@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AV — Geopolitical Risk & Climate Security Intelligence
+import SanctionsClimateFinancePage from './features/sanctions-climate-finance/pages/SanctionsClimateFinancePage';
+import EnergySecurityTransitionPage from './features/energy-security-transition/pages/EnergySecurityTransitionPage';
+import CriticalMineralGeopoliticsPage from './features/critical-mineral-geopolitics/pages/CriticalMineralGeopoliticsPage';
+import TradeCarbonPolicyPage from './features/trade-carbon-policy/pages/TradeCarbonPolicyPage';
+import ClimateMigrationRiskPage from './features/climate-migration-risk/pages/ClimateMigrationRiskPage';
+import GeopoliticalEsgHubPage from './features/geopolitical-esg-hub/pages/GeopoliticalEsgHubPage';
 // Sprint AU — Climate & Health Nexus Finance
 import HeatMortalityRiskPage from './features/heat-mortality-risk/pages/HeatMortalityRiskPage';
 import AirQualityFinancePage from './features/air-quality-finance/pages/AirQualityFinancePage';
@@ -569,6 +576,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Geopolitical Risk & Climate Security', icon: '🌐', color: '#7f1d1d', items: [
+    { path: '/geopolitical-esg-hub',          label: 'Geopolitical ESG Hub',          badge: 'Hub · Sanctions+Energy+Minerals+Trade+Migration · Scenarios',       code: 'EP-AV6' },
+    { path: '/sanctions-climate-finance',     label: 'Sanctions & Climate Finance',   badge: 'OFAC/EU/UK · 60 Countries · Dual-Use Tech · Compliance',            code: 'EP-AV1' },
+    { path: '/energy-security-transition',    label: 'Energy Security & Transition',  badge: '50 Countries · Import Dependency · Chokepoints · LNG',              code: 'EP-AV2' },
+    { path: '/critical-mineral-geopolitics',  label: 'Critical Mineral Geopolitics',  badge: '15 Minerals · Friendshoring · China Dominance · IRA/CRMA',          code: 'EP-AV3' },
+    { path: '/trade-carbon-policy',           label: 'Trade & Carbon Border Policy',  badge: 'EU CBAM · UK CBAM · Carbon Club · Embedded Emissions',              code: 'EP-AV4' },
+    { path: '/climate-migration-risk',        label: 'Climate Migration Risk',        badge: '50 Countries · 216M by 2050 · Displacement · Stranded RE',          code: 'EP-AV5' },
   ]},
   { label: 'Climate & Health Nexus', icon: '🏥', color: '#0d9488', items: [
     { path: '/climate-health-hub',           label: 'Climate Health Hub',           badge: 'Hub · Heat+Air+Pandemic+Adapt+Worker · CRM · Board',                code: 'EP-AU6' },
@@ -1489,6 +1504,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AV — Geopolitical Risk & Climate Security Intelligence */}
+            <Route path="/geopolitical-esg-hub"          element={<GeopoliticalEsgHubPage />} />
+            <Route path="/sanctions-climate-finance"     element={<SanctionsClimateFinancePage />} />
+            <Route path="/energy-security-transition"    element={<EnergySecurityTransitionPage />} />
+            <Route path="/critical-mineral-geopolitics"  element={<CriticalMineralGeopoliticsPage />} />
+            <Route path="/trade-carbon-policy"           element={<TradeCarbonPolicyPage />} />
+            <Route path="/climate-migration-risk"        element={<ClimateMigrationRiskPage />} />
             {/* Sprint AU — Climate & Health Nexus Finance */}
             <Route path="/climate-health-hub"           element={<ClimateHealthHubPage />} />
             <Route path="/heat-mortality-risk"          element={<HeatMortalityRiskPage />} />
