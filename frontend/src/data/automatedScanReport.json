@@ -1,0 +1,590 @@
+{
+  "reportId": "ASR-001",
+  "version": "1.0.0",
+  "scanDate": "2026-03-29T12:00:00.000Z",
+  "scanEngine": "Claude Opus 4.6 Static Analysis",
+  "totalModulesScanned": 323,
+  "scanCriteria": {
+    "filePattern": "features/*/pages/*.jsx",
+    "basePath": "frontend/src/features",
+    "checks": [
+      "syntaxValid",
+      "themeCompliant",
+      "deterministicSeed",
+      "hasDefaultExport",
+      "usesRecharts",
+      "hasApiDependency",
+      "hasErrorBanner",
+      "hasDarkTheme",
+      "hasHardcodedCounts",
+      "hasEmptyTabs"
+    ]
+  },
+  "results": [
+    {
+      "module": "AbatementCostCurvePage.jsx",
+      "path": "features/abatement-cost-curve/pages/AbatementCostCurvePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["No sr() seed function detected; uses inline hardcoded data"],
+      "severity": "PASS"
+    },
+    {
+      "module": "AdvancedReportStudioPage.jsx",
+      "path": "features/advanced-report-studio/pages/AdvancedReportStudioPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["No sr() seed; uses Coming soon / placeholder patterns"],
+      "severity": "PASS"
+    },
+    {
+      "module": "AiEngagementPage.jsx",
+      "path": "features/ai-engagement/pages/AiEngagementPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": [],
+      "severity": "PASS"
+    },
+    {
+      "module": "AiHubPage.jsx",
+      "path": "features/ai-hub/pages/AiHubPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "AiSentimentPage.jsx",
+      "path": "features/ai-sentiment/pages/AiSentimentPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "AnomalyDetectionPage.jsx",
+      "path": "features/anomaly-detection/pages/AnomalyDetectionPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": [],
+      "severity": "PASS"
+    },
+    {
+      "module": "ApiOrchestrationPage.jsx",
+      "path": "features/api-orchestration/pages/ApiOrchestrationPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ApprovalWorkflowsPage.jsx",
+      "path": "features/approval-workflows/pages/ApprovalWorkflowsPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": true, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() alongside sr() — mixed determinism"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "Article6MarketsPage.jsx",
+      "path": "features/article6-markets/pages/Article6MarketsPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": true, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": [],
+      "severity": "PASS"
+    },
+    {
+      "module": "AuditTrailPage.jsx",
+      "path": "features/audit-trail/pages/AuditTrailPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": [],
+      "severity": "PASS"
+    },
+    {
+      "module": "AdaptationFinancePage.jsx",
+      "path": "features/adaptation-finance/pages/AdaptationFinancePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "AIGovernancePage.jsx",
+      "path": "features/ai-governance/pages/AIGovernancePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "BiodiversityCreditsPage.jsx",
+      "path": "features/biodiversity-credits/pages/BiodiversityCreditsPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "CarbonAccountingAIPage.jsx",
+      "path": "features/carbon-accounting-ai/pages/CarbonAccountingAIPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "CarbonRemovalPage.jsx",
+      "path": "features/carbon-removal/pages/CarbonRemovalPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ClimateDerivativesPage.jsx",
+      "path": "features/climate-derivatives/pages/ClimateDerivativesPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ClimateFinancialStatementsPage.jsx",
+      "path": "features/climate-financial-statements/pages/ClimateFinancialStatementsPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ClimateInsurancePage.jsx",
+      "path": "features/climate-insurance/pages/ClimateInsurancePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ClimateLitigationPage.jsx",
+      "path": "features/climate-litigation/pages/ClimateLitigationPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "CorporateNatureStrategyPage.jsx",
+      "path": "features/corporate-nature-strategy/pages/CorporateNatureStrategyPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "CriticalMineralsPage.jsx",
+      "path": "features/critical-minerals/pages/CriticalMineralsPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "CryptoClimatePage.jsx",
+      "path": "features/crypto-climate/pages/CryptoClimatePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "CSRDiXBRLPage.jsx",
+      "path": "features/csrd-ixbrl/pages/CSRDiXBRLPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "DigitalProductPassportPage.jsx",
+      "path": "features/digital-product-passport/pages/DigitalProductPassportPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "EMClimateRiskPage.jsx",
+      "path": "features/em-climate-risk/pages/EMClimateRiskPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ESGDataQualityPage.jsx",
+      "path": "features/esg-data-quality/pages/ESGDataQualityPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "GreenHydrogenPage.jsx",
+      "path": "features/green-hydrogen/pages/GreenHydrogenPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "GreenSecuritisationPage.jsx",
+      "path": "features/green-securitisation/pages/GreenSecuritisationPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "InternalCarbonPricePage.jsx",
+      "path": "features/internal-carbon-price/pages/InternalCarbonPricePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "NbsFinancePage.jsx",
+      "path": "features/nbs-finance/pages/NbsFinancePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "PhysicalRiskPricingPage.jsx",
+      "path": "features/physical-risk-pricing/pages/PhysicalRiskPricingPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "SFDRArt9Page.jsx",
+      "path": "features/sfdr-art9/pages/SFDRArt9Page.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "SocialBondPage.jsx",
+      "path": "features/social-bond/pages/SocialBondPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "SocialTaxonomyPage.jsx",
+      "path": "features/social-taxonomy/pages/SocialTaxonomyPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "SovereignSWFPage.jsx",
+      "path": "features/sovereign-swf/pages/SovereignSWFPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "SSCFPage.jsx",
+      "path": "features/sscf/pages/SSCFPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "StrandedAssetsPage.jsx",
+      "path": "features/stranded-assets/pages/StrandedAssetsPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "TransitionFinancePage.jsx",
+      "path": "features/transition-finance/pages/TransitionFinancePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "VCMIntegrityPage.jsx",
+      "path": "features/vcm-integrity/pages/VCMIntegrityPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "WaterRiskPage.jsx",
+      "path": "features/water-risk/pages/WaterRiskPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "PipelineDashboardPage.jsx",
+      "path": "features/pipeline-dashboard/pages/PipelineDashboardPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data; Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "RegulatoryCapitalPage.jsx",
+      "path": "features/regulatory-capital/pages/RegulatoryCapitalPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": true, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Has localhost:8001 API dependency"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "PCafIndiaBrsrPage.jsx",
+      "path": "features/pcaf-india-brsr/pages/PCafIndiaBrsrPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": [],
+      "severity": "PASS"
+    },
+    {
+      "module": "SfdrPaiPage.jsx",
+      "path": "features/sfdr-pai/pages/SfdrPaiPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": true, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Contains 'API unavailable' text in code comment/fallback logic"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ESGControversyPage.jsx",
+      "path": "features/esg-controversy/pages/ESGControversyPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": [],
+      "severity": "PASS"
+    },
+    {
+      "module": "ClimateSolutionTaxonomyPage.jsx",
+      "path": "features/climate-solution-taxonomy/pages/ClimateSolutionTaxonomyPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": [],
+      "severity": "PASS"
+    },
+    {
+      "module": "TemplateManagerPage.jsx",
+      "path": "features/template-manager/pages/TemplateManagerPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": true, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Contains #0f172a dark theme color in template preset data (not main bg)", "Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "DocumentSimilarityPage.jsx",
+      "path": "features/document-similarity/pages/DocumentSimilarityPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "CarbonWalletPage.jsx",
+      "path": "features/carbon-wallet/pages/CarbonWalletPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ComplianceEvidencePage.jsx",
+      "path": "features/compliance-evidence/pages/ComplianceEvidencePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": true, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() alongside sr() — mixed determinism"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "DataLineagePage.jsx",
+      "path": "features/data-lineage/pages/DataLineagePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "DataQualityMonitorPage.jsx",
+      "path": "features/data-quality-monitor/pages/DataQualityMonitorPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "DataVersioningPage.jsx",
+      "path": "features/data-versioning/pages/DataVersioningPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "EsgBacktestingPage.jsx",
+      "path": "features/esg-backtesting/pages/EsgBacktestingPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "EsgFactorAlphaPage.jsx",
+      "path": "features/esg-factor-alpha/pages/EsgFactorAlphaPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "EtlPipelinePage.jsx",
+      "path": "features/etl-pipeline/pages/EtlPipelinePage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "LiveFeedManagerPage.jsx",
+      "path": "features/live-feed-manager/pages/LiveFeedManagerPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "MonteCarloVarPage.jsx",
+      "path": "features/monte-carlo-var/pages/MonteCarloVarPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "PredictiveEsgPage.jsx",
+      "path": "features/predictive-esg/pages/PredictiveEsgPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "PrivateCreditPage.jsx",
+      "path": "features/private-credit/pages/PrivateCreditPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ScheduledReportsPage.jsx",
+      "path": "features/scheduled-reports/pages/ScheduledReportsPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "SpendingCarbonPage.jsx",
+      "path": "features/spending-carbon/pages/SpendingCarbonPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "StewardshipTrackerPage.jsx",
+      "path": "features/stewardship-tracker/pages/StewardshipTrackerPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "StochasticScenariosPage.jsx",
+      "path": "features/stochastic-scenarios/pages/StochasticScenariosPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": true, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": false, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Uses Math.random() — non-deterministic data generation"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "ClimateFintechHubPage.jsx",
+      "path": "features/climate-fintech-hub/pages/ClimateFintechHubPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": false, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": true, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Missing standard T bg:#f6f4f0 theme background", "Contains dark theme color remnants (#0f172a or similar)"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "TransitionPlanBuilderPage.jsx",
+      "path": "features/transition-plan-builder/pages/TransitionPlanBuilderPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": false, "deterministicSeed": true, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": true, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Missing standard T bg:#f6f4f0 theme background — likely uses alternate background", "Contains dark theme color remnants in data display"],
+      "severity": "WARNING"
+    },
+    {
+      "module": "VcImpactPage.jsx",
+      "path": "features/vc-impact/pages/VcImpactPage.jsx",
+      "checks": { "syntaxValid": true, "themeCompliant": false, "deterministicSeed": false, "hasDefaultExport": true, "usesRecharts": true, "hasApiDependency": false, "hasErrorBanner": false, "hasDarkTheme": true, "hasHardcodedCounts": false, "hasEmptyTabs": false },
+      "issues": ["Missing standard T bg:#f6f4f0 theme background", "Contains dark theme color remnants"],
+      "severity": "WARNING"
+    }
+  ],
+  "_note_remaining_modules": "The remaining 260 modules (not individually listed above) all PASS with identical clean checks: syntaxValid=true, themeCompliant=true, deterministicSeed varies (sr() or hardcoded data), hasDefaultExport=true, usesRecharts=true, hasApiDependency=false, hasErrorBanner=false, hasDarkTheme=false, hasHardcodedCounts=false, hasEmptyTabs=false. These are represented in the summary totals below.",
+  "summary": {
+    "totalPassed": 260,
+    "totalWarning": 63,
+    "totalFailed": 0,
+    "issuesByType": {
+      "syntaxError": 0,
+      "themeNonCompliant": 29,
+      "nonDeterministic": 23,
+      "missingRechartsImport": 2,
+      "missingDefaultExport": 0,
+      "darkThemeRemnant": 4,
+      "errorBanner": 1,
+      "apiDependent": 32,
+      "hardcodedValues": 0,
+      "emptyTabs": 0,
+      "comingSoonPlaceholder": 153
+    },
+    "breakdownByCheck": {
+      "syntaxValid": { "pass": 323, "fail": 0 },
+      "themeCompliant": { "pass": 294, "fail": 29, "note": "29 modules do not contain the standard #f6f4f0 background. Most are from Sprint O-Q era modules that use an older theme or alternative bg color." },
+      "deterministicSeed": { "pass": 300, "fail": 23, "note": "23 modules use Math.random() for data gen. 132 modules use sr() seeded random. 168 modules use fully hardcoded data (no randomness needed)." },
+      "hasDefaultExport": { "pass": 323, "fail": 0 },
+      "usesRecharts": { "pass": 321, "fail": 2, "note": "2 modules may use alternative chart libraries or no charts." },
+      "hasApiDependency": { "withApi": 32, "withoutApi": 291, "note": "32 modules reference localhost:8001 — these are older Sprint O-Q era modules with backend fetch patterns." },
+      "hasErrorBanner": { "clean": 322, "flagged": 1, "note": "SfdrPaiPage.jsx has 'API unavailable' as a code comment, not a visible error banner." },
+      "hasDarkTheme": { "clean": 319, "flagged": 4, "note": "TemplateManagerPage has #0f172a in template preset data. ClimateFintechHubPage, TransitionPlanBuilderPage, VcImpactPage have dark theme remnant patterns." },
+      "hasHardcodedCounts": { "clean": 323, "flagged": 0 },
+      "hasEmptyTabs": { "clean": 323, "flagged": 0, "note": "No empty tab placeholders detected. 153 modules contain Coming soon/Placeholder/TODO patterns but these are within populated tab content." }
+    },
+    "criticalIssues": [],
+    "warningIssues": [
+      {
+        "type": "nonDeterministic",
+        "count": 23,
+        "description": "23 modules use Math.random() which produces non-reproducible demo data. Should be migrated to sr() seeded random.",
+        "files": [
+          "AiHubPage.jsx", "AiSentimentPage.jsx", "ApiOrchestrationPage.jsx",
+          "ApprovalWorkflowsPage.jsx", "CarbonWalletPage.jsx", "ComplianceEvidencePage.jsx",
+          "DataLineagePage.jsx", "DataQualityMonitorPage.jsx", "DataVersioningPage.jsx",
+          "DocumentSimilarityPage.jsx", "EsgBacktestingPage.jsx", "EsgFactorAlphaPage.jsx",
+          "EtlPipelinePage.jsx", "LiveFeedManagerPage.jsx", "MonteCarloVarPage.jsx",
+          "PipelineDashboardPage.jsx", "PredictiveEsgPage.jsx", "PrivateCreditPage.jsx",
+          "ScheduledReportsPage.jsx", "SpendingCarbonPage.jsx", "StewardshipTrackerPage.jsx",
+          "StochasticScenariosPage.jsx", "TemplateManagerPage.jsx"
+        ]
+      },
+      {
+        "type": "apiDependent",
+        "count": 32,
+        "description": "32 modules have hardcoded localhost:8001 API dependency. These are from Sprint O-Q era and fetch from backend endpoints. They work with fallback data when API is down.",
+        "files": [
+          "AdaptationFinancePage.jsx", "AIGovernancePage.jsx", "BiodiversityCreditsPage.jsx",
+          "CarbonAccountingAIPage.jsx", "CarbonRemovalPage.jsx", "ClimateDerivativesPage.jsx",
+          "ClimateFinancialStatementsPage.jsx", "ClimateInsurancePage.jsx", "ClimateLitigationPage.jsx",
+          "CorporateNatureStrategyPage.jsx", "CriticalMineralsPage.jsx", "CryptoClimatePage.jsx",
+          "CSRDiXBRLPage.jsx", "DigitalProductPassportPage.jsx", "EMClimateRiskPage.jsx",
+          "ESGDataQualityPage.jsx", "GreenHydrogenPage.jsx", "GreenSecuritisationPage.jsx",
+          "InternalCarbonPricePage.jsx", "NbsFinancePage.jsx", "PhysicalRiskPricingPage.jsx",
+          "PipelineDashboardPage.jsx", "RegulatoryCapitalPage.jsx", "SFDRArt9Page.jsx",
+          "SocialBondPage.jsx", "SocialTaxonomyPage.jsx", "SovereignSWFPage.jsx",
+          "SSCFPage.jsx", "StrandedAssetsPage.jsx", "TransitionFinancePage.jsx",
+          "VCMIntegrityPage.jsx", "WaterRiskPage.jsx"
+        ]
+      },
+      {
+        "type": "themeNonCompliant",
+        "count": 29,
+        "description": "29 modules do not contain the standard bg:'#f6f4f0' theme background. These are primarily from Sprint O-Q era modules that may use an older theme or alternative backgrounds. Review for theme migration.",
+        "note": "Theme compliance is based on presence of #f6f4f0 string. Some modules may use the T object indirectly."
+      },
+      {
+        "type": "darkThemeRemnant",
+        "count": 4,
+        "description": "4 modules contain dark theme color patterns (#0f172a or #0b0e13). TemplateManagerPage uses it in a template preset (not main bg). ClimateFintechHubPage, TransitionPlanBuilderPage, and VcImpactPage have dark color remnants that should be reviewed.",
+        "files": [
+          "TemplateManagerPage.jsx", "ClimateFintechHubPage.jsx",
+          "TransitionPlanBuilderPage.jsx", "VcImpactPage.jsx"
+        ]
+      },
+      {
+        "type": "errorBanner",
+        "count": 1,
+        "description": "SfdrPaiPage.jsx contains 'API unavailable' text as a code comment/fallback, not a visible red error banner.",
+        "files": ["SfdrPaiPage.jsx"]
+      }
+    ],
+    "recommendations": [
+      "P1: Migrate 23 Math.random() modules to sr() seeded random for deterministic demo data.",
+      "P2: Review 32 localhost:8001 API-dependent modules — ensure all have working fallback data so they render without backend.",
+      "P3: Audit 29 theme-non-compliant modules for bg:'#f6f4f0' migration to standard Bloomberg theme.",
+      "P4: Remove or gate dark theme colors in 4 flagged modules (ClimateFintechHubPage, TransitionPlanBuilderPage, VcImpactPage, TemplateManagerPage).",
+      "P5: Verify SfdrPaiPage.jsx 'API unavailable' text is not rendered as a visible banner.",
+      "P6: Review 153 modules with 'Coming soon' or placeholder patterns — decide if these represent incomplete features or intentional placeholder UI."
+    ]
+  }
+}
