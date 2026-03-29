@@ -240,6 +240,27 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AT — Food Systems & Agricultural Finance
+import RegenerativeAgriculturePage from './features/regenerative-agriculture/pages/RegenerativeAgriculturePage';
+import FoodSupplyChainEmissionsPage from './features/food-supply-chain-emissions/pages/FoodSupplyChainEmissionsPage';
+import WaterAgricultureRiskPage from './features/water-agriculture-risk/pages/WaterAgricultureRiskPage';
+import LandUseCarbonPage from './features/land-use-carbon/pages/LandUseCarbonPage';
+import AgriBiodiversityPage from './features/agri-biodiversity/pages/AgriBiodiversityPage';
+import AgriFinanceHubPage from './features/agri-finance-hub/pages/AgriFinanceHubPage';
+// Sprint AS — Real Estate & Built Environment ESG
+import BuildingEnergyPerformancePage from './features/building-energy-performance/pages/BuildingEnergyPerformancePage';
+import GreenBuildingCertificationPage from './features/green-building-certification/pages/GreenBuildingCertificationPage';
+import EmbodiedCarbonPage from './features/embodied-carbon/pages/EmbodiedCarbonPage';
+import ClimateResilientDesignPage from './features/climate-resilient-design/pages/ClimateResilientDesignPage';
+import TenantEngagementEsgPage from './features/tenant-engagement-esg/pages/TenantEngagementEsgPage';
+import RealEstateEsgHubPage from './features/real-estate-esg-hub/pages/RealEstateEsgHubPage';
+// Sprint AR — Insurance & Underwriting Climate Analytics
+import CatastropheModellingPage from './features/catastrophe-modelling/pages/CatastropheModellingPage';
+import UnderwritingEsgPage from './features/underwriting-esg/pages/UnderwritingEsgPage';
+import ParametricInsurancePage from './features/parametric-insurance/pages/ParametricInsurancePage';
+import ReinsuranceClimatePage from './features/reinsurance-climate/pages/ReinsuranceClimatePage';
+import InsuranceTransitionPage from './features/insurance-transition/pages/InsuranceTransitionPage';
+import InsuranceClimateHubPage from './features/insurance-climate-hub/pages/InsuranceClimateHubPage';
 // Sprint AQ — Sovereign ESG & Country-Level Climate Risk Intelligence
 import SovereignClimateRiskPage from './features/sovereign-climate-risk/pages/SovereignClimateRiskPage';
 import SovereignDebtSustainabilityPage from './features/sovereign-debt-sustainability/pages/SovereignDebtSustainabilityPage';
@@ -541,6 +562,30 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Food Systems & Agricultural Finance', icon: '🌾', color: '#15803d', items: [
+    { path: '/agri-finance-hub',             label: 'Agri Finance Hub',             badge: 'Hub · Regen+Food+Water+Land+Biodiversity · CRM · Board',            code: 'EP-AT6' },
+    { path: '/regenerative-agriculture',     label: 'Regenerative Agriculture',     badge: '80 Ops · Soil Carbon · No-Till · Cover Crop · Credit Revenue',      code: 'EP-AT1' },
+    { path: '/food-supply-chain-emissions',  label: 'Food Supply Chain Emissions',  badge: '60 Cos · Protein Transition · Food Waste · SBTi FLAG',              code: 'EP-AT2' },
+    { path: '/water-agriculture-risk',       label: 'Water Agriculture Risk',       badge: '50 Regions · Aqueduct · Crop Footprint · Drought Model',            code: 'EP-AT3' },
+    { path: '/land-use-carbon',              label: 'Land Use & Carbon',            badge: '40 Parcels · 8 Land Types · LULUCF · NBS · Carbon Credits',         code: 'EP-AT4' },
+    { path: '/agri-biodiversity',            label: 'Agricultural Biodiversity',    badge: '60 Ops · Pollinators · Soil Microbiome · Biodiversity Credits',     code: 'EP-AT5' },
+  ]},
+  { label: 'Real Estate & Built Environment', icon: '🏢', color: '#7c3aed', items: [
+    { path: '/real-estate-esg-hub',          label: 'Real Estate ESG Hub',          badge: 'Hub · 150 Buildings · GRESB · CRREM · Capex · Board',               code: 'EP-AS6' },
+    { path: '/building-energy-performance',  label: 'Building Energy Performance',  badge: '150 Buildings · EPC A-G · CRREM · Retrofit ROI · MEES',             code: 'EP-AS1' },
+    { path: '/green-building-certification', label: 'Green Building Certification', badge: '100 Buildings · LEED/BREEAM/WELL · Green Premium · Planner',        code: 'EP-AS2' },
+    { path: '/embodied-carbon',              label: 'Embodied Carbon',              badge: '80 Projects · A1-D Lifecycle · 30 Materials · RIBA 2030',           code: 'EP-AS3' },
+    { path: '/climate-resilient-design',     label: 'Climate Resilient Design',     badge: '100 Buildings · 6 Hazards · Adaptation · Insurance Impact',         code: 'EP-AS4' },
+    { path: '/tenant-engagement-esg',        label: 'Tenant Engagement ESG',        badge: '80 Tenants · Green Leases · Scope 3 Downstream · CRM',             code: 'EP-AS5' },
+  ]},
+  { label: 'Insurance & Underwriting Climate', icon: '🛡️', color: '#9f1239', items: [
+    { path: '/insurance-climate-hub',        label: 'Insurance Climate Hub',        badge: 'Hub · Cat Model+Underwriting+Parametric+Re · Board',                code: 'EP-AR6' },
+    { path: '/catastrophe-modelling',        label: 'Catastrophe Modelling',        badge: '100 Assets · 8 Perils · AAL/PML · Event Scenarios · Reinsurance',   code: 'EP-AR1' },
+    { path: '/underwriting-esg',             label: 'Underwriting ESG',             badge: '80 Policies · ESG Risk Scoring · Fossil Phase-Out · Solvency II',   code: 'EP-AR2' },
+    { path: '/parametric-insurance',         label: 'Parametric Insurance',         badge: '60 Products · 6 Triggers · Basis Risk · CCRIF/ARC',                 code: 'EP-AR3' },
+    { path: '/reinsurance-climate',          label: 'Reinsurance & Climate',        badge: '40 Treaties · 30 Cat Bonds · ILS · Climate Pricing',                code: 'EP-AR4' },
+    { path: '/insurance-transition',         label: 'Insurance Transition',         badge: '50 Insurers · NZIA · Fossil Exposure · Green Products',             code: 'EP-AR5' },
   ]},
   { label: 'Sovereign ESG & Country Risk', icon: '🌍', color: '#1e40af', items: [
     { path: '/sovereign-esg-hub',              label: 'Sovereign ESG Hub',              badge: 'Hub · 80 Countries · Climate+Debt+CB+Nature+Social · Board',        code: 'EP-AQ6' },
@@ -1429,6 +1474,27 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AT — Food Systems & Agricultural Finance */}
+            <Route path="/agri-finance-hub"             element={<AgriFinanceHubPage />} />
+            <Route path="/regenerative-agriculture"     element={<RegenerativeAgriculturePage />} />
+            <Route path="/food-supply-chain-emissions"  element={<FoodSupplyChainEmissionsPage />} />
+            <Route path="/water-agriculture-risk"       element={<WaterAgricultureRiskPage />} />
+            <Route path="/land-use-carbon"              element={<LandUseCarbonPage />} />
+            <Route path="/agri-biodiversity"            element={<AgriBiodiversityPage />} />
+            {/* Sprint AS — Real Estate & Built Environment ESG */}
+            <Route path="/real-estate-esg-hub"          element={<RealEstateEsgHubPage />} />
+            <Route path="/building-energy-performance"  element={<BuildingEnergyPerformancePage />} />
+            <Route path="/green-building-certification" element={<GreenBuildingCertificationPage />} />
+            <Route path="/embodied-carbon"              element={<EmbodiedCarbonPage />} />
+            <Route path="/climate-resilient-design"     element={<ClimateResilientDesignPage />} />
+            <Route path="/tenant-engagement-esg"        element={<TenantEngagementEsgPage />} />
+            {/* Sprint AR — Insurance & Underwriting Climate Analytics */}
+            <Route path="/insurance-climate-hub"        element={<InsuranceClimateHubPage />} />
+            <Route path="/catastrophe-modelling"        element={<CatastropheModellingPage />} />
+            <Route path="/underwriting-esg"             element={<UnderwritingEsgPage />} />
+            <Route path="/parametric-insurance"         element={<ParametricInsurancePage />} />
+            <Route path="/reinsurance-climate"          element={<ReinsuranceClimatePage />} />
+            <Route path="/insurance-transition"         element={<InsuranceTransitionPage />} />
             {/* Sprint AQ — Sovereign ESG & Country-Level Climate Risk Intelligence */}
             <Route path="/sovereign-esg-hub"             element={<SovereignEsgHubPage />} />
             <Route path="/sovereign-climate-risk"        element={<SovereignClimateRiskPage />} />
