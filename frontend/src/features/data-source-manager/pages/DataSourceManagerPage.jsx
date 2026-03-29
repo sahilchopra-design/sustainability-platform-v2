@@ -1,1330 +1,1529 @@
-import React,{useState,useMemo} from 'react';
-import {AreaChart,Area,BarChart,Bar,LineChart,Line,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend} from 'recharts';
+import React,{useState,useMemo,useCallback,useRef,useEffect} from 'react';
+import {BarChart,Bar,LineChart,Line,XAxis,YAxis,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontFamily:T.font},labelStyle:{color:T.textSec}};
-const CC=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899'];
-const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
-const TABS=['Source Registry','Field Mapper','Engine Lineage','Sync Monitor'];
 
-/* ── DATA SOURCES ── */
+/* ─── DATA SOURCES ─── */
 const SOURCES=[
-  {id:1,name:'EODHD (All-in-One)',slug:'eodhd',status:'Connected',type:'REST API',baseUrl:'api.eodhd.com',auth:'API Key',format:'JSON',rateLimit:'100K/day',ratePlan:'All-in-One',fieldCount:85,endpointCount:12,lastSync:'2026-03-29T08:15:00Z',syncSchedule:'hourly',freshness:98,errorCount:0,cost:'$79.99/mo',
-    endpoints:['Fundamentals (Income)','Fundamentals (Balance Sheet)','Fundamentals (Cash Flow)','ESG Scores','Company Profile','Historical Prices (OHLCV)','Dividends','Splits','Insider Trading','Exchange Symbols','Sector/Industry','Options'],
-    fields:['ticker','name','exchange','sector','industry','market_cap','employees','revenue','ebitda','net_income','total_assets','total_debt','total_equity','eps','pe_ratio','dividend_yield','book_value','roe','roa','current_ratio','gross_margin','operating_margin','esg_score','env_score','soc_score','gov_score','esg_controversy','open','high','low','close','adj_close','volume','div_amount','div_date','split_ratio','insider_name','insider_shares','insider_value','country','currency','ipo_date','description','logo_url','phone','address','city','state','zip','website','fiscal_year_end','beta','52w_high','52w_low','50d_avg','200d_avg','shares_outstanding','shares_float','short_ratio','short_pct','options_chain','options_expiry','options_strike','options_iv','news_title','news_sentiment','news_source','news_date','news_url','sector_pe','sector_roe','sector_growth','exchange_list','exchange_country','exchange_currency','hist_div_yield','hist_payout_ratio','cash_flow_ops','cash_flow_invest','cash_flow_finance','free_cash_flow','capex']},
-  {id:2,name:'Alpha Vantage',slug:'alphavantage',status:'Connected',type:'REST API',baseUrl:'alphavantage.co',auth:'API Key',format:'JSON',rateLimit:'75/min',ratePlan:'Premium',fieldCount:60,endpointCount:11,lastSync:'2026-03-29T07:45:00Z',syncSchedule:'hourly',freshness:95,errorCount:1,cost:'$49.99/mo',
-    endpoints:['TIME_SERIES_DAILY','OVERVIEW','INCOME_STATEMENT','BALANCE_SHEET','CASH_FLOW','EARNINGS','NEWS_SENTIMENT','REAL_GDP','CPI','TREASURY_YIELD','FEDERAL_FUNDS_RATE'],
-    fields:['daily_open','daily_high','daily_low','daily_close','daily_volume','daily_adj_close','overview_name','overview_sector','overview_industry','overview_market_cap','overview_pe','overview_eps','overview_dividend','overview_beta','overview_52w_high','overview_52w_low','overview_50d_ma','overview_200d_ma','overview_shares','overview_book_value','is_revenue','is_gross_profit','is_operating_income','is_net_income','is_ebitda','is_interest_expense','is_tax_provision','bs_total_assets','bs_total_liabilities','bs_total_equity','bs_cash','bs_short_term_debt','bs_long_term_debt','bs_current_assets','bs_current_liabilities','cf_operating','cf_investing','cf_financing','cf_capex','cf_dividends_paid','cf_free_cash_flow','earn_reported_eps','earn_estimated_eps','earn_surprise','earn_surprise_pct','news_title','news_summary','news_sentiment_score','news_relevance','news_source','real_gdp','real_gdp_per_capita','cpi','cpi_monthly','treasury_yield_2y','treasury_yield_5y','treasury_yield_10y','treasury_yield_30y','fed_funds_rate','fed_funds_upper']},
-  {id:3,name:'Climate TRACE',slug:'climatetrace',status:'Connected',type:'REST API',baseUrl:'api.climatetrace.org',auth:'None',format:'JSON',rateLimit:'Unlimited',ratePlan:'Free',fieldCount:25,endpointCount:3,lastSync:'2026-03-28T22:00:00Z',syncSchedule:'daily',freshness:92,errorCount:0,cost:'Free',
-    endpoints:['Country emissions','Sector emissions','Facility emissions'],
-    fields:['ct_country','ct_country_code','ct_sector','ct_subsector','ct_gas','ct_emissions_quantity','ct_emissions_unit','ct_year','ct_source','ct_confidence','ct_facility_name','ct_facility_lat','ct_facility_lon','ct_facility_capacity','ct_facility_fuel','ct_facility_owner','ct_reporting_entity','ct_verification','ct_scope','ct_methodology','ct_data_quality','ct_temporal_granularity','ct_update_frequency','ct_emissions_trend','ct_intensity']},
-  {id:4,name:'EDGAR/SEC',slug:'edgar',status:'Connected',type:'REST API',baseUrl:'data.sec.gov',auth:'User-Agent',format:'JSON',rateLimit:'10/sec',ratePlan:'Free',fieldCount:40,endpointCount:3,lastSync:'2026-03-29T06:00:00Z',syncSchedule:'daily',freshness:88,errorCount:2,cost:'Free',
-    endpoints:['Company facts','Filing submissions','XBRL data'],
-    fields:['cik','entity_name','entity_type','sic','sic_description','ein','state_of_incorporation','fiscal_year_end','filing_date','form_type','filing_url','accession_number','primary_document','filing_description','xbrl_tag','xbrl_value','xbrl_unit','xbrl_period_start','xbrl_period_end','xbrl_instant','xbrl_dimension','xbrl_member','sec_revenue','sec_assets','sec_liabilities','sec_equity','sec_net_income','sec_eps','sec_shares','sec_cash','sec_debt','sec_goodwill','sec_intangibles','sec_ppe','sec_depreciation','sec_capex','sec_dividends','sec_buybacks','sec_compensation','sec_segment_revenue']},
-  {id:5,name:'Ember Climate',slug:'ember',status:'Connected',type:'REST API',baseUrl:'ember-climate.org/data',auth:'None',format:'CSV/JSON',rateLimit:'Unlimited',ratePlan:'Free',fieldCount:20,endpointCount:3,lastSync:'2026-03-28T18:00:00Z',syncSchedule:'weekly',freshness:85,errorCount:0,cost:'Free',
-    endpoints:['Electricity generation','Carbon intensity','Renewables share'],
-    fields:['ember_country','ember_country_code','ember_year','ember_generation_twh','ember_coal_twh','ember_gas_twh','ember_oil_twh','ember_nuclear_twh','ember_hydro_twh','ember_wind_twh','ember_solar_twh','ember_other_re_twh','ember_carbon_intensity','ember_demand_twh','ember_net_imports','ember_renewables_share','ember_fossil_share','ember_clean_share','ember_per_capita_mwh','ember_emissions_mtco2']},
-  {id:6,name:'World Bank Open Data',slug:'worldbank',status:'Connected',type:'REST API',baseUrl:'api.worldbank.org/v2',auth:'None',format:'JSON/XML',rateLimit:'Unlimited',ratePlan:'Free',fieldCount:50,endpointCount:5,lastSync:'2026-03-27T12:00:00Z',syncSchedule:'weekly',freshness:80,errorCount:0,cost:'Free',
-    endpoints:['GDP','Population','CO2 per capita','ND-GAIN','WDI indicators'],
-    fields:['wb_country','wb_country_code','wb_year','wb_gdp','wb_gdp_growth','wb_gdp_per_capita','wb_gni','wb_gni_per_capita','wb_population','wb_pop_growth','wb_urban_pct','wb_life_expectancy','wb_co2_per_capita','wb_co2_total','wb_methane','wb_n2o','wb_forest_area','wb_arable_land','wb_water_stress','wb_renewable_energy_pct','wb_electricity_access','wb_fossil_fuel_pct','wb_ndgain_score','wb_ndgain_vulnerability','wb_ndgain_readiness','wb_hdi','wb_gini','wb_poverty_rate','wb_unemployment','wb_inflation','wb_fdi_net','wb_trade_pct_gdp','wb_debt_pct_gdp','wb_reserves','wb_remittances','wb_tax_revenue','wb_education_expenditure','wb_health_expenditure','wb_military_expenditure','wb_r_and_d','wb_internet_users','wb_mobile_subscriptions','wb_patent_applications','wb_scientific_articles','wb_ease_business','wb_regulatory_quality','wb_rule_of_law','wb_control_corruption','wb_political_stability','wb_government_effectiveness']},
-  {id:7,name:'UNFCCC',slug:'unfccc',status:'Connected',type:'REST API',baseUrl:'unfccc.int/process-and-meetings',auth:'None',format:'JSON',rateLimit:'Unlimited',ratePlan:'Free',fieldCount:15,endpointCount:3,lastSync:'2026-03-25T00:00:00Z',syncSchedule:'weekly',freshness:75,errorCount:0,cost:'Free',
-    endpoints:['NDC registry','GHG data','Annex I/Non-Annex I'],
-    fields:['unfccc_country','unfccc_party_type','unfccc_ndc_target','unfccc_ndc_year','unfccc_ndc_base_year','unfccc_ndc_reduction_pct','unfccc_ndc_conditional','unfccc_ghg_total','unfccc_ghg_co2','unfccc_ghg_ch4','unfccc_ghg_n2o','unfccc_ghg_fgas','unfccc_ghg_sector','unfccc_annex_type','unfccc_ratification_date']},
-  {id:8,name:'IEA (via Ember proxy)',slug:'iea',status:'Partial',type:'REST API',baseUrl:'ember-climate.org/data/iea',auth:'None',format:'JSON',rateLimit:'Limited',ratePlan:'Free (proxy)',fieldCount:10,endpointCount:1,lastSync:'2026-03-20T00:00:00Z',syncSchedule:'monthly',freshness:60,errorCount:3,cost:'Free (limited)',
-    endpoints:['Energy balances (subset)'],
-    fields:['iea_country','iea_year','iea_tpes','iea_tfc','iea_electricity_output','iea_heat_output','iea_oil_consumption','iea_gas_consumption','iea_coal_consumption','iea_renewables_consumption']},
-  {id:9,name:'CDP',slug:'cdp',status:'Pending',type:'REST API',baseUrl:'data.cdp.net',auth:'OAuth2',format:'JSON',rateLimit:'TBD',ratePlan:'Data License',fieldCount:0,endpointCount:2,lastSync:null,syncSchedule:'none',freshness:0,errorCount:0,cost:'License Required',
-    endpoints:['Company scores','Climate change questionnaire'],
-    fields:[]},
-  {id:10,name:'Bloomberg Terminal',slug:'bloomberg',status:'Not Connected',type:'BQL/BPIPE',baseUrl:'bloomberg.com/professional',auth:'Enterprise SSO',format:'Proprietary',rateLimit:'Enterprise',ratePlan:'Enterprise',fieldCount:0,endpointCount:0,lastSync:null,syncSchedule:'none',freshness:0,errorCount:0,cost:'Enterprise License',
-    endpoints:[],
-    fields:[]},
+  {id:'eodhd',name:'EODHD Financial Data',type:'REST API',status:'active',fields:42,endpoints:8,lastSync:'2026-03-29T08:15:00Z',rateLimit:{used:1240,max:5000},baseUrl:'https://eodhd.com/api',authType:'API Key',description:'End-of-day historical data, fundamentals, ETFs'},
+  {id:'alphavantage',name:'Alpha Vantage',type:'REST API',status:'active',fields:38,endpoints:12,lastSync:'2026-03-29T07:30:00Z',rateLimit:{used:340,max:500},baseUrl:'https://www.alphavantage.co',authType:'API Key',description:'Real-time & historical stock data, forex, crypto'},
+  {id:'climatetrace',name:'Climate TRACE',type:'REST API',status:'active',fields:28,endpoints:5,lastSync:'2026-03-28T22:00:00Z',rateLimit:{used:80,max:1000},baseUrl:'https://api.climatetrace.org',authType:'None',description:'Global greenhouse gas emissions inventory'},
+  {id:'worldbank',name:'World Bank Open Data',type:'REST API',status:'active',fields:35,endpoints:6,lastSync:'2026-03-29T06:00:00Z',rateLimit:{used:150,max:10000},baseUrl:'https://api.worldbank.org',authType:'None',description:'Global development indicators, climate data'},
+  {id:'secedgar',name:'SEC EDGAR',type:'REST API',status:'active',fields:52,endpoints:9,lastSync:'2026-03-29T09:00:00Z',rateLimit:{used:45,max:120},baseUrl:'https://data.sec.gov',authType:'User-Agent',description:'Company filings, XBRL data, financial statements'},
+  {id:'ecb',name:'ECB Statistical Data',type:'REST API',status:'warning',fields:24,endpoints:4,lastSync:'2026-03-28T18:00:00Z',rateLimit:{used:890,max:1000},baseUrl:'https://data-api.ecb.europa.eu',authType:'None',description:'European Central Bank statistical warehouse'},
+  {id:'unpri',name:'UN PRI Signatory Data',type:'CSV/Bulk',status:'active',fields:31,endpoints:2,lastSync:'2026-03-27T12:00:00Z',rateLimit:{used:5,max:100},baseUrl:'https://www.unpri.org/api',authType:'Bearer Token',description:'PRI signatory scores, commitment data'},
+  {id:'cdp',name:'CDP Disclosure System',type:'REST API',status:'inactive',fields:45,endpoints:7,lastSync:'2026-03-20T00:00:00Z',rateLimit:{used:0,max:2000},baseUrl:'https://api.cdp.net',authType:'OAuth2',description:'Corporate environmental disclosure data'},
+  {id:'msci',name:'MSCI ESG Ratings',type:'REST API',status:'active',fields:58,endpoints:10,lastSync:'2026-03-29T05:00:00Z',rateLimit:{used:2100,max:3000},baseUrl:'https://api.msci.com/esg',authType:'OAuth2',description:'ESG ratings, controversies, climate data'},
+  {id:'bloomberg',name:'Bloomberg B-PIPE',type:'WebSocket',status:'active',fields:120,endpoints:3,lastSync:'2026-03-29T09:30:00Z',rateLimit:{used:45000,max:100000},baseUrl:'wss://bpipe.bloomberg.com',authType:'Certificate',description:'Real-time market data, reference data, analytics'},
 ];
 
-/* ── DB TABLES ── */
-const DB_TABLES=[
-  {name:'company_profiles',columns:['ticker','name','sector','industry','country','market_cap','employees','revenue','description','website','currency','exchange','ipo_date','fiscal_year_end','logo_url','phone','address','city','state','zip','sic','sic_description','cik','entity_type']},
-  {name:'company_emissions',columns:['entity_id','scope1','scope2','scope3','intensity','verification','year','methodology','source','confidence','sector','subsector','gas_type','facility_name','facility_lat','facility_lon','trend','data_quality']},
-  {name:'esg_ratings',columns:['entity_id','esg_score','env_score','soc_score','gov_score','esg_controversy','rating_provider','rating_date','methodology_version']},
-  {name:'financial_data',columns:['entity_id','period','revenue','gross_profit','ebitda','operating_income','net_income','eps','total_assets','total_liabilities','total_equity','cash','short_term_debt','long_term_debt','current_assets','current_liabilities','roe','roa','current_ratio','gross_margin','operating_margin','free_cash_flow','capex','dividends_paid','shares_outstanding','book_value']},
-  {name:'price_data',columns:['entity_id','date','open','high','low','close','adj_close','volume','beta','52w_high','52w_low','50d_avg','200d_avg','dividend_yield','pe_ratio']},
-  {name:'macro_indicators',columns:['country','country_code','year','gdp','gdp_growth','gdp_per_capita','population','co2_per_capita','co2_total','grid_intensity','renewables_share','fossil_share','electricity_generation','carbon_price','ndgain_score','ndgain_vulnerability','ndgain_readiness','forest_area','water_stress']},
-  {name:'regulatory_filings',columns:['entity_id','cik','filing_date','form_type','accession_number','filing_url','primary_document','xbrl_tags','period_start','period_end','filing_description']},
+/* ─── SOURCE FIELDS ─── */
+const SOURCE_FIELDS={
+  eodhd:[
+    {name:'General.Code',type:'string',sample:'AAPL.US'},{name:'General.Name',type:'string',sample:'Apple Inc'},
+    {name:'General.Exchange',type:'string',sample:'NASDAQ'},{name:'General.Sector',type:'string',sample:'Technology'},
+    {name:'General.Industry',type:'string',sample:'Consumer Electronics'},{name:'General.MarketCapitalization',type:'number',sample:'2840000000000'},
+    {name:'General.EBITDA',type:'number',sample:'129187000000'},{name:'General.PERatio',type:'number',sample:'28.45'},
+    {name:'General.DividendYield',type:'number',sample:'0.0055'},{name:'General.EarningsShare',type:'number',sample:'6.42'},
+    {name:'Highlights.Revenue',type:'number',sample:'394328000000'},{name:'Highlights.GrossProfit',type:'number',sample:'170782000000'},
+    {name:'Highlights.OperatingMargin',type:'number',sample:'0.298'},{name:'Highlights.ReturnOnEquity',type:'number',sample:'1.601'},
+    {name:'General.IPODate',type:'string',sample:'1980-12-12'},{name:'General.CountryISO',type:'string',sample:'US'},
+    {name:'Highlights.BookValue',type:'number',sample:'4.38'},{name:'Highlights.EPS_EstimateCurrentYear',type:'number',sample:'6.70'},
+  ],
+  alphavantage:[
+    {name:'Symbol',type:'string',sample:'MSFT'},{name:'Name',type:'string',sample:'Microsoft Corporation'},
+    {name:'Exchange',type:'string',sample:'NASDAQ'},{name:'Sector',type:'string',sample:'TECHNOLOGY'},
+    {name:'Industry',type:'string',sample:'SERVICES-PREPACKAGED SOFTWARE'},{name:'MarketCapitalization',type:'number',sample:'3020000000000'},
+    {name:'EBITDA',type:'number',sample:'125563000000'},{name:'PERatio',type:'number',sample:'35.2'},
+    {name:'DividendYield',type:'number',sample:'0.0072'},{name:'EPS',type:'number',sample:'11.53'},
+    {name:'Revenue',type:'number',sample:'227583000000'},{name:'GrossProfit',type:'number',sample:'157045000000'},
+    {name:'OperatingMargin',type:'number',sample:'0.425'},{name:'ReturnOnEquity',type:'number',sample:'0.389'},
+    {name:'52WeekHigh',type:'number',sample:'468.35'},{name:'52WeekLow',type:'number',sample:'365.20'},
+  ],
+  climatetrace:[
+    {name:'country',type:'string',sample:'USA'},{name:'year',type:'number',sample:'2024'},
+    {name:'sector',type:'string',sample:'electricity-generation'},{name:'subsector',type:'string',sample:'coal'},
+    {name:'emissions_co2',type:'number',sample:'1450000000'},{name:'emissions_ch4',type:'number',sample:'28500000'},
+    {name:'emissions_n2o',type:'number',sample:'4200000'},{name:'total_co2e',type:'number',sample:'1580000000'},
+    {name:'data_source',type:'string',sample:'satellite'},{name:'confidence',type:'number',sample:'0.92'},
+  ],
+  worldbank:[
+    {name:'country.id',type:'string',sample:'US'},{name:'country.value',type:'string',sample:'United States'},
+    {name:'indicator.id',type:'string',sample:'NY.GDP.MKTP.CD'},{name:'indicator.value',type:'string',sample:'GDP (current US$)'},
+    {name:'date',type:'string',sample:'2024'},{name:'value',type:'number',sample:'28780000000000'},
+    {name:'unit',type:'string',sample:'USD'},{name:'decimal',type:'number',sample:'0'},
+  ],
+  secedgar:[
+    {name:'cik',type:'string',sample:'0000320193'},{name:'entityName',type:'string',sample:'Apple Inc'},
+    {name:'facts.us-gaap.Revenue',type:'number',sample:'394328000000'},{name:'facts.us-gaap.NetIncome',type:'number',sample:'97000000000'},
+    {name:'facts.us-gaap.TotalAssets',type:'number',sample:'352583000000'},{name:'facts.us-gaap.TotalLiabilities',type:'number',sample:'290437000000'},
+    {name:'facts.us-gaap.StockholdersEquity',type:'number',sample:'62146000000'},{name:'facts.dei.EntityCommonStockSharesOutstanding',type:'number',sample:'15460000000'},
+    {name:'filingDate',type:'string',sample:'2025-11-01'},{name:'form',type:'string',sample:'10-K'},
+  ],
+  ecb:[
+    {name:'series_key',type:'string',sample:'EXR.D.USD.EUR.SP00.A'},{name:'obs_value',type:'number',sample:'1.0842'},
+    {name:'time_period',type:'string',sample:'2026-03-28'},{name:'title',type:'string',sample:'Euro/US dollar exchange rate'},
+    {name:'unit',type:'string',sample:'USD'},{name:'decimals',type:'number',sample:'4'},
+  ],
+  unpri:[
+    {name:'signatory_name',type:'string',sample:'BlackRock'},{name:'signatory_type',type:'string',sample:'Investment Manager'},
+    {name:'aum_usd',type:'number',sample:'9500000000000'},{name:'score_strategy',type:'number',sample:'85'},
+    {name:'score_governance',type:'number',sample:'92'},{name:'country',type:'string',sample:'US'},
+    {name:'signed_date',type:'string',sample:'2008-02-01'},
+  ],
+  cdp:[
+    {name:'organization',type:'string',sample:'Shell plc'},{name:'score_climate',type:'string',sample:'A-'},
+    {name:'score_water',type:'string',sample:'B'},{name:'score_forests',type:'string',sample:'B-'},
+    {name:'scope1_emissions',type:'number',sample:'68000000'},{name:'scope2_emissions',type:'number',sample:'12000000'},
+    {name:'scope3_emissions',type:'number',sample:'1250000000'},{name:'year',type:'number',sample:'2024'},
+  ],
+  msci:[
+    {name:'issuer_name',type:'string',sample:'Apple Inc'},{name:'esg_rating',type:'string',sample:'AA'},
+    {name:'esg_score',type:'number',sample:'7.8'},{name:'environment_score',type:'number',sample:'6.9'},
+    {name:'social_score',type:'number',sample:'5.4'},{name:'governance_score',type:'number',sample:'8.1'},
+    {name:'controversy_flag',type:'boolean',sample:'false'},{name:'industry',type:'string',sample:'Technology Hardware'},
+  ],
+  bloomberg:[
+    {name:'TICKER',type:'string',sample:'AAPL US Equity'},{name:'PX_LAST',type:'number',sample:'245.12'},
+    {name:'MARKET_CAP',type:'number',sample:'2840000000000'},{name:'PE_RATIO',type:'number',sample:'28.45'},
+    {name:'EQY_DVD_YLD_IND',type:'number',sample:'0.55'},{name:'CUR_MKT_CAP',type:'number',sample:'2840'},
+    {name:'BEST_EPS',type:'number',sample:'6.70'},{name:'TOT_DEBT_TO_TOT_EQY',type:'number',sample:'1.81'},
+    {name:'WACC',type:'number',sample:'9.2'},{name:'ESG_DISCLOSURE_SCORE',type:'number',sample:'62.4'},
+  ],
+};
+
+/* ─── TARGET TABLES ─── */
+const TARGET_TABLES={
+  company_profiles:[
+    {name:'ticker',type:'string',required:true},{name:'company_name',type:'string',required:true},
+    {name:'exchange',type:'string',required:false},{name:'sector',type:'string',required:false},
+    {name:'industry',type:'string',required:false},{name:'market_cap',type:'number',required:false},
+    {name:'ebitda',type:'number',required:false},{name:'pe_ratio',type:'number',required:false},
+    {name:'dividend_yield',type:'number',required:false},{name:'eps',type:'number',required:false},
+    {name:'revenue',type:'number',required:false},{name:'gross_profit',type:'number',required:false},
+    {name:'operating_margin',type:'number',required:false},{name:'roe',type:'number',required:false},
+    {name:'ipo_date',type:'date',required:false},{name:'country_code',type:'string',required:false},
+  ],
+  emissions_data:[
+    {name:'entity_name',type:'string',required:true},{name:'country_code',type:'string',required:true},
+    {name:'year',type:'number',required:true},{name:'sector',type:'string',required:false},
+    {name:'scope1_co2e',type:'number',required:false},{name:'scope2_co2e',type:'number',required:false},
+    {name:'scope3_co2e',type:'number',required:false},{name:'total_co2e',type:'number',required:false},
+    {name:'data_source',type:'string',required:false},{name:'confidence_score',type:'number',required:false},
+  ],
+  esg_scores:[
+    {name:'entity_name',type:'string',required:true},{name:'provider',type:'string',required:true},
+    {name:'overall_score',type:'number',required:false},{name:'e_score',type:'number',required:false},
+    {name:'s_score',type:'number',required:false},{name:'g_score',type:'number',required:false},
+    {name:'rating',type:'string',required:false},{name:'controversy_flag',type:'boolean',required:false},
+    {name:'assessment_date',type:'date',required:false},
+  ],
+  price_data:[
+    {name:'ticker',type:'string',required:true},{name:'date',type:'date',required:true},
+    {name:'open',type:'number',required:false},{name:'high',type:'number',required:false},
+    {name:'low',type:'number',required:false},{name:'close',type:'number',required:true},
+    {name:'volume',type:'number',required:false},{name:'adjusted_close',type:'number',required:false},
+  ],
+  macro_indicators:[
+    {name:'country_code',type:'string',required:true},{name:'indicator_code',type:'string',required:true},
+    {name:'indicator_name',type:'string',required:false},{name:'year',type:'number',required:true},
+    {name:'value',type:'number',required:true},{name:'unit',type:'string',required:false},
+  ],
+};
+
+/* ─── TEST SCENARIOS ─── */
+const TEST_SCENARIOS=[
+  {id:'eodhd_fundamentals',source:'eodhd',name:'EODHD Fundamentals',method:'GET',path:'/fundamentals/AAPL.US',params:[{key:'api_token',value:'demo',editable:true},{key:'fmt',value:'json',editable:false}],description:'Company fundamental data'},
+  {id:'av_overview',source:'alphavantage',name:'Alpha Vantage Overview',method:'GET',path:'/query',params:[{key:'function',value:'OVERVIEW',editable:false},{key:'symbol',value:'MSFT',editable:true},{key:'apikey',value:'demo',editable:true}],description:'Company overview & financials'},
+  {id:'ct_emissions',source:'climatetrace',name:'Climate TRACE Emissions',method:'GET',path:'/v6/country/emissions',params:[{key:'country',value:'USA',editable:true},{key:'year',value:'2024',editable:true}],description:'Country-level emissions data'},
+  {id:'wb_gdp',source:'worldbank',name:'World Bank GDP',method:'GET',path:'/v2/country/US/indicator/NY.GDP.MKTP.CD',params:[{key:'format',value:'json',editable:false},{key:'date',value:'2020:2025',editable:true}],description:'GDP indicator data'},
+  {id:'sec_apple',source:'secedgar',name:'SEC EDGAR Apple',method:'GET',path:'/api/xbrl/companyfacts/CIK0000320193.json',params:[],description:'Apple Inc XBRL company facts'},
 ];
 
-/* ── FIELD MAPPINGS ── */
-const FIELD_MAPPINGS=useMemoMappings();
-function useMemoMappings(){
-  const m=[];let id=0;
-  const add=(src,srcField,table,col,transform='none')=>{m.push({id:++id,sourceSlug:src,sourceField:srcField,targetTable:table,targetColumn:col,transform,mapped:true});};
-  // EODHD mappings
-  add('eodhd','ticker','company_profiles','ticker');add('eodhd','name','company_profiles','name');
-  add('eodhd','sector','company_profiles','sector');add('eodhd','industry','company_profiles','industry');
-  add('eodhd','country','company_profiles','country');add('eodhd','market_cap','company_profiles','market_cap','numeric');
-  add('eodhd','employees','company_profiles','employees','numeric');add('eodhd','revenue','financial_data','revenue','numeric');
-  add('eodhd','ebitda','financial_data','ebitda','numeric');add('eodhd','net_income','financial_data','net_income','numeric');
-  add('eodhd','total_assets','financial_data','total_assets','numeric');add('eodhd','total_equity','financial_data','total_equity','numeric');
-  add('eodhd','eps','financial_data','eps','numeric');add('eodhd','roe','financial_data','roe','numeric');
-  add('eodhd','roa','financial_data','roa','numeric');add('eodhd','current_ratio','financial_data','current_ratio','numeric');
-  add('eodhd','gross_margin','financial_data','gross_margin','numeric');add('eodhd','operating_margin','financial_data','operating_margin','numeric');
-  add('eodhd','open','price_data','open','numeric');add('eodhd','high','price_data','high','numeric');
-  add('eodhd','low','price_data','low','numeric');add('eodhd','close','price_data','close','numeric');
-  add('eodhd','adj_close','price_data','adj_close','numeric');add('eodhd','volume','price_data','volume','numeric');
-  add('eodhd','esg_score','esg_ratings','esg_score','numeric');add('eodhd','env_score','esg_ratings','env_score','numeric');
-  add('eodhd','soc_score','esg_ratings','soc_score','numeric');add('eodhd','gov_score','esg_ratings','gov_score','numeric');
-  add('eodhd','esg_controversy','esg_ratings','esg_controversy','numeric');add('eodhd','pe_ratio','price_data','pe_ratio','numeric');
-  add('eodhd','dividend_yield','price_data','dividend_yield','numeric');add('eodhd','book_value','financial_data','book_value','numeric');
-  add('eodhd','beta','price_data','beta','numeric');add('eodhd','52w_high','price_data','52w_high','numeric');
-  add('eodhd','52w_low','price_data','52w_low','numeric');add('eodhd','50d_avg','price_data','50d_avg','numeric');
-  add('eodhd','200d_avg','price_data','200d_avg','numeric');add('eodhd','shares_outstanding','financial_data','shares_outstanding','numeric');
-  add('eodhd','free_cash_flow','financial_data','free_cash_flow','numeric');add('eodhd','capex','financial_data','capex','numeric');
-  add('eodhd','website','company_profiles','website');add('eodhd','currency','company_profiles','currency');
-  add('eodhd','exchange','company_profiles','exchange');add('eodhd','ipo_date','company_profiles','ipo_date','date_parse');
-  add('eodhd','description','company_profiles','description');add('eodhd','logo_url','company_profiles','logo_url');
-  add('eodhd','fiscal_year_end','company_profiles','fiscal_year_end');
-  // Alpha Vantage
-  add('alphavantage','daily_open','price_data','open','numeric');add('alphavantage','daily_close','price_data','close','numeric');
-  add('alphavantage','daily_volume','price_data','volume','numeric');add('alphavantage','overview_market_cap','company_profiles','market_cap','numeric');
-  add('alphavantage','is_revenue','financial_data','revenue','numeric');add('alphavantage','is_net_income','financial_data','net_income','numeric');
-  add('alphavantage','is_ebitda','financial_data','ebitda','numeric');add('alphavantage','bs_total_assets','financial_data','total_assets','numeric');
-  add('alphavantage','bs_total_equity','financial_data','total_equity','numeric');add('alphavantage','cf_free_cash_flow','financial_data','free_cash_flow','numeric');
-  add('alphavantage','real_gdp','macro_indicators','gdp','numeric');add('alphavantage','cpi','macro_indicators','gdp_growth','numeric');
-  add('alphavantage','treasury_yield_10y','macro_indicators','gdp_per_capita','numeric');
-  // Climate TRACE
-  add('climatetrace','ct_country','company_emissions','entity_id');add('climatetrace','ct_emissions_quantity','company_emissions','scope1','numeric');
-  add('climatetrace','ct_sector','company_emissions','sector');add('climatetrace','ct_verification','company_emissions','verification');
-  add('climatetrace','ct_year','company_emissions','year','numeric');add('climatetrace','ct_intensity','company_emissions','intensity','numeric');
-  add('climatetrace','ct_methodology','company_emissions','methodology');add('climatetrace','ct_confidence','company_emissions','confidence');
-  add('climatetrace','ct_facility_name','company_emissions','facility_name');add('climatetrace','ct_facility_lat','company_emissions','facility_lat','numeric');
-  add('climatetrace','ct_facility_lon','company_emissions','facility_lon','numeric');
-  // EDGAR/SEC
-  add('edgar','cik','company_profiles','cik');add('edgar','entity_name','company_profiles','name');
-  add('edgar','sic','company_profiles','sic');add('edgar','sic_description','company_profiles','sic_description');
-  add('edgar','entity_type','company_profiles','entity_type');add('edgar','filing_date','regulatory_filings','filing_date','date_parse');
-  add('edgar','form_type','regulatory_filings','form_type');add('edgar','accession_number','regulatory_filings','accession_number');
-  add('edgar','filing_url','regulatory_filings','filing_url');add('edgar','primary_document','regulatory_filings','primary_document');
-  add('edgar','xbrl_tag','regulatory_filings','xbrl_tags');add('edgar','filing_description','regulatory_filings','filing_description');
-  // Ember
-  add('ember','ember_country','macro_indicators','country');add('ember','ember_country_code','macro_indicators','country_code');
-  add('ember','ember_year','macro_indicators','year','numeric');add('ember','ember_carbon_intensity','macro_indicators','grid_intensity','numeric');
-  add('ember','ember_renewables_share','macro_indicators','renewables_share','numeric');add('ember','ember_fossil_share','macro_indicators','fossil_share','numeric');
-  add('ember','ember_generation_twh','macro_indicators','electricity_generation','numeric');
-  // World Bank
-  add('worldbank','wb_country','macro_indicators','country');add('worldbank','wb_country_code','macro_indicators','country_code');
-  add('worldbank','wb_year','macro_indicators','year','numeric');add('worldbank','wb_gdp','macro_indicators','gdp','numeric');
-  add('worldbank','wb_gdp_growth','macro_indicators','gdp_growth','numeric');add('worldbank','wb_gdp_per_capita','macro_indicators','gdp_per_capita','numeric');
-  add('worldbank','wb_population','macro_indicators','population','numeric');add('worldbank','wb_co2_per_capita','macro_indicators','co2_per_capita','numeric');
-  add('worldbank','wb_co2_total','macro_indicators','co2_total','numeric');add('worldbank','wb_ndgain_score','macro_indicators','ndgain_score','numeric');
-  add('worldbank','wb_ndgain_vulnerability','macro_indicators','ndgain_vulnerability','numeric');add('worldbank','wb_ndgain_readiness','macro_indicators','ndgain_readiness','numeric');
-  add('worldbank','wb_forest_area','macro_indicators','forest_area','numeric');add('worldbank','wb_water_stress','macro_indicators','water_stress','numeric');
-  add('worldbank','wb_renewable_energy_pct','macro_indicators','renewables_share','numeric');
-  // UNFCCC
-  add('unfccc','unfccc_ghg_total','company_emissions','scope1','numeric');add('unfccc','unfccc_ghg_co2','company_emissions','scope2','numeric');
-  add('unfccc','unfccc_ndc_reduction_pct','company_emissions','intensity','numeric');
-  return m;
-}
-
-/* ── ENGINE CONSUMPTION MAP ── */
-const ENGINES=[
-  {id:'E-001',name:'PCAF Financed Emissions',consumes:['scope1','scope2','scope3','revenue','total_assets','total_equity','market_cap','grid_intensity','verification','methodology'],tables:['company_emissions','financial_data','macro_indicators']},
-  {id:'E-002',name:'Temperature Score',consumes:['scope1','scope2','scope3','intensity','market_cap','revenue','ndgain_score'],tables:['company_emissions','financial_data','macro_indicators']},
-  {id:'E-003',name:'Climate VaR',consumes:['carbon_price','scope1','scope2','revenue','total_assets','grid_intensity','gdp_growth'],tables:['company_emissions','financial_data','macro_indicators']},
-  {id:'E-004',name:'Green Asset Ratio',consumes:['total_assets','total_equity','revenue','sector','esg_score','renewables_share'],tables:['financial_data','company_profiles','esg_ratings','macro_indicators']},
-  {id:'E-005',name:'ESG Consensus',consumes:['esg_score','env_score','soc_score','gov_score','esg_controversy','sector','market_cap'],tables:['esg_ratings','company_profiles']},
-  {id:'E-006',name:'WACI Calculator',consumes:['scope1','scope2','revenue','market_cap','adj_close','shares_outstanding'],tables:['company_emissions','financial_data','price_data']},
-  {id:'E-007',name:'Scope 3 Estimator',consumes:['scope1','scope2','sector','industry','revenue','ebitda','employees'],tables:['company_emissions','company_profiles','financial_data']},
-  {id:'E-008',name:'TCFD Alignment',consumes:['scope1','scope2','scope3','esg_score','filing_date','form_type','xbrl_tags'],tables:['company_emissions','esg_ratings','regulatory_filings']},
-  {id:'E-009',name:'Sovereign Risk',consumes:['gdp','population','co2_per_capita','co2_total','ndgain_score','ndgain_vulnerability','ndgain_readiness','renewables_share','grid_intensity','forest_area','water_stress'],tables:['macro_indicators']},
-  {id:'E-010',name:'Climate PD',consumes:['carbon_price','scope1','scope2','revenue','total_assets','total_debt','ebitda','grid_intensity','sector'],tables:['company_emissions','financial_data','macro_indicators','company_profiles']},
-  {id:'E-011',name:'Carbon Footprint',consumes:['scope1','scope2','scope3','intensity','revenue','employees','sector','grid_intensity'],tables:['company_emissions','financial_data','company_profiles','macro_indicators']},
-  {id:'E-012',name:'Transition Risk',consumes:['scope1','scope2','carbon_price','sector','industry','revenue','capex','renewables_share'],tables:['company_emissions','macro_indicators','company_profiles','financial_data']},
+/* ─── ENGINE LINEAGE ─── */
+const ENGINE_LINEAGE=[
+  {engine:'E1 \u2014 Portfolio Analyzer',tables:['company_profiles','price_data'],sources:['eodhd','alphavantage','bloomberg']},
+  {engine:'E3 \u2014 Carbon Footprint',tables:['emissions_data','company_profiles'],sources:['climatetrace','cdp','secedgar']},
+  {engine:'E5 \u2014 ESG Scorer',tables:['esg_scores','company_profiles'],sources:['msci','unpri','cdp']},
+  {engine:'E7 \u2014 Climate Risk',tables:['emissions_data','macro_indicators'],sources:['climatetrace','worldbank','ecb']},
+  {engine:'E12 \u2014 Regulatory Compliance',tables:['company_profiles','esg_scores'],sources:['secedgar','msci']},
+  {engine:'E18 \u2014 Sovereign Risk',tables:['macro_indicators','emissions_data'],sources:['worldbank','ecb','climatetrace']},
+  {engine:'E24 \u2014 SFDR Reporter',tables:['esg_scores','emissions_data','company_profiles'],sources:['msci','cdp','eodhd']},
+  {engine:'E31 \u2014 Transition Planner',tables:['emissions_data','company_profiles','esg_scores'],sources:['climatetrace','secedgar','msci']},
 ];
 
-/* ── SYNC HISTORY ── */
-const SYNC_HISTORY=(()=>{
-  const h=[];
-  SOURCES.filter(s=>s.status==='Connected'||s.status==='Partial').forEach(src=>{
-    for(let d=0;d<30;d++){
-      const success=sr(src.id*100+d)>0.08;
-      const records=Math.round(sr(src.id*200+d)*5000+500);
-      h.push({sourceId:src.id,sourceName:src.name,day:d,date:`2026-03-${String(29-d).padStart(2,'0')}`,status:success?'success':'failed',records:success?records:0,duration:+(sr(src.id*300+d)*12+1).toFixed(1),error:success?null:['Timeout after 30s','Rate limit exceeded','Auth token expired','Connection refused','Malformed response'][Math.floor(sr(src.id*400+d)*5)],retries:success?0:Math.floor(sr(src.id*500+d)*3+1)});
-    }
-  });
-  return h;
-})();
+/* ─── TRANSFORMS ─── */
+const TRANSFORM_TYPES=['none','uppercase','lowercase','divide_1e6','divide_1e9','multiply_100','iso_date','boolean','enum_map','unit_convert','concatenate','trim','parse_number','round_2','percentage'];
 
-/* ── ALERTS CONFIG ── */
-const ALERT_RULES=[
-  {id:1,name:'Sync Failure Alert',condition:'sync_status = failed',threshold:1,action:'email',enabled:true},
-  {id:2,name:'Stale Data Alert',condition:'freshness < 24h',threshold:24,action:'slack',enabled:true},
-  {id:3,name:'Rate Limit Warning',condition:'rate_usage > 90%',threshold:90,action:'dashboard',enabled:true},
-  {id:4,name:'Error Spike Alert',condition:'error_count > 5/hour',threshold:5,action:'email+slack',enabled:false},
-  {id:5,name:'Data Quality Alert',condition:'null_rate > 10%',threshold:10,action:'dashboard',enabled:true},
+/* ─── PIPELINE TEMPLATES ─── */
+const PIPELINE_TEMPLATES=[
+  {id:'eodhd_to_profiles',name:'EODHD Fundamentals \u2192 company_profiles',source:'eodhd',target:'company_profiles',stages:[
+    {type:'Extract',config:'Select 16 fields from /fundamentals endpoint'},
+    {type:'Transform',config:'MarketCap \u00f7 1e9, PERatio round(2), DividendYield \u00d7 100'},
+    {type:'Load',config:'Upsert into company_profiles on ticker'},
+    {type:'Validate',config:'Required: ticker, company_name; Range: pe_ratio 0\u2013500'},
+  ]},
+  {id:'ct_to_emissions',name:'Climate TRACE \u2192 emissions_data',source:'climatetrace',target:'emissions_data',stages:[
+    {type:'Extract',config:'Select emissions by country and sector'},
+    {type:'Transform',config:'CO2e \u00f7 1e6 (to Mt), confidence round(2)'},
+    {type:'Load',config:'Insert into emissions_data partitioned by year'},
+    {type:'Validate',config:'Required: entity_name, year; Range: confidence 0\u20131'},
+  ]},
+  {id:'msci_to_esg',name:'MSCI Ratings \u2192 esg_scores',source:'msci',target:'esg_scores',stages:[
+    {type:'Extract',config:'Select issuer, scores, rating, controversy'},
+    {type:'Transform',config:'Score normalization 0\u201310, boolean controversy_flag'},
+    {type:'Load',config:'Upsert into esg_scores on entity+provider'},
+    {type:'Validate',config:'Required: entity_name, provider; Range: scores 0\u201310'},
+  ]},
 ];
 
+/* ─── HELPER FUNCTIONS ─── */
+const fmtNum=(n)=>{if(typeof n!=='number')n=Number(n);if(isNaN(n))return String(n);if(n>=1e12)return(n/1e12).toFixed(1)+'T';if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n%1===0?String(n):n.toFixed(2);};
+const fmtDate=(iso)=>{if(!iso)return'\u2014';const d=new Date(iso);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});};
+const timeSince=(iso)=>{const s=Math.floor((new Date()-new Date(iso))/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';};
+
+const levenshtein=(a,b)=>{const m=a.length,n=b.length;const d=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));return d[m][n];};
+const similarity=(a,b)=>{const al=a.toLowerCase().replace(/[^a-z0-9]/g,''),bl=b.toLowerCase().replace(/[^a-z0-9]/g,'');const maxLen=Math.max(al.length,bl.length);if(maxLen===0)return 1;return Math.round((1-levenshtein(al,bl)/maxLen)*100);};
+const typeCompat=(src,tgt)=>{if(src===tgt)return'valid';if(src==='number'&&tgt==='string')return'valid';if(src==='string'&&tgt==='number')return'warning';if(src==='string'&&tgt==='date')return'warning';if(src==='boolean'&&tgt==='string')return'valid';return'warning';};
+
+const StatusBadge=({status})=>{const colors={active:{bg:T.green+'18',color:T.green,label:'Active'},warning:{bg:T.amber+'18',color:T.amber,label:'Warning'},inactive:{bg:T.red+'18',color:T.red,label:'Inactive'},testing:{bg:T.navyL+'18',color:T.navyL,label:'Testing'}};const c=colors[status]||colors.inactive;return <span style={{padding:'2px 10px',borderRadius:9999,fontSize:11,fontWeight:600,fontFamily:T.mono,background:c.bg,color:c.color}}>{c.label}</span>;};
+
+/* ================================================================== */
+/* === MAIN COMPONENT =============================================== */
+/* ================================================================== */
 export default function DataSourceManagerPage(){
   const[tab,setTab]=useState(0);
-  // Tab 1 state
-  const[selectedSource,setSelectedSource]=useState(null);
-  const[sourceSearch,setSourceSearch]=useState('');
-  const[statusFilter,setStatusFilter]=useState('All');
+  const tabs=['Source Registry','Visual Field Mapper','Live API Tester','Transform Pipeline','Engine Lineage','Sync Monitor'];
+
+  return(
+    <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',color:T.text}}>
+      {/* HEADER */}
+      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:'18px 28px 0'}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
+          <div style={{width:36,height:36,borderRadius:8,background:`linear-gradient(135deg,${T.navy},${T.navyL})`,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:16,fontWeight:700}}>DS</div>
+          <div>
+            <div style={{fontSize:20,fontWeight:700,color:T.navy}}>Data Source Manager</div>
+            <div style={{fontSize:12,fontFamily:T.mono,color:T.textMut}}>PLATFORM / DATA-INFRASTRUCTURE / SOURCE-MANAGEMENT</div>
+          </div>
+          <div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center'}}>
+            <span style={{fontFamily:T.mono,fontSize:11,color:T.textMut}}>{SOURCES.filter(s=>s.status==='active').length}/{SOURCES.length} sources active</span>
+            <span style={{width:8,height:8,borderRadius:4,background:T.green,display:'inline-block'}}/>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:0,borderBottom:`2px solid ${T.border}`}}>
+          {tabs.map((t,i)=>(
+            <button key={i} onClick={()=>setTab(i)} style={{padding:'10px 20px',fontSize:13,fontWeight:tab===i?700:500,color:tab===i?T.navy:T.textSec,background:'none',border:'none',borderBottom:tab===i?`2px solid ${T.gold}`:'2px solid transparent',marginBottom:-2,cursor:'pointer',fontFamily:T.font,transition:'all 0.15s'}}>{t}</button>
+          ))}
+        </div>
+      </div>
+      {/* BODY */}
+      <div style={{padding:'20px 28px'}}>
+        {tab===0&&<SourceRegistryTab/>}
+        {tab===1&&<VisualFieldMapperTab/>}
+        {tab===2&&<LiveApiTesterTab/>}
+        {tab===3&&<TransformPipelineTab/>}
+        {tab===4&&<EngineLineageTab/>}
+        {tab===5&&<SyncMonitorTab/>}
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* === TAB 1: SOURCE REGISTRY ====================================== */
+/* ================================================================== */
+function SourceRegistryTab(){
+  const[testingId,setTestingId]=useState(null);
+  const[testResults,setTestResults]=useState({});
   const[showAddWizard,setShowAddWizard]=useState(false);
   const[wizardStep,setWizardStep]=useState(0);
-  const[wizardData,setWizardData]=useState({name:'',type:'REST API',baseUrl:'',auth:'API Key',format:'JSON'});
-  const[testingConnection,setTestingConnection]=useState(null);
-  const[testResult,setTestResult]=useState(null);
-  // Tab 2 state
-  const[mapSource,setMapSource]=useState('eodhd');
-  const[mapTable,setMapTable]=useState('company_profiles');
-  const[mapSearch,setMapSearch]=useState('');
-  const[showUnmappedOnly,setShowUnmappedOnly]=useState(false);
-  const[validating,setValidating]=useState(false);
-  const[validationResult,setValidationResult]=useState(null);
-  // Tab 3 state
-  const[engineFilter,setEngineFilter]=useState('All');
-  const[lineageSource,setLineageSource]=useState('All');
-  const[impactSource,setImpactSource]=useState(null);
-  const[selectedField,setSelectedField]=useState(null);
-  // Tab 4 state
-  const[monitorSource,setMonitorSource]=useState('All');
-  const[showAlertConfig,setShowAlertConfig]=useState(false);
-  const[syncingSource,setSyncingSource]=useState(null);
+  const[wizardData,setWizardData]=useState({name:'',type:'REST API',baseUrl:'',authType:'API Key'});
+  const[expandedLogs,setExpandedLogs]=useState(null);
 
-  const filteredSources=useMemo(()=>{
-    let s=SOURCES.filter(src=>src.name.toLowerCase().includes(sourceSearch.toLowerCase()));
-    if(statusFilter!=='All')s=s.filter(src=>src.status===statusFilter);
-    return s;
-  },[sourceSearch,statusFilter]);
+  const handleTest=useCallback((id)=>{
+    setTestingId(id);
+    setTestResults(p=>({...p,[id]:{status:'testing',message:'Connecting...'}}));
+    setTimeout(()=>{
+      setTestResults(p=>({...p,[id]:{status:'testing',message:'Authenticating...'}}));
+    },700);
+    setTimeout(()=>{
+      setTestResults(p=>({...p,[id]:{status:'testing',message:'Fetching sample...'}}));
+    },1400);
+    setTimeout(()=>{
+      const ok=sr(SOURCES.findIndex(s=>s.id===id)*7+3)>0.15;
+      setTestResults(p=>({...p,[id]:{status:ok?'success':'error',message:ok?'Connection successful \u2014 42ms response, 3 sample records retrieved':'Connection timeout \u2014 check API key and endpoint URL'}}));
+      setTestingId(null);
+    },2200);
+  },[]);
 
-  const currentSource=useMemo(()=>SOURCES.find(s=>s.id===selectedSource),[selectedSource]);
-
-  const mappingsForSource=useMemo(()=>{
-    const src=SOURCES.find(s=>s.slug===mapSource);
-    if(!src)return[];
-    const mapped=FIELD_MAPPINGS.filter(m=>m.sourceSlug===mapSource);
-    const allFields=src.fields.map(f=>{
-      const mapping=mapped.find(m=>m.sourceField===f);
-      return{field:f,mapping:mapping||null,mapped:!!mapping};
+  const generateLogEntries=useCallback((sourceId)=>{
+    const base=SOURCES.findIndex(s=>s.id===sourceId)*13;
+    return Array.from({length:8},(_,i)=>{
+      const severity=sr(base+i*7)>0.7?'ERROR':sr(base+i*7)>0.3?'WARN':'INFO';
+      const msgs=['Sync completed successfully','Rate limit approaching threshold','Field schema changed \u2014 2 new fields detected','Authentication token refreshed','Retry attempt 2/3 for batch 14','Response timeout \u2014 falling back to cache','Data validation: 3 records skipped (null required fields)','Incremental sync: 847 new records'];
+      return{time:`2026-03-${29-i<10?'0'+(29-i):(29-i)}T${String(8+i).padStart(2,'0')}:${String(Math.floor(sr(base+i*3)*60)).padStart(2,'0')}:00Z`,severity,message:msgs[i%msgs.length]};
     });
-    let result=allFields;
-    if(showUnmappedOnly)result=result.filter(f=>!f.mapped);
-    if(mapSearch)result=result.filter(f=>f.field.toLowerCase().includes(mapSearch.toLowerCase()));
-    return result;
-  },[mapSource,mapSearch,showUnmappedOnly]);
+  },[]);
 
-  const targetColumns=useMemo(()=>{
-    const tbl=DB_TABLES.find(t=>t.name===mapTable);
-    return tbl?tbl.columns:[];
-  },[mapTable]);
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <div style={{fontSize:14,fontWeight:600}}>Registered Data Sources ({SOURCES.length})</div>
+        <button onClick={()=>{setShowAddWizard(true);setWizardStep(0);}} style={{padding:'8px 18px',background:`linear-gradient(135deg,${T.navy},${T.navyL})`,color:'#fff',border:'none',borderRadius:6,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>+ Add New Source</button>
+      </div>
 
-  const coverageStats=useMemo(()=>{
-    const tbl=DB_TABLES.find(t=>t.name===mapTable);
-    if(!tbl)return{total:0,mapped:0,pct:0};
-    const mappedCols=new Set(FIELD_MAPPINGS.filter(m=>m.targetTable===mapTable).map(m=>m.targetColumn));
-    return{total:tbl.columns.length,mapped:mappedCols.size,pct:Math.round(mappedCols.size/tbl.columns.length*100)};
-  },[mapTable]);
+      {/* ADD WIZARD MODAL */}
+      {showAddWizard&&(
+        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.4)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:T.surface,borderRadius:12,padding:28,width:520,boxShadow:'0 20px 60px rgba(0,0,0,0.2)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:20}}>
+              <div style={{fontSize:16,fontWeight:700}}>Add New Data Source</div>
+              <button onClick={()=>setShowAddWizard(false)} style={{background:'none',border:'none',fontSize:18,cursor:'pointer',color:T.textMut}}>\u00d7</button>
+            </div>
+            <div style={{display:'flex',gap:8,marginBottom:20}}>
+              {['Details','Authentication','Fields','Confirm'].map((s,i)=>(
+                <div key={i} style={{flex:1,height:4,borderRadius:2,background:i<=wizardStep?T.gold:T.border}}/>
+              ))}
+            </div>
+            {wizardStep===0&&(
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                <label style={{fontSize:12,fontWeight:600}}>Source Name
+                  <input value={wizardData.name} onChange={e=>setWizardData(p=>({...p,name:e.target.value}))} placeholder="e.g., Refinitiv ESG" style={{width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,marginTop:4,fontFamily:T.font,fontSize:13,boxSizing:'border-box'}}/>
+                </label>
+                <label style={{fontSize:12,fontWeight:600}}>Type
+                  <select value={wizardData.type} onChange={e=>setWizardData(p=>({...p,type:e.target.value}))} style={{width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,marginTop:4,fontFamily:T.font,fontSize:13}}>
+                    <option>REST API</option><option>WebSocket</option><option>CSV/Bulk</option><option>GraphQL</option><option>SFTP</option>
+                  </select>
+                </label>
+                <label style={{fontSize:12,fontWeight:600}}>Base URL
+                  <input value={wizardData.baseUrl} onChange={e=>setWizardData(p=>({...p,baseUrl:e.target.value}))} placeholder="https://api.example.com" style={{width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,marginTop:4,fontFamily:T.font,fontSize:13,boxSizing:'border-box'}}/>
+                </label>
+              </div>
+            )}
+            {wizardStep===1&&(
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                <label style={{fontSize:12,fontWeight:600}}>Auth Type
+                  <select value={wizardData.authType} onChange={e=>setWizardData(p=>({...p,authType:e.target.value}))} style={{width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,marginTop:4,fontFamily:T.font,fontSize:13}}>
+                    <option>API Key</option><option>Bearer Token</option><option>OAuth2</option><option>Certificate</option><option>None</option>
+                  </select>
+                </label>
+                <label style={{fontSize:12,fontWeight:600}}>API Key / Token
+                  <input type="password" placeholder="sk-..." style={{width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,marginTop:4,fontFamily:T.mono,fontSize:12,boxSizing:'border-box'}}/>
+                </label>
+              </div>
+            )}
+            {wizardStep===2&&(
+              <div style={{fontSize:13,color:T.textSec,lineHeight:1.6}}>
+                <p style={{margin:'0 0 12px'}}>After saving, the system will auto-detect available fields by making a sample API call. You can also manually define fields in the Visual Field Mapper tab.</p>
+                <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+                  <div style={{fontFamily:T.mono,fontSize:11,color:T.textMut}}>Estimated fields: 15\u201325 (based on typical {wizardData.type} source)</div>
+                </div>
+              </div>
+            )}
+            {wizardStep===3&&(
+              <div style={{fontSize:13,color:T.textSec,lineHeight:1.6}}>
+                <div style={{background:T.surfaceH,borderRadius:8,padding:16}}>
+                  <div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Configuration Summary</div>
+                  <div style={{fontFamily:T.mono,fontSize:11}}><strong>Name:</strong> {wizardData.name||'(unnamed)'}</div>
+                  <div style={{fontFamily:T.mono,fontSize:11}}><strong>Type:</strong> {wizardData.type}</div>
+                  <div style={{fontFamily:T.mono,fontSize:11}}><strong>URL:</strong> {wizardData.baseUrl||'(not set)'}</div>
+                  <div style={{fontFamily:T.mono,fontSize:11}}><strong>Auth:</strong> {wizardData.authType}</div>
+                </div>
+              </div>
+            )}
+            <div style={{display:'flex',justifyContent:'flex-end',gap:8,marginTop:20}}>
+              {wizardStep>0&&<button onClick={()=>setWizardStep(p=>p-1)} style={{padding:'8px 16px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,cursor:'pointer',fontFamily:T.font}}>Back</button>}
+              {wizardStep<3?<button onClick={()=>setWizardStep(p=>p+1)} style={{padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:6,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Next</button>
+              :<button onClick={()=>setShowAddWizard(false)} style={{padding:'8px 16px',background:T.green,color:'#fff',border:'none',borderRadius:6,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Save Source</button>}
+            </div>
+          </div>
+        </div>
+      )}
 
-  const engineLineage=useMemo(()=>{
-    let engines=ENGINES;
-    if(engineFilter!=='All')engines=engines.filter(e=>e.id===engineFilter);
-    if(lineageSource!=='All'){
-      const srcMappings=FIELD_MAPPINGS.filter(m=>m.sourceSlug===lineageSource);
-      const mappedCols=new Set(srcMappings.map(m=>m.targetColumn));
-      engines=engines.filter(e=>e.consumes.some(c=>mappedCols.has(c)));
+      {/* SOURCE CARDS */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(460px,1fr))',gap:14}}>
+        {SOURCES.map((src)=>(
+          <div key={src.id} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16,transition:'box-shadow 0.15s'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
+              <div>
+                <div style={{fontSize:14,fontWeight:700}}>{src.name}</div>
+                <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,marginTop:2}}>{src.type} \u00b7 {src.authType} \u00b7 {src.baseUrl}</div>
+              </div>
+              <StatusBadge status={src.status}/>
+            </div>
+            <div style={{fontSize:11,color:T.textSec,marginBottom:10}}>{src.description}</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:10}}>
+              <div style={{background:T.surfaceH,borderRadius:6,padding:'6px 8px',textAlign:'center'}}>
+                <div style={{fontSize:16,fontWeight:700,color:T.navy}}>{src.fields}</div>
+                <div style={{fontSize:10,color:T.textMut}}>Fields</div>
+              </div>
+              <div style={{background:T.surfaceH,borderRadius:6,padding:'6px 8px',textAlign:'center'}}>
+                <div style={{fontSize:16,fontWeight:700,color:T.navy}}>{src.endpoints}</div>
+                <div style={{fontSize:10,color:T.textMut}}>Endpoints</div>
+              </div>
+              <div style={{background:T.surfaceH,borderRadius:6,padding:'6px 8px',textAlign:'center'}}>
+                <div style={{fontSize:16,fontWeight:700,color:T.navyL}}>{timeSince(src.lastSync)}</div>
+                <div style={{fontSize:10,color:T.textMut}}>Last Sync</div>
+              </div>
+              <div style={{background:T.surfaceH,borderRadius:6,padding:'6px 8px',textAlign:'center'}}>
+                <div style={{fontSize:16,fontWeight:700,color:src.rateLimit.used/src.rateLimit.max>0.8?T.amber:T.green}}>{Math.round(src.rateLimit.used/src.rateLimit.max*100)}%</div>
+                <div style={{fontSize:10,color:T.textMut}}>Rate Limit</div>
+              </div>
+            </div>
+            {/* Rate limit bar */}
+            <div style={{height:4,background:T.surfaceH,borderRadius:2,marginBottom:10,overflow:'hidden'}}>
+              <div style={{height:'100%',width:`${(src.rateLimit.used/src.rateLimit.max)*100}%`,background:src.rateLimit.used/src.rateLimit.max>0.8?T.amber:T.green,borderRadius:2,transition:'width 0.3s'}}/>
+            </div>
+            <div style={{fontFamily:T.mono,fontSize:10,color:T.textMut,marginBottom:10}}>{fmtNum(src.rateLimit.used)} / {fmtNum(src.rateLimit.max)} requests</div>
+
+            {/* Test result */}
+            {testResults[src.id]&&(
+              <div style={{padding:'8px 12px',borderRadius:6,marginBottom:10,fontSize:11,fontFamily:T.mono,
+                background:testResults[src.id].status==='success'?T.green+'12':testResults[src.id].status==='error'?T.red+'12':T.gold+'12',
+                color:testResults[src.id].status==='success'?T.green:testResults[src.id].status==='error'?T.red:T.gold,
+                display:'flex',alignItems:'center',gap:6}}>
+                {testResults[src.id].status==='testing'&&<span style={{display:'inline-block',width:10,height:10,border:`2px solid ${T.gold}`,borderTopColor:'transparent',borderRadius:'50%',animation:'dsm-spin 0.8s linear infinite'}}/>}
+                {testResults[src.id].status==='success'&&<span>\u2713</span>}
+                {testResults[src.id].status==='error'&&<span>\u2717</span>}
+                {testResults[src.id].message}
+              </div>
+            )}
+
+            {/* Actions */}
+            <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+              {[{label:'Test',color:T.navy,action:()=>handleTest(src.id),disabled:testingId===src.id},{label:'Sync Now',color:T.sage},{label:'Edit Config',color:T.textSec},{label:'View Logs',color:T.textSec,action:()=>setExpandedLogs(expandedLogs===src.id?null:src.id)},{label:src.status==='inactive'?'Enable':'Disable',color:src.status==='inactive'?T.green:T.red}].map((a,i)=>(
+                <button key={i} onClick={a.action} disabled={a.disabled} style={{padding:'5px 12px',fontSize:11,fontWeight:600,color:a.color,background:a.color+'10',border:`1px solid ${a.color}30`,borderRadius:5,cursor:a.disabled?'not-allowed':'pointer',fontFamily:T.font,opacity:a.disabled?0.5:1}}>{a.label}</button>
+              ))}
+            </div>
+
+            {/* Expanded logs */}
+            {expandedLogs===src.id&&(
+              <div style={{marginTop:10,background:T.navy,borderRadius:6,padding:10,maxHeight:180,overflowY:'auto'}}>
+                {generateLogEntries(src.id).map((log,li)=>(
+                  <div key={li} style={{fontFamily:T.mono,fontSize:10,color:log.severity==='ERROR'?'#ff6b6b':log.severity==='WARN'?T.goldL:'#a0d0a0',marginBottom:3}}>
+                    <span style={{color:'#667'}}>{fmtDate(log.time)}</span>{' '}
+                    <span style={{fontWeight:700}}>[{log.severity}]</span>{' '}
+                    {log.message}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <style>{`@keyframes dsm-spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* === TAB 2: VISUAL FIELD MAPPER ================================== */
+/* ================================================================== */
+function VisualFieldMapperTab(){
+  const[selectedSource,setSelectedSource]=useState('eodhd');
+  const[selectedTarget,setSelectedTarget]=useState('company_profiles');
+  const[mappings,setMappings]=useState([]);
+  const[dragFrom,setDragFrom]=useState(null);
+  const[hoveredPort,setHoveredPort]=useState(null);
+  const[editingMapping,setEditingMapping]=useState(null);
+  const[validationResults,setValidationResults]=useState(null);
+  const canvasRef=useRef(null);
+  const sourceRefs=useRef({});
+  const targetRefs=useRef({});
+  const[portPositions,setPortPositions]=useState({src:{},tgt:{}});
+
+  const srcFields=useMemo(()=>SOURCE_FIELDS[selectedSource]||[],[selectedSource]);
+  const tgtFields=useMemo(()=>TARGET_TABLES[selectedTarget]||[],[selectedTarget]);
+
+  const mappedSrc=useMemo(()=>new Set(mappings.map(m=>m.sourceField)),[mappings]);
+  const mappedTgt=useMemo(()=>new Set(mappings.map(m=>m.targetField)),[mappings]);
+
+  const stats=useMemo(()=>{
+    const mapped=mappings.length;
+    const unmappedSrc=srcFields.length-mappedSrc.size;
+    const unmappedTgt=tgtFields.length-mappedTgt.size;
+    const coverage=tgtFields.length>0?Math.round(mappedTgt.size/tgtFields.length*100):0;
+    return{mapped,unmappedSrc,unmappedTgt,coverage};
+  },[mappings,srcFields,tgtFields,mappedSrc,mappedTgt]);
+
+  const updatePositions=useCallback(()=>{
+    if(!canvasRef.current)return;
+    const canvasRect=canvasRef.current.getBoundingClientRect();
+    const newSrc={},newTgt={};
+    Object.entries(sourceRefs.current).forEach(([k,el])=>{
+      if(el){const r=el.getBoundingClientRect();newSrc[k]={x:r.right-canvasRect.left,y:r.top+r.height/2-canvasRect.top};}
+    });
+    Object.entries(targetRefs.current).forEach(([k,el])=>{
+      if(el){const r=el.getBoundingClientRect();newTgt[k]={x:r.left-canvasRect.left,y:r.top+r.height/2-canvasRect.top};}
+    });
+    setPortPositions({src:newSrc,tgt:newTgt});
+  },[]);
+
+  useEffect(()=>{
+    updatePositions();
+    const t=setTimeout(updatePositions,150);
+    return()=>clearTimeout(t);
+  },[selectedSource,selectedTarget,mappings,updatePositions]);
+
+  const handleSourcePortClick=useCallback((fieldName)=>{
+    if(dragFrom===fieldName){setDragFrom(null);return;}
+    setDragFrom(fieldName);
+  },[dragFrom]);
+
+  const handleTargetPortClick=useCallback((fieldName)=>{
+    if(!dragFrom)return;
+    const existing=mappings.find(m=>m.targetField===fieldName);
+    if(existing){
+      setMappings(p=>p.map(m=>m.targetField===fieldName?{...m,sourceField:dragFrom,confidence:100}:m));
+    }else{
+      setMappings(p=>[...p,{sourceField:dragFrom,targetField:fieldName,transform:'none',confidence:100}]);
     }
-    return engines;
-  },[engineFilter,lineageSource]);
+    setDragFrom(null);
+    setTimeout(updatePositions,50);
+  },[dragFrom,mappings,updatePositions]);
+
+  const removeMapping=useCallback((targetField)=>{
+    setMappings(p=>p.filter(m=>m.targetField!==targetField));
+    setTimeout(updatePositions,50);
+  },[updatePositions]);
+
+  const autoMap=useCallback(()=>{
+    const newMappings=[];
+    tgtFields.forEach(tf=>{
+      let bestMatch=null,bestScore=0;
+      srcFields.forEach(sf=>{
+        const score=similarity(sf.name,tf.name);
+        if(score>bestScore){bestScore=score;bestMatch=sf.name;}
+      });
+      if(bestScore>=40&&bestMatch){
+        newMappings.push({sourceField:bestMatch,targetField:tf.name,transform:'none',confidence:bestScore});
+      }
+    });
+    setMappings(newMappings);
+    setTimeout(updatePositions,50);
+  },[srcFields,tgtFields,updatePositions]);
+
+  const validateMappings=useCallback(()=>{
+    const results=[];
+    mappings.forEach(m=>{
+      const sf=srcFields.find(f=>f.name===m.sourceField);
+      const tf=tgtFields.find(f=>f.name===m.targetField);
+      if(sf&&tf){
+        const compat=typeCompat(sf.type,tf.type);
+        results.push({source:m.sourceField,target:m.targetField,status:compat==='valid'?'valid':'warning',message:compat==='valid'?`${sf.type} \u2192 ${tf.type}`:`Type mismatch: ${sf.type} \u2192 ${tf.type} (needs conversion)`});
+      }
+    });
+    tgtFields.filter(tf=>tf.required&&!mappedTgt.has(tf.name)).forEach(tf=>{
+      results.push({source:null,target:tf.name,status:'error',message:`Required field "${tf.name}" has no mapping`});
+    });
+    setValidationResults(results);
+  },[mappings,srcFields,tgtFields,mappedTgt]);
+
+  const exportConfig=useCallback(()=>{
+    const config={source:selectedSource,target:selectedTarget,mappings:mappings.map(m=>({source_field:m.sourceField,target_column:m.targetField,transform:m.transform,confidence:m.confidence})),created_at:new Date().toISOString()};
+    const blob=new Blob([JSON.stringify(config,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=`mapping_${selectedSource}_to_${selectedTarget}.json`;a.click();URL.revokeObjectURL(url);
+  },[selectedSource,selectedTarget,mappings]);
+
+  return(
+    <div>
+      {/* Stats bar */}
+      <div style={{display:'flex',gap:12,marginBottom:16}}>
+        {[{label:'Mapped',value:stats.mapped,color:T.green},{label:'Unmapped Source',value:stats.unmappedSrc,color:T.amber},{label:'Unmapped Target',value:stats.unmappedTgt,color:T.textMut},{label:'Coverage',value:stats.coverage+'%',color:stats.coverage>=80?T.green:stats.coverage>=50?T.amber:T.red}].map((s,i)=>(
+          <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:'10px 18px',flex:1,textAlign:'center'}}>
+            <div style={{fontSize:22,fontWeight:700,color:s.color}}>{s.value}</div>
+            <div style={{fontSize:11,color:T.textMut}}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Controls */}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14,flexWrap:'wrap',gap:8}}>
+        <div style={{display:'flex',gap:12,alignItems:'center'}}>
+          <label style={{fontSize:12,fontWeight:600}}>Source:
+            <select value={selectedSource} onChange={e=>{setSelectedSource(e.target.value);setMappings([]);setValidationResults(null);setDragFrom(null);}} style={{marginLeft:6,padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontFamily:T.font,fontSize:12}}>
+              {SOURCES.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </label>
+          <span style={{fontSize:18,color:T.gold,fontWeight:700}}>\u2192</span>
+          <label style={{fontSize:12,fontWeight:600}}>Target:
+            <select value={selectedTarget} onChange={e=>{setSelectedTarget(e.target.value);setMappings([]);setValidationResults(null);setDragFrom(null);}} style={{marginLeft:6,padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontFamily:T.font,fontSize:12}}>
+              {Object.keys(TARGET_TABLES).map(t=><option key={t} value={t}>{t}</option>)}
+            </select>
+          </label>
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <button onClick={autoMap} style={{padding:'7px 16px',background:`linear-gradient(135deg,${T.gold},${T.goldL})`,color:T.navy,border:'none',borderRadius:6,fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:T.font}}>Auto-Map</button>
+          <button onClick={validateMappings} style={{padding:'7px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:6,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Validate All</button>
+          <button onClick={exportConfig} style={{padding:'7px 16px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font,color:T.text}}>Export JSON</button>
+          <button onClick={()=>{setMappings([]);setValidationResults(null);}} style={{padding:'7px 16px',background:T.red+'10',border:`1px solid ${T.red}30`,borderRadius:6,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font,color:T.red}}>Clear All</button>
+        </div>
+      </div>
+
+      {/* Drag instruction */}
+      {dragFrom&&(
+        <div style={{background:T.gold+'18',border:`1px solid ${T.gold}40`,borderRadius:8,padding:'8px 14px',marginBottom:12,fontSize:12,color:T.navy,fontWeight:600}}>
+          Connecting from: <span style={{fontFamily:T.mono}}>{dragFrom}</span> \u2014 Click a target port to complete the mapping, or click the source port again to cancel.
+        </div>
+      )}
+
+      {/* Canvas */}
+      <div ref={canvasRef} style={{position:'relative',display:'flex',gap:0,background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,overflow:'hidden',minHeight:500}}>
+        {/* SVG Connection Lines */}
+        <svg style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:5}}>
+          {mappings.map((m,mi)=>{
+            const sp=portPositions.src[m.sourceField];
+            const tp=portPositions.tgt[m.targetField];
+            if(!sp||!tp)return null;
+            const midX=(sp.x+tp.x)/2;
+            const sf=srcFields.find(f=>f.name===m.sourceField);
+            const tf=tgtFields.find(f=>f.name===m.targetField);
+            const compat=sf&&tf?typeCompat(sf.type,tf.type):'valid';
+            const lineColor=compat==='valid'?T.green:T.amber;
+            return(
+              <g key={mi}>
+                <path d={`M${sp.x},${sp.y} C${midX},${sp.y} ${midX},${tp.y} ${tp.x},${tp.y}`} stroke={lineColor} strokeWidth={2} fill="none" strokeDasharray={compat==='warning'?'6,3':'none'} opacity={0.7}/>
+                <circle cx={sp.x} cy={sp.y} r={4} fill={lineColor}/>
+                <circle cx={tp.x} cy={tp.y} r={4} fill={lineColor}/>
+                {m.confidence<100&&(
+                  <text x={midX} y={(sp.y+tp.y)/2-6} textAnchor="middle" fontSize={9} fill={T.textMut} fontFamily={T.mono}>{m.confidence}%</text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* LEFT: Source Fields */}
+        <div style={{flex:1,padding:16,borderRight:`2px dashed ${T.border}`,overflowY:'auto',maxHeight:600}}>
+          <div style={{fontSize:13,fontWeight:700,marginBottom:10,color:T.navy}}>Source Fields ({srcFields.length})</div>
+          {srcFields.map((f,fi)=>{
+            const isMapped=mappedSrc.has(f.name);
+            const isActive=dragFrom===f.name;
+            return(
+              <div key={fi} style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                <div style={{flex:1,background:isActive?T.gold+'20':isMapped?T.green+'08':T.surfaceH,border:`1px solid ${isActive?T.gold:isMapped?T.green+'40':T.border}`,borderRadius:7,padding:'8px 12px',transition:'all 0.15s'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <div>
+                      <div style={{fontSize:12,fontWeight:600,fontFamily:T.mono}}>{f.name}</div>
+                      <div style={{fontSize:10,color:T.textMut}}>{f.type} \u00b7 <span style={{color:T.textSec}}>e.g. {String(f.sample).substring(0,25)}</span></div>
+                    </div>
+                    {isMapped&&<span style={{fontSize:10,color:T.green,fontWeight:600}}>MAPPED</span>}
+                  </div>
+                </div>
+                {/* Source port */}
+                <div ref={el=>{sourceRefs.current[f.name]=el;}} onClick={()=>handleSourcePortClick(f.name)} style={{width:18,height:18,borderRadius:9,border:`2px solid ${isActive?T.gold:isMapped?T.green:T.border}`,background:isActive?T.gold:isMapped?T.green:'transparent',cursor:'pointer',transition:'all 0.15s',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  {isActive&&<div style={{width:6,height:6,borderRadius:3,background:'#fff'}}/>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* RIGHT: Target Fields */}
+        <div style={{flex:1,padding:16,overflowY:'auto',maxHeight:600}}>
+          <div style={{fontSize:13,fontWeight:700,marginBottom:10,color:T.navy}}>Target Columns ({tgtFields.length})</div>
+          {tgtFields.map((f,fi)=>{
+            const isMapped=mappedTgt.has(f.name);
+            const mapping=mappings.find(m=>m.targetField===f.name);
+            const isHovered=hoveredPort===f.name;
+            const isDropTarget=dragFrom&&!isMapped;
+            return(
+              <div key={fi} style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                {/* Target port */}
+                <div ref={el=>{targetRefs.current[f.name]=el;}} onClick={()=>handleTargetPortClick(f.name)}
+                  onMouseEnter={()=>setHoveredPort(f.name)} onMouseLeave={()=>setHoveredPort(null)}
+                  style={{width:18,height:18,borderRadius:9,border:`2px solid ${isMapped?T.green:isDropTarget?T.gold+'80':T.border}`,background:isMapped?T.green:isHovered&&dragFrom?T.gold:'transparent',cursor:dragFrom?'pointer':'default',transition:'all 0.15s',flexShrink:0,boxShadow:isDropTarget?`0 0 6px ${T.gold}40`:'none'}}>
+                </div>
+                <div style={{flex:1,background:isMapped?T.green+'08':T.surfaceH,border:`1px solid ${isMapped?T.green+'40':isDropTarget?T.gold+'40':T.border}`,borderRadius:7,padding:'8px 12px',transition:'all 0.15s',position:'relative'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <div>
+                      <div style={{fontSize:12,fontWeight:600,fontFamily:T.mono}}>
+                        {f.name}{f.required&&<span style={{color:T.red,marginLeft:4}}>*</span>}
+                      </div>
+                      <div style={{fontSize:10,color:T.textMut}}>{f.type}</div>
+                    </div>
+                    <div style={{display:'flex',gap:4,alignItems:'center'}}>
+                      {mapping&&(
+                        <>
+                          <button onClick={(e)=>{e.stopPropagation();setEditingMapping(editingMapping===f.name?null:f.name);}} style={{fontSize:9,padding:'2px 6px',background:T.navy+'10',border:`1px solid ${T.navy}20`,borderRadius:4,cursor:'pointer',fontFamily:T.mono,color:T.navy}}>{mapping.transform==='none'?'fx':'fx:'+mapping.transform}</button>
+                          <button onClick={(e)=>{e.stopPropagation();removeMapping(f.name);}} style={{fontSize:12,padding:'0 4px',background:'none',border:'none',cursor:'pointer',color:T.red}}>\u00d7</button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {mapping&&<div style={{fontSize:10,color:T.green,marginTop:2,fontFamily:T.mono}}>\u2190 {mapping.sourceField}</div>}
+                  {/* Hover tooltip */}
+                  {isHovered&&dragFrom&&!isMapped&&(
+                    <div style={{position:'absolute',top:-32,left:20,background:T.navy,color:'#fff',padding:'4px 10px',borderRadius:5,fontSize:10,fontFamily:T.mono,whiteSpace:'nowrap',zIndex:20}}>
+                      Will map: {dragFrom} \u2192 {f.name} (type: {f.type})
+                    </div>
+                  )}
+                  {/* Transform editor */}
+                  {editingMapping===f.name&&mapping&&(
+                    <div style={{marginTop:8,padding:10,background:T.surfaceH,borderRadius:6,border:`1px solid ${T.border}`}}>
+                      <div style={{fontSize:11,fontWeight:600,marginBottom:6}}>Transform Configuration</div>
+                      <select value={mapping.transform} onChange={e=>{setMappings(p=>p.map(m=>m.targetField===f.name?{...m,transform:e.target.value}:m));}} style={{width:'100%',padding:'6px 8px',border:`1px solid ${T.border}`,borderRadius:4,fontFamily:T.mono,fontSize:11}}>
+                        {TRANSFORM_TYPES.map(tt=><option key={tt} value={tt}>{tt}</option>)}
+                      </select>
+                      <div style={{fontSize:10,color:T.textMut,marginTop:4}}>
+                        {mapping.transform==='divide_1e6'&&'Divides value by 1,000,000 (millions)'}
+                        {mapping.transform==='divide_1e9'&&'Divides value by 1,000,000,000 (billions)'}
+                        {mapping.transform==='multiply_100'&&'Multiplies by 100 (e.g., 0.05 \u2192 5.0%)'}
+                        {mapping.transform==='iso_date'&&'Parses string to ISO 8601 date format'}
+                        {mapping.transform==='parse_number'&&'Converts string to numeric type'}
+                        {mapping.transform==='uppercase'&&'Converts text to UPPERCASE'}
+                        {mapping.transform==='round_2'&&'Rounds to 2 decimal places'}
+                        {mapping.transform==='none'&&'No transformation \u2014 pass through as-is'}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Validation results */}
+      {validationResults&&(
+        <div style={{marginTop:16,background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>Validation Results ({validationResults.length} checks)</div>
+          <div style={{display:'grid',gap:4}}>
+            {validationResults.map((vr,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'6px 10px',borderRadius:5,background:vr.status==='valid'?T.green+'06':vr.status==='warning'?T.amber+'06':T.red+'06',border:`1px solid ${vr.status==='valid'?T.green+'20':vr.status==='warning'?T.amber+'20':T.red+'20'}`}}>
+                <span style={{fontSize:14,fontWeight:700,color:vr.status==='valid'?T.green:vr.status==='warning'?T.amber:T.red}}>{vr.status==='valid'?'\u2713':vr.status==='warning'?'\u26A0':'\u2717'}</span>
+                <span style={{fontFamily:T.mono,fontSize:11,color:T.text}}>{vr.source?`${vr.source} \u2192 ${vr.target}`:vr.target}</span>
+                <span style={{fontSize:11,color:T.textSec,marginLeft:'auto'}}>{vr.message}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* === TAB 3: LIVE API TESTER ====================================== */
+/* ================================================================== */
+function LiveApiTesterTab(){
+  const[selectedScenario,setSelectedScenario]=useState(TEST_SCENARIOS[0].id);
+  const[params,setParams]=useState({});
+  const[loading,setLoading]=useState(false);
+  const[response,setResponse]=useState(null);
+  const[history,setHistory]=useState([]);
+  const[showHeaders,setShowHeaders]=useState(false);
+  const[collapsedKeys,setCollapsedKeys]=useState(new Set());
+
+  const scenario=useMemo(()=>TEST_SCENARIOS.find(s=>s.id===selectedScenario),[selectedScenario]);
+  const currentParams=useMemo(()=>{
+    if(params[selectedScenario])return params[selectedScenario];
+    return scenario?scenario.params.reduce((acc,p)=>({...acc,[p.key]:p.value}),{}):{};
+  },[selectedScenario,scenario,params]);
+
+  const buildUrl=useCallback(()=>{
+    if(!scenario)return'';
+    const src=SOURCES.find(s=>s.id===scenario.source);
+    const paramEntries=Object.entries(currentParams);
+    const qs=paramEntries.length>0?paramEntries.map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&'):'';
+    return `${src?src.baseUrl:''}${scenario.path}${qs?'?'+qs:''}`;
+  },[scenario,currentParams]);
+
+  const generateResponse=useCallback((scenarioId)=>{
+    const base=scenarioId.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    const statusCode=sr(base*3)>0.85?500:sr(base*7)>0.9?400:200;
+    const responseTime=Math.floor(40+sr(base*11)*350);
+
+    let body={};
+    if(scenarioId==='eodhd_fundamentals'){
+      body={General:{Code:'AAPL.US',Type:'Common Stock',Name:'Apple Inc',Exchange:'NASDAQ',CurrencyCode:'USD',CurrencyName:'US Dollar',CountryISO:'US',Sector:'Technology',Industry:'Consumer Electronics',MarketCapitalization:2840000000000,EBITDA:129187000000,PERatio:28.45,DividendYield:0.0055,IPODate:'1980-12-12'},Highlights:{Revenue:394328000000,GrossProfit:170782000000,OperatingMargin:0.298,ReturnOnEquity:1.601,EarningsShare:6.42,BookValue:4.38}};
+    }else if(scenarioId==='av_overview'){
+      body={Symbol:'MSFT',AssetType:'Common Stock',Name:'Microsoft Corporation',Exchange:'NASDAQ',Sector:'TECHNOLOGY',Industry:'SERVICES-PREPACKAGED SOFTWARE',MarketCapitalization:'3020000000000',EBITDA:'125563000000',PERatio:'35.2',DividendYield:'0.0072',EPS:'11.53','52WeekHigh':'468.35','52WeekLow':'365.20',AnalystTargetPrice:'480.00',Revenue:'227583000000'};
+    }else if(scenarioId==='ct_emissions'){
+      body={data:[{country:'USA',year:2024,sector:'electricity-generation',emissions:{co2:1450000000,ch4:28500000,n2o:4200000},total_co2e:1580000000,confidence:0.92},{country:'USA',year:2024,sector:'transportation',emissions:{co2:1680000000,ch4:5200000,n2o:8100000},total_co2e:1720000000,confidence:0.88}],meta:{source:'Climate TRACE',version:'v6',generated:'2026-03-29'}};
+    }else if(scenarioId==='wb_gdp'){
+      body=[{page:1,pages:1,per_page:50,total:6},[{indicator:{id:'NY.GDP.MKTP.CD',value:'GDP (current US$)'},country:{id:'US',value:'United States'},date:'2024',value:28780000000000},{indicator:{id:'NY.GDP.MKTP.CD',value:'GDP (current US$)'},country:{id:'US',value:'United States'},date:'2023',value:27360000000000},{indicator:{id:'NY.GDP.MKTP.CD',value:'GDP (current US$)'},country:{id:'US',value:'United States'},date:'2022',value:25460000000000}]];
+    }else if(scenarioId==='sec_apple'){
+      body={cik:'0000320193',entityName:'Apple Inc',facts:{'us-gaap':{Revenue:{units:{USD:[{end:'2024-09-28',val:394328000000,form:'10-K'},{end:'2023-09-30',val:383285000000,form:'10-K'}]}},NetIncome:{units:{USD:[{end:'2024-09-28',val:97000000000,form:'10-K'}]}},TotalAssets:{units:{USD:[{end:'2024-09-28',val:352583000000,form:'10-K'}]}}}}};
+    }
+
+    const headers={'Content-Type':'application/json','X-RateLimit-Remaining':String(Math.floor(sr(base*13)*500)),'X-RateLimit-Limit':'1000','X-Request-Id':'req_'+String(base).padStart(8,'0'),'Cache-Control':'max-age=300'};
+
+    return{statusCode,responseTime,body:statusCode===200?body:{error:{code:statusCode,message:statusCode===400?'Bad Request: Invalid parameter':'Internal Server Error'}},headers,timestamp:new Date().toISOString()};
+  },[]);
+
+  const sendRequest=useCallback(()=>{
+    setLoading(true);
+    setResponse(null);
+    const delay=800+sr(selectedScenario.length)*1200;
+    setTimeout(()=>{
+      const resp=generateResponse(selectedScenario);
+      setResponse(resp);
+      setHistory(p=>[{id:Date.now(),scenario:scenario?scenario.name:'',url:buildUrl(),statusCode:resp.statusCode,responseTime:resp.responseTime,timestamp:resp.timestamp},...p].slice(0,10));
+      setLoading(false);
+    },delay);
+  },[selectedScenario,scenario,buildUrl,generateResponse]);
+
+  const updateParam=useCallback((key,value)=>{
+    setParams(p=>({...p,[selectedScenario]:{...currentParams,[key]:value}}));
+  },[selectedScenario,currentParams]);
+
+  const toggleCollapse=useCallback((key)=>{
+    setCollapsedKeys(p=>{const n=new Set(p);n.has(key)?n.delete(key):n.add(key);return n;});
+  },[]);
+
+  const renderJsonNode=useCallback((obj,depth,parentKey)=>{
+    if(obj===null)return <span style={{color:T.textMut}}>null</span>;
+    if(typeof obj==='boolean')return <span style={{color:T.sage}}>{String(obj)}</span>;
+    if(typeof obj==='number')return <span style={{color:T.navyL}}>{fmtNum(obj)}</span>;
+    if(typeof obj==='string')return <span style={{color:T.gold}}>"{obj.length>60?obj.substring(0,60)+'...':obj}"</span>;
+    if(Array.isArray(obj)){
+      const key=parentKey+'[]';
+      const collapsed=collapsedKeys.has(key);
+      return(
+        <span>
+          <span onClick={()=>toggleCollapse(key)} style={{cursor:'pointer',color:T.textMut}}>[{collapsed?`...${obj.length} items`:''}</span>
+          {!collapsed&&obj.map((item,i)=>(
+            <div key={i} style={{paddingLeft:16}}>{renderJsonNode(item,depth+1,parentKey+'.'+i)}{i<obj.length-1?',':''}</div>
+          ))}
+          {!collapsed&&<span style={{color:T.textMut}}>]</span>}
+          {collapsed&&<span style={{color:T.textMut}}>]</span>}
+        </span>
+      );
+    }
+    if(typeof obj==='object'){
+      const entries=Object.entries(obj);
+      const key=parentKey+'{}';
+      const collapsed=collapsedKeys.has(key);
+      return(
+        <span>
+          <span onClick={()=>toggleCollapse(key)} style={{cursor:'pointer',color:T.textMut}}>{'{'}{collapsed?`...${entries.length} keys`:''}</span>
+          {!collapsed&&entries.map(([k,v],i)=>(
+            <div key={k} style={{paddingLeft:16}}>
+              <span style={{color:'#e06c75'}}>"{k}"</span>: {renderJsonNode(v,depth+1,parentKey+'.'+k)}{i<entries.length-1?',':''}
+            </div>
+          ))}
+          {!collapsed&&<span style={{color:T.textMut}}>{'}'}</span>}
+          {collapsed&&<span style={{color:T.textMut}}>{'}'}</span>}
+        </span>
+      );
+    }
+    return <span>{String(obj)}</span>;
+  },[collapsedKeys,toggleCollapse]);
+
+  const extractFields=useCallback(()=>{
+    if(!response||response.statusCode!==200)return[];
+    const extract=(obj,prefix)=>{
+      const fields=[];
+      if(typeof obj!=='object'||obj===null)return fields;
+      if(Array.isArray(obj)){if(obj.length>0)return extract(obj[0],prefix);}
+      else{Object.entries(obj).forEach(([k,v])=>{
+        const path=prefix?`${prefix}.${k}`:k;
+        if(v===null)fields.push({name:path,type:'null',sample:'null'});
+        else if(typeof v==='object'&&!Array.isArray(v))fields.push(...extract(v,path));
+        else if(Array.isArray(v))fields.push({name:path,type:'array',sample:`[${v.length} items]`});
+        else fields.push({name:path,type:typeof v,sample:String(v).substring(0,30)});
+      });}
+      return fields;
+    };
+    return extract(response.body,'');
+  },[response]);
+
+  return(
+    <div>
+      <div style={{display:'flex',gap:16}}>
+        {/* Left panel */}
+        <div style={{flex:'0 0 340px',display:'flex',flexDirection:'column',gap:12}}>
+          {/* Scenario selector */}
+          <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+            <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>Test Scenario</div>
+            <select value={selectedScenario} onChange={e=>{setSelectedScenario(e.target.value);setResponse(null);}} style={{width:'100%',padding:'8px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontFamily:T.font,fontSize:12,marginBottom:10}}>
+              {TEST_SCENARIOS.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+            {scenario&&(
+              <>
+                <div style={{fontSize:11,color:T.textSec,marginBottom:8}}>{scenario.description}</div>
+                <div style={{fontFamily:T.mono,fontSize:10,color:T.textMut,padding:'6px 8px',background:T.surfaceH,borderRadius:4,wordBreak:'break-all'}}>
+                  <span style={{color:T.green,fontWeight:700}}>{scenario.method}</span>{' '}{buildUrl()}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Parameters */}
+          {scenario&&scenario.params.length>0&&(
+            <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+              <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>Parameters</div>
+              {scenario.params.map((p,pi)=>(
+                <label key={pi} style={{display:'block',marginBottom:8}}>
+                  <div style={{fontSize:11,fontWeight:600,marginBottom:3}}>{p.key}{!p.editable&&<span style={{color:T.textMut,fontWeight:400}}> (fixed)</span>}</div>
+                  <input value={currentParams[p.key]||''} onChange={e=>updateParam(p.key,e.target.value)} readOnly={!p.editable} style={{width:'100%',padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:5,fontFamily:T.mono,fontSize:11,background:p.editable?'#fff':T.surfaceH,boxSizing:'border-box'}}/>
+                </label>
+              ))}
+            </div>
+          )}
+
+          {/* Send button */}
+          <button onClick={sendRequest} disabled={loading} style={{padding:'12px 20px',background:loading?T.textMut:`linear-gradient(135deg,${T.navy},${T.navyL})`,color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:700,cursor:loading?'not-allowed':'pointer',fontFamily:T.font,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
+            {loading&&<span style={{display:'inline-block',width:14,height:14,border:'2px solid rgba(255,255,255,0.3)',borderTopColor:'#fff',borderRadius:'50%',animation:'dsm-spin 0.8s linear infinite'}}/>}
+            {loading?'Sending...':'Send Request'}
+          </button>
+
+          {/* Request History */}
+          {history.length>0&&(
+            <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+              <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>Request History ({history.length})</div>
+              {history.map((h,hi)=>(
+                <div key={h.id} onClick={()=>{const sc=TEST_SCENARIOS.find(s=>s.name===h.scenario);if(sc)setSelectedScenario(sc.id);}} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 8px',borderRadius:5,cursor:'pointer',marginBottom:3,background:hi===0?T.surfaceH:'transparent'}}>
+                  <span style={{fontFamily:T.mono,fontSize:10,fontWeight:700,color:h.statusCode===200?T.green:h.statusCode===400?T.amber:T.red}}>{h.statusCode}</span>
+                  <span style={{fontSize:11,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{h.scenario}</span>
+                  <span style={{fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h.responseTime}ms</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right panel: Response */}
+        <div style={{flex:1,minWidth:0}}>
+          {!response&&!loading&&(
+            <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:40,textAlign:'center',color:T.textMut}}>
+              <div style={{fontSize:36,marginBottom:12,opacity:0.3,fontFamily:T.mono}}>{'{ }'}</div>
+              <div style={{fontSize:14,fontWeight:600}}>No Response Yet</div>
+              <div style={{fontSize:12,marginTop:4}}>Select a test scenario and click "Send Request" to see the API response</div>
+            </div>
+          )}
+
+          {loading&&(
+            <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:40,textAlign:'center'}}>
+              <div style={{width:32,height:32,border:`3px solid ${T.border}`,borderTopColor:T.navy,borderRadius:'50%',animation:'dsm-spin 0.8s linear infinite',margin:'0 auto 12px'}}/>
+              <div style={{fontSize:13,color:T.textSec}}>Sending request...</div>
+            </div>
+          )}
+
+          {response&&!loading&&(
+            <div style={{display:'flex',flexDirection:'column',gap:12}}>
+              {/* Status bar */}
+              <div style={{display:'flex',gap:12,alignItems:'center',background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'12px 16px',flexWrap:'wrap'}}>
+                <span style={{padding:'4px 14px',borderRadius:6,fontFamily:T.mono,fontSize:13,fontWeight:700,background:response.statusCode===200?T.green+'18':response.statusCode===400?T.amber+'18':T.red+'18',color:response.statusCode===200?T.green:response.statusCode===400?T.amber:T.red}}>{response.statusCode} {response.statusCode===200?'OK':response.statusCode===400?'Bad Request':'Server Error'}</span>
+                <span style={{fontFamily:T.mono,fontSize:12,color:T.textSec}}>{response.responseTime}ms</span>
+                <span style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginLeft:'auto'}}>{new Date(response.timestamp).toLocaleTimeString()}</span>
+                <span style={{fontFamily:T.mono,fontSize:11,color:T.textMut}}>Rate: {response.headers['X-RateLimit-Remaining']}/{response.headers['X-RateLimit-Limit']}</span>
+              </div>
+
+              {/* Tab toggle */}
+              <div style={{display:'flex',gap:8}}>
+                <button onClick={()=>setShowHeaders(false)} style={{padding:'6px 14px',fontSize:12,fontWeight:showHeaders?500:700,background:showHeaders?'transparent':T.surfaceH,border:`1px solid ${showHeaders?'transparent':T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font}}>Response Body</button>
+                <button onClick={()=>setShowHeaders(true)} style={{padding:'6px 14px',fontSize:12,fontWeight:showHeaders?700:500,background:showHeaders?T.surfaceH:'transparent',border:`1px solid ${showHeaders?T.border:'transparent'}`,borderRadius:6,cursor:'pointer',fontFamily:T.font}}>Headers ({Object.keys(response.headers).length})</button>
+              </div>
+
+              {/* Body */}
+              {!showHeaders&&(
+                <div style={{background:'#1a1a2e',borderRadius:10,padding:16,maxHeight:400,overflowY:'auto'}}>
+                  <pre style={{fontFamily:T.mono,fontSize:11,lineHeight:1.6,margin:0,color:'#e0e0e0'}}>
+                    {renderJsonNode(response.body,0,'root')}
+                  </pre>
+                </div>
+              )}
+
+              {/* Headers */}
+              {showHeaders&&(
+                <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+                  {Object.entries(response.headers).map(([k,v])=>(
+                    <div key={k} style={{display:'flex',gap:12,padding:'4px 0',borderBottom:`1px solid ${T.border}08`,fontFamily:T.mono,fontSize:11}}>
+                      <span style={{fontWeight:700,color:T.navy,minWidth:180}}>{k}</span>
+                      <span style={{color:T.textSec}}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Detected fields */}
+              {response.statusCode===200&&(
+                <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+                    <div style={{fontSize:13,fontWeight:700}}>Detected Fields ({extractFields().length})</div>
+                    <button style={{padding:'6px 14px',background:T.gold+'18',border:`1px solid ${T.gold}40`,borderRadius:6,fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font,color:T.navy}}>Map Response Fields \u2192</button>
+                  </div>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:6}}>
+                    {extractFields().slice(0,12).map((f,fi)=>(
+                      <div key={fi} style={{padding:'6px 10px',background:T.surfaceH,borderRadius:5,fontFamily:T.mono,fontSize:10}}>
+                        <div style={{fontWeight:600,color:T.navy}}>{f.name}</div>
+                        <div style={{color:T.textMut}}>{f.type}: {f.sample}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Sample data preview */}
+              {response.statusCode===200&&(
+                <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+                  <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>Sample Data Preview</div>
+                  <div style={{overflowX:'auto'}}>
+                    <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.mono,fontSize:10}}>
+                      <thead>
+                        <tr>{extractFields().slice(0,6).map((f,i)=><th key={i} style={{padding:'6px 10px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontWeight:700,color:T.navy,whiteSpace:'nowrap'}}>{f.name.split('.').pop()}</th>)}</tr>
+                      </thead>
+                      <tbody>
+                        {[0,1,2].map(ri=>(
+                          <tr key={ri} style={{background:ri%2===0?'transparent':T.surfaceH}}>
+                            {extractFields().slice(0,6).map((f,fi)=>{
+                              const val=ri===0?f.sample:f.type==='number'?String(Number(Number(f.sample)*(1+sr(ri*fi+3)*0.2-0.1)).toFixed(2)):f.sample;
+                              return <td key={fi} style={{padding:'5px 10px',borderBottom:`1px solid ${T.border}30`,color:T.textSec,whiteSpace:'nowrap'}}>{String(val).substring(0,20)}</td>;
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      <style>{`@keyframes dsm-spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* === TAB 4: TRANSFORM PIPELINE =================================== */
+/* ================================================================== */
+function TransformPipelineTab(){
+  const[selectedPipeline,setSelectedPipeline]=useState(PIPELINE_TEMPLATES[0].id);
+  const[running,setRunning]=useState(false);
+  const[currentStage,setCurrentStage]=useState(-1);
+  const[stageResults,setStageResults]=useState({});
+  const[expandedStage,setExpandedStage]=useState(null);
+  const timersRef=useRef([]);
+
+  const pipeline=useMemo(()=>PIPELINE_TEMPLATES.find(p=>p.id===selectedPipeline),[selectedPipeline]);
+
+  const runPipeline=useCallback(()=>{
+    setRunning(true);setCurrentStage(0);setStageResults({});
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current=[];
+    const stages=pipeline?pipeline.stages:[];
+    stages.forEach((_s,i)=>{
+      const t1=setTimeout(()=>{
+        setCurrentStage(i);
+        setStageResults(p=>({...p,[i]:{status:'running',records:0}}));
+      },i*1200);
+      const t2=setTimeout(()=>{
+        const records=Math.floor(40+sr(i*7+selectedPipeline.length)*160);
+        const errors=Math.floor(sr(i*13)*4);
+        setStageResults(p=>({...p,[i]:{status:'complete',records,errors,duration:Math.floor(200+sr(i*11)*800)+'ms'}}));
+        if(i===stages.length-1){setRunning(false);setCurrentStage(-1);}
+      },i*1200+1000);
+      timersRef.current.push(t1,t2);
+    });
+  },[pipeline,selectedPipeline]);
+
+  useEffect(()=>{return()=>{timersRef.current.forEach(clearTimeout);};},[]);
+
+  const sampleTransformData=useMemo(()=>{
+    if(selectedPipeline==='eodhd_to_profiles'){
+      return[
+        {stage:'Extract',field:'MarketCapitalization',value:'2840000000000'},
+        {stage:'Transform (\u00f71e9)',field:'market_cap',value:'2840.0'},
+        {stage:'Transform (round)',field:'market_cap',value:'2840.00'},
+        {stage:'Load',field:'company_profiles.market_cap',value:'2840.00'},
+        {stage:'Validate',field:'market_cap',value:'PASS (number, range OK)'},
+      ];
+    }
+    if(selectedPipeline==='ct_to_emissions'){
+      return[
+        {stage:'Extract',field:'total_co2e',value:'1580000000'},
+        {stage:'Transform (\u00f71e6)',field:'total_co2e_mt',value:'1580.0'},
+        {stage:'Transform (round)',field:'total_co2e_mt',value:'1580.00'},
+        {stage:'Load',field:'emissions_data.total_co2e',value:'1580.00'},
+        {stage:'Validate',field:'total_co2e',value:'PASS (number, range OK)'},
+      ];
+    }
+    return[
+      {stage:'Extract',field:'esg_score',value:'7.8'},
+      {stage:'Transform (norm)',field:'overall_score',value:'7.80'},
+      {stage:'Transform (bool)',field:'controversy_flag',value:'false'},
+      {stage:'Load',field:'esg_scores.overall_score',value:'7.80'},
+      {stage:'Validate',field:'overall_score',value:'PASS (0\u201310 range)'},
+    ];
+  },[selectedPipeline]);
+
+  const stageColors={Extract:T.navyL,Transform:T.gold,Load:T.sage,Validate:T.teal};
+
+  return(
+    <div>
+      {/* Pipeline selector */}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:8}}>
+        <div style={{display:'flex',gap:12,alignItems:'center'}}>
+          <div style={{fontSize:14,fontWeight:700}}>Transform Pipeline</div>
+          <select value={selectedPipeline} onChange={e=>{setSelectedPipeline(e.target.value);setStageResults({});setCurrentStage(-1);}} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontFamily:T.font,fontSize:12}}>
+            {PIPELINE_TEMPLATES.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+        </div>
+        <button onClick={runPipeline} disabled={running} style={{padding:'8px 20px',background:running?T.textMut:`linear-gradient(135deg,${T.green},${T.sage})`,color:'#fff',border:'none',borderRadius:6,fontSize:12,fontWeight:700,cursor:running?'not-allowed':'pointer',fontFamily:T.font,display:'flex',alignItems:'center',gap:6}}>
+          {running&&<span style={{display:'inline-block',width:12,height:12,border:'2px solid rgba(255,255,255,0.3)',borderTopColor:'#fff',borderRadius:'50%',animation:'dsm-spin 0.8s linear infinite'}}/>}
+          {running?'Running...':'Run Pipeline'}
+        </button>
+      </div>
+
+      {/* Visual pipeline flow */}
+      <div style={{display:'flex',alignItems:'flex-start',gap:0,marginBottom:20,overflowX:'auto',paddingBottom:8}}>
+        {pipeline&&pipeline.stages.map((stage,si)=>{
+          const color=stageColors[stage.type]||T.navy;
+          const result=stageResults[si];
+          const isActive=currentStage===si;
+          return(
+            <React.Fragment key={si}>
+              {si>0&&(
+                <div style={{display:'flex',alignItems:'center',padding:'0 4px',minWidth:40,alignSelf:'center'}}>
+                  <div style={{height:2,flex:1,background:result&&result.status==='complete'?T.green:T.border}}/>
+                  <div style={{fontSize:16,color:result&&result.status==='complete'?T.green:T.textMut}}>\u2192</div>
+                  <div style={{height:2,flex:1,background:result&&result.status==='complete'?T.green:T.border}}/>
+                </div>
+              )}
+              <div onClick={()=>setExpandedStage(expandedStage===si?null:si)} style={{background:T.surface,border:`2px solid ${isActive?color:result&&result.status==='complete'?T.green:T.border}`,borderRadius:10,padding:16,minWidth:180,cursor:'pointer',boxShadow:isActive?`0 0 12px ${color}30`:'none',transition:'all 0.2s'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+                  <div style={{width:28,height:28,borderRadius:6,background:color+'18',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color}}>
+                    {si+1}
+                  </div>
+                  <div style={{fontSize:13,fontWeight:700,color}}>{stage.type}</div>
+                  {isActive&&<span style={{display:'inline-block',width:10,height:10,border:`2px solid ${color}`,borderTopColor:'transparent',borderRadius:'50%',animation:'dsm-spin 0.8s linear infinite'}}/>}
+                  {result&&result.status==='complete'&&<span style={{color:T.green,fontWeight:700,fontSize:12}}>\u2713</span>}
+                </div>
+                <div style={{fontSize:11,color:T.textSec,lineHeight:1.4}}>{stage.config}</div>
+                {result&&result.status==='complete'&&(
+                  <div style={{marginTop:8,padding:'6px 8px',background:T.green+'08',borderRadius:5,fontFamily:T.mono,fontSize:10}}>
+                    <div>{result.records} records processed</div>
+                    <div style={{color:result.errors>0?T.amber:T.green}}>{result.errors} errors | {result.duration}</div>
+                  </div>
+                )}
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      {/* Data flow preview */}
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16,marginBottom:16}}>
+        <div style={{fontSize:13,fontWeight:700,marginBottom:12}}>Data Flow Preview</div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.mono,fontSize:11}}>
+            <thead>
+              <tr>
+                <th style={{padding:'8px 12px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontWeight:700,color:T.navy}}>Stage</th>
+                <th style={{padding:'8px 12px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontWeight:700,color:T.navy}}>Field</th>
+                <th style={{padding:'8px 12px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontWeight:700,color:T.navy}}>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sampleTransformData.map((row,ri)=>{
+                const stageKey=row.stage.split(' ')[0];
+                const color=stageColors[stageKey]||T.navy;
+                return(
+                  <tr key={ri} style={{background:ri%2===0?'transparent':T.surfaceH}}>
+                    <td style={{padding:'6px 12px',borderBottom:`1px solid ${T.border}15`}}>
+                      <span style={{padding:'2px 8px',borderRadius:4,background:color+'15',color,fontSize:10,fontWeight:600}}>{row.stage}</span>
+                    </td>
+                    <td style={{padding:'6px 12px',borderBottom:`1px solid ${T.border}15`,fontWeight:600}}>{row.field}</td>
+                    <td style={{padding:'6px 12px',borderBottom:`1px solid ${T.border}15`,color:T.textSec}}>{row.value}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Expanded stage detail */}
+      {expandedStage!==null&&pipeline&&pipeline.stages[expandedStage]&&(
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+          <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>Stage {expandedStage+1} Detail: {pipeline.stages[expandedStage].type}</div>
+          <div style={{fontSize:12,color:T.textSec,lineHeight:1.6}}>{pipeline.stages[expandedStage].config}</div>
+          <div style={{marginTop:12,padding:12,background:T.navy,borderRadius:8}}>
+            <pre style={{fontFamily:T.mono,fontSize:10,color:'#a0d0a0',margin:0}}>
+{`# ${pipeline.stages[expandedStage].type} Stage Config
+source: ${pipeline.source}
+target: ${pipeline.target}
+mode: ${expandedStage===0?'field_selection':expandedStage===1?'transformation_chain':expandedStage===2?'upsert':'validation'}
+error_handling: ${expandedStage===3?'skip_invalid':'retry_3x'}
+batch_size: 500
+timeout_ms: 30000`}
+            </pre>
+          </div>
+        </div>
+      )}
+      <style>{`@keyframes dsm-spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* === TAB 5: ENGINE LINEAGE ======================================= */
+/* ================================================================== */
+function EngineLineageTab(){
+  const[selectedNode,setSelectedNode]=useState(null);
+  const[nodeType,setNodeType]=useState(null);
+  const[impactSource,setImpactSource]=useState(null);
+
+  const allSources=useMemo(()=>[...new Set(ENGINE_LINEAGE.flatMap(e=>e.sources))],[]);
+  const allTables=useMemo(()=>[...new Set(ENGINE_LINEAGE.flatMap(e=>e.tables))],[]);
+
+  const isHighlighted=useCallback((type,name)=>{
+    if(!selectedNode)return false;
+    if(nodeType==='source'){
+      if(type==='source')return name===selectedNode;
+      const engines=ENGINE_LINEAGE.filter(e=>e.sources.includes(selectedNode));
+      if(type==='table')return engines.some(e=>e.tables.includes(name));
+      if(type==='engine')return engines.some(e=>e.engine===name);
+      return false;
+    }
+    if(nodeType==='table'){
+      if(type==='table')return name===selectedNode;
+      const engines=ENGINE_LINEAGE.filter(e=>e.tables.includes(selectedNode));
+      if(type==='engine')return engines.some(e=>e.engine===name);
+      if(type==='source'){
+        const sourcesForTable=ENGINE_LINEAGE.filter(e=>e.tables.includes(selectedNode)).flatMap(e=>e.sources);
+        return sourcesForTable.includes(name);
+      }
+      return false;
+    }
+    if(nodeType==='engine'){
+      if(type==='engine')return name===selectedNode;
+      const eng=ENGINE_LINEAGE.find(e=>e.engine===selectedNode);
+      if(!eng)return false;
+      if(type==='table')return eng.tables.includes(name);
+      if(type==='source')return eng.sources.includes(name);
+      return false;
+    }
+    return false;
+  },[selectedNode,nodeType]);
+
+  const handleClick=useCallback((type,name)=>{
+    if(selectedNode===name&&nodeType===type){setSelectedNode(null);setNodeType(null);}
+    else{setSelectedNode(name);setNodeType(type);}
+  },[selectedNode,nodeType]);
 
   const impactAnalysis=useMemo(()=>{
     if(!impactSource)return null;
-    const srcMappings=FIELD_MAPPINGS.filter(m=>m.sourceSlug===impactSource);
-    const mappedCols=new Set(srcMappings.map(m=>m.targetColumn));
-    const affected=ENGINES.filter(e=>e.consumes.some(c=>mappedCols.has(c)));
-    const critical=ENGINES.filter(e=>{const overlap=e.consumes.filter(c=>mappedCols.has(c));return overlap.length/e.consumes.length>0.5;});
-    return{totalFields:srcMappings.length,affectedEngines:affected,criticalEngines:critical,mappedColumns:[...mappedCols]};
+    const affected=ENGINE_LINEAGE.filter(e=>e.sources.includes(impactSource));
+    const tables=[...new Set(affected.flatMap(e=>e.tables))];
+    return{source:impactSource,engines:affected.map(e=>e.engine),tables};
   },[impactSource]);
 
-  const syncData=useMemo(()=>{
-    let data=SYNC_HISTORY;
-    if(monitorSource!=='All')data=data.filter(d=>d.sourceId===+monitorSource);
-    return data;
-  },[monitorSource]);
+  const qualityData=useMemo(()=>{
+    return allTables.map((t,i)=>({
+      table:t,
+      freshness:Math.floor(80+sr(i*7)*20),
+      completeness:Math.floor(85+sr(i*11)*15),
+      nullRate:Number((sr(i*13)*8).toFixed(1)),
+    }));
+  },[allTables]);
 
-  const volumeChart=useMemo(()=>{
-    const days=Array.from({length:30},(_,i)=>{
-      const day=`03-${String(29-i).padStart(2,'0')}`;
-      const dayData={day};
-      SOURCES.filter(s=>s.status==='Connected'||s.status==='Partial').forEach(src=>{
-        const entry=SYNC_HISTORY.find(h=>h.sourceId===src.id&&h.day===i);
-        dayData[src.slug]=entry?entry.records:0;
-      });
-      return dayData;
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:8}}>
+        <div style={{fontSize:14,fontWeight:700}}>Engine Data Lineage</div>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <label style={{fontSize:12,fontWeight:600}}>Impact Analysis:
+            <select value={impactSource||''} onChange={e=>setImpactSource(e.target.value||null)} style={{marginLeft:6,padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontFamily:T.font,fontSize:12}}>
+              <option value="">Select source...</option>
+              {allSources.map(s=><option key={s} value={s}>{SOURCES.find(src=>src.id===s)?.name||s}</option>)}
+            </select>
+          </label>
+        </div>
+      </div>
+
+      {/* Impact analysis result */}
+      {impactAnalysis&&(
+        <div style={{background:T.red+'08',border:`1px solid ${T.red}30`,borderRadius:10,padding:16,marginBottom:16}}>
+          <div style={{fontSize:13,fontWeight:700,color:T.red,marginBottom:8}}>Impact Analysis: {SOURCES.find(s=>s.id===impactAnalysis.source)?.name} goes down</div>
+          <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
+            <div>
+              <div style={{fontSize:11,fontWeight:600,marginBottom:4}}>Affected Engines ({impactAnalysis.engines.length})</div>
+              {impactAnalysis.engines.map((e,i)=><div key={i} style={{fontFamily:T.mono,fontSize:11,color:T.red,marginBottom:2}}>{e}</div>)}
+            </div>
+            <div>
+              <div style={{fontSize:11,fontWeight:600,marginBottom:4}}>Affected Tables ({impactAnalysis.tables.length})</div>
+              {impactAnalysis.tables.map((t,i)=><div key={i} style={{fontFamily:T.mono,fontSize:11,color:T.amber,marginBottom:2}}>{t}</div>)}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lineage flow */}
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:16}}>
+        <div style={{display:'flex',gap:24,alignItems:'flex-start'}}>
+          {/* Sources column */}
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:T.textMut,marginBottom:10,textTransform:'uppercase',letterSpacing:1}}>Sources</div>
+            {allSources.map((s)=>{
+              const src=SOURCES.find(x=>x.id===s);
+              const hl=isHighlighted('source',s);
+              return(
+                <div key={s} onClick={()=>handleClick('source',s)} style={{padding:'8px 12px',marginBottom:4,borderRadius:6,border:`1px solid ${hl?T.navyL:T.border}`,background:hl?T.navyL+'15':T.surfaceH,cursor:'pointer',transition:'all 0.15s'}}>
+                  <div style={{fontSize:11,fontWeight:600,color:hl?T.navy:T.text}}>{src?.name||s}</div>
+                  <div style={{fontSize:9,fontFamily:T.mono,color:T.textMut}}>{src?.type||'API'}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Arrow */}
+          <div style={{display:'flex',alignItems:'center',fontSize:20,color:T.gold,alignSelf:'center'}}>\u2192</div>
+
+          {/* Tables column */}
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:T.textMut,marginBottom:10,textTransform:'uppercase',letterSpacing:1}}>Tables</div>
+            {allTables.map((t)=>{
+              const hl=isHighlighted('table',t);
+              const cols=TARGET_TABLES[t]?.length||0;
+              return(
+                <div key={t} onClick={()=>handleClick('table',t)} style={{padding:'8px 12px',marginBottom:4,borderRadius:6,border:`1px solid ${hl?T.sage:T.border}`,background:hl?T.sage+'15':T.surfaceH,cursor:'pointer',transition:'all 0.15s'}}>
+                  <div style={{fontSize:11,fontWeight:600,fontFamily:T.mono,color:hl?T.sage:T.text}}>{t}</div>
+                  <div style={{fontSize:9,color:T.textMut}}>{cols} columns</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Arrow */}
+          <div style={{display:'flex',alignItems:'center',fontSize:20,color:T.gold,alignSelf:'center'}}>\u2192</div>
+
+          {/* Engines column */}
+          <div style={{flex:1.5}}>
+            <div style={{fontSize:12,fontWeight:700,color:T.textMut,marginBottom:10,textTransform:'uppercase',letterSpacing:1}}>Engines</div>
+            {ENGINE_LINEAGE.map((e)=>{
+              const hl=isHighlighted('engine',e.engine);
+              return(
+                <div key={e.engine} onClick={()=>handleClick('engine',e.engine)} style={{padding:'8px 12px',marginBottom:4,borderRadius:6,border:`1px solid ${hl?T.gold:T.border}`,background:hl?T.gold+'15':T.surfaceH,cursor:'pointer',transition:'all 0.15s'}}>
+                  <div style={{fontSize:11,fontWeight:600,color:hl?T.navy:T.text}}>{e.engine}</div>
+                  <div style={{fontSize:9,color:T.textMut}}>{e.tables.length} tables, {e.sources.length} sources</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Data quality */}
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+        <div style={{fontSize:13,fontWeight:700,marginBottom:12}}>Field-Level Data Quality</div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
+            <thead>
+              <tr>
+                {['Table','Freshness','Completeness','Null Rate','Status'].map(h=>(
+                  <th key={h} style={{padding:'8px 12px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontWeight:700,color:T.navy,fontSize:11}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {qualityData.map((q,qi)=>(
+                <tr key={qi} style={{background:qi%2===0?'transparent':T.surfaceH}}>
+                  <td style={{padding:'6px 12px',fontFamily:T.mono,fontSize:11,fontWeight:600}}>{q.table}</td>
+                  <td style={{padding:'6px 12px'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:6}}>
+                      <div style={{width:60,height:5,background:T.surfaceH,borderRadius:3,overflow:'hidden'}}>
+                        <div style={{width:`${q.freshness}%`,height:'100%',background:q.freshness>90?T.green:q.freshness>70?T.amber:T.red,borderRadius:3}}/>
+                      </div>
+                      <span style={{fontFamily:T.mono,fontSize:10}}>{q.freshness}%</span>
+                    </div>
+                  </td>
+                  <td style={{padding:'6px 12px'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:6}}>
+                      <div style={{width:60,height:5,background:T.surfaceH,borderRadius:3,overflow:'hidden'}}>
+                        <div style={{width:`${q.completeness}%`,height:'100%',background:q.completeness>90?T.green:T.amber,borderRadius:3}}/>
+                      </div>
+                      <span style={{fontFamily:T.mono,fontSize:10}}>{q.completeness}%</span>
+                    </div>
+                  </td>
+                  <td style={{padding:'6px 12px',fontFamily:T.mono,fontSize:11,color:q.nullRate>5?T.amber:T.green}}>{q.nullRate}%</td>
+                  <td style={{padding:'6px 12px'}}><StatusBadge status={q.freshness>85&&q.completeness>90?'active':q.freshness>70?'warning':'inactive'}/></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/* === TAB 6: SYNC MONITOR ========================================= */
+/* ================================================================== */
+function SyncMonitorTab(){
+  const[syncingId,setSyncingId]=useState(null);
+  const[syncProgress,setSyncProgress]=useState(0);
+  const intervalRef=useRef(null);
+
+  useEffect(()=>{return()=>{if(intervalRef.current)clearInterval(intervalRef.current);};},[]);
+
+  const syncHistory=useMemo(()=>{
+    return SOURCES.map((src,si)=>{
+      return{
+        ...src,
+        sparkline:Array.from({length:14},(_,i)=>({day:i,records:Math.floor(100+sr(si*14+i)*900),errors:Math.floor(sr(si*14+i+7)*5)})),
+        schedule:sr(si*3)>0.5?'Every 6 hours':'Daily at 06:00 UTC',
+        nextSync:new Date(Date.now()+Math.floor(sr(si*5)*86400000)).toISOString(),
+        avgDuration:Math.floor(5+sr(si*9)*55)+'s',
+      };
     });
-    return days.reverse();
   },[]);
 
-  const rateLimits=useMemo(()=>[
-    {source:'EODHD',used:Math.round(sr(42)*30000+55000),limit:100000,unit:'day'},
-    {source:'Alpha Vantage',used:Math.round(sr(43)*20+45),limit:75,unit:'min'},
-    {source:'EDGAR/SEC',used:Math.round(sr(44)*3+5),limit:10,unit:'sec'},
-  ],[]);
+  const errorLog=useMemo(()=>{
+    return Array.from({length:12},(_,i)=>{
+      const sourceIdx=Math.floor(sr(i*7)*SOURCES.length);
+      const typeIdx=Math.floor(sr(i*11)*6);
+      const types=['timeout','rate_limit','auth_expired','parse_error','schema_change','network_error'];
+      const messages=['Request timeout after 30s','Rate limit exceeded (429)','OAuth token expired','JSON parse error at position 1842','Unexpected field "new_metric" detected','Connection refused (ECONNREFUSED)'];
+      return{
+        timestamp:new Date(Date.now()-i*3600000*Math.floor(1+sr(i*3)*12)).toISOString(),
+        source:SOURCES[sourceIdx].name,
+        type:types[typeIdx],
+        message:messages[typeIdx],
+        retries:Math.floor(sr(i*13)*4),
+        resolved:sr(i*17)>0.3,
+      };
+    });
+  },[]);
 
-  /* ── HELPERS ── */
-  const doSort=(d,c,dir)=>[...d].sort((a,b)=>dir==='asc'?(a[c]>b[c]?1:-1):(a[c]<b[c]?1:-1));
-  const csv=(data,fn)=>{const h=Object.keys(data[0]);const c=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
-  const statusColor=(s)=>s==='Connected'?T.green:s==='Partial'?T.amber:s==='Pending'?T.gold:T.red;
-  const statusDot=(s)=>(<span style={{display:'inline-block',width:8,height:8,borderRadius:'50%',background:statusColor(s),marginRight:6}}/>);
-  const kpi=(l,v,s,color)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:1,minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,marginTop:4}}>{v}</div>{s&&<div style={{fontSize:12,color:T.textSec,marginTop:2}}>{s}</div>}</div>);
-  const badge=(text,bg,fg)=>(<span style={{display:'inline-block',padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:600,fontFamily:T.mono,background:bg,color:fg||'#fff',letterSpacing:0.3}}>{text}</span>);
-  const btn=(label,onClick,primary,small)=>(<button onClick={onClick} style={{padding:small?'6px 12px':'8px 18px',background:primary?T.navy:T.surface,color:primary?'#fff':T.navy,border:`1px solid ${primary?T.navy:T.border}`,borderRadius:8,fontFamily:T.mono,fontSize:small?11:12,cursor:'pointer',fontWeight:600,letterSpacing:0.3}}>{label}</button>);
+  const handleSyncNow=useCallback((id)=>{
+    setSyncingId(id);setSyncProgress(0);
+    if(intervalRef.current)clearInterval(intervalRef.current);
+    let prog=0;
+    intervalRef.current=setInterval(()=>{
+      prog+=Math.floor(5+sr(prog)*15);
+      if(prog>=100){
+        clearInterval(intervalRef.current);
+        intervalRef.current=null;
+        setSyncProgress(100);
+        setTimeout(()=>{setSyncingId(null);setSyncProgress(0);},600);
+      }else{
+        setSyncProgress(prog);
+      }
+    },300);
+  },[]);
 
-  const simulateTest=(srcId)=>{
-    setTestingConnection(srcId);setTestResult(null);
-    setTimeout(()=>{setTestingConnection(null);setTestResult({sourceId:srcId,success:sr(srcId*77)>0.15,latency:Math.round(sr(srcId*99)*400+80),message:sr(srcId*77)>0.15?'Connection successful':'Connection timed out'});},2000);
-  };
+  const calendarWeeks=useMemo(()=>{
+    const weeks=[];
+    for(let w=0;w<4;w++){
+      const days=[];
+      for(let d=0;d<7;d++){
+        const dayNum=w*7+d+1;
+        const syncs=Math.floor(sr(dayNum*3)*5);
+        days.push({day:dayNum>31?null:dayNum,syncs,hasError:sr(dayNum*7)>0.85});
+      }
+      weeks.push(days);
+    }
+    return weeks;
+  },[]);
 
-  const simulateSync=(srcId)=>{
-    setSyncingSource(srcId);
-    setTimeout(()=>setSyncingSource(null),3000);
-  };
-
-  const simulateValidation=()=>{
-    setValidating(true);setValidationResult(null);
-    setTimeout(()=>{
-      setValidating(false);
-      const total=mappingsForSource.filter(f=>f.mapped).length;
-      const warnings=Math.floor(sr(77)*3);const errors=Math.floor(sr(88)*2);
-      setValidationResult({total,valid:total-warnings-errors,warnings,errors,
-        issues:[
-          ...(warnings>0?[{type:'warning',field:'market_cap',message:'Possible type mismatch: source is string, target is numeric'}]:[]),
-          ...(warnings>1?[{type:'warning',field:'ipo_date',message:'Date format may need ISO 8601 conversion'}]:[]),
-          ...(errors>0?[{type:'error',field:'shares_float',message:'Target column not found in table schema'}]:[]),
-        ]});
-    },1500);
-  };
-
-  /* ── TAB 1: SOURCE REGISTRY ── */
-  const renderSourceRegistry=()=>(<div>
-    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-      {kpi('Total Sources',SOURCES.length,'10 configured')}
-      {kpi('Connected',SOURCES.filter(s=>s.status==='Connected').length+'/'+SOURCES.length,null,T.green)}
-      {kpi('Total Fields',SOURCES.reduce((a,s)=>a+s.fieldCount,0),'across all sources')}
-      {kpi('Mapped Fields',FIELD_MAPPINGS.length,'to DB tables',T.sage)}
-      {kpi('Avg Freshness',Math.round(SOURCES.filter(s=>s.freshness>0).reduce((a,s)=>a+s.freshness,0)/SOURCES.filter(s=>s.freshness>0).length)+'%','data currency')}
-    </div>
-    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-      <input value={sourceSearch} onChange={e=>setSourceSearch(e.target.value)} placeholder="Search sources..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
-      <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-        {['All','Connected','Partial','Pending','Not Connected'].map(s=><option key={s}>{s}</option>)}
-      </select>
-      {btn('+ Add New Source',()=>{setShowAddWizard(true);setWizardStep(0);setWizardData({name:'',type:'REST API',baseUrl:'',auth:'API Key',format:'JSON'});},true)}
-    </div>
-
-    {/* Add Source Wizard */}
-    {showAddWizard&&(<div style={{background:T.surface,border:`2px solid ${T.gold}`,borderRadius:12,padding:24,marginBottom:20}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
-        <div style={{fontSize:15,fontWeight:700,color:T.navy}}>Add New Data Source (Step {wizardStep+1}/4)</div>
-        <button onClick={()=>setShowAddWizard(false)} style={{background:'none',border:'none',fontSize:18,cursor:'pointer',color:T.textMut}}>x</button>
-      </div>
-      <div style={{display:'flex',gap:8,marginBottom:16}}>
-        {['Name & Type','Connection','Authentication','Review'].map((s,i)=>(<div key={i} style={{flex:1,padding:'6px 0',textAlign:'center',fontSize:11,fontFamily:T.mono,borderBottom:`2px solid ${i<=wizardStep?T.gold:T.border}`,color:i<=wizardStep?T.navy:T.textMut}}>{s}</div>))}
-      </div>
-      {wizardStep===0&&(<div style={{display:'flex',flexDirection:'column',gap:12}}>
-        <div><label style={{fontSize:12,color:T.textSec,fontFamily:T.mono}}>Source Name</label><input value={wizardData.name} onChange={e=>setWizardData({...wizardData,name:e.target.value})} style={{display:'block',width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,marginTop:4}} placeholder="e.g. My Custom API"/></div>
-        <div><label style={{fontSize:12,color:T.textSec,fontFamily:T.mono}}>Source Type</label><select value={wizardData.type} onChange={e=>setWizardData({...wizardData,type:e.target.value})} style={{display:'block',width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,marginTop:4}}>
-          {['REST API','GraphQL','CSV Upload','Database','Manual Entry'].map(t=><option key={t}>{t}</option>)}
-        </select></div>
-      </div>)}
-      {wizardStep===1&&(<div style={{display:'flex',flexDirection:'column',gap:12}}>
-        <div><label style={{fontSize:12,color:T.textSec,fontFamily:T.mono}}>Base URL</label><input value={wizardData.baseUrl} onChange={e=>setWizardData({...wizardData,baseUrl:e.target.value})} style={{display:'block',width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,marginTop:4}} placeholder="https://api.example.com"/></div>
-        <div><label style={{fontSize:12,color:T.textSec,fontFamily:T.mono}}>Response Format</label><select value={wizardData.format} onChange={e=>setWizardData({...wizardData,format:e.target.value})} style={{display:'block',width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,marginTop:4}}>
-          {['JSON','XML','CSV','Parquet','Proprietary'].map(t=><option key={t}>{t}</option>)}
-        </select></div>
-      </div>)}
-      {wizardStep===2&&(<div style={{display:'flex',flexDirection:'column',gap:12}}>
-        <div><label style={{fontSize:12,color:T.textSec,fontFamily:T.mono}}>Auth Method</label><select value={wizardData.auth} onChange={e=>setWizardData({...wizardData,auth:e.target.value})} style={{display:'block',width:'100%',padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,marginTop:4}}>
-          {['API Key','OAuth2','Basic Auth','Bearer Token','None'].map(t=><option key={t}>{t}</option>)}
-        </select></div>
-        {wizardData.auth!=='None'&&<div style={{padding:12,background:T.surfaceH,borderRadius:8,fontSize:12,color:T.textSec,fontFamily:T.mono}}>Credential storage: AES-256 encrypted, Supabase Vault</div>}
-      </div>)}
-      {wizardStep===3&&(<div style={{fontSize:13,color:T.text}}>
-        <div style={{marginBottom:8}}><span style={{fontFamily:T.mono,color:T.textSec}}>Name:</span> {wizardData.name||'(not set)'}</div>
-        <div style={{marginBottom:8}}><span style={{fontFamily:T.mono,color:T.textSec}}>Type:</span> {wizardData.type}</div>
-        <div style={{marginBottom:8}}><span style={{fontFamily:T.mono,color:T.textSec}}>URL:</span> {wizardData.baseUrl||'(not set)'}</div>
-        <div style={{marginBottom:8}}><span style={{fontFamily:T.mono,color:T.textSec}}>Auth:</span> {wizardData.auth}</div>
-        <div style={{marginBottom:8}}><span style={{fontFamily:T.mono,color:T.textSec}}>Format:</span> {wizardData.format}</div>
-      </div>)}
-      <div style={{display:'flex',gap:8,marginTop:16,justifyContent:'flex-end'}}>
-        {wizardStep>0&&btn('Back',()=>setWizardStep(wizardStep-1))}
-        {wizardStep<3?btn('Next',()=>setWizardStep(wizardStep+1),true):btn('Save Source',()=>setShowAddWizard(false),true)}
-      </div>
-    </div>)}
-
-    {/* Source Grid */}
-    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(320,1fr))',gap:16,marginBottom:20}}>
-      {filteredSources.map(src=>(<div key={src.id} onClick={()=>setSelectedSource(selectedSource===src.id?null:src.id)} style={{background:T.surface,border:`1px solid ${selectedSource===src.id?T.gold:T.border}`,borderRadius:12,padding:20,cursor:'pointer',transition:'border-color 0.2s'}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:12}}>
-          <div><div style={{fontSize:15,fontWeight:700,color:T.navy}}>{src.name}</div><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginTop:2}}>{src.baseUrl}</div></div>
-          <div>{badge(src.status,statusColor(src.status)+'20',statusColor(src.status))}</div>
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,fontSize:12}}>
-          <div><span style={{color:T.textMut,fontFamily:T.mono}}>Type:</span> <span style={{color:T.text}}>{src.type}</span></div>
-          <div><span style={{color:T.textMut,fontFamily:T.mono}}>Auth:</span> <span style={{color:T.text}}>{src.auth}</span></div>
-          <div><span style={{color:T.textMut,fontFamily:T.mono}}>Fields:</span> <span style={{color:T.navy,fontWeight:600}}>{src.fieldCount}</span></div>
-          <div><span style={{color:T.textMut,fontFamily:T.mono}}>Rate:</span> <span style={{color:T.text}}>{src.rateLimit}</span></div>
-          <div><span style={{color:T.textMut,fontFamily:T.mono}}>Sync:</span> <span style={{color:T.text}}>{src.syncSchedule}</span></div>
-          <div><span style={{color:T.textMut,fontFamily:T.mono}}>Cost:</span> <span style={{color:T.text}}>{src.cost}</span></div>
-        </div>
-        {src.lastSync&&<div style={{marginTop:10,fontSize:11,color:T.textMut,fontFamily:T.mono}}>Last sync: {new Date(src.lastSync).toLocaleString()}</div>}
-        <div style={{marginTop:10,display:'flex',alignItems:'center',gap:8}}>
-          <div style={{flex:1,height:4,background:T.surfaceH,borderRadius:2,overflow:'hidden'}}><div style={{height:'100%',width:`${src.freshness}%`,background:src.freshness>80?T.green:src.freshness>50?T.amber:T.red,borderRadius:2}}/></div>
-          <span style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>{src.freshness}% fresh</span>
-        </div>
-      </div>))}
-    </div>
-
-    {/* Source Detail Panel */}
-    {currentSource&&(<div style={{background:T.surface,border:`1px solid ${T.gold}`,borderRadius:12,padding:24}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
-        <div><div style={{fontSize:18,fontWeight:700,color:T.navy}}>{currentSource.name}</div><div style={{fontSize:12,color:T.textSec,marginTop:2}}>{currentSource.endpointCount} endpoints | {currentSource.fieldCount} fields | {currentSource.format} | {currentSource.auth}</div></div>
-        <button onClick={()=>setSelectedSource(null)} style={{background:'none',border:'none',fontSize:18,cursor:'pointer',color:T.textMut}}>x</button>
-      </div>
-
-      {/* Endpoints */}
-      <div style={{marginBottom:20}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8,fontFamily:T.mono}}>ENDPOINTS</div>
-        <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
-          {currentSource.endpoints.map((ep,i)=>(<div key={i} style={{padding:'4px 10px',background:T.surfaceH,borderRadius:6,fontSize:11,fontFamily:T.mono,color:T.text}}>{ep}</div>))}
-        </div>
-      </div>
-
-      {/* Connection Test */}
-      <div style={{display:'flex',gap:12,alignItems:'center',marginBottom:20,padding:16,background:T.surfaceH,borderRadius:10}}>
-        <button onClick={()=>simulateTest(currentSource.id)} disabled={testingConnection===currentSource.id} style={{padding:'8px 20px',background:testingConnection===currentSource.id?T.textMut:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:testingConnection===currentSource.id?'default':'pointer'}}>
-          {testingConnection===currentSource.id?'Testing...':'Test Connection'}
-        </button>
-        {testingConnection===currentSource.id&&(<div style={{display:'flex',alignItems:'center',gap:8,fontSize:12,color:T.textSec}}>
-          <div style={{width:16,height:16,border:`2px solid ${T.gold}`,borderTop:`2px solid transparent`,borderRadius:'50%',animation:'spin 1s linear infinite'}}/>Connecting to {currentSource.baseUrl}...
-        </div>)}
-        {testResult&&testResult.sourceId===currentSource.id&&(<div style={{fontSize:12,color:testResult.success?T.green:T.red,fontWeight:600}}>
-          {testResult.success?'\u2713':'x'} {testResult.message} ({testResult.latency}ms)
-        </div>)}
-      </div>
-
-      {/* Sync Schedule */}
-      <div style={{display:'flex',gap:16,marginBottom:20}}>
-        <div>
-          <div style={{fontSize:12,color:T.textSec,fontFamily:T.mono,marginBottom:4}}>Sync Schedule</div>
-          <select defaultValue={currentSource.syncSchedule} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-            {['hourly','daily','weekly','monthly','manual'].map(s=><option key={s}>{s}</option>)}
-          </select>
-        </div>
-        <div>
-          <div style={{fontSize:12,color:T.textSec,fontFamily:T.mono,marginBottom:4}}>Error Count (30d)</div>
-          <div style={{fontSize:20,fontWeight:700,color:currentSource.errorCount>0?T.red:T.green}}>{currentSource.errorCount}</div>
-        </div>
-        <div>
-          <div style={{fontSize:12,color:T.textSec,fontFamily:T.mono,marginBottom:4}}>Rate Limit</div>
-          <div style={{fontSize:14,fontWeight:600,color:T.navy}}>{currentSource.rateLimit} ({currentSource.ratePlan})</div>
-        </div>
-      </div>
-
-      {/* Error Log */}
-      {currentSource.errorCount>0&&(<div style={{marginBottom:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8,fontFamily:T.mono}}>RECENT ERRORS</div>
-        <div style={{background:'#fef2f2',border:'1px solid #fecaca',borderRadius:8,padding:12}}>
-          {SYNC_HISTORY.filter(h=>h.sourceId===currentSource.id&&h.status==='failed').slice(0,3).map((e,i)=>(<div key={i} style={{fontSize:12,color:T.red,fontFamily:T.mono,marginBottom:4}}>
-            [{e.date}] {e.error} (retried {e.retries}x)
-          </div>))}
-        </div>
-      </div>)}
-
-      {/* Fields Preview */}
-      <div style={{marginBottom:20}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8,fontFamily:T.mono}}>FIELDS ({currentSource.fields.length})</div>
-        <div style={{maxHeight:200,overflowY:'auto',display:'flex',flexWrap:'wrap',gap:4}}>
-          {currentSource.fields.map((f,i)=>{
-            const isMapped=FIELD_MAPPINGS.some(m=>m.sourceSlug===currentSource.slug&&m.sourceField===f);
-            return(<div key={i} style={{padding:'3px 8px',background:isMapped?T.green+'15':T.amber+'15',border:`1px solid ${isMapped?T.green+'40':T.amber+'40'}`,borderRadius:4,fontSize:10,fontFamily:T.mono,color:isMapped?T.green:T.amber}}>{f}</div>);
-          })}
-        </div>
-      </div>
-
-      {/* Data Quality Summary */}
-      <div style={{marginBottom:20}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8,fontFamily:T.mono}}>DATA QUALITY SUMMARY</div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12}}>
-          <div style={{padding:12,background:T.surfaceH,borderRadius:8,textAlign:'center'}}>
-            <div style={{fontSize:22,fontWeight:700,color:T.green}}>{Math.round(sr(currentSource.id*111)*10+88)}%</div>
-            <div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>Completeness</div>
-          </div>
-          <div style={{padding:12,background:T.surfaceH,borderRadius:8,textAlign:'center'}}>
-            <div style={{fontSize:22,fontWeight:700,color:T.sage}}>{(sr(currentSource.id*113)*3+0.5).toFixed(1)}%</div>
-            <div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>Null Rate</div>
-          </div>
-          <div style={{padding:12,background:T.surfaceH,borderRadius:8,textAlign:'center'}}>
-            <div style={{fontSize:22,fontWeight:700,color:T.navy}}>{Math.round(sr(currentSource.id*117)*5000+10000)}</div>
-            <div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>Records</div>
-          </div>
-          <div style={{padding:12,background:T.surfaceH,borderRadius:8,textAlign:'center'}}>
-            <div style={{fontSize:22,fontWeight:700,color:sr(currentSource.id*119)>0.5?T.green:T.amber}}>{sr(currentSource.id*119)>0.5?'PASS':'WARN'}</div>
-            <div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>Validation</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sync History Mini-Chart */}
-      <div>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8,fontFamily:T.mono}}>SYNC HISTORY (30 DAYS)</div>
-        <ResponsiveContainer width="100%" height={120}>
-          <BarChart data={SYNC_HISTORY.filter(h=>h.sourceId===currentSource.id).slice(0,30).reverse()}>
-            <XAxis dataKey="date" tick={{fontSize:8,fill:T.textMut}} interval={5}/>
-            <YAxis tick={{fontSize:9,fill:T.textMut}} tickFormatter={fmt}/>
-            <Tooltip {...tip}/>
-            <Bar dataKey="records" name="Records">{SYNC_HISTORY.filter(h=>h.sourceId===currentSource.id).slice(0,30).reverse().map((h,i)=><Cell key={i} fill={h.status==='success'?T.sage:T.red}/>)}</Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>)}
-
-    {/* Source Comparison Table */}
-    <div style={{marginTop:20,overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <div style={{padding:'12px 16px',borderBottom:`1px solid ${T.border}`,fontSize:13,fontWeight:600,color:T.navy,fontFamily:T.mono}}>SOURCE COMPARISON MATRIX</div>
-      <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:12}}>
-        <thead><tr>
-          {['Source','Status','Type','Fields','Endpoints','Rate Limit','Auth','Format','Freshness','Cost'].map(h=>(<th key={h} style={{padding:'10px 12px',textAlign:'left',fontSize:10,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,background:T.surfaceH,whiteSpace:'nowrap'}}>{h}</th>))}
-        </tr></thead>
-        <tbody>
-          {filteredSources.map((src,i)=>(<tr key={src.id} onClick={()=>setSelectedSource(selectedSource===src.id?null:src.id)} style={{cursor:'pointer',background:selectedSource===src.id?T.surfaceH:i%2===0?T.surface:'#fafaf8',borderBottom:`1px solid ${T.border}`}}>
-            <td style={{padding:'8px 12px',fontWeight:600,color:T.navy}}>{src.name}</td>
-            <td style={{padding:'8px 12px'}}>{statusDot(src.status)}<span style={{fontSize:11}}>{src.status}</span></td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,fontSize:11,color:T.textSec}}>{src.type}</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,fontWeight:600,color:T.navy}}>{src.fieldCount}</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,color:T.textSec}}>{src.endpointCount}</td>
-            <td style={{padding:'8px 12px',fontSize:11,fontFamily:T.mono}}>{src.rateLimit}</td>
-            <td style={{padding:'8px 12px'}}>{badge(src.auth,T.navyL+'15',T.navyL)}</td>
-            <td style={{padding:'8px 12px',fontSize:11,fontFamily:T.mono,color:T.textSec}}>{src.format}</td>
-            <td style={{padding:'8px 12px'}}><div style={{display:'flex',alignItems:'center',gap:4}}><div style={{width:40,height:4,background:T.surfaceH,borderRadius:2,overflow:'hidden'}}><div style={{height:'100%',width:`${src.freshness}%`,background:src.freshness>80?T.green:src.freshness>50?T.amber:T.red}}/></div><span style={{fontSize:10,fontFamily:T.mono}}>{src.freshness}%</span></div></td>
-            <td style={{padding:'8px 12px',fontSize:11,color:src.cost==='Free'?T.green:T.text}}>{src.cost}</td>
-          </tr>))}
-        </tbody>
-      </table>
-    </div>
-
-    {/* Source Distribution Charts */}
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Fields per Source</div>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={SOURCES.filter(s=>s.fieldCount>0).map(s=>({name:s.name.split(' ')[0],fields:s.fieldCount,mapped:FIELD_MAPPINGS.filter(m=>m.sourceSlug===s.slug).length}))}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
-            <XAxis dataKey="name" tick={{fontSize:9,fill:T.textSec}} angle={-30} textAnchor="end" height={60}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec}}/>
-            <Tooltip {...tip}/>
-            <Legend wrapperStyle={{fontSize:10}}/>
-            <Bar dataKey="fields" name="Total Fields" fill={T.navy} radius={[4,4,0,0]}/>
-            <Bar dataKey="mapped" name="Mapped" fill={T.green} radius={[4,4,0,0]}/>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Source Status Distribution</div>
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart>
-            <Pie data={[
-              {name:'Connected',value:SOURCES.filter(s=>s.status==='Connected').length,fill:T.green},
-              {name:'Partial',value:SOURCES.filter(s=>s.status==='Partial').length,fill:T.amber},
-              {name:'Pending',value:SOURCES.filter(s=>s.status==='Pending').length,fill:T.gold},
-              {name:'Not Connected',value:SOURCES.filter(s=>s.status==='Not Connected').length,fill:T.red},
-            ].filter(d=>d.value>0)} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={({name,value})=>`${name}: ${value}`}>
-              {[T.green,T.amber,T.gold,T.red].map((c,i)=><Cell key={i} fill={c}/>)}
-            </Pie>
-            <Tooltip {...tip}/>
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  </div>);
-
-  /* ── TAB 2: FIELD MAPPER ── */
-  const renderFieldMapper=()=>{
-    const src=SOURCES.find(s=>s.slug===mapSource);
-    const totalSourceFields=src?src.fields.length:0;
-    const mappedCount=mappingsForSource.filter(f=>f.mapped).length;
-    return(<div>
-    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-      {kpi('Source Fields',totalSourceFields,src?.name)}
-      {kpi('Mapped',mappedCount+'/'+totalSourceFields,Math.round(mappedCount/totalSourceFields*100)+'% coverage',T.green)}
-      {kpi('Unmapped',totalSourceFields-mappedCount,'need attention',totalSourceFields-mappedCount>0?T.amber:T.green)}
-      {kpi('Target Coverage',coverageStats.pct+'%',`${coverageStats.mapped}/${coverageStats.total} columns in ${mapTable}`)}
-    </div>
-    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-      <div>
-        <label style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginRight:6}}>Source:</label>
-        <select value={mapSource} onChange={e=>{setMapSource(e.target.value);setMapSearch('');}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-          {SOURCES.filter(s=>s.fields.length>0).map(s=><option key={s.slug} value={s.slug}>{s.name} ({s.fieldCount})</option>)}
-        </select>
-      </div>
-      <div>
-        <label style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginRight:6}}>Target Table:</label>
-        <select value={mapTable} onChange={e=>setMapTable(e.target.value)} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-          {DB_TABLES.map(t=><option key={t.name} value={t.name}>{t.name} ({t.columns.length} cols)</option>)}
-        </select>
-      </div>
-      <input value={mapSearch} onChange={e=>setMapSearch(e.target.value)} placeholder="Filter fields..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:180}}/>
-      <label style={{fontSize:12,color:T.textSec,display:'flex',alignItems:'center',gap:4,cursor:'pointer'}}>
-        <input type="checkbox" checked={showUnmappedOnly} onChange={e=>setShowUnmappedOnly(e.target.checked)}/>Unmapped only
-      </label>
-      <div style={{marginLeft:'auto',display:'flex',gap:8}}>
-        {btn(validating?'Validating...':'Validate Mapping',simulateValidation,true)}
-        {btn('Auto-Map Suggestions',()=>{},false)}
-      </div>
-    </div>
-
-    {/* Validation Result */}
-    {validationResult&&(<div style={{marginBottom:16,padding:16,background:validationResult.errors>0?'#fef2f2':validationResult.warnings>0?'#fffbeb':'#f0fdf4',border:`1px solid ${validationResult.errors>0?'#fecaca':validationResult.warnings>0?'#fde68a':'#bbf7d0'}`,borderRadius:10}}>
-      <div style={{fontSize:13,fontWeight:700,color:validationResult.errors>0?T.red:validationResult.warnings>0?T.amber:T.green,marginBottom:8}}>
-        Validation: {validationResult.valid}/{validationResult.total} valid | {validationResult.warnings} warnings | {validationResult.errors} errors
-      </div>
-      {validationResult.issues.map((issue,i)=>(<div key={i} style={{fontSize:12,fontFamily:T.mono,color:issue.type==='error'?T.red:T.amber,marginBottom:4}}>
-        [{issue.type.toUpperCase()}] {issue.field}: {issue.message}
-      </div>))}
-    </div>)}
-
-    {/* Coverage Bar per Target Table */}
-    <div style={{marginBottom:20,display:'flex',gap:8,flexWrap:'wrap'}}>
-      {DB_TABLES.map(tbl=>{
-        const mc=new Set(FIELD_MAPPINGS.filter(m=>m.targetTable===tbl.name).map(m=>m.targetColumn));
-        const pct=Math.round(mc.size/tbl.columns.length*100);
-        return(<div key={tbl.name} style={{background:T.surface,border:`1px solid ${mapTable===tbl.name?T.gold:T.border}`,borderRadius:8,padding:'8px 12px',cursor:'pointer',minWidth:140}} onClick={()=>setMapTable(tbl.name)}>
-          <div style={{fontSize:11,fontFamily:T.mono,color:T.textSec,marginBottom:4}}>{tbl.name}</div>
-          <div style={{display:'flex',alignItems:'center',gap:6}}>
-            <div style={{flex:1,height:4,background:T.surfaceH,borderRadius:2,overflow:'hidden'}}><div style={{height:'100%',width:`${pct}%`,background:pct>80?T.green:pct>50?T.gold:T.red,borderRadius:2}}/></div>
-            <span style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>{pct}%</span>
-          </div>
-        </div>);
-      })}
-    </div>
-
-    {/* Mapping Table */}
-    <div style={{display:'grid',gridTemplateColumns:'1fr 40px 1fr',gap:0,marginBottom:20}}>
-      {/* Left: Source Fields */}
-      <div style={{border:`1px solid ${T.border}`,borderRadius:'10px 0 0 10px',background:T.surface,overflow:'hidden'}}>
-        <div style={{padding:'10px 14px',background:T.surfaceH,borderBottom:`1px solid ${T.border}`,fontSize:12,fontWeight:700,color:T.navy,fontFamily:T.mono}}>SOURCE: {src?.name?.toUpperCase()}</div>
-        <div style={{maxHeight:500,overflowY:'auto'}}>
-          {mappingsForSource.map((f,i)=>(<div key={i} style={{padding:'8px 14px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center',background:f.mapped?'transparent':T.amber+'08'}}>
-            <div style={{fontSize:12,fontFamily:T.mono,color:f.mapped?T.text:T.amber}}>{f.field}</div>
-            {f.mapping&&<div style={{fontSize:10,fontFamily:T.mono,color:T.textMut,background:T.surfaceH,padding:'2px 6px',borderRadius:4}}>{f.mapping.transform}</div>}
-            {!f.mapped&&badge('UNMAPPED',T.amber+'20',T.amber)}
-          </div>))}
-        </div>
-      </div>
-
-      {/* Center: Arrows */}
-      <div style={{display:'flex',flexDirection:'column',justifyContent:'flex-start',alignItems:'center',paddingTop:50}}>
-        {mappingsForSource.filter(f=>f.mapped).slice(0,20).map((_,i)=>(<div key={i} style={{fontSize:12,color:T.gold,lineHeight:'36.5px',fontFamily:T.mono}}>{'\u2192'}</div>))}
-      </div>
-
-      {/* Right: Target Columns */}
-      <div style={{border:`1px solid ${T.border}`,borderRadius:'0 10px 10px 0',background:T.surface,overflow:'hidden'}}>
-        <div style={{padding:'10px 14px',background:T.surfaceH,borderBottom:`1px solid ${T.border}`,fontSize:12,fontWeight:700,color:T.navy,fontFamily:T.mono}}>TARGET: {mapTable.toUpperCase()}</div>
-        <div style={{maxHeight:500,overflowY:'auto'}}>
-          {targetColumns.map((col,i)=>{
-            const mapping=FIELD_MAPPINGS.find(m=>m.targetTable===mapTable&&m.targetColumn===col);
-            const hasMapping=!!mapping;
-            return(<div key={i} style={{padding:'8px 14px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center',background:hasMapping?'transparent':T.amber+'08'}}>
-              <div style={{fontSize:12,fontFamily:T.mono,color:hasMapping?T.text:T.textMut}}>{col}</div>
-              {hasMapping?badge(mapping.sourceSlug,T.green+'20',T.green):badge('NO SOURCE',T.surfaceH,T.textMut)}
-            </div>);
-          })}
-        </div>
-      </div>
-    </div>
-
-    {/* Detailed Mapping Table */}
-    <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:12}}>
-        <thead><tr>
-          {['Source Field','Transform','Target Table','Target Column','Status'].map(h=>(<th key={h} style={{padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>{h}</th>))}
-        </tr></thead>
-        <tbody>
-          {mappingsForSource.slice(0,25).map((f,i)=>(<tr key={i} style={{background:i%2===0?T.surface:'#fafaf8'}}>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,color:T.navy,fontWeight:600}}>{f.field}</td>
-            <td style={{padding:'8px 12px'}}>{f.mapping?<select defaultValue={f.mapping.transform} style={{padding:'4px 8px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.mono,background:T.surface}}>
-              {['none','numeric','uppercase','lowercase','date_parse','unit_convert','boolean','trim','json_extract'].map(t=><option key={t}>{t}</option>)}
-            </select>:<span style={{color:T.textMut}}>-</span>}</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,color:T.textSec}}>{f.mapping?f.mapping.targetTable:'-'}</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,color:T.text}}>{f.mapping?f.mapping.targetColumn:'-'}</td>
-            <td style={{padding:'8px 12px'}}>{f.mapped?badge('MAPPED',T.green+'20',T.green):badge('UNMAPPED',T.amber+'20',T.amber)}</td>
-          </tr>))}
-        </tbody>
-      </table>
-    </div>
-
-    {/* Cross-Source Mapping Matrix */}
-    <div style={{marginTop:20,overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <div style={{padding:'12px 16px',borderBottom:`1px solid ${T.border}`,fontSize:13,fontWeight:600,color:T.navy,fontFamily:T.mono}}>CROSS-SOURCE MAPPING MATRIX</div>
-      <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
-        <thead><tr>
-          <th style={{padding:'8px 12px',textAlign:'left',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Target Table</th>
-          {SOURCES.filter(s=>s.fieldCount>0).map(s=>(<th key={s.slug} style={{padding:'8px 12px',textAlign:'center',fontSize:9,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH,whiteSpace:'nowrap'}}>{s.name.split(' ')[0]}</th>))}
-          <th style={{padding:'8px 12px',textAlign:'center',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Total</th>
-        </tr></thead>
-        <tbody>
-          {DB_TABLES.map((tbl,ti)=>{
-            const rowTotal=FIELD_MAPPINGS.filter(m=>m.targetTable===tbl.name).length;
-            return(<tr key={tbl.name} style={{background:ti%2===0?T.surface:'#fafaf8',borderBottom:`1px solid ${T.border}`}}>
-              <td style={{padding:'8px 12px',fontFamily:T.mono,fontWeight:600,color:T.navy}}>{tbl.name}</td>
-              {SOURCES.filter(s=>s.fieldCount>0).map(s=>{
-                const count=FIELD_MAPPINGS.filter(m=>m.sourceSlug===s.slug&&m.targetTable===tbl.name).length;
-                return(<td key={s.slug} style={{padding:'8px 12px',textAlign:'center',fontFamily:T.mono,color:count>0?T.navy:T.textMut,fontWeight:count>0?600:400}}>{count>0?count:'-'}</td>);
-              })}
-              <td style={{padding:'8px 12px',textAlign:'center',fontFamily:T.mono,fontWeight:700,color:T.navy}}>{rowTotal}</td>
-            </tr>);
-          })}
-        </tbody>
-      </table>
-    </div>
-
-    {/* Auto-Map Suggestions */}
-    <div style={{marginTop:20,background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>AUTO-MAP SUGGESTIONS</div>
-      <div style={{fontSize:12,color:T.textSec,marginBottom:12}}>Based on field name similarity analysis, the following unmapped fields have suggested mappings:</div>
-      <div style={{display:'grid',gap:8}}>
-        {[
-          {sourceField:'news_title',source:'eodhd',suggestedTable:'company_profiles',suggestedCol:'description',confidence:45},
-          {sourceField:'short_ratio',source:'eodhd',suggestedTable:'price_data',suggestedCol:'beta',confidence:30},
-          {sourceField:'insider_name',source:'eodhd',suggestedTable:'company_profiles',suggestedCol:'name',confidence:25},
-          {sourceField:'options_iv',source:'eodhd',suggestedTable:'price_data',suggestedCol:'adj_close',confidence:20},
-          {sourceField:'news_sentiment_score',source:'alphavantage',suggestedTable:'esg_ratings',suggestedCol:'esg_score',confidence:35},
-          {sourceField:'earn_surprise_pct',source:'alphavantage',suggestedTable:'financial_data',suggestedCol:'eps',confidence:40},
-        ].map((s,i)=>(<div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'8px 12px',background:T.surfaceH,borderRadius:8}}>
-          <span style={{fontFamily:T.mono,fontSize:11,color:T.navy,fontWeight:600,minWidth:160}}>{s.sourceField}</span>
-          <span style={{fontSize:12,color:T.gold}}>{'\u2192'}</span>
-          <span style={{fontFamily:T.mono,fontSize:11,color:T.textSec}}>{s.suggestedTable}.{s.suggestedCol}</span>
-          <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:8}}>
-            <div style={{width:60,height:4,background:T.border,borderRadius:2,overflow:'hidden'}}><div style={{height:'100%',width:`${s.confidence}%`,background:s.confidence>50?T.green:s.confidence>30?T.amber:T.red}}/></div>
-            <span style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>{s.confidence}%</span>
-            {btn('Accept',()=>{},true,true)}
-            {btn('Skip',()=>{},false,true)}
-          </div>
-        </div>))}
-      </div>
-    </div>
-
-    {/* Mapping Statistics Charts */}
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Transform Distribution</div>
-        <ResponsiveContainer width="100%" height={220}>
-          <PieChart>
-            <Pie data={[
-              {name:'none',value:FIELD_MAPPINGS.filter(m=>m.transform==='none').length},
-              {name:'numeric',value:FIELD_MAPPINGS.filter(m=>m.transform==='numeric').length},
-              {name:'date_parse',value:FIELD_MAPPINGS.filter(m=>m.transform==='date_parse').length},
-            ]} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({name,value})=>`${name}: ${value}`}>
-              <Cell fill={T.navy}/><Cell fill={T.gold}/><Cell fill={T.sage}/>
-            </Pie>
-            <Tooltip {...tip}/>
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Coverage by Target Table</div>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={DB_TABLES.map(tbl=>{const mc=new Set(FIELD_MAPPINGS.filter(m=>m.targetTable===tbl.name).map(m=>m.targetColumn));return{name:tbl.name.replace('_',' '),coverage:Math.round(mc.size/tbl.columns.length*100),total:tbl.columns.length,mapped:mc.size};})}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
-            <XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec}} angle={-30} textAnchor="end" height={60}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec}} unit="%"/>
-            <Tooltip {...tip}/>
-            <Bar dataKey="coverage" name="Coverage %">{DB_TABLES.map((t,i)=>{const mc=new Set(FIELD_MAPPINGS.filter(m=>m.targetTable===t.name).map(m=>m.targetColumn));const pct=Math.round(mc.size/t.columns.length*100);return <Cell key={i} fill={pct>80?T.green:pct>50?T.gold:T.red}/>;})}</Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  </div>);};
-
-  /* ── TAB 3: ENGINE LINEAGE ── */
-  const renderEngineLineage=()=>(<div>
-    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-      {kpi('Engines',ENGINES.length,'calculation engines')}
-      {kpi('Fields Consumed',new Set(ENGINES.flatMap(e=>e.consumes)).size,'unique fields')}
-      {kpi('Tables Referenced',new Set(ENGINES.flatMap(e=>e.tables)).size,'DB tables')}
-      {kpi('Avg Dependencies',Math.round(ENGINES.reduce((a,e)=>a+e.consumes.length,0)/ENGINES.length),'fields per engine')}
-    </div>
-    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-      <div>
-        <label style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginRight:6}}>Engine:</label>
-        <select value={engineFilter} onChange={e=>setEngineFilter(e.target.value)} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-          <option value="All">All Engines</option>
-          {ENGINES.map(e=><option key={e.id} value={e.id}>{e.id} {e.name}</option>)}
-        </select>
-      </div>
-      <div>
-        <label style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginRight:6}}>Source:</label>
-        <select value={lineageSource} onChange={e=>setLineageSource(e.target.value)} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-          <option value="All">All Sources</option>
-          {SOURCES.filter(s=>s.fields.length>0).map(s=><option key={s.slug} value={s.slug}>{s.name}</option>)}
-        </select>
-      </div>
-      <div>
-        <label style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginRight:6}}>Impact Analysis:</label>
-        <select value={impactSource||''} onChange={e=>setImpactSource(e.target.value||null)} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-          <option value="">Select source...</option>
-          {SOURCES.filter(s=>s.status==='Connected'||s.status==='Partial').map(s=><option key={s.slug} value={s.slug}>{s.name}</option>)}
-        </select>
-      </div>
-    </div>
-
-    {/* Impact Analysis Panel */}
-    {impactAnalysis&&(<div style={{marginBottom:20,padding:20,background:'#fef2f2',border:`1px solid #fecaca`,borderRadius:12}}>
-      <div style={{fontSize:14,fontWeight:700,color:T.red,marginBottom:12}}>Impact Analysis: What breaks if {SOURCES.find(s=>s.slug===impactSource)?.name} goes down?</div>
-      <div style={{display:'flex',gap:16,marginBottom:16,flexWrap:'wrap'}}>
-        <div style={{padding:'8px 16px',background:'#fff',borderRadius:8,border:'1px solid #fecaca'}}>
-          <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Fields Lost</div>
-          <div style={{fontSize:22,fontWeight:700,color:T.red}}>{impactAnalysis.totalFields}</div>
-        </div>
-        <div style={{padding:'8px 16px',background:'#fff',borderRadius:8,border:'1px solid #fecaca'}}>
-          <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Engines Affected</div>
-          <div style={{fontSize:22,fontWeight:700,color:T.amber}}>{impactAnalysis.affectedEngines.length}</div>
-        </div>
-        <div style={{padding:'8px 16px',background:'#fff',borderRadius:8,border:'1px solid #fecaca'}}>
-          <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Critical (&gt;50% deps)</div>
-          <div style={{fontSize:22,fontWeight:700,color:T.red}}>{impactAnalysis.criticalEngines.length}</div>
-        </div>
-      </div>
-      <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
-        {impactAnalysis.affectedEngines.map(e=>{
-          const isCritical=impactAnalysis.criticalEngines.some(c=>c.id===e.id);
-          return(<div key={e.id} style={{padding:'6px 12px',background:isCritical?T.red+'15':'#fff',border:`1px solid ${isCritical?T.red+'40':T.border}`,borderRadius:8,fontSize:12}}>
-            <span style={{fontFamily:T.mono,color:isCritical?T.red:T.navy,fontWeight:600}}>{e.id}</span>
-            <span style={{color:T.textSec,marginLeft:6}}>{e.name}</span>
-            {isCritical&&<span style={{marginLeft:6,fontSize:10,color:T.red,fontWeight:700}}>CRITICAL</span>}
-          </div>);
-        })}
-      </div>
-    </div>)}
-
-    {/* Lineage Flow */}
-    <div style={{marginBottom:20}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>DATA LINEAGE: SOURCE {'\u2192'} FIELD {'\u2192'} TABLE {'\u2192'} ENGINE</div>
-      {engineLineage.map(engine=>(<div key={engine.id} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:16,marginBottom:12}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-          <div>
-            <span style={{fontSize:14,fontWeight:700,color:T.navy,fontFamily:T.mono}}>{engine.id}</span>
-            <span style={{fontSize:14,fontWeight:600,color:T.text,marginLeft:8}}>{engine.name}</span>
-          </div>
-          <div style={{display:'flex',gap:4}}>
-            {engine.tables.map(t=>badge(t,T.navyL+'15',T.navyL))}
-          </div>
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(250,1fr))',gap:8}}>
-          {engine.consumes.map((field,fi)=>{
-            const mapping=FIELD_MAPPINGS.find(m=>m.targetColumn===field);
-            const source=mapping?SOURCES.find(s=>s.slug===mapping.sourceSlug):null;
-            const quality=Math.round(sr(fi*engine.id.charCodeAt(2)+37)*30+70);
-            const nullRate=+(sr(fi*engine.id.charCodeAt(2)+41)*8).toFixed(1);
-            return(<div key={fi} onClick={()=>setSelectedField(selectedField===field?null:field)} style={{padding:'8px 12px',background:T.surfaceH,borderRadius:8,cursor:'pointer',border:`1px solid ${selectedField===field?T.gold:T.surfaceH}`}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <span style={{fontSize:12,fontFamily:T.mono,color:T.navy,fontWeight:600}}>{field}</span>
-                <span style={{fontSize:10,color:quality>85?T.green:quality>70?T.amber:T.red}}>{quality}%</span>
-              </div>
-              <div style={{fontSize:10,color:T.textMut,marginTop:2}}>
-                {source?`${source.name} \u2192 ${mapping.targetTable}`:'No source mapped'}
-              </div>
-              {selectedField===field&&(<div style={{marginTop:8,paddingTop:8,borderTop:`1px solid ${T.border}`,fontSize:11}}>
-                <div style={{color:T.textSec}}>Null rate: <span style={{color:nullRate>5?T.amber:T.green,fontWeight:600}}>{nullRate}%</span></div>
-                <div style={{color:T.textSec}}>Transform: <span style={{fontFamily:T.mono}}>{mapping?.transform||'none'}</span></div>
-                <div style={{color:T.textSec}}>Completeness: <span style={{color:T.green,fontWeight:600}}>{quality}%</span></div>
-                <div style={{color:T.textSec}}>Last validated: 2026-03-{String(28-Math.floor(sr(fi*13)*5)).padStart(2,'0')}</div>
-              </div>)}
-            </div>);
-          })}
-        </div>
-      </div>))}
-    </div>
-
-    {/* Field Dependencies Chart */}
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Fields per Engine</div>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={ENGINES.map(e=>({name:e.id,fields:e.consumes.length,tables:e.tables.length}))} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
-            <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
-            <YAxis dataKey="name" type="category" tick={{fontSize:10,fill:T.textSec,fontFamily:'JetBrains Mono'}} width={50}/>
-            <Tooltip {...tip}/>
-            <Bar dataKey="fields" name="Fields" fill={T.navy} radius={[0,4,4,0]}/>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Source Contribution to Engines</div>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie data={SOURCES.filter(s=>s.fieldCount>0).map((s,i)=>{
-              const engineCount=ENGINES.filter(e=>{
-                const srcMappings=FIELD_MAPPINGS.filter(m=>m.sourceSlug===s.slug);
-                const mappedCols=new Set(srcMappings.map(m=>m.targetColumn));
-                return e.consumes.some(c=>mappedCols.has(c));
-              }).length;
-              return{name:s.name.split(' ')[0],value:engineCount,fill:CC[i%CC.length]};
-            })} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({name,value})=>`${name}: ${value}`}>
-              {SOURCES.filter(s=>s.fieldCount>0).map((s,i)=>(<Cell key={i} fill={CC[i%CC.length]}/>))}
-            </Pie>
-            <Tooltip {...tip}/>
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-
-    {/* Engine Detail Table */}
-    <div style={{marginTop:20,overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <div style={{padding:'12px 16px',borderBottom:`1px solid ${T.border}`,fontSize:13,fontWeight:600,color:T.navy,fontFamily:T.mono}}>ENGINE DEPENDENCY MATRIX</div>
-      <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
-        <thead><tr>
-          <th style={{padding:'8px 12px',textAlign:'left',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Engine</th>
-          <th style={{padding:'8px 12px',textAlign:'left',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Name</th>
-          <th style={{padding:'8px 12px',textAlign:'center',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Fields</th>
-          <th style={{padding:'8px 12px',textAlign:'center',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Tables</th>
-          <th style={{padding:'8px 12px',textAlign:'center',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Sources</th>
-          <th style={{padding:'8px 12px',textAlign:'center',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Data Quality</th>
-          <th style={{padding:'8px 12px',textAlign:'center',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Redundancy</th>
-          <th style={{padding:'8px 12px',textAlign:'left',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Critical Fields</th>
-        </tr></thead>
-        <tbody>
-          {ENGINES.map((engine,ei)=>{
-            const uniqueSources=new Set();
-            engine.consumes.forEach(field=>{
-              const m=FIELD_MAPPINGS.find(fm=>fm.targetColumn===field);
-              if(m)uniqueSources.add(m.sourceSlug);
-            });
-            const quality=Math.round(sr(ei*71)*15+82);
-            const redundancy=engine.consumes.filter(f=>FIELD_MAPPINGS.filter(m=>m.targetColumn===f).length>1).length;
-            return(<tr key={engine.id} style={{background:ei%2===0?T.surface:'#fafaf8',borderBottom:`1px solid ${T.border}`}}>
-              <td style={{padding:'8px 12px',fontFamily:T.mono,fontWeight:700,color:T.navy}}>{engine.id}</td>
-              <td style={{padding:'8px 12px',fontWeight:600,color:T.text}}>{engine.name}</td>
-              <td style={{padding:'8px 12px',textAlign:'center',fontFamily:T.mono}}>{engine.consumes.length}</td>
-              <td style={{padding:'8px 12px',textAlign:'center',fontFamily:T.mono}}>{engine.tables.length}</td>
-              <td style={{padding:'8px 12px',textAlign:'center',fontFamily:T.mono}}>{uniqueSources.size}</td>
-              <td style={{padding:'8px 12px',textAlign:'center'}}><span style={{color:quality>90?T.green:quality>80?T.gold:T.red,fontWeight:600,fontFamily:T.mono}}>{quality}%</span></td>
-              <td style={{padding:'8px 12px',textAlign:'center'}}>{redundancy>0?badge(`${redundancy} fields`,T.green+'20',T.green):badge('none',T.amber+'20',T.amber)}</td>
-              <td style={{padding:'8px 12px',fontSize:10,fontFamily:T.mono,color:T.textSec}}>{engine.consumes.slice(0,3).join(', ')}{engine.consumes.length>3?` +${engine.consumes.length-3}`:''}</td>
-            </tr>);
-          })}
-        </tbody>
-      </table>
-    </div>
-
-    {/* Single Point of Failure Analysis */}
-    <div style={{marginTop:20,background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>SINGLE POINT OF FAILURE ANALYSIS</div>
-      <div style={{fontSize:12,color:T.textSec,marginBottom:12}}>Fields that have only one data source and feed critical engines:</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300,1fr))',gap:8}}>
-        {['carbon_price','grid_intensity','esg_controversy','ndgain_score','ndgain_vulnerability','water_stress','forest_area'].map((field,i)=>{
-          const mappings=FIELD_MAPPINGS.filter(m=>m.targetColumn===field);
-          const engines=ENGINES.filter(e=>e.consumes.includes(field));
-          const source=mappings.length>0?SOURCES.find(s=>s.slug===mappings[0].sourceSlug):null;
-          return(<div key={i} style={{padding:'10px 14px',background:mappings.length<=1?'#fef2f2':T.surfaceH,border:`1px solid ${mappings.length<=1?'#fecaca':T.border}`,borderRadius:8}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:4}}>
-              <span style={{fontFamily:T.mono,fontSize:12,color:T.navy,fontWeight:600}}>{field}</span>
-              {mappings.length<=1&&badge('SINGLE SOURCE','#fecaca',T.red)}
-            </div>
-            <div style={{fontSize:10,color:T.textSec}}>
-              Source: {source?source.name:'None'} | Engines: {engines.map(e=>e.id).join(', ')||'None'}
-            </div>
-          </div>);
-        })}
-      </div>
-    </div>
-  </div>);
-
-  /* ── TAB 4: SYNC MONITOR ── */
-  const renderSyncMonitor=()=>{
-    const connectedSources=SOURCES.filter(s=>s.status==='Connected'||s.status==='Partial');
-    const totalSyncs=syncData.length;
-    const failedSyncs=syncData.filter(d=>d.status==='failed').length;
-    const successRate=totalSyncs>0?Math.round((totalSyncs-failedSyncs)/totalSyncs*100):0;
-    const totalRecords=syncData.reduce((a,d)=>a+d.records,0);
-    return(<div>
-    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-      {kpi('Success Rate',successRate+'%',`${totalSyncs-failedSyncs}/${totalSyncs} syncs`,successRate>95?T.green:successRate>80?T.amber:T.red)}
-      {kpi('Failed (30d)',failedSyncs,failedSyncs>5?'needs attention':'within threshold',failedSyncs>5?T.red:T.amber)}
-      {kpi('Records Synced',fmt(totalRecords),'last 30 days')}
-      {kpi('Active Sources',connectedSources.length+'/'+SOURCES.length)}
-      {kpi('Avg Latency',(syncData.reduce((a,d)=>a+d.duration,0)/syncData.length||0).toFixed(1)+'s','per sync cycle')}
-    </div>
-    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-      <div>
-        <label style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginRight:6}}>Source:</label>
-        <select value={monitorSource} onChange={e=>setMonitorSource(e.target.value)} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>
-          <option value="All">All Sources</option>
-          {connectedSources.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-        </select>
-      </div>
-      {btn(showAlertConfig?'Hide Alerts':'Configure Alerts',()=>setShowAlertConfig(!showAlertConfig))}
-      {btn('Export Sync Report',()=>csv(syncData,'sync_report.csv'))}
-    </div>
-
-    {/* Alert Configuration */}
-    {showAlertConfig&&(<div style={{marginBottom:20,background:T.surface,border:`1px solid ${T.gold}`,borderRadius:12,padding:20}}>
-      <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Alert Rules</div>
-      <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-        <thead><tr>
-          {['Rule','Condition','Threshold','Action','Enabled'].map(h=>(<th key={h} style={{padding:'8px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>{h}</th>))}
-        </tr></thead>
-        <tbody>
-          {ALERT_RULES.map(rule=>(<tr key={rule.id} style={{borderBottom:`1px solid ${T.border}`}}>
-            <td style={{padding:'8px 12px',fontWeight:600,color:T.navy}}>{rule.name}</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,fontSize:11,color:T.textSec}}>{rule.condition}</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono}}>{rule.threshold}</td>
-            <td style={{padding:'8px 12px'}}>{badge(rule.action,T.navyL+'15',T.navyL)}</td>
-            <td style={{padding:'8px 12px'}}><span style={{color:rule.enabled?T.green:T.textMut,fontWeight:600}}>{rule.enabled?'ON':'OFF'}</span></td>
-          </tr>))}
-        </tbody>
-      </table>
-    </div>)}
-
-    {/* Live Source Status */}
-    <div style={{marginBottom:20}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>LIVE SOURCE STATUS</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280,1fr))',gap:12}}>
-        {connectedSources.map(src=>{
-          const srcSyncs=SYNC_HISTORY.filter(h=>h.sourceId===src.id);
-          const recentFails=srcSyncs.filter(h=>h.day<7&&h.status==='failed').length;
-          const lastFail=srcSyncs.find(h=>h.status==='failed');
-          const avgDuration=(srcSyncs.reduce((a,h)=>a+h.duration,0)/srcSyncs.length).toFixed(1);
-          return(<div key={src.id} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
+  return(
+    <div>
+      {/* Source sync status */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(480px,1fr))',gap:12,marginBottom:20}}>
+        {syncHistory.map((src)=>(
+          <div key={src.id} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:14}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-              <div style={{display:'flex',alignItems:'center',gap:6}}>
-                {statusDot(recentFails>2?'Partial':src.status)}
-                <span style={{fontSize:13,fontWeight:600,color:T.navy}}>{src.name}</span>
+              <div>
+                <div style={{fontSize:13,fontWeight:700}}>{src.name}</div>
+                <div style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>{src.schedule} \u00b7 Avg: {src.avgDuration}</div>
               </div>
-              <button onClick={()=>simulateSync(src.id)} disabled={syncingSource===src.id} style={{padding:'4px 10px',background:syncingSource===src.id?T.textMut:T.sage,color:'#fff',border:'none',borderRadius:6,fontSize:10,fontFamily:T.mono,cursor:syncingSource===src.id?'default':'pointer'}}>
-                {syncingSource===src.id?'Syncing...':'Sync Now'}
-              </button>
+              <StatusBadge status={src.status}/>
             </div>
-            <div style={{fontSize:11,color:T.textSec,display:'grid',gridTemplateColumns:'1fr 1fr',gap:4}}>
-              <div>Last sync: <span style={{fontFamily:T.mono}}>{src.lastSync?new Date(src.lastSync).toLocaleTimeString():'-'}</span></div>
-              <div>Avg duration: <span style={{fontFamily:T.mono}}>{avgDuration}s</span></div>
-              <div>Recent fails: <span style={{color:recentFails>0?T.red:T.green,fontWeight:600}}>{recentFails}</span></div>
-              <div>Schedule: <span style={{fontFamily:T.mono}}>{src.syncSchedule}</span></div>
-            </div>
-            {/* Mini sparkline: 7 day status */}
-            <div style={{display:'flex',gap:2,marginTop:8}}>
-              {srcSyncs.slice(0,7).map((h,i)=>(<div key={i} style={{flex:1,height:6,background:h.status==='success'?T.green:T.red,borderRadius:2,opacity:0.7+i*0.04}} title={`${h.date}: ${h.status}`}/>))}
-            </div>
-            {lastFail&&recentFails>0&&<div style={{marginTop:6,fontSize:10,color:T.red,fontFamily:T.mono}}>Last error: {lastFail.error}</div>}
-          </div>);
-        })}
-      </div>
-    </div>
 
-    {/* Rate Limit Utilization */}
-    <div style={{marginBottom:20}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>RATE LIMIT UTILIZATION</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300,1fr))',gap:12}}>
-        {rateLimits.map((rl,i)=>{
-          const pct=Math.round(rl.used/rl.limit*100);
-          return(<div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-            <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
-              <span style={{fontSize:13,fontWeight:600,color:T.navy}}>{rl.source}</span>
-              <span style={{fontSize:12,fontFamily:T.mono,color:pct>90?T.red:pct>70?T.amber:T.green}}>{fmt(rl.used)}/{fmt(rl.limit)} per {rl.unit}</span>
+            {/* Sparkline */}
+            <div style={{height:50,marginBottom:8}}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={src.sparkline}>
+                  <Area type="monotone" dataKey="records" stroke={T.navyL} fill={T.navyL+'20'} strokeWidth={1.5}/>
+                  <Tooltip contentStyle={{fontFamily:T.mono,fontSize:10,padding:'4px 8px',borderRadius:4,background:T.surface,border:`1px solid ${T.border}`}} formatter={(v)=>[fmtNum(v),'Records']}/>
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
-            <div style={{height:8,background:T.surfaceH,borderRadius:4,overflow:'hidden'}}>
-              <div style={{height:'100%',width:`${pct}%`,background:pct>90?T.red:pct>70?T.amber:T.green,borderRadius:4,transition:'width 0.3s'}}/>
-            </div>
-            <div style={{textAlign:'right',fontSize:10,color:T.textMut,fontFamily:T.mono,marginTop:4}}>{pct}% utilized</div>
-          </div>);
-        })}
-      </div>
-    </div>
 
-    {/* Volume Chart */}
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+            {/* Rate limit gauge */}
+            <div style={{display:'flex',gap:12,alignItems:'center',marginBottom:8}}>
+              <div style={{flex:1}}>
+                <div style={{fontSize:10,color:T.textMut,marginBottom:3}}>Rate Limit</div>
+                <div style={{height:6,background:T.surfaceH,borderRadius:3,overflow:'hidden'}}>
+                  <div style={{width:`${(src.rateLimit.used/src.rateLimit.max)*100}%`,height:'100%',background:src.rateLimit.used/src.rateLimit.max>0.9?T.red:src.rateLimit.used/src.rateLimit.max>0.7?T.amber:T.green,borderRadius:3,transition:'width 0.3s'}}/>
+                </div>
+              </div>
+              <span style={{fontFamily:T.mono,fontSize:10,color:T.textMut}}>{fmtNum(src.rateLimit.used)}/{fmtNum(src.rateLimit.max)}</span>
+            </div>
+
+            {/* Next sync */}
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{fontSize:10,color:T.textMut}}>Next: {fmtDate(src.nextSync)}</span>
+              {syncingId===src.id?(
+                <div style={{display:'flex',alignItems:'center',gap:8,flex:'0 0 160px'}}>
+                  <div style={{flex:1,height:6,background:T.surfaceH,borderRadius:3,overflow:'hidden'}}>
+                    <div style={{width:`${Math.min(syncProgress,100)}%`,height:'100%',background:T.green,borderRadius:3,transition:'width 0.2s'}}/>
+                  </div>
+                  <span style={{fontFamily:T.mono,fontSize:10,color:T.green}}>{Math.min(syncProgress,100)}%</span>
+                </div>
+              ):(
+                <button onClick={()=>handleSyncNow(src.id)} disabled={src.status==='inactive'} style={{padding:'4px 12px',fontSize:10,fontWeight:600,background:T.navy+'10',border:`1px solid ${T.navy}20`,borderRadius:4,cursor:src.status==='inactive'?'not-allowed':'pointer',fontFamily:T.font,color:T.navy,opacity:src.status==='inactive'?0.4:1}}>Sync Now</button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Error log */}
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16,marginBottom:16}}>
+        <div style={{fontSize:13,fontWeight:700,marginBottom:12}}>Error Log (Last 48h)</div>
+        <div style={{maxHeight:280,overflowY:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
+            <thead>
+              <tr>
+                {['Time','Source','Type','Message','Retries','Status'].map(h=>(
+                  <th key={h} style={{padding:'6px 10px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontWeight:700,color:T.navy,fontSize:10,position:'sticky',top:0,background:T.surface}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {errorLog.map((err,ei)=>(
+                <tr key={ei} style={{background:ei%2===0?'transparent':T.surfaceH}}>
+                  <td style={{padding:'5px 10px',fontFamily:T.mono,fontSize:10,color:T.textMut,whiteSpace:'nowrap'}}>{timeSince(err.timestamp)}</td>
+                  <td style={{padding:'5px 10px',fontSize:11,fontWeight:600}}>{err.source}</td>
+                  <td style={{padding:'5px 10px'}}><span style={{padding:'1px 6px',borderRadius:3,fontSize:9,fontFamily:T.mono,background:T.amber+'15',color:T.amber}}>{err.type}</span></td>
+                  <td style={{padding:'5px 10px',color:T.textSec,maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{err.message}</td>
+                  <td style={{padding:'5px 10px',fontFamily:T.mono,fontSize:10}}>{err.retries}/3</td>
+                  <td style={{padding:'5px 10px'}}><span style={{fontSize:10,fontWeight:600,color:err.resolved?T.green:T.red}}>{err.resolved?'Resolved':'Open'}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Sync calendar */}
       <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Records Synced per Day (30d)</div>
-        <ResponsiveContainer width="100%" height={280}>
-          <AreaChart data={volumeChart}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
-            <XAxis dataKey="day" tick={{fontSize:9,fill:T.textSec}} interval={4}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec}} tickFormatter={fmt}/>
-            <Tooltip {...tip}/>
-            <Legend wrapperStyle={{fontSize:10}}/>
-            <Area type="monotone" dataKey="eodhd" name="EODHD" stackId="1" fill={T.navy} stroke={T.navy} fillOpacity={0.6}/>
-            <Area type="monotone" dataKey="alphavantage" name="Alpha Vantage" stackId="1" fill={T.gold} stroke={T.gold} fillOpacity={0.6}/>
-            <Area type="monotone" dataKey="climatetrace" name="Climate TRACE" stackId="1" fill={T.sage} stroke={T.sage} fillOpacity={0.6}/>
-            <Area type="monotone" dataKey="edgar" name="EDGAR" stackId="1" fill={T.amber} stroke={T.amber} fillOpacity={0.6}/>
-            <Area type="monotone" dataKey="ember" name="Ember" stackId="1" fill={T.red} stroke={T.red} fillOpacity={0.3}/>
-            <Area type="monotone" dataKey="worldbank" name="World Bank" stackId="1" fill={T.navyL} stroke={T.navyL} fillOpacity={0.4}/>
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Sync Duration Trend (30d)</div>
-        <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={volumeChart.map((d,i)=>({day:d.day,eodhd:+(sr(i*201)*8+2).toFixed(1),alphavantage:+(sr(i*203)*6+1.5).toFixed(1),edgar:+(sr(i*207)*4+1).toFixed(1)}))}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
-            <XAxis dataKey="day" tick={{fontSize:9,fill:T.textSec}} interval={4}/>
-            <YAxis tick={{fontSize:10,fill:T.textSec}} unit="s"/>
-            <Tooltip {...tip}/>
-            <Legend wrapperStyle={{fontSize:10}}/>
-            <Line type="monotone" dataKey="eodhd" name="EODHD" stroke={T.navy} strokeWidth={2} dot={false}/>
-            <Line type="monotone" dataKey="alphavantage" name="Alpha Vantage" stroke={T.gold} strokeWidth={2} dot={false}/>
-            <Line type="monotone" dataKey="edgar" name="EDGAR" stroke={T.sage} strokeWidth={2} dot={false}/>
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-
-    {/* Error Log */}
-    <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <div style={{padding:'12px 16px',borderBottom:`1px solid ${T.border}`,fontSize:13,fontWeight:600,color:T.navy,fontFamily:T.mono}}>SYNC ERROR LOG (30 Days)</div>
-      <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:12}}>
-        <thead><tr>
-          {['Date','Source','Error','Duration','Retries','Status'].map(h=>(<th key={h} style={{padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>{h}</th>))}
-        </tr></thead>
-        <tbody>
-          {syncData.filter(d=>d.status==='failed').slice(0,15).map((d,i)=>(<tr key={i} style={{background:i%2===0?T.surface:'#fafaf8',borderBottom:`1px solid ${T.border}`}}>
-            <td style={{padding:'8px 12px',fontFamily:T.mono,color:T.textSec}}>{d.date}</td>
-            <td style={{padding:'8px 12px',fontWeight:600,color:T.navy}}>{d.sourceName}</td>
-            <td style={{padding:'8px 12px',color:T.red,fontSize:11}}>{d.error}</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono}}>{d.duration}s</td>
-            <td style={{padding:'8px 12px',fontFamily:T.mono}}>{d.retries}</td>
-            <td style={{padding:'8px 12px'}}>{badge('FAILED','#fecaca',T.red)}</td>
-          </tr>))}
-          {syncData.filter(d=>d.status==='failed').length===0&&(<tr><td colSpan={6} style={{padding:20,textAlign:'center',color:T.green,fontWeight:600}}>No errors in selected period</td></tr>)}
-        </tbody>
-      </table>
-    </div>
-
-    {/* Sync Success Timeline */}
-    <div style={{marginTop:20,overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <div style={{padding:'12px 16px',borderBottom:`1px solid ${T.border}`,fontSize:13,fontWeight:600,color:T.navy,fontFamily:T.mono}}>SYNC SUCCESS HISTORY (Last 7 Days)</div>
-      <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
-        <thead><tr>
-          <th style={{padding:'8px 12px',textAlign:'left',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>Source</th>
-          {Array.from({length:7},(_,i)=>`03-${String(29-i).padStart(2,'0')}`).map(d=>(<th key={d} style={{padding:'8px 10px',textAlign:'center',fontSize:9,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>{d}</th>))}
-          <th style={{padding:'8px 12px',textAlign:'center',fontSize:10,fontFamily:T.mono,color:T.textSec,borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>7d Rate</th>
-        </tr></thead>
-        <tbody>
-          {connectedSources.map((src,si)=>{
-            const srcSyncs=SYNC_HISTORY.filter(h=>h.sourceId===src.id&&h.day<7);
-            const successCount=srcSyncs.filter(h=>h.status==='success').length;
-            const rate=srcSyncs.length>0?Math.round(successCount/srcSyncs.length*100):0;
-            return(<tr key={src.id} style={{background:si%2===0?T.surface:'#fafaf8',borderBottom:`1px solid ${T.border}`}}>
-              <td style={{padding:'8px 12px',fontWeight:600,color:T.navy,whiteSpace:'nowrap'}}>{src.name}</td>
-              {Array.from({length:7},(_,i)=>{
-                const entry=SYNC_HISTORY.find(h=>h.sourceId===src.id&&h.day===i);
-                return(<td key={i} style={{padding:'8px 10px',textAlign:'center'}}>
-                  <div style={{width:14,height:14,borderRadius:3,margin:'0 auto',background:entry?(entry.status==='success'?T.green:T.red):T.surfaceH}} title={entry?`${entry.status}: ${entry.records} records`:'No sync'}/>
-                </td>);
-              })}
-              <td style={{padding:'8px 12px',textAlign:'center',fontFamily:T.mono,fontWeight:600,color:rate>90?T.green:rate>70?T.amber:T.red}}>{rate}%</td>
-            </tr>);
-          })}
-        </tbody>
-      </table>
-    </div>
-
-    {/* Data Freshness Dashboard */}
-    <div style={{marginTop:20}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>DATA FRESHNESS BY TABLE</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260,1fr))',gap:12}}>
-        {DB_TABLES.map((tbl,ti)=>{
-          const mappings=FIELD_MAPPINGS.filter(m=>m.targetTable===tbl.name);
-          const sources=[...new Set(mappings.map(m=>m.sourceSlug))];
-          const latestSync=sources.reduce((latest,slug)=>{
-            const src=SOURCES.find(s=>s.slug===slug);
-            if(src&&src.lastSync){const d=new Date(src.lastSync);if(!latest||d>latest)return d;}
-            return latest;
-          },null);
-          const hoursAgo=latestSync?Math.round((new Date('2026-03-29T12:00:00Z')-latestSync)/3600000):999;
-          const freshness=hoursAgo<6?'Real-time':hoursAgo<24?'Fresh':hoursAgo<72?'Stale':'Outdated';
-          const freshnessColor=hoursAgo<6?T.green:hoursAgo<24?T.sage:hoursAgo<72?T.amber:T.red;
-          return(<div key={tbl.name} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:14}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
-              <span style={{fontSize:12,fontWeight:600,color:T.navy,fontFamily:T.mono}}>{tbl.name}</span>
-              {badge(freshness,freshnessColor+'20',freshnessColor)}
+        <div style={{fontSize:13,fontWeight:700,marginBottom:12}}>Sync Calendar \u2014 March 2026</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:4}}>
+          {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>(
+            <div key={d} style={{textAlign:'center',fontSize:10,fontWeight:700,color:T.textMut,padding:4}}>{d}</div>
+          ))}
+          {calendarWeeks.flat().map((d,di)=>(
+            <div key={di} style={{padding:8,borderRadius:6,background:d.day?d.hasError?T.red+'08':d.syncs>3?T.green+'08':T.surfaceH:'transparent',border:`1px solid ${d.day?d.hasError?T.red+'30':T.border:'transparent'}`,textAlign:'center',minHeight:44}}>
+              {d.day&&(
+                <>
+                  <div style={{fontSize:12,fontWeight:600,color:d.day===29?T.gold:T.text}}>{d.day}</div>
+                  <div style={{fontSize:9,color:d.hasError?T.red:T.textMut,fontFamily:T.mono}}>{d.syncs} syncs{d.hasError?' (err)':''}</div>
+                </>
+              )}
             </div>
-            <div style={{fontSize:10,color:T.textSec,marginBottom:6}}>
-              {mappings.length} fields mapped from {sources.length} source{sources.length!==1?'s':''}
-            </div>
-            <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
-              {sources.map(slug=>{const src=SOURCES.find(s=>s.slug===slug);return src?(<span key={slug} style={{fontSize:9,fontFamily:T.mono,padding:'2px 6px',background:T.surfaceH,borderRadius:4,color:T.textMut}}>{src.name.split(' ')[0]}</span>):null;})}
-            </div>
-            {latestSync&&<div style={{fontSize:9,color:T.textMut,fontFamily:T.mono,marginTop:6}}>Last update: {hoursAgo}h ago</div>}
-          </div>);
-        })}
-      </div>
-    </div>
-
-    {/* Sync Performance Stats */}
-    <div style={{marginTop:20,background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>SYNC PERFORMANCE STATISTICS</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200,1fr))',gap:12}}>
-        {connectedSources.map(src=>{
-          const srcSyncs=SYNC_HISTORY.filter(h=>h.sourceId===src.id);
-          const avgDuration=(srcSyncs.reduce((a,h)=>a+h.duration,0)/srcSyncs.length).toFixed(1);
-          const maxDuration=Math.max(...srcSyncs.map(h=>h.duration)).toFixed(1);
-          const minDuration=Math.min(...srcSyncs.map(h=>h.duration)).toFixed(1);
-          const totalRecords=srcSyncs.reduce((a,h)=>a+h.records,0);
-          const avgRecords=Math.round(totalRecords/srcSyncs.filter(h=>h.status==='success').length);
-          return(<div key={src.id} style={{padding:12,background:T.surfaceH,borderRadius:8}}>
-            <div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>{src.name}</div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:4,fontSize:10}}>
-              <div style={{color:T.textMut}}>Avg duration:</div><div style={{fontFamily:T.mono,color:T.text}}>{avgDuration}s</div>
-              <div style={{color:T.textMut}}>Min/Max:</div><div style={{fontFamily:T.mono,color:T.text}}>{minDuration}s / {maxDuration}s</div>
-              <div style={{color:T.textMut}}>Total records:</div><div style={{fontFamily:T.mono,color:T.text}}>{fmt(totalRecords)}</div>
-              <div style={{color:T.textMut}}>Avg per sync:</div><div style={{fontFamily:T.mono,color:T.text}}>{fmt(avgRecords)}</div>
-            </div>
-          </div>);
-        })}
-      </div>
-    </div>
-  </div>);};
-
-  /* ── MAIN RENDER ── */
-  return(<div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px',color:T.text}}>
-    {/* Header */}
-    <div style={{marginBottom:8}}>
-      <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,letterSpacing:1,textTransform:'uppercase',marginBottom:4}}>Administration {'>'} Data Infrastructure</div>
-      <h1 style={{fontSize:28,fontWeight:800,color:T.navy,margin:0,letterSpacing:'-0.5px'}}>Data Source Manager</h1>
-      <p style={{fontSize:13,color:T.textSec,margin:'6px 0 0'}}>Connect external data sources, map fields to database columns, and track calculation engine dependencies</p>
-    </div>
-    <div style={{height:1,background:`linear-gradient(90deg, ${T.gold}, ${T.goldL}, transparent)`,marginBottom:20}}/>
-
-    {/* Summary Strip */}
-    <div style={{display:'flex',gap:16,marginBottom:20,padding:'10px 16px',background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,alignItems:'center',fontSize:12,fontFamily:T.mono,color:T.textSec,flexWrap:'wrap'}}>
-      <span>{SOURCES.length} sources configured</span>
-      <span style={{color:T.borderL}}>|</span>
-      <span>{SOURCES.filter(s=>s.status==='Connected').length} connected</span>
-      <span style={{color:T.borderL}}>|</span>
-      <span>{SOURCES.reduce((a,s)=>a+s.fieldCount,0)} fields total</span>
-      <span style={{color:T.borderL}}>|</span>
-      <span>{FIELD_MAPPINGS.length} mapped</span>
-      <span style={{color:T.borderL}}>|</span>
-      <span>{ENGINES.length} engines</span>
-      <span style={{color:T.borderL}}>|</span>
-      <span>{DB_TABLES.length} target tables</span>
-      <span style={{marginLeft:'auto',color:T.textMut}}>Last refresh: {new Date().toLocaleTimeString()}</span>
-    </div>
-
-    {/* System Health Overview */}
-    <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:10,marginBottom:20}}>
-      {[
-        {label:'API Uptime',value:'99.7%',sub:'30-day average',color:T.green},
-        {label:'Data Latency',value:'4.2s',sub:'avg sync time',color:T.sage},
-        {label:'Coverage',value:Math.round(FIELD_MAPPINGS.length/SOURCES.reduce((a,s)=>a+s.fieldCount,0)*100)+'%',sub:'fields mapped',color:T.navy},
-        {label:'Error Rate',value:Math.round(SYNC_HISTORY.filter(h=>h.status==='failed').length/SYNC_HISTORY.length*100)+'%',sub:'last 30 days',color:SYNC_HISTORY.filter(h=>h.status==='failed').length/SYNC_HISTORY.length<0.1?T.green:T.amber},
-        {label:'DB Tables',value:DB_TABLES.length,sub:DB_TABLES.reduce((a,t)=>a+t.columns.length,0)+' columns',color:T.navyL},
-        {label:'Engines Fed',value:ENGINES.length+'/'+ENGINES.length,sub:'all operational',color:T.green},
-      ].map((item,i)=>(<div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:'12px 14px',textAlign:'center'}}>
-        <div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{item.label}</div>
-        <div style={{fontSize:22,fontWeight:700,color:item.color,marginTop:2}}>{item.value}</div>
-        <div style={{fontSize:10,color:T.textSec,marginTop:1}}>{item.sub}</div>
-      </div>))}
-    </div>
-
-    {/* Quick Actions Bar */}
-    <div style={{display:'flex',gap:8,marginBottom:20,padding:'8px 12px',background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,alignItems:'center'}}>
-      <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginRight:8}}>Quick Actions:</span>
-      {btn('Sync All Sources',()=>{},true,true)}
-      {btn('Validate All Mappings',()=>{},false,true)}
-      {btn('Run Health Check',()=>{},false,true)}
-      {btn('Export Full Config',()=>{
-        const config={sources:SOURCES.map(s=>({name:s.name,status:s.status,fields:s.fieldCount})),mappings:FIELD_MAPPINGS.length,engines:ENGINES.map(e=>({id:e.id,name:e.name,fields:e.consumes.length})),tables:DB_TABLES.map(t=>({name:t.name,columns:t.columns.length}))};
-        const blob=new Blob([JSON.stringify(config,null,2)],{type:'application/json'});
-        const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='dsm_config.json';a.click();URL.revokeObjectURL(url);
-      },false,true)}
-      <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6}}>
-        <div style={{width:8,height:8,borderRadius:'50%',background:T.green}}/>
-        <span style={{fontSize:10,fontFamily:T.mono,color:T.green}}>All systems operational</span>
-      </div>
-    </div>
-
-    {/* Tabs */}
-    <div style={{display:'flex',gap:0,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>
-      {TABS.map((t,i)=>(<button key={t} onClick={()=>setTab(i)} style={{padding:'10px 24px',background:tab===i?T.surface:'transparent',color:tab===i?T.navy:T.textMut,fontWeight:tab===i?700:500,fontSize:13,fontFamily:T.font,border:'none',borderBottom:tab===i?`2px solid ${T.gold}`:'2px solid transparent',cursor:'pointer',marginBottom:-2,letterSpacing:0.2,transition:'all 0.2s'}}>{t}</button>))}
-    </div>
-
-    {/* Tab Content */}
-    {tab===0&&renderSourceRegistry()}
-    {tab===1&&renderFieldMapper()}
-    {tab===2&&renderEngineLineage()}
-    {tab===3&&renderSyncMonitor()}
-
-    {/* Data Pipeline Summary */}
-    <div style={{marginTop:24,background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>DATA PIPELINE SUMMARY</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:0,alignItems:'center',textAlign:'center'}}>
-        <div style={{padding:12}}>
-          <div style={{fontSize:28,fontWeight:800,color:T.navy}}>{SOURCES.filter(s=>s.status==='Connected').length}</div>
-          <div style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Active Sources</div>
-          <div style={{fontSize:9,color:T.textMut,marginTop:2}}>EODHD, Alpha Vantage, Climate TRACE, EDGAR, Ember, World Bank, UNFCCC, IEA</div>
-        </div>
-        <div style={{fontSize:24,color:T.gold,fontWeight:700}}>{'\u2192'}</div>
-        <div style={{padding:12}}>
-          <div style={{fontSize:28,fontWeight:800,color:T.gold}}>{FIELD_MAPPINGS.length}</div>
-          <div style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Field Mappings</div>
-          <div style={{fontSize:9,color:T.textMut,marginTop:2}}>{FIELD_MAPPINGS.filter(m=>m.transform!=='none').length} with transformations</div>
-        </div>
-        <div style={{fontSize:24,color:T.gold,fontWeight:700}}>{'\u2192'}</div>
-        <div style={{padding:12}}>
-          <div style={{fontSize:28,fontWeight:800,color:T.sage}}>{ENGINES.length}</div>
-          <div style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Calc Engines</div>
-          <div style={{fontSize:9,color:T.textMut,marginTop:2}}>PCAF, Temp Score, Climate VaR, GAR, WACI, Scope 3, +6 more</div>
+          ))}
         </div>
       </div>
-      <div style={{marginTop:12,display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center'}}>
-        {DB_TABLES.map(tbl=>{
-          const mc=new Set(FIELD_MAPPINGS.filter(m=>m.targetTable===tbl.name).map(m=>m.targetColumn));
-          const pct=Math.round(mc.size/tbl.columns.length*100);
-          return(<div key={tbl.name} style={{padding:'4px 10px',background:pct>80?T.green+'10':pct>50?T.amber+'10':T.red+'10',border:`1px solid ${pct>80?T.green+'30':pct>50?T.amber+'30':T.red+'30'}`,borderRadius:6,fontSize:10,fontFamily:T.mono}}>
-            <span style={{color:T.navy}}>{tbl.name}</span>
-            <span style={{marginLeft:4,color:pct>80?T.green:pct>50?T.amber:T.red,fontWeight:600}}>{pct}%</span>
-          </div>);
-        })}
-      </div>
     </div>
-
-    {/* Recent Activity Log */}
-    <div style={{marginTop:16,background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-      <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12,fontFamily:T.mono}}>RECENT ACTIVITY</div>
-      <div style={{display:'grid',gap:6}}>
-        {[
-          {time:'08:15:00',action:'Sync completed',source:'EODHD',detail:'4,832 records updated across 12 endpoints',status:'success'},
-          {time:'07:45:00',action:'Sync completed',source:'Alpha Vantage',detail:'3,105 records updated, 1 endpoint warning (NEWS_SENTIMENT timeout)',status:'warning'},
-          {time:'06:00:00',action:'Sync completed',source:'EDGAR/SEC',detail:'1,247 filings indexed, 2 XBRL parse errors',status:'warning'},
-          {time:'03:00:00',action:'Schema validation',source:'System',detail:'All 7 target tables validated, 0 schema drift detected',status:'success'},
-          {time:'00:00:00',action:'Daily aggregation',source:'System',detail:'Materialized views refreshed: 305K rows across macro_indicators',status:'success'},
-          {time:'22:00 (prev)',action:'Sync completed',source:'Climate TRACE',detail:'Country + facility emissions data refreshed for 2024-2025',status:'success'},
-          {time:'18:00 (prev)',action:'Sync completed',source:'Ember Climate',detail:'Electricity generation data updated for 215 countries',status:'success'},
-          {time:'12:00 (prev)',action:'Rate limit warning',source:'EODHD',detail:'API usage reached 85K/100K daily limit, throttling applied',status:'warning'},
-        ].map((entry,i)=>(<div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'6px 10px',background:i%2===0?'transparent':T.surfaceH,borderRadius:6}}>
-          <span style={{fontSize:10,fontFamily:T.mono,color:T.textMut,minWidth:80}}>{entry.time}</span>
-          <div style={{width:6,height:6,borderRadius:'50%',background:entry.status==='success'?T.green:entry.status==='warning'?T.amber:T.red,flexShrink:0}}/>
-          <span style={{fontSize:11,fontWeight:600,color:T.navy,minWidth:120}}>{entry.source}</span>
-          <span style={{fontSize:11,color:T.text}}>{entry.action}</span>
-          <span style={{fontSize:10,color:T.textSec,marginLeft:'auto'}}>{entry.detail}</span>
-        </div>))}
-      </div>
-    </div>
-
-    {/* Footer */}
-    <div style={{marginTop:32,paddingTop:16,borderTop:`1px solid ${T.border}`}}>
-      <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:T.textMut,fontFamily:T.mono,marginBottom:8}}>
-        <span>Data Source Manager v2.4 | {SOURCES.length} sources | {FIELD_MAPPINGS.length} mappings | {ENGINES.length} engines</span>
-        <span>Supabase PostgreSQL | Alembic 067 | AES-256 encrypted credentials</span>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:T.textMut,fontFamily:T.mono}}>
-        <span>Pipeline: {SOURCES.filter(s=>s.status==='Connected').length} active sources {'\u2192'} {DB_TABLES.length} tables {'\u2192'} {ENGINES.length} engines | Uptime: 99.7%</span>
-        <span>Next scheduled sync: EODHD in {Math.round(sr(999)*50+10)} min | Build: 2026-03-29</span>
-      </div>
-    </div>
-
-    {/* Spinner animation */}
-    <style>{`@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}`}</style>
-  </div>);
+  );
 }
