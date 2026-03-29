@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AQ — Sovereign ESG & Country-Level Climate Risk Intelligence
+import SovereignClimateRiskPage from './features/sovereign-climate-risk/pages/SovereignClimateRiskPage';
+import SovereignDebtSustainabilityPage from './features/sovereign-debt-sustainability/pages/SovereignDebtSustainabilityPage';
+import CentralBankClimatePage from './features/central-bank-climate/pages/CentralBankClimatePage';
+import SovereignNatureRiskPage from './features/sovereign-nature-risk/pages/SovereignNatureRiskPage';
+import SovereignSocialIndexPage from './features/sovereign-social-index/pages/SovereignSocialIndexPage';
+import SovereignEsgHubPage from './features/sovereign-esg-hub/pages/SovereignEsgHubPage';
 // Sprint AP — Supply Chain ESG & Scope 3 Value Chain Intelligence
 import Scope3UpstreamTrackerPage from './features/scope3-upstream-tracker/pages/Scope3UpstreamTrackerPage';
 import SupplierEngagementPage from './features/supplier-engagement/pages/SupplierEngagementPage';
@@ -534,6 +541,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Sovereign ESG & Country Risk', icon: '🌍', color: '#1e40af', items: [
+    { path: '/sovereign-esg-hub',              label: 'Sovereign ESG Hub',              badge: 'Hub · 80 Countries · Climate+Debt+CB+Nature+Social · Board',        code: 'EP-AQ6' },
+    { path: '/sovereign-climate-risk',         label: 'Sovereign Climate Risk',         badge: '80 Countries · 8 Hazards · ND-GAIN · Credit Impact · NGFS',         code: 'EP-AQ1' },
+    { path: '/sovereign-debt-sustainability',  label: 'Sovereign Debt Sustainability',  badge: '60 Countries · Climate DSA · 4 Scenarios · Fiscal Costs',           code: 'EP-AQ2' },
+    { path: '/central-bank-climate',           label: 'Central Bank Climate',           badge: '40 CBs · NGFS · Stress Tests · Green QE · Reserves',                code: 'EP-AQ3' },
+    { path: '/sovereign-nature-risk',          label: 'Sovereign Nature Risk',          badge: '60 Countries · 6 Ecosystems · GBF · TNFD · Biodiversity',           code: 'EP-AQ4' },
+    { path: '/sovereign-social-index',         label: 'Sovereign Social Index',         badge: '80 Countries · 8 Dimensions · HDI · SDG · Social Yield',            code: 'EP-AQ5' },
   ]},
   { label: 'Supply Chain ESG & Scope 3', icon: '🔗', color: '#4a1d96', items: [
     { path: '/supply-chain-esg-hub',       label: 'Supply Chain ESG Hub',       badge: 'Hub · Scope3+Suppliers+EUDR+Minerals+Resilience · Board',          code: 'EP-AP6' },
@@ -1414,6 +1429,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AQ — Sovereign ESG & Country-Level Climate Risk Intelligence */}
+            <Route path="/sovereign-esg-hub"             element={<SovereignEsgHubPage />} />
+            <Route path="/sovereign-climate-risk"        element={<SovereignClimateRiskPage />} />
+            <Route path="/sovereign-debt-sustainability" element={<SovereignDebtSustainabilityPage />} />
+            <Route path="/central-bank-climate"          element={<CentralBankClimatePage />} />
+            <Route path="/sovereign-nature-risk"         element={<SovereignNatureRiskPage />} />
+            <Route path="/sovereign-social-index"        element={<SovereignSocialIndexPage />} />
             {/* Sprint AP — Supply Chain ESG & Scope 3 Value Chain Intelligence */}
             <Route path="/supply-chain-esg-hub"       element={<SupplyChainEsgHubPage />} />
             <Route path="/scope3-upstream-tracker"    element={<Scope3UpstreamTrackerPage />} />
