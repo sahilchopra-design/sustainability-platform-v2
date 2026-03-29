@@ -48,8 +48,10 @@ function genCompanies(){
 }
 
 const normalize=(c)=>({MSCI:c.msciNum/7*100,Sustainalytics:(100-c.sust),ISS:c.iss/10*100,CDP:c.cdpNum/8*100,'S&P Global':c.sp,Bloomberg:c.bbg});
-const consensus=(c)=>{const n=normalize(c);return Math.round(Object.values(n).reduce((a,b)=>a+b,0)/6);};
-const divergence=(c)=>{const n=normalize(c);const vals=Object.values(n);const mn=Math.min(...vals);const mx=Math.max(...vals);return Math.round(mx-mn);};
+/* EVR Fix 2.3: Divide by AVAILABLE providers, not hardcoded 6 */
+/* EVR Fix 2.5: Accept optional weights parameter for custom weighting from Tab 4 */
+const consensus=(c,weights)=>{const n=normalize(c);const entries=Object.entries(n).filter(([,v])=>v!=null&&!isNaN(v));if(!entries.length)return null;if(weights&&weights.length===6){const prov=['MSCI','Sustainalytics','ISS','CDP','S&P Global','Bloomberg'];let wSum=0,vSum=0;entries.forEach(([k,v])=>{const wi=weights[prov.indexOf(k)]||0;wSum+=wi;vSum+=v*wi;});return wSum>0?Math.round(vSum/wSum):null;}return Math.round(entries.reduce((a,[,v])=>a+v,0)/entries.length);};
+const divergence=(c)=>{const n=normalize(c);const vals=Object.values(n).filter(v=>v!=null&&!isNaN(v));if(vals.length<2)return 0;return Math.round(Math.max(...vals)-Math.min(...vals));};
 
 const btn=(active)=>({padding:'6px 14px',borderRadius:6,border:`1px solid ${active?T.navy:T.border}`,background:active?T.navy:T.surface,color:active?'#fff':T.text,cursor:'pointer',fontSize:13,fontFamily:T.font,fontWeight:active?600:400,transition:'all 0.15s'});
 const card={background:T.surface,borderRadius:10,border:`1px solid ${T.border}`,padding:16,marginBottom:12};
@@ -204,7 +206,7 @@ export default function EsgRatingsComparatorPage(){
 
   const exportCSV=()=>{
     const rows=[['Name','Sector','Country','Cap','MSCI','Sustainalytics','ISS','CDP','S&P Global','Bloomberg','Consensus','Divergence']];
-    portfolio.forEach(id=>{const c=data[id];rows.push([c.name,c.sector,c.country,c.cap,c.msci,c.sust,c.iss,c.cdp,c.sp,c.bbg,consensus(c),divergence(c)]);});
+    portfolio.forEach(id=>{const c=data[id];rows.push([c.name,c.sector,c.country,c.cap,c.msci,c.sust,c.iss,c.cdp,c.sp,c.bbg,consensus(c,portWeights),divergence(c)]);});
     const csv=rows.map(r=>r.join(',')).join('\n');
     const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.href=url;a.download='esg_portfolio_analysis.csv';a.click();URL.revokeObjectURL(url);

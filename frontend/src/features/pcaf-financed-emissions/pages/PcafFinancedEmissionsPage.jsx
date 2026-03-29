@@ -88,18 +88,26 @@ const BASE_POSITIONS = [
   { id:60, name:'Australian Residential Book',         country:'AU',  geo:'APAC',     assetClass:'Mortgages', sector:'Residential',              evic:null, outstanding:920,   totalEmissions:72400,     dqs:4, source:'NatHERS rating proxy' },
 ];
 
+/* UNIT CONVENTION (EVR Fix 2.2): evic=$Bn, outstanding=$M, totalEmissions=tCO2e */
+const SECTOR_MEDIAN_EVIC={Technology:500,Utilities:40,'Oil & Gas':150,Mining:80,Steel:25,Cement:20,Automotive:100,Chemicals:45,'Electric Utilities':60,Shipping:15,Residential:null,'Real Estate':30,default:50};
+
 function computeAttrFactor(p) {
-  if (p.assetClass === 'Project Finance' || p.assetClass === 'Commercial Real Estate' || p.assetClass === 'Mortgages') return 1.0;
-  if (!p.evic) return 1.0;
+  if (p.assetClass==='Project Finance'||p.assetClass==='Commercial Real Estate'||p.assetClass==='Mortgages') return 1.0;
+  /* EVR Fix 2.1: Null EVIC → sector-median proxy, not silent 100% attribution */
+  if (!p.evic) { const se=SECTOR_MEDIAN_EVIC[p.sector]||SECTOR_MEDIAN_EVIC.default; return se?Math.min(1.0,p.outstanding/se):1.0; }
+  if (p.evic>100000) console.warn('EVIC for '+p.name+' appears raw USD, expected $Bn');
   return Math.min(1.0, p.outstanding / p.evic);
 }
 
 function computeRow(p) {
   const attrFactor = computeAttrFactor(p);
   const financedEmissions = +(attrFactor * p.totalEmissions).toFixed(0);
-  const evicM = p.evic ? p.evic * 1000 : null;
-  const waci = evicM ? (p.totalEmissions / evicM) * p.outstanding : 0;
-  return { ...p, attrFactor, financedEmissions, waci };
+  const evicWarning = (!p.evic&&p.assetClass!=='Project Finance'&&p.assetClass!=='Commercial Real Estate'&&p.assetClass!=='Mortgages')?'NULL_EVIC — sector proxy':null;
+  const adjustedDqs = evicWarning ? Math.max(p.dqs,4) : p.dqs;
+  /* EVR Fix 2.4: WACI uses revenue denominator per TCFD, not EVIC */
+  const revenueM = p.evic ? p.evic*350 : (SECTOR_MEDIAN_EVIC[p.sector]||50)*350;
+  const waci = revenueM>0 ? (p.totalEmissions/revenueM) : 0;
+  return { ...p, attrFactor, financedEmissions, waci, evicWarning, dqs:adjustedDqs };
 }
 
 const INITIAL_POSITIONS = BASE_POSITIONS.map(computeRow);
