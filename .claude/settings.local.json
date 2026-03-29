@@ -1720,7 +1720,9 @@
       "Bash(node -e \"const m = require\\(''./dataFlowService.js''\\); console.log\\(Object.keys\\(m.PROVIDER_CONFIG\\)\\);\")",
       "Bash(find 'C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features' -name *.jsx -newer 'C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\climate-health-hub\\\\pages\\\\ClimateHealthHubPage.jsx')",
       "Bash(powershell -Command \"\\(Get-Content ''GeopoliticalEsgHubPage.jsx''\\) -replace ''GeopoliticalAiGovPage'', ''GeopoliticalEsgHubPage'' | Set-Content ''GeopoliticalEsgHubPage.jsx''\")",
-      "Bash(node tmp_scan.js)"
+      "Bash(node tmp_scan.js)",
+      "Bash(curl -v http://localhost:4000/)",
+      "Bash(findstr \":4002.*LISTENING\")"
     ]
   }
 }

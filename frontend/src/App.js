@@ -1,396 +1,396 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { TestDataProvider } from './context/TestDataContext';
 import { CompanyEnrichmentProvider } from './context/CompanyEnrichmentContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
 // Sprint 37 — E108–E111
-import RegulatoryCapitalPage from './features/regulatory-capital/pages/RegulatoryCapitalPage';
+const RegulatoryCapitalPage = React.lazy(() => import("./features/regulatory-capital/pages/RegulatoryCapitalPage"));
 // ClimatePolicyPage moved to Sprint O imports
-import ExportCreditESGPage from './features/export-credit-esg/pages/ExportCreditESGPage';
-import ESGControversyPage from './features/esg-controversy/pages/ESGControversyPage';
+const ExportCreditESGPage = React.lazy(() => import("./features/export-credit-esg/pages/ExportCreditESGPage"));
+const ESGControversyPage = React.lazy(() => import("./features/esg-controversy/pages/ESGControversyPage"));
 // Sprint 38 — E112–E115
-import CRREMPage from './features/crrem/pages/CRREMPage';
-import LossDamagePage from './features/loss-damage/pages/LossDamagePage';
-import ForcedLabourPage from './features/forced-labour-msv2/pages/ForcedLabourPage';
-import SLLSLBv2Page from './features/sll-slb-v2/pages/SLLSLBv2Page';
+const CRREMPage = React.lazy(() => import("./features/crrem/pages/CRREMPage"));
+const LossDamagePage = React.lazy(() => import("./features/loss-damage/pages/LossDamagePage"));
+const ForcedLabourPage = React.lazy(() => import("./features/forced-labour-msv2/pages/ForcedLabourPage"));
+const SLLSLBv2Page = React.lazy(() => import("./features/sll-slb-v2/pages/SLLSLBv2Page"));
 // Sprint 39 — E116–E119
-import NatureCapitalAccountingPage from './features/nature-capital-accounting/pages/NatureCapitalAccountingPage';
-import RegulatoryHorizonPage from './features/regulatory-horizon/pages/RegulatoryHorizonPage';
-import ClimateTechPage from './features/climate-tech/pages/ClimateTechPage';
-import ComprehensiveReportingPage from './features/comprehensive-reporting/pages/ComprehensiveReportingPage';
+const NatureCapitalAccountingPage = React.lazy(() => import("./features/nature-capital-accounting/pages/NatureCapitalAccountingPage"));
+const RegulatoryHorizonPage = React.lazy(() => import("./features/regulatory-horizon/pages/RegulatoryHorizonPage"));
+const ClimateTechPage = React.lazy(() => import("./features/climate-tech/pages/ClimateTechPage"));
+const ComprehensiveReportingPage = React.lazy(() => import("./features/comprehensive-reporting/pages/ComprehensiveReportingPage"));
 // Sprint 29 — E76–E79
-import CryptoClimatePage from './features/crypto-climate/pages/CryptoClimatePage';
-import AIGovernancePage from './features/ai-governance/pages/AIGovernancePage';
-import CarbonAccountingAIPage from './features/carbon-accounting-ai/pages/CarbonAccountingAIPage';
-import ClimateInsurancePage from './features/climate-insurance/pages/ClimateInsurancePage';
+const CryptoClimatePage = React.lazy(() => import("./features/crypto-climate/pages/CryptoClimatePage"));
+const AIGovernancePage = React.lazy(() => import("./features/ai-governance/pages/AIGovernancePage"));
+const CarbonAccountingAIPage = React.lazy(() => import("./features/carbon-accounting-ai/pages/CarbonAccountingAIPage"));
+const ClimateInsurancePage = React.lazy(() => import("./features/climate-insurance/pages/ClimateInsurancePage"));
 // Sprint 30 — E80–E83
-import CorporateNatureStrategyPage from './features/corporate-nature-strategy/pages/CorporateNatureStrategyPage';
-import GreenSecuritisationPage from './features/green-securitisation/pages/GreenSecuritisationPage';
-import DigitalProductPassportPage from './features/digital-product-passport/pages/DigitalProductPassportPage';
-import AdaptationFinancePage from './features/adaptation-finance/pages/AdaptationFinancePage';
+const CorporateNatureStrategyPage = React.lazy(() => import("./features/corporate-nature-strategy/pages/CorporateNatureStrategyPage"));
+const GreenSecuritisationPage = React.lazy(() => import("./features/green-securitisation/pages/GreenSecuritisationPage"));
+const DigitalProductPassportPage = React.lazy(() => import("./features/digital-product-passport/pages/DigitalProductPassportPage"));
+const AdaptationFinancePage = React.lazy(() => import("./features/adaptation-finance/pages/AdaptationFinancePage"));
 // Sprint 31 — E84–E87
-import InternalCarbonPricePage from './features/internal-carbon-price/pages/InternalCarbonPricePage';
-import SocialBondPage from './features/social-bond/pages/SocialBondPage';
-import ClimateFinancialStatementsPage from './features/climate-financial-statements/pages/ClimateFinancialStatementsPage';
-import EMClimateRiskPage from './features/em-climate-risk/pages/EMClimateRiskPage';
+const InternalCarbonPricePage = React.lazy(() => import("./features/internal-carbon-price/pages/InternalCarbonPricePage"));
+const SocialBondPage = React.lazy(() => import("./features/social-bond/pages/SocialBondPage"));
+const ClimateFinancialStatementsPage = React.lazy(() => import("./features/climate-financial-statements/pages/ClimateFinancialStatementsPage"));
+const EMClimateRiskPage = React.lazy(() => import("./features/em-climate-risk/pages/EMClimateRiskPage"));
 // Sprint 32 — E88–E91
-import BiodiversityCreditsPage from './features/biodiversity-credits/pages/BiodiversityCreditsPage';
+const BiodiversityCreditsPage = React.lazy(() => import("./features/biodiversity-credits/pages/BiodiversityCreditsPage"));
 // JustTransitionPage moved to Sprint O imports
-import CarbonRemovalPage from './features/carbon-removal/pages/CarbonRemovalPage';
-import ClimateLitigationPage from './features/climate-litigation/pages/ClimateLitigationPage';
+const CarbonRemovalPage = React.lazy(() => import("./features/carbon-removal/pages/CarbonRemovalPage"));
+const ClimateLitigationPage = React.lazy(() => import("./features/climate-litigation/pages/ClimateLitigationPage"));
 // Sprint 33 — E92–E95
-import WaterRiskPage from './features/water-risk/pages/WaterRiskPage';
-import CriticalMineralsPage from './features/critical-minerals/pages/CriticalMineralsPage';
-import NbsFinancePage from './features/nbs-finance/pages/NbsFinancePage';
-import SFDRArt9Page from './features/sfdr-art9/pages/SFDRArt9Page';
+const WaterRiskPage = React.lazy(() => import("./features/water-risk/pages/WaterRiskPage"));
+const CriticalMineralsPage = React.lazy(() => import("./features/critical-minerals/pages/CriticalMineralsPage"));
+const NbsFinancePage = React.lazy(() => import("./features/nbs-finance/pages/NbsFinancePage"));
+const SFDRArt9Page = React.lazy(() => import("./features/sfdr-art9/pages/SFDRArt9Page"));
 // Sprint 34 — E96–E99
-import VCMIntegrityPage from './features/vcm-integrity/pages/VCMIntegrityPage';
-import SocialTaxonomyPage from './features/social-taxonomy/pages/SocialTaxonomyPage';
-import GreenHydrogenPage from './features/green-hydrogen/pages/GreenHydrogenPage';
-import TransitionFinancePage from './features/transition-finance/pages/TransitionFinancePage';
+const VCMIntegrityPage = React.lazy(() => import("./features/vcm-integrity/pages/VCMIntegrityPage"));
+const SocialTaxonomyPage = React.lazy(() => import("./features/social-taxonomy/pages/SocialTaxonomyPage"));
+const GreenHydrogenPage = React.lazy(() => import("./features/green-hydrogen/pages/GreenHydrogenPage"));
+const TransitionFinancePage = React.lazy(() => import("./features/transition-finance/pages/TransitionFinancePage"));
 // Sprint 35 — E100–E103
-import StressTestOrchestratorPage from './features/stress-test-orchestrator/pages/StressTestOrchestratorPage';
-import SSCFPage from './features/sscf/pages/SSCFPage';
-import DoubleMaterialityPage from './features/double-materiality/pages/DoubleMaterialityPage';
-import TemperatureAlignmentPage from './features/temperature-alignment/pages/TemperatureAlignmentPage';
+const StressTestOrchestratorPage = React.lazy(() => import("./features/stress-test-orchestrator/pages/StressTestOrchestratorPage"));
+const SSCFPage = React.lazy(() => import("./features/sscf/pages/SSCFPage"));
+const DoubleMaterialityPage = React.lazy(() => import("./features/double-materiality/pages/DoubleMaterialityPage"));
+const TemperatureAlignmentPage = React.lazy(() => import("./features/temperature-alignment/pages/TemperatureAlignmentPage"));
 // Sprint 36 — E104–E107
-import PhysicalRiskPricingPage from './features/physical-risk-pricing/pages/PhysicalRiskPricingPage';
-import ESGDataQualityPage from './features/esg-data-quality/pages/ESGDataQualityPage';
-import ClimateDerivativesPage from './features/climate-derivatives/pages/ClimateDerivativesPage';
-import SovereignSWFPage from './features/sovereign-swf/pages/SovereignSWFPage';
+const PhysicalRiskPricingPage = React.lazy(() => import("./features/physical-risk-pricing/pages/PhysicalRiskPricingPage"));
+const ESGDataQualityPage = React.lazy(() => import("./features/esg-data-quality/pages/ESGDataQualityPage"));
+const ClimateDerivativesPage = React.lazy(() => import("./features/climate-derivatives/pages/ClimateDerivativesPage"));
+const SovereignSWFPage = React.lazy(() => import("./features/sovereign-swf/pages/SovereignSWFPage"));
 // Sentiment Analysis
-import SentimentAnalysisPage from './features/sentiment-analysis/pages/SentimentAnalysisPage';
+const SentimentAnalysisPage = React.lazy(() => import("./features/sentiment-analysis/pages/SentimentAnalysisPage"));
 // E138 PCAF India BRSR
-import PCafIndiaBrsrPage from './features/pcaf-india-brsr/pages/PCafIndiaBrsrPage';
+const PCafIndiaBrsrPage = React.lazy(() => import("./features/pcaf-india-brsr/pages/PCafIndiaBrsrPage"));
 // E147 Equator Principles
-import EquatorPrinciplesPage from './features/equator-principles/pages/EquatorPrinciplesPage';
+const EquatorPrinciplesPage = React.lazy(() => import("./features/equator-principles/pages/EquatorPrinciplesPage"));
 // E148 ESMS
-import EsmsPage from './features/esms/pages/EsmsPage';
+const EsmsPage = React.lazy(() => import("./features/esms/pages/EsmsPage"));
 // E149 ISSB S2 / TCFD Climate Disclosure
-import IssbTcfdPage from './features/issb-tcfd/pages/IssbTcfdPage';
+const IssbTcfdPage = React.lazy(() => import("./features/issb-tcfd/pages/IssbTcfdPage"));
 // E150 EU Taxonomy Alignment
-import EuTaxonomyPage from './features/eu-taxonomy/pages/EuTaxonomyPage';
+const EuTaxonomyPage = React.lazy(() => import("./features/eu-taxonomy/pages/EuTaxonomyPage"));
 // Sprint D — Platform Intelligence (EP-D1, EP-D3, EP-D4, EP-D6, EP-D7)
-import StrandedAssetsPage from './features/stranded-assets/pages/StrandedAssetsPage';
-import NGFSScenariosPage from './features/ngfs-scenarios/pages/NGFSScenariosPage';
-import PortfolioClimateVaRPage from './features/portfolio-climate-var/pages/PortfolioClimateVaRPage';
-import PipelineDashboardPage from './features/pipeline-dashboard/pages/PipelineDashboardPage';
-import CSRDiXBRLPage from './features/csrd-ixbrl/pages/CSRDiXBRLPage';
+const StrandedAssetsPage = React.lazy(() => import("./features/stranded-assets/pages/StrandedAssetsPage"));
+const NGFSScenariosPage = React.lazy(() => import("./features/ngfs-scenarios/pages/NGFSScenariosPage"));
+const PortfolioClimateVaRPage = React.lazy(() => import("./features/portfolio-climate-var/pages/PortfolioClimateVaRPage"));
+const PipelineDashboardPage = React.lazy(() => import("./features/pipeline-dashboard/pages/PipelineDashboardPage"));
+const CSRDiXBRLPage = React.lazy(() => import("./features/csrd-ixbrl/pages/CSRDiXBRLPage"));
 // Master Reference
-import CompanyProfilesPage from './features/company-profiles/pages/CompanyProfilesPage';
+const CompanyProfilesPage = React.lazy(() => import("./features/company-profiles/pages/CompanyProfilesPage"));
 // Sprint E — Global Market Intelligence
-import ExchangeIntelligencePage from './features/exchange-intelligence/pages/ExchangeIntelligencePage';
-import SectorBenchmarkingPage from './features/sector-benchmarking/pages/SectorBenchmarkingPage';
+const ExchangeIntelligencePage = React.lazy(() => import("./features/exchange-intelligence/pages/ExchangeIntelligencePage"));
+const SectorBenchmarkingPage = React.lazy(() => import("./features/sector-benchmarking/pages/SectorBenchmarkingPage"));
 // Sprint F — Portfolio Intelligence & Client Services
-import PortfolioManagerPage from './features/portfolio-manager/pages/PortfolioManagerPage';
-import EsgScreenerPage from './features/esg-screener/pages/EsgScreenerPage';
-import StewardshipTrackerPage from './features/stewardship-tracker/pages/StewardshipTrackerPage';
-import ClientReportPage from './features/client-report/pages/ClientReportPage';
-import RegulatoryCalendarPage from './features/regulatory-calendar/pages/RegulatoryCalendarPage';
+const PortfolioManagerPage = React.lazy(() => import("./features/portfolio-manager/pages/PortfolioManagerPage"));
+const EsgScreenerPage = React.lazy(() => import("./features/esg-screener/pages/EsgScreenerPage"));
+const StewardshipTrackerPage = React.lazy(() => import("./features/stewardship-tracker/pages/StewardshipTrackerPage"));
+const ClientReportPage = React.lazy(() => import("./features/client-report/pages/ClientReportPage"));
+const RegulatoryCalendarPage = React.lazy(() => import("./features/regulatory-calendar/pages/RegulatoryCalendarPage"));
 // Sprint G — Portfolio Intelligence Advanced Suite
-import PortfolioSuitePage from './features/portfolio-suite/pages/PortfolioSuitePage';
-import ScenarioStressTestPage from './features/scenario-stress-test/pages/ScenarioStressTestPage';
-import CarbonBudgetPage from './features/carbon-budget/pages/CarbonBudgetPage';
-import HoldingsDeepDivePage from './features/holdings-deep-dive/pages/HoldingsDeepDivePage';
-import BenchmarkAnalyticsPage from './features/benchmark-analytics/pages/BenchmarkAnalyticsPage';
-import AdvancedReportStudioPage from './features/advanced-report-studio/pages/AdvancedReportStudioPage';
+const PortfolioSuitePage = React.lazy(() => import("./features/portfolio-suite/pages/PortfolioSuitePage"));
+const ScenarioStressTestPage = React.lazy(() => import("./features/scenario-stress-test/pages/ScenarioStressTestPage"));
+const CarbonBudgetPage = React.lazy(() => import("./features/carbon-budget/pages/CarbonBudgetPage"));
+const HoldingsDeepDivePage = React.lazy(() => import("./features/holdings-deep-dive/pages/HoldingsDeepDivePage"));
+const BenchmarkAnalyticsPage = React.lazy(() => import("./features/benchmark-analytics/pages/BenchmarkAnalyticsPage"));
+const AdvancedReportStudioPage = React.lazy(() => import("./features/advanced-report-studio/pages/AdvancedReportStudioPage"));
 // Sprint H — Institutional Analytics & AI Intelligence
-import RiskAttributionPage from './features/risk-attribution/pages/RiskAttributionPage';
-import FixedIncomeEsgPage from './features/fixed-income-esg/pages/FixedIncomeEsgPage';
-import PortfolioOptimizerPage from './features/portfolio-optimizer/pages/PortfolioOptimizerPage';
-import ControversyMonitorPage from './features/controversy-monitor/pages/ControversyMonitorPage';
-import AiSentimentPage from './features/ai-sentiment/pages/AiSentimentPage';
-import RegulatoryGapPage from './features/regulatory-gap/pages/RegulatoryGapPage';
-import ClimatePhysicalRiskPage from './features/climate-physical-risk/pages/ClimatePhysicalRiskPage';
-import ClimateTransitionRiskPage from './features/climate-transition-risk/pages/ClimateTransitionRiskPage';
+const RiskAttributionPage = React.lazy(() => import("./features/risk-attribution/pages/RiskAttributionPage"));
+const FixedIncomeEsgPage = React.lazy(() => import("./features/fixed-income-esg/pages/FixedIncomeEsgPage"));
+const PortfolioOptimizerPage = React.lazy(() => import("./features/portfolio-optimizer/pages/PortfolioOptimizerPage"));
+const ControversyMonitorPage = React.lazy(() => import("./features/controversy-monitor/pages/ControversyMonitorPage"));
+const AiSentimentPage = React.lazy(() => import("./features/ai-sentiment/pages/AiSentimentPage"));
+const RegulatoryGapPage = React.lazy(() => import("./features/regulatory-gap/pages/RegulatoryGapPage"));
+const ClimatePhysicalRiskPage = React.lazy(() => import("./features/climate-physical-risk/pages/ClimatePhysicalRiskPage"));
+const ClimateTransitionRiskPage = React.lazy(() => import("./features/climate-transition-risk/pages/ClimateTransitionRiskPage"));
 // Sprint I — Real Estate & Infrastructure ESG
-import GreenBuildingCertPage from './features/green-building-cert/pages/GreenBuildingCertPage';
-import PropertyPhysicalRiskPage from './features/property-physical-risk/pages/PropertyPhysicalRiskPage';
-import GRESBScoringPage from './features/gresb-scoring/pages/GRESBScoringPage';
-import InfraESGDueDiligencePage from './features/infra-esg-dd/pages/InfraESGDueDiligencePage';
-import REPortfolioDashboardPage from './features/re-portfolio-dashboard/pages/REPortfolioDashboardPage';
+const GreenBuildingCertPage = React.lazy(() => import("./features/green-building-cert/pages/GreenBuildingCertPage"));
+const PropertyPhysicalRiskPage = React.lazy(() => import("./features/property-physical-risk/pages/PropertyPhysicalRiskPage"));
+const GRESBScoringPage = React.lazy(() => import("./features/gresb-scoring/pages/GRESBScoringPage"));
+const InfraESGDueDiligencePage = React.lazy(() => import("./features/infra-esg-dd/pages/InfraESGDueDiligencePage"));
+const REPortfolioDashboardPage = React.lazy(() => import("./features/re-portfolio-dashboard/pages/REPortfolioDashboardPage"));
 // Sprint J — Advanced Quantitative Analytics
-import MonteCarloVarPage from './features/monte-carlo-var/pages/MonteCarloVarPage';
-import EsgBacktestingPage from './features/esg-backtesting/pages/EsgBacktestingPage';
-import ImpliedTempRegressionPage from './features/implied-temp-regression/pages/ImpliedTempRegressionPage';
-import CopulaTailRiskPage from './features/copula-tail-risk/pages/CopulaTailRiskPage';
-import StochasticScenariosPage from './features/stochastic-scenarios/pages/StochasticScenariosPage';
-import QuantDashboardPage from './features/quant-dashboard/pages/QuantDashboardPage';
+const MonteCarloVarPage = React.lazy(() => import("./features/monte-carlo-var/pages/MonteCarloVarPage"));
+const EsgBacktestingPage = React.lazy(() => import("./features/esg-backtesting/pages/EsgBacktestingPage"));
+const ImpliedTempRegressionPage = React.lazy(() => import("./features/implied-temp-regression/pages/ImpliedTempRegressionPage"));
+const CopulaTailRiskPage = React.lazy(() => import("./features/copula-tail-risk/pages/CopulaTailRiskPage"));
+const StochasticScenariosPage = React.lazy(() => import("./features/stochastic-scenarios/pages/StochasticScenariosPage"));
+const QuantDashboardPage = React.lazy(() => import("./features/quant-dashboard/pages/QuantDashboardPage"));
 // Sprint K — Supply Chain & Scope 3
-import Scope3EnginePage from './features/scope3-engine/pages/Scope3EnginePage';
-import SupplyChainMapPage from './features/supply-chain-map/pages/SupplyChainMapPage';
-import CSDDDCompliancePage from './features/csddd-compliance/pages/CSDDDCompliancePage';
-import DeforestationRiskPage from './features/deforestation-risk/pages/DeforestationRiskPage';
-import SupplyChainCarbonPage from './features/supply-chain-carbon/pages/SupplyChainCarbonPage';
-import ValueChainDashboardPage from './features/value-chain-dashboard/pages/ValueChainDashboardPage';
+const Scope3EnginePage = React.lazy(() => import("./features/scope3-engine/pages/Scope3EnginePage"));
+const SupplyChainMapPage = React.lazy(() => import("./features/supply-chain-map/pages/SupplyChainMapPage"));
+const CSDDDCompliancePage = React.lazy(() => import("./features/csddd-compliance/pages/CSDDDCompliancePage"));
+const DeforestationRiskPage = React.lazy(() => import("./features/deforestation-risk/pages/DeforestationRiskPage"));
+const SupplyChainCarbonPage = React.lazy(() => import("./features/supply-chain-carbon/pages/SupplyChainCarbonPage"));
+const ValueChainDashboardPage = React.lazy(() => import("./features/value-chain-dashboard/pages/ValueChainDashboardPage"));
 // Sprint L — Private Markets & Alternative Assets
-import PeVcEsgPage from './features/pe-vc-esg/pages/PeVcEsgPage';
-import PrivateCreditPage from './features/private-credit/pages/PrivateCreditPage';
-import FundOfFundsPage from './features/fund-of-funds/pages/FundOfFundsPage';
-import LpReportingPage from './features/lp-reporting/pages/LpReportingPage';
-import CoInvestmentPage from './features/co-investment/pages/CoInvestmentPage';
-import PrivateMarketsHubPage from './features/private-markets-hub/pages/PrivateMarketsHubPage';
+const PeVcEsgPage = React.lazy(() => import("./features/pe-vc-esg/pages/PeVcEsgPage"));
+const PrivateCreditPage = React.lazy(() => import("./features/private-credit/pages/PrivateCreditPage"));
+const FundOfFundsPage = React.lazy(() => import("./features/fund-of-funds/pages/FundOfFundsPage"));
+const LpReportingPage = React.lazy(() => import("./features/lp-reporting/pages/LpReportingPage"));
+const CoInvestmentPage = React.lazy(() => import("./features/co-investment/pages/CoInvestmentPage"));
+const PrivateMarketsHubPage = React.lazy(() => import("./features/private-markets-hub/pages/PrivateMarketsHubPage"));
 // Sprint M — Nature & Biodiversity (TNFD)
-import TnfdLeapPage from './features/tnfd-leap/pages/TnfdLeapPage';
-import BiodiversityFootprintPage from './features/biodiversity-footprint/pages/BiodiversityFootprintPage';
-import EcosystemServicesPage from './features/ecosystem-services/pages/EcosystemServicesPage';
-import WaterStressPage from './features/water-stress/pages/WaterStressPage';
-import NatureScenariosPage from './features/nature-scenarios/pages/NatureScenariosPage';
-import NatureHubPage from './features/nature-hub/pages/NatureHubPage';
+const TnfdLeapPage = React.lazy(() => import("./features/tnfd-leap/pages/TnfdLeapPage"));
+const BiodiversityFootprintPage = React.lazy(() => import("./features/biodiversity-footprint/pages/BiodiversityFootprintPage"));
+const EcosystemServicesPage = React.lazy(() => import("./features/ecosystem-services/pages/EcosystemServicesPage"));
+const WaterStressPage = React.lazy(() => import("./features/water-stress/pages/WaterStressPage"));
+const NatureScenariosPage = React.lazy(() => import("./features/nature-scenarios/pages/NatureScenariosPage"));
+const NatureHubPage = React.lazy(() => import("./features/nature-hub/pages/NatureHubPage"));
 // Sprint N — Social & Human Capital Analytics
-import BoardDiversityPage from './features/board-diversity/pages/BoardDiversityPage';
-import LivingWagePage from './features/living-wage/pages/LivingWagePage';
-import HumanRightsDDPage from './features/human-rights-dd/pages/HumanRightsDDPage';
-import EmployeeWellbeingPage from './features/employee-wellbeing/pages/EmployeeWellbeingPage';
-import SocialImpactPage from './features/social-impact/pages/SocialImpactPage';
-import SocialHubPage from './features/social-hub/pages/SocialHubPage';
+const BoardDiversityPage = React.lazy(() => import("./features/board-diversity/pages/BoardDiversityPage"));
+const LivingWagePage = React.lazy(() => import("./features/living-wage/pages/LivingWagePage"));
+const HumanRightsDDPage = React.lazy(() => import("./features/human-rights-dd/pages/HumanRightsDDPage"));
+const EmployeeWellbeingPage = React.lazy(() => import("./features/employee-wellbeing/pages/EmployeeWellbeingPage"));
+const SocialImpactPage = React.lazy(() => import("./features/social-impact/pages/SocialImpactPage"));
+const SocialHubPage = React.lazy(() => import("./features/social-hub/pages/SocialHubPage"));
 // Sprint O — Sovereign & Macro ESG Analytics
-import SovereignEsgPage from './features/sovereign-esg/pages/SovereignEsgPage';
-import ClimatePolicyPage from './features/climate-policy/pages/ClimatePolicyPage';
-import MacroTransitionPage from './features/macro-transition/pages/MacroTransitionPage';
-import JustTransitionPage from './features/just-transition/pages/JustTransitionPage';
-import ParisAlignmentPage from './features/paris-alignment/pages/ParisAlignmentPage';
-import SovereignHubPage from './features/sovereign-hub/pages/SovereignHubPage';
+const SovereignEsgPage = React.lazy(() => import("./features/sovereign-esg/pages/SovereignEsgPage"));
+const ClimatePolicyPage = React.lazy(() => import("./features/climate-policy/pages/ClimatePolicyPage"));
+const MacroTransitionPage = React.lazy(() => import("./features/macro-transition/pages/MacroTransitionPage"));
+const JustTransitionPage = React.lazy(() => import("./features/just-transition/pages/JustTransitionPage"));
+const ParisAlignmentPage = React.lazy(() => import("./features/paris-alignment/pages/ParisAlignmentPage"));
+const SovereignHubPage = React.lazy(() => import("./features/sovereign-hub/pages/SovereignHubPage"));
 // Sprint P — Data Infrastructure & Live Feeds
-import ApiOrchestrationPage from './features/api-orchestration/pages/ApiOrchestrationPage';
-import DataQualityMonitorPage from './features/data-quality-monitor/pages/DataQualityMonitorPage';
-import LiveFeedManagerPage from './features/live-feed-manager/pages/LiveFeedManagerPage';
-import DataLineagePage from './features/data-lineage/pages/DataLineagePage';
-import BrsrBridgePage from './features/brsr-bridge/pages/BrsrBridgePage';
-import DataInfraHubPage from './features/data-infra-hub/pages/DataInfraHubPage';
+const ApiOrchestrationPage = React.lazy(() => import("./features/api-orchestration/pages/ApiOrchestrationPage"));
+const DataQualityMonitorPage = React.lazy(() => import("./features/data-quality-monitor/pages/DataQualityMonitorPage"));
+const LiveFeedManagerPage = React.lazy(() => import("./features/live-feed-manager/pages/LiveFeedManagerPage"));
+const DataLineagePage = React.lazy(() => import("./features/data-lineage/pages/DataLineagePage"));
+const BrsrBridgePage = React.lazy(() => import("./features/brsr-bridge/pages/BrsrBridgePage"));
+const DataInfraHubPage = React.lazy(() => import("./features/data-infra-hub/pages/DataInfraHubPage"));
 // Sprint Q — Taxonomy & Classification Engine
-import EuTaxonomyEnginePage from './features/eu-taxonomy-engine/pages/EuTaxonomyEnginePage';
-import SfdrClassificationPage from './features/sfdr-classification/pages/SfdrClassificationPage';
-import IssbMaterialityPage from './features/issb-materiality/pages/IssbMaterialityPage';
-import GriAlignmentPage from './features/gri-alignment/pages/GriAlignmentPage';
-import FrameworkInteropPage from './features/framework-interop/pages/FrameworkInteropPage';
-import TaxonomyHubPage from './features/taxonomy-hub/pages/TaxonomyHubPage';
+const EuTaxonomyEnginePage = React.lazy(() => import("./features/eu-taxonomy-engine/pages/EuTaxonomyEnginePage"));
+const SfdrClassificationPage = React.lazy(() => import("./features/sfdr-classification/pages/SfdrClassificationPage"));
+const IssbMaterialityPage = React.lazy(() => import("./features/issb-materiality/pages/IssbMaterialityPage"));
+const GriAlignmentPage = React.lazy(() => import("./features/gri-alignment/pages/GriAlignmentPage"));
+const FrameworkInteropPage = React.lazy(() => import("./features/framework-interop/pages/FrameworkInteropPage"));
+const TaxonomyHubPage = React.lazy(() => import("./features/taxonomy-hub/pages/TaxonomyHubPage"));
 // Sprint R — Client & Reporting Automation
-import ReportGeneratorPage from './features/report-generator/pages/ReportGeneratorPage';
-import TemplateManagerPage from './features/template-manager/pages/TemplateManagerPage';
-import ClientPortalPage from './features/client-portal/pages/ClientPortalPage';
-import ScheduledReportsPage from './features/scheduled-reports/pages/ScheduledReportsPage';
-import RegulatorySubmissionPage from './features/regulatory-submission/pages/RegulatorySubmissionPage';
-import ReportingHubPage from './features/reporting-hub/pages/ReportingHubPage';
+const ReportGeneratorPage = React.lazy(() => import("./features/report-generator/pages/ReportGeneratorPage"));
+const TemplateManagerPage = React.lazy(() => import("./features/template-manager/pages/TemplateManagerPage"));
+const ClientPortalPage = React.lazy(() => import("./features/client-portal/pages/ClientPortalPage"));
+const ScheduledReportsPage = React.lazy(() => import("./features/scheduled-reports/pages/ScheduledReportsPage"));
+const RegulatorySubmissionPage = React.lazy(() => import("./features/regulatory-submission/pages/RegulatorySubmissionPage"));
+const ReportingHubPage = React.lazy(() => import("./features/reporting-hub/pages/ReportingHubPage"));
 // Sprint S — Data Management Engine (DME)
-import DataValidationPage from './features/data-validation/pages/DataValidationPage';
-import DataReconciliationPage from './features/data-reconciliation/pages/DataReconciliationPage';
-import DataVersioningPage from './features/data-versioning/pages/DataVersioningPage';
-import EtlPipelinePage from './features/etl-pipeline/pages/EtlPipelinePage';
-import DataGovernancePage from './features/data-governance/pages/DataGovernancePage';
-import DmeHubPage from './features/dme-hub/pages/DmeHubPage';
+const DataValidationPage = React.lazy(() => import("./features/data-validation/pages/DataValidationPage"));
+const DataReconciliationPage = React.lazy(() => import("./features/data-reconciliation/pages/DataReconciliationPage"));
+const DataVersioningPage = React.lazy(() => import("./features/data-versioning/pages/DataVersioningPage"));
+const EtlPipelinePage = React.lazy(() => import("./features/etl-pipeline/pages/EtlPipelinePage"));
+const DataGovernancePage = React.lazy(() => import("./features/data-governance/pages/DataGovernancePage"));
+const DmeHubPage = React.lazy(() => import("./features/dme-hub/pages/DmeHubPage"));
 // Sprint U — DME Platform Integration (dme-platform + sentiment-engine + greenium-alpha)
-import DmeRiskEnginePage from './features/dme-risk-engine/pages/DmeRiskEnginePage';
-import DmeEntityPage from './features/dme-entity/pages/DmeEntityPage';
-import DmeScenariosPage from './features/dme-scenarios/pages/DmeScenariosPage';
-import DmeAlertsPage from './features/dme-alerts/pages/DmeAlertsPage';
-import DmeContagionPage from './features/dme-contagion/pages/DmeContagionPage';
-import DmePortfolioPage from './features/dme-portfolio/pages/DmePortfolioPage';
-import DmeCompetitivePage from './features/dme-competitive/pages/DmeCompetitivePage';
-import DmeDashboardPage from './features/dme-dashboard/pages/DmeDashboardPage';
+const DmeRiskEnginePage = React.lazy(() => import("./features/dme-risk-engine/pages/DmeRiskEnginePage"));
+const DmeEntityPage = React.lazy(() => import("./features/dme-entity/pages/DmeEntityPage"));
+const DmeScenariosPage = React.lazy(() => import("./features/dme-scenarios/pages/DmeScenariosPage"));
+const DmeAlertsPage = React.lazy(() => import("./features/dme-alerts/pages/DmeAlertsPage"));
+const DmeContagionPage = React.lazy(() => import("./features/dme-contagion/pages/DmeContagionPage"));
+const DmePortfolioPage = React.lazy(() => import("./features/dme-portfolio/pages/DmePortfolioPage"));
+const DmeCompetitivePage = React.lazy(() => import("./features/dme-competitive/pages/DmeCompetitivePage"));
+const DmeDashboardPage = React.lazy(() => import("./features/dme-dashboard/pages/DmeDashboardPage"));
 // Sprint T — Dynamic Materiality Engine
 // DoubleMaterialityPage already imported from Sprint 35 (line 55)
-import StakeholderImpactPage from './features/stakeholder-impact/pages/StakeholderImpactPage';
-import MaterialityTrendsPage from './features/materiality-trends/pages/MaterialityTrendsPage';
-import ControversyMaterialityPage from './features/controversy-materiality/pages/ControversyMaterialityPage';
-import MaterialityScenariosPage from './features/materiality-scenarios/pages/MaterialityScenariosPage';
-import MaterialityHubPage from './features/materiality-hub/pages/MaterialityHubPage';
+const StakeholderImpactPage = React.lazy(() => import("./features/stakeholder-impact/pages/StakeholderImpactPage"));
+const MaterialityTrendsPage = React.lazy(() => import("./features/materiality-trends/pages/MaterialityTrendsPage"));
+const ControversyMaterialityPage = React.lazy(() => import("./features/controversy-materiality/pages/ControversyMaterialityPage"));
+const MaterialityScenariosPage = React.lazy(() => import("./features/materiality-scenarios/pages/MaterialityScenariosPage"));
+const MaterialityHubPage = React.lazy(() => import("./features/materiality-hub/pages/MaterialityHubPage"));
 // Sprint X — Impact Measurement & SDG Finance
-import ImpactWeightedAccountsPage from './features/impact-weighted-accounts/pages/ImpactWeightedAccountsPage';
-import IrisMetricsPage from './features/iris-metrics/pages/IrisMetricsPage';
-import SdgBondImpactPage from './features/sdg-bond-impact/pages/SdgBondImpactPage';
-import BlendedFinancePage from './features/blended-finance/pages/BlendedFinancePage';
-import ImpactVerificationPage from './features/impact-verification/pages/ImpactVerificationPage';
-import ImpactHubPage from './features/impact-hub/pages/ImpactHubPage';
+const ImpactWeightedAccountsPage = React.lazy(() => import("./features/impact-weighted-accounts/pages/ImpactWeightedAccountsPage"));
+const IrisMetricsPage = React.lazy(() => import("./features/iris-metrics/pages/IrisMetricsPage"));
+const SdgBondImpactPage = React.lazy(() => import("./features/sdg-bond-impact/pages/SdgBondImpactPage"));
+const BlendedFinancePage = React.lazy(() => import("./features/blended-finance/pages/BlendedFinancePage"));
+const ImpactVerificationPage = React.lazy(() => import("./features/impact-verification/pages/ImpactVerificationPage"));
+const ImpactHubPage = React.lazy(() => import("./features/impact-hub/pages/ImpactHubPage"));
 // Sprint W — AI & NLP Analytics
-import EsgReportParserPage from './features/esg-report-parser/pages/EsgReportParserPage';
-import PredictiveEsgPage from './features/predictive-esg/pages/PredictiveEsgPage';
-import AnomalyDetectionPage from './features/anomaly-detection/pages/AnomalyDetectionPage';
-import AiEngagementPage from './features/ai-engagement/pages/AiEngagementPage';
-import DocumentSimilarityPage from './features/document-similarity/pages/DocumentSimilarityPage';
-import AiHubPage from './features/ai-hub/pages/AiHubPage';
+const EsgReportParserPage = React.lazy(() => import("./features/esg-report-parser/pages/EsgReportParserPage"));
+const PredictiveEsgPage = React.lazy(() => import("./features/predictive-esg/pages/PredictiveEsgPage"));
+const AnomalyDetectionPage = React.lazy(() => import("./features/anomaly-detection/pages/AnomalyDetectionPage"));
+const AiEngagementPage = React.lazy(() => import("./features/ai-engagement/pages/AiEngagementPage"));
+const DocumentSimilarityPage = React.lazy(() => import("./features/document-similarity/pages/DocumentSimilarityPage"));
+const AiHubPage = React.lazy(() => import("./features/ai-hub/pages/AiHubPage"));
 // Sprint V — Governance & Audit Trail
-import AuditTrailPage from './features/audit-trail/pages/AuditTrailPage';
-import ModelGovernancePage from './features/model-governance/pages/ModelGovernancePage';
-import ApprovalWorkflowsPage from './features/approval-workflows/pages/ApprovalWorkflowsPage';
-import ComplianceEvidencePage from './features/compliance-evidence/pages/ComplianceEvidencePage';
-import ChangeManagementPage from './features/change-management/pages/ChangeManagementPage';
-import GovernanceHubPage from './features/governance-hub/pages/GovernanceHubPage';
-import CorporateGovernancePage from './features/corporate-governance/pages/CorporateGovernancePage';
-import GeopoliticalAiGovPage from './features/geopolitical-ai-gov/pages/GeopoliticalAiGovPage';
+const AuditTrailPage = React.lazy(() => import("./features/audit-trail/pages/AuditTrailPage"));
+const ModelGovernancePage = React.lazy(() => import("./features/model-governance/pages/ModelGovernancePage"));
+const ApprovalWorkflowsPage = React.lazy(() => import("./features/approval-workflows/pages/ApprovalWorkflowsPage"));
+const ComplianceEvidencePage = React.lazy(() => import("./features/compliance-evidence/pages/ComplianceEvidencePage"));
+const ChangeManagementPage = React.lazy(() => import("./features/change-management/pages/ChangeManagementPage"));
+const GovernanceHubPage = React.lazy(() => import("./features/governance-hub/pages/GovernanceHubPage"));
+const CorporateGovernancePage = React.lazy(() => import("./features/corporate-governance/pages/CorporateGovernancePage"));
+const GeopoliticalAiGovPage = React.lazy(() => import("./features/geopolitical-ai-gov/pages/GeopoliticalAiGovPage"));
 // Sprint Z — Consumer Carbon Intelligence
-import CarbonCalculatorPage from './features/carbon-calculator/pages/CarbonCalculatorPage';
-import CarbonWalletPage from './features/carbon-wallet/pages/CarbonWalletPage';
-import InvoiceParserPage from './features/invoice-parser/pages/InvoiceParserPage';
-import SpendingCarbonPage from './features/spending-carbon/pages/SpendingCarbonPage';
-import CarbonEconomyPage from './features/carbon-economy/pages/CarbonEconomyPage';
-import ConsumerCarbonHubPage from './features/consumer-carbon-hub/pages/ConsumerCarbonHubPage';
+const CarbonCalculatorPage = React.lazy(() => import("./features/carbon-calculator/pages/CarbonCalculatorPage"));
+const CarbonWalletPage = React.lazy(() => import("./features/carbon-wallet/pages/CarbonWalletPage"));
+const InvoiceParserPage = React.lazy(() => import("./features/invoice-parser/pages/InvoiceParserPage"));
+const SpendingCarbonPage = React.lazy(() => import("./features/spending-carbon/pages/SpendingCarbonPage"));
+const CarbonEconomyPage = React.lazy(() => import("./features/carbon-economy/pages/CarbonEconomyPage"));
+const ConsumerCarbonHubPage = React.lazy(() => import("./features/consumer-carbon-hub/pages/ConsumerCarbonHubPage"));
 // Sprint AI — Corporate Decarbonisation & SBTi Intelligence
-import SbtiTargetSetterPage from './features/sbti-target-setter/pages/SbtiTargetSetterPage';
-import DecarbonisationRoadmapPage from './features/decarbonisation-roadmap/pages/DecarbonisationRoadmapPage';
-import AbatementCostCurvePage from './features/abatement-cost-curve/pages/AbatementCostCurvePage';
-import EnergyTransitionAnalyticsPage from './features/energy-transition-analytics/pages/EnergyTransitionAnalyticsPage';
-import CarbonReductionProjectsPage from './features/carbon-reduction-projects/pages/CarbonReductionProjectsPage';
-import DecarbonisationHubPage from './features/decarbonisation-hub/pages/DecarbonisationHubPage';
+const SbtiTargetSetterPage = React.lazy(() => import("./features/sbti-target-setter/pages/SbtiTargetSetterPage"));
+const DecarbonisationRoadmapPage = React.lazy(() => import("./features/decarbonisation-roadmap/pages/DecarbonisationRoadmapPage"));
+const AbatementCostCurvePage = React.lazy(() => import("./features/abatement-cost-curve/pages/AbatementCostCurvePage"));
+const EnergyTransitionAnalyticsPage = React.lazy(() => import("./features/energy-transition-analytics/pages/EnergyTransitionAnalyticsPage"));
+const CarbonReductionProjectsPage = React.lazy(() => import("./features/carbon-reduction-projects/pages/CarbonReductionProjectsPage"));
+const DecarbonisationHubPage = React.lazy(() => import("./features/decarbonisation-hub/pages/DecarbonisationHubPage"));
 // Sprint AJ — Financed Emissions & Climate Banking Analytics
-import PcafFinancedEmissionsPage from './features/pcaf-financed-emissions/pages/PcafFinancedEmissionsPage';
-import ClimateStressTestPage from './features/climate-stress-test/pages/ClimateStressTestPage';
-import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRatioPage';
-import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
-import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
-import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+const PcafFinancedEmissionsPage = React.lazy(() => import("./features/pcaf-financed-emissions/pages/PcafFinancedEmissionsPage"));
+const ClimateStressTestPage = React.lazy(() => import("./features/climate-stress-test/pages/ClimateStressTestPage"));
+const GreenAssetRatioPage = React.lazy(() => import("./features/green-asset-ratio/pages/GreenAssetRatioPage"));
+const PortfolioTemperatureScorePage = React.lazy(() => import("./features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage"));
+const ClimateCreditRiskPage = React.lazy(() => import("./features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage"));
+const ClimateBankingHubPage = React.lazy(() => import("./features/climate-banking-hub/pages/ClimateBankingHubPage"));
 // Sprint AV — Geopolitical Risk & Climate Security Intelligence
-import SanctionsClimateFinancePage from './features/sanctions-climate-finance/pages/SanctionsClimateFinancePage';
-import EnergySecurityTransitionPage from './features/energy-security-transition/pages/EnergySecurityTransitionPage';
-import CriticalMineralGeopoliticsPage from './features/critical-mineral-geopolitics/pages/CriticalMineralGeopoliticsPage';
-import TradeCarbonPolicyPage from './features/trade-carbon-policy/pages/TradeCarbonPolicyPage';
-import ClimateMigrationRiskPage from './features/climate-migration-risk/pages/ClimateMigrationRiskPage';
-import GeopoliticalEsgHubPage from './features/geopolitical-esg-hub/pages/GeopoliticalEsgHubPage';
+const SanctionsClimateFinancePage = React.lazy(() => import("./features/sanctions-climate-finance/pages/SanctionsClimateFinancePage"));
+const EnergySecurityTransitionPage = React.lazy(() => import("./features/energy-security-transition/pages/EnergySecurityTransitionPage"));
+const CriticalMineralGeopoliticsPage = React.lazy(() => import("./features/critical-mineral-geopolitics/pages/CriticalMineralGeopoliticsPage"));
+const TradeCarbonPolicyPage = React.lazy(() => import("./features/trade-carbon-policy/pages/TradeCarbonPolicyPage"));
+const ClimateMigrationRiskPage = React.lazy(() => import("./features/climate-migration-risk/pages/ClimateMigrationRiskPage"));
+const GeopoliticalEsgHubPage = React.lazy(() => import("./features/geopolitical-esg-hub/pages/GeopoliticalEsgHubPage"));
 // Sprint AU — Climate & Health Nexus Finance
-import HeatMortalityRiskPage from './features/heat-mortality-risk/pages/HeatMortalityRiskPage';
-import AirQualityFinancePage from './features/air-quality-finance/pages/AirQualityFinancePage';
-import PandemicClimateNexusPage from './features/pandemic-climate-nexus/pages/PandemicClimateNexusPage';
-import HealthAdaptationFinancePage from './features/health-adaptation-finance/pages/HealthAdaptationFinancePage';
-import WorkerHeatStressPage from './features/worker-heat-stress/pages/WorkerHeatStressPage';
-import ClimateHealthHubPage from './features/climate-health-hub/pages/ClimateHealthHubPage';
+const HeatMortalityRiskPage = React.lazy(() => import("./features/heat-mortality-risk/pages/HeatMortalityRiskPage"));
+const AirQualityFinancePage = React.lazy(() => import("./features/air-quality-finance/pages/AirQualityFinancePage"));
+const PandemicClimateNexusPage = React.lazy(() => import("./features/pandemic-climate-nexus/pages/PandemicClimateNexusPage"));
+const HealthAdaptationFinancePage = React.lazy(() => import("./features/health-adaptation-finance/pages/HealthAdaptationFinancePage"));
+const WorkerHeatStressPage = React.lazy(() => import("./features/worker-heat-stress/pages/WorkerHeatStressPage"));
+const ClimateHealthHubPage = React.lazy(() => import("./features/climate-health-hub/pages/ClimateHealthHubPage"));
 // Sprint AT — Food Systems & Agricultural Finance
-import RegenerativeAgriculturePage from './features/regenerative-agriculture/pages/RegenerativeAgriculturePage';
-import FoodSupplyChainEmissionsPage from './features/food-supply-chain-emissions/pages/FoodSupplyChainEmissionsPage';
-import WaterAgricultureRiskPage from './features/water-agriculture-risk/pages/WaterAgricultureRiskPage';
-import LandUseCarbonPage from './features/land-use-carbon/pages/LandUseCarbonPage';
-import AgriBiodiversityPage from './features/agri-biodiversity/pages/AgriBiodiversityPage';
-import AgriFinanceHubPage from './features/agri-finance-hub/pages/AgriFinanceHubPage';
+const RegenerativeAgriculturePage = React.lazy(() => import("./features/regenerative-agriculture/pages/RegenerativeAgriculturePage"));
+const FoodSupplyChainEmissionsPage = React.lazy(() => import("./features/food-supply-chain-emissions/pages/FoodSupplyChainEmissionsPage"));
+const WaterAgricultureRiskPage = React.lazy(() => import("./features/water-agriculture-risk/pages/WaterAgricultureRiskPage"));
+const LandUseCarbonPage = React.lazy(() => import("./features/land-use-carbon/pages/LandUseCarbonPage"));
+const AgriBiodiversityPage = React.lazy(() => import("./features/agri-biodiversity/pages/AgriBiodiversityPage"));
+const AgriFinanceHubPage = React.lazy(() => import("./features/agri-finance-hub/pages/AgriFinanceHubPage"));
 // Sprint AS — Real Estate & Built Environment ESG
-import BuildingEnergyPerformancePage from './features/building-energy-performance/pages/BuildingEnergyPerformancePage';
-import GreenBuildingCertificationPage from './features/green-building-certification/pages/GreenBuildingCertificationPage';
-import EmbodiedCarbonPage from './features/embodied-carbon/pages/EmbodiedCarbonPage';
-import ClimateResilientDesignPage from './features/climate-resilient-design/pages/ClimateResilientDesignPage';
-import TenantEngagementEsgPage from './features/tenant-engagement-esg/pages/TenantEngagementEsgPage';
-import RealEstateEsgHubPage from './features/real-estate-esg-hub/pages/RealEstateEsgHubPage';
+const BuildingEnergyPerformancePage = React.lazy(() => import("./features/building-energy-performance/pages/BuildingEnergyPerformancePage"));
+const GreenBuildingCertificationPage = React.lazy(() => import("./features/green-building-certification/pages/GreenBuildingCertificationPage"));
+const EmbodiedCarbonPage = React.lazy(() => import("./features/embodied-carbon/pages/EmbodiedCarbonPage"));
+const ClimateResilientDesignPage = React.lazy(() => import("./features/climate-resilient-design/pages/ClimateResilientDesignPage"));
+const TenantEngagementEsgPage = React.lazy(() => import("./features/tenant-engagement-esg/pages/TenantEngagementEsgPage"));
+const RealEstateEsgHubPage = React.lazy(() => import("./features/real-estate-esg-hub/pages/RealEstateEsgHubPage"));
 // Sprint AR — Insurance & Underwriting Climate Analytics
-import CatastropheModellingPage from './features/catastrophe-modelling/pages/CatastropheModellingPage';
-import UnderwritingEsgPage from './features/underwriting-esg/pages/UnderwritingEsgPage';
-import ParametricInsurancePage from './features/parametric-insurance/pages/ParametricInsurancePage';
-import ReinsuranceClimatePage from './features/reinsurance-climate/pages/ReinsuranceClimatePage';
-import InsuranceTransitionPage from './features/insurance-transition/pages/InsuranceTransitionPage';
-import InsuranceClimateHubPage from './features/insurance-climate-hub/pages/InsuranceClimateHubPage';
+const CatastropheModellingPage = React.lazy(() => import("./features/catastrophe-modelling/pages/CatastropheModellingPage"));
+const UnderwritingEsgPage = React.lazy(() => import("./features/underwriting-esg/pages/UnderwritingEsgPage"));
+const ParametricInsurancePage = React.lazy(() => import("./features/parametric-insurance/pages/ParametricInsurancePage"));
+const ReinsuranceClimatePage = React.lazy(() => import("./features/reinsurance-climate/pages/ReinsuranceClimatePage"));
+const InsuranceTransitionPage = React.lazy(() => import("./features/insurance-transition/pages/InsuranceTransitionPage"));
+const InsuranceClimateHubPage = React.lazy(() => import("./features/insurance-climate-hub/pages/InsuranceClimateHubPage"));
 // Sprint AQ — Sovereign ESG & Country-Level Climate Risk Intelligence
-import SovereignClimateRiskPage from './features/sovereign-climate-risk/pages/SovereignClimateRiskPage';
-import SovereignDebtSustainabilityPage from './features/sovereign-debt-sustainability/pages/SovereignDebtSustainabilityPage';
-import CentralBankClimatePage from './features/central-bank-climate/pages/CentralBankClimatePage';
-import SovereignNatureRiskPage from './features/sovereign-nature-risk/pages/SovereignNatureRiskPage';
-import SovereignSocialIndexPage from './features/sovereign-social-index/pages/SovereignSocialIndexPage';
-import SovereignEsgHubPage from './features/sovereign-esg-hub/pages/SovereignEsgHubPage';
+const SovereignClimateRiskPage = React.lazy(() => import("./features/sovereign-climate-risk/pages/SovereignClimateRiskPage"));
+const SovereignDebtSustainabilityPage = React.lazy(() => import("./features/sovereign-debt-sustainability/pages/SovereignDebtSustainabilityPage"));
+const CentralBankClimatePage = React.lazy(() => import("./features/central-bank-climate/pages/CentralBankClimatePage"));
+const SovereignNatureRiskPage = React.lazy(() => import("./features/sovereign-nature-risk/pages/SovereignNatureRiskPage"));
+const SovereignSocialIndexPage = React.lazy(() => import("./features/sovereign-social-index/pages/SovereignSocialIndexPage"));
+const SovereignEsgHubPage = React.lazy(() => import("./features/sovereign-esg-hub/pages/SovereignEsgHubPage"));
 // Sprint AP — Supply Chain ESG & Scope 3 Value Chain Intelligence
-import Scope3UpstreamTrackerPage from './features/scope3-upstream-tracker/pages/Scope3UpstreamTrackerPage';
-import SupplierEngagementPage from './features/supplier-engagement/pages/SupplierEngagementPage';
-import CommodityDeforestationPage from './features/commodity-deforestation/pages/CommodityDeforestationPage';
-import ConflictMineralsPage from './features/conflict-minerals/pages/ConflictMineralsPage';
-import SupplyChainResiliencePage from './features/supply-chain-resilience/pages/SupplyChainResiliencePage';
-import SupplyChainEsgHubPage from './features/supply-chain-esg-hub/pages/SupplyChainEsgHubPage';
+const Scope3UpstreamTrackerPage = React.lazy(() => import("./features/scope3-upstream-tracker/pages/Scope3UpstreamTrackerPage"));
+const SupplierEngagementPage = React.lazy(() => import("./features/supplier-engagement/pages/SupplierEngagementPage"));
+const CommodityDeforestationPage = React.lazy(() => import("./features/commodity-deforestation/pages/CommodityDeforestationPage"));
+const ConflictMineralsPage = React.lazy(() => import("./features/conflict-minerals/pages/ConflictMineralsPage"));
+const SupplyChainResiliencePage = React.lazy(() => import("./features/supply-chain-resilience/pages/SupplyChainResiliencePage"));
+const SupplyChainEsgHubPage = React.lazy(() => import("./features/supply-chain-esg-hub/pages/SupplyChainEsgHubPage"));
 // Sprint AO — Scope 4 / Avoided Emissions & Climate Solutions
-import Scope4AvoidedEmissionsPage from './features/scope4-avoided-emissions/pages/Scope4AvoidedEmissionsPage';
-import ProductCarbonHandprintPage from './features/product-carbon-handprint/pages/ProductCarbonHandprintPage';
-import EnablementMethodologyPage from './features/enablement-methodology/pages/EnablementMethodologyPage';
-import AvoidedEmissionsPortfolioPage from './features/avoided-emissions-portfolio/pages/AvoidedEmissionsPortfolioPage';
-import ClimateSolutionTaxonomyPage from './features/climate-solution-taxonomy/pages/ClimateSolutionTaxonomyPage';
-import AvoidedEmissionsHubPage from './features/avoided-emissions-hub/pages/AvoidedEmissionsHubPage';
+const Scope4AvoidedEmissionsPage = React.lazy(() => import("./features/scope4-avoided-emissions/pages/Scope4AvoidedEmissionsPage"));
+const ProductCarbonHandprintPage = React.lazy(() => import("./features/product-carbon-handprint/pages/ProductCarbonHandprintPage"));
+const EnablementMethodologyPage = React.lazy(() => import("./features/enablement-methodology/pages/EnablementMethodologyPage"));
+const AvoidedEmissionsPortfolioPage = React.lazy(() => import("./features/avoided-emissions-portfolio/pages/AvoidedEmissionsPortfolioPage"));
+const ClimateSolutionTaxonomyPage = React.lazy(() => import("./features/climate-solution-taxonomy/pages/ClimateSolutionTaxonomyPage"));
+const AvoidedEmissionsHubPage = React.lazy(() => import("./features/avoided-emissions-hub/pages/AvoidedEmissionsHubPage"));
 // Sprint AN — Sustainable Transport & Logistics Decarbonisation
-import MaritimeImoCompliancePage from './features/maritime-imo-compliance/pages/MaritimeImoCompliancePage';
-import AviationCorsiaPage from './features/aviation-corsia/pages/AviationCorsiaPage';
-import EvFleetFinancePage from './features/ev-fleet-finance/pages/EvFleetFinancePage';
-import SustainableAviationFuelPage from './features/sustainable-aviation-fuel/pages/SustainableAviationFuelPage';
-import TransportDecarbonisationPage from './features/transport-decarbonisation/pages/TransportDecarbonisationPage';
-import SustainableTransportHubPage from './features/sustainable-transport-hub/pages/SustainableTransportHubPage';
+const MaritimeImoCompliancePage = React.lazy(() => import("./features/maritime-imo-compliance/pages/MaritimeImoCompliancePage"));
+const AviationCorsiaPage = React.lazy(() => import("./features/aviation-corsia/pages/AviationCorsiaPage"));
+const EvFleetFinancePage = React.lazy(() => import("./features/ev-fleet-finance/pages/EvFleetFinancePage"));
+const SustainableAviationFuelPage = React.lazy(() => import("./features/sustainable-aviation-fuel/pages/SustainableAviationFuelPage"));
+const TransportDecarbonisationPage = React.lazy(() => import("./features/transport-decarbonisation/pages/TransportDecarbonisationPage"));
+const SustainableTransportHubPage = React.lazy(() => import("./features/sustainable-transport-hub/pages/SustainableTransportHubPage"));
 // Sprint AM — Climate Fintech & Digital MRV Intelligence
-import DigitalMrvPage from './features/digital-mrv/pages/DigitalMrvPage';
-import SatelliteClimateMonitorPage from './features/satellite-climate-monitor/pages/SatelliteClimateMonitorPage';
-import BlockchainCarbonRegistryPage from './features/blockchain-carbon-registry/pages/BlockchainCarbonRegistryPage';
-import ClimateDataMarketplacePage from './features/climate-data-marketplace/pages/ClimateDataMarketplacePage';
-import IotEmissionsTrackerPage from './features/iot-emissions-tracker/pages/IotEmissionsTrackerPage';
-import ClimateFintechHubPage from './features/climate-fintech-hub/pages/ClimateFintechHubPage';
+const DigitalMrvPage = React.lazy(() => import("./features/digital-mrv/pages/DigitalMrvPage"));
+const SatelliteClimateMonitorPage = React.lazy(() => import("./features/satellite-climate-monitor/pages/SatelliteClimateMonitorPage"));
+const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockchain-carbon-registry/pages/BlockchainCarbonRegistryPage"));
+const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
+const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
+const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
 // Sprint AL — Transition Planning & Net Zero Alignment Intelligence
-import TransitionPlanBuilderPage from './features/transition-plan-builder/pages/TransitionPlanBuilderPage';
-import GfanzSectorPathwaysPage from './features/gfanz-sector-pathways/pages/GfanzSectorPathwaysPage';
-import ActAssessmentPage from './features/act-assessment/pages/ActAssessmentPage';
-import NetZeroCommitmentTrackerPage from './features/net-zero-commitment-tracker/pages/NetZeroCommitmentTrackerPage';
-import TransitionCredibilityPage from './features/transition-credibility/pages/TransitionCredibilityPage';
-import TransitionPlanningHubPage from './features/transition-planning-hub/pages/TransitionPlanningHubPage';
+const TransitionPlanBuilderPage = React.lazy(() => import("./features/transition-plan-builder/pages/TransitionPlanBuilderPage"));
+const GfanzSectorPathwaysPage = React.lazy(() => import("./features/gfanz-sector-pathways/pages/GfanzSectorPathwaysPage"));
+const ActAssessmentPage = React.lazy(() => import("./features/act-assessment/pages/ActAssessmentPage"));
+const NetZeroCommitmentTrackerPage = React.lazy(() => import("./features/net-zero-commitment-tracker/pages/NetZeroCommitmentTrackerPage"));
+const TransitionCredibilityPage = React.lazy(() => import("./features/transition-credibility/pages/TransitionCredibilityPage"));
+const TransitionPlanningHubPage = React.lazy(() => import("./features/transition-planning-hub/pages/TransitionPlanningHubPage"));
 // Sprint AK — ESG Ratings Intelligence & Provider Analytics
-import EsgRatingsComparatorPage from './features/esg-ratings-comparator/pages/EsgRatingsComparatorPage';
-import RatingsMethodologyDecoderPage from './features/ratings-methodology-decoder/pages/RatingsMethodologyDecoderPage';
-import RatingsMigrationMomentumPage from './features/ratings-migration-momentum/pages/RatingsMigrationMomentumPage';
-import ControversyRatingImpactPage from './features/controversy-rating-impact/pages/ControversyRatingImpactPage';
-import GreenwashingDetectorPage from './features/greenwashing-detector/pages/GreenwashingDetectorPage';
-import EsgRatingsHubPage from './features/esg-ratings-hub/pages/EsgRatingsHubPage';
+const EsgRatingsComparatorPage = React.lazy(() => import("./features/esg-ratings-comparator/pages/EsgRatingsComparatorPage"));
+const RatingsMethodologyDecoderPage = React.lazy(() => import("./features/ratings-methodology-decoder/pages/RatingsMethodologyDecoderPage"));
+const RatingsMigrationMomentumPage = React.lazy(() => import("./features/ratings-migration-momentum/pages/RatingsMigrationMomentumPage"));
+const ControversyRatingImpactPage = React.lazy(() => import("./features/controversy-rating-impact/pages/ControversyRatingImpactPage"));
+const GreenwashingDetectorPage = React.lazy(() => import("./features/greenwashing-detector/pages/GreenwashingDetectorPage"));
+const EsgRatingsHubPage = React.lazy(() => import("./features/esg-ratings-hub/pages/EsgRatingsHubPage"));
 // Sprint AH — Regulatory Reporting & Disclosure Automation
-import CsrdEsrsAutomationPage from './features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage';
-import SfdrV2ReportingPage from './features/sfdr-v2-reporting/pages/SfdrV2ReportingPage';
-import IssbDisclosurePage from './features/issb-disclosure/pages/IssbDisclosurePage';
-import UkSdrPage from './features/uk-sdr/pages/UkSdrPage';
-import SecClimateRulePage from './features/sec-climate-rule/pages/SecClimateRulePage';
-import DisclosureHubPage from './features/disclosure-hub/pages/DisclosureHubPage';
+const CsrdEsrsAutomationPage = React.lazy(() => import("./features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage"));
+const SfdrV2ReportingPage = React.lazy(() => import("./features/sfdr-v2-reporting/pages/SfdrV2ReportingPage"));
+const IssbDisclosurePage = React.lazy(() => import("./features/issb-disclosure/pages/IssbDisclosurePage"));
+const UkSdrPage = React.lazy(() => import("./features/uk-sdr/pages/UkSdrPage"));
+const SecClimateRulePage = React.lazy(() => import("./features/sec-climate-rule/pages/SecClimateRulePage"));
+const DisclosureHubPage = React.lazy(() => import("./features/disclosure-hub/pages/DisclosureHubPage"));
 // Sprint AG — Private Markets & Alternative Credit ESG
-import PeEsgDiligencePage from './features/pe-esg-diligence/pages/PeEsgDiligencePage';
-import PrivateCreditClimatePage from './features/private-credit-climate/pages/PrivateCreditClimatePage';
-import InfrastructureEsgPage from './features/infrastructure-esg/pages/InfrastructureEsgPage';
-import RealAssetsClimatePage from './features/real-assets-climate/pages/RealAssetsClimatePage';
-import VcImpactPage from './features/vc-impact/pages/VcImpactPage';
-import PrivateMarketsEsgHubPage from './features/private-markets-esg-hub/pages/PrivateMarketsEsgHubPage';
+const PeEsgDiligencePage = React.lazy(() => import("./features/pe-esg-diligence/pages/PeEsgDiligencePage"));
+const PrivateCreditClimatePage = React.lazy(() => import("./features/private-credit-climate/pages/PrivateCreditClimatePage"));
+const InfrastructureEsgPage = React.lazy(() => import("./features/infrastructure-esg/pages/InfrastructureEsgPage"));
+const RealAssetsClimatePage = React.lazy(() => import("./features/real-assets-climate/pages/RealAssetsClimatePage"));
+const VcImpactPage = React.lazy(() => import("./features/vc-impact/pages/VcImpactPage"));
+const PrivateMarketsEsgHubPage = React.lazy(() => import("./features/private-markets-esg-hub/pages/PrivateMarketsEsgHubPage"));
 // Sprint AF — Quantitative ESG & Portfolio Intelligence
-import EsgPortfolioOptimizerPage from './features/esg-portfolio-optimizer/pages/EsgPortfolioOptimizerPage';
-import CarbonAwareAllocationPage from './features/carbon-aware-allocation/pages/CarbonAwareAllocationPage';
-import EsgMomentumScannerPage from './features/esg-momentum-scanner/pages/EsgMomentumScannerPage';
-import NetZeroPortfolioBuilderPage from './features/net-zero-portfolio-builder/pages/NetZeroPortfolioBuilderPage';
-import EsgFactorAlphaPage from './features/esg-factor-alpha/pages/EsgFactorAlphaPage';
-import QuantEsgHubPage from './features/quant-esg-hub/pages/QuantEsgHubPage';
+const EsgPortfolioOptimizerPage = React.lazy(() => import("./features/esg-portfolio-optimizer/pages/EsgPortfolioOptimizerPage"));
+const CarbonAwareAllocationPage = React.lazy(() => import("./features/carbon-aware-allocation/pages/CarbonAwareAllocationPage"));
+const EsgMomentumScannerPage = React.lazy(() => import("./features/esg-momentum-scanner/pages/EsgMomentumScannerPage"));
+const NetZeroPortfolioBuilderPage = React.lazy(() => import("./features/net-zero-portfolio-builder/pages/NetZeroPortfolioBuilderPage"));
+const EsgFactorAlphaPage = React.lazy(() => import("./features/esg-factor-alpha/pages/EsgFactorAlphaPage"));
+const QuantEsgHubPage = React.lazy(() => import("./features/quant-esg-hub/pages/QuantEsgHubPage"));
 // Sprint AE — Corporate Governance & Executive Intelligence
-import BoardCompositionPage from './features/board-composition/pages/BoardCompositionPage';
-import ExecutivePayAnalyticsPage from './features/executive-pay-analytics/pages/ExecutivePayAnalyticsPage';
-import ShareholderActivismPage from './features/shareholder-activism/pages/ShareholderActivismPage';
-import AntiCorruptionPage from './features/anti-corruption/pages/AntiCorruptionPage';
-import ProxyVotingIntelPage from './features/proxy-voting-intel/pages/ProxyVotingIntelPage';
-import DiversityEquityInclusionPage from './features/diversity-equity-inclusion/pages/DiversityEquityInclusionPage';
+const BoardCompositionPage = React.lazy(() => import("./features/board-composition/pages/BoardCompositionPage"));
+const ExecutivePayAnalyticsPage = React.lazy(() => import("./features/executive-pay-analytics/pages/ExecutivePayAnalyticsPage"));
+const ShareholderActivismPage = React.lazy(() => import("./features/shareholder-activism/pages/ShareholderActivismPage"));
+const AntiCorruptionPage = React.lazy(() => import("./features/anti-corruption/pages/AntiCorruptionPage"));
+const ProxyVotingIntelPage = React.lazy(() => import("./features/proxy-voting-intel/pages/ProxyVotingIntelPage"));
+const DiversityEquityInclusionPage = React.lazy(() => import("./features/diversity-equity-inclusion/pages/DiversityEquityInclusionPage"));
 // Sprint AD — Social & Just Transition
-import JustTransitionFinancePage from './features/just-transition-finance/pages/JustTransitionFinancePage';
-import HumanRightsRiskPage from './features/human-rights-risk/pages/HumanRightsRiskPage';
-import LivingWageTrackerPage from './features/living-wage-tracker/pages/LivingWageTrackerPage';
-import ModernSlaveryIntelPage from './features/modern-slavery-intel/pages/ModernSlaveryIntelPage';
-import CommunityImpactPage from './features/community-impact/pages/CommunityImpactPage';
-import WorkplaceHealthSafetyPage from './features/workplace-health-safety/pages/WorkplaceHealthSafetyPage';
+const JustTransitionFinancePage = React.lazy(() => import("./features/just-transition-finance/pages/JustTransitionFinancePage"));
+const HumanRightsRiskPage = React.lazy(() => import("./features/human-rights-risk/pages/HumanRightsRiskPage"));
+const LivingWageTrackerPage = React.lazy(() => import("./features/living-wage-tracker/pages/LivingWageTrackerPage"));
+const ModernSlaveryIntelPage = React.lazy(() => import("./features/modern-slavery-intel/pages/ModernSlaveryIntelPage"));
+const CommunityImpactPage = React.lazy(() => import("./features/community-impact/pages/CommunityImpactPage"));
+const WorkplaceHealthSafetyPage = React.lazy(() => import("./features/workplace-health-safety/pages/WorkplaceHealthSafetyPage"));
 // Sprint AC — Nature, Environment & Physical Risk
-import NatureLossRiskPage from './features/nature-loss-risk/pages/NatureLossRiskPage';
-import WaterRiskAnalyticsPage from './features/water-risk-analytics/pages/WaterRiskAnalyticsPage';
-import LandUseDeforestationPage from './features/land-use-deforestation/pages/LandUseDeforestationPage';
-import OceanMarineRiskPage from './features/ocean-marine-risk/pages/OceanMarineRiskPage';
-import CircularEconomyTrackerPage from './features/circular-economy-tracker/pages/CircularEconomyTrackerPage';
-import AirQualityHealthRiskPage from './features/air-quality-health-risk/pages/AirQualityHealthRiskPage';
+const NatureLossRiskPage = React.lazy(() => import("./features/nature-loss-risk/pages/NatureLossRiskPage"));
+const WaterRiskAnalyticsPage = React.lazy(() => import("./features/water-risk-analytics/pages/WaterRiskAnalyticsPage"));
+const LandUseDeforestationPage = React.lazy(() => import("./features/land-use-deforestation/pages/LandUseDeforestationPage"));
+const OceanMarineRiskPage = React.lazy(() => import("./features/ocean-marine-risk/pages/OceanMarineRiskPage"));
+const CircularEconomyTrackerPage = React.lazy(() => import("./features/circular-economy-tracker/pages/CircularEconomyTrackerPage"));
+const AirQualityHealthRiskPage = React.lazy(() => import("./features/air-quality-health-risk/pages/AirQualityHealthRiskPage"));
 // Sprint AB — Macro & Systemic Risk Intelligence
-import SystemicESGRiskPage from './features/systemic-esg-risk/pages/SystemicESGRiskPage';
-import ClimatePolicyIntelligencePage from './features/climate-policy-intelligence/pages/ClimatePolicyIntelligencePage';
-import GreenCentralBankingPage from './features/green-central-banking/pages/GreenCentralBankingPage';
-import ESGFactorAttributionPage from './features/esg-factor-attribution/pages/ESGFactorAttributionPage';
-import TransitionScenarioModellerPage from './features/transition-scenario-modeller/pages/TransitionScenarioModellerPage';
-import CrossAssetContagionPage from './features/cross-asset-contagion/pages/CrossAssetContagionPage';
+const SystemicESGRiskPage = React.lazy(() => import("./features/systemic-esg-risk/pages/SystemicESGRiskPage"));
+const ClimatePolicyIntelligencePage = React.lazy(() => import("./features/climate-policy-intelligence/pages/ClimatePolicyIntelligencePage"));
+const GreenCentralBankingPage = React.lazy(() => import("./features/green-central-banking/pages/GreenCentralBankingPage"));
+const ESGFactorAttributionPage = React.lazy(() => import("./features/esg-factor-attribution/pages/ESGFactorAttributionPage"));
+const TransitionScenarioModellerPage = React.lazy(() => import("./features/transition-scenario-modeller/pages/TransitionScenarioModellerPage"));
+const CrossAssetContagionPage = React.lazy(() => import("./features/cross-asset-contagion/pages/CrossAssetContagionPage"));
 // Sprint AA — Climate Finance Architecture
-import ClimateFinanceHubPage from './features/climate-finance-hub/pages/ClimateFinanceHubPage';
-import Article6MarketsPage from './features/article6-markets/pages/Article6MarketsPage';
-import CbamCompliancePage from './features/cbam-compliance/pages/CbamCompliancePage';
-import ClimateFinanceTrackerPage from './features/climate-finance-tracker/pages/ClimateFinanceTrackerPage';
-import GreenTaxonomyNavigatorPage from './features/green-taxonomy-navigator/pages/GreenTaxonomyNavigatorPage';
-import ClimateSovereignBondsPage from './features/climate-sovereign-bonds/pages/ClimateSovereignBondsPage';
+const ClimateFinanceHubPage = React.lazy(() => import("./features/climate-finance-hub/pages/ClimateFinanceHubPage"));
+const Article6MarketsPage = React.lazy(() => import("./features/article6-markets/pages/Article6MarketsPage"));
+const CbamCompliancePage = React.lazy(() => import("./features/cbam-compliance/pages/CbamCompliancePage"));
+const ClimateFinanceTrackerPage = React.lazy(() => import("./features/climate-finance-tracker/pages/ClimateFinanceTrackerPage"));
+const GreenTaxonomyNavigatorPage = React.lazy(() => import("./features/green-taxonomy-navigator/pages/GreenTaxonomyNavigatorPage"));
+const ClimateSovereignBondsPage = React.lazy(() => import("./features/climate-sovereign-bonds/pages/ClimateSovereignBondsPage"));
 // Sprint Y — Commodity Lifecycle Intelligence
-import CommodityIntelligencePage from './features/commodity-intelligence/pages/CommodityIntelligencePage';
-import CommodityInventoryPage from './features/commodity-inventory/pages/CommodityInventoryPage';
-import LifecycleAssessmentPage from './features/lifecycle-assessment/pages/LifecycleAssessmentPage';
-import FinancialFlowPage from './features/financial-flow/pages/FinancialFlowPage';
-import EsgValueChainPage from './features/esg-value-chain/pages/EsgValueChainPage';
-import ClimateNatureRepoPage from './features/climate-nature-repo/pages/ClimateNatureRepoPage';
-import MultiFactorIntegrationPage from './features/multi-factor-integration/pages/MultiFactorIntegrationPage';
-import CommodityHubPage from './features/commodity-hub/pages/CommodityHubPage';
-import ProductAnatomyPage from './features/product-anatomy/pages/ProductAnatomyPage';
-import EpdLcaDatabasePage from './features/epd-lca-database/pages/EpdLcaDatabasePage';
+const CommodityIntelligencePage = React.lazy(() => import("./features/commodity-intelligence/pages/CommodityIntelligencePage"));
+const CommodityInventoryPage = React.lazy(() => import("./features/commodity-inventory/pages/CommodityInventoryPage"));
+const LifecycleAssessmentPage = React.lazy(() => import("./features/lifecycle-assessment/pages/LifecycleAssessmentPage"));
+const FinancialFlowPage = React.lazy(() => import("./features/financial-flow/pages/FinancialFlowPage"));
+const EsgValueChainPage = React.lazy(() => import("./features/esg-value-chain/pages/EsgValueChainPage"));
+const ClimateNatureRepoPage = React.lazy(() => import("./features/climate-nature-repo/pages/ClimateNatureRepoPage"));
+const MultiFactorIntegrationPage = React.lazy(() => import("./features/multi-factor-integration/pages/MultiFactorIntegrationPage"));
+const CommodityHubPage = React.lazy(() => import("./features/commodity-hub/pages/CommodityHubPage"));
+const ProductAnatomyPage = React.lazy(() => import("./features/product-anatomy/pages/ProductAnatomyPage"));
+const EpdLcaDatabasePage = React.lazy(() => import("./features/epd-lca-database/pages/EpdLcaDatabasePage"));
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Institutional Light · Navy / Gold / Sage (AA Impact brand)
@@ -403,6 +403,16 @@ if (typeof window !== 'undefined' && !document.querySelector('link[href*="DM+San
   document.head.appendChild(_fl);
 }
 
+
+const LoadingFallback = () => (
+  <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',
+    background:'#f6f4f0',fontFamily:"'DM Sans',system-ui,sans-serif"}}>
+    <div style={{textAlign:'center'}}>
+      <div style={{fontSize:28,fontWeight:700,color:'#1b3a5c',marginBottom:8}}>AA Impact Platform</div>
+      <div style={{fontSize:14,color:'#5c6b7e'}}>Loading module...</div>
+    </div>
+  </div>
+);
 const T = {
   bg:       '#f6f4f0',       // warm cream
   surface:  '#ffffff',
@@ -1290,7 +1300,8 @@ function AppContent() {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar search={search} setSearch={setSearch} sidebarOpen={sidebarOpen} />
         <main style={{ flex: 1, overflowY: 'auto', background: T.bg }}>
-          <Routes>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
             <Route path="/crypto-climate" element={<CryptoClimatePage />} />
             <Route path="/ai-governance" element={<AIGovernancePage />} />
             <Route path="/carbon-accounting-ai" element={<CarbonAccountingAIPage />} />
@@ -1662,6 +1673,7 @@ function AppContent() {
             <Route path="/company-profiles"      element={<CompanyProfilesPage />} />
             <Route path="*" element={<Dashboard />} />
           </Routes>
+            </Suspense>
         </main>
       </div>
       <StatusBar />
