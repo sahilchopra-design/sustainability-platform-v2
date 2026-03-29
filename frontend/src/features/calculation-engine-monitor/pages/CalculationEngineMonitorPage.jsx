@@ -303,7 +303,7 @@ export default function CalculationEngineMonitorPage() {
                         <span style={{fontWeight:700,fontSize:13}}>{eng.id}</span>
                         <span style={{fontSize:12,color:T.textSec}}>{eng.name}</span>
                       </div>
-                      <span style={sty.badge(STATUS_COLORS[status])}>{status.toUpperCase()}</span>
+                      <span style={sty.badge(STATUS_COLORS[status])}>{(status||'idle').toUpperCase()}</span>
                     </div>
                     <div style={{fontSize:11,color:T.textMut,marginBottom:8}}>{eng.desc}</div>
                     <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,fontSize:10}}>
@@ -621,7 +621,7 @@ export default function CalculationEngineMonitorPage() {
                   <div style={{fontSize:12,fontWeight:600,marginBottom:4}}>{a.engine}</div>
                   <div style={{fontSize:11,color:T.textSec,marginBottom:6}}>{a.alert}</div>
                   <div style={{display:'flex',justifyContent:'space-between'}}>
-                    <span style={sty.badge(a.severity==='critical'?T.red:a.severity==='warning'?T.amber:a.severity==='ok'?T.green:T.navyL)}>{a.severity.toUpperCase()}</span>
+                    <span style={sty.badge(a.severity==='critical'?T.red:a.severity==='warning'?T.amber:a.severity==='ok'?T.green:T.navyL)}>{(a.severity||'info').toUpperCase()}</span>
                     <span style={{fontSize:10,color:T.textMut}}>{a.since}</span>
                   </div>
                 </div>
