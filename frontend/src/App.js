@@ -8,6 +8,12 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 // Platform Admin & Data Management
 const DataSourceManagerPage = React.lazy(() => import("./features/data-source-manager/pages/DataSourceManagerPage"));
 const DbExplorerPage = React.lazy(() => import("./features/db-explorer/pages/DbExplorerPage"));
+const UserRoleManagementPage = React.lazy(() => import("./features/user-role-management/pages/UserRoleManagementPage"));
+const AuditTrailViewerPage = React.lazy(() => import("./features/audit-trail-viewer/pages/AuditTrailViewerPage"));
+const ApiGatewayMonitorPage = React.lazy(() => import("./features/api-gateway-monitor/pages/ApiGatewayMonitorPage"));
+const DataQualityDashboardPage = React.lazy(() => import("./features/data-quality-dashboard/pages/DataQualityDashboardPage"));
+const CalculationEngineMonitorPage = React.lazy(() => import("./features/calculation-engine-monitor/pages/CalculationEngineMonitorPage"));
+const PlatformSettingsPage = React.lazy(() => import("./features/platform-settings/pages/PlatformSettingsPage"));
 // Sprint 37 — E108–E111
 const RegulatoryCapitalPage = React.lazy(() => import("./features/regulatory-capital/pages/RegulatoryCapitalPage"));
 // ClimatePolicyPage moved to Sprint O imports
@@ -592,8 +598,14 @@ const NAV_GROUPS = [
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
   ]},
   { label: 'Platform Administration', icon: '⚙️', color: '#475569', items: [
-    { path: '/data-source-manager',     label: 'Data Source Manager',     badge: '47 Sources · EODHD+AV · Field Mapper · Engine Lineage · Sync',   code: 'ADM-01' },
-    { path: '/db-explorer',             label: 'DB Explorer & SQL',       badge: '40+ Tables · SQL Editor · Lineage · Migration Tracker',           code: 'ADM-02' },
+    { path: '/data-source-manager',       label: 'Data Source Manager',       badge: '47 Sources · EODHD+AV · Field Mapper · Engine Lineage · Sync',       code: 'ADM-01' },
+    { path: '/db-explorer',               label: 'DB Explorer & SQL',         badge: '40+ Tables · SQL Editor · Lineage · Migration Tracker',               code: 'ADM-02' },
+    { path: '/user-role-management',      label: 'Users & Roles',             badge: '50 Users · 8 Roles · Permission Matrix · Teams · MFA · SSO',          code: 'ADM-03' },
+    { path: '/audit-trail-viewer',        label: 'Audit Trail',               badge: '500 Events · Calculation Audit · ISAE 3000 · SOC 2 · GDPR',          code: 'ADM-04' },
+    { path: '/api-gateway-monitor',       label: 'API Gateway',               badge: '2302 Endpoints · Traffic · Rate Limits · Swagger · Webhooks',         code: 'ADM-05' },
+    { path: '/data-quality-dashboard',    label: 'Data Quality',              badge: 'Quality Scores · Completeness · Freshness · 50 Validation Rules',     code: 'ADM-06' },
+    { path: '/calculation-engine-monitor',label: 'Engine Monitor',            badge: '30 Engines · Execution History · Shadow Model · Config · Drift',      code: 'ADM-07' },
+    { path: '/platform-settings',         label: 'Platform Settings',         badge: 'Theme · Integrations · Feature Flags · System Health',                code: 'ADM-08' },
   ]},
   { label: 'Geopolitical Risk & Climate Security', icon: '🌐', color: '#7f1d1d', items: [
     { path: '/geopolitical-esg-hub',          label: 'Geopolitical ESG Hub',          badge: 'Hub · Sanctions+Energy+Minerals+Trade+Migration · Scenarios',       code: 'EP-AV6' },
@@ -1525,8 +1537,14 @@ function AppContent() {
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
             {/* Sprint AV — Geopolitical Risk & Climate Security Intelligence */}
             {/* Platform Administration */}
-            <Route path="/data-source-manager"     element={<DataSourceManagerPage />} />
-            <Route path="/db-explorer"             element={<DbExplorerPage />} />
+            <Route path="/data-source-manager"       element={<DataSourceManagerPage />} />
+            <Route path="/db-explorer"               element={<DbExplorerPage />} />
+            <Route path="/user-role-management"      element={<UserRoleManagementPage />} />
+            <Route path="/audit-trail-viewer"        element={<AuditTrailViewerPage />} />
+            <Route path="/api-gateway-monitor"       element={<ApiGatewayMonitorPage />} />
+            <Route path="/data-quality-dashboard"    element={<DataQualityDashboardPage />} />
+            <Route path="/calculation-engine-monitor" element={<CalculationEngineMonitorPage />} />
+            <Route path="/platform-settings"         element={<PlatformSettingsPage />} />
             <Route path="/geopolitical-esg-hub"          element={<GeopoliticalEsgHubPage />} />
             <Route path="/sanctions-climate-finance"     element={<SanctionsClimateFinancePage />} />
             <Route path="/energy-security-transition"    element={<EnergySecurityTransitionPage />} />
