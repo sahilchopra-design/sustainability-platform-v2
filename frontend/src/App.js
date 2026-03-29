@@ -240,6 +240,13 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+// Sprint AU — Climate & Health Nexus Finance
+import HeatMortalityRiskPage from './features/heat-mortality-risk/pages/HeatMortalityRiskPage';
+import AirQualityFinancePage from './features/air-quality-finance/pages/AirQualityFinancePage';
+import PandemicClimateNexusPage from './features/pandemic-climate-nexus/pages/PandemicClimateNexusPage';
+import HealthAdaptationFinancePage from './features/health-adaptation-finance/pages/HealthAdaptationFinancePage';
+import WorkerHeatStressPage from './features/worker-heat-stress/pages/WorkerHeatStressPage';
+import ClimateHealthHubPage from './features/climate-health-hub/pages/ClimateHealthHubPage';
 // Sprint AT — Food Systems & Agricultural Finance
 import RegenerativeAgriculturePage from './features/regenerative-agriculture/pages/RegenerativeAgriculturePage';
 import FoodSupplyChainEmissionsPage from './features/food-supply-chain-emissions/pages/FoodSupplyChainEmissionsPage';
@@ -562,6 +569,14 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+  ]},
+  { label: 'Climate & Health Nexus', icon: '🏥', color: '#0d9488', items: [
+    { path: '/climate-health-hub',           label: 'Climate Health Hub',           badge: 'Hub · Heat+Air+Pandemic+Adapt+Worker · CRM · Board',                code: 'EP-AU6' },
+    { path: '/heat-mortality-risk',          label: 'Heat Mortality Risk',          badge: '60 Cities · RCP · Wet-Bulb · Labour · UHI · Cooling',               code: 'EP-AU1' },
+    { path: '/air-quality-finance',          label: 'Air Quality Finance',          badge: '50 Cities · PM2.5 · WHO · 80 Cos · Health Costs · Clean Air',       code: 'EP-AU2' },
+    { path: '/pandemic-climate-nexus',       label: 'Pandemic-Climate Nexus',       badge: '40 Countries · Zoonotic · Vector-Borne · GHS · One Health',         code: 'EP-AU3' },
+    { path: '/health-adaptation-finance',    label: 'Health Adaptation Finance',    badge: '30 Countries · WHO Gap · Early Warning · Health Bonds',              code: 'EP-AU4' },
+    { path: '/worker-heat-stress',           label: 'Worker Heat Stress',           badge: '100 Cos · WBGT · ILO/OSHA · Productivity · Litigation',             code: 'EP-AU5' },
   ]},
   { label: 'Food Systems & Agricultural Finance', icon: '🌾', color: '#15803d', items: [
     { path: '/agri-finance-hub',             label: 'Agri Finance Hub',             badge: 'Hub · Regen+Food+Water+Land+Biodiversity · CRM · Board',            code: 'EP-AT6' },
@@ -1474,6 +1489,13 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            {/* Sprint AU — Climate & Health Nexus Finance */}
+            <Route path="/climate-health-hub"           element={<ClimateHealthHubPage />} />
+            <Route path="/heat-mortality-risk"          element={<HeatMortalityRiskPage />} />
+            <Route path="/air-quality-finance"          element={<AirQualityFinancePage />} />
+            <Route path="/pandemic-climate-nexus"       element={<PandemicClimateNexusPage />} />
+            <Route path="/health-adaptation-finance"    element={<HealthAdaptationFinancePage />} />
+            <Route path="/worker-heat-stress"           element={<WorkerHeatStressPage />} />
             {/* Sprint AT — Food Systems & Agricultural Finance */}
             <Route path="/agri-finance-hub"             element={<AgriFinanceHubPage />} />
             <Route path="/regenerative-agriculture"     element={<RegenerativeAgriculturePage />} />
