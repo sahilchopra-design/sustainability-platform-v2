@@ -13,7 +13,7 @@ const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.flo
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -38,7 +38,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -215,7 +215,7 @@ export default function BiodiversityCreditsPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Biodiversity Credits & Nature Markets</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Biodiversity Credits & Nature Markets</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>DEFRA BNG · TNFD v1.0 · ENCORE Ecosystem Services · GBF Target 15 · Nature Credit Quality</p>
       </div>
 
@@ -407,7 +407,7 @@ export default function BiodiversityCreditsPage() {
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
                     <td style={{ padding: '8px 12px', fontWeight: 700, color: '#059669' }}>{s.id.toUpperCase()}</td>
                     <td style={{ padding: '8px 12px', color: '#374151' }}>{s.label}</td>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#111827' }}>{s.score}/100</td>
+                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1b3a5c' }}>{s.score}/100</td>
                     <td style={{ padding: '8px 12px' }}>
                       <Badge label={s.score >= 65 ? 'Met' : s.score >= 50 ? 'Partial' : 'Gap'} color={s.score >= 65 ? 'green' : s.score >= 50 ? 'yellow' : 'red'} />
                     </td>

@@ -13,7 +13,7 @@ const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.flo
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -38,7 +38,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -165,7 +165,7 @@ export default function DigitalProductPassportPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Digital Product Passport</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Digital Product Passport</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>ESPR · EU Reg 2023/1542 (Batteries) · ISO 14044 / PEF Lifecycle · Circularity · EPR · E82</p>
       </div>
 
@@ -213,9 +213,9 @@ export default function DigitalProductPassportPage() {
               <tbody>
                 {esprRegs.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: r.category.toLowerCase().includes(productCategory.substring(0, 4)) ? '#f0fdf4' : 'white' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.category}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.category}</td>
                     <td style={{ padding: '10px 12px', color: '#6b7280', fontFamily: 'monospace', fontSize: 12 }}>{r.euReg}</td>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: r.dppYear <= 2026 ? '#dc2626' : '#111827' }}>{r.dppYear}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: r.dppYear <= 2026 ? '#dc2626' : '#1b3a5c' }}>{r.dppYear}</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{r.reqs.join(' · ')}</td>
                   </tr>
                 ))}
@@ -323,7 +323,7 @@ export default function DigitalProductPassportPage() {
                   const share = Math.round((stageTotal / totalCarbonPerUnit) * 100);
                   return (
                     <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.stage}</td>
+                      <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.stage}</td>
                       <td style={{ padding: '10px 12px', color: '#374151' }}>{r.scope1} kg</td>
                       <td style={{ padding: '10px 12px', color: '#374151' }}>{r.scope2} kg</td>
                       <td style={{ padding: '10px 12px', color: '#374151' }}>{r.scope3} kg</td>
@@ -390,7 +390,7 @@ export default function DigitalProductPassportPage() {
               <tbody>
                 {batteryTargets.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.material}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.material}</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{r.target2025}%</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{r.target2030}%</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{r.target2035}%</td>
@@ -446,7 +446,7 @@ export default function DigitalProductPassportPage() {
               ].map((s, i) => (
                 <div key={i} style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 8, background: 'white' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{s.step}</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1b3a5c' }}>{s.step}</div>
                     <Badge label={s.status} color={s.color} />
                   </div>
                   <div style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>{s.detail}</div>

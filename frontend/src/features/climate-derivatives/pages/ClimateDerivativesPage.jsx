@@ -7,13 +7,14 @@ import {
 } from 'recharts';
 
 const API = 'http://localhost:8001';
+const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; } return Math.abs(h); };
 const seededRandom = (seed) => { let x = Math.sin(seed * 9301 + 49297) * 233280; return x - Math.floor(x); };
 
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -38,7 +39,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -214,7 +215,7 @@ export default function ClimateDerivativesPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Climate Derivatives Pricing Engine</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Climate Derivatives Pricing Engine</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>Weather Derivatives · Cat Bonds · EUA Options · Carbon Spreads · Parametric Products · EMIR/MiFID Classification</p>
       </div>
 
@@ -252,7 +253,7 @@ export default function ClimateDerivativesPage() {
                   {pricing.greeks.map((g, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
                       <td style={{ padding: '8px 12px', fontWeight: 700, color: '#059669' }}>{g.greek}</td>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: g.value < 0 ? '#dc2626' : '#111827' }}>{g.value}</td>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: g.value < 0 ? '#dc2626' : '#1b3a5c' }}>{g.value}</td>
                       <td style={{ padding: '8px 12px', color: '#6b7280' }}>{g.unit}</td>
                     </tr>
                   ))}
@@ -313,7 +314,7 @@ export default function ClimateDerivativesPage() {
                       <td style={{ padding: '8px 12px', fontWeight: 700, color: '#059669' }}>{t.type}</td>
                       <td style={{ padding: '8px 12px', color: '#374151', fontSize: 12 }}>{t.pros}</td>
                       <td style={{ padding: '8px 12px', color: '#6b7280', fontSize: 12 }}>{t.cons}</td>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: '#111827' }}>{t.typical_spread}</td>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1b3a5c' }}>{t.typical_spread}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -366,7 +367,7 @@ export default function ClimateDerivativesPage() {
                   {eua.volSurface.map((row, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: i % 2 === 0 ? 'white' : '#f9fafb' }}>
                       <td style={{ padding: '8px 12px', fontWeight: 700, color: '#374151' }}>{row.strike}</td>
-                      {eua.tenors.map(t => <td key={t} style={{ padding: '8px 12px', color: '#111827' }}>{row[`${t}yr`]}</td>)}
+                      {eua.tenors.map(t => <td key={t} style={{ padding: '8px 12px', color: '#1b3a5c' }}>{row[`${t}yr`]}</td>)}
                     </tr>
                   ))}
                 </tbody>
@@ -394,7 +395,7 @@ export default function ClimateDerivativesPage() {
                 {reg.checklist.map((item, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: i % 2 === 0 ? 'white' : '#f9fafb' }}>
                     <td style={{ padding: '8px 12px', fontWeight: 600, color: '#374151' }}>{item.item}</td>
-                    <td style={{ padding: '8px 12px', color: '#111827' }}>{item.value}</td>
+                    <td style={{ padding: '8px 12px', color: '#1b3a5c' }}>{item.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -435,7 +436,7 @@ export default function ClimateDerivativesPage() {
               {tmpl.templates.map((t, i) => (
                 <div key={i} style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: 8, padding: 16, borderLeft: '4px solid #059669' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{t.name}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1b3a5c' }}>{t.name}</div>
                     <Badge label={t.type} color="blue" />
                   </div>
                   <div style={{ fontSize: 12, color: '#6b7280' }}>Tenor: <strong>{t.tenor}</strong> · Spread: <strong style={{ color: '#059669' }}>{t.spread} bps</strong></div>

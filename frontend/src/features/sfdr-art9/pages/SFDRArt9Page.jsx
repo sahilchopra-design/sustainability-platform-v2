@@ -12,7 +12,7 @@ const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.flo
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -37,7 +37,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -189,7 +189,7 @@ export default function SFDRArt9Page() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>SFDR Article 9 Impact Fund Assessment</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>SFDR Article 9 Impact Fund Assessment</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>RTS 2022/1288 · ESMA Q&A 2023 · 14 PAI Indicators</p>
       </div>
 
@@ -346,7 +346,7 @@ export default function SFDRArt9Page() {
                       <td style={{ padding: '10px 14px', fontWeight: 700, color: '#059669' }}>{i + 1}</td>
                       <td style={{ padding: '10px 14px', fontWeight: 600, color: '#374151' }}>{s.label}</td>
                       <td style={{ padding: '10px 14px', color: '#6b7280', fontSize: 12 }}>{s.desc}</td>
-                      <td style={{ padding: '10px 14px', fontWeight: 600, color: '#111827' }}>{s.score}/100</td>
+                      <td style={{ padding: '10px 14px', fontWeight: 600, color: '#1b3a5c' }}>{s.score}/100</td>
                       <td style={{ padding: '10px 14px' }}>
                         <Badge label={s.pass ? 'Pass' : 'Fail'} color={s.pass ? 'green' : 'red'} />
                       </td>
@@ -446,7 +446,7 @@ export default function SFDRArt9Page() {
                   data={[{ name: 'Downgrade Risk', value: downgrade.riskScore, fill: downgrade.riskScore >= 70 ? '#ef4444' : downgrade.riskScore >= 45 ? '#f59e0b' : '#059669' }]}
                   startAngle={180} endAngle={0}>
                   <RadialBar minAngle={15} dataKey="value" cornerRadius={8} />
-                  <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 28, fontWeight: 700, fill: '#111827' }}>{downgrade.riskScore}</text>
+                  <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 28, fontWeight: 700, fill: '#1b3a5c' }}>{downgrade.riskScore}</text>
                   <text x="50%" y="68%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 13, fill: '#6b7280' }}>/ 100</text>
                 </RadialBarChart>
               </ResponsiveContainer>

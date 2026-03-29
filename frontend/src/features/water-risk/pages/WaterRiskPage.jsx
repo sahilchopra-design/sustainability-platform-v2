@@ -12,7 +12,7 @@ const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.flo
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -37,7 +37,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -181,7 +181,7 @@ export default function WaterRiskPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Water Risk & Stewardship Finance</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Water Risk & Stewardship Finance</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>WRI AQUEDUCT 4.0 · CDP Water · TNFD E3 · AWS Standard v2</p>
       </div>
 
@@ -245,7 +245,7 @@ export default function WaterRiskPage() {
                 {aqueduct.subScores.map((s, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
                     <td style={{ padding: '8px 12px', color: '#374151' }}>{s.name}</td>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#111827' }}>{s.value}</td>
+                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1b3a5c' }}>{s.value}</td>
                     <td style={{ padding: '8px 12px' }}>
                       <Badge label={s.value >= 3.5 ? 'Extremely High' : s.value >= 2.5 ? 'High' : s.value >= 1.5 ? 'Medium-High' : 'Low-Medium'} color={s.value >= 3.5 ? 'red' : s.value >= 2.5 ? 'orange' : s.value >= 1.5 ? 'yellow' : 'green'} />
                     </td>

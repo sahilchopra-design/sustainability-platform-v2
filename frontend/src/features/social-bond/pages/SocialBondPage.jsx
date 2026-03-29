@@ -12,7 +12,7 @@ const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.flo
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -30,7 +30,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -142,7 +142,7 @@ export default function SocialBondPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Social Bond & Impact Finance (E85)</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Social Bond & Impact Finance (E85)</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>ICMA SBP Compliance · Use of Proceeds · Target Population · Social KPIs & SDGs · Bond Overview</p>
       </div>
 
@@ -229,7 +229,7 @@ export default function SocialBondPage() {
                   <tbody>
                     {proceedCategories.map((r, i) => (
                       <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                        <td style={{ padding: '8px 10px', fontWeight: 500, color: '#111827' }}>{r.name}</td>
+                        <td style={{ padding: '8px 10px', fontWeight: 500, color: '#1b3a5c' }}>{r.name}</td>
                         <td style={{ padding: '8px 10px', color: '#374151' }}>{r.amount}</td>
                         <td style={{ padding: '8px 10px', color: '#6b7280' }}>{((r.amount / totalProceeds) * 100).toFixed(1)}%</td>
                         <td style={{ padding: '8px 10px' }}><span style={{ fontSize: 16, color: r.eligible ? '#059669' : '#9ca3af' }}>{r.eligible ? '✓' : '✗'}</span></td>
@@ -323,7 +323,7 @@ export default function SocialBondPage() {
               <tbody>
                 {kpiList.map((k, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{k.name}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{k.name}</td>
                     <td style={{ padding: '10px 12px', color: '#374151', fontWeight: 600 }}>{k.value.toLocaleString()}</td>
                     <td style={{ padding: '10px 12px', color: '#6b7280' }}>{k.unit}</td>
                     <td style={{ padding: '10px 12px' }}><Badge label={k.sdg} color="blue" /></td>

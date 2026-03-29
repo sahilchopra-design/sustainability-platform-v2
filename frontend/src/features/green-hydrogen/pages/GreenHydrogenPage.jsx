@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 
 const API = 'http://localhost:8001';
+const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const seededRandom = (seed) => {
   let x = Math.sin(seed * 9301 + 49297) * 233280;
@@ -22,7 +23,7 @@ const hashStr = (s) => {
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -40,7 +41,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -231,7 +232,7 @@ export default function GreenHydrogenPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Green Hydrogen Assessment</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Green Hydrogen Assessment</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>RFNBO Delegated Act · GHG Intensity · LCOH Economics · REPowerEU 2030 · H2 CfD & Certification</p>
       </div>
 
@@ -277,7 +278,7 @@ export default function GreenHydrogenPage() {
               <tbody>
                 {rfnbo.criteria.map((c, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: c.pass ? '#f0fdf4' : '#fef2f2' }}>
-                    <td style={{ padding: '10px 14px', fontWeight: 600, color: '#111827' }}>{c.name}</td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600, color: '#1b3a5c' }}>{c.name}</td>
                     <td style={{ padding: '10px 14px', color: '#6b7280', fontSize: 13 }}>{c.requirement}</td>
                     <td style={{ padding: '10px 14px', color: '#374151' }}>{c.value}</td>
                     <td style={{ padding: '10px 14px' }}><Badge label={c.pass ? '✓ Pass' : '✗ Fail'} color={c.pass ? 'green' : 'red'} /></td>
@@ -292,7 +293,7 @@ export default function GreenHydrogenPage() {
                 <div style={{ fontSize: 13, color: '#374151', width: 140 }}>Current: {rfnbo.ghgIntensity} kg</div>
                 <div style={{ flex: 1, background: '#e5e7eb', borderRadius: 8, height: 20, position: 'relative' }}>
                   <div style={{ background: rfnbo.ghgIntensity <= rfnbo.RFNBO_THRESHOLD ? '#059669' : '#ef4444', height: '100%', borderRadius: 8, width: `${Math.min(100, (rfnbo.ghgIntensity / 10) * 100)}%` }} />
-                  <div style={{ position: 'absolute', top: 0, left: `${(rfnbo.RFNBO_THRESHOLD / 10) * 100}%`, height: '100%', width: 2, background: '#111827' }} />
+                  <div style={{ position: 'absolute', top: 0, left: `${(rfnbo.RFNBO_THRESHOLD / 10) * 100}%`, height: '100%', width: 2, background: '#1b3a5c' }} />
                 </div>
                 <div style={{ fontSize: 13, color: '#6b7280', width: 100 }}>Max: 10.0 kg</div>
               </div>

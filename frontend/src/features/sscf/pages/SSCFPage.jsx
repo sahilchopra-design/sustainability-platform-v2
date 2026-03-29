@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 
 const API = 'http://localhost:8001';
+const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const hashStr = (s) => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
 const seededRandom = (seed) => { let x = Math.sin(Math.abs(seed) * 9301 + 49297) * 233280; return x - Math.floor(x); };
 const sr = (seed, offset = 0) => seededRandom(seed + offset);
@@ -15,7 +16,7 @@ const PIE_COLORS = ['#059669', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -40,7 +41,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -173,7 +174,7 @@ export default function SSCFPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Sustainable Supply Chain Finance (SSCF)</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Sustainable Supply Chain Finance (SSCF)</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>LMA SSCF 2023 · ICC SCF 2022 · GSCFF 2023 · OECD DDG · CSDDD Cascade · Margin Ratchet Modelling</p>
       </div>
 
@@ -262,7 +263,7 @@ export default function SSCFPage() {
               <tbody>
                 {d.suppliers.map((s, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#111827' }}>{s.name}</td>
+                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1b3a5c' }}>{s.name}</td>
                     <td style={{ padding: '8px 12px', color: '#374151' }}>{s.country}</td>
                     <td style={{ padding: '8px 12px', color: '#374151' }}>Tier {s.tier}</td>
                     <td style={{ padding: '8px 12px', fontWeight: 600, color: s.esgScore >= 70 ? '#059669' : s.esgScore >= 50 ? '#d97706' : '#dc2626' }}>{s.esgScore}/100</td>
@@ -313,7 +314,7 @@ export default function SSCFPage() {
                 <tbody>
                   {d.sptData.map((s, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: '#111827' }}>{s.name}</td>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1b3a5c' }}>{s.name}</td>
                       <td style={{ padding: '8px 12px', color: '#374151' }}>{s.threshold}</td>
                       <td style={{ padding: '8px 12px', color: '#374151' }}>{s.currentPerf}</td>
                       <td style={{ padding: '8px 12px', color: '#059669', fontWeight: 700 }}>-{s.bps} bps</td>
@@ -369,7 +370,7 @@ export default function SSCFPage() {
                     <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
                       <td style={{ padding: '8px 12px', color: '#374151' }}>{ai.impact}</td>
                       <td style={{ padding: '8px 12px' }}><Badge label={ai.severity} color={ai.severity === 'High' ? 'red' : ai.severity === 'Medium' ? 'yellow' : 'gray'} /></td>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: '#111827' }}>{ai.suppliers}</td>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1b3a5c' }}>{ai.suppliers}</td>
                     </tr>
                   ))}
                 </tbody>

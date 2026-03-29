@@ -12,7 +12,7 @@ const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.flo
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -37,7 +37,7 @@ const Inp = ({ label, value, onChange, type = 'text', placeholder = '' }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -159,7 +159,7 @@ export default function GreenSecuritisationPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Green Securitisation</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Green Securitisation</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>EU GBS 2023/2631 · RMBS / ABS / CLO / CMBS · CRREM · Climate Pass-Through · E81</p>
       </div>
 
@@ -269,10 +269,10 @@ export default function GreenSecuritisationPage() {
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', marginBottom: 8, border: `1px solid ${r.status ? '#bbf7d0' : '#fecaca'}`, borderRadius: 8, background: r.status ? '#f0fdf4' : '#fef2f2' }}>
                 <span style={{ fontSize: 20, color: r.status ? '#059669' : '#ef4444' }}>{r.status ? '✓' : '✗'}</span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{r.req}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: '#1b3a5c' }}>{r.req}</div>
                   <div style={{ fontSize: 12, color: '#6b7280' }}>{r.detail}</div>
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>{r.score}/100</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#1b3a5c' }}>{r.score}/100</div>
                 <Badge label={r.status ? 'Met' : 'Gap'} color={r.status ? 'green' : 'red'} />
               </div>
             ))}
@@ -352,7 +352,7 @@ export default function GreenSecuritisationPage() {
               <tbody>
                 {climateRiskData.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.asset}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.asset}</td>
                     <td style={{ padding: '10px 12px', color: r.physicalVar > 3 ? '#dc2626' : '#374151' }}>{r.physicalVar}%</td>
                     <td style={{ padding: '10px 12px', color: r.transitionVar > 4 ? '#dc2626' : '#374151' }}>{r.transitionVar}%</td>
                     <td style={{ padding: '10px 12px', color: r.pdUplift > 15 ? '#dc2626' : '#374151' }}>{r.pdUplift} bps</td>
@@ -439,7 +439,7 @@ export default function GreenSecuritisationPage() {
               <tbody>
                 {geoHazardData.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.region}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.region}</td>
                     {[r.flood, r.heat, r.subsidence, r.fire].map((h, j) => {
                       const c = hazardColor(h);
                       return (
@@ -448,7 +448,7 @@ export default function GreenSecuritisationPage() {
                         </td>
                       );
                     })}
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{r.exposure}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{r.exposure}</td>
                   </tr>
                 ))}
               </tbody>
@@ -487,7 +487,7 @@ export default function GreenSecuritisationPage() {
               ].map((rec, i) => (
                 <div key={i} style={{ padding: '14px 16px', border: '1px solid #e5e7eb', borderRadius: 8, background: 'white' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{rec.title}</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1b3a5c' }}>{rec.title}</div>
                     <Badge label={rec.status} color={rec.color} />
                   </div>
                   <div style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>{rec.body}</div>

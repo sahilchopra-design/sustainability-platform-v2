@@ -14,7 +14,7 @@ const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.flo
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
     <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{value}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
 );
@@ -39,7 +39,7 @@ const Sel = ({ label, value, onChange, options }) => (
 );
 const Section = ({ title, children }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
     {children}
   </div>
 );
@@ -176,7 +176,7 @@ export default function ClimateFinancialStatementsPage() {
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Climate Financial Statements (E86)</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Climate Financial Statements (E86)</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>IFRS S2 · Impairment & Provisions · Stranded Assets · Climate P&L · Scenario Analysis</p>
       </div>
 
@@ -290,7 +290,7 @@ export default function ClimateFinancialStatementsPage() {
                   <tbody>
                     {provisionTypes.map((p, i) => (
                       <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                        <td style={{ padding: '9px 10px', fontWeight: 500, color: '#111827' }}>{p.name}</td>
+                        <td style={{ padding: '9px 10px', fontWeight: 500, color: '#1b3a5c' }}>{p.name}</td>
                         <td style={{ padding: '9px 10px', fontWeight: 700, color: '#374151' }}>€{p.value}M</td>
                         <td style={{ padding: '9px 10px', color: '#6b7280' }}>{i === 0 ? 'Present obligation — ETS Phase 4' : i === 1 ? 'Constructive obligation — carbon tax' : i === 2 ? 'Best estimate — NatCat deductibles' : i === 3 ? 'Legal obligation — env. remediation' : 'Constructive obligation — transition'}</td>
                       </tr>
@@ -359,7 +359,7 @@ export default function ClimateFinancialStatementsPage() {
                   const rc = risk === 'Imminent' ? 'red' : risk === 'Near-Term' ? 'yellow' : 'blue';
                   return (
                     <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{a.type}</td>
+                      <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{a.type}</td>
                       <td style={{ padding: '10px 12px', color: '#374151', fontWeight: 600 }}>€{a.exposureM}M</td>
                       <td style={{ padding: '10px 12px', color: '#374151' }}>{a.writedownYr}</td>
                       <td style={{ padding: '10px 12px', color: '#dc2626', fontWeight: 700 }}>€{writedown}M</td>
