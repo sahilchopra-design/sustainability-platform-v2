@@ -229,6 +229,8 @@ const ChangeManagementPage = React.lazy(() => import("./features/change-manageme
 const GovernanceHubPage = React.lazy(() => import("./features/governance-hub/pages/GovernanceHubPage"));
 const CorporateGovernancePage = React.lazy(() => import("./features/corporate-governance/pages/CorporateGovernancePage"));
 const GeopoliticalAiGovPage = React.lazy(() => import("./features/geopolitical-ai-gov/pages/GeopoliticalAiGovPage"));
+// Integrated Carbon Emissions Hub
+const IntegratedCarbonEmissionsPage = React.lazy(() => import("./features/integrated-carbon-emissions/pages/IntegratedCarbonEmissionsPage"));
 // Sprint Z — Consumer Carbon Intelligence
 const CarbonCalculatorPage = React.lazy(() => import("./features/carbon-calculator/pages/CarbonCalculatorPage"));
 const CarbonWalletPage = React.lazy(() => import("./features/carbon-wallet/pages/CarbonWalletPage"));
@@ -465,6 +467,7 @@ const NAV_GROUPS = [
     { path: '/em-climate-risk', label: 'EM Climate Risk', badge: 'IFC PS6', code: 'E87' },
   ]},
   { label: 'Carbon & Emissions', icon: '\uD83C\uDF2B\uFE0F', color: PASTEL[1], items: [
+    { path: '/integrated-carbon-emissions', label: 'Integrated Carbon Hub', badge: 'Hub · All Scopes · 150 Holdings · 8 Tabs · Board Report', code: 'ICE-001' },
     { path: '/carbon-accounting-ai', label: 'Carbon Accounting AI', badge: 'GHG Protocol', code: 'E78' },
     { path: '/carbon-removal', label: 'Carbon Removal & CDR', badge: 'Oxford', code: 'E90' },
     { path: '/internal-carbon-price', label: 'Internal Carbon Price', badge: 'SBTi ICP', code: 'E84' },
@@ -1497,6 +1500,7 @@ function AppContent() {
             <Route path="/impact-verification"       element={<ImpactVerificationPage />} />
             <Route path="/impact-hub"                element={<ImpactHubPage />} />
             {/* Sprint Z — Consumer Carbon Intelligence */}
+            <Route path="/integrated-carbon-emissions" element={<IntegratedCarbonEmissionsPage />} />
             <Route path="/carbon-calculator"          element={<CarbonCalculatorPage />} />
             <Route path="/carbon-wallet"              element={<CarbonWalletPage />} />
             <Route path="/invoice-parser"             element={<InvoiceParserPage />} />
