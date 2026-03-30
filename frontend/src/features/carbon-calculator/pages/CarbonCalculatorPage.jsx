@@ -1,1177 +1,2525 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, RadialBarChart, RadialBar } from 'recharts';
-import { TRANSPORT_FACTORS, SPEND_FACTORS, ENERGY_FACTORS, GWP_AR6, TRANSPORT_KG_PER_KM } from '../../../data/emissionFactors';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { EMISSION_FACTORS, GWP_VALUES, GRID_INTENSITY, SECTOR_BENCHMARKS, getGridIntensity, getSectorBenchmark } from '../../../data/referenceData';
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GHG Protocol-Aligned Carbon Emission Calculator
+   ─────────────────────────────────────────────────────────────────────────────
+   Foundation module feeding: PCAF, SBTi, CSRD ESRS E1, SFDR PAI #1-3,
+   Portfolio Temperature Score, CBAM, Carbon Budget
+   Standards: GHG Protocol Corporate Standard (Rev. 2015), Scope 2 Guidance
+   (2015), Corporate Value Chain (Scope 3) Standard (2013)
+   ═══════════════════════════════════════════════════════════════════════════════ */
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 
-/* ─── Product Carbon Database (200+ products, 12 categories) ─── */
-const PRODUCT_CARBON_DB = {
-  food_drink: {
-    name: 'Food & Drink', icon: '\🍔', color: '#dc2626',
-    products: [
-      { id:'F001', name:'Beef (conventional)', carbon_kg:27.0, water_l:15400, land_m2:164, unit:'per kg', category:'Protein', sustainable_alt:'F002', alt_saving_pct:93, fun_fact:'Equivalent to driving 100 km in a car' },
-      { id:'F002', name:'Plant-based burger (Beyond/Impossible)', carbon_kg:1.9, water_l:1800, land_m2:3.5, unit:'per kg', category:'Protein', label:'Low Carbon' },
-      { id:'F003', name:'Chicken', carbon_kg:6.9, water_l:4300, land_m2:7.1, unit:'per kg', category:'Protein' },
-      { id:'F004', name:'Pork', carbon_kg:7.6, water_l:5990, land_m2:11, unit:'per kg', category:'Protein' },
-      { id:'F005', name:'Salmon (farmed)', carbon_kg:5.1, water_l:2000, land_m2:4, unit:'per kg', category:'Protein' },
-      { id:'F006', name:'Tofu', carbon_kg:2.0, water_l:2500, land_m2:2.2, unit:'per kg', category:'Protein', label:'Low Carbon' },
-      { id:'F007', name:'Eggs', carbon_kg:4.5, water_l:3300, land_m2:5.7, unit:'per dozen', category:'Protein' },
-      { id:'F008', name:'Lentils/Beans', carbon_kg:0.9, water_l:1250, land_m2:1.4, unit:'per kg', category:'Protein', label:'Lowest Carbon' },
-      { id:'F009', name:'Shrimp (farmed)', carbon_kg:12.0, water_l:3500, unit:'per kg', category:'Protein' },
-      { id:'F010', name:'Cow milk', carbon_kg:3.15, water_l:1020, unit:'per litre', category:'Dairy', sustainable_alt:'F011', alt_saving_pct:70 },
-      { id:'F011', name:'Oat milk', carbon_kg:0.9, water_l:48, unit:'per litre', category:'Dairy', label:'Low Carbon' },
-      { id:'F012', name:'Cheese (hard)', carbon_kg:13.5, water_l:5060, unit:'per kg', category:'Dairy' },
-      { id:'F013', name:'Butter', carbon_kg:11.5, water_l:5550, unit:'per kg', category:'Dairy' },
-      { id:'F014', name:'Yogurt', carbon_kg:2.5, water_l:1040, unit:'per kg', category:'Dairy' },
-      { id:'F015', name:'Almond milk', carbon_kg:0.7, water_l:371, unit:'per litre', category:'Dairy', label:'Low Carbon' },
-      { id:'F016', name:'Soy milk', carbon_kg:0.9, water_l:28, unit:'per litre', category:'Dairy', label:'Low Carbon' },
-      { id:'F017', name:'Cream cheese', carbon_kg:8.5, water_l:3800, unit:'per kg', category:'Dairy' },
-      { id:'F018', name:'Ice cream', carbon_kg:4.2, water_l:2400, unit:'per kg', category:'Dairy' },
-      { id:'F020', name:'Rice', carbon_kg:2.7, water_l:2500, unit:'per kg', category:'Grains', fun_fact:'Methane from paddy fields' },
-      { id:'F021', name:'Wheat bread', carbon_kg:0.8, water_l:1600, unit:'per kg', category:'Grains', label:'Low Carbon' },
-      { id:'F022', name:'Pasta', carbon_kg:1.3, water_l:1850, unit:'per kg', category:'Grains' },
-      { id:'F023', name:'Potatoes', carbon_kg:0.3, water_l:287, unit:'per kg', category:'Vegetables', label:'Lowest Carbon' },
-      { id:'F024', name:'Oats', carbon_kg:0.5, water_l:900, unit:'per kg', category:'Grains', label:'Lowest Carbon' },
-      { id:'F025', name:'Quinoa', carbon_kg:1.2, water_l:1400, unit:'per kg', category:'Grains' },
-      { id:'F026', name:'Corn/Maize', carbon_kg:0.5, water_l:700, unit:'per kg', category:'Grains', label:'Lowest Carbon' },
-      { id:'F030', name:'Tomatoes (local, seasonal)', carbon_kg:0.7, unit:'per kg', category:'Vegetables' },
-      { id:'F031', name:'Tomatoes (heated greenhouse)', carbon_kg:3.5, unit:'per kg', category:'Vegetables' },
-      { id:'F032', name:'Bananas', carbon_kg:0.7, unit:'per kg', category:'Fruit', fun_fact:'Shipped by boat, not plane \— surprisingly low carbon' },
-      { id:'F033', name:'Avocado', carbon_kg:2.5, water_l:2000, unit:'per kg', category:'Fruit' },
-      { id:'F034', name:'Berries (air-freighted)', carbon_kg:7.8, unit:'per kg', category:'Fruit', fun_fact:'Air freight = 50\× the emissions of sea freight' },
-      { id:'F035', name:'Apples (local)', carbon_kg:0.3, unit:'per kg', category:'Fruit', label:'Lowest Carbon' },
-      { id:'F036', name:'Oranges', carbon_kg:0.5, unit:'per kg', category:'Fruit' },
-      { id:'F037', name:'Mangoes (imported)', carbon_kg:1.5, unit:'per kg', category:'Fruit' },
-      { id:'F038', name:'Grapes', carbon_kg:1.1, unit:'per kg', category:'Fruit' },
-      { id:'F039', name:'Lettuce/Salad', carbon_kg:0.4, unit:'per kg', category:'Vegetables' },
-      { id:'F040', name:'Coffee (per cup)', carbon_kg:0.21, water_l:140, unit:'per cup', category:'Beverage' },
-      { id:'F041', name:'Tea (per cup)', carbon_kg:0.05, water_l:34, unit:'per cup', category:'Beverage', label:'Lowest Carbon' },
-      { id:'F042', name:'Beer (per pint)', carbon_kg:0.5, unit:'per pint', category:'Beverage' },
-      { id:'F043', name:'Wine (per glass)', carbon_kg:0.4, unit:'per glass', category:'Beverage' },
-      { id:'F044', name:'Orange juice', carbon_kg:1.5, unit:'per litre', category:'Beverage' },
-      { id:'F045', name:'Soft drink (can)', carbon_kg:0.3, unit:'per 330ml', category:'Beverage' },
-      { id:'F046', name:'Bottled water', carbon_kg:0.16, unit:'per litre', category:'Beverage', fun_fact:'Tap water is ~300x less carbon' },
-      { id:'F050', name:'Chocolate bar (dark)', carbon_kg:1.9, unit:'per 100g bar', category:'Snacks', deforestation_risk:true },
-      { id:'F051', name:'Chocolate bar (milk)', carbon_kg:2.8, unit:'per 100g bar', category:'Snacks', deforestation_risk:true },
-      { id:'F052', name:'Potato chips', carbon_kg:0.4, unit:'per 100g bag', category:'Snacks' },
-      { id:'F053', name:'Nuts (mixed)', carbon_kg:0.3, unit:'per 100g', category:'Snacks', label:'Low Carbon' },
-      { id:'F054', name:'Granola bar', carbon_kg:0.5, unit:'per bar', category:'Snacks' },
-    ],
-  },
-  transport: {
-    name: 'Transport', icon: '\🚗', color: '#2563eb',
-    products: [
-      // carbon_kg values = DEFRA GHG Conversion Factors 2023 (kgCO2e/km), real published figures
-      { id:'T001', name:'Car (petrol, avg)', carbon_kg:0.1705, unit:'per km', category:'Drive', source:'DEFRA 2023' },
-      { id:'T002', name:'Car (diesel)', carbon_kg:0.1582, unit:'per km', category:'Drive', source:'DEFRA 2023' },
-      { id:'T003', name:'Car (electric, UK grid 2023)', carbon_kg:0.0465, unit:'per km', category:'Drive', label:'Low Carbon', source:'DEFRA 2023' },
-      { id:'T004', name:'Car (electric, renewable grid)', carbon_kg:0.01, unit:'per km', category:'Drive', label:'Lowest Carbon' },
-      { id:'T005', name:'Bus (avg UK)', carbon_kg:0.0820, unit:'per km', category:'Public', source:'DEFRA 2023' },
-      { id:'T006', name:'Train (UK average)', carbon_kg:0.0357, unit:'per km', category:'Public', label:'Low Carbon', source:'DEFRA 2023' },
-      { id:'T007', name:'Subway/Metro', carbon_kg:0.0280, unit:'per km', category:'Public', label:'Low Carbon', source:'DEFRA 2023' },
-      { id:'T008', name:'Bicycle', carbon_kg:0.005, unit:'per km', category:'Active', label:'Lowest Carbon' },
-      { id:'T009', name:'E-scooter (shared)', carbon_kg:0.04, unit:'per km', category:'Active' },
-      { id:'T010', name:'Flight (economy, short-haul)', carbon_kg:0.255, unit:'per km', category:'Air', source:'DEFRA 2023', fun_fact:'Includes radiative forcing index (RFI) uplift — real climate impact is higher than just CO\u2082' },
-      { id:'T011', name:'Flight (economy, long-haul)', carbon_kg:0.195, unit:'per km', category:'Air', source:'DEFRA 2023' },
-      { id:'T012', name:'Flight (business class)', carbon_kg:0.428, unit:'per km', category:'Air', source:'DEFRA 2023', fun_fact:'2.2\xD7 economy class per km — larger seat footprint' },
-      { id:'T013', name:'Taxi (average)', carbon_kg:0.149, unit:'per km', category:'Ride', source:'DEFRA 2023' },
-      { id:'T014', name:'Ferry (foot passenger)', carbon_kg:0.187, unit:'per km', category:'Water', source:'DEFRA 2023' },
-      { id:'T015', name:'Motorcycle (average)', carbon_kg:0.1033, unit:'per km', category:'Drive', source:'DEFRA 2023' },
-      { id:'T016', name:'Walking', carbon_kg:0.0, unit:'per km', category:'Active', label:'Zero Carbon' },
-      { id:'T017', name:'Hybrid car', carbon_kg:0.12, unit:'per km', category:'Drive' },
-      { id:'T018', name:'Carpool (4 people)', carbon_kg:0.0426, unit:'per km per person', category:'Drive', label:'Low Carbon', source:'DEFRA 2023' },
-    ],
-  },
-  fashion: {
-    name: 'Fashion & Clothing', icon: '\👕', color: '#7c3aed',
-    products: [
-      { id:'CL01', name:'Cotton T-shirt', carbon_kg:6.5, water_l:2700, unit:'per item', category:'Basics', sustainable_alt:'CL02', alt_saving_pct:23 },
-      { id:'CL02', name:'Organic cotton T-shirt', carbon_kg:5.0, water_l:1800, unit:'per item', label:'Better Choice' },
-      { id:'CL03', name:'Polyester T-shirt', carbon_kg:5.5, water_l:60, unit:'per item', category:'Basics', microplastic:true },
-      { id:'CL04', name:'Jeans', carbon_kg:33.4, water_l:10850, unit:'per pair', category:'Bottoms', fun_fact:'10,850 litres of water \— enough to fill a bathtub 70 times' },
-      { id:'CL05', name:'Dress (fast fashion)', carbon_kg:16.0, unit:'per item', category:'Dresses', wears_typical:7 },
-      { id:'CL06', name:'Dress (quality, long-lasting)', carbon_kg:20.0, unit:'per item', category:'Dresses', wears_typical:100, label:'Lower per-wear' },
-      { id:'CL07', name:'Sneakers/Running shoes', carbon_kg:13.6, unit:'per pair', category:'Footwear' },
-      { id:'CL08', name:'Leather shoes', carbon_kg:17.0, unit:'per pair', category:'Footwear', deforestation_risk:true },
-      { id:'CL09', name:'Winter jacket (synthetic)', carbon_kg:25.0, unit:'per item', category:'Outerwear' },
-      { id:'CL10', name:'Second-hand clothing (any)', carbon_kg:0.5, unit:'per item', label:'Lowest Carbon', fun_fact:'Extending garment life by 9 months cuts carbon by 30%' },
-      { id:'CL11', name:'Wool sweater', carbon_kg:18.0, water_l:4000, unit:'per item', category:'Outerwear' },
-      { id:'CL12', name:'Swimsuit', carbon_kg:5.5, unit:'per item', category:'Basics' },
-      { id:'CL13', name:'Socks (pair)', carbon_kg:1.2, unit:'per pair', category:'Basics' },
-      { id:'CL14', name:'Underwear', carbon_kg:1.8, unit:'per item', category:'Basics' },
-      { id:'CL15', name:'Linen shirt', carbon_kg:4.0, water_l:900, unit:'per item', category:'Basics', label:'Low Carbon' },
-    ],
-  },
-  electronics: {
-    name: 'Electronics', icon: '\📱', color: '#0891b2',
-    products: [
-      { id:'E001', name:'Smartphone (new)', carbon_kg:70, water_l:12700, unit:'per device', lifespan_yr:3, conflict_minerals:true },
-      { id:'E002', name:'Smartphone (refurbished)', carbon_kg:7, unit:'per device', label:'Low Carbon', fun_fact:'90% less carbon than new' },
-      { id:'E003', name:'Laptop', carbon_kg:350, water_l:190000, unit:'per device', lifespan_yr:5 },
-      { id:'E004', name:'Laptop (refurbished)', carbon_kg:35, unit:'per device', label:'Low Carbon' },
-      { id:'E005', name:'TV (55")', carbon_kg:600, unit:'per device', lifespan_yr:8 },
-      { id:'E006', name:'Tablet', carbon_kg:120, unit:'per device', lifespan_yr:4 },
-      { id:'E007', name:'Smart speaker', carbon_kg:25, unit:'per device' },
-      { id:'E008', name:'Gaming console', carbon_kg:85, unit:'per device' },
-      { id:'E009', name:'Wireless earbuds', carbon_kg:8, unit:'per pair', lifespan_yr:2 },
-      { id:'E010', name:'Streaming (1 hour HD)', carbon_kg:0.036, unit:'per hour', category:'Digital' },
-      { id:'E011', name:'Email (with attachment)', carbon_kg:0.05, unit:'per email', category:'Digital' },
-      { id:'E012', name:'Google search', carbon_kg:0.0003, unit:'per search', category:'Digital' },
-      { id:'E013', name:'Smart watch', carbon_kg:30, unit:'per device', lifespan_yr:3 },
-      { id:'E014', name:'Desktop computer', carbon_kg:500, unit:'per device', lifespan_yr:6 },
-      { id:'E015', name:'Monitor (27")', carbon_kg:200, unit:'per device', lifespan_yr:7 },
-      { id:'E016', name:'Router/Modem', carbon_kg:15, unit:'per device' },
-      { id:'E017', name:'USB flash drive', carbon_kg:0.5, unit:'per device' },
-      { id:'E018', name:'Printer (inkjet)', carbon_kg:45, unit:'per device' },
-    ],
-  },
-  home_energy: {
-    name: 'Home & Energy', icon: '\🏠', color: '#16a34a',
-    products: [
-      // Grid factors: Ember Global Electricity Review 2023 & DEFRA 2023 (kgCO2e/kWh)
-      { id:'H001', name:'Electricity (grid avg, India)', carbon_kg:0.632, unit:'per kWh', source:'Ember 2023' },
-      { id:'H002', name:'Electricity (grid avg, USA)', carbon_kg:0.386, unit:'per kWh', source:'EPA eGRID 2022' },
-      { id:'H003', name:'Electricity (grid avg, UK)', carbon_kg:0.2379, unit:'per kWh', source:'DEFRA / National Grid ESO 2023' },
-      { id:'H004', name:'Electricity (grid avg, France)', carbon_kg:0.056, unit:'per kWh', label:'Low Carbon', fun_fact:'Nuclear + hydro = very low carbon grid', source:'Ember 2023' },
-      { id:'H004b', name:'Electricity (grid avg, Germany)', carbon_kg:0.385, unit:'per kWh', source:'Ember 2023' },
-      { id:'H004c', name:'Electricity (grid avg, China)', carbon_kg:0.555, unit:'per kWh', source:'Ember 2023' },
-      { id:'H005', name:'Electricity (solar rooftop)', carbon_kg:0.04, unit:'per kWh', label:'Lowest Carbon' },
-      // Natural gas: DEFRA 2023 — 2.04249 kgCO2e/m³ (gross calorific value)
-      { id:'H006', name:'Natural gas (heating)', carbon_kg:2.04, unit:'per m\u00B3', source:'DEFRA 2023' },
-      { id:'H007', name:'LPG cooking gas', carbon_kg:2.95, unit:'per kg' },
-      { id:'H008', name:'LED lightbulb (lifetime)', carbon_kg:2.5, unit:'per bulb (50K hrs)', label:'Low Carbon' },
-      { id:'H009', name:'Incandescent bulb (lifetime)', carbon_kg:25, unit:'per bulb (1K hrs)' },
-      { id:'H010', name:'Hot shower (8 min)', carbon_kg:1.5, unit:'per shower' },
-      { id:'H011', name:'Washing machine load', carbon_kg:0.6, unit:'per load (40\°C)' },
-      { id:'H012', name:'Washing machine load (cold)', carbon_kg:0.2, unit:'per load', label:'Low Carbon' },
-      { id:'H013', name:'Dishwasher load', carbon_kg:0.7, unit:'per load' },
-      { id:'H014', name:'Air conditioning (1 hr)', carbon_kg:0.9, unit:'per hour' },
-      { id:'H015', name:'Electric heater (1 hr)', carbon_kg:1.2, unit:'per hour' },
-      { id:'H016', name:'Tumble dryer load', carbon_kg:2.4, unit:'per load' },
-    ],
-  },
-  travel_accommodation: {
-    name: 'Travel & Accommodation', icon: '\🏨', color: '#ea580c',
-    products: [
-      { id:'TA01', name:'Hotel night (luxury)', carbon_kg:32.5, unit:'per night' },
-      { id:'TA02', name:'Hotel night (mid-range)', carbon_kg:20.6, unit:'per night' },
-      { id:'TA03', name:'Hotel night (budget)', carbon_kg:10.2, unit:'per night' },
-      { id:'TA04', name:'Airbnb/apartment', carbon_kg:6.0, unit:'per night', label:'Low Carbon' },
-      { id:'TA05', name:'Hostel', carbon_kg:3.5, unit:'per night', label:'Lowest Carbon' },
-      { id:'TA06', name:'Camping', carbon_kg:0.8, unit:'per night', label:'Lowest Carbon' },
-      { id:'TA07', name:'Cruise ship (per day)', carbon_kg:85, unit:'per day', fun_fact:'Floating cities with huge fuel consumption' },
-      { id:'TA08', name:'London to Paris (Eurostar)', carbon_kg:5.0, unit:'per trip', label:'Low Carbon' },
-      { id:'TA09', name:'London to Paris (flight)', carbon_kg:55, unit:'per trip' },
-      { id:'TA10', name:'Delhi to Mumbai (train)', carbon_kg:14, unit:'per trip', label:'Low Carbon' },
-      { id:'TA11', name:'Delhi to Mumbai (flight)', carbon_kg:110, unit:'per trip' },
-    ],
-  },
-  personal_care: {
-    name: 'Personal Care', icon: '\🧴', color: '#be185d',
-    products: [
-      { id:'PC01', name:'Shampoo bottle (250ml)', carbon_kg:0.5, unit:'per bottle' },
-      { id:'PC02', name:'Shampoo bar', carbon_kg:0.15, unit:'per bar', label:'Low Carbon' },
-      { id:'PC03', name:'Disposable razor', carbon_kg:0.08, unit:'per razor' },
-      { id:'PC04', name:'Safety razor (steel)', carbon_kg:0.01, unit:'per shave', label:'Lowest Carbon' },
-      { id:'PC05', name:'Toothbrush (plastic)', carbon_kg:0.1, unit:'per brush' },
-      { id:'PC06', name:'Toothbrush (bamboo)', carbon_kg:0.03, unit:'per brush', label:'Low Carbon' },
-      { id:'PC07', name:'Deodorant (aerosol)', carbon_kg:0.4, unit:'per can' },
-      { id:'PC08', name:'Deodorant (roll-on)', carbon_kg:0.15, unit:'per bottle' },
-      { id:'PC09', name:'Sunscreen', carbon_kg:0.3, unit:'per tube' },
-      { id:'PC10', name:'Bar soap', carbon_kg:0.1, unit:'per bar', label:'Low Carbon' },
-      { id:'PC11', name:'Liquid soap (250ml)', carbon_kg:0.35, unit:'per bottle' },
-    ],
-  },
-  packaging: {
-    name: 'Packaging & Bags', icon: '\📦', color: '#92400e',
-    products: [
-      { id:'PK01', name:'Plastic bag', carbon_kg:0.033, unit:'per bag', microplastic:true },
-      { id:'PK02', name:'Paper bag', carbon_kg:0.08, unit:'per bag' },
-      { id:'PK03', name:'Reusable cotton bag', carbon_kg:0.002, unit:'per use (131+ uses)', label:'Lowest Carbon' },
-      { id:'PK04', name:'Plastic water bottle', carbon_kg:0.083, unit:'per bottle' },
-      { id:'PK05', name:'Aluminium can', carbon_kg:0.17, unit:'per can' },
-      { id:'PK06', name:'Glass bottle', carbon_kg:0.2, unit:'per bottle' },
-      { id:'PK07', name:'Cardboard box (medium)', carbon_kg:0.5, unit:'per box' },
-      { id:'PK08', name:'Cling wrap (per metre)', carbon_kg:0.01, unit:'per metre' },
-      { id:'PK09', name:'Beeswax wrap', carbon_kg:0.001, unit:'per use', label:'Lowest Carbon' },
-    ],
-  },
-  services: {
-    name: 'Services & Digital', icon: '\💻', color: '#6366f1',
-    products: [
-      { id:'SV01', name:'Haircut (salon)', carbon_kg:3.5, unit:'per visit' },
-      { id:'SV02', name:'Gym session', carbon_kg:1.2, unit:'per visit' },
-      { id:'SV03', name:'Doctor visit', carbon_kg:5.0, unit:'per visit' },
-      { id:'SV04', name:'Netflix (1 month)', carbon_kg:1.1, unit:'per month' },
-      { id:'SV05', name:'Cloud storage (1 GB/month)', carbon_kg:0.05, unit:'per month' },
-      { id:'SV06', name:'Video call (1 hour)', carbon_kg:0.15, unit:'per hour' },
-      { id:'SV07', name:'Social media (1 hr)', carbon_kg:0.06, unit:'per hour' },
-      { id:'SV08', name:'Online shopping delivery', carbon_kg:0.5, unit:'per package' },
-      { id:'SV09', name:'Dry cleaning (per item)', carbon_kg:2.0, unit:'per item' },
-    ],
-  },
-  pets: {
-    name: 'Pets', icon: '\🐶', color: '#b45309',
-    products: [
-      { id:'PT01', name:'Dog food (dry, per day)', carbon_kg:1.2, unit:'per day' },
-      { id:'PT02', name:'Cat food (wet, per day)', carbon_kg:0.8, unit:'per day' },
-      { id:'PT03', name:'Dog (medium, annual)', carbon_kg:770, unit:'per year', fun_fact:'A medium dog has the carbon footprint of a small car' },
-      { id:'PT04', name:'Cat (annual)', carbon_kg:310, unit:'per year' },
-      { id:'PT05', name:'Fish tank (annual)', carbon_kg:60, unit:'per year' },
-      { id:'PT06', name:'Hamster (annual)', carbon_kg:25, unit:'per year' },
-    ],
-  },
-  subscriptions: {
-    name: 'Subscriptions & Media', icon: '\📺', color: '#4f46e5',
-    products: [
-      { id:'SB01', name:'Newspaper (physical, daily)', carbon_kg:0.3, unit:'per day' },
-      { id:'SB02', name:'Newspaper (digital)', carbon_kg:0.01, unit:'per day', label:'Low Carbon' },
-      { id:'SB03', name:'Magazine (print)', carbon_kg:0.8, unit:'per issue' },
-      { id:'SB04', name:'Book (paperback)', carbon_kg:1.0, unit:'per book' },
-      { id:'SB05', name:'Book (e-reader, per read)', carbon_kg:0.05, unit:'per book', label:'Low Carbon' },
-      { id:'SB06', name:'Music streaming (1 hr)', carbon_kg:0.02, unit:'per hour', label:'Low Carbon' },
-      { id:'SB07', name:'Gaming (1 hr, console)', carbon_kg:0.07, unit:'per hour' },
-    ],
-  },
-  furniture: {
-    name: 'Furniture & Home', icon: '\🪑', color: '#65a30d',
-    products: [
-      { id:'FU01', name:'Sofa (new)', carbon_kg:90, unit:'per item' },
-      { id:'FU02', name:'Sofa (second-hand)', carbon_kg:5, unit:'per item', label:'Lowest Carbon' },
-      { id:'FU03', name:'Wooden desk', carbon_kg:50, unit:'per item' },
-      { id:'FU04', name:'Office chair', carbon_kg:72, unit:'per item' },
-      { id:'FU05', name:'Mattress', carbon_kg:100, unit:'per item' },
-      { id:'FU06', name:'Bookshelf', carbon_kg:35, unit:'per item' },
-      { id:'FU07', name:'Dining table (wood)', carbon_kg:60, unit:'per item' },
-      { id:'FU08', name:'Bed frame (metal)', carbon_kg:40, unit:'per item' },
-    ],
-  },
-};
-
-const ALL_PRODUCTS = Object.entries(PRODUCT_CARBON_DB).flatMap(([catKey, cat]) =>
-  cat.products.map(p => ({ ...p, catKey, catName: cat.name, catIcon: cat.icon, catColor: cat.color }))
-);
-
-function carbonEquivalent(kg_co2) {
-  return {
-    km_driving: (kg_co2 / 0.21).toFixed(0),
-    flights_london_paris: (kg_co2 / 55).toFixed(2),
-    trees_to_offset_1yr: (kg_co2 / 22).toFixed(1),
-    smartphone_charges: (kg_co2 / 0.008).toFixed(0),
-    cups_of_tea: (kg_co2 / 0.05).toFixed(0),
-    streaming_hours: (kg_co2 / 0.036).toFixed(0),
-    days_of_avg_person: (kg_co2 / (4700 / 365)).toFixed(1),
-  };
-}
-
-const LIFECYCLE_TEMPLATES = {
-  food_drink: [{ name:'Farming', pct:60 },{ name:'Processing', pct:15 },{ name:'Transport', pct:10 },{ name:'Packaging', pct:8 },{ name:'Retail', pct:4 },{ name:'Waste', pct:3 }],
-  transport: [{ name:'Fuel/Energy', pct:75 },{ name:'Vehicle Mfg', pct:15 },{ name:'Infrastructure', pct:7 },{ name:'Maintenance', pct:3 }],
-  fashion: [{ name:'Raw Materials', pct:30 },{ name:'Manufacturing', pct:35 },{ name:'Transport', pct:10 },{ name:'Retail', pct:5 },{ name:'Use (washing)', pct:15 },{ name:'Disposal', pct:5 }],
-  electronics: [{ name:'Raw Materials', pct:20 },{ name:'Manufacturing', pct:50 },{ name:'Transport', pct:5 },{ name:'Use Phase', pct:20 },{ name:'End of Life', pct:5 }],
-  home_energy: [{ name:'Generation', pct:70 },{ name:'Transmission', pct:10 },{ name:'Infrastructure', pct:15 },{ name:'Maintenance', pct:5 }],
-  default: [{ name:'Production', pct:50 },{ name:'Transport', pct:20 },{ name:'Use', pct:20 },{ name:'Disposal', pct:10 }],
-};
-
-const DAILY_BUDGET_KG = 6.3;
-const PIE_COLORS = ['#dc2626','#2563eb','#16a34a','#d97706','#7c3aed','#0891b2','#ea580c','#be185d'];
-const DATA_SOURCES = [
-  'Our World in Data (Poore & Nemecek, 2018) — food lifecycle data',
-  'UK DEFRA GHG Conversion Factors 2023 — transport, energy, spend-based factors (gov.uk)',
-  'EPA eGRID 2022 — US electricity grid emission factors (epa.gov/egrid)',
-  'IPCC AR6 WG1 Chapter 7, Table 7.SM.7 (2021) — GWP100 values',
-  'Ecoinvent v3.9 — manufacturing lifecycle inventory',
-  'WRAP Carbon Footprint Reports — fashion & textiles',
-  'Ember Global Electricity Review 2023 — grid carbon intensity by country (CC BY 4.0)',
+/* ─── Shared tab list ─── */
+const TABS = [
+  { key:'boundary',  label:'Organizational Boundary' },
+  { key:'scope1',    label:'Scope 1 \u2014 Direct' },
+  { key:'scope2',    label:'Scope 2 \u2014 Energy Indirect' },
+  { key:'scope3',    label:'Scope 3 \u2014 Value Chain' },
+  { key:'gwp',       label:'GWP & Conversions' },
+  { key:'summary',   label:'GHG Inventory Summary' },
+  { key:'downstream', label:'Downstream Connections' },
 ];
 
-function getStoredCart() { try { return JSON.parse(localStorage.getItem('ra_carbon_cart_v1') || '[]'); } catch { return []; } }
-function saveCart(c) { localStorage.setItem('ra_carbon_cart_v1', JSON.stringify(c)); }
-function getSearchHistory() { try { return JSON.parse(localStorage.getItem('ra_carbon_searches_v1') || '[]'); } catch { return []; } }
-function saveSearchHistory(h) { localStorage.setItem('ra_carbon_searches_v1', JSON.stringify(h.slice(0, 20))); }
+/* ─── Reusable micro-components ─── */
+const KPICard=({label,value,sub,color,trend})=>(
+  <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:'16px 20px',minWidth:170,flex:1}}>
+    <div style={{fontFamily:T.font,fontSize:11,color:T.textMut,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:4}}>{label}</div>
+    <div style={{fontFamily:T.mono,fontSize:22,fontWeight:700,color:color||T.navy}}>{value}</div>
+    {sub&&<div style={{fontFamily:T.font,fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}
+    {trend!=null&&<div style={{fontFamily:T.mono,fontSize:11,color:trend>=0?T.red:T.green,marginTop:2}}>{trend>=0?'+':''}{trend.toFixed(1)}% YoY</div>}
+  </div>
+);
 
-export default function CarbonCalculatorPage() {
-  const navigate = useNavigate();
-  const [search, setSearch] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [activeCat, setActiveCat] = useState(null);
-  const [compareList, setCompareList] = useState([]);
-  const [compareMode, setCompareMode] = useState(false);
-  const [cart, setCart] = useState(getStoredCart);
-  const [qty, setQty] = useState(1);
-  const [showEquiv, setShowEquiv] = useState(false);
-  const [equivKg, setEquivKg] = useState(10);
-  const [country, setCountry] = useState('India');
-  const [showSources, setShowSources] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [showLabel, setShowLabel] = useState(false);
-  const [tab, setTab] = useState('search');
-  const searchRef = useRef(null);
+const Badge=({label,color})=>(
+  <span style={{display:'inline-block',fontFamily:T.mono,fontSize:10,fontWeight:600,color:color||T.navy,background:(color||T.navy)+'18',border:`1px solid ${(color||T.navy)}30`,borderRadius:4,padding:'2px 7px',marginLeft:4}}>{label}</span>
+);
 
-  useEffect(() => { saveCart(cart); }, [cart]);
+const Panel=({title,children,collapsible,defaultOpen=true,citation})=>{
+  const [open,setOpen]=useState(defaultOpen);
+  return(
+    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,marginBottom:16,overflow:'hidden'}}>
+      <div onClick={collapsible?()=>setOpen(!open):undefined} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'12px 20px',borderBottom:open?`1px solid ${T.border}`:'none',cursor:collapsible?'pointer':'default',background:T.surfaceH}}>
+        <span style={{fontFamily:T.font,fontSize:14,fontWeight:700,color:T.navy}}>{title}</span>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          {citation&&<span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{citation}</span>}
+          {collapsible&&<span style={{fontFamily:T.mono,fontSize:12,color:T.textMut}}>{open?'\u25B2':'\u25BC'}</span>}
+        </div>
+      </div>
+      {open&&<div style={{padding:'16px 20px'}}>{children}</div>}
+    </div>
+  );
+};
 
-  const filteredProducts = useMemo(() => {
-    if (!search.trim()) return [];
-    const q = search.toLowerCase();
-    return ALL_PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q) || p.catName.toLowerCase().includes(q)).slice(0, 20);
-  }, [search]);
+const Inp=({label,value,onChange,type='text',unit,placeholder,width,disabled,style:sx})=>(
+  <div style={{display:'inline-flex',flexDirection:'column',gap:2,...sx}}>
+    {label&&<label style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{label}</label>}
+    <div style={{display:'flex',alignItems:'center',gap:4}}>
+      <input value={value} onChange={e=>onChange(type==='number'?parseFloat(e.target.value)||0:e.target.value)} type={type} placeholder={placeholder}
+        disabled={disabled}
+        style={{fontFamily:T.mono,fontSize:12,padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:4,background:disabled?T.surfaceH:T.surface,color:T.text,width:width||120,outline:'none'}} />
+      {unit&&<span style={{fontFamily:T.mono,fontSize:10,color:T.textMut}}>{unit}</span>}
+    </div>
+  </div>
+);
 
-  const categoryProducts = useMemo(() => {
-    if (!activeCat) return [];
-    return PRODUCT_CARBON_DB[activeCat]?.products || [];
-  }, [activeCat]);
+const Sel=({label,value,onChange,options,width,disabled})=>(
+  <div style={{display:'inline-flex',flexDirection:'column',gap:2}}>
+    {label&&<label style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{label}</label>}
+    <select value={value} onChange={e=>onChange(e.target.value)} disabled={disabled}
+      style={{fontFamily:T.mono,fontSize:12,padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:4,background:disabled?T.surfaceH:T.surface,color:T.text,width:width||180}}>
+      {options.map(o=><option key={typeof o==='string'?o:o.value} value={typeof o==='string'?o:o.value}>{typeof o==='string'?o:o.label}</option>)}
+    </select>
+  </div>
+);
 
-  const categoryLeaderboard = useMemo(() => {
-    if (!activeCat) return [];
-    return [...(PRODUCT_CARBON_DB[activeCat]?.products || [])].sort((a, b) => a.carbon_kg - b.carbon_kg);
-  }, [activeCat]);
+const Btn=({children,onClick,variant='primary',small,disabled,style:sx})=>{
+  const bg=variant==='primary'?T.navy:variant==='gold'?T.gold:variant==='danger'?T.red:'transparent';
+  const fg=variant==='ghost'?T.navy:'#fff';
+  const bd=variant==='ghost'?`1px solid ${T.border}`:'none';
+  return <button onClick={onClick} disabled={disabled} style={{fontFamily:T.font,fontSize:small?11:12,fontWeight:600,padding:small?'4px 10px':'7px 16px',borderRadius:6,background:disabled?T.textMut:bg,color:fg,border:bd,cursor:disabled?'not-allowed':'pointer',opacity:disabled?.6:1,...sx}}>{children}</button>;
+};
 
-  const cartTotal = useMemo(() => cart.reduce((s, c) => s + c.carbon_kg * c.qty, 0), [cart]);
-  const cartEquiv = useMemo(() => carbonEquivalent(cartTotal), [cartTotal]);
+const TH=({children,w})=><th style={{fontFamily:T.font,fontSize:11,fontWeight:600,color:T.textSec,textAlign:'left',padding:'8px 10px',borderBottom:`1px solid ${T.border}`,width:w,whiteSpace:'nowrap',textTransform:'uppercase',letterSpacing:'.04em'}}>{children}</th>;
+const TD=({children,mono,color,align})=><td style={{fontFamily:mono?T.mono:T.font,fontSize:12,color:color||T.text,padding:'7px 10px',borderBottom:`1px solid ${T.border}`,textAlign:align||'left'}}>{children}</td>;
 
-  const selectProduct = useCallback((p) => {
-    setSelectedProduct(p);
-    setQty(1);
-    const hist = getSearchHistory();
-    if (!hist.find(h => h.id === p.id)) { saveSearchHistory([{ id: p.id, name: p.name, ts: Date.now() }, ...hist]); }
-  }, []);
+const InfoBox=({text,type='info'})=>{
+  const c=type==='warn'?T.amber:type==='error'?T.red:T.navyL;
+  return <div style={{fontFamily:T.font,fontSize:12,color:c,background:c+'10',border:`1px solid ${c}30`,borderRadius:6,padding:'10px 14px',marginBottom:12}}>{text}</div>;
+};
 
-  const addToCart = useCallback((p, q) => {
-    setCart(prev => {
-      const ex = prev.find(c => c.id === p.id);
-      if (ex) return prev.map(c => c.id === p.id ? { ...c, qty: c.qty + q } : c);
-      return [...prev, { ...p, qty: q }];
+const formatN=(n,d=1)=>{if(n==null||isNaN(n))return'\u2014';if(Math.abs(n)>=1e6)return(n/1e6).toFixed(d)+'M';if(Math.abs(n)>=1e3)return(n/1e3).toFixed(d)+'k';return n.toFixed(d);};
+const fmtCO2=(t)=>{if(t==null||isNaN(t))return'\u2014';if(t>=1e6)return(t/1e6).toFixed(2)+' MtCO2e';if(t>=1e3)return(t/1e3).toFixed(2)+' ktCO2e';return t.toFixed(2)+' tCO2e';};
+
+const COLORS=[T.navy,T.gold,T.sage,'#8b5cf6','#0ea5e9','#f59e0b','#ef4444','#10b981','#6366f1','#ec4899','#14b8a6','#f97316','#a855f7','#06b6d4','#84cc16'];
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   INITIAL DATA — demo entities, scope1/2/3 entries
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+const BOUNDARY_APPROACHES=[
+  {value:'equity',label:'Equity Share',desc:'Consolidate based on % economic interest in each entity'},
+  {value:'operational',label:'Operational Control',desc:'100% of emissions from entities where the company has operational control'},
+  {value:'financial',label:'Financial Control',desc:'100% of emissions from entities where the company has financial control'},
+];
+
+const initEntities=()=>[
+  {id:1,name:'Apex Holdings Ltd (Parent)',country:'GB',ownership:100,include:true,isParent:true},
+  {id:2,name:'Apex Manufacturing GmbH',country:'DE',ownership:100,include:true,isParent:false},
+  {id:3,name:'Apex Technologies Inc.',country:'US',ownership:75,include:true,isParent:false},
+  {id:4,name:'Apex India Pvt Ltd',country:'IN',ownership:51,include:true,isParent:false},
+  {id:5,name:'GreenField JV Pty Ltd',country:'AU',ownership:30,include:false,isParent:false},
+];
+
+const FUEL_TYPES=[
+  {value:'naturalGas_kWh',label:'Natural Gas (kWh)',unit:'kWh'},
+  {value:'diesel_kWh',label:'Diesel (kWh)',unit:'kWh'},
+  {value:'coal_kWh',label:'Coal (kWh)',unit:'kWh'},
+  {value:'lpg_kWh',label:'LPG (kWh)',unit:'kWh'},
+  {value:'fuelOil_kWh',label:'Fuel Oil (kWh)',unit:'kWh'},
+  {value:'biogas_kWh',label:'Biogas (kWh)',unit:'kWh'},
+  {value:'biomass_kWh',label:'Biomass (kWh)',unit:'kWh'},
+  {value:'naturalGas_m3',label:'Natural Gas (m\u00B3)',unit:'m\u00B3'},
+  {value:'diesel_litre',label:'Diesel (litres)',unit:'litres'},
+  {value:'petrol_litre',label:'Petrol (litres)',unit:'litres'},
+];
+
+const VEHICLE_TYPES=[
+  {value:'petrolCar',label:'Petrol Car'},
+  {value:'dieselCar',label:'Diesel Car'},
+  {value:'hybridCar',label:'Hybrid Car'},
+  {value:'electricCar',label:'Electric Car'},
+  {value:'bus',label:'Bus / Coach'},
+  {value:'taxi',label:'Taxi'},
+  {value:'trainNational',label:'National Rail'},
+  {value:'motorbike',label:'Motorbike'},
+];
+
+const INDUSTRY_PROCESSES=[
+  {value:'cement',label:'Cement (Clinker)',ef:830,unit:'kgCO2e/t',source:'GCCA / DEFRA 2023'},
+  {value:'steel_primary',label:'Steel (BF-BOF)',ef:1850,unit:'kgCO2e/t',source:'worldsteel / DEFRA 2023'},
+  {value:'steel_eaf',label:'Steel (EAF)',ef:410,unit:'kgCO2e/t',source:'worldsteel / DEFRA 2023'},
+  {value:'aluminium',label:'Aluminium (Primary)',ef:8400,unit:'kgCO2e/t',source:'IAI / DEFRA 2023'},
+  {value:'chemicals',label:'Chemicals (Average)',ef:2100,unit:'kgCO2e/t',source:'DEFRA 2023'},
+  {value:'glass',label:'Glass (Flat)',ef:910,unit:'kgCO2e/t',source:'DEFRA 2023'},
+  {value:'paper',label:'Paper (Virgin)',ef:920,unit:'kgCO2e/t',source:'DEFRA 2023'},
+  {value:'plastics',label:'Plastics (Average)',ef:3100,unit:'kgCO2e/t',source:'DEFRA 2023'},
+];
+
+const REFRIGERANT_TYPES=[
+  {value:'HFC_134a',label:'R-134a (HFC-134a)',gwp:GWP_VALUES.HFC_134a},
+  {value:'HFC_32',label:'R-32 (HFC-32)',gwp:GWP_VALUES.HFC_32},
+  {value:'HFC_125',label:'R-410A (HFC-125/32 blend)',gwp:2088},
+  {value:'HFC_227ea',label:'R-227ea',gwp:GWP_VALUES.HFC_227ea},
+  {value:'SF6',label:'SF\u2086 (Switchgear)',gwp:GWP_VALUES.SF6},
+  {value:'HFC_23',label:'HFC-23',gwp:GWP_VALUES.HFC_23},
+  {value:'HFC_143a',label:'R-143a',gwp:GWP_VALUES.HFC_143a},
+  {value:'HFC_245fa',label:'R-245fa',gwp:GWP_VALUES.HFC_245fa},
+];
+
+/* ─── Waste disposal methods (Scope 3 Cat 5) ─── */
+const WASTE_TYPES=[
+  {value:'landfill_mixed',label:'Landfill (Mixed Waste)',ef:0.587,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'landfill_organic',label:'Landfill (Organic/Food)',ef:0.623,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'incineration',label:'Incineration (w/ energy recovery)',ef:0.021,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'incineration_no_er',label:'Incineration (w/o energy recovery)',ef:0.467,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'recycling_paper',label:'Recycling \u2014 Paper/Cardboard',ef:0.021,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'recycling_plastics',label:'Recycling \u2014 Plastics',ef:0.021,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'recycling_metals',label:'Recycling \u2014 Metals',ef:0.021,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'recycling_glass',label:'Recycling \u2014 Glass',ef:0.021,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'composting',label:'Composting',ef:0.010,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'anaerobic_digestion',label:'Anaerobic Digestion',ef:0.010,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'hazardous',label:'Hazardous Waste Treatment',ef:0.850,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'construction',label:'Construction & Demolition',ef:0.014,unit:'tCO2e/t',source:'DEFRA 2023'},
+  {value:'electronics',label:'WEEE / E-waste',ef:0.035,unit:'tCO2e/t',source:'DEFRA 2023'},
+];
+
+/* ─── Freight transport modes (Scope 3 Cat 4/9) ─── */
+const FREIGHT_MODES=[
+  {value:'road_hgv',label:'Road \u2014 HGV (articulated)',ef:0.10480,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'road_lgv',label:'Road \u2014 LGV (van)',ef:0.58350,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'road_rigid',label:'Road \u2014 Rigid HGV',ef:0.15580,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'rail_freight',label:'Rail Freight',ef:0.02580,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'sea_container',label:'Sea \u2014 Container Ship',ef:0.01618,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'sea_bulk',label:'Sea \u2014 Bulk Carrier',ef:0.00500,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'sea_tanker',label:'Sea \u2014 Tanker',ef:0.00750,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'air_freight',label:'Air Freight',ef:1.12780,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'air_long',label:'Air Freight (Long Haul)',ef:0.60230,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'barge',label:'Inland Waterway / Barge',ef:0.03130,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+  {value:'pipeline',label:'Pipeline (liquids/gas)',ef:0.01100,unit:'kgCO2e/tonne-km',source:'DEFRA 2023'},
+];
+
+/* ─── Commute mode split options (Scope 3 Cat 7) ─── */
+const COMMUTE_MODES=[
+  {value:'car_solo',label:'Car (Solo Driver)',ef:0.17050,unit:'kgCO2e/km',pct:45,source:'DEFRA 2023'},
+  {value:'car_pool',label:'Car (Carpool 2+)',ef:0.08525,unit:'kgCO2e/km',pct:10,source:'DEFRA 2023 / 2-person'},
+  {value:'bus_transit',label:'Bus / Public Transit',ef:0.08200,unit:'kgCO2e/km',pct:15,source:'DEFRA 2023'},
+  {value:'rail_metro',label:'Rail / Metro',ef:0.03570,unit:'kgCO2e/km',pct:12,source:'DEFRA 2023'},
+  {value:'cycle_walk',label:'Cycling / Walking',ef:0.00000,unit:'kgCO2e/km',pct:8,source:'Zero emission'},
+  {value:'ev_car',label:'Electric Car',ef:0.04650,unit:'kgCO2e/km',pct:5,source:'DEFRA 2023'},
+  {value:'motorbike',label:'Motorbike / Scooter',ef:0.10330,unit:'kgCO2e/km',pct:3,source:'DEFRA 2023'},
+  {value:'wfh',label:'Work from Home',ef:0.00300,unit:'kgCO2e/day',pct:2,source:'IEA estimate'},
+];
+
+/* ─── Business travel modes (Scope 3 Cat 6) ─── */
+const BIZ_TRAVEL_MODES=[
+  {value:'flight_short_eco',label:'Short-Haul Flight (Economy)',ef:0.25500,unit:'kgCO2e/pkm',source:'DEFRA 2023 incl RFI'},
+  {value:'flight_long_eco',label:'Long-Haul Flight (Economy)',ef:0.19500,unit:'kgCO2e/pkm',source:'DEFRA 2023 incl RFI'},
+  {value:'flight_long_biz',label:'Long-Haul Flight (Business)',ef:0.42800,unit:'kgCO2e/pkm',source:'DEFRA 2023 incl RFI'},
+  {value:'flight_long_first',label:'Long-Haul Flight (First)',ef:0.58600,unit:'kgCO2e/pkm',source:'DEFRA 2023 incl RFI'},
+  {value:'train_national',label:'National Rail',ef:0.03570,unit:'kgCO2e/pkm',source:'DEFRA 2023'},
+  {value:'train_intl',label:'International Rail (Eurostar)',ef:0.00600,unit:'kgCO2e/pkm',source:'DEFRA 2023'},
+  {value:'taxi_standard',label:'Taxi / Ride-hail',ef:0.14900,unit:'kgCO2e/pkm',source:'DEFRA 2023'},
+  {value:'rental_car',label:'Rental Car (Average)',ef:0.17050,unit:'kgCO2e/pkm',source:'DEFRA 2023'},
+  {value:'hotel_night',label:'Hotel Night (Average)',ef:20.6,unit:'kgCO2e/night',source:'DEFRA 2023 / Cornell study'},
+];
+
+/* ─── Spend-based sector breakdowns (more granular EXIOBASE) ─── */
+const SPEND_SECTORS=[
+  {value:'manufacturing_general',label:'Manufacturing (General)',ef:0.42,source:'EXIOBASE 3.8.2'},
+  {value:'food_agriculture',label:'Food & Agriculture',ef:0.58,source:'EXIOBASE 3.8.2'},
+  {value:'chemicals_pharma',label:'Chemicals & Pharmaceuticals',ef:0.51,source:'EXIOBASE 3.8.2'},
+  {value:'machinery_equipment',label:'Machinery & Equipment',ef:0.55,source:'EXIOBASE 3.8.2'},
+  {value:'electronics_it',label:'Electronics & IT',ef:0.38,source:'EXIOBASE 3.8.2'},
+  {value:'textiles_apparel',label:'Textiles & Apparel',ef:0.62,source:'EXIOBASE 3.8.2'},
+  {value:'paper_printing',label:'Paper & Printing',ef:0.45,source:'EXIOBASE 3.8.2'},
+  {value:'metals_mining',label:'Metals & Mining',ef:0.72,source:'EXIOBASE 3.8.2'},
+  {value:'construction',label:'Construction Services',ef:0.48,source:'EXIOBASE 3.8.2'},
+  {value:'professional_services',label:'Professional Services',ef:0.18,source:'USEEIO v2.0'},
+  {value:'financial_services',label:'Financial Services',ef:0.12,source:'USEEIO v2.0'},
+  {value:'transport_logistics',label:'Transport & Logistics',ef:0.52,source:'EXIOBASE 3.8.2'},
+  {value:'utilities_energy',label:'Utilities & Energy Services',ef:0.68,source:'EXIOBASE 3.8.2'},
+  {value:'real_estate',label:'Real Estate Services',ef:0.25,source:'USEEIO v2.0'},
+  {value:'healthcare',label:'Healthcare Services',ef:0.32,source:'USEEIO v2.0'},
+  {value:'education',label:'Education Services',ef:0.15,source:'USEEIO v2.0'},
+  {value:'hospitality',label:'Hospitality & Tourism',ef:0.35,source:'EXIOBASE 3.8.2'},
+  {value:'media_telecom',label:'Media & Telecommunications',ef:0.22,source:'USEEIO v2.0'},
+];
+
+/* ─── Capital goods sub-categories (Cat 2) ─── */
+const CAPITAL_GOODS_TYPES=[
+  {value:'buildings',label:'Buildings & Facilities',ef:0.65,source:'EXIOBASE'},
+  {value:'machinery',label:'Production Machinery',ef:0.55,source:'EXIOBASE'},
+  {value:'vehicles',label:'Vehicles & Transport Equipment',ef:0.48,source:'EXIOBASE'},
+  {value:'it_equipment',label:'IT & Office Equipment',ef:0.38,source:'EXIOBASE'},
+  {value:'furniture',label:'Furniture & Fixtures',ef:0.42,source:'EXIOBASE'},
+  {value:'lab_equipment',label:'Lab / Scientific Equipment',ef:0.50,source:'EXIOBASE'},
+  {value:'renewable_assets',label:'Renewable Energy Assets',ef:0.35,source:'IEA LCA'},
+];
+
+/* ─── Energy product lifecycle (Cat 3: Fuel & Energy Related) ─── */
+const FUEL_LIFECYCLE_FACTORS={
+  naturalGas_wtt:{factor:0.03382,unit:'kgCO2e/kWh',source:'DEFRA 2023 WTT',desc:'Well-to-tank natural gas'},
+  diesel_wtt:{factor:0.06328,unit:'kgCO2e/kWh',source:'DEFRA 2023 WTT',desc:'Well-to-tank diesel'},
+  electricity_td_loss_pct:{factor:7.5,unit:'%',source:'IEA / national grid data',desc:'Average T&D loss percentage'},
+  coal_wtt:{factor:0.04140,unit:'kgCO2e/kWh',source:'DEFRA 2023 WTT',desc:'Well-to-tank coal'},
+  petrol_wtt:{factor:0.05861,unit:'kgCO2e/kWh',source:'DEFRA 2023 WTT',desc:'Well-to-tank petrol'},
+  lpg_wtt:{factor:0.02311,unit:'kgCO2e/kWh',source:'DEFRA 2023 WTT',desc:'Well-to-tank LPG'},
+};
+
+/* ─── Sold product energy use profiles (Cat 11) ─── */
+const PRODUCT_USE_PROFILES=[
+  {value:'laptop',label:'Laptop Computer',annualKwh:50,lifetimeYears:5,source:'Energy Star / EU Ecodesign'},
+  {value:'desktop',label:'Desktop Computer',annualKwh:200,lifetimeYears:5,source:'Energy Star'},
+  {value:'server',label:'Server (rack)',annualKwh:4380,lifetimeYears:5,source:'ASHRAE'},
+  {value:'ev_car',label:'Electric Vehicle',annualKwh:3500,lifetimeYears:12,source:'EPA / DEFRA'},
+  {value:'heat_pump',label:'Heat Pump (residential)',annualKwh:4000,lifetimeYears:15,source:'EST'},
+  {value:'washing_machine',label:'Washing Machine',annualKwh:150,lifetimeYears:10,source:'EU Energy Label'},
+  {value:'refrigerator',label:'Refrigerator',annualKwh:250,lifetimeYears:12,source:'EU Energy Label'},
+  {value:'led_bulb',label:'LED Light Bulb',annualKwh:10,lifetimeYears:15,source:'DOE'},
+  {value:'smartphone',label:'Smartphone',annualKwh:5,lifetimeYears:3,source:'IEA'},
+  {value:'data_center',label:'Data Center (per rack)',annualKwh:35040,lifetimeYears:10,source:'Uptime Institute'},
+];
+
+/* ─── End-of-life disposal methods (Cat 12) ─── */
+const EOL_METHODS=[
+  {value:'landfill',label:'Landfill',ef:0.587,source:'DEFRA 2023'},
+  {value:'incineration',label:'Incineration',ef:0.021,source:'DEFRA 2023'},
+  {value:'recycling',label:'Recycling',ef:0.021,source:'DEFRA 2023'},
+  {value:'composting',label:'Composting',ef:0.010,source:'DEFRA 2023'},
+  {value:'reuse',label:'Reuse / Refurbishment',ef:0.005,source:'Estimate'},
+];
+
+/* ─── PCAF asset class mapping (Cat 15) ─── */
+const PCAF_ASSET_CLASSES=[
+  {value:'listed_equity',label:'Listed Equity & Corporate Bonds',method:'EVIC-based attribution',dqs_typical:2},
+  {value:'business_loans',label:'Business Loans & Unlisted Equity',method:'Revenue/Balance sheet-based',dqs_typical:3},
+  {value:'project_finance',label:'Project Finance',method:'Project-level emissions',dqs_typical:2},
+  {value:'commercial_re',label:'Commercial Real Estate',method:'Floor area \u00D7 EPC rating',dqs_typical:3},
+  {value:'mortgages',label:'Residential Mortgages',method:'EPC-based / national avg',dqs_typical:4},
+  {value:'motor_vehicles',label:'Motor Vehicle Loans',method:'Vehicle type \u00D7 mileage',dqs_typical:4},
+  {value:'sovereign',label:'Sovereign Debt',method:'National emissions / GDP',dqs_typical:2},
+];
+
+/* ─── Scope 3 category-specific guidance text ─── */
+const SCOPE3_GUIDANCE={
+  cat1:'Use supplier-specific data where available (DQS 1-2). For remaining spend, apply EXIOBASE sector-average factors. Prioritize top suppliers by spend volume. GHG Protocol recommends hybrid approach combining supplier data with spend-based estimates.',
+  cat2:'Capital goods emissions are typically amortized over the useful life of the asset. Include embodied carbon from manufacturing. For buildings, use lifecycle assessment (LCA) data. For IT equipment, use manufacturer Product Carbon Footprints (PCFs) where available.',
+  cat3:'Includes: (a) upstream emissions from purchased fuels (well-to-tank), (b) upstream emissions from purchased electricity (generation losses), (c) T&D losses from delivered electricity. Use DEFRA WTT factors for fuels and national grid loss factors for electricity.',
+  cat4:'Calculate using: distance (km) \u00D7 weight (tonnes) \u00D7 mode-specific emission factor. Prioritize activity-based data from logistics providers. For spend-based, use transport sector EFs. Consider multimodal journeys.',
+  cat5:'Categorize waste by type (general, organic, recyclable, hazardous) and disposal method (landfill, incineration, recycling, composting). Use waste audit data where available. Apply disposal-specific emission factors.',
+  cat6:'Track by travel mode: air (short/long haul, class), rail, rental car, taxi, hotel nights. Use distance-based factors from DEFRA. For air travel, include Radiative Forcing Index (RFI = 1.9x). Consider offsetting programs.',
+  cat7:'FTE \u00D7 avg one-way distance \u00D7 2 (round trip) \u00D7 working days \u00D7 mode-specific EF. Survey employees for mode split or use national transport statistics. Include WFH emissions where applicable.',
+  cat8:'For leased offices: floor area (m\u00B2) \u00D7 energy intensity (kWh/m\u00B2) \u00D7 grid emission factor. Use EPC ratings or actual energy data where available. Distinguish between full-building and partial leases.',
+  cat9:'Similar to Category 4 but for outbound logistics. Include warehousing emissions at distribution centres. Use customer delivery data where available.',
+  cat10:'Applies to companies selling intermediate products. Calculate processing energy \u00D7 grid factor for downstream manufacturing. Often requires engagement with customers.',
+  cat11:'Lifetime energy use: annual energy consumption (kWh) \u00D7 product lifetime (years) \u00D7 number of products sold \u00D7 grid emission factor (use-phase country). Critical for electronics, vehicles, appliances.',
+  cat12:'Product weight \u00D7 disposal method EF. Consider product composition (materials mix) and likely disposal pathway by market. Use national waste statistics for disposal method split.',
+  cat13:'Similar methodology to Category 8 but for assets owned by the reporting company and leased to others. Include full building energy if company owns the asset.',
+  cat14:'For franchisors: aggregate Scope 1 + Scope 2 emissions from all franchise operations. Use franchise-specific data or estimate from revenue \u00D7 sector intensity. Ensure no double-counting with Scope 1/2.',
+  cat15:'Links to PCAF methodology. For listed equity: EVIC-based attribution. For corporate bonds: use outstanding amount. For project finance: use project-level emissions. Calculate: (Outstanding / EVIC) \u00D7 Company Emissions.',
+};
+
+/* ─── Historical emissions for YoY comparison (demo) ─── */
+const HISTORICAL_EMISSIONS=(seed)=>{
+  const years=[2020,2021,2022,2023,2024];
+  return years.map((y,i)=>({
+    year:y,
+    scope1:42000*(1-0.03*i+sr(seed+i*3)*0.02),
+    scope2_loc:18000*(1-0.05*i+sr(seed+i*5)*0.02),
+    scope2_mkt:18000*(1-0.08*i+sr(seed+i*7)*0.02),
+    scope3:85000*(1+0.02*i-sr(seed+i*11)*0.03),
+  }));
+};
+
+/* ─── District heating / cooling factors by country ─── */
+const DISTRICT_HEATING_EFS=[
+  {country:'GB',label:'UK District Heating',ef:0.180,unit:'kgCO2e/kWh',source:'DEFRA 2023'},
+  {country:'DE',label:'Germany Fernw\u00E4rme',ef:0.165,unit:'kgCO2e/kWh',source:'UBA 2023'},
+  {country:'SE',label:'Sweden District Heating',ef:0.040,unit:'kgCO2e/kWh',source:'Energimyndigheten'},
+  {country:'DK',label:'Denmark District Heating',ef:0.085,unit:'kgCO2e/kWh',source:'Energinet'},
+  {country:'FI',label:'Finland District Heating',ef:0.130,unit:'kgCO2e/kWh',source:'Statistics Finland'},
+  {country:'FR',label:'France Chauffage Urbain',ef:0.110,unit:'kgCO2e/kWh',source:'ADEME'},
+  {country:'US',label:'US District Heating (avg)',ef:0.200,unit:'kgCO2e/kWh',source:'DOE estimate'},
+  {country:'CN',label:'China District Heating',ef:0.310,unit:'kgCO2e/kWh',source:'China Building Energy'},
+];
+
+/* ─── Currency conversion rates for spend-based (illustrative) ─── */
+const EXCHANGE_RATES=[
+  {from:'EUR',to:'USD',rate:1.09,source:'ECB Mar 2026'},
+  {from:'GBP',to:'USD',rate:1.27,source:'ECB Mar 2026'},
+  {from:'JPY',to:'USD',rate:0.0067,source:'ECB Mar 2026'},
+  {from:'CHF',to:'USD',rate:1.13,source:'ECB Mar 2026'},
+  {from:'CNY',to:'USD',rate:0.138,source:'ECB Mar 2026'},
+  {from:'INR',to:'USD',rate:0.0119,source:'ECB Mar 2026'},
+  {from:'AUD',to:'USD',rate:0.65,source:'ECB Mar 2026'},
+  {from:'CAD',to:'USD',rate:0.74,source:'ECB Mar 2026'},
+  {from:'KRW',to:'USD',rate:0.00074,source:'ECB Mar 2026'},
+  {from:'BRL',to:'USD',rate:0.18,source:'ECB Mar 2026'},
+];
+
+const initScope1Stationary=()=>[
+  {id:1,desc:'HQ Office Gas Heating',fuel:'naturalGas_kWh',qty:850000,note:'Annual gas consumption'},
+  {id:2,desc:'Backup Generator',fuel:'diesel_litre',qty:12000,note:'Emergency diesel genset'},
+  {id:3,desc:'Factory Boiler (DE)',fuel:'naturalGas_kWh',qty:2400000,note:'Process steam'},
+  {id:4,desc:'Warehouse Heating',fuel:'lpg_kWh',qty:180000,note:''},
+  {id:5,desc:'India Office Generator',fuel:'diesel_litre',qty:8500,note:'Grid backup'},
+];
+
+const initScope1Mobile=()=>[
+  {id:1,desc:'Company Cars (Petrol)',vehicle:'petrolCar',distance:480000,fleetSize:12,note:'Sales fleet'},
+  {id:2,desc:'Delivery Vans (Diesel)',vehicle:'dieselCar',distance:320000,fleetSize:8,note:'Last-mile delivery'},
+  {id:3,desc:'Executive Hybrid Fleet',vehicle:'hybridCar',distance:120000,fleetSize:4,note:'Management vehicles'},
+];
+
+const initScope1Process=()=>[
+  {id:1,desc:'Cement Clinker Production',industry:'cement',qty:45000,note:'Annual clinker output'},
+];
+
+const initScope1Fugitive=()=>[
+  {id:1,desc:'Building HVAC System',refrigerant:'HFC_125',charge:85,leakRate:5,note:'R-410A in office AC'},
+  {id:2,desc:'Electrical Switchgear',refrigerant:'SF6',charge:12,leakRate:1,note:'HV switch insulation'},
+];
+
+const initScope2Facilities=()=>[
+  {id:1,name:'UK HQ (London)',country:'GB',elecKwh:1200000,recKwh:600000,ppaKwh:0,supplierEf:null,residualEf:null,heatKwh:80000,heatEf:0.18,coolKwh:0},
+  {id:2,name:'US Manufacturing (Ohio)',country:'US',elecKwh:3500000,recKwh:0,ppaKwh:3500000,supplierEf:0.01,residualEf:null,heatKwh:200000,heatEf:0.20,coolKwh:150000},
+  {id:3,name:'India Office (Mumbai)',country:'IN',elecKwh:450000,recKwh:0,ppaKwh:0,supplierEf:null,residualEf:0.72,heatKwh:0,heatEf:0,coolKwh:120000},
+];
+
+const SCOPE3_CATEGORIES=[
+  {num:1,name:'Purchased Goods & Services',key:'cat1',spendKey:'cat1_purchased_goods',desc:'All upstream Scope 3 emissions from purchased goods & services'},
+  {num:2,name:'Capital Goods',key:'cat2',spendKey:'cat2_capital_goods',desc:'Emissions from production of capital goods purchased or acquired'},
+  {num:3,name:'Fuel & Energy Related Activities',key:'cat3',spendKey:'cat3_fuel_energy',desc:'Upstream extraction, production, and transportation of fuels; T&D losses'},
+  {num:4,name:'Upstream Transportation & Distribution',key:'cat4',spendKey:'cat4_upstream_transport',desc:'Transport and distribution of purchased products between Tier 1 suppliers and company'},
+  {num:5,name:'Waste Generated in Operations',key:'cat5',spendKey:'cat5_waste',desc:'Disposal and treatment of waste generated in operations'},
+  {num:6,name:'Business Travel',key:'cat6',spendKey:'cat6_business_travel',desc:'Employee travel for business activities in non-owned vehicles'},
+  {num:7,name:'Employee Commuting',key:'cat7',spendKey:'cat7_commuting',desc:'Employee travel between homes and worksites'},
+  {num:8,name:'Upstream Leased Assets',key:'cat8',spendKey:'cat8_upstream_leased',desc:'Emissions from operation of leased assets not in Scope 1/2'},
+  {num:9,name:'Downstream Transportation & Distribution',key:'cat9',spendKey:'cat9_downstream_transport',desc:'Transport of sold products between company and end consumer'},
+  {num:10,name:'Processing of Sold Products',key:'cat10',spendKey:null,desc:'Processing by third parties of intermediate products sold'},
+  {num:11,name:'Use of Sold Products',key:'cat11',spendKey:'cat11_use_of_product',desc:'End use of goods and services sold by the company'},
+  {num:12,name:'End-of-Life Treatment of Sold Products',key:'cat12',spendKey:'cat12_end_of_life',desc:'Waste disposal and treatment of sold products at end of life'},
+  {num:13,name:'Downstream Leased Assets',key:'cat13',spendKey:null,desc:'Emissions from operation of assets owned but leased to others'},
+  {num:14,name:'Franchises',key:'cat14',spendKey:null,desc:'Emissions from operation of franchises not in Scope 1/2'},
+  {num:15,name:'Investments',key:'cat15',spendKey:'cat15_investments',desc:'Emissions from investments (equity, debt, project finance) — links to PCAF'},
+];
+
+const initScope3Data=()=>{
+  const d={};
+  SCOPE3_CATEGORIES.forEach(c=>{
+    const on=[1,2,4,5,6,7,15].includes(c.num);
+    d[c.key]={
+      enabled:on,
+      methodology:c.spendKey?'spend':'activity',
+      dqs:c.spendKey?4:3,
+      spend:0,activity:0,activityUnit:'',customEf:0,customEfSource:'',
+      notes:'',
+    };
+  });
+  // Pre-load demo data
+  d.cat1={...d.cat1,enabled:true,methodology:'spend',spend:28500000,dqs:4,notes:'All purchased goods FY2024'};
+  d.cat2={...d.cat2,enabled:true,methodology:'spend',spend:4200000,dqs:4,notes:'Machinery & IT equipment'};
+  d.cat4={...d.cat4,enabled:true,methodology:'spend',spend:3100000,dqs:4,notes:'Inbound logistics'};
+  d.cat5={...d.cat5,enabled:true,methodology:'spend',spend:620000,dqs:4,notes:'Waste management contracts'};
+  d.cat6={...d.cat6,enabled:true,methodology:'spend',spend:1850000,dqs:3,notes:'Flights, hotels, ground transport'};
+  d.cat7={...d.cat7,enabled:true,methodology:'activity',activity:850,activityUnit:'FTE',customEf:1.2,customEfSource:'UK avg commute 1.2 tCO2e/FTE (DEFRA)',dqs:3,notes:'850 FTE avg commute'};
+  d.cat15={...d.cat15,enabled:true,methodology:'spend',spend:120000000,dqs:5,notes:'Listed equity & corporate debt portfolio'};
+  return d;
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════════════════════════════════════ */
+export default function CarbonCalculatorPage(){
+  const [tab,setTab]=useState('boundary');
+
+  /* ─── Company-level info ─── */
+  const [companyName,setCompanyName]=useState('Apex Holdings Ltd');
+  const [reportingYear,setReportingYear]=useState(2024);
+  const [baseYear,setBaseYear]=useState(2020);
+  const [revenue,setRevenue]=useState(185000000);
+  const [employees,setEmployees]=useState(850);
+  const [sector,setSector]=useState('2010');
+
+  /* ─── Tab 1: Organizational Boundary ─── */
+  const [boundaryApproach,setBoundaryApproach]=useState('operational');
+  const [entities,setEntities]=useState(initEntities);
+  const nextEntityId=useRef(6);
+
+  /* ─── Tab 2: Scope 1 ─── */
+  const [stationary,setStationary]=useState(initScope1Stationary);
+  const [mobile,setMobile]=useState(initScope1Mobile);
+  const [process,setProcess]=useState(initScope1Process);
+  const [fugitive,setFugitive]=useState(initScope1Fugitive);
+  const nextS1Id=useRef(20);
+
+  /* ─── Tab 3: Scope 2 ─── */
+  const [facilities,setFacilities]=useState(initScope2Facilities);
+  const nextFacId=useRef(4);
+
+  /* ─── Tab 4: Scope 3 ─── */
+  const [scope3,setScope3]=useState(initScope3Data);
+
+  /* ─── Tab 5: GWP ─── */
+  const [convFrom,setConvFrom]=useState(1);
+  const [convFromUnit,setConvFromUnit]=useState('tCO2e');
+  const [convToUnit,setConvToUnit]=useState('ktCO2e');
+  const [baseYearEmissions,setBaseYearEmissions]=useState(42000);
+  const [structuralChange,setStructuralChange]=useState(3500);
+  const [structuralType,setStructuralType]=useState('acquisition');
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     CALCULATIONS
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* --- Scope 1 Stationary --- */
+  const calcStationary=useCallback((item)=>{
+    const ef=EMISSION_FACTORS.energy[item.fuel];
+    if(!ef)return 0;
+    return (item.qty*ef.factor)/1000; // kgCO2e -> tCO2e
+  },[]);
+
+  const scope1StationaryTotal=useMemo(()=>stationary.reduce((s,i)=>s+calcStationary(i),0),[stationary,calcStationary]);
+
+  /* --- Scope 1 Mobile --- */
+  const calcMobile=useCallback((item)=>{
+    const ef=EMISSION_FACTORS.transport[item.vehicle];
+    if(!ef)return 0;
+    return (item.distance*(item.fleetSize||1)*ef.factor)/1e6; // gCO2e -> tCO2e
+  },[]);
+
+  const scope1MobileTotal=useMemo(()=>mobile.reduce((s,i)=>s+calcMobile(i),0),[mobile,calcMobile]);
+
+  /* --- Scope 1 Process --- */
+  const calcProcess=useCallback((item)=>{
+    const p=INDUSTRY_PROCESSES.find(x=>x.value===item.industry);
+    if(!p)return 0;
+    return (item.qty*p.ef)/1000; // kgCO2e -> tCO2e
+  },[]);
+
+  const scope1ProcessTotal=useMemo(()=>process.reduce((s,i)=>s+calcProcess(i),0),[process,calcProcess]);
+
+  /* --- Scope 1 Fugitive --- */
+  const calcFugitive=useCallback((item)=>{
+    const ref=REFRIGERANT_TYPES.find(r=>r.value===item.refrigerant);
+    if(!ref)return 0;
+    return (item.charge*(item.leakRate/100)*ref.gwp)/1000; // kgCO2e -> tCO2e
+  },[]);
+
+  const scope1FugitiveTotal=useMemo(()=>fugitive.reduce((s,i)=>s+calcFugitive(i),0),[fugitive,calcFugitive]);
+
+  const scope1Total=useMemo(()=>scope1StationaryTotal+scope1MobileTotal+scope1ProcessTotal+scope1FugitiveTotal,[scope1StationaryTotal,scope1MobileTotal,scope1ProcessTotal,scope1FugitiveTotal]);
+
+  /* --- Scope 2 Location-Based --- */
+  const calcS2Location=useCallback((f)=>{
+    const gi=GRID_INTENSITY.find(g=>g.iso2===f.country);
+    const elecFactor=gi?gi.gCO2_kWh:400;
+    const elecT=(f.elecKwh*elecFactor)/1e6;
+    const heatT=(f.heatKwh*(f.heatEf||0.18))/1000;
+    const coolT=(f.coolKwh*elecFactor)/1e6;
+    return elecT+heatT+coolT;
+  },[]);
+
+  /* --- Scope 2 Market-Based --- */
+  const calcS2Market=useCallback((f)=>{
+    const gi=GRID_INTENSITY.find(g=>g.iso2===f.country);
+    const gridF=gi?gi.gCO2_kWh:400;
+    let remainKwh=f.elecKwh;
+    let mktT=0;
+    // REC/GO certificates -> zero emissions for covered portion
+    if(f.recKwh>0){
+      remainKwh-=Math.min(f.recKwh,remainKwh);
+    }
+    // PPA with supplier-specific EF
+    if(f.ppaKwh>0&&f.supplierEf!=null){
+      const ppaCover=Math.min(f.ppaKwh,remainKwh);
+      mktT+=(ppaCover*f.supplierEf*1000)/1e6; // supplierEf in kgCO2e/kWh -> t
+      remainKwh-=ppaCover;
+    }
+    // Residual mix for uncovered portion
+    if(remainKwh>0){
+      const resFactor=f.residualEf!=null?f.residualEf*1000:gridF; // residualEf in kgCO2e/kWh
+      mktT+=(remainKwh*resFactor)/1e6;
+    }
+    // Heat and cooling same as location-based
+    mktT+=(f.heatKwh*(f.heatEf||0.18))/1000;
+    mktT+=(f.coolKwh*gridF)/1e6;
+    return mktT;
+  },[]);
+
+  const scope2LocationTotal=useMemo(()=>facilities.reduce((s,f)=>s+calcS2Location(f),0),[facilities,calcS2Location]);
+  const scope2MarketTotal=useMemo(()=>facilities.reduce((s,f)=>s+calcS2Market(f),0),[facilities,calcS2Market]);
+
+  const renewableKwh=useMemo(()=>facilities.reduce((s,f)=>s+(f.recKwh||0)+(f.ppaKwh||0),0),[facilities]);
+  const totalElecKwh=useMemo(()=>facilities.reduce((s,f)=>s+(f.elecKwh||0),0),[facilities]);
+  const renewablePct=totalElecKwh>0?(renewableKwh/totalElecKwh*100):0;
+
+  /* --- Scope 3 --- */
+  const calcScope3Cat=useCallback((catKey)=>{
+    const catMeta=SCOPE3_CATEGORIES.find(c=>c.key===catKey);
+    const d=scope3[catKey];
+    if(!d||!d.enabled)return 0;
+    if(d.methodology==='spend'&&d.spend>0){
+      const spendEf=catMeta?.spendKey?EMISSION_FACTORS.scope3_spend[catMeta.spendKey]:null;
+      if(spendEf)return(d.spend*spendEf.factor)/1000; // kgCO2e -> tCO2e
+      return 0;
+    }
+    if(d.methodology==='activity'&&d.activity>0&&d.customEf>0){
+      return d.activity*d.customEf; // already in tCO2e
+    }
+    if(d.methodology==='supplier'&&d.activity>0&&d.customEf>0){
+      return d.activity*d.customEf;
+    }
+    return 0;
+  },[scope3]);
+
+  const scope3Totals=useMemo(()=>{
+    const t={};
+    let sum=0;
+    SCOPE3_CATEGORIES.forEach(c=>{
+      const v=calcScope3Cat(c.key);
+      t[c.key]=v;
+      sum+=v;
     });
-  }, []);
+    return{byCat:t,total:sum};
+  },[calcScope3Cat]);
 
-  const removeFromCart = useCallback((id) => setCart(prev => prev.filter(c => c.id !== id)), []);
-  const clearCart = useCallback(() => setCart([]), []);
+  const scope3DqsAvg=useMemo(()=>{
+    let wSum=0,wCount=0;
+    SCOPE3_CATEGORIES.forEach(c=>{
+      const d=scope3[c.key];
+      if(d&&d.enabled&&scope3Totals.byCat[c.key]>0){
+        wSum+=d.dqs*scope3Totals.byCat[c.key];
+        wCount+=scope3Totals.byCat[c.key];
+      }
+    });
+    return wCount>0?(wSum/wCount):0;
+  },[scope3,scope3Totals]);
 
-  const toggleCompare = useCallback((p) => {
-    setCompareList(prev => prev.find(c => c.id === p.id) ? prev.filter(c => c.id !== p.id) : prev.length < 4 ? [...prev, p] : prev);
-  }, []);
+  /* --- Grand totals --- */
+  const grandTotal=scope1Total+scope2LocationTotal+scope3Totals.total;
+  const grandTotalMarket=scope1Total+scope2MarketTotal+scope3Totals.total;
+  const intensityRevenue=revenue>0?(grandTotal/(revenue/1e6)):0;
+  const intensityEmployee=employees>0?(grandTotal/employees):0;
 
-  const addToWallet = useCallback((p, q) => {
-    const walletData = JSON.parse(localStorage.getItem('ra_carbon_wallet_v1') || '[]');
-    walletData.push({ id: `TXN-${Date.now()}`, date: new Date().toISOString(), description: p.name, amount_usd: 0, category: p.catKey || 'other', carbon_kg: p.carbon_kg * q, method: 'calculator', items: [{ product: p.name, carbon_kg: p.carbon_kg * q }], offset: false, notes: '' });
-    localStorage.setItem('ra_carbon_wallet_v1', JSON.stringify(walletData));
-  }, []);
+  /* --- Sector benchmark --- */
+  const sectorBench=useMemo(()=>SECTOR_BENCHMARKS.find(s=>s.gics===sector),[sector]);
 
-  const getAlt = useCallback((p) => {
-    if (!p.sustainable_alt) return null;
-    return ALL_PRODUCTS.find(a => a.id === p.sustainable_alt) || null;
-  }, []);
+  /* ═══════════════════════════════════════════════════════════════════════════
+     DATA VALIDATION
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const validationIssues=useMemo(()=>{
+    const issues=[];
+    stationary.forEach(i=>{if(!i.fuel||!i.qty)issues.push({type:'error',msg:`Scope 1 Stationary "${i.desc}": missing fuel type or quantity`});});
+    facilities.forEach(f=>{if(!f.country||!f.elecKwh)issues.push({type:'error',msg:`Scope 2 "${f.name}": missing country or electricity data`});});
+    const enabledCats=SCOPE3_CATEGORIES.filter(c=>scope3[c.key]?.enabled);
+    if(enabledCats.length<3)issues.push({type:'warn',msg:'Less than 3 Scope 3 categories enabled \u2014 GHG Protocol recommends including all material categories'});
+    enabledCats.forEach(c=>{
+      const d=scope3[c.key];
+      if(d.methodology==='spend'&&!d.spend)issues.push({type:'warn',msg:`Scope 3 Cat ${c.num}: enabled but no spend data entered`});
+      if(d.dqs>=4)issues.push({type:'info',msg:`Scope 3 Cat ${c.num}: DQS ${d.dqs} \u2014 consider upgrading to activity-based methodology`});
+    });
+    SCOPE3_CATEGORIES.forEach(c=>{
+      if(scope3[c.key]?.enabled&&scope3Totals.total>0){
+        const pct=(scope3Totals.byCat[c.key]/scope3Totals.total)*100;
+        if(pct>40)issues.push({type:'warn',msg:`Scope 3 Cat ${c.num} is ${pct.toFixed(0)}% of total Scope 3 \u2014 verify data quality`});
+      }
+    });
+    return issues;
+  },[stationary,facilities,scope3,scope3Totals]);
 
-  const exportProductCard = useCallback(() => { alert('Product card PDF export initiated. In production this generates a downloadable PDF.'); }, []);
-  const exportComparisonCSV = useCallback(() => {
-    if (!compareList.length) return;
-    const hdr = 'Name,Carbon (kg CO2e),Unit,Category\n';
-    const rows = compareList.map(p => `"${p.name}",${p.carbon_kg},"${p.unit}","${p.catName}"`).join('\n');
-    const blob = new Blob([hdr + rows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'carbon_comparison.csv'; a.click(); URL.revokeObjectURL(url);
-  }, [compareList]);
-  const printPage = useCallback(() => window.print(), []);
+  /* ═══════════════════════════════════════════════════════════════════════════
+     HELPER: Entity updaters
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const updateEntity=(id,field,val)=>setEntities(es=>es.map(e=>e.id===id?{...e,[field]:val}:e));
+  const addEntity=()=>{setEntities(es=>[...es,{id:nextEntityId.current++,name:'New Entity',country:'GB',ownership:50,include:true,isParent:false}]);};
+  const removeEntity=(id)=>setEntities(es=>es.filter(e=>e.id!==id));
 
-  /* ─── Styles ─── */
-  const sPage = { fontFamily: T.font, background: T.bg, minHeight: '100vh', padding: '0 0 80px' };
-  const sHero = { background: `linear-gradient(135deg, ${T.navy} 0%, ${T.navyL} 100%)`, color: '#fff', padding: '48px 32px 40px', textAlign: 'center' };
-  const sContainer = { maxWidth: 1200, margin: '0 auto', padding: '0 24px' };
-  const sCard = { background: T.surface, borderRadius: 14, border: `1px solid ${T.border}`, padding: 24, marginBottom: 20 };
-  const sInput = { width: '100%', padding: '14px 20px', borderRadius: 12, border: `2px solid ${T.border}`, fontSize: 16, fontFamily: T.font, outline: 'none', background: '#fff' };
-  const sBtn = (bg, c) => ({ padding: '10px 20px', borderRadius: 10, border: 'none', background: bg, color: c || '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: T.font });
-  const sBtnSm = (bg, c) => ({ ...sBtn(bg, c), padding: '6px 14px', fontSize: 12 });
-  const sBadge = (bg) => ({ display: 'inline-block', padding: '3px 10px', borderRadius: 20, background: bg, color: '#fff', fontSize: 11, fontWeight: 700, marginRight: 6 });
-  const sTab = (active) => ({ padding: '10px 20px', borderRadius: '10px 10px 0 0', border: 'none', background: active ? T.surface : T.surfaceH, color: active ? T.navy : T.textSec, fontWeight: active ? 700 : 500, fontSize: 14, cursor: 'pointer', fontFamily: T.font, borderBottom: active ? `3px solid ${T.gold}` : 'none' });
-  const sGrid = (cols) => ({ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 16 });
-  const sKpi = { background: T.surface, borderRadius: 12, border: `1px solid ${T.border}`, padding: '16px 20px', textAlign: 'center' };
+  const updateStationary=(id,field,val)=>setStationary(xs=>xs.map(x=>x.id===id?{...x,[field]:val}:x));
+  const addStationary=()=>{setStationary(xs=>[...xs,{id:nextS1Id.current++,desc:'New Source',fuel:'naturalGas_kWh',qty:0,note:''}]);};
+  const removeStationary=(id)=>setStationary(xs=>xs.filter(x=>x.id!==id));
 
-  /* ─── Section: Product Carbon Card ─── */
-  const renderProductCard = (p) => {
-    if (!p) return null;
-    const eq = carbonEquivalent(p.carbon_kg * qty);
-    const alt = getAlt(p);
-    const lifecycle = LIFECYCLE_TEMPLATES[p.catKey] || LIFECYCLE_TEMPLATES.default;
-    const budgetPct = ((p.carbon_kg * qty) / DAILY_BUDGET_KG * 100);
-    const lcData = lifecycle.map((l, i) => ({ name: l.name, value: l.pct, fill: PIE_COLORS[i % PIE_COLORS.length] }));
-    return (
-      <div style={sCard}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
-          <div style={{ flex: 1, minWidth: 280 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <span style={{ fontSize: 28 }}>{p.catIcon}</span>
-              <div>
-                <h3 style={{ margin: 0, color: T.navy, fontSize: 22 }}>{p.name}</h3>
-                <span style={{ color: T.textSec, fontSize: 13 }}>{p.catName} &middot; {p.unit}</span>
-              </div>
-            </div>
-            {p.label && <span style={sBadge(p.label.includes('Lowest') ? T.green : T.sage)}>{p.label}</span>}
-            {p.deforestation_risk && <span style={sBadge(T.red)}>Deforestation Risk</span>}
-            {p.microplastic && <span style={sBadge(T.amber)}>Microplastic</span>}
-            {p.conflict_minerals && <span style={sBadge('#7c3aed')}>Conflict Minerals</span>}
+  const updateMobile=(id,field,val)=>setMobile(xs=>xs.map(x=>x.id===id?{...x,[field]:val}:x));
+  const addMobile=()=>{setMobile(xs=>[...xs,{id:nextS1Id.current++,desc:'New Vehicle',vehicle:'petrolCar',distance:0,fleetSize:1,note:''}]);};
+  const removeMobile=(id)=>setMobile(xs=>xs.filter(x=>x.id!==id));
 
-            <div style={{ marginTop: 20, display: 'flex', alignItems: 'baseline', gap: 8 }}>
-              <span style={{ fontSize: 48, fontWeight: 800, color: p.carbon_kg > 10 ? T.red : p.carbon_kg > 3 ? T.amber : T.green }}>{(p.carbon_kg * qty).toFixed(1)}</span>
-              <span style={{ fontSize: 18, color: T.textSec }}>kg CO\₂e</span>
-            </div>
+  const updateProcess=(id,field,val)=>setProcess(xs=>xs.map(x=>x.id===id?{...x,[field]:val}:x));
+  const addProcess=()=>{setProcess(xs=>[...xs,{id:nextS1Id.current++,desc:'New Process',industry:'cement',qty:0,note:''}]);};
+  const removeProcess=(id)=>setProcess(xs=>xs.filter(x=>x.id!==id));
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-              <label style={{ fontSize: 13, color: T.textSec }}>Quantity:</label>
-              <input type="number" min={1} max={100} value={qty} onChange={e => setQty(Math.max(1, +e.target.value))} style={{ ...sInput, width: 80, padding: '8px 12px' }} />
-            </div>
+  const updateFugitive=(id,field,val)=>setFugitive(xs=>xs.map(x=>x.id===id?{...x,[field]:val}:x));
+  const addFugitive=()=>{setFugitive(xs=>[...xs,{id:nextS1Id.current++,desc:'New Source',refrigerant:'HFC_134a',charge:0,leakRate:5,note:''}]);};
+  const removeFugitive=(id)=>setFugitive(xs=>xs.filter(x=>x.id!==id));
 
-            {/* Equivalence badges */}
-            <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {[{ icon: '\🚗', val: eq.km_driving, label: 'km driving' }, { icon: '\🌳', val: eq.trees_to_offset_1yr, label: 'tree-years to offset' }, { icon: '\📱', val: eq.smartphone_charges, label: 'phone charges' }, { icon: '\☕', val: eq.cups_of_tea, label: 'cups of tea' }].map((e, i) => (
-                <div key={i} style={{ background: T.surfaceH, borderRadius: 10, padding: '8px 14px', fontSize: 13 }}>
-                  <span>{e.icon}</span> = <strong>{e.val}</strong> {e.label}
+  const updateFacility=(id,field,val)=>setFacilities(xs=>xs.map(x=>x.id===id?{...x,[field]:val}:x));
+  const addFacility=()=>{setFacilities(xs=>[...xs,{id:nextFacId.current++,name:'New Facility',country:'GB',elecKwh:0,recKwh:0,ppaKwh:0,supplierEf:null,residualEf:null,heatKwh:0,heatEf:0.18,coolKwh:0}]);};
+  const removeFacility=(id)=>setFacilities(xs=>xs.filter(x=>x.id!==id));
+
+  const updateScope3=(catKey,field,val)=>setScope3(s=>({...s,[catKey]:{...s[catKey],[field]:val}}));
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     EXPORT HELPERS
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const buildInventoryJSON=useCallback(()=>{
+    return{
+      company:companyName,reportingYear,baseYear,
+      boundary:{approach:boundaryApproach,entities:entities.filter(e=>e.include)},
+      scope1:{stationary:scope1StationaryTotal,mobile:scope1MobileTotal,process:scope1ProcessTotal,fugitive:scope1FugitiveTotal,total:scope1Total},
+      scope2:{locationBased:scope2LocationTotal,marketBased:scope2MarketTotal,renewablePct},
+      scope3:{byCat:scope3Totals.byCat,total:scope3Totals.total,dqsAvg:scope3DqsAvg},
+      totals:{grandTotal_locationBased:grandTotal,grandTotal_marketBased:grandTotalMarket,intensityRevenue,intensityEmployee},
+      metadata:{standard:'GHG Protocol Corporate Standard (Rev. 2015)',generatedAt:new Date().toISOString()},
+    };
+  },[companyName,reportingYear,baseYear,boundaryApproach,entities,scope1StationaryTotal,scope1MobileTotal,scope1ProcessTotal,scope1FugitiveTotal,scope1Total,scope2LocationTotal,scope2MarketTotal,renewablePct,scope3Totals,scope3DqsAvg,grandTotal,grandTotalMarket,intensityRevenue,intensityEmployee]);
+
+  const downloadCSV=useCallback(()=>{
+    const rows=[['Scope','Category','Source','tCO2e']];
+    stationary.forEach(i=>rows.push(['Scope 1','Stationary Combustion',i.desc,calcStationary(i).toFixed(2)]));
+    mobile.forEach(i=>rows.push(['Scope 1','Mobile Combustion',i.desc,calcMobile(i).toFixed(2)]));
+    process.forEach(i=>rows.push(['Scope 1','Process Emissions',i.desc,calcProcess(i).toFixed(2)]));
+    fugitive.forEach(i=>rows.push(['Scope 1','Fugitive Emissions',i.desc,calcFugitive(i).toFixed(2)]));
+    facilities.forEach(f=>{
+      rows.push(['Scope 2','Location-Based',f.name,calcS2Location(f).toFixed(2)]);
+      rows.push(['Scope 2','Market-Based',f.name,calcS2Market(f).toFixed(2)]);
+    });
+    SCOPE3_CATEGORIES.forEach(c=>{
+      if(scope3[c.key]?.enabled)rows.push(['Scope 3',`Cat ${c.num}: ${c.name}`,'',scope3Totals.byCat[c.key].toFixed(2)]);
+    });
+    rows.push(['TOTAL','Grand Total (Location-Based)','',grandTotal.toFixed(2)]);
+    const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=`GHG_Inventory_${companyName.replace(/\s+/g,'_')}_FY${reportingYear}.csv`;a.click();
+    URL.revokeObjectURL(url);
+  },[stationary,mobile,process,fugitive,facilities,scope3,scope3Totals,grandTotal,companyName,reportingYear,calcStationary,calcMobile,calcProcess,calcFugitive,calcS2Location,calcS2Market]);
+
+  const downloadJSON=useCallback(()=>{
+    const json=JSON.stringify(buildInventoryJSON(),null,2);
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=`GHG_Inventory_${companyName.replace(/\s+/g,'_')}_FY${reportingYear}.json`;a.click();
+    URL.revokeObjectURL(url);
+  },[buildInventoryJSON,companyName,reportingYear]);
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TAB 1: ORGANIZATIONAL BOUNDARY
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const renderBoundary=()=>(
+    <div>
+      <Panel title="GHG Protocol Consolidation Approach" citation="GHG Protocol Corporate Standard, Chapter 3">
+        <InfoBox text="Per GHG Protocol Corporate Standard, Chapter 3: Setting Organizational Boundaries \u2014 Companies shall select and consistently apply one of three consolidation approaches." />
+        <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+          {BOUNDARY_APPROACHES.map(a=>(
+            <div key={a.value} onClick={()=>setBoundaryApproach(a.value)}
+              style={{flex:1,minWidth:200,padding:'16px 20px',borderRadius:8,border:`2px solid ${boundaryApproach===a.value?T.navy:T.border}`,background:boundaryApproach===a.value?T.navy+'08':T.surface,cursor:'pointer'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                <div style={{width:18,height:18,borderRadius:'50%',border:`2px solid ${boundaryApproach===a.value?T.navy:T.textMut}`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  {boundaryApproach===a.value&&<div style={{width:10,height:10,borderRadius:'50%',background:T.navy}} />}
                 </div>
-              ))}
-            </div>
-
-            {p.water_l && <div style={{ marginTop: 12, fontSize: 13, color: T.textSec }}>\💧 Water footprint: <strong>{(p.water_l * qty).toLocaleString()} litres</strong></div>}
-            {p.land_m2 && <div style={{ fontSize: 13, color: T.textSec }}>\🌾 Land use: <strong>{(p.land_m2 * qty).toFixed(1)} m\²</strong></div>}
-            {p.fun_fact && <div style={{ marginTop: 12, padding: '10px 16px', background: '#fef3c7', borderRadius: 10, fontSize: 13 }}>\💡 <strong>Fun fact:</strong> {p.fun_fact}</div>}
-
-            {/* Daily budget gauge */}
-            <div style={{ marginTop: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: T.navy, marginBottom: 6 }}>Daily Carbon Budget (1.5\°C pathway: 6.3 kg/day)</div>
-              <div style={{ height: 20, background: T.surfaceH, borderRadius: 10, overflow: 'hidden', position: 'relative' }}>
-                <div style={{ height: '100%', width: `${Math.min(budgetPct, 100)}%`, background: budgetPct > 100 ? T.red : budgetPct > 70 ? T.amber : T.green, borderRadius: 10, transition: 'width 0.5s' }} />
+                <span style={{fontFamily:T.font,fontSize:13,fontWeight:700,color:T.navy}}>{a.label}</span>
               </div>
-              <div style={{ fontSize: 12, color: budgetPct > 100 ? T.red : T.textSec, marginTop: 4 }}>
-                This purchase uses <strong>{budgetPct.toFixed(0)}%</strong> of your daily carbon budget
-                {budgetPct > 100 && ' \— exceeds daily budget!'}
-              </div>
+              <div style={{fontFamily:T.font,fontSize:11,color:T.textSec,marginLeft:26}}>{a.desc}</div>
             </div>
-
-            {/* Actions */}
-            <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
-              <button onClick={() => addToCart(p, qty)} style={sBtn(T.gold, '#fff')}>\🛒 Add to Cart</button>
-              <button onClick={() => { addToWallet(p, qty); alert('Added to your Carbon Wallet!'); }} style={sBtn(T.sage, '#fff')}>\💳 Add to Wallet</button>
-              <button onClick={() => toggleCompare(p)} style={sBtnSm(compareList.find(c => c.id === p.id) ? T.red : T.navyL, '#fff')}>
-                {compareList.find(c => c.id === p.id) ? 'Remove from Compare' : '\⚖\️ Compare'}
-              </button>
-              <button onClick={() => setShowLabel(true)} style={sBtnSm(T.navy, '#fff')}>\🏷\️ Carbon Label</button>
-            </div>
-          </div>
-
-          {/* Lifecycle PieChart */}
-          <div style={{ width: 280, flexShrink: 0 }}>
-            <h4 style={{ margin: '0 0 8px', color: T.navy, fontSize: 14 }}>Lifecycle Breakdown</h4>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={lcData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => `${name} ${value}%`} labelLine={false} fontSize={10}>
-                  {lcData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                </Pie>
-                <Tooltip formatter={(v) => `${v}%`} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Swap & Save */}
-        {alt && (
-          <div style={{ marginTop: 16, padding: 16, background: '#ecfdf5', borderRadius: 12, border: `1px solid #bbf7d0` }}>
-            <div style={{ fontWeight: 700, color: T.green, marginBottom: 6 }}>\♻\️ Swap & Save</div>
-            <div style={{ fontSize: 14 }}>
-              Switch to <strong style={{ cursor: 'pointer', color: T.navyL, textDecoration: 'underline' }} onClick={() => selectProduct(ALL_PRODUCTS.find(x => x.id === p.sustainable_alt))}>{alt.name}</strong> and save <strong style={{ color: T.green }}>{p.alt_saving_pct}%</strong> carbon ({(p.carbon_kg - alt.carbon_kg).toFixed(1)} kg CO\₂e less)
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  /* ─── Carbon Label Generator ─── */
-  const renderCarbonLabel = () => {
-    if (!showLabel || !selectedProduct) return null;
-    const p = selectedProduct;
-    const eq = carbonEquivalent(p.carbon_kg);
-    return (
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowLabel(false)}>
-        <div style={{ background: '#fff', borderRadius: 20, padding: 32, width: 340, textAlign: 'center' }} onClick={e => e.stopPropagation()}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, letterSpacing: 2, textTransform: 'uppercase' }}>Carbon Footprint Label</div>
-          <div style={{ margin: '16px 0', padding: 16, border: `3px solid ${p.carbon_kg > 10 ? T.red : p.carbon_kg > 3 ? T.amber : T.green}`, borderRadius: 14 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: T.navy }}>{p.name}</div>
-            <div style={{ fontSize: 42, fontWeight: 800, color: p.carbon_kg > 10 ? T.red : p.carbon_kg > 3 ? T.amber : T.green, margin: '8px 0' }}>{p.carbon_kg}</div>
-            <div style={{ fontSize: 13, color: T.textSec }}>kg CO\₂e {p.unit}</div>
-            <div style={{ marginTop: 12, borderTop: `1px solid ${T.border}`, paddingTop: 12, fontSize: 12, textAlign: 'left' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span>Driving equivalent</span><strong>{eq.km_driving} km</strong></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span>Trees to offset (1 yr)</span><strong>{eq.trees_to_offset_1yr}</strong></div>
-              {p.water_l && <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span>Water footprint</span><strong>{p.water_l.toLocaleString()} L</strong></div>}
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Daily budget used</span><strong>{(p.carbon_kg / DAILY_BUDGET_KG * 100).toFixed(0)}%</strong></div>
-            </div>
-            <div style={{ marginTop: 10, fontSize: 10, color: T.textMut }}>Rating: {p.carbon_kg < 1 ? 'A+' : p.carbon_kg < 3 ? 'A' : p.carbon_kg < 7 ? 'B' : p.carbon_kg < 15 ? 'C' : p.carbon_kg < 30 ? 'D' : 'E'}</div>
-          </div>
-          <button onClick={() => setShowLabel(false)} style={sBtn(T.navy, '#fff')}>Close</button>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div style={sPage}>
-      {renderCarbonLabel()}
-
-      {/* 1. Hero Header */}
-      <div style={sHero}>
-        <div style={sContainer}>
-          <div style={{ fontSize: 42, fontWeight: 800, marginBottom: 8 }}>\🌍 What's the carbon cost of your purchase?</div>
-          <div style={{ fontSize: 18, opacity: 0.85, marginBottom: 12 }}>Search 200+ products across 12 categories. Compare. Make better choices.</div>
-          {/* Data quality provenance badge */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-            {[
-              { icon: '\u2713', text: 'Transport factors: UK DEFRA 2023 (real)', color: '#16a34a' },
-              { icon: '\u2713', text: `GWP: IPCC AR6 — CH\u2084 = ${GWP_AR6.CH4_fossil}, N\u2082O = ${GWP_AR6.N2O}`, color: '#2563eb' },
-              { icon: '\u2713', text: `UK grid: ${ENERGY_FACTORS.ukGrid2023.factor} kgCO\u2082/kWh (2023)`, color: '#7c3aed' },
-            ].map((b, i) => (
-              <span key={i} style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)', border: `1px solid ${b.color}55`, borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ color: b.color, fontWeight: 800 }}>{b.icon}</span>
-                {b.text}
-              </span>
-            ))}
-          </div>
-          <div style={{ maxWidth: 600, margin: '0 auto', position: 'relative' }}>
-            <input
-              ref={searchRef}
-              value={search}
-              onChange={e => { setSearch(e.target.value); setTab('search'); }}
-              placeholder="Search any product... (e.g., beef, t-shirt, laptop, flight)"
-              style={{ ...sInput, padding: '16px 24px', fontSize: 18, borderRadius: 16, border: '2px solid rgba(255,255,255,0.3)' }}
-            />
-            {search && (
-              <button onClick={() => { setSearch(''); setSelectedProduct(null); }} style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: T.textMut }}>\✕</button>
-            )}
-          </div>
-          {/* Quick-search autocomplete dropdown */}
-          {search && filteredProducts.length > 0 && (
-            <div style={{ maxWidth: 600, margin: '4px auto 0', background: '#fff', borderRadius: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.15)', maxHeight: 320, overflowY: 'auto', textAlign: 'left' }}>
-              {filteredProducts.map(p => (
-                <div key={p.id} onClick={() => { selectProduct(p); setSearch(''); }} style={{ padding: '12px 20px', cursor: 'pointer', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                  onMouseEnter={e => e.currentTarget.style.background = T.surfaceH} onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-                  <div>
-                    <span style={{ marginRight: 8 }}>{p.catIcon}</span>
-                    <strong style={{ color: T.navy }}>{p.name}</strong>
-                    <span style={{ color: T.textMut, fontSize: 12, marginLeft: 8 }}>{p.catName}</span>
-                  </div>
-                  <div style={{ fontWeight: 700, color: p.carbon_kg > 10 ? T.red : p.carbon_kg > 3 ? T.amber : T.green }}>
-                    {p.carbon_kg} kg
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div style={sContainer}>
-        {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: 4, marginTop: 24, marginBottom: 0, flexWrap: 'wrap' }}>
-          {[{ k: 'search', l: '\🔍 Search' }, { k: 'categories', l: '\📂 Categories' }, { k: 'compare', l: `\⚖\️ Compare (${compareList.length})` }, { k: 'cart', l: `\🛒 Cart (${cart.length})` }, { k: 'equiv', l: '\📊 Equivalences' }].map(t => (
-            <button key={t.k} onClick={() => setTab(t.k)} style={sTab(tab === t.k)}>{t.l}</button>
           ))}
         </div>
+      </Panel>
 
-        {/* ─── SEARCH TAB ─── */}
-        {tab === 'search' && (
-          <div>
-            {selectedProduct && renderProductCard(selectedProduct)}
+      <Panel title="Entity Structure" citation="\u00A7 3.1 Organizational Boundaries">
+        <div style={{display:'flex',gap:12,marginBottom:16}}>
+          <Inp label="Company Name" value={companyName} onChange={setCompanyName} width={240} />
+          <Inp label="Reporting Year" value={reportingYear} onChange={setReportingYear} type="number" width={90} />
+          <Inp label="Base Year" value={baseYear} onChange={setBaseYear} type="number" width={90} />
+          <Inp label="Revenue (USD)" value={revenue} onChange={setRevenue} type="number" width={150} unit="$" />
+          <Inp label="Employees" value={employees} onChange={setEmployees} type="number" width={90} />
+          <Sel label="GICS Sector" value={sector} onChange={setSector} width={220}
+            options={SECTOR_BENCHMARKS.map(s=>({value:s.gics,label:`${s.gics} \u2014 ${s.sector}`}))} />
+        </div>
 
-            {!selectedProduct && (
-              <div style={sCard}>
-                <h3 style={{ color: T.navy, margin: '0 0 12px' }}>\🔍 Start by searching for a product above</h3>
-                <p style={{ color: T.textSec, margin: 0, fontSize: 14 }}>Type any product name in the search bar to see its carbon footprint, water usage, and sustainable alternatives.</p>
-                {/* Recent searches */}
-                {getSearchHistory().length > 0 && (
-                  <div style={{ marginTop: 16 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: T.textSec, marginBottom: 8 }}>Recent Searches</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                      {getSearchHistory().slice(0, 8).map(h => (
-                        <button key={h.id} onClick={() => { const p = ALL_PRODUCTS.find(x => x.id === h.id); if (p) selectProduct(p); }} style={sBtnSm(T.surfaceH, T.navy)}>{h.name}</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH w={30}>#</TH><TH>Entity Name</TH><TH w={80}>Country</TH><TH w={90}>Ownership %</TH>
+              <TH w={100}>Included</TH><TH w={120}>Allocation</TH><TH w={60}></TH>
+            </tr></thead>
+            <tbody>
+              {entities.map((e,i)=>{
+                const alloc=boundaryApproach==='equity'?e.ownership:e.include?100:0;
+                return(
+                  <tr key={e.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD mono>{i+1}</TD>
+                    <TD>
+                      <input value={e.name} onChange={ev=>updateEntity(e.id,'name',ev.target.value)}
+                        style={{fontFamily:T.font,fontSize:12,border:'none',background:'transparent',color:T.text,width:'100%',outline:'none'}} />
+                      {e.isParent&&<Badge label="Parent" color={T.navy} />}
+                    </TD>
+                    <TD>
+                      <select value={e.country} onChange={ev=>updateEntity(e.id,'country',ev.target.value)}
+                        style={{fontFamily:T.mono,fontSize:11,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',background:T.surface}}>
+                        {GRID_INTENSITY.map(g=><option key={g.iso2} value={g.iso2}>{g.iso2}</option>)}
+                      </select>
+                    </TD>
+                    <TD mono>
+                      <input type="number" value={e.ownership} onChange={ev=>updateEntity(e.id,'ownership',parseFloat(ev.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:50,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />%
+                    </TD>
+                    <TD>
+                      <input type="checkbox" checked={e.include} onChange={ev=>updateEntity(e.id,'include',ev.target.checked)} />
+                      <span style={{fontFamily:T.mono,fontSize:10,color:e.include?T.green:T.textMut,marginLeft:4}}>{e.include?'Yes':'No'}</span>
+                    </TD>
+                    <TD mono color={alloc>0?T.navy:T.textMut}>{alloc}%</TD>
+                    <TD>{!e.isParent&&<Btn small variant="danger" onClick={()=>removeEntity(e.id)}>\u2715</Btn>}</TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div style={{marginTop:12}}><Btn small variant="ghost" onClick={addEntity}>+ Add Entity</Btn></div>
+      </Panel>
+
+      <Panel title="Consolidation Preview" collapsible defaultOpen={true}>
+        {boundaryApproach==='equity'&&(
+          <InfoBox type="warn" text={`Under Equity Share approach, each entity contributes emissions proportional to ownership %. E.g., "${entities.find(e=>e.ownership<100&&e.ownership>0)?.name||'Entity X'}" at ${entities.find(e=>e.ownership<100&&e.ownership>0)?.ownership||30}% ownership contributes ${entities.find(e=>e.ownership<100&&e.ownership>0)?.ownership||30}% of its emissions.`} />
+        )}
+        <div style={{display:'flex',flexWrap:'wrap',gap:12}}>
+          {entities.filter(e=>boundaryApproach==='equity'?e.ownership>0:e.include).map(e=>{
+            const alloc=boundaryApproach==='equity'?e.ownership:100;
+            return(
+              <div key={e.id} style={{padding:'12px 16px',borderRadius:8,border:`2px solid ${T.navy}30`,background:T.navy+'06',minWidth:180}}>
+                <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy}}>{e.name}</div>
+                <div style={{fontFamily:T.mono,fontSize:11,color:T.textSec,marginTop:4}}>Country: {e.country} | Ownership: {e.ownership}%</div>
+                <div style={{fontFamily:T.mono,fontSize:13,fontWeight:700,color:T.sage,marginTop:4}}>Allocation: {alloc}%</div>
               </div>
-            )}
-
-            {/* Product Carbon Trend (simulated) */}
-            {selectedProduct && (
-              <div style={sCard}>
-                <h3 style={{ color: T.navy, margin: '0 0 12px' }}>\📈 Carbon Trend for {selectedProduct.name}</h3>
-                <p style={{ color: T.textSec, fontSize: 13, marginBottom: 12 }}>Estimated carbon footprint trend as grids decarbonize and production improves</p>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={[2020, 2021, 2022, 2023, 2024, 2025].map((y, i) => ({ year: y, carbon: +(selectedProduct.carbon_kg * (1 - i * 0.02)).toFixed(2) }))}>
-                    <XAxis dataKey="year" fontSize={12} />
-                    <YAxis fontSize={12} />
-                    <Tooltip />
-                    <Bar dataKey="carbon" fill={T.sage} radius={[6, 6, 0, 0]} name="kg CO2e" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-
-            {/* Country Grid Factor */}
-            {selectedProduct && (
-              <div style={sCard}>
-                <h3 style={{ color: T.navy, margin: '0 0 12px' }}>\⚡ Country Grid Factor Adjustment</h3>
-                <p style={{ color: T.textSec, fontSize: 13, marginBottom: 12 }}>If this product uses electricity, adjust its carbon based on your country's grid</p>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <select value={country} onChange={e => setCountry(e.target.value)} style={{ ...sInput, width: 200, padding: '10px 14px' }}>
-                    {/* Real grid intensity: Ember 2023 (gCO2/kWh ÷ 1000 = kgCO2/kWh) */}
-                    {[{ n: 'India', f: 0.632 }, { n: 'USA', f: 0.386 }, { n: 'UK', f: 0.238 }, { n: 'France', f: 0.056 }, { n: 'Germany', f: 0.385 }, { n: 'China', f: 0.555 }, { n: 'Australia', f: 0.487 }, { n: 'Brazil', f: 0.091 }, { n: 'Norway', f: 0.024 }, { n: 'Japan', f: 0.465 }, { n: 'Canada', f: 0.130 }, { n: 'South Korea', f: 0.415 }, { n: 'Poland', f: 0.697 }, { n: 'Spain', f: 0.167 }].map(c => <option key={c.n} value={c.n}>{c.n} ({c.f} kg/kWh)</option>)}
-                  </select>
-                  <span style={{ fontSize: 13, color: T.textSec }}>Grid emission factor affects electricity-dependent products</span>
-                </div>
-              </div>
-            )}
+            );
+          })}
+        </div>
+        {entities.filter(e=>!e.include&&boundaryApproach!=='equity').length>0&&(
+          <div style={{marginTop:12}}>
+            <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.textMut,marginBottom:6}}>Excluded Entities:</div>
+            {entities.filter(e=>!e.include&&boundaryApproach!=='equity').map(e=>(
+              <span key={e.id} style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginRight:12}}>{e.name} ({e.ownership}%)</span>
+            ))}
           </div>
         )}
+      </Panel>
+    </div>
+  );
 
-        {/* ─── CATEGORIES TAB ─── */}
-        {tab === 'categories' && (
-          <div>
-            {/* Category Tiles */}
-            <div style={{ ...sGrid(window.innerWidth < 768 ? 2 : 4), marginTop: 20 }}>
-              {Object.entries(PRODUCT_CARBON_DB).map(([key, cat]) => (
-                <div key={key} onClick={() => setActiveCat(activeCat === key ? null : key)}
-                  style={{ ...sKpi, cursor: 'pointer', border: activeCat === key ? `2px solid ${cat.color || T.gold}` : `1px solid ${T.border}`, transition: 'all 0.2s' }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
-                  <div style={{ fontSize: 32 }}>{cat.icon}</div>
-                  <div style={{ fontWeight: 700, color: T.navy, fontSize: 14, marginTop: 4 }}>{cat.name}</div>
-                  <div style={{ fontSize: 12, color: T.textSec }}>{cat.products.length} products</div>
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TAB 2: SCOPE 1 — DIRECT EMISSIONS
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const renderScope1=()=>{
+    const breakdownData=[
+      {name:'Stationary',value:scope1StationaryTotal},
+      {name:'Mobile',value:scope1MobileTotal},
+      {name:'Process',value:scope1ProcessTotal},
+      {name:'Fugitive',value:scope1FugitiveTotal},
+    ].filter(d=>d.value>0);
+
+    return(
+      <div>
+        <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
+          <KPICard label="Scope 1 Total" value={fmtCO2(scope1Total)} color={T.navy} />
+          <KPICard label="Stationary Combustion" value={fmtCO2(scope1StationaryTotal)} sub={`${scope1Total>0?(scope1StationaryTotal/scope1Total*100).toFixed(1):0}%`} color={T.gold} />
+          <KPICard label="Mobile Combustion" value={fmtCO2(scope1MobileTotal)} sub={`${scope1Total>0?(scope1MobileTotal/scope1Total*100).toFixed(1):0}%`} color={T.sage} />
+          <KPICard label="Process + Fugitive" value={fmtCO2(scope1ProcessTotal+scope1FugitiveTotal)} color={T.navyL} />
+        </div>
+
+        {/* 2a. Stationary Combustion */}
+        <Panel title="2a. Stationary Combustion" collapsible citation="GHG Protocol Ch 4 \u2014 Stationary Sources">
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH w={30}>#</TH><TH>Description</TH><TH w={180}>Fuel Type</TH><TH w={120}>Consumption</TH>
+              <TH w={100}>EF</TH><TH w={80}>Source</TH><TH w={100}>tCO2e</TH><TH w={40}></TH>
+            </tr></thead>
+            <tbody>
+              {stationary.map((item,i)=>{
+                const ef=EMISSION_FACTORS.energy[item.fuel];
+                const tco2=calcStationary(item);
+                return(
+                  <tr key={item.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD mono>{i+1}</TD>
+                    <TD>
+                      <input value={item.desc} onChange={e=>updateStationary(item.id,'desc',e.target.value)}
+                        style={{fontFamily:T.font,fontSize:12,border:'none',background:'transparent',width:'100%',outline:'none',color:T.text}} />
+                    </TD>
+                    <TD>
+                      <select value={item.fuel} onChange={e=>updateStationary(item.id,'fuel',e.target.value)}
+                        style={{fontFamily:T.mono,fontSize:11,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',width:'100%'}}>
+                        {FUEL_TYPES.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}
+                      </select>
+                    </TD>
+                    <TD>
+                      <input type="number" value={item.qty} onChange={e=>updateStationary(item.id,'qty',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:80,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                      <span style={{fontFamily:T.mono,fontSize:9,color:T.textMut,marginLeft:4}}>{FUEL_TYPES.find(f=>f.value===item.fuel)?.unit}</span>
+                    </TD>
+                    <TD mono>{ef?ef.factor:'\u2014'}</TD>
+                    <TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{ef?.source||''}</span></TD>
+                    <TD mono color={T.navy}>{tco2.toFixed(2)}</TD>
+                    <TD><Btn small variant="danger" onClick={()=>removeStationary(item.id)}>\u2715</Btn></TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{background:T.navy+'08'}}>
+                <td colSpan={6} style={{padding:'8px 10px',fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,textAlign:'right'}}>Subtotal Stationary:</td>
+                <TD mono color={T.navy}>{scope1StationaryTotal.toFixed(2)}</TD>
+                <TD></TD>
+              </tr>
+            </tfoot>
+          </table>
+          <div style={{marginTop:10}}><Btn small variant="ghost" onClick={addStationary}>+ Add Stationary Source</Btn></div>
+        </Panel>
+
+        {/* 2b. Mobile Combustion */}
+        <Panel title="2b. Mobile Combustion" collapsible citation="GHG Protocol Ch 4 \u2014 Mobile Sources">
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH w={30}>#</TH><TH>Description</TH><TH w={160}>Vehicle Type</TH><TH w={110}>Distance (km)</TH>
+              <TH w={80}>Fleet Size</TH><TH w={90}>EF (gCO2e/km)</TH><TH w={100}>tCO2e</TH><TH w={40}></TH>
+            </tr></thead>
+            <tbody>
+              {mobile.map((item,i)=>{
+                const ef=EMISSION_FACTORS.transport[item.vehicle];
+                const tco2=calcMobile(item);
+                return(
+                  <tr key={item.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD mono>{i+1}</TD>
+                    <TD>
+                      <input value={item.desc} onChange={e=>updateMobile(item.id,'desc',e.target.value)}
+                        style={{fontFamily:T.font,fontSize:12,border:'none',background:'transparent',width:'100%',outline:'none',color:T.text}} />
+                    </TD>
+                    <TD>
+                      <select value={item.vehicle} onChange={e=>updateMobile(item.id,'vehicle',e.target.value)}
+                        style={{fontFamily:T.mono,fontSize:11,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',width:'100%'}}>
+                        {VEHICLE_TYPES.map(v=><option key={v.value} value={v.value}>{v.label}</option>)}
+                      </select>
+                    </TD>
+                    <TD>
+                      <input type="number" value={item.distance} onChange={e=>updateMobile(item.id,'distance',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:80,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD>
+                      <input type="number" value={item.fleetSize} onChange={e=>updateMobile(item.id,'fleetSize',parseInt(e.target.value)||1)}
+                        style={{fontFamily:T.mono,fontSize:12,width:50,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD mono>{ef?ef.factor:'\u2014'}</TD>
+                    <TD mono color={T.navy}>{tco2.toFixed(2)}</TD>
+                    <TD><Btn small variant="danger" onClick={()=>removeMobile(item.id)}>\u2715</Btn></TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{background:T.navy+'08'}}>
+                <td colSpan={6} style={{padding:'8px 10px',fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,textAlign:'right'}}>Subtotal Mobile:</td>
+                <TD mono color={T.navy}>{scope1MobileTotal.toFixed(2)}</TD>
+                <TD></TD>
+              </tr>
+            </tfoot>
+          </table>
+          <div style={{marginTop:10}}><Btn small variant="ghost" onClick={addMobile}>+ Add Vehicle / Fleet</Btn></div>
+        </Panel>
+
+        {/* 2c. Process Emissions */}
+        <Panel title="2c. Process Emissions" collapsible citation="GHG Protocol Ch 4 \u2014 Process Emissions">
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH w={30}>#</TH><TH>Description</TH><TH w={180}>Industry / Process</TH>
+              <TH w={120}>Production (t)</TH><TH w={100}>EF (kgCO2e/t)</TH><TH w={80}>Source</TH><TH w={100}>tCO2e</TH><TH w={40}></TH>
+            </tr></thead>
+            <tbody>
+              {process.map((item,i)=>{
+                const p=INDUSTRY_PROCESSES.find(x=>x.value===item.industry);
+                const tco2=calcProcess(item);
+                return(
+                  <tr key={item.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD mono>{i+1}</TD>
+                    <TD>
+                      <input value={item.desc} onChange={e=>updateProcess(item.id,'desc',e.target.value)}
+                        style={{fontFamily:T.font,fontSize:12,border:'none',background:'transparent',width:'100%',outline:'none',color:T.text}} />
+                    </TD>
+                    <TD>
+                      <select value={item.industry} onChange={e=>updateProcess(item.id,'industry',e.target.value)}
+                        style={{fontFamily:T.mono,fontSize:11,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',width:'100%'}}>
+                        {INDUSTRY_PROCESSES.map(p2=><option key={p2.value} value={p2.value}>{p2.label}</option>)}
+                      </select>
+                    </TD>
+                    <TD>
+                      <input type="number" value={item.qty} onChange={e=>updateProcess(item.id,'qty',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:80,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD mono>{p?p.ef:'\u2014'}</TD>
+                    <TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{p?.source||''}</span></TD>
+                    <TD mono color={T.navy}>{tco2.toFixed(2)}</TD>
+                    <TD><Btn small variant="danger" onClick={()=>removeProcess(item.id)}>\u2715</Btn></TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{background:T.navy+'08'}}>
+                <td colSpan={6} style={{padding:'8px 10px',fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,textAlign:'right'}}>Subtotal Process:</td>
+                <TD mono color={T.navy}>{scope1ProcessTotal.toFixed(2)}</TD>
+                <TD></TD>
+              </tr>
+            </tfoot>
+          </table>
+          <div style={{marginTop:10}}><Btn small variant="ghost" onClick={addProcess}>+ Add Process Source</Btn></div>
+        </Panel>
+
+        {/* 2d. Fugitive Emissions */}
+        <Panel title="2d. Fugitive Emissions" collapsible citation="GHG Protocol Ch 4 \u2014 Fugitive Emissions">
+          <InfoBox text="Fugitive emissions = Charge (kg) \u00D7 Leak Rate (%) \u00D7 GWP. GWP values from IPCC AR6 WG1, Chapter 7, Table 7.15." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH w={30}>#</TH><TH>Description</TH><TH w={180}>Refrigerant</TH>
+              <TH w={90}>Charge (kg)</TH><TH w={90}>Leak Rate %</TH><TH w={80}>GWP-100</TH><TH w={100}>tCO2e</TH><TH w={40}></TH>
+            </tr></thead>
+            <tbody>
+              {fugitive.map((item,i)=>{
+                const ref=REFRIGERANT_TYPES.find(r=>r.value===item.refrigerant);
+                const tco2=calcFugitive(item);
+                return(
+                  <tr key={item.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD mono>{i+1}</TD>
+                    <TD>
+                      <input value={item.desc} onChange={e=>updateFugitive(item.id,'desc',e.target.value)}
+                        style={{fontFamily:T.font,fontSize:12,border:'none',background:'transparent',width:'100%',outline:'none',color:T.text}} />
+                    </TD>
+                    <TD>
+                      <select value={item.refrigerant} onChange={e=>updateFugitive(item.id,'refrigerant',e.target.value)}
+                        style={{fontFamily:T.mono,fontSize:11,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',width:'100%'}}>
+                        {REFRIGERANT_TYPES.map(r=><option key={r.value} value={r.value}>{r.label} (GWP: {r.gwp.toLocaleString()})</option>)}
+                      </select>
+                    </TD>
+                    <TD>
+                      <input type="number" value={item.charge} onChange={e=>updateFugitive(item.id,'charge',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:60,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD>
+                      <input type="number" value={item.leakRate} onChange={e=>updateFugitive(item.id,'leakRate',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:50,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD mono>{ref?ref.gwp.toLocaleString():'\u2014'}</TD>
+                    <TD mono color={T.navy}>{tco2.toFixed(4)}</TD>
+                    <TD><Btn small variant="danger" onClick={()=>removeFugitive(item.id)}>\u2715</Btn></TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{background:T.navy+'08'}}>
+                <td colSpan={6} style={{padding:'8px 10px',fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,textAlign:'right'}}>Subtotal Fugitive:</td>
+                <TD mono color={T.navy}>{scope1FugitiveTotal.toFixed(4)}</TD>
+                <TD></TD>
+              </tr>
+            </tfoot>
+          </table>
+          <div style={{marginTop:10}}><Btn small variant="ghost" onClick={addFugitive}>+ Add Fugitive Source</Btn></div>
+        </Panel>
+
+        {/* Scope 1 Breakdown Chart */}
+        <Panel title="Scope 1 Breakdown">
+          <div style={{height:280}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={breakdownData} layout="vertical" margin={{left:100,right:40,top:10,bottom:10}}>
+                <XAxis type="number" tick={{fontFamily:T.mono,fontSize:10}} />
+                <YAxis type="category" dataKey="name" tick={{fontFamily:T.font,fontSize:11}} width={90} />
+                <Tooltip formatter={v=>[v.toFixed(2)+' tCO2e']} contentStyle={{fontFamily:T.mono,fontSize:11}} />
+                <Bar dataKey="value" fill={T.navy} radius={[0,4,4,0]}>
+                  {breakdownData.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Panel>
+
+        {/* Scope 1 EF Quick Reference */}
+        <Panel title="Scope 1 Emission Factor Quick Reference" collapsible defaultOpen={false} citation="DEFRA 2023 / IPCC AR6">
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+            <div>
+              <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Stationary Combustion (kgCO2e per unit)</div>
+              <table style={{width:'100%',borderCollapse:'collapse'}}>
+                <thead><tr><TH>Fuel</TH><TH w={80}>EF</TH><TH w={80}>Unit</TH></tr></thead>
+                <tbody>
+                  {Object.entries(EMISSION_FACTORS.energy).map(([key,val],i)=>(
+                    <tr key={key} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                      <TD>{key.replace(/_/g,' ')}</TD>
+                      <TD mono>{val.factor}</TD>
+                      <TD mono>{val.unit}</TD>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Mobile Combustion (gCO2e per passenger-km)</div>
+              <table style={{width:'100%',borderCollapse:'collapse'}}>
+                <thead><tr><TH>Vehicle</TH><TH w={80}>EF</TH></tr></thead>
+                <tbody>
+                  {VEHICLE_TYPES.map((v,i)=>{
+                    const ef=EMISSION_FACTORS.transport[v.value];
+                    return(
+                      <tr key={v.value} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                        <TD>{v.label}</TD>
+                        <TD mono>{ef?ef.factor:'\u2014'}</TD>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <div style={{marginTop:12}}>
+                <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Process Emissions (kgCO2e per tonne)</div>
+                <table style={{width:'100%',borderCollapse:'collapse'}}>
+                  <thead><tr><TH>Industry</TH><TH w={80}>EF</TH></tr></thead>
+                  <tbody>
+                    {INDUSTRY_PROCESSES.map((p,i)=>(
+                      <tr key={p.value} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                        <TD>{p.label}</TD>
+                        <TD mono color={p.ef>2000?T.red:p.ef>1000?T.amber:T.text}>{p.ef.toLocaleString()}</TD>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{marginTop:12}}>
+                <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Fugitive (GWP-100 values)</div>
+                <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                  {REFRIGERANT_TYPES.map(r=>(
+                    <div key={r.value} style={{padding:'3px 8px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:4,fontFamily:T.mono,fontSize:10}}>
+                      <span style={{color:T.navy}}>{r.label.split('(')[0].trim()}</span>: <span style={{color:r.gwp>10000?T.red:r.gwp>1000?T.amber:T.green}}>{r.gwp.toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Panel>
+
+        {/* Scope 1 Reduction Opportunities */}
+        <Panel title="Scope 1 Reduction Opportunity Analysis" collapsible defaultOpen={false}>
+          <InfoBox text="Based on current Scope 1 composition, the following reduction pathways are identified. Prioritize by cost-effectiveness ($/tCO2e abated) and implementation timeline." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr><TH>Source</TH><TH>Current tCO2e</TH><TH>Reduction Pathway</TH><TH>Potential Reduction</TH><TH>Typical Cost</TH><TH>Timeline</TH></tr></thead>
+            <tbody>
+              {[
+                {src:'Natural Gas Heating',cur:scope1StationaryTotal>0?'Primary stationary source':'\u2014',path:'Electrification (heat pumps)',red:'60-90%',cost:'$50-150/tCO2e',time:'2-4 years'},
+                {src:'Diesel Generators',cur:'Backup power',path:'Battery storage + solar',red:'70-100%',cost:'$80-200/tCO2e',time:'1-3 years'},
+                {src:'Fleet Vehicles',cur:scope1MobileTotal>0?'Fleet emissions':'\u2014',path:'EV transition',red:'50-80%',cost:'$20-80/tCO2e',time:'3-7 years'},
+                {src:'Process Emissions',cur:scope1ProcessTotal>0?'Industrial process':'\u2014',path:'Process efficiency + CCS',red:'20-50%',cost:'$40-120/tCO2e',time:'5-10 years'},
+                {src:'Refrigerants',cur:scope1FugitiveTotal>0?'HVAC/switchgear':'\u2014',path:'Low-GWP alternatives (R-32, R-290)',red:'60-80%',cost:'$10-50/tCO2e',time:'1-5 years'},
+                {src:'SF6 Switchgear',cur:'Electrical',path:'SF6-free alternatives (vacuum, clean air)',red:'100%',cost:'$20-60/tCO2e',time:'3-8 years'},
+              ].map((row,i)=>(
+                <tr key={i} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                  <TD><strong>{row.src}</strong></TD>
+                  <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{row.cur}</span></TD>
+                  <TD>{row.path}</TD>
+                  <TD><Badge label={row.red} color={T.green} /></TD>
+                  <TD><span style={{fontFamily:T.mono,fontSize:11,color:T.textSec}}>{row.cost}</span></TD>
+                  <TD><span style={{fontFamily:T.mono,fontSize:11,color:T.textSec}}>{row.time}</span></TD>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Panel>
+      </div>
+    );
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TAB 3: SCOPE 2 — ENERGY INDIRECT
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const renderScope2=()=>{
+    const comparisonData=facilities.map(f=>({
+      name:f.name.length>18?f.name.slice(0,18)+'...':f.name,
+      'Location-Based':calcS2Location(f),
+      'Market-Based':calcS2Market(f),
+    }));
+
+    return(
+      <div>
+        <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
+          <KPICard label="Location-Based Total" value={fmtCO2(scope2LocationTotal)} color={T.navy} />
+          <KPICard label="Market-Based Total" value={fmtCO2(scope2MarketTotal)} color={T.sage} />
+          <KPICard label="Renewable Share" value={renewablePct.toFixed(1)+'%'} sub={`${formatN(renewableKwh)} / ${formatN(totalElecKwh)} kWh`} color={T.green} />
+          <KPICard label="Market vs Location" value={(scope2LocationTotal>0?((scope2MarketTotal/scope2LocationTotal-1)*100).toFixed(1):0)+'%'} sub="Savings from procurement" color={scope2MarketTotal<scope2LocationTotal?T.green:T.red} />
+        </div>
+
+        {/* 3a. Location-Based */}
+        <Panel title="3a. Location-Based Method" collapsible citation="Scope 2 Guidance (2015), Ch 6">
+          <InfoBox text="Location-based method uses average grid emission factors for electricity delivered through the grid. Per GHG Protocol Scope 2 Guidance (2015), both location-based and market-based results must be reported." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH w={30}>#</TH><TH>Facility</TH><TH w={70}>Country</TH><TH w={120}>Electricity (kWh)</TH>
+              <TH w={100}>Grid EF (gCO2/kWh)</TH><TH w={90}>Heat (kWh)</TH><TH w={90}>Cooling (kWh)</TH><TH w={100}>tCO2e</TH><TH w={40}></TH>
+            </tr></thead>
+            <tbody>
+              {facilities.map((f,i)=>{
+                const gi=GRID_INTENSITY.find(g=>g.iso2===f.country);
+                const tco2=calcS2Location(f);
+                return(
+                  <tr key={f.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD mono>{i+1}</TD>
+                    <TD>
+                      <input value={f.name} onChange={e=>updateFacility(f.id,'name',e.target.value)}
+                        style={{fontFamily:T.font,fontSize:12,border:'none',background:'transparent',width:'100%',outline:'none',color:T.text}} />
+                    </TD>
+                    <TD>
+                      <select value={f.country} onChange={e=>updateFacility(f.id,'country',e.target.value)}
+                        style={{fontFamily:T.mono,fontSize:11,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px'}}>
+                        {GRID_INTENSITY.map(g=><option key={g.iso2} value={g.iso2}>{g.iso2} ({g.gCO2_kWh})</option>)}
+                      </select>
+                    </TD>
+                    <TD>
+                      <input type="number" value={f.elecKwh} onChange={e=>updateFacility(f.id,'elecKwh',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:90,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD mono>{gi?`${gi.gCO2_kWh} (${gi.primary.split('+')[0].trim()})`:'\u2014'}</TD>
+                    <TD>
+                      <input type="number" value={f.heatKwh} onChange={e=>updateFacility(f.id,'heatKwh',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:70,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD>
+                      <input type="number" value={f.coolKwh} onChange={e=>updateFacility(f.id,'coolKwh',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:70,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD mono color={T.navy}>{tco2.toFixed(2)}</TD>
+                    <TD><Btn small variant="danger" onClick={()=>removeFacility(f.id)}>\u2715</Btn></TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{background:T.navy+'08'}}>
+                <td colSpan={7} style={{padding:'8px 10px',fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,textAlign:'right'}}>Total Location-Based:</td>
+                <TD mono color={T.navy}>{scope2LocationTotal.toFixed(2)}</TD>
+                <TD></TD>
+              </tr>
+            </tfoot>
+          </table>
+        </Panel>
+
+        {/* 3b. Market-Based */}
+        <Panel title="3b. Market-Based Method" collapsible citation="Scope 2 Guidance (2015), Ch 7">
+          <InfoBox text="Market-based method uses supplier-specific EFs, RECs/GOs, PPAs, and residual mix factors. Hierarchy: (1) Energy attribute certificates, (2) Direct contracts / PPAs, (3) Supplier-specific EF, (4) Residual mix factor, (5) Grid average." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH w={30}>#</TH><TH>Facility</TH><TH w={100}>REC/GO (kWh)</TH>
+              <TH w={100}>PPA (kWh)</TH><TH w={90}>PPA EF (kg/kWh)</TH><TH w={100}>Residual EF</TH><TH w={100}>Market tCO2e</TH>
+            </tr></thead>
+            <tbody>
+              {facilities.map((f,i)=>{
+                const tco2=calcS2Market(f);
+                return(
+                  <tr key={f.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD mono>{i+1}</TD>
+                    <TD>{f.name}</TD>
+                    <TD>
+                      <input type="number" value={f.recKwh} onChange={e=>updateFacility(f.id,'recKwh',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:80,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                      {f.recKwh>0&&<Badge label={`${(f.recKwh/f.elecKwh*100).toFixed(0)}%`} color={T.green} />}
+                    </TD>
+                    <TD>
+                      <input type="number" value={f.ppaKwh} onChange={e=>updateFacility(f.id,'ppaKwh',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:80,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD>
+                      <input type="number" value={f.supplierEf||''} onChange={e=>updateFacility(f.id,'supplierEf',parseFloat(e.target.value)||null)}
+                        style={{fontFamily:T.mono,fontSize:12,width:60,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} placeholder="\u2014" />
+                    </TD>
+                    <TD>
+                      <input type="number" value={f.residualEf||''} onChange={e=>updateFacility(f.id,'residualEf',parseFloat(e.target.value)||null)}
+                        style={{fontFamily:T.mono,fontSize:12,width:60,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} placeholder="grid avg" />
+                    </TD>
+                    <TD mono color={T.sage}>{tco2.toFixed(2)}</TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{background:T.sage+'10'}}>
+                <td colSpan={6} style={{padding:'8px 10px',fontFamily:T.font,fontSize:12,fontWeight:700,color:T.sage,textAlign:'right'}}>Total Market-Based:</td>
+                <TD mono color={T.sage}>{scope2MarketTotal.toFixed(2)}</TD>
+              </tr>
+            </tfoot>
+          </table>
+          <div style={{marginTop:10}}><Btn small variant="ghost" onClick={addFacility}>+ Add Facility</Btn></div>
+        </Panel>
+
+        {/* Comparison Chart */}
+        <Panel title="Location-Based vs Market-Based Comparison">
+          <div style={{height:280}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={comparisonData} margin={{left:20,right:20,top:10,bottom:40}}>
+                <XAxis dataKey="name" tick={{fontFamily:T.font,fontSize:10,angle:-15}} interval={0} />
+                <YAxis tick={{fontFamily:T.mono,fontSize:10}} />
+                <Tooltip formatter={v=>[v.toFixed(2)+' tCO2e']} contentStyle={{fontFamily:T.mono,fontSize:11}} />
+                <Legend wrapperStyle={{fontFamily:T.font,fontSize:11}} />
+                <Bar dataKey="Location-Based" fill={T.navy} radius={[4,4,0,0]} />
+                <Bar dataKey="Market-Based" fill={T.sage} radius={[4,4,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Panel>
+
+        {/* 3c. Additional Energy Types */}
+        <Panel title="3c. Additional Energy Purchases" collapsible defaultOpen={false} citation="Scope 2 Guidance Ch 6.4">
+          <InfoBox text="In addition to electricity, Scope 2 includes purchased heat, steam, and cooling. District heating emission factors vary significantly by country and energy source." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH>Facility</TH><TH w={120}>Heat/Steam (kWh)</TH><TH w={120}>Heat EF (kgCO2e/kWh)</TH>
+              <TH w={120}>Cooling (kWh)</TH><TH w={100}>Heat tCO2e</TH><TH w={100}>Cool tCO2e</TH>
+            </tr></thead>
+            <tbody>
+              {facilities.map((f,i)=>{
+                const gi=GRID_INTENSITY.find(g=>g.iso2===f.country);
+                const heatT=(f.heatKwh*(f.heatEf||0.18))/1000;
+                const coolT=(f.coolKwh*(gi?gi.gCO2_kWh:400))/1e6;
+                return(
+                  <tr key={f.id} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD>{f.name}</TD>
+                    <TD>
+                      <input type="number" value={f.heatKwh} onChange={e=>updateFacility(f.id,'heatKwh',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:90,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD>
+                      <input type="number" value={f.heatEf||0.18} onChange={e=>updateFacility(f.id,'heatEf',parseFloat(e.target.value)||0.18)} step="0.01"
+                        style={{fontFamily:T.mono,fontSize:12,width:70,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                      {DISTRICT_HEATING_EFS.find(dh=>dh.country===f.country)&&(
+                        <span style={{fontFamily:T.mono,fontSize:9,color:T.textMut,marginLeft:4}}>
+                          Default: {DISTRICT_HEATING_EFS.find(dh=>dh.country===f.country).ef}
+                        </span>
+                      )}
+                    </TD>
+                    <TD>
+                      <input type="number" value={f.coolKwh} onChange={e=>updateFacility(f.id,'coolKwh',parseFloat(e.target.value)||0)}
+                        style={{fontFamily:T.mono,fontSize:12,width:90,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
+                    </TD>
+                    <TD mono>{heatT.toFixed(2)}</TD>
+                    <TD mono>{coolT.toFixed(4)}</TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <div style={{marginTop:12}}>
+            <div style={{fontFamily:T.font,fontSize:11,fontWeight:600,color:T.navy,marginBottom:6}}>Country-specific district heating factors:</div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+              {DISTRICT_HEATING_EFS.map(dh=>(
+                <div key={dh.country} style={{padding:'3px 8px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:4,fontFamily:T.mono,fontSize:10}}>
+                  <span style={{color:T.navy}}>{dh.label}</span>: <span style={{color:T.sage}}>{dh.ef}</span>
                 </div>
               ))}
             </div>
+          </div>
+        </Panel>
 
-            {/* Category Leaderboard */}
-            {activeCat && (
-              <div style={{ ...sCard, marginTop: 20 }}>
-                <h3 style={{ color: T.navy, margin: '0 0 4px' }}>{PRODUCT_CARBON_DB[activeCat].icon} {PRODUCT_CARBON_DB[activeCat].name} \— Ranked by Carbon</h3>
-                <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Lowest carbon first. Click any product for details.</p>
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                    <thead>
-                      <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                        <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>#</th>
-                        <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Product</th>
-                        <th style={{ textAlign: 'right', padding: '8px 12px', color: T.textSec }}>CO\₂e (kg)</th>
-                        <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Unit</th>
-                        <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Label</th>
-                        <th style={{ padding: '8px 12px' }}></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {categoryLeaderboard.map((p, i) => (
-                        <tr key={p.id} style={{ borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }}
-                          onClick={() => { selectProduct({ ...p, catKey: activeCat, catName: PRODUCT_CARBON_DB[activeCat].name, catIcon: PRODUCT_CARBON_DB[activeCat].icon, catColor: PRODUCT_CARBON_DB[activeCat].color }); setTab('search'); }}
-                          onMouseEnter={e => e.currentTarget.style.background = T.surfaceH} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                          <td style={{ padding: '10px 12px', fontWeight: 700, color: i === 0 ? T.green : T.textSec }}>{i + 1}</td>
-                          <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{p.name}</td>
-                          <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: p.carbon_kg > 10 ? T.red : p.carbon_kg > 3 ? T.amber : T.green }}>{p.carbon_kg}</td>
-                          <td style={{ padding: '10px 12px', color: T.textSec }}>{p.unit}</td>
-                          <td style={{ padding: '10px 12px' }}>{p.label ? <span style={sBadge(p.label.includes('Lowest') ? T.green : T.sage)}>{p.label}</span> : '\—'}</td>
-                          <td style={{ padding: '10px 12px' }}>
-                            <button onClick={e => { e.stopPropagation(); toggleCompare({ ...p, catKey: activeCat, catName: PRODUCT_CARBON_DB[activeCat].name, catIcon: PRODUCT_CARBON_DB[activeCat].icon }); }} style={sBtnSm(T.surfaceH, T.navy)}>+Compare</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+        {/* Scope 2 Quality Instrument Hierarchy */}
+        <Panel title="Market-Based Instrument Hierarchy" collapsible defaultOpen={false} citation="Scope 2 Guidance, Table 6.1">
+          <InfoBox text="The GHG Protocol Scope 2 Guidance specifies a hierarchy of contractual instruments. Apply in order until all purchased electricity is accounted for." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr><TH>Priority</TH><TH>Instrument Type</TH><TH>Description</TH><TH w={80}>EF Impact</TH></tr></thead>
+            <tbody>
+              {[
+                {pri:1,type:'Energy Attribute Certificates (EACs)',desc:'RECs (North America), GOs (Europe), I-RECs (Global). Purchased and retired. Must be from same market/grid as consumption.',ef:'Zero'},
+                {pri:2,type:'Direct Contracts / PPAs',desc:'Power Purchase Agreements with specific generators. Virtual PPAs (financial) or physical PPAs. Use generator-specific EF.',ef:'Generator EF'},
+                {pri:3,type:'Supplier/Utility Specific',desc:'Green tariff or certified renewable supply from utility. Must be backed by retired EACs.',ef:'Tariff EF'},
+                {pri:4,type:'Residual Mix',desc:'Grid residual mix factor after EACs are removed from the grid mix. Typically higher than grid average.',ef:'Residual mix'},
+                {pri:5,type:'Grid Average (Fallback)',desc:'National or sub-national grid average. Used only when no other instrument applies.',ef:'Grid avg'},
+              ].map((row,i)=>(
+                <tr key={i} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                  <TD mono>{row.pri}</TD>
+                  <TD><strong>{row.type}</strong></TD>
+                  <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{row.desc}</span></TD>
+                  <TD><Badge label={row.ef} color={row.pri<=2?T.green:row.pri<=3?T.sage:T.amber} /></TD>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Panel>
+
+        {/* Renewable Energy Procurement Tracker */}
+        <Panel title="Renewable Energy Procurement Summary" collapsible defaultOpen={true}>
+          <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:12}}>
+            {facilities.map(f=>{
+              const totalRenew=(f.recKwh||0)+(f.ppaKwh||0);
+              const pct=f.elecKwh>0?(totalRenew/f.elecKwh*100):0;
+              return(
+                <div key={f.id} style={{flex:1,minWidth:200,padding:'12px 16px',borderRadius:8,border:`1px solid ${T.border}`,background:T.surface}}>
+                  <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,marginBottom:4}}>{f.name}</div>
+                  <div style={{fontFamily:T.mono,fontSize:11,color:T.textSec}}>Total: {(f.elecKwh/1e6).toFixed(2)} GWh</div>
+                  <div style={{display:'flex',gap:8,marginTop:6}}>
+                    {f.recKwh>0&&<Badge label={`REC: ${(f.recKwh/1e6).toFixed(2)} GWh`} color={T.green} />}
+                    {f.ppaKwh>0&&<Badge label={`PPA: ${(f.ppaKwh/1e6).toFixed(2)} GWh`} color={T.sage} />}
+                  </div>
+                  <div style={{marginTop:6,height:6,background:T.surfaceH,borderRadius:3,overflow:'hidden'}}>
+                    <div style={{height:'100%',width:`${Math.min(pct,100)}%`,background:pct>=100?T.green:pct>=50?T.sage:T.amber,borderRadius:3}} />
+                  </div>
+                  <div style={{fontFamily:T.mono,fontSize:11,fontWeight:700,color:pct>=100?T.green:T.navy,marginTop:4}}>{pct.toFixed(1)}% renewable</div>
                 </div>
+              );
+            })}
+          </div>
+          <div style={{padding:'10px 14px',background:T.green+'08',border:`1px solid ${T.green}20`,borderRadius:6}}>
+            <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.green}}>
+              RE100 Progress: {renewablePct.toFixed(1)}% of total electricity from renewable sources
+            </div>
+            <div style={{fontFamily:T.font,fontSize:11,color:T.textSec,marginTop:2}}>
+              Target: 60% by 2030, 90% by 2040, 100% by 2050 (RE100 member pathway)
+            </div>
+          </div>
+        </Panel>
+      </div>
+    );
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TAB 4: SCOPE 3 — VALUE CHAIN
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const renderScope3=()=>{
+    const catBarData=SCOPE3_CATEGORIES.filter(c=>scope3[c.key]?.enabled&&scope3Totals.byCat[c.key]>0)
+      .map(c=>({name:`Cat ${c.num}`,fullName:c.name,value:scope3Totals.byCat[c.key],pct:scope3Totals.total>0?(scope3Totals.byCat[c.key]/scope3Totals.total*100):0}));
+
+    const relevantCats=SCOPE3_CATEGORIES.filter(c=>{
+      if(!scope3[c.key]?.enabled)return false;
+      const pct=scope3Totals.total>0?(scope3Totals.byCat[c.key]/scope3Totals.total*100):0;
+      return pct>=5;
+    });
+
+    return(
+      <div>
+        <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
+          <KPICard label="Scope 3 Total" value={fmtCO2(scope3Totals.total)} color={T.navy} />
+          <KPICard label="Categories Enabled" value={`${SCOPE3_CATEGORIES.filter(c=>scope3[c.key]?.enabled).length} / 15`} color={T.gold} />
+          <KPICard label="Weighted DQS" value={scope3DqsAvg.toFixed(1)} sub={scope3DqsAvg<=2?'Good':scope3DqsAvg<=3?'Moderate':'Needs Improvement'} color={scope3DqsAvg<=2?T.green:scope3DqsAvg<=3?T.amber:T.red} />
+          <KPICard label="Material Categories (\u22655%)" value={relevantCats.length.toString()} sub={relevantCats.map(c=>`Cat ${c.num}`).join(', ')} color={T.navyL} />
+        </div>
+
+        <InfoBox text="GHG Protocol Corporate Value Chain (Scope 3) Standard requires disclosure of all 15 categories. Categories may be excluded only with justification per the relevance assessment criteria (Chapter 3)." />
+
+        {SCOPE3_CATEGORIES.map(cat=>{
+          const d=scope3[cat.key];
+          const tco2=scope3Totals.byCat[cat.key];
+          const pct=scope3Totals.total>0?(tco2/scope3Totals.total*100):0;
+          const spendEf=cat.spendKey?EMISSION_FACTORS.scope3_spend[cat.spendKey]:null;
+
+          return(
+            <Panel key={cat.key} title={`Category ${cat.num}: ${cat.name}`} collapsible defaultOpen={d.enabled&&tco2>0}
+              citation={`Scope 3 Standard, Ch ${cat.num+4}`}>
+              <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:12}}>
+                <label style={{display:'flex',alignItems:'center',gap:6,cursor:'pointer'}}>
+                  <input type="checkbox" checked={d.enabled} onChange={e=>updateScope3(cat.key,'enabled',e.target.checked)} />
+                  <span style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:d.enabled?T.navy:T.textMut}}>Include in Inventory</span>
+                </label>
+                {d.enabled&&tco2>0&&<Badge label={`${pct.toFixed(1)}% of Scope 3`} color={pct>=5?T.navy:T.textMut} />}
+                {d.enabled&&pct>=5&&<Badge label="Material" color={T.amber} />}
+                {d.enabled&&d.dqs>=4&&<Badge label={`DQS ${d.dqs}`} color={T.red} />}
+                {!d.enabled&&<Badge label="Excluded" color={T.textMut} />}
+              </div>
+
+              {d.enabled&&(
+                <div>
+                  <div style={{fontFamily:T.font,fontSize:11,color:T.textSec,marginBottom:10}}>{cat.desc}</div>
+
+                  <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:12}}>
+                    <Sel label="Methodology" value={d.methodology} onChange={v=>updateScope3(cat.key,'methodology',v)}
+                      options={[
+                        {value:'spend',label:'Spend-Based (EXIOBASE)'},
+                        {value:'activity',label:'Activity-Based'},
+                        {value:'supplier',label:'Supplier-Specific'},
+                      ]} width={200} />
+
+                    <Sel label="Data Quality Score" value={d.dqs} onChange={v=>updateScope3(cat.key,'dqs',parseInt(v))}
+                      options={[1,2,3,4,5].map(n=>({value:n,label:`DQS ${n} \u2014 ${n===1?'Verified':n===2?'Reported':n===3?'Activity-based':n===4?'Spend-based':'Proxy'}`}))} width={280} />
+                  </div>
+
+                  {d.methodology==='spend'&&(
+                    <div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap'}}>
+                      <Inp label="Annual Spend (USD)" value={d.spend} onChange={v=>updateScope3(cat.key,'spend',v)} type="number" unit="$" width={150} />
+                      {spendEf&&<div style={{fontFamily:T.mono,fontSize:11,color:T.textSec,paddingBottom:8}}>EF: {spendEf.factor} {spendEf.unit} ({spendEf.source})</div>}
+                      <div style={{fontFamily:T.mono,fontSize:14,fontWeight:700,color:T.navy,paddingBottom:6}}>= {tco2.toFixed(2)} tCO2e</div>
+                    </div>
+                  )}
+
+                  {(d.methodology==='activity'||d.methodology==='supplier')&&(
+                    <div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap'}}>
+                      <Inp label="Activity Data" value={d.activity} onChange={v=>updateScope3(cat.key,'activity',v)} type="number" width={120} />
+                      <Inp label="Unit" value={d.activityUnit} onChange={v=>updateScope3(cat.key,'activityUnit',v)} width={80} />
+                      <Inp label="Emission Factor (tCO2e/unit)" value={d.customEf} onChange={v=>updateScope3(cat.key,'customEf',v)} type="number" width={150} />
+                      <Inp label="EF Source" value={d.customEfSource} onChange={v=>updateScope3(cat.key,'customEfSource',v)} width={250} />
+                      <div style={{fontFamily:T.mono,fontSize:14,fontWeight:700,color:T.navy,paddingBottom:6}}>= {tco2.toFixed(2)} tCO2e</div>
+                    </div>
+                  )}
+
+                  <div style={{marginTop:8}}>
+                    <Inp label="Notes" value={d.notes} onChange={v=>updateScope3(cat.key,'notes',v)} width={500} placeholder="Data source, assumptions, exclusions..." />
+                  </div>
+
+                  {/* Per-category guidance box */}
+                  {SCOPE3_GUIDANCE[cat.key]&&(
+                    <div style={{marginTop:10,padding:'10px 14px',background:T.navy+'06',border:`1px solid ${T.navy}15`,borderRadius:6}}>
+                      <div style={{fontFamily:T.font,fontSize:11,fontWeight:600,color:T.navy,marginBottom:4}}>Methodology Guidance (Cat {cat.num}):</div>
+                      <div style={{fontFamily:T.font,fontSize:11,color:T.textSec,lineHeight:1.5}}>{SCOPE3_GUIDANCE[cat.key]}</div>
+                    </div>
+                  )}
+
+                  {/* Cat 4/9: Freight transport detail */}
+                  {(cat.num===4||cat.num===9)&&d.methodology==='activity'&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Freight Transport Emission Factors (DEFRA 2023):</div>
+                      <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                        {FREIGHT_MODES.map(fm=>(
+                          <div key={fm.value} style={{padding:'4px 8px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:4,fontFamily:T.mono,fontSize:10}}>
+                            <span style={{color:T.navy}}>{fm.label}</span>: <span style={{color:T.sage}}>{fm.ef} {fm.unit}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cat 5: Waste type reference */}
+                  {cat.num===5&&d.methodology==='activity'&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Waste Disposal Emission Factors (DEFRA 2023):</div>
+                      <table style={{borderCollapse:'collapse',width:'100%'}}>
+                        <thead><tr><TH>Disposal Method</TH><TH w={100}>EF (tCO2e/t)</TH><TH w={120}>Source</TH></tr></thead>
+                        <tbody>
+                          {WASTE_TYPES.map((wt,wi)=>(
+                            <tr key={wt.value} style={{background:wi%2===0?T.surface:T.surfaceH}}>
+                              <TD>{wt.label}</TD><TD mono>{wt.ef}</TD><TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{wt.source}</span></TD>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Cat 6: Business travel modes */}
+                  {cat.num===6&&d.methodology==='activity'&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Business Travel Emission Factors (DEFRA 2023, incl. RFI for flights):</div>
+                      <table style={{borderCollapse:'collapse',width:'100%'}}>
+                        <thead><tr><TH>Travel Mode</TH><TH w={120}>EF</TH><TH w={100}>Unit</TH><TH w={120}>Source</TH></tr></thead>
+                        <tbody>
+                          {BIZ_TRAVEL_MODES.map((bt,bi)=>(
+                            <tr key={bt.value} style={{background:bi%2===0?T.surface:T.surfaceH}}>
+                              <TD>{bt.label}</TD><TD mono>{bt.ef}</TD><TD mono>{bt.unit}</TD><TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{bt.source}</span></TD>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Cat 7: Commute mode split */}
+                  {cat.num===7&&d.methodology==='activity'&&(
+                    <div style={{marginTop:12}}>
+                      <InfoBox type="info" text="Activity-based commuting: FTE count \u00D7 average one-way distance \u00D7 2 (round trip) \u00D7 working days/year \u00D7 mode-specific EF. Default: 1.2 tCO2e/FTE/year (UK average from DEFRA 2023 business travel guidance)." />
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Commute Mode Split (Typical UK Distribution):</div>
+                      <table style={{borderCollapse:'collapse',width:'100%'}}>
+                        <thead><tr><TH>Mode</TH><TH w={100}>EF</TH><TH w={100}>Unit</TH><TH w={80}>Typical %</TH><TH w={120}>Source</TH></tr></thead>
+                        <tbody>
+                          {COMMUTE_MODES.map((cm,ci)=>(
+                            <tr key={cm.value} style={{background:ci%2===0?T.surface:T.surfaceH}}>
+                              <TD>{cm.label}</TD><TD mono>{cm.ef.toFixed(5)}</TD><TD mono>{cm.unit}</TD><TD mono>{cm.pct}%</TD>
+                              <TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{cm.source}</span></TD>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Cat 3: Fuel lifecycle WTT factors */}
+                  {cat.num===3&&d.enabled&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Fuel Lifecycle (Well-to-Tank) Emission Factors:</div>
+                      <table style={{borderCollapse:'collapse',width:'100%'}}>
+                        <thead><tr><TH>Fuel / Factor</TH><TH w={100}>EF</TH><TH w={100}>Unit</TH><TH>Description</TH></tr></thead>
+                        <tbody>
+                          {Object.entries(FUEL_LIFECYCLE_FACTORS).map(([k,v],fi)=>(
+                            <tr key={k} style={{background:fi%2===0?T.surface:T.surfaceH}}>
+                              <TD>{k.replace(/_/g,' ')}</TD><TD mono>{v.factor}</TD><TD mono>{v.unit}</TD>
+                              <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{v.desc}</span></TD>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Cat 11: Product use profiles */}
+                  {cat.num===11&&d.methodology==='activity'&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Typical Product Lifetime Energy Use Profiles:</div>
+                      <table style={{borderCollapse:'collapse',width:'100%'}}>
+                        <thead><tr><TH>Product</TH><TH w={100}>Annual kWh</TH><TH w={80}>Lifetime (yr)</TH><TH w={100}>Total kWh</TH><TH w={120}>Source</TH></tr></thead>
+                        <tbody>
+                          {PRODUCT_USE_PROFILES.map((p,pi)=>(
+                            <tr key={p.value} style={{background:pi%2===0?T.surface:T.surfaceH}}>
+                              <TD>{p.label}</TD><TD mono>{p.annualKwh.toLocaleString()}</TD><TD mono>{p.lifetimeYears}</TD>
+                              <TD mono>{(p.annualKwh*p.lifetimeYears).toLocaleString()}</TD>
+                              <TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{p.source}</span></TD>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Cat 12: End-of-life methods */}
+                  {cat.num===12&&d.enabled&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>End-of-Life Disposal Methods & Factors:</div>
+                      <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                        {EOL_METHODS.map(eol=>(
+                          <div key={eol.value} style={{padding:'6px 10px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:6,minWidth:140}}>
+                            <div style={{fontFamily:T.font,fontSize:11,fontWeight:600,color:T.navy}}>{eol.label}</div>
+                            <div style={{fontFamily:T.mono,fontSize:11,color:T.sage}}>{eol.ef} tCO2e/t</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cat 15: PCAF asset classes */}
+                  {cat.num===15&&d.enabled&&(
+                    <div style={{marginTop:12}}>
+                      <InfoBox type="info" text="Category 15 (Investments) links to PCAF Financed Emissions module. For portfolio-level attribution, use the PCAF methodology (GHG/EVIC or GHG/Outstanding) via the PCAF Financed Emissions module." />
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>PCAF Asset Class Attribution Methods:</div>
+                      <table style={{borderCollapse:'collapse',width:'100%'}}>
+                        <thead><tr><TH>Asset Class</TH><TH>Attribution Method</TH><TH w={80}>Typical DQS</TH></tr></thead>
+                        <tbody>
+                          {PCAF_ASSET_CLASSES.map((ac,ai)=>(
+                            <tr key={ac.value} style={{background:ai%2===0?T.surface:T.surfaceH}}>
+                              <TD>{ac.label}</TD><TD>{ac.method}</TD>
+                              <TD><Badge label={`DQS ${ac.dqs_typical}`} color={ac.dqs_typical<=2?T.green:ac.dqs_typical<=3?T.amber:T.red} /></TD>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Cat 1: Spend sector breakdown */}
+                  {cat.num===1&&d.methodology==='spend'&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Spend-Based Sector Emission Factors (kgCO2e per $ spent):</div>
+                      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:6}}>
+                        {SPEND_SECTORS.map(ss=>(
+                          <div key={ss.value} style={{padding:'4px 8px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:4,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                            <span style={{fontFamily:T.font,fontSize:11,color:T.text}}>{ss.label}</span>
+                            <span style={{fontFamily:T.mono,fontSize:11,fontWeight:600,color:T.sage}}>{ss.ef}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cat 2: Capital goods types */}
+                  {cat.num===2&&d.methodology==='spend'&&(
+                    <div style={{marginTop:12}}>
+                      <div style={{fontFamily:T.font,fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Capital Goods Sub-Categories (kgCO2e per $ spent):</div>
+                      <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                        {CAPITAL_GOODS_TYPES.map(cg=>(
+                          <div key={cg.value} style={{padding:'4px 8px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:4,fontFamily:T.mono,fontSize:10}}>
+                            <span style={{color:T.navy}}>{cg.label}</span>: <span style={{color:T.sage}}>{cg.ef} kgCO2e/$</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </Panel>
+          );
+        })}
+
+        {/* Scope 3 Summary Chart */}
+        <Panel title="Scope 3 Category Breakdown">
+          <div style={{height:Math.max(280,catBarData.length*30+60)}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={catBarData} layout="vertical" margin={{left:60,right:60,top:10,bottom:10}}>
+                <XAxis type="number" tick={{fontFamily:T.mono,fontSize:10}} />
+                <YAxis type="category" dataKey="name" tick={{fontFamily:T.mono,fontSize:10}} width={55} />
+                <Tooltip formatter={(v,name,props)=>[`${v.toFixed(2)} tCO2e (${props.payload.pct.toFixed(1)}%)`,props.payload.fullName]} contentStyle={{fontFamily:T.mono,fontSize:11}} />
+                <Bar dataKey="value" radius={[0,4,4,0]}>
+                  {catBarData.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Panel>
+      </div>
+    );
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TAB 5: GWP & UNIT CONVERSIONS
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const renderGWP=()=>{
+    const gwpEntries=Object.entries(GWP_VALUES).filter(([k])=>!k.includes('GWP20'));
+    const gwp20Entries=Object.entries(GWP_VALUES).filter(([k])=>k.includes('GWP20'));
+
+    const UNIT_CONVERSIONS={
+      'tCO2e_to_ktCO2e':0.001,
+      'tCO2e_to_MtCO2e':0.000001,
+      'tCO2e_to_GtCO2e':0.000000001,
+      'ktCO2e_to_tCO2e':1000,
+      'ktCO2e_to_MtCO2e':0.001,
+      'ktCO2e_to_GtCO2e':0.000001,
+      'MtCO2e_to_tCO2e':1000000,
+      'MtCO2e_to_ktCO2e':1000,
+      'MtCO2e_to_GtCO2e':0.001,
+      'GtCO2e_to_tCO2e':1000000000,
+      'GtCO2e_to_ktCO2e':1000000,
+      'GtCO2e_to_MtCO2e':1000,
+      'kg_to_tonnes':0.001,
+      'tonnes_to_kg':1000,
+      'litres_to_m3':0.001,
+      'm3_to_litres':1000,
+    };
+    const convKey=`${convFromUnit}_to_${convToUnit}`;
+    const convFactor=UNIT_CONVERSIONS[convKey]||1;
+    const convResult=convFrom*convFactor;
+
+    const changePct=baseYearEmissions>0?(structuralChange/baseYearEmissions*100):0;
+    const needsRecalc=Math.abs(changePct)>5;
+    const adjustedBaseYear=baseYearEmissions+(structuralType==='acquisition'?structuralChange:-structuralChange);
+
+    return(
+      <div>
+        {/* GWP-100 Table */}
+        <Panel title="IPCC AR6 Global Warming Potentials (GWP-100)" citation="IPCC AR6 WG1, Chapter 7, Table 7.15">
+          <InfoBox text="GWP-100 values convert non-CO2 greenhouse gases to CO2-equivalent. These values are used throughout the GHG Protocol framework for all emissions calculations. Source: IPCC Sixth Assessment Report (2021)." />
+          <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
+            <div style={{flex:1,minWidth:300}}>
+              <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>GWP-100 Year Values</div>
+              <table style={{width:'100%',borderCollapse:'collapse'}}>
+                <thead><tr><TH>Gas</TH><TH w={80}>Formula</TH><TH w={100}>GWP-100</TH><TH>Category</TH></tr></thead>
+                <tbody>
+                  {gwpEntries.map(([key,val],i)=>{
+                    const cat=key.startsWith('HFC')?'HFC':key.startsWith('C')||key==='c_C4F8'||key==='CF4'?'PFC':key==='NF3'?'Other F-gas':'Core';
+                    return(
+                      <tr key={key} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                        <TD>{key.replace(/_/g,' ').replace('fossil','(fossil)').replace('biogenic','(biogenic)')}</TD>
+                        <TD mono>{key.replace('HFC_','HFC-').replace('CH4_fossil','CH\u2084').replace('CH4_biogenic','CH\u2084').replace('N2O','N\u2082O').replace('SF6','SF\u2086').replace('NF3','NF\u2083').replace('CF4','CF\u2084').replace('C2F6','C\u2082F\u2086').replace('C3F8','C\u2083F\u2088').replace('c_C4F8','c-C\u2084F\u2088')}</TD>
+                        <TD mono color={val>1000?T.red:val>100?T.amber:T.text}>{val.toLocaleString()}</TD>
+                        <TD><Badge label={cat} color={cat==='Core'?T.navy:cat==='HFC'?T.gold:cat==='PFC'?T.sage:T.navyL} /></TD>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{flex:0,minWidth:250}}>
+              <div style={{fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>GWP-20 Year Values (Short-horizon)</div>
+              <table style={{width:'100%',borderCollapse:'collapse'}}>
+                <thead><tr><TH>Gas</TH><TH w={100}>GWP-20</TH></tr></thead>
+                <tbody>
+                  {gwp20Entries.map(([key,val],i)=>(
+                    <tr key={key} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                      <TD>{key.replace('_GWP20','').replace(/_/g,' ')}</TD>
+                      <TD mono color={T.red}>{val}</TD>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <InfoBox type="info" text="GWP-20 shows methane's much stronger short-term warming effect. Important for near-term climate strategy and ISSB S2 reporting." />
+            </div>
+          </div>
+        </Panel>
+
+        {/* Unit Converter */}
+        <Panel title="Unit Converter Tool">
+          <div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap',marginBottom:16}}>
+            <Inp label="Value" value={convFrom} onChange={setConvFrom} type="number" width={120} />
+            <Sel label="From" value={convFromUnit} onChange={setConvFromUnit}
+              options={['tCO2e','ktCO2e','MtCO2e','GtCO2e','kg','tonnes','litres','m3']} width={130} />
+            <div style={{fontFamily:T.mono,fontSize:18,color:T.gold,paddingBottom:6}}>\u2192</div>
+            <Sel label="To" value={convToUnit} onChange={setConvToUnit}
+              options={['tCO2e','ktCO2e','MtCO2e','GtCO2e','kg','tonnes','litres','m3']} width={130} />
+            <div style={{padding:'6px 16px',background:T.navy+'08',borderRadius:6,fontFamily:T.mono,fontSize:16,fontWeight:700,color:T.navy}}>
+              = {convResult.toLocaleString(undefined,{maximumFractionDigits:6})} {convToUnit}
+            </div>
+          </div>
+        </Panel>
+
+        {/* Base Year Recalculation */}
+        <Panel title="Base Year Recalculation Tool" citation="GHG Protocol Corporate Standard, Ch 5">
+          <InfoBox text="Per GHG Protocol Chapter 5: If structural changes (mergers, acquisitions, divestitures) result in >5% change to the base year inventory, the base year must be recalculated. Organic growth or decline does NOT trigger recalculation." />
+          <div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap',marginBottom:16}}>
+            <Inp label="Base Year Emissions (tCO2e)" value={baseYearEmissions} onChange={setBaseYearEmissions} type="number" width={160} />
+            <Sel label="Change Type" value={structuralType} onChange={setStructuralType}
+              options={[{value:'acquisition',label:'Acquisition / Merger'},{value:'divestiture',label:'Divestiture / Outsourcing'}]} width={200} />
+            <Inp label="Emissions Change (tCO2e)" value={structuralChange} onChange={setStructuralChange} type="number" width={160} />
+          </div>
+          <div style={{display:'flex',gap:20,flexWrap:'wrap'}}>
+            <div style={{padding:'12px 16px',borderRadius:8,border:`1px solid ${T.border}`,background:T.surface}}>
+              <div style={{fontFamily:T.font,fontSize:11,color:T.textMut}}>Change vs Base Year</div>
+              <div style={{fontFamily:T.mono,fontSize:18,fontWeight:700,color:Math.abs(changePct)>5?T.red:T.green}}>{changePct.toFixed(1)}%</div>
+              {needsRecalc?<Badge label="Recalculation Required" color={T.red} />:<Badge label="No Recalculation Needed" color={T.green} />}
+            </div>
+            {needsRecalc&&(
+              <div style={{padding:'12px 16px',borderRadius:8,border:`1px solid ${T.navy}30`,background:T.navy+'06'}}>
+                <div style={{fontFamily:T.font,fontSize:11,color:T.textMut}}>Adjusted Base Year</div>
+                <div style={{fontFamily:T.mono,fontSize:18,fontWeight:700,color:T.navy}}>{formatN(adjustedBaseYear)} tCO2e</div>
+                <div style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>Original: {formatN(baseYearEmissions)} | {structuralType==='acquisition'?'+':'-'}{formatN(structuralChange)}</div>
               </div>
             )}
           </div>
-        )}
+        </Panel>
 
-        {/* ─── COMPARE TAB ─── */}
-        {tab === 'compare' && (
-          <div>
-            <div style={{ ...sCard, marginTop: 20 }}>
-              <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\⚖\️ Compare Products Side by Side</h3>
-              <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Select 2\–4 products from search or categories, then compare their carbon footprints here.</p>
-              {compareList.length === 0 && <div style={{ textAlign: 'center', padding: 40, color: T.textMut }}>No products selected for comparison. Browse categories or search to add products.</div>}
-              {compareList.length > 0 && (
-                <>
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-                    {compareList.map(p => (
-                      <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 6, background: T.surfaceH, borderRadius: 8, padding: '6px 12px' }}>
-                        <span>{p.catIcon}</span> <span style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</span>
-                        <button onClick={() => toggleCompare(p)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.red, fontWeight: 700 }}>\✕</button>
-                      </div>
-                    ))}
-                    <button onClick={() => setCompareList([])} style={sBtnSm(T.red, '#fff')}>Clear All</button>
-                    <button onClick={exportComparisonCSV} style={sBtnSm(T.navy, '#fff')}>\💾 Export CSV</button>
-                  </div>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={compareList.map(p => ({ name: p.name.length > 20 ? p.name.slice(0, 18) + '...' : p.name, carbon: p.carbon_kg, water: p.water_l || 0 }))} layout="vertical">
-                      <XAxis type="number" fontSize={12} />
-                      <YAxis type="category" dataKey="name" width={150} fontSize={11} />
-                      <Tooltip />
-                      <Bar dataKey="carbon" fill={T.navyL} radius={[0, 6, 6, 0]} name="kg CO2e" />
-                    </BarChart>
-                  </ResponsiveContainer>
+        {renderCurrencyConverter()}
+        {renderEFSourceReference()}
+        {renderMaterialsReference()}
+        {renderTransportReference()}
+      </div>
+    );
+  };
 
-                  {/* Detailed comparison table */}
-                  <div style={{ overflowX: 'auto', marginTop: 16 }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                      <thead>
-                        <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                          <th style={{ textAlign: 'left', padding: 10, color: T.textSec }}>Metric</th>
-                          {compareList.map(p => <th key={p.id} style={{ textAlign: 'right', padding: 10, color: T.navy }}>{p.name.length > 15 ? p.name.slice(0, 13) + '...' : p.name}</th>)}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { l: 'Carbon (kg CO2e)', fn: p => p.carbon_kg.toFixed(1) },
-                          { l: 'Unit', fn: p => p.unit },
-                          { l: 'Water (L)', fn: p => p.water_l ? p.water_l.toLocaleString() : '\—' },
-                          { l: 'Driving equivalent (km)', fn: p => carbonEquivalent(p.carbon_kg).km_driving },
-                          { l: 'Trees to offset', fn: p => carbonEquivalent(p.carbon_kg).trees_to_offset_1yr },
-                          { l: 'Daily budget %', fn: p => (p.carbon_kg / DAILY_BUDGET_KG * 100).toFixed(0) + '%' },
-                        ].map((r, i) => (
-                          <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
-                            <td style={{ padding: 10, fontWeight: 600, color: T.textSec }}>{r.l}</td>
-                            {compareList.map(p => <td key={p.id} style={{ padding: 10, textAlign: 'right', fontWeight: 600 }}>{r.fn(p)}</td>)}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+  /* ─── Currency conversion sub-render (for GWP tab) ─── */
+  const renderCurrencyConverter=()=>(
+    <Panel title="Currency Conversion for Spend-Based Calculations" collapsible defaultOpen={false} citation="ECB / BIS March 2026">
+      <InfoBox text="For Scope 3 spend-based calculations, all spend must be converted to a consistent currency (USD recommended). Apply exchange rates at the average rate for the reporting period." />
+      <table style={{width:'100%',borderCollapse:'collapse'}}>
+        <thead><tr><TH>Currency</TH><TH w={100}>Rate to USD</TH><TH w={150}>Source</TH><TH w={140}>Example: 1M \u2192 USD</TH></tr></thead>
+        <tbody>
+          {EXCHANGE_RATES.map((er,i)=>(
+            <tr key={er.from} style={{background:i%2===0?T.surface:T.surfaceH}}>
+              <TD>{er.from}</TD>
+              <TD mono>{er.rate}</TD>
+              <TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{er.source}</span></TD>
+              <TD mono color={T.navy}>${(1000000*er.rate).toLocaleString(undefined,{maximumFractionDigits:0})}</TD>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Panel>
+  );
 
-        {/* ─── CART TAB ─── */}
-        {tab === 'cart' && (
-          <div>
-            <div style={{ ...sCard, marginTop: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h3 style={{ color: T.navy, margin: 0 }}>\🛒 Shopping Cart Simulator</h3>
-                {cart.length > 0 && <button onClick={clearCart} style={sBtnSm(T.red, '#fff')}>Clear Cart</button>}
-              </div>
-              <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Add products to see the total carbon footprint of your shopping trip.</p>
-              {cart.length === 0 && <div style={{ textAlign: 'center', padding: 40, color: T.textMut }}>Your cart is empty. Search for products and add them here.</div>}
-              {cart.length > 0 && (
-                <>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                      <thead>
-                        <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                          <th style={{ textAlign: 'left', padding: 10, color: T.textSec }}>Product</th>
-                          <th style={{ textAlign: 'center', padding: 10, color: T.textSec }}>Qty</th>
-                          <th style={{ textAlign: 'right', padding: 10, color: T.textSec }}>Per Unit</th>
-                          <th style={{ textAlign: 'right', padding: 10, color: T.textSec }}>Total CO\₂e</th>
-                          <th style={{ padding: 10 }}></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {cart.map(c => (
-                          <tr key={c.id} style={{ borderBottom: `1px solid ${T.border}` }}>
-                            <td style={{ padding: 10, fontWeight: 600, color: T.navy }}>{c.catIcon || ''} {c.name}</td>
-                            <td style={{ padding: 10, textAlign: 'center' }}>
-                              <input type="number" min={1} value={c.qty} onChange={e => setCart(prev => prev.map(x => x.id === c.id ? { ...x, qty: Math.max(1, +e.target.value) } : x))} style={{ width: 50, textAlign: 'center', border: `1px solid ${T.border}`, borderRadius: 6, padding: '4px 6px', fontFamily: T.font }} />
-                            </td>
-                            <td style={{ padding: 10, textAlign: 'right', color: T.textSec }}>{c.carbon_kg} kg</td>
-                            <td style={{ padding: 10, textAlign: 'right', fontWeight: 700, color: (c.carbon_kg * c.qty) > 10 ? T.red : T.green }}>{(c.carbon_kg * c.qty).toFixed(1)} kg</td>
-                            <td style={{ padding: 10 }}><button onClick={() => removeFromCart(c.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.red, fontSize: 16 }}>\🗑\️</button></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+  /* ─── EF Source Reference sub-render (for GWP tab) ─── */
+  const renderEFSourceReference=()=>(
+    <Panel title="Emission Factor Sources & Methodology Hierarchy" collapsible defaultOpen={false}>
+      <InfoBox text="GHG Protocol establishes a hierarchy for emission factor selection. Prefer supplier-specific > national > sector average > global default." />
+      <table style={{width:'100%',borderCollapse:'collapse'}}>
+        <thead><tr><TH>Priority</TH><TH>Source Type</TH><TH>Example</TH><TH>Applicable Scope</TH><TH w={80}>Typical DQS</TH></tr></thead>
+        <tbody>
+          {[
+            {pri:1,type:'Supplier-Specific / Measured',ex:'Direct metering, stack testing, CEMS',scope:'Scope 1',dqs:1},
+            {pri:2,type:'Verified / Audited Factors',ex:'Third-party assured per ISO 14064',scope:'All',dqs:1},
+            {pri:3,type:'National Inventory Factors',ex:'UK DEFRA GHG Conversion Factors 2023',scope:'All',dqs:2},
+            {pri:4,type:'National Grid Factor',ex:'Ember country grid intensity (gCO2/kWh)',scope:'Scope 2',dqs:2},
+            {pri:5,type:'Technology-Specific LCA',ex:'EPD, PEF, ISO 14040/44 compliant LCA',scope:'Scope 3',dqs:2},
+            {pri:6,type:'Sector Average Activity-Based',ex:'IEA sector benchmarks, worldsteel, GCCA',scope:'Scope 1/3',dqs:3},
+            {pri:7,type:'Multi-Regional IO Model',ex:'EXIOBASE 3.8.2, GTAP, WIOD',scope:'Scope 3',dqs:4},
+            {pri:8,type:'National IO Model',ex:'USEEIO v2.0 (EPA), BEIS supply-chain factors',scope:'Scope 3',dqs:4},
+            {pri:9,type:'Sector Proxy / Estimate',ex:'PCAF DQS 5, CDP sector averages',scope:'Scope 3',dqs:5},
+          ].map((row,i)=>(
+            <tr key={i} style={{background:i%2===0?T.surface:T.surfaceH}}>
+              <TD mono>{row.pri}</TD>
+              <TD>{row.type}</TD>
+              <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{row.ex}</span></TD>
+              <TD><Badge label={row.scope} color={T.navy} /></TD>
+              <TD><Badge label={`DQS ${row.dqs}`} color={row.dqs<=2?T.green:row.dqs<=3?T.amber:T.red} /></TD>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Panel>
+  );
 
-                  {/* Cart Total */}
-                  <div style={{ marginTop: 20, padding: 20, background: T.surfaceH, borderRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-                    <div>
-                      <div style={{ fontSize: 13, color: T.textSec }}>Total Carbon Footprint</div>
-                      <div style={{ fontSize: 36, fontWeight: 800, color: cartTotal > 20 ? T.red : cartTotal > 10 ? T.amber : T.green }}>{cartTotal.toFixed(1)} <span style={{ fontSize: 16, color: T.textSec }}>kg CO\₂e</span></div>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                      {[{ icon: '\🚗', val: cartEquiv.km_driving, l: 'km driving' }, { icon: '\🌳', val: cartEquiv.trees_to_offset_1yr, l: 'tree-years' }, { icon: '\☕', val: cartEquiv.cups_of_tea, l: 'cups of tea' }].map((e, i) => (
-                        <div key={i} style={{ background: '#fff', borderRadius: 8, padding: '8px 14px', fontSize: 12 }}>{e.icon} = <strong>{e.val}</strong> {e.l}</div>
-                      ))}
-                    </div>
-                  </div>
+  /* ─── Materials / Industrial EF reference sub-render (for GWP tab) ─── */
+  const renderMaterialsReference=()=>(
+    <Panel title="Materials & Industrial Emission Factors" collapsible defaultOpen={false} citation="DEFRA 2023 / Industry LCA Sources">
+      <table style={{width:'100%',borderCollapse:'collapse'}}>
+        <thead><tr><TH>Material</TH><TH w={120}>EF (kgCO2e/t)</TH><TH w={200}>Source</TH></tr></thead>
+        <tbody>
+          {Object.entries(EMISSION_FACTORS.materials).map(([key,val],i)=>(
+            <tr key={key} style={{background:i%2===0?T.surface:T.surfaceH}}>
+              <TD>{key.replace(/_/g,' ').replace(/^./,c=>c.toUpperCase())}</TD>
+              <TD mono color={val.factor>5000?T.red:val.factor>1000?T.amber:T.green}>{val.factor.toLocaleString()}</TD>
+              <TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{val.source}</span></TD>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Panel>
+  );
 
-                  {/* Cart budget gauge */}
-                  <div style={{ marginTop: 16 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: T.navy, marginBottom: 6 }}>Daily Budget Impact ({DAILY_BUDGET_KG} kg/day for 1.5\°C)</div>
-                    <div style={{ height: 24, background: T.surfaceH, borderRadius: 12, overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${Math.min(cartTotal / DAILY_BUDGET_KG * 100, 100)}%`, background: cartTotal > DAILY_BUDGET_KG ? T.red : cartTotal > DAILY_BUDGET_KG * 0.7 ? T.amber : T.green, borderRadius: 12 }} />
-                    </div>
-                    <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>{(cartTotal / DAILY_BUDGET_KG * 100).toFixed(0)}% of daily budget</div>
-                  </div>
+  /* ─── Transport EF reference sub-render (for GWP tab) ─── */
+  const renderTransportReference=()=>(
+    <Panel title="Transport Emission Factors (Passenger)" collapsible defaultOpen={false} citation="DEFRA 2023">
+      <table style={{width:'100%',borderCollapse:'collapse'}}>
+        <thead><tr><TH>Mode</TH><TH w={100}>EF</TH><TH w={100}>Unit</TH><TH w={150}>Source</TH><TH>Note</TH></tr></thead>
+        <tbody>
+          {Object.entries(EMISSION_FACTORS.transport).map(([key,val],i)=>(
+            <tr key={key} style={{background:i%2===0?T.surface:T.surfaceH}}>
+              <TD>{key.replace(/([A-Z])/g,' $1').replace(/^./,c=>c.toUpperCase())}</TD>
+              <TD mono>{val.factor}</TD>
+              <TD mono>{val.unit}</TD>
+              <TD><span style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{val.source}</span></TD>
+              <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{val.note||'\u2014'}</span></TD>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Panel>
+  );
 
-                  <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                    <button onClick={() => { cart.forEach(c => addToWallet(c, c.qty)); alert('All cart items added to your Carbon Wallet!'); }} style={sBtn(T.sage, '#fff')}>\💳 Add All to Wallet</button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TAB 6: GHG INVENTORY SUMMARY
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const renderSummary=()=>{
+    const scopeData=[
+      {name:'Scope 1',value:scope1Total},
+      {name:'Scope 2 (L)',value:scope2LocationTotal},
+      {name:'Scope 3',value:scope3Totals.total},
+    ];
+    const donutData=scopeData.filter(d=>d.value>0);
+    const donutColors=[T.navy,T.sage,'#8b5cf6'];
 
-        {/* ─── EQUIVALENCES TAB ─── */}
-        {tab === 'equiv' && (
-          <div>
-            <div style={{ ...sCard, marginTop: 20 }}>
-              <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\📊 Carbon Equivalence Visualizer</h3>
-              <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Enter any amount of CO\₂e and see what it equals in everyday terms.</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <input type="number" min={0.01} step={0.1} value={equivKg} onChange={e => setEquivKg(+e.target.value || 0)} style={{ ...sInput, width: 120, fontSize: 18, fontWeight: 700, textAlign: 'center' }} />
-                <span style={{ fontSize: 16, color: T.textSec }}>kg CO\₂e is equivalent to...</span>
-              </div>
-              {(() => {
-                const eq = carbonEquivalent(equivKg);
-                return (
-                  <div style={sGrid(window.innerWidth < 768 ? 2 : 4)}>
-                    {[
-                      { icon: '\🚗', val: eq.km_driving, label: 'km driving a petrol car' },
-                      { icon: '\✈\️', val: eq.flights_london_paris, label: 'London\→Paris flights' },
-                      { icon: '\🌳', val: eq.trees_to_offset_1yr, label: 'tree-years to absorb' },
-                      { icon: '\📱', val: eq.smartphone_charges, label: 'smartphone charges' },
-                      { icon: '\☕', val: eq.cups_of_tea, label: 'cups of tea (carbon)' },
-                      { icon: '\📺', val: eq.streaming_hours, label: 'hours of HD streaming' },
-                      { icon: '\👤', val: eq.days_of_avg_person, label: 'days of global avg person' },
-                    ].map((e, i) => (
-                      <div key={i} style={sKpi}>
-                        <div style={{ fontSize: 28 }}>{e.icon}</div>
-                        <div style={{ fontSize: 24, fontWeight: 800, color: T.navy }}>{e.val}</div>
-                        <div style={{ fontSize: 12, color: T.textSec }}>{e.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })()}
-            </div>
+    const fullInventory=[
+      {scope:'Scope 1',cat:'Stationary Combustion',tco2:scope1StationaryTotal},
+      {scope:'Scope 1',cat:'Mobile Combustion',tco2:scope1MobileTotal},
+      {scope:'Scope 1',cat:'Process Emissions',tco2:scope1ProcessTotal},
+      {scope:'Scope 1',cat:'Fugitive Emissions',tco2:scope1FugitiveTotal},
+      {scope:'Scope 2',cat:'Location-Based',tco2:scope2LocationTotal},
+      {scope:'Scope 2',cat:'Market-Based',tco2:scope2MarketTotal},
+      ...SCOPE3_CATEGORIES.filter(c=>scope3[c.key]?.enabled).map(c=>({scope:'Scope 3',cat:`Cat ${c.num}: ${c.name}`,tco2:scope3Totals.byCat[c.key]})),
+    ];
 
-            {/* Seasonal/Local Adjustment */}
-            <div style={sCard}>
-              <h3 style={{ color: T.navy, margin: '0 0 8px' }}>\🌱 Seasonal & Local Food Impact</h3>
-              <p style={{ color: T.textSec, fontSize: 13, marginBottom: 16 }}>The same product can have very different carbon footprints depending on how it is grown and where it comes from.</p>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={[
-                  { name: 'Tomatoes (local)', carbon: 0.7, fill: T.green },
-                  { name: 'Tomatoes (greenhouse)', carbon: 3.5, fill: T.red },
-                  { name: 'Berries (local)', carbon: 1.2, fill: T.green },
-                  { name: 'Berries (air-freight)', carbon: 7.8, fill: T.red },
-                  { name: 'Apples (local)', carbon: 0.3, fill: T.green },
-                  { name: 'Mangoes (imported)', carbon: 1.5, fill: T.amber },
-                ]} layout="vertical">
-                  <XAxis type="number" fontSize={12} />
-                  <YAxis type="category" dataKey="name" width={160} fontSize={11} />
-                  <Tooltip />
-                  <Bar dataKey="carbon" radius={[0, 6, 6, 0]} name="kg CO2e">
-                    {[T.green, T.red, T.green, T.red, T.green, T.amber].map((c, i) => <Cell key={i} fill={c} />)}
+    const stackedBarData=[
+      {name:'Scope 1',Stationary:scope1StationaryTotal,Mobile:scope1MobileTotal,Process:scope1ProcessTotal,Fugitive:scope1FugitiveTotal},
+    ];
+
+    return(
+      <div>
+        <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
+          <KPICard label="Grand Total (Location-Based)" value={fmtCO2(grandTotal)} color={T.navy} />
+          <KPICard label="Grand Total (Market-Based)" value={fmtCO2(grandTotalMarket)} color={T.sage} />
+          <KPICard label="Intensity (tCO2e/$M Revenue)" value={intensityRevenue.toFixed(1)} sub={sectorBench?`Sector median: ${sectorBench.medianIntensity}`:''} color={sectorBench&&intensityRevenue<sectorBench.medianIntensity?T.green:T.amber} />
+          <KPICard label="Intensity (tCO2e/Employee)" value={intensityEmployee.toFixed(1)} color={T.navyL} />
+        </div>
+
+        {/* Scope Breakdown Charts */}
+        <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:16}}>
+          <Panel title="Emissions by Scope (tCO2e)">
+            <div style={{height:280}}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={scopeData} margin={{left:20,right:20,top:10,bottom:10}}>
+                  <XAxis dataKey="name" tick={{fontFamily:T.font,fontSize:11}} />
+                  <YAxis tick={{fontFamily:T.mono,fontSize:10}} />
+                  <Tooltip formatter={v=>[v.toFixed(2)+' tCO2e']} contentStyle={{fontFamily:T.mono,fontSize:11}} />
+                  <Bar dataKey="value" radius={[4,4,0,0]}>
+                    {scopeData.map((_,i)=><Cell key={i} fill={donutColors[i]} />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </Panel>
+
+          <Panel title="Scope Distribution (%)">
+            <div style={{height:280}}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={donutData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100}
+                    label={({name,percent})=>`${name}: ${(percent*100).toFixed(1)}%`}
+                    labelLine={{stroke:T.textMut,strokeWidth:1}}>
+                    {donutData.map((_,i)=><Cell key={i} fill={donutColors[i]} />)}
+                  </Pie>
+                  <Tooltip formatter={v=>[v.toFixed(2)+' tCO2e']} contentStyle={{fontFamily:T.mono,fontSize:11}} />
+                  <Legend wrapperStyle={{fontFamily:T.font,fontSize:11}} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </Panel>
+        </div>
+
+        {/* Sector Benchmark Comparison */}
+        {sectorBench&&(
+          <Panel title="Sector Benchmark Comparison" citation={`GICS ${sector} \u2014 ${sectorBench.sector}`}>
+            <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:12}}>
+              <div style={{flex:1,minWidth:200}}>
+                <div style={{fontFamily:T.font,fontSize:11,color:T.textMut,marginBottom:4}}>Your Intensity (tCO2e/$M Revenue)</div>
+                <div style={{fontFamily:T.mono,fontSize:24,fontWeight:700,color:intensityRevenue<sectorBench.medianIntensity?T.green:T.red}}>{intensityRevenue.toFixed(1)}</div>
+              </div>
+              <div style={{flex:1,minWidth:200}}>
+                <div style={{fontFamily:T.font,fontSize:11,color:T.textMut,marginBottom:4}}>Sector Median</div>
+                <div style={{fontFamily:T.mono,fontSize:24,fontWeight:700,color:T.textSec}}>{sectorBench.medianIntensity}</div>
+              </div>
+              <div style={{flex:1,minWidth:200}}>
+                <div style={{fontFamily:T.font,fontSize:11,color:T.textMut,marginBottom:4}}>Paris-Aligned 2030 Target</div>
+                <div style={{fontFamily:T.mono,fontSize:24,fontWeight:700,color:T.green}}>{sectorBench.parisTarget2030}</div>
+              </div>
+              <div style={{flex:1,minWidth:200}}>
+                <div style={{fontFamily:T.font,fontSize:11,color:T.textMut,marginBottom:4}}>SBTi Method</div>
+                <div style={{fontFamily:T.mono,fontSize:24,fontWeight:700,color:T.navy}}>{sectorBench.sbtiMethod}</div>
+                <div style={{fontFamily:T.mono,fontSize:10,color:T.textMut}}>Required decarb rate: {sectorBench.decarbRate}% p.a.</div>
+              </div>
+            </div>
+            {/* Visual comparison bar */}
+            <div style={{marginTop:12}}>
+              <div style={{fontFamily:T.font,fontSize:11,color:T.textSec,marginBottom:4}}>Position vs Sector</div>
+              <div style={{position:'relative',height:32,background:T.surfaceH,borderRadius:8,border:`1px solid ${T.border}`,overflow:'hidden'}}>
+                {/* Paris target marker */}
+                <div style={{position:'absolute',left:`${Math.min((sectorBench.parisTarget2030/Math.max(sectorBench.medianIntensity*1.5,intensityRevenue*1.2))*100,95)}%`,top:0,bottom:0,width:2,background:T.green,zIndex:2}} />
+                {/* Sector median marker */}
+                <div style={{position:'absolute',left:`${Math.min((sectorBench.medianIntensity/Math.max(sectorBench.medianIntensity*1.5,intensityRevenue*1.2))*100,95)}%`,top:0,bottom:0,width:2,background:T.amber,zIndex:2}} />
+                {/* Company position */}
+                <div style={{position:'absolute',left:`${Math.min((intensityRevenue/Math.max(sectorBench.medianIntensity*1.5,intensityRevenue*1.2))*100,95)}%`,top:4,width:24,height:24,borderRadius:'50%',background:T.navy,border:`2px solid ${T.surface}`,zIndex:3,transform:'translateX(-12px)'}} />
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',marginTop:4}}>
+                <span style={{fontFamily:T.mono,fontSize:9,color:T.green}}>Paris Target ({sectorBench.parisTarget2030})</span>
+                <span style={{fontFamily:T.mono,fontSize:9,color:T.amber}}>Sector Median ({sectorBench.medianIntensity})</span>
+              </div>
+            </div>
+          </Panel>
         )}
 
-        {/* ─── TOP CARBON PRODUCTS ACROSS ALL CATEGORIES ─── */}
-        <div style={{ ...sCard, marginTop: 20 }}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\🔥 Highest Carbon Products (Top 20)</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>The biggest carbon emitters across all categories. Can you avoid or swap any?</p>
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={[...ALL_PRODUCTS].sort((a, b) => b.carbon_kg - a.carbon_kg).slice(0, 20).map(p => ({ name: p.name.length > 22 ? p.name.slice(0, 20) + '...' : p.name, carbon: p.carbon_kg, cat: p.catName }))} layout="vertical">
-              <XAxis type="number" fontSize={11} />
-              <YAxis type="category" dataKey="name" width={170} fontSize={10} />
-              <Tooltip formatter={(v) => `${v} kg CO\₂e`} />
-              <Bar dataKey="carbon" radius={[0, 6, 6, 0]} name="kg CO2e">
-                {[...ALL_PRODUCTS].sort((a, b) => b.carbon_kg - a.carbon_kg).slice(0, 20).map((p, i) => (
-                  <Cell key={i} fill={p.catColor || PIE_COLORS[i % PIE_COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* ─── LOWEST CARBON HEROES ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\🌿 Carbon Heroes (Lowest Footprint Products)</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>These products have the smallest carbon footprint in each category. Choose these when you can!</p>
-          <div style={sGrid(window.innerWidth < 768 ? 1 : 3)}>
-            {Object.entries(PRODUCT_CARBON_DB).map(([key, cat]) => {
-              const hero = [...cat.products].sort((a, b) => a.carbon_kg - b.carbon_kg)[0];
-              if (!hero) return null;
-              return (
-                <div key={key} style={{ ...sKpi, textAlign: 'left', cursor: 'pointer', transition: 'all 0.2s' }}
-                  onClick={() => { selectProduct({ ...hero, catKey: key, catName: cat.name, catIcon: cat.icon, catColor: cat.color }); setTab('search'); }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = T.gold} onMouseLeave={e => e.currentTarget.style.borderColor = T.border}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 22 }}>{cat.icon}</span>
-                    <span style={sBadge(T.green)}>Best</span>
-                  </div>
-                  <div style={{ fontWeight: 700, color: T.navy, fontSize: 14, marginTop: 6 }}>{hero.name}</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: T.green, marginTop: 2 }}>{hero.carbon_kg} <span style={{ fontSize: 12 }}>kg CO\₂e</span></div>
-                  <div style={{ fontSize: 11, color: T.textMut }}>{hero.unit}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ─── CARBON HEATMAP BY CATEGORY ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\🗺\️ Carbon Heatmap by Category</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Average carbon footprint per product in each category. Darker = higher carbon.</p>
-          <div style={sGrid(window.innerWidth < 768 ? 2 : 4)}>
-            {Object.entries(PRODUCT_CARBON_DB).map(([key, cat]) => {
-              const avg = cat.products.reduce((s, p) => s + p.carbon_kg, 0) / cat.products.length;
-              const max = Math.max(...cat.products.map(p => p.carbon_kg));
-              const intensity = Math.min(avg / 50, 1);
-              return (
-                <div key={key} style={{
-                  ...sKpi,
-                  background: `rgba(220, 38, 38, ${intensity * 0.3 + 0.05})`,
-                  border: `1px solid rgba(220, 38, 38, ${intensity * 0.4})`,
-                }}>
-                  <div style={{ fontSize: 24 }}>{cat.icon}</div>
-                  <div style={{ fontWeight: 700, color: T.navy, fontSize: 13, marginTop: 4 }}>{cat.name}</div>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: avg > 20 ? T.red : avg > 5 ? T.amber : T.green }}>{avg.toFixed(1)} kg</div>
-                  <div style={{ fontSize: 10, color: T.textMut }}>avg &middot; max {max.toFixed(1)} kg</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ─── WATER FOOTPRINT COMPARISON ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\💧 Water Footprint \— Top Water-Intensive Products</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Water usage is another key environmental metric. Here are the thirstiest products.</p>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={ALL_PRODUCTS.filter(p => p.water_l).sort((a, b) => b.water_l - a.water_l).slice(0, 12).map(p => ({
-              name: p.name.length > 20 ? p.name.slice(0, 18) + '...' : p.name,
-              water: p.water_l,
-            }))} layout="vertical">
-              <XAxis type="number" fontSize={11} />
-              <YAxis type="category" dataKey="name" width={150} fontSize={10} />
-              <Tooltip formatter={(v) => `${v.toLocaleString()} litres`} />
-              <Bar dataKey="water" fill="#3b82f6" radius={[0, 6, 6, 0]} name="Litres of water" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* ─── DEFORESTATION & ENVIRONMENTAL RISK FLAGS ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\⚠\️ Environmental Risk Flags</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Some products carry additional environmental risks beyond carbon emissions.</p>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                  <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Product</th>
-                  <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Risk Type</th>
-                  <th style={{ textAlign: 'right', padding: '8px 12px', color: T.textSec }}>CO\₂e (kg)</th>
-                  <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Category</th>
+        {/* Full Inventory Table */}
+        <Panel title="Full GHG Inventory Table">
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr><TH>Scope</TH><TH>Category / Source</TH><TH w={120}>tCO2e</TH><TH w={80}>% of Total</TH></tr></thead>
+            <tbody>
+              {fullInventory.map((row,i)=>(
+                <tr key={i} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                  <TD><Badge label={row.scope} color={row.scope==='Scope 1'?T.navy:row.scope==='Scope 2'?T.sage:'#8b5cf6'} /></TD>
+                  <TD>{row.cat}</TD>
+                  <TD mono>{row.tco2.toFixed(2)}</TD>
+                  <TD mono color={T.textSec}>{grandTotal>0?(row.tco2/grandTotal*100).toFixed(1):'0.0'}%</TD>
                 </tr>
-              </thead>
-              <tbody>
-                {ALL_PRODUCTS.filter(p => p.deforestation_risk || p.microplastic || p.conflict_minerals).map(p => (
-                  <tr key={p.id} style={{ borderBottom: `1px solid ${T.border}` }}>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: T.navy }}>{p.catIcon} {p.name}</td>
-                    <td style={{ padding: '8px 12px' }}>
-                      {p.deforestation_risk && <span style={sBadge(T.red)}>Deforestation</span>}
-                      {p.microplastic && <span style={sBadge(T.amber)}>Microplastic</span>}
-                      {p.conflict_minerals && <span style={sBadge('#7c3aed')}>Conflict Minerals</span>}
-                    </td>
-                    <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: 700 }}>{p.carbon_kg}</td>
-                    <td style={{ padding: '8px 12px', color: T.textSec }}>{p.catName}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              ))}
+              <tr style={{background:T.navy+'08'}}>
+                <td colSpan={2} style={{padding:'10px',fontFamily:T.font,fontSize:13,fontWeight:700,color:T.navy}}>GRAND TOTAL (Location-Based)</td>
+                <TD mono color={T.navy}><strong>{grandTotal.toFixed(2)}</strong></TD>
+                <TD mono>100.0%</TD>
+              </tr>
+            </tbody>
+          </table>
+        </Panel>
 
-        {/* ─── PER-WEAR / PER-USE COST ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\💰 Carbon Per Wear / Per Use</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>For fashion and electronics, the carbon per use matters more than the total. Buying quality and using longer = lower per-use carbon.</p>
-          <div style={sGrid(window.innerWidth < 768 ? 1 : 2)}>
-            {ALL_PRODUCTS.filter(p => p.wears_typical || p.lifespan_yr).map(p => {
-              const uses = p.wears_typical || (p.lifespan_yr ? p.lifespan_yr * 365 : 100);
-              const perUse = p.carbon_kg / uses;
-              return (
-                <div key={p.id} style={{ display: 'flex', gap: 12, padding: 14, background: T.surfaceH, borderRadius: 12, alignItems: 'center' }}>
-                  <div style={{ fontSize: 24 }}>{p.catIcon}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, color: T.navy, fontSize: 13 }}>{p.name}</div>
-                    <div style={{ fontSize: 12, color: T.textSec }}>
-                      {p.carbon_kg} kg total &middot; {p.wears_typical ? `${p.wears_typical} wears` : `${p.lifespan_yr} yr lifespan`}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: perUse < 0.1 ? T.green : perUse < 1 ? T.amber : T.red }}>{perUse.toFixed(3)}</div>
-                    <div style={{ fontSize: 10, color: T.textMut }}>kg per use</div>
-                  </div>
+        {/* Year-on-Year Comparison (Historical) */}
+        <Panel title="Year-on-Year Emissions Trend" collapsible defaultOpen={true}>
+          <InfoBox text="Historical emissions trajectory based on base year data. Actual reporting year data from this calculator is shown alongside modelled historical estimates for trend analysis." />
+          {(()=>{
+            const hist=HISTORICAL_EMISSIONS(42);
+            const yoyData=hist.map(h=>({year:h.year,'Scope 1':Math.round(h.scope1),'Scope 2 (Loc)':Math.round(h.scope2_loc),'Scope 3':Math.round(h.scope3),Total:Math.round(h.scope1+h.scope2_loc+h.scope3)}));
+            // Override the current year with actual calculated data
+            const currentIdx=yoyData.findIndex(d=>d.year===reportingYear);
+            if(currentIdx>=0){yoyData[currentIdx]={'Scope 1':Math.round(scope1Total),'Scope 2 (Loc)':Math.round(scope2LocationTotal),'Scope 3':Math.round(scope3Totals.total),Total:Math.round(grandTotal),year:reportingYear};}
+            return(
+              <div>
+                <div style={{height:300,marginBottom:16}}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={yoyData} margin={{left:20,right:20,top:10,bottom:10}}>
+                      <XAxis dataKey="year" tick={{fontFamily:T.mono,fontSize:11}} />
+                      <YAxis tick={{fontFamily:T.mono,fontSize:10}} />
+                      <Tooltip formatter={v=>[v.toLocaleString()+' tCO2e']} contentStyle={{fontFamily:T.mono,fontSize:11}} />
+                      <Legend wrapperStyle={{fontFamily:T.font,fontSize:11}} />
+                      <Bar dataKey="Scope 1" stackId="a" fill={T.navy} />
+                      <Bar dataKey="Scope 2 (Loc)" stackId="a" fill={T.sage} />
+                      <Bar dataKey="Scope 3" stackId="a" fill="#8b5cf6" radius={[4,4,0,0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ─── FUN FACTS COLLECTION ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\💡 Did You Know?</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Surprising carbon and environmental facts from our product database.</p>
-          <div style={sGrid(window.innerWidth < 768 ? 1 : 2)}>
-            {ALL_PRODUCTS.filter(p => p.fun_fact).map(p => (
-              <div key={p.id} style={{ padding: '14px 18px', background: '#fef3c7', borderRadius: 12, fontSize: 13 }}>
-                <div style={{ fontWeight: 700, color: T.navy, marginBottom: 4 }}>{p.catIcon} {p.name}</div>
-                <div style={{ color: T.textSec }}>{p.fun_fact}</div>
+                <table style={{width:'100%',borderCollapse:'collapse'}}>
+                  <thead><tr>
+                    <TH>Year</TH><TH>Scope 1</TH><TH>Scope 2 (Loc)</TH><TH>Scope 3</TH><TH>Total</TH><TH>YoY Change</TH>
+                  </tr></thead>
+                  <tbody>
+                    {yoyData.map((row,i)=>{
+                      const prev=i>0?yoyData[i-1].Total:null;
+                      const yoy=prev?((row.Total-prev)/prev*100):null;
+                      return(
+                        <tr key={row.year} style={{background:row.year===reportingYear?T.gold+'15':i%2===0?T.surface:T.surfaceH}}>
+                          <TD mono>{row.year}{row.year===reportingYear?' (Current)':''}</TD>
+                          <TD mono>{row['Scope 1'].toLocaleString()}</TD>
+                          <TD mono>{row['Scope 2 (Loc)'].toLocaleString()}</TD>
+                          <TD mono>{row['Scope 3'].toLocaleString()}</TD>
+                          <TD mono color={T.navy}><strong>{row.Total.toLocaleString()}</strong></TD>
+                          <TD mono color={yoy!=null?(yoy<0?T.green:T.red):T.textMut}>
+                            {yoy!=null?`${yoy>0?'+':''}${yoy.toFixed(1)}%`:'\u2014'}
+                          </TD>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        </div>
+            );
+          })()}
+        </Panel>
 
-        {/* ─── PRODUCT STATS OVERVIEW ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 12px' }}>\📊 Database Statistics</h3>
-          <div style={sGrid(window.innerWidth < 768 ? 2 : 4)}>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.navy }}>{ALL_PRODUCTS.length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>Products Tracked</div>
-            </div>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.navy }}>{Object.keys(PRODUCT_CARBON_DB).length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>Categories</div>
-            </div>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.green }}>{ALL_PRODUCTS.filter(p => p.label).length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>Low Carbon Options</div>
-            </div>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.red }}>{ALL_PRODUCTS.filter(p => p.deforestation_risk || p.microplastic || p.conflict_minerals).length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>Risk-Flagged Items</div>
-            </div>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.navyL }}>{ALL_PRODUCTS.filter(p => p.water_l).length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>With Water Data</div>
-            </div>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.gold }}>{ALL_PRODUCTS.filter(p => p.fun_fact).length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>Fun Facts</div>
-            </div>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.sage }}>{ALL_PRODUCTS.filter(p => p.sustainable_alt).length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>Swap Suggestions</div>
-            </div>
-            <div style={sKpi}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.amber }}>{ALL_PRODUCTS.filter(p => p.wears_typical || p.lifespan_yr).length}</div>
-              <div style={{ fontSize: 12, color: T.textSec }}>With Lifespan Data</div>
-            </div>
-          </div>
-        </div>
-
-        {/* ─── ALL SWAP & SAVE RECOMMENDATIONS ─── */}
-        <div style={sCard}>
-          <h3 style={{ color: T.navy, margin: '0 0 4px' }}>\♻\️ All Swap & Save Recommendations</h3>
-          <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 16px' }}>Products with lower-carbon alternatives available in our database.</p>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                  <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Current Choice</th>
-                  <th style={{ textAlign: 'right', padding: '8px 12px', color: T.textSec }}>CO\₂e</th>
-                  <th style={{ textAlign: 'center', padding: '8px 12px', color: T.textSec }}>\→</th>
-                  <th style={{ textAlign: 'left', padding: '8px 12px', color: T.textSec }}>Better Alternative</th>
-                  <th style={{ textAlign: 'right', padding: '8px 12px', color: T.textSec }}>CO\₂e</th>
-                  <th style={{ textAlign: 'right', padding: '8px 12px', color: T.textSec }}>Saving</th>
-                </tr>
-              </thead>
+        {/* Grid Intensity Reference Table */}
+        <Panel title="Grid Emission Factors Reference (50 Countries)" collapsible defaultOpen={false} citation="Ember Global Electricity Review 2024">
+          <div style={{maxHeight:400,overflowY:'auto'}}>
+            <table style={{width:'100%',borderCollapse:'collapse'}}>
+              <thead style={{position:'sticky',top:0,background:T.surface}}><tr>
+                <TH>Country</TH><TH w={50}>ISO</TH><TH w={100}>gCO2/kWh</TH><TH>Primary Source</TH>
+                <TH w={80}>Category</TH>
+              </tr></thead>
               <tbody>
-                {ALL_PRODUCTS.filter(p => p.sustainable_alt).map(p => {
-                  const alt = ALL_PRODUCTS.find(a => a.id === p.sustainable_alt);
-                  if (!alt) return null;
-                  return (
-                    <tr key={p.id} style={{ borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: T.navy }}>{p.catIcon} {p.name}</td>
-                      <td style={{ padding: '8px 12px', textAlign: 'right', color: T.red, fontWeight: 700 }}>{p.carbon_kg} kg</td>
-                      <td style={{ padding: '8px 12px', textAlign: 'center', fontSize: 18 }}>\➡\️</td>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: T.green }}>{alt.name}</td>
-                      <td style={{ padding: '8px 12px', textAlign: 'right', color: T.green, fontWeight: 700 }}>{alt.carbon_kg} kg</td>
-                      <td style={{ padding: '8px 12px', textAlign: 'right' }}><span style={sBadge(T.green)}>{p.alt_saving_pct}% less</span></td>
+                {GRID_INTENSITY.map((g,i)=>{
+                  const cat=g.gCO2_kWh<100?'Very Low':g.gCO2_kWh<200?'Low':g.gCO2_kWh<400?'Medium':g.gCO2_kWh<600?'Higher':'High';
+                  const catCol=g.gCO2_kWh<100?T.green:g.gCO2_kWh<200?'#16a34a':g.gCO2_kWh<400?T.amber:g.gCO2_kWh<600?'#ea580c':T.red;
+                  return(
+                    <tr key={g.iso2} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                      <TD>{g.country}</TD>
+                      <TD mono>{g.iso2}</TD>
+                      <TD mono color={catCol}>{g.gCO2_kWh}</TD>
+                      <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{g.primary}</span></TD>
+                      <TD><Badge label={cat} color={catCol} /></TD>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
           </div>
-        </div>
+        </Panel>
 
-        {/* ─── DATA SOURCES ─── */}
-        <div style={{ ...sCard, marginTop: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowSources(!showSources)}>
-            <h3 style={{ color: T.navy, margin: 0 }}>\📚 Data Sources & Methodology</h3>
-            <span style={{ fontSize: 18 }}>{showSources ? '\▲' : '\▼'}</span>
-          </div>
-          {showSources && (
-            <div style={{ marginTop: 12 }}>
-              <p style={{ color: T.textSec, fontSize: 13, marginBottom: 10 }}>All carbon footprint data is sourced from peer-reviewed research and government databases:</p>
-              <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: T.textSec }}>
-                {DATA_SOURCES.map((s, i) => <li key={i} style={{ marginBottom: 4 }}>{s}</li>)}
-              </ul>
-              <p style={{ color: T.textMut, fontSize: 12, marginTop: 10 }}>Values represent lifecycle emissions (cradle-to-grave) unless otherwise noted. Actual emissions may vary based on production methods, supply chain, and geography.</p>
-            </div>
-          )}
-        </div>
+        {/* Scope 3 DQS Detailed Summary */}
+        <Panel title="Scope 3 Data Quality Score (DQS) Summary" collapsible defaultOpen={false} citation="PCAF Global Standard / GHG Protocol">
+          <InfoBox text="DQS ranges from 1 (highest quality \u2014 audited/verified) to 5 (lowest \u2014 sector average proxy). GHG Protocol recommends improving data quality over time. Target: weighted average DQS \u2264 3.0." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH>Category</TH><TH w={60}>DQS</TH><TH>Methodology</TH><TH w={100}>tCO2e</TH><TH w={80}>% of S3</TH><TH>Recommendation</TH>
+            </tr></thead>
+            <tbody>
+              {SCOPE3_CATEGORIES.filter(c=>scope3[c.key]?.enabled).map((c,i)=>{
+                const d=scope3[c.key];
+                const tco2=scope3Totals.byCat[c.key];
+                const pct=scope3Totals.total>0?(tco2/scope3Totals.total*100):0;
+                const rec=d.dqs>=4&&pct>=5?'Upgrade to activity-based':d.dqs>=3&&pct>=10?'Engage suppliers for specific data':d.dqs<=2?'Maintain current quality':'Acceptable for materiality level';
+                return(
+                  <tr key={c.key} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                    <TD>Cat {c.num}: {c.name}</TD>
+                    <TD><Badge label={`DQS ${d.dqs}`} color={d.dqs<=2?T.green:d.dqs<=3?T.amber:T.red} /></TD>
+                    <TD>{d.methodology==='spend'?'Spend-Based (EXIOBASE)':d.methodology==='activity'?'Activity-Based':'Supplier-Specific'}</TD>
+                    <TD mono>{tco2.toFixed(0)}</TD>
+                    <TD mono>{pct.toFixed(1)}%</TD>
+                    <TD><span style={{fontFamily:T.font,fontSize:11,color:d.dqs>=4&&pct>=5?T.red:T.textSec}}>{rec}</span></TD>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr style={{background:T.navy+'08'}}>
+                <td style={{padding:'8px 10px',fontFamily:T.font,fontSize:12,fontWeight:700,color:T.navy}}>Weighted Average</td>
+                <td style={{padding:'8px 10px'}}><Badge label={`DQS ${scope3DqsAvg.toFixed(1)}`} color={scope3DqsAvg<=2?T.green:scope3DqsAvg<=3?T.amber:T.red} /></td>
+                <td colSpan={4} style={{padding:'8px 10px',fontFamily:T.font,fontSize:11,color:T.textSec}}>
+                  {scope3DqsAvg<=3?'Meets recommended threshold (\u2264 3.0)':'Above recommended threshold \u2014 prioritize data quality improvements for material categories'}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </Panel>
 
-        {/* ─── FEEDBACK ─── */}
-        <div style={{ ...sCard }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }} onClick={() => setShowFeedback(!showFeedback)}>
-            <h3 style={{ color: T.navy, margin: 0 }}>\💬 Suggest a Product or Correction</h3>
-            <span style={{ fontSize: 18 }}>{showFeedback ? '\▲' : '\▼'}</span>
-          </div>
-          {showFeedback && (
-            <div style={{ marginTop: 12 }}>
-              <p style={{ color: T.textSec, fontSize: 13, marginBottom: 10 }}>Can't find a product? Have a correction? Let us know!</p>
-              <textarea placeholder="Product name, suggested carbon value, and source..." rows={4} style={{ ...sInput, resize: 'vertical' }} />
-              <button style={{ ...sBtn(T.gold, '#fff'), marginTop: 10 }} onClick={() => { setShowFeedback(false); alert('Thank you for your suggestion! Our team will review it.'); }}>Submit Feedback</button>
-            </div>
-          )}
-        </div>
+        {/* Intensity Metrics Detailed */}
+        <Panel title="Intensity Metrics & Benchmarking" collapsible defaultOpen={true}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr><TH>Metric</TH><TH w={120}>Value</TH><TH w={100}>Unit</TH><TH>Context</TH></tr></thead>
+            <tbody>
+              <tr style={{background:T.surface}}>
+                <TD>Carbon Intensity (Revenue)</TD>
+                <TD mono color={T.navy}>{intensityRevenue.toFixed(1)}</TD>
+                <TD mono>tCO2e/$M</TD>
+                <TD>{sectorBench?`Sector median: ${sectorBench.medianIntensity} tCO2e/$M (${sectorBench.sector})`:'\u2014'}</TD>
+              </tr>
+              <tr style={{background:T.surfaceH}}>
+                <TD>Carbon Intensity (Employee)</TD>
+                <TD mono color={T.navy}>{intensityEmployee.toFixed(1)}</TD>
+                <TD mono>tCO2e/FTE</TD>
+                <TD>Global average (services): ~5-15 tCO2e/FTE; Industrial: 30-200 tCO2e/FTE</TD>
+              </tr>
+              <tr style={{background:T.surface}}>
+                <TD>Scope 1+2 Intensity</TD>
+                <TD mono color={T.navy}>{revenue>0?((scope1Total+scope2LocationTotal)/(revenue/1e6)).toFixed(1):'\u2014'}</TD>
+                <TD mono>tCO2e/$M</TD>
+                <TD>Direct operational intensity (excl. value chain)</TD>
+              </tr>
+              <tr style={{background:T.surfaceH}}>
+                <TD>Scope 3 Share</TD>
+                <TD mono color={'#8b5cf6'}>{grandTotal>0?(scope3Totals.total/grandTotal*100).toFixed(1):0}%</TD>
+                <TD mono>%</TD>
+                <TD>Typical: 70-90% for financial services, 60-80% for manufacturing</TD>
+              </tr>
+              <tr style={{background:T.surface}}>
+                <TD>Market-Based Savings</TD>
+                <TD mono color={T.green}>{scope2LocationTotal>0?((1-scope2MarketTotal/scope2LocationTotal)*100).toFixed(1):0}%</TD>
+                <TD mono>%</TD>
+                <TD>Reduction achieved through renewable energy procurement</TD>
+              </tr>
+              <tr style={{background:T.surfaceH}}>
+                <TD>Renewable Electricity Share</TD>
+                <TD mono color={T.green}>{renewablePct.toFixed(1)}</TD>
+                <TD mono>%</TD>
+                <TD>RE100 target: 100% renewable by 2050 (interim: 60% by 2030)</TD>
+              </tr>
+            </tbody>
+          </table>
+        </Panel>
 
-        {/* ─── SHARE ─── */}
-        {selectedProduct && (
-          <div style={sCard}>
-            <h3 style={{ color: T.navy, margin: '0 0 12px' }}>\📤 Share Your Carbon Insight</h3>
-            <p style={{ color: T.textSec, fontSize: 13, marginBottom: 12 }}>Share how much carbon your purchase creates with friends and family.</p>
-            <div style={{ background: T.surfaceH, borderRadius: 12, padding: 20, textAlign: 'center', maxWidth: 400 }}>
-              <div style={{ fontSize: 14, color: T.textSec }}>Did you know?</div>
-              <div style={{ fontSize: 20, fontWeight: 700, color: T.navy, margin: '8px 0' }}>{selectedProduct.name}</div>
-              <div style={{ fontSize: 36, fontWeight: 800, color: selectedProduct.carbon_kg > 10 ? T.red : T.green }}>{selectedProduct.carbon_kg} kg CO\₂e</div>
-              <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>= {carbonEquivalent(selectedProduct.carbon_kg).km_driving} km of driving</div>
-            </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <button onClick={() => { navigator.clipboard?.writeText(`${selectedProduct.name}: ${selectedProduct.carbon_kg} kg CO2e (= ${carbonEquivalent(selectedProduct.carbon_kg).km_driving} km driving)`); alert('Copied to clipboard!'); }} style={sBtnSm(T.navyL, '#fff')}>\📋 Copy Text</button>
-            </div>
+        {/* District Heating Reference */}
+        <Panel title="District Heating Emission Factors by Country" collapsible defaultOpen={false}>
+          <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+            {DISTRICT_HEATING_EFS.map(dh=>(
+              <div key={dh.country} style={{padding:'8px 12px',background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:6,minWidth:160}}>
+                <div style={{fontFamily:T.font,fontSize:11,fontWeight:600,color:T.navy}}>{dh.label}</div>
+                <div style={{fontFamily:T.mono,fontSize:13,fontWeight:700,color:T.sage}}>{dh.ef} kgCO2e/kWh</div>
+                <div style={{fontFamily:T.mono,fontSize:9,color:T.textMut}}>{dh.source}</div>
+              </div>
+            ))}
           </div>
+        </Panel>
+
+        {/* Data Validation */}
+        {validationIssues.length>0&&(
+          <Panel title={`Data Validation (${validationIssues.length} items)`} collapsible>
+            {validationIssues.map((issue,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 0',borderBottom:`1px solid ${T.border}`}}>
+                <Badge label={issue.type.toUpperCase()} color={issue.type==='error'?T.red:issue.type==='warn'?T.amber:T.navyL} />
+                <span style={{fontFamily:T.font,fontSize:12,color:T.text}}>{issue.msg}</span>
+              </div>
+            ))}
+          </Panel>
         )}
 
-        {/* ─── EXPORTS & CROSS-NAV ─── */}
-        <div style={{ ...sCard }}>
-          <h3 style={{ color: T.navy, margin: '0 0 12px' }}>\📥 Export & Navigate</h3>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button onClick={exportProductCard} style={sBtn(T.navy, '#fff')}>\📄 Export Product Card (PDF)</button>
-            <button onClick={exportComparisonCSV} style={sBtn(T.navyL, '#fff')}>\💾 Export Comparison (CSV)</button>
-            <button onClick={printPage} style={sBtn(T.textSec, '#fff')}>\🖨\️ Print</button>
-            <button onClick={() => navigate('/carbon-wallet')} style={sBtn(T.sage, '#fff')}>\💳 Carbon Wallet</button>
-            <button onClick={() => navigate('/carbon-calculator')} style={sBtn(T.gold, '#fff')}>\🧪 Product Anatomy</button>
+        {/* Export Section */}
+        <Panel title="Export GHG Inventory">
+          <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+            <Btn onClick={downloadCSV}>Download CSV</Btn>
+            <Btn variant="gold" onClick={downloadJSON}>Download JSON (Structured)</Btn>
+            <Btn variant="ghost" onClick={()=>{
+              const cdp=buildInventoryJSON();
+              cdp.metadata.format='CDP Climate Change C6/C7';
+              cdp.metadata.note='Aligned with CDP questionnaire sections C6 (Emissions data) and C7 (Emissions breakdown)';
+              const blob=new Blob([JSON.stringify(cdp,null,2)],{type:'application/json'});
+              const url=URL.createObjectURL(blob);
+              const a=document.createElement('a');a.href=url;a.download=`CDP_Format_${companyName.replace(/\s+/g,'_')}_FY${reportingYear}.json`;a.click();
+              URL.revokeObjectURL(url);
+            }}>CDP-Format Export (C6/C7)</Btn>
+          </div>
+          <div style={{fontFamily:T.mono,fontSize:10,color:T.textMut,marginTop:8}}>CSV: Full inventory table | JSON: Structured data for downstream modules | CDP: Aligned with CDP Climate Change questionnaire C6.1-C6.5, C7.1a-C7.9b</div>
+        </Panel>
+      </div>
+    );
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TAB 7: DOWNSTREAM CONNECTIONS
+     ═══════════════════════════════════════════════════════════════════════════ */
+  const renderDownstream=()=>{
+    const connections=[
+      {
+        id:'pcaf',module:'PCAF Financed Emissions',icon:'\uD83C\uDFE6',color:'#0c4a6e',
+        desc:'Scope 3 Category 15 data feeds into financed emissions attribution via PCAF methodology',
+        fields:['scope3.byCat.cat15 (tCO2e)','company.evic','company.revenue','boundary.approach'],
+        format:'JSON: {investee_emissions, attribution_factor, asset_class}',
+        path:'/pcaf-financed-emissions',
+      },
+      {
+        id:'sbti',module:'SBTi Target Setter',icon:'\uD83C\uDFAF',color:'#059669',
+        desc:'Total emissions inventory serves as the baseline for science-based target setting',
+        fields:['scope1.total','scope2.locationBased','scope2.marketBased','scope3.total','scope3.byCat','company.sector'],
+        format:'JSON: {base_year_emissions, sector, target_type, time_horizon}',
+        path:'/decarbonisation-roadmap',
+      },
+      {
+        id:'csrd',module:'CSRD ESRS E1 Disclosure',icon:'\uD83D\uDCCB',color:'#7c3aed',
+        desc:'Scope 1/2/3 data maps directly to ESRS E1-6 disclosure datapoints for EU reporting',
+        fields:['scope1.total (E1-6 para 44)','scope2.locationBased (E1-6 para 46)','scope2.marketBased (E1-6 para 47)','scope3.byCat (E1-6 para 51)'],
+        format:'XBRL/JSON: {esrs_e1_6_datapoints}',
+        path:'/csrd-esrs-automation',
+      },
+      {
+        id:'sfdr',module:'SFDR PAI #1-3',icon:'\uD83D\uDCCA',color:'#0ea5e9',
+        desc:'Portfolio-level GHG metrics: PAI #1 (Total GHG), #2 (Carbon Footprint), #3 (GHG Intensity)',
+        fields:['scope1.total','scope2.total','scope3.total','company.evic','portfolio.nav'],
+        format:'JSON: {pai_1_total_ghg, pai_2_carbon_footprint_per_m, pai_3_ghg_intensity}',
+        path:'/sfdr-art9',
+      },
+      {
+        id:'temp',module:'Portfolio Temperature Score',icon:'\uD83C\uDF21\uFE0F',color:'#f59e0b',
+        desc:'Emission trajectory data feeds into implied temperature rise calculation',
+        fields:['scope1.total','scope2.total','scope3.total','base_year','base_year_emissions','sector.decarbRate'],
+        format:'JSON: {emission_trajectory, sector_pathway, implied_temperature_rise}',
+        path:'/portfolio-temperature-score',
+      },
+      {
+        id:'cbam',module:'CBAM Compliance',icon:'\uD83C\uDDEA\uD83C\uDDFA',color:'#dc2626',
+        desc:'Scope 1 emissions of imported goods = embedded emissions for EU CBAM reporting',
+        fields:['scope1.process (tCO2e per product)','scope1.stationary (allocated)','product.cn_code','product.origin_country'],
+        format:'JSON: {embedded_emissions_per_tonne, product_code, origin, cbam_certificates_required}',
+        path:'/cbam-compliance',
+      },
+      {
+        id:'budget',module:'Carbon Budget',icon:'\uD83C\uDF0D',color:'#16a34a',
+        desc:'Total emissions vs remaining 1.5/2.0\u00B0C global carbon budget allocation',
+        fields:['totals.grandTotal','company.revenue','company.sector','ipcc.remaining_budget'],
+        format:'JSON: {company_budget_share, years_remaining, overshoot_risk}',
+        path:'/carbon-budget',
+      },
+    ];
+
+    return(
+      <div>
+        <Panel title="Data Flow Architecture" citation="GHG Protocol \u2192 Downstream Module Integration">
+          <InfoBox text="This Carbon Calculator is the foundation data source for 7 downstream climate modules. Each module consumes specific fields from the GHG inventory via structured JSON payloads." />
+
+          {/* Visual flow */}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',marginBottom:24,flexWrap:'wrap',gap:16}}>
+            <div style={{padding:'16px 24px',borderRadius:12,background:T.navy,color:'#fff',fontFamily:T.font,fontSize:14,fontWeight:700,textAlign:'center',minWidth:180}}>
+              GHG Protocol<br />Carbon Calculator
+              <div style={{fontFamily:T.mono,fontSize:10,color:T.goldL,marginTop:4}}>{fmtCO2(grandTotal)}</div>
+            </div>
+            <div style={{fontFamily:T.mono,fontSize:24,color:T.gold}}>\u2192</div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              {connections.map(c=>(
+                <div key={c.id} style={{display:'flex',alignItems:'center',gap:8}}>
+                  <div style={{width:8,height:8,borderRadius:'50%',background:c.color}} />
+                  <span style={{fontFamily:T.font,fontSize:11,color:T.text}}>{c.module}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Panel>
+
+        {/* Connection Cards */}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(400px,1fr))',gap:16}}>
+          {connections.map(c=>(
+            <div key={c.id} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',background:c.color+'10',borderBottom:`2px solid ${c.color}30`,display:'flex',alignItems:'center',gap:10}}>
+                <span style={{fontSize:20}}>{c.icon}</span>
+                <div>
+                  <div style={{fontFamily:T.font,fontSize:13,fontWeight:700,color:T.navy}}>{c.module}</div>
+                  <div style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{c.desc}</div>
+                </div>
+              </div>
+              <div style={{padding:'12px 16px'}}>
+                <div style={{fontFamily:T.font,fontSize:11,fontWeight:600,color:T.textMut,marginBottom:6}}>Fields Consumed:</div>
+                <div style={{display:'flex',flexWrap:'wrap',gap:4,marginBottom:10}}>
+                  {c.fields.map((f,i)=><span key={i} style={{fontFamily:T.mono,fontSize:10,background:T.surfaceH,border:`1px solid ${T.border}`,borderRadius:4,padding:'2px 6px',color:T.text}}>{f}</span>)}
+                </div>
+                <div style={{fontFamily:T.mono,fontSize:10,color:T.textMut,marginBottom:10}}>{c.format}</div>
+                <Btn small variant="ghost" onClick={()=>{
+                  const payload=buildInventoryJSON();
+                  payload.metadata.targetModule=c.module;
+                  payload.metadata.exportedFields=c.fields;
+                  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+                  const url=URL.createObjectURL(blob);
+                  const a=document.createElement('a');a.href=url;a.download=`Export_to_${c.id.toUpperCase()}_${reportingYear}.json`;a.click();
+                  URL.revokeObjectURL(url);
+                }}>Export to {c.module}</Btn>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Regulatory Alignment Matrix */}
+        <Panel title="Regulatory Alignment Matrix" collapsible defaultOpen={true}>
+          <InfoBox text="This GHG inventory data maps to mandatory disclosure requirements across multiple regulatory frameworks. The table below shows which inventory fields satisfy which regulation." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH>Regulation</TH><TH>Requirement</TH><TH>Data Source from Calculator</TH><TH w={80}>Status</TH>
+            </tr></thead>
+            <tbody>
+              {[
+                {reg:'EU CSRD (ESRS E1)',req:'E1-6 para 44: Gross Scope 1 GHG emissions',src:'scope1.total',ready:scope1Total>0},
+                {reg:'EU CSRD (ESRS E1)',req:'E1-6 para 46: Gross Scope 2 GHG (location-based)',src:'scope2.locationBased',ready:scope2LocationTotal>0},
+                {reg:'EU CSRD (ESRS E1)',req:'E1-6 para 47: Gross Scope 2 GHG (market-based)',src:'scope2.marketBased',ready:scope2MarketTotal>0},
+                {reg:'EU CSRD (ESRS E1)',req:'E1-6 para 51: Gross Scope 3 GHG by category',src:'scope3.byCat.*',ready:scope3Totals.total>0},
+                {reg:'EU CSRD (ESRS E1)',req:'E1-6 para 53: GHG intensity per net revenue',src:'totals.intensityRevenue',ready:intensityRevenue>0},
+                {reg:'SFDR RTS',req:'PAI #1: GHG emissions (Scope 1+2+3)',src:'scope1+scope2+scope3',ready:grandTotal>0},
+                {reg:'SFDR RTS',req:'PAI #2: Carbon footprint (per EUR M invested)',src:'totals.grandTotal / investmentValue',ready:grandTotal>0},
+                {reg:'SFDR RTS',req:'PAI #3: GHG intensity of investee companies',src:'totals.intensityRevenue',ready:intensityRevenue>0},
+                {reg:'SEC Climate Rule',req:'Scope 1 emissions disclosure (all registrants)',src:'scope1.total',ready:scope1Total>0},
+                {reg:'SEC Climate Rule',req:'Scope 2 emissions disclosure (all registrants)',src:'scope2.locationBased + scope2.marketBased',ready:scope2LocationTotal>0},
+                {reg:'SEC Climate Rule',req:'Scope 3 if material (LAF/AF only, if > 1% of total)',src:'scope3.total (if material)',ready:scope3Totals.total>0},
+                {reg:'ISSB S2',req:'S2.29: Scope 1+2 absolute emissions',src:'scope1.total + scope2.*',ready:scope1Total>0},
+                {reg:'ISSB S2',req:'S2.29: Scope 3 emissions by category',src:'scope3.byCat.*',ready:scope3Totals.total>0},
+                {reg:'CDP Climate',req:'C6.1: Scope 1 by business division/facility',src:'scope1.* (disaggregated by entity)',ready:scope1Total>0},
+                {reg:'CDP Climate',req:'C6.3: Scope 2 location-based & market-based',src:'scope2.locationBased + scope2.marketBased',ready:scope2LocationTotal>0},
+                {reg:'CDP Climate',req:'C6.5: Scope 3 by category with methodology',src:'scope3.byCat.* + methodology + DQS',ready:scope3Totals.total>0},
+                {reg:'UK SDR',req:'Sustainability entity report: GHG metrics',src:'scope1 + scope2 + scope3',ready:grandTotal>0},
+                {reg:'EU CBAM',req:'Embedded emissions per product (Scope 1)',src:'scope1.process (per tonne product)',ready:scope1ProcessTotal>0},
+                {reg:'SBTi Validation',req:'Base year emissions inventory (all scopes)',src:'Full GHG inventory + base year',ready:grandTotal>0&&baseYear>0},
+                {reg:'PCAF Standard',req:'Scope 3 Cat 15 for financed emissions',src:'scope3.byCat.cat15',ready:scope3Totals.byCat.cat15>0},
+                {reg:'TCFD/TNFD',req:'Metrics & Targets: GHG emissions Scope 1/2/3',src:'Full inventory',ready:grandTotal>0},
+              ].map((row,i)=>(
+                <tr key={i} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                  <TD><Badge label={row.reg} color={T.navy} /></TD>
+                  <TD>{row.req}</TD>
+                  <TD><span style={{fontFamily:T.mono,fontSize:10,color:T.textSec}}>{row.src}</span></TD>
+                  <TD>
+                    {row.ready?
+                      <Badge label="Ready" color={T.green} />:
+                      <Badge label="Missing Data" color={T.red} />
+                    }
+                  </TD>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Panel>
+
+        {/* Methodology Comparison: Spend vs Activity vs Supplier */}
+        <Panel title="Methodology Comparison Guide" collapsible defaultOpen={false}>
+          <InfoBox text="The GHG Protocol Scope 3 Standard allows three calculation approaches. Higher-quality approaches yield more actionable data for decarbonization but require more effort to collect." />
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead><tr>
+              <TH>Dimension</TH><TH>Spend-Based</TH><TH>Activity-Based</TH><TH>Supplier-Specific</TH>
+            </tr></thead>
+            <tbody>
+              {[
+                {dim:'Data Required',spend:'$ spent by category',activity:'Physical quantities (kg, km, kWh)',supplier:'Supplier product-level emissions'},
+                {dim:'Emission Factors',spend:'EXIOBASE / USEEIO (kgCO2e/$)',activity:'DEFRA / national EFs (kgCO2e/unit)',supplier:'Supplier EPDs / PCFs'},
+                {dim:'Typical DQS',spend:'4 (Economic)',activity:'3 (Physical)',supplier:'1-2 (Specific)'},
+                {dim:'Data Availability',spend:'High (spend data readily available)',activity:'Medium (requires operational data)',supplier:'Low (requires supplier engagement)'},
+                {dim:'Accuracy',spend:'Low (sector averages)',activity:'Medium (activity-specific)',supplier:'High (product-specific)'},
+                {dim:'Actionability',spend:'Low (cannot identify reduction levers)',activity:'Medium (identifies high-emission activities)',supplier:'High (identifies supplier-specific hotspots)'},
+                {dim:'Cost to Implement',spend:'Low',activity:'Medium',supplier:'High'},
+                {dim:'GHG Protocol Recommendation',spend:'Screening / initial estimate',activity:'Preferred for material categories',supplier:'Best practice for top suppliers'},
+                {dim:'Use Case',spend:'All 15 categories initially',activity:'Categories 4-7 (transport, travel, commuting)',supplier:'Category 1 (top 20 suppliers)'},
+                {dim:'Improvement Path',spend:'Start here \u2192 prioritize material categories',activity:'Upgrade from spend-based',supplier:'Engage key suppliers'},
+              ].map((row,i)=>(
+                <tr key={i} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                  <TD><strong>{row.dim}</strong></TD>
+                  <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{row.spend}</span></TD>
+                  <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{row.activity}</span></TD>
+                  <TD><span style={{fontFamily:T.font,fontSize:11,color:T.textSec}}>{row.supplier}</span></TD>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Panel>
+
+        {/* GHG Protocol Completeness Checklist */}
+        <Panel title="GHG Protocol Completeness Checklist" collapsible defaultOpen={false}>
+          {(()=>{
+            const checks=[
+              {item:'Organizational boundary defined',done:boundaryApproach!=='',ref:'Ch 3'},
+              {item:'Consolidation approach selected',done:true,ref:'Ch 3.1'},
+              {item:'All entities listed with ownership %',done:entities.length>=2,ref:'Ch 3.2'},
+              {item:'Base year identified',done:baseYear>0&&baseYear<reportingYear,ref:'Ch 5'},
+              {item:'Scope 1: Stationary combustion',done:stationary.length>0&&scope1StationaryTotal>0,ref:'Ch 4.2'},
+              {item:'Scope 1: Mobile combustion',done:mobile.length>0,ref:'Ch 4.2'},
+              {item:'Scope 1: Process emissions assessed',done:process.length>0||true,ref:'Ch 4.2'},
+              {item:'Scope 1: Fugitive emissions assessed',done:fugitive.length>0,ref:'Ch 4.2'},
+              {item:'Scope 2: Location-based reported',done:scope2LocationTotal>0,ref:'S2 Guidance Ch 6'},
+              {item:'Scope 2: Market-based reported',done:scope2MarketTotal>=0,ref:'S2 Guidance Ch 7'},
+              {item:'Scope 2: Dual reporting (both methods)',done:scope2LocationTotal>0,ref:'S2 Guidance Ch 4'},
+              {item:'Scope 3: Relevance assessment completed',done:SCOPE3_CATEGORIES.filter(c=>scope3[c.key]?.enabled).length>=3,ref:'S3 Standard Ch 3'},
+              {item:'Scope 3: All material categories included',done:SCOPE3_CATEGORIES.filter(c=>scope3[c.key]?.enabled).length>=5,ref:'S3 Standard Ch 3'},
+              {item:'Scope 3: Data quality assessed',done:scope3DqsAvg>0,ref:'S3 Standard Ch 4'},
+              {item:'Sector benchmark comparison',done:!!sectorBench,ref:'Best practice'},
+              {item:'Intensity metrics calculated',done:intensityRevenue>0,ref:'Ch 9'},
+              {item:'Revenue denominator provided',done:revenue>0,ref:'Ch 9'},
+              {item:'Employee count provided',done:employees>0,ref:'Best practice'},
+            ];
+            const doneCt=checks.filter(c=>c.done).length;
+            return(
+              <div>
+                <div style={{fontFamily:T.mono,fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>
+                  Completeness: {doneCt}/{checks.length} ({(doneCt/checks.length*100).toFixed(0)}%)
+                </div>
+                <div style={{height:8,background:T.surfaceH,borderRadius:4,marginBottom:16,overflow:'hidden'}}>
+                  <div style={{height:'100%',width:`${(doneCt/checks.length*100)}%`,background:doneCt===checks.length?T.green:doneCt/checks.length>=0.8?T.amber:T.red,borderRadius:4,transition:'width 0.3s'}} />
+                </div>
+                <table style={{width:'100%',borderCollapse:'collapse'}}>
+                  <thead><tr><TH w={30}></TH><TH>Checklist Item</TH><TH w={120}>GHG Protocol Ref</TH></tr></thead>
+                  <tbody>
+                    {checks.map((c,i)=>(
+                      <tr key={i} style={{background:i%2===0?T.surface:T.surfaceH}}>
+                        <TD><span style={{color:c.done?T.green:T.red,fontFamily:T.mono,fontSize:14}}>{c.done?'\u2713':'\u2717'}</span></TD>
+                        <TD>{c.item}</TD>
+                        <TD><span style={{fontFamily:T.mono,fontSize:10,color:T.textMut}}>{c.ref}</span></TD>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
+        </Panel>
+      </div>
+    );
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     MAIN RENDER
+     ═══════════════════════════════════════════════════════════════════════════ */
+  return(
+    <div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font}}>
+      {/* Header */}
+      <div style={{background:T.surface,borderBottom:`1px solid ${T.border}`,padding:'16px 32px',position:'sticky',top:0,zIndex:100}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+          <div>
+            <div style={{fontFamily:T.mono,fontSize:10,color:T.textMut,letterSpacing:'.08em',textTransform:'uppercase'}}>Carbon Calculator / GHG Protocol</div>
+            <h1 style={{fontFamily:T.font,fontSize:22,fontWeight:800,color:T.navy,margin:'4px 0 0'}}>GHG Protocol Carbon Emission Calculator</h1>
+          </div>
+          <div style={{display:'flex',gap:12,alignItems:'center'}}>
+            <div style={{textAlign:'right'}}>
+              <div style={{fontFamily:T.mono,fontSize:11,color:T.textMut}}>FY{reportingYear} | {companyName}</div>
+              <div style={{fontFamily:T.mono,fontSize:13,fontWeight:700,color:T.navy}}>{fmtCO2(grandTotal)}</div>
+            </div>
+            <div style={{width:1,height:32,background:T.border}} />
+            <div style={{textAlign:'right'}}>
+              <div style={{fontFamily:T.mono,fontSize:10,color:T.textMut}}>Scope 1 | 2 (L) | 3</div>
+              <div style={{fontFamily:T.mono,fontSize:11}}>
+                <span style={{color:T.navy}}>{fmtCO2(scope1Total)}</span>
+                <span style={{color:T.textMut}}> | </span>
+                <span style={{color:T.sage}}>{fmtCO2(scope2LocationTotal)}</span>
+                <span style={{color:T.textMut}}> | </span>
+                <span style={{color:'#8b5cf6'}}>{fmtCO2(scope3Totals.total)}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div style={{ textAlign: 'center', padding: '32px 0 16px', color: T.textMut, fontSize: 12 }}>
-          Carbon Impact Calculator &middot; Data from peer-reviewed sources &middot; Version 1.0
+        {/* Tab Bar */}
+        <div style={{display:'flex',gap:0,borderBottom:`2px solid ${T.border}`,marginTop:8,overflowX:'auto'}}>
+          {TABS.map(t=>(
+            <button key={t.key} onClick={()=>setTab(t.key)}
+              style={{
+                fontFamily:T.font,fontSize:12,fontWeight:tab===t.key?700:500,color:tab===t.key?T.navy:T.textSec,
+                padding:'10px 18px',border:'none',borderBottom:tab===t.key?`2px solid ${T.gold}`:'2px solid transparent',
+                background:'transparent',cursor:'pointer',whiteSpace:'nowrap',marginBottom:-2,
+                transition:'all 0.15s ease',
+              }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{maxWidth:1400,margin:'0 auto',padding:'24px 32px'}}>
+        {tab==='boundary'&&renderBoundary()}
+        {tab==='scope1'&&renderScope1()}
+        {tab==='scope2'&&renderScope2()}
+        {tab==='scope3'&&renderScope3()}
+        {tab==='gwp'&&renderGWP()}
+        {tab==='summary'&&renderSummary()}
+        {tab==='downstream'&&renderDownstream()}
+      </div>
+
+      {/* Footer Status Bar */}
+      <div style={{position:'fixed',bottom:0,left:0,right:0,background:T.navy,padding:'6px 32px',display:'flex',justifyContent:'space-between',alignItems:'center',zIndex:100}}>
+        <div style={{display:'flex',gap:16}}>
+          <span style={{fontFamily:T.mono,fontSize:10,color:T.goldL}}>GHG PROTOCOL CORPORATE STANDARD (2015)</span>
+          <span style={{fontFamily:T.mono,fontSize:10,color:'#fff8'}}>|</span>
+          <span style={{fontFamily:T.mono,fontSize:10,color:'#fff8'}}>SCOPE 2 GUIDANCE (2015)</span>
+          <span style={{fontFamily:T.mono,fontSize:10,color:'#fff8'}}>|</span>
+          <span style={{fontFamily:T.mono,fontSize:10,color:'#fff8'}}>SCOPE 3 STANDARD (2013)</span>
+        </div>
+        <div style={{display:'flex',gap:12}}>
+          <span style={{fontFamily:T.mono,fontSize:10,color:validationIssues.filter(i=>i.type==='error').length>0?T.red:'#fff8'}}>
+            {validationIssues.filter(i=>i.type==='error').length} errors
+          </span>
+          <span style={{fontFamily:T.mono,fontSize:10,color:validationIssues.filter(i=>i.type==='warn').length>0?T.amber:'#fff8'}}>
+            {validationIssues.filter(i=>i.type==='warn').length} warnings
+          </span>
+          <span style={{fontFamily:T.mono,fontSize:10,color:T.goldL}}>EF: DEFRA 2023 | GWP: IPCC AR6 | Grid: Ember 2024</span>
         </div>
       </div>
     </div>
