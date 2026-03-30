@@ -1,362 +1,62 @@
-import React, { useState } from 'react';
-import { AreaChart, Area, BarChart, Bar, LineChart, Line, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const ACCENT = '#0f766e';
-const tip = { contentStyle:{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, color:T.text }, labelStyle:{ color:T.textSec } };
-const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
-
-const INSTITUTIONS = [
-  { name:'BlackRock', meetings:17500, forMgmt:82, against:14, abstain:4, esg:88 },
-  { name:'Vanguard', meetings:15200, forMgmt:79, against:17, abstain:4, esg:84 },
-  { name:'State Street', meetings:12800, forMgmt:76, against:20, abstain:4, esg:91 },
-  { name:'Norges Bank', meetings:9600, forMgmt:68, against:28, abstain:4, esg:95 },
-  { name:'Fidelity', meetings:11300, forMgmt:85, against:12, abstain:3, esg:76 },
-  { name:'T. Rowe Price', meetings:8700, forMgmt:80, against:16, abstain:4, esg:80 },
-  { name:'CalPERS', meetings:6200, forMgmt:71, against:25, abstain:4, esg:93 },
-  { name:'APG Asset Mgmt', meetings:5400, forMgmt:65, against:31, abstain:4, esg:97 },
-];
-
-const ESG_TREND = Array.from({length:24}, (_,i) => ({ month:`M${i+1}`, filings: Math.round(180 + sr(i*3)*120 + i*8) }));
-
-const POLICIES = [
-  { inv:'ISS', climate:'Support', diversity:'Support', execPay:'Case-by-Case', shrRights:'Support', polDon:'Case-by-Case', humanRts:'Support' },
-  { inv:'Glass Lewis', climate:'Support', diversity:'Support', execPay:'Case-by-Case', shrRights:'Support', polDon:'Oppose', humanRts:'Support' },
-  { inv:'BlackRock', climate:'Support', diversity:'Support', execPay:'Case-by-Case', shrRights:'Case-by-Case', polDon:'Oppose', humanRts:'Case-by-Case' },
-  { inv:'Vanguard', climate:'Case-by-Case', diversity:'Support', execPay:'Case-by-Case', shrRights:'Case-by-Case', polDon:'Oppose', humanRts:'Case-by-Case' },
-  { inv:'State Street', climate:'Support', diversity:'Support', execPay:'Support', shrRights:'Support', polDon:'Oppose', humanRts:'Support' },
-  { inv:'Norges Bank', climate:'Support', diversity:'Support', execPay:'Support', shrRights:'Support', polDon:'Oppose', humanRts:'Support' },
-];
-const POLICY_COLS = ['climate','diversity','execPay','shrRights','polDon','humanRts'];
-const POLICY_LABELS = { climate:'Climate', diversity:'Board Diversity', execPay:'Executive Pay', shrRights:'Shareholder Rights', polDon:'Political Donations', humanRts:'Human Rights' };
-
-const INVESTOR_ESG_RATES = POLICIES.map((p,i) => ({ name:p.inv, rate: Math.round(60 + sr(i*7)*35) }));
-
-const RESOLUTION_CATS = [
-  { cat:'Environmental', filed:412, support:58, majority:71, mgmtRec:'Against', trend:'↑' },
-  { cat:'Social', filed:287, support:44, majority:52, mgmtRec:'Against', trend:'↑' },
-  { cat:'Governance', filed:534, support:63, majority:78, mgmtRec:'For', trend:'→' },
-  { cat:'Exec Compensation', filed:189, support:36, majority:41, mgmtRec:'Against', trend:'↑' },
-  { cat:'Board Elections', filed:2180, support:88, majority:97, mgmtRec:'For', trend:'→' },
-  { cat:'Capital Allocation', filed:143, support:52, majority:61, mgmtRec:'For', trend:'↓' },
-  { cat:'M&A', filed:78, support:71, majority:85, mgmtRec:'For', trend:'↓' },
-  { cat:'Auditor Ratification', filed:1860, support:92, majority:99, mgmtRec:'For', trend:'→' },
-];
-
-const CLIMATE_RES_TREND = Array.from({length:24}, (_,i) => ({ month:`M${i+1}`, support: Math.round(38 + sr(i*5)*18 + i*0.8) }));
-
-const SOP_COMPANIES = [
-  { co:'Company A', ceoPay:18.4, result:94, rec:'For', drivers:'None', response:'Maintained' },
-  { co:'Company B', ceoPay:32.1, result:67, rec:'Against', drivers:'Excessive quantum', response:'Cap introduced' },
-  { co:'Company C', ceoPay:11.2, result:91, rec:'For', drivers:'None', response:'Maintained' },
-  { co:'Company D', ceoPay:24.7, result:51, rec:'Against', drivers:'Peer misalignment', response:'Redesigned' },
-  { co:'Company E', ceoPay:9.8, result:96, rec:'For', drivers:'None', response:'Maintained' },
-  { co:'Company F', ceoPay:41.3, result:38, rec:'Against', drivers:'No performance link', response:'Clawback added' },
-  { co:'Company G', ceoPay:15.6, result:82, rec:'For', drivers:'Minor concern', response:'Disclosed metrics' },
-  { co:'Company H', ceoPay:28.9, result:72, rec:'Against', drivers:'Discretionary awards', response:'Policy revised' },
-];
-
-const OPPOSITION_DRIVERS = [
-  { driver:'Excessive quantum', count:142 },
-  { driver:'Peer misalignment', count:118 },
-  { driver:'No performance link', count:97 },
-  { driver:'Discretionary awards', count:74 },
-  { driver:'Retention focus', count:61 },
-];
-
-const STEWARDSHIP_CODES = [
-  { code:'UK Stewardship Code 2020', jurisdiction:'United Kingdom', signatories:254, reporting:'Annual', updated:'2020', principles:['Purpose, strategy & culture','Stewardship activities reporting','Environmental & social issues'] },
-  { code:'Japan Stewardship Code', jurisdiction:'Japan', signatories:327, reporting:'Annual', updated:'2020', principles:['Clear stewardship policy','Monitoring investees','Constructive dialogue'] },
-  { code:'EU Shareholders Rights Dir II', jurisdiction:'European Union', signatories:891, reporting:'Public disclosure', updated:'2019', principles:['Engagement policy disclosure','Vote disclosure','Conflicts of interest'] },
-  { code:'PRI Stewardship Blueprint', jurisdiction:'Global', signatories:5300, reporting:'Annual PRI report', updated:'2022', principles:['Active ownership integration','Collaborative engagement','ESG incorporation'] },
-  { code:'ICGN Global Stewardship', jurisdiction:'Global', signatories:220, reporting:'Voluntary', updated:'2023', principles:['Fiduciary duties','Proportionate engagement','Transparency & accountability'] },
-  { code:'Australian Stewardship Code', jurisdiction:'Australia', signatories:147, reporting:'Annual', updated:'2017', principles:['Clear stewardship policy','Active ownership','Transparent reporting'] },
-];
-
-const policyColor = v => v === 'Support' ? T.green : v === 'Oppose' ? T.red : T.amber;
-
-const StatCard = ({ label, value }) => (
-  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:'14px 18px', flex:1 }}>
-    <div style={{ color:ACCENT, fontSize:22, fontWeight:700 }}>{value}</div>
-    <div style={{ color:T.textSec, fontSize:12, marginTop:4 }}>{label}</div>
-  </div>
-);
-
-const TABS = ['Overview','Voting Policy Comparison','Resolution Categories','Say-on-Pay Tracker','Stewardship Codes'];
-
-export default function ProxyVotingIntelPage() {
-  const [tab, setTab] = useState(0);
-
-  return (
-    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font, color:T.text, padding:'24px' }}>
-      <div style={{ marginBottom:20 }}>
-        <h1 style={{ fontSize:22, fontWeight:700, color:T.text, margin:0 }}>Proxy Voting & Stewardship Intelligence</h1>
-        <p style={{ color:T.textSec, fontSize:13, marginTop:4 }}>Institutional voting patterns, policy benchmarks, and stewardship frameworks</p>
-      </div>
-
-      <div style={{ display:'flex', gap:4, borderBottom:`1px solid ${T.border}`, marginBottom:24 }}>
-        {TABS.map((t,i) => (
-          <button key={i} onClick={() => setTab(i)} style={{ background:'none', border:'none', color: tab===i ? ACCENT : T.textSec, fontFamily:T.font, fontSize:13, fontWeight: tab===i ? 700 : 400, padding:'8px 14px', cursor:'pointer', borderBottom: tab===i ? `2px solid ${ACCENT}` : '2px solid transparent' }}>
-            {t}
-          </button>
-        ))}
-      </div>
-
-      {tab === 0 && (
-        <div>
-          <div style={{ display:'flex', gap:12, marginBottom:24 }}>
-            <StatCard label="Meetings Tracked" value="21,000+" />
-            <StatCard label="ESG Resolutions YoY" value="+34%" />
-            <StatCard label="Avg Against Management" value="8.2%" />
-            <StatCard label="Majority Votes Passed" value="127" />
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Institutional Investor Voting Summary</div>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-                <thead>
-                  <tr style={{ color:T.textSec }}>
-                    {['Investor','Meetings','For Mgmt %','Against %','Abstain %','ESG Score'].map(h => (
-                      <th key={h} style={{ textAlign:'left', padding:'4px 8px', borderBottom:`1px solid ${T.border}` }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {INSTITUTIONS.map((r,i) => (
-                    <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                      <td style={{ padding:'6px 8px', fontWeight:600 }}>{r.name}</td>
-                      <td style={{ padding:'6px 8px', color:T.textSec }}>{r.meetings.toLocaleString()}</td>
-                      <td style={{ padding:'6px 8px', color:T.green }}>{r.forMgmt}%</td>
-                      <td style={{ padding:'6px 8px', color:T.red }}>{r.against}%</td>
-                      <td style={{ padding:'6px 8px', color:T.amber }}>{r.abstain}%</td>
-                      <td style={{ padding:'6px 8px' }}><span style={{ background:ACCENT, color:'#fff', borderRadius:4, padding:'2px 6px' }}>{r.esg}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>ESG Resolution Filing Trend (24 Months)</div>
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={ESG_TREND}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="month" tick={{ fill:T.textMut, fontSize:10 }} interval={3} />
-                  <YAxis tick={{ fill:T.textMut, fontSize:10 }} />
-                  <Tooltip {...tip} />
-                  <Area type="monotone" dataKey="filings" stroke={ACCENT} fill={ACCENT} fillOpacity={0.2} name="Filings" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {tab === 1 && (
-        <div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginBottom:16 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Voting Policy Comparison by Topic</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textSec }}>
-                  <th style={{ textAlign:'left', padding:'4px 8px', borderBottom:`1px solid ${T.border}` }}>Investor</th>
-                  {POLICY_COLS.map(c => <th key={c} style={{ textAlign:'center', padding:'4px 8px', borderBottom:`1px solid ${T.border}` }}>{POLICY_LABELS[c]}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {POLICIES.map((p,i) => (
-                  <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                    <td style={{ padding:'6px 8px', fontWeight:600 }}>{p.inv}</td>
-                    {POLICY_COLS.map(c => (
-                      <td key={c} style={{ padding:'6px 8px', textAlign:'center' }}>
-                        <span style={{ background: policyColor(p[c])+'22', color: policyColor(p[c]), borderRadius:4, padding:'2px 8px', fontSize:11 }}>{p[c]}</span>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Overall ESG Vote Support Rate by Investor</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={INVESTOR_ESG_RATES}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill:T.textMut, fontSize:11 }} />
-                <YAxis tick={{ fill:T.textMut, fontSize:11 }} domain={[0,100]} />
-                <Tooltip {...tip} />
-                <Bar dataKey="rate" name="ESG Support %">
-                  {INVESTOR_ESG_RATES.map((d,i) => <Cell key={i} fill={d.rate >= 80 ? T.green : d.rate >= 65 ? T.amber : ACCENT} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {tab === 2 && (
-        <div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Resolution Categories — 2023 Filing Data</div>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-                <thead>
-                  <tr style={{ color:T.textSec }}>
-                    {['Category','Filed','Support %','Majority %','Mgmt Rec','Trend'].map(h => (
-                      <th key={h} style={{ textAlign:'left', padding:'4px 6px', borderBottom:`1px solid ${T.border}` }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {RESOLUTION_CATS.map((r,i) => (
-                    <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                      <td style={{ padding:'5px 6px', fontWeight:600 }}>{r.cat}</td>
-                      <td style={{ padding:'5px 6px', color:T.textSec }}>{r.filed}</td>
-                      <td style={{ padding:'5px 6px', color: r.support >= 50 ? T.green : T.amber }}>{r.support}%</td>
-                      <td style={{ padding:'5px 6px' }}>{r.majority}%</td>
-                      <td style={{ padding:'5px 6px', color: r.mgmtRec === 'For' ? T.green : T.red }}>{r.mgmtRec}</td>
-                      <td style={{ padding:'5px 6px' }}>{r.trend}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Avg Support % by Category</div>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={RESOLUTION_CATS} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis type="number" tick={{ fill:T.textMut, fontSize:10 }} domain={[0,100]} />
-                  <YAxis type="category" dataKey="cat" tick={{ fill:T.textMut, fontSize:10 }} width={110} />
-                  <Tooltip {...tip} />
-                  <Bar dataKey="support" name="Support %">
-                    {RESOLUTION_CATS.map((d,i) => <Cell key={i} fill={d.support > 50 ? T.green : d.support > 30 ? T.amber : T.teal} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Climate Resolution Support Trend (24 Months)</div>
-            <ResponsiveContainer width="100%" height={180}>
-              <LineChart data={CLIMATE_RES_TREND}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill:T.textMut, fontSize:10 }} interval={3} />
-                <YAxis tick={{ fill:T.textMut, fontSize:10 }} domain={[30,70]} />
-                <Tooltip {...tip} />
-                <Line type="monotone" dataKey="support" stroke={T.teal} strokeWidth={2} dot={false} name="Support %" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {tab === 3 && (
-        <div>
-          <div style={{ display:'flex', gap:12, marginBottom:16 }}>
-            <StatCard label="Failed Say-on-Pay Votes (2023)" value="34" />
-            <StatCard label="Avg Opposition" value="11.2%" />
-            <StatCard label="Companies Changed Pay Post-Vote" value="28%" />
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'3fr 2fr', gap:16, marginBottom:16 }}>
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Say-on-Pay Results by Company</div>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-                <thead>
-                  <tr style={{ color:T.textSec }}>
-                    {['Company','CEO Pay ($M)','Result %','Proxy Rec','Opposition Drivers','Mgmt Response'].map(h => (
-                      <th key={h} style={{ textAlign:'left', padding:'4px 6px', borderBottom:`1px solid ${T.border}` }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {SOP_COMPANIES.map((r,i) => (
-                    <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                      <td style={{ padding:'5px 6px', fontWeight:600 }}>{r.co}</td>
-                      <td style={{ padding:'5px 6px' }}>{r.ceoPay}</td>
-                      <td style={{ padding:'5px 6px', color: r.result >= 90 ? T.green : r.result >= 75 ? T.amber : T.red }}>{r.result}%</td>
-                      <td style={{ padding:'5px 6px', color: r.rec === 'For' ? T.green : T.red }}>{r.rec}</td>
-                      <td style={{ padding:'5px 6px', color:T.textSec }}>{r.drivers}</td>
-                      <td style={{ padding:'5px 6px', color:T.teal }}>{r.response}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Say-on-Pay Support %</div>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={SOP_COMPANIES}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="co" tick={{ fill:T.textMut, fontSize:10 }} />
-                  <YAxis tick={{ fill:T.textMut, fontSize:10 }} domain={[0,100]} />
-                  <Tooltip {...tip} />
-                  <Bar dataKey="result" name="Support %">
-                    {SOP_COMPANIES.map((d,i) => <Cell key={i} fill={d.result >= 90 ? T.green : d.result >= 75 ? T.amber : T.red} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              <div style={{ fontSize:13, fontWeight:600, marginTop:16, marginBottom:8 }}>Key Opposition Drivers</div>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-                <thead>
-                  <tr><th style={{ textAlign:'left', color:T.textSec, padding:'3px 6px', borderBottom:`1px solid ${T.border}` }}>Driver</th><th style={{ textAlign:'right', color:T.textSec, padding:'3px 6px', borderBottom:`1px solid ${T.border}` }}>Cases</th></tr>
-                </thead>
-                <tbody>
-                  {OPPOSITION_DRIVERS.map((d,i) => (
-                    <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                      <td style={{ padding:'4px 6px' }}>{d.driver}</td>
-                      <td style={{ padding:'4px 6px', textAlign:'right', color:T.amber }}>{d.count}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {tab === 4 && (
-        <div>
-          <div style={{ display:'flex', gap:12, marginBottom:16 }}>
-            <StatCard label="Total PRI Signatories" value="5,300+" />
-            <StatCard label="AUM Covered" value="$120T" />
-            <StatCard label="Codes Requiring Public Reporting" value="5 / 6" />
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-              {STEWARDSHIP_CODES.map((c,i) => (
-                <div key={i} style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:14 }}>
-                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6 }}>
-                    <div style={{ fontWeight:600, fontSize:13 }}>{c.code}</div>
-                    <span style={{ background:ACCENT+'33', color:ACCENT, borderRadius:4, padding:'2px 7px', fontSize:11 }}>{c.jurisdiction}</span>
-                  </div>
-                  <ul style={{ margin:'0 0 8px 0', paddingLeft:16, color:T.textSec, fontSize:12 }}>
-                    {c.principles.map((p,j) => <li key={j} style={{ marginBottom:2 }}>{p}</li>)}
-                  </ul>
-                  <div style={{ display:'flex', gap:16, fontSize:12, color:T.textMut }}>
-                    <span>Signatories: <strong style={{ color:T.text }}>{c.signatories.toLocaleString()}</strong></span>
-                    <span>Reporting: <strong style={{ color:T.text }}>{c.reporting}</strong></span>
-                    <span>Updated: <strong style={{ color:T.text }}>{c.updated}</strong></span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Signatory Count by Stewardship Code</div>
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={STEWARDSHIP_CODES} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis type="number" tick={{ fill:T.textMut, fontSize:10 }} />
-                  <YAxis type="category" dataKey="code" tick={{ fill:T.textMut, fontSize:10 }} width={150} />
-                  <Tooltip {...tip} />
-                  <Bar dataKey="signatories" name="Signatories">
-                    {STEWARDSHIP_CODES.map((d,i) => <Cell key={i} fill={[ACCENT, T.teal, T.green, T.amber, T.sage, T.gold][i % 6]} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#0f766e';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899'];
+const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(0):v;
+const TABS=['Voting Dashboard','Company AGMs','Resolution Analysis','Voting Trends'];const SECTORS=['All','Technology','Financials','Healthcare','Energy','Consumer','Industrials','Materials','Utilities'];const PAGE=12;
+const RESTYPES=['Climate','Board Diversity','Executive Pay','Human Rights','Lobbying Disclosure','Political Spend','Racial Equity','Water Risk','Deforestation','Plastic Pollution','Tax Transparency','Cybersecurity'];
+const COS=Array.from({length:80},(_,i)=>{
+  const names=['Apple','Microsoft','Alphabet','Amazon','NVIDIA','Meta','Tesla','JPMorgan','Visa','UnitedHealth','J&J','Walmart','P&G','Mastercard','Chevron','Home Depot','Coca-Cola','Pfizer','Abbott','Eli Lilly','PepsiCo','Costco','Broadcom','Cisco','Merck','Accenture','McDonalds','Adobe','Salesforce','AMD','Qualcomm','Intel','Goldman Sachs','Caterpillar','Amgen','Honeywell','Lockheed','Deere','IBM','GE','Medtronic','Shell','BP','TotalEnergies','Nestle','Roche','Novartis','SAP','Siemens','LVMH','Unilever','HSBC','BHP','Rio Tinto','Toyota','Samsung','TSMC','Novo Nordisk','AbbVie','Netflix','Starbucks','Booking','Intuit','Uber','Airbnb','PayPal','ServiceNow','CrowdStrike','Snowflake','Datadog','NextEra','Enel','Iberdrola','Orsted','Duke Energy','Southern Co','Xcel Energy','AES Corp','Dominion','Brookfield'];
+  const secs=['Technology','Technology','Technology','Technology','Technology','Technology','Technology','Financials','Financials','Healthcare','Healthcare','Consumer','Consumer','Financials','Energy','Consumer','Consumer','Healthcare','Healthcare','Healthcare','Consumer','Consumer','Technology','Technology','Healthcare','Technology','Consumer','Technology','Technology','Technology','Technology','Technology','Financials','Industrials','Healthcare','Industrials','Industrials','Industrials','Technology','Industrials','Healthcare','Energy','Energy','Energy','Consumer','Healthcare','Healthcare','Technology','Industrials','Consumer','Consumer','Financials','Materials','Materials','Industrials','Technology','Technology','Healthcare','Healthcare','Technology','Consumer','Consumer','Technology','Technology','Technology','Financials','Technology','Technology','Technology','Technology','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities'];
+  const totalRes=Math.round(sr(i*7)*15+3);const esgRes=Math.round(totalRes*(sr(i*11)*0.4+0.1));const avgSupport=Math.round(sr(i*13)*40+20);const mgmtOpposed=Math.round(esgRes*(sr(i*17)*0.6+0.2));
+  const resolutions=Array.from({length:Math.min(esgRes,5)},(_,j)=>({type:RESTYPES[Math.floor(sr(i*100+j*7)*RESTYPES.length)],support:Math.round(sr(i*100+j*11)*50+15),year:2023+Math.floor(sr(i*100+j*13)*2),result:sr(i*100+j*17)>0.7?'Passed':'Failed',filer:['As You Sow','NYSCRF','CalPERS','Follow This','ShareAction','Trillium','ICCR','Mercy Invest'][Math.floor(sr(i*100+j*19)*8)]}));
+  return{id:i+1,name:names[i],sector:secs[i],totalResolutions:totalRes,esgResolutions:esgRes,avgSupportPct:avgSupport,mgmtOpposed,shareholderProposals:Math.round(sr(i*19)*8+1),sayOnPayPct:Math.round(sr(i*23)*25+70),directorElectionAvg:Math.round(sr(i*29)*15+80),contestedVotes:Math.round(sr(i*31)*3),abstentionRate:+(sr(i*37)*10+2).toFixed(1),issVote:sr(i*41)>0.4?'Aligned':'Divergent',glassLewis:sr(i*43)>0.45?'Aligned':'Divergent',passedESG:resolutions.filter(r=>r.result==='Passed').length,resolutions,votingPolicy:['Stewardship','Active','Passive'][Math.floor(sr(i*47)*3)]||'Active',engagements:Math.round(sr(i*49)*10+1)};
+});
+export default function ProxyVotingIntelPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sectorF,setSectorF]=useState('All');const[sortCol,setSortCol]=useState('esgResolutions');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const filtered=useMemo(()=>{let d=[...COS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(sectorF!=='All')d=d.filter(r=>r.sector===sectorF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sectorF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
+  const stats=useMemo(()=>({count:filtered.length,totalESGRes:filtered.reduce((s,r)=>s+r.esgResolutions,0),avgSupport:Math.round(filtered.reduce((s,r)=>s+r.avgSupportPct,0)/filtered.length||0),totalPassed:filtered.reduce((s,r)=>s+r.passedESG,0),avgSoP:Math.round(filtered.reduce((s,r)=>s+r.sayOnPayPct,0)/filtered.length||0),issAligned:filtered.filter(r=>r.issVote==='Aligned').length,contested:filtered.reduce((s,r)=>s+r.contestedVotes,0)}),[filtered]);
+  const resTypeDist=useMemo(()=>{const m={};COS.forEach(c=>c.resolutions.forEach(r=>{m[r.type]=(m[r.type]||0)+1;}));return Object.entries(m).map(([k,v])=>({type:k,count:v})).sort((a,b)=>b.count-a.count);},[]);
+  const sectorVoting=useMemo(()=>{const m={};COS.forEach(c=>{if(!m[c.sector])m[c.sector]={s:c.sector,support:0,sop:0,n:0};m[c.sector].support+=c.avgSupportPct;m[c.sector].sop+=c.sayOnPayPct;m[c.sector].n++;});return Object.values(m).map(s=>({sector:s.s,avgSupport:Math.round(s.support/s.n),avgSoP:Math.round(s.sop/s.n)}));},[]);
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]).filter(k=>k!=='resolutions');const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});const pgB={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:130}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:460,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><div style={{fontSize:12,color:T.textSec}}>{item.sector}</div></div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>{'\u2715'}</button></div>
+    <div style={{padding:'16px 24px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:12}}>{[['Total Res.',item.totalResolutions],['ESG Res.',item.esgResolutions],['Avg Support',item.avgSupportPct+'%'],['Mgmt Opposed',item.mgmtOpposed],['Say on Pay',item.sayOnPayPct+'%'],['Dir Election',item.directorElectionAvg+'%'],['Contested',item.contestedVotes],['ISS',item.issVote],['Glass Lewis',item.glassLewis],['Passed ESG',item.passedESG],['Abstention',item.abstentionRate+'%'],['Engagements',item.engagements]].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div>
+      {item.resolutions.length>0&&<div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>ESG Resolutions</div><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{['Type','Support%','Year','Result','Filer'].map(h=><th key={h} style={{...thS,fontSize:9}}>{h}</th>)}</tr></thead><tbody>{item.resolutions.map((r,j)=><tr key={j}><td style={tdS}>{r.type}</td><td style={tdS}>{r.support}%</td><td style={tdS}>{r.year}</td><td style={tdS}><span style={{color:r.result==='Passed'?T.green:T.red,fontWeight:600,fontSize:10}}>{r.result}</span></td><td style={{...tdS,fontSize:10}}>{r.filer}</td></tr>)}</tbody></table></div>}
+    </div></div>);};
+  const renderDash=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Companies',stats.count)}{kpi('ESG Resolutions',stats.totalESGRes)}{kpi('Avg Support',stats.avgSupport+'%')}{kpi('Passed',stats.totalPassed,T.green)}{kpi('Avg Say on Pay',stats.avgSoP+'%')}{kpi('ISS Aligned',stats.issAligned)}{kpi('Contested',stats.contested)}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search companies..." style={inpS}/><select value={sectorF} onChange={e=>{setSectorF(e.target.value);setPage(1);}} style={selS}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select><button onClick={()=>exportCSV(filtered,'proxy_voting.csv')} style={btnS(false)}>Export CSV</button></div>
+    <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['name','Company'],['sector','Sector'],['esgResolutions','ESG Res'],['avgSupportPct','Support%'],['sayOnPayPct','SoP%'],['passedESG','Passed'],['issVote','ISS'],['contestedVotes','Contested']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{paged.map(r=><tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.name}</span></td><td style={tdS}>{r.sector}</td><td style={tdS}>{r.esgResolutions}</td><td style={tdS}>{r.avgSupportPct}%</td><td style={tdS}>{r.sayOnPayPct}%</td><td style={tdS}>{r.passedESG}</td><td style={tdS}><span style={{color:r.issVote==='Aligned'?T.green:T.amber,fontSize:10,fontWeight:600}}>{r.issVote}</span></td><td style={tdS}>{r.contestedVotes}</td></tr>)}</tbody></table></div>
+    {totalPages>1&&<div style={{display:'flex',gap:6,marginTop:12,alignItems:'center',justifyContent:'center'}}><button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Page {page}/{totalPages}</span><button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={pgB}>&raquo;</button></div>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>ESG Resolution Types</div><ResponsiveContainer width="100%" height={280}><BarChart data={resTypeDist.slice(0,10)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="type" tick={{fontSize:8,fill:T.textSec}} width={100}/><Tooltip {...tip}/><Bar dataKey="count" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Support % by Sector</div><ResponsiveContainer width="100%" height={280}><BarChart data={sectorVoting}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="avgSupport" fill={ACCENT} name="ESG Support %"/><Bar dataKey="avgSoP" fill={T.gold} name="Say on Pay %"/><Legend/></BarChart></ResponsiveContainer></div>
+    </div></div>);
+  const renderAGM=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Highest ESG Resolution Activity</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...COS].sort((a,b)=>b.esgResolutions-a.esgResolutions).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="esgResolutions" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Director Election Support</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...filtered].sort((a,b)=>a.directorElectionAvg-b.directorElectionAvg).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} domain={[60,100]}/><YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="directorElectionAvg" fill={T.navy} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderResolution=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Resolution Outcome Distribution</div><ResponsiveContainer width="100%" height={280}><PieChart><Pie data={[{n:'Passed',v:COS.reduce((s,c)=>s+c.passedESG,0)},{n:'Failed',v:COS.reduce((s,c)=>s+c.esgResolutions-c.passedESG,0)}]} cx="50%" cy="50%" outerRadius={90} dataKey="v" label={({n,v})=>`${n}: ${v}`}>{[T.green,T.red].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Support vs Abstention</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Avg Support%" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Abstention%" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(c=>({name:c.name,x:c.avgSupportPct,y:c.abstentionRate}))} fill={ACCENT} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderTrends=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>ISS Alignment by Sector</div><ResponsiveContainer width="100%" height={280}><BarChart data={SECTORS.slice(1).map(s=>{const cos=COS.filter(c=>c.sector===s);return{sector:s,pct:cos.length?Math.round(cos.filter(c=>c.issVote==='Aligned').length/cos.length*100):0};})}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:8,fill:T.textSec}} angle={-20}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="pct" fill={T.sage} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Engagements vs Resolutions</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Engagements" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="ESG Resolutions" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(c=>({name:c.name,x:c.engagements,y:c.esgResolutions}))} fill={T.gold} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+  </div></div>);
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Proxy Voting Intelligence</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>80 companies | AGM voting, ESG resolutions, proxy advisory analysis</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderAGM()}{tab===2&&renderResolution()}{tab===3&&renderTrends()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
+  </div>);
 }

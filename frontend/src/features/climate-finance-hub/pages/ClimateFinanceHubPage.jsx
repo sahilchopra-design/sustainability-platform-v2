@@ -1,174 +1,101 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,LineChart,Line,AreaChart,Area,ScatterChart,Scatter,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend} from 'recharts';
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontFamily:T.font},labelStyle:{color:T.textSec}};
-const CC=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899','#06b6d4'];
+const ACCENT='#0e7490';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,T.sageL,'#8b5cf6','#ec4899','#06b6d4'];
 const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
-const TABS=['Finance Overview','Fund Tracker','Green Bonds & Instruments','Policy & Mobilization'];
-const PAGE_SIZE=12;
+const TABS=['Funding Overview','Fund Tracker','Regional Flows','Gap Analysis'];
+const TYPES=['All','Mitigation','Adaptation','Cross-cutting','Loss & Damage'];const PAGE=12;
+const FUNDS=['GCF','AF','GEF','CIF','LDCF','SCCF','CAFI','GCPF','NDC Partnership','IRENA Fund','GCA','AIIB Green','IFC Climate','ADB Climate','KfW Climate','EIB Green','EBRD Green','AfDB Climate','IsDB Green','NDB Green','GGGI','CTCN','TNC Blue','CI Fund','WWF Climate','UNDP Climate','UNEP Finance','WRI Climate','CDP Fund','Climate Works'];
 
-const FUNDS=Array.from({length:50},(_,i)=>{
-  const names=['Green Climate Fund','Adaptation Fund','GEF Climate','CIF Clean Tech','LDCF','SCCF','Amazon Fund','Norway Climate','UK ICF','Germany IKI','AIIB Green','NDB Climate','AfDB Climate','ADB Climate','EIB Climate','World Bank CPF','IFC Climate','EBRD Green','KfW Climate','JICA Green','Korea GCF','Swiss Climate','Danish DCIF','Swedish Sida','Finnish FLC','Dutch FMO','French AFD','Italian CDP','Spanish AECID','Belgian BIO','Irish Aid','Luxembourg LuxDev','EU Global Gateway','USAID Climate','Canadian DFATD','Australian DFAT','NZ MFAT','Japan JCM Fund','Korea KOICA','Singapore GIA','UAE IRENA','Saudi GI','Qatar NE','Oman GFI','Bahrain SFI','Kuwait FDI','Israel Green','Turkey Climate','India NICEF','Brazil Climate'];
-  const types=['Multilateral','Multilateral','Multilateral','Multilateral','Multilateral','Multilateral','National','Bilateral','Bilateral','Bilateral','MDB','MDB','MDB','MDB','MDB','MDB','DFI','MDB','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','DFI','Bilateral','DFI','Bilateral','DFI','Bilateral','Bilateral','Multilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','Bilateral','National','National'];
-  const focus=['Mitigation & Adaptation','Adaptation','Multi-focal','Clean Technology','Adaptation (LDCs)','Adaptation (SIDS)','REDD+','Multi-focal','Multi-focal','Multi-focal','Green Infra','Climate Infra','Adaptation','Multi-focal','Green Finance','Multi-focal','Private Sector','Green Transition','Multi-focal','Multi-focal','Multi-focal','Adaptation','Multi-focal','Multi-focal','Multi-focal','Green Finance','Multi-focal','Green Finance','Multi-focal','Green Finance','Adaptation','Multi-focal','Green Deal','Multi-focal','Multi-focal','Multi-focal','Multi-focal','JCM','Multi-focal','Green Finance','Renewables','Green Hydrogen','Clean Energy','Renewables','Renewables','Green Finance','Green Tech','Climate Resilience','Multi-focal','Multi-focal'];
-  return{
-    id:i+1,name:names[i],type:types[i],focus:focus[i],
-    pledged:+(sr(i*7)*20+0.5).toFixed(1),
-    deposited:+(sr(i*11)*15+0.3).toFixed(1),
-    disbursed:+(sr(i*13)*10+0.1).toFixed(1),
-    projects:Math.round(sr(i*17)*200+10),
-    countries:Math.round(sr(i*19)*80+5),
-    year:2005+Math.floor(sr(i*23)*18),
-    grantPct:+(sr(i*29)*60+20).toFixed(0),
-    loanPct:+(100-sr(i*29)*60-20).toFixed(0),
-    leverageRatio:+(sr(i*31)*5+1.5).toFixed(1),
-    gender:sr(i*37)>0.5?'Gender-responsive':'Gender-mainstreamed',
-    status:sr(i*41)>0.2?'Active':'Under Review',
-  };
-});
-
-const ANNUAL=Array.from({length:12},(_,i)=>({
-  year:2013+i,
-  public:+(sr(i*43)*40+30).toFixed(1),
-  private:+(sr(i*47)*60+20).toFixed(1),
-  total:+(sr(i*43)*40+30+sr(i*47)*60+20).toFixed(1),
-  adaptation:+(sr(i*53)*20+8).toFixed(1),
-  mitigation:+(sr(i*59)*50+25).toFixed(1),
-  crossCutting:+(sr(i*61)*15+3).toFixed(1),
-}));
-
-const BONDS=Array.from({length:40},(_,i)=>{
-  const issuers=['World Bank','EIB','KfW','AfDB','ADB','AIIB','IFC','EBRD','NDB','CDB','NIB','IBRD','Apple','Toyota','Enel','Iberdrola','Engie','NextEra','Orsted','Vestas','Republic of Chile','Republic of Fiji','Germany','France','UK','Netherlands','Poland','Belgium','Ireland','Italy','Hong Kong','Singapore','Japan','South Korea','Indonesia','Egypt','Nigeria','Mexico','Colombia','Brazil'];
-  return{
-    id:i+1,issuer:issuers[i],
-    type:['Green Bond','Sustainability Bond','Social Bond','Transition Bond','Blue Bond'][Math.floor(sr(i*67)*5)],
-    amount:+(sr(i*71)*8+0.2).toFixed(1),
-    currency:['USD','EUR','GBP','JPY','CHF'][Math.floor(sr(i*73)*5)],
-    tenor:Math.round(sr(i*79)*20+3),
-    coupon:+(sr(i*83)*3+0.5).toFixed(2),
-    rating:['AAA','AA+','AA','AA-','A+','A','BBB+'][Math.floor(sr(i*89)*7)],
-    framework:['ICMA GBP','CBI','EU GBS','National'][Math.floor(sr(i*97)*4)],
-    verified:sr(i*101)>0.3?'Yes':'Pending',
-    year:2018+Math.floor(sr(i*103)*7),
-  };
+const PROJECTS=Array.from({length:60},(_,i)=>{
+  const regions=['Sub-Saharan Africa','South Asia','Southeast Asia','Latin America','East Asia','MENA','Pacific Islands','Central Asia','Eastern Europe','Caribbean'];
+  const sectors=['Renewable Energy','Forest Conservation','Climate Resilience','Sustainable Transport','Water Management','Agriculture','Coastal Protection','Urban Adaptation','Energy Efficiency','Disaster Risk'];
+  const fund=FUNDS[i%30];const region=regions[Math.floor(sr(i*7)*regions.length)];const sector=sectors[Math.floor(sr(i*11)*sectors.length)];
+  const type=['Mitigation','Adaptation','Cross-cutting','Loss & Damage'][Math.floor(sr(i*13)*4)];const status=['Active','Completed','Pipeline','Disbursing'][Math.floor(sr(i*17)*4)];
+  const approved=+(sr(i*19)*500+10).toFixed(1);const disbursed=+(approved*(sr(i*23)*0.6+0.2)).toFixed(1);const cofinance=+(approved*(sr(i*29)*2+0.5)).toFixed(1);
+  const countries=Math.round(sr(i*31)*8+1);const beneficiaries=Math.round(sr(i*37)*5+0.1);const emissions=Math.round(sr(i*41)*50+5);const jobs=Math.round(sr(i*43)*20000+1000);
+  const yearly=Array.from({length:5},(_,y)=>({year:2020+y,approved:+(approved/5+sr(i*100+y)*20-10).toFixed(1),disbursed:+(disbursed/5+sr(i*100+y*3)*10-5).toFixed(1)}));
+  return{id:i+1,name:`${sector} - ${region.split(' ')[0]}`,fund,region,sector,type,status,approvedM:approved,disbursedM:disbursed,cofinanceM:cofinance,disbursementRate:Math.round(disbursed/approved*100),countries,beneficiariesM:beneficiaries,emissionsReduced:emissions,jobsCreated:jobs,startYear:2019+Math.floor(sr(i*47)*4),endYear:2025+Math.floor(sr(i*49)*5),genderMarker:['G0','G1','G2'][Math.floor(sr(i*51)*3)],resultArea:['Energy','REDD+','Transport','Adaptation','Health','Food','Water','Cities'][Math.floor(sr(i*53)*8)],riskRating:['Low','Medium','High'][Math.floor(sr(i*57)*3)],yearly};
 });
 
 export default function ClimateFinanceHubPage(){
-  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sortCol,setSortCol]=useState('pledged');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(0);const[selected,setSelected]=useState(null);const[typeFilter,setTypeFilter]=useState('All');const[bondSearch,setBondSearch]=useState('');const[bondSort,setBondSort]=useState('amount');const[bondDir,setBondDir]=useState('desc');const[bondPage,setBondPage]=useState(0);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[typeF,setTypeF]=useState('All');const[sortCol,setSortCol]=useState('approvedM');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
 
-  const doSort=(d,c,dir)=>[...d].sort((a,b)=>dir==='asc'?(a[c]>b[c]?1:-1):(a[c]<b[c]?1:-1));
-  const tog=(col,cur,setC,dir,setD)=>{if(cur===col)setD(dir==='asc'?'desc':'asc');else{setC(col);setD('desc');}};
-  const SH=({label,col,cc,dir,onClick})=>(<th onClick={()=>onClick(col)} style={{padding:'10px 12px',textAlign:'left',cursor:'pointer',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',background:T.surfaceH}}>{label}{cc===col?(dir==='asc'?' \u25B2':' \u25BC'):''}</th>);
-  const kpi=(l,v,s)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:1,minWidth:170}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:26,fontWeight:700,color:T.navy,marginTop:4}}>{v}</div>{s&&<div style={{fontSize:12,color:T.textSec,marginTop:2}}>{s}</div>}</div>);
-  const csv=(data,fn)=>{const h=Object.keys(data[0]);const c=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
-  const types=['All','Multilateral','Bilateral','MDB','DFI','National'];
+  const filtered=useMemo(()=>{let d=[...PROJECTS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase())||r.fund.toLowerCase().includes(search.toLowerCase()));if(typeF!=='All')d=d.filter(r=>r.type===typeF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,typeF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
 
-  const filtered=useMemo(()=>{let d=FUNDS.filter(f=>f.name.toLowerCase().includes(search.toLowerCase()));if(typeFilter!=='All')d=d.filter(f=>f.type===typeFilter);return doSort(d,sortCol,sortDir);},[search,typeFilter,sortCol,sortDir]);
-  const paged=filtered.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);const tp=Math.ceil(filtered.length/PAGE_SIZE);
-  const fBonds=useMemo(()=>{let d=BONDS.filter(b=>b.issuer.toLowerCase().includes(bondSearch.toLowerCase()));return doSort(d,bondSort,bondDir);},[bondSearch,bondSort,bondDir]);
-  const pBonds=fBonds.slice(bondPage*PAGE_SIZE,(bondPage+1)*PAGE_SIZE);const tBP=Math.ceil(fBonds.length/PAGE_SIZE);
+  const stats=useMemo(()=>({count:filtered.length,totalApproved:fmt(filtered.reduce((s,r)=>s+r.approvedM,0)*1e6),totalDisbursed:fmt(filtered.reduce((s,r)=>s+r.disbursedM,0)*1e6),avgDisbRate:Math.round(filtered.reduce((s,r)=>s+r.disbursementRate,0)/filtered.length||0),totalCofinance:fmt(filtered.reduce((s,r)=>s+r.cofinanceM,0)*1e6),totalEmissions:fmt(filtered.reduce((s,r)=>s+r.emissionsReduced,0)),active:filtered.filter(r=>r.status==='Active').length}),[filtered]);
+
+  const typeDist=useMemo(()=>{const m={};PROJECTS.forEach(r=>{m[r.type]=(m[r.type]||0)+r.approvedM;});return Object.entries(m).map(([k,v])=>({name:k,value:Math.round(v)}));},[]);
+  const regionFlow=useMemo(()=>{const m={};PROJECTS.forEach(r=>{if(!m[r.region])m[r.region]={region:r.region,approved:0,disbursed:0};m[r.region].approved+=r.approvedM;m[r.region].disbursed+=r.disbursedM;});return Object.values(m).sort((a,b)=>b.approved-a.approved);},[]);
+  const fundRank=useMemo(()=>{const m={};PROJECTS.forEach(r=>{if(!m[r.fund])m[r.fund]={fund:r.fund,total:0,n:0};m[r.fund].total+=r.approvedM;m[r.fund].n++;});return Object.values(m).sort((a,b)=>b.total-a.total).slice(0,15);},[]);
+  const yearlyTrend=useMemo(()=>{const m={};PROJECTS.forEach(p=>p.yearly.forEach(y=>{if(!m[y.year])m[y.year]={year:y.year,approved:0,disbursed:0};m[y.year].approved+=y.approved;m[y.year].disbursed+=y.disbursed;}));return Object.values(m).sort((a,b)=>a.year-b.year);},[]);
+
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]).filter(k=>k!=='yearly');const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
+
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};
+  const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
+  const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
+  const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});
+  const pgB={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
+  const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:140}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
+
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:460,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><div style={{fontSize:12,color:T.textSec}}>{item.fund} | {item.type}</div></div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>\u2715</button></div>
+    <div style={{padding:'16px 24px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:16}}>{[['Approved','$'+item.approvedM+'M'],['Disbursed','$'+item.disbursedM+'M'],['Co-finance','$'+item.cofinanceM+'M'],['Disb. Rate',item.disbursementRate+'%'],['Countries',item.countries],['Beneficiaries',item.beneficiariesM+'M'],['Emissions',item.emissionsReduced+' MtCO2'],['Jobs',fmt(item.jobsCreated)],['Status',item.status],['Region',item.region],['Sector',item.sector],['Risk',item.riskRating],['Gender',item.genderMarker],['Start',item.startYear],['End',item.endYear]].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Yearly Funding Flow</div><ResponsiveContainer width="100%" height={200}><BarChart data={item.yearly}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="approved" fill={ACCENT} name="Approved $M"/><Bar dataKey="disbursed" fill={T.gold} name="Disbursed $M"/><Legend/></BarChart></ResponsiveContainer></div>
+    </div></div>);};
 
   const renderOverview=()=>(<div>
-    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-      {kpi('Total Pledged','$'+fmt(filtered.reduce((a,f)=>a+f.pledged,0))+'B')}
-      {kpi('Total Disbursed','$'+fmt(filtered.reduce((a,f)=>a+f.disbursed,0))+'B')}
-      {kpi('Active Funds',filtered.filter(f=>f.status==='Active').length)}
-      {kpi('Total Projects',fmt(filtered.reduce((a,f)=>a+f.projects,0)))}
-      {kpi('Avg Leverage',fmt(filtered.reduce((a,f)=>a+parseFloat(f.leverageRatio),0)/filtered.length||0)+'x')}
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Projects',stats.count)}{kpi('Total Approved',stats.totalApproved)}{kpi('Total Disbursed',stats.totalDisbursed)}{kpi('Avg Disb. Rate',stats.avgDisbRate+'%')}{kpi('Co-financing',stats.totalCofinance)}{kpi('Emissions Cut',stats.totalEmissions+' Mt')}{kpi('Active',stats.active,T.green)}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search projects or funds..." style={inpS}/><select value={typeF} onChange={e=>{setTypeF(e.target.value);setPage(1);}} style={selS}>{TYPES.map(s=><option key={s}>{s}</option>)}</select><button onClick={()=>exportCSV(filtered,'climate_finance.csv')} style={btnS(false)}>Export CSV</button></div>
+    <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['name','Project'],['fund','Fund'],['type','Type'],['approvedM','Approved $M'],['disbursedM','Disbursed $M'],['disbursementRate','Disb %'],['region','Region'],['status','Status']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{paged.map(r=><tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.name}</span></td><td style={{...tdS,fontSize:10,fontFamily:T.mono}}>{r.fund}</td><td style={tdS}>{r.type}</td><td style={tdS}>${r.approvedM}M</td><td style={tdS}>${r.disbursedM}M</td><td style={tdS}><span style={{color:r.disbursementRate>60?T.green:r.disbursementRate>30?T.amber:T.red,fontWeight:600}}>{r.disbursementRate}%</span></td><td style={tdS}>{r.region}</td><td style={tdS}>{r.status}</td></tr>)}</tbody></table></div>
+    {totalPages>1&&<div style={{display:'flex',gap:6,marginTop:12,alignItems:'center',justifyContent:'center'}}><button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Page {page}/{totalPages}</span><button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={pgB}>&raquo;</button></div>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Finance by Type</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={typeDist} cx="50%" cy="50%" outerRadius={90} dataKey="value" label={({name,value})=>`${name}: $${value}M`}>{typeDist.map((_,i)=><Cell key={i} fill={COLORS[i]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Annual Trend</div><ResponsiveContainer width="100%" height={260}><AreaChart data={yearlyTrend}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="approved" stroke={ACCENT} fill="rgba(14,116,144,0.15)" name="Approved"/><Area type="monotone" dataKey="disbursed" stroke={T.gold} fill="rgba(197,169,106,0.15)" name="Disbursed"/><Legend/></AreaChart></ResponsiveContainer></div>
     </div>
-    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-      <input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search funds..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
-      <select value={typeFilter} onChange={e=>{setTypeFilter(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>{types.map(t=><option key={t}>{t}</option>)}</select>
-      <button onClick={()=>csv(filtered,'climate_funds.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
-    </div>
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Pledged vs Disbursed ($B)</div><ResponsiveContainer width="100%" height={300}><BarChart data={filtered.slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec}} angle={-45} textAnchor="end" height={100}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="pledged" fill={T.navy} name="Pledged"/><Bar dataKey="disbursed" fill={T.gold} name="Disbursed"/><Legend/></BarChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Fund Type Distribution</div><ResponsiveContainer width="100%" height={300}><PieChart><Pie data={types.filter(t=>t!=='All').map(t=>({name:t,value:filtered.filter(f=>f.type===t).length}))} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({name,value})=>`${name}: ${value}`} style={{fontSize:10}}>{types.filter(t=>t!=='All').map((_,i)=><Cell key={i} fill={CC[i]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
-    </div>
-    <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}><thead><tr>
-        {[['Fund','name'],['Type','type'],['Pledged $B','pledged'],['Disbursed $B','disbursed'],['Projects','projects'],['Countries','countries'],['Leverage','leverageRatio'],['Status','status']].map(([l,c])=><SH key={c} label={l} col={c} cc={sortCol} dir={sortDir} onClick={c2=>tog(c2,sortCol,setSortCol,sortDir,setSortDir)}/>)}
-      </tr></thead><tbody>
-        {paged.map((f,i)=>(<React.Fragment key={f.id}>
-          <tr onClick={()=>setSelected(selected===f.id?null:f.id)} style={{cursor:'pointer',background:selected===f.id?T.surfaceH:i%2===0?T.surface:'#fafaf8'}}>
-            <td style={{padding:'10px 12px',fontWeight:600,color:T.navy,maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{f.name}</td>
-            <td style={{padding:'10px 12px',fontSize:12,color:T.textSec}}>{f.type}</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>${f.pledged}B</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>${f.disbursed}B</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{f.projects}</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{f.countries}</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{f.leverageRatio}x</td>
-            <td style={{padding:'10px 12px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:11,fontWeight:600,background:f.status==='Active'?'#dcfce7':'#fef9c3',color:f.status==='Active'?T.green:T.amber}}>{f.status}</span></td>
-          </tr>
-          {selected===f.id&&(<tr><td colSpan={8} style={{padding:20,background:T.surfaceH,borderTop:`1px solid ${T.border}`}}><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16}}>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Focus</span><div style={{fontSize:14,fontWeight:600,color:T.navy}}>{f.focus}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Deposited</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>${f.deposited}B</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Grant %</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{f.grantPct}%</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Gender</span><div style={{fontSize:14,fontWeight:600,color:T.navy}}>{f.gender}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Est. Year</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{f.year}</div></div>
-          </div></td></tr>)}
-        </React.Fragment>))}
-      </tbody></table>
-    </div>
-    <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><span style={{fontSize:12,color:T.textMut}}>{filtered.length} funds</span><div style={{display:'flex',gap:6}}><button disabled={page===0} onClick={()=>setPage(page-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,cursor:page===0?'default':'pointer',opacity:page===0?0.4:1}}>Prev</button><span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{page+1}/{tp||1}</span><button disabled={page>=tp-1} onClick={()=>setPage(page+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,cursor:page>=tp-1?'default':'pointer',opacity:page>=tp-1?0.4:1}}>Next</button></div></div>
   </div>);
 
-  const renderFundTracker=()=>(<div>
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Annual Climate Finance Flow ($B)</div><ResponsiveContainer width="100%" height={300}><AreaChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="public" stackId="1" stroke={T.navy} fill={T.navy} fillOpacity={0.3} name="Public"/><Area type="monotone" dataKey="private" stackId="1" stroke={T.gold} fill={T.gold} fillOpacity={0.3} name="Private"/><Legend/></AreaChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Adaptation vs Mitigation ($B)</div><ResponsiveContainer width="100%" height={300}><LineChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Line type="monotone" dataKey="adaptation" stroke={T.sage} strokeWidth={2} name="Adaptation"/><Line type="monotone" dataKey="mitigation" stroke={T.navy} strokeWidth={2} name="Mitigation"/><Line type="monotone" dataKey="crossCutting" stroke={T.gold} strokeWidth={2} name="Cross-cutting"/><Legend/></LineChart></ResponsiveContainer></div>
-    </div>
-    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Total Climate Finance by Year</div><ResponsiveContainer width="100%" height={250}><BarChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="total" fill={T.navy} name="Total $B"/></BarChart></ResponsiveContainer></div>
-  </div>);
-
-  const renderBonds=()=>(<div>
-    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
-      <input value={bondSearch} onChange={e=>{setBondSearch(e.target.value);setBondPage(0);}} placeholder="Search issuers..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
-      <button onClick={()=>csv(fBonds,'green_bonds.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
-    </div>
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Bond Type Distribution</div><ResponsiveContainer width="100%" height={280}><PieChart><Pie data={['Green Bond','Sustainability Bond','Social Bond','Transition Bond','Blue Bond'].map(t=>({name:t,value:fBonds.filter(b=>b.type===t).length}))} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} style={{fontSize:9}}>{[0,1,2,3,4].map(i=><Cell key={i} fill={CC[i]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Issuance by Amount ($B)</div><ResponsiveContainer width="100%" height={280}><BarChart data={fBonds.slice(0,12)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="issuer" tick={{fontSize:8,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="amount" fill={T.sage} name="Amount $B"/></BarChart></ResponsiveContainer></div>
-    </div>
-    <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}><thead><tr>
-        {[['Issuer','issuer'],['Type','type'],['Amount $B','amount'],['Currency','currency'],['Tenor','tenor'],['Coupon','coupon'],['Rating','rating'],['Framework','framework'],['Verified','verified']].map(([l,c])=><SH key={c} label={l} col={c} cc={bondSort} dir={bondDir} onClick={c2=>tog(c2,bondSort,setBondSort,bondDir,setBondDir)}/>)}
-      </tr></thead><tbody>
-        {pBonds.map((b,i)=>(<tr key={b.id} style={{background:i%2===0?T.surface:'#fafaf8'}}>
-          <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{b.issuer}</td>
-          <td style={{padding:'10px 12px',fontSize:12}}>{b.type}</td>
-          <td style={{padding:'10px 12px',fontFamily:T.mono}}>${b.amount}B</td>
-          <td style={{padding:'10px 12px',fontFamily:T.mono}}>{b.currency}</td>
-          <td style={{padding:'10px 12px',fontFamily:T.mono}}>{b.tenor}y</td>
-          <td style={{padding:'10px 12px',fontFamily:T.mono}}>{b.coupon}%</td>
-          <td style={{padding:'10px 12px',fontFamily:T.mono}}>{b.rating}</td>
-          <td style={{padding:'10px 12px',fontSize:12}}>{b.framework}</td>
-          <td style={{padding:'10px 12px'}}><span style={{color:b.verified==='Yes'?T.green:T.amber}}>{b.verified}</span></td>
-        </tr>))}
-      </tbody></table>
-    </div>
-    <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><span style={{fontSize:12,color:T.textMut}}>{fBonds.length} bonds</span><div style={{display:'flex',gap:6}}><button disabled={bondPage===0} onClick={()=>setBondPage(bondPage-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,cursor:bondPage===0?'default':'pointer',opacity:bondPage===0?0.4:1}}>Prev</button><span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{bondPage+1}/{tBP||1}</span><button disabled={bondPage>=tBP-1} onClick={()=>setBondPage(bondPage+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,cursor:bondPage>=tBP-1?'default':'pointer',opacity:bondPage>=tBP-1?0.4:1}}>Next</button></div></div>
-  </div>);
-
-  const renderPolicy=()=>(<div>
-    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-      {kpi('$100B Goal','$83.3B/yr','2020 target missed')}
-      {kpi('NCQG Target','$300B/yr','by 2035')}
-      {kpi('Private Mobilized','$'+fmt(ANNUAL[ANNUAL.length-1].private)+'B','Latest year')}
-      {kpi('Adaptation Share',(ANNUAL[ANNUAL.length-1].adaptation/(parseFloat(ANNUAL[ANNUAL.length-1].total)||1)*100).toFixed(0)+'%','Target: 50%')}
-    </div>
+  const renderFunds=()=>(<div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Public vs Private Mobilization</div><ResponsiveContainer width="100%" height={300}><BarChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="public" stackId="a" fill={T.navy} name="Public"/><Bar dataKey="private" stackId="a" fill={T.gold} name="Private"/><Legend/></BarChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Leverage Ratios by Fund Type</div><ResponsiveContainer width="100%" height={300}><BarChart data={types.filter(t=>t!=='All').map(t=>{const fs=FUNDS.filter(f=>f.type===t);return{type:t,avgLeverage:+(fs.reduce((a,f)=>a+parseFloat(f.leverageRatio),0)/(fs.length||1)).toFixed(1)};})}>
-        <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="type" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="avgLeverage" fill={T.sage} name="Avg Leverage"/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Top 15 Funds by Volume</div><ResponsiveContainer width="100%" height={350}><BarChart data={fundRank} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="fund" tick={{fontSize:8,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="total" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Fund Project Count</div><ResponsiveContainer width="100%" height={350}><BarChart data={fundRank} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="fund" tick={{fontSize:8,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="n" fill={T.gold} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+      <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Approved vs Disbursed by Fund</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Approved $M" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Disbursed $M" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={PROJECTS.map(p=>({name:p.fund,x:p.approvedM,y:p.disbursedM}))} fill={ACCENT} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
     </div>
   </div>);
 
-  return(<div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px',color:T.text}}>
-    <div style={{marginBottom:24}}><div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,letterSpacing:1,textTransform:'uppercase'}}>Climate Finance Architecture</div><h1 style={{fontSize:28,fontWeight:700,color:T.navy,margin:'4px 0 0'}}>Climate Finance Hub</h1></div>
-    <div style={{display:'flex',gap:4,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${T.gold}`:'2px solid transparent',background:tab===i?T.surface:'transparent',color:tab===i?T.navy:T.textSec,fontFamily:T.font,fontSize:13,fontWeight:tab===i?600:400,cursor:'pointer',marginBottom:-2}}>{t}</button>)}</div>
-    {tab===0&&renderOverview()}{tab===1&&renderFundTracker()}{tab===2&&renderBonds()}{tab===3&&renderPolicy()}
+  const renderRegional=()=>(<div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Regional Funding Flows</div><ResponsiveContainer width="100%" height={300}><BarChart data={regionFlow}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="approved" fill={ACCENT} name="Approved $M"/><Bar dataKey="disbursed" fill={T.gold} name="Disbursed $M"/><Legend/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Disbursement Efficiency by Region</div><ResponsiveContainer width="100%" height={300}><BarChart data={regionFlow.map(r=>({...r,rate:r.approved>0?Math.round(r.disbursed/r.approved*100):0}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="rate" fill={T.sage} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+      <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Regional Distribution</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={regionFlow.map(r=>({name:r.region,value:Math.round(r.approved)}))} cx="50%" cy="50%" outerRadius={95} dataKey="value" label={({name,value})=>`${name}: $${value}M`}>{regionFlow.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div>
+  </div>);
+
+  const renderGap=()=>{
+    const needs=[{region:'Sub-Saharan Africa',need:80,current:25},{region:'South Asia',need:60,current:20},{region:'Southeast Asia',need:45,current:18},{region:'Latin America',need:35,current:15},{region:'Pacific Islands',need:25,current:5},{region:'MENA',need:30,current:12},{region:'Central Asia',need:20,current:7},{region:'Caribbean',need:15,current:4}];
+    return(<div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Financing Gap by Region ($B)</div><ResponsiveContainer width="100%" height={300}><BarChart data={needs}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="need" fill={T.red} name="Need $B" opacity={0.3}/><Bar dataKey="current" fill={T.green} name="Current $B"/><Legend/></BarChart></ResponsiveContainer></div>
+        <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Gap Closure Rate</div><ResponsiveContainer width="100%" height={300}><BarChart data={needs.map(n=>({...n,gap:Math.round(n.current/n.need*100)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="gap" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+        <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Mitigation vs Adaptation Split (% of approved)</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={[{name:'Mitigation',value:Math.round(PROJECTS.filter(p=>p.type==='Mitigation').reduce((s,p)=>s+p.approvedM,0))},{name:'Adaptation',value:Math.round(PROJECTS.filter(p=>p.type==='Adaptation').reduce((s,p)=>s+p.approvedM,0))},{name:'Cross-cutting',value:Math.round(PROJECTS.filter(p=>p.type==='Cross-cutting').reduce((s,p)=>s+p.approvedM,0))},{name:'Loss & Damage',value:Math.round(PROJECTS.filter(p=>p.type==='Loss & Damage').reduce((s,p)=>s+p.approvedM,0))}]} cx="50%" cy="50%" outerRadius={90} dataKey="value" label={({name,value})=>`${name}: $${value}M`}>{[T.sage,ACCENT,T.gold,T.red].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+      </div>
+    </div>);
+  };
+
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Climate Finance Hub</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>$100B+ tracking | GCF, AF, GEF | 60 projects | Regional flows & gap analysis</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderOverview()}{tab===1&&renderFunds()}{tab===2&&renderRegional()}{tab===3&&renderGap()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
   </div>);
 }

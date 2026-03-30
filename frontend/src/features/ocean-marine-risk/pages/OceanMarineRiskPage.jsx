@@ -1,352 +1,64 @@
-import React, { useState } from 'react';
-import {
-  AreaChart, Area, BarChart, Bar, Cell, LineChart, Line,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from 'recharts';
-
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-
-const tip = {
-  contentStyle: { background: T.surface, border: '1px solid ' + T.border, borderRadius: 8, color: T.text },
-  labelStyle: { color: T.textSec }
-};
-
-const REGIONS = [
-  { name: 'Arctic', tempAnomaly: '+2.4', pH: '8.02', biodiversity: 62, exposure: 180 },
-  { name: 'North Atlantic', tempAnomaly: '+1.1', pH: '8.08', biodiversity: 74, exposure: 620 },
-  { name: 'Mediterranean', tempAnomaly: '+1.8', pH: '8.04', biodiversity: 68, exposure: 940 },
-  { name: 'Indian Ocean', tempAnomaly: '+1.3', pH: '8.06', biodiversity: 81, exposure: 520 },
-  { name: 'South Pacific', tempAnomaly: '+0.9', pH: '8.10', biodiversity: 88, exposure: 310 },
-  { name: 'Coral Triangle', tempAnomaly: '+1.6', pH: '8.03', biodiversity: 94, exposure: 270 },
-  { name: 'Gulf of Mexico', tempAnomaly: '+1.4', pH: '8.05', biodiversity: 72, exposure: 480 },
-  { name: 'Southern Ocean', tempAnomaly: '+1.7', pH: '8.01', biodiversity: 57, exposure: 90 },
-];
-
-const HEAT_TREND = Array.from({ length: 24 }, (_, i) => ({
-  month: `M${i + 1}`,
-  content: +(280 + sr(i * 3) * 40 + i * 1.8).toFixed(1),
-  anomaly: +(0.6 + sr(i * 7) * 0.8).toFixed(2),
-}));
-
-const COASTAL_CITIES = [
-  { city: 'Miami', current: 420, risk2050: 680, adaptation: 38, resilience: 52 },
-  { city: 'Shanghai', current: 1240, risk2050: 1890, adaptation: 120, resilience: 61 },
-  { city: 'Jakarta', current: 380, risk2050: 720, adaptation: 45, resilience: 38 },
-  { city: 'Mumbai', current: 560, risk2050: 940, adaptation: 62, resilience: 44 },
-  { city: 'Amsterdam', current: 290, risk2050: 410, adaptation: 28, resilience: 77 },
-  { city: 'New Orleans', current: 180, risk2050: 340, adaptation: 22, resilience: 49 },
-  { city: 'Ho Chi Minh', current: 320, risk2050: 610, adaptation: 41, resilience: 41 },
-  { city: 'Alexandria', current: 210, risk2050: 490, adaptation: 35, resilience: 36 },
-];
-
-const ECOSYSTEMS = [
-  { name: 'Coral Reefs', coverage: 284, degradation: 50, services: 9.9, protected: 27 },
-  { name: 'Seagrass', coverage: 300, degradation: 35, services: 1.9, protected: 18 },
-  { name: 'Kelp Forests', coverage: 25, degradation: 40, services: 0.8, protected: 12 },
-  { name: 'Deep Sea', coverage: 33600, degradation: 15, services: 1.4, protected: 4 },
-  { name: 'Mangroves', coverage: 150, degradation: 38, services: 1.6, protected: 22 },
-  { name: 'Polar Seas', coverage: 14000, degradation: 28, services: 2.1, protected: 9 },
-];
-
-const CHOKEPOINTS = [
-  { name: 'Strait of Hormuz', tradeValue: 1.7, vulnerability: 82, disruption: 18, rerouting: 4.2 },
-  { name: 'Suez Canal', tradeValue: 9.5, vulnerability: 67, disruption: 14, rerouting: 7.8 },
-  { name: 'Strait of Malacca', tradeValue: 5.3, vulnerability: 58, disruption: 11, rerouting: 5.1 },
-  { name: 'Panama Canal', tradeValue: 4.2, vulnerability: 71, disruption: 22, rerouting: 6.4 },
-  { name: 'Bab el-Mandeb', tradeValue: 4.7, vulnerability: 76, disruption: 19, rerouting: 5.9 },
-  { name: 'Danish Straits', tradeValue: 2.1, vulnerability: 44, disruption: 8, rerouting: 2.3 },
-];
-
-const SHIPPING_INDEX = Array.from({ length: 24 }, (_, i) => ({
-  month: `M${i + 1}`,
-  index: +(100 + sr(i * 5) * 60 + (i > 14 ? (i - 14) * 3.5 : 0)).toFixed(1),
-}));
-
-const REGULATIONS = [
-  { name: 'BBNJ Treaty', status: 'Ratification', jurisdiction: 'Global', scope: 'High Seas', obligation: 'Area-based management tools & EIAs for ABNJ', date: '2025' },
-  { name: 'EU Maritime Spatial Planning', status: 'Active', jurisdiction: 'EU Waters', scope: 'Coastal & offshore', obligation: 'Cross-border MSP by 2021, updated plans 2026', date: '2026' },
-  { name: 'IMO 2050 Strategy', status: 'In Force', jurisdiction: 'International Shipping', scope: 'GHG emissions', obligation: 'Net-zero GHG by 2050; 20% cut by 2030', date: '2030' },
-  { name: 'UN SDG 14', status: 'Voluntary', jurisdiction: 'UN Member States', scope: 'Ocean health', obligation: 'Reduce pollution, protect 10% coastal/marine areas', date: '2030' },
-  { name: 'OSPAR Convention', status: 'Active', jurisdiction: 'NE Atlantic', scope: 'Marine protection', obligation: 'Marine protected areas network; zero harmful substances', date: '2030' },
-  { name: "Kunming-Montreal (Target 3)", status: 'Agreed', jurisdiction: 'CBD Parties', scope: 'Biodiversity', obligation: '30x30 — protect 30% oceans by 2030', date: '2030' },
-];
-
-const statCard = (label, value, sub) => (
-  <div key={label} style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: '16px 20px', flex: 1, minWidth: 160 }}>
-    <div style={{ color: T.teal, fontSize: 22, fontWeight: 700 }}>{value}</div>
-    <div style={{ color: T.text, fontSize: 13, marginTop: 4 }}>{label}</div>
-    {sub && <div style={{ color: T.textMut, fontSize: 11, marginTop: 2 }}>{sub}</div>}
-  </div>
-);
-
-const cellColor = val => val > 500 ? T.red : val > 200 ? T.amber : T.teal;
-
-export default function OceanMarineRiskPage() {
-  const [tab, setTab] = useState(0);
-  const tabs = ['Overview', 'Sea Level & Coastal', 'Marine Biodiversity', 'Shipping & Trade', 'Blue Economy Regulation'];
-
-  const tableHead = { color: T.textSec, fontSize: 11, padding: '6px 10px', textAlign: 'left', borderBottom: '1px solid ' + T.border, textTransform: 'uppercase' };
-  const tableCell = { color: T.text, fontSize: 12, padding: '8px 10px', borderBottom: '1px solid ' + T.border };
-
-  return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, padding: '24px 28px', color: T.text }}>
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: T.text }}>Ocean & Marine Risk Analytics</div>
-        <div style={{ color: T.textSec, fontSize: 13, marginTop: 4 }}>EP-AC4 — Blue economy exposure, sea-level risk, biodiversity & shipping disruption</div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid ' + T.border, marginBottom: 24 }}>
-        {tabs.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: '10px 16px', fontSize: 13, fontWeight: 500,
-            color: tab === i ? T.teal : T.textSec,
-            borderBottom: tab === i ? '2px solid ' + T.teal : '2px solid transparent',
-          }}>{t}</button>
-        ))}
-      </div>
-
-      {/* TAB 0 — Overview */}
-      {tab === 0 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            {statCard('Ocean Warming', '1.2°C', 'Above pre-industrial baseline')}
-            {statCard('Blue Economy', '$2.5T', 'Annual GDP at risk')}
-            {statCard('Reefs Bleached', '40%', 'Global coral coverage loss')}
-            {statCard('BBNJ Treaty', '2025', 'Ratification target year')}
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16, marginBottom: 24, overflowX: 'auto' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>Ocean Region Risk Matrix</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  {['Region', 'Temp Anomaly', 'Acidification pH', 'Biodiversity Index', 'Economic Exposure ($bn)'].map(h => (
-                    <th key={h} style={tableHead}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {REGIONS.map(r => (
-                  <tr key={r.name}>
-                    <td style={{ ...tableCell, fontWeight: 600, color: T.teal }}>{r.name}</td>
-                    <td style={{ ...tableCell, color: T.red }}>{r.tempAnomaly}°C</td>
-                    <td style={tableCell}>{r.pH}</td>
-                    <td style={tableCell}>{r.biodiversity}</td>
-                    <td style={tableCell}>${r.exposure}bn</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>24-Month Ocean Heat Content Trend (ZJ)</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={HEAT_TREND}>
-                <defs>
-                  <linearGradient id="heatGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={T.teal} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={T.teal} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <YAxis stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <Tooltip {...tip} />
-                <Area type="monotone" dataKey="content" stroke={T.teal} fill="url(#heatGrad)" strokeWidth={2} dot={false} name="Heat Content (ZJ)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 1 — Sea Level & Coastal */}
-      {tab === 1 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            {statCard('Global Coastal Assets', '$14.2T', 'Total assets at risk by 2050')}
-            {statCard('Population Exposed', '1B+', 'People in flood-prone zones')}
-            {statCard('Adaptation Finance Gap', '$400bn/yr', 'Annual shortfall vs. need')}
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16, marginBottom: 24 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>2050 Coastal Risk by City ($bn)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={COASTAL_CITIES} margin={{ left: 0, right: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="city" stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <YAxis stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="risk2050" name="2050 Risk ($bn)" radius={[4, 4, 0, 0]}>
-                  {COASTAL_CITIES.map((c, i) => (
-                    <Cell key={i} fill={cellColor(c.risk2050)} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16, overflowX: 'auto' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>Coastal City Exposure Detail</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  {['City', 'Current ($bn)', '2050 Risk ($bn)', 'Adaptation Cost ($bn)', 'Resilience Score'].map(h => (
-                    <th key={h} style={tableHead}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {COASTAL_CITIES.map(c => (
-                  <tr key={c.city}>
-                    <td style={{ ...tableCell, fontWeight: 600, color: T.teal }}>{c.city}</td>
-                    <td style={tableCell}>${c.current}bn</td>
-                    <td style={{ ...tableCell, color: c.risk2050 > 500 ? T.red : T.amber }}>${c.risk2050}bn</td>
-                    <td style={tableCell}>${c.adaptation}bn</td>
-                    <td style={{ ...tableCell, color: c.resilience > 65 ? T.green : c.resilience > 45 ? T.amber : T.red }}>{c.resilience}/100</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2 — Marine Biodiversity */}
-      {tab === 2 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            {statCard('BBNJ Signatories', '87 Nations', 'As of March 2025')}
-            {statCard('High Seas Protected', '1.2%', 'Target: 30% by 2030')}
-            {statCard('MPA Coverage', '8.1%', 'Of global ocean area')}
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16, marginBottom: 24 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>Ecosystem Services Value ($T/yr)</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={ECOSYSTEMS} margin={{ left: 0, right: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <YAxis stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="services" name="Services Value ($T/yr)" fill={T.teal} radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16, overflowX: 'auto' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>Marine Ecosystem Health</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  {['Ecosystem', 'Coverage (Mha)', 'Degradation %', 'Services Value ($T/yr)', 'Protected Area %'].map(h => (
-                    <th key={h} style={tableHead}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ECOSYSTEMS.map(e => (
-                  <tr key={e.name}>
-                    <td style={{ ...tableCell, fontWeight: 600, color: T.teal }}>{e.name}</td>
-                    <td style={tableCell}>{e.coverage.toLocaleString()}</td>
-                    <td style={{ ...tableCell, color: e.degradation > 40 ? T.red : T.amber }}>{e.degradation}%</td>
-                    <td style={tableCell}>${e.services}T</td>
-                    <td style={{ ...tableCell, color: e.protected > 20 ? T.green : T.amber }}>{e.protected}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3 — Shipping & Trade */}
-      {tab === 3 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            {statCard('Total Trade at Risk', '$27.5T/yr', 'Via critical chokepoints')}
-            {statCard('Insurance Cost Impact', '+$18bn', 'Climate premium increase')}
-            {statCard('Rerouting Carbon', '+12%', 'GHG from extended voyages')}
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16, marginBottom: 24, overflowX: 'auto' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>Critical Chokepoint Risk Matrix</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  {['Chokepoint', 'Daily Trade ($bn)', 'Climate Vulnerability', 'Disruption Prob %', 'Rerouting Cost ($bn)'].map(h => (
-                    <th key={h} style={tableHead}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {CHOKEPOINTS.map(c => (
-                  <tr key={c.name}>
-                    <td style={{ ...tableCell, fontWeight: 600, color: T.teal }}>{c.name}</td>
-                    <td style={tableCell}>${c.tradeValue}bn</td>
-                    <td style={{ ...tableCell, color: c.vulnerability > 70 ? T.red : c.vulnerability > 55 ? T.amber : T.green }}>{c.vulnerability}/100</td>
-                    <td style={{ ...tableCell, color: c.disruption > 15 ? T.red : T.amber }}>{c.disruption}%</td>
-                    <td style={tableCell}>${c.rerouting}bn</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 12 }}>24-Month Shipping Disruption Index</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={SHIPPING_INDEX}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <YAxis stroke={T.textMut} tick={{ fontSize: 10 }} />
-                <Tooltip {...tip} />
-                <Line type="monotone" dataKey="index" stroke={T.teal} strokeWidth={2} dot={false} name="Disruption Index" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4 — Blue Economy Regulation */}
-      {tab === 4 && (
-        <div>
-          <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
-            {statCard('High Seas Protected', '1.2% → 30%', 'Current vs. 2030 target')}
-            {statCard('MPA Count', '18,000+', 'Marine protected areas globally')}
-            {statCard('Blue Bond Issuance', '$5.2bn', 'Cumulative to 2025')}
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 14 }}>
-            {REGULATIONS.map(reg => (
-              <div key={reg.name} style={{ background: T.surface, border: '1px solid ' + T.border, borderRadius: 10, padding: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: T.text }}>{reg.name}</div>
-                  <span style={{
-                    fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 12,
-                    background: reg.status === 'Active' || reg.status === 'In Force' ? T.green + '22' : T.teal + '22',
-                    color: reg.status === 'Active' || reg.status === 'In Force' ? T.green : T.teal,
-                    border: '1px solid ' + (reg.status === 'Active' || reg.status === 'In Force' ? T.green : T.teal),
-                    whiteSpace: 'nowrap'
-                  }}>{reg.status}</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
-                  <div>
-                    <div style={{ color: T.textMut, fontSize: 10 }}>Jurisdiction</div>
-                    <div style={{ color: T.textSec, fontSize: 12 }}>{reg.jurisdiction}</div>
-                  </div>
-                  <div>
-                    <div style={{ color: T.textMut, fontSize: 10 }}>Scope</div>
-                    <div style={{ color: T.textSec, fontSize: 12 }}>{reg.scope}</div>
-                  </div>
-                  <div>
-                    <div style={{ color: T.textMut, fontSize: 10 }}>Implementation</div>
-                    <div style={{ color: T.teal, fontSize: 12, fontWeight: 600 }}>{reg.date}</div>
-                  </div>
-                </div>
-                <div style={{ background: T.bg, borderRadius: 6, padding: '8px 10px' }}>
-                  <div style={{ color: T.textMut, fontSize: 10, marginBottom: 2 }}>Key Obligation</div>
-                  <div style={{ color: T.text, fontSize: 12 }}>{reg.obligation}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#0369a1';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899','#06b6d4'];
+const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const TABS=['Marine Dashboard','Ocean Health','Fisheries','Blue Economy'];const OCEANS=['All','Atlantic','Pacific','Indian','Arctic','Southern','Mediterranean','Caribbean','South China Sea'];const PAGE=10;
+const ZONES=Array.from({length:30},(_,i)=>{
+  const names=['North Atlantic','South Atlantic','North Pacific','South Pacific','Indian Ocean','Arctic Ocean','Southern Ocean','Mediterranean Sea','Caribbean Sea','South China Sea','Gulf of Mexico','Bay of Bengal','Arabian Sea','Coral Sea','Tasman Sea','North Sea','Baltic Sea','Red Sea','Persian Gulf','East China Sea','Sea of Japan','Philippine Sea','Andaman Sea','Mozambique Channel','Barents Sea','Norwegian Sea','Bering Sea','Sargasso Sea','Banda Sea','Timor Sea'];
+  const oceans=['Atlantic','Atlantic','Pacific','Pacific','Indian','Arctic','Southern','Mediterranean','Caribbean','South China Sea','Atlantic','Indian','Indian','Pacific','Pacific','Atlantic','Atlantic','Indian','Indian','Pacific','Pacific','Pacific','Indian','Indian','Arctic','Atlantic','Pacific','Atlantic','Pacific','Indian'];
+  const healthIdx=Math.round(sr(i*7)*40+40);const sst=+(sr(i*11)*4+22).toFixed(1);const acidification=+(sr(i*13)*0.3+7.8).toFixed(2);const o2=+(sr(i*17)*3+4).toFixed(1);
+  const fishStockPct=Math.round(sr(i*19)*50+30);const overfished=Math.round(sr(i*23)*40);const mpasPct=+(sr(i*29)*30+2).toFixed(1);const plasticDensity=Math.round(sr(i*31)*50000+500);
+  const blueGDP=+(sr(i*37)*50+2).toFixed(1);const shippingRoutes=Math.round(sr(i*41)*200+10);const coralCoverage=Math.round(sr(i*43)*60);const mangroveKm2=Math.round(sr(i*47)*5000);
+  const yearly=Array.from({length:6},(_,y)=>({year:2019+y,health:Math.round(healthIdx-5+y*1.5+sr(i*100+y)*4),sst:+(sst+y*0.1+sr(i*100+y*3)*0.3).toFixed(1),plastic:Math.round(plasticDensity+y*1000+sr(i*100+y*7)*3000)}));
+  return{id:i+1,name:names[i],ocean:oceans[i],healthIndex:healthIdx,sst,acidification,dissolvedO2:o2,fishStockHealthy:fishStockPct,overfishedPct:overfished,mpaCoverage:mpasPct,plasticDensity,blueGDPBn:blueGDP,shippingRoutes,coralCoverage,mangroveKm2,seagrassKm2:Math.round(sr(i*49)*3000),biodiversityIndex:Math.round(sr(i*51)*40+50),pollutionScore:Math.round(sr(i*53)*60+20),riskLevel:healthIdx>70?'Low':healthIdx>50?'Medium':healthIdx>30?'High':'Critical',sealevelRise:+(sr(i*57)*5+1).toFixed(1),stormFreq:Math.round(sr(i*59)*20+3),yearly};
+});
+export default function OceanMarineRiskPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[oceanF,setOceanF]=useState('All');const[sortCol,setSortCol]=useState('healthIndex');const[sortDir,setSortDir]=useState('asc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const filtered=useMemo(()=>{let d=[...ZONES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(oceanF!=='All')d=d.filter(r=>r.ocean===oceanF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,oceanF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
+  const stats=useMemo(()=>({count:filtered.length,avgHealth:Math.round(filtered.reduce((s,r)=>s+r.healthIndex,0)/filtered.length||0),avgSST:(filtered.reduce((s,r)=>s+r.sst,0)/filtered.length||0).toFixed(1),critical:filtered.filter(r=>r.riskLevel==='Critical').length,avgMPA:(filtered.reduce((s,r)=>s+r.mpaCoverage,0)/filtered.length||0).toFixed(1),totalBlue:'$'+filtered.reduce((s,r)=>s+r.blueGDPBn,0).toFixed(0)+'B',avgFish:Math.round(filtered.reduce((s,r)=>s+r.fishStockHealthy,0)/filtered.length||0)}),[filtered]);
+  const oceanAgg=useMemo(()=>{const m={};ZONES.forEach(z=>{if(!m[z.ocean])m[z.ocean]={o:z.ocean,health:0,sst:0,fish:0,n:0};m[z.ocean].health+=z.healthIndex;m[z.ocean].sst+=z.sst;m[z.ocean].fish+=z.fishStockHealthy;m[z.ocean].n++;});return Object.values(m).map(o=>({ocean:o.o,health:Math.round(o.health/o.n),sst:+(o.sst/o.n).toFixed(1),fish:Math.round(o.fish/o.n)}));},[]);
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]).filter(k=>k!=='yearly');const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});const pgB={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:130}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:460,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><div style={{fontSize:12,color:T.textSec}}>{item.ocean} | {item.riskLevel} Risk</div></div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>{'\u2715'}</button></div>
+    <div style={{padding:'16px 24px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:16}}>{[['Health',item.healthIndex+'/100'],['SST',item.sst+'\u00B0C'],['pH',item.acidification],['O2',item.dissolvedO2+' mg/L'],['Fish Healthy',item.fishStockHealthy+'%'],['Overfished',item.overfishedPct+'%'],['MPA',item.mpaCoverage+'%'],['Plastic',fmt(item.plasticDensity)+'/km2'],['Blue GDP','$'+item.blueGDPBn+'B'],['Coral',item.coralCoverage+'%'],['Mangrove',fmt(item.mangroveKm2)+' km2'],['Biodiversity',item.biodiversityIndex],['Pollution',item.pollutionScore],['Sea Level',item.sealevelRise+' mm/yr'],['Storms',item.stormFreq+'/yr']].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Health & SST Trend</div><ResponsiveContainer width="100%" height={180}><LineChart data={item.yearly}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:9,fill:T.textSec}}/><YAxis yAxisId="l" tick={{fontSize:9,fill:T.textSec}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Line yAxisId="l" type="monotone" dataKey="health" stroke={ACCENT} name="Health" strokeWidth={2}/><Line yAxisId="r" type="monotone" dataKey="sst" stroke={T.red} name="SST \u00B0C" strokeWidth={2}/><Legend/></LineChart></ResponsiveContainer></div>
+      <div style={{...cS,marginTop:12}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Ecosystem Radar</div><ResponsiveContainer width="100%" height={200}><RadarChart data={[{m:'Health',v:item.healthIndex},{m:'Fish',v:item.fishStockHealthy},{m:'MPA',v:item.mpaCoverage*3},{m:'Biodiversity',v:item.biodiversityIndex},{m:'Coral',v:item.coralCoverage}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(3,105,161,0.2)"/></RadarChart></ResponsiveContainer></div>
+    </div></div>);};
+  const renderDash=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Zones',stats.count)}{kpi('Avg Health',stats.avgHealth+'/100')}{kpi('Avg SST',stats.avgSST+'\u00B0C')}{kpi('Critical',stats.critical,T.red)}{kpi('Avg MPA',stats.avgMPA+'%')}{kpi('Blue Economy',stats.totalBlue)}{kpi('Healthy Fish',stats.avgFish+'%')}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search marine zones..." style={inpS}/><select value={oceanF} onChange={e=>{setOceanF(e.target.value);setPage(1);}} style={selS}>{OCEANS.map(s=><option key={s}>{s}</option>)}</select><button onClick={()=>exportCSV(filtered,'ocean_risk.csv')} style={btnS(false)}>Export CSV</button></div>
+    <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['name','Zone'],['ocean','Ocean'],['healthIndex','Health'],['sst','SST'],['fishStockHealthy','Fish%'],['mpaCoverage','MPA%'],['plasticDensity','Plastic'],['riskLevel','Risk']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{paged.map(r=><tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.name}</span></td><td style={tdS}>{r.ocean}</td><td style={tdS}>{r.healthIndex}</td><td style={tdS}>{r.sst}\u00B0C</td><td style={tdS}>{r.fishStockHealthy}%</td><td style={tdS}>{r.mpaCoverage}%</td><td style={tdS}>{fmt(r.plasticDensity)}</td><td style={tdS}><span style={{color:r.riskLevel==='Critical'?T.red:r.riskLevel==='High'?T.amber:r.riskLevel==='Medium'?T.gold:T.green,fontWeight:600,fontSize:11}}>{r.riskLevel}</span></td></tr>)}</tbody></table></div>
+    {totalPages>1&&<div style={{display:'flex',gap:6,marginTop:12,alignItems:'center',justifyContent:'center'}}><button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Page {page}/{totalPages}</span><button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={pgB}>&raquo;</button></div>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Health Index by Ocean</div><ResponsiveContainer width="100%" height={260}><BarChart data={oceanAgg}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="ocean" tick={{fontSize:8,fill:T.textSec}} angle={-15}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="health" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Risk Distribution</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={[{n:'Critical',v:ZONES.filter(z=>z.riskLevel==='Critical').length},{n:'High',v:ZONES.filter(z=>z.riskLevel==='High').length},{n:'Medium',v:ZONES.filter(z=>z.riskLevel==='Medium').length},{n:'Low',v:ZONES.filter(z=>z.riskLevel==='Low').length}]} cx="50%" cy="50%" outerRadius={90} dataKey="v" label={({n,v})=>`${n}: ${v}`}>{[T.red,T.amber,T.gold,T.green].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div></div>);
+  const renderHealth=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>SST vs Health</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="SST" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Health" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(z=>({name:z.name,x:z.sst,y:z.healthIndex}))} fill={ACCENT} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Acidification (pH) by Zone</div><ResponsiveContainer width="100%" height={280}><BarChart data={[...filtered].sort((a,b)=>a.acidification-b.acidification).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.textSec}} width={90}/><Tooltip {...tip}/><Bar dataKey="acidification" fill={T.red} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Plastic Pollution Density</div><ResponsiveContainer width="100%" height={260}><BarChart data={[...ZONES].sort((a,b)=>b.plasticDensity-a.plasticDensity).slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:7,fill:T.textSec}} angle={-30}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="plasticDensity" fill={T.amber} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderFish=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Healthy Fish Stocks</div><ResponsiveContainer width="100%" height={300}><BarChart data={[...filtered].sort((a,b)=>a.fishStockHealthy-b.fishStockHealthy).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.textSec}} width={90}/><Tooltip {...tip}/><Bar dataKey="fishStockHealthy" fill={T.sage} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>MPA Coverage by Ocean</div><ResponsiveContainer width="100%" height={300}><BarChart data={oceanAgg.map(o=>({...o,mpa:+(ZONES.filter(z=>z.ocean===o.ocean).reduce((s,z)=>s+z.mpaCoverage,0)/o.fish||0).toFixed(1)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="ocean" tick={{fontSize:8,fill:T.textSec}} angle={-15}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="fish" fill={T.sage} name="Fish Healthy %"/><Bar dataKey="sst" fill={T.red} name="Avg SST"/><Legend/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderBlue=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Blue Economy GDP ($B)</div><ResponsiveContainer width="100%" height={300}><BarChart data={[...filtered].sort((a,b)=>b.blueGDPBn-a.blueGDPBn).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.textSec}} width={90}/><Tooltip {...tip}/><Bar dataKey="blueGDPBn" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Shipping Routes vs Pollution</div><ResponsiveContainer width="100%" height={300}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Shipping Routes" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Pollution Score" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(z=>({name:z.name,x:z.shippingRoutes,y:z.pollutionScore}))} fill={T.amber} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+  </div></div>);
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Ocean & Marine Risk Analytics</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>30 marine zones | Ocean health, fisheries, blue economy analytics</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderHealth()}{tab===2&&renderFish()}{tab===3&&renderBlue()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
+  </div>);
 }

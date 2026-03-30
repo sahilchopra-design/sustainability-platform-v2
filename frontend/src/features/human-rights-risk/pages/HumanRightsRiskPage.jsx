@@ -1,319 +1,85 @@
-import React, { useState } from 'react';
-import { AreaChart, Area, BarChart, Bar, LineChart, Line, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const ACCENT = '#dc2626';
-const tip = { contentStyle:{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, color:T.text }, labelStyle:{ color:T.textSec } };
-const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#dc2626';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,T.sageL,'#8b5cf6','#ec4899','#06b6d4'];
+const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const TABS=['Risk Dashboard','UNGP Assessment','Salient Issues','Due Diligence'];
+const SECTORS=['All','Technology','Consumer','Industrials','Energy','Mining','Agriculture','Apparel','Financials'];const PAGE=12;
+const ISSUES=['Forced Labour','Child Labour','Living Wage','Freedom of Association','Discrimination','Land Rights','Indigenous Rights','Privacy','Water Access','Health & Safety','Conflict Minerals','Migrant Workers','Gender Equality','Community Displacement','Digital Rights'];
 
-const MONTHS = ['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+const COS=Array.from({length:60},(_,i)=>{
+  const names=['Apple','Samsung','Nike','H&M','Nestle','Unilever','Shell','BHP','Glencore','Rio Tinto','Coca-Cola','PepsiCo','Amazon','Walmart','Tesla','Meta','Alphabet','Microsoft','BASF','Dow','Caterpillar','Siemens','Toyota','Volkswagen','Adidas','LVMH','L\'Oreal','P&G','J&J','Pfizer','Foxconn','Tencent','Alibaba','JBS','Cargill','Archer Daniels','Bayer','Syngenta','Anglo American','Freeport McMoRan','Barrick Gold','Newmont','Vale','TotalEnergies','BP','Chevron','ConocoPhillips','Exxon','Inditex','Fast Retailing','Under Armour','Lululemon','Starbucks','McDonalds','Tyson Foods','Mondelez','Mars','Danone','Reckitt','Colgate'];
+  const secs=['Technology','Technology','Apparel','Apparel','Consumer','Consumer','Energy','Mining','Mining','Mining','Consumer','Consumer','Technology','Consumer','Technology','Technology','Technology','Technology','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials','Apparel','Consumer','Consumer','Consumer','Consumer','Consumer','Technology','Technology','Technology','Agriculture','Agriculture','Agriculture','Agriculture','Agriculture','Mining','Mining','Mining','Mining','Mining','Energy','Energy','Energy','Energy','Energy','Apparel','Apparel','Apparel','Apparel','Consumer','Consumer','Agriculture','Consumer','Consumer','Consumer','Consumer','Consumer'];
+  const riskScore=Math.round(sr(i*7)*70+20);const ungpScore=Math.round(sr(i*11)*60+30);const dueDiligence=Math.round(sr(i*13)*50+40);
+  const salient=ISSUES.filter((_,j)=>sr(i*100+j*7)>0.5).slice(0,Math.round(sr(i*17)*5+2));
+  const incidents=Math.round(sr(i*19)*15);const grievances=Math.round(sr(i*23)*30);const remediations=Math.round(grievances*(sr(i*29)*0.6+0.2));
+  const supplyTiers=Math.round(sr(i*31)*4+1);const countriesOp=Math.round(sr(i*37)*40+5);const highRiskCountries=Math.round(countriesOp*(sr(i*41)*0.4));
+  const yearly=Array.from({length:5},(_,y)=>({year:2020+y,risk:Math.round(riskScore+5-y*2+sr(i*100+y)*8),ungp:Math.round(ungpScore-3+y*2+sr(i*100+y*3)*5),incidents:Math.round(incidents-y*0.5+sr(i*100+y*7)*3)}));
+  return{id:i+1,name:names[i],sector:secs[i],riskScore,ungpScore,dueDiligence,salientIssues:salient,salientCount:salient.length,incidents,grievances,remediations,remediationRate:grievances>0?Math.round(remediations/grievances*100):0,supplyTiers,countriesOp,highRiskCountries,policyScore:Math.round(sr(i*43)*40+50),transparencyScore:Math.round(sr(i*47)*50+40),stakeholderEngagement:Math.round(sr(i*49)*60+30),riskTrend:sr(i*51)>0.6?'Improving':sr(i*51)<0.3?'Worsening':'Stable',severity:riskScore>70?'Critical':riskScore>50?'High':riskScore>30?'Medium':'Low',yearly};
+});
 
-const slaveryTrend = MONTHS.map((m,i) => ({ month: m, incidents: Math.round(80 + sr(i*3)*60 + i*1.5) }));
+export default function HumanRightsRiskPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sectorF,setSectorF]=useState('All');const[sortCol,setSortCol]=useState('riskScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const filtered=useMemo(()=>{let d=[...COS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(sectorF!=='All')d=d.filter(r=>r.sector===sectorF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sectorF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
+  const stats=useMemo(()=>({count:filtered.length,avgRisk:Math.round(filtered.reduce((s,r)=>s+r.riskScore,0)/filtered.length||0),critical:filtered.filter(r=>r.severity==='Critical').length,avgUNGP:Math.round(filtered.reduce((s,r)=>s+r.ungpScore,0)/filtered.length||0),totalIncidents:filtered.reduce((s,r)=>s+r.incidents,0),avgRemediation:Math.round(filtered.reduce((s,r)=>s+r.remediationRate,0)/filtered.length||0),improving:filtered.filter(r=>r.riskTrend==='Improving').length}),[filtered]);
+  const sectorRisk=useMemo(()=>{const m={};COS.forEach(c=>{if(!m[c.sector])m[c.sector]={s:c.sector,risk:0,ungp:0,n:0};m[c.sector].risk+=c.riskScore;m[c.sector].ungp+=c.ungpScore;m[c.sector].n++;});return Object.values(m).map(s=>({sector:s.s,risk:Math.round(s.risk/s.n),ungp:Math.round(s.ungp/s.n)})).sort((a,b)=>b.risk-a.risk);},[]);
+  const issueDist=useMemo(()=>{const m={};COS.forEach(c=>c.salientIssues.forEach(i=>{m[i]=(m[i]||0)+1;}));return Object.entries(m).map(([k,v])=>({issue:k,count:v})).sort((a,b)=>b.count-a.count);},[]);
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]).filter(k=>k!=='yearly'&&k!=='salientIssues');const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};
+  const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
+  const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
+  const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});
+  const pgB={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
+  const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:140}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
+  const sevBdg=s=>({background:s==='Critical'?'rgba(220,38,38,0.12)':s==='High'?'rgba(217,119,6,0.12)':s==='Medium'?'rgba(197,169,106,0.12)':'rgba(22,163,74,0.1)',color:s==='Critical'?T.red:s==='High'?T.amber:s==='Medium'?T.gold:T.green,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600});
 
-const sectors = [
-  { name:'Apparel', forced: 8.7, child: 12.4, tiers: 4, ungp: 34 },
-  { name:'Electronics', forced: 7.9, child: 8.1, tiers: 5, ungp: 41 },
-  { name:'Agriculture', forced: 8.2, child: 18.6, tiers: 3, ungp: 29 },
-  { name:'Mining', forced: 7.5, child: 11.2, tiers: 3, ungp: 38 },
-  { name:'Construction', forced: 6.8, child: 7.4, tiers: 2, ungp: 45 },
-  { name:'Fishing', forced: 9.1, child: 9.8, tiers: 2, ungp: 22 },
-  { name:'Domestic Work', forced: 8.4, child: 14.3, tiers: 1, ungp: 18 },
-  { name:'Manufacturing', forced: 6.3, child: 6.9, tiers: 4, ungp: 52 },
-];
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:480,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><div style={{fontSize:12,color:T.textSec}}>{item.sector} | {item.severity} Risk</div></div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>{'\u2715'}</button></div>
+    <div style={{padding:'16px 24px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:16}}>{[['Risk Score',item.riskScore+'/100'],['UNGP Score',item.ungpScore+'/100'],['Due Diligence',item.dueDiligence+'/100'],['Incidents',item.incidents],['Grievances',item.grievances],['Remediation',item.remediationRate+'%'],['Supply Tiers',item.supplyTiers],['Countries',item.countriesOp],['High Risk',item.highRiskCountries],['Policy',item.policyScore+'/100'],['Transparency',item.transparencyScore+'/100'],['Engagement',item.stakeholderEngagement+'/100'],['Trend',item.riskTrend],['Severity',item.severity],['Issues',item.salientCount]].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div>
+      <div style={{marginBottom:12}}><div style={{fontSize:11,color:T.textSec,marginBottom:6}}>Salient Issues:</div><div style={{display:'flex',flexWrap:'wrap',gap:4}}>{item.salientIssues.map(i=><span key={i} style={{background:'rgba(220,38,38,0.08)',color:T.red,padding:'2px 8px',borderRadius:4,fontSize:10}}>{i}</span>)}</div></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>5-Year Risk Trend</div><ResponsiveContainer width="100%" height={180}><LineChart data={item.yearly}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Line type="monotone" dataKey="risk" stroke={T.red} name="Risk" strokeWidth={2}/><Line type="monotone" dataKey="ungp" stroke={T.green} name="UNGP" strokeWidth={2}/><Legend/></LineChart></ResponsiveContainer></div>
+      <div style={{...cS,marginTop:12}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Assessment Radar</div><ResponsiveContainer width="100%" height={200}><RadarChart data={[{m:'Policy',v:item.policyScore},{m:'Transparency',v:item.transparencyScore},{m:'Due Diligence',v:item.dueDiligence},{m:'Engagement',v:item.stakeholderEngagement},{m:'Remediation',v:item.remediationRate}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(220,38,38,0.15)"/></RadarChart></ResponsiveContainer></div>
+    </div></div>);};
 
-const regulations = [
-  { name:'EU CSDDD', jurisdiction:'EU', status:'Enacted', scope:'500+ employees', obligation:'Full value-chain DD', penalty:'5% revenue', effective:'2024' },
-  { name:'German LkSG', jurisdiction:'Germany', status:'Active', scope:'1,000+ employees', obligation:'Direct supplier DD', penalty:'2% revenue', effective:'2023' },
-  { name:'French Duty of Vigilance', jurisdiction:'France', status:'Active', scope:'5,000+ employees', obligation:'Vigilance plan required', penalty:'Civil liability', effective:'2017' },
-  { name:'Norwegian Transparency Act', jurisdiction:'Norway', status:'Active', scope:'250+ employees', obligation:'DD & public reporting', penalty:'Fines + orders', effective:'2022' },
-  { name:'UK Modern Slavery Act', jurisdiction:'UK', status:'Active', scope:'£36M+ turnover', obligation:'Annual statement', penalty:'Reputational only', effective:'2015' },
-  { name:'Australian MSA', jurisdiction:'Australia', status:'Active', scope:'AUD$100M+ revenue', obligation:'Annual report', penalty:'Civil penalties', effective:'2018' },
-  { name:'US UFLPA', jurisdiction:'USA', status:'Active', scope:'All importers', obligation:'Rebuttable presumption', penalty:'Import ban', effective:'2022' },
-  { name:'California SB 657', jurisdiction:'USA/CA', status:'Active', scope:'$100M+ revenue', obligation:'Supply chain disclosure', penalty:'Civil fines', effective:'2012' },
-];
-
-const countries = [
-  { name:'China', overall:7.8, forced:7.9, child:5.2, foa:1.8, remedy:3.1 },
-  { name:'India', overall:6.9, forced:6.4, child:7.1, foa:3.2, remedy:4.0 },
-  { name:'Bangladesh', overall:7.2, forced:6.8, child:6.9, foa:2.4, remedy:3.6 },
-  { name:'Vietnam', overall:6.4, forced:6.1, child:5.8, foa:2.0, remedy:4.2 },
-  { name:'Myanmar', overall:8.9, forced:8.7, child:7.8, foa:1.2, remedy:2.1 },
-  { name:'Indonesia', overall:6.1, forced:5.9, child:6.2, foa:3.4, remedy:4.5 },
-  { name:'Brazil', overall:5.8, forced:5.6, child:5.4, foa:4.1, remedy:5.2 },
-  { name:'Turkey', overall:5.4, forced:5.1, child:4.8, foa:2.8, remedy:4.8 },
-  { name:'Mexico', overall:5.9, forced:5.7, child:5.6, foa:3.6, remedy:4.9 },
-  { name:'Ethiopia', overall:7.1, forced:6.9, child:8.2, foa:2.2, remedy:2.8 },
-];
-
-const companies = [
-  { id:'A', sector:'Apparel', maturity:4, audits:320, grievance:'Y', fund:12.4, disclosure:78 },
-  { id:'B', sector:'Electronics', maturity:3, audits:180, grievance:'Y', fund:8.1, disclosure:62 },
-  { id:'C', sector:'Agriculture', maturity:2, audits:95, grievance:'N', fund:2.3, disclosure:41 },
-  { id:'D', sector:'Mining', maturity:3, audits:140, grievance:'Y', fund:6.7, disclosure:55 },
-  { id:'E', sector:'Construction', maturity:1, audits:40, grievance:'N', fund:0.8, disclosure:28 },
-  { id:'F', sector:'Retail', maturity:4, audits:410, grievance:'Y', fund:15.2, disclosure:82 },
-  { id:'G', sector:'Food & Bev', maturity:2, audits:120, grievance:'N', fund:3.4, disclosure:37 },
-  { id:'H', sector:'Manufacturing', maturity:5, audits:520, grievance:'Y', fund:22.6, disclosure:91 },
-];
-
-const cases = [
-  { name:'Total/Sherpa', jurisdiction:'France', year:2019, allegation:'Forced labour Myanmar', outcome:'Settled', exposure:45 },
-  { name:'KiK', jurisdiction:'Germany', year:2016, allegation:'Factory fire liability', outcome:'Dismissed', exposure:5 },
-  { name:'Vedanta/Lungowe', jurisdiction:'UK', year:2019, allegation:'Pollution & community rights', outcome:'Settled £190M', exposure:250 },
-  { name:'Apple/Cobalt', jurisdiction:'USA', year:2019, allegation:'Child labour cobalt mining', outcome:'Ongoing', exposure:120 },
-  { name:'Nestlé/Cocoa', jurisdiction:'USA', year:2021, allegation:'Child labour cocoa supply', outcome:'SCOTUS dismissed', exposure:30 },
-  { name:'Shell/Nigeria', jurisdiction:'Netherlands', year:2021, allegation:'Oil spill community harm', outcome:'Shell liable', exposure:500 },
-];
-
-const litigationTrend = MONTHS.map((m,i) => ({ month: m, cases: Math.round(30 + sr(i*7)*25 + i*1.2) }));
-
-const riskColor = v => v > 7 ? T.red : v > 4 ? T.amber : T.green;
-const matColor = v => v >= 4 ? T.green : v >= 2 ? T.amber : T.red;
-const TABS = ['Overview','Due Diligence','Country Risk','Corporate Compliance','Litigation'];
-
-export default function HumanRightsRiskPage() {
-  const [tab, setTab] = useState(0);
-
-  return (
-    <div style={{ background:T.bg, minHeight:'100vh', color:T.text, fontFamily:T.font, padding:24 }}>
-      <div style={{ marginBottom:20 }}>
-        <h1 style={{ fontSize:22, fontWeight:700, margin:0 }}>Human Rights &amp; Supply Chain Risk</h1>
-        <p style={{ color:T.textSec, margin:'4px 0 0', fontSize:13 }}>EP-AD2 · UNGP, CSDDD, LkSG &amp; Modern Slavery Frameworks</p>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display:'flex', gap:4, borderBottom:'1px solid '+T.border, marginBottom:24 }}>
-        {TABS.map((t,i) => (
-          <button key={t} onClick={() => setTab(i)} style={{ background:'none', border:'none', color: tab===i ? T.text : T.textSec, padding:'8px 16px', cursor:'pointer', borderBottom: tab===i ? '2px solid '+ACCENT : '2px solid transparent', fontSize:13, fontWeight: tab===i ? 600 : 400 }}>{t}</button>
-        ))}
-      </div>
-
-      {/* Tab 1 — Overview */}
-      {tab === 0 && (
-        <div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:24 }}>
-            {[['40.3M','Modern Slaves'],['160M','Child Labourers'],['EU CSDDD','Enacted 2024'],['UNGPs','93 Countries']].map(([v,l]) => (
-              <div key={l} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16 }}>
-                <div style={{ fontSize:22, fontWeight:700, color:ACCENT }}>{v}</div>
-                <div style={{ fontSize:12, color:T.textSec, marginTop:4 }}>{l}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16, marginBottom:24 }}>
-            <h3 style={{ margin:'0 0 12px', fontSize:14 }}>High-Risk Sector Exposure</h3>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textSec }}>
-                  {['Sector','Forced Labour Risk','Child Labour %','Supply Tiers','UNGP Alignment %'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 8px', borderBottom:'1px solid '+T.border }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {sectors.map(s => (
-                  <tr key={s.name} style={{ borderBottom:'1px solid '+T.border }}>
-                    <td style={{ padding:'6px 8px', fontWeight:600 }}>{s.name}</td>
-                    <td style={{ padding:'6px 8px', color: riskColor(s.forced) }}>{s.forced.toFixed(1)}</td>
-                    <td style={{ padding:'6px 8px' }}>{s.child.toFixed(1)}%</td>
-                    <td style={{ padding:'6px 8px' }}>{s.tiers}</td>
-                    <td style={{ padding:'6px 8px', color:T.textSec }}>{s.ungp}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16 }}>
-            <h3 style={{ margin:'0 0 12px', fontSize:14 }}>Modern Slavery Incident Trend (24 Months)</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={slaveryTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill:T.textSec, fontSize:11 }} />
-                <YAxis tick={{ fill:T.textSec, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Area type="monotone" dataKey="incidents" stroke={ACCENT} fill={ACCENT} fillOpacity={0.15} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2 — Due Diligence */}
-      {tab === 1 && (
-        <div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:24 }}>
-            {[['12','Mandatory DD Jurisdictions'],['50,000+','Companies in Scope'],['$4.2M','Avg Compliance Cost']].map(([v,l]) => (
-              <div key={l} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16 }}>
-                <div style={{ fontSize:22, fontWeight:700, color:ACCENT }}>{v}</div>
-                <div style={{ fontSize:12, color:T.textSec, marginTop:4 }}>{l}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:12 }}>
-            {regulations.map(r => (
-              <div key={r.name} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:14 }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-                  <span style={{ fontWeight:700, fontSize:13 }}>{r.name}</span>
-                  <span style={{ background: r.status==='Enacted' ? ACCENT+'33' : T.navy, color: r.status==='Enacted' ? ACCENT : T.teal, fontSize:11, padding:'2px 8px', borderRadius:12 }}>{r.status}</span>
-                </div>
-                <div style={{ fontSize:11, color:T.textSec, lineHeight:1.8 }}>
-                  <div><span style={{ color:T.textMut }}>Jurisdiction:</span> {r.jurisdiction}</div>
-                  <div><span style={{ color:T.textMut }}>Scope:</span> {r.scope}</div>
-                  <div><span style={{ color:T.textMut }}>Obligation:</span> {r.obligation}</div>
-                  <div><span style={{ color:T.textMut }}>Penalty:</span> <span style={{ color:T.amber }}>{r.penalty}</span></div>
-                  <div><span style={{ color:T.textMut }}>Effective:</span> {r.effective}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3 — Country Risk Matrix */}
-      {tab === 2 && (
-        <div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16, marginBottom:24 }}>
-            <h3 style={{ margin:'0 0 12px', fontSize:14 }}>Country HR Risk Scores (0–10 scale)</h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={countries} margin={{ top:4, right:16, left:0, bottom:0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
-                <YAxis domain={[0,10]} tick={{ fill:T.textSec, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="overall" radius={[3,3,0,0]}>
-                  {countries.map((c,i) => <Cell key={i} fill={riskColor(c.overall)} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <div style={{ display:'flex', gap:16, marginTop:8, fontSize:11, color:T.textSec }}>
-              {[['High Risk (>7)',T.red],['Medium (4–7)',T.amber],['Lower (<4)',T.green]].map(([l,c]) => (
-                <span key={l}><span style={{ display:'inline-block', width:10, height:10, background:c, borderRadius:2, marginRight:4 }} />{l}</span>
-              ))}
-              <span style={{ marginLeft:'auto' }}>ITUC Global Rights Index: 1 (best) — 5+ (no guarantee)</span>
-            </div>
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16 }}>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textSec }}>
-                  {['Country','Overall','Forced Labour','Child Labour','Freedom Assoc.','Remedy Access'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 8px', borderBottom:'1px solid '+T.border }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {countries.map(c => (
-                  <tr key={c.name} style={{ borderBottom:'1px solid '+T.border }}>
-                    <td style={{ padding:'6px 8px', fontWeight:600 }}>{c.name}</td>
-                    <td style={{ padding:'6px 8px', color:riskColor(c.overall), fontWeight:600 }}>{c.overall}</td>
-                    <td style={{ padding:'6px 8px', color:riskColor(c.forced) }}>{c.forced}</td>
-                    <td style={{ padding:'6px 8px', color:riskColor(c.child) }}>{c.child}</td>
-                    <td style={{ padding:'6px 8px', color:T.textSec }}>{c.foa}</td>
-                    <td style={{ padding:'6px 8px', color:T.textSec }}>{c.remedy}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4 — Corporate Compliance */}
-      {tab === 3 && (
-        <div>
-          <div style={{ display:'flex', gap:16, marginBottom:16, fontSize:12, color:T.textSec }}>
-            {['Protect','Respect','Remedy'].map(p => (
-              <div key={p} style={{ background:T.navy, border:'1px solid '+T.border, borderRadius:6, padding:'6px 16px', color:T.teal, fontWeight:600 }}>UNGP: {p}</div>
-            ))}
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16, marginBottom:24 }}>
-            <h3 style={{ margin:'0 0 12px', fontSize:14 }}>Disclosure Scores by Company</h3>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={companies} margin={{ top:4, right:16, left:0, bottom:0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="id" tick={{ fill:T.textSec, fontSize:11 }} />
-                <YAxis domain={[0,100]} tick={{ fill:T.textSec, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="disclosure" radius={[3,3,0,0]}>
-                  {companies.map((c,i) => <Cell key={i} fill={c.disclosure >= 70 ? T.green : c.disclosure >= 45 ? T.amber : T.red} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16 }}>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textSec }}>
-                  {['Co.','Sector','DD Maturity','Audits/yr','Grievance','Fund $M','Disclosure'].map(h => (
-                    <th key={h} style={{ textAlign:'left', padding:'6px 8px', borderBottom:'1px solid '+T.border }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {companies.map(c => (
-                  <tr key={c.id} style={{ borderBottom:'1px solid '+T.border }}>
-                    <td style={{ padding:'6px 8px', fontWeight:700 }}>{c.id}</td>
-                    <td style={{ padding:'6px 8px', color:T.textSec }}>{c.sector}</td>
-                    <td style={{ padding:'6px 8px' }}>
-                      <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                        <div style={{ width:60, height:6, background:T.border, borderRadius:3 }}>
-                          <div style={{ width:(c.maturity/5*100)+'%', height:'100%', background:matColor(c.maturity), borderRadius:3 }} />
-                        </div>
-                        <span style={{ color:matColor(c.maturity) }}>{c.maturity}/5</span>
-                      </div>
-                    </td>
-                    <td style={{ padding:'6px 8px' }}>{c.audits}</td>
-                    <td style={{ padding:'6px 8px', color: c.grievance==='Y' ? T.green : T.red }}>{c.grievance}</td>
-                    <td style={{ padding:'6px 8px' }}>{c.fund}</td>
-                    <td style={{ padding:'6px 8px', color: c.disclosure>=70 ? T.green : c.disclosure>=45 ? T.amber : T.red }}>{c.disclosure}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5 — Litigation */}
-      {tab === 4 && (
-        <div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:24 }}>
-            {[['847','HR Cases Filed 2023'],['$28M','Avg Settlement'],['23%','Cases Won by Plaintiffs']].map(([v,l]) => (
-              <div key={l} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16 }}>
-                <div style={{ fontSize:22, fontWeight:700, color:ACCENT }}>{v}</div>
-                <div style={{ fontSize:12, color:T.textSec, marginTop:4 }}>{l}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:12, marginBottom:24 }}>
-            {cases.map(c => (
-              <div key={c.name} style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:14 }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-                  <span style={{ fontWeight:700, fontSize:13 }}>{c.name}</span>
-                  <span style={{ fontSize:11, color:T.textSec }}>{c.year}</span>
-                </div>
-                <div style={{ fontSize:11, color:T.textSec, lineHeight:1.8 }}>
-                  <div><span style={{ color:T.textMut }}>Jurisdiction:</span> {c.jurisdiction}</div>
-                  <div><span style={{ color:T.textMut }}>Allegation:</span> {c.allegation}</div>
-                  <div><span style={{ color:T.textMut }}>Outcome:</span> <span style={{ color: c.outcome.includes('Settled') || c.outcome.includes('liable') ? T.amber : T.textSec }}>{c.outcome}</span></div>
-                  <div><span style={{ color:T.textMut }}>Exposure:</span> <span style={{ color:ACCENT }}>${c.exposure}M</span></div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, padding:16 }}>
-            <h3 style={{ margin:'0 0 12px', fontSize:14 }}>HR Litigation Trend (24 Months)</h3>
-            <ResponsiveContainer width="100%" height={180}>
-              <LineChart data={litigationTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill:T.textSec, fontSize:11 }} />
-                <YAxis tick={{ fill:T.textSec, fontSize:11 }} />
-                <Tooltip {...tip} />
-                <Line type="monotone" dataKey="cases" stroke={ACCENT} strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
+  const renderDash=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Companies',stats.count)}{kpi('Avg Risk Score',stats.avgRisk+'/100',stats.avgRisk>50?T.red:T.amber)}{kpi('Critical',stats.critical,T.red)}{kpi('Avg UNGP',stats.avgUNGP+'/100')}{kpi('Total Incidents',stats.totalIncidents)}{kpi('Avg Remediation',stats.avgRemediation+'%')}{kpi('Improving',stats.improving,T.green)}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search companies..." style={inpS}/><select value={sectorF} onChange={e=>{setSectorF(e.target.value);setPage(1);}} style={selS}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select><button onClick={()=>exportCSV(filtered,'human_rights_risk.csv')} style={btnS(false)}>Export CSV</button></div>
+    <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['name','Company'],['sector','Sector'],['riskScore','Risk'],['ungpScore','UNGP'],['incidents','Incidents'],['remediationRate','Remed%'],['severity','Severity'],['riskTrend','Trend']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{paged.map(r=><tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.name}</span></td><td style={tdS}>{r.sector}</td><td style={tdS}>{r.riskScore}</td><td style={tdS}>{r.ungpScore}</td><td style={tdS}>{r.incidents}</td><td style={tdS}>{r.remediationRate}%</td><td style={tdS}><span style={sevBdg(r.severity)}>{r.severity}</span></td><td style={tdS}><span style={{color:r.riskTrend==='Improving'?T.green:r.riskTrend==='Worsening'?T.red:T.amber,fontWeight:600,fontSize:11}}>{r.riskTrend}</span></td></tr>)}</tbody></table></div>
+    {totalPages>1&&<div style={{display:'flex',gap:6,marginTop:12,alignItems:'center',justifyContent:'center'}}><button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Page {page}/{totalPages}</span><button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={pgB}>&raquo;</button></div>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Risk Score by Sector</div><ResponsiveContainer width="100%" height={260}><BarChart data={sectorRisk}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="risk" fill={T.red} name="Risk" radius={[4,4,0,0]}/><Bar dataKey="ungp" fill={T.green} name="UNGP"/><Legend/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Severity Distribution</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={[{n:'Critical',v:COS.filter(c=>c.severity==='Critical').length},{n:'High',v:COS.filter(c=>c.severity==='High').length},{n:'Medium',v:COS.filter(c=>c.severity==='Medium').length},{n:'Low',v:COS.filter(c=>c.severity==='Low').length}]} cx="50%" cy="50%" outerRadius={90} dataKey="v" label={({n,v})=>`${n}: ${v}`}>{[T.red,T.amber,T.gold,T.green].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
     </div>
-  );
+  </div>);
+
+  const renderUNGP=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>UNGP Score Ranking (Top 20)</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...COS].sort((a,b)=>b.ungpScore-a.ungpScore).slice(0,20)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="ungpScore" fill={T.green} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Risk vs UNGP Compliance</div><ResponsiveContainer width="100%" height={350}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="UNGP Score" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Risk Score" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(c=>({name:c.name,x:c.ungpScore,y:c.riskScore}))} fill={T.red} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+  </div></div>);
+
+  const renderSalient=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Most Prevalent Salient Issues</div><ResponsiveContainer width="100%" height={350}><BarChart data={issueDist.slice(0,12)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="issue" tick={{fontSize:8,fill:T.textSec}} width={110}/><Tooltip {...tip}/><Bar dataKey="count" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Issues by Sector Heatmap</div><div style={{overflowX:'auto'}}><table style={{borderCollapse:'collapse',width:'100%'}}><thead><tr><th style={thS}>Sector</th>{ISSUES.slice(0,8).map(i=><th key={i} style={{...thS,fontSize:7,maxWidth:50}}>{i.slice(0,10)}</th>)}</tr></thead><tbody>{SECTORS.slice(1).map(s=>{const cos=COS.filter(c=>c.sector===s);return<tr key={s}><td style={{...tdS,fontWeight:600,fontSize:10}}>{s}</td>{ISSUES.slice(0,8).map(iss=>{const cnt=cos.filter(c=>c.salientIssues.includes(iss)).length;return<td key={iss} style={{...tdS,textAlign:'center',fontSize:10,background:cnt>3?'rgba(220,38,38,0.12)':cnt>1?'rgba(217,119,6,0.08)':'transparent'}}>{cnt}</td>;})}</tr>})}</tbody></table></div></div>
+  </div></div>);
+
+  const renderDD=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Due Diligence Score Distribution</div><ResponsiveContainer width="100%" height={280}><BarChart data={[{r:'<40',c:filtered.filter(r=>r.dueDiligence<40).length},{r:'40-60',c:filtered.filter(r=>r.dueDiligence>=40&&r.dueDiligence<60).length},{r:'60-80',c:filtered.filter(r=>r.dueDiligence>=60&&r.dueDiligence<80).length},{r:'>80',c:filtered.filter(r=>r.dueDiligence>=80).length}]}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="r" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="c" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Grievances vs Remediation</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Grievances" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Remediation %" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(c=>({name:c.name,x:c.grievances,y:c.remediationRate}))} fill={T.sage} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+    <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Policy vs Transparency vs Engagement</div><ResponsiveContainer width="100%" height={280}><BarChart data={[...filtered].sort((a,b)=>b.riskScore-a.riskScore).slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:7,fill:T.textSec}} angle={-30}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="policyScore" fill={T.navy} name="Policy"/><Bar dataKey="transparencyScore" fill={T.gold} name="Transparency"/><Bar dataKey="stakeholderEngagement" fill={T.sage} name="Engagement"/><Legend/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Human Rights Risk Analytics</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>60 companies | UNGP assessment, salient issues, due diligence tracking</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderUNGP()}{tab===2&&renderSalient()}{tab===3&&renderDD()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
+  </div>);
 }

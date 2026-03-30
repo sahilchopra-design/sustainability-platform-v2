@@ -1,133 +1,87 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,LineChart,Line,AreaChart,Area,ScatterChart,Scatter,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontFamily:T.font},labelStyle:{color:T.textSec}};
-const CC=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899'];
-const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
-const TABS=['Country Dashboard','Renewable Capacity','Fossil Phase-Out','Grid Decarbonization'];
-const PAGE_SIZE=12;
+const ACCENT='#16a34a';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,T.sageL,'#8b5cf6','#ec4899','#06b6d4'];
+const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const TABS=['Country Dashboard','Renewable Capacity','Grid Decarbonisation','Investment Flows'];
+const REGIONF=['All','Europe','Asia Pacific','Americas','Middle East & Africa'];const PAGE=10;
 
 const COUNTRIES=Array.from({length:30},(_,i)=>{
-  const names=['China','USA','India','Germany','UK','France','Japan','Brazil','Australia','Canada','South Korea','Spain','Italy','Netherlands','Denmark','Sweden','Norway','Chile','Morocco','South Africa','Indonesia','Vietnam','Thailand','Mexico','Turkey','Poland','Egypt','Saudi Arabia','UAE','Nigeria'];
-  const regions=['Asia','Americas','Asia','Europe','Europe','Europe','Asia','Americas','Oceania','Americas','Asia','Europe','Europe','Europe','Europe','Europe','Europe','Americas','Africa','Africa','Asia','Asia','Asia','Americas','Europe','Europe','Africa','Middle East','Middle East','Africa'];
-  return{
-    id:i+1,country:names[i],region:regions[i],
-    renewablePct:+(sr(i*7)*50+10).toFixed(1),
-    solarGW:+(sr(i*11)*200+5).toFixed(1),
-    windGW:+(sr(i*13)*150+3).toFixed(1),
-    hydroGW:+(sr(i*17)*100+2).toFixed(1),
-    fossilPct:+(90-sr(i*7)*50).toFixed(1),
-    coalPhaseOut:2025+Math.floor(sr(i*19)*20),
-    gridIntensity:Math.round(sr(i*23)*600+100),
-    investment:+(sr(i*29)*80+2).toFixed(1),
-    jobsCreated:Math.round(sr(i*31)*500+50),
-    emissionsReduction:+(sr(i*37)*15+1).toFixed(1),
-    evShare:+(sr(i*41)*30+2).toFixed(1),
-    hydrogenPlan:sr(i*43)>0.5?'Active':'Planned',
-    carbonPrice:Math.round(sr(i*47)*120+5),
-    nuclearGW:+(sr(i*53)*30).toFixed(1),
-    storageGWh:+(sr(i*59)*50+0.5).toFixed(1),
-    gridReliability:+(sr(i*61)*5+94).toFixed(1),
-    policyScore:+(sr(i*67)*30+60).toFixed(0),
-  };
+  const names=['China','USA','India','Germany','Japan','UK','Brazil','France','Australia','South Korea','Spain','Italy','Netherlands','Canada','Mexico','South Africa','Indonesia','Vietnam','Chile','Denmark','Norway','Sweden','Morocco','Egypt','Saudi Arabia','UAE','Thailand','Poland','Turkey','Argentina'];
+  const regions=['Asia Pacific','Americas','Asia Pacific','Europe','Asia Pacific','Europe','Americas','Europe','Asia Pacific','Asia Pacific','Europe','Europe','Europe','Americas','Americas','Middle East & Africa','Asia Pacific','Asia Pacific','Americas','Europe','Europe','Europe','Middle East & Africa','Middle East & Africa','Middle East & Africa','Middle East & Africa','Asia Pacific','Europe','Europe','Americas'];
+  const totalCap=Math.round(50+sr(i*7)*1200);const renewPct=Math.round(15+sr(i*11)*55);const solarGW=Math.round(totalCap*renewPct/100*(sr(i*13)*0.4+0.2));const windGW=Math.round(totalCap*renewPct/100*(sr(i*17)*0.3+0.15));const hydroGW=Math.round(totalCap*renewPct/100-solarGW-windGW);
+  const gridIntensity=Math.round(100+sr(i*19)*600);const coalPct=Math.round(sr(i*23)*50);const gasPct=Math.round(sr(i*29)*(100-coalPct-renewPct));const nuclearPct=Math.round(100-coalPct-gasPct-renewPct);
+  const investBn=+(sr(i*31)*80+2).toFixed(1);const subsidyBn=+(sr(i*37)*20+0.5).toFixed(1);const carbonPrice=Math.round(sr(i*41)*100);const evPct=+(sr(i*43)*30).toFixed(1);
+  const yearly=Array.from({length:6},(_,y)=>({year:2019+y,renewPct:Math.round(renewPct-10+y*3+sr(i*100+y)*3),gridIntensity:Math.round(gridIntensity+50-y*15+sr(i*100+y*3)*20),invest:+(investBn/6+sr(i*100+y*7)*5).toFixed(1)}));
+  return{id:i+1,name:names[i],region:regions[i],totalCapGW:totalCap,renewablePct:renewPct,solarGW,windGW,hydroGW,gridIntensity,coalPct,gasPct,nuclearPct,investBn,subsidyBn,carbonPrice,evPct,storageMW:Math.round(sr(i*47)*5000+100),h2Projects:Math.round(sr(i*49)*30+1),jobsK:Math.round(sr(i*51)*500+20),netZeroTarget:sr(i*53)<0.3?2030:sr(i*53)<0.6?2040:2050,policyScore:Math.round(sr(i*57)*40+60),gridStability:Math.round(sr(i*59)*20+80),curtailment:+(sr(i*61)*8).toFixed(1),yearly};
 });
 
-const CAPACITY=Array.from({length:12},(_,i)=>({year:2013+i,solar:+(sr(i*71)*400+50).toFixed(0),wind:+(sr(i*73)*350+80).toFixed(0),hydro:+(sr(i*79)*20+1100).toFixed(0),nuclear:+(sr(i*83)*10+350).toFixed(0),other:+(sr(i*89)*30+100).toFixed(0)}));
-const FOSSIL=Array.from({length:12},(_,i)=>({year:2013+i,coal:+(sr(i*97)*5+30-i*1.5).toFixed(1),gas:+(sr(i*101)*3+22+i*0.3).toFixed(1),oil:+(sr(i*103)*2+28-i*0.8).toFixed(1)}));
-const GRID=Array.from({length:12},(_,i)=>({year:2013+i,intensity:Math.round(500-i*15+sr(i*107)*30),renewShare:+(25+i*3+sr(i*109)*4).toFixed(1),storageGWh:+(sr(i*113)*200+20+i*40).toFixed(0)}));
-
 export default function EnergyTransitionAnalyticsPage(){
-  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sortCol,setSortCol]=useState('renewablePct');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(0);const[selected,setSelected]=useState(null);const[regionFilter,setRegionFilter]=useState('All');const[minRenew,setMinRenew]=useState(0);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[regionF,setRegionF]=useState('All');const[sortCol,setSortCol]=useState('renewablePct');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
 
-  const doSort=(d,c,dir)=>[...d].sort((a,b)=>dir==='asc'?(a[c]>b[c]?1:-1):(a[c]<b[c]?1:-1));
-  const tog=(col,cur,setC,dir,setD)=>{if(cur===col)setD(dir==='asc'?'desc':'asc');else{setC(col);setD('desc');}};
-  const SH=({label,col,cc,dir,onClick})=>(<th onClick={()=>onClick(col)} style={{padding:'10px 12px',textAlign:'left',cursor:'pointer',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',background:T.surfaceH}}>{label}{cc===col?(dir==='asc'?' \u25B2':' \u25BC'):''}</th>);
-  const kpi=(l,v,s)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:1,minWidth:170}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:26,fontWeight:700,color:T.navy,marginTop:4}}>{v}</div>{s&&<div style={{fontSize:12,color:T.textSec,marginTop:2}}>{s}</div>}</div>);
-  const csv=(data,fn)=>{const h=Object.keys(data[0]);const c=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
-  const regions=['All','Asia','Europe','Americas','Africa','Oceania','Middle East'];
+  const filtered=useMemo(()=>{let d=[...COUNTRIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(regionF!=='All')d=d.filter(r=>r.region===regionF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,regionF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
 
-  const filtered=useMemo(()=>{let d=COUNTRIES.filter(c=>c.country.toLowerCase().includes(search.toLowerCase()));if(regionFilter!=='All')d=d.filter(c=>c.region===regionFilter);d=d.filter(c=>c.renewablePct>=minRenew);return doSort(d,sortCol,sortDir);},[search,regionFilter,minRenew,sortCol,sortDir]);
-  const paged=filtered.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);const tp=Math.ceil(filtered.length/PAGE_SIZE);
+  const stats=useMemo(()=>({count:filtered.length,avgRenew:Math.round(filtered.reduce((s,r)=>s+r.renewablePct,0)/filtered.length||0),totalCap:fmt(filtered.reduce((s,r)=>s+r.totalCapGW,0)),totalInvest:'$'+filtered.reduce((s,r)=>s+r.investBn,0).toFixed(0)+'B',avgIntensity:Math.round(filtered.reduce((s,r)=>s+r.gridIntensity,0)/filtered.length||0),totalSolar:fmt(filtered.reduce((s,r)=>s+r.solarGW,0)),totalWind:fmt(filtered.reduce((s,r)=>s+r.windGW,0))}),[filtered]);
 
-  const renderDashboard=()=>(<div>
-    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-      {kpi('Countries',filtered.length)}
-      {kpi('Avg Renewable',(filtered.reduce((a,c)=>a+c.renewablePct,0)/filtered.length||0).toFixed(1)+'%')}
-      {kpi('Total Solar',fmt(filtered.reduce((a,c)=>a+c.solarGW,0))+' GW')}
-      {kpi('Total Wind',fmt(filtered.reduce((a,c)=>a+c.windGW,0))+' GW')}
-      {kpi('Total Investment','$'+fmt(filtered.reduce((a,c)=>a+c.investment,0))+'B')}
-    </div>
-    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-      <input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search countries..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
-      <select value={regionFilter} onChange={e=>{setRegionFilter(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>{regions.map(r=><option key={r}>{r}</option>)}</select>
-      <div style={{fontSize:12,color:T.textSec,display:'flex',alignItems:'center',gap:8}}>Min renewable: {minRenew}%<input type="range" min={0} max={60} value={minRenew} onChange={e=>setMinRenew(+e.target.value)} style={{width:100}}/></div>
-      <button onClick={()=>csv(filtered,'energy_transition.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
-    </div>
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Renewable Share by Country</div><ResponsiveContainer width="100%" height={300}><BarChart data={filtered.slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="country" tick={{fontSize:9,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="renewablePct" name="Renewable %">{filtered.slice(0,15).map((c,i)=><Cell key={i} fill={c.renewablePct>40?T.green:c.renewablePct>20?T.gold:T.red}/>)}</Bar></BarChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Investment vs Grid Intensity</div><ResponsiveContainer width="100%" height={300}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="investment" name="Investment $B" tick={{fontSize:10,fill:T.textSec}}/><YAxis dataKey="gridIntensity" name="gCO2/kWh" tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered} fill={T.navy} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer></div>
-    </div>
-    <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-      <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}><thead><tr>
-        {[['Country','country'],['Region','region'],['Renew %','renewablePct'],['Solar GW','solarGW'],['Wind GW','windGW'],['Grid g/kWh','gridIntensity'],['Invest $B','investment'],['EV Share %','evShare'],['Policy','policyScore']].map(([l,c])=><SH key={c} label={l} col={c} cc={sortCol} dir={sortDir} onClick={c2=>tog(c2,sortCol,setSortCol,sortDir,setSortDir)}/>)}
-      </tr></thead><tbody>
-        {paged.map((c,i)=>(<React.Fragment key={c.id}>
-          <tr onClick={()=>setSelected(selected===c.id?null:c.id)} style={{cursor:'pointer',background:selected===c.id?T.surfaceH:i%2===0?T.surface:'#fafaf8'}}>
-            <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{c.country}</td>
-            <td style={{padding:'10px 12px',color:T.textSec,fontSize:12}}>{c.region}</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono,color:c.renewablePct>40?T.green:c.renewablePct>20?T.gold:T.red,fontWeight:600}}>{c.renewablePct}%</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{c.solarGW}</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{c.windGW}</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{c.gridIntensity}</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>${c.investment}B</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono}}>{c.evShare}%</td>
-            <td style={{padding:'10px 12px',fontFamily:T.mono,fontWeight:600}}>{c.policyScore}</td>
-          </tr>
-          {selected===c.id&&(<tr><td colSpan={9} style={{padding:20,background:T.surfaceH,borderTop:`1px solid ${T.border}`}}><div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12}}>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Hydro GW</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{c.hydroGW}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Nuclear GW</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{c.nuclearGW}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Coal Exit</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{c.coalPhaseOut}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Carbon $/t</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>${c.carbonPrice}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>H2 Plan</span><div style={{fontSize:16,fontWeight:700,color:c.hydrogenPlan==='Active'?T.green:T.amber}}>{c.hydrogenPlan}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Storage GWh</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{c.storageGWh}</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Grid Reliability</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{c.gridReliability}%</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Jobs Created K</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{c.jobsCreated}K</div></div>
-            <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Emissions Red %</span><div style={{fontSize:16,fontWeight:700,color:T.green}}>{c.emissionsReduction}%</div></div>
-          </div></td></tr>)}
-        </React.Fragment>))}
-      </tbody></table>
-    </div>
-    <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><span style={{fontSize:12,color:T.textMut}}>{filtered.length} countries</span><div style={{display:'flex',gap:6}}><button disabled={page===0} onClick={()=>setPage(page-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,opacity:page===0?0.4:1,cursor:page===0?'default':'pointer'}}>Prev</button><span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{page+1}/{tp||1}</span><button disabled={page>=tp-1} onClick={()=>setPage(page+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,opacity:page>=tp-1?0.4:1,cursor:page>=tp-1?'default':'pointer'}}>Next</button></div></div>
-  </div>);
+  const regionMix=useMemo(()=>{const m={};COUNTRIES.forEach(c=>{if(!m[c.region])m[c.region]={region:c.region,renew:0,coal:0,gas:0,nuclear:0,n:0};m[c.region].renew+=c.renewablePct;m[c.region].coal+=c.coalPct;m[c.region].gas+=c.gasPct;m[c.region].nuclear+=c.nuclearPct;m[c.region].n++;});return Object.values(m).map(r=>({region:r.region,renewable:Math.round(r.renew/r.n),coal:Math.round(r.coal/r.n),gas:Math.round(r.gas/r.n),nuclear:Math.round(r.nuclear/r.n)}));},[]);
 
-  const renderCapacity=()=>(<div>
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Global Renewable Capacity (GW)</div><ResponsiveContainer width="100%" height={300}><AreaChart data={CAPACITY}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="solar" stackId="1" stroke={T.gold} fill={T.gold} fillOpacity={0.4} name="Solar"/><Area type="monotone" dataKey="wind" stackId="1" stroke={T.navy} fill={T.navy} fillOpacity={0.3} name="Wind"/><Area type="monotone" dataKey="hydro" stackId="1" stroke={T.sage} fill={T.sage} fillOpacity={0.2} name="Hydro"/><Legend/></AreaChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Technology Mix (Latest)</div><ResponsiveContainer width="100%" height={300}><PieChart><Pie data={[{name:'Solar',value:+CAPACITY[11].solar},{name:'Wind',value:+CAPACITY[11].wind},{name:'Hydro',value:+CAPACITY[11].hydro},{name:'Nuclear',value:+CAPACITY[11].nuclear},{name:'Other',value:+CAPACITY[11].other}]} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} style={{fontSize:10}}>{[0,1,2,3,4].map(j=><Cell key={j} fill={CC[j]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
-    </div>
-    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Country Capacity Radar</div><ResponsiveContainer width="100%" height={300}><RadarChart data={filtered.slice(0,8).map(c=>({country:c.country,solar:c.solarGW,wind:c.windGW,hydro:c.hydroGW}))}><PolarGrid stroke={T.borderL}/><PolarAngleAxis dataKey="country" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}}/><Radar dataKey="solar" stroke={T.gold} fill={T.gold} fillOpacity={0.2} name="Solar"/><Radar dataKey="wind" stroke={T.navy} fill={T.navy} fillOpacity={0.2} name="Wind"/><Legend/></RadarChart></ResponsiveContainer></div>
-  </div>);
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]).filter(k=>k!=='yearly');const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
 
-  const renderFossil=()=>(<div>
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Global Fossil Fuel Share (%)</div><ResponsiveContainer width="100%" height={300}><AreaChart data={FOSSIL}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="coal" stroke={T.red} fill={T.red} fillOpacity={0.2} name="Coal"/><Area type="monotone" dataKey="gas" stroke={T.amber} fill={T.amber} fillOpacity={0.2} name="Gas"/><Area type="monotone" dataKey="oil" stroke={T.navy} fill={T.navy} fillOpacity={0.2} name="Oil"/><Legend/></AreaChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Coal Phase-Out Timeline</div><ResponsiveContainer width="100%" height={300}><BarChart data={filtered.filter(c=>c.coalPhaseOut<=2040).sort((a,b)=>a.coalPhaseOut-b.coalPhaseOut).slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="country" tick={{fontSize:9,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}} domain={[2025,2045]}/><Tooltip {...tip}/><Bar dataKey="coalPhaseOut" fill={T.red} name="Phase-out Year"/></BarChart></ResponsiveContainer></div>
-    </div>
-    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Fossil vs Renewable Split</div><ResponsiveContainer width="100%" height={250}><BarChart data={filtered.slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="country" tick={{fontSize:9,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="renewablePct" stackId="a" fill={T.green} name="Renewable"/><Bar dataKey="fossilPct" stackId="a" fill={T.red} name="Fossil"/><Legend/></BarChart></ResponsiveContainer></div>
-  </div>);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};
+  const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
+  const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
+  const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});
+  const pgB={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
+  const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:140}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
 
-  const renderGrid=()=>(<div>
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Grid Carbon Intensity (gCO2/kWh)</div><ResponsiveContainer width="100%" height={300}><LineChart data={GRID}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Line type="monotone" dataKey="intensity" stroke={T.red} strokeWidth={2} name="Intensity"/></LineChart></ResponsiveContainer></div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Storage Capacity & Renewable Share</div><ResponsiveContainer width="100%" height={300}><LineChart data={GRID}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textSec}}/><YAxis yAxisId="l" tick={{fontSize:10,fill:T.textSec}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Line yAxisId="l" type="monotone" dataKey="storageGWh" stroke={T.navy} strokeWidth={2} name="Storage GWh"/><Line yAxisId="r" type="monotone" dataKey="renewShare" stroke={T.green} strokeWidth={2} name="Renewable %"/><Legend/></LineChart></ResponsiveContainer></div>
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:460,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><div style={{fontSize:12,color:T.textSec}}>{item.region} | Net Zero: {item.netZeroTarget}</div></div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>\u2715</button></div>
+    <div style={{padding:'16px 24px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:16}}>{[['Total Cap',item.totalCapGW+' GW'],['Renewable',item.renewablePct+'%'],['Solar',item.solarGW+' GW'],['Wind',item.windGW+' GW'],['Hydro',item.hydroGW+' GW'],['Grid Intensity',item.gridIntensity+' g/kWh'],['Coal',item.coalPct+'%'],['Gas',item.gasPct+'%'],['Nuclear',item.nuclearPct+'%'],['Investment','$'+item.investBn+'B'],['Carbon Price','$'+item.carbonPrice+'/t'],['EV Share',item.evPct+'%'],['Storage',item.storageMW+' MW'],['H2 Projects',item.h2Projects],['Jobs',item.jobsK+'K']].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Energy Mix</div><ResponsiveContainer width="100%" height={180}><PieChart><Pie data={[{n:'Renewable',v:item.renewablePct},{n:'Coal',v:item.coalPct},{n:'Gas',v:item.gasPct},{n:'Nuclear',v:item.nuclearPct}]} cx="50%" cy="50%" outerRadius={65} dataKey="v" label={({n,v})=>`${n}: ${v}%`}>{[T.green,T.red,T.amber,T.navy].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+      <div style={{...cS,marginTop:12}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Transition Trend</div><ResponsiveContainer width="100%" height={180}><LineChart data={item.yearly}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Line type="monotone" dataKey="renewPct" stroke={T.green} name="Renewable %" strokeWidth={2}/><Line type="monotone" dataKey="gridIntensity" stroke={T.red} name="Grid gCO2/kWh" strokeWidth={2}/><Legend/></LineChart></ResponsiveContainer></div>
+    </div></div>);};
+
+  const renderDash=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Countries',stats.count)}{kpi('Avg Renewable',stats.avgRenew+'%',T.green)}{kpi('Total Capacity',stats.totalCap+' GW')}{kpi('Total Investment',stats.totalInvest)}{kpi('Avg Grid Intensity',stats.avgIntensity+' g')}{kpi('Solar',stats.totalSolar+' GW')}{kpi('Wind',stats.totalWind+' GW')}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search countries..." style={inpS}/><select value={regionF} onChange={e=>{setRegionF(e.target.value);setPage(1);}} style={selS}>{REGIONF.map(s=><option key={s}>{s}</option>)}</select><button onClick={()=>exportCSV(filtered,'energy_transition.csv')} style={btnS(false)}>Export CSV</button></div>
+    <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['name','Country'],['region','Region'],['totalCapGW','Cap GW'],['renewablePct','Renew%'],['gridIntensity','gCO2/kWh'],['investBn','Invest $B'],['carbonPrice','CO2 $/t'],['netZeroTarget','NZ Target']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{paged.map(r=><tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.name}</span></td><td style={tdS}>{r.region}</td><td style={tdS}>{r.totalCapGW}</td><td style={tdS}><span style={{color:r.renewablePct>40?T.green:r.renewablePct>20?T.amber:T.red,fontWeight:600}}>{r.renewablePct}%</span></td><td style={tdS}>{r.gridIntensity}</td><td style={tdS}>${r.investBn}B</td><td style={tdS}>${r.carbonPrice}</td><td style={tdS}>{r.netZeroTarget}</td></tr>)}</tbody></table></div>
+    {totalPages>1&&<div style={{display:'flex',gap:6,marginTop:12,alignItems:'center',justifyContent:'center'}}><button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Page {page}/{totalPages}</span><button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={pgB}>&raquo;</button></div>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Energy Mix by Region</div><ResponsiveContainer width="100%" height={260}><BarChart data={regionMix}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:8,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="renewable" fill={T.green} stackId="a" name="Renewable"/><Bar dataKey="coal" fill={T.red} stackId="a" name="Coal"/><Bar dataKey="gas" fill={T.amber} stackId="a" name="Gas"/><Bar dataKey="nuclear" fill={T.navy} stackId="a" name="Nuclear"/><Legend/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Renewable % vs Grid Intensity</div><ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Renewable %" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="gCO2/kWh" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(c=>({name:c.name,x:c.renewablePct,y:c.gridIntensity}))} fill={T.green} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
     </div>
   </div>);
 
-  return(<div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px',color:T.text}}>
-    <div style={{marginBottom:24}}><div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,letterSpacing:1,textTransform:'uppercase'}}>Global Energy Intelligence</div><h1 style={{fontSize:28,fontWeight:700,color:T.navy,margin:'4px 0 0'}}>Energy Transition Analytics</h1></div>
-    <div style={{display:'flex',gap:4,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${T.gold}`:'2px solid transparent',background:tab===i?T.surface:'transparent',color:tab===i?T.navy:T.textSec,fontFamily:T.font,fontSize:13,fontWeight:tab===i?600:400,cursor:'pointer',marginBottom:-2}}>{t}</button>)}</div>
-    {tab===0&&renderDashboard()}{tab===1&&renderCapacity()}{tab===2&&renderFossil()}{tab===3&&renderGrid()}
+  const renderRenew=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Solar Capacity (Top 15)</div><ResponsiveContainer width="100%" height={300}><BarChart data={[...COUNTRIES].sort((a,b)=>b.solarGW-a.solarGW).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:9,fill:T.textSec}} width={70}/><Tooltip {...tip}/><Bar dataKey="solarGW" fill={T.amber} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Wind Capacity (Top 15)</div><ResponsiveContainer width="100%" height={300}><BarChart data={[...COUNTRIES].sort((a,b)=>b.windGW-a.windGW).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:9,fill:T.textSec}} width={70}/><Tooltip {...tip}/><Bar dataKey="windGW" fill={T.navy} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Storage & H2 Landscape</div><ResponsiveContainer width="100%" height={280}><BarChart data={[...COUNTRIES].sort((a,b)=>b.storageMW-a.storageMW).slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec}} angle={-30}/><YAxis yAxisId="l" tick={{fontSize:9,fill:T.textSec}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar yAxisId="l" dataKey="storageMW" fill={T.gold} name="Storage MW"/><Bar yAxisId="r" dataKey="h2Projects" fill={T.sage} name="H2 Projects"/><Legend/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+
+  const renderGrid=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Grid Intensity Ranking</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...filtered].sort((a,b)=>b.gridIntensity-a.gridIntensity).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:9,fill:T.textSec}} width={70}/><Tooltip {...tip}/><Bar dataKey="gridIntensity" fill={T.red} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Coal Phase-out Progress</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...filtered].sort((a,b)=>b.coalPct-a.coalPct).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><YAxis type="category" dataKey="name" tick={{fontSize:9,fill:T.textSec}} width={70}/><Tooltip {...tip}/><Bar dataKey="coalPct" fill={T.red} radius={[0,4,4,0]} name="Coal %"/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+
+  const renderInvest=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Investment Ranking ($B)</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...filtered].sort((a,b)=>b.investBn-a.investBn).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:9,fill:T.textSec}} width={70}/><Tooltip {...tip}/><Bar dataKey="investBn" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Carbon Price Landscape</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...COUNTRIES].filter(c=>c.carbonPrice>0).sort((a,b)=>b.carbonPrice-a.carbonPrice)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:9,fill:T.textSec}} width={70}/><Tooltip {...tip}/><Bar dataKey="carbonPrice" fill={T.gold} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Investment vs Renewable Share</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Investment $B" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Renewable %" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(c=>({name:c.name,x:c.investBn,y:c.renewablePct}))} fill={ACCENT} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+  </div></div>);
+
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Energy Transition Analytics</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>30 countries | Renewable capacity, grid decarb, investment flows</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderRenew()}{tab===2&&renderGrid()}{tab===3&&renderInvest()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
   </div>);
 }

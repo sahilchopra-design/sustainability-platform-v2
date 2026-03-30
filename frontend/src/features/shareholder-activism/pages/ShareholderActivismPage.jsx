@@ -1,389 +1,61 @@
-import React, { useState } from 'react';
-import { AreaChart, Area, BarChart, Bar, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const ACCENT = '#0ea5e9';
-const tip = { contentStyle:{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, color:T.text }, labelStyle:{ color:T.textSec } };
-const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
-
-const TABS = ['Overview','Campaign Database','Proxy Voting','Resolution Tracker','Engagement Outcomes'];
-
-const MONTHS_24 = Array.from({length:24},(_,i)=>{const d=new Date(2022,3+i);return d.toLocaleString('default',{month:'short',year:'2-digit'});});
-
-const campaignTrend = MONTHS_24.map((m,i)=>({ month:m, campaigns: Math.round(28+sr(i*3)*22) }));
-
-const recentCampaigns = [
-  {activist:'Activist A',target:'Company A',demand:'Board Refresh',type:'Governance',status:'Won',value:4.2},
-  {activist:'Activist B',target:'Company B',demand:'Net Zero Commitment',type:'ESG',status:'Ongoing',value:8.7},
-  {activist:'Activist C',target:'Company C',demand:'Strategic Review',type:'Financial',status:'Won',value:12.1},
-  {activist:'Activist D',target:'Company D',demand:'Deforestation Policy',type:'ESG',status:'Withdrawn',value:3.5},
-  {activist:'Activist E',target:'Company E',demand:'CEO Replacement',type:'Governance',status:'Lost',value:6.8},
-  {activist:'Activist F',target:'Company F',demand:'Climate Disclosure',type:'ESG',status:'Won',value:9.3},
-  {activist:'Activist G',target:'Company G',demand:'Capital Return',type:'Financial',status:'Ongoing',value:5.4},
-  {activist:'Activist H',target:'Company H',demand:'Supply Chain Audit',type:'ESG',status:'Won',value:2.9},
-];
-
-const campaigns = [
-  {activist:'Elliott',sector:'Energy',demand:'Strategy',esg:'N',seats:3,settled:'Y'},
-  {activist:'Starboard',sector:'Technology',demand:'Board Change',esg:'N',seats:2,settled:'N'},
-  {activist:'Engine No. 1',sector:'Oil & Gas',demand:'ESG',esg:'Y',seats:3,settled:'Y'},
-  {activist:'Follow This',sector:'Energy',demand:'ESG',esg:'Y',seats:0,settled:'N'},
-  {activist:'Bluebell',sector:'Consumer',demand:'Strategy',esg:'Y',seats:1,settled:'Y'},
-  {activist:'Third Point',sector:'Financials',demand:'M&A',esg:'N',seats:2,settled:'Y'},
-  {activist:'Jana Partners',sector:'Tech',demand:'ESG',esg:'Y',seats:1,settled:'Y'},
-  {activist:'ValueAct',sector:'Healthcare',demand:'Board Change',esg:'N',seats:2,settled:'N'},
-  {activist:'Sachem Head',sector:'Industrials',demand:'Capital Return',esg:'N',seats:0,settled:'Y'},
-  {activist:'Ancora',sector:'Auto',demand:'Strategy',esg:'Y',seats:1,settled:'Y'},
-];
-
-const demandTypes = [
-  {demand:'Strategy',count:38},
-  {demand:'Board Change',count:29},
-  {demand:'ESG',count:47},
-  {demand:'M&A',count:21},
-  {demand:'Capital Return',count:33},
-];
-const DEMAND_COLORS = [ACCENT, T.amber, T.green, T.teal, T.gold];
-
-const investors = [
-  {name:'BlackRock',aum:10.0,esgVote:82,sayOnPay:18,climate:74,meetings:2800},
-  {name:'Vanguard',aum:8.1,esgVote:71,sayOnPay:12,climate:61,meetings:1900},
-  {name:'State Street',aum:4.1,esgVote:85,sayOnPay:22,climate:79,meetings:1400},
-  {name:'Norges Bank',aum:1.6,esgVote:91,sayOnPay:31,climate:88,meetings:3200},
-  {name:'CalPERS',aum:0.46,esgVote:94,sayOnPay:38,climate:92,meetings:780},
-  {name:'AP Funds',aum:0.2,esgVote:89,sayOnPay:27,climate:85,meetings:620},
-  {name:'LGIM',aum:1.8,esgVote:88,sayOnPay:29,climate:83,meetings:1100},
-  {name:'Amundi',aum:2.0,esgVote:76,sayOnPay:19,climate:68,meetings:940},
-];
-
-const esgSupportTrend = MONTHS_24.map((m,i)=>({ month:m, support: Math.round(42+sr(i*7)*18) }));
-
-const resolutions = [
-  {type:'Climate Target Setting',filed:142,support:48,majority:31,implemented:24},
-  {type:'Board Diversity',filed:98,support:61,majority:52,implemented:38},
-  {type:'Executive Pay',filed:134,support:39,majority:28,implemented:19},
-  {type:'Deforestation',filed:67,support:44,majority:29,implemented:22},
-  {type:'Lobbying Disclosure',filed:89,support:52,majority:43,implemented:31},
-  {type:'Political Donations',filed:74,support:35,majority:21,implemented:15},
-  {type:'Human Rights DD',filed:81,support:41,majority:26,implemented:20},
-  {type:'Net Zero by 2050',filed:127,support:57,majority:46,implemented:33},
-];
-
-const engagements = [
-  {company:'Company A',issue:'Scope 3 Emissions',duration:'8 months',outcome:'Policy Change',value:2.1,scoreImprove:5.2},
-  {company:'Company B',issue:'Board Gender Diversity',duration:'5 months',outcome:'Board Appointment',value:0.8,scoreImprove:3.8},
-  {company:'Company C',issue:'Supply Chain Labour',duration:'12 months',outcome:'Disclosure Improvement',value:1.4,scoreImprove:4.5},
-  {company:'Company D',issue:'Water Stewardship',duration:'7 months',outcome:'Policy Change',value:0.6,scoreImprove:3.1},
-  {company:'Company E',issue:'Deforestation Risk',duration:'10 months',outcome:'No Change',value:0.0,scoreImprove:0.4},
-  {company:'Company F',issue:'Executive Pay Alignment',duration:'6 months',outcome:'Disclosure Improvement',value:1.2,scoreImprove:2.9},
-];
-
-const esgScoreTrend = MONTHS_24.map((m,i)=>({ month:m, score: +(42+sr(i*5)*6+i*0.25).toFixed(1) }));
-
-const priItems = [
-  'Principle 1: Active ownership integrated into investment policy',
-  'Principle 2: Voting policy publicly disclosed and applied',
-  'Principle 3: Engagement activities reported annually',
-  'Principle 4: Collaborative engagement initiatives participated in',
-  'Principle 5: Conflicts of interest managed and disclosed',
-  'Principle 6: Stewardship activities subject to periodic review',
-];
-
-const statusColor = s => s==='Won'?T.green:s==='Ongoing'?ACCENT:s==='Withdrawn'?T.amber:T.red;
-const outcomeColor = o => o==='Policy Change'?T.green:o==='Board Appointment'?ACCENT:o==='Disclosure Improvement'?T.teal:T.textMut;
-
-const Card = ({label,value,sub})=>(
-  <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:'18px 20px',flex:1,minWidth:160}}>
-    <div style={{fontSize:22,fontWeight:700,color:ACCENT}}>{value}</div>
-    <div style={{fontSize:13,color:T.text,marginTop:4}}>{label}</div>
-    {sub&&<div style={{fontSize:11,color:T.textMut,marginTop:2}}>{sub}</div>}
-  </div>
-);
-
-const Stat = ({label,value})=>(
-  <div style={{background:T.navy,border:'1px solid '+T.border,borderRadius:8,padding:'14px 18px',textAlign:'center'}}>
-    <div style={{fontSize:20,fontWeight:700,color:ACCENT}}>{value}</div>
-    <div style={{fontSize:12,color:T.textSec,marginTop:3}}>{label}</div>
-  </div>
-);
-
-export default function ShareholderActivismPage() {
-  const [tab, setTab] = useState(0);
-
-  return (
-    <div style={{background:T.bg,minHeight:'100vh',fontFamily:T.font,color:T.text,padding:'24px'}}>
-      <div style={{marginBottom:24}}>
-        <h1 style={{fontSize:24,fontWeight:700,margin:0}}>Shareholder Activism &amp; Engagement</h1>
-        <p style={{color:T.textSec,margin:'4px 0 0',fontSize:14}}>EP-AE3 · Campaign tracking, proxy voting, and engagement outcomes</p>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{display:'flex',gap:0,borderBottom:'1px solid '+T.border,marginBottom:24}}>
-        {TABS.map((t,i)=>(
-          <button key={t} onClick={()=>setTab(i)} style={{background:'none',border:'none',borderBottom:tab===i?'2px solid '+ACCENT:'2px solid transparent',color:tab===i?ACCENT:T.textSec,cursor:'pointer',fontFamily:T.font,fontSize:13,fontWeight:600,padding:'10px 18px',transition:'color .2s'}}>
-            {t}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab 1 — Overview */}
-      {tab===0&&(
-        <div style={{display:'flex',flexDirection:'column',gap:20}}>
-          <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-            <Card label="Activist Campaigns 2023" value="847" />
-            <Card label="AUM Activists" value="$380bn" />
-            <Card label="ESG Proposals" value="62%" sub="of all campaigns" />
-            <Card label="Success Rate" value="43%" />
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Recent Campaigns</div>
-            <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
-              <thead>
-                <tr style={{color:T.textSec,borderBottom:'1px solid '+T.border}}>
-                  {['Activist','Target','Demand','Type','Status','Value ($bn)'].map(h=>(
-                    <th key={h} style={{textAlign:'left',padding:'6px 10px',fontWeight:600}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {recentCampaigns.map((r,i)=>(
-                  <tr key={i} style={{borderBottom:'1px solid '+T.border+'44'}}>
-                    <td style={{padding:'8px 10px'}}>{r.activist}</td>
-                    <td style={{padding:'8px 10px',color:T.textSec}}>{r.target}</td>
-                    <td style={{padding:'8px 10px'}}>{r.demand}</td>
-                    <td style={{padding:'8px 10px'}}><span style={{background:r.type==='ESG'?T.green+'22':r.type==='Governance'?ACCENT+'22':T.amber+'22',color:r.type==='ESG'?T.green:r.type==='Governance'?ACCENT:T.amber,borderRadius:4,padding:'2px 8px',fontSize:11}}>{r.type}</span></td>
-                    <td style={{padding:'8px 10px'}}><span style={{color:statusColor(r.status),fontWeight:600}}>{r.status}</span></td>
-                    <td style={{padding:'8px 10px',color:ACCENT}}>{r.value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Campaign Count Trend (24-Month)</div>
-            <ResponsiveContainer width="100%" height={180}>
-              <AreaChart data={campaignTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{fill:T.textMut,fontSize:11}} interval={3} />
-                <YAxis tick={{fill:T.textMut,fontSize:11}} />
-                <Tooltip {...tip} />
-                <Area type="monotone" dataKey="campaigns" stroke={ACCENT} fill={ACCENT+'33'} name="Campaigns" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2 — Campaign Database */}
-      {tab===1&&(
-        <div style={{display:'flex',flexDirection:'column',gap:20}}>
-          <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-            <Stat label="Avg Campaign Duration" value="14 mo" />
-            <Stat label="Board Seats Won" value="234" />
-            <Stat label="ESG Settlements" value="41%" />
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Active Campaigns</div>
-            <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
-              <thead>
-                <tr style={{color:T.textSec,borderBottom:'1px solid '+T.border}}>
-                  {['Activist','Sector','Demand','ESG Focus','Board Seats','Settled'].map(h=>(
-                    <th key={h} style={{textAlign:'left',padding:'6px 10px',fontWeight:600}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {campaigns.map((c,i)=>(
-                  <tr key={i} style={{borderBottom:'1px solid '+T.border+'44'}}>
-                    <td style={{padding:'8px 10px',fontWeight:600}}>{c.activist}</td>
-                    <td style={{padding:'8px 10px',color:T.textSec}}>{c.sector}</td>
-                    <td style={{padding:'8px 10px'}}>{c.demand}</td>
-                    <td style={{padding:'8px 10px'}}><span style={{color:c.esg==='Y'?T.green:T.textMut,fontWeight:600}}>{c.esg==='Y'?'Yes':'No'}</span></td>
-                    <td style={{padding:'8px 10px',color:ACCENT}}>{c.seats}</td>
-                    <td style={{padding:'8px 10px'}}><span style={{color:c.settled==='Y'?T.green:T.amber,fontWeight:600}}>{c.settled==='Y'?'Yes':'No'}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Campaigns by Demand Type</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={demandTypes}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="demand" tick={{fill:T.textMut,fontSize:12}} />
-                <YAxis tick={{fill:T.textMut,fontSize:11}} />
-                <Tooltip {...tip} />
-                <Bar dataKey="count" name="Campaigns" radius={[4,4,0,0]}>
-                  {demandTypes.map((_,i)=><Cell key={i} fill={DEMAND_COLORS[i%DEMAND_COLORS.length]} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3 — Proxy Voting */}
-      {tab===2&&(
-        <div style={{display:'flex',flexDirection:'column',gap:20}}>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Institutional Investor Voting Profiles</div>
-            <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
-              <thead>
-                <tr style={{color:T.textSec,borderBottom:'1px solid '+T.border}}>
-                  {['Investor','AUM ($T)','ESG Vote %','Say-on-Pay Opp %','Climate Res %','Engagements/yr'].map(h=>(
-                    <th key={h} style={{textAlign:'left',padding:'6px 10px',fontWeight:600}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {investors.map((inv,i)=>(
-                  <tr key={i} style={{borderBottom:'1px solid '+T.border+'44'}}>
-                    <td style={{padding:'8px 10px',fontWeight:600}}>{inv.name}</td>
-                    <td style={{padding:'8px 10px',color:T.textSec}}>{inv.aum}</td>
-                    <td style={{padding:'8px 10px',color:inv.esgVote>=80?T.green:inv.esgVote>=60?T.amber:ACCENT,fontWeight:600}}>{inv.esgVote}%</td>
-                    <td style={{padding:'8px 10px'}}>{inv.sayOnPay}%</td>
-                    <td style={{padding:'8px 10px',color:ACCENT}}>{inv.climate}%</td>
-                    <td style={{padding:'8px 10px',color:T.textSec}}>{inv.meetings.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>ESG Vote Rate by Investor</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={investors}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{fill:T.textMut,fontSize:11}} />
-                <YAxis domain={[0,100]} tick={{fill:T.textMut,fontSize:11}} unit="%" />
-                <Tooltip {...tip} formatter={v=>[v+'%','ESG Vote Rate']} />
-                <Bar dataKey="esgVote" name="ESG Vote %" radius={[4,4,0,0]}>
-                  {investors.map((inv,i)=><Cell key={i} fill={inv.esgVote>=80?T.green:inv.esgVote>=60?T.amber:ACCENT} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>ESG Resolution Support Trend (24-Month)</div>
-            <ResponsiveContainer width="100%" height={160}>
-              <LineChart data={esgSupportTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{fill:T.textMut,fontSize:11}} interval={3} />
-                <YAxis tick={{fill:T.textMut,fontSize:11}} unit="%" />
-                <Tooltip {...tip} formatter={v=>[v+'%','Support']} />
-                <Line type="monotone" dataKey="support" stroke={T.green} dot={false} strokeWidth={2} name="Support %" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4 — Resolution Tracker */}
-      {tab===3&&(
-        <div style={{display:'flex',flexDirection:'column',gap:20}}>
-          <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-            <Stat label="Total ESG Resolutions 2023" value="812" />
-            <Stat label="Avg Support" value="34%" />
-            <Stat label="Implemented Post-Vote" value="28%" />
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Shareholder Resolution Types</div>
-            <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
-              <thead>
-                <tr style={{color:T.textSec,borderBottom:'1px solid '+T.border}}>
-                  {['Resolution Type','Filed 2023','Avg Support %','Majority Votes %','Implementation %'].map(h=>(
-                    <th key={h} style={{textAlign:'left',padding:'6px 10px',fontWeight:600}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {resolutions.map((r,i)=>(
-                  <tr key={i} style={{borderBottom:'1px solid '+T.border+'44'}}>
-                    <td style={{padding:'8px 10px',fontWeight:600}}>{r.type}</td>
-                    <td style={{padding:'8px 10px',color:T.textSec}}>{r.filed}</td>
-                    <td style={{padding:'8px 10px',color:r.support>=50?T.green:r.support>=30?T.amber:ACCENT,fontWeight:600}}>{r.support}%</td>
-                    <td style={{padding:'8px 10px'}}>{r.majority}%</td>
-                    <td style={{padding:'8px 10px',color:T.teal}}>{r.implemented}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Avg Support % by Resolution Type</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={resolutions} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis type="number" domain={[0,80]} tick={{fill:T.textMut,fontSize:11}} unit="%" />
-                <YAxis type="category" dataKey="type" tick={{fill:T.textMut,fontSize:10}} width={140} />
-                <Tooltip {...tip} formatter={v=>[v+'%','Avg Support']} />
-                <Bar dataKey="support" name="Avg Support %" radius={[0,4,4,0]}>
-                  {resolutions.map((r,i)=><Cell key={i} fill={r.support>=50?T.green:r.support>=30?T.amber:ACCENT} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5 — Engagement Outcomes */}
-      {tab===4&&(
-        <div style={{display:'flex',flexDirection:'column',gap:20}}>
-          <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-            <Stat label="Companies Engaged 2023" value="2,847" />
-            <Stat label="Successful Outcomes" value="67%" />
-            <Stat label="Avg ESG Score Improvement" value="+4.2 pts" />
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Engagement Case Studies</div>
-            <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
-              <thead>
-                <tr style={{color:T.textSec,borderBottom:'1px solid '+T.border}}>
-                  {['Company','Issue Raised','Duration','Outcome','Value ($bn)','ESG Score +'].map(h=>(
-                    <th key={h} style={{textAlign:'left',padding:'6px 10px',fontWeight:600}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {engagements.map((e,i)=>(
-                  <tr key={i} style={{borderBottom:'1px solid '+T.border+'44'}}>
-                    <td style={{padding:'8px 10px',fontWeight:600}}>{e.company}</td>
-                    <td style={{padding:'8px 10px',color:T.textSec}}>{e.issue}</td>
-                    <td style={{padding:'8px 10px'}}>{e.duration}</td>
-                    <td style={{padding:'8px 10px'}}><span style={{color:outcomeColor(e.outcome),fontWeight:600}}>{e.outcome}</span></td>
-                    <td style={{padding:'8px 10px',color:ACCENT}}>{e.value>0?e.value:'—'}</td>
-                    <td style={{padding:'8px 10px',color:e.scoreImprove>=4?T.green:T.amber}}>+{e.scoreImprove}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>Portfolio ESG Score Improvement (24-Month)</div>
-            <ResponsiveContainer width="100%" height={160}>
-              <LineChart data={esgScoreTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{fill:T.textMut,fontSize:11}} interval={3} />
-                <YAxis tick={{fill:T.textMut,fontSize:11}} domain={['auto','auto']} />
-                <Tooltip {...tip} formatter={v=>[v,'ESG Score']} />
-                <Line type="monotone" dataKey="score" stroke={T.sage} dot={false} strokeWidth={2} name="ESG Score" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{background:T.surface,border:'1px solid '+T.border,borderRadius:10,padding:20}}>
-            <div style={{fontSize:14,fontWeight:600,marginBottom:12}}>PRI Responsible Investment Stewardship Compliance</div>
-            <div style={{display:'flex',flexDirection:'column',gap:8}}>
-              {priItems.map((item,i)=>(
-                <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',background:T.navy,borderRadius:6,fontSize:13}}>
-                  <span style={{color:T.green,fontWeight:700,fontSize:15}}>✓</span>
-                  <span style={{color:T.text}}>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#0ea5e9';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899'];
+const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(0):v;
+const TABS=['Campaign Dashboard','Active Campaigns','Activist Profiles','Outcome Analysis'];const SECTORS=['All','Technology','Energy','Financials','Healthcare','Consumer','Industrials','Materials'];const PAGE=12;
+const ACTIVISTS=['Elliott Management','Carl Icahn','Third Point','ValueAct','Trian Partners','Starboard Value','JANA Partners','Pershing Square','Engaged Capital','Sachem Head','Cevian Capital','TCI Fund','Bluebell Capital','Follow This','Engine No.1','Inclusive Capital','Green Century','As You Sow','ShareAction','Impax Asset'];
+const CAMPAIGNS=Array.from({length:60},(_,i)=>{
+  const targets=['ExxonMobil','Shell','Chevron','Disney','Salesforce','PayPal','Alphabet','Meta','Amazon','Walmart','J&J','P&G','Unilever','Nestle','BHP','Rio Tinto','BP','TotalEnergies','Barclays','HSBC','Citigroup','Goldman Sachs','JPMorgan','McDonalds','Starbucks','Coca-Cola','PepsiCo','Nike','Toyota','Samsung','Microsoft','Apple','Intel','IBM','GE','Boeing','Lockheed','Caterpillar','3M','DuPont','Dow','BASF','Bayer','Siemens','Volkswagen','Daimler','BMW','ArcelorMittal','Glencore','Anglo American','Newmont','Barrick Gold','Vale','Freeport','Southern Co','Duke Energy','Dominion','AES','NextEra','Enel'];
+  const secs=['Energy','Energy','Energy','Technology','Technology','Technology','Technology','Technology','Technology','Consumer','Healthcare','Consumer','Consumer','Consumer','Materials','Materials','Energy','Energy','Financials','Financials','Financials','Financials','Financials','Consumer','Consumer','Consumer','Consumer','Consumer','Industrials','Technology','Technology','Technology','Technology','Technology','Industrials','Industrials','Industrials','Industrials','Materials','Materials','Materials','Materials','Materials','Industrials','Industrials','Industrials','Industrials','Materials','Materials','Materials','Materials','Materials','Materials','Materials','Energy','Energy','Energy','Energy','Energy','Energy'];
+  const activist=ACTIVISTS[Math.floor(sr(i*7)*ACTIVISTS.length)];const target=targets[i%targets.length];const sector=secs[i%secs.length];
+  const type=['Board Seat','Strategic Review','ESG Proposal','M&A Opposition','Capital Return','Governance Reform','Climate Action','Compensation Reform'][Math.floor(sr(i*11)*8)];
+  const status=['Active','Settled','Won','Lost','Withdrawn'][Math.floor(sr(i*13)*5)];const stakeM=Math.round(sr(i*17)*5000+100);const stakePct=+(sr(i*19)*8+0.5).toFixed(1);
+  return{id:i+1,target,sector,activist,campaignType:type,status,stakeMktValM:stakeM,stakeOwnershipPct:stakePct,boardSeatsWon:type==='Board Seat'?Math.round(sr(i*23)*3+1):0,startDate:`${2022+Math.floor(sr(i*29)*3)}-${String(Math.floor(sr(i*31)*12)+1).padStart(2,'0')}`,durationMonths:Math.round(sr(i*37)*24+3),proxyFight:sr(i*41)>0.7?'Yes':'No',settlementAchieved:status==='Settled'?'Yes':'No',stockImpact:+((sr(i*43)-0.4)*30).toFixed(1),esgFocus:sr(i*47)>0.5?'Yes':'No',supportPct:Math.round(sr(i*49)*40+20),coFilers:Math.round(sr(i*51)*5),mediaAttention:['High','Medium','Low'][Math.floor(sr(i*53)*3)]};
+});
+export default function ShareholderActivismPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sectorF,setSectorF]=useState('All');const[sortCol,setSortCol]=useState('stakeMktValM');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const filtered=useMemo(()=>{let d=[...CAMPAIGNS];if(search)d=d.filter(r=>r.target.toLowerCase().includes(search.toLowerCase())||r.activist.toLowerCase().includes(search.toLowerCase()));if(sectorF!=='All')d=d.filter(r=>r.sector===sectorF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sectorF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
+  const stats=useMemo(()=>({count:filtered.length,active:filtered.filter(r=>r.status==='Active').length,totalStake:'$'+fmt(filtered.reduce((s,r)=>s+r.stakeMktValM,0)*1e6),won:filtered.filter(r=>r.status==='Won').length,esgFocused:filtered.filter(r=>r.esgFocus==='Yes').length,avgSupport:Math.round(filtered.reduce((s,r)=>s+r.supportPct,0)/filtered.length||0),proxyFights:filtered.filter(r=>r.proxyFight==='Yes').length}),[filtered]);
+  const typeDist=useMemo(()=>{const m={};CAMPAIGNS.forEach(c=>{m[c.campaignType]=(m[c.campaignType]||0)+1;});return Object.entries(m).map(([k,v])=>({type:k,count:v})).sort((a,b)=>b.count-a.count);},[]);
+  const activistRank=useMemo(()=>{const m={};CAMPAIGNS.forEach(c=>{if(!m[c.activist])m[c.activist]={name:c.activist,campaigns:0,wins:0,stake:0};m[c.activist].campaigns++;if(c.status==='Won')m[c.activist].wins++;m[c.activist].stake+=c.stakeMktValM;});return Object.values(m).sort((a,b)=>b.campaigns-a.campaigns).slice(0,12);},[]);
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]);const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});const pgB={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:130}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
+  const stBdg=s=>({color:s==='Won'?T.green:s==='Active'?ACCENT:s==='Settled'?T.gold:s==='Lost'?T.red:T.textMut,fontWeight:600,fontSize:11});
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:440,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.target}</div><div style={{fontSize:12,color:T.textSec}}>by {item.activist}</div></div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>{'\u2715'}</button></div>
+    <div style={{padding:'16px 24px'}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{[['Type',item.campaignType],['Status',item.status],['Stake','$'+fmt(item.stakeMktValM*1e6)],['Ownership',item.stakeOwnershipPct+'%'],['Board Seats',item.boardSeatsWon],['Start',item.startDate],['Duration',item.durationMonths+'mo'],['Proxy Fight',item.proxyFight],['Settlement',item.settlementAchieved],['Stock Impact',item.stockImpact+'%'],['ESG Focus',item.esgFocus],['Support',item.supportPct+'%'],['Co-filers',item.coFilers],['Media',item.mediaAttention]].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div></div></div>);};
+  const renderDash=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Campaigns',stats.count)}{kpi('Active',stats.active,ACCENT)}{kpi('Total Stake',stats.totalStake)}{kpi('Won',stats.won,T.green)}{kpi('ESG Focus',stats.esgFocused)}{kpi('Avg Support',stats.avgSupport+'%')}{kpi('Proxy Fights',stats.proxyFights)}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search target or activist..." style={inpS}/><select value={sectorF} onChange={e=>{setSectorF(e.target.value);setPage(1);}} style={selS}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select><button onClick={()=>exportCSV(filtered,'activism.csv')} style={btnS(false)}>Export CSV</button></div>
+    <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['target','Target'],['activist','Activist'],['campaignType','Type'],['stakeMktValM','Stake $M'],['stakeOwnershipPct','Own%'],['status','Status'],['supportPct','Support%'],['esgFocus','ESG']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{paged.map(r=><tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.target}</span></td><td style={{...tdS,fontSize:11}}>{r.activist}</td><td style={tdS}>{r.campaignType}</td><td style={tdS}>${fmt(r.stakeMktValM*1e6)}</td><td style={tdS}>{r.stakeOwnershipPct}%</td><td style={tdS}><span style={stBdg(r.status)}>{r.status}</span></td><td style={tdS}>{r.supportPct}%</td><td style={tdS}>{r.esgFocus}</td></tr>)}</tbody></table></div>
+    {totalPages>1&&<div style={{display:'flex',gap:6,marginTop:12,alignItems:'center',justifyContent:'center'}}><button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Page {page}/{totalPages}</span><button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={pgB}>&raquo;</button></div>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Campaign Type Distribution</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={typeDist} cx="50%" cy="50%" outerRadius={90} dataKey="count" label={({type,count})=>`${type}: ${count}`}>{typeDist.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Status Breakdown</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={['Active','Settled','Won','Lost','Withdrawn'].map(s=>({name:s,value:CAMPAIGNS.filter(c=>c.status===s).length}))} cx="50%" cy="50%" outerRadius={90} dataKey="value" label={({name,value})=>`${name}: ${value}`}>{[ACCENT,T.gold,T.green,T.red,T.textMut].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div></div>);
+  const renderActive=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Largest Active Stakes</div><ResponsiveContainer width="100%" height={350}><BarChart data={[...CAMPAIGNS].filter(c=>c.status==='Active').sort((a,b)=>b.stakeMktValM-a.stakeMktValM).slice(0,12)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="target" tick={{fontSize:8,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="stakeMktValM" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Campaigns by Sector</div><ResponsiveContainer width="100%" height={350}><BarChart data={SECTORS.slice(1).map(s=>({sector:s,count:CAMPAIGNS.filter(c=>c.sector===s).length}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:8,fill:T.textSec}} angle={-20}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="count" fill={T.navy} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderProfiles=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Most Active Investors</div><ResponsiveContainer width="100%" height={350}><BarChart data={activistRank} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.textSec}} width={100}/><Tooltip {...tip}/><Bar dataKey="campaigns" fill={ACCENT} name="Campaigns" radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Win Rate by Activist</div><ResponsiveContainer width="100%" height={350}><BarChart data={activistRank.map(a=>({...a,winRate:a.campaigns>0?Math.round(a.wins/a.campaigns*100):0}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:7,fill:T.textSec}} angle={-35}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="winRate" fill={T.green} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderOutcome=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Stock Impact Distribution</div><ResponsiveContainer width="100%" height={280}><BarChart data={[{r:'<-10%',c:CAMPAIGNS.filter(c=>c.stockImpact<-10).length},{r:'-10 to 0',c:CAMPAIGNS.filter(c=>c.stockImpact>=-10&&c.stockImpact<0).length},{r:'0 to 10%',c:CAMPAIGNS.filter(c=>c.stockImpact>=0&&c.stockImpact<10).length},{r:'>10%',c:CAMPAIGNS.filter(c=>c.stockImpact>=10).length}]}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="r" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="c" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Support % vs Stock Impact</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Support %" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Stock Impact %" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filtered.map(c=>({name:c.target,x:c.supportPct,y:c.stockImpact}))} fill={ACCENT} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div>
+  </div></div>);
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Shareholder Activism Intelligence</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>60 campaigns | Activist investors, ESG proposals, outcome analysis</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderActive()}{tab===2&&renderProfiles()}{tab===3&&renderOutcome()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
+  </div>);
 }

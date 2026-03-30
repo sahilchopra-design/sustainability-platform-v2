@@ -1,339 +1,116 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,LineChart,Line,AreaChart,Area,ScatterChart,Scatter,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
-import { CARBON_PRICES } from '../../../data/referenceData';
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,color:T.text,fontFamily:T.font},labelStyle:{color:T.textSec}};
-const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899','#06b6d4','#f97316'];
+const ACCENT='#059669';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,T.sageL,'#8b5cf6','#ec4899','#06b6d4'];
 const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
-const TABS=['ITMO Dashboard','Bilateral Agreements','Market Analytics','Methodology & Governance'];
-const PAGE_SIZE=12;
+const TABS=['Agreement Dashboard','ITMO Registry','Market Analytics','Methodology'];
+const STATUSES=['All','Active','Pending','Completed','Suspended'];const PAGE=10;
 
-const ITMOS=Array.from({length:60},(_,i)=>{
-  const buyers=['Switzerland','Japan','South Korea','Singapore','Sweden','Norway','Germany','UK','Canada','Netherlands','Denmark','Finland','Austria','Belgium','France','Spain','Italy','Australia','New Zealand','Ireland'];
-  const hosts=['Ghana','Peru','Thailand','Senegal','Rwanda','Morocco','Georgia','Dominican Republic','Malawi','Vanuatu','Bangladesh','Vietnam','Indonesia','Kenya','Colombia','Chile','Costa Rica','Nepal','Uganda','Ethiopia','Cambodia','Mongolia','Laos','Sri Lanka','Fiji','Papua New Guinea','Tanzania','Mozambique','Zambia','Madagascar'];
-  const sectors=['Renewable Energy','Energy Efficiency','Forestry & REDD+','Transport','Waste Management','Methane Reduction','Agriculture','Blue Carbon','Industrial Decarb','Clean Cooking'];
-  const statuses=['Active','Pipeline','Completed','Negotiating','Suspended'];
-  return{
-    id:i+1,buyer:buyers[i%20],host:hosts[i%30],
-    sector:sectors[Math.floor(sr(i*7)*10)],
-    status:statuses[Math.floor(sr(i*11)*5)],
-    itmos:Math.round(sr(i*13)*5000+100),
-    pricePerTon:+(sr(i*17)*25+5).toFixed(2),
-    totalValue:+(sr(i*19)*80+2).toFixed(1),
-    vintage:2021+Math.floor(sr(i*23)*5),
-    methodology:['CDM','Gold Standard','Verra VCS','ART TREES','CORSIA'][Math.floor(sr(i*29)*5)],
-    correspondingAdj:sr(i*31)>0.3?'Yes':'Pending',
-    authorizationDate:2022+Math.floor(sr(i*37)*4),
-    shareOfProceeds:+(sr(i*41)*5+2).toFixed(1),
-    adaptationFund:+(sr(i*43)*2+0.5).toFixed(1),
-    integrityScore:+(sr(i*47)*30+65).toFixed(0),
-    additionality:sr(i*53)>0.4?'Demonstrated':'Under Review',
-    ndcAlignment:sr(i*59)>0.5?'Aligned':'Partial',
-  };
+const BUYERS=['Switzerland','Japan','Sweden','Singapore','South Korea','Norway','Germany','Netherlands','UK','Canada','Denmark','Finland','Austria','Luxembourg','Belgium'];
+const SELLERS=['Ghana','Peru','Thailand','Senegal','Georgia','Dominica','Vanuatu','Rwanda','Bangladesh','Nepal','Mozambique','Morocco','Chile','Colombia','Vietnam','Kenya','Costa Rica','Uruguay','Paraguay','Cambodia','Sri Lanka','Uganda','Ethiopia','Tanzania','Philippines','Indonesia','Mexico','Malawi','Zambia','Fiji'];
+const SECTORS=['Renewable Energy','Forestry','Energy Efficiency','Waste Management','Transport','Agriculture','Blue Carbon','Industrial Process','Cookstoves','Methane Capture'];
+
+const AGREEMENTS=Array.from({length:30},(_,i)=>{
+  const buyer=BUYERS[Math.floor(sr(i*7)*BUYERS.length)];const seller=SELLERS[i%SELLERS.length];const sector=SECTORS[Math.floor(sr(i*11)*SECTORS.length)];
+  const type=sr(i*13)<0.5?'Art 6.2':'Art 6.4';const status=['Active','Active','Active','Pending','Completed','Suspended'][Math.floor(sr(i*17)*6)];
+  const vol=Math.round(sr(i*19)*50+2);const price=+(sr(i*23)*30+5).toFixed(1);const coSdg=Math.round(sr(i*31)*8+1);
+  const vintage=2022+Math.floor(sr(i*37)*4);const ca=sr(i*41)>0.4;
+  const quarterly=Array.from({length:8},(_,q)=>({q:`Q${(q%4)+1} ${2023+Math.floor(q/4)}`,issued:Math.round(vol/8+sr(i*100+q)*3),transferred:Math.round(vol/10+sr(i*100+q*3)*2),price:+(price+sr(i*100+q*7)*5-2.5).toFixed(1)}));
+  return{id:i+1,buyer,seller,sector,type,status,volumeMt:vol,priceUSD:price,totalValueM:+(vol*price).toFixed(1),correspondingAdj:ca?'Yes':'No',coAdaptation:sr(i*29)>0.5?'Yes':'No',sdgCount:coSdg,vintage,shareOfProceeds:type==='Art 6.4'?5:0,methodology:['CDM','VCS','Gold Standard','JCM','REDD+','CAR'][Math.floor(sr(i*43)*6)],verifier:['DNV','SGS','RINA','Bureau Veritas','TUV SUD'][Math.floor(sr(i*47)*5)],startYear:2022+Math.floor(sr(i*49)*3),endYear:2027+Math.floor(sr(i*51)*4),crediting:Math.round(sr(i*53)*15+5)+'yr',monitoringFreq:sr(i*57)<0.5?'Annual':'Biennial',envIntegrity:Math.round(sr(i*59)*40+60),additionality:Math.round(sr(i*61)*30+70),permanence:Math.round(sr(i*63)*35+65),transparency:Math.round(sr(i*67)*25+75),quarterly};
 });
 
-const BILATERAL=Array.from({length:40},(_,i)=>{
-  const pairs=[['Switzerland','Ghana'],['Japan','Thailand'],['South Korea','Peru'],['Singapore','Vietnam'],['Sweden','Senegal'],['Norway','Rwanda'],['Germany','Morocco'],['UK','Indonesia'],['Canada','Colombia'],['Netherlands','Kenya'],['Denmark','Ethiopia'],['Finland','Nepal'],['Switzerland','Peru'],['Japan','Indonesia'],['South Korea','Vietnam'],['Singapore','Ghana'],['Sweden','Rwanda'],['Norway','Senegal'],['Germany','Kenya'],['UK','Colombia'],['Japan','Bangladesh'],['Switzerland','Vanuatu'],['Norway','Ethiopia'],['Germany','Ghana'],['UK','Vietnam'],['Canada','Kenya'],['Sweden','Thailand'],['Denmark','Peru'],['Finland','Indonesia'],['Netherlands','Senegal'],['Singapore','Cambodia'],['South Korea','Thailand'],['Japan','Mongolia'],['Switzerland','Dominican Rep.'],['Norway','Malawi'],['Sweden','Georgia'],['Germany','Thailand'],['UK','Rwanda'],['Canada','Senegal'],['Denmark','Ghana']];
-  return{
-    id:i+1,buyer:pairs[i][0],host:pairs[i][1],
-    signedYear:2020+Math.floor(sr(i*61)*5),
-    scope:['Energy','Forestry','Multi-sector','Transport','Waste'][Math.floor(sr(i*67)*5)],
-    targetMtCO2:+(sr(i*71)*50+5).toFixed(1),
-    deliveredMtCO2:+(sr(i*73)*30+1).toFixed(1),
-    priceRange:`$${(5+sr(i*79)*15).toFixed(0)}-${(20+sr(i*83)*20).toFixed(0)}`,
-    governanceBody:['Art 6.2 Authority','Joint Committee','Bilateral Commission'][Math.floor(sr(i*89)*3)],
-    mrvSystem:sr(i*97)>0.5?'Digital MRV':'Traditional',
-    registryLinked:sr(i*101)>0.4?'Yes':'No',
-    adaptationShare:+(sr(i*103)*5+2).toFixed(1)+'%',
-    status:['Operational','Framework Signed','Negotiating','Pilot Phase'][Math.floor(sr(i*107)*4)],
-  };
-});
-
-const MARKET_DATA=Array.from({length:24},(_,i)=>({
-  quarter:`${2021+Math.floor(i/4)} Q${i%4+1}`,
-  volume:Math.round(sr(i*109)*8000+500),
-  avgPrice:+(sr(i*113)*18+5).toFixed(2),
-  totalValue:+(sr(i*117)*120+10).toFixed(1),
-  numTransactions:Math.round(sr(i*119)*40+5),
-  art62:Math.round(sr(i*121)*5000+200),
-  art64:Math.round(sr(i*123)*3000+100),
-}));
-
-const METHODOLOGIES=[
-  {name:'CDM Transition',projects:342,itmos:28400,integrity:78,coverage:'Energy, Waste, Transport',authority:'UNFCCC SB',lastUpdate:2024},
-  {name:'Gold Standard Art6',projects:156,itmos:12800,integrity:92,coverage:'Renewable Energy, Clean Cooking',authority:'GS Foundation',lastUpdate:2025},
-  {name:'Verra VCS Art6',projects:234,itmos:19600,integrity:85,coverage:'Forestry, Energy, Agriculture',authority:'Verra',lastUpdate:2025},
-  {name:'ART TREES',projects:28,itmos:8400,integrity:88,coverage:'Jurisdictional REDD+',authority:'ART Secretariat',lastUpdate:2024},
-  {name:'CORSIA Eligible',projects:89,itmos:7200,integrity:82,coverage:'Aviation Offsets',authority:'ICAO',lastUpdate:2024},
-  {name:'Swiss KliK',projects:45,itmos:3600,integrity:90,coverage:'Multi-sector',authority:'Swiss FOEN',lastUpdate:2025},
-  {name:'JCM (Japan)',projects:218,itmos:15200,integrity:86,coverage:'Energy, Transport, Waste',authority:'Japan MoE',lastUpdate:2025},
-  {name:'Korean ETS Link',projects:34,itmos:2800,integrity:80,coverage:'Industrial, Energy',authority:'Korean MoE',lastUpdate:2024},
-];
+const ITMOS=Array.from({length:60},(_,i)=>{const a=AGREEMENTS[i%30];return{id:i+1,serialNo:`ITMO-${2023+Math.floor(i/20)}-${String(i+1).padStart(4,'0')}`,buyer:a.buyer,seller:a.seller,agreementId:a.id,sector:a.sector,vintage:2022+Math.floor(sr(i*71)*3),volume:Math.round(sr(i*73)*5+0.5),status:['Authorised','Transferred','Used','Cancelled'][Math.floor(sr(i*77)*4)],firstTransfer:sr(i*79)>0.3?'Yes':'No',ca:a.correspondingAdj,methodology:a.methodology};});
 
 export default function Article6MarketsPage(){
-  const[tab,setTab]=useState(0);
-  const[search,setSearch]=useState('');
-  const[sortCol,setSortCol]=useState('itmos');
-  const[sortDir,setSortDir]=useState('desc');
-  const[page,setPage]=useState(0);
-  const[selected,setSelected]=useState(null);
-  const[statusFilter,setStatusFilter]=useState('All');
-  const[sectorFilter,setSectorFilter]=useState('All');
-  const[minPrice,setMinPrice]=useState(0);
-  const[bilSearch,setBilSearch]=useState('');
-  const[bilSort,setBilSort]=useState('targetMtCO2');
-  const[bilDir,setBilDir]=useState('desc');
-  const[bilPage,setBilPage]=useState(0);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[statusF,setStatusF]=useState('All');const[typeF,setTypeF]=useState('All');const[sortCol,setSortCol]=useState('totalValueM');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);const[itmSearch,setItmSearch]=useState('');const[itmPage,setItmPage]=useState(1);
 
-  const doSort=(d,c,dir)=>[...d].sort((a,b)=>dir==='asc'?(a[c]>b[c]?1:-1):(a[c]<b[c]?1:-1));
-  const toggleSort=(col,cur,setC,dir,setD)=>{if(cur===col)setD(dir==='asc'?'desc':'asc');else{setC(col);setD('desc');}};
-  const SortHeader=({label,col,currentCol,dir,onClick})=>(
-    <th onClick={()=>onClick(col)} style={{padding:'10px 12px',textAlign:'left',cursor:'pointer',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',letterSpacing:0.5,borderBottom:`2px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',background:T.surfaceH}}>{label}{currentCol===col?(dir==='asc'?' \u25B2':' \u25BC'):''}</th>
-  );
-  const kpi=(label,value,sub)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:1,minWidth:170}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:T.navy,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:12,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
-  const csvExport=(data,fn)=>{const h=Object.keys(data[0]);const csv=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
+  const filtered=useMemo(()=>{let d=[...AGREEMENTS];if(search)d=d.filter(r=>r.buyer.toLowerCase().includes(search.toLowerCase())||r.seller.toLowerCase().includes(search.toLowerCase()));if(statusF!=='All')d=d.filter(r=>r.status===statusF);if(typeF!=='All')d=d.filter(r=>r.type===typeF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,statusF,typeF,sortCol,sortDir]);
+  const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
 
-  const statuses=['All','Active','Pipeline','Completed','Negotiating','Suspended'];
-  const sectors=['All',...[...new Set(ITMOS.map(i=>i.sector))]];
+  const stats=useMemo(()=>({count:filtered.length,totalVol:filtered.reduce((s,r)=>s+r.volumeMt,0),totalVal:filtered.reduce((s,r)=>s+r.totalValueM,0).toFixed(0),avgPrice:(filtered.reduce((s,r)=>s+r.priceUSD,0)/filtered.length||0).toFixed(1),active:filtered.filter(r=>r.status==='Active').length,art62:filtered.filter(r=>r.type==='Art 6.2').length,caCount:filtered.filter(r=>r.correspondingAdj==='Yes').length}),[filtered]);
 
-  const filteredITMOs=useMemo(()=>{
-    let d=ITMOS.filter(x=>x.buyer.toLowerCase().includes(search.toLowerCase())||x.host.toLowerCase().includes(search.toLowerCase()));
-    if(statusFilter!=='All')d=d.filter(x=>x.status===statusFilter);
-    if(sectorFilter!=='All')d=d.filter(x=>x.sector===sectorFilter);
-    d=d.filter(x=>x.pricePerTon>=minPrice);
-    return doSort(d,sortCol,sortDir);
-  },[search,statusFilter,sectorFilter,minPrice,sortCol,sortDir]);
-  const pagedITMOs=filteredITMOs.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);
-  const totalPages=Math.ceil(filteredITMOs.length/PAGE_SIZE);
+  const sectorVol=useMemo(()=>{const m={};AGREEMENTS.forEach(r=>{m[r.sector]=(m[r.sector]||0)+r.volumeMt;});return Object.entries(m).map(([k,v])=>({sector:k,volume:v})).sort((a,b)=>b.volume-a.volume);},[]);
+  const buyerRank=useMemo(()=>{const m={};AGREEMENTS.forEach(r=>{if(!m[r.buyer])m[r.buyer]={buyer:r.buyer,vol:0,val:0,n:0};m[r.buyer].vol+=r.volumeMt;m[r.buyer].val+=r.totalValueM;m[r.buyer].n++;});return Object.values(m).sort((a,b)=>b.vol-a.vol);},[]);
+  const priceHistory=useMemo(()=>{const qs={};AGREEMENTS.forEach(a=>a.quarterly.forEach(q=>{if(!qs[q.q])qs[q.q]={q:q.q,prices:[],vol:0};qs[q.q].prices.push(q.price);qs[q.q].vol+=q.issued;}));return Object.values(qs).map(q=>({q:q.q,avgPrice:+(q.prices.reduce((s,p)=>s+p,0)/q.prices.length).toFixed(1),volume:q.vol}));},[]);
+  const typeDist=useMemo(()=>[{name:'Art 6.2',value:filtered.filter(r=>r.type==='Art 6.2').length},{name:'Art 6.4',value:filtered.filter(r=>r.type==='Art 6.4').length}],[filtered]);
 
-  const filteredBil=useMemo(()=>{
-    let d=BILATERAL.filter(x=>x.buyer.toLowerCase().includes(bilSearch.toLowerCase())||x.host.toLowerCase().includes(bilSearch.toLowerCase()));
-    return doSort(d,bilSort,bilDir);
-  },[bilSearch,bilSort,bilDir]);
-  const pagedBil=filteredBil.slice(bilPage*PAGE_SIZE,(bilPage+1)*PAGE_SIZE);
-  const totalBilPages=Math.ceil(filteredBil.length/PAGE_SIZE);
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]).filter(k=>k!=='quarterly');const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
 
-  const sectorBreakdown=useMemo(()=>{
-    const m={};filteredITMOs.forEach(x=>{m[x.sector]=(m[x.sector]||0)+x.itmos;});
-    return Object.entries(m).map(([n,v])=>({name:n,value:v})).sort((a,b)=>b.value-a.value);
-  },[filteredITMOs]);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};
+  const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
+  const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
+  const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});
+  const pgB={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
+  const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const stBdg=s=>({background:s==='Active'?'rgba(22,163,74,0.1)':s==='Pending'?'rgba(217,119,6,0.1)':s==='Completed'?'rgba(27,58,92,0.1)':'rgba(220,38,38,0.1)',color:s==='Active'?T.green:s==='Pending'?T.amber:s==='Completed'?T.navy:T.red,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600});
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:140}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
 
-  const renderDashboard=()=>(
-    <div>
-      <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-        {kpi('Total ITMOs',fmt(filteredITMOs.reduce((a,x)=>a+x.itmos,0)),'Internationally Transferred')}
-        {kpi('Active Deals',filteredITMOs.filter(x=>x.status==='Active').length)}
-        {kpi('Avg Price','$'+fmt(filteredITMOs.reduce((a,x)=>a+x.pricePerTon,0)/filteredITMOs.length||0)+'/tCO2')}
-        {kpi('Total Value','$'+fmt(filteredITMOs.reduce((a,x)=>a+x.totalValue,0))+'M')}
-        {kpi('CA Applied',filteredITMOs.filter(x=>x.correspondingAdj==='Yes').length+'/'+filteredITMOs.length)}
-      </div>
-      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search buyer/host..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
-        <select value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>{statuses.map(s=><option key={s}>{s}</option>)}</select>
-        <select value={sectorFilter} onChange={e=>{setSectorFilter(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface}}>{sectors.map(s=><option key={s}>{s}</option>)}</select>
-        <div style={{fontSize:12,color:T.textSec,display:'flex',alignItems:'center',gap:8}}>Min $/t: ${minPrice}<input type="range" min={0} max={30} value={minPrice} onChange={e=>setMinPrice(+e.target.value)} style={{width:100}}/></div>
-        <button onClick={()=>csvExport(filteredITMOs,'itmo_transactions.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>ITMOs by Sector</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart><Pie data={sectorBreakdown} cx="50%" cy="50%" outerRadius={110} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} style={{fontSize:10}}>{sectorBreakdown.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Price vs Volume Scatter</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="itmos" name="ITMOs" tick={{fontSize:10,fill:T.textSec}}/><YAxis dataKey="pricePerTon" name="$/tCO2" tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={filteredITMOs} fill={T.navy} fillOpacity={0.6}/></ScatterChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-        <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}>
-          <thead><tr>
-            {[['Buyer','buyer'],['Host','host'],['Sector','sector'],['ITMOs','itmos'],['$/tCO2','pricePerTon'],['Value $M','totalValue'],['Status','status'],['CA','correspondingAdj'],['Integrity','integrityScore']].map(([l,c])=><SortHeader key={c} label={l} col={c} currentCol={sortCol} dir={sortDir} onClick={c2=>toggleSort(c2,sortCol,setSortCol,sortDir,setSortDir)}/>)}
-          </tr></thead>
-          <tbody>
-            {pagedITMOs.map((x,i)=>(
-              <React.Fragment key={x.id}>
-                <tr onClick={()=>setSelected(selected===x.id?null:x.id)} style={{cursor:'pointer',background:selected===x.id?T.surfaceH:i%2===0?T.surface:'#fafaf8'}}>
-                  <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{x.buyer}</td>
-                  <td style={{padding:'10px 12px',color:T.textSec}}>{x.host}</td>
-                  <td style={{padding:'10px 12px',fontSize:12}}>{x.sector}</td>
-                  <td style={{padding:'10px 12px',fontFamily:T.mono}}>{fmt(x.itmos)}</td>
-                  <td style={{padding:'10px 12px',fontFamily:T.mono}}>${x.pricePerTon}</td>
-                  <td style={{padding:'10px 12px',fontFamily:T.mono}}>${x.totalValue}M</td>
-                  <td style={{padding:'10px 12px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:11,fontWeight:600,background:x.status==='Active'?'#dcfce7':x.status==='Completed'?'#dbeafe':x.status==='Suspended'?'#fef2f2':'#fef9c3',color:x.status==='Active'?T.green:x.status==='Completed'?T.navy:x.status==='Suspended'?T.red:T.amber}}>{x.status}</span></td>
-                  <td style={{padding:'10px 12px'}}><span style={{color:x.correspondingAdj==='Yes'?T.green:T.amber}}>{x.correspondingAdj}</span></td>
-                  <td style={{padding:'10px 12px',fontFamily:T.mono}}>{x.integrityScore}</td>
-                </tr>
-                {selected===x.id&&(
-                  <tr><td colSpan={9} style={{padding:20,background:T.surfaceH,borderTop:`1px solid ${T.border}`}}>
-                    <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16}}>
-                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Vintage</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{x.vintage}</div></div>
-                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Methodology</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{x.methodology}</div></div>
-                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Auth Date</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{x.authorizationDate}</div></div>
-                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>SoP %</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{x.shareOfProceeds}%</div></div>
-                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Adapt Fund $M</span><div style={{fontSize:16,fontWeight:700,color:T.navy}}>${x.adaptationFund}M</div></div>
-                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Additionality</span><div style={{fontSize:16,fontWeight:700,color:x.additionality==='Demonstrated'?T.green:T.amber}}>{x.additionality}</div></div>
-                      <div><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>NDC Alignment</span><div style={{fontSize:16,fontWeight:700,color:x.ndcAlignment==='Aligned'?T.green:T.amber}}>{x.ndcAlignment}</div></div>
-                    </div>
-                  </td></tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}>
-        <span style={{fontSize:12,color:T.textMut}}>{filteredITMOs.length} transactions</span>
-        <div style={{display:'flex',gap:6}}>
-          <button disabled={page===0} onClick={()=>setPage(page-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:page===0?'default':'pointer',opacity:page===0?0.4:1,fontFamily:T.mono,fontSize:12}}>Prev</button>
-          <span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{page+1}/{totalPages||1}</span>
-          <button disabled={page>=totalPages-1} onClick={()=>setPage(page+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:page>=totalPages-1?'default':'pointer',opacity:page>=totalPages-1?0.4:1,fontFamily:T.mono,fontSize:12}}>Next</button>
-        </div>
-      </div>
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:460,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.buyer} \u2192 {item.seller}</div><div style={{fontSize:12,color:T.textSec}}>{item.type} | {item.sector}</div></div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>\u2715</button></div>
+    <div style={{padding:'16px 24px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginBottom:16}}>{[['Volume',item.volumeMt+' Mt'],['Price','$'+item.priceUSD],['Value','$'+item.totalValueM+'M'],['Status',item.status],['Vintage',item.vintage],['CA',item.correspondingAdj],['SDGs',item.sdgCount],['Methodology',item.methodology],['Verifier',item.verifier],['Env Integrity',item.envIntegrity+'/100'],['Additionality',item.additionality+'/100'],['Permanence',item.permanence+'/100'],['Transparency',item.transparency+'/100'],['Crediting',item.crediting],['Monitoring',item.monitoringFreq]].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Quarterly Issuance & Price</div><ResponsiveContainer width="100%" height={200}><BarChart data={item.quarterly}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="q" tick={{fontSize:8,fill:T.textSec}}/><YAxis yAxisId="l" tick={{fontSize:9,fill:T.textSec}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar yAxisId="l" dataKey="issued" fill={T.sage} name="Issued Mt"/><Bar yAxisId="r" dataKey="transferred" fill={T.gold} name="Transferred"/><Legend/></BarChart></ResponsiveContainer></div>
+      <div style={{...cS,marginTop:12}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Quality Radar</div><ResponsiveContainer width="100%" height={220}><RadarChart data={[{m:'Env Integrity',v:item.envIntegrity},{m:'Additionality',v:item.additionality},{m:'Permanence',v:item.permanence},{m:'Transparency',v:item.transparency},{m:'Co-benefits',v:item.sdgCount*10}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(5,150,105,0.2)"/></RadarChart></ResponsiveContainer></div>
+    </div></div>);};
+
+  const renderDash=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Agreements',stats.count)}{kpi('Total Volume',stats.totalVol+' Mt')}{kpi('Total Value','$'+stats.totalVal+'M')}{kpi('Avg Price','$'+stats.avgPrice+'/t')}{kpi('Active',stats.active,T.green)}{kpi('Art 6.2',stats.art62)}{kpi('CA Applied',stats.caCount)}</div>
+    <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search buyer or seller..." style={inpS}/><select value={statusF} onChange={e=>{setStatusF(e.target.value);setPage(1);}} style={selS}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select><select value={typeF} onChange={e=>{setTypeF(e.target.value);setPage(1);}} style={selS}><option>All</option><option>Art 6.2</option><option>Art 6.4</option></select><button onClick={()=>exportCSV(filtered,'article6_agreements.csv')} style={btnS(false)}>Export CSV</button></div>
+    <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['buyer','Buyer'],['seller','Seller'],['type','Type'],['sector','Sector'],['volumeMt','Vol Mt'],['priceUSD','$/t'],['totalValueM','Value $M'],['status','Status'],['envIntegrity','Integrity']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{paged.map(r=><tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.buyer}</span></td><td style={tdS}>{r.seller}</td><td style={{...tdS,fontFamily:T.mono,fontSize:10}}>{r.type}</td><td style={tdS}>{r.sector}</td><td style={tdS}>{r.volumeMt}</td><td style={tdS}>${r.priceUSD}</td><td style={tdS}>${r.totalValueM}M</td><td style={tdS}><span style={stBdg(r.status)}>{r.status}</span></td><td style={tdS}>{r.envIntegrity}/100</td></tr>)}</tbody></table></div>
+    {totalPages>1&&<div style={{display:'flex',gap:6,marginTop:12,alignItems:'center',justifyContent:'center'}}><button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Page {page}/{totalPages}</span><button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={pgB}>&raquo;</button></div>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:20}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Volume by Sector</div><ResponsiveContainer width="100%" height={260}><BarChart data={sectorVol}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="volume" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Art 6.2 vs 6.4 Split</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={typeDist} cx="50%" cy="50%" outerRadius={90} dataKey="value" label={({name,value})=>`${name}: ${value}`}>{typeDist.map((_,i)=><Cell key={i} fill={[T.navy,T.gold][i]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
     </div>
-  );
+  </div>);
 
-  const renderBilateral=()=>(
-    <div>
-      <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
-        <input value={bilSearch} onChange={e=>{setBilSearch(e.target.value);setBilPage(0);}} placeholder="Search agreements..." style={{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:13,background:T.surface,color:T.text,width:220}}/>
-        <button onClick={()=>csvExport(filteredBil,'bilateral_agreements.csv')} style={{marginLeft:'auto',padding:'8px 16px',background:T.navy,color:'#fff',border:'none',borderRadius:8,fontFamily:T.mono,fontSize:12,cursor:'pointer'}}>Export CSV</button>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Target vs Delivered MtCO2</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={filteredBil.slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="host" tick={{fontSize:9,fill:T.textSec}} angle={-45} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="targetMtCO2" fill={T.navy} name="Target"/><Bar dataKey="deliveredMtCO2" fill={T.gold} name="Delivered"/><Legend/></BarChart>
-          </ResponsiveContainer>
+  const renderITMO=()=>{
+    const fi=ITMOS.filter(r=>!itmSearch||r.serialNo.toLowerCase().includes(itmSearch.toLowerCase())||r.buyer.toLowerCase().includes(itmSearch.toLowerCase()));
+    const ip=fi.slice((itmPage-1)*12,itmPage*12);const tp=Math.ceil(fi.length/12);
+    const statusDist=[{name:'Authorised',value:ITMOS.filter(r=>r.status==='Authorised').length},{name:'Transferred',value:ITMOS.filter(r=>r.status==='Transferred').length},{name:'Used',value:ITMOS.filter(r=>r.status==='Used').length},{name:'Cancelled',value:ITMOS.filter(r=>r.status==='Cancelled').length}];
+    return(<div>
+      <div style={{display:'flex',gap:12,marginBottom:16}}><input value={itmSearch} onChange={e=>{setItmSearch(e.target.value);setItmPage(1);}} placeholder="Search ITMOs..." style={inpS}/><button onClick={()=>exportCSV(fi,'itmo_registry.csv')} style={btnS(false)}>Export CSV</button></div>
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:16}}>
+        <div style={{overflowX:'auto',...cS,padding:0}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{['Serial','Buyer','Seller','Sector','Vintage','Volume','Status','CA'].map(h=><th key={h} style={thS}>{h}</th>)}</tr></thead><tbody>{ip.map(r=><tr key={r.id}><td style={{...tdS,fontFamily:T.mono,fontSize:10}}>{r.serialNo}</td><td style={tdS}>{r.buyer}</td><td style={tdS}>{r.seller}</td><td style={tdS}>{r.sector}</td><td style={tdS}>{r.vintage}</td><td style={tdS}>{r.volume} Mt</td><td style={tdS}><span style={stBdg(r.status==='Cancelled'?'Suspended':r.status==='Used'?'Completed':'Active')}>{r.status}</span></td><td style={tdS}>{r.ca}</td></tr>)}</tbody></table>
+          {tp>1&&<div style={{display:'flex',gap:6,padding:12,justifyContent:'center'}}><button onClick={()=>setItmPage(p=>Math.max(1,p-1))} disabled={itmPage===1} style={pgB}>&laquo;</button><span style={{fontSize:11,color:T.textSec}}>{itmPage}/{tp}</span><button onClick={()=>setItmPage(p=>Math.min(tp,p+1))} disabled={itmPage===tp} style={pgB}>&raquo;</button></div>}
         </div>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Agreement Status Distribution</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart><Pie data={['Operational','Framework Signed','Negotiating','Pilot Phase'].map(s=>({name:s,value:filteredBil.filter(b=>b.status===s).length}))} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({name,value})=>`${name}: ${value}`} style={{fontSize:10}}>{['Operational','Framework Signed','Negotiating','Pilot Phase'].map((_,i)=><Cell key={i} fill={COLORS[i]}/>)}</Pie><Tooltip {...tip}/></PieChart>
-          </ResponsiveContainer>
-        </div>
+        <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>ITMO Status Distribution</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={statusDist} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({name,value})=>`${name}: ${value}`}>{statusDist.map((_,i)=><Cell key={i} fill={COLORS[i]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
       </div>
-      <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-        <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}>
-          <thead><tr>
-            {[['Buyer','buyer'],['Host','host'],['Signed','signedYear'],['Scope','scope'],['Target Mt','targetMtCO2'],['Delivered Mt','deliveredMtCO2'],['Price Range','priceRange'],['MRV','mrvSystem'],['Status','status']].map(([l,c])=><SortHeader key={c} label={l} col={c} currentCol={bilSort} dir={bilDir} onClick={c2=>toggleSort(c2,bilSort,setBilSort,bilDir,setBilDir)}/>)}
-          </tr></thead>
-          <tbody>
-            {pagedBil.map((b,i)=>(
-              <tr key={b.id} style={{background:i%2===0?T.surface:'#fafaf8'}}>
-                <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{b.buyer}</td>
-                <td style={{padding:'10px 12px',color:T.textSec}}>{b.host}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{b.signedYear}</td>
-                <td style={{padding:'10px 12px',fontSize:12}}>{b.scope}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{b.targetMtCO2}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{b.deliveredMtCO2}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono,fontSize:11}}>{b.priceRange}</td>
-                <td style={{padding:'10px 12px',fontSize:12}}>{b.mrvSystem}</td>
-                <td style={{padding:'10px 12px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:11,fontWeight:600,background:b.status==='Operational'?'#dcfce7':'#fef9c3',color:b.status==='Operational'?T.green:T.amber}}>{b.status}</span></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}>
-        <span style={{fontSize:12,color:T.textMut}}>{filteredBil.length} agreements</span>
-        <div style={{display:'flex',gap:6}}>
-          <button disabled={bilPage===0} onClick={()=>setBilPage(bilPage-1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,cursor:bilPage===0?'default':'pointer',opacity:bilPage===0?0.4:1}}>Prev</button>
-          <span style={{padding:'6px 12px',fontSize:12,color:T.textSec}}>{bilPage+1}/{totalBilPages||1}</span>
-          <button disabled={bilPage>=totalBilPages-1} onClick={()=>setBilPage(bilPage+1)} style={{padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontFamily:T.mono,fontSize:12,cursor:bilPage>=totalBilPages-1?'default':'pointer',opacity:bilPage>=totalBilPages-1?0.4:1}}>Next</button>
-        </div>
-      </div>
-    </div>
-  );
+    </div>);
+  };
 
-  const renderMarketAnalytics=()=>(
-    <div>
-      <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-        {kpi('Total Volume',fmt(MARKET_DATA.reduce((a,m)=>a+m.volume,0))+' ITMOs')}
-        {kpi('Avg Price','$'+fmt(MARKET_DATA.reduce((a,m)=>a+m.avgPrice,0)/MARKET_DATA.length)+'/t')}
-        {kpi('Total Value','$'+fmt(MARKET_DATA.reduce((a,m)=>a+m.totalValue,0))+'M')}
-        {kpi('Transactions',fmt(MARKET_DATA.reduce((a,m)=>a+m.numTransactions,0)))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Market Volume & Price Trend</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={MARKET_DATA}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="quarter" tick={{fontSize:9,fill:T.textSec}}/><YAxis yAxisId="l" tick={{fontSize:10,fill:T.textSec}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Line yAxisId="l" type="monotone" dataKey="volume" stroke={T.navy} strokeWidth={2}/><Line yAxisId="r" type="monotone" dataKey="avgPrice" stroke={T.gold} strokeWidth={2}/><Legend/></LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Art 6.2 vs Art 6.4 Volume</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={MARKET_DATA}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="quarter" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="art62" stackId="1" stroke={T.navy} fill={T.navy} fillOpacity={0.3} name="Art 6.2"/><Area type="monotone" dataKey="art64" stackId="1" stroke={T.gold} fill={T.gold} fillOpacity={0.3} name="Art 6.4"/><Legend/></AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Transaction Value Over Time</div>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={MARKET_DATA}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="quarter" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="totalValue" fill={T.sage} name="Value $M"/></BarChart>
-        </ResponsiveContainer>
-      </div>
+  const renderMarket=()=>(<div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Price Trend (Quarterly Avg)</div><ResponsiveContainer width="100%" height={280}><LineChart data={priceHistory}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="q" tick={{fontSize:8,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Line type="monotone" dataKey="avgPrice" stroke={T.gold} strokeWidth={2} dot={{r:3}}/></LineChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Issuance Volume Trend</div><ResponsiveContainer width="100%" height={280}><AreaChart data={priceHistory}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="q" tick={{fontSize:8,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="volume" stroke={ACCENT} fill="rgba(5,150,105,0.15)"/></AreaChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Top Buyers by Volume</div><ResponsiveContainer width="100%" height={280}><BarChart data={buyerRank.slice(0,10)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}}/><YAxis type="category" dataKey="buyer" tick={{fontSize:9,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="vol" fill={T.navy} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Price vs Volume Scatter</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Volume" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Price" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={AGREEMENTS.map(a=>({name:a.buyer+'-'+a.seller,x:a.volumeMt,y:a.priceUSD}))} fill={T.gold} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer></div>
     </div>
-  );
+  </div>);
 
-  const renderMethodology=()=>(
-    <div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Methodology Integrity Scores</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <RadarChart data={METHODOLOGIES}><PolarGrid stroke={T.borderL}/><PolarAngleAxis dataKey="name" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}}/><Radar dataKey="integrity" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/></RadarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Projects & ITMOs by Methodology</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={METHODOLOGIES}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec}} angle={-30} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="projects" fill={T.navy} name="Projects"/><Bar dataKey="itmos" fill={T.gold} name="ITMOs"/><Legend/></BarChart>
-          </ResponsiveContainer>
-        </div>
+  const renderMethod=()=>{
+    const methodDist=[];const md={};AGREEMENTS.forEach(a=>{md[a.methodology]=(md[a.methodology]||0)+1;});Object.entries(md).forEach(([k,v])=>methodDist.push({name:k,value:v}));
+    const verifierDist=[];const vd={};AGREEMENTS.forEach(a=>{vd[a.verifier]=(vd[a.verifier]||0)+1;});Object.entries(vd).forEach(([k,v])=>verifierDist.push({name:k,value:v}));
+    const qualityMetrics=AGREEMENTS.slice(0,15).map(a=>({name:a.buyer.slice(0,3)+'-'+a.seller.slice(0,3),integrity:a.envIntegrity,additionality:a.additionality,permanence:a.permanence,transparency:a.transparency}));
+    return(<div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Methodology Distribution</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={methodDist} cx="50%" cy="50%" outerRadius={85} dataKey="value" label={({name,value})=>`${name}: ${value}`}>{methodDist.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+        <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Verifier Coverage</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={verifierDist} cx="50%" cy="50%" outerRadius={85} dataKey="value" label={({name,value})=>`${name}: ${value}`}>{verifierDist.map((_,i)=><Cell key={i} fill={COLORS[(i+3)%COLORS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+        <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Quality Score Comparison</div><ResponsiveContainer width="100%" height={300}><BarChart data={qualityMetrics}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec}}/><YAxis domain={[0,100]} tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="integrity" fill={T.navy} name="Env Integrity"/><Bar dataKey="additionality" fill={T.sage} name="Additionality"/><Bar dataKey="permanence" fill={T.gold} name="Permanence"/><Bar dataKey="transparency" fill={T.amber} name="Transparency"/><Legend/></BarChart></ResponsiveContainer></div>
       </div>
-      <div style={{overflowX:'auto',border:`1px solid ${T.border}`,borderRadius:10,background:T.surface}}>
-        <table style={{width:'100%',borderCollapse:'collapse',fontFamily:T.font,fontSize:13}}>
-          <thead><tr>
-            {['Methodology','Projects','ITMOs','Integrity','Coverage','Authority','Updated'].map(h=><th key={h} style={{padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:T.textSec,textTransform:'uppercase',borderBottom:`2px solid ${T.border}`,background:T.surfaceH}}>{h}</th>)}
-          </tr></thead>
-          <tbody>
-            {METHODOLOGIES.map((m,i)=>(
-              <tr key={m.name} style={{background:i%2===0?T.surface:'#fafaf8'}}>
-                <td style={{padding:'10px 12px',fontWeight:600,color:T.navy}}>{m.name}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{m.projects}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{fmt(m.itmos)}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono,color:m.integrity>=85?T.green:m.integrity>=75?T.amber:T.red}}>{m.integrity}/100</td>
-                <td style={{padding:'10px 12px',fontSize:12}}>{m.coverage}</td>
-                <td style={{padding:'10px 12px',fontSize:12}}>{m.authority}</td>
-                <td style={{padding:'10px 12px',fontFamily:T.mono}}>{m.lastUpdate}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    </div>);
+  };
 
-  return(
-    <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px',color:T.text}}>
-      <div style={{marginBottom:24}}>
-        <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,letterSpacing:1,textTransform:'uppercase'}}>Paris Agreement Carbon Markets</div>
-        <h1 style={{fontSize:28,fontWeight:700,color:T.navy,margin:'4px 0 0'}}>Article 6 Markets Intelligence</h1>
-      </div>
-      <div style={{display:'flex',gap:4,marginBottom:24,borderBottom:`2px solid ${T.border}`,paddingBottom:0}}>
-        {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${T.gold}`:'2px solid transparent',background:tab===i?T.surface:'transparent',color:tab===i?T.navy:T.textSec,fontFamily:T.font,fontSize:13,fontWeight:tab===i?600:400,cursor:'pointer',marginBottom:-2}}>{t}</button>)}
-      </div>
-      {tab===0&&renderDashboard()}
-      {tab===1&&renderBilateral()}
-      {tab===2&&renderMarketAnalytics()}
-      {tab===3&&renderMethodology()}
-    </div>
-  );
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Article 6 Markets Intelligence</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>30 bilateral agreements | ITMO registry | Art 6.2 & 6.4 | Market analytics</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderITMO()}{tab===2&&renderMarket()}{tab===3&&renderMethod()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
+  </div>);
 }

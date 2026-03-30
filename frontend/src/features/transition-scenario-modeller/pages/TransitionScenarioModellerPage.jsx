@@ -1,512 +1,65 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
-import { CARBON_PRICES, NGFS_SCENARIOS } from '../../../data/referenceData';
-
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const PURPLE = '#7c3aed';
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const tip = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text, fontSize: 11 };
-
-const SCENARIOS = [
-  { name: 'Net Zero 2050',         tempOutcome: '1.5°C', carbonPrice2030: 130, carbonPrice2050: 250, renewablesShare2030: 65, renewablesShare2050: 90, strandedAssets: 1.2, gdpImpact2050: -1.4, portfolioImpact: 14.2 },
-  { name: '1.5°C Accelerated',     tempOutcome: '1.4°C', carbonPrice2030: 185, carbonPrice2050: 310, renewablesShare2030: 72, renewablesShare2050: 95, strandedAssets: 0.9, gdpImpact2050: -1.8, portfolioImpact: 23.1 },
-  { name: '2°C Gradual',           tempOutcome: '2.0°C', carbonPrice2030:  85, carbonPrice2050: 170, renewablesShare2030: 52, renewablesShare2050: 78, strandedAssets: 1.9, gdpImpact2050: -0.9, portfolioImpact:  6.8 },
-  { name: 'Delayed Transition',    tempOutcome: '2.4°C', carbonPrice2030:  40, carbonPrice2050: 290, renewablesShare2030: 38, renewablesShare2050: 70, strandedAssets: 3.4, gdpImpact2050: -4.2, portfolioImpact: -8.7 },
-  { name: 'Failed Transition',     tempOutcome: '3.2°C', carbonPrice2030:  12, carbonPrice2050:  35, renewablesShare2030: 28, renewablesShare2050: 45, strandedAssets: 6.1, gdpImpact2050:-11.3, portfolioImpact:-22.4 },
-];
-
-const SECTOR_CAPEX = [
-  { sector: 'Power',         required: 820, current: 390, gap: 430, readiness: 72 },
-  { sector: 'Transport',     required: 610, current: 210, gap: 400, readiness: 54 },
-  { sector: 'Buildings',     required: 480, current: 180, gap: 300, readiness: 48 },
-  { sector: 'Industry',      required: 540, current: 140, gap: 400, readiness: 38 },
-  { sector: 'Agriculture',   required: 310, current:  90, gap: 220, readiness: 31 },
-  { sector: 'Hydrogen',      required: 270, current:  45, gap: 225, readiness: 27 },
-  { sector: 'Carbon Capture',required: 190, current:  22, gap: 168, readiness: 19 },
-  { sector: 'Land Use',      required: 150, current:  65, gap:  85, readiness: 44 },
-];
-
-const STRANDED_TIMELINE = [
-  { year: 2025, nz2050: 0.3, gradual: 0.2, failed: 0.1 },
-  { year: 2030, nz2050: 1.2, gradual: 0.7, failed: 0.3 },
-  { year: 2035, nz2050: 2.4, gradual: 1.3, failed: 0.5 },
-  { year: 2040, nz2050: 3.9, gradual: 2.1, failed: 0.9 },
-  { year: 2045, nz2050: 5.4, gradual: 3.0, failed: 1.4 },
-  { year: 2050, nz2050: 7.1, gradual: 4.2, failed: 2.2 },
-];
-
-const PORTFOLIO_IMPACT = [
-  { assetClass: 'Renewables Equity',    orderly:  38.4, disorderly: -12.1 },
-  { assetClass: 'Green Bonds',          orderly:  12.6, disorderly:  -4.8 },
-  { assetClass: 'Diversified Equity',   orderly:   6.3, disorderly: -18.6 },
-  { assetClass: 'Real Estate',          orderly:  -2.1, disorderly: -24.3 },
-  { assetClass: 'Fossil Fuel Equity',   orderly: -31.7, disorderly:  -8.4 },
-  { assetClass: 'Sovereign Bonds (EM)', orderly:  -8.9, disorderly: -34.7 },
-];
-
-const PATHWAY_MILESTONES = [
-  { milestone: 'Coal power phase-out (OECD)',       year: 2030, dependency: 'Policy' },
-  { milestone: 'EV tipping point (>50% new sales)', year: 2032, dependency: 'Market' },
-  { milestone: 'Green hydrogen cost parity',         year: 2034, dependency: 'Technology' },
-  { milestone: 'Coal phase-out (Global)',            year: 2040, dependency: 'Policy' },
-  { milestone: 'Net zero power sector',             year: 2035, dependency: 'Policy' },
-  { milestone: 'Sustainable aviation fuel scale',   year: 2037, dependency: 'Technology' },
-  { milestone: 'Industrial heat electrification',   year: 2042, dependency: 'Technology' },
-  { milestone: 'Net zero industry',                 year: 2050, dependency: 'Market' },
-];
-
-const TABS = ['Overview', 'Pathway Constructor', 'Sector CapEx', 'Stranded Asset Timeline', 'Portfolio Impact'];
-
-const fmt = (v, prefix = '', suffix = '') => `${prefix}${typeof v === 'number' ? v.toLocaleString() : v}${suffix}`;
-const pct = v => `${v > 0 ? '+' : ''}${v}%`;
-
-const StatCard = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: '16px 20px', flex: 1 }}>
-    <div style={{ fontSize: 11, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 700, color: color || T.navy, lineHeight: 1.1 }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 4 }}>{sub}</div>}
-  </div>
-);
-
-const Badge = ({ text, color }) => (
-  <span style={{ display:'inline-block', padding:'2px 8px', borderRadius:4, fontSize:10, fontWeight:600, background: color+'18', color, border:`1px solid ${color}40`, letterSpacing:'0.04em' }}>{text}</span>
-);
-
-const ScenarioBar = ({ scenario, maxImpact = 30 }) => {
-  const isPositive = scenario.portfolioImpact > 0;
-  const barW = Math.abs(scenario.portfolioImpact) / maxImpact * 120;
-  const color = isPositive ? T.green : T.red;
-  return (
-    <div style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 0', borderBottom:`1px solid ${T.border}` }}>
-      <div style={{ width:160, fontSize:12, color:T.text, fontWeight:500 }}>{scenario.name}</div>
-      <div style={{ width:80, fontSize:11, color:T.textMut }}>{scenario.tempOutcome}</div>
-      <div style={{ flex:1, display:'flex', alignItems:'center', gap:6 }}>
-        <div style={{ width: barW, height:12, borderRadius:3, background:color, opacity:0.8 }} />
-        <span style={{ fontSize:12, fontWeight:600, color }}>{pct(scenario.portfolioImpact)}</span>
-      </div>
-      <div style={{ width:80, fontSize:11, color:T.textSec, textAlign:'right' }}>${scenario.strandedAssets}T stranded</div>
-    </div>
-  );
-};
-
-export default function TransitionScenarioModellerPage() {
-  const [activeTab, setActiveTab] = useState('Overview');
-  const [selectedScenario, setSelectedScenario] = useState(0);
-  const sc = SCENARIOS[selectedScenario];
-
-  return (
-    <div style={{ minHeight:'100vh', background:T.bg, fontFamily:T.font, padding:'28px 32px' }}>
-      {/* Header */}
-      <div style={{ marginBottom:24 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:6 }}>
-          <div style={{ width:36, height:36, borderRadius:8, background:PURPLE, display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <span style={{ fontSize:18 }}>🔀</span>
-          </div>
-          <div>
-            <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-              <h1 style={{ margin:0, fontSize:22, fontWeight:700, color:T.navy }}>Transition Scenario Modeller</h1>
-              <Badge text="EP-AB5" color={PURPLE} />
-              <Badge text="NGFS Aligned" color={T.teal} />
-            </div>
-            <p style={{ margin:0, fontSize:12, color:T.textSec, marginTop:2 }}>
-              Model climate transition pathways, capital deployment requirements, and portfolio impacts across 5 NGFS-aligned scenarios
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display:'flex', gap:4, marginBottom:24, borderBottom:`2px solid ${T.border}`, paddingBottom:0 }}>
-        {TABS.map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)} style={{
-            padding:'8px 16px', fontSize:13, fontWeight:activeTab===tab?700:500,
-            color: activeTab===tab ? PURPLE : T.textSec,
-            background:'transparent', border:'none', borderBottom: activeTab===tab ? `2px solid ${PURPLE}` : '2px solid transparent',
-            cursor:'pointer', marginBottom:-2, transition:'all 0.15s'
-          }}>{tab}</button>
-        ))}
-      </div>
-
-      {/* Overview Tab */}
-      {activeTab === 'Overview' && (
-        <div>
-          <div style={{ display:'flex', gap:14, marginBottom:20 }}>
-            <StatCard label="Annual Clean Energy Investment Needed" value="$5.4T" sub="By 2030, per IEA NZE pathway" color={PURPLE} />
-            <StatCard label="Renewable Capacity Addition" value="847 GW/yr" sub="Required to meet Net Zero 2050" color={T.teal} />
-            <StatCard label="Stranded Assets by 2030 (NZ2050)" value="$1.2T" sub="Fossil fuel infrastructure at risk" color={T.amber} />
-            <StatCard label="Portfolio Upside — Accelerated" value="+23%" sub="Accelerated 1.5°C scenario return" color={T.green} />
-          </div>
-
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-            {/* Scenario Comparison */}
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:16 }}>Scenario Portfolio Impact Summary</div>
-              <div style={{ fontSize:11, color:T.textMut, marginBottom:10, display:'flex', gap:10 }}>
-                <span style={{ width:160 }}>SCENARIO</span>
-                <span style={{ width:80 }}>OUTCOME</span>
-                <span style={{ flex:1 }}>PORTFOLIO IMPACT (2050)</span>
-                <span style={{ width:80, textAlign:'right' }}>STRANDED</span>
-              </div>
-              {SCENARIOS.map(s => <ScenarioBar key={s.name} scenario={s} />)}
-            </div>
-
-            {/* Carbon Price Trajectories */}
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:4 }}>Carbon Price by Scenario (2030 vs 2050)</div>
-              <div style={{ fontSize:11, color:T.textMut, marginBottom:12 }}>USD per tonne CO₂e</div>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={SCENARIOS.map(s => ({ name: s.name.split(' ').slice(0,2).join(' '), y2030: s.carbonPrice2030, y2050: s.carbonPrice2050 }))} margin={{ top:4, right:8, bottom:20, left:0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize:9, fill:T.textMut }} angle={-20} textAnchor="end" />
-                  <YAxis tick={{ fontSize:10, fill:T.textMut }} tickFormatter={v => `$${v}`} />
-                  <Tooltip contentStyle={tip} formatter={(v, n) => [`$${v}/t`, n === 'y2030' ? '2030' : '2050']} />
-                  <Bar dataKey="y2030" name="2030" radius={[3,3,0,0]}>
-                    {SCENARIOS.map((_, i) => <Cell key={i} fill={PURPLE} opacity={0.55} />)}
-                  </Bar>
-                  <Bar dataKey="y2050" name="2050" radius={[3,3,0,0]}>
-                    {SCENARIOS.map((_, i) => <Cell key={i} fill={PURPLE} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Renewables Share */}
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:4 }}>Renewables Share of Power Mix (%)</div>
-              <div style={{ fontSize:11, color:T.textMut, marginBottom:12 }}>2030 and 2050 targets per scenario</div>
-              <ResponsiveContainer width="100%" height={190}>
-                <BarChart data={SCENARIOS.map(s => ({ name: s.name.split(' ').slice(0,2).join(' '), r2030: s.renewablesShare2030, r2050: s.renewablesShare2050 }))} margin={{ top:4, right:8, bottom:20, left:0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize:9, fill:T.textMut }} angle={-20} textAnchor="end" />
-                  <YAxis tick={{ fontSize:10, fill:T.textMut }} tickFormatter={v => `${v}%`} domain={[0,100]} />
-                  <Tooltip contentStyle={tip} formatter={(v, n) => [`${v}%`, n === 'r2030' ? '2030' : '2050']} />
-                  <Bar dataKey="r2030" name="2030" radius={[3,3,0,0]}>
-                    {SCENARIOS.map((_, i) => <Cell key={i} fill={T.teal} opacity={0.5} />)}
-                  </Bar>
-                  <Bar dataKey="r2050" name="2050" radius={[3,3,0,0]}>
-                    {SCENARIOS.map((_, i) => <Cell key={i} fill={T.teal} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Key Milestones */}
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:14 }}>Net Zero Pathway Milestones</div>
-              <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-                {PATHWAY_MILESTONES.map((m, i) => (
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 10px', background:T.bg, borderRadius:7 }}>
-                    <div style={{ width:42, height:42, borderRadius:8, background: PURPLE+'18', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                      <span style={{ fontSize:13, fontWeight:700, color:PURPLE }}>{m.year}</span>
-                    </div>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontSize:12, color:T.navy, fontWeight:500 }}>{m.milestone}</div>
-                      <div style={{ fontSize:10, color:T.textMut, marginTop:1 }}>{m.dependency} driver</div>
-                    </div>
-                    <Badge text={m.dependency} color={m.dependency==='Policy'?T.amber:m.dependency==='Technology'?PURPLE:T.teal} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Pathway Constructor Tab */}
-      {activeTab === 'Pathway Constructor' && (
-        <div style={{ display:'grid', gridTemplateColumns:'300px 1fr', gap:20 }}>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20, height:'fit-content' }}>
-            <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:16 }}>Select Transition Pathway</div>
-            <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
-              {SCENARIOS.map((s, i) => (
-                <button key={i} onClick={() => setSelectedScenario(i)} style={{
-                  padding:'12px 14px', borderRadius:9, border: selectedScenario===i ? `2px solid ${PURPLE}` : `1px solid ${T.border}`,
-                  background: selectedScenario===i ? PURPLE+'0d' : T.surface, cursor:'pointer', textAlign:'left', transition:'all 0.15s'
-                }}>
-                  <div style={{ fontSize:13, fontWeight:600, color: selectedScenario===i ? PURPLE : T.navy }}>{s.name}</div>
-                  <div style={{ fontSize:11, color:T.textMut, marginTop:3 }}>Outcome: {s.tempOutcome} — GDP: {pct(s.gdpImpact2050)} by 2050</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-            {/* Scenario Header */}
-            <div style={{ background: PURPLE+'0d', border:`2px solid ${PURPLE}30`, borderRadius:12, padding:20 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:4 }}>
-                <div style={{ fontSize:20, fontWeight:700, color:PURPLE }}>{sc.name}</div>
-                <Badge text={sc.tempOutcome} color={sc.portfolioImpact>0?T.green:T.red} />
-              </div>
-              <div style={{ fontSize:12, color:T.textSec }}>
-                Modelled GDP impact by 2050: {pct(sc.gdpImpact2050)} | Portfolio projected impact: {pct(sc.portfolioImpact)}
-              </div>
-            </div>
-
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:14 }}>
-              <StatCard label="Carbon Price 2030" value={`$${sc.carbonPrice2030}/t`} sub="CO₂e per tonne" color={PURPLE} />
-              <StatCard label="Carbon Price 2050" value={`$${sc.carbonPrice2050}/t`} sub="CO₂e per tonne" color={PURPLE} />
-              <StatCard label="Stranded Assets" value={`$${sc.strandedAssets}T`} sub="Cumulative by 2050" color={T.red} />
-              <StatCard label="Renewables 2030" value={`${sc.renewablesShare2030}%`} sub="Share of power mix" color={T.teal} />
-              <StatCard label="Renewables 2050" value={`${sc.renewablesShare2050}%`} sub="Share of power mix" color={T.teal} />
-              <StatCard label="Portfolio Impact" value={pct(sc.portfolioImpact)} sub="Total return differential" color={sc.portfolioImpact>0?T.green:T.red} />
-            </div>
-
-            {/* Pathway Milestones Timeline */}
-            <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:14 }}>Pathway Milestone Timeline — {sc.name}</div>
-              <div style={{ position:'relative', paddingLeft:20 }}>
-                <div style={{ position:'absolute', left:8, top:0, bottom:0, width:2, background:`${PURPLE}30`, borderRadius:2 }} />
-                {PATHWAY_MILESTONES.sort((a,b)=>a.year-b.year).map((m, i) => (
-                  <div key={i} style={{ display:'flex', gap:14, marginBottom:12, alignItems:'flex-start' }}>
-                    <div style={{ width:8, height:8, borderRadius:'50%', background:PURPLE, flexShrink:0, marginTop:4, marginLeft:-4 }} />
-                    <div>
-                      <span style={{ fontSize:12, fontWeight:600, color:PURPLE, marginRight:8 }}>{m.year}</span>
-                      <span style={{ fontSize:12, color:T.navy }}>{m.milestone}</span>
-                      <span style={{ fontSize:10, color:T.textMut, marginLeft:8 }}>({m.dependency})</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Sector CapEx Tab */}
-      {activeTab === 'Sector CapEx' && (
-        <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-            <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:4 }}>Annual CapEx Requirement vs Current Deployment ($bn)</div>
-            <div style={{ fontSize:11, color:T.textMut, marginBottom:16 }}>Net Zero 2050 aligned investment requirement per sector</div>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={SECTOR_CAPEX} margin={{ top:4, right:12, bottom:8, left:0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="sector" tick={{ fontSize:11, fill:T.textMut }} />
-                <YAxis tick={{ fontSize:10, fill:T.textMut }} tickFormatter={v => `$${v}bn`} />
-                <Tooltip contentStyle={tip} formatter={(v, n) => [`$${v}bn`, n === 'required' ? 'Required' : n === 'current' ? 'Current' : 'Gap']} />
-                <Bar dataKey="required" name="required" radius={[3,3,0,0]}>
-                  {SECTOR_CAPEX.map((_, i) => <Cell key={i} fill={PURPLE} opacity={0.45} />)}
-                </Bar>
-                <Bar dataKey="current" name="current" radius={[3,3,0,0]}>
-                  {SECTOR_CAPEX.map((_, i) => <Cell key={i} fill={PURPLE} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-            <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:14 }}>Sector-Level CapEx Gap Analysis</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ borderBottom:`2px solid ${T.border}` }}>
-                  {['Sector','Required ($bn/yr)','Current ($bn/yr)','Gap ($bn/yr)','Gap %','Readiness Score'].map(h => (
-                    <th key={h} style={{ padding:'8px 10px', textAlign:'left', color:T.textMut, fontWeight:600, fontSize:10, textTransform:'uppercase', letterSpacing:'0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {SECTOR_CAPEX.map((s, i) => {
-                  const gapPct = Math.round(s.gap / s.required * 100);
-                  const rColor = s.readiness >= 60 ? T.green : s.readiness >= 40 ? T.amber : T.red;
-                  return (
-                    <tr key={i} style={{ borderBottom:`1px solid ${T.border}`, background: i%2===0 ? T.bg : T.surface }}>
-                      <td style={{ padding:'9px 10px', fontWeight:600, color:T.navy }}>{s.sector}</td>
-                      <td style={{ padding:'9px 10px', color:T.text }}>${s.required}bn</td>
-                      <td style={{ padding:'9px 10px', color:T.text }}>${s.current}bn</td>
-                      <td style={{ padding:'9px 10px', color:T.red, fontWeight:600 }}>${s.gap}bn</td>
-                      <td style={{ padding:'9px 10px' }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                          <div style={{ width:60, height:6, borderRadius:3, background:T.border, overflow:'hidden' }}>
-                            <div style={{ width:`${gapPct}%`, height:'100%', background:T.red, borderRadius:3 }} />
-                          </div>
-                          <span style={{ color:T.red, fontWeight:600 }}>{gapPct}%</span>
-                        </div>
-                      </td>
-                      <td style={{ padding:'9px 10px' }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                          <div style={{ width:60, height:6, borderRadius:3, background:T.border, overflow:'hidden' }}>
-                            <div style={{ width:`${s.readiness}%`, height:'100%', background:rColor, borderRadius:3 }} />
-                          </div>
-                          <span style={{ color:rColor, fontWeight:600 }}>{s.readiness}/100</span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Stranded Asset Timeline Tab */}
-      {activeTab === 'Stranded Asset Timeline' && (
-        <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
-          <div style={{ display:'flex', gap:14 }}>
-            <StatCard label="NZ2050 Stranded by 2030" value="$1.2T" sub="Coal & gas power assets" color={T.red} />
-            <StatCard label="Delayed Transition (2035)" value="$3.4T" sub="Lock-in of unabated assets" color={T.amber} />
-            <StatCard label="Failed Transition (2050)" value="$2.2T" sub="Below orderly — late write-downs" color={T.textSec} />
-            <StatCard label="Peak Stranding Year" value="2042–2048" sub="Under NZ2050 — accelerating" color={PURPLE} />
-          </div>
-
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-            <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:4 }}>Cumulative Stranded Assets by Scenario ($T)</div>
-            <div style={{ fontSize:11, color:T.textMut, marginBottom:8 }}>Fossil fuel infrastructure stranded value (2025–2050)</div>
-            <div style={{ display:'flex', gap:16, marginBottom:16 }}>
-              {[['Net Zero 2050', PURPLE], ['2°C Gradual', T.amber], ['Failed Transition', T.red]].map(([label, color]) => (
-                <div key={label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:T.textSec }}>
-                  <div style={{ width:20, height:3, borderRadius:2, background:color }} />
-                  {label}
-                </div>
-              ))}
-            </div>
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={STRANDED_TIMELINE} margin={{ top:4, right:16, bottom:8, left:0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="year" tick={{ fontSize:11, fill:T.textMut }} />
-                <YAxis tick={{ fontSize:10, fill:T.textMut }} tickFormatter={v => `$${v}T`} />
-                <Tooltip contentStyle={tip} formatter={(v, n) => [`$${v}T`, n === 'nz2050' ? 'Net Zero 2050' : n === 'gradual' ? '2°C Gradual' : 'Failed Transition']} />
-                <Line type="monotone" dataKey="nz2050" stroke={PURPLE} strokeWidth={2.5} dot={{ r:4, fill:PURPLE }} />
-                <Line type="monotone" dataKey="gradual" stroke={T.amber} strokeWidth={2.5} dot={{ r:4, fill:T.amber }} />
-                <Line type="monotone" dataKey="failed" stroke={T.red} strokeWidth={2.5} dot={{ r:4, fill:T.red }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-            <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:14 }}>Asset Type Stranding Exposure (NZ2050 Scenario)</div>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={[
-                { type: 'Coal Power',      value: 2.8, color: T.red },
-                { type: 'Gas Extraction',  value: 1.9, color: T.amber },
-                { type: 'Oil Sands',       value: 1.4, color: T.amber },
-                { type: 'LNG Terminals',   value: 0.9, color: T.textSec },
-                { type: 'Petrochem',       value: 0.6, color: T.textSec },
-                { type: 'Coal Mining',     value: 0.5, color: T.red },
-              ]} margin={{ top:4, right:12, bottom:8, left:0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="type" tick={{ fontSize:10, fill:T.textMut }} />
-                <YAxis tick={{ fontSize:10, fill:T.textMut }} tickFormatter={v => `$${v}T`} />
-                <Tooltip contentStyle={tip} formatter={v => [`$${v}T`, 'Stranded Value']} />
-                <Bar dataKey="value" radius={[4,4,0,0]}>
-                  {[T.red, T.amber, T.amber, T.textSec, T.textSec, T.red].map((c, i) => <Cell key={i} fill={c} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Portfolio Impact Tab */}
-      {activeTab === 'Portfolio Impact' && (
-        <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
-          <div style={{ display:'flex', gap:14 }}>
-            <StatCard label="Renewables Upside (Orderly)" value="+38.4%" sub="Equity outperformance by 2050" color={T.green} />
-            <StatCard label="Fossil Fuel Downside (Orderly)" value="-31.7%" sub="Equity revaluation risk" color={T.red} />
-            <StatCard label="Disorderly Sovereign Bonds EM" value="-34.7%" sub="Climate-vulnerable EM debt" color={T.red} />
-            <StatCard label="Green Bond Resilience" value="+12.6%" sub="Orderly transition performance" color={T.teal} />
-          </div>
-
-          {/* Horizontal Bar Chart */}
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-            <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:4 }}>Asset Class Impact: Orderly vs Disorderly Transition (%)</div>
-            <div style={{ fontSize:11, color:T.textMut, marginBottom:16 }}>Projected value change by 2050 relative to baseline</div>
-            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-              {PORTFOLIO_IMPACT.map((item, i) => {
-                const maxAbs = 45;
-                return (
-                  <div key={i}>
-                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:5 }}>
-                      <span style={{ fontSize:12, fontWeight:600, color:T.navy }}>{item.assetClass}</span>
-                      <div style={{ display:'flex', gap:16 }}>
-                        <span style={{ fontSize:11, color:item.orderly>=0?T.green:T.red, fontWeight:600 }}>Orderly: {pct(item.orderly)}</span>
-                        <span style={{ fontSize:11, color:item.disorderly>=0?T.green:T.red, fontWeight:600 }}>Disorderly: {pct(item.disorderly)}</span>
-                      </div>
-                    </div>
-                    <div style={{ position:'relative', height:10, background:T.border, borderRadius:5, overflow:'visible' }}>
-                      <div style={{ position:'absolute', left:'50%', top:-2, width:2, height:14, background:T.textMut, borderRadius:1 }} />
-                      {/* Orderly bar */}
-                      <div style={{
-                        position:'absolute',
-                        height:10, borderRadius:5,
-                        background: item.orderly>=0 ? T.green : T.red,
-                        left: item.orderly>=0 ? '50%' : `calc(50% - ${Math.abs(item.orderly)/maxAbs*45}%)`,
-                        width: `${Math.abs(item.orderly)/maxAbs*45}%`,
-                        opacity: 0.8,
-                      }} />
-                    </div>
-                    <div style={{ height:6 }} />
-                    <div style={{ position:'relative', height:10, background:T.border, borderRadius:5, overflow:'visible' }}>
-                      <div style={{ position:'absolute', left:'50%', top:-2, width:2, height:14, background:T.textMut, borderRadius:1 }} />
-                      {/* Disorderly bar */}
-                      <div style={{
-                        position:'absolute',
-                        height:10, borderRadius:5,
-                        background: item.disorderly>=0 ? T.teal : T.amber,
-                        left: item.disorderly>=0 ? '50%' : `calc(50% - ${Math.abs(item.disorderly)/maxAbs*45}%)`,
-                        width: `${Math.abs(item.disorderly)/maxAbs*45}%`,
-                        opacity: 0.75,
-                      }} />
-                    </div>
-                    <div style={{ display:'flex', gap:16, marginTop:3 }}>
-                      <span style={{ fontSize:9, color:T.textMut }}>Orderly (above)</span>
-                      <span style={{ fontSize:9, color:T.textMut }}>Disorderly (below)</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div style={{ display:'flex', gap:20, marginTop:20, padding:'12px 14px', background:T.bg, borderRadius:8 }}>
-              {[['Orderly Positive', T.green], ['Orderly Negative', T.red], ['Disorderly Positive', T.teal], ['Disorderly Negative', T.amber]].map(([label, color]) => (
-                <div key={label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:T.textSec }}>
-                  <div style={{ width:14, height:8, borderRadius:2, background:color, opacity:0.8 }} />
-                  {label}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Impact Table */}
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:12, padding:20 }}>
-            <div style={{ fontSize:13, fontWeight:700, color:T.navy, marginBottom:14 }}>Detailed Portfolio Impact Matrix</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ borderBottom:`2px solid ${T.border}` }}>
-                  {['Asset Class','Orderly Transition','Disorderly Transition','Differential','Risk Rating'].map(h => (
-                    <th key={h} style={{ padding:'8px 10px', textAlign:'left', color:T.textMut, fontWeight:600, fontSize:10, textTransform:'uppercase', letterSpacing:'0.04em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {PORTFOLIO_IMPACT.map((item, i) => {
-                  const diff = (item.orderly - item.disorderly).toFixed(1);
-                  const risk = Math.abs(item.disorderly) > 25 ? 'High' : Math.abs(item.disorderly) > 12 ? 'Medium' : 'Low';
-                  const riskColor = risk === 'High' ? T.red : risk === 'Medium' ? T.amber : T.green;
-                  return (
-                    <tr key={i} style={{ borderBottom:`1px solid ${T.border}`, background: i%2===0 ? T.bg : T.surface }}>
-                      <td style={{ padding:'9px 10px', fontWeight:600, color:T.navy }}>{item.assetClass}</td>
-                      <td style={{ padding:'9px 10px', color:item.orderly>=0?T.green:T.red, fontWeight:600 }}>{pct(item.orderly)}</td>
-                      <td style={{ padding:'9px 10px', color:item.disorderly>=0?T.teal:T.amber, fontWeight:600 }}>{pct(item.disorderly)}</td>
-                      <td style={{ padding:'9px 10px', color:PURPLE, fontWeight:600 }}>{diff > 0 ? '+' : ''}{diff}pp</td>
-                      <td style={{ padding:'9px 10px' }}><Badge text={risk} color={riskColor} /></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Footer */}
-      <div style={{ marginTop:28, padding:'12px 16px', background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <span style={{ fontSize:11, color:T.textMut }}>EP-AB5 — Transition Scenario Modeller | NGFS v4.0 Scenarios | IEA NZE 2050 Aligned | Updated Q1 2026</span>
-        <div style={{ display:'flex', gap:8 }}>
-          <Badge text="NGFS v4.0" color={T.teal} />
-          <Badge text="IEA NZE" color={T.navy} />
-          <Badge text="TCFD Aligned" color={PURPLE} />
-        </div>
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#6d28d9';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6'];
+const TABS=['Scenario Builder','Impact Analysis','Pathway Comparison','Custom Scenarios'];const PAGE=12;
+const PRESETS=[{id:1,name:'NGFS Net Zero 2050',carbonPrice:250,renewPct:90,tempC:1.5,gdp:-2,coalPhase:2040,evShare:85,h2Scale:'High',ccusGt:7},{id:2,name:'NGFS Delayed',carbonPrice:350,renewPct:75,tempC:1.8,gdp:-4.5,coalPhase:2050,evShare:65,h2Scale:'Medium',ccusGt:5},{id:3,name:'Current Policies',carbonPrice:50,renewPct:40,tempC:3.0,gdp:-8,coalPhase:2070,evShare:30,h2Scale:'Low',ccusGt:1},{id:4,name:'IEA NZE',carbonPrice:280,renewPct:88,tempC:1.4,gdp:-1.5,coalPhase:2035,evShare:90,h2Scale:'High',ccusGt:8},{id:5,name:'Below 2C',carbonPrice:180,renewPct:70,tempC:1.7,gdp:-3,coalPhase:2045,evShare:55,h2Scale:'Medium',ccusGt:4},{id:6,name:'Divergent NZ',carbonPrice:400,renewPct:85,tempC:1.5,gdp:-5,coalPhase:2040,evShare:80,h2Scale:'High',ccusGt:6}];
+const SECTORS=['Energy','Utilities','Materials','Industrials','Technology','Financials','Consumer','Healthcare','Real Estate','Transport'];
+const SECTOR_IMPACTS=PRESETS.map(p=>({scenario:p.name,...Object.fromEntries(SECTORS.map((s,i)=>[s,+((sr(p.id*100+i*7)-0.5)*Math.abs(p.gdp)*3).toFixed(1)]))}));
+const TIMELINE=Array.from({length:7},(_,y)=>({year:2025+y*5,nz:+(1.2+y*0.04).toFixed(1),delayed:+(1.2+y*0.1).toFixed(1),current:+(1.2+y*0.28).toFixed(1),carbon_nz:Math.round(250+y*0),carbon_del:Math.round(50+y*45),carbon_cur:Math.round(20+y*5)}));
+export default function TransitionScenarioModellerPage(){
+  const[tab,setTab]=useState(0);const[scenarioId,setScenarioId]=useState(1);const[search,setSearch]=useState('');const[sortCol,setSortCol]=useState('gdp');const[sortDir,setSortDir]=useState('asc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const[customCarbon,setCustomCarbon]=useState(200);const[customRenew,setCustomRenew]=useState(70);const[customTemp,setCustomTemp]=useState(2.0);
+  const curPreset=PRESETS.find(p=>p.id===scenarioId)||PRESETS[0];
+  const sectorImpact=useMemo(()=>{const si=SECTOR_IMPACTS.find(s=>s.scenario===curPreset.name);if(!si)return[];return SECTORS.map(s=>({sector:s,impact:si[s]||0})).sort((a,b)=>a.impact-b.impact);},[curPreset]);
+  const filteredPresets=useMemo(()=>{let d=[...PRESETS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sortCol,sortDir]);
+  const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('asc');}};
+  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const keys=Object.keys(data[0]);const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
+  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' \u25B2':' \u25BC'):' \u25CB';
+  const thS={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left',background:T.surfaceH};const tdS={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};const inpS={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:180};const selS={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
+  const btnS=a=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});const cS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
+  const kpi=(l,v,c)=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 18px',flex:1,minWidth:130}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:1}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c||T.navy,marginTop:4}}>{v}</div></div>);
+  const sliderS={width:'100%',accentColor:ACCENT};
+  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}><div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>{'\u2715'}</button></div>
+    <div style={{padding:'16px 24px'}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{[['Carbon Price','$'+item.carbonPrice+'/t'],['Renewable',item.renewPct+'%'],['Temperature',item.tempC+'\u00B0C'],['GDP Impact',item.gdp+'%'],['Coal Phase-out',item.coalPhase],['EV Share',item.evShare+'%'],['H2 Scale',item.h2Scale],['CCUS',item.ccusGt+' GtCO2']].map(([k,v],j)=>(<div key={j} style={{background:T.surfaceH,borderRadius:6,padding:'8px 10px'}}><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:2}}>{v}</div></div>))}</div></div></div>);};
+  const renderBuilder=()=>(<div>
+    <div style={{display:'flex',gap:12,marginBottom:16}}><span style={{fontSize:12,color:T.textSec,alignSelf:'center'}}>Scenario:</span><select value={scenarioId} onChange={e=>setScenarioId(+e.target.value)} style={selS}>{PRESETS.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
+    <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>{kpi('Temperature',curPreset.tempC+'\u00B0C',curPreset.tempC>2?T.red:T.green)}{kpi('Carbon Price','$'+curPreset.carbonPrice+'/t')}{kpi('GDP Impact',curPreset.gdp+'%',T.red)}{kpi('Renewable',curPreset.renewPct+'%',T.green)}{kpi('Coal Phase-out',curPreset.coalPhase)}{kpi('EV Share',curPreset.evShare+'%')}{kpi('CCUS',curPreset.ccusGt+' Gt')}</div>
+    <div style={{overflowX:'auto',...cS,padding:0,marginBottom:16}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{[['name','Scenario'],['carbonPrice','CO2 $/t'],['renewPct','Renew%'],['tempC','Temp'],['gdp','GDP%'],['coalPhase','Coal Out'],['evShare','EV%']].map(([k,l])=><th key={k} onClick={()=>doSort(k)} style={thS}>{l}{si(k,sortCol,sortDir)}</th>)}</tr></thead>
+      <tbody>{filteredPresets.map(r=><tr key={r.id} onClick={()=>{setScenarioId(r.id);setSelected(r);}} style={{cursor:'pointer',background:r.id===scenarioId?T.surfaceH:'transparent'}}><td style={tdS}><span style={{fontWeight:600}}>{r.name}</span></td><td style={tdS}>${r.carbonPrice}</td><td style={tdS}>{r.renewPct}%</td><td style={tdS}><span style={{color:r.tempC>2?T.red:T.green,fontWeight:600}}>{r.tempC}\u00B0C</span></td><td style={tdS}><span style={{color:T.red}}>{r.gdp}%</span></td><td style={tdS}>{r.coalPhase}</td><td style={tdS}>{r.evShare}%</td></tr>)}</tbody></table></div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Sector Impact</div><ResponsiveContainer width="100%" height={280}><BarChart data={sectorImpact}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="impact">{sectorImpact.map((e,j)=><Cell key={j} fill={e.impact>=0?T.green:T.red}/>)}</Bar></BarChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Scenario Radar</div><ResponsiveContainer width="100%" height={280}><RadarChart data={[{m:'Renewable',v:curPreset.renewPct},{m:'EV',v:curPreset.evShare},{m:'CCUS',v:curPreset.ccusGt*12},{m:'Carbon$',v:curPreset.carbonPrice/4},{m:'GDP',v:100+curPreset.gdp*5}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(109,40,217,0.2)"/></RadarChart></ResponsiveContainer></div>
+    </div></div>);
+  const renderImpact=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={{...cS,gridColumn:'1/3'}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Sector Impact Across Scenarios</div><ResponsiveContainer width="100%" height={300}><BarChart data={SECTOR_IMPACTS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="scenario" tick={{fontSize:7,fill:T.textSec}} angle={-20}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/>{SECTORS.slice(0,5).map((s,i)=><Bar key={s} dataKey={s} fill={COLORS[i]}/>)}<Legend/></BarChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Carbon Price vs GDP</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Carbon $/t" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="GDP %" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={PRESETS.map(p=>({name:p.name,x:p.carbonPrice,y:p.gdp}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Temperature Outcomes</div><ResponsiveContainer width="100%" height={280}><BarChart data={PRESETS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:7,fill:T.textSec}} angle={-20}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[0,4]}/><Tooltip {...tip}/><Bar dataKey="tempC" radius={[4,4,0,0]}>{PRESETS.map((p,j)=><Cell key={j} fill={p.tempC>2?T.red:p.tempC>1.5?T.amber:T.green}/>)}</Bar></BarChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderPathway=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Temperature Pathways</div><ResponsiveContainer width="100%" height={300}><LineChart data={TIMELINE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}} domain={[1,4]}/><Tooltip {...tip}/><Line type="monotone" dataKey="nz" stroke={T.green} strokeWidth={2} name="Net Zero"/><Line type="monotone" dataKey="delayed" stroke={T.amber} strokeWidth={2} name="Delayed"/><Line type="monotone" dataKey="current" stroke={T.red} strokeWidth={2} name="Current"/><Legend/></LineChart></ResponsiveContainer></div>
+    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Carbon Price Pathways</div><ResponsiveContainer width="100%" height={300}><AreaChart data={TIMELINE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Area type="monotone" dataKey="carbon_nz" stroke={T.green} fill="rgba(22,163,74,0.1)" name="NZ $/t"/><Area type="monotone" dataKey="carbon_del" stroke={T.amber} fill="rgba(217,119,6,0.1)" name="Delayed $/t"/><Area type="monotone" dataKey="carbon_cur" stroke={T.red} fill="rgba(220,38,38,0.1)" name="Current $/t"/><Legend/></AreaChart></ResponsiveContainer></div>
+  </div></div>);
+  const renderCustom=()=>(<div>
+    <div style={{...cS,marginBottom:16}}><div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:12}}>Custom Scenario Builder</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+        <div><div style={{fontSize:11,color:T.textSec}}>Carbon Price: <strong>${customCarbon}/t</strong></div><input type="range" min={20} max={500} value={customCarbon} onChange={e=>setCustomCarbon(+e.target.value)} style={sliderS}/></div>
+        <div><div style={{fontSize:11,color:T.textSec}}>Renewable: <strong>{customRenew}%</strong></div><input type="range" min={20} max={100} value={customRenew} onChange={e=>setCustomRenew(+e.target.value)} style={sliderS}/></div>
+        <div><div style={{fontSize:11,color:T.textSec}}>Target Temp: <strong>{customTemp}\u00B0C</strong></div><input type="range" min={12} max={40} value={Math.round(customTemp*10)} onChange={e=>setCustomTemp(+(e.target.value/10).toFixed(1))} style={sliderS}/></div>
       </div>
     </div>
-  );
+    <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>{kpi('Carbon Price','$'+customCarbon+'/t')}{kpi('Renewable',customRenew+'%',T.green)}{kpi('Temperature',customTemp+'\u00B0C',customTemp>2?T.red:T.green)}{kpi('Est. GDP',(-customCarbon*0.01-customTemp*1.5).toFixed(1)+'%',T.red)}</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Custom vs Presets</div><ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Carbon$/t" tick={{fontSize:9,fill:T.textSec}}/><YAxis dataKey="y" name="Temp\u00B0C" tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Scatter data={[...PRESETS.map(p=>({name:p.name,x:p.carbonPrice,y:p.tempC})),{name:'Custom',x:customCarbon,y:customTemp}]} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer></div>
+      <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Custom Sector Impact Estimate</div><ResponsiveContainer width="100%" height={280}><BarChart data={SECTORS.map((s,i)=>({sector:s,impact:+((sr(i*7)-0.5)*customCarbon*0.02).toFixed(1)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:8,fill:T.textSec}} angle={-25}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="impact">{SECTORS.map((_,j)=><Cell key={j} fill={sr(j*7)>0.5?T.green:T.red}/>)}</Bar></BarChart></ResponsiveContainer></div>
+    </div>
+    <div style={{marginTop:12}}><button onClick={()=>exportCSV(PRESETS,'scenarios.csv')} style={btnS(false)}>Export All Scenarios CSV</button></div>
+  </div>);
+  return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
+    <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Transition Scenario Modeller</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>6 NGFS/IEA presets | Custom scenario builder | Impact modelling</p></div>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
+    {tab===0&&renderBuilder()}{tab===1&&renderImpact()}{tab===2&&renderPathway()}{tab===3&&renderCustom()}
+    <Panel item={selected} onClose={()=>setSelected(null)}/>
+  </div>);
 }
