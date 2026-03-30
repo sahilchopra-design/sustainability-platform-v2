@@ -1,168 +1,131 @@
 import React,{useState,useMemo,useCallback} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
-import { REGULATORY_THRESHOLDS } from '../../../data/referenceData';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 const ACCENT='#7c3aed';
+const fmt=v=>typeof v==='number'?v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
 const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
 const TABS=['Dashboard','Company Readiness','ESRS Standards','Gap Analysis'];
-const SECTORS=['All','Financial Services','Energy','Manufacturing','Technology','Healthcare','Consumer','Utilities','Real Estate','Mining'];
-const READINESS=['All','Compliant','Mostly Ready','In Progress','Early Stage','Not Started'];
+const SECTORS=['All','Finance','Energy','Industrials','Technology','Consumer','Healthcare','Materials','Utilities','Real Estate','Telecom'];
+const READINESS=['All','Compliant','Advanced','In Progress','Early Stage','Not Started'];
 const PAGE_SIZE=15;
+const PIECLRS=[ACCENT,T.navy,T.gold,T.sage,T.amber,T.green,T.red,'#0891b2','#be185d','#ea580c'];
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(22,163,74,0.12)':v>=mid?'rgba(197,169,106,0.12)':v>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v>=hi?T.green:v>=mid?T.gold:v>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const readBadge=(r)=>{const m={Compliant:{bg:'rgba(22,163,74,0.12)',c:T.green},Advanced:{bg:'rgba(90,138,106,0.12)',c:T.sage},'In Progress':{bg:'rgba(197,169,106,0.15)',c:T.gold},'Early Stage':{bg:'rgba(217,119,6,0.12)',c:T.amber},'Not Started':{bg:'rgba(220,38,38,0.12)',c:T.red}};const s=m[r]||m['Early Stage'];return{background:s.bg,color:s.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
 
-const ESRS_STANDARDS=[
-  {id:'ESRS E1',name:'Climate Change',category:'Environmental',dataPoints:82,mandatory:true},
-  {id:'ESRS E2',name:'Pollution',category:'Environmental',dataPoints:56,mandatory:false},
-  {id:'ESRS E3',name:'Water & Marine Resources',category:'Environmental',dataPoints:48,mandatory:false},
-  {id:'ESRS E4',name:'Biodiversity & Ecosystems',category:'Environmental',dataPoints:64,mandatory:false},
-  {id:'ESRS E5',name:'Resource Use & Circular Economy',category:'Environmental',dataPoints:52,mandatory:false},
-  {id:'ESRS S1',name:'Own Workforce',category:'Social',dataPoints:78,mandatory:true},
-  {id:'ESRS S2',name:'Workers in Value Chain',category:'Social',dataPoints:45,mandatory:false},
-  {id:'ESRS S3',name:'Affected Communities',category:'Social',dataPoints:42,mandatory:false},
-  {id:'ESRS S4',name:'Consumers & End-Users',category:'Social',dataPoints:38,mandatory:false},
-  {id:'ESRS G1',name:'Business Conduct',category:'Governance',dataPoints:34,mandatory:true},
-  {id:'ESRS 1',name:'General Requirements',category:'Cross-Cutting',dataPoints:28,mandatory:true},
-  {id:'ESRS 2',name:'General Disclosures',category:'Cross-Cutting',dataPoints:44,mandatory:true},
-];
+const ESRS_STANDARDS=[{id:'ESRS E1',name:'Climate Change',category:'Environment',dataPoints:82,mandatory:true},{id:'ESRS E2',name:'Pollution',category:'Environment',dataPoints:56,mandatory:false},{id:'ESRS E3',name:'Water & Marine Resources',category:'Environment',dataPoints:38,mandatory:false},{id:'ESRS E4',name:'Biodiversity & Ecosystems',category:'Environment',dataPoints:45,mandatory:false},{id:'ESRS E5',name:'Resource Use & Circular Economy',category:'Environment',dataPoints:42,mandatory:false},{id:'ESRS S1',name:'Own Workforce',category:'Social',dataPoints:91,mandatory:true},{id:'ESRS S2',name:'Workers in Value Chain',category:'Social',dataPoints:48,mandatory:false},{id:'ESRS S3',name:'Affected Communities',category:'Social',dataPoints:36,mandatory:false},{id:'ESRS S4',name:'Consumers & End-users',category:'Social',dataPoints:34,mandatory:false},{id:'ESRS G1',name:'Business Conduct',category:'Governance',dataPoints:28,mandatory:true},{id:'ESRS 1',name:'General Requirements',category:'Cross-cutting',dataPoints:65,mandatory:true},{id:'ESRS 2',name:'General Disclosures',category:'Cross-cutting',dataPoints:78,mandatory:true}];
 
-const COMPANIES=(()=>{
-  const names=['Deutsche Bank','Allianz SE','Siemens AG','BASF SE','BMW AG','SAP SE','Adidas AG','Bayer AG','Daimler Truck','Infineon Tech','Volkswagen AG','Munich Re','Henkel AG','Merck KGaA','Continental AG','Fresenius SE','HeidelbergCement','RWE AG','E.ON SE','Deutsche Telekom','BNP Paribas','TotalEnergies','LVMH','Schneider Elec','Air Liquide','Danone SA','Engie SA','Veolia Environ','Saint-Gobain','Capgemini SE','Unilever plc','Shell plc','HSBC Holdings','AstraZeneca','Rio Tinto','BP plc','GSK plc','Barclays plc','Diageo plc','National Grid','Nestlé SA','Novartis AG','Roche Holding','UBS Group','ABB Ltd','Zurich Insur.','Holcim Ltd','Swiss Re','Swatch Group','Givaudan SA','ING Group','Philips NV','ASML Holding','Aegon NV','Heineken NV','Enel SpA','Eni SpA','Intesa Sanpaolo','Generali SpA','UniCredit SpA','Iberdrola SA','Banco Santander','Telefonica','Inditex SA','CaixaBank SA','Nordea Bank','Volvo Group','Ericsson AB','H&M Group','Atlas Copco','Orsted A/S','Maersk','Novo Nordisk','Carlsberg','Vestas Wind','KBC Group','ArcelorMittal','Solvay SA','UCB SA','Umicore SA'];
-  const secs=['Financial Services','Financial Services','Manufacturing','Manufacturing','Manufacturing','Technology','Consumer','Healthcare','Manufacturing','Technology','Manufacturing','Financial Services','Consumer','Healthcare','Manufacturing','Healthcare','Mining','Energy','Utilities','Technology','Financial Services','Energy','Consumer','Manufacturing','Manufacturing','Consumer','Utilities','Utilities','Manufacturing','Technology','Consumer','Energy','Financial Services','Healthcare','Mining','Energy','Healthcare','Financial Services','Consumer','Utilities','Consumer','Healthcare','Healthcare','Financial Services','Manufacturing','Financial Services','Mining','Financial Services','Consumer','Manufacturing','Financial Services','Technology','Technology','Financial Services','Consumer','Utilities','Energy','Financial Services','Financial Services','Financial Services','Utilities','Financial Services','Technology','Consumer','Financial Services','Financial Services','Manufacturing','Technology','Consumer','Manufacturing','Energy','Manufacturing','Healthcare','Consumer','Energy','Financial Services','Mining','Manufacturing','Healthcare','Manufacturing'];
-  return names.map((n,i)=>{const scores={};ESRS_STANDARDS.forEach((s,j)=>{scores[s.id]=Math.round(10+sr(i*7+j*13)*85);});
-    return{id:i+1,name:n,sector:secs[i]||'Manufacturing',overallReadiness:Math.round(15+sr(i*7)*80),doubleMateriality:Math.round(10+sr(i*11)*85),dataCollectionPct:Math.round(20+sr(i*13)*75),gapsCritical:Math.floor(sr(i*17)*12),gapsMajor:Math.floor(sr(i*19)*18),gapsMinor:Math.floor(sr(i*23)*25),auditReadiness:Math.round(15+sr(i*29)*80),taxonomyAlignment:Math.round(5+sr(i*31)*60),valueChainMapping:Math.round(10+sr(i*37)*80),stakeholderEngagement:Math.round(20+sr(i*41)*75),reportingTimeline:sr(i*43)<0.3?'FY2024':sr(i*43)<0.6?'FY2025':'FY2026',assuranceLevel:sr(i*47)<0.4?'Limited':sr(i*47)<0.7?'Reasonable':'None',readinessRating:sr(i*7)<0.1?'Compliant':sr(i*7)<0.3?'Mostly Ready':sr(i*7)<0.55?'In Progress':sr(i*7)<0.8?'Early Stage':'Not Started',...scores};})();})();
+const COMPANIES=(()=>{const names=['Siemens AG','SAP SE','Allianz SE','Deutsche Bank','BMW AG','BASF SE','Bayer AG','Volkswagen AG','Daimler Truck','Infineon Tech','Unilever plc','Shell plc','BP plc','HSBC Holdings','Nestle SA','Novartis AG','Roche Holding','AstraZeneca','GSK plc','Diageo plc','Rio Tinto plc','BHP Group','Glencore plc','Anglo American','TotalEnergies','Enel SpA','Iberdrola SA','Schneider Elec','Saint-Gobain','Danone SA','LVMH','LOreal SA','Pernod Ricard','Hermes Intl','Kering SA','Stellantis NV','Renault Group','Philips NV','ASML Holding','Adidas AG','Inditex SA','H&M Group','Volvo Group','Ericsson AB','Nokia Corp','Telefonica SA','Deutsche Telekom','Orange SA','Eiffage SA','Vinci SA','Bouygues SA','Engie SA','Veolia Environ','Air Liquide','Michelin SA','Peugeot SA','Safran SA','Thales SA','Leonardo SpA','Airbus SE','ABB Ltd','UBS Group','Credit Suisse','Swiss Re','Zurich Insurance','Adecco Group','Swatch Group','Geberit AG','Holcim Ltd','Sika AG','EDF Group','Orsted A/S','Vestas Wind','Novo Nordisk','Maersk','Carlsberg A/S','Coloplast','DSV Panalpina','Pandora A/S','ISS A/S'];
+const secs=['Industrials','Technology','Finance','Finance','Industrials','Materials','Healthcare','Industrials','Industrials','Technology','Consumer','Energy','Energy','Finance','Consumer','Healthcare','Healthcare','Healthcare','Healthcare','Consumer','Materials','Materials','Materials','Materials','Energy','Utilities','Utilities','Industrials','Materials','Consumer','Consumer','Consumer','Consumer','Consumer','Consumer','Industrials','Industrials','Healthcare','Technology','Consumer','Consumer','Consumer','Industrials','Technology','Technology','Telecom','Telecom','Telecom','Industrials','Industrials','Industrials','Utilities','Utilities','Materials','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials','Finance','Finance','Finance','Finance','Industrials','Consumer','Industrials','Materials','Materials','Utilities','Energy','Energy','Healthcare','Industrials','Consumer','Healthcare','Industrials','Consumer','Industrials'];
+return names.map((n,i)=>({id:i+1,name:n,sector:secs[i],overallReadiness:Math.round(10+sr(i*7)*85),e1Score:Math.round(15+sr(i*11)*80),e2Score:Math.round(10+sr(i*13)*85),s1Score:Math.round(20+sr(i*17)*75),s2Score:Math.round(5+sr(i*19)*80),g1Score:Math.round(25+sr(i*23)*70),doubleMateriality:Math.round(10+sr(i*29)*85),gapCount:Math.round(sr(i*31)*45),dataPointsCovered:Math.round(100+sr(i*37)*543),totalDataPoints:643,automationRate:Math.round(10+sr(i*41)*80),assuranceReady:Math.round(5+sr(i*43)*90),taxonomyAlignment:Math.round(sr(i*47)*65),reportingDeadline:`202${5+Math.floor(sr(i*53)*2)}`,status:sr(i*7)<0.1?'Compliant':sr(i*7)<0.3?'Advanced':sr(i*7)<0.55?'In Progress':sr(i*7)<0.8?'Early Stage':'Not Started'}));})();
 
-const TREND=Array.from({length:18},(_,i)=>({month:`${2024+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,avgReadiness:Math.round(25+i*2.5+sr(i*7)*8),companiesReporting:Math.round(10+i*4+sr(i*11)*5),gapsClosed:Math.round(50+i*8+sr(i*13)*15)}));
+const TREND=Array.from({length:18},(_,i)=>({month:`${2024+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,avgReady:Math.round(20+i*3+sr(i*7)*8),compliant:Math.round(2+i*1.5+sr(i*11)*3),gapsFixed:Math.round(50+i*20+sr(i*13)*40)}));
 
-const badge=(val,thresholds)=>{const[lo,mid,hi]=thresholds;const bg=val>=hi?'rgba(22,163,74,0.12)':val>=mid?'rgba(197,169,106,0.12)':val>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=val>=hi?T.green:val>=mid?T.gold:val>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
-const rBadge=(r)=>{const m={Compliant:{bg:'rgba(22,163,74,0.12)',c:T.green},'Mostly Ready':{bg:'rgba(90,138,106,0.12)',c:T.sage},'In Progress':{bg:'rgba(197,169,106,0.15)',c:T.gold},'Early Stage':{bg:'rgba(217,119,6,0.12)',c:T.amber},'Not Started':{bg:'rgba(220,38,38,0.12)',c:T.red}};const s=m[r]||m['Early Stage'];return{background:s.bg,color:s.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+const KPI=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
 
 export default function CsrdEsrsAutomationPage(){
-  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sectorF,setSectorF]=useState('All');const[readyF,setReadyF]=useState('All');const[sortCol,setSortCol]=useState('overallReadiness');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
-  const[sSearch,setSSearch]=useState('');const[gSearch,setGSearch]=useState('');const[gSort,setGSort]=useState('gapsCritical');const[gDir,setGDir]=useState('desc');const[gPage,setGPage]=useState(1);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[secF,setSecF]=useState('All');const[readF,setReadF]=useState('All');
+  const[sortCol,setSortCol]=useState('overallReadiness');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[expanded,setExpanded]=useState(null);
 
-  const filtered=useMemo(()=>{let d=[...COMPANIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(sectorF!=='All')d=d.filter(r=>r.sector===sectorF);if(readyF!=='All')d=d.filter(r=>r.readinessRating===readyF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sectorF,readyF,sortCol,sortDir]);
-  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);const tP=Math.ceil(filtered.length/PAGE_SIZE);
+  const filtered=useMemo(()=>{let d=[...COMPANIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(secF!=='All')d=d.filter(r=>r.sector===secF);if(readF!=='All')d=d.filter(r=>r.status===readF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,secF,readF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
-  const esrsFiltered=useMemo(()=>{let d=[...ESRS_STANDARDS];if(sSearch)d=d.filter(r=>r.name.toLowerCase().includes(sSearch.toLowerCase())||r.id.toLowerCase().includes(sSearch.toLowerCase()));return d;},[sSearch]);
+  const kpis=useMemo(()=>{const avg=(k)=>Math.round(COMPANIES.reduce((s,c)=>s+c[k],0)/COMPANIES.length);return{avgReady:avg('overallReadiness'),avgAuto:avg('automationRate'),compliant:COMPANIES.filter(c=>c.status==='Compliant'||c.status==='Advanced').length,totalGaps:COMPANIES.reduce((s,c)=>s+c.gapCount,0),standards:ESRS_STANDARDS.length};},[]);
+  const sectorChart=useMemo(()=>{const m={};COMPANIES.forEach(c=>{if(!m[c.sector])m[c.sector]={sector:c.sector,avgReady:0,n:0};m[c.sector].avgReady+=c.overallReadiness;m[c.sector].n++;});return Object.values(m).map(s=>({...s,avgReady:Math.round(s.avgReady/s.n)}));},[]);
+  const statusDist=useMemo(()=>{const m={};COMPANIES.forEach(c=>{m[c.status]=(m[c.status]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
+  const radarData=useMemo(()=>{const dims=['e1Score','e2Score','s1Score','s2Score','g1Score','doubleMateriality'];const avg=(k)=>Math.round(COMPANIES.reduce((s,c)=>s+c[k],0)/COMPANIES.length);return dims.map(d=>({dim:d.replace(/([A-Z])/g,' $1').replace(/(\d)/g,' $1').trim(),value:avg(d),fullMark:100}));},[]);
 
-  const gapData=useMemo(()=>{let d=filtered.map(r=>({name:r.name,sector:r.sector,gapsCritical:r.gapsCritical,gapsMajor:r.gapsMajor,gapsMinor:r.gapsMinor,totalGaps:r.gapsCritical+r.gapsMajor+r.gapsMinor,dataCollection:r.dataCollectionPct,readiness:r.overallReadiness}));if(gSearch)d=d.filter(r=>r.name.toLowerCase().includes(gSearch.toLowerCase()));d.sort((a,b)=>gDir==='asc'?(a[gSort]>b[gSort]?1:-1):(a[gSort]<b[gSort]?1:-1));return d;},[filtered,gSearch,gSort,gDir]);
-  const gPaged=useMemo(()=>gapData.slice((gPage-1)*PAGE_SIZE,gPage*PAGE_SIZE),[gapData,gPage]);const gTP=Math.ceil(gapData.length/PAGE_SIZE);
+  const ss={wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},sub:{fontSize:13,color:T.textSec,marginBottom:20},tabs:{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0},tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(124,58,237,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2}),card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},th:(col,sc,sd)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sc===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16}};
+  const TH=({col,label,sc,sd,fn})=><th style={ss.th(col,sc,sd)} onClick={()=>fn(col)}>{label}{sc===col?(sd==='asc'?' \u25B2':' \u25BC'):''}</th>;
 
-  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
-  const doGSort=(col)=>{if(gSort===col)setGDir(d=>d==='asc'?'desc':'asc');else{setGSort(col);setGDir('desc');}setGPage(1);};
-
-  const stats=useMemo(()=>({total:filtered.length,avgReady:(filtered.reduce((s,r)=>s+r.overallReadiness,0)/filtered.length||0).toFixed(1),compliant:filtered.filter(r=>r.readinessRating==='Compliant'||r.readinessRating==='Mostly Ready').length,avgDM:(filtered.reduce((s,r)=>s+r.doubleMateriality,0)/filtered.length||0).toFixed(1),totalCritical:filtered.reduce((s,r)=>s+r.gapsCritical,0),avgData:(filtered.reduce((s,r)=>s+r.dataCollectionPct,0)/filtered.length||0).toFixed(1)}),[filtered]);
-
-  const readyDist=useMemo(()=>{const o=['Compliant','Mostly Ready','In Progress','Early Stage','Not Started'];const m={};filtered.forEach(r=>{m[r.readinessRating]=(m[r.readinessRating]||0)+1;});return o.filter(k=>m[k]).map(k=>({name:k,value:m[k]}));},[filtered]);
-  const sectorAvg=useMemo(()=>{const m={};filtered.forEach(r=>{if(!m[r.sector])m[r.sector]={s:0,c:0};m[r.sector].s+=r.overallReadiness;m[r.sector].c++;});return Object.entries(m).map(([k,v])=>({sector:k,avg:+(v.s/v.c).toFixed(1)})).sort((a,b)=>b.avg-a.avg);},[filtered]);
-
-  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const k=Object.keys(data[0]);const csv=[k.join(','),...data.map(r=>k.map(c=>`"${r[c]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
-
-  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
-  const th={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
-  const td_={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
-  const inp={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
-  const sel_={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
-  const btnS=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer'});
-  const pb={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
-  const card={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
-
-  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:440,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
-    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button></div>
-    <div style={{padding:'16px 24px'}}>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
-        {[['Overall Readiness',item.overallReadiness+'%'],['Double Materiality',item.doubleMateriality+'%'],['Data Collection',item.dataCollectionPct+'%'],['Critical Gaps',item.gapsCritical],['Major Gaps',item.gapsMajor],['Minor Gaps',item.gapsMinor],['Audit Readiness',item.auditReadiness+'%'],['Taxonomy Alignment',item.taxonomyAlignment+'%'],['Value Chain Map',item.valueChainMapping+'%'],['Stakeholder Engage.',item.stakeholderEngagement+'%'],['Timeline',item.reportingTimeline],['Assurance',item.assuranceLevel]].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
-      </div>
-      <span style={rBadge(item.readinessRating)}>{item.readinessRating}</span>
-      <div style={{marginTop:16,fontSize:11,fontFamily:T.mono,color:T.textSec,fontWeight:600}}>ESRS Standard Scores</div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:8}}>
-        {ESRS_STANDARDS.map(s=>(<div key={s.id} style={{display:'flex',justifyContent:'space-between',padding:'4px 8px',background:T.surfaceH,borderRadius:4}}><span style={{fontSize:10,color:T.textSec}}>{s.id}</span><span style={{fontSize:11,fontWeight:600,...badge(item[s.id],[25,50,70])}}>{item[s.id]}%</span></div>))}
-      </div>
+  const renderDash=()=>(<>
+    <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:24}}>
+      <KPI label="Avg Readiness" value={kpis.avgReady+'%'} sub="80 companies" color={ACCENT}/><KPI label="Automation Rate" value={kpis.avgAuto+'%'} sub="data collection" color={T.navy}/>
+      <KPI label="Compliant/Adv" value={kpis.compliant} sub="companies" color={T.green}/><KPI label="Total Gaps" value={fmt(kpis.totalGaps)} sub="across portfolio" color={T.red}/>
+      <KPI label="ESRS Standards" value={kpis.standards} sub="tracked" color={T.gold}/>
     </div>
-  </div>);};
-
-  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
-    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}><div style={{fontSize:20,fontWeight:700,color:T.navy}}>CSRD / ESRS Compliance Automation</div><div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>Double Materiality &middot; {ESRS_STANDARDS.length} ESRS Standards &middot; {COMPANIES.length} Companies</div></div>
-    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>{TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}</div>
-    <div style={{padding:'20px 28px'}}>
-
-    {tab===0&&(<div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
-        {[['Companies',stats.total,T.navy],['Avg Readiness',stats.avgReady+'%',ACCENT],['Compliant/Ready',stats.compliant,T.green],['Avg Materiality',stats.avgDM+'%',T.sage],['Critical Gaps',stats.totalCritical,T.red],['Avg Data Coll.',stats.avgData+'%',T.gold]].map(([l,v,c],i)=>(<div key={i} style={card}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:16,marginBottom:20}}>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Readiness Trend (18M)</div>
-          <ResponsiveContainer width="100%" height={220}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={2}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Area type="monotone" dataKey="avgReadiness" stroke={ACCENT} fill={ACCENT} fillOpacity={0.15} name="Avg Readiness%"/><Area type="monotone" dataKey="gapsClosed" stroke={T.green} fill={T.green} fillOpacity={0.1} name="Gaps Closed"/></AreaChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Readiness Distribution</div>
-          <ResponsiveContainer width="100%" height={220}><PieChart><Pie data={readyDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={40} label={({name,value})=>`${name}: ${value}`} style={{fontSize:8}}>{readyDist.map((_,i)=>(<Cell key={i} fill={[T.green,T.sage,T.gold,T.amber,T.red][i%5]}/>))}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Sector Readiness</div>
-          <ResponsiveContainer width="100%" height={220}><BarChart data={sectorAvg.slice(0,8)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9}} domain={[0,100]}/><YAxis dataKey="sector" type="category" tick={{fontSize:8}} width={85}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
-        </div>
-      </div>
-    </div>)}
-
-    {tab===1&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search companies..." style={inp}/>
-        <select value={sectorF} onChange={e=>{setSectorF(e.target.value);setPage(1);}} style={sel_}>{SECTORS.map(s=>(<option key={s}>{s}</option>))}</select>
-        <select value={readyF} onChange={e=>{setReadyF(e.target.value);setPage(1);}} style={sel_}>{READINESS.map(r=>(<option key={r}>{r}</option>))}</select>
-        <button onClick={()=>exportCSV(filtered,'csrd_readiness.csv')} style={btnS(false)}>Export CSV</button>
-        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length}</span>
-      </div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Company'],['sector','Sector'],['overallReadiness','Readiness%'],['doubleMateriality','DM%'],['dataCollectionPct','Data%'],['gapsCritical','Crit.Gaps'],['auditReadiness','Audit%'],['taxonomyAlignment','Taxonomy%'],['reportingTimeline','Timeline'],['readinessRating','Rating']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={th}>{l}{si(k,sortCol,sortDir)}</th>))}
-        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
-          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.sector}</td>
-          <td style={td_}><span style={badge(r.overallReadiness,[25,50,70])}>{r.overallReadiness}%</span></td>
-          <td style={td_}>{r.doubleMateriality}%</td><td style={td_}>{r.dataCollectionPct}%</td>
-          <td style={td_}><span style={{color:r.gapsCritical>5?T.red:r.gapsCritical>2?T.amber:T.green,fontWeight:700}}>{r.gapsCritical}</span></td>
-          <td style={td_}>{r.auditReadiness}%</td><td style={td_}>{r.taxonomyAlignment}%</td><td style={td_}>{r.reportingTimeline}</td>
-          <td style={td_}><span style={rBadge(r.readinessRating)}>{r.readinessRating}</span></td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page}/{tP}</span><button disabled={page>=tP} onClick={()=>setPage(p=>p+1)} style={pb}>Next</button></div>
-      <Panel item={selected} onClose={()=>setSelected(null)}/>
-    </div>)}
-
-    {tab===2&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={sSearch} onChange={e=>setSSearch(e.target.value)} placeholder="Search standards..." style={inp}/><button onClick={()=>exportCSV(esrsFiltered,'esrs_standards.csv')} style={btnS(false)}>Export CSV</button></div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`,marginBottom:16}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {['Standard ID','Name','Category','Data Points','Mandatory','Avg Company Score'].map(l=>(<th key={l} style={th}>{l}</th>))}
-        </tr></thead><tbody>{esrsFiltered.map(s=>{const avg=(filtered.reduce((sum,r)=>sum+(r[s.id]||0),0)/filtered.length||0).toFixed(1);return(<tr key={s.id}>
-          <td style={{...td_,fontWeight:600,color:ACCENT,fontFamily:T.mono}}>{s.id}</td><td style={{...td_,fontWeight:600}}>{s.name}</td>
-          <td style={td_}><span style={{padding:'2px 6px',borderRadius:4,fontSize:10,background:s.category==='Environmental'?'rgba(22,163,74,0.1)':s.category==='Social'?'rgba(14,165,233,0.1)':s.category==='Governance'?'rgba(124,58,237,0.1)':'rgba(197,169,106,0.1)',color:s.category==='Environmental'?T.green:s.category==='Social'?'#0ea5e9':s.category==='Governance'?ACCENT:T.gold}}>{s.category}</span></td>
-          <td style={td_}>{s.dataPoints}</td><td style={td_}><span style={{color:s.mandatory?T.green:T.textMut,fontWeight:600}}>{s.mandatory?'Yes':'No'}</span></td>
-          <td style={td_}><span style={badge(parseFloat(avg),[25,50,70])}>{avg}%</span></td>
-        </tr>);})}</tbody></table>
-      </div>
-      <div style={{...card}}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Average Scores by Standard</div>
-        <ResponsiveContainer width="100%" height={300}><BarChart data={ESRS_STANDARDS.map(s=>({name:s.id,avg:+(filtered.reduce((sum,r)=>sum+(r[s.id]||0),0)/filtered.length||0).toFixed(1)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9,fill:T.textMut}}/><YAxis tick={{fontSize:9}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer>
-      </div>
-    </div>)}
-
-    {tab===3&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={gSearch} onChange={e=>{setGSearch(e.target.value);setGPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(gapData,'gap_analysis.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{gapData.length}</span></div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Company'],['sector','Sector'],['gapsCritical','Critical'],['gapsMajor','Major'],['gapsMinor','Minor'],['totalGaps','Total'],['dataCollection','Data%'],['readiness','Readiness%']].map(([k,l])=>(<th key={k} onClick={()=>doGSort(k)} style={th}>{l}{si(k,gSort,gDir)}</th>))}
-        </tr></thead><tbody>{gPaged.map((r,i)=>(<tr key={i}>
-          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.sector}</td>
-          <td style={td_}><span style={{color:r.gapsCritical>5?T.red:T.amber,fontWeight:700}}>{r.gapsCritical}</span></td>
-          <td style={td_}>{r.gapsMajor}</td><td style={td_}>{r.gapsMinor}</td><td style={td_}>{r.totalGaps}</td>
-          <td style={td_}>{r.dataCollection}%</td><td style={td_}><span style={badge(r.readiness,[25,50,70])}>{r.readiness}%</span></td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={gPage<=1} onClick={()=>setGPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {gPage}/{gTP}</span><button disabled={gPage>=gTP} onClick={()=>setGPage(p=>p+1)} style={pb}>Next</button></div>
-      <div style={{...card,marginTop:16}}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Gaps vs Readiness</div>
-        <ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Total Gaps" tick={{fontSize:9}}/><YAxis dataKey="y" name="Readiness%" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={gapData.map(r=>({name:r.name,x:r.totalGaps,y:r.readiness}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
-      </div>
-    </div>)}
-
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Readiness by Sector</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={sectorChart}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="avgReady" fill={ACCENT} radius={[4,4,0,0]} name="Readiness %"/></BarChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Status Distribution</div>
+        <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={statusDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={10}>{statusDist.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
     </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Readiness Trend</div>
+        <ResponsiveContainer width="100%" height={240}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={2}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="avgReady" stroke={ACCENT} fill="rgba(124,58,237,0.1)" name="Avg Readiness %"/><Area type="monotone" dataKey="compliant" stroke={T.green} fill="rgba(22,163,74,0.08)" name="Compliant #"/></AreaChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>ESRS Score Radar</div>
+        <ResponsiveContainer width="100%" height={240}><RadarChart data={radarData} cx="50%" cy="50%" outerRadius={85}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Avg" dataKey="value" stroke={ACCENT} fill="rgba(124,58,237,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer></div>
+    </div>
+  </>);
+
+  const renderScreen=()=>(<div style={ss.card}>
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+      <input style={ss.input} placeholder="Search companies..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+      <select style={ss.select} value={secF} onChange={e=>{setSecF(e.target.value);setPage(1);}}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select>
+      <select style={ss.select} value={readF} onChange={e=>{setReadF(e.target.value);setPage(1);}}>{READINESS.map(s=><option key={s}>{s}</option>)}</select>
+      <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} companies</span>
+      <button style={ss.btn} onClick={()=>csvExport(filtered,'csrd_readiness')}>Export CSV</button>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+      <TH col="name" label="Company" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="sector" label="Sector" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="overallReadiness" label="Readiness" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="e1Score" label="E1 Climate" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="s1Score" label="S1 Workforce" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="g1Score" label="G1 Conduct" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="gapCount" label="Gaps" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="status" label="Status" sc={sortCol} sd={sortDir} fn={doSort}/>
+    </tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}>
+      <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+        <td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={ss.td}>{r.sector}</td>
+        <td style={ss.td}><span style={badge(r.overallReadiness,[25,50,70])}>{r.overallReadiness}%</span></td>
+        <td style={ss.td}><span style={badge(r.e1Score,[25,50,70])}>{r.e1Score}%</span></td>
+        <td style={ss.td}><span style={badge(r.s1Score,[25,50,70])}>{r.s1Score}%</span></td>
+        <td style={ss.td}><span style={badge(r.g1Score,[25,50,70])}>{r.g1Score}%</span></td>
+        <td style={{...ss.td,fontFamily:T.mono,color:r.gapCount>30?T.red:r.gapCount>15?T.amber:T.green}}>{r.gapCount}</td>
+        <td style={ss.td}><span style={readBadge(r.status)}>{r.status}</span></td>
+      </tr>
+      {expanded===r.id&&<tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20}}>
+          <div>{[['E2 Pollution',r.e2Score+'%'],['S2 Value Chain',r.s2Score+'%'],['Double Materiality',r.doubleMateriality+'%'],['Data Points',r.dataPointsCovered+'/'+r.totalDataPoints],['Automation Rate',r.automationRate+'%'],['Assurance Ready',r.assuranceReady+'%'],['Taxonomy Alignment',r.taxonomyAlignment+'%'],['Reporting Deadline',r.reportingDeadline]].map(([l,v])=>(<div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span></div>))}</div>
+          <ResponsiveContainer width="100%" height={180}><RadarChart data={[{d:'E1',v:r.e1Score},{d:'E2',v:r.e2Score},{d:'S1',v:r.s1Score},{d:'S2',v:r.s2Score},{d:'G1',v:r.g1Score},{d:'DblMat',v:r.doubleMateriality}]} cx="50%" cy="50%" outerRadius={65}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={false} domain={[0,100]}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(124,58,237,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={180}><BarChart data={[{n:'Readiness',v:r.overallReadiness},{n:'Automation',v:r.automationRate},{n:'Assurance',v:r.assuranceReady},{n:'Taxonomy',v:r.taxonomyAlignment},{n:'Dbl Materiality',v:r.doubleMateriality}]} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:9,fill:T.textMut}}/><YAxis dataKey="n" type="category" tick={{fontSize:9,fill:T.textSec}} width={80}/><Tooltip {...tip}/><Bar dataKey="v" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
+        </div>
+      </td></tr>}
+    </React.Fragment>))}</tbody></table></div>
+    <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+  </div>);
+
+  const renderStandards=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>ESRS Standards Overview</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={280}><BarChart data={ESRS_STANDARDS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="id" tick={{fontSize:9,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="dataPoints" fill={ACCENT} radius={[4,4,0,0]} name="Data Points"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={280}><PieChart><Pie data={[{name:'Environment',value:5},{name:'Social',value:4},{name:'Governance',value:1},{name:'Cross-cutting',value:2}]} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,value})=>`${name}: ${value}`} labelLine={false} fontSize={10}>{[0,1,2,3].map(i=><Cell key={i} fill={PIECLRS[i]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>ID</th><th style={ss.th('','','')}>Standard</th><th style={ss.th('','','')}>Category</th><th style={ss.th('','','')}>Data Points</th><th style={ss.th('','','')}>Mandatory</th></tr></thead><tbody>
+      {ESRS_STANDARDS.map(s=>(<tr key={s.id}><td style={{...ss.td,fontFamily:T.mono,fontWeight:600}}>{s.id}</td><td style={{...ss.td,fontWeight:600}}>{s.name}</td><td style={ss.td}><span style={{background:s.category==='Environment'?'rgba(22,163,74,0.1)':s.category==='Social'?'rgba(8,145,178,0.1)':s.category==='Governance'?'rgba(124,58,237,0.1)':'rgba(197,169,106,0.1)',color:s.category==='Environment'?T.green:s.category==='Social'?'#0891b2':s.category==='Governance'?ACCENT:T.gold,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600}}>{s.category}</span></td><td style={{...ss.td,fontFamily:T.mono}}>{s.dataPoints}</td><td style={ss.td}><span style={{color:s.mandatory?T.green:T.textMut,fontWeight:600,fontSize:11}}>{s.mandatory?'Yes':'Materiality'}</span></td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(ESRS_STANDARDS,'esrs_standards')}>Export CSV</button></div>
+  </div>);
+
+  const renderGap=()=>{
+    const gapData=COMPANIES.sort((a,b)=>b.gapCount-a.gapCount).slice(0,20);
+    return(<div style={ss.card}>
+      <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Gap Analysis</div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+        <ResponsiveContainer width="100%" height={300}><BarChart data={gapData} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="name" type="category" tick={{fontSize:8,fill:T.textSec}} width={100}/><Tooltip {...tip}/><Bar dataKey="gapCount" fill={T.red} radius={[0,4,4,0]} name="Gaps"/></BarChart></ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={300}><LineChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={2}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="gapsFixed" stroke={T.green} strokeWidth={2} name="Gaps Fixed (cumulative)"/></LineChart></ResponsiveContainer>
+      </div>
+      <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Company</th><th style={ss.th('','','')}>Gaps</th><th style={ss.th('','','')}>Readiness</th><th style={ss.th('','','')}>Coverage</th><th style={ss.th('','','')}>Status</th></tr></thead><tbody>
+        {gapData.map(r=>(<tr key={r.id}><td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={{...ss.td,fontFamily:T.mono,color:T.red,fontWeight:600}}>{r.gapCount}</td><td style={ss.td}><span style={badge(r.overallReadiness,[25,50,70])}>{r.overallReadiness}%</span></td><td style={{...ss.td,fontFamily:T.mono}}>{r.dataPointsCovered}/{r.totalDataPoints}</td><td style={ss.td}><span style={readBadge(r.status)}>{r.status}</span></td></tr>))}
+      </tbody></table></div>
+      <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(gapData,'gap_analysis')}>Export CSV</button></div>
+    </div>);
+  };
+
+  return(<div style={ss.wrap}>
+    <div style={ss.header}>CSRD / ESRS Automation</div>
+    <div style={ss.sub}>12 ESRS standards, double materiality assessment, gap analysis across 80 companies</div>
+    <div style={ss.tabs}>{TABS.map((t,i)=><button key={t} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderScreen()}{tab===2&&renderStandards()}{tab===3&&renderGap()}
   </div>);
 }

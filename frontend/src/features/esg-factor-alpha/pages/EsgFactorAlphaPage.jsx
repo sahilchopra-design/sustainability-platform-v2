@@ -1,153 +1,122 @@
 import React,{useState,useMemo,useCallback} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,LineChart,Line,Legend} from 'recharts';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-const ACCENT='#0c4a6e';
+const ACCENT='#0c4a6e';const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(2):v:v;
 const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
-const TABS=['Dashboard','Factor Analysis','Alpha Decomposition','Backtesting'];
-const SECTORS=['All','Technology','Finance','Healthcare','Energy','Industrials','Consumer','Utilities','Materials','Real Estate','Telecom'];
-const PAGE_SIZE=15;
+const TABS=['Dashboard','Factor Screening','Alpha Decomposition','Backtesting'];
+const SECTORS=['All','Technology','Healthcare','Finance','Energy','Industrials','Consumer','Materials','Utilities','Real Estate','Telecom'];
+const PAGE_SIZE=15;const PIECLRS=[ACCENT,T.navy,T.gold,T.sage,T.amber,T.green,T.red,'#8b5cf6','#0891b2','#be185d'];
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(22,163,74,0.12)':v>=mid?'rgba(197,169,106,0.12)':v>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v>=hi?T.green:v>=mid?T.gold:v>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
 
-const COMPANIES=(()=>{
-  const names=['Apple Inc','Microsoft Corp','Alphabet Inc','Amazon.com','NVIDIA Corp','Meta Platforms','Tesla Inc','Berkshire Hath.','JPMorgan Chase','Johnson & Johnson','Visa Inc','UnitedHealth','Procter & Gamble','Mastercard Inc','Home Depot','Chevron Corp','Merck & Co','AbbVie Inc','Costco Wholesale','Pfizer Inc','Coca-Cola Co','PepsiCo Inc','Bank of America','Thermo Fisher','Cisco Systems','Broadcom Inc','McDonald\'s Corp','Accenture plc','Abbott Labs','Linde plc','Danaher Corp','Texas Instruments','Philip Morris','Salesforce Inc','Honeywell Intl','Amgen Inc','S&P Global','NextEra Energy','Caterpillar Inc','Boeing Co','Morgan Stanley','Goldman Sachs','Deere & Co','Lockheed Martin','Starbucks Corp','BlackRock Inc','Prologis Inc','Fidelity NIS','American Tower','Crown Castle','Exxon Mobil','ConocoPhillips','EOG Resources','Pioneer Natural','Devon Energy','Duke Energy','Southern Co','Dominion Energy','AES Corp','Xcel Energy','Equinix Inc','Digital Realty','Alexandria RE','Ventas Inc','Welltower Inc','Nucor Corp','Freeport-McMoRan','Air Products','Linde plc','Ecolab Inc','Waste Management','Republic Serv.','AT&T Inc','Verizon Comm','T-Mobile US','Comcast Corp','Walt Disney','Netflix Inc','Warner Bros','Paramount Glob','Eli Lilly','Novo Nordisk','AstraZeneca','Roche Holding','Novartis AG','Sanofi SA','GSK plc','Bayer AG','Merck KGaA','Takeda Pharma','Toyota Motor','BMW AG','Volkswagen AG','Stellantis NV','Honda Motor','General Motors','Ford Motor','Rivian Auto','Lucid Group','NIO Inc'];
-  const secs=['Technology','Technology','Technology','Technology','Technology','Technology','Technology','Finance','Finance','Healthcare','Finance','Healthcare','Consumer','Finance','Consumer','Energy','Healthcare','Healthcare','Consumer','Healthcare','Consumer','Consumer','Finance','Healthcare','Technology','Technology','Consumer','Technology','Healthcare','Materials','Healthcare','Technology','Consumer','Technology','Industrials','Healthcare','Finance','Utilities','Industrials','Industrials','Finance','Finance','Industrials','Industrials','Consumer','Finance','Real Estate','Finance','Real Estate','Real Estate','Energy','Energy','Energy','Energy','Energy','Utilities','Utilities','Utilities','Utilities','Utilities','Real Estate','Real Estate','Real Estate','Real Estate','Real Estate','Materials','Materials','Materials','Materials','Materials','Industrials','Industrials','Telecom','Telecom','Telecom','Telecom','Consumer','Technology','Consumer','Consumer','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials','Industrials'];
-  return names.map((n,i)=>({id:i+1,name:n,sector:secs[i]||'Technology',esgScore:Math.round(20+sr(i*7)*70),envScore:Math.round(15+sr(i*11)*80),socScore:Math.round(20+sr(i*13)*75),govScore:Math.round(25+sr(i*17)*70),esgMomentum:+(-15+sr(i*19)*30).toFixed(1),alphaContrib:+(-3+sr(i*23)*6).toFixed(2),factorExposure:+(-2+sr(i*29)*4).toFixed(2),trackingError:+(1+sr(i*31)*5).toFixed(2),infoRatio:+(-0.5+sr(i*37)*2).toFixed(2),sharpeRatio:+(0.2+sr(i*41)*1.8).toFixed(2),maxDrawdown:+(-25+sr(i*43)*15).toFixed(1),beta:+(0.5+sr(i*47)*1).toFixed(2),annualReturn:+(-5+sr(i*53)*25).toFixed(1),volatility:+(8+sr(i*59)*20).toFixed(1),carbonIntensity:Math.round(10+sr(i*61)*500),controversyScore:Math.round(sr(i*67)*80)}));})();
+const COMPANIES=(()=>{const names=['Apple Inc','Microsoft Corp','Alphabet Inc','Amazon.com','Meta Platforms','NVIDIA Corp','Tesla Inc','JPMorgan Chase','Johnson & Johnson','UnitedHealth','Visa Inc','Procter & Gamble','Mastercard','Home Depot','Chevron Corp','AbbVie Inc','Merck & Co','PepsiCo Inc','Costco Wholesale','Coca-Cola Co','Thermo Fisher','McDonald Corp','Cisco Systems','Adobe Inc','Salesforce','Intel Corp','Texas Instruments','Honeywell','Amgen Inc','Caterpillar','Deere & Co','IBM Corp','General Electric','3M Company','Goldman Sachs','Morgan Stanley','BlackRock','S&P Global','Moody Corp','Charles Schwab','Citigroup','Wells Fargo','Bank of America','US Bancorp','Truist Financial','PNC Financial','Capital One','American Express','Discover Financial','Synchrony Fin','NextEra Energy','Duke Energy','Southern Co','Dominion Energy','Exelon Corp','AES Corp','Eversource','WEC Energy','CenterPoint','Entergy Corp','Prologis Inc','American Tower','Crown Castle','Equinix Inc','Digital Realty','Public Storage','Welltower Inc','Realty Income','Simon Property','VICI Properties','Exxon Mobil','ConocoPhillips','EOG Resources','Pioneer Natural','Devon Energy','Marathon Petro','Valero Energy','Phillips 66','Schlumberger','Halliburton','Linde plc','Air Products','Sherwin-Williams','Ecolab Inc','Nucor Corp','Freeport McMoRan','Newmont Corp','Corteva Inc','CF Industries','Mosaic Co','Eli Lilly','Pfizer Inc','Bristol-Myers','Regeneron','Vertex Pharma','Gilead Sciences','Danaher Corp','Becton Dickinson','Stryker Corp','Edwards Lifesci'];
+const secs=['Technology','Technology','Technology','Technology','Technology','Technology','Technology','Finance','Healthcare','Healthcare','Finance','Consumer','Finance','Consumer','Energy','Healthcare','Healthcare','Consumer','Consumer','Consumer','Healthcare','Consumer','Technology','Technology','Technology','Technology','Technology','Industrials','Healthcare','Industrials','Industrials','Technology','Industrials','Industrials','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Finance','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Utilities','Real Estate','Real Estate','Real Estate','Real Estate','Real Estate','Real Estate','Real Estate','Real Estate','Real Estate','Real Estate','Energy','Energy','Energy','Energy','Energy','Energy','Energy','Energy','Energy','Energy','Materials','Materials','Materials','Materials','Materials','Materials','Materials','Materials','Materials','Materials','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare','Healthcare'];
+return names.map((n,i)=>({id:i+1,name:n,sector:secs[i],esgScore:Math.round(20+sr(i*7)*75),eReturn:+((sr(i*11)-0.3)*20).toFixed(2),sReturn:+((sr(i*13)-0.3)*15).toFixed(2),gReturn:+((sr(i*17)-0.3)*12).toFixed(2),totalAlpha:+((sr(i*19)-0.35)*25).toFixed(2),momentum:+((sr(i*23)-0.4)*18).toFixed(2),quality:Math.round(20+sr(i*29)*75),value:+((sr(i*31)-0.5)*10).toFixed(2),size:+((sr(i*37)-0.5)*8).toFixed(2),volatility:+(5+sr(i*41)*30).toFixed(2),sharpe:+((sr(i*43)-0.2)*3).toFixed(2),infoRatio:+((sr(i*47)-0.3)*2.5).toFixed(2),maxDrawdown:+(-(sr(i*53)*35+5)).toFixed(2),trackingError:+(1+sr(i*59)*8).toFixed(2),beta:+(0.5+sr(i*61)*1.2).toFixed(2),marketCap:Math.round(10+sr(i*67)*900)}));})();
 
-const FACTORS=[
-  {name:'ESG Quality',annReturn:8.2,sharpe:0.92,maxDD:-12.4,alpha:2.1,tStat:2.8,turnover:28},{name:'ESG Momentum',annReturn:11.4,sharpe:1.15,maxDD:-15.2,alpha:3.8,tStat:3.4,turnover:45},
-  {name:'Low Carbon',annReturn:7.8,sharpe:0.88,maxDD:-11.8,alpha:1.6,tStat:2.1,turnover:22},{name:'Green Revenue',annReturn:9.6,sharpe:1.02,maxDD:-14.1,alpha:2.9,tStat:2.9,turnover:35},
-  {name:'Governance',annReturn:6.9,sharpe:0.78,maxDD:-10.2,alpha:1.2,tStat:1.8,turnover:18},{name:'Social Impact',annReturn:7.4,sharpe:0.85,maxDD:-13.5,alpha:1.5,tStat:2.0,turnover:25},
-  {name:'Controversy Avoid',annReturn:8.8,sharpe:0.95,maxDD:-9.8,alpha:2.4,tStat:3.1,turnover:32},{name:'Water Stress',annReturn:6.2,sharpe:0.71,maxDD:-16.8,alpha:0.8,tStat:1.4,turnover:20},
-];
+const BACKTEST=Array.from({length:36},(_,i)=>({month:`${2022+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,esgAlpha:+((sr(i*7)-0.4)*3).toFixed(2),eAlpha:+((sr(i*11)-0.35)*2.5).toFixed(2),sAlpha:+((sr(i*13)-0.4)*2).toFixed(2),gAlpha:+((sr(i*17)-0.45)*1.8).toFixed(2),cumulative:+(i*0.3+sr(i*19)*5-2).toFixed(2),benchmark:+(i*0.2+sr(i*23)*4-1).toFixed(2)}));
+const FACTORS=[{factor:'ESG Quality',return3m:2.4,return12m:8.7,sharpe:1.2,ir:0.85},{factor:'E - Climate',return3m:1.8,return12m:6.2,sharpe:0.9,ir:0.65},{factor:'S - Workforce',return3m:1.1,return12m:4.8,sharpe:0.7,ir:0.52},{factor:'G - Board',return3m:2.1,return12m:7.1,sharpe:1.05,ir:0.78},{factor:'ESG Momentum',return3m:3.2,return12m:11.5,sharpe:1.45,ir:1.1},{factor:'Carbon Intensity',return3m:-0.8,return12m:3.1,sharpe:0.4,ir:0.25},{factor:'Green Revenue',return3m:1.5,return12m:5.8,sharpe:0.85,ir:0.6},{factor:'Controversy',return3m:-1.2,return12m:-2.4,sharpe:-0.3,ir:-0.2}];
 
-const BACKTEST=Array.from({length:60},(_,i)=>({month:`${2020+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,esgPortfolio:100*(1+0.008*i+sr(i*7)*3-1.5)/100*100,benchmark:100*(1+0.006*i+sr(i*11)*2.5-1.25)/100*100,esgMomentum:100*(1+0.01*i+sr(i*13)*4-2)/100*100,lowCarbon:100*(1+0.007*i+sr(i*17)*3-1.5)/100*100}));
-
-const badge=(val,thresholds)=>{const[lo,mid,hi]=thresholds;const bg=val>=hi?'rgba(22,163,74,0.12)':val>=mid?'rgba(197,169,106,0.12)':val>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=val>=hi?T.green:val>=mid?T.gold:val>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+const KPI=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
 
 export default function EsgFactorAlphaPage(){
-  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sectorF,setSectorF]=useState('All');const[sortCol,setSortCol]=useState('esgScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
-  const[fSort,setFSort]=useState('annReturn');const[fDir,setFDir]=useState('desc');
-  const[aSearch,setASearch]=useState('');const[aSort,setASort]=useState('alphaContrib');const[aDir,setADir]=useState('desc');const[aPage,setAPage]=useState(1);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[secF,setSecF]=useState('All');
+  const[sortCol,setSortCol]=useState('totalAlpha');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[expanded,setExpanded]=useState(null);
 
-  const filtered=useMemo(()=>{let d=[...COMPANIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(sectorF!=='All')d=d.filter(r=>r.sector===sectorF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sectorF,sortCol,sortDir]);
-  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);const tP=Math.ceil(filtered.length/PAGE_SIZE);
+  const filtered=useMemo(()=>{let d=[...COMPANIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(secF!=='All')d=d.filter(r=>r.sector===secF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,secF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
-  const factorsSorted=useMemo(()=>[...FACTORS].sort((a,b)=>fDir==='asc'?(a[fSort]>b[fSort]?1:-1):(a[fSort]<b[fSort]?1:-1)),[fSort,fDir]);
+  const kpis=useMemo(()=>{const avg=(k)=>+(COMPANIES.reduce((s,c)=>s+c[k],0)/COMPANIES.length).toFixed(2);return{avgAlpha:avg('totalAlpha'),avgSharpe:avg('sharpe'),avgEsg:Math.round(COMPANIES.reduce((s,c)=>s+c.esgScore,0)/COMPANIES.length),positiveAlpha:COMPANIES.filter(c=>c.totalAlpha>0).length,avgIR:avg('infoRatio')};},[]);
+  const sectorAlpha=useMemo(()=>{const m={};COMPANIES.forEach(c=>{if(!m[c.sector])m[c.sector]={sector:c.sector,alpha:0,n:0};m[c.sector].alpha+=c.totalAlpha;m[c.sector].n++;});return Object.values(m).map(s=>({...s,alpha:+(s.alpha/s.n).toFixed(2)}));},[]);
+  const alphaDistData=useMemo(()=>{const bins=[{range:'<-5%',count:0},{range:'-5 to 0%',count:0},{range:'0 to 5%',count:0},{range:'5 to 10%',count:0},{range:'>10%',count:0}];COMPANIES.forEach(c=>{if(c.totalAlpha<-5)bins[0].count++;else if(c.totalAlpha<0)bins[1].count++;else if(c.totalAlpha<5)bins[2].count++;else if(c.totalAlpha<10)bins[3].count++;else bins[4].count++;});return bins;},[]);
+  const radarData=useMemo(()=>[{dim:'E Return',value:Math.abs(kpis.avgAlpha)*10+40},{dim:'S Return',value:Math.abs(kpis.avgSharpe)*20+30},{dim:'G Return',value:Math.abs(kpis.avgIR)*25+35},{dim:'Quality',value:50},{dim:'Momentum',value:45},{dim:'Sharpe',value:Math.abs(kpis.avgSharpe)*30+30}],[kpis]);
 
-  const alphaData=useMemo(()=>{let d=filtered.map(r=>({name:r.name,sector:r.sector,esgScore:r.esgScore,alphaContrib:r.alphaContrib,factorExposure:r.factorExposure,infoRatio:r.infoRatio,sharpeRatio:r.sharpeRatio,annualReturn:r.annualReturn}));if(aSearch)d=d.filter(r=>r.name.toLowerCase().includes(aSearch.toLowerCase()));d.sort((a,b)=>aDir==='asc'?(a[aSort]>b[aSort]?1:-1):(a[aSort]<b[aSort]?1:-1));return d;},[filtered,aSearch,aSort,aDir]);
-  const aPaged=useMemo(()=>alphaData.slice((aPage-1)*PAGE_SIZE,aPage*PAGE_SIZE),[alphaData,aPage]);const aTP=Math.ceil(alphaData.length/PAGE_SIZE);
+  const ss={wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},sub:{fontSize:13,color:T.textSec,marginBottom:20},tabs:{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0},tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(12,74,110,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2}),card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},th:(col,sc,sd)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sc===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16}};
+  const TH=({col,label,sc,sd,fn})=><th style={ss.th(col,sc,sd)} onClick={()=>fn(col)}>{label}{sc===col?(sd==='asc'?' \u25B2':' \u25BC'):''}</th>;
+  const pnl=(v)=>({color:v>=0?T.green:T.red,fontFamily:T.mono,fontWeight:600,fontSize:12});
 
-  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
-  const doFSort=(col)=>{if(fSort===col)setFDir(d=>d==='asc'?'desc':'asc');else{setFSort(col);setFDir('desc');}};
-  const doASort=(col)=>{if(aSort===col)setADir(d=>d==='asc'?'desc':'asc');else{setASort(col);setADir('desc');}setAPage(1);};
-
-  const stats=useMemo(()=>({total:filtered.length,avgESG:(filtered.reduce((s,r)=>s+r.esgScore,0)/filtered.length||0).toFixed(1),avgAlpha:(filtered.reduce((s,r)=>s+r.alphaContrib,0)/filtered.length||0).toFixed(2),avgSharpe:(filtered.reduce((s,r)=>s+r.sharpeRatio,0)/filtered.length||0).toFixed(2),positiveAlpha:filtered.filter(r=>r.alphaContrib>0).length,avgReturn:(filtered.reduce((s,r)=>s+r.annualReturn,0)/filtered.length||0).toFixed(1)}),[filtered]);
-
-  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const k=Object.keys(data[0]);const csv=[k.join(','),...data.map(r=>k.map(c=>`"${r[c]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
-
-  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
-  const th={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
-  const td_={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
-  const inp={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
-  const sel_={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
-  const btnS=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer'});
-  const pb={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
-  const card={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
-
-  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
-    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button></div>
-    <div style={{padding:'16px 24px'}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-      {[['ESG Score',item.esgScore],['E Score',item.envScore],['S Score',item.socScore],['G Score',item.govScore],['ESG Momentum',item.esgMomentum],['Alpha Contrib',item.alphaContrib+'%'],['Factor Exposure',item.factorExposure],['Tracking Error',item.trackingError+'%'],['Info Ratio',item.infoRatio],['Sharpe Ratio',item.sharpeRatio],['Max Drawdown',item.maxDrawdown+'%'],['Beta',item.beta],['Annual Return',item.annualReturn+'%'],['Volatility',item.volatility+'%'],['Carbon Intensity',item.carbonIntensity],['Controversy',item.controversyScore]].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
-    </div></div>
-  </div>);};
-
-  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
-    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}><div style={{fontSize:20,fontWeight:700,color:T.navy}}>ESG Factor Alpha</div><div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>Factor Returns &middot; Alpha Decomposition &middot; {COMPANIES.length} Companies &middot; {FACTORS.length} Factors</div></div>
-    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>{TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}</div>
-    <div style={{padding:'20px 28px'}}>
-
-    {tab===0&&(<div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
-        {[['Universe',stats.total,T.navy],['Avg ESG',stats.avgESG,ACCENT],['Avg Alpha',stats.avgAlpha+'%',T.green],['Avg Sharpe',stats.avgSharpe,T.gold],['Positive Alpha',stats.positiveAlpha,T.sage],['Avg Return',stats.avgReturn+'%',T.amber]].map(([l,v,c],i)=>(<div key={i} style={card}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Factor Returns Comparison</div>
-          <ResponsiveContainer width="100%" height={250}><BarChart data={FACTORS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Bar dataKey="annReturn" fill={ACCENT} name="Ann.Return%" radius={[4,4,0,0]}/><Bar dataKey="alpha" fill={T.green} name="Alpha%" radius={[4,4,0,0]}/></BarChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>ESG Score vs Alpha</div>
-          <ResponsiveContainer width="100%" height={250}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="ESG Score" tick={{fontSize:9}}/><YAxis dataKey="y" name="Alpha%" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={filtered.map(r=>({name:r.name,x:r.esgScore,y:r.alphaContrib}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
-        </div>
-      </div>
-    </div>)}
-
-    {tab===1&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search companies..." style={inp}/>
-        <select value={sectorF} onChange={e=>{setSectorF(e.target.value);setPage(1);}} style={sel_}>{SECTORS.map(s=>(<option key={s}>{s}</option>))}</select>
-        <button onClick={()=>exportCSV(filtered,'esg_factor_alpha.csv')} style={btnS(false)}>Export CSV</button>
-        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length}</span>
-      </div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Company'],['sector','Sector'],['esgScore','ESG'],['envScore','E'],['socScore','S'],['govScore','G'],['esgMomentum','Momentum'],['alphaContrib','Alpha%'],['sharpeRatio','Sharpe'],['annualReturn','Return%']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={th}>{l}{si(k,sortCol,sortDir)}</th>))}
-        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
-          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.sector}</td>
-          <td style={td_}><span style={badge(r.esgScore,[25,50,70])}>{r.esgScore}</span></td>
-          <td style={td_}>{r.envScore}</td><td style={td_}>{r.socScore}</td><td style={td_}>{r.govScore}</td>
-          <td style={td_}><span style={{color:r.esgMomentum>0?T.green:T.red,fontWeight:600}}>{r.esgMomentum>0?'+':''}{r.esgMomentum}</span></td>
-          <td style={td_}><span style={{color:r.alphaContrib>0?T.green:T.red,fontWeight:700}}>{r.alphaContrib>0?'+':''}{r.alphaContrib}%</span></td>
-          <td style={td_}>{r.sharpeRatio}</td><td style={td_}><span style={{color:r.annualReturn>0?T.green:T.red}}>{r.annualReturn}%</span></td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page}/{tP}</span><button disabled={page>=tP} onClick={()=>setPage(p=>p+1)} style={pb}>Next</button></div>
-      <Panel item={selected} onClose={()=>setSelected(null)}/>
-    </div>)}
-
-    {tab===2&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={aSearch} onChange={e=>{setASearch(e.target.value);setAPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(alphaData,'alpha_decomp.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{alphaData.length}</span></div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`,marginBottom:16}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Company'],['sector','Sector'],['esgScore','ESG'],['alphaContrib','Alpha%'],['factorExposure','Factor Exp.'],['infoRatio','Info Ratio'],['sharpeRatio','Sharpe'],['annualReturn','Return%']].map(([k,l])=>(<th key={k} onClick={()=>doASort(k)} style={th}>{l}{si(k,aSort,aDir)}</th>))}
-        </tr></thead><tbody>{aPaged.map((r,i)=>(<tr key={i}>
-          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.sector}</td><td style={td_}>{r.esgScore}</td>
-          <td style={td_}><span style={{color:r.alphaContrib>0?T.green:T.red,fontWeight:700}}>{r.alphaContrib>0?'+':''}{r.alphaContrib}%</span></td>
-          <td style={td_}>{r.factorExposure}</td><td style={td_}>{r.infoRatio}</td><td style={td_}>{r.sharpeRatio}</td>
-          <td style={td_}><span style={{color:r.annualReturn>0?T.green:T.red}}>{r.annualReturn}%</span></td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={aPage<=1} onClick={()=>setAPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {aPage}/{aTP}</span><button disabled={aPage>=aTP} onClick={()=>setAPage(p=>p+1)} style={pb}>Next</button></div>
-      <div style={{marginTop:16}}>
-        <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-          <div style={{fontSize:12,fontWeight:600,padding:'12px 16px'}}>ESG Factor Performance</div>
-          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-            {[['name','Factor'],['annReturn','Ann.Ret%'],['sharpe','Sharpe'],['maxDD','Max DD%'],['alpha','Alpha%'],['tStat','t-Stat'],['turnover','Turnover%']].map(([k,l])=>(<th key={k} onClick={()=>doFSort(k)} style={th}>{l}{si(k,fSort,fDir)}</th>))}
-          </tr></thead><tbody>{factorsSorted.map((r,i)=>(<tr key={i}>
-            <td style={{...td_,fontWeight:600,color:ACCENT}}>{r.name}</td>
-            <td style={td_}><span style={{color:T.green,fontWeight:600}}>{r.annReturn}%</span></td>
-            <td style={td_}>{r.sharpe}</td><td style={td_}><span style={{color:T.red}}>{r.maxDD}%</span></td>
-            <td style={td_}><span style={{color:T.green,fontWeight:600}}>{r.alpha}%</span></td>
-            <td style={td_}>{r.tStat}</td><td style={td_}>{r.turnover}%</td>
-          </tr>))}</tbody></table>
-        </div>
-      </div>
-    </div>)}
-
-    {tab===3&&(<div>
-      <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Portfolio Backtest (60 Months)</div>
-        <ResponsiveContainer width="100%" height={320}><LineChart data={BACKTEST}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={8}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Legend wrapperStyle={{fontSize:10}}/><Line type="monotone" dataKey="esgPortfolio" stroke={ACCENT} name="ESG Portfolio" dot={false} strokeWidth={2}/><Line type="monotone" dataKey="benchmark" stroke={T.textMut} name="Benchmark" dot={false} strokeDasharray="5 5"/><Line type="monotone" dataKey="esgMomentum" stroke={T.green} name="ESG Momentum" dot={false}/><Line type="monotone" dataKey="lowCarbon" stroke={T.gold} name="Low Carbon" dot={false}/></LineChart></ResponsiveContainer>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:16}}>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Factor Sharpe Ratios</div>
-          <ResponsiveContainer width="100%" height={250}><BarChart data={FACTORS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Bar dataKey="sharpe" fill={T.gold} name="Sharpe" radius={[4,4,0,0]}/></BarChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Max Drawdowns</div>
-          <ResponsiveContainer width="100%" height={250}><BarChart data={FACTORS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Bar dataKey="maxDD" fill={T.red} name="Max DD%" radius={[4,4,0,0]}/></BarChart></ResponsiveContainer>
-        </div>
-      </div>
-      <div style={{marginTop:12}}><button onClick={()=>exportCSV(BACKTEST,'backtest_data.csv')} style={btnS(false)}>Export Backtest CSV</button></div>
-    </div>)}
-
+  const renderDash=()=>(<>
+    <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:24}}>
+      <KPI label="Avg Alpha" value={(kpis.avgAlpha>0?'+':'')+kpis.avgAlpha+'%'} sub="100 companies" color={kpis.avgAlpha>=0?T.green:T.red}/>
+      <KPI label="Avg Sharpe" value={kpis.avgSharpe} sub="risk-adjusted" color={ACCENT}/><KPI label="Avg ESG Score" value={kpis.avgEsg} sub="/100" color={T.navy}/>
+      <KPI label="Positive Alpha" value={kpis.positiveAlpha} sub="companies" color={T.green}/><KPI label="Info Ratio" value={kpis.avgIR} sub="avg" color={T.gold}/>
     </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Alpha by Sector</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={sectorAlpha}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="alpha" fill={ACCENT} radius={[4,4,0,0]} name="Avg Alpha %">{sectorAlpha.map((e,i)=><Cell key={i} fill={e.alpha>=0?T.green:T.red}/>)}</Bar></BarChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Alpha Distribution</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={alphaDistData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="range" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="count" fill={T.navy} radius={[4,4,0,0]} name="Companies"/></BarChart></ResponsiveContainer></div>
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Cumulative Returns</div>
+        <ResponsiveContainer width="100%" height={240}><LineChart data={BACKTEST}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="cumulative" stroke={ACCENT} strokeWidth={2} name="ESG Strategy"/><Line type="monotone" dataKey="benchmark" stroke={T.textMut} strokeWidth={1.5} strokeDasharray="5 5" name="Benchmark"/></LineChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Factor Radar</div>
+        <ResponsiveContainer width="100%" height={240}><RadarChart data={radarData} cx="50%" cy="50%" outerRadius={85}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Score" dataKey="value" stroke={ACCENT} fill="rgba(12,74,110,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer></div>
+    </div>
+  </>);
+
+  const renderScreen=()=>(<div style={ss.card}>
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+      <input style={ss.input} placeholder="Search companies..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+      <select style={ss.select} value={secF} onChange={e=>{setSecF(e.target.value);setPage(1);}}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select>
+      <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} companies</span>
+      <button style={ss.btn} onClick={()=>csvExport(filtered,'esg_factor_alpha')}>Export CSV</button>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+      <TH col="name" label="Company" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="sector" label="Sector" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="esgScore" label="ESG" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="totalAlpha" label="Alpha %" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="eReturn" label="E Return" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="sReturn" label="S Return" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="sharpe" label="Sharpe" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="volatility" label="Vol %" sc={sortCol} sd={sortDir} fn={doSort}/>
+    </tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}>
+      <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+        <td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={ss.td}>{r.sector}</td>
+        <td style={ss.td}><span style={badge(r.esgScore,[25,50,70])}>{r.esgScore}</span></td>
+        <td style={pnl(r.totalAlpha)}>{r.totalAlpha>0?'+':''}{r.totalAlpha}%</td>
+        <td style={pnl(r.eReturn)}>{r.eReturn>0?'+':''}{r.eReturn}%</td>
+        <td style={pnl(r.sReturn)}>{r.sReturn>0?'+':''}{r.sReturn}%</td>
+        <td style={{...ss.td,fontFamily:T.mono}}>{r.sharpe}</td><td style={{...ss.td,fontFamily:T.mono}}>{r.volatility}%</td>
+      </tr>
+      {expanded===r.id&&<tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20}}>
+          <div>{[['G Return',r.gReturn+'%'],['Momentum',r.momentum+'%'],['Quality',r.quality],['Value',r.value],['Size',r.size],['Info Ratio',r.infoRatio],['Max Drawdown',r.maxDrawdown+'%'],['Tracking Error',r.trackingError+'%'],['Beta',r.beta],['Market Cap ($B)',r.marketCap]].map(([l,v])=>(<div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span></div>))}</div>
+          <ResponsiveContainer width="100%" height={180}><RadarChart data={[{d:'E',v:50+r.eReturn*3},{d:'S',v:50+r.sReturn*3},{d:'G',v:50+r.gReturn*3},{d:'Quality',v:r.quality},{d:'Momentum',v:50+r.momentum*2},{d:'Sharpe',v:50+r.sharpe*15}]} cx="50%" cy="50%" outerRadius={65}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={false} domain={[0,100]}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(12,74,110,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={180}><BarChart data={[{n:'E Alpha',v:r.eReturn},{n:'S Alpha',v:r.sReturn},{n:'G Alpha',v:r.gReturn},{n:'Total',v:r.totalAlpha}]}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="n" tick={{fontSize:9,fill:T.textMut}}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="v" radius={[4,4,0,0]} name="Return %">{[0,1,2,3].map(i=><Cell key={i} fill={[r.eReturn,r.sReturn,r.gReturn,r.totalAlpha][i]>=0?T.green:T.red}/>)}</Bar></BarChart></ResponsiveContainer>
+        </div>
+      </td></tr>}
+    </React.Fragment>))}</tbody></table></div>
+    <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+  </div>);
+
+  const renderDecomp=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>ESG Factor Alpha Decomposition</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={280}><BarChart data={FACTORS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="factor" tick={{fontSize:9,fill:T.textMut}} angle={-20} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="return12m" fill={ACCENT} radius={[4,4,0,0]} name="12M Return %">{FACTORS.map((f,i)=><Cell key={i} fill={f.return12m>=0?T.green:T.red}/>)}</Bar></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={280}><AreaChart data={BACKTEST}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="eAlpha" stroke={T.green} fill="rgba(22,163,74,0.08)" name="E Alpha"/><Area type="monotone" dataKey="sAlpha" stroke={ACCENT} fill="rgba(12,74,110,0.08)" name="S Alpha"/><Area type="monotone" dataKey="gAlpha" stroke={T.gold} fill="rgba(197,169,106,0.08)" name="G Alpha"/></AreaChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Factor</th><th style={ss.th('','','')}>3M Return</th><th style={ss.th('','','')}>12M Return</th><th style={ss.th('','','')}>Sharpe</th><th style={ss.th('','','')}>Info Ratio</th></tr></thead><tbody>
+      {FACTORS.map((f,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{f.factor}</td><td style={pnl(f.return3m)}>{f.return3m>0?'+':''}{f.return3m}%</td><td style={pnl(f.return12m)}>{f.return12m>0?'+':''}{f.return12m}%</td><td style={{...ss.td,fontFamily:T.mono}}>{f.sharpe}</td><td style={{...ss.td,fontFamily:T.mono}}>{f.ir}</td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(FACTORS,'factor_decomposition')}>Export CSV</button></div>
+  </div>);
+
+  const renderBacktest=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>ESG Strategy Backtesting (36 months)</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={300}><LineChart data={BACKTEST}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/><Line type="monotone" dataKey="cumulative" stroke={ACCENT} strokeWidth={2} name="ESG Strategy"/><Line type="monotone" dataKey="benchmark" stroke={T.textMut} strokeWidth={1.5} strokeDasharray="5 5" name="Benchmark"/></LineChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={300}><BarChart data={BACKTEST}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:8,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="esgAlpha" name="Monthly Alpha %">{BACKTEST.map((e,i)=><Cell key={i} fill={e.esgAlpha>=0?T.green:T.red}/>)}</Bar></BarChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Month</th><th style={ss.th('','','')}>ESG Alpha</th><th style={ss.th('','','')}>E Alpha</th><th style={ss.th('','','')}>S Alpha</th><th style={ss.th('','','')}>G Alpha</th><th style={ss.th('','','')}>Cumulative</th></tr></thead><tbody>
+      {BACKTEST.map((r,i)=>(<tr key={i}><td style={{...ss.td,fontFamily:T.mono}}>{r.month}</td><td style={pnl(r.esgAlpha)}>{r.esgAlpha>0?'+':''}{r.esgAlpha}%</td><td style={pnl(r.eAlpha)}>{r.eAlpha>0?'+':''}{r.eAlpha}%</td><td style={pnl(r.sAlpha)}>{r.sAlpha>0?'+':''}{r.sAlpha}%</td><td style={pnl(r.gAlpha)}>{r.gAlpha>0?'+':''}{r.gAlpha}%</td><td style={pnl(r.cumulative)}>{r.cumulative>0?'+':''}{r.cumulative}%</td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(BACKTEST,'backtest_results')}>Export CSV</button></div>
+  </div>);
+
+  return(<div style={ss.wrap}>
+    <div style={ss.header}>ESG Factor Alpha Engine</div>
+    <div style={ss.sub}>Factor return attribution, alpha decomposition, backtesting across 100 companies</div>
+    <div style={ss.tabs}>{TABS.map((t,i)=><button key={t} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderScreen()}{tab===2&&renderDecomp()}{tab===3&&renderBacktest()}
   </div>);
 }

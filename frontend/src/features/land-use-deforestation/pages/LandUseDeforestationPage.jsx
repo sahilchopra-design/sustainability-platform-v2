@@ -1,138 +1,123 @@
 import React,{useState,useMemo,useCallback} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
-
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-const ACCENT='#92400e';
+const ACCENT='#15803d';const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
 const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
-const TABS=['Dashboard','Country Tracker','EUDR Compliance','Commodity Traceability'];
-const REGIONS=['All','South America','Southeast Asia','Central Africa','West Africa','Central America','South Asia'];
-const RISK_LEVELS=['All','Critical','High','Medium','Low'];
-const PAGE_SIZE=10;
+const TABS=['Dashboard','Country Screening','EUDR Tracker','Commodity Traceability'];
+const REGIONS=['All','Amazon Basin','Congo Basin','Southeast Asia','Central America','West Africa','East Africa','South Asia','Oceania'];
+const RISK=['All','Critical','High','Elevated','Moderate','Low'];
+const PAGE_SIZE=15;const PIECLRS=[ACCENT,T.navy,T.gold,T.sage,T.amber,T.red,'#8b5cf6','#0891b2','#be185d','#ea580c'];
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v<=lo?'rgba(22,163,74,0.12)':v<=mid?'rgba(197,169,106,0.12)':v<=hi?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v<=lo?T.green:v<=mid?T.gold:v<=hi?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const riskBadge=(r)=>{const m={Critical:{bg:'rgba(220,38,38,0.12)',c:T.red},High:{bg:'rgba(217,119,6,0.12)',c:T.amber},Elevated:{bg:'rgba(197,169,106,0.15)',c:T.gold},Moderate:{bg:'rgba(22,163,74,0.12)',c:T.green},Low:{bg:'rgba(22,163,74,0.08)',c:'#15803d'}};const s=m[r]||m.Moderate;return{background:s.bg,color:s.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
 
-const COUNTRIES=(()=>{const names=['Brazil','Indonesia','DRC','Colombia','Bolivia','Peru','Malaysia','Myanmar','Laos','Cambodia','Papua New Guinea','Ivory Coast','Ghana','Cameroon','Liberia','Sierra Leone','Madagascar','Mozambique','Tanzania','Paraguay','Argentina','Mexico','Guatemala','Honduras','Nicaragua','Ecuador','Venezuela','Guyana','Suriname','Vietnam'];
-  const regs=['South America','Southeast Asia','Central Africa','South America','South America','South America','Southeast Asia','Southeast Asia','Southeast Asia','Southeast Asia','Southeast Asia','West Africa','West Africa','Central Africa','West Africa','West Africa','Central Africa','Central Africa','Central Africa','South America','South America','Central America','Central America','Central America','Central America','South America','South America','South America','South America','Southeast Asia'];
-  return names.map((n,i)=>({id:i+1,country:n,region:regs[i],annualLossKha:Math.round(50+sr(i*7)*4950),treecover2020:Math.round(30+sr(i*11)*60),primaryForestLoss:Math.round(10+sr(i*13)*2000),deforestationRate:+(0.1+sr(i*17)*4.5).toFixed(2),fireAlerts:Math.round(100+sr(i*19)*9900),miningConcessions:Math.round(sr(i*23)*500),palmOilArea:Math.round(sr(i*29)*3000),soyArea:Math.round(sr(i*31)*2000),cattleArea:Math.round(sr(i*37)*5000),eudrCompliance:Math.round(10+sr(i*41)*80),traceability:Math.round(5+sr(i*43)*85),zeroDFCommitments:Math.round(sr(i*47)*60),protectedAreaPct:Math.round(5+sr(i*53)*35),indigenousLand:Math.round(5+sr(i*59)*40),carbonStock:Math.round(500+sr(i*61)*9500),biodiversityIndex:Math.round(15+sr(i*67)*80),riskLevel:sr(i*7)<0.25?'Critical':sr(i*7)<0.5?'High':sr(i*7)<0.75?'Medium':'Low'}));})();
+const COUNTRIES=(()=>{const names=['Brazil','Indonesia','DRC','Colombia','Bolivia','Peru','Malaysia','Myanmar','Cambodia','Laos','Guatemala','Honduras','Nicaragua','Cameroon','Ghana','Ivory Coast','Nigeria','Liberia','Sierra Leone','Madagascar','Mozambique','Tanzania','Papua New Guinea','Vietnam','Thailand','Philippines','Ecuador','Paraguay','Argentina','Guyana'];
+const regs=['Amazon Basin','Southeast Asia','Congo Basin','Amazon Basin','Amazon Basin','Amazon Basin','Southeast Asia','Southeast Asia','Southeast Asia','Southeast Asia','Central America','Central America','Central America','West Africa','West Africa','West Africa','West Africa','West Africa','West Africa','East Africa','East Africa','East Africa','Oceania','Southeast Asia','Southeast Asia','Southeast Asia','Amazon Basin','Amazon Basin','Amazon Basin','Amazon Basin'];
+return names.map((n,i)=>({id:i+1,country:n,region:regs[i],deforestationKha:Math.round(10+sr(i*7)*990),alertsMonth:Math.round(50+sr(i*11)*4950),forestCover:Math.round(20+sr(i*13)*70),treeGain:Math.round(sr(i*17)*200),primaryForestLoss:Math.round(5+sr(i*19)*495),fireAlerts:Math.round(10+sr(i*23)*2990),eudrRisk:Math.round(10+sr(i*29)*85),commodityExposure:Math.round(15+sr(i*31)*80),traceability:Math.round(5+sr(i*37)*85),governance:Math.round(10+sr(i*41)*75),enforcement:Math.round(5+sr(i*43)*80),protectedArea:Math.round(5+sr(i*47)*35),indigenousLand:Math.round(sr(i*53)*40),carbonStock:Math.round(50+sr(i*59)*200),soybExposure:Math.round(sr(i*61)*80),palmExposure:Math.round(sr(i*67)*90),cattleExposure:Math.round(sr(i*71)*85),cocaExposure:Math.round(sr(i*73)*70),riskRating:sr(i*7)<0.2?'Critical':sr(i*7)<0.4?'High':sr(i*7)<0.65?'Elevated':sr(i*7)<0.85?'Moderate':'Low'}));})();
 
-const COMMODITIES=[{name:'Palm Oil',volume:75e6,deforestationLink:42,traceability:38,certifiedPct:21,topCountries:'Indonesia, Malaysia, Nigeria'},{name:'Soy',volume:370e6,deforestationLink:28,traceability:45,certifiedPct:15,topCountries:'Brazil, Argentina, Paraguay'},{name:'Beef/Cattle',volume:72e6,deforestationLink:65,traceability:22,certifiedPct:8,topCountries:'Brazil, Paraguay, Argentina'},{name:'Cocoa',volume:5.5e6,deforestationLink:35,traceability:52,certifiedPct:45,topCountries:'Ivory Coast, Ghana, Indonesia'},{name:'Coffee',volume:10e6,deforestationLink:18,traceability:48,certifiedPct:38,topCountries:'Brazil, Vietnam, Colombia'},{name:'Rubber',volume:14e6,deforestationLink:24,traceability:28,certifiedPct:12,topCountries:'Thailand, Indonesia, Vietnam'},{name:'Timber',volume:400e6,deforestationLink:55,traceability:35,certifiedPct:20,topCountries:'Brazil, Indonesia, DRC'},{name:'Pulp & Paper',volume:190e6,deforestationLink:30,traceability:55,certifiedPct:35,topCountries:'Brazil, Indonesia, Chile'},{name:'Maize',volume:1200e6,deforestationLink:12,traceability:60,certifiedPct:5,topCountries:'US, Brazil, Argentina'},{name:'Sugar',volume:185e6,deforestationLink:15,traceability:42,certifiedPct:18,topCountries:'Brazil, India, Thailand'}];
+const COMMODITIES=[{name:'Palm Oil',deforest:28,volume:78,traceability:45,eudrScope:true},{name:'Soy',deforest:22,volume:130,traceability:52,eudrScope:true},{name:'Cattle/Beef',deforest:35,volume:95,traceability:28,eudrScope:true},{name:'Cocoa',deforest:8,volume:5.5,traceability:38,eudrScope:true},{name:'Coffee',deforest:4,volume:10,traceability:55,eudrScope:true},{name:'Rubber',deforest:6,volume:14,traceability:32,eudrScope:true},{name:'Timber/Wood',deforest:12,volume:45,traceability:48,eudrScope:true},{name:'Maize',deforest:5,volume:120,traceability:40,eudrScope:false},{name:'Rice',deforest:3,volume:52,traceability:35,eudrScope:false},{name:'Sugarcane',deforest:4,volume:190,traceability:42,eudrScope:false}];
+const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,alerts:Math.round(5000+sr(i*7)*15000),deforest:Math.round(100+sr(i*11)*400),fires:Math.round(2000+sr(i*13)*8000)}));
 
-const TREND=Array.from({length:36},(_,i)=>({month:`${2022+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,alerts:Math.round(5000+sr(i*7)*10000),lossKha:Math.round(200+sr(i*11)*800),fires:Math.round(1000+sr(i*13)*5000),eudrActions:Math.round(sr(i*17)*15)}));
-
-const badge=(val,thresholds)=>{const[lo,mid,hi]=thresholds;const bg=val>=hi?'rgba(220,38,38,0.12)':val>=mid?'rgba(217,119,6,0.12)':val>=lo?'rgba(197,169,106,0.12)':'rgba(22,163,74,0.12)';const c=val>=hi?T.red:val>=mid?T.amber:val>=lo?T.gold:T.green;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
-const rBadge=(r)=>{const m={Critical:{bg:'rgba(220,38,38,0.12)',c:T.red},High:{bg:'rgba(217,119,6,0.12)',c:T.amber},Medium:{bg:'rgba(197,169,106,0.15)',c:T.gold},Low:{bg:'rgba(22,163,74,0.12)',c:T.green}};return{background:(m[r]||m.Medium).bg,color:(m[r]||m.Medium).c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+const KPI=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
 
 export default function LandUseDeforestationPage(){
-  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[regionF,setRegionF]=useState('All');const[riskF,setRiskF]=useState('All');const[sortCol,setSortCol]=useState('annualLossKha');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
-  const[eSearch,setESearch]=useState('');const[eSort,setESort]=useState('eudrCompliance');const[eDir,setEDir]=useState('asc');const[ePage,setEPage]=useState(1);
-  const[cSearch,setCSearch]=useState('');const[cSort,setCSort]=useState('deforestationLink');const[cDir,setCDir]=useState('desc');
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[regF,setRegF]=useState('All');const[riskF,setRiskF]=useState('All');
+  const[sortCol,setSortCol]=useState('deforestationKha');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[expanded,setExpanded]=useState(null);
 
-  const filtered=useMemo(()=>{let d=[...COUNTRIES];if(search)d=d.filter(r=>r.country.toLowerCase().includes(search.toLowerCase()));if(regionF!=='All')d=d.filter(r=>r.region===regionF);if(riskF!=='All')d=d.filter(r=>r.riskLevel===riskF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,regionF,riskF,sortCol,sortDir]);
-  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);const tP=Math.ceil(filtered.length/PAGE_SIZE);
+  const filtered=useMemo(()=>{let d=[...COUNTRIES];if(search)d=d.filter(r=>r.country.toLowerCase().includes(search.toLowerCase()));if(regF!=='All')d=d.filter(r=>r.region===regF);if(riskF!=='All')d=d.filter(r=>r.riskRating===riskF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,regF,riskF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
-  const eudrData=useMemo(()=>{let d=filtered.map(r=>({country:r.country,region:r.region,eudrCompliance:r.eudrCompliance,traceability:r.traceability,zeroDFCommitments:r.zeroDFCommitments,riskLevel:r.riskLevel}));if(eSearch)d=d.filter(r=>r.country.toLowerCase().includes(eSearch.toLowerCase()));d.sort((a,b)=>eDir==='asc'?(a[eSort]>b[eSort]?1:-1):(a[eSort]<b[eSort]?1:-1));return d;},[filtered,eSearch,eSort,eDir]);
-  const ePaged=useMemo(()=>eudrData.slice((ePage-1)*PAGE_SIZE,ePage*PAGE_SIZE),[eudrData,ePage]);const eTP=Math.ceil(eudrData.length/PAGE_SIZE);
+  const kpis=useMemo(()=>{const totalDeforest=COUNTRIES.reduce((s,c)=>s+c.deforestationKha,0);const totalAlerts=COUNTRIES.reduce((s,c)=>s+c.alertsMonth,0);const avgTrace=Math.round(COUNTRIES.reduce((s,c)=>s+c.traceability,0)/COUNTRIES.length);const critical=COUNTRIES.filter(c=>c.riskRating==='Critical'||c.riskRating==='High').length;return{totalDeforest,totalAlerts,avgTrace,critical,countries:COUNTRIES.length};},[]);
+  const regionChart=useMemo(()=>{const m={};COUNTRIES.forEach(c=>{if(!m[c.region])m[c.region]={region:c.region,deforest:0,n:0};m[c.region].deforest+=c.deforestationKha;m[c.region].n++;});return Object.values(m).sort((a,b)=>b.deforest-a.deforest);},[]);
+  const riskDist=useMemo(()=>{const m={};COUNTRIES.forEach(c=>{m[c.riskRating]=(m[c.riskRating]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
+  const radarData=useMemo(()=>{const dims=['eudrRisk','traceability','governance','enforcement','protectedArea','commodityExposure'];const avg=(k)=>Math.round(COUNTRIES.reduce((s,c)=>s+c[k],0)/COUNTRIES.length);return dims.map(d=>({dim:d.replace(/([A-Z])/g,' $1').trim(),value:avg(d),fullMark:100}));},[]);
 
-  const comFiltered=useMemo(()=>{let d=[...COMMODITIES];if(cSearch)d=d.filter(r=>r.name.toLowerCase().includes(cSearch.toLowerCase()));d.sort((a,b)=>cDir==='asc'?(a[cSort]>b[cSort]?1:-1):(a[cSort]<b[cSort]?1:-1));return d;},[cSearch,cSort,cDir]);
+  const ss={wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},sub:{fontSize:13,color:T.textSec,marginBottom:20},tabs:{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0},tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(21,128,61,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2}),card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},th:(col,sc,sd)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sc===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16}};
+  const TH=({col,label,sc,sd,fn})=><th style={ss.th(col,sc,sd)} onClick={()=>fn(col)}>{label}{sc===col?(sd==='asc'?' \u25B2':' \u25BC'):''}</th>;
 
-  const doSort=(c)=>{if(sortCol===c)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(c);setSortDir('desc');}setPage(1);};
-  const doESort=(c)=>{if(eSort===c)setEDir(d=>d==='asc'?'desc':'asc');else{setESort(c);setEDir('desc');}setEPage(1);};
-  const doCSort=(c)=>{if(cSort===c)setCDir(d=>d==='asc'?'desc':'asc');else{setCSort(c);setCDir('desc');}};
-
-  const stats=useMemo(()=>({total:filtered.length,totalLoss:filtered.reduce((s,r)=>s+r.annualLossKha,0),critical:filtered.filter(r=>r.riskLevel==='Critical').length,avgEUDR:(filtered.reduce((s,r)=>s+r.eudrCompliance,0)/filtered.length||0).toFixed(1),totalFires:filtered.reduce((s,r)=>s+r.fireAlerts,0),avgBiodiversity:(filtered.reduce((s,r)=>s+r.biodiversityIndex,0)/filtered.length||0).toFixed(1)}),[filtered]);
-
-  const riskDist=useMemo(()=>{const o=['Critical','High','Medium','Low'];const m={};filtered.forEach(r=>{m[r.riskLevel]=(m[r.riskLevel]||0)+1;});return o.filter(k=>m[k]).map(k=>({name:k,value:m[k]}));},[filtered]);
-  const regionLoss=useMemo(()=>{const m={};filtered.forEach(r=>{m[r.region]=(m[r.region]||0)+r.annualLossKha;});return Object.entries(m).map(([k,v])=>({region:k,loss:v})).sort((a,b)=>b.loss-a.loss);},[filtered]);
-
-  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const k=Object.keys(data[0]);const csv=[k.join(','),...data.map(r=>k.map(c=>`"${r[c]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
-
-  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
-  const th={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
-  const td_={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
-  const inp={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
-  const sel_={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
-  const btnS=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer'});
-  const pb={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
-  const card={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
-
-  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
-    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.country}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button></div>
-    <div style={{padding:'16px 24px'}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
-      {[['Annual Loss',item.annualLossKha+' kha'],['Tree Cover',item.treecover2020+'%'],['Primary Forest Loss',item.primaryForestLoss+' kha'],['Deforestation Rate',item.deforestationRate+'%'],['Fire Alerts',item.fireAlerts.toLocaleString()],['Mining Concessions',item.miningConcessions+' kha'],['Palm Oil Area',item.palmOilArea+' kha'],['Soy Area',item.soyArea+' kha'],['Cattle Area',item.cattleArea+' kha'],['EUDR Compliance',item.eudrCompliance+'%'],['Traceability',item.traceability+'%'],['Zero-DF Commits',item.zeroDFCommitments+'%'],['Protected Area',item.protectedAreaPct+'%'],['Indigenous Land',item.indigenousLand+'%'],['Carbon Stock',item.carbonStock+' MtC'],['Biodiversity',item.biodiversityIndex]].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
-    </div><span style={rBadge(item.riskLevel)}>{item.riskLevel}</span></div>
-  </div>);};
-
-  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
-    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}><div style={{fontSize:20,fontWeight:700,color:T.navy}}>Land Use & Deforestation</div><div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>EUDR Compliance &middot; Commodity Traceability &middot; {COUNTRIES.length} Countries</div></div>
-    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>{TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}</div>
-    <div style={{padding:'20px 28px'}}>
-
-    {tab===0&&(<div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
-        {[['Countries',stats.total,T.navy],['Total Loss',(stats.totalLoss/1000).toFixed(0)+'K kha',T.red],['Critical Risk',stats.critical,ACCENT],['Avg EUDR',stats.avgEUDR+'%',T.gold],['Fire Alerts',(stats.totalFires/1000).toFixed(0)+'K',T.amber],['Avg Biodiversity',stats.avgBiodiversity,T.green]].map(([l,v,c],i)=>(<div key={i} style={card}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:16}}>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Alert Trend (36M)</div>
-          <ResponsiveContainer width="100%" height={220}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Area type="monotone" dataKey="alerts" stroke={T.red} fill={T.red} fillOpacity={0.15} name="Deforestation Alerts"/><Area type="monotone" dataKey="fires" stroke={T.amber} fill={T.amber} fillOpacity={0.1} name="Fire Alerts"/></AreaChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Risk Distribution</div>
-          <ResponsiveContainer width="100%" height={220}><PieChart><Pie data={riskDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={40} label={({name,value})=>`${name}: ${value}`} style={{fontSize:9}}>{riskDist.map((_,i)=>(<Cell key={i} fill={[T.red,T.amber,T.gold,T.green][i%4]}/>))}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Regional Forest Loss</div>
-          <ResponsiveContainer width="100%" height={220}><BarChart data={regionLoss} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9}}/><YAxis dataKey="region" type="category" tick={{fontSize:8}} width={90}/><Tooltip {...tip}/><Bar dataKey="loss" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
-        </div>
-      </div>
-    </div>)}
-
-    {tab===1&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search countries..." style={inp}/>
-        <select value={regionF} onChange={e=>{setRegionF(e.target.value);setPage(1);}} style={sel_}>{REGIONS.map(r=>(<option key={r}>{r}</option>))}</select>
-        <select value={riskF} onChange={e=>{setRiskF(e.target.value);setPage(1);}} style={sel_}>{RISK_LEVELS.map(r=>(<option key={r}>{r}</option>))}</select>
-        <button onClick={()=>exportCSV(filtered,'deforestation_countries.csv')} style={btnS(false)}>Export CSV</button>
-        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length}</span>
-      </div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['country','Country'],['region','Region'],['annualLossKha','Loss kha'],['deforestationRate','Rate%'],['fireAlerts','Fires'],['eudrCompliance','EUDR%'],['traceability','Trace%'],['biodiversityIndex','Biodiv.'],['riskLevel','Risk']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={th}>{l}{si(k,sortCol,sortDir)}</th>))}
-        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
-          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.country}</td><td style={td_}>{r.region}</td>
-          <td style={td_}><span style={badge(r.annualLossKha,[500,1500,3000])}>{r.annualLossKha}</span></td>
-          <td style={td_}>{r.deforestationRate}%</td><td style={td_}>{r.fireAlerts.toLocaleString()}</td>
-          <td style={td_}>{r.eudrCompliance}%</td><td style={td_}>{r.traceability}%</td>
-          <td style={td_}>{r.biodiversityIndex}</td><td style={td_}><span style={rBadge(r.riskLevel)}>{r.riskLevel}</span></td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page}/{tP}</span><button disabled={page>=tP} onClick={()=>setPage(p=>p+1)} style={pb}>Next</button></div>
-      <Panel item={selected} onClose={()=>setSelected(null)}/>
-    </div>)}
-
-    {tab===2&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={eSearch} onChange={e=>{setESearch(e.target.value);setEPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(eudrData,'eudr_compliance.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{eudrData.length}</span></div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['country','Country'],['region','Region'],['eudrCompliance','EUDR%'],['traceability','Traceability%'],['zeroDFCommitments','Zero-DF%'],['riskLevel','Risk']].map(([k,l])=>(<th key={k} onClick={()=>doESort(k)} style={th}>{l}{si(k,eSort,eDir)}</th>))}
-        </tr></thead><tbody>{ePaged.map((r,i)=>(<tr key={i}><td style={{...td_,fontWeight:600,color:T.navy}}>{r.country}</td><td style={td_}>{r.region}</td><td style={td_}><span style={badge(r.eudrCompliance,[25,50,70])}>{r.eudrCompliance}%</span></td><td style={td_}>{r.traceability}%</td><td style={td_}>{r.zeroDFCommitments}%</td><td style={td_}><span style={rBadge(r.riskLevel)}>{r.riskLevel}</span></td></tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={ePage<=1} onClick={()=>setEPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {ePage}/{eTP}</span><button disabled={ePage>=eTP} onClick={()=>setEPage(p=>p+1)} style={pb}>Next</button></div>
-    </div>)}
-
-    {tab===3&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={cSearch} onChange={e=>setCSearch(e.target.value)} placeholder="Search commodities..." style={inp}/><button onClick={()=>exportCSV(comFiltered,'commodity_traceability.csv')} style={btnS(false)}>Export CSV</button></div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`,marginBottom:16}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Commodity'],['volume','Volume (t)'],['deforestationLink','Deforest.Link%'],['traceability','Traceability%'],['certifiedPct','Certified%'],['topCountries','Top Countries']].map(([k,l])=>(<th key={k} onClick={()=>doCSort(k)} style={th}>{l}{si(k,cSort,cDir)}</th>))}
-        </tr></thead><tbody>{comFiltered.map((r,i)=>(<tr key={i}><td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{(r.volume/1e6).toFixed(1)}M</td><td style={td_}><span style={badge(r.deforestationLink,[15,30,50])}>{r.deforestationLink}%</span></td><td style={td_}>{r.traceability}%</td><td style={td_}>{r.certifiedPct}%</td><td style={{...td_,fontSize:10}}>{r.topCountries}</td></tr>))}</tbody></table>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Deforestation Link by Commodity</div>
-          <ResponsiveContainer width="100%" height={280}><BarChart data={comFiltered} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9}}/><YAxis dataKey="name" type="category" tick={{fontSize:9}} width={80}/><Tooltip {...tip}/><Bar dataKey="deforestationLink" fill={ACCENT} name="Deforestation%" radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Traceability vs Certified</div>
-          <ResponsiveContainer width="100%" height={280}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Traceability%" tick={{fontSize:9}}/><YAxis dataKey="y" name="Certified%" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={comFiltered.map(r=>({name:r.name,x:r.traceability,y:r.certifiedPct}))} fill={ACCENT} fillOpacity={0.7}/></ScatterChart></ResponsiveContainer>
-        </div>
-      </div>
-    </div>)}
-
+  const renderDash=()=>(<>
+    <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:24}}>
+      <KPI label="Total Deforestation" value={fmt(kpis.totalDeforest)+'kha'} sub="30 countries" color={T.red}/><KPI label="Monthly Alerts" value={fmt(kpis.totalAlerts)} sub="deforestation alerts" color={T.amber}/>
+      <KPI label="Avg Traceability" value={kpis.avgTrace+'%'} sub="commodity chains" color={ACCENT}/><KPI label="High Risk" value={kpis.critical} sub="countries" color={T.red}/>
+      <KPI label="Countries Tracked" value={kpis.countries} sub="monitoring" color={T.navy}/>
     </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Deforestation by Region (kha)</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={regionChart}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:9,fill:T.textMut}} angle={-20} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="deforest" fill={T.red} radius={[4,4,0,0]} name="Deforestation kha"/></BarChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Risk Distribution</div>
+        <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={riskDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={10}>{riskDist.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Alert Trend</div>
+        <ResponsiveContainer width="100%" height={240}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="alerts" stroke={T.red} fill="rgba(220,38,38,0.08)" name="Alerts"/><Area type="monotone" dataKey="fires" stroke={T.amber} fill="rgba(217,119,6,0.06)" name="Fire Alerts"/></AreaChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Governance Radar</div>
+        <ResponsiveContainer width="100%" height={240}><RadarChart data={radarData} cx="50%" cy="50%" outerRadius={85}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Avg" dataKey="value" stroke={ACCENT} fill="rgba(21,128,61,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer></div>
+    </div>
+  </>);
+
+  const renderScreen=()=>(<div style={ss.card}>
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+      <input style={ss.input} placeholder="Search countries..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+      <select style={ss.select} value={regF} onChange={e=>{setRegF(e.target.value);setPage(1);}}>{REGIONS.map(s=><option key={s}>{s}</option>)}</select>
+      <select style={ss.select} value={riskF} onChange={e=>{setRiskF(e.target.value);setPage(1);}}>{RISK.map(s=><option key={s}>{s}</option>)}</select>
+      <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} countries</span>
+      <button style={ss.btn} onClick={()=>csvExport(filtered,'deforestation')}>Export CSV</button>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+      <TH col="country" label="Country" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="region" label="Region" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="deforestationKha" label="Deforest kha" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="alertsMonth" label="Alerts/Mo" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="forestCover" label="Cover %" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="eudrRisk" label="EUDR Risk" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="traceability" label="Trace %" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="riskRating" label="Rating" sc={sortCol} sd={sortDir} fn={doSort}/>
+    </tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}>
+      <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+        <td style={{...ss.td,fontWeight:600}}>{r.country}</td><td style={ss.td}>{r.region}</td>
+        <td style={{...ss.td,fontFamily:T.mono,color:T.red}}>{fmt(r.deforestationKha)}</td>
+        <td style={{...ss.td,fontFamily:T.mono}}>{fmt(r.alertsMonth)}</td><td style={ss.td}>{r.forestCover}%</td>
+        <td style={ss.td}><span style={badge(100-r.eudrRisk,[30,55,75])}>{r.eudrRisk}</span></td>
+        <td style={ss.td}><span style={badge(r.traceability,[25,50,70])}>{r.traceability}%</span></td>
+        <td style={ss.td}><span style={riskBadge(r.riskRating)}>{r.riskRating}</span></td>
+      </tr>
+      {expanded===r.id&&<tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20}}>
+          <div>{[['Primary Forest Loss',fmt(r.primaryForestLoss)+' kha'],['Fire Alerts',fmt(r.fireAlerts)],['Governance',r.governance],['Enforcement',r.enforcement],['Protected Area',r.protectedArea+'%'],['Indigenous Land',r.indigenousLand+'%'],['Carbon Stock',r.carbonStock+' tC/ha'],['Soy Exposure',r.soybExposure+'%'],['Palm Exposure',r.palmExposure+'%'],['Cattle Exposure',r.cattleExposure+'%'],['Cocoa Exposure',r.cocaExposure+'%']].map(([l,v])=>(<div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span></div>))}</div>
+          <ResponsiveContainer width="100%" height={180}><RadarChart data={[{d:'EUDR',v:r.eudrRisk},{d:'Trace',v:r.traceability},{d:'Govern',v:r.governance},{d:'Enforce',v:r.enforcement},{d:'Protected',v:r.protectedArea*2.5},{d:'Carbon',v:Math.min(100,r.carbonStock/2.5)}]} cx="50%" cy="50%" outerRadius={65}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis tick={false} domain={[0,100]}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(21,128,61,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={180}><BarChart data={[{n:'Soy',v:r.soybExposure},{n:'Palm',v:r.palmExposure},{n:'Cattle',v:r.cattleExposure},{n:'Cocoa',v:r.cocaExposure}]} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:9,fill:T.textMut}}/><YAxis dataKey="n" type="category" tick={{fontSize:9,fill:T.textSec}} width={50}/><Tooltip {...tip}/><Bar dataKey="v" fill={ACCENT} radius={[0,4,4,0]} name="Exposure %"/></BarChart></ResponsiveContainer>
+        </div>
+      </td></tr>}
+    </React.Fragment>))}</tbody></table></div>
+    <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+  </div>);
+
+  const renderEudr=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>EUDR Compliance Tracker</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={280}><BarChart data={COUNTRIES.sort((a,b)=>b.eudrRisk-a.eudrRisk).slice(0,15)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="country" tick={{fontSize:8,fill:T.textMut}} angle={-30} textAnchor="end" height={70}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="eudrRisk" fill={T.red} radius={[4,4,0,0]} name="EUDR Risk"/><Bar dataKey="traceability" fill={ACCENT} radius={[4,4,0,0]} name="Traceability %"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={280}><PieChart><Pie data={COMMODITIES.filter(c=>c.eudrScope)} dataKey="deforest" nameKey="name" cx="50%" cy="50%" outerRadius={100} innerRadius={50} label={({name,deforest})=>`${name}: ${deforest}%`} labelLine fontSize={9}>{COMMODITIES.filter(c=>c.eudrScope).map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Country</th><th style={ss.th('','','')}>EUDR Risk</th><th style={ss.th('','','')}>Traceability</th><th style={ss.th('','','')}>Governance</th><th style={ss.th('','','')}>Commodity Exp.</th></tr></thead><tbody>
+      {COUNTRIES.sort((a,b)=>b.eudrRisk-a.eudrRisk).slice(0,15).map(r=>(<tr key={r.id}><td style={{...ss.td,fontWeight:600}}>{r.country}</td><td style={ss.td}><span style={badge(100-r.eudrRisk,[25,55,75])}>{r.eudrRisk}</span></td><td style={ss.td}>{r.traceability}%</td><td style={ss.td}>{r.governance}</td><td style={ss.td}>{r.commodityExposure}%</td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(COUNTRIES,'eudr_tracker')}>Export CSV</button></div>
+  </div>);
+
+  const renderCommod=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Commodity Traceability</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={280}><BarChart data={COMMODITIES}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="deforest" fill={T.red} radius={[4,4,0,0]} name="Deforest Contribution %"/><Bar dataKey="traceability" fill={ACCENT} radius={[4,4,0,0]} name="Traceability %"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={280}><LineChart data={COMMODITIES}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="volume" stroke={T.navy} strokeWidth={2} name="Volume (Mt)"/></LineChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Commodity</th><th style={ss.th('','','')}>Deforest %</th><th style={ss.th('','','')}>Volume (Mt)</th><th style={ss.th('','','')}>Traceability</th><th style={ss.th('','','')}>EUDR Scope</th></tr></thead><tbody>
+      {COMMODITIES.map((r,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={{...ss.td,fontFamily:T.mono,color:T.red}}>{r.deforest}%</td><td style={{...ss.td,fontFamily:T.mono}}>{r.volume}</td><td style={ss.td}><span style={badge(r.traceability,[20,40,60])}>{r.traceability}%</span></td><td style={ss.td}><span style={{color:r.eudrScope?T.green:T.textMut,fontWeight:600,fontSize:11}}>{r.eudrScope?'Yes':'No'}</span></td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(COMMODITIES,'commodities')}>Export CSV</button></div>
+  </div>);
+
+  return(<div style={ss.wrap}>
+    <div style={ss.header}>Land Use & Deforestation Intelligence</div>
+    <div style={ss.sub}>Deforestation alerts, EUDR compliance, commodity traceability across 30 countries</div>
+    <div style={ss.tabs}>{TABS.map((t,i)=><button key={t} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderScreen()}{tab===2&&renderEudr()}{tab===3&&renderCommod()}
   </div>);
 }

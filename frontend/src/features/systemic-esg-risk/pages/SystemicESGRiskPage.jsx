@@ -1,422 +1,124 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area } from 'recharts';
-
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const PURPLE = '#7c3aed';
-const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const tip = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text, fontSize: 11 };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#991b1b';const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(2):v:v;
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const TABS=['Dashboard','Risk Indicators','Contagion Model','Tipping Points'];
+const CATEGORIES=['All','Climate','Social','Governance','Financial','Geopolitical','Environmental','Technological'];
+const PAGE_SIZE=15;const PIECLRS=[ACCENT,T.navy,T.gold,T.sage,T.amber,T.green,'#8b5cf6','#0891b2','#be185d','#ea580c'];
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(220,38,38,0.12)':v>=mid?'rgba(217,119,6,0.12)':v>=lo?'rgba(197,169,106,0.12)':'rgba(22,163,74,0.12)';const c=v>=hi?T.red:v>=mid?T.amber:v>=lo?T.gold:T.green;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
 
-const SYSTEMIC_NODES = [
-  { name: 'GlobalBank Group',       type: 'Bank',          aum: 6800, esgScore: 58, climateVar: 12.4, sectorConcentration: 34, interconnectedness: 92, systemicRisk: 'Critical' },
-  { name: 'Atlantic Insurance Co',  type: 'Insurer',       aum: 3200, esgScore: 64, climateVar: 9.1,  sectorConcentration: 28, interconnectedness: 74, systemicRisk: 'High'     },
-  { name: 'Meridian Asset Mgmt',    type: 'Asset Manager', aum: 5400, esgScore: 71, climateVar: 7.8,  sectorConcentration: 22, interconnectedness: 81, systemicRisk: 'High'     },
-  { name: 'Pacific Capital Bank',   type: 'Bank',          aum: 4100, esgScore: 55, climateVar: 14.2, sectorConcentration: 41, interconnectedness: 88, systemicRisk: 'Critical' },
-  { name: 'Vanguard Reinsurance',   type: 'Insurer',       aum: 2700, esgScore: 67, climateVar: 8.6,  sectorConcentration: 31, interconnectedness: 63, systemicRisk: 'Medium'   },
-  { name: 'NordInvest Partners',    type: 'Asset Manager', aum: 3900, esgScore: 78, climateVar: 5.3,  sectorConcentration: 18, interconnectedness: 57, systemicRisk: 'Medium'   },
-  { name: 'Equatorial Bank',        type: 'Bank',          aum: 5100, esgScore: 52, climateVar: 16.7, sectorConcentration: 47, interconnectedness: 95, systemicRisk: 'Critical' },
-  { name: 'Sovereign Wealth Fund',  type: 'Asset Manager', aum: 8200, esgScore: 69, climateVar: 6.9,  sectorConcentration: 15, interconnectedness: 49, systemicRisk: 'Low'      },
-  { name: 'Continental Life Group', type: 'Insurer',       aum: 4600, esgScore: 61, climateVar: 10.5, sectorConcentration: 36, interconnectedness: 77, systemicRisk: 'High'     },
-  { name: 'Apex Credit Union',      type: 'Bank',          aum: 3200, esgScore: 73, climateVar: 7.2,  sectorConcentration: 25, interconnectedness: 58, systemicRisk: 'Medium'   },
-];
+const INDICATORS=(()=>{const names=['Climate VaR Index','Social Inequality Stress','Governance Failure Index','Green Swan Probability','Stranded Asset Cascade','Water Scarcity Systemic','Biodiversity Collapse Risk','Pandemic Preparedness','Cyber-Physical Nexus','Supply Chain Fragility','Energy Transition Shock','Carbon Border Disruption','Sovereign Climate Default','Social License Revocation','Regulatory Whiplash Risk','Greenwashing Contagion','Just Transition Failure','Nature-Finance Nexus','Climate Litigation Wave','ESG Rating Divergence','Geopolitical ESG Risk','Tech-Ethics Spillover','Workforce Displacement','Infrastructure Stranding','Food System Collapse','Ocean Economy Stress','Deforestation Cascade','Methane Bomb Risk','Tipping Point Proximity','Permafrost Feedback','Arctic Ice Collapse','Amazon Dieback Risk','AMOC Slowdown','Coral Reef Collapse','Monsoon Disruption','Thermohaline Shift','Boreal Forest Loss','Savanna Transition','Antarctic Ice Sheet','Greenland Melt Rate'];
+const cats=['Climate','Social','Governance','Financial','Financial','Environmental','Environmental','Social','Technological','Financial','Climate','Climate','Financial','Social','Governance','Governance','Social','Environmental','Governance','Financial','Geopolitical','Technological','Social','Climate','Environmental','Environmental','Environmental','Climate','Climate','Climate','Climate','Environmental','Climate','Environmental','Climate','Climate','Environmental','Environmental','Climate','Climate'];
+return names.map((n,i)=>({id:i+1,name:n,category:cats[i],severity:Math.round(15+sr(i*7)*80),probability:Math.round(5+sr(i*11)*90),velocity:Math.round(10+sr(i*13)*85),interconnection:Math.round(20+sr(i*17)*75),systemicScore:Math.round(10+sr(i*19)*85),contagionRisk:Math.round(5+sr(i*23)*90),timeHorizon:sr(i*29)<0.3?'Near-term':sr(i*29)<0.6?'Medium-term':'Long-term',trendDir:sr(i*31)<0.3?'Accelerating':sr(i*31)<0.6?'Stable':'Decelerating',financialImpact:Math.round(1+sr(i*37)*99),mitigationReady:Math.round(5+sr(i*41)*80),monitorFreq:sr(i*43)<0.4?'Daily':sr(i*43)<0.7?'Weekly':'Monthly',lastUpdate:`2026-03-${String(Math.floor(1+sr(i*47)*28)).padStart(2,'0')}`}));})();
 
-const SECTOR_CONCENTRATION = [
-  { sector: 'Fossil Fuels',      weight: 18.4, taxonomyAlign: 4,  transitionRisk: 87 },
-  { sector: 'Real Estate',       weight: 14.2, taxonomyAlign: 31, transitionRisk: 54 },
-  { sector: 'Utilities',         weight: 12.8, taxonomyAlign: 48, transitionRisk: 61 },
-  { sector: 'Industrials',       weight: 11.5, taxonomyAlign: 22, transitionRisk: 69 },
-  { sector: 'Transportation',    weight: 9.7,  taxonomyAlign: 17, transitionRisk: 73 },
-  { sector: 'Agriculture',       weight: 8.3,  taxonomyAlign: 35, transitionRisk: 58 },
-  { sector: 'Technology',        weight: 14.6, taxonomyAlign: 62, transitionRisk: 28 },
-  { sector: 'Healthcare',        weight: 10.5, taxonomyAlign: 55, transitionRisk: 22 },
-];
+const CONTAGION=[{source:'Climate VaR',target:'Stranded Assets',strength:85},{source:'Climate VaR',target:'Sovereign Default',strength:72},{source:'Stranded Assets',target:'Financial System',strength:78},{source:'Social Inequality',target:'Just Transition',strength:68},{source:'Biodiversity Loss',target:'Food Systems',strength:74},{source:'Supply Chain',target:'Energy Transition',strength:65},{source:'Governance Fail',target:'Greenwashing',strength:71},{source:'Water Scarcity',target:'Agriculture',strength:82},{source:'Cyber Risk',target:'Infrastructure',strength:69},{source:'Deforestation',target:'Climate VaR',strength:76},{source:'Methane Bomb',target:'Tipping Points',strength:88},{source:'Arctic Ice',target:'Sea Level',strength:91},{source:'AMOC Slowdown',target:'Monsoon',strength:79},{source:'Permafrost',target:'Methane Bomb',strength:84},{source:'Coral Collapse',target:'Ocean Economy',strength:73}];
 
-const CONTAGION_SCENARIOS = [
-  { scenario: 'Orderly Transition',       probability: 28, portfolioLoss: 8.2,  creditImpact: 3.1, liquidityStress: 12, timeHorizon: '2030' },
-  { scenario: 'Disorderly Transition',    probability: 35, portfolioLoss: 21.7, creditImpact: 9.4, liquidityStress: 31, timeHorizon: '2027' },
-  { scenario: 'Hot House World',          probability: 22, portfolioLoss: 34.5, creditImpact: 16.8,liquidityStress: 48, timeHorizon: '2035' },
-  { scenario: 'Too Little Too Late',      probability: 15, portfolioLoss: 28.1, creditImpact: 12.3,liquidityStress: 39, timeHorizon: '2032' },
-];
+const TREND=Array.from({length:36},(_,i)=>({month:`${2022+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,systemicIdx:Math.round(35+i*0.5+sr(i*7)*15),contagion:Math.round(25+i*0.4+sr(i*11)*12),tippingProx:Math.round(20+i*0.6+sr(i*13)*10),alerts:Math.round(2+sr(i*17)*8)}));
 
-const FRAGILITY_TREND = [
-  { month: 'Oct 24', index: 53, climate: 21, credit: 18, liquidity: 14 },
-  { month: 'Nov 24', index: 55, climate: 22, credit: 19, liquidity: 14 },
-  { month: 'Dec 24', index: 57, climate: 23, credit: 20, liquidity: 14 },
-  { month: 'Jan 25', index: 54, climate: 22, credit: 18, liquidity: 14 },
-  { month: 'Feb 25', index: 59, climate: 24, credit: 21, liquidity: 14 },
-  { month: 'Mar 25', index: 62, climate: 25, credit: 22, liquidity: 15 },
-  { month: 'Apr 25', index: 60, climate: 24, credit: 21, liquidity: 15 },
-  { month: 'May 25', index: 64, climate: 26, credit: 23, liquidity: 15 },
-  { month: 'Jun 25', index: 67, climate: 27, credit: 24, liquidity: 16 },
-  { month: 'Jul 25', index: 65, climate: 26, credit: 24, liquidity: 15 },
-  { month: 'Aug 25', index: 70, climate: 28, credit: 26, liquidity: 16 },
-  { month: 'Sep 25', index: 72, climate: 29, credit: 27, liquidity: 16 },
-  { month: 'Oct 25', index: 69, climate: 28, credit: 26, liquidity: 15 },
-  { month: 'Nov 25', index: 74, climate: 30, credit: 28, liquidity: 16 },
-  { month: 'Dec 25', index: 76, climate: 31, credit: 29, liquidity: 16 },
-  { month: 'Jan 26', index: 73, climate: 30, credit: 28, liquidity: 15 },
-  { month: 'Feb 26', index: 79, climate: 32, credit: 30, liquidity: 17 },
-  { month: 'Mar 26', index: 82, climate: 34, credit: 31, liquidity: 17 },
-];
+const TIPPING_POINTS=[{name:'AMOC Collapse',threshold:'4C warming',proximity:42,impact:'Catastrophic',reversible:false},{name:'Amazon Dieback',threshold:'3-4C / 40% loss',proximity:58,impact:'Severe',reversible:false},{name:'Arctic Summer Ice',threshold:'1.5C warming',proximity:75,impact:'High',reversible:true},{name:'Greenland Ice Sheet',threshold:'1.5-2C warming',proximity:55,impact:'Catastrophic',reversible:false},{name:'West Antarctic',threshold:'1.5-2C warming',proximity:48,impact:'Catastrophic',reversible:false},{name:'Coral Reef Die-off',threshold:'1.5C warming',proximity:82,impact:'Severe',reversible:false},{name:'Permafrost Thaw',threshold:'1.5-2C warming',proximity:65,impact:'High',reversible:false},{name:'Boreal Forest Shift',threshold:'3-5C warming',proximity:35,impact:'High',reversible:false},{name:'Monsoon Disruption',threshold:'2-3C warming',proximity:38,impact:'Severe',reversible:true},{name:'Sahel Greening/Drying',threshold:'2C warming',proximity:45,impact:'Moderate',reversible:true}];
 
-const REGULATORY_EXPOSURE = [
-  { regulation: 'SFDR Article 8/9',         status: 'Compliant',     capitalImpact: 0.4,  implementDate: 'Jan 2023', scope: 'EU' },
-  { regulation: 'Basel IV Climate Pillar 2', status: 'In Progress',   capitalImpact: 2.8,  implementDate: 'Jan 2026', scope: 'Global' },
-  { regulation: 'CSRD Reporting',            status: 'In Progress',   capitalImpact: 0.6,  implementDate: 'Jan 2025', scope: 'EU' },
-  { regulation: 'TCFD Mandatory Disclosure', status: 'Compliant',     capitalImpact: 0.2,  implementDate: 'Apr 2022', scope: 'UK/US' },
-  { regulation: 'EU Taxonomy Alignment',     status: 'Partial',       capitalImpact: 1.4,  implementDate: 'Jan 2024', scope: 'EU' },
-  { regulation: 'Nature Risk Disclosure',    status: 'Not Started',   capitalImpact: 3.2,  implementDate: 'Jan 2027', scope: 'Global' },
-];
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+const KPI=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
 
-const RISK_COLOR = { Critical: T.red, High: T.amber, Medium: PURPLE, Low: T.green };
-const STATUS_COLOR = { Compliant: T.green, 'In Progress': T.amber, Partial: PURPLE, 'Not Started': T.red };
+export default function SystemicEsgRiskPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[catF,setCatF]=useState('All');
+  const[sortCol,setSortCol]=useState('systemicScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[expanded,setExpanded]=useState(null);
 
-const STAT = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: '18px 22px', minWidth: 160, flex: 1 }}>
-    <div style={{ fontSize: 11, color: T.textMut, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 700, color: color || T.navy, lineHeight: 1.1 }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 4 }}>{sub}</div>}
-  </div>
-);
+  const filtered=useMemo(()=>{let d=[...INDICATORS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(catF!=='All')d=d.filter(r=>r.category===catF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,catF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
-const Badge = ({ text, color }) => (
-  <span style={{ display: 'inline-block', padding: '2px 9px', borderRadius: 20, fontSize: 11, fontWeight: 700, background: color + '18', color, border: `1px solid ${color}40` }}>{text}</span>
-);
+  const kpis=useMemo(()=>{const avg=(k)=>Math.round(INDICATORS.reduce((s,c)=>s+c[k],0)/INDICATORS.length);const critical=INDICATORS.filter(c=>c.systemicScore>70).length;const accelerating=INDICATORS.filter(c=>c.trendDir==='Accelerating').length;return{avgSystemic:avg('systemicScore'),avgContagion:avg('contagionRisk'),critical,accelerating,tippingNear:TIPPING_POINTS.filter(t=>t.proximity>60).length};},[]);
+  const catChart=useMemo(()=>{const m={};INDICATORS.forEach(c=>{if(!m[c.category])m[c.category]={category:c.category,avg:0,n:0};m[c.category].avg+=c.systemicScore;m[c.category].n++;});return Object.values(m).map(s=>({...s,avg:Math.round(s.avg/s.n)}));},[]);
+  const catDist=useMemo(()=>{const m={};INDICATORS.forEach(c=>{m[c.category]=(m[c.category]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
+  const radarData=useMemo(()=>{const dims=['severity','probability','velocity','interconnection','contagionRisk','financialImpact'];const avg=(k)=>Math.round(INDICATORS.reduce((s,c)=>s+c[k],0)/INDICATORS.length);return dims.map(d=>({dim:d.replace(/([A-Z])/g,' $1').trim(),value:avg(d),fullMark:100}));},[]);
 
-const InterconnBar = ({ value }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <div style={{ flex: 1, height: 7, background: T.surfaceH, borderRadius: 4, overflow: 'hidden' }}>
-      <div style={{ width: `${value}%`, height: '100%', background: value >= 85 ? T.red : value >= 70 ? T.amber : PURPLE, borderRadius: 4 }} />
+  const ss={wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},sub:{fontSize:13,color:T.textSec,marginBottom:20},tabs:{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0},tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(153,27,27,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2}),card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},th:(col,sc,sd)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sc===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16}};
+  const TH=({col,label,sc,sd,fn})=><th style={ss.th(col,sc,sd)} onClick={()=>fn(col)}>{label}{sc===col?(sd==='asc'?' \u25B2':' \u25BC'):''}</th>;
+
+  const renderDash=()=>(<>
+    <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:24}}>
+      <KPI label="Systemic Index" value={kpis.avgSystemic+'/100'} sub="40 indicators" color={ACCENT}/><KPI label="Contagion Risk" value={kpis.avgContagion+'/100'} sub="avg score" color={T.red}/>
+      <KPI label="Critical Risks" value={kpis.critical} sub="score >70" color={T.amber}/><KPI label="Accelerating" value={kpis.accelerating} sub="worsening trend" color={T.red}/>
+      <KPI label="Tipping Proximate" value={kpis.tippingNear} sub="proximity >60%" color={ACCENT}/>
     </div>
-    <span style={{ fontSize: 11, color: T.textSec, minWidth: 28, textAlign: 'right' }}>{value}</span>
-  </div>
-);
-
-const TABS = ['Overview', 'Network Contagion', 'Sector Concentration', 'Systemic Fragility Index', 'Regulatory Exposure'];
-
-export default function SystemicESGRiskPage() {
-  const [tab, setTab] = useState(0);
-
-  return (
-    <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh', padding: '28px 32px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 9, background: PURPLE, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 18 }}>🕸</span>
-          </div>
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: T.navy }}>Systemic ESG Risk Dashboard</div>
-            <div style={{ fontSize: 12, color: T.textMut }}>EP-AB1 · Cross-institutional contagion, concentration & fragility monitoring</div>
-          </div>
-          <div style={{ marginLeft: 'auto', padding: '4px 14px', borderRadius: 20, background: PURPLE + '18', color: PURPLE, fontSize: 12, fontWeight: 700, border: `1px solid ${PURPLE}40` }}>LIVE</div>
-        </div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display: 'flex', gap: 4, borderBottom: `2px solid ${T.border}`, marginBottom: 28 }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{ padding: '9px 18px', fontSize: 13, fontWeight: 600, color: tab === i ? PURPLE : T.textSec, background: 'none', border: 'none', borderBottom: tab === i ? `2px solid ${PURPLE}` : '2px solid transparent', marginBottom: -2, cursor: 'pointer', transition: 'color 0.15s' }}>{t}</button>
-        ))}
-      </div>
-
-      {/* ── Overview ── */}
-      {tab === 0 && (
-        <div>
-          {/* Stat Row */}
-          <div style={{ display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
-            <STAT label="Systemically Important Institutions" value="10" sub="Banks, insurers & asset managers" color={PURPLE} />
-            <STAT label="Total AUM Monitored" value="$47.2T" sub="Aggregate exposure pool" color={T.navy} />
-            <STAT label="Average ESG Score" value="62.4" sub="Weighted by AUM" color={T.amber} />
-            <STAT label="Network Density" value="0.68" sub="Interconnectedness index" color={T.red} />
-          </div>
-
-          {/* Contagion Scenario Table */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24, marginBottom: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Contagion Scenario Overview</div>
-            <div style={{ fontSize: 12, color: T.textMut, marginBottom: 16 }}>NGFS-aligned climate transition scenarios — portfolio impact projections</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                  {['Scenario', 'Probability', 'Portfolio Loss %', 'Credit Impact %', 'Liquidity Stress %', 'Time Horizon'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {CONTAGION_SCENARIOS.map((s, i) => (
-                  <tr key={s.scenario} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.bg : T.surface }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{s.scenario}</td>
-                    <td style={{ padding: '10px 12px', color: T.textSec }}>{s.probability}%</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{ color: s.portfolioLoss > 25 ? T.red : s.portfolioLoss > 15 ? T.amber : T.green, fontWeight: 700 }}>{s.portfolioLoss}%</span>
-                    </td>
-                    <td style={{ padding: '10px 12px', color: T.textSec }}>{s.creditImpact}%</td>
-                    <td style={{ padding: '10px 12px', color: T.textSec }}>{s.liquidityStress}%</td>
-                    <td style={{ padding: '10px 12px', color: T.textMut }}>{s.timeHorizon}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Fragility Trend Chart */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Systemic Fragility Index — 18-Month Trend</div>
-            <div style={{ fontSize: 12, color: T.textMut, marginBottom: 16 }}>Composite score: climate VaR + credit stress + liquidity risk (0–100)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={FRAGILITY_TREND} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: T.textMut }} interval={2} />
-                <YAxis domain={[45, 90]} tick={{ fontSize: 10, fill: T.textMut }} />
-                <Tooltip contentStyle={tip} />
-                <Area type="monotone" dataKey="index" stroke={PURPLE} fill={PURPLE + '22'} strokeWidth={2} name="Fragility Index" dot={false} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* ── Network Contagion ── */}
-      {tab === 1 && (
-        <div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24, marginBottom: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Systemically Important Institutions</div>
-            <div style={{ fontSize: 12, color: T.textMut, marginBottom: 16 }}>Ranked by interconnectedness — network contagion exposure</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                  {['Institution', 'Type', 'AUM ($B)', 'ESG Score', 'Climate VaR %', 'Interconnectedness', 'Systemic Risk'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[...SYSTEMIC_NODES].sort((a, b) => b.interconnectedness - a.interconnectedness).map((node, i) => (
-                  <tr key={node.name} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.bg : T.surface }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{node.name}</td>
-                    <td style={{ padding: '10px 12px', color: T.textSec }}>{node.type}</td>
-                    <td style={{ padding: '10px 12px', color: T.textSec }}>{node.aum.toLocaleString()}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{ color: node.esgScore >= 70 ? T.green : node.esgScore >= 60 ? T.amber : T.red, fontWeight: 700 }}>{node.esgScore}</span>
-                    </td>
-                    <td style={{ padding: '10px 12px', color: node.climateVar > 12 ? T.red : T.textSec }}>{node.climateVar}%</td>
-                    <td style={{ padding: '10px 12px', minWidth: 160 }}><InterconnBar value={node.interconnectedness} /></td>
-                    <td style={{ padding: '10px 12px' }}><Badge text={node.systemicRisk} color={RISK_COLOR[node.systemicRisk]} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Scenario Impact Grid */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Scenario Impact Grid</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-              {CONTAGION_SCENARIOS.map(s => (
-                <div key={s.scenario} style={{ border: `1px solid ${T.border}`, borderRadius: 10, padding: 18 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>{s.scenario}</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {[
-                      { label: 'Probability', val: `${s.probability}%`, color: T.textSec },
-                      { label: 'Portfolio Loss', val: `${s.portfolioLoss}%`, color: s.portfolioLoss > 25 ? T.red : T.amber },
-                      { label: 'Credit Impact', val: `${s.creditImpact}%`, color: T.amber },
-                      { label: 'Liquidity Stress', val: `${s.liquidityStress}%`, color: s.liquidityStress > 35 ? T.red : T.amber },
-                      { label: 'Time Horizon', val: s.timeHorizon, color: T.textMut },
-                    ].map(item => (
-                      <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 11, color: T.textMut }}>{item.label}</span>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: item.color }}>{item.val}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Sector Concentration ── */}
-      {tab === 2 && (
-        <div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24, marginBottom: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Portfolio Sector Weight Distribution</div>
-            <div style={{ fontSize: 12, color: T.textMut, marginBottom: 16 }}>Aggregate AUM allocation across systemically important sectors</div>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={SECTOR_CONCENTRATION} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false} />
-                <XAxis dataKey="sector" tick={{ fontSize: 10, fill: T.textMut }} />
-                <YAxis tick={{ fontSize: 10, fill: T.textMut }} unit="%" />
-                <Tooltip contentStyle={tip} formatter={(v) => [`${v}%`, 'Portfolio Weight']} />
-                <Bar dataKey="weight" radius={[4, 4, 0, 0]} name="Portfolio Weight %">
-                  {SECTOR_CONCENTRATION.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.transitionRisk > 70 ? T.red : entry.transitionRisk > 50 ? T.amber : PURPLE} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <div style={{ display: 'flex', gap: 16, marginTop: 8, justifyContent: 'center' }}>
-              {[{ label: 'High Transition Risk (>70)', color: T.red }, { label: 'Medium Risk (50–70)', color: T.amber }, { label: 'Lower Risk (<50)', color: PURPLE }].map(l => (
-                <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: T.textSec }}>
-                  <div style={{ width: 10, height: 10, borderRadius: 2, background: l.color }} />
-                  {l.label}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Taxonomy Alignment Table */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 4 }}>EU Taxonomy Alignment & Transition Risk</div>
-            <div style={{ fontSize: 12, color: T.textMut, marginBottom: 16 }}>Sector-level taxonomy-aligned share vs. transition risk score</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                  {['Sector', 'Portfolio Weight', 'EU Taxonomy Alignment', 'Transition Risk Score', 'Risk Band'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontWeight: 600, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[...SECTOR_CONCENTRATION].sort((a, b) => b.transitionRisk - a.transitionRisk).map((sec, i) => (
-                  <tr key={sec.sector} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.bg : T.surface }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{sec.sector}</td>
-                    <td style={{ padding: '10px 12px', color: T.textSec }}>{sec.weight}%</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 80, height: 7, background: T.surfaceH, borderRadius: 4, overflow: 'hidden' }}>
-                          <div style={{ width: `${sec.taxonomyAlign}%`, height: '100%', background: sec.taxonomyAlign > 50 ? T.green : sec.taxonomyAlign > 25 ? T.amber : T.red, borderRadius: 4 }} />
-                        </div>
-                        <span style={{ fontSize: 11, color: T.textSec }}>{sec.taxonomyAlign}%</span>
-                      </div>
-                    </td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{ color: sec.transitionRisk > 70 ? T.red : sec.transitionRisk > 50 ? T.amber : T.green, fontWeight: 700 }}>{sec.transitionRisk}</span>
-                    </td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <Badge
-                        text={sec.transitionRisk > 70 ? 'High' : sec.transitionRisk > 50 ? 'Medium' : 'Low'}
-                        color={sec.transitionRisk > 70 ? T.red : sec.transitionRisk > 50 ? T.amber : T.green}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ── Systemic Fragility Index ── */}
-      {tab === 3 && (
-        <div>
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24, marginBottom: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Systemic Fragility Index — 18-Month Decomposition</div>
-            <div style={{ fontSize: 12, color: T.textMut, marginBottom: 16 }}>Stacked sub-components: climate VaR · credit stress · liquidity risk</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={FRAGILITY_TREND} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: T.textMut }} interval={1} />
-                <YAxis domain={[0, 90]} tick={{ fontSize: 10, fill: T.textMut }} />
-                <Tooltip contentStyle={tip} />
-                <Area type="monotone" dataKey="climate" stackId="1" stroke={T.red} fill={T.red + '55'} strokeWidth={1.5} name="Climate VaR" />
-                <Area type="monotone" dataKey="credit" stackId="1" stroke={T.amber} fill={T.amber + '55'} strokeWidth={1.5} name="Credit Stress" />
-                <Area type="monotone" dataKey="liquidity" stackId="1" stroke={PURPLE} fill={PURPLE + '55'} strokeWidth={1.5} name="Liquidity Risk" />
-              </AreaChart>
-            </ResponsiveContainer>
-            <div style={{ display: 'flex', gap: 20, marginTop: 12, justifyContent: 'center' }}>
-              {[{ label: 'Climate VaR', color: T.red }, { label: 'Credit Stress', color: T.amber }, { label: 'Liquidity Risk', color: PURPLE }].map(l => (
-                <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: T.textSec }}>
-                  <div style={{ width: 10, height: 10, borderRadius: 2, background: l.color }} />
-                  {l.label}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Fragility Decomposition Cards */}
-          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Current Fragility Decomposition (Mar 2026)</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-              {[
-                { label: 'Composite Fragility Index', value: 82, max: 100, color: T.red, desc: 'Up 9 pts from Oct 2024' },
-                { label: 'Climate VaR Component', value: 34, max: 50, color: T.red, desc: '+13 pts YoY increase' },
-                { label: 'Credit Stress Component', value: 31, max: 40, color: T.amber, desc: 'Elevated in fossil-heavy sectors' },
-                { label: 'Liquidity Risk Component', value: 17, max: 20, color: PURPLE, desc: 'Stable — moderate concern' },
-                { label: 'Network Amplification Factor', value: 68, max: 100, color: T.amber, desc: 'Dense cross-institution links' },
-                { label: 'Tail Risk Concentration', value: 74, max: 100, color: T.red, desc: '3 Critical institutions drive 61%' },
-              ].map(item => (
-                <div key={item.label} style={{ border: `1px solid ${T.border}`, borderRadius: 10, padding: 18 }}>
-                  <div style={{ fontSize: 11, color: T.textMut, fontWeight: 600, marginBottom: 8 }}>{item.label}</div>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: item.color, marginBottom: 6 }}>{item.value}</div>
-                  <div style={{ height: 6, background: T.surfaceH, borderRadius: 4, overflow: 'hidden', marginBottom: 8 }}>
-                    <div style={{ width: `${(item.value / item.max) * 100}%`, height: '100%', background: item.color, borderRadius: 4 }} />
-                  </div>
-                  <div style={{ fontSize: 11, color: T.textSec }}>{item.desc}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Regulatory Exposure ── */}
-      {tab === 4 && (
-        <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
-            <STAT label="Compliant Regulations" value="2 / 6" sub="SFDR & TCFD complete" color={T.green} />
-            <STAT label="Estimated Capital Impact" value="8.6%" sub="Blended capital buffer required" color={T.red} />
-            <STAT label="Upcoming Deadlines" value="3" sub="Within next 24 months" color={T.amber} />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
-            {REGULATORY_EXPOSURE.map(reg => (
-              <div key={reg.regulation} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 22 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 4 }}>{reg.regulation}</div>
-                    <div style={{ fontSize: 11, color: T.textMut }}>{reg.scope} · Implementation: {reg.implementDate}</div>
-                  </div>
-                  <Badge text={reg.status} color={STATUS_COLOR[reg.status]} />
-                </div>
-                <div style={{ display: 'flex', gap: 16 }}>
-                  <div style={{ flex: 1, background: T.bg, borderRadius: 8, padding: '12px 14px' }}>
-                    <div style={{ fontSize: 10, color: T.textMut, fontWeight: 600, marginBottom: 4, textTransform: 'uppercase' }}>Capital Impact</div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: reg.capitalImpact >= 2 ? T.red : reg.capitalImpact >= 1 ? T.amber : T.green }}>
-                      +{reg.capitalImpact}%
-                    </div>
-                  </div>
-                  <div style={{ flex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 11, color: T.textMut }}>Compliance readiness</div>
-                    <div style={{ height: 8, background: T.surfaceH, borderRadius: 4, overflow: 'hidden' }}>
-                      <div style={{
-                        width: reg.status === 'Compliant' ? '100%' : reg.status === 'In Progress' ? '55%' : reg.status === 'Partial' ? '30%' : '5%',
-                        height: '100%',
-                        background: STATUS_COLOR[reg.status],
-                        borderRadius: 4,
-                        transition: 'width 0.4s'
-                      }} />
-                    </div>
-                    <div style={{ fontSize: 11, color: T.textSec }}>
-                      {reg.status === 'Compliant' ? '100%' : reg.status === 'In Progress' ? '55%' : reg.status === 'Partial' ? '30%' : '5%'} complete
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Summary insight banner */}
-          <div style={{ background: PURPLE + '10', border: `1px solid ${PURPLE}30`, borderRadius: 12, padding: 20, marginTop: 24 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: PURPLE, marginBottom: 6 }}>Regulatory Action Priority</div>
-            <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.7 }}>
-              <strong>Nature Risk Disclosure</strong> (Jan 2027) carries the highest capital impact at +3.2% and is currently not started — immediate gap assessment recommended.
-              <strong> Basel IV Climate Pillar 2</strong> (Jan 2026) is in progress but requires accelerated implementation given +2.8% capital requirement.
-              EU Taxonomy partial alignment (30% complete) should be escalated ahead of mandatory GAR reporting obligations.
-            </div>
-          </div>
-        </div>
-      )}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Systemic Risk by Category</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={catChart}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="category" tick={{fontSize:9,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[4,4,0,0]} name="Avg Systemic Score"/></BarChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Risk Category Distribution</div>
+        <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={catDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={9}>{catDist.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
     </div>
-  );
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Systemic Risk Trend</div>
+        <ResponsiveContainer width="100%" height={240}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="systemicIdx" stroke={ACCENT} fill="rgba(153,27,27,0.1)" name="Systemic Index"/><Area type="monotone" dataKey="contagion" stroke={T.red} fill="rgba(220,38,38,0.06)" name="Contagion"/><Area type="monotone" dataKey="tippingProx" stroke={T.amber} fill="rgba(217,119,6,0.06)" name="Tipping Proximity"/></AreaChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Risk Dimension Radar</div>
+        <ResponsiveContainer width="100%" height={240}><RadarChart data={radarData} cx="50%" cy="50%" outerRadius={85}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Avg" dataKey="value" stroke={ACCENT} fill="rgba(153,27,27,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer></div>
+    </div>
+  </>);
+
+  const renderIndicators=()=>(<div style={ss.card}>
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+      <input style={ss.input} placeholder="Search indicators..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+      <select style={ss.select} value={catF} onChange={e=>{setCatF(e.target.value);setPage(1);}}>{CATEGORIES.map(s=><option key={s}>{s}</option>)}</select>
+      <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} indicators</span>
+      <button style={ss.btn} onClick={()=>csvExport(filtered,'systemic_risk')}>Export CSV</button>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+      <TH col="name" label="Indicator" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="category" label="Category" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="systemicScore" label="Systemic" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="severity" label="Severity" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="probability" label="Probability" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="contagionRisk" label="Contagion" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="velocity" label="Velocity" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="trendDir" label="Trend" sc={sortCol} sd={sortDir} fn={doSort}/>
+    </tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}>
+      <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+        <td style={{...ss.td,fontWeight:600,maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.name}</td><td style={ss.td}>{r.category}</td>
+        <td style={ss.td}><span style={badge(r.systemicScore,[30,50,70])}>{r.systemicScore}</span></td>
+        <td style={ss.td}><span style={badge(r.severity,[30,50,70])}>{r.severity}</span></td>
+        <td style={ss.td}>{r.probability}%</td>
+        <td style={ss.td}><span style={badge(r.contagionRisk,[30,50,70])}>{r.contagionRisk}</span></td>
+        <td style={ss.td}>{r.velocity}</td>
+        <td style={ss.td}><span style={{color:r.trendDir==='Accelerating'?T.red:r.trendDir==='Stable'?T.amber:T.green,fontWeight:600,fontSize:11}}>{r.trendDir}</span></td>
+      </tr>
+      {expanded===r.id&&<tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20}}>
+          <div>{[['Interconnection',r.interconnection],['Time Horizon',r.timeHorizon],['Financial Impact',r.financialImpact+'%'],['Mitigation Ready',r.mitigationReady+'%'],['Monitor Freq.',r.monitorFreq],['Last Update',r.lastUpdate]].map(([l,v])=>(<div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span></div>))}</div>
+          <ResponsiveContainer width="100%" height={180}><RadarChart data={[{d:'Severity',v:r.severity},{d:'Probability',v:r.probability},{d:'Velocity',v:r.velocity},{d:'Interconn.',v:r.interconnection},{d:'Contagion',v:r.contagionRisk},{d:'Fin. Impact',v:r.financialImpact}]} cx="50%" cy="50%" outerRadius={65}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis tick={false} domain={[0,100]}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(153,27,27,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={180}><BarChart data={[{n:'Systemic',v:r.systemicScore},{n:'Severity',v:r.severity},{n:'Contagion',v:r.contagionRisk},{n:'Velocity',v:r.velocity},{n:'Mitigation',v:r.mitigationReady}]} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:9,fill:T.textMut}}/><YAxis dataKey="n" type="category" tick={{fontSize:9,fill:T.textSec}} width={65}/><Tooltip {...tip}/><Bar dataKey="v" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
+        </div>
+      </td></tr>}
+    </React.Fragment>))}</tbody></table></div>
+    <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+  </div>);
+
+  const renderContagion=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Contagion Network Model</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={300}><BarChart data={CONTAGION.sort((a,b)=>b.strength-a.strength)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="source" tick={{fontSize:8,fill:T.textMut}} angle={-30} textAnchor="end" height={70}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="strength" fill={ACCENT} radius={[4,4,0,0]} name="Link Strength"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={300}><LineChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="contagion" stroke={ACCENT} strokeWidth={2} name="Contagion Index"/><Line type="monotone" dataKey="alerts" stroke={T.red} strokeWidth={2} name="Alert Count"/></LineChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Source</th><th style={ss.th('','','')}>Target</th><th style={ss.th('','','')}>Strength</th><th style={ss.th('','','')}>Visual</th></tr></thead><tbody>
+      {CONTAGION.sort((a,b)=>b.strength-a.strength).map((r,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{r.source}</td><td style={ss.td}>{r.target}</td><td style={ss.td}><span style={badge(r.strength,[40,60,80])}>{r.strength}</span></td><td style={ss.td}><div style={{background:T.border,borderRadius:4,height:12,width:100}}><div style={{background:ACCENT,borderRadius:4,height:12,width:r.strength}}/></div></td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(CONTAGION,'contagion_model')}>Export CSV</button></div>
+  </div>);
+
+  const renderTipping=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Climate Tipping Points</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={300}><BarChart data={TIPPING_POINTS.sort((a,b)=>b.proximity-a.proximity)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-30} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="proximity" fill={ACCENT} radius={[4,4,0,0]} name="Proximity %">{TIPPING_POINTS.map((t,i)=><Cell key={i} fill={t.proximity>60?T.red:t.proximity>40?T.amber:T.green}/>)}</Bar></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={300}><RadarChart data={TIPPING_POINTS.slice(0,8).map(t=>({dim:t.name.split(' ').slice(0,2).join(' '),value:t.proximity}))} cx="50%" cy="50%" outerRadius={100}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Proximity" dataKey="value" stroke={ACCENT} fill="rgba(153,27,27,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Tipping Point</th><th style={ss.th('','','')}>Threshold</th><th style={ss.th('','','')}>Proximity</th><th style={ss.th('','','')}>Impact</th><th style={ss.th('','','')}>Reversible</th></tr></thead><tbody>
+      {TIPPING_POINTS.sort((a,b)=>b.proximity-a.proximity).map((r,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={ss.td}>{r.threshold}</td><td style={ss.td}><span style={badge(r.proximity,[30,50,70])}>{r.proximity}%</span></td><td style={ss.td}><span style={{color:r.impact==='Catastrophic'?T.red:r.impact==='Severe'?T.amber:T.gold,fontWeight:600,fontSize:11}}>{r.impact}</span></td><td style={ss.td}><span style={{color:r.reversible?T.green:T.red,fontWeight:600,fontSize:11}}>{r.reversible?'Yes':'No'}</span></td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(TIPPING_POINTS,'tipping_points')}>Export CSV</button></div>
+  </div>);
+
+  return(<div style={ss.wrap}>
+    <div style={ss.header}>Systemic ESG Risk Intelligence</div>
+    <div style={ss.sub}>Systemic risk indicators, contagion modelling, tipping point proximity tracking</div>
+    <div style={ss.tabs}>{TABS.map((t,i)=><button key={t} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderIndicators()}{tab===2&&renderContagion()}{tab===3&&renderTipping()}
+  </div>);
 }

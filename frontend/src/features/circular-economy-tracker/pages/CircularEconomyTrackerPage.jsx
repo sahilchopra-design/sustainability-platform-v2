@@ -1,213 +1,131 @@
 import React,{useState,useMemo,useCallback} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,ZAxis,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 const ACCENT='#16a34a';
-const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
 const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
-const TABS=['Dashboard','Company Circularity','Material Flows','Waste Analytics'];
-const SECTORS=['All','Manufacturing','Technology','Consumer Goods','Automotive','Packaging','Construction','Textiles','Electronics','Chemicals','Food & Bev'];
-const RATINGS=['All','Leader','Advanced','Progressing','Emerging','Laggard'];
+const TABS=['Dashboard','Company Screening','Material Flow','Waste Analytics'];
+const SECTORS=['All','Consumer Goods','Packaging','Electronics','Automotive','Textiles','Construction','Food & Bev','Chemicals','Metals','Plastics'];
+const RATINGS=['All','Leader','Advanced','Progressing','Developing','Lagging'];
 const PAGE_SIZE=15;
+const PIECLRS=[T.green,T.sage,T.gold,T.amber,T.navy,T.navyL,T.red,'#8b5cf6','#0891b2','#be185d'];
+const badge=(val,th)=>{const[lo,mid,hi]=th;const bg=val>=hi?'rgba(22,163,74,0.12)':val>=mid?'rgba(197,169,106,0.12)':val>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=val>=hi?T.green:val>=mid?T.gold:val>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const ratBadge=(r)=>{const m={Leader:{bg:'rgba(22,163,74,0.12)',c:T.green},Advanced:{bg:'rgba(90,138,106,0.12)',c:T.sage},Progressing:{bg:'rgba(197,169,106,0.15)',c:T.gold},Developing:{bg:'rgba(217,119,6,0.12)',c:T.amber},Lagging:{bg:'rgba(220,38,38,0.12)',c:T.red}};const s=m[r]||m.Developing;return{background:s.bg,color:s.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
 
-const COMPANIES=(()=>{
-  const names=['Unilever plc','Philips NV','Interface Inc','Patagonia Inc','IKEA Group','HP Inc','Dell Technologies','Apple Inc','Samsung Elec','LG Electronics','Toyota Motor','BMW AG','Volvo Group','Renault Group','Stellantis NV','Schneider Electric','Siemens AG','ABB Ltd','Veolia Environ','Suez SA','Tomra Systems','Umicore SA','DS Smith plc','Smurfit Kappa','Mondi plc','Berry Global','Sealed Air','Amcor plc','Ball Corp','Crown Holdings','Nestlé SA','Danone SA','PepsiCo Inc','Coca-Cola HBC','AB InBev','L\'Oréal SA','Henkel AG','P&G Co','Kimberly-Clark','Essity AB','H&M Group','Inditex SA','Nike Inc','Adidas AG','Levi Strauss','BASF SE','Dow Inc','DuPont Co','Covestro AG','Lanxess AG','Saint-Gobain','Holcim Ltd','CRH plc','LafargeHolcim','HeidelbergCement','Caterpillar Inc','Deere & Co','3M Company','General Electric','Honeywell Intl'];
-  const secs=['Consumer Goods','Electronics','Manufacturing','Textiles','Consumer Goods','Technology','Technology','Technology','Electronics','Electronics','Automotive','Automotive','Automotive','Automotive','Automotive','Electronics','Manufacturing','Manufacturing','Chemicals','Chemicals','Manufacturing','Chemicals','Packaging','Packaging','Packaging','Packaging','Packaging','Packaging','Packaging','Packaging','Food & Bev','Food & Bev','Food & Bev','Food & Bev','Food & Bev','Consumer Goods','Chemicals','Consumer Goods','Consumer Goods','Consumer Goods','Textiles','Textiles','Textiles','Textiles','Textiles','Chemicals','Chemicals','Chemicals','Chemicals','Chemicals','Construction','Construction','Construction','Construction','Construction','Manufacturing','Manufacturing','Manufacturing','Manufacturing','Manufacturing'];
-  return names.map((n,i)=>({id:i+1,name:n,sector:secs[i]||'Manufacturing',circularityScore:Math.round(15+sr(i*7)*75),recycledInput:Math.round(5+sr(i*11)*60),recyclingRate:Math.round(20+sr(i*13)*70),wasteToValue:Math.round(10+sr(i*17)*65),materialEfficiency:Math.round(30+sr(i*19)*65),productLifeExtension:Math.round(15+sr(i*23)*70),closedLoopPct:Math.round(5+sr(i*29)*55),wasteIntensity:+(0.5+sr(i*31)*4).toFixed(2),circularRevenue:Math.round(2+sr(i*37)*35),designForRecycling:Math.round(20+sr(i*41)*75),takeBackProgram:sr(i*43)>0.4?'Active':'Planned',eprCompliance:Math.round(40+sr(i*47)*58),remanufacturing:Math.round(sr(i*53)*40),sharingModels:sr(i*59)>0.6?'Yes':'No',rating:sr(i*7)<0.12?'Leader':sr(i*7)<0.32?'Advanced':sr(i*7)<0.55?'Progressing':sr(i*7)<0.8?'Emerging':'Laggard',wasteTotal:Math.round(500+sr(i*61)*9500),landfillPct:Math.round(5+sr(i*67)*45),incinerationPct:Math.round(5+sr(i*71)*30),compostPct:Math.round(sr(i*73)*20)}));})();
+const COMPANIES=(()=>{const names=['Unilever plc','Nestle SA','Procter & Gamble','IKEA Group','Patagonia Inc','H&M Group','Interface Inc','Philips NV','Renault Group','Veolia Environ','DS Smith plc','Smurfit Kappa','Ball Corp','Amcor plc','Berry Global','Tetra Pak','Apple Inc','Samsung Elec','Dell Technologies','HP Inc','Cisco Systems','Nike Inc','Adidas AG','Inditex SA','Levi Strauss','PepsiCo Inc','Coca-Cola Co','Danone SA','Mondelez Intl','Mars Inc','BASF SE','Dow Inc','Eastman Chemical','Novelis Inc','Hydro ASA','ArcelorMittal','Nucor Corp','Caterpillar Inc','Toyota Motor','BMW AG','Stellantis NV','Volvo Group','LafargeHolcim','CRH plc','Saint-Gobain','Kingfisher plc','Henkel AG','Reckitt plc','Colgate-Palmolive','Church & Dwight','Sealed Air','Sonoco Products','Graphic Packaging','WestRock Co','International Paper','Kimberly-Clark','Georgia-Pacific','Cascades Inc','Brambles Ltd','Loop Industries'];
+const secs=['Consumer Goods','Consumer Goods','Consumer Goods','Consumer Goods','Textiles','Textiles','Construction','Electronics','Automotive','Chemicals','Packaging','Packaging','Packaging','Packaging','Packaging','Packaging','Electronics','Electronics','Electronics','Electronics','Electronics','Textiles','Textiles','Textiles','Textiles','Food & Bev','Food & Bev','Food & Bev','Food & Bev','Food & Bev','Chemicals','Chemicals','Chemicals','Metals','Metals','Metals','Metals','Automotive','Automotive','Automotive','Automotive','Automotive','Construction','Construction','Construction','Consumer Goods','Consumer Goods','Consumer Goods','Consumer Goods','Consumer Goods','Packaging','Packaging','Packaging','Packaging','Packaging','Consumer Goods','Packaging','Packaging','Packaging','Plastics'];
+return names.map((n,i)=>({id:i+1,name:n,sector:secs[i]||'Consumer Goods',circularityScore:Math.round(10+sr(i*7)*80),wasteDiv:Math.round(15+sr(i*11)*80),recycledInput:Math.round(5+sr(i*13)*70),recyclability:Math.round(20+sr(i*17)*75),reusePct:Math.round(sr(i*19)*45),compostPct:Math.round(sr(i*23)*30),landfillPct:Math.round(5+sr(i*29)*50),waterRecycle:Math.round(10+sr(i*31)*80),energyRecovery:Math.round(sr(i*37)*40),materialEfficiency:Math.round(30+sr(i*41)*60),eprCompliance:Math.round(40+sr(i*43)*55),designCircularity:Math.round(15+sr(i*47)*75),productLifeExt:Math.round(sr(i*53)*60),reverseLogistics:Math.round(10+sr(i*59)*70),totalWaste:Math.round(100+sr(i*61)*9900),diverted:Math.round(50+sr(i*67)*5000),rating:sr(i*7)<0.15?'Leader':sr(i*7)<0.35?'Advanced':sr(i*7)<0.55?'Progressing':sr(i*7)<0.8?'Developing':'Lagging'}));})();
 
-const MATERIALS=[
-  {material:'Plastics',virgin:42e6,recycled:8.5e6,rate:16.8,target:30,gap:13.2},{material:'Steel',virgin:85e6,recycled:38e6,rate:30.9,target:50,gap:19.1},
-  {material:'Aluminum',virgin:28e6,recycled:18e6,rate:39.1,target:55,gap:15.9},{material:'Paper/Cardboard',virgin:55e6,recycled:38e6,rate:40.9,target:65,gap:24.1},
-  {material:'Glass',virgin:18e6,recycled:13e6,rate:41.9,target:70,gap:28.1},{material:'Textiles',virgin:32e6,recycled:4.2e6,rate:11.6,target:25,gap:13.4},
-  {material:'Electronics',virgin:22e6,recycled:4.8e6,rate:17.9,target:35,gap:17.1},{material:'Rubber',virgin:14e6,recycled:3.1e6,rate:18.1,target:30,gap:11.9},
-  {material:'Concrete',virgin:120e6,recycled:15e6,rate:11.1,target:25,gap:13.9},{material:'Copper',virgin:8.5e6,recycled:3.2e6,rate:27.4,target:45,gap:17.6},
-  {material:'Rare Earths',virgin:0.3e6,recycled:0.003e6,rate:1.0,target:10,gap:9.0},{material:'Lithium',virgin:0.5e6,recycled:0.025e6,rate:4.8,target:20,gap:15.2},
-];
+const MATERIALS=[{name:'Plastics',recycled:32,virgin:68,flow:4200},{name:'Paper/Card',recycled:65,virgin:35,flow:3800},{name:'Glass',recycled:42,virgin:58,flow:1200},{name:'Metals',recycled:58,virgin:42,flow:2600},{name:'Textiles',recycled:12,virgin:88,flow:900},{name:'Electronics',recycled:18,virgin:82,flow:1500},{name:'Organics',recycled:45,virgin:55,flow:2200},{name:'Construction',recycled:35,virgin:65,flow:5100},{name:'Chemicals',recycled:8,virgin:92,flow:1800},{name:'Rubber',recycled:22,virgin:78,flow:600}];
+const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,circularity:Math.round(22+i*0.8+sr(i*7)*8),wasteDiv:Math.round(35+i*0.6+sr(i*11)*10),recycled:Math.round(18+i*0.7+sr(i*13)*6),landfill:Math.round(45-i*0.5+sr(i*17)*8)}));
+const WASTE_TYPES=[{type:'Recycled',value:38},{type:'Composted',value:12},{type:'Energy Recovery',value:15},{type:'Landfill',value:28},{type:'Incinerated',value:7}];
 
-const WASTE_TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,generated:Math.round(800+sr(i*7)*400),recycled:Math.round(200+sr(i*11)*250),landfill:Math.round(100+sr(i*13)*200),incineration:Math.round(50+sr(i*17)*150),composted:Math.round(20+sr(i*19)*80)}));
-
-const badge=(val,thresholds,invert)=>{const[lo,mid,hi]=thresholds;const v=invert?100-val:val;const bg=v>=hi?'rgba(220,38,38,0.12)':v>=mid?'rgba(217,119,6,0.12)':v>=lo?'rgba(197,169,106,0.12)':'rgba(22,163,74,0.12)';const color=v>=hi?T.red:v>=mid?T.amber:v>=lo?T.gold:T.green;return{background:bg,color,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
-const ratingBadge=(r)=>{const m={Leader:{bg:'rgba(22,163,74,0.12)',c:T.green},Advanced:{bg:'rgba(90,138,106,0.12)',c:T.sage},Progressing:{bg:'rgba(197,169,106,0.15)',c:T.gold},Emerging:{bg:'rgba(217,119,6,0.12)',c:T.amber},Laggard:{bg:'rgba(220,38,38,0.12)',c:T.red}};const s=m[r]||m.Emerging;return{background:s.bg,color:s.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+const KPI=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
 
 export default function CircularEconomyTrackerPage(){
-  const[tab,setTab]=useState(0);
-  const[search,setSearch]=useState('');
-  const[sectorF,setSectorF]=useState('All');
-  const[ratingF,setRatingF]=useState('All');
-  const[sortCol,setSortCol]=useState('circularityScore');
-  const[sortDir,setSortDir]=useState('desc');
-  const[page,setPage]=useState(1);
-  const[selected,setSelected]=useState(null);
-  const[mSearch,setMSearch]=useState('');
-  const[mSort,setMSort]=useState('rate');
-  const[mDir,setMDir]=useState('desc');
-  const[wSearch,setWSearch]=useState('');
-  const[wSort,setWSort]=useState('wasteTotal');
-  const[wDir,setWDir]=useState('desc');
-  const[wPage,setWPage]=useState(1);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sector,setSector]=useState('All');const[ratingF,setRatingF]=useState('All');
+  const[sortCol,setSortCol]=useState('circularityScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[expanded,setExpanded]=useState(null);
 
-  const filtered=useMemo(()=>{let d=[...COMPANIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(sectorF!=='All')d=d.filter(r=>r.sector===sectorF);if(ratingF!=='All')d=d.filter(r=>r.rating===ratingF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sectorF,ratingF,sortCol,sortDir]);
-  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);
-  const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const filtered=useMemo(()=>{let d=[...COMPANIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(sector!=='All')d=d.filter(r=>r.sector===sector);if(ratingF!=='All')d=d.filter(r=>r.rating===ratingF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,sector,ratingF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
-  const matFiltered=useMemo(()=>{let d=[...MATERIALS];if(mSearch)d=d.filter(r=>r.material.toLowerCase().includes(mSearch.toLowerCase()));d.sort((a,b)=>mDir==='asc'?(a[mSort]>b[mSort]?1:-1):(a[mSort]<b[mSort]?1:-1));return d;},[mSearch,mSort,mDir]);
+  const kpis=useMemo(()=>{const avg=(k)=>Math.round(COMPANIES.reduce((s,c)=>s+c[k],0)/COMPANIES.length);return{avgCirc:avg('circularityScore'),avgDiv:avg('wasteDiv'),avgRecInput:avg('recycledInput'),leaders:COMPANIES.filter(c=>c.rating==='Leader'||c.rating==='Advanced').length,avgLandfill:avg('landfillPct')};},[]);
+  const sectorChart=useMemo(()=>{const m={};COMPANIES.forEach(c=>{if(!m[c.sector])m[c.sector]={sector:c.sector,avgCirc:0,avgDiv:0,n:0};m[c.sector].avgCirc+=c.circularityScore;m[c.sector].avgDiv+=c.wasteDiv;m[c.sector].n++;});return Object.values(m).map(s=>({...s,avgCirc:Math.round(s.avgCirc/s.n),avgDiv:Math.round(s.avgDiv/s.n)}));},[]);
+  const ratingDist=useMemo(()=>{const m={};COMPANIES.forEach(c=>{m[c.rating]=(m[c.rating]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
+  const radarData=useMemo(()=>{const dims=['circularityScore','wasteDiv','recycledInput','recyclability','materialEfficiency','designCircularity'];const avg=(k)=>Math.round(COMPANIES.reduce((s,c)=>s+c[k],0)/COMPANIES.length);return dims.map(d=>({dim:d.replace(/([A-Z])/g,' $1').trim(),value:avg(d),fullMark:100}));},[]);
 
-  const wasteCompanies=useMemo(()=>{let d=filtered.map(r=>({name:r.name,sector:r.sector,wasteTotal:r.wasteTotal,recyclingRate:r.recyclingRate,landfillPct:r.landfillPct,incinerationPct:r.incinerationPct,compostPct:r.compostPct,wasteIntensity:r.wasteIntensity}));if(wSearch)d=d.filter(r=>r.name.toLowerCase().includes(wSearch.toLowerCase()));d.sort((a,b)=>wDir==='asc'?(a[wSort]>b[wSort]?1:-1):(a[wSort]<b[wSort]?1:-1));return d;},[filtered,wSearch,wSort,wDir]);
-  const wPaged=useMemo(()=>wasteCompanies.slice((wPage-1)*PAGE_SIZE,wPage*PAGE_SIZE),[wasteCompanies,wPage]);
-  const wTotalPages=Math.ceil(wasteCompanies.length/PAGE_SIZE);
+  const ss={wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},sub:{fontSize:13,color:T.textSec,marginBottom:20},tabs:{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0},tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(22,163,74,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2}),card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},th:(col,sc,sd)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sc===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16}};
+  const TH=({col,label,sc,sd,fn})=><th style={ss.th(col,sc,sd)} onClick={()=>fn(col)}>{label}{sc===col?(sd==='asc'?' \u25B2':' \u25BC'):''}</th>;
 
-  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
-  const doMSort=(col)=>{if(mSort===col)setMDir(d=>d==='asc'?'desc':'asc');else{setMSort(col);setMDir('desc');}};
-  const doWSort=(col)=>{if(wSort===col)setWDir(d=>d==='asc'?'desc':'asc');else{setWSort(col);setWDir('desc');}setWPage(1);};
-
-  const stats=useMemo(()=>{const d=filtered;return{total:d.length,avgCirc:(d.reduce((s,r)=>s+r.circularityScore,0)/d.length||0).toFixed(1),avgRecycled:(d.reduce((s,r)=>s+r.recycledInput,0)/d.length||0).toFixed(1),avgWTV:(d.reduce((s,r)=>s+r.wasteToValue,0)/d.length||0).toFixed(1),leaders:d.filter(r=>r.rating==='Leader'||r.rating==='Advanced').length,avgCircRev:(d.reduce((s,r)=>s+r.circularRevenue,0)/d.length||0).toFixed(1)};},[filtered]);
-
-  const sectorAvg=useMemo(()=>{const m={};filtered.forEach(r=>{if(!m[r.sector])m[r.sector]={sum:0,cnt:0};m[r.sector].sum+=r.circularityScore;m[r.sector].cnt++;});return Object.entries(m).map(([k,v])=>({sector:k,avg:+(v.sum/v.cnt).toFixed(1)})).sort((a,b)=>b.avg-a.avg);},[filtered]);
-  const ratingDist=useMemo(()=>{const order=['Leader','Advanced','Progressing','Emerging','Laggard'];const m={};filtered.forEach(r=>{m[r.rating]=(m[r.rating]||0)+1;});return order.filter(k=>m[k]).map(k=>({name:k,value:m[k]}));},[filtered]);
-
-  const exportCSV=useCallback((data,filename)=>{if(!data.length)return;const keys=Object.keys(data[0]);const csv=[keys.join(','),...data.map(r=>keys.map(k=>`"${r[k]}"`).join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);},[]);
-
-  const sortIcon=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
-  const thStyle={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
-  const tdStyle={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
-  const inputStyle={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
-  const selectStyle={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
-  const btnStyle=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontWeight:a?600:400});
-  const pagBtn={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
-  const cardStyle={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
-
-  const SidePanel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
-    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-      <div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div>
-      <button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button>
+  const renderDash=()=>(<>
+    <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:24}}>
+      <KPI label="Avg Circularity" value={kpis.avgCirc+'%'} sub="across 60 companies" color={ACCENT}/>
+      <KPI label="Waste Diversion" value={kpis.avgDiv+'%'} sub="from landfill" color={T.sage}/>
+      <KPI label="Recycled Input" value={kpis.avgRecInput+'%'} sub="avg material input" color={T.navy}/>
+      <KPI label="Leaders/Advanced" value={kpis.leaders} sub="top-rated" color={T.gold}/>
+      <KPI label="Landfill Rate" value={kpis.avgLandfill+'%'} sub="avg to landfill" color={T.red}/>
     </div>
-    <div style={{padding:'16px 24px'}}>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
-        {[['Circularity Score',item.circularityScore],['Recycled Input',item.recycledInput+'%'],['Recycling Rate',item.recyclingRate+'%'],['Waste-to-Value',item.wasteToValue+'%'],['Material Efficiency',item.materialEfficiency+'%'],['Product Life Ext.',item.productLifeExtension+'%'],['Closed Loop',item.closedLoopPct+'%'],['Waste Intensity',item.wasteIntensity+' t/$M'],['Circular Revenue',item.circularRevenue+'%'],['Design for Recycling',item.designForRecycling+'%'],['Take-Back',item.takeBackProgram],['EPR Compliance',item.eprCompliance+'%'],['Remanufacturing',item.remanufacturing+'%'],['Sharing Models',item.sharingModels]].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:15,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
-      </div>
-      <div style={{marginBottom:12}}><span style={ratingBadge(item.rating)}>{item.rating}</span><span style={{marginLeft:8,fontSize:11,color:T.textSec}}>Sector: {item.sector}</span></div>
-      <div style={{height:200}}>
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={[{d:'Recycled Input',v:item.recycledInput},{d:'Recycling Rate',v:item.recyclingRate},{d:'Waste-to-Value',v:item.wasteToValue},{d:'Material Eff.',v:item.materialEfficiency},{d:'Life Extension',v:item.productLifeExtension},{d:'Design4Recycle',v:item.designForRecycling}]}>
-            <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={ACCENT} fill={ACCENT} fillOpacity={0.2}/>
-          </RadarChart>
-        </ResponsiveContainer>
-      </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Circularity by Sector</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={sectorChart}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="avgCirc" fill={ACCENT} radius={[4,4,0,0]} name="Circularity %"/><Bar dataKey="avgDiv" fill={T.navy} radius={[4,4,0,0]} name="Diversion %"/></BarChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Rating Distribution</div>
+        <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={ratingDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={10}>{ratingDist.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
     </div>
-  </div>);};
-
-  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
-    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}>
-      <div style={{fontSize:20,fontWeight:700,color:T.navy}}>Circular Economy Tracker</div>
-      <div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>Circularity Metrics &middot; Material Flow Analysis &middot; {COMPANIES.length} Companies &middot; {MATERIALS.length} Material Streams</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Circularity Trend</div>
+        <ResponsiveContainer width="100%" height={240}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="circularity" stroke={ACCENT} fill="rgba(22,163,74,0.1)" name="Circularity %"/><Area type="monotone" dataKey="wasteDiv" stroke={T.navy} fill="rgba(27,58,92,0.08)" name="Diversion %"/><Area type="monotone" dataKey="landfill" stroke={T.red} fill="rgba(220,38,38,0.06)" name="Landfill %"/></AreaChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Portfolio Circularity Radar</div>
+        <ResponsiveContainer width="100%" height={240}><RadarChart data={radarData} cx="50%" cy="50%" outerRadius={85}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Score" dataKey="value" stroke={ACCENT} fill="rgba(22,163,74,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer></div>
     </div>
-    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>
-      {TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}
+    <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Waste Destination</div>
+      <ResponsiveContainer width="100%" height={200}><PieChart><Pie data={WASTE_TYPES} dataKey="value" nameKey="type" cx="50%" cy="50%" outerRadius={75} label={({type,percent})=>`${type} ${(percent*100).toFixed(0)}%`} labelLine fontSize={10}>{WASTE_TYPES.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+  </>);
+
+  const renderScreen=()=>(<div style={ss.card}>
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+      <input style={ss.input} placeholder="Search companies..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+      <select style={ss.select} value={sector} onChange={e=>{setSector(e.target.value);setPage(1);}}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select>
+      <select style={ss.select} value={ratingF} onChange={e=>{setRatingF(e.target.value);setPage(1);}}>{RATINGS.map(r=><option key={r}>{r}</option>)}</select>
+      <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} results</span>
+      <button style={ss.btn} onClick={()=>csvExport(filtered,'circular_economy')}>Export CSV</button>
     </div>
-    <div style={{padding:'20px 28px'}}>
-
-    {tab===0&&(<div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
-        {[['Companies Tracked',stats.total,T.navy],['Avg Circularity',stats.avgCirc,ACCENT],['Avg Recycled Input',stats.avgRecycled+'%',T.sage],['Avg Waste-to-Value',stats.avgWTV+'%',T.gold],['Leaders/Advanced',stats.leaders,T.green],['Avg Circular Rev',stats.avgCircRev+'%',T.navy]].map(([l,v,c],i)=>(<div key={i} style={cardStyle}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:16,marginBottom:20}}>
-        <div style={cardStyle}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Waste Stream Trend (24M)</div>
-          <ResponsiveContainer width="100%" height={220}><AreaChart data={WASTE_TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="recycled" stackId="1" stroke={ACCENT} fill={ACCENT} fillOpacity={0.3} name="Recycled"/><Area type="monotone" dataKey="composted" stackId="1" stroke={T.sage} fill={T.sage} fillOpacity={0.2} name="Composted"/><Area type="monotone" dataKey="incineration" stackId="1" stroke={T.amber} fill={T.amber} fillOpacity={0.2} name="Incineration"/><Area type="monotone" dataKey="landfill" stackId="1" stroke={T.red} fill={T.red} fillOpacity={0.15} name="Landfill"/></AreaChart></ResponsiveContainer>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+      <TH col="name" label="Company" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="sector" label="Sector" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="circularityScore" label="Circularity" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="wasteDiv" label="Diversion" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="recycledInput" label="Recycled In" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="recyclability" label="Recyclability" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="landfillPct" label="Landfill" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="rating" label="Rating" sc={sortCol} sd={sortDir} fn={doSort}/>
+    </tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}>
+      <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+        <td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={ss.td}>{r.sector}</td>
+        <td style={ss.td}><span style={badge(r.circularityScore,[25,50,70])}>{r.circularityScore}%</span></td>
+        <td style={ss.td}><span style={badge(r.wasteDiv,[25,50,70])}>{r.wasteDiv}%</span></td>
+        <td style={ss.td}>{r.recycledInput}%</td><td style={ss.td}>{r.recyclability}%</td>
+        <td style={ss.td}><span style={badge(100-r.landfillPct,[30,55,75])}>{r.landfillPct}%</span></td>
+        <td style={ss.td}><span style={ratBadge(r.rating)}>{r.rating}</span></td>
+      </tr>
+      {expanded===r.id&&<tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20}}>
+          <div>{[['Reuse %',r.reusePct],['Compost %',r.compostPct],['Water Recycle',r.waterRecycle+'%'],['Energy Recovery',r.energyRecovery+'%'],['Material Eff.',r.materialEfficiency+'%'],['EPR Compliance',r.eprCompliance+'%'],['Design Circ.',r.designCircularity+'%'],['Product Life Ext.',r.productLifeExt+'%'],['Reverse Logistics',r.reverseLogistics+'%'],['Total Waste',fmt(r.totalWaste)+' t'],['Diverted',fmt(r.diverted)+' t']].map(([l,v])=>(<div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span></div>))}</div>
+          <ResponsiveContainer width="100%" height={180}><RadarChart data={[{d:'Circularity',v:r.circularityScore},{d:'Diversion',v:r.wasteDiv},{d:'Recycled In',v:r.recycledInput},{d:'Recyclability',v:r.recyclability},{d:'Material Eff',v:r.materialEfficiency},{d:'Design Circ',v:r.designCircularity}]} cx="50%" cy="50%" outerRadius={65}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis tick={false} domain={[0,100]}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(22,163,74,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={180}><BarChart data={[{n:'Recycled',v:r.recycledInput},{n:'Reuse',v:r.reusePct},{n:'Compost',v:r.compostPct},{n:'Landfill',v:r.landfillPct},{n:'Recovery',v:r.energyRecovery}]} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:9,fill:T.textMut}}/><YAxis dataKey="n" type="category" tick={{fontSize:9,fill:T.textSec}} width={65}/><Tooltip {...tip}/><Bar dataKey="v" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
         </div>
-        <div style={cardStyle}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Rating Distribution</div>
-          <ResponsiveContainer width="100%" height={220}><PieChart><Pie data={ratingDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={40} label={({name,value})=>`${name}: ${value}`} style={{fontSize:9}}>{ratingDist.map((_,i)=>(<Cell key={i} fill={[T.green,T.sage,T.gold,T.amber,T.red][i%5]}/>))}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
-        </div>
-        <div style={cardStyle}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Sector Avg Circularity</div>
-          <ResponsiveContainer width="100%" height={220}><BarChart data={sectorAvg.slice(0,8)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><YAxis dataKey="sector" type="category" tick={{fontSize:9,fill:T.textMut}} width={80}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
-        </div>
-      </div>
-      <div style={cardStyle}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Circularity vs Recycled Input</div>
-        <ResponsiveContainer width="100%" height={240}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Circularity" tick={{fontSize:9}}/><YAxis dataKey="y" name="Recycled %" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={filtered.map(r=>({name:r.name,x:r.circularityScore,y:r.recycledInput}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
-      </div>
-    </div>)}
+      </td></tr>}
+    </React.Fragment>))}</tbody></table></div>
+    <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+  </div>);
 
-    {tab===1&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search companies..." style={inputStyle}/>
-        <select value={sectorF} onChange={e=>{setSectorF(e.target.value);setPage(1);}} style={selectStyle}>{SECTORS.map(s=>(<option key={s}>{s}</option>))}</select>
-        <select value={ratingF} onChange={e=>{setRatingF(e.target.value);setPage(1);}} style={selectStyle}>{RATINGS.map(r=>(<option key={r}>{r}</option>))}</select>
-        <button onClick={()=>exportCSV(filtered,'circular_economy_companies.csv')} style={btnStyle(false)}>Export CSV</button>
-        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length} results</span>
-      </div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Company'],['sector','Sector'],['circularityScore','Circularity'],['recycledInput','Recycled In%'],['recyclingRate','Recycling%'],['wasteToValue','WTV%'],['materialEfficiency','Mat.Eff%'],['closedLoopPct','Closed Loop%'],['circularRevenue','Circ.Rev%'],['rating','Rating']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={thStyle}>{l}{sortIcon(k,sortCol,sortDir)}</th>))}
-        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
-          <td style={{...tdStyle,fontWeight:600,color:T.navy}}>{r.name}</td><td style={tdStyle}>{r.sector}</td>
-          <td style={tdStyle}><span style={badge(100-r.circularityScore,[30,55,75])}>{r.circularityScore}</span></td>
-          <td style={tdStyle}>{r.recycledInput}%</td><td style={tdStyle}>{r.recyclingRate}%</td><td style={tdStyle}>{r.wasteToValue}%</td>
-          <td style={tdStyle}>{r.materialEfficiency}%</td><td style={tdStyle}>{r.closedLoopPct}%</td><td style={tdStyle}>{r.circularRevenue}%</td>
-          <td style={tdStyle}><span style={ratingBadge(r.rating)}>{r.rating}</span></td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12}}>
-        <button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pagBtn}>Prev</button>
-        <span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page} of {totalPages}</span>
-        <button disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)} style={pagBtn}>Next</button>
-      </div>
-      <SidePanel item={selected} onClose={()=>setSelected(null)}/>
-    </div>)}
-
-    {tab===2&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}>
-        <input value={mSearch} onChange={e=>setMSearch(e.target.value)} placeholder="Search materials..." style={inputStyle}/>
-        <button onClick={()=>exportCSV(matFiltered,'material_flows.csv')} style={btnStyle(false)}>Export CSV</button>
-        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{matFiltered.length} materials</span>
-      </div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`,marginBottom:16}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['material','Material'],['virgin','Virgin (t)'],['recycled','Recycled (t)'],['rate','Recycling Rate%'],['target','Target%'],['gap','Gap%']].map(([k,l])=>(<th key={k} onClick={()=>doMSort(k)} style={thStyle}>{l}{sortIcon(k,mSort,mDir)}</th>))}
-        </tr></thead><tbody>{matFiltered.map((r,i)=>(<tr key={i}>
-          <td style={{...tdStyle,fontWeight:600,color:T.navy}}>{r.material}</td>
-          <td style={tdStyle}>{fmt(r.virgin)}</td><td style={tdStyle}>{fmt(r.recycled)}</td>
-          <td style={tdStyle}><span style={badge(100-r.rate,[30,60,80])}>{r.rate}%</span></td>
-          <td style={tdStyle}>{r.target}%</td><td style={tdStyle}><span style={{color:T.red,fontWeight:600}}>{r.gap}%</span></td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        <div style={cardStyle}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Current vs Target Rate</div>
-          <ResponsiveContainer width="100%" height={280}><BarChart data={matFiltered}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="material" tick={{fontSize:8,fill:T.textMut}} angle={-30} textAnchor="end" height={50}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="rate" fill={ACCENT} name="Current%" radius={[4,4,0,0]}/><Bar dataKey="target" fill={T.gold} name="Target%" radius={[4,4,0,0]}/></BarChart></ResponsiveContainer>
-        </div>
-        <div style={cardStyle}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Virgin vs Recycled Volume</div>
-          <ResponsiveContainer width="100%" height={280}><BarChart data={matFiltered} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textMut}} tickFormatter={v=>fmt(v)}/><YAxis dataKey="material" type="category" tick={{fontSize:8,fill:T.textMut}} width={80}/><Tooltip {...tip} formatter={v=>fmt(v)}/><Bar dataKey="virgin" fill={T.amber} name="Virgin" stackId="a"/><Bar dataKey="recycled" fill={ACCENT} name="Recycled" stackId="a"/></BarChart></ResponsiveContainer>
-        </div>
-      </div>
-    </div>)}
-
-    {tab===3&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}>
-        <input value={wSearch} onChange={e=>{setWSearch(e.target.value);setWPage(1);}} placeholder="Search companies..." style={inputStyle}/>
-        <button onClick={()=>exportCSV(wasteCompanies,'waste_analytics.csv')} style={btnStyle(false)}>Export CSV</button>
-        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{wasteCompanies.length} companies</span>
-      </div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Company'],['sector','Sector'],['wasteTotal','Total Waste(t)'],['recyclingRate','Recycling%'],['landfillPct','Landfill%'],['incinerationPct','Incineration%'],['compostPct','Compost%'],['wasteIntensity','Intensity']].map(([k,l])=>(<th key={k} onClick={()=>doWSort(k)} style={thStyle}>{l}{sortIcon(k,wSort,wDir)}</th>))}
-        </tr></thead><tbody>{wPaged.map((r,i)=>(<tr key={i}>
-          <td style={{...tdStyle,fontWeight:600,color:T.navy}}>{r.name}</td><td style={tdStyle}>{r.sector}</td>
-          <td style={tdStyle}>{fmt(r.wasteTotal)}</td>
-          <td style={tdStyle}><span style={badge(100-r.recyclingRate,[30,55,75])}>{r.recyclingRate}%</span></td>
-          <td style={tdStyle}><span style={badge(r.landfillPct,[15,25,40])}>{r.landfillPct}%</span></td>
-          <td style={tdStyle}>{r.incinerationPct}%</td><td style={tdStyle}>{r.compostPct}%</td>
-          <td style={tdStyle}>{r.wasteIntensity}</td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12}}>
-        <button disabled={wPage<=1} onClick={()=>setWPage(p=>p-1)} style={pagBtn}>Prev</button>
-        <span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {wPage} of {wTotalPages}</span>
-        <button disabled={wPage>=wTotalPages} onClick={()=>setWPage(p=>p+1)} style={pagBtn}>Next</button>
-      </div>
-      <div style={{...cardStyle,marginTop:16}}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Waste Composition Breakdown</div>
-        <ResponsiveContainer width="100%" height={260}><BarChart data={wPaged}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="recyclingRate" fill={ACCENT} stackId="a" name="Recycled%"/><Bar dataKey="compostPct" fill={T.sage} stackId="a" name="Compost%"/><Bar dataKey="incinerationPct" fill={T.amber} stackId="a" name="Incineration%"/><Bar dataKey="landfillPct" fill={T.red} stackId="a" name="Landfill%"/></BarChart></ResponsiveContainer>
-      </div>
-    </div>)}
-
+  const renderMat=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Material Flow Analysis</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={300}><BarChart data={MATERIALS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:10,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/><Bar dataKey="recycled" stackId="a" fill={ACCENT} name="Recycled %"/><Bar dataKey="virgin" stackId="a" fill={T.border} name="Virgin %"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={300}><LineChart data={MATERIALS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:10,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="flow" stroke={T.navy} strokeWidth={2} dot={{fill:T.navy,r:4}} name="Flow (kt)"/></LineChart></ResponsiveContainer>
     </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Material</th><th style={ss.th('','','')}>Recycled %</th><th style={ss.th('','','')}>Virgin %</th><th style={ss.th('','','')}>Flow (kt)</th><th style={ss.th('','','')}>Gap</th></tr></thead><tbody>
+      {MATERIALS.map((m,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{m.name}</td><td style={ss.td}><span style={badge(m.recycled,[20,40,60])}>{m.recycled}%</span></td><td style={ss.td}>{m.virgin}%</td><td style={{...ss.td,fontFamily:T.mono}}>{fmt(m.flow)}</td><td style={ss.td}><div style={{background:T.border,borderRadius:4,height:12,width:100}}><div style={{background:ACCENT,borderRadius:4,height:12,width:m.recycled}}/></div></td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(MATERIALS,'material_flow')}>Export CSV</button></div>
+  </div>);
+
+  const renderWaste=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Waste Analytics & Destination</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={280}><PieChart><Pie data={WASTE_TYPES} dataKey="value" nameKey="type" cx="50%" cy="50%" outerRadius={100} innerRadius={50} label={({type,value})=>`${type}: ${value}%`} labelLine fontSize={10}>{WASTE_TYPES.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={280}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="recycled" stroke={ACCENT} fill="rgba(22,163,74,0.1)" name="Recycling %"/><Area type="monotone" dataKey="landfill" stroke={T.red} fill="rgba(220,38,38,0.06)" name="Landfill %"/></AreaChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Destination</th><th style={ss.th('','','')}>Share %</th><th style={ss.th('','','')}>Visual</th></tr></thead><tbody>
+      {WASTE_TYPES.map((w,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{w.type}</td><td style={{...ss.td,fontFamily:T.mono}}>{w.value}%</td><td style={ss.td}><div style={{background:T.border,borderRadius:4,height:14,width:120}}><div style={{background:PIECLRS[i],borderRadius:4,height:14,width:w.value*1.2}}/></div></td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(WASTE_TYPES,'waste_analytics')}>Export CSV</button></div>
+  </div>);
+
+  return(<div style={ss.wrap}>
+    <div style={ss.header}>Circular Economy Tracker</div>
+    <div style={ss.sub}>Circularity scoring, waste diversion analytics, material flow mapping</div>
+    <div style={ss.tabs}>{TABS.map((t,i)=><button key={t} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderScreen()}{tab===2&&renderMat()}{tab===3&&renderWaste()}
   </div>);
 }

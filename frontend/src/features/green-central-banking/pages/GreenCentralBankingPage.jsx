@@ -1,142 +1,121 @@
 import React,{useState,useMemo,useCallback} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
-import { GRID_INTENSITY } from '../../../data/referenceData';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-const ACCENT='#0e7490';
+const ACCENT='#059669';const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
 const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
-const TABS=['Dashboard','Central Bank Profiles','Green QE & Reserves','Climate Mandates'];
-const REGIONS=['All','Europe','Asia Pacific','North America','Latin America','Africa','Middle East'];
-const NGFS_STATUS=['All','Member','Observer','Non-Member'];
-const PAGE_SIZE=10;
+const TABS=['Dashboard','Central Bank Profiles','Green QE Analytics','Stress Test Mandates'];
+const REGIONS=['All','Europe','Americas','Asia Pacific','Africa','Middle East'];
+const PAGE_SIZE=15;const PIECLRS=[ACCENT,T.navy,T.gold,T.sage,T.amber,T.red,'#8b5cf6','#0891b2','#be185d','#ea580c'];
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(5,150,105,0.12)':v>=mid?'rgba(197,169,106,0.12)':v>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v>=hi?ACCENT:v>=mid?T.gold:v>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
 
-const BANKS=(()=>{
-  const names=['ECB','Federal Reserve','Bank of Japan','People\'s Bank of China','Bank of England','Swiss National Bank','Reserve Bank of Australia','Bank of Canada','Riksbank Sweden','Norges Bank','Deutsche Bundesbank','Banque de France','Banca d\'Italia','Banco de España','De Nederlandsche Bank','Reserve Bank of India','Bank Indonesia','Bank of Korea','Monetary Auth. Singapore','Bank Negara Malaysia','Central Bank of Brazil','Banco de México','Central Bank of Chile','Central Bank of Colombia','South African Reserve','Central Bank of Nigeria','Bank of Thailand','State Bank of Vietnam','Central Bank of Philippines','Central Bank of Egypt'];
-  const regs=['Europe','North America','Asia Pacific','Asia Pacific','Europe','Europe','Asia Pacific','North America','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Latin America','Latin America','Latin America','Latin America','Africa','Africa','Asia Pacific','Asia Pacific','Asia Pacific','Africa'];
-  return names.map((n,i)=>({id:i+1,name:n,region:regs[i],ngfsStatus:sr(i*7)<0.6?'Member':sr(i*7)<0.85?'Observer':'Non-Member',greenQE:sr(i*11)<0.35,climateMandateExplicit:sr(i*13)<0.4,greenBondHoldings:Math.round(sr(i*17)*80000),reserveESGIntegration:Math.round(10+sr(i*19)*80),climateStressTest:sr(i*23)<0.5?'Conducted':sr(i*23)<0.8?'Planned':'None',taxonomyAdopted:sr(i*29)<0.45?'Yes':'No',disclosureRequirement:sr(i*31)<0.55?'Mandatory':sr(i*31)<0.8?'Recommended':'None',collateralPolicy:sr(i*37)<0.35?'Green-Adjusted':'Standard',prudentialClimate:Math.round(15+sr(i*41)*80),researchOutput:Math.round(5+sr(i*43)*45),greenFinancePolicy:Math.round(10+sr(i*47)*85),supervisoryExpectation:sr(i*53)<0.4?'Published':sr(i*53)<0.7?'Drafting':'None',policyRate:+(0.5+sr(i*59)*8).toFixed(2),balanceSheet:Math.round(100+sr(i*61)*8000),greenAssetRatio:+(sr(i*67)*15).toFixed(1),carbonFootprint:Math.round(50+sr(i*71)*450),overallScore:Math.round(10+sr(i*73)*85)}));})();
+const CBS=(()=>{const names=['European Central Bank','Federal Reserve','Bank of England','Bank of Japan','Peoples Bank China','Reserve Bank India','Bank of Canada','Reserve Bank Aus','Bundesbank','Banque de France','De Nederlandsche Bank','Banca dItalia','Banco de Espana','Swiss National Bank','Sveriges Riksbank','Norges Bank','Danmarks Nationalbank','Bank of Korea','Monetary Auth Singapore','Bank Negara Malaysia','Bank of Thailand','Central Bank Brazil','Banco de Mexico','Central Bank Chile','Central Bank Colombia','South African Reserve','Bank of Ghana','Central Bank Nigeria','Bank Al-Maghrib','Reserve Bank NZ'];
+const regs=['Europe','Americas','Europe','Asia Pacific','Asia Pacific','Asia Pacific','Americas','Asia Pacific','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Americas','Americas','Americas','Americas','Africa','Africa','Africa','Africa','Asia Pacific'];
+return names.map((n,i)=>({id:i+1,name:n,region:regs[i],ngfsMemb:sr(i*7)>0.2?'Yes':'No',greenQe:sr(i*11)>0.6?'Active':sr(i*11)>0.3?'Planned':'None',climateStress:sr(i*13)>0.45?'Mandatory':sr(i*13)>0.25?'Voluntary':'None',greenBondPurchase:Math.round(sr(i*17)*80),taxonomyAdoption:Math.round(sr(i*19)*90),disclosureReq:sr(i*23)>0.4?'Mandatory':sr(i*23)>0.2?'Comply-or-Explain':'Voluntary',capitalReqs:sr(i*29)>0.5?'Active':'Under Review',greenScore:Math.round(15+sr(i*31)*80),reserveGreening:Math.round(sr(i*37)*45),researchOutput:Math.round(2+sr(i*41)*48),coalExclusion:sr(i*43)>0.5?'Yes':'No',scenarioAnalysis:sr(i*47)>0.4?'NGFS':'Internal',supervisoryExpect:Math.round(10+sr(i*53)*85),transitionPlan:sr(i*59)>0.5?'Required':'Encouraged',macroprudential:Math.round(5+sr(i*61)*80),assets:Math.round(50+sr(i*67)*9950)}));})();
 
-const MANDATES=(()=>BANKS.map((b,i)=>({id:i+1,bank:b.name,region:b.region,priceStability:sr(i*7)<0.9,financialStability:sr(i*11)<0.7,climateRisk:sr(i*13)<0.45,greenTransition:sr(i*17)<0.35,biodiversity:sr(i*19)<0.15,socialObjective:sr(i*23)<0.25,mandateScore:Math.round(20+sr(i*29)*75),legalBasis:sr(i*31)<0.4?'Primary Legislation':sr(i*31)<0.7?'Secondary Mandate':'Interpretive',lastUpdated:`202${Math.floor(3+sr(i*37)*3)}`})))();
+const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,greenQeVol:Math.round(100+i*15+sr(i*7)*80),cbsActive:Math.round(8+i*0.6+sr(i*11)*3),stressTests:Math.round(3+sr(i*13)*8),greenBonds:Math.round(200+i*20+sr(i*17)*100)}));
+const QE_DATA=[{instrument:'Green Sovereign Bonds',volume:450,share:35,growth:12},{instrument:'Green Corporate Bonds',volume:280,share:22,growth:18},{instrument:'Climate MBS',volume:120,share:9,growth:25},{instrument:'Sustainability Bonds',volume:190,share:15,growth:15},{instrument:'Transition Bonds',volume:80,share:6,growth:30},{instrument:'Social Bonds',volume:165,share:13,growth:8}];
 
-const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,greenBonds:Math.round(200+i*15+sr(i*7)*50),stressTests:Math.round(3+sr(i*11)*5),newPolicies:Math.round(1+sr(i*13)*4),ngfsMembers:Math.round(100+i*2+sr(i*17)*3)}));
-
-const badge=(val,thresholds)=>{const[lo,mid,hi]=thresholds;const bg=val>=hi?'rgba(22,163,74,0.12)':val>=mid?'rgba(197,169,106,0.12)':val>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=val>=hi?T.green:val>=mid?T.gold:val>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+const KPI=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
 
 export default function GreenCentralBankingPage(){
-  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[regionF,setRegionF]=useState('All');const[ngfsF,setNgfsF]=useState('All');const[sortCol,setSortCol]=useState('overallScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
-  const[qSearch,setQSearch]=useState('');const[qSort,setQSort]=useState('greenBondHoldings');const[qDir,setQDir]=useState('desc');const[qPage,setQPage]=useState(1);
-  const[mSearch,setMSearch]=useState('');const[mSort,setMSort]=useState('mandateScore');const[mDir,setMDir]=useState('desc');const[mPage,setMPage]=useState(1);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[regF,setRegF]=useState('All');
+  const[sortCol,setSortCol]=useState('greenScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[expanded,setExpanded]=useState(null);
 
-  const filtered=useMemo(()=>{let d=[...BANKS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(regionF!=='All')d=d.filter(r=>r.region===regionF);if(ngfsF!=='All')d=d.filter(r=>r.ngfsStatus===ngfsF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,regionF,ngfsF,sortCol,sortDir]);
-  const paged=useMemo(()=>filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE),[filtered,page]);const tP=Math.ceil(filtered.length/PAGE_SIZE);
+  const filtered=useMemo(()=>{let d=[...CBS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(regF!=='All')d=d.filter(r=>r.region===regF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,regF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
-  const qData=useMemo(()=>{let d=filtered.map(r=>({name:r.name,region:r.region,greenBondHoldings:r.greenBondHoldings,reserveESGIntegration:r.reserveESGIntegration,greenAssetRatio:r.greenAssetRatio,collateralPolicy:r.collateralPolicy,balanceSheet:r.balanceSheet}));if(qSearch)d=d.filter(r=>r.name.toLowerCase().includes(qSearch.toLowerCase()));d.sort((a,b)=>qDir==='asc'?(a[qSort]>b[qSort]?1:-1):(a[qSort]<b[qSort]?1:-1));return d;},[filtered,qSearch,qSort,qDir]);
-  const qPaged=useMemo(()=>qData.slice((qPage-1)*PAGE_SIZE,qPage*PAGE_SIZE),[qData,qPage]);const qTP=Math.ceil(qData.length/PAGE_SIZE);
+  const kpis=useMemo(()=>{const avg=(k)=>Math.round(CBS.reduce((s,c)=>s+c[k],0)/CBS.length);const ngfs=CBS.filter(c=>c.ngfsMemb==='Yes').length;const activeQe=CBS.filter(c=>c.greenQe==='Active').length;const mandatory=CBS.filter(c=>c.climateStress==='Mandatory').length;return{avgGreen:avg('greenScore'),ngfs,activeQe,mandatory,totalAssets:Math.round(CBS.reduce((s,c)=>s+c.assets,0))};},[]);
+  const regChart=useMemo(()=>{const m={};CBS.forEach(c=>{if(!m[c.region])m[c.region]={region:c.region,avg:0,n:0};m[c.region].avg+=c.greenScore;m[c.region].n++;});return Object.values(m).map(s=>({...s,avg:Math.round(s.avg/s.n)}));},[]);
+  const qeDist=useMemo(()=>{const m={};CBS.forEach(c=>{m[c.greenQe]=(m[c.greenQe]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
+  const radarData=useMemo(()=>{const dims=['greenScore','taxonomyAdoption','supervisoryExpect','macroprudential','reserveGreening','greenBondPurchase'];const avg=(k)=>Math.round(CBS.reduce((s,c)=>s+c[k],0)/CBS.length);return dims.map(d=>({dim:d.replace(/([A-Z])/g,' $1').trim(),value:avg(d),fullMark:100}));},[]);
 
-  const mData=useMemo(()=>{let d=[...MANDATES];if(mSearch)d=d.filter(r=>r.bank.toLowerCase().includes(mSearch.toLowerCase()));d.sort((a,b)=>mDir==='asc'?(a[mSort]>b[mSort]?1:-1):(a[mSort]<b[mSort]?1:-1));return d;},[mSearch,mSort,mDir]);
-  const mPaged=useMemo(()=>mData.slice((mPage-1)*PAGE_SIZE,mPage*PAGE_SIZE),[mData,mPage]);const mTP=Math.ceil(mData.length/PAGE_SIZE);
+  const ss={wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},sub:{fontSize:13,color:T.textSec,marginBottom:20},tabs:{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0},tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(5,150,105,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2}),card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},th:(col,sc,sd)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sc===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16}};
+  const TH=({col,label,sc,sd,fn})=><th style={ss.th(col,sc,sd)} onClick={()=>fn(col)}>{label}{sc===col?(sd==='asc'?' \u25B2':' \u25BC'):''}</th>;
 
-  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
-  const doQSort=(col)=>{if(qSort===col)setQDir(d=>d==='asc'?'desc':'asc');else{setQSort(col);setQDir('desc');}setQPage(1);};
-  const doMSort=(col)=>{if(mSort===col)setMDir(d=>d==='asc'?'desc':'asc');else{setMSort(col);setMDir('desc');}setMPage(1);};
-
-  const stats=useMemo(()=>({total:filtered.length,ngfs:filtered.filter(r=>r.ngfsStatus==='Member').length,avgScore:(filtered.reduce((s,r)=>s+r.overallScore,0)/filtered.length||0).toFixed(1),stressTest:filtered.filter(r=>r.climateStressTest==='Conducted').length,greenQE:filtered.filter(r=>r.greenQE).length,totalGreen:filtered.reduce((s,r)=>s+r.greenBondHoldings,0)}),[filtered]);
-
-  const ngfsDist=useMemo(()=>{const m={};filtered.forEach(r=>{m[r.ngfsStatus]=(m[r.ngfsStatus]||0)+1;});return Object.entries(m).map(([k,v])=>({name:k,value:v}));},[filtered]);
-  const regionAvg=useMemo(()=>{const m={};filtered.forEach(r=>{if(!m[r.region])m[r.region]={s:0,c:0};m[r.region].s+=r.overallScore;m[r.region].c++;});return Object.entries(m).map(([k,v])=>({region:k,avg:+(v.s/v.c).toFixed(1)})).sort((a,b)=>b.avg-a.avg);},[filtered]);
-
-  const exportCSV=useCallback((data,fn)=>{if(!data.length)return;const k=Object.keys(data[0]);const csv=[k.join(','),...data.map(r=>k.map(c=>`"${r[c]}"`).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);},[]);
-
-  const si=(col,cur,dir)=>cur===col?(dir==='asc'?' ▲':' ▼'):' ○';
-  const th={padding:'8px 10px',fontSize:11,fontFamily:T.mono,color:T.textSec,cursor:'pointer',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none',textAlign:'left'};
-  const td_={padding:'7px 10px',fontSize:12,fontFamily:T.font,borderBottom:`1px solid ${T.border}`,color:T.text};
-  const inp={padding:'6px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220};
-  const sel_={padding:'6px 10px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font,background:T.surface,color:T.text};
-  const btnS=(a)=>({padding:'6px 16px',border:`1px solid ${a?ACCENT:T.border}`,borderRadius:6,fontSize:12,background:a?ACCENT:T.surface,color:a?'#fff':T.text,cursor:'pointer'});
-  const pb={padding:'4px 10px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11,cursor:'pointer',background:T.surface,color:T.text};
-  const card={background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16};
-
-  const Panel=({item,onClose})=>{if(!item)return null;return(<div style={{position:'fixed',top:0,right:0,width:420,height:'100vh',background:T.surface,borderLeft:`2px solid ${ACCENT}`,zIndex:1000,overflowY:'auto',boxShadow:'-4px 0 24px rgba(0,0,0,0.10)'}}>
-    <div style={{padding:'20px 24px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:16,fontWeight:700,color:T.navy}}>{item.name}</div><button onClick={onClose} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:T.textMut}}>x</button></div>
-    <div style={{padding:'16px 24px'}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-      {[['NGFS Status',item.ngfsStatus],['Overall Score',item.overallScore],['Green QE',item.greenQE?'Yes':'No'],['Climate Mandate',item.climateMandateExplicit?'Explicit':'Implicit'],['Green Bonds','$'+item.greenBondHoldings+'M'],['ESG Integration',item.reserveESGIntegration+'%'],['Stress Test',item.climateStressTest],['Taxonomy',item.taxonomyAdopted],['Disclosure',item.disclosureRequirement],['Collateral',item.collateralPolicy],['Prudential',item.prudentialClimate],['Research Papers',item.researchOutput],['Green Finance',item.greenFinancePolicy],['Supervisory',item.supervisoryExpectation],['Policy Rate',item.policyRate+'%'],['Balance Sheet','$'+item.balanceSheet+'B']].map(([k,v],i)=>(<div key={i} style={{background:T.surfaceH,borderRadius:6,padding:'8px 12px'}}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k}</div><div style={{fontSize:14,fontWeight:700,color:T.navy,marginTop:2}}>{v}</div></div>))}
-    </div></div>
-  </div>);};
-
-  return(<div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
-    <div style={{padding:'20px 28px',borderBottom:`1px solid ${T.border}`,background:T.surface}}><div style={{fontSize:20,fontWeight:700,color:T.navy}}>Green Central Banking</div><div style={{fontSize:12,color:T.textSec,marginTop:2,fontFamily:T.mono}}>NGFS &middot; Green QE &middot; Climate Stress Testing &middot; {BANKS.length} Central Banks</div></div>
-    <div style={{display:'flex',gap:0,borderBottom:`1px solid ${T.border}`,background:T.surface,paddingLeft:28}}>{TABS.map((t,i)=>(<button key={i} onClick={()=>{setTab(i);setSelected(null);}} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`2px solid ${ACCENT}`:'2px solid transparent',background:'none',color:tab===i?ACCENT:T.textSec,fontWeight:tab===i?700:400,fontSize:12,cursor:'pointer'}}>{t}</button>))}</div>
-    <div style={{padding:'20px 28px'}}>
-
-    {tab===0&&(<div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:14,marginBottom:20}}>
-        {[['Central Banks',stats.total,T.navy],['NGFS Members',stats.ngfs,ACCENT],['Avg Score',stats.avgScore,T.green],['Stress Tests Done',stats.stressTest,T.gold],['Green QE Active',stats.greenQE,T.sage],['Total Green','$'+(stats.totalGreen/1000).toFixed(0)+'B',T.amber]].map(([l,v,c],i)=>(<div key={i} style={card}><div style={{fontSize:10,color:T.textMut,fontFamily:T.mono,marginBottom:4}}>{l}</div><div style={{fontSize:22,fontWeight:700,color:c}}>{v}</div></div>))}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:16}}>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Green Finance Trend (24M)</div>
-          <ResponsiveContainer width="100%" height={220}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:9}}/><Tooltip {...tip}/><Area type="monotone" dataKey="greenBonds" stroke={ACCENT} fill={ACCENT} fillOpacity={0.15} name="Green Bond Holdings ($B)"/><Area type="monotone" dataKey="ngfsMembers" stroke={T.sage} fill={T.sage} fillOpacity={0.1} name="NGFS Members"/></AreaChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>NGFS Status</div>
-          <ResponsiveContainer width="100%" height={220}><PieChart><Pie data={ngfsDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={40} label={({name,value})=>`${name}: ${value}`} style={{fontSize:9}}>{ngfsDist.map((_,i)=>(<Cell key={i} fill={[T.green,T.gold,T.red][i%3]}/>))}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer>
-        </div>
-        <div style={card}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Regional Scores</div>
-          <ResponsiveContainer width="100%" height={220}><BarChart data={regionAvg} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9}} domain={[0,100]}/><YAxis dataKey="region" type="category" tick={{fontSize:9}} width={85}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
-        </div>
-      </div>
-    </div>)}
-
-    {tab===1&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}} placeholder="Search banks..." style={inp}/>
-        <select value={regionF} onChange={e=>{setRegionF(e.target.value);setPage(1);}} style={sel_}>{REGIONS.map(r=>(<option key={r}>{r}</option>))}</select>
-        <select value={ngfsF} onChange={e=>{setNgfsF(e.target.value);setPage(1);}} style={sel_}>{NGFS_STATUS.map(r=>(<option key={r}>{r}</option>))}</select>
-        <button onClick={()=>exportCSV(filtered,'central_banks.csv')} style={btnS(false)}>Export CSV</button>
-        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{filtered.length}</span>
-      </div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Central Bank'],['region','Region'],['ngfsStatus','NGFS'],['overallScore','Score'],['climateStressTest','Stress Test'],['greenFinancePolicy','Green Policy'],['prudentialClimate','Prudential'],['disclosureRequirement','Disclosure'],['taxonomyAdopted','Taxonomy']].map(([k,l])=>(<th key={k} onClick={()=>doSort(k)} style={th}>{l}{si(k,sortCol,sortDir)}</th>))}
-        </tr></thead><tbody>{paged.map(r=>(<tr key={r.id} onClick={()=>setSelected(r)} style={{cursor:'pointer',background:selected?.id===r.id?T.surfaceH:'transparent'}}>
-          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.region}</td>
-          <td style={td_}><span style={{padding:'2px 6px',borderRadius:4,fontSize:10,background:r.ngfsStatus==='Member'?'rgba(22,163,74,0.12)':'rgba(217,119,6,0.12)',color:r.ngfsStatus==='Member'?T.green:T.amber}}>{r.ngfsStatus}</span></td>
-          <td style={td_}><span style={badge(r.overallScore,[25,50,70])}>{r.overallScore}</span></td>
-          <td style={td_}>{r.climateStressTest}</td><td style={td_}>{r.greenFinancePolicy}</td>
-          <td style={td_}>{r.prudentialClimate}</td><td style={td_}>{r.disclosureRequirement}</td><td style={td_}>{r.taxonomyAdopted}</td>
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={page<=1} onClick={()=>setPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {page}/{tP}</span><button disabled={page>=tP} onClick={()=>setPage(p=>p+1)} style={pb}>Next</button></div>
-      <Panel item={selected} onClose={()=>setSelected(null)}/>
-    </div>)}
-
-    {tab===2&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={qSearch} onChange={e=>{setQSearch(e.target.value);setQPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(qData,'green_qe.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{qData.length}</span></div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['name','Bank'],['region','Region'],['greenBondHoldings','Green Bonds $M'],['reserveESGIntegration','ESG Integ.%'],['greenAssetRatio','Green Asset%'],['collateralPolicy','Collateral'],['balanceSheet','Balance $B']].map(([k,l])=>(<th key={k} onClick={()=>doQSort(k)} style={th}>{l}{si(k,qSort,qDir)}</th>))}
-        </tr></thead><tbody>{qPaged.map((r,i)=>(<tr key={i}><td style={{...td_,fontWeight:600,color:T.navy}}>{r.name}</td><td style={td_}>{r.region}</td><td style={td_}>${r.greenBondHoldings}M</td><td style={td_}>{r.reserveESGIntegration}%</td><td style={td_}>{r.greenAssetRatio}%</td><td style={td_}>{r.collateralPolicy}</td><td style={td_}>${r.balanceSheet}B</td></tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={qPage<=1} onClick={()=>setQPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {qPage}/{qTP}</span><button disabled={qPage>=qTP} onClick={()=>setQPage(p=>p+1)} style={pb}>Next</button></div>
-      <div style={{...card,marginTop:16}}><div style={{fontSize:12,fontWeight:600,marginBottom:8}}>Green Bond Holdings vs ESG Integration</div>
-        <ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Green Bonds $M" tick={{fontSize:9}}/><YAxis dataKey="y" name="ESG %" tick={{fontSize:9}}/><Tooltip {...tip}/><Scatter data={qData.map(r=>({name:r.name,x:r.greenBondHoldings,y:r.reserveESGIntegration}))} fill={ACCENT} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer>
-      </div>
-    </div>)}
-
-    {tab===3&&(<div>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}><input value={mSearch} onChange={e=>{setMSearch(e.target.value);setMPage(1);}} placeholder="Search..." style={inp}/><button onClick={()=>exportCSV(mData,'climate_mandates.csv')} style={btnS(false)}>Export CSV</button><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono,marginLeft:'auto'}}>{mData.length}</span></div>
-      <div style={{overflowX:'auto',background:T.surface,borderRadius:10,border:`1px solid ${T.border}`}}>
-        <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
-          {[['bank','Bank'],['region','Region'],['mandateScore','Score'],['legalBasis','Legal Basis'],['lastUpdated','Updated']].map(([k,l])=>(<th key={k} onClick={()=>doMSort(k)} style={th}>{l}{si(k,mSort,mDir)}</th>))}
-          {['Price Stability','Financial Stability','Climate Risk','Green Transition','Biodiversity','Social'].map(l=>(<th key={l} style={{...th,cursor:'default'}}>{l}</th>))}
-        </tr></thead><tbody>{mPaged.map(r=>(<tr key={r.id}>
-          <td style={{...td_,fontWeight:600,color:T.navy}}>{r.bank}</td><td style={td_}>{r.region}</td>
-          <td style={td_}><span style={badge(r.mandateScore,[25,50,70])}>{r.mandateScore}</span></td>
-          <td style={td_}>{r.legalBasis}</td><td style={td_}>{r.lastUpdated}</td>
-          {[r.priceStability,r.financialStability,r.climateRisk,r.greenTransition,r.biodiversity,r.socialObjective].map((v,j)=>(<td key={j} style={td_}><span style={{color:v?T.green:T.textMut,fontWeight:600}}>{v?'Yes':'--'}</span></td>))}
-        </tr>))}</tbody></table>
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:12}}><button disabled={mPage<=1} onClick={()=>setMPage(p=>p-1)} style={pb}>Prev</button><span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>Page {mPage}/{mTP}</span><button disabled={mPage>=mTP} onClick={()=>setMPage(p=>p+1)} style={pb}>Next</button></div>
-    </div>)}
-
+  const renderDash=()=>(<>
+    <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:24}}>
+      <KPI label="Avg Green Score" value={kpis.avgGreen+'/100'} sub="30 central banks" color={ACCENT}/><KPI label="NGFS Members" value={kpis.ngfs} sub="of 30" color={T.navy}/>
+      <KPI label="Active Green QE" value={kpis.activeQe} sub="central banks" color={T.gold}/><KPI label="Mandatory Stress" value={kpis.mandatory} sub="climate stress tests" color={T.amber}/>
+      <KPI label="Total Assets" value={'$'+fmt(kpis.totalAssets)+'B'} sub="aggregate balance sheet" color={T.sage}/>
     </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Green Score by Region</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={regChart}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><Tooltip {...tip}/><Bar dataKey="avg" fill={ACCENT} radius={[4,4,0,0]} name="Avg Green Score"/></BarChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Green QE Status</div>
+        <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={qeDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={10}>{qeDist.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Green Central Banking Trend</div>
+        <ResponsiveContainer width="100%" height={240}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="greenQeVol" stroke={ACCENT} fill="rgba(5,150,105,0.1)" name="Green QE ($B)"/><Area type="monotone" dataKey="greenBonds" stroke={T.navy} fill="rgba(27,58,92,0.08)" name="Green Bonds ($B)"/></AreaChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Policy Radar</div>
+        <ResponsiveContainer width="100%" height={240}><RadarChart data={radarData} cx="50%" cy="50%" outerRadius={85}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Avg" dataKey="value" stroke={ACCENT} fill="rgba(5,150,105,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer></div>
+    </div>
+  </>);
+
+  const renderProfiles=()=>(<div style={ss.card}>
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+      <input style={ss.input} placeholder="Search central banks..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+      <select style={ss.select} value={regF} onChange={e=>{setRegF(e.target.value);setPage(1);}}>{REGIONS.map(s=><option key={s}>{s}</option>)}</select>
+      <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} banks</span>
+      <button style={ss.btn} onClick={()=>csvExport(filtered,'green_central_banking')}>Export CSV</button>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+      <TH col="name" label="Central Bank" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="region" label="Region" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="greenScore" label="Green Score" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="greenQe" label="Green QE" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="climateStress" label="Stress Test" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="ngfsMemb" label="NGFS" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="taxonomyAdoption" label="Taxonomy" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="assets" label="Assets $B" sc={sortCol} sd={sortDir} fn={doSort}/>
+    </tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}>
+      <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+        <td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={ss.td}>{r.region}</td>
+        <td style={ss.td}><span style={badge(r.greenScore,[25,50,70])}>{r.greenScore}</span></td>
+        <td style={ss.td}><span style={{color:r.greenQe==='Active'?T.green:r.greenQe==='Planned'?T.amber:T.textMut,fontWeight:600,fontSize:11}}>{r.greenQe}</span></td>
+        <td style={ss.td}><span style={{color:r.climateStress==='Mandatory'?T.green:r.climateStress==='Voluntary'?T.amber:T.textMut,fontWeight:600,fontSize:11}}>{r.climateStress}</span></td>
+        <td style={ss.td}><span style={{color:r.ngfsMemb==='Yes'?T.green:T.textMut,fontWeight:600,fontSize:11}}>{r.ngfsMemb}</span></td>
+        <td style={ss.td}>{r.taxonomyAdoption}%</td><td style={{...ss.td,fontFamily:T.mono}}>${fmt(r.assets)}B</td>
+      </tr>
+      {expanded===r.id&&<tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20}}>
+          <div>{[['Disclosure Req.',r.disclosureReq],['Capital Requirements',r.capitalReqs],['Reserve Greening',r.reserveGreening+'%'],['Green Bond Purchase',r.greenBondPurchase+'%'],['Research Output',r.researchOutput+' papers'],['Coal Exclusion',r.coalExclusion],['Scenario Analysis',r.scenarioAnalysis],['Supervisory Expect.',r.supervisoryExpect],['Transition Plan',r.transitionPlan],['Macroprudential',r.macroprudential]].map(([l,v])=>(<div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span></div>))}</div>
+          <ResponsiveContainer width="100%" height={180}><RadarChart data={[{d:'Green Score',v:r.greenScore},{d:'Taxonomy',v:r.taxonomyAdoption},{d:'Supervision',v:r.supervisoryExpect},{d:'Macropru',v:r.macroprudential},{d:'Reserves',v:r.reserveGreening*2},{d:'Green Bonds',v:r.greenBondPurchase}]} cx="50%" cy="50%" outerRadius={65}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis tick={false} domain={[0,100]}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(5,150,105,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={180}><BarChart data={[{n:'Green Score',v:r.greenScore},{n:'Taxonomy',v:r.taxonomyAdoption},{n:'Supervision',v:r.supervisoryExpect},{n:'Macropru',v:r.macroprudential}]} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:9,fill:T.textMut}}/><YAxis dataKey="n" type="category" tick={{fontSize:9,fill:T.textSec}} width={75}/><Tooltip {...tip}/><Bar dataKey="v" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
+        </div>
+      </td></tr>}
+    </React.Fragment>))}</tbody></table></div>
+    <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+  </div>);
+
+  const renderQe=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Green QE Instrument Analytics</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={280}><BarChart data={QE_DATA}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="instrument" tick={{fontSize:8,fill:T.textMut}} angle={-20} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="volume" fill={ACCENT} radius={[4,4,0,0]} name="Volume $B"/><Bar dataKey="growth" fill={T.gold} radius={[4,4,0,0]} name="Growth %"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={280}><PieChart><Pie data={QE_DATA} dataKey="share" nameKey="instrument" cx="50%" cy="50%" outerRadius={100} innerRadius={50} label={({instrument,share})=>`${share}%`} labelLine fontSize={10}>{QE_DATA.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/><Legend/></PieChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Instrument</th><th style={ss.th('','','')}>Volume ($B)</th><th style={ss.th('','','')}>Share %</th><th style={ss.th('','','')}>Growth %</th></tr></thead><tbody>
+      {QE_DATA.map((r,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{r.instrument}</td><td style={{...ss.td,fontFamily:T.mono}}>${r.volume}B</td><td style={{...ss.td,fontFamily:T.mono}}>{r.share}%</td><td style={{...ss.td,fontFamily:T.mono,color:T.green}}>+{r.growth}%</td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(QE_DATA,'green_qe')}>Export CSV</button></div>
+  </div>);
+
+  const renderStress=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Climate Stress Test Mandates</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={280}><BarChart data={CBS.filter(c=>c.climateStress!=='None').sort((a,b)=>b.supervisoryExpect-a.supervisoryExpect)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:7,fill:T.textMut}} angle={-35} textAnchor="end" height={80}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="supervisoryExpect" fill={ACCENT} radius={[4,4,0,0]} name="Supervisory Score"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={280}><LineChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={3}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="stressTests" stroke={ACCENT} strokeWidth={2} name="Stress Tests"/><Line type="monotone" dataKey="cbsActive" stroke={T.navy} strokeWidth={2} name="Active CBs"/></LineChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Central Bank</th><th style={ss.th('','','')}>Mandate</th><th style={ss.th('','','')}>Scenario</th><th style={ss.th('','','')}>Supervisory</th><th style={ss.th('','','')}>Disclosure</th></tr></thead><tbody>
+      {CBS.filter(c=>c.climateStress!=='None').map(r=>(<tr key={r.id}><td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={ss.td}><span style={{color:r.climateStress==='Mandatory'?T.green:T.amber,fontWeight:600,fontSize:11}}>{r.climateStress}</span></td><td style={ss.td}>{r.scenarioAnalysis}</td><td style={ss.td}><span style={badge(r.supervisoryExpect,[25,50,70])}>{r.supervisoryExpect}</span></td><td style={ss.td}>{r.disclosureReq}</td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(CBS,'stress_test_mandates')}>Export CSV</button></div>
+  </div>);
+
+  return(<div style={ss.wrap}>
+    <div style={ss.header}>Green Central Banking Intelligence</div>
+    <div style={ss.sub}>30 central banks -- green QE, climate stress mandates, supervisory expectations</div>
+    <div style={ss.tabs}>{TABS.map((t,i)=><button key={t} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderProfiles()}{tab===2&&renderQe()}{tab===3&&renderStress()}
   </div>);
 }

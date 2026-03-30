@@ -1,375 +1,131 @@
-import React, { useState } from 'react';
-import { AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const ACCENT = '#ea580c';
-const tip = { contentStyle:{ background:T.surface, border:'1px solid '+T.border, borderRadius:8, color:T.text }, labelStyle:{ color:T.textSec } };
-const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#ea580c';const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(2):v:v;
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const TABS=['Safety Dashboard','Company Screening','Incident Analysis','Benchmarking'];
+const SECTORS=['All','Mining','Construction','Manufacturing','Oil & Gas','Chemicals','Utilities','Transportation','Agriculture','Forestry','Metals'];
+const REGIONS=['All','North America','Europe','Asia Pacific','Latin America','Africa','Middle East'];
+const RATINGS=['All','Critical','Poor','Below Average','Average','Good','Excellent'];
+const PAGE_SIZE=15;const PIECLRS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899'];
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v<=lo?'rgba(22,163,74,0.12)':v<=mid?'rgba(197,169,106,0.12)':v<=hi?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v<=lo?T.green:v<=mid?T.gold:v<=hi?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const ratBadge=(r)=>{const m={Critical:{bg:'rgba(220,38,38,0.12)',c:T.red},Poor:{bg:'rgba(220,38,38,0.08)',c:'#b91c1c'},'Below Average':{bg:'rgba(217,119,6,0.12)',c:T.amber},Average:{bg:'rgba(197,169,106,0.15)',c:T.gold},Good:{bg:'rgba(22,163,74,0.12)',c:T.green},Excellent:{bg:'rgba(22,163,74,0.08)',c:'#15803d'}};const s=m[r]||m.Average;return{background:s.bg,color:s.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
 
-const TABS = ['Overview','Incident Analytics','Corporate Benchmarking','Mental Health & Wellbeing','Regulatory Standards'];
+const COMPANIES=(()=>{const names=['BHP Group','Rio Tinto','Vale SA','Glencore','Anglo American','Freeport McMoRan','Newmont Corp','Barrick Gold','ArcelorMittal','Nucor Corp','US Steel','Caterpillar','Deere & Co','BASF SE','Dow Inc','DuPont','3M Company','Honeywell','General Electric','Siemens AG','ABB Ltd','Schneider Electric','Exxon Mobil','Chevron','Shell plc','BP plc','TotalEnergies','ConocoPhillips','Schlumberger','Halliburton','Baker Hughes','Bechtel Corp','Fluor Corp','AECOM','Jacobs Eng','Skanska AB','Vinci SA','Bouygues','CRH plc','LafargeHolcim','HeidelbergCement','Martin Marietta','Vulcan Materials','Cemex SAB','Saint-Gobain','Suncor Energy','Imperial Oil','Teck Resources','South32 Ltd','Fortescue Metals','Alcoa Corp','Cleveland-Cliffs','Mosaic Co','Nutrien Ltd','CF Industries','Yara Intl','OCI NV','Sasol Ltd','Vedanta Ltd','Hindalco Industries','JSW Steel','Tata Steel','Norsk Hydro','Boliden AB','LKAB','Codelco','Antofagasta','First Quantum','Ivanhoe Mines','Pan American Silver','Kinross Gold','Agnico Eagle','Wheaton Precious','Franco-Nevada','B2Gold Corp','Centerra Gold','Lundin Mining','Hudbay Minerals','Capstone Copper','Ero Copper'];
+const secs=['Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Metals','Metals','Metals','Manufacturing','Manufacturing','Chemicals','Chemicals','Chemicals','Manufacturing','Manufacturing','Manufacturing','Manufacturing','Manufacturing','Manufacturing','Oil & Gas','Oil & Gas','Oil & Gas','Oil & Gas','Oil & Gas','Oil & Gas','Oil & Gas','Oil & Gas','Oil & Gas','Construction','Construction','Construction','Construction','Construction','Construction','Construction','Construction','Chemicals','Chemicals','Construction','Construction','Construction','Manufacturing','Oil & Gas','Oil & Gas','Mining','Mining','Mining','Metals','Metals','Chemicals','Chemicals','Chemicals','Chemicals','Chemicals','Oil & Gas','Mining','Metals','Metals','Metals','Metals','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining','Mining'];
+const regs=['Asia Pacific','Europe','Latin America','Europe','Europe','North America','North America','North America','Europe','North America','North America','North America','North America','Europe','North America','North America','North America','North America','North America','Europe','Europe','Europe','North America','North America','Europe','Europe','Europe','North America','North America','North America','North America','North America','North America','North America','North America','Europe','Europe','Europe','Europe','Europe','Europe','North America','North America','Latin America','Europe','North America','North America','North America','Asia Pacific','Asia Pacific','North America','North America','North America','North America','North America','Europe','Europe','Africa','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Europe','Europe','Europe','Latin America','Europe','Africa','Africa','Latin America','North America','North America','North America','North America','North America','North America','North America','North America','North America','North America'];
+return names.map((n,i)=>({id:i+1,name:n,sector:secs[i],region:regs[i],ltir:+(sr(i*7)*4.5+0.2).toFixed(2),trir:+(sr(i*11)*8+0.5).toFixed(2),fatalities:Math.floor(sr(i*13)*5),nearMisses:Math.round(10+sr(i*17)*190),lostDays:Math.round(50+sr(i*19)*2000),employees:Math.round(5000+sr(i*23)*95000),safetySpend:Math.round(sr(i*29)*50),trainingHours:Math.round(8+sr(i*31)*40),inspections:Math.round(50+sr(i*37)*450),violations:Math.round(sr(i*41)*25),safetyScore:Math.round(20+sr(i*43)*75),isoCompliance:sr(i*47)>0.3?'Yes':'No',mentalHealth:Math.round(20+sr(i*53)*70),ergonomics:Math.round(30+sr(i*59)*65),ppeCompliance:Math.round(60+sr(i*61)*38),incidentTrend:sr(i*67)<0.4?'Improving':sr(i*67)<0.7?'Stable':'Worsening',safetyRating:sr(i*7)<0.1?'Critical':sr(i*7)<0.25?'Poor':sr(i*7)<0.45?'Below Average':sr(i*7)<0.65?'Average':sr(i*7)<0.85?'Good':'Excellent',severity:+(sr(i*71)*200+10).toFixed(0),processEvents:Math.round(sr(i*73)*15),contractorRate:+(sr(i*79)*6+0.5).toFixed(2)}));})();
 
-const SECTORS = [
-  { name:'Construction',    fatRate:17.2, trir:3.8, ldr:142, iso:28 },
-  { name:'Mining',          fatRate:22.1, trir:4.2, ldr:198, iso:35 },
-  { name:'Agriculture',     fatRate:18.9, trir:3.5, ldr:165, iso:18 },
-  { name:'Manufacturing',   fatRate:8.4,  trir:2.9, ldr:98,  iso:52 },
-  { name:'Transport',       fatRate:14.3, trir:3.1, ldr:128, iso:41 },
-  { name:'Oil & Gas',       fatRate:11.7, trir:2.4, ldr:87,  iso:67 },
-  { name:'Healthcare',      fatRate:3.2,  trir:4.8, ldr:201, iso:44 },
-  { name:'Fishing',         fatRate:29.4, trir:5.1, ldr:230, iso:12 },
-];
+const INCIDENT_TYPES=[{type:'Slips/Falls',count:245,pct:22},{type:'Struck By Object',count:198,pct:18},{type:'Overexertion',count:165,pct:15},{type:'Equipment Contact',count:143,pct:13},{type:'Chemical Exposure',count:110,pct:10},{type:'Vehicle Incident',count:88,pct:8},{type:'Electrical',count:66,pct:6},{type:'Confined Space',count:44,pct:4},{type:'Fire/Explosion',count:33,pct:3},{type:'Other',count:11,pct:1}];
+const TREND=Array.from({length:36},(_,i)=>({month:`${2022+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,avgLtir:+(2.5-i*0.03+sr(i*7)*0.5).toFixed(2),avgTrir:+(4.5-i*0.05+sr(i*11)*0.8).toFixed(2),fatalities:Math.round(sr(i*13)*4),nearMisses:Math.round(50+sr(i*17)*100)}));
+const BENCHMARKS=[{sector:'Mining',ltir:2.8,trir:5.2,fatRate:0.012},{sector:'Construction',ltir:2.1,trir:4.5,fatRate:0.008},{sector:'Manufacturing',ltir:1.5,trir:3.2,fatRate:0.004},{sector:'Oil & Gas',ltir:1.8,trir:3.8,fatRate:0.006},{sector:'Chemicals',ltir:1.2,trir:2.8,fatRate:0.003},{sector:'Metals',ltir:2.4,trir:4.8,fatRate:0.010},{sector:'Utilities',ltir:1.0,trir:2.2,fatRate:0.002},{sector:'Transportation',ltir:2.0,trir:4.0,fatRate:0.007}];
 
-const TREND_DATA = Array.from({length:24}, (_,i) => ({
-  month: `M${i+1}`,
-  incidents: Math.round(4200 + sr(i*3)*800 - i*12),
-  fatalities: Math.round(180 + sr(i*7)*40 - i*0.5),
-}));
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+const KPI=({label,value,sub,color})=>(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:160}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div><div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>{sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}</div>);
 
-const INCIDENT_TYPES = [
-  { name:'Falls from Height',     incidents:2.1, fatalShare:28, costK:94,  roi:4.2 },
-  { name:'Machinery Contact',     incidents:1.8, fatalShare:22, costK:112, roi:3.8 },
-  { name:'Hazardous Substance',   incidents:3.4, fatalShare:8,  costK:78,  roi:5.1 },
-  { name:'Musculoskeletal',       incidents:8.7, fatalShare:1,  costK:34,  roi:6.4 },
-  { name:'Mental Health',         incidents:12.3,fatalShare:3,  costK:41,  roi:7.2 },
-  { name:'Vehicle',               incidents:2.9, fatalShare:31, costK:138, roi:3.5 },
-  { name:'Electrical',            incidents:0.7, fatalShare:19, costK:87,  roi:4.8 },
-  { name:'Thermal/Fire',          incidents:1.1, fatalShare:15, costK:103, roi:4.1 },
-];
+export default function WorkplaceHealthSafetyPage(){
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[secF,setSecF]=useState('All');const[regF,setRegF]=useState('All');const[ratF,setRatF]=useState('All');
+  const[sortCol,setSortCol]=useState('safetyScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[expanded,setExpanded]=useState(null);
 
-const LEADING_INDICATORS = ['Near-miss reporting rate','Safety audit completion %','Training compliance rate','Hazard identification count','Leadership safety walks','Safety culture survey score'];
-const LAGGING_INDICATORS = ['Total Recordable Incident Rate','Lost Time Injury Frequency Rate','Fatality count','Days away from work','Workers compensation cost','Regulatory citations'];
+  const filtered=useMemo(()=>{let d=[...COMPANIES];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(secF!=='All')d=d.filter(r=>r.sector===secF);if(regF!=='All')d=d.filter(r=>r.region===regF);if(ratF!=='All')d=d.filter(r=>r.safetyRating===ratF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,secF,regF,ratF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
-const COMPANIES = [
-  { name:'Company A', sector:'Mining',       trir:4.1, ltifr:3.2, fats:2.3, nmr:62,  iso:false, hspct:0.8 },
-  { name:'Company B', sector:'Construction', trir:3.4, ltifr:2.8, fats:1.7, nmr:71,  iso:false, hspct:1.1 },
-  { name:'Company C', sector:'Oil & Gas',    trir:1.9, ltifr:1.4, fats:0.3, nmr:88,  iso:true,  hspct:2.4 },
-  { name:'Company D', sector:'Manufacturing',trir:2.6, ltifr:1.9, fats:0.7, nmr:79,  iso:true,  hspct:1.6 },
-  { name:'Company E', sector:'Transport',    trir:2.9, ltifr:2.3, fats:1.1, nmr:74,  iso:false, hspct:1.3 },
-  { name:'Company F', sector:'Healthcare',   trir:1.3, ltifr:0.9, fats:0.0, nmr:91,  iso:true,  hspct:1.9 },
-  { name:'Company G', sector:'Agriculture',  trir:3.7, ltifr:2.9, fats:1.9, nmr:58,  iso:false, hspct:0.6 },
-  { name:'Company H', sector:'Oil & Gas',    trir:1.1, ltifr:0.7, fats:0.0, nmr:96,  iso:true,  hspct:2.8 },
-];
+  const kpis=useMemo(()=>{const avgN=(k)=>+(COMPANIES.reduce((s,c)=>s+c[k],0)/COMPANIES.length).toFixed(2);const totalFat=COMPANIES.reduce((s,c)=>s+c.fatalities,0);const avgScore=Math.round(COMPANIES.reduce((s,c)=>s+c.safetyScore,0)/COMPANIES.length);const improving=COMPANIES.filter(c=>c.incidentTrend==='Improving').length;return{avgLtir:avgN('ltir'),avgTrir:avgN('trir'),totalFat,avgScore,improving};},[]);
+  const sectorChart=useMemo(()=>{const m={};COMPANIES.forEach(c=>{if(!m[c.sector])m[c.sector]={sector:c.sector,avgLtir:0,avgTrir:0,n:0};m[c.sector].avgLtir+=c.ltir;m[c.sector].avgTrir+=c.trir;m[c.sector].n++;});return Object.values(m).map(s=>({...s,avgLtir:+(s.avgLtir/s.n).toFixed(2),avgTrir:+(s.avgTrir/s.n).toFixed(2)}));},[]);
+  const ratingDist=useMemo(()=>{const m={};COMPANIES.forEach(c=>{m[c.safetyRating]=(m[c.safetyRating]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
+  const radarData=useMemo(()=>{const avg=(k)=>Math.round(COMPANIES.reduce((s,c)=>s+c[k],0)/COMPANIES.length);return[{dim:'Safety Score',value:avg('safetyScore')},{dim:'Training',value:avg('trainingHours')*2},{dim:'PPE Compliance',value:avg('ppeCompliance')},{dim:'Mental Health',value:avg('mentalHealth')},{dim:'Ergonomics',value:avg('ergonomics')},{dim:'ISO Cert',value:COMPANIES.filter(c=>c.isoCompliance==='Yes').length/COMPANIES.length*100}].map(d=>({...d,fullMark:100}));},[]);
 
-const MH_FACTORS = [
-  { name:'Burnout',               prevalence:42, costBn:322, absDays:18, legal:7.8 },
-  { name:'Harassment & Bullying', prevalence:23, costBn:98,  absDays:24, legal:9.2 },
-  { name:'Job Insecurity',        prevalence:31, costBn:142, absDays:12, legal:4.1 },
-  { name:'Overwork (>48hr/wk)',   prevalence:28, costBn:187, absDays:9,  legal:5.6 },
-  { name:'Discrimination',        prevalence:18, costBn:76,  absDays:21, legal:9.7 },
-  { name:'Isolation/Remote Work', prevalence:35, costBn:114, absDays:14, legal:3.2 },
-];
+  const ss={wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},sub:{fontSize:13,color:T.textSec,marginBottom:20},tabs:{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0},tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(234,88,12,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2}),card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},th:(col,sc,sd)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sc===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16}};
+  const TH=({col,label,sc,sd,fn})=><th style={ss.th(col,sc,sd)} onClick={()=>fn(col)}>{label}{sc===col?(sd==='asc'?' \u25B2':' \u25BC'):''}</th>;
 
-const WHO_CHECKLIST = [
-  'Mental health policy integrated into OSH management system',
-  'Psychosocial risk assessment conducted annually',
-  'Return-to-work program for mental health absences',
-  'Manager training on mental health first aid',
-  'Employee Assistance Programme (EAP) available',
-  'Anonymous reporting channel for psychological hazards',
-];
-
-const PRESENTEEISM_TREND = Array.from({length:24}, (_,i) => ({
-  month:`M${i+1}`,
-  cost: Math.round(280 + sr(i*5)*60 + i*4),
-}));
-
-const REGULATIONS = [
-  { name:'ISO 45001:2018',                     juris:'Global',     scope:'All sectors', key:'PDCA OHS management system', penalty:'N/A (certification loss)', enf:'Third-party audit',     compliance:64 },
-  { name:'ILO OSH Convention 155',             juris:'187 member states', scope:'All workplaces', key:'National OSH policy & programmes', penalty:'Varies by state', enf:'Labour inspectorates', compliance:71 },
-  { name:'EU OSH Framework Directive',         juris:'EU/EEA',     scope:'All employers', key:'Risk assessment & worker consultation', penalty:'Up to €1.5M',   enf:'National labour inspectors', compliance:82 },
-  { name:'US OSHA General Duty',               juris:'USA',        scope:'Multi-employer sites', key:'Free of recognised serious hazards', penalty:'Up to $156k', enf:'OSHA inspections',     compliance:77 },
-  { name:'UK Health & Safety at Work Act',     juris:'UK',         scope:'All employers', key:'So far as reasonably practicable', penalty:'Unlimited fine',    enf:'HSE inspectorate',       compliance:88 },
-  { name:'Australia WHS Act',                  juris:'Australia',  scope:'Persons conducting business', key:'Primary duty of care', penalty:'Up to AU$3M', enf:'Safe Work Australia',    compliance:85 },
-];
-
-const StatCard = ({ label, value }) => (
-  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:'14px 18px', flex:'1 1 180px' }}>
-    <div style={{ fontSize:11, color:T.textMut, marginBottom:4 }}>{label}</div>
-    <div style={{ fontSize:20, fontWeight:700, color:ACCENT }}>{value}</div>
-  </div>
-);
-
-export default function WorkplaceHealthSafetyPage() {
-  const [tab, setTab] = useState(0);
-
-  return (
-    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font, color:T.text, padding:'24px' }}>
-      <div style={{ marginBottom:20 }}>
-        <div style={{ fontSize:22, fontWeight:700, marginBottom:4 }}>Workplace Health & Safety Analytics</div>
-        <div style={{ fontSize:13, color:T.textSec }}>EP-AD6 · ILO data · ISO 45001 · Global OSH benchmarking</div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display:'flex', gap:0, borderBottom:`1px solid ${T.border}`, marginBottom:24 }}>
-        {TABS.map((t,i) => (
-          <button key={i} onClick={()=>setTab(i)} style={{ background:'none', border:'none', padding:'10px 16px', cursor:'pointer', fontSize:13, color: tab===i ? T.text : T.textMut, borderBottom: tab===i ? `2px solid ${ACCENT}` : '2px solid transparent', fontFamily:T.font }}>
-            {t}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab 1 — Overview */}
-      {tab===0 && (
-        <div>
-          <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:24 }}>
-            <StatCard label="Global Deaths/Year (ILO)" value="2.78M" />
-            <StatCard label="Annual Economic Cost" value="$3.9T" />
-            <StatCard label="TRIR Benchmark" value="1.8" />
-            <StatCard label="ISO 45001 Certified" value="45,000+" />
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16, marginBottom:24 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>High-Risk Sectors — OSH Profile</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textMut }}>
-                  {['Sector','Fatality Rate (per 100k)','TRIR','Lost Day Rate','ISO 45001 Adoption %'].map(h=>(
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', borderBottom:`1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {SECTORS.map((r,i) => (
-                  <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                    <td style={{ padding:'7px 10px', color:T.text }}>{r.name}</td>
-                    <td style={{ padding:'7px 10px', color: r.fatRate>20 ? T.red : r.fatRate>10 ? T.amber : T.green }}>{r.fatRate}</td>
-                    <td style={{ padding:'7px 10px', color: r.trir>4 ? T.red : r.trir>2.5 ? T.amber : T.green }}>{r.trir}</td>
-                    <td style={{ padding:'7px 10px', color:T.textSec }}>{r.ldr}</td>
-                    <td style={{ padding:'7px 10px', color:T.textSec }}>{r.iso}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Global Workplace Incident Trend (24 months)</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={TREND_DATA}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill:T.textMut, fontSize:10 }} interval={3} />
-                <YAxis tick={{ fill:T.textMut, fontSize:10 }} />
-                <Tooltip {...tip} />
-                <Area type="monotone" dataKey="incidents" stroke={ACCENT} fill={ACCENT} fillOpacity={0.15} name="Incidents" />
-                <Area type="monotone" dataKey="fatalities" stroke={T.red} fill={T.red} fillOpacity={0.1} name="Fatalities" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2 — Incident Analytics */}
-      {tab===1 && (
-        <div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16, marginBottom:24 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Incident Types — Annual Volume & Cost Profile</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textMut }}>
-                  {['Type','Annual Incidents (M)','Fatal Share %','Avg Cost/Incident ($k)','Prevention ROI'].map(h=>(
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', borderBottom:`1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {INCIDENT_TYPES.map((r,i) => (
-                  <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                    <td style={{ padding:'7px 10px', color:T.text }}>{r.name}</td>
-                    <td style={{ padding:'7px 10px', color:T.textSec }}>{r.incidents}</td>
-                    <td style={{ padding:'7px 10px', color: r.fatalShare>20 ? T.red : r.fatalShare>10 ? T.amber : T.green }}>{r.fatalShare}%</td>
-                    <td style={{ padding:'7px 10px', color:T.textSec }}>${r.costK}k</td>
-                    <td style={{ padding:'7px 10px', color:T.sage }}>{r.roi}x</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16, marginBottom:24 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Annual Incident Volume by Type</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={INCIDENT_TYPES} margin={{ left:0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill:T.textMut, fontSize:9 }} />
-                <YAxis tick={{ fill:T.textMut, fontSize:10 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="incidents" name="Incidents (M)">
-                  {INCIDENT_TYPES.map((d,i) => (
-                    <Cell key={i} fill={ d.fatalShare>20 ? T.red : d.fatalShare>10 ? T.amber : T.green } />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ display:'flex', gap:16 }}>
-            <div style={{ flex:1, background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, color:T.green, marginBottom:10 }}>Leading Indicators</div>
-              {LEADING_INDICATORS.map((li,i) => <div key={i} style={{ fontSize:12, color:T.textSec, padding:'4px 0', borderBottom:`1px solid ${T.border}` }}>{li}</div>)}
-            </div>
-            <div style={{ flex:1, background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, color:T.amber, marginBottom:10 }}>Lagging Indicators</div>
-              {LAGGING_INDICATORS.map((li,i) => <div key={i} style={{ fontSize:12, color:T.textSec, padding:'4px 0', borderBottom:`1px solid ${T.border}` }}>{li}</div>)}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3 — Corporate Benchmarking */}
-      {tab===2 && (
-        <div>
-          <div style={{ display:'flex', gap:12, marginBottom:24 }}>
-            <StatCard label="Industry Avg TRIR" value="2.6" />
-            <StatCard label="ISO 45001 Certified" value="50%" />
-            <StatCard label="Avg H&S Training (hrs/yr)" value="32" />
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16, marginBottom:24 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Corporate H&S Benchmarks</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textMut }}>
-                  {['Company','Sector','TRIR','LTIFR','Fatalities (3yr avg)','Near-Miss Rate %','ISO 45001','H&S Spend % Rev'].map(h=>(
-                    <th key={h} style={{ textAlign:'left', padding:'6px 8px', borderBottom:`1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {COMPANIES.map((r,i) => (
-                  <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                    <td style={{ padding:'7px 8px', color:T.text }}>{r.name}</td>
-                    <td style={{ padding:'7px 8px', color:T.textSec }}>{r.sector}</td>
-                    <td style={{ padding:'7px 8px', color: r.trir>3 ? T.red : r.trir>1.5 ? T.amber : T.green }}>{r.trir}</td>
-                    <td style={{ padding:'7px 8px', color:T.textSec }}>{r.ltifr}</td>
-                    <td style={{ padding:'7px 8px', color: r.fats>1.5 ? T.red : r.fats>0.5 ? T.amber : T.green }}>{r.fats}</td>
-                    <td style={{ padding:'7px 8px', color:T.textSec }}>{r.nmr}%</td>
-                    <td style={{ padding:'7px 8px', color: r.iso ? T.green : T.red }}>{r.iso ? 'Yes' : 'No'}</td>
-                    <td style={{ padding:'7px 8px', color:T.textSec }}>{r.hspct}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>TRIR by Company</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={COMPANIES}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill:T.textMut, fontSize:10 }} />
-                <YAxis tick={{ fill:T.textMut, fontSize:10 }} />
-                <Tooltip {...tip} />
-                <Bar dataKey="trir" name="TRIR">
-                  {COMPANIES.map((d,i) => (
-                    <Cell key={i} fill={ d.trir>3.0 ? T.red : d.trir>1.5 ? T.amber : T.green } />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4 — Mental Health & Wellbeing */}
-      {tab===3 && (
-        <div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16, marginBottom:24 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Mental Health Risk Factors in the Workplace</div>
-            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead>
-                <tr style={{ color:T.textMut }}>
-                  {['Risk Factor','Prevalence %','Productivity Cost ($bn/yr)','Absenteeism Days','Legal Exposure (1–10)'].map(h=>(
-                    <th key={h} style={{ textAlign:'left', padding:'6px 10px', borderBottom:`1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {MH_FACTORS.map((r,i) => (
-                  <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                    <td style={{ padding:'7px 10px', color:T.text }}>{r.name}</td>
-                    <td style={{ padding:'7px 10px', color: r.prevalence>35 ? T.red : r.prevalence>25 ? T.amber : T.green }}>{r.prevalence}%</td>
-                    <td style={{ padding:'7px 10px', color:T.textSec }}>${r.costBn}bn</td>
-                    <td style={{ padding:'7px 10px', color:T.textSec }}>{r.absDays}</td>
-                    <td style={{ padding:'7px 10px', color: r.legal>8 ? T.red : r.legal>5 ? T.amber : T.green }}>{r.legal}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ display:'flex', gap:16, marginBottom:24 }}>
-            <div style={{ flex:1, background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Prevalence % by Risk Factor</div>
-              <ResponsiveContainer width="100%" height={180}>
-                <BarChart data={MH_FACTORS}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fill:T.textMut, fontSize:8 }} />
-                  <YAxis tick={{ fill:T.textMut, fontSize:10 }} />
-                  <Tooltip {...tip} />
-                  <Bar dataKey="prevalence" name="Prevalence %">
-                    {MH_FACTORS.map((d,i) => (
-                      <Cell key={i} fill={ d.prevalence>35 ? T.red : d.prevalence>25 ? T.amber : T.green } />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div style={{ flex:1, background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:10 }}>WHO Workplace Mental Health Guidelines 2022</div>
-              {WHO_CHECKLIST.map((item,i) => (
-                <div key={i} style={{ display:'flex', alignItems:'flex-start', gap:8, padding:'5px 0', borderBottom:`1px solid ${T.border}`, fontSize:12 }}>
-                  <span style={{ color:T.green, marginTop:1 }}>✓</span>
-                  <span style={{ color:T.textSec }}>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Presenteeism Cost Trend (24 months, $bn)</div>
-            <ResponsiveContainer width="100%" height={180}>
-              <AreaChart data={PRESENTEEISM_TREND}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="month" tick={{ fill:T.textMut, fontSize:10 }} interval={3} />
-                <YAxis tick={{ fill:T.textMut, fontSize:10 }} />
-                <Tooltip {...tip} />
-                <Area type="monotone" dataKey="cost" stroke={T.teal} fill={T.teal} fillOpacity={0.15} name="Cost ($bn)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5 — Regulatory Standards */}
-      {tab===4 && (
-        <div>
-          <div style={{ display:'flex', gap:12, marginBottom:24 }}>
-            <StatCard label="Global OSH Inspection Rate" value="22%" />
-            <StatCard label="Average Regulatory Fine" value="$47k" />
-            <StatCard label="Countries with National OSH Policy" value="91%" />
-          </div>
-          <div style={{ display:'flex', flexWrap:'wrap', gap:12, marginBottom:24 }}>
-            {REGULATIONS.map((r,i) => (
-              <div key={i} style={{ flex:'1 1 280px', background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:14 }}>
-                <div style={{ fontSize:13, fontWeight:700, color:ACCENT, marginBottom:6 }}>{r.name}</div>
-                <div style={{ fontSize:11, color:T.textMut, marginBottom:2 }}>Jurisdiction: <span style={{ color:T.textSec }}>{r.juris}</span></div>
-                <div style={{ fontSize:11, color:T.textMut, marginBottom:2 }}>Scope: <span style={{ color:T.textSec }}>{r.scope}</span></div>
-                <div style={{ fontSize:11, color:T.textMut, marginBottom:2 }}>Key Req: <span style={{ color:T.textSec }}>{r.key}</span></div>
-                <div style={{ fontSize:11, color:T.textMut, marginBottom:2 }}>Penalty: <span style={{ color:T.red }}>{r.penalty}</span></div>
-                <div style={{ fontSize:11, color:T.textMut }}>Enforcement: <span style={{ color:T.textSec }}>{r.enf}</span></div>
-              </div>
-            ))}
-          </div>
-          <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:16 }}>
-            <div style={{ fontSize:13, fontWeight:600, marginBottom:12 }}>Compliance Rate by Jurisdiction</div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={REGULATIONS}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fill:T.textMut, fontSize:9 }} />
-                <YAxis tick={{ fill:T.textMut, fontSize:10 }} domain={[0,100]} />
-                <Tooltip {...tip} />
-                <Bar dataKey="compliance" name="Compliance %">
-                  {REGULATIONS.map((d,i) => (
-                    <Cell key={i} fill={ d.compliance>=80 ? T.green : d.compliance>=65 ? T.amber : T.red } />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
+  const renderDash=()=>(<>
+    <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:24}}>
+      <KPI label="Avg LTIR" value={kpis.avgLtir} sub="per 200K hours" color={ACCENT}/><KPI label="Avg TRIR" value={kpis.avgTrir} sub="per 200K hours" color={T.amber}/>
+      <KPI label="Total Fatalities" value={kpis.totalFat} sub="across portfolio" color={T.red}/><KPI label="Safety Score" value={kpis.avgScore+'/100'} sub="avg score" color={T.navy}/>
+      <KPI label="Improving" value={kpis.improving} sub="companies" color={T.green}/>
     </div>
-  );
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>LTIR/TRIR by Sector</div>
+        <ResponsiveContainer width="100%" height={260}><BarChart data={sectorChart}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9,fill:T.textMut}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="avgLtir" fill={ACCENT} radius={[4,4,0,0]} name="Avg LTIR"/><Bar dataKey="avgTrir" fill={T.navy} radius={[4,4,0,0]} name="Avg TRIR"/></BarChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Safety Rating Distribution</div>
+        <ResponsiveContainer width="100%" height={260}><PieChart><Pie data={ratingDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={9}>{ratingDist.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Safety Trend (36 months)</div>
+        <ResponsiveContainer width="100%" height={240}><LineChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="avgLtir" stroke={ACCENT} strokeWidth={2} name="Avg LTIR"/><Line type="monotone" dataKey="avgTrir" stroke={T.navy} strokeWidth={2} name="Avg TRIR"/></LineChart></ResponsiveContainer></div>
+      <div style={ss.card}><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Safety Radar</div>
+        <ResponsiveContainer width="100%" height={240}><RadarChart data={radarData} cx="50%" cy="50%" outerRadius={85}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="dim" tick={{fontSize:9,fill:T.textSec}}/><PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/><Radar name="Avg" dataKey="value" stroke={ACCENT} fill="rgba(234,88,12,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer></div>
+    </div>
+  </>);
+
+  const renderScreen=()=>(<div style={ss.card}>
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}>
+      <input style={ss.input} placeholder="Search companies..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+      <select style={ss.select} value={secF} onChange={e=>{setSecF(e.target.value);setPage(1);}}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select>
+      <select style={ss.select} value={regF} onChange={e=>{setRegF(e.target.value);setPage(1);}}>{REGIONS.map(s=><option key={s}>{s}</option>)}</select>
+      <select style={ss.select} value={ratF} onChange={e=>{setRatF(e.target.value);setPage(1);}}>{RATINGS.map(s=><option key={s}>{s}</option>)}</select>
+      <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} companies</span>
+      <button style={ss.btn} onClick={()=>csvExport(filtered,'whs_screening')}>Export CSV</button>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+      <TH col="name" label="Company" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="sector" label="Sector" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="ltir" label="LTIR" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="trir" label="TRIR" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="fatalities" label="Fatal" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="safetyScore" label="Score" sc={sortCol} sd={sortDir} fn={doSort}/>
+      <TH col="incidentTrend" label="Trend" sc={sortCol} sd={sortDir} fn={doSort}/><TH col="safetyRating" label="Rating" sc={sortCol} sd={sortDir} fn={doSort}/>
+    </tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}>
+      <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+        <td style={{...ss.td,fontWeight:600}}>{r.name}</td><td style={ss.td}>{r.sector}</td>
+        <td style={ss.td}><span style={badge(r.ltir,[1,2,3.5])}>{r.ltir}</span></td>
+        <td style={ss.td}><span style={badge(r.trir,[2,4,6])}>{r.trir}</span></td>
+        <td style={{...ss.td,fontFamily:T.mono,color:r.fatalities>0?T.red:T.green,fontWeight:600}}>{r.fatalities}</td>
+        <td style={ss.td}><span style={{background:r.safetyScore>=70?'rgba(22,163,74,0.12)':r.safetyScore>=50?'rgba(197,169,106,0.12)':'rgba(220,38,38,0.12)',color:r.safetyScore>=70?T.green:r.safetyScore>=50?T.gold:T.red,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono}}>{r.safetyScore}</span></td>
+        <td style={ss.td}><span style={{color:r.incidentTrend==='Improving'?T.green:r.incidentTrend==='Stable'?T.amber:T.red,fontWeight:600,fontSize:11}}>{r.incidentTrend}</span></td>
+        <td style={ss.td}><span style={ratBadge(r.safetyRating)}>{r.safetyRating}</span></td>
+      </tr>
+      {expanded===r.id&&<tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20}}>
+          <div>{[['Near Misses',r.nearMisses],['Lost Days',fmt(r.lostDays)],['Employees',fmt(r.employees)],['Safety Spend ($M)',r.safetySpend],['Training (hrs/yr)',r.trainingHours],['Inspections',r.inspections],['Violations',r.violations],['ISO 45001',r.isoCompliance],['Mental Health',r.mentalHealth],['Ergonomics',r.ergonomics],['PPE Compliance',r.ppeCompliance+'%'],['Severity Rate',r.severity],['Process Events',r.processEvents],['Contractor TRIR',r.contractorRate]].map(([l,v])=>(<div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span></div>))}</div>
+          <ResponsiveContainer width="100%" height={180}><RadarChart data={[{d:'Score',v:r.safetyScore},{d:'Training',v:r.trainingHours*2},{d:'PPE',v:r.ppeCompliance},{d:'Mental',v:r.mentalHealth},{d:'Ergonomics',v:r.ergonomics},{d:'Inspections',v:Math.min(100,r.inspections/5)}]} cx="50%" cy="50%" outerRadius={65}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:8,fill:T.textSec}}/><PolarRadiusAxis tick={false} domain={[0,100]}/><Radar dataKey="v" stroke={ACCENT} fill="rgba(234,88,12,0.15)" strokeWidth={2}/></RadarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={180}><BarChart data={[{n:'LTIR',v:r.ltir*20},{n:'TRIR',v:r.trir*10},{n:'Near Miss',v:Math.min(100,r.nearMisses/2)},{n:'Violations',v:r.violations*4},{n:'Severity',v:Math.min(100,r.severity/2)}]} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:9,fill:T.textMut}}/><YAxis dataKey="n" type="category" tick={{fontSize:9,fill:T.textSec}} width={65}/><Tooltip {...tip}/><Bar dataKey="v" fill={ACCENT} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer>
+        </div>
+      </td></tr>}
+    </React.Fragment>))}</tbody></table></div>
+    <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+  </div>);
+
+  const renderIncident=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Incident Type Analysis</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={300}><BarChart data={INCIDENT_TYPES}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="type" tick={{fontSize:9,fill:T.textMut}} angle={-25} textAnchor="end" height={70}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="count" fill={ACCENT} radius={[4,4,0,0]} name="Count"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={300}><PieChart><Pie data={INCIDENT_TYPES} dataKey="pct" nameKey="type" cx="50%" cy="50%" outerRadius={110} innerRadius={55} label={({type,pct})=>`${pct}%`} labelLine fontSize={9}>{INCIDENT_TYPES.map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}</Pie><Tooltip {...tip}/><Legend wrapperStyle={{fontSize:9}}/></PieChart></ResponsiveContainer>
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:16}}>
+      <ResponsiveContainer width="100%" height={240}><AreaChart data={TREND}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="month" tick={{fontSize:9,fill:T.textMut}} interval={5}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="nearMisses" stroke={T.amber} fill="rgba(217,119,6,0.08)" name="Near Misses"/><Area type="monotone" dataKey="fatalities" stroke={T.red} fill="rgba(220,38,38,0.08)" name="Fatalities"/></AreaChart></ResponsiveContainer>
+      <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Type</th><th style={ss.th('','','')}>Count</th><th style={ss.th('','','')}>Share %</th></tr></thead><tbody>
+        {INCIDENT_TYPES.map((r,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{r.type}</td><td style={{...ss.td,fontFamily:T.mono}}>{r.count}</td><td style={ss.td}><div style={{display:'flex',alignItems:'center',gap:6}}><div style={{background:T.border,borderRadius:4,height:12,width:80,flex:'0 0 80px'}}><div style={{background:PIECLRS[i],borderRadius:4,height:12,width:r.pct*0.8*10/10*8}}/></div><span style={{fontFamily:T.mono,fontSize:11}}>{r.pct}%</span></div></td></tr>))}
+      </tbody></table></div>
+    </div>
+    <button style={ss.btn} onClick={()=>csvExport(INCIDENT_TYPES,'incident_analysis')}>Export CSV</button>
+  </div>);
+
+  const renderBenchmark=()=>(<div style={ss.card}>
+    <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Industry Benchmarking</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+      <ResponsiveContainer width="100%" height={300}><BarChart data={BENCHMARKS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/><Bar dataKey="ltir" fill={ACCENT} radius={[4,4,0,0]} name="LTIR Benchmark"/><Bar dataKey="trir" fill={T.navy} radius={[4,4,0,0]} name="TRIR Benchmark"/></BarChart></ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={300}><LineChart data={BENCHMARKS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9,fill:T.textMut}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="fatRate" stroke={T.red} strokeWidth={2} dot={{fill:T.red,r:4}} name="Fatality Rate"/></LineChart></ResponsiveContainer>
+    </div>
+    <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr><th style={ss.th('','','')}>Sector</th><th style={ss.th('','','')}>LTIR Benchmark</th><th style={ss.th('','','')}>TRIR Benchmark</th><th style={ss.th('','','')}>Fatality Rate</th></tr></thead><tbody>
+      {BENCHMARKS.map((r,i)=>(<tr key={i}><td style={{...ss.td,fontWeight:600}}>{r.sector}</td><td style={{...ss.td,fontFamily:T.mono}}>{r.ltir}</td><td style={{...ss.td,fontFamily:T.mono}}>{r.trir}</td><td style={{...ss.td,fontFamily:T.mono,color:r.fatRate>0.008?T.red:r.fatRate>0.005?T.amber:T.green}}>{r.fatRate}</td></tr>))}
+    </tbody></table></div>
+    <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(BENCHMARKS,'safety_benchmarks')}>Export CSV</button></div>
+  </div>);
+
+  return(<div style={ss.wrap}>
+    <div style={ss.header}>Workplace Health & Safety Intelligence</div>
+    <div style={ss.sub}>LTIR, TRIR, fatality rates, safety scoring across 80 companies</div>
+    <div style={ss.tabs}>{TABS.map((t,i)=><button key={t} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+    {tab===0&&renderDash()}{tab===1&&renderScreen()}{tab===2&&renderIncident()}{tab===3&&renderBenchmark()}
+  </div>);
 }
