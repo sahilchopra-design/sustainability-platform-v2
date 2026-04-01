@@ -84,7 +84,7 @@ const EuTaxonomyPage = React.lazy(() => import("./features/eu-taxonomy/pages/EuT
 // Sprint D — Platform Intelligence (EP-D1, EP-D3, EP-D4, EP-D6, EP-D7)
 const StrandedAssetsPage = React.lazy(() => import("./features/stranded-assets/pages/StrandedAssetsPage"));
 const NGFSScenariosPage = React.lazy(() => import("./features/ngfs-scenarios/pages/NGFSScenariosPage"));
-const PortfolioClimateVaRPage = React.lazy(() => import("./features/portfolio-climate-var/pages/PortfolioClimateVaRPage"));
+const PortfolioClimateVaRPage = React.lazy(() => import("./features/portfolio-climate-var/pages/PortfolioClimateVarPage"));
 const PipelineDashboardPage = React.lazy(() => import("./features/pipeline-dashboard/pages/PipelineDashboardPage"));
 const CSRDiXBRLPage = React.lazy(() => import("./features/csrd-ixbrl/pages/CSRDiXBRLPage"));
 // Master Reference
@@ -385,10 +385,10 @@ const OceanMarineRiskPage = React.lazy(() => import("./features/ocean-marine-ris
 const CircularEconomyTrackerPage = React.lazy(() => import("./features/circular-economy-tracker/pages/CircularEconomyTrackerPage"));
 const AirQualityHealthRiskPage = React.lazy(() => import("./features/air-quality-health-risk/pages/AirQualityHealthRiskPage"));
 // Sprint AB — Macro & Systemic Risk Intelligence
-const SystemicESGRiskPage = React.lazy(() => import("./features/systemic-esg-risk/pages/SystemicESGRiskPage"));
+const SystemicESGRiskPage = React.lazy(() => import("./features/systemic-esg-risk/pages/SystemicEsgRiskPage"));
 const ClimatePolicyIntelligencePage = React.lazy(() => import("./features/climate-policy-intelligence/pages/ClimatePolicyIntelligencePage"));
 const GreenCentralBankingPage = React.lazy(() => import("./features/green-central-banking/pages/GreenCentralBankingPage"));
-const ESGFactorAttributionPage = React.lazy(() => import("./features/esg-factor-attribution/pages/ESGFactorAttributionPage"));
+const ESGFactorAttributionPage = React.lazy(() => import("./features/esg-factor-attribution/pages/EsgFactorAttributionPage"));
 const TransitionScenarioModellerPage = React.lazy(() => import("./features/transition-scenario-modeller/pages/TransitionScenarioModellerPage"));
 const CrossAssetContagionPage = React.lazy(() => import("./features/cross-asset-contagion/pages/CrossAssetContagionPage"));
 // Sprint AA — Climate Finance Architecture
