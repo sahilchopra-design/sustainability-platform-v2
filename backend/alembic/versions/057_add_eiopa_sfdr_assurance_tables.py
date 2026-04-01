@@ -73,8 +73,8 @@ def upgrade():
     op.create_table(
         "eiopa_stress_scenarios",
         sa.Column("id", sa.BigInteger, primary_key=True, autoincrement=True),
-        sa.Column("run_id", sa.Text, nullable=False,
-                  sa.ForeignKey("eiopa_stress_runs.run_id", ondelete="CASCADE")),
+        sa.Column("run_id", sa.Text, sa.ForeignKey("eiopa_stress_runs.run_id", ondelete="CASCADE"),
+                  nullable=False),
         sa.Column("scenario_id", sa.Text, nullable=False),   # sudden_transition etc.
         sa.Column("scenario_name", sa.Text),
         sa.Column("temp_outcome_c", sa.Numeric(4, 2)),
@@ -162,8 +162,8 @@ def upgrade():
     op.create_table(
         "sfdr_annex_sections",
         sa.Column("id", sa.BigInteger, primary_key=True, autoincrement=True),
-        sa.Column("run_id", sa.Text, nullable=False,
-                  sa.ForeignKey("sfdr_annex_runs.run_id", ondelete="CASCADE")),
+        sa.Column("run_id", sa.Text, sa.ForeignKey("sfdr_annex_runs.run_id", ondelete="CASCADE"),
+                  nullable=False),
         sa.Column("section_id", sa.Text, nullable=False),
         sa.Column("section_title", sa.Text),
         sa.Column("is_mandatory", sa.Boolean),
@@ -214,8 +214,8 @@ def upgrade():
     op.create_table(
         "assurance_criterion_results",
         sa.Column("id", sa.BigInteger, primary_key=True, autoincrement=True),
-        sa.Column("run_id", sa.Text, nullable=False,
-                  sa.ForeignKey("assurance_readiness_runs.run_id", ondelete="CASCADE")),
+        sa.Column("run_id", sa.Text, sa.ForeignKey("assurance_readiness_runs.run_id", ondelete="CASCADE"),
+                  nullable=False),
         sa.Column("criterion_id", sa.Text, nullable=False),
         sa.Column("domain", sa.Text),
         sa.Column("title", sa.Text),
