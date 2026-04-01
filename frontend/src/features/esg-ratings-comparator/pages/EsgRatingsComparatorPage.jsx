@@ -6,6 +6,7 @@ import React,{useState,useMemo,useCallback} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Cell,ScatterChart,Scatter,Legend,LineChart,Line,PieChart,Pie,AreaChart,Area,ZAxis} from 'recharts';
 import {SECTOR_BENCHMARKS} from '../../../data/referenceData';
 import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
+import {getEsgRatings,hasRealEsgData,realEsgCoverage,getCoverageStats,PROVIDER_META} from '../../../data/eohdEsgService';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME + HELPERS
@@ -118,18 +119,32 @@ const METHODOLOGY_DATA={
 /* ═══════════════════════════════════════════════════════════════════════════════
    150 COMPANIES WITH 6-PROVIDER RATINGS + 12Q HISTORY
    ═══════════════════════════════════════════════════════════════════════════════ */
+/* ENH-029: Companies generated with real EODHD ESG data where available, seed-based fallback */
 const COMPANIES=(()=>{
   const equities=SECURITY_UNIVERSE.filter(s=>s.assetType==='Equity').slice(0,150);
   return equities.map((sec,i)=>{
     const base=i*139;
-    const msciIdx=Math.floor(sr(base+1)*7);
-    const sustVal=Math.floor(10+sr(base+3)*80);
-    const issVal=Math.round((1+sr(base+5)*9)*10)/10;
-    const cdpIdx=Math.floor(sr(base+7)*8);
-    const spVal=Math.floor(15+sr(base+9)*75);
-    const bbgVal=Math.floor(10+sr(base+11)*80);
-    // 12 quarter history
-    const hist=Array.from({length:12},(_, q)=>{
+    // ENH-029: use real EODHD ESG data if available, seed-based otherwise
+    const realRatings=getEsgRatings(sec.ticker||'',sec.sector||'Default',i);
+    const msciRaw=realRatings.scores.MSCI;
+    const sustRaw=realRatings.scores.Sustainalytics;
+    const issRaw=realRatings.scores.ISS;
+    const cdpRaw=realRatings.scores.CDP;
+    const spVal=realRatings.scores['S&P Global'];
+    const bbgVal=realRatings.scores.Bloomberg;
+
+    // Convert back to provider-native scales for display
+    const msciIdx=Math.max(0,Math.min(6,Math.round((100-msciRaw)/100*6)));
+    const sustVal=Math.max(5,Math.min(90,Math.round(100-sustRaw)));
+    const issVal=+(Math.max(1,Math.min(10,(100-issRaw)/100*9+1)).toFixed(1));
+    const cdpIdx=Math.max(0,Math.min(7,Math.round((100-cdpRaw)/100*7)));
+    const msciNum=msciRaw;
+    const sustNorm=sustRaw;
+    const issNorm=issRaw;
+    const cdpNum=cdpRaw;
+
+    // 12 quarter history (deterministic drift from real/seed base)
+    const hist=Array.from({length:12},(_,q)=>{
       const drift=sr(i*100+q*17);
       return{
         q:`Q${(q%4)+1} ${2023+Math.floor(q/4)}`,
@@ -141,11 +156,6 @@ const COMPANIES=(()=>{
         bbg:Math.min(100,Math.max(0,bbgVal+Math.floor((sr(i*100+q*37)-0.5)*15)))
       };
     });
-    // Normalize all to 0-100
-    const msciNum=(7-msciIdx)/7*100;
-    const sustNorm=100-sustVal; // Sustainalytics: lower=better, so invert
-    const issNorm=(10-issVal)/9*100;
-    const cdpNum=(8-cdpIdx)/8*100;
     const consensus=Math.round((msciNum+sustNorm+issNorm+cdpNum+spVal+bbgVal)/6);
     const diverg=Math.round(Math.max(msciNum,sustNorm,issNorm,cdpNum,spVal,bbgVal)-Math.min(msciNum,sustNorm,issNorm,cdpNum,spVal,bbgVal));
 
@@ -160,9 +170,16 @@ const COMPANIES=(()=>{
       consensus,divergence:diverg,hist,
       controversyCount:Math.round(sr(base+13)*8),
       controversySeverity:sr(base+15)<0.2?'Severe':sr(base+15)<0.5?'Moderate':'Low',
+      // ENH-029 provenance
+      dataSource:realRatings.isReal?'EODHD':'Estimated',
+      dataDqs:realRatings.dqs,
+      dataProvenance:realRatings.provenance,
     };
   });
 })();
+
+/* ENH-029: Coverage stats banner data */
+const ESG_COVERAGE=getCoverageStats(COMPANIES.map(c=>c.ticker));
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    CONTROVERSY DATA — 90 controversies
@@ -336,7 +353,7 @@ export default function EsgRatingsComparatorPage(){
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-                <div style={{fontSize:11,color:T.textSec,marginTop:8}}>Controversies: {r.controversyCount} ({r.controversySeverity}) | Country: {r.country} | Ticker: {r.ticker}</div>
+                <div style={{fontSize:11,color:T.textSec,marginTop:8}}>Controversies: {r.controversyCount} ({r.controversySeverity}) | Country: {r.country} | Ticker: {r.ticker} | Data: <span style={{color:r.dataSource==='EODHD'?T.green:T.amber,fontFamily:T.mono,fontWeight:600}}>{r.dataSource}</span> (DQS-{r.dataDqs})</div>
               </td></tr>}
             </React.Fragment>
           ))}</tbody></table>
@@ -853,6 +870,14 @@ export default function EsgRatingsComparatorPage(){
     <div style={ss.wrap}>
       <div style={ss.header}>ESG Ratings Comparator</div>
       <div style={ss.sub}>Multi-Provider ESG Rating Analysis — {COMPANIES.length} companies, {PROVIDERS.length} providers, {CONTROVERSIES.length} controversies, 12Q history</div>
+      {/* ENH-029: Data provenance banner */}
+      <div style={{display:'flex',gap:8,alignItems:'center',padding:'7px 14px',borderRadius:6,background:hasRealEsgData?'rgba(22,163,74,0.07)':'rgba(217,119,6,0.07)',border:`1px solid ${hasRealEsgData?'rgba(22,163,74,0.2)':'rgba(217,119,6,0.2)'}`,marginBottom:14,fontSize:11}}>
+        <span style={{fontFamily:'monospace',fontWeight:700,color:hasRealEsgData?T.green:T.amber}}>ENH-029</span>
+        <span style={{color:T.textSec}}>ESG data source:</span>
+        <span style={{fontWeight:600,color:hasRealEsgData?T.green:T.amber}}>{hasRealEsgData?`EODHD live (${ESG_COVERAGE.realCount}/${ESG_COVERAGE.total} tickers, ${ESG_COVERAGE.coveragePct}% coverage)`:'Sector-median estimates — run `node scripts/pullEsgData.js` to load real EODHD data'}</span>
+        {!hasRealEsgData&&<span style={{fontSize:10,color:T.textMut,marginLeft:'auto'}}>DQS-4 · Seed-based · Deterministic</span>}
+        {hasRealEsgData&&<span style={{fontSize:10,color:T.textMut,marginLeft:'auto'}}>DQS-2 · EODHD Fundamentals API · {realEsgCoverage} companies</span>}
+      </div>
       <div style={ss.tabs}>{TABS.map((t,i)=><button key={i} style={ss.tab(tab===i)} onClick={()=>{setTab(i);setPage(1);}}>{t}</button>)}</div>
       {tab===0&&renderComparison()}
       {tab===1&&renderMethodology()}

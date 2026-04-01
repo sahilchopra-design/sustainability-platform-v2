@@ -6,6 +6,7 @@ import React,{useState,useMemo,useCallback} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend,ScatterChart,Scatter,ZAxis} from 'recharts';
 import {REGULATORY_THRESHOLDS,TAXONOMY_THRESHOLDS} from '../../../data/referenceData';
 import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
+import {buildEvidencePackage,downloadEvidencePackage,downloadOpinionText,EVIDENCE_CATEGORIES,evidenceStatusColor,opinionColor,getPortfolioAssuranceReadiness} from '../../../data/isae3000EvidenceExport';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME + CORE HELPERS
@@ -238,6 +239,9 @@ export default function CsrdEsrsAutomationPage(){
   const[stdExpanded,setStdExpanded]=useState(null);
   const[xbrlStd,setXbrlStd]=useState(null);
   const[assuranceLevel,setAssuranceLevel]=useState('Limited');
+  const[evidencePkg,setEvidencePkg]=useState(null);
+  const[evPkgCompany,setEvPkgCompany]=useState(null);
+  const[assuranceView,setAssuranceView]=useState('tracker');// 'tracker' | 'evidence' | 'portfolio'
   const[exportFormat,setExportFormat]=useState('CSRD Filing');
 
   const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
@@ -939,28 +943,115 @@ export default function CsrdEsrsAutomationPage(){
   };
 
   /* ═══════════════════════════════════════════════════════════════════════════════
-     TAB 5: ASSURANCE — ISAE 3000 limited vs reasonable, evidence tracker
+     TAB 5: ASSURANCE — ISAE 3000 limited vs reasonable, evidence tracker + ENH-015 export
      ═══════════════════════════════════════════════════════════════════════════════ */
   const renderAssurance=()=>{
     const avgLimited=Math.round(ASSURANCE_EVIDENCE.reduce((s,e)=>s+e.limitedReady,0)/ASSURANCE_EVIDENCE.length);
     const avgReasonable=Math.round(ASSURANCE_EVIDENCE.reduce((s,e)=>s+e.reasonableReady,0)/ASSURANCE_EVIDENCE.length);
     const totalEvidence=ASSURANCE_EVIDENCE.reduce((s,e)=>s+e.evidenceCount,0);
     const totalGapsForReasonable=ASSURANCE_EVIDENCE.reduce((s,e)=>s+e.gapsForReasonable,0);
+    const portfolioReadiness=getPortfolioAssuranceReadiness(CSRD_COMPANIES.slice(0,20).map(c=>({ticker:c.ticker,name:c.name,sector:c.sector,country:c.country})),assuranceLevel);
+    const buildPkg=(company,idx)=>{const pkg=buildEvidencePackage({ticker:company.ticker,name:company.name,sector:company.sector,country:company.country},assuranceLevel,idx+1);setEvidencePkg(pkg);setEvPkgCompany(company.name);setAssuranceView('evidence');};
 
     return(<>
-      <SectionHead cite="CSRD Art. 34 — Assurance of Sustainability Reporting (ISAE 3000)">Assurance Readiness</SectionHead>
+      <SectionHead cite="CSRD Art. 34 — Assurance of Sustainability Reporting (ISAE 3000)">Assurance Readiness — ENH-015</SectionHead>
       <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
         <KPI label="Limited Assurance" value={avgLimited+'%'} sub="avg readiness" color={T.amber} cite="ISAE 3000 (Revised)"/>
         <KPI label="Reasonable Assurance" value={avgReasonable+'%'} sub="avg readiness" color={T.sage} cite="Target: FY2028+"/>
         <KPI label="Total Evidence" value={totalEvidence} sub="documents collected" color={ACCENT}/>
         <KPI label="Gaps for Reasonable" value={totalGapsForReasonable} color={T.red}/>
         <KPI label="ISAE 3000 Aligned" value={ASSURANCE_EVIDENCE.filter(e=>e.isae3000Aligned).length+'/'+ASSURANCE_EVIDENCE.length} color={T.navy}/>
+        <KPI label="Ready for Filing" value={portfolioReadiness.filter(r=>r.readyForFiling).length+'/'+portfolioReadiness.length} color={T.green}/>
       </div>
 
-      <div style={{...ss.flex,marginBottom:16}}>
+      <div style={{...ss.flex,gap:8,marginBottom:16,flexWrap:'wrap'}}>
         <button style={assuranceLevel==='Limited'?ss.btn:ss.btnSec} onClick={()=>setAssuranceLevel('Limited')}>Limited Assurance</button>
         <button style={assuranceLevel==='Reasonable'?ss.btn:ss.btnSec} onClick={()=>setAssuranceLevel('Reasonable')}>Reasonable Assurance</button>
+        <div style={{marginLeft:'auto',display:'flex',gap:8}}>
+          <button style={assuranceView==='tracker'?ss.btn:ss.btnSec} onClick={()=>setAssuranceView('tracker')}>Evidence Tracker</button>
+          <button style={assuranceView==='portfolio'?ss.btn:ss.btnSec} onClick={()=>setAssuranceView('portfolio')}>Portfolio Readiness</button>
+          {evidencePkg&&<button style={assuranceView==='evidence'?ss.btn:ss.btnSec} onClick={()=>setAssuranceView('evidence')}>📋 {evPkgCompany}</button>}
+        </div>
       </div>
+
+      {/* EVIDENCE PACKAGE VIEW */}
+      {assuranceView==='evidence'&&evidencePkg&&(<div style={ss.card}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
+          <div>
+            <SectionHead cite={evidencePkg.framework}>Evidence Package — {evidencePkg.company.name}</SectionHead>
+            <div style={{fontSize:11,color:T.textSec}}>{evidencePkg.packageId} · {evidencePkg.reportingPeriod} · {evidencePkg.assuranceLevel} Assurance</div>
+          </div>
+          <div style={{display:'flex',gap:8}}>
+            <button onClick={()=>downloadEvidencePackage(evidencePkg)} style={{...ss.btn,fontSize:11}}>↓ Download JSON</button>
+            <button onClick={()=>downloadOpinionText(evidencePkg)} style={{...ss.btnSec,fontSize:11}}>↓ Opinion Text</button>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
+          {[
+            {label:'Overall Completion',value:evidencePkg.summary.overallCompletionPct+'%',color:evidencePkg.summary.overallCompletionPct>=80?T.green:evidencePkg.summary.overallCompletionPct>=50?T.amber:T.red},
+            {label:'Ready for Filing',value:evidencePkg.summary.readyForFiling?'✓ Yes':'✗ No',color:evidencePkg.summary.readyForFiling?T.green:T.red},
+            {label:'Critical Gaps',value:evidencePkg.summary.criticalGapsTotal,color:evidencePkg.summary.criticalGapsTotal>0?T.red:T.green},
+            {label:'Items Complete',value:`${evidencePkg.summary.completeItems}/${evidencePkg.summary.totalItems}`,color:T.navy},
+          ].map((k,i)=><div key={i} style={{background:T.bg,border:`1px solid ${T.border}`,borderRadius:8,padding:'8px 14px'}}>
+            <div style={{fontSize:10,color:T.textMut}}>{k.label}</div>
+            <div style={{fontSize:15,fontWeight:700,color:k.color,marginTop:1}}>{k.value}</div>
+          </div>)}
+        </div>
+        <div style={{padding:12,background:T.bg,borderRadius:6,marginBottom:12,fontFamily:T.mono,fontSize:10,color:opinionColor(evidencePkg.summary.opinion)}}>
+          <strong>Projected Opinion:</strong> {evidencePkg.summary.opinion}
+        </div>
+        {evidencePkg.categories.map((cat,ci)=>(
+          <div key={ci} style={{border:`1px solid ${T.border}`,borderRadius:6,marginBottom:8,overflow:'hidden'}}>
+            <div style={{padding:'8px 12px',background:T.bg,display:'flex',alignItems:'center',gap:10}}>
+              <span style={{fontFamily:T.mono,fontSize:10,fontWeight:700,color:T.navy,width:30}}>{cat.id}</span>
+              <span style={{flex:1,fontWeight:600,fontSize:11,color:T.navy}}>{cat.label}</span>
+              <span style={{fontSize:9,color:T.textMut}}>{cat.citation}</span>
+              <span style={{fontFamily:T.mono,fontSize:11,fontWeight:700,color:cat.completionPct>=80?T.green:cat.completionPct>=50?T.amber:T.red}}>{cat.completionPct}%</span>
+            </div>
+            <div style={{padding:'8px 12px'}}>
+              {cat.items.map((item,ii)=>(
+                <div key={ii} style={{display:'flex',gap:8,padding:'4px 0',borderBottom:`1px solid ${T.border}`,fontSize:11,alignItems:'flex-start'}}>
+                  <span style={{fontFamily:T.mono,fontSize:9,color:T.textMut,width:55,flexShrink:0}}>{item.id}</span>
+                  <span style={{flex:1,color:T.text}}>{item.desc}</span>
+                  <span style={{fontSize:9,color:T.textMut,width:70,textAlign:'right'}}>{item.esrsRef}</span>
+                  <span style={{padding:'1px 8px',borderRadius:3,fontSize:10,fontWeight:600,background:`${evidenceStatusColor(item.status)}15`,color:evidenceStatusColor(item.status),width:80,textAlign:'center',flexShrink:0}}>{item.status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div style={{padding:12,background:T.bg,borderRadius:6,marginTop:8,fontSize:10,color:T.textSec,whiteSpace:'pre-line',fontFamily:T.mono,lineHeight:1.6,maxHeight:200,overflow:'auto'}}>
+          {evidencePkg.opinionText}
+        </div>
+      </div>)}
+
+      {/* PORTFOLIO READINESS VIEW */}
+      {assuranceView==='portfolio'&&(<div style={ss.card}>
+        <SectionHead cite="ISAE 3000 — Portfolio Assurance Readiness">Portfolio Readiness — {assuranceLevel} Assurance</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['Ticker','Company','Sector','Completion','Opinion','Critical Gaps','Filing Ready','Actions'].map(h=>(
+              <th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>
+            ))}
+          </tr></thead><tbody>
+            {portfolioReadiness.map((r,i)=>(
+              <tr key={i}>
+                <td style={{...ss.td,fontFamily:T.mono,fontWeight:700,color:T.navy}}>{r.ticker}</td>
+                <td style={{...ss.td,fontSize:11}}>{r.name}</td>
+                <td style={{...ss.td,fontSize:10,color:T.textSec}}>{r.sector}</td>
+                <td style={ss.td}><span style={badge(r.completionPct,[40,70,85])}>{r.completionPct}%</span></td>
+                <td style={{...ss.td,fontSize:10,color:opinionColor(r.opinion)}}>{r.opinion.split(' ').slice(0,2).join(' ')}</td>
+                <td style={{...ss.td,fontFamily:T.mono,color:r.criticalGaps>0?T.red:T.green}}>{r.criticalGaps}</td>
+                <td style={ss.td}><span style={{color:r.readyForFiling?T.green:T.red,fontWeight:600}}>{r.readyForFiling?'✓':'✗'}</span></td>
+                <td style={ss.td}><button onClick={()=>buildPkg(CSRD_COMPANIES[i],i)} style={{padding:'3px 8px',border:`1px solid ${ACCENT}`,borderRadius:4,color:ACCENT,background:'transparent',fontSize:10,cursor:'pointer'}}>Build Package</button></td>
+              </tr>
+            ))}
+          </tbody></table>
+        </div>
+      </div>)}
+
+      {/* DEFAULT: EVIDENCE TRACKER VIEW */}
+      {assuranceView==='tracker'&&(<>
 
       <div style={ss.card}>
         <SectionHead cite={assuranceLevel==='Limited'?'ISAE 3000 §49-66':'ISAE 3000 §67-88'}>Evidence Tracker — {assuranceLevel} Assurance</SectionHead>
@@ -1025,6 +1116,7 @@ export default function CsrdEsrsAutomationPage(){
           <div style={ss.cite}>CSRD Art. 34. Limited assurance from FY2024. Reasonable assurance adoption pending EU Commission delegated act.</div>
         </div>
       </div>
+      </>)}
     </>);
   };
 

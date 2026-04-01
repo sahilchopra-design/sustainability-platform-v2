@@ -16,6 +16,7 @@ import {
 import { EMISSION_FACTORS, SECTOR_BENCHMARKS, PCAF_DATA_QUALITY, CARBON_PRICES } from '../../../data/referenceData';
 import { SECURITY_UNIVERSE, MOCK_PORTFOLIO } from '../../../data/securityUniverse';
 import { getEVIC } from '../../../data/evicService';
+import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME, PRNG, UTILITIES
@@ -1186,9 +1187,154 @@ function DownstreamTab({positions}){
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   MAIN PAGE COMPONENT — 7 Tabs
+   TAB 8: AUDIT TRAIL — ENH-017 step-by-step calculation evidence
    ═══════════════════════════════════════════════════════════════════════════════ */
-const TABS=['Part A: Financed','Part B: Insurance','Part C: Facilitated','Data Quality','Reference Data','Formula Engine','Downstream'];
+function AuditTrailTab({positions}){
+  const[selPos,setSelPos]=useState(null);
+  const[view,setView]=useState('portfolio');// 'portfolio' | 'position'
+
+  const trail=useMemo(()=>generatePortfolioAuditTrail(positions),[positions]);
+  const posTrail=useMemo(()=>selPos!=null?trail.positions[selPos]:null,[trail,selPos]);
+
+  const statusBg=s=>({PASS:'rgba(22,163,74,0.08)',WARN:'rgba(217,119,6,0.08)',FAIL:'rgba(220,38,38,0.08)'}[s]||'transparent');
+  const FL={display:'flex',gap:8,alignItems:'center'};
+
+  return(<div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+      <div>
+        <div style={{fontWeight:700,color:T.navy,fontSize:15}}>PCAF Calculation Audit Trail</div>
+        <div style={{fontSize:11,color:T.textSec,marginTop:2}}>ENH-017 · {trail.standard} · Trail ID: <span style={{fontFamily:T.mono}}>{trail.trailId}</span></div>
+      </div>
+      <div style={FL}>
+        <button onClick={()=>downloadTrail(trail)} style={{padding:'7px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.navy,color:'#fff',fontSize:11,fontWeight:600,cursor:'pointer'}}>↓ Export JSON</button>
+        <button onClick={()=>setView(v=>v==='portfolio'?'position':'portfolio')} style={{padding:'7px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontSize:11,cursor:'pointer'}}>{view==='portfolio'?'Position View':'Portfolio View'}</button>
+      </div>
+    </div>
+
+    {/* Portfolio summary KPIs */}
+    <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
+      {[
+        {label:'Total Positions',value:trail.portfolio.totalPositions,color:T.navy},
+        {label:'Total Financed Emissions',value:fmt(trail.portfolio.totalFinancedEmissions)+' tCO2e',color:T.navy},
+        {label:'Portfolio WACI',value:trail.portfolio.portfolioWaci.toFixed(3)+' tCO2e/$M',color:T.navy},
+        {label:'Avg DQS',value:trail.portfolio.avgDqs,color:dqsColor(Math.round(trail.portfolio.avgDqs))},
+        {label:'DQS Target Met',value:trail.portfolio.dqsMeetsTarget?'✓ Yes':'✗ No',color:trail.portfolio.dqsMeetsTarget?T.green:T.red},
+        {label:'Flags',value:trail.portfolio.flagSummary.total,color:trail.portfolio.flagSummary.errors>0?T.red:T.amber},
+      ].map((k,i)=>(
+        <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:'10px 16px',minWidth:140}}>
+          <div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k.label}</div>
+          <div style={{fontSize:16,fontWeight:700,color:k.color,marginTop:2}}>{k.value}</div>
+        </div>
+      ))}
+    </div>
+
+    {/* DQS distribution */}
+    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:16,marginBottom:16}}>
+      <div style={{fontWeight:600,color:T.navy,fontSize:12,marginBottom:10}}>DQS Distribution — {PCAF_CITATIONS.dqs.ref}</div>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+        {trail.portfolio.dqsDistribution.map(d=>(
+          <div key={d.dqs} style={{flex:1,minWidth:110,background:T.bg,borderRadius:6,padding:'8px 12px',borderLeft:`3px solid ${dqsColor(d.dqs)}`}}>
+            <div style={{fontFamily:T.mono,fontSize:11,fontWeight:700,color:dqsColor(d.dqs)}}>DQS-{d.dqs}</div>
+            <div style={{fontSize:10,color:T.textSec,margin:'2px 0'}}>{d.description.slice(0,35)}…</div>
+            <div style={{fontSize:13,fontWeight:700,color:T.navy}}>{d.count} positions</div>
+            <div style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>{d.pct}% | {fmt(d.financedEmissions)} tCO2e</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Flags */}
+    {trail.portfolio.flags.length>0&&<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:16,marginBottom:16}}>
+      <div style={{fontWeight:600,color:T.navy,fontSize:12,marginBottom:8}}>
+        Portfolio Flags — {trail.portfolio.flagSummary.errors} errors · {trail.portfolio.flagSummary.warnings} warnings
+      </div>
+      <div style={{display:'grid',gap:4}}>
+        {trail.portfolio.flags.slice(0,10).map((f,i)=>(
+          <div key={i} style={{...FL,padding:'6px 10px',borderRadius:4,background:`${flagSeverityColor(f.severity)}14`}}>
+            <span style={{fontFamily:T.mono,fontSize:10,fontWeight:700,color:flagSeverityColor(f.severity)}}>[{f.code||f.severity.toUpperCase()}]</span>
+            <span style={{fontSize:10,color:T.text,flex:1}}>{f.msg}</span>
+            <span style={{fontSize:9,fontFamily:T.mono,color:T.textMut}}>{f.position}</span>
+          </div>
+        ))}
+        {trail.portfolio.flags.length>10&&<div style={{fontSize:10,color:T.textMut,paddingLeft:10}}>…and {trail.portfolio.flags.length-10} more flags</div>}
+      </div>
+    </div>}
+
+    {/* Position list with step summary */}
+    <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:16}}>
+      <div style={{fontWeight:600,color:T.navy,fontSize:12,marginBottom:10}}>
+        Position Audit Trails — click to expand 7-step calculation
+      </div>
+      <div style={{display:'grid',gap:6}}>
+        {trail.positions.map((pt,i)=>(
+          <div key={i} style={{border:`1px solid ${T.border}`,borderRadius:6,overflow:'hidden'}}>
+            {/* Row header */}
+            <div onClick={()=>{setSelPos(selPos===i?null:i);setView('position');}} style={{...FL,padding:'8px 12px',cursor:'pointer',background:selPos===i?T.bg:T.surface}}>
+              <span style={{fontFamily:T.mono,fontSize:10,color:T.textMut,width:60}}>{pt.positionId}</span>
+              <span style={{flex:1,fontWeight:600,fontSize:11,color:T.navy}}>{pt.positionName}</span>
+              <span style={{fontFamily:T.mono,fontSize:10,color:T.textMut,width:80}}>{pt.assetClass?.slice(0,12)}</span>
+              <span style={{fontFamily:T.mono,fontSize:11,color:dqsColor(pt.summary.compositeDqs),width:50}}>DQS-{pt.summary.compositeDqs}</span>
+              <span style={{fontFamily:T.mono,fontSize:11,color:T.navy,width:100}}>{pt.summary.financedEmissions.toFixed(1)} tCO2e</span>
+              <div style={{...FL,gap:4,width:80}}>
+                {['PASS','WARN','FAIL'].map(s=><span key={s} style={{fontSize:9,fontFamily:T.mono,color:stepStatusColor(s)}}>{s[0]}{pt.summary[s.toLowerCase()+'Count']}</span>)}
+              </div>
+              <span style={{color:T.textMut}}>{selPos===i?'▲':'▼'}</span>
+            </div>
+            {/* Expanded 7-step trail */}
+            {selPos===i&&<div style={{borderTop:`1px solid ${T.border}`,padding:'10px 12px',background:T.bg}}>
+              {pt.steps.map((step,si)=>(
+                <div key={si} style={{marginBottom:8,padding:'8px 10px',borderRadius:6,background:statusBg(step.status),border:`1px solid ${step.status==='PASS'?'rgba(22,163,74,0.15)':step.status==='WARN'?'rgba(217,119,6,0.2)':'rgba(220,38,38,0.2)'}`}}>
+                  <div style={{...FL,marginBottom:4}}>
+                    <span style={{fontFamily:T.mono,fontSize:10,fontWeight:700,color:stepStatusColor(step.status),width:24}}>{step.id}</span>
+                    <span style={{fontWeight:600,fontSize:11,color:T.navy,flex:1}}>{step.label}</span>
+                    <span style={{fontSize:9,fontFamily:T.mono,color:T.textMut}}>{step.citation}</span>
+                    <span style={{fontSize:10,fontWeight:700,color:stepStatusColor(step.status),marginLeft:8}}>{step.status}</span>
+                  </div>
+                  <div style={{fontSize:10,color:T.textSec,marginBottom:4}}>{step.desc}</div>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                    <div style={{fontSize:10}}>
+                      <div style={{color:T.textMut,fontFamily:T.mono,marginBottom:2}}>INPUTS</div>
+                      {Object.entries(step.inputs||{}).map(([k,v])=>(
+                        <div key={k} style={{...FL,justifyContent:'space-between'}}>
+                          <span style={{color:T.textSec}}>{k}:</span>
+                          <span style={{fontFamily:T.mono,color:T.navy,fontSize:10}}>{String(v)}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{fontSize:10}}>
+                      <div style={{color:T.textMut,fontFamily:T.mono,marginBottom:2}}>OUTPUTS</div>
+                      {Object.entries(step.outputs||{}).map(([k,v])=>(
+                        <div key={k} style={{...FL,justifyContent:'space-between'}}>
+                          <span style={{color:T.textSec}}>{k}:</span>
+                          <span style={{fontFamily:T.mono,color:T.navy,fontSize:10}}>{String(v)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {step.checks&&<div style={{marginTop:4,display:'flex',gap:4,flexWrap:'wrap'}}>
+                    {step.checks.map((c,ci)=><span key={ci} style={{fontSize:9,padding:'1px 6px',borderRadius:10,background:'rgba(91,138,106,0.1)',color:T.sage}}>✓ {c}</span>)}
+                  </div>}
+                </div>
+              ))}
+              {pt.flags.length>0&&<div style={{marginTop:6,padding:'6px 8px',borderRadius:4,background:'rgba(220,38,38,0.04)',border:`1px solid rgba(220,38,38,0.1)`}}>
+                {pt.flags.map((f,fi)=><div key={fi} style={{fontSize:10,color:flagSeverityColor(f.severity),padding:'1px 0'}}>⚠ [{f.code}] {f.msg}</div>)}
+              </div>}
+            </div>}
+          </div>
+        ))}
+      </div>
+      <div style={{marginTop:12,padding:10,background:T.bg,borderRadius:6}}>
+        <div style={{fontSize:10,fontWeight:600,color:T.navy,marginBottom:4}}>Methodology Notes</div>
+        {trail.methodologyNotes.map((n,i)=><div key={i} style={{fontSize:9,color:T.textSec,padding:'1px 0'}}>• {n}</div>)}
+      </div>
+    </div>
+  </div>);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAIN PAGE COMPONENT — 8 Tabs
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const TABS=['Part A: Financed','Part B: Insurance','Part C: Facilitated','Data Quality','Reference Data','Formula Engine','Downstream','Audit Trail'];
 
 export default function PcafFinancedEmissionsPage(){
   const[activeTab,setActiveTab]=useState(TABS[0]);
@@ -1208,6 +1354,7 @@ export default function PcafFinancedEmissionsPage(){
       {activeTab===TABS[4]&&<ReferenceDataTab/>}
       {activeTab===TABS[5]&&<FormulaEngineTab/>}
       {activeTab===TABS[6]&&<DownstreamTab positions={positions}/>}
+      {activeTab===TABS[7]&&<AuditTrailTab positions={positions}/>}
     </div>
   );
 }
