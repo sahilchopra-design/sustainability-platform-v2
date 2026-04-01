@@ -3,7 +3,7 @@ Interactive Scenario Builder and Sensitivity Analysis API Routes
 Enables real-time what-if analysis, scenario comparison, and sensitivity testing
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime, timezone
 from uuid import uuid4, UUID
@@ -33,6 +33,8 @@ from services.scenario_analysis_engine import (
     list_scenarios,
     get_scenario,
 )
+from api.dependencies import get_current_user
+from db.models.portfolio_pg import UserPG
 
 router = APIRouter(prefix="/api/v1/scenarios", tags=["Scenario Analysis"])
 
@@ -83,7 +85,7 @@ async def get_dashboard():
 # ============ Scenario Builder ============
 
 @router.post("/build", response_model=ScenarioBuildResult)
-async def build_scenario(request: ScenarioBuildRequest):
+async def build_scenario(request: ScenarioBuildRequest, _user: UserPG = Depends(get_current_user)):
     """
     Build a custom scenario with modifications.
     
@@ -176,7 +178,7 @@ async def get_scenario_by_id(scenario_id: str):
 
 
 @router.post("/compare", response_model=ScenarioComparisonResult)
-async def compare_scenarios(request: ScenarioComparisonRequest):
+async def compare_scenarios(request: ScenarioComparisonRequest, _user: UserPG = Depends(get_current_user)):
     """
     Compare multiple scenarios against base property.
     
@@ -192,7 +194,7 @@ async def compare_scenarios(request: ScenarioComparisonRequest):
 
 
 @router.post("/batch-create", response_model=BatchScenarioResult)
-async def batch_create_scenarios(request: BatchScenarioRequest):
+async def batch_create_scenarios(request: BatchScenarioRequest, _user: UserPG = Depends(get_current_user)):
     """
     Create multiple scenarios at once using templates.
     """

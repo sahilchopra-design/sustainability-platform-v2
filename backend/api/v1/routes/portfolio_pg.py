@@ -10,8 +10,9 @@ from datetime import datetime, timezone
 import uuid
 
 from db.base import get_db
-from db.models.portfolio_pg import PortfolioPG, AssetPG, AnalysisRunPG
+from db.models.portfolio_pg import PortfolioPG, AssetPG, AnalysisRunPG, UserPG
 from middleware.auth_middleware import apply_org_filter, get_request_org_id
+from api.dependencies import get_current_user
 
 router = APIRouter(prefix="/api/pg", tags=["portfolios-pg"])
 
@@ -58,7 +59,7 @@ def list_portfolios(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/portfolios", status_code=201)
-def create_portfolio(request: Request, body: PortfolioCreate, db: Session = Depends(get_db)):
+def create_portfolio(request: Request, body: PortfolioCreate, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     org_id = get_request_org_id(request)
     p = PortfolioPG(name=body.name, description=body.description, org_id=org_id)
     db.add(p)
@@ -109,7 +110,7 @@ def get_portfolio(pid: str, request: Request, db: Session = Depends(get_db)):
 
 
 @router.put("/portfolios/{pid}")
-def update_portfolio(pid: str, body: PortfolioUpdate, request: Request, db: Session = Depends(get_db)):
+def update_portfolio(pid: str, body: PortfolioUpdate, request: Request, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     p = db.get(PortfolioPG, pid)
     if not p:
         raise HTTPException(404, "Portfolio not found")
@@ -123,7 +124,7 @@ def update_portfolio(pid: str, body: PortfolioUpdate, request: Request, db: Sess
 
 
 @router.delete("/portfolios/{pid}", status_code=204)
-def delete_portfolio(pid: str, request: Request, db: Session = Depends(get_db)):
+def delete_portfolio(pid: str, request: Request, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     p = db.get(PortfolioPG, pid)
     if not p:
         raise HTTPException(404, "Portfolio not found")
@@ -133,7 +134,7 @@ def delete_portfolio(pid: str, request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/portfolios/{pid}/assets", status_code=201)
-def add_asset(pid: str, body: AssetCreate, request: Request, db: Session = Depends(get_db)):
+def add_asset(pid: str, body: AssetCreate, request: Request, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     p = db.get(PortfolioPG, pid)
     if not p:
         raise HTTPException(404, "Portfolio not found")
@@ -151,7 +152,7 @@ def add_asset(pid: str, body: AssetCreate, request: Request, db: Session = Depen
 
 
 @router.delete("/portfolios/{pid}/assets/{aid}", status_code=204)
-def remove_asset(pid: str, aid: str, db: Session = Depends(get_db)):
+def remove_asset(pid: str, aid: str, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     a = db.get(AssetPG, aid)
     if not a or a.portfolio_id != pid:
         raise HTTPException(404, "Asset not found")

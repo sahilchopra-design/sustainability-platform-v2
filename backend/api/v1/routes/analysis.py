@@ -10,6 +10,8 @@ from datetime import datetime
 
 from db.base import get_db
 from services.scenario_comparison_service import ScenarioComparisonService
+from api.dependencies import get_current_user
+from db.models.portfolio_pg import UserPG
 
 router = APIRouter(prefix="/api/v1/analysis", tags=["analysis"])
 
@@ -114,7 +116,7 @@ def list_comparisons(db: Session = Depends(get_db)):
 
 
 @router.post("/comparisons", response_model=ComparisonResponse, status_code=201)
-def create_comparison(body: ComparisonCreate, db: Session = Depends(get_db)):
+def create_comparison(body: ComparisonCreate, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     """Save a new scenario comparison."""
     svc = ScenarioComparisonService(db)
     return svc.create_comparison(body.model_dump())
@@ -141,7 +143,7 @@ def get_comparison_data(comp_id: str, db: Session = Depends(get_db)):
 
 
 @router.delete("/comparisons/{comp_id}", status_code=204)
-def delete_comparison(comp_id: str, db: Session = Depends(get_db)):
+def delete_comparison(comp_id: str, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     """Delete a comparison and its gap analyses."""
     svc = ScenarioComparisonService(db)
     if not svc.delete_comparison(comp_id):
@@ -235,7 +237,7 @@ class AlertCreate(BaseModel):
 
 
 @router.post("/alerts", response_model=AlertResponse, status_code=201)
-def create_alert(body: AlertCreate, db: Session = Depends(get_db)):
+def create_alert(body: AlertCreate, db: Session = Depends(get_db), _user: UserPG = Depends(get_current_user)):
     """Create a new alert."""
     svc = ScenarioComparisonService(db)
     return svc.create_alert(body.model_dump())

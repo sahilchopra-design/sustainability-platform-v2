@@ -9,6 +9,8 @@ from api.v1.schemas import (
     PortfolioCreate, PortfolioUpdate, PortfolioSummary, PortfolioDetail,
     HoldingCreate, HoldingResponse, PaginatedResponse, MessageResponse
 )
+from api.dependencies import get_current_user
+from db.models.portfolio_pg import UserPG
 
 router = APIRouter(prefix="/portfolios", tags=["portfolios"])
 
@@ -84,7 +86,8 @@ def get_portfolio(
 @router.post("", response_model=PortfolioDetail, status_code=status.HTTP_201_CREATED)
 def create_portfolio(
     portfolio_data: PortfolioCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _user: UserPG = Depends(get_current_user),
 ):
     """
     Create a new portfolio.
@@ -111,7 +114,8 @@ def create_portfolio(
 def update_portfolio(
     portfolio_id: str,
     portfolio_data: PortfolioUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _user: UserPG = Depends(get_current_user),
 ):
     """
     Update portfolio information.
@@ -146,7 +150,8 @@ def update_portfolio(
 @router.delete("/{portfolio_id}", response_model=MessageResponse)
 def delete_portfolio(
     portfolio_id: str,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _user: UserPG = Depends(get_current_user),
 ):
     """
     Delete a portfolio.
@@ -214,7 +219,8 @@ def list_holdings(
 def add_holding(
     portfolio_id: str,
     holding_data: HoldingCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _user: UserPG = Depends(get_current_user),
 ):
     """
     Add a new holding to the portfolio.

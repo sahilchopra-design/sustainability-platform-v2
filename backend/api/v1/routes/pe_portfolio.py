@@ -16,11 +16,13 @@ GET   /api/v1/pe-portfolio/db/summary            — Portfolio summary (TVPI/DPI
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 from datetime import date
 
+from api.dependencies import get_current_user
+from db.models.portfolio_pg import UserPG
 from services.pe_portfolio_monitor import (
     PEPortfolioMonitor,
     CompanyKPIData,
@@ -199,7 +201,7 @@ def _ser_plan(p) -> dict:
 # ---------------------------------------------------------------------------
 
 @router.post("/monitor-company")
-def monitor_company(req: CompanyMonitorRequest):
+def monitor_company(req: CompanyMonitorRequest, _user: UserPG = Depends(get_current_user)):
     """Monitor a single portfolio company's ESG KPIs."""
     engine = PEPortfolioMonitor()
     inp = _to_monitor_input(req)
@@ -208,7 +210,7 @@ def monitor_company(req: CompanyMonitorRequest):
 
 
 @router.post("/monitor-portfolio")
-def monitor_portfolio(req: PortfolioMonitorRequest):
+def monitor_portfolio(req: PortfolioMonitorRequest, _user: UserPG = Depends(get_current_user)):
     """Monitor all portfolio companies with aggregate summary."""
     engine = PEPortfolioMonitor()
     companies = [_to_monitor_input(c) for c in req.companies]
@@ -228,7 +230,7 @@ def monitor_portfolio(req: PortfolioMonitorRequest):
 
 
 @router.post("/value-creation-plan")
-def value_creation_plan(req: ValueCreationRequest):
+def value_creation_plan(req: ValueCreationRequest, _user: UserPG = Depends(get_current_user)):
     """Generate ESG value creation plan for a portfolio company."""
     engine = PEValueCreationEngine()
     plan = engine.generate_plan(
@@ -306,7 +308,7 @@ class ExitRequest(BaseModel):
 
 
 @router.post("/db/companies", summary="Create portfolio company in DB")
-def db_create_company(req: PortfolioCompanyCreateRequest) -> Dict[str, Any]:
+def db_create_company(req: PortfolioCompanyCreateRequest, _user: UserPG = Depends(get_current_user)) -> Dict[str, Any]:
     """Insert a new portfolio company into pe_portfolio_companies."""
     svc = _get_pe_db()
     data = req.model_dump()
@@ -328,7 +330,7 @@ def db_list_companies(
 
 
 @router.patch("/db/companies/{company_id}", summary="Update portfolio company")
-def db_update_company(company_id: str, req: PortfolioCompanyUpdateRequest) -> Dict[str, Any]:
+def db_update_company(company_id: str, req: PortfolioCompanyUpdateRequest, _user: UserPG = Depends(get_current_user)) -> Dict[str, Any]:
     """Partial update for a portfolio company (NAV, ESG score, etc.)."""
     svc = _get_pe_db()
     updates = {k: v for k, v in req.model_dump().items() if v is not None}
@@ -341,7 +343,7 @@ def db_update_company(company_id: str, req: PortfolioCompanyUpdateRequest) -> Di
 
 
 @router.post("/db/companies/{company_id}/exit", summary="Record portfolio company exit")
-def db_record_exit(company_id: str, req: ExitRequest) -> Dict[str, Any]:
+def db_record_exit(company_id: str, req: ExitRequest, _user: UserPG = Depends(get_current_user)) -> Dict[str, Any]:
     """Record an exit event — sets status=exited, exit_date, exit_proceeds."""
     svc = _get_pe_db()
     result = svc.record_exit(

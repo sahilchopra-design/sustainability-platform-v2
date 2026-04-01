@@ -3,7 +3,7 @@ Portfolio Aggregation and Reporting Module API Routes
 Consolidates property valuations into portfolio-level analytics
 """
 
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from typing import Optional, List
 from datetime import date
 from uuid import UUID, uuid4, uuid5, NAMESPACE_DNS
@@ -24,6 +24,8 @@ from services.portfolio_analytics_engine_v2 import (
     remove_holding, list_portfolios, get_report, init_sample_data
 )
 from middleware.auth_middleware import get_request_org_id
+from api.dependencies import get_current_user
+from db.models.portfolio_pg import UserPG
 
 
 router = APIRouter(prefix="/api/v1/portfolio-analytics", tags=["Portfolio Analytics"])
@@ -91,7 +93,7 @@ async def list_all_portfolios(
 
 
 @router.post("/portfolios", response_model=PortfolioResponse, status_code=201)
-async def create_portfolio(data: PortfolioCreate):
+async def create_portfolio(data: PortfolioCreate, _user: UserPG = Depends(get_current_user)):
     """
     Create a new portfolio.
     
@@ -179,7 +181,7 @@ async def get_portfolio_by_id(portfolio_id: str, request: Request):
 
 
 @router.patch("/portfolios/{portfolio_id}", response_model=PortfolioResponse)
-async def update_portfolio(portfolio_id: str, data: PortfolioUpdate, request: Request):
+async def update_portfolio(portfolio_id: str, data: PortfolioUpdate, request: Request, _user: UserPG = Depends(get_current_user)):
     """
     Update portfolio information.
 
@@ -285,7 +287,7 @@ async def list_holdings(portfolio_id: str, request: Request):
 
 
 @router.post("/portfolios/{portfolio_id}/holdings", response_model=HoldingResponse, status_code=201)
-async def add_holding(portfolio_id: str, data: HoldingCreate, request: Request):
+async def add_holding(portfolio_id: str, data: HoldingCreate, request: Request, _user: UserPG = Depends(get_current_user)):
     """
     Add a new holding to the portfolio.
 
@@ -324,7 +326,7 @@ async def add_holding(portfolio_id: str, data: HoldingCreate, request: Request):
 
 
 @router.delete("/portfolios/{portfolio_id}/holdings/{property_id}", status_code=204)
-async def delete_holding(portfolio_id: str, property_id: str, request: Request):
+async def delete_holding(portfolio_id: str, property_id: str, request: Request, _user: UserPG = Depends(get_current_user)):
     """
     Remove a holding from the portfolio.
     P0-2: Rejects if portfolio belongs to a different organisation.
@@ -373,6 +375,7 @@ async def get_portfolio_analytics(
 async def compare_scenarios(
     portfolio_id: str,
     data: ScenarioComparisonRequest,
+    _user: UserPG = Depends(get_current_user),
 ):
     """
     Compare multiple scenarios for a portfolio.
@@ -425,6 +428,7 @@ async def get_portfolio_dashboard(
 async def generate_report(
     portfolio_id: str,
     data: ReportGenerateRequest,
+    _user: UserPG = Depends(get_current_user),
 ):
     """
     Generate a comprehensive report for the portfolio.
