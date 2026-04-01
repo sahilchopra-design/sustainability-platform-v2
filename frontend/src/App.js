@@ -322,6 +322,12 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint AX — Sovereign & Country Climate Risk Intelligence (new analytical modules)
+const SovereignEsgScorerPage   = React.lazy(() => import("./features/sovereign-esg-scorer/pages/SovereignEsgScorerPage"));
+const NdcAlignmentTrackerPage  = React.lazy(() => import("./features/ndc-alignment-tracker/pages/NdcAlignmentTrackerPage"));
+const SovereignPhysicalRiskPage= React.lazy(() => import("./features/sovereign-physical-risk/pages/SovereignPhysicalRiskPage"));
+const EmDebtClimateRiskPage    = React.lazy(() => import("./features/em-debt-climate-risk/pages/EmDebtClimateRiskPage"));
+const MdbClimateFinancePage    = React.lazy(() => import("./features/mdb-climate-finance/pages/MdbClimateFinancePage"));
 // Sprint AL — Transition Planning & Net Zero Alignment Intelligence
 const TransitionPlanBuilderPage = React.lazy(() => import("./features/transition-plan-builder/pages/TransitionPlanBuilderPage"));
 const GfanzSectorPathwaysPage = React.lazy(() => import("./features/gfanz-sector-pathways/pages/GfanzSectorPathwaysPage"));
@@ -689,6 +695,16 @@ const NAV_GROUPS = [
     { path: '/blockchain-carbon-registry',   label: 'Blockchain Carbon Registry',   badge: '200 Credits · Verra/GS/ACR/CAR · Tokenization · Integrity',      code: 'EP-AM3' },
     { path: '/climate-data-marketplace',     label: 'Climate Data Marketplace',     badge: '60 Providers · Quality Radar · Coverage Gap · Stack Builder',     code: 'EP-AM4' },
     { path: '/iot-emissions-tracker',        label: 'IoT Emissions Tracker',        badge: '60 Facilities · 200 Sensors · Anomaly Detection · Compliance',   code: 'EP-AM5' },
+  ]},
+  { label: 'Sovereign & Country Climate Risk', icon: '🌐', color: '#1e3a5f', items: [
+    { path: '/sovereign-esg-hub',         label: 'Sovereign ESG Hub',           badge: 'Hub · 60 Countries · ESG+Physical+NDC+Debt · Board Pack',       code: 'EP-AX6' },
+    { path: '/sovereign-esg-scorer',      label: 'Sovereign ESG Scorer',        badge: '60 Countries · E/S/G Pillars · 6 Providers · AAA–CCC Ratings',  code: 'EP-AX1' },
+    { path: '/ndc-alignment-tracker',     label: 'NDC Alignment Tracker',       badge: '80 Countries · Paris 1.5°C/2°C · Sectoral · Financing Gap',     code: 'EP-AX2' },
+    { path: '/sovereign-physical-risk',   label: 'Sovereign Physical Risk',     badge: '70 Countries · Flood/Drought/Heat · GDP@Risk · NGFS Scenarios', code: 'EP-AX3' },
+    { path: '/em-debt-climate-risk',      label: 'EM Debt & Climate Risk',      badge: '50 EMs · Green Bonds · Debt-for-Nature · Credit Spreads',       code: 'EP-AX4' },
+    { path: '/mdb-climate-finance',       label: 'MDB Climate Finance',         badge: '8 MDBs · $120B Flows · Mobilisation · Project Pipeline',        code: 'EP-AX5' },
+    { path: '/sovereign-climate-risk',    label: 'Sovereign Climate Risk',      badge: 'Country Risk · Policy · Physical · Transition · Fiscal Impact',  code: 'EP-AQ2' },
+    { path: '/sovereign-debt-sustainability', label: 'Sovereign Debt Sustainability', badge: 'Climate-Adj Fiscal · Debt Distress · DSA Scenarios',       code: 'EP-AQ3' },
   ]},
   { label: 'Transition Planning & Net Zero', icon: '🧭', color: '#0e7490', items: [
     { path: '/transition-planning-hub',       label: 'Transition Planning Hub',       badge: 'Hub · TPT+GFANZ+ACT+NZAM · Credibility · Board Pack',          code: 'EP-AL6' },
@@ -1618,6 +1634,12 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint AX — Sovereign & Country Climate Risk Intelligence (new modules) */}
+            <Route path="/sovereign-esg-scorer"     element={<SovereignEsgScorerPage />} />
+            <Route path="/ndc-alignment-tracker"    element={<NdcAlignmentTrackerPage />} />
+            <Route path="/sovereign-physical-risk"  element={<SovereignPhysicalRiskPage />} />
+            <Route path="/em-debt-climate-risk"     element={<EmDebtClimateRiskPage />} />
+            <Route path="/mdb-climate-finance"      element={<MdbClimateFinancePage />} />
             {/* Sprint AL — Transition Planning & Net Zero Alignment */}
             <Route path="/transition-planning-hub"     element={<TransitionPlanningHubPage />} />
             <Route path="/transition-plan-builder"     element={<TransitionPlanBuilderPage />} />
