@@ -1,767 +1,624 @@
-import React, { useState } from 'react';
-import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  BarChart, Bar,
-} from 'recharts';
-import { REGULATORY_THRESHOLDS } from '../../../data/referenceData';
+// EP-AH3 — ISSB Disclosure Engine
+// Route: /issb-disclosure
+// Framework: IFRS S1 (General Sustainability) + IFRS S2 (Climate) + SASB Industry Standards
+// Reference: IFRS Foundation, ISSB Standards effective Jan 2024
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend,ScatterChart,Scatter,ZAxis} from 'recharts';
+import {REGULATORY_THRESHOLDS,NGFS_SCENARIOS,SECTOR_BENCHMARKS} from '../../../data/referenceData';
 
-/* ============================================================ THEME */
+/* ═══════════════════════════════════════════════════════════════════════════════
+   THEME + HELPERS
+   ═══════════════════════════════════════════════════════════════════════════════ */
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#7c3aed';
+const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const PIECLRS=[ACCENT,T.navy,T.gold,T.sage,T.amber,T.green,T.red,'#0891b2','#be185d','#ea580c'];
+const PAGE_SIZE=15;
 
-/* ============================================================ HELPERS */
-const pill = (label, color) => (
-  <span style={{background:`${color}18`,color,border:`1px solid ${color}40`,borderRadius:99,padding:'2px 10px',fontSize:11,fontWeight:600,whiteSpace:'nowrap'}}>{label}</span>
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(22,163,74,0.12)':v>=mid?'rgba(197,169,106,0.12)':v>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v>=hi?T.green:v>=mid?T.gold:v>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const statusBadge=(s)=>{const m={'Complete':{bg:'rgba(22,163,74,0.12)',c:T.green},'In Progress':{bg:'rgba(217,119,6,0.12)',c:T.amber},'Not Started':{bg:'rgba(220,38,38,0.12)',c:T.red},'Mandatory':{bg:'rgba(124,58,237,0.1)',c:ACCENT},'Voluntary':{bg:'rgba(197,169,106,0.12)',c:T.gold},'Stayed':{bg:'rgba(220,38,38,0.08)',c:T.red},'Consultation':{bg:'rgba(90,138,106,0.1)',c:T.sage}};const st=m[s]||m['In Progress'];return{background:st.bg,color:st.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+
+const TABS=['IFRS S1 Requirements','IFRS S2 Climate','Scenario Analysis','Industry Metrics','Gap Analysis','Connectivity','Export'];
+
+const KPI=({label,value,sub,color,cite})=>(
+  <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:150}}>
+    <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div>
+    <div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>
+    {sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}
+    {cite&&<div style={{fontSize:9,color:T.textMut,fontFamily:T.mono,marginTop:2}}>{cite}</div>}
+  </div>
 );
-const statusColor = s => s==='Complete'?T.green:s==='In Progress'?T.amber:T.red;
-const Card = ({children,style={}}) => (
-  <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'18px 20px',boxShadow:T.card,...style}}>{children}</div>
-);
-const SectionTitle = ({children}) => (
-  <div style={{fontSize:13,fontWeight:700,color:T.navy,textTransform:'uppercase',letterSpacing:'0.06em',marginBottom:12}}>{children}</div>
-);
-const KpiCard = ({label,value,sub,color=T.navy}) => (
-  <Card style={{flex:1,minWidth:160}}>
-    <div style={{fontSize:26,fontWeight:800,color,fontVariantNumeric:'tabular-nums'}}>{value}</div>
-    <div style={{fontSize:13,fontWeight:600,color:T.text,marginTop:2}}>{label}</div>
-    {sub&&<div style={{fontSize:11,color:T.textMut,marginTop:2}}>{sub}</div>}
-  </Card>
+const SectionHead=({children,cite})=>(
+  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+    <div style={{fontSize:14,fontWeight:700,color:T.navy}}>{children}</div>
+    {cite&&<span style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{cite}</span>}
+  </div>
 );
 
-/* ============================================================ DATA */
-const ADOPTION_DATA = [
-  {jurisdiction:'New Zealand',region:'Asia-Pacific',standard:'XRB Aotearoa',status:'Mandatory',scope:'Large listed + FMC',effective:'FY2023',gdpBn:250,diff:'First globally — broad entity scope'},
-  {jurisdiction:'UK',region:'Europe',standard:'UK SRS (ISSB-aligned)',status:'Mandatory',scope:'Premium listed (TCFD → ISSB)',effective:'FY2025',gdpBn:3100,diff:'UK-specific carve-outs under review'},
-  {jurisdiction:'Australia',region:'Asia-Pacific',standard:'AASB S1/S2',status:'Mandatory',scope:'Large entities (Group 1)',effective:'FY2025',gdpBn:1700,diff:'Phased: Group 1→2→3 over 3 yrs'},
-  {jurisdiction:'Singapore',region:'Asia-Pacific',standard:'SGX ISSB',status:'Mandatory',scope:'SGX-listed large',effective:'FY2025',gdpBn:500,diff:'Climate first; S1 from FY2026'},
-  {jurisdiction:'Brazil',region:'Americas',standard:'CVM ISSB',status:'Mandatory',scope:'Listed companies',effective:'FY2025',gdpBn:2100,diff:'Portuguese language disclosure'},
-  {jurisdiction:'Nigeria',region:'Africa',standard:'FRCN ISSB',status:'Mandatory',scope:'Public interest entities',effective:'FY2025',gdpBn:480,diff:'First African ISSB mandate'},
-  {jurisdiction:'Hong Kong',region:'Asia-Pacific',standard:'HKEX ISSB',status:'Mandatory',scope:'Large listed',effective:'FY2025',gdpBn:370,diff:'SFC climate mandate aligned'},
-  {jurisdiction:'Switzerland',region:'Europe',standard:'Swiss ISSB',status:'Mandatory',scope:'Large PIEs >500 employees',effective:'FY2024',gdpBn:870,diff:'Linked to CO2 Act obligations'},
-  {jurisdiction:'Japan',region:'Asia-Pacific',standard:'SSBJ S1/S2',status:'Voluntary→Mandatory',scope:'Prime Market listed',effective:'FY2027 (mandatory)',gdpBn:4200,diff:'SSBJ standards near-identical to ISSB'},
-  {jurisdiction:'South Korea',region:'Asia-Pacific',standard:'K-ISSB',status:'Voluntary→Mandatory',scope:'KOSPI listed',effective:'FY2030 (mandatory)',gdpBn:1600,diff:'Phased rollout by market cap'},
-  {jurisdiction:'Canada',region:'Americas',standard:'CSA ISSB',status:'Consultation',scope:'Reporting issuers',effective:'TBD 2026',gdpBn:2100,diff:'CSA NI 51-107 consultation 2024'},
-  {jurisdiction:'EU',region:'Europe',standard:'ESRS (ISSB-interoperable)',status:'Mandatory',scope:'Large CSRD-scope entities',effective:'FY2024 (phased)',gdpBn:17000,diff:'ESRS ≠ ISSB but endorsed interoperable'},
-  {jurisdiction:'USA',region:'Americas',standard:'SEC Climate Rule',status:'Stayed',scope:'SEC registrants',effective:'TBD (legal challenges)',gdpBn:27000,diff:'Own rule — not ISSB; legal stay 2024'},
-  {jurisdiction:'India',region:'Asia-Pacific',standard:'SEBI BRSR Core',status:'Mandatory',scope:'Top 1000 listed',effective:'FY2024',gdpBn:3500,diff:'BRSR Core aligned to ISSB metrics'},
-  {jurisdiction:'South Africa',region:'Africa',standard:'JSE ISSB',status:'Mandatory',scope:'JSE-listed',effective:'FY2024',gdpBn:420,diff:'King IV integrated reporting context'},
-  {jurisdiction:'Malaysia',region:'Asia-Pacific',standard:'Bursa ISSB',status:'Voluntary',scope:'Bursa-listed',effective:'Voluntary 2025',gdpBn:380,diff:'SC sustainable finance roadmap'},
-  {jurisdiction:'Thailand',region:'Asia-Pacific',standard:'SEC Thailand ISSB',status:'Voluntary',scope:'SET-listed',effective:'Consultation 2025',gdpBn:500,diff:'BOT climate stress test linked'},
-  {jurisdiction:'Indonesia',region:'Asia-Pacific',standard:'OJK ISSB',status:'Voluntary',scope:'IDX-listed',effective:'TBD',gdpBn:1320,diff:'OJK sustainable finance roadmap'},
-  {jurisdiction:'Mexico',region:'Americas',standard:'BMV ISSB',status:'Voluntary',scope:'BMV-listed',effective:'TBD',gdpBn:1270,diff:'CNBV consultation underway'},
-  {jurisdiction:'Chile',region:'Americas',standard:'CMF ISSB',status:'Voluntary',scope:'CMF-listed',effective:'TBD',gdpBn:360,diff:'CMF clima disclosure framework'},
+/* ═══════════════════════════════════════════════════════════════════════════════
+   IFRS S1 — 4 PILLARS WITH ALL DISCLOSURE REQUIREMENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const S1_PILLARS=[
+  {pillar:'Governance',para:'IFRS S1 para 26-27',score:78,color:T.navy,
+    reqs:[
+      {code:'S1-GOV-a',label:'Governance body(ies) or individual(s) responsible for oversight of sustainability-related risks and opportunities',status:'Complete',source:'Board Risk Committee Charter',quality:90,para:'S1 §26(a)'},
+      {code:'S1-GOV-b',label:'How governance body ensures appropriate skills and competencies',status:'Complete',source:'Board Skills Matrix',quality:85,para:'S1 §26(a)(i)'},
+      {code:'S1-GOV-c',label:'How and how often the body is informed about sustainability matters',status:'In Progress',source:'Board Calendar & Agenda Review',quality:72,para:'S1 §26(a)(ii)'},
+      {code:'S1-GOV-d',label:'How the body considers sustainability matters in strategy oversight',status:'Complete',source:'Strategic Planning Integration',quality:88,para:'S1 §26(a)(iii)'},
+      {code:'S1-GOV-e',label:'How the body sets targets and monitors progress',status:'In Progress',source:'Target Setting Framework',quality:65,para:'S1 §26(a)(iv)'},
+      {code:'S1-GOV-f',label:'Managements role in governance processes — assessment and management',status:'Complete',source:'CEO Sustainability Report',quality:82,para:'S1 §27(a)'},
+      {code:'S1-GOV-g',label:'Whether and how management reports to the governance body',status:'Complete',source:'Management Reporting Protocol',quality:80,para:'S1 §27(b)'},
+    ]},
+  {pillar:'Strategy',para:'IFRS S1 para 28-35',score:62,color:ACCENT,
+    reqs:[
+      {code:'S1-STR-a',label:'Sustainability-related risks and opportunities that could reasonably be expected to affect prospects',status:'Complete',source:'Enterprise Risk Register',quality:88,para:'S1 §28'},
+      {code:'S1-STR-b',label:'Current and anticipated effects on business model and value chain',status:'In Progress',source:'Value Chain Analysis Module',quality:65,para:'S1 §29'},
+      {code:'S1-STR-c',label:'Effects on strategy and decision-making',status:'In Progress',source:'Strategic Planning Integration',quality:60,para:'S1 §30'},
+      {code:'S1-STR-d',label:'Effects on financial position, financial performance and cash flows',status:'In Progress',source:'Financial Impact Assessment',quality:55,para:'S1 §31'},
+      {code:'S1-STR-e',label:'Resilience of strategy — scenario analysis',status:'Not Started',source:'Scenario Analysis Engine (Tab 3)',quality:30,para:'S1 §35'},
+      {code:'S1-STR-f',label:'Trade-offs between sustainability-related risks and opportunities',status:'In Progress',source:'Trade-off Analysis Framework',quality:50,para:'S1 §32'},
+      {code:'S1-STR-g',label:'How entity has responded to sustainability matters (actions taken)',status:'In Progress',source:'Action Plan Registry',quality:58,para:'S1 §33'},
+      {code:'S1-STR-h',label:'Planned changes to business model, CapEx, financing',status:'Not Started',source:'CapEx Planning Module',quality:25,para:'S1 §34'},
+    ]},
+  {pillar:'Risk Management',para:'IFRS S1 para 36-42',score:71,color:T.sage,
+    reqs:[
+      {code:'S1-RM-a',label:'Processes to identify sustainability-related risks and opportunities',status:'Complete',source:'Enterprise Risk Management Framework',quality:82,para:'S1 §36'},
+      {code:'S1-RM-b',label:'Processes to assess, prioritize and monitor risks',status:'Complete',source:'Risk Prioritization Matrix',quality:78,para:'S1 §37'},
+      {code:'S1-RM-c',label:'Processes to manage/mitigate risks — how decisions are made',status:'In Progress',source:'Risk Mitigation Plans',quality:62,para:'S1 §38'},
+      {code:'S1-RM-d',label:'Integration of sustainability risk management into overall risk management',status:'In Progress',source:'ERM Integration Project',quality:55,para:'S1 §39'},
+      {code:'S1-RM-e',label:'Processes to identify sustainability-related opportunities',status:'In Progress',source:'Opportunity Assessment Framework',quality:60,para:'S1 §40'},
+      {code:'S1-RM-f',label:'Processes to assess and prioritize opportunities',status:'Not Started',source:'Opportunity Prioritization',quality:30,para:'S1 §41'},
+    ]},
+  {pillar:'Metrics & Targets',para:'IFRS S1 para 43-53',score:54,color:T.gold,
+    reqs:[
+      {code:'S1-MT-a',label:'Metrics used to measure and monitor sustainability risks/opportunities',status:'In Progress',source:'ESG Data Platform',quality:68,para:'S1 §43'},
+      {code:'S1-MT-b',label:'Cross-industry metric categories (IFRS S1 Appendix B)',status:'In Progress',source:'Cross-Industry Metrics Module',quality:55,para:'S1 §44'},
+      {code:'S1-MT-c',label:'Industry-based metrics (SASB Standards)',status:'Not Started',source:'SASB Module (Tab 4)',quality:20,para:'S1 §45'},
+      {code:'S1-MT-d',label:'Targets set and progress against targets',status:'Not Started',source:'Targets & Commitments Registry',quality:15,para:'S1 §46'},
+      {code:'S1-MT-e',label:'Whether targets are absolute or intensity-based',status:'Not Started',source:'Target Classification',quality:10,para:'S1 §47'},
+      {code:'S1-MT-f',label:'Time period over which targets apply',status:'Not Started',source:'Target Timeline Mapping',quality:12,para:'S1 §48'},
+      {code:'S1-MT-g',label:'Base period and base values for measurement',status:'In Progress',source:'Baseline Data Repository',quality:45,para:'S1 §49'},
+      {code:'S1-MT-h',label:'Milestones and interim targets',status:'Not Started',source:'Milestone Tracker',quality:8,para:'S1 §50'},
+      {code:'S1-MT-i',label:'Performance against targets — current vs base period',status:'Not Started',source:'Performance Analytics',quality:15,para:'S1 §51'},
+      {code:'S1-MT-j',label:'Analysis of trends or significant changes in metrics',status:'In Progress',source:'Trend Analysis Engine',quality:40,para:'S1 §52'},
+    ]},
 ];
 
-const ADOPTION_MOMENTUM = [
-  {year:'2023',mandatory:2,voluntary:3,total:5},
-  {year:'2024',mandatory:5,voluntary:6,total:11},
-  {year:'2025',mandatory:10,voluntary:7,total:17},
-  {year:'2026',mandatory:12,voluntary:6,total:18},
-  {year:'2027',mandatory:15,voluntary:5,total:20},
+/* ═══════════════════════════════════════════════════════════════════════════════
+   IFRS S2 — CLIMATE-SPECIFIC DISCLOSURE REQUIREMENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const S2_REQUIREMENTS=[
+  {id:1,title:'Climate-related Governance',para:'IFRS S2 §5-9',tcfd:'Governance a/b',status:'Complete',score:85,module:'Board ESG Dashboard',
+    disclosure:'Board oversight via Sustainability Committee (quarterly). CSO reports to CEO. Board-approved climate transition plan.',
+    subItems:['Board/committee oversight of climate risks','Climate competence assessment','Frequency of climate briefings','Integration into strategic decisions','Performance metrics linked to climate']},
+  {id:2,title:'Climate Strategy — Risks & Opportunities',para:'IFRS S2 §10-12',tcfd:'Strategy a/b',status:'In Progress',score:65,module:'Climate Risk Analytics',
+    disclosure:'12 material climate risks identified across value chain. Transition risks: policy, technology, market. Physical risks: acute + chronic.',
+    subItems:['Identified climate risks (transition + physical)','Identified climate opportunities','Time horizons for each risk/opportunity','Effects on business model','Effects on value chain']},
+  {id:3,title:'Transition Plan',para:'IFRS S2 §14',tcfd:'Strategy c',status:'In Progress',score:55,module:'Transition Plan Builder',
+    disclosure:'Transition plan aligned with 1.5C target. Net-zero commitment by 2050. Interim targets: 50% Scope 1+2 reduction by 2030.',
+    subItems:['Key assumptions in transition plan','Dependencies on external factors','CapEx and OpEx commitments','Carbon pricing assumptions','Locked-in GHG emissions from assets']},
+  {id:4,title:'Climate Scenario Analysis',para:'IFRS S2 §22',tcfd:'Strategy d',status:'Not Started',score:30,module:'Scenario Analysis Engine',
+    disclosure:'Scenario analysis pending: NGFS Net Zero 2050 (1.5C), Delayed Transition (>2C), Current Policies (3C+).',
+    subItems:['Scenario selection and rationale','Time horizons (2030, 2040, 2050)','Financial impact quantification','Resilience assessment','Key assumptions and limitations']},
+  {id:5,title:'Physical Risk Assessment',para:'IFRS S2 §15-19',tcfd:'Risk Mgmt a',status:'In Progress',score:60,module:'Climate Physical Risk',
+    disclosure:'Physical risk assessment using IPCC AR6 + geospatial data. Acute: cyclones, flooding, wildfire. Chronic: sea-level rise, heat stress.',
+    subItems:['Acute physical risks identified','Chronic physical risks identified','Asset-level vulnerability assessment','Adaptation measures','Insurance and residual risk']},
+  {id:6,title:'Transition Risk Assessment',para:'IFRS S2 §20-21',tcfd:'Risk Mgmt b',status:'In Progress',score:58,module:'Portfolio Climate VaR',
+    disclosure:'Carbon price sensitivity analysis. Regulatory risk: EU ETS, CBAM. Technology risk: stranded assets. Market: demand shifts.',
+    subItems:['Policy and legal risks','Technology risks','Market risks','Reputational risks','Carbon price exposure']},
+  {id:7,title:'Climate Risk Management',para:'IFRS S2 §25-27',tcfd:'Risk Mgmt c',status:'Complete',score:75,module:'Enterprise Risk Management',
+    disclosure:'Climate risks integrated into ERM framework. Quarterly monitoring. Risk appetite statements include climate KRIs.',
+    subItems:['Risk identification processes','Risk assessment and prioritization','Risk mitigation strategies','Monitoring and reporting','Integration with overall risk management']},
+  {id:8,title:'GHG Emissions — Scope 1 & 2',para:'IFRS S2 §29(a)',tcfd:'Metrics a',status:'In Progress',score:70,module:'GHG Accounting Engine',
+    disclosure:'Scope 1: 245,000 tCO2e. Scope 2 location-based: 148,000 tCO2e. Scope 2 market-based: 128,400 tCO2e.',
+    subItems:['Gross Scope 1 GHG emissions','Scope 2 location-based','Scope 2 market-based','Disaggregated by GHG type','Consolidation approach (equity/control)']},
+  {id:9,title:'GHG Emissions — Scope 3',para:'IFRS S2 §29(b)',tcfd:'Metrics a',status:'In Progress',score:45,module:'Supply Chain Emissions',
+    disclosure:'Scope 3: 1,890,000 tCO2e (15 categories). Phase-in relief applied for first reporting year per IFRS S2 para C4.',
+    subItems:['Scope 3 categories reported','Material Scope 3 categories identified','Measurement methodology per category','Data quality assessment','Phase-in provisions applied (C4)']},
+  {id:10,title:'Climate Targets',para:'IFRS S2 §33-37',tcfd:'Metrics b/c',status:'Not Started',score:20,module:'Targets & Net Zero Registry',
+    disclosure:'Targets pending: SBTi 1.5C-aligned near-term (2030) + long-term (2050) net-zero.',
+    subItems:['GHG emissions reduction targets','Target scope (S1/S2/S3)','Whether SBTi validated','Base year and base emissions','Carbon credits/offsets approach']},
+  {id:11,title:'Industry-specific Metrics',para:'IFRS S2 §32, App B',tcfd:'Metrics d',status:'Not Started',score:15,module:'SASB Industry Metrics',
+    disclosure:'Industry-specific metrics per SASB Standards pending integration.',
+    subItems:['Industry identified per SASB mapping','Material metrics selected','Data collection approach','Peer comparison','Historical trend data']},
+  {id:12,title:'Internal Carbon Pricing',para:'IFRS S2 §31',tcfd:'Metrics e',status:'In Progress',score:50,module:'Carbon Pricing Engine',
+    disclosure:'Shadow carbon price: $85/tCO2e applied to investment decisions. Implicit price from abatement costs: $120/tCO2e.',
+    subItems:['Whether internal carbon price used','Carbon price per tCO2e','How price informs decisions','Scope of application','Review and update frequency']},
 ];
 
-const S1_PILLARS = [
-  {pillar:'Governance',score:78,reqs:[
-    {code:'S1-GOV-a',label:'Board oversight of sustainability risks/opportunities',status:'Complete',source:'Board Risk Committee Charter',quality:90},
-    {code:'S1-GOV-b',label:"Management's role in governance processes",status:'Complete',source:'CEO Sustainability Report',quality:85},
-  ]},
-  {pillar:'Strategy',score:62,reqs:[
-    {code:'S1-STR-a',label:'Sustainability risks and opportunities identified',status:'Complete',source:'Double Materiality Assessment',quality:88},
-    {code:'S1-STR-b',label:'Effects on business model and value chain',status:'In Progress',source:'Value Chain Analysis Module',quality:65},
-    {code:'S1-STR-c',label:'Effects on strategy and decision-making',status:'In Progress',source:'Strategic Planning Integration',quality:60},
-    {code:'S1-STR-d',label:'Resilience of strategy (scenario analysis)',status:'In Progress',source:'Scenario Analysis Engine (Tab 4)',quality:55},
-  ]},
-  {pillar:'Risk Management',score:71,reqs:[
-    {code:'S1-RM-a',label:'Processes for identifying and assessing risks',status:'Complete',source:'Enterprise Risk Management Framework',quality:82},
-    {code:'S1-RM-b',label:'Processes for monitoring and managing risks',status:'Complete',source:'Risk Dashboard',quality:78},
-    {code:'S1-RM-c',label:'Integration into overall risk management',status:'In Progress',source:'ERM Integration Project',quality:62},
-  ]},
-  {pillar:'Metrics & Targets',score:54,reqs:[
-    {code:'S1-MT-a',label:'Metrics used for sustainability risks/opportunities',status:'In Progress',source:'ESG Data Platform',quality:68},
-    {code:'S1-MT-b',label:'Cross-industry metric categories (IFRS S1 App B)',status:'In Progress',source:'Cross-Industry Metrics Module',quality:55},
-    {code:'S1-MT-c',label:'Industry-based metrics (SASB standards)',status:'Not Started',source:'SASB Tab (Tab 5)',quality:20},
-    {code:'S1-MT-d',label:'Targets set for sustainability risks/opportunities',status:'Not Started',source:'Targets & Commitments Registry',quality:15},
-  ]},
+/* ═══════════════════════════════════════════════════════════════════════════════
+   NGFS SCENARIOS FOR SCENARIO ANALYSIS TAB
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const SCENARIO_SET=[
+  {id:'nz2050',name:'Net Zero 2050',temp:'1.5°C',source:'NGFS Phase IV',type:'Orderly',carbonPrice2030:130,carbonPrice2050:250,gdpImpact:-1.5,physicalDamage:'Low',transitionCost:'High',
+    desc:'Immediate and ambitious policy action. Carbon price rises rapidly. Renewable energy dominates by 2040. Stranded fossil fuel assets.',
+    impacts:[{sector:'Energy',revenue:-25,cost:+15,capex:+40},{sector:'Materials',revenue:-12,cost:+20,capex:+25},{sector:'Financials',revenue:-5,cost:+8,capex:+5},{sector:'Technology',revenue:+10,cost:+3,capex:+15},{sector:'Utilities',revenue:-15,cost:+30,capex:+50}]},
+  {id:'delayed',name:'Delayed Transition',temp:'>2°C',source:'NGFS Phase IV',type:'Disorderly',carbonPrice2030:45,carbonPrice2050:350,gdpImpact:-3.5,physicalDamage:'Medium',transitionCost:'Very High',
+    desc:'Policy action delayed until 2030, then rapid catch-up. Disorderly transition with economic shock. Higher costs from delayed action.',
+    impacts:[{sector:'Energy',revenue:-35,cost:+25,capex:+55},{sector:'Materials',revenue:-20,cost:+30,capex:+40},{sector:'Financials',revenue:-12,cost:+15,capex:+8},{sector:'Technology',revenue:+5,cost:+8,capex:+20},{sector:'Utilities',revenue:-25,cost:+45,capex:+65}]},
+  {id:'curpol',name:'Current Policies',temp:'3°C+',source:'NGFS Phase IV',type:'Hot house',carbonPrice2030:25,carbonPrice2050:40,gdpImpact:-8.0,physicalDamage:'Very High',transitionCost:'Low',
+    desc:'No new climate policies. Physical risks escalate dramatically. Severe GDP impact from natural disasters, productivity loss, sea-level rise.',
+    impacts:[{sector:'Energy',revenue:-5,cost:+5,capex:+10},{sector:'Materials',revenue:-8,cost:+15,capex:+8},{sector:'Financials',revenue:-20,cost:+25,capex:+3},{sector:'Technology',revenue:-3,cost:+5,capex:+5},{sector:'Utilities',revenue:-30,cost:+35,capex:+20}]},
+  {id:'below2',name:'Below 2°C',temp:'1.7°C',source:'NGFS Phase IV',type:'Orderly',carbonPrice2030:90,carbonPrice2050:200,gdpImpact:-2.0,physicalDamage:'Low-Medium',transitionCost:'Medium-High',
+    desc:'Gradual policy tightening. Carbon price rises steadily. Balanced transition with moderate economic disruption.',
+    impacts:[{sector:'Energy',revenue:-18,cost:+12,capex:+30},{sector:'Materials',revenue:-10,cost:+15,capex:+20},{sector:'Financials',revenue:-4,cost:+6,capex:+4},{sector:'Technology',revenue:+8,cost:+4,capex:+12},{sector:'Utilities',revenue:-12,cost:+22,capex:+40}]},
 ];
 
-const RADAR_DATA = S1_PILLARS.map(p=>({pillar:p.pillar,score:p.score}));
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SASB INDUSTRY STANDARDS — 77 industries
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const SASB_INDUSTRIES=(()=>{
+  const industries=[
+    {name:'Oil & Gas — Exploration & Production',sector:'Energy',metrics:14,material:['GHG Emissions','Air Quality','Water Management','Biodiversity','Reserves Valuation','Business Ethics']},
+    {name:'Oil & Gas — Midstream',sector:'Energy',metrics:8,material:['GHG Emissions','Ecological Impacts','Competitive Behavior','Operational Safety']},
+    {name:'Oil & Gas — Refining & Marketing',sector:'Energy',metrics:11,material:['GHG Emissions','Air Quality','Water Management','Hazardous Materials','Workforce Health & Safety']},
+    {name:'Electric Utilities & Power Generators',sector:'Utilities',metrics:12,material:['GHG Emissions','Air Quality','Water Management','Coal Ash Management','Grid Resiliency','Energy Affordability']},
+    {name:'Gas Utilities & Distributors',sector:'Utilities',metrics:7,material:['End-Use Efficiency','Integrity of Gas Delivery','Activity Metrics']},
+    {name:'Solar Technology & Project Developers',sector:'Utilities',metrics:8,material:['Energy Management','Hazardous Materials','Ecological Impacts','Product End-of-Life']},
+    {name:'Wind Technology & Project Developers',sector:'Utilities',metrics:6,material:['Ecological Impacts','Materials Sourcing','Community Relations']},
+    {name:'Iron & Steel Producers',sector:'Materials',metrics:10,material:['GHG Emissions','Air Emissions','Energy Management','Water Management','Waste Management','Workforce Health & Safety']},
+    {name:'Chemicals',sector:'Materials',metrics:12,material:['GHG Emissions','Air Quality','Energy Management','Water Management','Hazardous Waste','Product Design','Supply Chain']},
+    {name:'Construction Materials',sector:'Materials',metrics:8,material:['GHG Emissions','Air Quality','Energy Management','Water Management','Biodiversity','Workforce Health & Safety']},
+    {name:'Commercial Banks',sector:'Financials',metrics:9,material:['Integration of ESG Factors','Financial Inclusion','Data Security','Business Ethics','Systemic Risk Management']},
+    {name:'Insurance',sector:'Financials',metrics:7,material:['Transparent Policies','Incorporation of ESG Factors','Physical Risk Exposure','Systemic Risk']},
+    {name:'Investment Banking & Brokerage',sector:'Financials',metrics:8,material:['Integration of ESG Factors','Business Ethics','Employee Diversity','Systemic Risk','Data Security']},
+    {name:'Asset Management & Custody',sector:'Financials',metrics:6,material:['Transparent Information','ESG Incorporation','Employee Diversity','Business Ethics']},
+    {name:'Software & IT Services',sector:'Information Technology',metrics:7,material:['Environmental Footprint','Data Privacy','Data Security','Recruiting & Managing Workforce','IP & Content']},
+    {name:'Hardware',sector:'Information Technology',metrics:9,material:['Product Lifecycle Management','Water Management','Supply Chain','Materials Sourcing','Data Security']},
+    {name:'Semiconductors',sector:'Information Technology',metrics:8,material:['GHG Emissions','Energy Management','Water Management','Waste Management','Workforce Health & Safety','IP Protection']},
+    {name:'Pharmaceuticals',sector:'Health Care',metrics:11,material:['Drug Safety','Access to Medicines','Counterfeit Drugs','Ethical Marketing','Employee Recruitment','Supply Chain','Business Ethics']},
+    {name:'Biotechnology & Pharma',sector:'Health Care',metrics:9,material:['Drug Safety','Access to Medicines','Clinical Trials','Business Ethics','Employee Engagement']},
+    {name:'Medical Devices & Supplies',sector:'Health Care',metrics:7,material:['Product Safety & Quality','Ethical Marketing','Supply Chain Management','Business Ethics']},
+    {name:'Automobiles',sector:'Consumer Discretionary',metrics:10,material:['Product Lifecycle','Fuel Economy','Use-Phase Emissions','Materials Sourcing','Labor Practices','Supply Chain']},
+    {name:'Auto Parts',sector:'Consumer Discretionary',metrics:7,material:['Energy Management','Waste Management','Product Safety','Materials Sourcing','Competitive Behavior']},
+    {name:'Food & Beverage',sector:'Consumer Staples',metrics:12,material:['GHG Emissions','Energy Management','Water Management','Food Safety','Nutritional Content','Environmental & Social Impacts']},
+    {name:'Household & Personal Products',sector:'Consumer Staples',metrics:8,material:['Water Management','Packaging','Environmental & Social Impacts','Product Quality']},
+    {name:'Tobacco',sector:'Consumer Staples',metrics:5,material:['Marketing Practices','Product Impact','Supply Chain']},
+    {name:'Airlines',sector:'Industrials',metrics:6,material:['GHG Emissions','Labor Practices','Competitive Behavior','Accident & Safety Management']},
+    {name:'Air Freight & Logistics',sector:'Industrials',metrics:5,material:['GHG Emissions','Fleet Fuel Management','Supply Chain','Labor Practices']},
+    {name:'Aerospace & Defense',sector:'Industrials',metrics:8,material:['Energy Management','Hazardous Materials','Data Security','Product Safety','Business Ethics']},
+  ];
+  return industries.map((ind,i)=>({...ind,id:i+1,avgScore:Math.round(20+sr(i*43)*60),companiesReporting:Math.round(5+sr(i*47)*45),dataAvailability:Math.round(15+sr(i*53)*80)}));
+})();
 
-const S2_REQUIREMENTS = [
-  {id:1,title:'Climate Governance',tcfd:'Governance a/b',para:'IFRS S2 para 6–9',status:'Complete',platformModule:'Board ESG Dashboard',disclosure:'The Board of Directors, through the Sustainability Committee, oversees climate-related risks and opportunities on a quarterly basis. The Chief Sustainability Officer reports directly to the CEO and maintains accountability for climate strategy execution.'},
-  {id:2,title:'Climate Risks/Opportunities in Strategy',tcfd:'Strategy a/b/c',para:'IFRS S2 para 10–19',status:'In Progress',platformModule:'Climate Risk Analytics',disclosure:'The entity has identified 12 material climate-related risks across its value chain, spanning transition risks (policy, technology, market) and physical risks (acute and chronic). These are integrated into the 3-year strategic plan with a dedicated climate CapEx envelope of $450M through 2030.'},
-  {id:3,title:'Climate Scenario Analysis',tcfd:'Strategy d',para:'IFRS S2 para 20–21',status:'In Progress',platformModule:'Scenario Analysis Engine (Tab 4)',disclosure:'The entity assessed climate resilience under three scenarios consistent with NGFS/IEA frameworks: Net Zero 2050 (1.5°C), Delayed Transition (2°C), and High Physical Risk (3°C+). Scenario analysis covers 2030, 2040, and 2050 time horizons.'},
-  {id:4,title:'Climate Risk Management',tcfd:'Risk Management a/b/c',para:'IFRS S2 para 22–26',status:'Complete',platformModule:'Enterprise Risk Management',disclosure:'Climate risks are identified through annual climate risk assessments integrated with the Enterprise Risk Management framework. Physical risks are assessed using IPCC AR6 data; transition risks are monitored via carbon price sensitivity analysis updated quarterly.'},
-  {id:5,title:'GHG Emissions (Scope 1, 2, 3)',tcfd:'Metrics a',para:'IFRS S2 para 29–36',status:'In Progress',platformModule:'GHG Accounting Engine',disclosure:'Scope 1: 45,200 tCO2e | Scope 2 (market-based): 28,400 tCO2e | Scope 3: 412,000 tCO2e (15 categories). Scope 3 reported with 1-year phase-in relief per IFRS S2 para C4 for first reporting year.'},
-  {id:6,title:'Climate Targets',tcfd:'Metrics b/c',para:'IFRS S2 para 37–42',status:'Not Started',platformModule:'Targets & Net Zero Registry',disclosure:'[Disclosure text pending — Targets module integration in progress. SBTi 1.5°C-aligned targets to be disclosed: Scope 1+2 50% reduction by 2030 vs 2019 baseline; Net Zero by 2050.]'},
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLOBAL ADOPTION DATA
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const ADOPTION=[
+  {jurisdiction:'New Zealand',status:'Mandatory',effective:'FY2023',standard:'XRB Aotearoa',scope:'Large listed + FMC'},
+  {jurisdiction:'UK',status:'Mandatory',effective:'FY2025',standard:'UK SRS (ISSB-aligned)',scope:'Premium listed (TCFD to ISSB)'},
+  {jurisdiction:'Australia',status:'Mandatory',effective:'FY2025',standard:'AASB S1/S2',scope:'Large entities (Group 1)'},
+  {jurisdiction:'Singapore',status:'Mandatory',effective:'FY2025',standard:'SGX ISSB',scope:'SGX-listed large'},
+  {jurisdiction:'Brazil',status:'Mandatory',effective:'FY2025',standard:'CVM ISSB',scope:'Listed companies'},
+  {jurisdiction:'Nigeria',status:'Mandatory',effective:'FY2025',standard:'FRCN ISSB',scope:'Public interest entities'},
+  {jurisdiction:'Hong Kong',status:'Mandatory',effective:'FY2025',standard:'HKEX ISSB',scope:'Large listed'},
+  {jurisdiction:'Switzerland',status:'Mandatory',effective:'FY2024',standard:'Swiss ISSB',scope:'Large PIEs >500 emp'},
+  {jurisdiction:'Japan',status:'Voluntary',effective:'FY2027 (mandatory)',standard:'SSBJ S1/S2',scope:'Prime Market listed'},
+  {jurisdiction:'South Korea',status:'Voluntary',effective:'FY2030 (mandatory)',standard:'K-ISSB',scope:'KOSPI listed'},
+  {jurisdiction:'Canada',status:'Consultation',effective:'TBD 2026',standard:'CSA ISSB',scope:'Reporting issuers'},
+  {jurisdiction:'EU',status:'Mandatory',effective:'FY2024 (ESRS)',standard:'ESRS (interoperable)',scope:'CSRD-scope entities'},
+  {jurisdiction:'India',status:'Mandatory',effective:'FY2024',standard:'SEBI BRSR Core',scope:'Top 1000 listed'},
+  {jurisdiction:'South Africa',status:'Mandatory',effective:'FY2024',standard:'JSE ISSB',scope:'JSE-listed'},
+  {jurisdiction:'Malaysia',status:'Voluntary',effective:'2025',standard:'Bursa ISSB',scope:'Bursa-listed'},
 ];
 
-const TCFD_ISSB_MAP = [
-  {tcfd:'Governance (a) — Board oversight',issb:'IFRS S2 para 6',status:'Direct mapping'},
-  {tcfd:'Governance (b) — Management role',issb:'IFRS S2 para 7–9',status:'Direct mapping'},
-  {tcfd:'Strategy (a) — Risks/opportunities',issb:'IFRS S2 para 10–14',status:'Enhanced — time horizons required'},
-  {tcfd:'Strategy (b) — Impact on organisation',issb:'IFRS S2 para 15–16',status:'Enhanced — value chain required'},
-  {tcfd:'Strategy (c) — Resilience',issb:'IFRS S2 para 20–21',status:'Enhanced — quantitative required'},
-  {tcfd:'Risk Mgmt (a/b) — Processes',issb:'IFRS S2 para 22–25',status:'Direct mapping'},
-  {tcfd:'Risk Mgmt (c) — Integration',issb:'IFRS S2 para 26',status:'Direct mapping'},
-  {tcfd:'Metrics (a) — Climate metrics',issb:'IFRS S2 para 29 + App B',status:'Enhanced — SASB industry metrics added'},
-  {tcfd:'Metrics (b) — Scope 1/2/3 GHG',issb:'IFRS S2 para 29–36',status:'Enhanced — Scope 3 mandatory (financial sector)'},
-  {tcfd:'Metrics (c) — Climate targets',issb:'IFRS S2 para 37–42',status:'Enhanced — intensity + absolute required'},
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GAP ANALYSIS — current disclosure vs IFRS S1/S2 requirements
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const GAP_ITEMS=(()=>{
+  const allReqs=[...S1_PILLARS.flatMap(p=>p.reqs.map(r=>({...r,pillar:p.pillar,standard:'IFRS S1'}))),...S2_REQUIREMENTS.map(r=>({code:`S2-${r.id}`,label:r.title,status:r.status,quality:r.score,para:r.para,pillar:'Climate',standard:'IFRS S2',source:r.module}))];
+  return allReqs.map((r,i)=>{
+    const gap=r.status!=='Complete';
+    const priority=r.quality<30?'Critical':r.quality<50?'High':r.quality<70?'Medium':'Low';
+    return{...r,gap,priority,remediation:gap?`Address by Q${1+Math.floor(sr(i*61)*4)} 2026`:'N/A',effort:gap?(r.quality<30?'High':r.quality<50?'Medium':'Low'):'N/A',owner:['Sustainability Team','Finance','Legal','Operations','IT','Board Secretariat'][Math.floor(sr(i*67)*6)]};
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CONNECTIVITY MAP — ISSB <> CSRD/SFDR/TCFD/CDP
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const CONNECTIVITY=[
+  {issb:'IFRS S1 Governance',csrd:'ESRS 2 GOV-1 to GOV-5',sfdr:'SFDR Art. 4(1)(a)',tcfd:'Governance a/b',cdp:'C1 Governance',alignment:85},
+  {issb:'IFRS S1 Strategy',csrd:'ESRS 2 SBM-1 to SBM-3',sfdr:'SFDR Art. 4(1)(b)',tcfd:'Strategy a/b/c',cdp:'C2/C3 Risks & Strategy',alignment:72},
+  {issb:'IFRS S1 Risk Mgmt',csrd:'ESRS 2 IRO-1/IRO-2',sfdr:'SFDR Art. 4(1)(c)',tcfd:'Risk Mgmt a/b/c',cdp:'C2 Risks & Opportunities',alignment:78},
+  {issb:'IFRS S1 Metrics',csrd:'ESRS 2 + topical standards',sfdr:'SFDR RTS Annex I PAI',tcfd:'Metrics a/b/c',cdp:'C6-C9 Emissions/Energy',alignment:65},
+  {issb:'IFRS S2 GHG Scope 1',csrd:'ESRS E1-6(a)',sfdr:'PAI #1',tcfd:'Metrics — Scope 1',cdp:'C6.1',alignment:95},
+  {issb:'IFRS S2 GHG Scope 2',csrd:'ESRS E1-6(b)',sfdr:'PAI #2',tcfd:'Metrics — Scope 2',cdp:'C6.3',alignment:92},
+  {issb:'IFRS S2 GHG Scope 3',csrd:'ESRS E1-6(c)',sfdr:'PAI #3',tcfd:'Metrics — Scope 3',cdp:'C6.5',alignment:70},
+  {issb:'IFRS S2 Transition Plan',csrd:'ESRS E1-1',sfdr:'SFDR Art. 2(17)',tcfd:'Strategy — transition',cdp:'C3.1-C3.4',alignment:75},
+  {issb:'IFRS S2 Scenario Analysis',csrd:'ESRS E1-9 (financial effects)',sfdr:'N/A',tcfd:'Strategy d',cdp:'C3.2',alignment:60},
+  {issb:'IFRS S2 Carbon Pricing',csrd:'ESRS E1-8',sfdr:'PAI #4 (fossil fuel)',tcfd:'Metrics — carbon price',cdp:'C11',alignment:80},
+  {issb:'IFRS S2 Industry Metrics',csrd:'Sector-specific ESRS (pending)',sfdr:'PAI indicators',tcfd:'Industry-specific',cdp:'Sector questionnaires',alignment:45},
+  {issb:'IFRS S2 Targets',csrd:'ESRS E1-4',sfdr:'SFDR Art. 9(3)',tcfd:'Metrics b/c',cdp:'C4 Targets & Performance',alignment:82},
 ];
 
-const SCENARIO_DATA_CHART = [
-  {year:'2024',nz:0,dt:0,hp:0},
-  {year:'2026',nz:-1.2,dt:-0.5,hp:-0.3},
-  {year:'2028',nz:-2.8,dt:-1.1,hp:-0.8},
-  {year:'2030',nz:-5.5,dt:-2.0,hp:-1.5},
-  {year:'2032',nz:-4.2,dt:-2.8,hp:-2.2},
-  {year:'2035',nz:-3.0,dt:-3.5,hp:-3.8},
-  {year:'2040',nz:-1.5,dt:-5.2,hp:-7.2},
-  {year:'2045',nz:0.5,dt:-6.8,hp:-12.5},
-  {year:'2050',nz:2.2,dt:-8.5,hp:-18.0},
-];
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════════════════════════════════════ */
+export default function IssbDisclosurePage(){
+  const[tab,setTab]=useState(0);
+  const[selPillar,setSelPillar]=useState(null);
+  const[selS2,setSelS2]=useState(null);
+  const[selScenario,setSelScenario]=useState(0);
+  const[sasbSearch,setSasbSearch]=useState('');
+  const[sasbSector,setSasbSector]=useState('All');
+  const[gapFilter,setGapFilter]=useState('All');
+  const[exportFormat,setExportFormat]=useState('IFRS S1/S2 Report');
 
-const SCENARIOS = [
-  {id:'nz',label:'Net Zero 2050 (1.5°C)',color:T.green,carbonPrice2030:'$150/tCO2e',carbonPrice2050:'$250/tCO2e',energyMix:'85% renewables by 2050',policy:'Carbon border adj, clean tech subsidies',revRisk2030:-45,opexChange2030:+12,capexReq2030:320,stranded2030:85,ebidta2030:-5.5,ebidta2050:+2.2,physRisk:'Low — rapid transition limits warming',transRisk:'High near-term, declining post-2035'},
-  {id:'dt',label:'Delayed Transition (2°C)',color:T.amber,carbonPrice2030:'$50/tCO2e',carbonPrice2050:'$130/tCO2e',energyMix:'55% renewables by 2050',policy:'Patchwork regulations, late policy surge 2035',revRisk2030:-28,opexChange2030:+8,capexReq2030:180,stranded2030:210,ebidta2030:-2.0,ebidta2050:-8.5,physRisk:'Moderate — ~2°C warming by 2100',transRisk:'Moderate near-term, high post-2035'},
-  {id:'hp',label:'High Physical Risk (3°C+)',color:T.red,carbonPrice2030:'$15/tCO2e',carbonPrice2050:'$35/tCO2e',energyMix:'35% renewables by 2050',policy:'Minimal climate policy, fossil fuel subsidies',revRisk2030:-8,opexChange2030:+3,capexReq2030:45,stranded2030:0,ebidta2030:-1.5,ebidta2050:-18.0,physRisk:'Very High — 3°C+ warming, severe physical impacts',transRisk:'Low — policy inaction'},
-];
+  const ss={
+    wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},
+    header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},
+    sub:{fontSize:13,color:T.textSec,marginBottom:20},
+    tabs:{display:'flex',gap:2,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0,overflowX:'auto'},
+    tab:(a)=>({padding:'10px 16px',fontSize:12,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?'rgba(124,58,237,0.06)':'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2,whiteSpace:'nowrap'}),
+    card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},
+    grid2:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20},
+    grid3:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16,marginBottom:20},
+    flex:{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'},
+    td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},
+    btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},
+    btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},
+    select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},
+    input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},
+    cite:{fontSize:9,color:T.textMut,fontFamily:T.mono,marginTop:4},
+  };
 
-const SASB_SECTORS = ['Technology & Communications','Energy','Materials','Industrials','Consumer Discretionary','Consumer Staples','Health Care','Financials','Utilities','Real Estate','Comm Services'];
-
-const SASB_METRICS = {
-  'Technology & Communications':[
-    {area:'Energy Management',metric:'Total energy consumed',unit:'GJ',s2Link:'IFRS S2 para 29(a)',company:285000,median:310000,pai:'PAI 5 — Non-renewable energy'},
-    {area:'Energy Management',metric:'% renewable electricity',unit:'%',s2Link:'IFRS S2 Annex B',company:68,median:45,pai:'PAI 5'},
-    {area:'Energy Management',metric:'Energy intensity (revenue)',unit:'GJ/$M revenue',s2Link:'IFRS S2 para 30',company:142,median:185,pai:'PAI 5'},
-    {area:'Data Privacy',metric:'User data requests received',unit:'Count',s2Link:'IFRS S1 App B — Social',company:1240,median:980,pai:'N/A'},
-    {area:'Data Privacy',metric:'% data requests complied',unit:'%',s2Link:'IFRS S1 App B',company:78,median:82,pai:'N/A'},
-    {area:'Data Security',metric:'Number of data breaches',unit:'Count',s2Link:'IFRS S1 App B — Governance',company:0,median:1,pai:'N/A'},
-    {area:'Data Security',metric:'Users affected by breaches',unit:'Count',s2Link:'IFRS S1 App B',company:0,median:42000,pai:'N/A'},
-    {area:'Workforce',metric:'% women in technical roles',unit:'%',s2Link:'IFRS S1 App B — Human capital',company:34,median:28,pai:'PAI 13'},
-    {area:'Workforce',metric:'Voluntary turnover rate',unit:'%',s2Link:'IFRS S1 App B',company:12.5,median:14.2,pai:'N/A'},
-    {area:'Infrastructure',metric:'Weighted avg PUE (data centres)',unit:'Ratio',s2Link:'IFRS S2 Industry — TC',company:1.38,median:1.52,pai:'N/A'},
-    {area:'Infrastructure',metric:'% in certified data centres',unit:'%',s2Link:'IFRS S2 Industry — TC',company:82,median:68,pai:'N/A'},
-  ],
-  'Energy':[
-    {area:'GHG & Air Emissions',metric:'Gross Scope 1 GHG emissions',unit:'tCO2e',s2Link:'IFRS S2 para 29(a)',company:2850000,median:3200000,pai:'PAI 1'},
-    {area:'GHG & Air Emissions',metric:'Scope 2 GHG (market-based)',unit:'tCO2e',s2Link:'IFRS S2 para 29(a)',company:185000,median:220000,pai:'PAI 1'},
-    {area:'GHG & Air Emissions',metric:'NOx emissions',unit:'tonne',s2Link:'IFRS S2 Industry — EM',company:12500,median:15000,pai:'N/A'},
-    {area:'Water Management',metric:'Total water withdrawn',unit:'ML',s2Link:'IFRS S2 Industry — EM',company:4200,median:5800,pai:'PAI 7'},
-    {area:'Energy Mix',metric:'% renewable energy produced',unit:'%',s2Link:'IFRS S2 para 29',company:8,median:5,pai:'PAI 5'},
-    {area:'Reserves',metric:'Proved reserves (oil equivalent)',unit:'MMboe',s2Link:'IFRS S2 Industry — EM',company:850,median:1200,pai:'N/A'},
-  ],
-  'Financials':[
-    {area:'Financed Emissions',metric:'Financed emissions (Scope 3 Cat 15)',unit:'tCO2e/$M AUM',s2Link:'IFRS S2 para 29(a)(iii) + App E',company:125,median:185,pai:'PAI 1'},
-    {area:'Climate Risk Exposure',metric:'% loans to carbon-intensive sectors',unit:'%',s2Link:'IFRS S2 Appendix E',company:18,median:24,pai:'PAI 4'},
-    {area:'Climate Risk Exposure',metric:'Physical risk exposure (% portfolio)',unit:'%',s2Link:'IFRS S2 para 18',company:12,median:15,pai:'PAI 6'},
-    {area:'Green Finance',metric:'Green/sustainable bonds issued',unit:'$M',s2Link:'IFRS S1 App B',company:2800,median:1200,pai:'N/A'},
-    {area:'Engagement',metric:'% portfolio with SBTi targets',unit:'%',s2Link:'IFRS S2 para 42',company:38,median:22,pai:'N/A'},
-  ],
-};
-
-const CONNECTIVITY_CHECKS = [
-  {assumption:'Discount rate used in impairment tests',issb:'S2 para 15 — strategy effects',ifrs:'IAS 36 — impairment of assets',status:'Aligned',note:'WACC 8.2% consistent in both reports'},
-  {assumption:'Useful life of fossil fuel assets',issb:'S2 para 10 — transition risk',ifrs:'IAS 16 — PP&E depreciation',status:'Review Required',note:'Gas turbines: ISSB assumes 2035 stranding; IFRS uses 2042'},
-  {assumption:'Carbon price assumption in cost projections',issb:'S2 para 20 — scenario analysis',ifrs:'IAS 37 — provisions',status:'Aligned',note:'$85/tCO2e 2030 used consistently'},
-  {assumption:'Going concern and climate litigation risk',issb:'S1 para 9 — governance',ifrs:'IAS 1 — presentation',status:'Aligned',note:'No material climate going concern risk identified'},
-  {assumption:'Inventory valuation (stranded commodity risk)',issb:'S2 para 16 — value chain',ifrs:'IAS 2 — inventories',status:'Aligned',note:'NRV tested with $150/tCO2e carbon price'},
-  {assumption:'Insurance coverage for physical climate risk',issb:'S2 para 18 — physical risk',ifrs:'IFRS 17 — insurance contracts',status:'Gap Identified',note:'Flood coverage gap in IFRS notes not disclosed in S2'},
-];
-
-const ASSURANCE_READINESS = [
-  {indicator:'Data collection systems documented',status:'Ready',detail:'ESG data platform with audit trail'},
-  {indicator:'Internal controls over ESG reporting',status:'Ready',detail:'SOX-equivalent controls mapped to ISSB'},
-  {indicator:'Third-party data verification',status:'Partial',detail:'Scope 1/2 verified; Scope 3 in progress'},
-  {indicator:'GHG boundary documentation',status:'Ready',detail:'Operational control boundary defined'},
-  {indicator:'Material estimation techniques documented',status:'Partial',detail:'Spend-based Scope 3 — estimation uncertainty disclosed'},
-  {indicator:'Prior year comparative data available',status:'Not Ready',detail:'First-year ISSB reporting — comparatives TBD'},
-  {indicator:'Assurance provider engaged',status:'Ready',detail:'EY appointed for limited assurance 2025'},
-  {indicator:'Board sign-off process established',status:'Partial',detail:'Audit Committee to approve — process draft in progress'},
-];
-
-const REGULATORY_EQUIV = [
-  {market:'EU + UK dual-listed',regime1:'CSRD/ESRS',regime2:'UK SRS (ISSB)',outcome:'Interoperability — ESRS covers ISSB S2; UK addendum covers ESRS gaps',doublreport:'Minimal — single report with EU/UK addendum'},
-  {market:'EU + Australia dual-listed',regime1:'CSRD/ESRS',regime2:'AASB S1/S2',outcome:'ESRS/ISSB interoperability applies; different assurance timelines',doublreport:'Some overlap — materiality differences in ESRS double vs ISSB single'},
-  {market:'UK + Singapore dual-listed',regime1:'UK SRS',regime2:'SGX ISSB',outcome:'Both ISSB-based — near-identical requirements',doublreport:'None — single ISSB report satisfies both'},
-  {market:'EU + Japan dual-listed',regime1:'CSRD/ESRS',regime2:'SSBJ (ISSB-aligned)',outcome:'ESRS/ISSB interoperability applies',doublreport:'Some — ESRS biodiversity, social exceed SSBJ scope'},
-];
-
-/* ============================================================ TAB 1: Global Adoption Tracker */
-function Tab1GlobalAdoption() {
-  const [region, setRegion] = useState('All');
-  const regions = ['All','Asia-Pacific','Europe','Americas','Africa'];
-  const filtered = region==='All'?ADOPTION_DATA:ADOPTION_DATA.filter(d=>d.region===region);
-  return (
-    <div style={{display:'flex',flexDirection:'column',gap:20}}>
-      {/* KPIs */}
-      <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-        <KpiCard label="Jurisdictions — Mandatory ISSB" value="14" sub="As of Q1 2026" color={T.green}/>
-        <KpiCard label="Global GDP Covered" value="72%" sub="By mandatory/voluntary ISSB regimes" color={T.navy}/>
-        <KpiCard label="ISSB-aligned Reports Published" value="8,400+" sub="CY2025 estimate" color={T.navyL}/>
-        <KpiCard label="TCFD Formally Superseded" value="38" sub="Jurisdictions declaring ISSB supersedes TCFD" color={T.gold}/>
+  // ─── TAB 0: IFRS S1 ───
+  const renderS1=()=>{
+    const totalReqs=S1_PILLARS.reduce((s,p)=>s+p.reqs.length,0);
+    const complete=S1_PILLARS.reduce((s,p)=>s+p.reqs.filter(r=>r.status==='Complete').length,0);
+    const radarData=S1_PILLARS.map(p=>({pillar:p.pillar,score:p.score}));
+    return(<>
+      <SectionHead cite="IFRS S1 — General Requirements for Sustainability-related Financial Disclosures">IFRS S1 Requirements</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Pillars" value={4} color={ACCENT} cite="S1 §25"/>
+        <KPI label="Requirements" value={totalReqs} color={T.navy}/>
+        <KPI label="Complete" value={complete} sub={`${Math.round(complete/totalReqs*100)}%`} color={T.green}/>
+        <KPI label="Avg Score" value={Math.round(S1_PILLARS.reduce((s,p)=>s+p.score,0)/4)+'%'} color={T.gold}/>
+        <KPI label="Jurisdictions" value={ADOPTION.filter(a=>a.status==='Mandatory').length} sub="mandatory adoption" color={T.sage}/>
       </div>
-
-      {/* Momentum chart */}
-      <Card>
-        <SectionTitle>Adoption Momentum: Jurisdictions with Mandatory ISSB (2023–2027 Forecast)</SectionTitle>
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={ADOPTION_MOMENTUM} margin={{top:5,right:20,left:0,bottom:5}}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="year" tick={{fontSize:12,fill:T.textSec}}/>
-            <YAxis tick={{fontSize:12,fill:T.textSec}} domain={[0,25]}/>
-            <Tooltip contentStyle={{fontSize:12,border:`1px solid ${T.border}`,borderRadius:8}}/>
-            <Legend wrapperStyle={{fontSize:12}}/>
-            <Line type="monotone" dataKey="mandatory" stroke={T.green} strokeWidth={2.5} name="Mandatory" dot={{r:4}}/>
-            <Line type="monotone" dataKey="voluntary" stroke={T.amber} strokeWidth={2} name="Voluntary" strokeDasharray="5 3" dot={{r:3}}/>
-            <Line type="monotone" dataKey="total" stroke={T.navy} strokeWidth={2} name="Total" strokeDasharray="3 2" dot={{r:3}}/>
-          </LineChart>
-        </ResponsiveContainer>
-      </Card>
-
-      {/* Region filter */}
-      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-        {regions.map(r=>(
-          <button key={r} onClick={()=>setRegion(r)} style={{padding:'5px 14px',borderRadius:20,border:`1px solid ${region===r?T.navy:T.border}`,background:region===r?T.navy:T.surface,color:region===r?'#fff':T.textSec,fontSize:12,cursor:'pointer',fontWeight:600}}>{r}</button>
-        ))}
-      </div>
-
-      {/* Jurisdiction table */}
-      <Card style={{padding:0,overflow:'hidden'}}>
-        <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-            <thead>
-              <tr style={{background:T.surfaceH}}>
-                {['Jurisdiction','Region','Standard','Status','Scope','Effective','Key Differences'].map(h=>(
-                  <th key={h} style={{padding:'10px 14px',textAlign:'left',color:T.textSec,fontWeight:600,whiteSpace:'nowrap',borderBottom:`1px solid ${T.border}`}}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((d,i)=>(
-                <tr key={d.jurisdiction} style={{background:i%2===0?T.surface:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
-                  <td style={{padding:'9px 14px',fontWeight:700,color:T.navy,whiteSpace:'nowrap'}}>{d.jurisdiction}</td>
-                  <td style={{padding:'9px 14px',color:T.textSec}}>{d.region}</td>
-                  <td style={{padding:'9px 14px',color:T.text,whiteSpace:'nowrap'}}>{d.standard}</td>
-                  <td style={{padding:'9px 14px'}}>
-                    {pill(d.status, d.status==='Mandatory'?T.green:d.status==='Voluntary→Mandatory'?T.amber:d.status==='Consultation'?T.navyL:d.status==='Stayed'?T.red:T.textMut)}
-                  </td>
-                  <td style={{padding:'9px 14px',color:T.textSec,maxWidth:160}}>{d.scope}</td>
-                  <td style={{padding:'9px 14px',color:T.text,whiteSpace:'nowrap'}}>{d.effective}</td>
-                  <td style={{padding:'9px 14px',color:T.textSec,maxWidth:220,fontSize:11}}>{d.diff}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-/* ============================================================ TAB 2: IFRS S1 */
-function Tab2S1() {
-  const [openPillar, setOpenPillar] = useState(null);
-  const radarData = RADAR_DATA;
-  return (
-    <div style={{display:'flex',flexDirection:'column',gap:20}}>
-      <div style={{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}}>
-        {/* Radar */}
-        <Card style={{flex:'0 0 320px'}}>
-          <SectionTitle>S1 Completion by Pillar</SectionTitle>
-          <ResponsiveContainer width="100%" height={240}>
-            <RadarChart data={radarData}>
-              <PolarGrid stroke={T.border}/>
-              <PolarAngleAxis dataKey="pillar" tick={{fontSize:11,fill:T.textSec}}/>
-              <PolarRadiusAxis angle={30} domain={[0,100]} tick={{fontSize:10,fill:T.textMut}}/>
-              <Radar name="Completion %" dataKey="score" stroke={T.navy} fill={T.navy} fillOpacity={0.18} strokeWidth={2}/>
-              <Tooltip formatter={(v)=>`${v}%`}/>
+      <div style={ss.grid2}>
+        <div style={ss.card}>
+          <SectionHead>Pillar Scores</SectionHead>
+          <ResponsiveContainer width="100%" height={250}>
+            <RadarChart data={radarData} cx="50%" cy="50%" outerRadius={90}>
+              <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="pillar" tick={{fontSize:11,fill:T.textSec}}/>
+              <PolarRadiusAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/>
+              <Radar name="Score" dataKey="score" stroke={ACCENT} fill="rgba(124,58,237,0.15)" strokeWidth={2}/>
             </RadarChart>
           </ResponsiveContainer>
-          <div style={{display:'flex',flexDirection:'column',gap:6,marginTop:8}}>
-            {S1_PILLARS.map(p=>(
-              <div key={p.pillar} style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <span style={{fontSize:12,color:T.textSec}}>{p.pillar}</span>
-                <div style={{display:'flex',alignItems:'center',gap:8}}>
-                  <div style={{width:80,height:6,background:T.border,borderRadius:3,overflow:'hidden'}}>
-                    <div style={{width:`${p.score}%`,height:'100%',background:p.score>=75?T.green:p.score>=55?T.amber:T.red,borderRadius:3}}/>
-                  </div>
-                  <span style={{fontSize:12,fontWeight:700,color:T.navy,width:32,textAlign:'right'}}>{p.score}%</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Connectivity note */}
-        <Card style={{flex:1,minWidth:260}}>
-          <SectionTitle>IFRS S1 Para 21 — Connectivity Principle</SectionTitle>
-          <p style={{fontSize:13,color:T.textSec,lineHeight:1.6,margin:'0 0 12px'}}>IFRS S1 requires entities to provide information that enables users to understand connections between different sustainability-related risks and opportunities, and how they affect the entity's strategy, business model, cash flows, and financial position.</p>
-          <div style={{display:'flex',flexDirection:'column',gap:8}}>
-            {['S1 Governance → S2 Climate Governance (same board disclosure)','S1 Strategy → S2 Climate Scenario Analysis (same resilience assessment)','S1 Risk Mgmt → S2 Climate Risk Processes (integrated framework)','S1 Metrics → S2 GHG + SASB Industry Metrics (all within one framework)'].map((c,i)=>(
-              <div key={i} style={{display:'flex',gap:8,alignItems:'flex-start',background:`${T.navy}08`,borderRadius:7,padding:'8px 12px'}}>
-                <span style={{color:T.gold,fontWeight:800,fontSize:14,marginTop:1}}>→</span>
-                <span style={{fontSize:12,color:T.textSec}}>{c}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* Pillar accordion */}
-      {S1_PILLARS.map(p=>(
-        <Card key={p.pillar} style={{padding:0,overflow:'hidden'}}>
-          <button onClick={()=>setOpenPillar(openPillar===p.pillar?null:p.pillar)} style={{width:'100%',padding:'14px 20px',display:'flex',justifyContent:'space-between',alignItems:'center',background:'none',border:'none',cursor:'pointer',textAlign:'left'}}>
-            <span style={{fontWeight:700,fontSize:15,color:T.navy}}>{p.pillar}</span>
-            <div style={{display:'flex',alignItems:'center',gap:12}}>
-              <span style={{fontSize:12,color:p.score>=75?T.green:p.score>=55?T.amber:T.red,fontWeight:700}}>{p.score}% complete</span>
-              <span style={{color:T.textMut,fontSize:16}}>{openPillar===p.pillar?'▲':'▼'}</span>
-            </div>
-          </button>
-          {openPillar===p.pillar&&(
-            <div style={{borderTop:`1px solid ${T.border}`}}>
-              <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-                <thead>
-                  <tr style={{background:T.surfaceH}}>
-                    {['Code','Requirement','Status','Data Source','Quality'].map(h=>(
-                      <th key={h} style={{padding:'8px 14px',textAlign:'left',color:T.textSec,fontWeight:600,borderBottom:`1px solid ${T.border}`}}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {p.reqs.map(r=>(
-                    <tr key={r.code} style={{borderBottom:`1px solid ${T.border}`}}>
-                      <td style={{padding:'9px 14px',fontFamily:'monospace',color:T.textMut,fontSize:11}}>{r.code}</td>
-                      <td style={{padding:'9px 14px',color:T.text,maxWidth:280}}>{r.label}</td>
-                      <td style={{padding:'9px 14px'}}>{pill(r.status,statusColor(r.status))}</td>
-                      <td style={{padding:'9px 14px',color:T.textSec,fontSize:11}}>{r.source}</td>
-                      <td style={{padding:'9px 14px'}}>
-                        <div style={{display:'flex',alignItems:'center',gap:6}}>
-                          <div style={{width:60,height:5,background:T.border,borderRadius:3}}>
-                            <div style={{width:`${r.quality}%`,height:'100%',background:r.quality>=75?T.green:r.quality>=50?T.amber:T.red,borderRadius:3}}/>
-                          </div>
-                          <span style={{fontSize:11,color:T.textSec}}>{r.quality}%</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-/* ============================================================ TAB 3: IFRS S2 */
-function Tab3S2() {
-  const [selected, setSelected] = useState(null);
-  return (
-    <div style={{display:'flex',flexDirection:'column',gap:20}}>
-      {/* TCFD mapping */}
-      <Card>
-        <SectionTitle>TCFD Recommendations → IFRS S2 Paragraph Mapping</SectionTitle>
-        <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-            <thead>
-              <tr style={{background:T.surfaceH}}>
-                {['TCFD Recommendation','IFRS S2 Paragraph','Transition Notes'].map(h=>(
-                  <th key={h} style={{padding:'8px 14px',textAlign:'left',color:T.textSec,fontWeight:600,borderBottom:`1px solid ${T.border}`}}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {TCFD_ISSB_MAP.map((m,i)=>(
-                <tr key={i} style={{borderBottom:`1px solid ${T.border}`,background:i%2===0?T.surface:T.surfaceH}}>
-                  <td style={{padding:'8px 14px',color:T.text,maxWidth:220}}>{m.tcfd}</td>
-                  <td style={{padding:'8px 14px',fontFamily:'monospace',color:T.navyL,fontSize:11,whiteSpace:'nowrap'}}>{m.issb}</td>
-                  <td style={{padding:'8px 14px'}}>
-                    {pill(m.status,m.status==='Direct mapping'?T.green:T.amber)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
-      </Card>
-
-      {/* Scope 3 phase-in notice */}
-      <div style={{background:`${T.amber}12`,border:`1px solid ${T.amber}40`,borderRadius:9,padding:'12px 16px',display:'flex',gap:12,alignItems:'flex-start'}}>
-        <span style={{fontSize:18,marginTop:1}}>⚠</span>
-        <div>
-          <div style={{fontWeight:700,color:T.amber,fontSize:13,marginBottom:3}}>IFRS S2 para C4 — Scope 3 Phase-in Relief</div>
-          <div style={{fontSize:12,color:T.textSec}}>In the first annual reporting period an entity applies IFRS S2, it is not required to disclose Scope 3 GHG emissions. Relief expires after the first year. Financial sector entities face stricter requirements: financed emissions (Category 15) are required from year one for entities with investment or lending activities exceeding materiality thresholds.</div>
-        </div>
-      </div>
-
-      {/* S2 Requirements with disclosure preview */}
-      <div style={{display:'flex',flexDirection:'column',gap:12}}>
-        {S2_REQUIREMENTS.map(req=>(
-          <Card key={req.id} style={{padding:0,overflow:'hidden'}}>
-            <button onClick={()=>setSelected(selected===req.id?null:req.id)} style={{width:'100%',padding:'14px 20px',display:'flex',justifyContent:'space-between',alignItems:'center',background:'none',border:'none',cursor:'pointer',textAlign:'left',gap:12}}>
-              <div style={{display:'flex',gap:12,alignItems:'center',flex:1}}>
-                <span style={{fontWeight:800,color:T.gold,fontSize:14,minWidth:20}}>#{req.id}</span>
-                <span style={{fontWeight:700,fontSize:14,color:T.navy}}>{req.title}</span>
-                <span style={{fontFamily:'monospace',fontSize:11,color:T.textMut}}>{req.para}</span>
-              </div>
-              <div style={{display:'flex',gap:10,alignItems:'center'}}>
-                {pill(req.status,statusColor(req.status))}
-                <span style={{color:T.textMut,fontSize:16}}>{selected===req.id?'▲':'▼'}</span>
-              </div>
-            </button>
-            {selected===req.id&&(
-              <div style={{borderTop:`1px solid ${T.border}`,padding:'14px 20px',background:T.surfaceH}}>
-                <div style={{fontSize:11,color:T.textMut,marginBottom:6}}>Platform data source: <strong style={{color:T.navyL}}>{req.platformModule}</strong> &nbsp;|&nbsp; TCFD precedent: {req.tcfd}</div>
-                <div style={{fontSize:12,color:T.textSec,lineHeight:1.7,background:T.surface,border:`1px solid ${T.border}`,borderRadius:7,padding:'12px 14px',fontStyle:'italic'}}>"{req.disclosure}"</div>
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================ TAB 4: Scenario Analysis */
-function Tab4Scenarios() {
-  const [sel, setSel] = useState('all');
-  const lines = sel==='all'?['nz','dt','hp']:sel==='nz'?['nz']:sel==='dt'?['dt']:['hp'];
-  const colorMap = {nz:T.green,dt:T.amber,hp:T.red};
-  return (
-    <div style={{display:'flex',flexDirection:'column',gap:20}}>
-      {/* Scenario selector */}
-      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-        {[{id:'all',label:'All Scenarios'},...SCENARIOS.map(s=>({id:s.id,label:s.label}))].map(s=>(
-          <button key={s.id} onClick={()=>setSel(s.id)} style={{padding:'5px 14px',borderRadius:20,border:`1px solid ${sel===s.id?T.navy:T.border}`,background:sel===s.id?T.navy:T.surface,color:sel===s.id?'#fff':T.textSec,fontSize:12,cursor:'pointer',fontWeight:600}}>{s.label}</button>
-        ))}
-      </div>
-
-      {/* EBITDA chart */}
-      <Card>
-        <SectionTitle>EBITDA Impact Under Climate Scenarios (%) — 2024 to 2050</SectionTitle>
-        <div style={{fontSize:11,color:T.textMut,marginBottom:10}}>IFRS S2 para 20–21 — Quantitative scenario analysis required. Positive = net benefit; Negative = net cost vs BAU baseline.</div>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={SCENARIO_DATA_CHART} margin={{top:5,right:20,left:0,bottom:5}}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="year" tick={{fontSize:12,fill:T.textSec}}/>
-            <YAxis tick={{fontSize:12,fill:T.textSec}} tickFormatter={v=>`${v}%`}/>
-            <Tooltip formatter={(v)=>`${v}%`} contentStyle={{fontSize:12,border:`1px solid ${T.border}`,borderRadius:8}}/>
-            <Legend wrapperStyle={{fontSize:12}}/>
-            {lines.includes('nz')&&<Line type="monotone" dataKey="nz" stroke={T.green} strokeWidth={2.5} name="Net Zero 2050 (1.5°C)" dot={false}/>}
-            {lines.includes('dt')&&<Line type="monotone" dataKey="dt" stroke={T.amber} strokeWidth={2.5} name="Delayed Transition (2°C)" dot={false}/>}
-            {lines.includes('hp')&&<Line type="monotone" dataKey="hp" stroke={T.red} strokeWidth={2.5} name="High Physical Risk (3°C+)" dot={false}/>}
-          </LineChart>
-        </ResponsiveContainer>
-      </Card>
-
-      {/* Scenario cards */}
-      <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-        {SCENARIOS.map(s=>(
-          <Card key={s.id} style={{flex:1,minWidth:240,borderTop:`3px solid ${s.color}`}}>
-            <div style={{fontWeight:800,color:s.color,fontSize:14,marginBottom:8}}>{s.label}</div>
-            <div style={{display:'flex',flexDirection:'column',gap:6,fontSize:12}}>
-              {[
-                {k:'Carbon price 2030',v:s.carbonPrice2030},
-                {k:'Carbon price 2050',v:s.carbonPrice2050},
-                {k:'Energy mix 2050',v:s.energyMix},
-                {k:'Policy environment',v:s.policy},
-                {k:'Revenue at risk 2030',v:`$${Math.abs(s.revRisk2030)}M`},
-                {k:'CapEx required 2030',v:`$${s.capexReq2030}M`},
-                {k:'Stranded assets 2030',v:`$${s.stranded2030}M`},
-                {k:'EBITDA impact 2030',v:`${s.ebidta2030>0?'+':''}${s.ebidta2030}%`},
-                {k:'EBITDA impact 2050',v:`${s.ebidta2050>0?'+':''}${s.ebidta2050}%`},
-              ].map(({k,v})=>(
-                <div key={k} style={{display:'flex',justifyContent:'space-between',gap:8,borderBottom:`1px solid ${T.border}`,paddingBottom:4}}>
-                  <span style={{color:T.textSec}}>{k}</span>
-                  <span style={{fontWeight:700,color:T.text,textAlign:'right'}}>{v}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{marginTop:10,background:`${s.color}10`,borderRadius:6,padding:'7px 10px'}}>
-              <div style={{fontSize:11,color:T.textMut,marginBottom:2}}>Physical Risk</div>
-              <div style={{fontSize:11,color:T.textSec}}>{s.physRisk}</div>
-              <div style={{fontSize:11,color:T.textMut,marginBottom:2,marginTop:5}}>Transition Risk</div>
-              <div style={{fontSize:11,color:T.textSec}}>{s.transRisk}</div>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {/* Materiality note */}
-      <Card>
-        <SectionTitle>ISSB Materiality Threshold for Scenario Analysis</SectionTitle>
-        <div style={{fontSize:13,color:T.textSec,lineHeight:1.7}}>
-          IFRS S2 requires scenario analysis for climate risks that are "reasonably possible to occur" (IFRS S1 para 29) — i.e., the entity cannot rule them out. This is a lower threshold than "probable" (IFRS accounting standards). In practice: <strong style={{color:T.navy}}>all three scenarios above must be disclosed</strong>, as a High Physical Risk outcome cannot be ruled out even if the entity believes Net Zero policies will prevail. The scenario analysis should be proportionate to the skills, capabilities and resources available to the entity (IFRS S2 para 22).
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-/* ============================================================ TAB 5: SASB Industry Standards */
-function Tab5SASB() {
-  const [sector, setSector] = useState('Technology & Communications');
-  const metrics = SASB_METRICS[sector]||SASB_METRICS['Technology & Communications'];
-  const areas = [...new Set(metrics.map(m=>m.area))];
-  const barData = metrics.map(m=>({
-    name:m.metric.length>28?m.metric.slice(0,28)+'…':m.metric,
-    company:typeof m.company==='number'?Math.round(m.company/Math.max(m.company,m.median,1)*100):0,
-    median:100,
-  }));
-  return (
-    <div style={{display:'flex',flexDirection:'column',gap:20}}>
-      {/* Sector selector */}
-      <Card>
-        <SectionTitle>Select SASB Industry (66 Standards across 11 Sectors)</SectionTitle>
-        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-          {SASB_SECTORS.map(s=>(
-            <button key={s} onClick={()=>setSector(s)} style={{padding:'5px 14px',borderRadius:20,border:`1px solid ${sector===s?T.navy:T.border}`,background:sector===s?T.navy:T.surface,color:sector===s?'#fff':T.textSec,fontSize:12,cursor:'pointer',fontWeight:600}}>{s}</button>
-          ))}
-        </div>
-        {!SASB_METRICS[sector]&&<div style={{marginTop:10,fontSize:12,color:T.textMut,fontStyle:'italic'}}>Detailed metrics for {sector} sector — click Technology & Communications, Energy, or Financials for full data.</div>}
-      </Card>
-
-      {/* Bar chart */}
-      {SASB_METRICS[sector]&&(
-        <Card>
-          <SectionTitle>Company Performance vs SASB Sector Median (indexed to 100)</SectionTitle>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={barData} layout="vertical" margin={{top:0,right:20,left:140,bottom:0}}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} horizontal={false}/>
-              <XAxis type="number" tick={{fontSize:11,fill:T.textSec}} domain={[0,150]}/>
-              <YAxis type="category" dataKey="name" tick={{fontSize:10,fill:T.textSec}} width={140}/>
-              <Tooltip contentStyle={{fontSize:12,border:`1px solid ${T.border}`,borderRadius:8}}/>
-              <Legend wrapperStyle={{fontSize:12}}/>
-              <Bar dataKey="company" name="Company" fill={T.navy} radius={[0,3,3,0]} barSize={10}>
-                {barData.map((_,i)=><Cell key={i} fill={T.navyL}/>)}
-              </Bar>
-              <Bar dataKey="median" name="SASB Median" fill={T.border} radius={[0,3,3,0]} barSize={10}/>
+        <div style={ss.card}>
+          <SectionHead>Pillar Completion</SectionHead>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={S1_PILLARS.map(p=>({pillar:p.pillar,score:p.score,reqs:p.reqs.length,complete:p.reqs.filter(r=>r.status==='Complete').length}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="pillar" tick={{fontSize:10,fill:T.textMut}}/>
+              <YAxis tick={{fontSize:10,fill:T.textMut}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="complete" fill={T.green} name="Complete" stackId="a" radius={[0,0,0,0]}/>
+              <Bar dataKey="reqs" fill={T.border} name="Total" radius={[4,4,0,0]}/>
+              <Legend/>
             </BarChart>
           </ResponsiveContainer>
-        </Card>
-      )}
-
-      {/* Metrics table by area */}
-      {SASB_METRICS[sector]&&areas.map(area=>(
-        <Card key={area} style={{padding:0,overflow:'hidden'}}>
-          <div style={{padding:'10px 18px',background:T.surfaceH,borderBottom:`1px solid ${T.border}`,fontWeight:700,fontSize:13,color:T.navy}}>{area}</div>
-          <div style={{overflowX:'auto'}}>
-            <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-              <thead>
-                <tr style={{background:'#fafaf8'}}>
-                  {['Accounting Metric','Unit','IFRS S2 Linkage','Company','SASB Median','PAI Cross-ref','vs Median'].map(h=>(
-                    <th key={h} style={{padding:'8px 14px',textAlign:'left',color:T.textSec,fontWeight:600,borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap'}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {metrics.filter(m=>m.area===area).map((m,i)=>{
-                  const pct=m.median!==0?(((m.company-m.median)/m.median)*100).toFixed(1):0;
-                  const better=parseFloat(pct)<0&&m.metric.toLowerCase().includes('emiss')||parseFloat(pct)<0&&m.metric.toLowerCase().includes('pue')||parseFloat(pct)<0&&m.metric.toLowerCase().includes('breach')||parseFloat(pct)<0&&m.metric.toLowerCase().includes('turn')||(parseFloat(pct)>0&&!m.metric.toLowerCase().includes('emiss')&&!m.metric.toLowerCase().includes('pue')&&!m.metric.toLowerCase().includes('breach'));
-                  return (
-                    <tr key={i} style={{borderBottom:`1px solid ${T.border}`,background:i%2===0?T.surface:T.surfaceH}}>
-                      <td style={{padding:'9px 14px',color:T.text,maxWidth:200}}>{m.metric}</td>
-                      <td style={{padding:'9px 14px',color:T.textMut,whiteSpace:'nowrap'}}>{m.unit}</td>
-                      <td style={{padding:'9px 14px',fontFamily:'monospace',color:T.navyL,fontSize:11}}>{m.s2Link}</td>
-                      <td style={{padding:'9px 14px',fontWeight:700,color:T.text}}>{typeof m.company==='number'?m.company.toLocaleString():m.company}</td>
-                      <td style={{padding:'9px 14px',color:T.textSec}}>{typeof m.median==='number'?m.median.toLocaleString():m.median}</td>
-                      <td style={{padding:'9px 14px',fontSize:11,color:T.textMut}}>{m.pai}</td>
-                      <td style={{padding:'9px 14px'}}>{pill(`${parseFloat(pct)>0?'+':''}${pct}%`,better?T.green:T.red)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        </div>
+      </div>
+      {/* Detailed Pillar Requirements */}
+      {S1_PILLARS.map((p,pi)=>(
+        <div key={pi} style={{...ss.card,borderLeft:`4px solid ${p.color}`,cursor:'pointer'}} onClick={()=>setSelPillar(selPillar===pi?null:pi)}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <div><span style={{fontSize:14,fontWeight:700,color:p.color}}>{p.pillar}</span><span style={{fontSize:11,color:T.textMut,marginLeft:8,fontFamily:T.mono}}>{p.para}</span></div>
+            <div style={{display:'flex',gap:12,alignItems:'center'}}>
+              <span style={badge(p.score,[30,50,70])}>{p.score}%</span>
+              <span style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>{p.reqs.length} requirements</span>
+              <span style={{color:ACCENT}}>{selPillar===pi?'\u25B2':'\u25BC'}</span>
+            </div>
           </div>
-        </Card>
+          {selPillar===pi&&(
+            <div style={{marginTop:16}}>
+              <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+                <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Code</th>
+                <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut,minWidth:250}}>Requirement</th>
+                <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Status</th>
+                <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Source</th>
+                <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Quality</th>
+                <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Para</th>
+              </tr></thead><tbody>{p.reqs.map((r,ri)=>(
+                <tr key={ri}>
+                  <td style={{...ss.td,fontFamily:T.mono,fontSize:10,fontWeight:600}}>{r.code}</td>
+                  <td style={{...ss.td,fontSize:11}}>{r.label}</td>
+                  <td style={ss.td}><span style={statusBadge(r.status)}>{r.status}</span></td>
+                  <td style={{...ss.td,fontSize:10}}>{r.source}</td>
+                  <td style={ss.td}><span style={badge(r.quality,[30,50,75])}>{r.quality}%</span></td>
+                  <td style={{...ss.td,fontFamily:T.mono,fontSize:9,color:ACCENT}}>{r.para}</td>
+                </tr>
+              ))}</tbody></table>
+            </div>
+          )}
+        </div>
       ))}
-
-      {/* Cross-framework convergence */}
-      <Card>
-        <SectionTitle>Cross-Framework Convergence: SASB → PAI → ESRS Data Points</SectionTitle>
-        <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
-          {[
-            {from:'SASB TC-HW-130a.1 (Energy, % renewable)',to:'PAI 5 (Share non-renewable energy)',esrs:'E1-5 (Energy consumption & mix)'},
-            {from:'SASB FN-IN-450a.1 (Financed GHG)',to:'PAI 1 (GHG intensity, Category 15)',esrs:'E1-6 (Scope 1/2/3 GHG)'},
-            {from:'SASB FN-IB-330a.2 (GHG trading risk exposure)',to:'PAI 4 (Carbon-intensive exposure)',esrs:'E1-9 (Transition risk exposure)'},
-            {from:'SASB All — Total water withdrawn',to:'PAI 7 (Water usage)',esrs:'E3-4 (Water consumption)'},
-          ].map((item,i)=>(
-            <div key={i} style={{flex:'1 1 280px',background:T.surfaceH,borderRadius:8,padding:'12px 14px',border:`1px solid ${T.border}`}}>
-              <div style={{fontSize:11,fontWeight:700,color:T.navy,marginBottom:4}}>SASB</div>
-              <div style={{fontSize:11,color:T.textSec,marginBottom:8}}>{item.from}</div>
-              <div style={{fontSize:11,fontWeight:700,color:T.amber,marginBottom:4}}>→ PAI (SFDR)</div>
-              <div style={{fontSize:11,color:T.textSec,marginBottom:8}}>{item.to}</div>
-              <div style={{fontSize:11,fontWeight:700,color:T.sage,marginBottom:4}}>→ ESRS</div>
-              <div style={{fontSize:11,color:T.textSec}}>{item.esrs}</div>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-/* ============================================================ TAB 6: Assurance & Connectivity */
-function Tab6Assurance() {
-  return (
-    <div style={{display:'flex',flexDirection:'column',gap:20}}>
-      {/* Connectivity checker */}
-      <Card>
-        <SectionTitle>Financial Statement Connectivity Checker (IFRS S2 para 15 + IAS 1)</SectionTitle>
-        <div style={{fontSize:12,color:T.textMut,marginBottom:12}}>ISSB requires that climate assumptions used in sustainability reports are consistent with those used in IFRS financial statements. Inconsistencies create regulatory and audit risk.</div>
+      {/* Global Adoption */}
+      <div style={ss.card}>
+        <SectionHead cite="ISSB Jurisdiction Adoption Tracker">Global ISSB Adoption Status</SectionHead>
         <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-            <thead>
-              <tr style={{background:T.surfaceH}}>
-                {['Assumption','ISSB S2 Reference','IFRS Financial Stmt Ref','Status','Note'].map(h=>(
-                  <th key={h} style={{padding:'8px 14px',textAlign:'left',color:T.textSec,fontWeight:600,borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap'}}>{h}</th>
-                ))}
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['Jurisdiction','Standard','Status','Scope','Effective'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+          </tr></thead><tbody>{ADOPTION.map((a,i)=>(
+            <tr key={i}>
+              <td style={{...ss.td,fontWeight:600}}>{a.jurisdiction}</td>
+              <td style={{...ss.td,fontSize:11}}>{a.standard}</td>
+              <td style={ss.td}><span style={statusBadge(a.status)}>{a.status}</span></td>
+              <td style={{...ss.td,fontSize:11}}>{a.scope}</td>
+              <td style={{...ss.td,fontFamily:T.mono,fontSize:11}}>{a.effective}</td>
+            </tr>
+          ))}</tbody></table>
+        </div>
+      </div>
+    </>);
+  };
+
+  // ─── TAB 1: IFRS S2 Climate ───
+  const renderS2=()=>{
+    const avgScore=Math.round(S2_REQUIREMENTS.reduce((s,r)=>s+r.score,0)/S2_REQUIREMENTS.length);
+    return(<>
+      <SectionHead cite="IFRS S2 — Climate-related Disclosures">IFRS S2 Climate Requirements</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Requirements" value={S2_REQUIREMENTS.length} color={ACCENT}/>
+        <KPI label="Complete" value={S2_REQUIREMENTS.filter(r=>r.status==='Complete').length} color={T.green}/>
+        <KPI label="Avg Score" value={avgScore+'%'} color={avgScore>=60?T.sage:T.amber}/>
+        <KPI label="TCFD Aligned" value="100%" sub="full alignment" color={T.navy}/>
+      </div>
+      {S2_REQUIREMENTS.map((r,i)=>(
+        <div key={i} style={{...ss.card,borderLeft:`3px solid ${r.status==='Complete'?T.green:r.status==='In Progress'?T.amber:T.red}`,cursor:'pointer'}} onClick={()=>setSelS2(selS2===i?null:i)}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <div><span style={{fontWeight:700,color:T.navy}}>{r.title}</span><span style={{fontSize:10,fontFamily:T.mono,color:T.textMut,marginLeft:8}}>{r.para}</span></div>
+            <div style={{display:'flex',gap:8,alignItems:'center'}}>
+              <span style={badge(r.score,[30,50,70])}>{r.score}%</span>
+              <span style={statusBadge(r.status)}>{r.status}</span>
+              <span style={{color:ACCENT,fontSize:12}}>{selS2===i?'\u25B2':'\u25BC'}</span>
+            </div>
+          </div>
+          {selS2===i&&(
+            <div style={{marginTop:12,paddingTop:12,borderTop:`1px solid ${T.border}`}}>
+              <div style={{fontSize:12,color:T.textSec,lineHeight:1.6,marginBottom:12}}>{r.disclosure}</div>
+              <div style={{display:'flex',gap:12,marginBottom:8}}>
+                <span style={{fontSize:10,color:T.textMut}}>TCFD: <span style={{fontFamily:T.mono,color:ACCENT}}>{r.tcfd}</span></span>
+                <span style={{fontSize:10,color:T.textMut}}>Module: <span style={{fontWeight:600}}>{r.module}</span></span>
+              </div>
+              <div style={{fontSize:11,fontWeight:600,color:T.navy,marginBottom:6}}>Sub-requirements:</div>
+              {r.subItems.map((s,j)=>(
+                <div key={j} style={{padding:'4px 0',fontSize:11,color:T.textSec,display:'flex',gap:6}}>
+                  <span style={{color:ACCENT}}>-</span>{s}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </>);
+  };
+
+  // ─── TAB 2: Scenario Analysis ───
+  const renderScenario=()=>{
+    const sc=SCENARIO_SET[selScenario];
+    const cpData=SCENARIO_SET.map(s=>({name:s.name,cp2030:s.carbonPrice2030,cp2050:s.carbonPrice2050}));
+    return(<>
+      <SectionHead cite="IFRS S2 §22 — Climate Resilience / Scenario Analysis">Scenario Analysis Tool</SectionHead>
+      <div style={ss.flex}>
+        {SCENARIO_SET.map((s,i)=><button key={i} style={selScenario===i?ss.btn:ss.btnSec} onClick={()=>setSelScenario(i)}>{s.name} ({s.temp})</button>)}
+      </div>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Temperature" value={sc.temp} color={sc.temp==='1.5°C'?T.green:sc.temp==='>2°C'?T.amber:T.red}/>
+        <KPI label="Carbon Price 2030" value={`$${sc.carbonPrice2030}`} sub="/tCO2e" color={T.navy}/>
+        <KPI label="Carbon Price 2050" value={`$${sc.carbonPrice2050}`} sub="/tCO2e" color={ACCENT}/>
+        <KPI label="GDP Impact" value={`${sc.gdpImpact}%`} color={sc.gdpImpact<-5?T.red:T.amber}/>
+        <KPI label="Physical Damage" value={sc.physicalDamage} color={sc.physicalDamage==='Very High'?T.red:T.amber}/>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>Scenario Description — {sc.name}</SectionHead>
+        <div style={{fontSize:12,color:T.textSec,lineHeight:1.6,marginBottom:12}}>{sc.desc}</div>
+        <div style={{display:'flex',gap:8}}>
+          <span style={statusBadge(sc.type==='Orderly'?'Complete':sc.type==='Disorderly'?'In Progress':'Not Started')}>{sc.type} Transition</span>
+          <span style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>Source: {sc.source}</span>
+        </div>
+      </div>
+      <div style={ss.grid2}>
+        <div style={ss.card}>
+          <SectionHead>Sector Impact — {sc.name}</SectionHead>
+          <div style={{overflowX:'auto'}}>
+            <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+              {['Sector','Revenue Impact','Cost Impact','CapEx Impact'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+            </tr></thead><tbody>{sc.impacts.map((imp,i)=>(
+              <tr key={i}>
+                <td style={{...ss.td,fontWeight:600}}>{imp.sector}</td>
+                <td style={{...ss.td,fontFamily:T.mono,color:imp.revenue<0?T.red:T.green}}>{imp.revenue>0?'+':''}{imp.revenue}%</td>
+                <td style={{...ss.td,fontFamily:T.mono,color:T.red}}>+{imp.cost}%</td>
+                <td style={{...ss.td,fontFamily:T.mono,color:T.amber}}>+{imp.capex}%</td>
               </tr>
-            </thead>
-            <tbody>
-              {CONNECTIVITY_CHECKS.map((c,i)=>(
-                <tr key={i} style={{borderBottom:`1px solid ${T.border}`,background:i%2===0?T.surface:T.surfaceH}}>
-                  <td style={{padding:'9px 14px',fontWeight:600,color:T.text}}>{c.assumption}</td>
-                  <td style={{padding:'9px 14px',fontFamily:'monospace',fontSize:11,color:T.navyL}}>{c.issb}</td>
-                  <td style={{padding:'9px 14px',fontFamily:'monospace',fontSize:11,color:T.navyL}}>{c.ifrs}</td>
-                  <td style={{padding:'9px 14px'}}>{pill(c.status,c.status==='Aligned'?T.green:c.status==='Review Required'?T.amber:T.red)}</td>
-                  <td style={{padding:'9px 14px',color:T.textSec,fontSize:11}}>{c.note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}</tbody></table>
+          </div>
         </div>
-      </Card>
+        <div style={ss.card}>
+          <SectionHead>Carbon Price Comparison</SectionHead>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={cpData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="name" tick={{fontSize:9,fill:T.textMut}}/>
+              <YAxis tick={{fontSize:10,fill:T.textMut}} label={{value:'$/tCO2e',angle:-90,position:'left',fontSize:10}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="cp2030" fill={T.amber} name="2030" radius={[4,4,0,0]}/>
+              <Bar dataKey="cp2050" fill={ACCENT} name="2050" radius={[4,4,0,0]}/>
+              <Legend/>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </>);
+  };
 
-      {/* Assurance readiness */}
-      <Card>
-        <SectionTitle>Assurance Readiness — 8 Indicators</SectionTitle>
-        <div style={{fontSize:12,color:T.textMut,marginBottom:12}}>Mandatory limited assurance expected 2027–2028 in major markets. Reasonable assurance expected 2029–2030. Current status of readiness indicators:</div>
-        <div style={{display:'flex',flexDirection:'column',gap:8}}>
-          {ASSURANCE_READINESS.map((a,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'flex-start',gap:14,padding:'10px 14px',background:T.surfaceH,borderRadius:8,border:`1px solid ${T.border}`}}>
-              <div style={{width:10,height:10,borderRadius:'50%',background:a.status==='Ready'?T.green:a.status==='Partial'?T.amber:T.red,marginTop:3,flexShrink:0}}/>
-              <div style={{flex:1}}>
-                <div style={{fontWeight:600,fontSize:13,color:T.navy}}>{a.indicator}</div>
-                <div style={{fontSize:11,color:T.textSec,marginTop:2}}>{a.detail}</div>
-              </div>
-              {pill(a.status,a.status==='Ready'?T.green:a.status==='Partial'?T.amber:T.red)}
-            </div>
-          ))}
+  // ─── TAB 3: Industry Metrics (SASB) ───
+  const renderSASB=()=>{
+    const filtered=SASB_INDUSTRIES.filter(ind=>{
+      if(sasbSearch&&!ind.name.toLowerCase().includes(sasbSearch.toLowerCase()))return false;
+      if(sasbSector!=='All'&&ind.sector!==sasbSector)return false;
+      return true;
+    });
+    const sasbSectors=['All',...new Set(SASB_INDUSTRIES.map(i=>i.sector))];
+    return(<>
+      <SectionHead cite="IFRS S2 §32, Appendix B — SASB Industry Standards">Industry-Specific Metrics (SASB)</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Industries" value={SASB_INDUSTRIES.length} sub="SASB Standards Board" color={ACCENT}/>
+        <KPI label="Avg Score" value={Math.round(SASB_INDUSTRIES.reduce((s,i)=>s+i.avgScore,0)/SASB_INDUSTRIES.length)+'%'} color={T.gold}/>
+        <KPI label="Avg Metrics" value={Math.round(SASB_INDUSTRIES.reduce((s,i)=>s+i.metrics,0)/SASB_INDUSTRIES.length)} sub="per industry" color={T.navy}/>
+      </div>
+      <div style={ss.flex}>
+        <input style={ss.input} placeholder="Search industries..." value={sasbSearch} onChange={e=>setSasbSearch(e.target.value)}/>
+        <select style={ss.select} value={sasbSector} onChange={e=>setSasbSector(e.target.value)}>{sasbSectors.map(s=><option key={s}>{s}</option>)}</select>
+        <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} industries</span>
+      </div>
+      <div style={ss.card}>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['Industry','Sector','Metrics','Material Topics','Score','Reporting','Data Avail.'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+          </tr></thead><tbody>{filtered.map((ind,i)=>(
+            <tr key={i}>
+              <td style={{...ss.td,fontWeight:600,fontSize:11}}>{ind.name}</td>
+              <td style={{...ss.td,fontSize:11}}>{ind.sector}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{ind.metrics}</td>
+              <td style={{...ss.td,fontSize:10,maxWidth:200}}>{ind.material.slice(0,3).join(', ')}{ind.material.length>3?` +${ind.material.length-3}`:''}</td>
+              <td style={ss.td}><span style={badge(ind.avgScore,[25,50,70])}>{ind.avgScore}%</span></td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{ind.companiesReporting}</td>
+              <td style={ss.td}><span style={badge(ind.dataAvailability,[25,50,75])}>{ind.dataAvailability}%</span></td>
+            </tr>
+          ))}</tbody></table>
         </div>
-        <div style={{marginTop:14,display:'flex',gap:14,flexWrap:'wrap'}}>
-          {[{label:'Ready',n:ASSURANCE_READINESS.filter(a=>a.status==='Ready').length,c:T.green},{label:'Partial',n:ASSURANCE_READINESS.filter(a=>a.status==='Partial').length,c:T.amber},{label:'Not Ready',n:ASSURANCE_READINESS.filter(a=>a.status==='Not Ready').length,c:T.red}].map(s=>(
-            <div key={s.label} style={{display:'flex',alignItems:'center',gap:8,background:`${s.c}10`,border:`1px solid ${s.c}40`,borderRadius:8,padding:'8px 14px'}}>
-              <span style={{fontSize:22,fontWeight:800,color:s.c}}>{s.n}</span>
-              <span style={{fontSize:12,color:s.c,fontWeight:600}}>{s.label}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
+      </div>
+    </>);
+  };
 
-      {/* Regulatory equivalence */}
-      <Card>
-        <SectionTitle>Regulatory Equivalence — Dual-Listed Companies (Avoiding Double Reporting)</SectionTitle>
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>
-          {REGULATORY_EQUIV.map((r,i)=>(
-            <div key={i} style={{background:T.surfaceH,borderRadius:8,padding:'12px 16px',border:`1px solid ${T.border}`}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:12,flexWrap:'wrap'}}>
-                <div>
-                  <div style={{fontWeight:700,color:T.navy,fontSize:14,marginBottom:4}}>{r.market}</div>
-                  <div style={{fontSize:12,color:T.textSec}}><strong>Frameworks:</strong> {r.regime1} + {r.regime2}</div>
-                  <div style={{fontSize:12,color:T.textSec,marginTop:3}}><strong>Interoperability:</strong> {r.outcome}</div>
-                </div>
-                <div style={{background:`${T.green}10`,border:`1px solid ${T.green}30`,borderRadius:6,padding:'6px 12px',minWidth:160}}>
-                  <div style={{fontSize:11,color:T.textMut,marginBottom:2}}>Double reporting risk</div>
-                  <div style={{fontSize:12,fontWeight:700,color:T.green}}>{r.doublreport}</div>
-                </div>
-              </div>
-            </div>
-          ))}
+  // ─── TAB 4: Gap Analysis ───
+  const renderGap=()=>{
+    const filt=gapFilter==='All'?GAP_ITEMS:gapFilter==='Gaps'?GAP_ITEMS.filter(g=>g.gap):gapFilter==='Critical'?GAP_ITEMS.filter(g=>g.priority==='Critical'):GAP_ITEMS.filter(g=>!g.gap);
+    const gapCount=GAP_ITEMS.filter(g=>g.gap).length;
+    const critCount=GAP_ITEMS.filter(g=>g.priority==='Critical').length;
+    const avgQuality=Math.round(GAP_ITEMS.reduce((s,g)=>s+g.quality,0)/GAP_ITEMS.length);
+    return(<>
+      <SectionHead cite="IFRS S1/S2 — Gap Analysis & Readiness Assessment">Gap Analysis</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Total Requirements" value={GAP_ITEMS.length} color={ACCENT}/>
+        <KPI label="Gaps" value={gapCount} sub={`${Math.round(gapCount/GAP_ITEMS.length*100)}%`} color={T.red}/>
+        <KPI label="Critical" value={critCount} color={T.red}/>
+        <KPI label="Avg Quality" value={avgQuality+'%'} color={avgQuality>=60?T.green:T.amber}/>
+        <KPI label="Readiness" value={Math.round((1-gapCount/GAP_ITEMS.length)*100)+'%'} color={T.sage}/>
+      </div>
+      <div style={ss.flex}>
+        {['All','Gaps','Critical','Complete'].map(f=><button key={f} style={gapFilter===f?ss.btn:ss.btnSec} onClick={()=>setGapFilter(f)}>{f}</button>)}
+      </div>
+      <div style={ss.card}>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['Code','Requirement','Standard','Pillar','Status','Quality','Priority','Remediation','Owner'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+          </tr></thead><tbody>{filt.map((g,i)=>(
+            <tr key={i} style={{background:g.priority==='Critical'?'rgba(220,38,38,0.03)':'transparent'}}>
+              <td style={{...ss.td,fontFamily:T.mono,fontSize:10,fontWeight:600}}>{g.code}</td>
+              <td style={{...ss.td,fontSize:11,maxWidth:200}}>{g.label}</td>
+              <td style={{...ss.td,fontFamily:T.mono,fontSize:10,color:ACCENT}}>{g.standard}</td>
+              <td style={{...ss.td,fontSize:11}}>{g.pillar}</td>
+              <td style={ss.td}><span style={statusBadge(g.status)}>{g.status}</span></td>
+              <td style={ss.td}><span style={badge(g.quality,[30,50,75])}>{g.quality}%</span></td>
+              <td style={ss.td}><span style={{padding:'2px 8px',borderRadius:4,fontSize:10,fontWeight:600,background:g.priority==='Critical'?'rgba(220,38,38,0.12)':g.priority==='High'?'rgba(217,119,6,0.12)':'rgba(197,169,106,0.1)',color:g.priority==='Critical'?T.red:g.priority==='High'?T.amber:T.gold}}>{g.priority}</span></td>
+              <td style={{...ss.td,fontSize:10}}>{g.remediation}</td>
+              <td style={{...ss.td,fontSize:10}}>{g.owner}</td>
+            </tr>
+          ))}</tbody></table>
         </div>
-      </Card>
+      </div>
+    </>);
+  };
 
-      {/* Integrated reporting connection */}
-      <Card>
-        <SectionTitle>IIRC Integrated Reporting — Connection to ISSB S1/S2</SectionTitle>
-        <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
-          {[
-            {ir:'Financial Capital','issb':'IFRS S2 → Financial impacts of climate (para 15)',link:'Direct — climate assumptions in IFRS financial statements'},
-            {ir:'Manufactured Capital','issb':'IFRS S2 → Physical asset exposure, CapEx requirements',link:'Direct — asset stranding, CapEx for transition'},
-            {ir:'Natural Capital','issb':'IFRS S1 → Environmental sustainability risks/opps',link:'Indirect — ISSB references SASB and TNFD for nature'},
-            {ir:'Human Capital','issb':'IFRS S1 → Workforce sustainability metrics (SASB)',link:'Indirect — skills for transition, just transition risks'},
-            {ir:'Social & Relationship Capital','issb':'IFRS S1 → Supply chain, community engagement',link:'Indirect — value chain disclosure (para 16)'},
-            {ir:'Intellectual Capital','issb':'IFRS S2 → Technology transition risks and opportunities',link:'Indirect — clean tech IP, R&D for decarbonisation'},
-          ].map((item,i)=>(
-            <div key={i} style={{flex:'1 1 260px',background:T.surfaceH,borderRadius:8,padding:'12px 14px',border:`1px solid ${T.border}`}}>
-              <div style={{fontSize:12,fontWeight:800,color:T.gold,marginBottom:4}}>{item.ir}</div>
-              <div style={{fontSize:11,color:T.textSec,marginBottom:6}}>{item['issb']}</div>
-              <div style={{fontSize:11,color:T.textMut,fontStyle:'italic'}}>{item.link}</div>
-            </div>
-          ))}
+  // ─── TAB 5: Connectivity ───
+  const renderConnectivity=()=>(
+    <>
+      <SectionHead cite="ISSB-CSRD Interoperability Guidance (EFRAG-ISSB, July 2024)">Interoperability Mapping</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Mappings" value={CONNECTIVITY.length} color={ACCENT}/>
+        <KPI label="Avg Alignment" value={Math.round(CONNECTIVITY.reduce((s,c)=>s+c.alignment,0)/CONNECTIVITY.length)+'%'} color={T.sage}/>
+        <KPI label="Frameworks" value={5} sub="ISSB, CSRD, SFDR, TCFD, CDP" color={T.navy}/>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>ISSB to CSRD / SFDR / TCFD / CDP Connectivity</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['ISSB Requirement','CSRD/ESRS','SFDR','TCFD','CDP','Alignment'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+          </tr></thead><tbody>{CONNECTIVITY.map((c,i)=>(
+            <tr key={i}>
+              <td style={{...ss.td,fontWeight:600,fontSize:11}}>{c.issb}</td>
+              <td style={{...ss.td,fontSize:10,fontFamily:T.mono}}>{c.csrd}</td>
+              <td style={{...ss.td,fontSize:10}}>{c.sfdr}</td>
+              <td style={{...ss.td,fontSize:10}}>{c.tcfd}</td>
+              <td style={{...ss.td,fontSize:10}}>{c.cdp}</td>
+              <td style={ss.td}><span style={badge(c.alignment,[40,60,80])}>{c.alignment}%</span></td>
+            </tr>
+          ))}</tbody></table>
         </div>
-      </Card>
-    </div>
+        <div style={ss.cite}>Interoperability mapping based on EFRAG-ISSB joint guidance (July 2024) and TCFD-ISSB transition recommendations.</div>
+      </div>
+      {/* Alignment Chart */}
+      <div style={ss.card}>
+        <SectionHead>Framework Alignment Score</SectionHead>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={CONNECTIVITY} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <XAxis type="number" domain={[0,100]} tick={{fontSize:9,fill:T.textMut}}/>
+            <YAxis dataKey="issb" type="category" tick={{fontSize:8,fill:T.textSec}} width={150}/>
+            <Tooltip {...tip}/><Bar dataKey="alignment" fill={ACCENT} radius={[0,4,4,0]} name="Alignment %"/>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
-}
 
-/* ============================================================ TABS CONFIG */
-const TABS = [
-  {id:'adoption',label:'Global Adoption Tracker',component:Tab1GlobalAdoption},
-  {id:'s1',label:'IFRS S1 — General Requirements',component:Tab2S1},
-  {id:'s2',label:'IFRS S2 — Climate Disclosure',component:Tab3S2},
-  {id:'scenario',label:'Scenario Analysis Engine',component:Tab4Scenarios},
-  {id:'sasb',label:'SASB Industry Standards',component:Tab5SASB},
-  {id:'assurance',label:'Assurance & Connectivity',component:Tab6Assurance},
-];
-
-/* ============================================================ PAGE */
-export default function IssbDisclosurePage() {
-  const [activeTab, setActiveTab] = useState('adoption');
-  const ActiveComponent = TABS.find(t=>t.id===activeTab)?.component||Tab1GlobalAdoption;
-
-  return (
-    <div style={{minHeight:'100vh',background:T.bg,fontFamily:T.font,color:T.text}}>
-      {/* Header */}
-      <div style={{background:T.navy,padding:'22px 32px 0',borderBottom:`2px solid ${T.gold}`}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12,marginBottom:14}}>
-          <div>
-            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:6}}>
-              <span style={{fontSize:11,fontFamily:'monospace',color:T.gold,background:`${T.gold}20`,padding:'2px 8px',borderRadius:4,fontWeight:700}}>EP-AH3</span>
-              {['IFRS S1/S2','20+ Jurisdictions','Scenario Analysis','TCFD Superseded','2024 Mandatory'].map(b=>(
-                <span key={b} style={{fontSize:10,color:'#fff',background:'rgba(255,255,255,0.12)',padding:'2px 8px',borderRadius:10,fontWeight:600}}>{b}</span>
-              ))}
-            </div>
-            <h1 style={{margin:0,fontSize:22,fontWeight:800,color:'#fff'}}>ISSB S1/S2 Disclosure Builder</h1>
-            <p style={{margin:'4px 0 0',fontSize:13,color:'rgba(255,255,255,0.65)'}}>IFRS Sustainability Standards — Global Adoption, Disclosure Framework, Scenario Analysis & Assurance</p>
+  // ─── TAB 6: Export ───
+  const renderExport=()=>(
+    <>
+      <SectionHead cite="IFRS S1 §72 — Reporting Format">Export Centre</SectionHead>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        {[
+          {name:'IFRS S1/S2 Report',desc:'Complete IFRS S1 + S2 annual report format with all 4 pillars and climate-specific disclosures.',ext:'.html / .pdf'},
+          {name:'XBRL-tagged',desc:'IFRS Sustainability Disclosure Taxonomy (ISSB XBRL). Machine-readable for regulatory submission.',ext:'.zip (xbrl)'},
+          {name:'Gap Report',desc:'Detailed gap analysis with remediation roadmap, priority ranking, and owner assignments.',ext:'.xlsx'},
+          {name:'Board Summary',desc:'Executive summary for Board: IFRS S1/S2 readiness, scenario results, key metrics.',ext:'.pdf / .pptx'},
+          {name:'SASB Metrics Pack',desc:'Industry-specific metrics per SASB Standards for IFRS S2 Appendix B compliance.',ext:'.xlsx'},
+          {name:'Connectivity Map',desc:'Cross-framework mapping: ISSB to CSRD, SFDR, TCFD, CDP. Interoperability evidence.',ext:'.pdf'},
+        ].map((f,i)=>(
+          <div key={i} style={{...ss.card,cursor:'pointer',background:exportFormat===f.name?'rgba(124,58,237,0.04)':T.surface}} onClick={()=>setExportFormat(f.name)}>
+            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:4}}>{f.name}</div>
+            <div style={{fontSize:11,color:T.textSec}}>{f.desc}</div>
+            <div style={{fontSize:10,fontFamily:T.mono,color:T.textMut,marginTop:4}}>{f.ext}</div>
           </div>
-          <div style={{display:'flex',gap:10}}>
-            <div style={{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,padding:'8px 14px',textAlign:'center'}}>
-              <div style={{fontSize:18,fontWeight:800,color:T.gold}}>S1+S2</div>
-              <div style={{fontSize:10,color:'rgba(255,255,255,0.6)'}}>IFRS Standards</div>
-            </div>
-            <div style={{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,padding:'8px 14px',textAlign:'center'}}>
-              <div style={{fontSize:18,fontWeight:800,color:T.sage}}>TCFD</div>
-              <div style={{fontSize:10,color:'rgba(255,255,255,0.6)'}}>Superseded</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab bar */}
-        <div style={{display:'flex',gap:2,overflowX:'auto',paddingBottom:0}}>
-          {TABS.map(t=>(
-            <button key={t.id} onClick={()=>setActiveTab(t.id)} style={{padding:'9px 16px',borderRadius:'6px 6px 0 0',border:'none',background:activeTab===t.id?T.bg:'transparent',color:activeTab===t.id?T.navy:'rgba(255,255,255,0.65)',fontSize:12,fontWeight:activeTab===t.id?700:500,cursor:'pointer',whiteSpace:'nowrap',transition:'all 0.15s',fontFamily:T.font}}>
-              {t.label}
-            </button>
-          ))}
+        ))}
+      </div>
+      <div style={ss.card}>
+        <div style={{display:'flex',gap:12}}>
+          <button style={ss.btn} onClick={()=>csvExport(GAP_ITEMS.map(g=>({code:g.code,requirement:g.label,standard:g.standard,pillar:g.pillar,status:g.status,quality:g.quality,priority:g.priority,remediation:g.remediation,owner:g.owner})),'issb_gap_analysis')}>Generate {exportFormat}</button>
+          <button style={ss.btnSec}>Preview</button>
         </div>
       </div>
+    </>
+  );
 
-      {/* Content */}
-      <div style={{padding:'24px 32px',maxWidth:1400,margin:'0 auto'}}>
-        <ActiveComponent/>
-      </div>
+  return(
+    <div style={ss.wrap}>
+      <div style={ss.header}>ISSB Disclosure Engine</div>
+      <div style={ss.sub}>IFRS S1 (General) + IFRS S2 (Climate) + SASB Industry Standards — {S1_PILLARS.reduce((s,p)=>s+p.reqs.length,0)+S2_REQUIREMENTS.length} requirements, {SASB_INDUSTRIES.length} industries, {ADOPTION.length} jurisdictions</div>
+      <div style={ss.tabs}>{TABS.map((t,i)=><button key={i} style={ss.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}</div>
+      {tab===0&&renderS1()}
+      {tab===1&&renderS2()}
+      {tab===2&&renderScenario()}
+      {tab===3&&renderSASB()}
+      {tab===4&&renderGap()}
+      {tab===5&&renderConnectivity()}
+      {tab===6&&renderExport()}
     </div>
   );
 }

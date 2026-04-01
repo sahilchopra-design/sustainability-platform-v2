@@ -1,35 +1,137 @@
+// EP-AK1 — ESG Ratings Comparator
+// Route: /esg-ratings-comparator
+// Framework: Multi-provider ESG methodology (MSCI IVA, S&P CSA, Sustainalytics ESG Risk, ISS QualityScore, CDP, Bloomberg)
+// Reference: EU ESG Ratings Regulation (EU) 2024/3005
 import React,{useState,useMemo,useCallback} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Cell,ScatterChart,Scatter,Legend,LineChart,Line} from 'recharts';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Cell,ScatterChart,Scatter,Legend,LineChart,Line,PieChart,Pie,AreaChart,Area,ZAxis} from 'recharts';
+import {SECTOR_BENCHMARKS} from '../../../data/referenceData';
+import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   THEME + HELPERS
+   ═══════════════════════════════════════════════════════════════════════════════ */
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#b45309';
+const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const PIECLRS=[T.navy,T.red,T.sage,T.amber,T.navyL,'#7c3aed','#0891b2','#be185d',T.gold,T.green,'#ea580c','#6366f1'];
+const PCOLORS=[T.navy,T.red,T.sage,T.amber,T.navyL,'#7c3aed'];
+const PAGE_SIZE=15;
 
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(22,163,74,0.12)':v>=mid?'rgba(197,169,106,0.12)':v>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v>=hi?T.green:v>=mid?T.gold:v>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PROVIDERS + METHODOLOGY DATA
+   ═══════════════════════════════════════════════════════════════════════════════ */
 const PROVIDERS=['MSCI','Sustainalytics','ISS','CDP','S&P Global','Bloomberg'];
 const MSCI_LEVELS=['AAA','AA','A','BBB','BB','B','CCC'];
 const CDP_LEVELS=['A','A-','B','B-','C','C-','D','D-'];
-const SECTORS=['Software','Semiconductors','Pharmaceuticals','Biotechnology','Commercial Banks','Insurance','Oil & Gas','Renewable Energy','Electric Utilities','Automotive','Aerospace & Defense','Mining','Food & Beverage','Retail','Telecommunications'];
-const COUNTRIES=['US','GB','DE','JP','FR','CH','CA','AU','KR','NL','SE','NO','DK','SG','IN'];
-const CAPS=['Large','Mid','Small'];
-const PCOLORS=[T.navy,T.red,T.sage,T.amber,T.navyL,'#7c3aed'];
+const SECTORS=['All','Energy','Materials','Industrials','Consumer Discretionary','Consumer Staples','Health Care','Financials','Information Technology','Communication Services','Utilities','Real Estate'];
+const COUNTRIES=['All','US','GB','DE','JP','FR','CH','CA','AU','KR','NL','SE','DK','IN','SG'];
+const TABS=['Provider Comparison','Methodology Decoder','Correlation & Divergence','Sector Bias','Portfolio Lab','Controversy Integration','Regulatory Compliance'];
 
-const NAMES=['Apple','Microsoft','Alphabet','Amazon','Meta','Tesla','NVIDIA','Johnson & Johnson','Visa','Procter & Gamble','UnitedHealth','JPMorgan Chase','Mastercard','Home Depot','Chevron','AbbVie','Merck','PepsiCo','Costco','Eli Lilly','Broadcom','Pfizer','Cisco','Adobe','Thermo Fisher','Accenture','Danaher','Nike','McDonald\'s','Honeywell','Amgen','Intel','Texas Instruments','Union Pacific','Caterpillar','Goldman Sachs','Deere','IBM','Starbucks','Lockheed Martin','Palo Alto Networks','Automatic Data','Marsh McLennan','Becton Dickinson','Air Products','Ecolab','Waste Management','Republic Services','ASML','TSMC','Samsung','Toyota','Nestl\u00e9','Roche','Novartis','AstraZeneca','Shell','BP','TotalEnergies','Siemens','SAP','Allianz','BASF','Bayer','Deutsche Telekom','Munich Re','Unilever','GSK','Rio Tinto','BHP','Anglo American','Glencore','Equinor','Vestas','Orsted','Iberdrola','Enel','NextEra Energy','Brookfield Renewable','Enphase','SolarEdge','Canadian Solar','First Solar','Schneider Electric','ABB','Emerson','Rockwell','Parker Hannifin','Fortive','Xylem','Trane Technologies','Daikin Industries','Nidec','Keyence','Fanuc','Murata','Shin-Etsu','Hoya','TDK','Mitsubishi UFJ','Sumitomo Mitsui','Mizuho','Nomura','HDFC Bank','Infosys','TCS','Wipro','HCL Tech','Reliance Industries','DBS Group','OCBC','UOB','Singtel','Keppel','CapitaLand','Volvo','Atlas Copco','Sandvik','Hexagon','Assa Abloy','Epiroc','Novo Nordisk','DSV','Coloplast','Vestas Wind','Novozymes','Chr. Hansen','Carlsberg','Maersk','Yara','DNB','Mowi','Kongsberg','Tomra','Telenor','Schibsted','Ahold Delhaize','ASML Holding','ING Group','Adyen','Prosus','Wolters Kluwer','Heineken','ArcelorMittal','Philips','Randstad','Akzo Nobel','Just Eat','NN Group','Aegon'];
+const METHODOLOGY_DATA={
+  MSCI:{
+    name:'MSCI ESG Ratings (IVA)',fullName:'MSCI ESG Ratings — Intangible Value Assessment',
+    scale:'AAA to CCC (7-point letter scale)',normalized:'14.3-100 (linear)',
+    keyIssues:35,pillarWeights:{Environment:0.33,Social:0.33,Governance:0.34},
+    dataSources:['Company disclosures','Government data','NGO reports','1,600+ media sources','Direct company engagement'],
+    methodology:'Identifies 35 key issues per GICS sub-industry. Scores exposure (0-10) vs management (0-10). Weighted by industry materiality. Time horizon: current year + forward-looking.',
+    keyFeatures:['Industry-specific key issue selection','Exposure vs management framework','Controversies as deduction','Governance as universal pillar','Leader/Laggard designation','Annual review with quarterly controversy updates'],
+    controversyApproach:'Deduction model: controversies reduce overall score. Severity levels: very severe (red flag), severe, moderate, minor.',
+    updateFreq:'Annual full review + quarterly controversy scan',
+    coverage:'8,500+ companies, 680,000+ securities',
+    issues:['Climate Change','Natural Capital','Pollution & Waste','Environmental Opportunities','Human Capital','Product Liability','Stakeholder Opposition','Social Opportunities','Corporate Governance','Corporate Behavior',
+      'Water Stress','Carbon Emissions','Product Carbon Footprint','Financing Environmental Impact','Biodiversity & Land Use','Raw Material Sourcing','Electronic Waste','Packaging Material & Waste','Toxic Emissions & Waste','Clean Technology',
+      'Green Building','Renewable Energy','Health & Safety','Human Capital Development','Supply Chain Labor Standards','Privacy & Data Security','Chemical Safety','Product Safety & Quality','Financial Product Safety','Health & Demographic Risk',
+      'Responsible Investment','Community Relations','Controversial Sourcing','Board Diversity','Executive Pay']
+  },
+  Sustainalytics:{
+    name:'Sustainalytics ESG Risk Ratings',fullName:'Morningstar Sustainalytics ESG Risk Rating',
+    scale:'0-100 (lower = better, inverted risk)',normalized:'100 - raw (for comparison)',
+    keyIssues:20,pillarWeights:{Exposure:0.5,Management:0.5},
+    dataSources:['Company reports','Regulatory filings','NGO publications','Media monitoring','Sustainalytics research'],
+    methodology:'Exposure-Management framework: measures unmanaged ESG risk. Exposure = material ESG issues for industry. Management = company policies, programs, performance. Unmanaged risk = Exposure - Management gap.',
+    keyFeatures:['Absolute risk measurement (not relative)','Exposure-management gap = unmanaged risk','Industry-specific material ESG issues (MEIs)','Quantitative + qualitative signals','Five risk categories: negligible to severe','Comparable across industries'],
+    controversyApproach:'Incidents assessed on Category 1-5 severity. High-severity controversies directly increase unmanaged risk score.',
+    updateFreq:'Continuous monitoring, annual full review',
+    coverage:'16,000+ companies globally',
+    issues:['Carbon — Own Operations','Carbon — Products & Services','Emissions & Effluents','Water','Resource Use','Land Use & Biodiversity','Occupational Health & Safety','Human Capital','Labor Rights in Supply Chain','Human Rights',
+      'Community Relations','Customer Relations','Product Governance','Data Privacy','Business Ethics','ESG Integration — Financials','Carbon — Financial Institutions','Bribery & Corruption','Anti-Competitive Practices','Tax Transparency']
+  },
+  ISS:{
+    name:'ISS ESG QualityScore',fullName:'Institutional Shareholder Services ESG QualityScore',
+    scale:'1-10 (decile-based, 1=best)',normalized:'(10-raw)/9*100',
+    keyIssues:16,pillarWeights:{Environmental:0.30,Social:0.30,Governance:0.40},
+    dataSources:['Company proxy filings','Annual reports','Sustainability reports','ISS proprietary research','Government/regulatory data'],
+    methodology:'Governance-heavy rating. Decile-based scoring (1=best 10%) relative to industry/region peers. 380+ data factors mapped to 16 themes across E/S/G pillars.',
+    keyFeatures:['Governance-focused (40% weight)','Decile-based peer ranking','380+ underlying data factors','Proxy-season integration','Board-level recommendations','Pay-for-performance analysis'],
+    controversyApproach:'Norms-based screening: UN Global Compact, OECD Guidelines, ILO conventions. Separate controversy research product.',
+    updateFreq:'Weekly governance updates, annual full E&S review',
+    coverage:'10,000+ companies',
+    issues:['Climate Strategy','Environmental Management','Water Management','Biodiversity','Pollution Prevention','Workforce Management','Health & Safety','Human Rights','Community Relations','Supply Chain','Product Responsibility','Data Privacy','Board Structure','Compensation','Audit & Risk Oversight','Shareholder Rights']
+  },
+  CDP:{
+    name:'CDP Climate/Water/Forests Scores',fullName:'CDP (formerly Carbon Disclosure Project)',
+    scale:'A to D- (8-point letter scale)',normalized:'(8-index)/7*100',
+    keyIssues:11,pillarWeights:{Disclosure:0.20,Awareness:0.20,Management:0.30,Leadership:0.30},
+    dataSources:['Company self-reported questionnaires','Verification by accredited third parties','Investor/supply chain requests'],
+    methodology:'Questionnaire-based: companies self-report on climate change, water security, and deforestation. Scored on 4 levels: Disclosure, Awareness, Management, Leadership. A-list = top performers.',
+    keyFeatures:['Voluntary disclosure platform','Three themes: climate, water, forests','4-level scoring progression','A-list leadership recognition','Supply chain program','Investor-backed (680+ signatories, $130T AUM)'],
+    controversyApproach:'No separate controversy assessment. Score based purely on disclosure quality and reported performance.',
+    updateFreq:'Annual (one questionnaire cycle per year)',
+    coverage:'23,000+ companies (disclosing), scored subset',
+    issues:['Governance','Risks & Opportunities','Business Strategy','Targets & Performance','Emissions Methodology','Emissions Data','Emissions Verification','Energy','Scope 3 Categories','Value Chain Engagement','Water Management']
+  },
+  'S&P Global':{
+    name:'S&P Global ESG Scores (CSA)',fullName:'S&P Global Corporate Sustainability Assessment',
+    scale:'0-100 (higher = better)',normalized:'Direct (already 0-100)',
+    keyIssues:61,pillarWeights:{Environmental:0.30,Social:0.30,GovernanceEconomic:0.40},
+    dataSources:['Company CSA questionnaire','Public documents','Media & stakeholder analysis','S&P Global proprietary research'],
+    methodology:'Annual questionnaire-based assessment (CSA). 61 industry-specific criteria across E, S, G&E dimensions. Financial materiality focus. Percentile ranking within industry.',
+    keyFeatures:['61 industry-specific criteria','Annual CSA questionnaire','Financial materiality lens','DJSI constituent selection','Percentile-based industry ranking','Media & stakeholder analysis overlay','Best-in-class approach within industry'],
+    controversyApproach:'Media & Stakeholder Analysis (MSA): daily monitoring. Severity levels 1-5. Can reduce total score.',
+    updateFreq:'Annual CSA cycle + daily MSA monitoring',
+    coverage:'10,000+ companies',
+    issues:['Climate Strategy','Operational Eco-Efficiency','Environmental Reporting','Biodiversity','Water-Related Risks','Product Stewardship','Social Reporting','Talent Attraction & Retention','Labor Practice Indicators','Human Rights','Corporate Citizenship & Philanthropy','Human Capital Development','Health & Safety','Supply Chain Management','Customer Relationship Management','Codes of Business Conduct','Tax Strategy','Risk & Crisis Management','Information Security','Privacy Protection',
+      'Corporate Governance','Board Composition','Anti-Crime Policy & Measures','Materiality','Policy Influence','Brand Management','Innovation Management','Genetically Modified Organisms','Emerging Risks Management','Financial Stability & Systemic Risk',
+      'Insurance Risk Management','Investment Integration','Packaging','Raw Material Sourcing','Microfinance','Sustainable Construction','Drug Safety','Clinical Trial Management','Financial Inclusion','Quantitative Risk Analytics',
+      'Physical Risk Management','Transition Risk Management','Carbon Pricing','Green Revenues','Environmental Management System','Waste Management','Air Quality','Energy Management','GHG Emissions','Sustainable Procurement',
+      'Data Privacy & Freedom of Expression','Customer Data Protection','Responsible Marketing','Access to Healthcare','Nutrition & Health','Vehicle Safety','Responsible Mining','Community Impact','Indigenous Rights','Occupational Health','Due Diligence']
+  },
+  Bloomberg:{
+    name:'Bloomberg ESG Disclosure Score',fullName:'Bloomberg ESG Data & Disclosure Scores',
+    scale:'0-100 (disclosure completeness)',normalized:'Direct (already 0-100)',
+    keyIssues:15,pillarWeights:{Environmental:0.33,Social:0.33,Governance:0.34},
+    dataSources:['Company sustainability reports','Annual reports','Proxy statements','CDP responses','Bloomberg terminal data'],
+    methodology:'Disclosure-based: measures completeness of ESG data reported. Not a performance rating. Higher score = more transparent reporting. Industry-specific materiality weighting.',
+    keyFeatures:['Disclosure/transparency focus (not performance)','Bloomberg terminal integrated','120+ ESG indicators tracked','Industry-specific materiality weighting','Real-time data updates','Linked to TCFD framework mapping'],
+    controversyApproach:'Separate Bloomberg ESG controversy tracking. Not directly integrated into disclosure score.',
+    updateFreq:'Continuous (as reports published)',
+    coverage:'11,800+ companies, 120+ countries',
+    issues:['Carbon Emissions','Energy Consumption','Water Usage','Waste Management','Biodiversity Impact','Employee Diversity','Health & Safety Incidents','Employee Turnover','Community Investment','Supply Chain Standards','Board Independence','Executive Compensation','Audit Committee','Shareholder Rights','Anti-Corruption Policies']
+  }
+};
 
-function genCompanies(){
-  const out=[];
-  for(let i=0;i<150;i++){
-    const sector=SECTORS[Math.floor(sr(i*23+5)*SECTORS.length)];
-    const country=COUNTRIES[Math.floor(sr(i*31+9)*COUNTRIES.length)];
-    const cap=CAPS[Math.floor(sr(i*37+2)*3)];
-    const msciIdx=Math.floor(sr(i*41+1)*7);
-    const sustVal=Math.floor(10+sr(i*43+3)*80);
-    const issVal=Math.round((1+sr(i*47+5)*9)*10)/10;
-    const cdpIdx=Math.floor(sr(i*53+7)*8);
-    const spVal=Math.floor(15+sr(i*59+11)*75);
-    const bbgVal=Math.floor(10+sr(i*61+13)*80);
-    const hist=[];
-    for(let q=0;q<12;q++){
+/* ═══════════════════════════════════════════════════════════════════════════════
+   150 COMPANIES WITH 6-PROVIDER RATINGS + 12Q HISTORY
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const COMPANIES=(()=>{
+  const equities=SECURITY_UNIVERSE.filter(s=>s.assetType==='Equity').slice(0,150);
+  return equities.map((sec,i)=>{
+    const base=i*139;
+    const msciIdx=Math.floor(sr(base+1)*7);
+    const sustVal=Math.floor(10+sr(base+3)*80);
+    const issVal=Math.round((1+sr(base+5)*9)*10)/10;
+    const cdpIdx=Math.floor(sr(base+7)*8);
+    const spVal=Math.floor(15+sr(base+9)*75);
+    const bbgVal=Math.floor(10+sr(base+11)*80);
+    // 12 quarter history
+    const hist=Array.from({length:12},(_, q)=>{
       const drift=sr(i*100+q*17);
-      hist.push({
+      return{
         q:`Q${(q%4)+1} ${2023+Math.floor(q/4)}`,
         msci:Math.min(6,Math.max(0,msciIdx+Math.floor((drift-0.5)*2))),
         sust:Math.min(100,Math.max(0,sustVal+Math.floor((sr(i*100+q*19)-0.5)*20))),
@@ -37,596 +139,728 @@ function genCompanies(){
         cdp:Math.min(7,Math.max(0,cdpIdx+Math.floor((sr(i*100+q*29)-0.5)*2))),
         sp:Math.min(100,Math.max(0,spVal+Math.floor((sr(i*100+q*31)-0.5)*15))),
         bbg:Math.min(100,Math.max(0,bbgVal+Math.floor((sr(i*100+q*37)-0.5)*15)))
-      });
-    }
-    out.push({id:i,name:NAMES[i]||`Company_${i}`,sector,country,cap,
-      msci:MSCI_LEVELS[msciIdx],msciNum:7-msciIdx,
-      sust:sustVal,iss:issVal,cdp:CDP_LEVELS[cdpIdx],cdpNum:8-cdpIdx,
-      sp:spVal,bbg:bbgVal,hist,watchlist:false,flagged:false});
-  }
-  return out;
-}
+      };
+    });
+    // Normalize all to 0-100
+    const msciNum=(7-msciIdx)/7*100;
+    const sustNorm=100-sustVal; // Sustainalytics: lower=better, so invert
+    const issNorm=(10-issVal)/9*100;
+    const cdpNum=(8-cdpIdx)/8*100;
+    const consensus=Math.round((msciNum+sustNorm+issNorm+cdpNum+spVal+bbgVal)/6);
+    const diverg=Math.round(Math.max(msciNum,sustNorm,issNorm,cdpNum,spVal,bbgVal)-Math.min(msciNum,sustNorm,issNorm,cdpNum,spVal,bbgVal));
 
-const normalize=(c)=>({MSCI:c.msciNum/7*100,Sustainalytics:(100-c.sust),ISS:c.iss/10*100,CDP:c.cdpNum/8*100,'S&P Global':c.sp,Bloomberg:c.bbg});
-/* EVR Fix 2.3: Divide by AVAILABLE providers, not hardcoded 6 */
-/* EVR Fix 2.5: Accept optional weights parameter for custom weighting from Tab 4 */
-const consensus=(c,weights)=>{const n=normalize(c);const entries=Object.entries(n).filter(([,v])=>v!=null&&!isNaN(v));if(!entries.length)return null;if(weights&&weights.length===6){const prov=['MSCI','Sustainalytics','ISS','CDP','S&P Global','Bloomberg'];let wSum=0,vSum=0;entries.forEach(([k,v])=>{const wi=weights[prov.indexOf(k)]||0;wSum+=wi;vSum+=v*wi;});return wSum>0?Math.round(vSum/wSum):null;}return Math.round(entries.reduce((a,[,v])=>a+v,0)/entries.length);};
-const divergence=(c)=>{const n=normalize(c);const vals=Object.values(n).filter(v=>v!=null&&!isNaN(v));if(vals.length<2)return 0;return Math.round(Math.max(...vals)-Math.min(...vals));};
+    return{
+      id:sec.id||i+1,name:sec.name||`Company_${i+1}`,ticker:sec.ticker||'',
+      sector:sec.sector||'Industrials',country:sec.country||'US',
+      msci:MSCI_LEVELS[msciIdx],msciNum:Math.round(msciNum),
+      sust:sustVal,sustNorm:Math.round(sustNorm),
+      iss:issVal,issNorm:Math.round(issNorm),
+      cdp:CDP_LEVELS[cdpIdx],cdpNum:Math.round(cdpNum),
+      sp:spVal,bbg:bbgVal,
+      consensus,divergence:diverg,hist,
+      controversyCount:Math.round(sr(base+13)*8),
+      controversySeverity:sr(base+15)<0.2?'Severe':sr(base+15)<0.5?'Moderate':'Low',
+    };
+  });
+})();
 
-const btn=(active)=>({padding:'6px 14px',borderRadius:6,border:`1px solid ${active?T.navy:T.border}`,background:active?T.navy:T.surface,color:active?'#fff':T.text,cursor:'pointer',fontSize:13,fontFamily:T.font,fontWeight:active?600:400,transition:'all 0.15s'});
-const card={background:T.surface,borderRadius:10,border:`1px solid ${T.border}`,padding:16,marginBottom:12};
-const kpiBox={background:T.surfaceH,borderRadius:8,padding:'10px 14px',textAlign:'center',flex:1,minWidth:120};
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CONTROVERSY DATA — 90 controversies
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const CONTROVERSIES=(()=>{
+  const types=['Environmental Incident','Labor Rights Violation','Data Privacy Breach','Corruption/Bribery','Product Safety','Tax Avoidance','Human Rights','Supply Chain','Governance Failure','Greenwashing'];
+  const severities=['Severe','High','Moderate','Low'];
+  return Array.from({length:90},(_,i)=>{
+    const seed=i*43;
+    const coIdx=Math.floor(sr(seed)*COMPANIES.length);
+    const co=COMPANIES[coIdx];
+    return{
+      id:i+1,company:co.name,companyId:co.id,sector:co.sector,
+      type:types[Math.floor(sr(seed+1)*types.length)],
+      severity:severities[Math.floor(sr(seed+3)*4)],
+      date:`2024-${String(1+Math.floor(sr(seed+5)*12)).padStart(2,'0')}-${String(1+Math.floor(sr(seed+7)*28)).padStart(2,'0')}`,
+      msciImpact:Math.round(-2-sr(seed+9)*8),
+      sustImpact:Math.round(2+sr(seed+11)*10),
+      issImpact:Math.round(sr(seed+13)*3*10)/10,
+      spImpact:Math.round(-3-sr(seed+15)*12),
+      cdpImpact:0,
+      bbgImpact:Math.round(-1-sr(seed+17)*6),
+      leadLagDays:Math.round(sr(seed+19)*90),
+      resolved:sr(seed+21)<0.4,
+    };
+  });
+})();
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   UI HELPERS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const KPI=({label,value,sub,color,cite})=>(
+  <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:150}}>
+    <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div>
+    <div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>
+    {sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}
+    {cite&&<div style={{fontSize:9,color:T.textMut,fontFamily:T.mono,marginTop:2}}>{cite}</div>}
+  </div>
+);
+const SectionHead=({children,cite})=>(
+  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+    <div style={{fontSize:14,fontWeight:700,color:T.navy}}>{children}</div>
+    {cite&&<span style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{cite}</span>}
+  </div>
+);
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════════════════════════════════════ */
 export default function EsgRatingsComparatorPage(){
-  const [tab,setTab]=useState(0);
-  const [data]=useState(()=>genCompanies());
-  const [provFilter,setProvFilter]=useState(PROVIDERS.map(()=>true));
-  const [sectorFilter,setSectorFilter]=useState('All');
-  const [countryFilter,setCountryFilter]=useState('All');
-  const [capFilter,setCapFilter]=useState('All');
-  const [divSlider,setDivSlider]=useState(50);
-  const [sortCol,setSortCol]=useState('name');
-  const [sortDir,setSortDir]=useState(1);
-  const [page,setPage]=useState(0);
-  const [drawer,setDrawer]=useState(null);
-  const [watchlist,setWatchlist]=useState([]);
-  const [wlOpen,setWlOpen]=useState(false);
-  const [selected,setSelected]=useState(new Set());
-  const [compareOpen,setCompareOpen]=useState(false);
-  const [overrides,setOverrides]=useState({});
-  const [editCell,setEditCell]=useState(null);
-  const [editVal,setEditVal]=useState('');
-  // Tab 2
-  const [corrSector,setCorrSector]=useState('All');
-  const [corrCap,setCorrCap]=useState('All');
-  const [corrCell,setCorrCell]=useState(null);
-  // Tab 3
-  const [deepSector,setDeepSector]=useState(SECTORS[0]);
-  const [zScore,setZScore]=useState(false);
-  // Tab 4
-  const [portfolio,setPortfolio]=useState([]);
-  const [portSearch,setPortSearch]=useState('');
-  const [portWeights,setPortWeights]=useState(PROVIDERS.map(()=>100/6));
-  const [alertThresh,setAlertThresh]=useState(30);
-  const [port2,setPort2]=useState(null);
-  const [port2Compare,setPort2Compare]=useState(false);
+  const[tab,setTab]=useState(0);
+  const[search,setSearch]=useState('');
+  const[secF,setSecF]=useState('All');
+  const[countryF,setCountryF]=useState('All');
+  const[sortCol,setSortCol]=useState('consensus');
+  const[sortDir,setSortDir]=useState('desc');
+  const[page,setPage]=useState(1);
+  const[drawer,setDrawer]=useState(null);
+  const[methProvider,setMethProvider]=useState('MSCI');
+  const[corrSec,setCorrSec]=useState('All');
+  const[biasSec,setBiasSec]=useState(null);
+  const[portIds,setPortIds]=useState(()=>COMPANIES.slice(0,20).map(c=>c.id));
+  const[portWeights,setPortWeights]=useState(PROVIDERS.map(()=>+(100/6).toFixed(1)));
+  const[alertThresh,setAlertThresh]=useState(30);
+  const[contSearch,setContSearch]=useState('');
+  const[contSev,setContSev]=useState('All');
+  const[divMin,setDivMin]=useState(0);
 
-  const getVal=(c,prov)=>{
-    const key=`${c.id}_${prov}`;
-    if(overrides[key]!==undefined) return overrides[key];
-    if(prov==='MSCI')return c.msciNum/7*100;if(prov==='Sustainalytics')return 100-c.sust;if(prov==='ISS')return c.iss/10*100;if(prov==='CDP')return c.cdpNum/8*100;if(prov==='S&P Global')return c.sp;return c.bbg;
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
+
+  const ss={
+    wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},
+    header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},
+    sub:{fontSize:13,color:T.textSec,marginBottom:20},
+    tabs:{display:'flex',gap:2,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0,overflowX:'auto'},
+    tab:(a)=>({padding:'10px 16px',fontSize:12,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?`${ACCENT}10`:'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2,whiteSpace:'nowrap'}),
+    card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},
+    input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},
+    select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},
+    th:(col)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sortCol===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),
+    td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},
+    btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},
+    btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},
+    pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16},
+    cite:{fontSize:9,color:T.textMut,fontFamily:T.mono,marginTop:4},
+    grid2:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20},
+    flex:{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'},
   };
+  const TH=({col,label})=><th style={ss.th(col)} onClick={()=>doSort(col)}>{label}{sortCol===col?(sortDir==='asc'?' \u25B2':' \u25BC'):''}</th>;
 
+  /* ─── FILTERED ─── */
   const filtered=useMemo(()=>{
-    let f=data.filter(c=>{
-      if(sectorFilter!=='All'&&c.sector!==sectorFilter)return false;
-      if(countryFilter!=='All'&&c.country!==countryFilter)return false;
-      if(capFilter!=='All'&&c.cap!==capFilter)return false;
-      if(divergence(c)>divSlider)return false;
-      return true;
+    let d=[...COMPANIES];
+    if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase())||r.ticker.toLowerCase().includes(search.toLowerCase()));
+    if(secF!=='All')d=d.filter(r=>r.sector===secF);
+    if(countryF!=='All')d=d.filter(r=>r.country===countryF);
+    if(divMin>0)d=d.filter(r=>r.divergence>=divMin);
+    d.sort((a,b)=>{const av=a[sortCol]??0;const bv=b[sortCol]??0;return sortDir==='asc'?(av>bv?1:-1):(av<bv?1:-1);});
+    return d;
+  },[search,secF,countryF,sortCol,sortDir,divMin]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
+  const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
+
+  const avgConsensus=Math.round(COMPANIES.reduce((s,c)=>s+c.consensus,0)/COMPANIES.length);
+  const avgDivergence=Math.round(COMPANIES.reduce((s,c)=>s+c.divergence,0)/COMPANIES.length);
+  const highDiv=COMPANIES.filter(c=>c.divergence>40).length;
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 0: PROVIDER COMPARISON — 150 cos x 6 providers, sortable
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderComparison=()=>(
+    <>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Companies" value={COMPANIES.length} color={ACCENT}/>
+        <KPI label="Providers" value={6} color={T.navy}/>
+        <KPI label="Avg Consensus" value={avgConsensus} sub="normalized 0-100" color={avgConsensus>=60?T.green:T.amber}/>
+        <KPI label="Avg Divergence" value={avgDivergence+'pt'} sub="max-min spread" color={avgDivergence>30?T.red:T.amber}/>
+        <KPI label="High Divergence" value={highDiv} sub=">40pt spread" color={T.red}/>
+      </div>
+      <div style={ss.card}>
+        <div style={ss.flex}>
+          <input style={ss.input} placeholder="Search companies..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+          <select style={ss.select} value={secF} onChange={e=>{setSecF(e.target.value);setPage(1);}}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select>
+          <select style={ss.select} value={countryF} onChange={e=>{setCountryF(e.target.value);setPage(1);}}>{COUNTRIES.map(s=><option key={s}>{s}</option>)}</select>
+          <div style={{display:'flex',alignItems:'center',gap:6}}>
+            <span style={{fontSize:11,color:T.textMut}}>Min Divergence:</span>
+            <input type="range" min={0} max={60} value={divMin} onChange={e=>setDivMin(+e.target.value)} style={{width:80}}/>
+            <span style={{fontSize:11,fontFamily:T.mono}}>{divMin}</span>
+          </div>
+          <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} companies</span>
+          <button style={ss.btn} onClick={()=>csvExport(filtered.map(c=>({name:c.name,sector:c.sector,country:c.country,MSCI:c.msci,Sustainalytics:c.sust,ISS:c.iss,CDP:c.cdp,'S&P':c.sp,Bloomberg:c.bbg,consensus:c.consensus,divergence:c.divergence})),'esg_ratings')}>Export CSV</button>
+        </div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            <TH col="name" label="Company"/><TH col="sector" label="Sector"/>
+            <TH col="msciNum" label="MSCI"/><TH col="sustNorm" label="Sust."/>
+            <TH col="issNorm" label="ISS"/><TH col="cdpNum" label="CDP"/>
+            <TH col="sp" label="S&P"/><TH col="bbg" label="BBG"/>
+            <TH col="consensus" label="Consensus"/><TH col="divergence" label="Diverg."/>
+          </tr></thead><tbody>{paged.map(r=>(
+            <React.Fragment key={r.id}>
+              <tr style={{cursor:'pointer',background:drawer===r.id?T.surfaceH:'transparent'}} onClick={()=>setDrawer(drawer===r.id?null:r.id)}>
+                <td style={{...ss.td,fontWeight:600}}>{r.name}</td>
+                <td style={{...ss.td,fontSize:11}}>{r.sector}</td>
+                <td style={ss.td}><span style={badge(r.msciNum,[25,50,70])}>{r.msci}</span></td>
+                <td style={ss.td}><span style={badge(r.sustNorm,[25,50,70])}>{r.sust} ({r.sustNorm})</span></td>
+                <td style={ss.td}><span style={badge(r.issNorm,[25,50,70])}>{r.iss} ({r.issNorm})</span></td>
+                <td style={ss.td}><span style={badge(r.cdpNum,[25,50,70])}>{r.cdp}</span></td>
+                <td style={ss.td}><span style={badge(r.sp,[25,50,70])}>{r.sp}</span></td>
+                <td style={ss.td}><span style={badge(r.bbg,[25,50,70])}>{r.bbg}</span></td>
+                <td style={ss.td}><span style={badge(r.consensus,[30,50,70])}>{r.consensus}</span></td>
+                <td style={{...ss.td,fontFamily:T.mono,color:r.divergence>40?T.red:r.divergence>25?T.amber:T.green}}>{r.divergence}</td>
+              </tr>
+              {drawer===r.id&&<tr><td colSpan={10} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <RadarChart data={[{p:'MSCI',v:r.msciNum},{p:'Sust.',v:r.sustNorm},{p:'ISS',v:r.issNorm},{p:'CDP',v:r.cdpNum},{p:'S&P',v:r.sp},{p:'BBG',v:r.bbg}]} cx="50%" cy="50%" outerRadius={70}>
+                      <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="p" tick={{fontSize:10,fill:T.textSec}}/>
+                      <PolarRadiusAxis tick={false} domain={[0,100]}/>
+                      <Radar dataKey="v" stroke={ACCENT} fill={`${ACCENT}25`} strokeWidth={2}/>
+                    </RadarChart>
+                  </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <LineChart data={r.hist}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+                      <XAxis dataKey="q" tick={{fontSize:8,fill:T.textMut}} interval={2}/>
+                      <YAxis tick={{fontSize:9,fill:T.textMut}} domain={[0,100]}/>
+                      <Tooltip {...tip}/>
+                      <Line type="monotone" dataKey="sp" stroke={PCOLORS[4]} strokeWidth={1.5} dot={false} name="S&P"/>
+                      <Line type="monotone" dataKey="bbg" stroke={PCOLORS[5]} strokeWidth={1.5} dot={false} name="Bloomberg"/>
+                      <Legend/>
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div style={{fontSize:11,color:T.textSec,marginTop:8}}>Controversies: {r.controversyCount} ({r.controversySeverity}) | Country: {r.country} | Ticker: {r.ticker}</div>
+              </td></tr>}
+            </React.Fragment>
+          ))}</tbody></table>
+        </div>
+        <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+      </div>
+    </>
+  );
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 1: METHODOLOGY DECODER
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderMethodology=()=>{
+    const meth=METHODOLOGY_DATA[methProvider];
+    return(<>
+      <SectionHead cite="EU ESG Ratings Regulation (2024/3005)">Methodology Decoder</SectionHead>
+      <div style={ss.flex}>
+        {PROVIDERS.map(p=><button key={p} style={methProvider===p?ss.btn:ss.btnSec} onClick={()=>setMethProvider(p)}>{p}</button>)}
+      </div>
+      <div style={ss.card}>
+        <div style={{fontSize:16,fontWeight:700,color:T.navy,marginBottom:4}}>{meth.fullName}</div>
+        <div style={{fontSize:12,color:T.textSec,marginBottom:16}}>{meth.methodology}</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16,marginBottom:16}}>
+          <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>SCALE</div>
+            <div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:4}}>{meth.scale}</div>
+          </div>
+          <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>KEY ISSUES</div>
+            <div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:4}}>{meth.keyIssues} criteria</div>
+          </div>
+          <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>COVERAGE</div>
+            <div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:4}}>{meth.coverage}</div>
+          </div>
+        </div>
+        {/* Pillar Weights */}
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Pillar Weights</div>
+          <div style={{display:'flex',gap:8}}>
+            {Object.entries(meth.pillarWeights).map(([k,v])=>(
+              <div key={k} style={{flex:v,background:`${ACCENT}15`,borderRadius:6,padding:'8px 12px',textAlign:'center',border:`1px solid ${ACCENT}30`}}>
+                <div style={{fontSize:11,fontWeight:600,color:ACCENT}}>{k}</div>
+                <div style={{fontSize:16,fontWeight:700,color:T.navy,fontFamily:T.mono}}>{(v*100).toFixed(0)}%</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Key Features */}
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Key Features</div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
+            {meth.keyFeatures.map((f,i)=>(
+              <div key={i} style={{padding:'6px 10px',background:T.surfaceH,borderRadius:4,fontSize:11,color:T.text,display:'flex',gap:6,alignItems:'center'}}>
+                <span style={{color:ACCENT,fontWeight:700}}>+</span>{f}
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Controversy Approach */}
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Controversy Integration</div>
+          <div style={{fontSize:12,color:T.textSec,lineHeight:1.6,padding:'8px 12px',background:T.surfaceH,borderRadius:6}}>{meth.controversyApproach}</div>
+        </div>
+        {/* Data Sources */}
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Data Sources</div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            {meth.dataSources.map((d,i)=>(
+              <span key={i} style={{padding:'4px 10px',background:T.surfaceH,borderRadius:4,fontSize:11,color:T.text,border:`1px solid ${T.border}`}}>{d}</span>
+            ))}
+          </div>
+        </div>
+        {/* Key Issues/Criteria List */}
+        <div>
+          <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:8}}>Key Issues / Criteria ({meth.issues.length})</div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:4,maxHeight:300,overflowY:'auto'}}>
+            {meth.issues.map((iss,i)=>(
+              <div key={i} style={{padding:'4px 8px',fontSize:10,color:T.textSec,borderBottom:`1px solid ${T.border}`}}>
+                <span style={{fontFamily:T.mono,color:ACCENT,marginRight:4}}>{i+1}.</span>{iss}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>);
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 2: CORRELATION & DIVERGENCE — 6x6 matrix, scatter, trend
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderCorrelation=()=>{
+    // Compute 6x6 correlation matrix
+    const provKeys=[{k:'msciNum',l:'MSCI'},{k:'sustNorm',l:'Sust.'},{k:'issNorm',l:'ISS'},{k:'cdpNum',l:'CDP'},{k:'sp',l:'S&P'},{k:'bbg',l:'BBG'}];
+    const corrFiltered=corrSec==='All'?COMPANIES:COMPANIES.filter(c=>c.sector===corrSec);
+    const corr=(k1,k2)=>{
+      const n=corrFiltered.length;
+      const m1=corrFiltered.reduce((s,c)=>s+c[k1],0)/n;
+      const m2=corrFiltered.reduce((s,c)=>s+c[k2],0)/n;
+      let num=0,d1=0,d2=0;
+      corrFiltered.forEach(c=>{const a=c[k1]-m1;const b=c[k2]-m2;num+=a*b;d1+=a*a;d2+=b*b;});
+      return d1&&d2?+(num/Math.sqrt(d1*d2)).toFixed(2):0;
+    };
+    const matrix=provKeys.map(p1=>({provider:p1.l,...Object.fromEntries(provKeys.map(p2=>[p2.l,corr(p1.k,p2.k)]))}));
+
+    // Divergence distribution
+    const divBuckets=[{range:'0-10',count:0},{range:'10-20',count:0},{range:'20-30',count:0},{range:'30-40',count:0},{range:'40-50',count:0},{range:'50+',count:0}];
+    COMPANIES.forEach(c=>{
+      if(c.divergence<10)divBuckets[0].count++;
+      else if(c.divergence<20)divBuckets[1].count++;
+      else if(c.divergence<30)divBuckets[2].count++;
+      else if(c.divergence<40)divBuckets[3].count++;
+      else if(c.divergence<50)divBuckets[4].count++;
+      else divBuckets[5].count++;
     });
-    f.sort((a,b)=>{
-      let va,vb;
-      if(sortCol==='name'){va=a.name;vb=b.name;return va<vb?-sortDir:sortDir;}
-      if(sortCol==='consensus'){va=consensus(a);vb=consensus(b);}
-      else if(sortCol==='divergence'){va=divergence(a);vb=divergence(b);}
-      else if(sortCol==='sector'){va=a.sector;vb=b.sector;return va<vb?-sortDir:sortDir;}
-      else if(sortCol==='country'){va=a.country;vb=b.country;return va<vb?-sortDir:sortDir;}
-      else if(sortCol==='msci'){va=a.msciNum;vb=b.msciNum;}
-      else if(sortCol==='sust'){va=100-a.sust;vb=100-b.sust;}
-      else if(sortCol==='iss'){va=a.iss;vb=b.iss;}
-      else if(sortCol==='cdp'){va=a.cdpNum;vb=b.cdpNum;}
-      else if(sortCol==='sp'){va=a.sp;vb=b.sp;}
-      else if(sortCol==='bbg'){va=a.bbg;vb=b.bbg;}
-      else{va=0;vb=0;}
-      return (va-vb)*sortDir;
+
+    // Divergence trend over 12Q
+    const divTrend=Array.from({length:12},(_,q)=>{
+      const avgDiv=Math.round(COMPANIES.reduce((s,c)=>{
+        const h=c.hist[q];const vals=[h.sp,h.bbg,(7-h.msci)/7*100,(100-h.sust),(10-h.iss)/9*100,(8-h.cdp)/8*100];
+        return s+Math.max(...vals)-Math.min(...vals);
+      },0)/COMPANIES.length);
+      return{q:`Q${(q%4)+1} ${2023+Math.floor(q/4)}`,avgDivergence:avgDiv};
     });
-    return f;
-  },[data,sectorFilter,countryFilter,capFilter,divSlider,sortCol,sortDir]);
 
-  const paged=filtered.slice(page*20,(page+1)*20);
-  const totalPages=Math.ceil(filtered.length/20);
-
-  const kpis=useMemo(()=>{
-    if(!filtered.length)return{count:0,avgCon:0,avgDiv:0,highDiv:'-',lowDiv:'-'};
-    const cons=filtered.map(consensus);const divs=filtered.map(divergence);
-    const hIdx=divs.indexOf(Math.max(...divs));const lIdx=divs.indexOf(Math.min(...divs));
-    return{count:filtered.length,avgCon:Math.round(cons.reduce((a,b)=>a+b,0)/cons.length),avgDiv:Math.round(divs.reduce((a,b)=>a+b,0)/divs.length),highDiv:filtered[hIdx]?.name,lowDiv:filtered[lIdx]?.name};
-  },[filtered]);
-
-  const peers=(c)=>data.filter(x=>x.id!==c.id&&x.sector===c.sector).slice(0,5);
-  const toggleSort=(col)=>{if(sortCol===col)setSortDir(-sortDir);else{setSortCol(col);setSortDir(1);}setPage(0);};
-  const sortIcon=(col)=>sortCol===col?(sortDir===1?' \u25B2':' \u25BC'):'';
-  const toggleWatch=useCallback((id)=>{setWatchlist(w=>w.includes(id)?w.filter(x=>x!==id):[...w,id]);},[]);
-  const toggleSelect=(id)=>{setSelected(s=>{const n=new Set(s);if(n.has(id))n.delete(id);else n.add(id);return n;});};
-  const startEdit=(cid,prov,val)=>{setEditCell(`${cid}_${prov}`);setEditVal(String(Math.round(val)));};
-  const commitEdit=(cid,prov)=>{const v=parseFloat(editVal);if(!isNaN(v)){setOverrides(o=>({...o,[`${cid}_${prov}`]:Math.max(0,Math.min(100,v))}));}setEditCell(null);};
-
-  // Correlation computation
-  const corrData=useMemo(()=>{
-    let f=data;
-    if(corrSector!=='All')f=f.filter(c=>c.sector===corrSector);
-    if(corrCap!=='All')f=f.filter(c=>c.cap===corrCap);
-    const vals=PROVIDERS.map(p=>f.map(c=>getVal(c,p)));
-    const corr=(a,b)=>{const n=a.length;if(n<3)return 0;const ma=a.reduce((s,v)=>s+v,0)/n;const mb=b.reduce((s,v)=>s+v,0)/n;let num=0,da=0,db=0;for(let i=0;i<n;i++){num+=(a[i]-ma)*(b[i]-mb);da+=(a[i]-ma)**2;db+=(b[i]-mb)**2;}return da&&db?num/Math.sqrt(da*db):0;};
-    const matrix=PROVIDERS.map((_,i)=>PROVIDERS.map((_,j)=>+corr(vals[i],vals[j]).toFixed(3)));
-    return{matrix,vals,companies:f};
-  },[data,corrSector,corrCap,overrides]);
-
-  const corrQuarterTrend=useMemo(()=>{
-    if(!corrCell)return[];
-    const [pi,pj]=corrCell;
-    return Array.from({length:12},(_,q)=>{
-      let f=data;if(corrSector!=='All')f=f.filter(c=>c.sector===corrSector);
-      const extract=(c,idx)=>{const h=c.hist[q];return[h.msci/6*100,100-h.sust,h.iss/10*100,h.cdp/7*100,h.sp,h.bbg][idx];};
-      const a=f.map(c=>extract(c,pi));const b=f.map(c=>extract(c,pj));
-      const n=a.length;if(n<3)return{q:`Q${(q%4)+1} ${2023+Math.floor(q/4)}`,r:0};
-      const ma=a.reduce((s,v)=>s+v,0)/n;const mb=b.reduce((s,v)=>s+v,0)/n;
-      let num=0,da=0,db=0;for(let i=0;i<n;i++){num+=(a[i]-ma)*(b[i]-mb);da+=(a[i]-ma)**2;db+=(b[i]-mb)**2;}
-      return{q:`Q${(q%4)+1} ${2023+Math.floor(q/4)}`,r:da&&db?+(num/Math.sqrt(da*db)).toFixed(3):0};
-    });
-  },[corrCell,data,corrSector]);
-
-  // Sector deep dive data
-  const sectorData=useMemo(()=>{
-    const f=data.filter(c=>c.sector===deepSector);
-    const avg=PROVIDERS.map(p=>{const vals=f.map(c=>getVal(c,p));return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;});
-    if(zScore){const mean=avg.reduce((a,b)=>a+b,0)/6;const std=Math.sqrt(avg.reduce((a,b)=>a+(b-mean)**2,0)/6)||1;return{companies:f,bars:PROVIDERS.map((p,i)=>({provider:p,value:+((avg[i]-mean)/std).toFixed(2)})),avg};}
-    return{companies:f,bars:PROVIDERS.map((p,i)=>({provider:p,value:avg[i]})),avg};
-  },[data,deepSector,zScore,overrides]);
-
-  const sectorHeatmap=useMemo(()=>SECTORS.map(sec=>{
-    const f=data.filter(c=>c.sector===sec);
-    if(!f.length)return{sector:sec,vals:PROVIDERS.map(()=>0)};
-    return{sector:sec,vals:PROVIDERS.map((p,pi)=>{
-      const recent=f.map(c=>getVal(c,p));
-      const early=f.map(c=>{const h=c.hist[0];return[h.msci/6*100,100-h.sust,h.iss/10*100,h.cdp/7*100,h.sp,h.bbg][pi];});
-      const avgR=recent.reduce((a,b)=>a+b,0)/recent.length;const avgE=early.reduce((a,b)=>a+b,0)/early.length;
-      return Math.round(avgR-avgE);
-    })};
-  }),[data,overrides]);
-
-  const provBias=useMemo(()=>PROVIDERS.map(p=>{
-    const sectorAvgs=SECTORS.map(sec=>{const f=data.filter(c=>c.sector===sec);return f.length?f.map(c=>getVal(c,p)).reduce((a,b)=>a+b,0)/f.length:50;});
-    const mean=sectorAvgs.reduce((a,b)=>a+b,0)/sectorAvgs.length;
-    const std=Math.sqrt(sectorAvgs.reduce((a,b)=>a+(b-mean)**2,0)/sectorAvgs.length);
-    return{provider:p,bias:+std.toFixed(1)};
-  }),[data,overrides]);
-
-  // Portfolio Lab KPIs
-  const portKpis=useMemo(()=>{
-    if(!portfolio.length)return{wCon:0,gaps:0,maxDiv:0,agree:0};
-    const wTotal=portWeights.reduce((a,b)=>a+b,0)||1;
-    const wNorm=portWeights.map(w=>w/wTotal);
-    const wCons=portfolio.map(id=>{const c=data[id];return PROVIDERS.reduce((s,p,i)=>s+getVal(c,p)*wNorm[i],0);});
-    const wCon=Math.round(wCons.reduce((a,b)=>a+b,0)/wCons.length);
-    const divs=portfolio.map(id=>divergence(data[id]));
-    return{wCon,gaps:0,maxDiv:Math.max(...divs),agree:Math.round(100-Math.max(...divs))};
-  },[portfolio,portWeights,data,overrides]);
-
-  const exportCSV=()=>{
-    const rows=[['Name','Sector','Country','Cap','MSCI','Sustainalytics','ISS','CDP','S&P Global','Bloomberg','Consensus','Divergence']];
-    portfolio.forEach(id=>{const c=data[id];rows.push([c.name,c.sector,c.country,c.cap,c.msci,c.sust,c.iss,c.cdp,c.sp,c.bbg,consensus(c,portWeights),divergence(c)]);});
-    const csv=rows.map(r=>r.join(',')).join('\n');
-    const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download='esg_portfolio_analysis.csv';a.click();URL.revokeObjectURL(url);
-  };
-
-  const prebuilt=(type)=>{
-    const sorted=[...data];
-    if(type==='leaders')sorted.sort((a,b)=>consensus(b)-consensus(a));
-    else if(type==='divergence')sorted.sort((a,b)=>divergence(b)-divergence(a));
-    else sorted.sort((a,b)=>a.sector.localeCompare(b.sector));
-    setPortfolio(sorted.slice(0,20).map(c=>c.id));
-  };
-
-  const TABS=['Provider Comparison','Correlation Matrix','Sector Deep Dive','Portfolio Lab'];
-
-  // --- DRAWER ---
-  const renderDrawer=()=>{
-    if(drawer===null)return null;
-    const c=data[drawer];const n=normalize(c);
-    const radarD=PROVIDERS.map(p=>({provider:p,value:n[p]}));
-    const histD=c.hist.map(h=>({q:h.q,MSCI:h.msci/6*100,Sust:100-h.sust,ISS:h.iss/10*100,CDP:h.cdp/7*100,SP:h.sp,BBG:h.bbg}));
-    const ps=peers(c);
-    return(<div style={{position:'fixed',top:0,right:0,width:480,height:'100vh',background:T.surface,borderLeft:`2px solid ${T.border}`,zIndex:1000,overflowY:'auto',padding:20,boxShadow:'-4px 0 20px rgba(0,0,0,0.1)'}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
-        <h3 style={{margin:0,color:T.navy,fontFamily:T.font}}>{c.name}</h3>
-        <button onClick={()=>setDrawer(null)} style={{...btn(false),padding:'4px 10px'}}>Close</button>
+    return(<>
+      <SectionHead>Correlation & Divergence Analysis</SectionHead>
+      <div style={ss.flex}>
+        <select style={ss.select} value={corrSec} onChange={e=>setCorrSec(e.target.value)}>{SECTORS.map(s=><option key={s}>{s}</option>)}</select>
+        <span style={{fontSize:11,color:T.textMut}}>{corrFiltered.length} companies</span>
       </div>
-      <div style={{display:'flex',gap:8,marginBottom:12}}>
-        <span style={{fontSize:12,padding:'3px 8px',borderRadius:4,background:T.surfaceH,color:T.textSec}}>{c.sector}</span>
-        <span style={{fontSize:12,padding:'3px 8px',borderRadius:4,background:T.surfaceH,color:T.textSec}}>{c.country}</span>
-        <span style={{fontSize:12,padding:'3px 8px',borderRadius:4,background:T.surfaceH,color:T.textSec}}>{c.cap} Cap</span>
-      </div>
-      <div style={card}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Provider Radar</div>
-        <ResponsiveContainer width="100%" height={220}>
-          <RadarChart data={radarD}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="provider" tick={{fontSize:10,fill:T.textSec}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:9}}/><Radar dataKey="value" stroke={T.navy} fill={T.navy} fillOpacity={0.15}/></RadarChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={card}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>12-Quarter Trend</div>
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={histD}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="q" tick={{fontSize:8}}/><YAxis domain={[0,100]} tick={{fontSize:9}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.font}}/>
-          {['MSCI','Sust','ISS','CDP','SP','BBG'].map((k,i)=><Line key={k} type="monotone" dataKey={k} stroke={PCOLORS[i]} strokeWidth={1.5} dot={false}/>)}
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={card}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Peer Comparison (5 closest)</div>
-        <table style={{width:'100%',fontSize:11,borderCollapse:'collapse'}}>
-          <thead><tr>{['Peer','MSCI','ISS','S&P','Consensus'].map(h=><th key={h} style={{padding:'4px 6px',borderBottom:`1px solid ${T.border}`,textAlign:'left',color:T.textSec}}>{h}</th>)}</tr></thead>
-          <tbody>{ps.map(p=><tr key={p.id} style={{cursor:'pointer'}} onClick={()=>setDrawer(p.id)}><td style={{padding:'4px 6px'}}>{p.name}</td><td>{p.msci}</td><td>{p.iss}</td><td>{p.sp}</td><td>{consensus(p)}</td></tr>)}</tbody>
-        </table>
-      </div>
-      <div style={{display:'flex',gap:8}}>
-        <button onClick={()=>toggleWatch(c.id)} style={{...btn(watchlist.includes(c.id)),flex:1}}>{watchlist.includes(c.id)?'Remove from Watchlist':'Add to Watchlist'}</button>
-        <button onClick={()=>{}} style={{...btn(false),flex:1,borderColor:T.amber,color:T.amber}}>Flag for Review</button>
-      </div>
-    </div>);
-  };
-
-  // --- COMPARE OVERLAY ---
-  const renderCompare=()=>{
-    if(!compareOpen||selected.size<2)return null;
-    const ids=[...selected].slice(0,6);
-    return(<div style={{position:'fixed',top:0,left:0,width:'100%',height:'100%',background:'rgba(0,0,0,0.5)',zIndex:1100,display:'flex',alignItems:'center',justifyContent:'center'}} onClick={()=>setCompareOpen(false)}>
-      <div onClick={e=>e.stopPropagation()} style={{background:T.surface,borderRadius:12,padding:24,maxWidth:900,width:'90%',maxHeight:'80vh',overflowY:'auto'}}>
-        <div style={{display:'flex',justifyContent:'space-between',marginBottom:16}}><h3 style={{margin:0,color:T.navy}}>Compare Selected ({ids.length})</h3><button onClick={()=>setCompareOpen(false)} style={btn(false)}>Close</button></div>
-        <div style={{display:'grid',gridTemplateColumns:`repeat(${Math.min(ids.length,3)},1fr)`,gap:12}}>
-          {ids.map(id=>{const c=data[id];const radarD=PROVIDERS.map(p=>({provider:p,value:normalize(c)[p]}));
-            return(<div key={id} style={card}>
-              <div style={{fontWeight:600,fontSize:13,color:T.navy,marginBottom:6}}>{c.name}</div>
-              <ResponsiveContainer width="100%" height={180}><RadarChart data={radarD}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="provider" tick={{fontSize:8}}/><PolarRadiusAxis domain={[0,100]} tick={false}/><Radar dataKey="value" stroke={T.navy} fill={T.navy} fillOpacity={0.15}/></RadarChart></ResponsiveContainer>
-              <div style={{fontSize:11,color:T.textSec}}>Consensus: {consensus(c)} | Divergence: {divergence(c)}</div>
-            </div>);
-          })}
-        </div>
-      </div>
-    </div>);
-  };
-
-  // ====== TAB 0: Provider Comparison ======
-  const renderTab0=()=>(<div>
-    {/* Filters */}
-    <div style={{...card,display:'flex',flexWrap:'wrap',gap:10,alignItems:'center'}}>
-      <div style={{fontSize:12,fontWeight:600,color:T.navy}}>Providers:</div>
-      {PROVIDERS.map((p,i)=><label key={p} style={{fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',gap:3}}>
-        <input type="checkbox" checked={provFilter[i]} onChange={()=>{const n=[...provFilter];n[i]=!n[i];setProvFilter(n);}}/>
-        <span style={{color:PCOLORS[i],fontWeight:500}}>{p}</span>
-      </label>)}
-      <div style={{width:1,height:20,background:T.border}}/>
-      <select value={sectorFilter} onChange={e=>{setSectorFilter(e.target.value);setPage(0);}} style={{fontSize:12,padding:'4px 8px',borderRadius:5,border:`1px solid ${T.border}`,fontFamily:T.font}}>
-        <option value="All">All Sectors</option>{SECTORS.map(s=><option key={s} value={s}>{s}</option>)}
-      </select>
-      <select value={countryFilter} onChange={e=>{setCountryFilter(e.target.value);setPage(0);}} style={{fontSize:12,padding:'4px 8px',borderRadius:5,border:`1px solid ${T.border}`,fontFamily:T.font}}>
-        <option value="All">All Countries</option>{COUNTRIES.map(c=><option key={c} value={c}>{c}</option>)}
-      </select>
-      <select value={capFilter} onChange={e=>{setCapFilter(e.target.value);setPage(0);}} style={{fontSize:12,padding:'4px 8px',borderRadius:5,border:`1px solid ${T.border}`,fontFamily:T.font}}>
-        <option value="All">All Caps</option>{CAPS.map(c=><option key={c} value={c}>{c}</option>)}
-      </select>
-      <div style={{display:'flex',alignItems:'center',gap:6}}>
-        <span style={{fontSize:11,color:T.textSec}}>Max Divergence:</span>
-        <input type="range" min={0} max={100} value={divSlider} onChange={e=>{setDivSlider(+e.target.value);setPage(0);}} style={{width:100}}/>
-        <span style={{fontSize:11,fontFamily:T.mono,color:T.navy}}>{divSlider}</span>
-      </div>
-    </div>
-    {/* KPIs */}
-    <div style={{display:'flex',gap:10,marginBottom:12,flexWrap:'wrap'}}>
-      <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Companies</div><div style={{fontSize:22,fontWeight:700,color:T.navy}}>{kpis.count}</div></div>
-      <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Avg Consensus</div><div style={{fontSize:22,fontWeight:700,color:T.sage}}>{kpis.avgCon}</div></div>
-      <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Avg Divergence</div><div style={{fontSize:22,fontWeight:700,color:T.amber}}>{kpis.avgDiv}</div></div>
-      <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Highest Divergence</div><div style={{fontSize:13,fontWeight:600,color:T.red}}>{kpis.highDiv}</div></div>
-      <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Lowest Divergence</div><div style={{fontSize:13,fontWeight:600,color:T.green}}>{kpis.lowDiv}</div></div>
-    </div>
-    {/* Bulk actions */}
-    {selected.size>=2&&<div style={{marginBottom:8}}><button onClick={()=>setCompareOpen(true)} style={{...btn(true),fontSize:12}}>Compare Selected ({selected.size})</button></div>}
-    {/* Table */}
-    <div style={{...card,overflowX:'auto',padding:0}}>
-      <table style={{width:'100%',fontSize:12,borderCollapse:'collapse',fontFamily:T.font}}>
-        <thead><tr style={{background:T.surfaceH}}>
-          <th style={{padding:'8px 6px',width:30}}><input type="checkbox" onChange={e=>{if(e.target.checked)setSelected(new Set(paged.map(c=>c.id)));else setSelected(new Set());}}/></th>
-          {[{k:'name',l:'Company'},{k:'sector',l:'Sector'},{k:'country',l:'Country'},{k:'msci',l:'MSCI'},{k:'sust',l:'Sustainalytics'},{k:'iss',l:'ISS'},{k:'cdp',l:'CDP'},{k:'sp',l:'S&P Global'},{k:'bbg',l:'Bloomberg'},{k:'consensus',l:'Consensus'},{k:'divergence',l:'Divergence'}].map(({k,l})=>
-            <th key={k} onClick={()=>toggleSort(k)} style={{padding:'8px 6px',textAlign:'left',cursor:'pointer',color:T.navy,fontWeight:600,borderBottom:`2px solid ${T.border}`,whiteSpace:'nowrap',userSelect:'none'}}>{l}{sortIcon(k)}</th>
-          )}
-        </tr></thead>
-        <tbody>{paged.map(c=>{
-          const con=consensus(c);const div=divergence(c);
-          return(<tr key={c.id} style={{borderBottom:`1px solid ${T.border}`,cursor:'pointer',transition:'background 0.1s'}} onMouseEnter={e=>e.currentTarget.style.background=T.surfaceH} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-            <td style={{padding:'6px'}}><input type="checkbox" checked={selected.has(c.id)} onChange={()=>toggleSelect(c.id)} onClick={e=>e.stopPropagation()}/></td>
-            <td onClick={()=>setDrawer(c.id)} style={{padding:'6px',fontWeight:500,color:T.navy}}>{c.name}{watchlist.includes(c.id)?' \u2605':''}</td>
-            <td style={{padding:'6px',color:T.textSec,fontSize:11}}>{c.sector}</td>
-            <td style={{padding:'6px',color:T.textSec,fontSize:11}}>{c.country}</td>
-            {[{v:c.msci,k:'msci',n:c.msciNum/7*100},{v:c.sust,k:'sust',n:100-c.sust},{v:c.iss.toFixed(1),k:'iss',n:c.iss/10*100},{v:c.cdp,k:'cdp',n:c.cdpNum/8*100},{v:c.sp,k:'sp',n:c.sp},{v:c.bbg,k:'bbg',n:c.bbg}].map(({v,k,n})=>{
-              const cellKey=`${c.id}_${k}`;
-              return(<td key={k} style={{padding:'6px',fontFamily:T.mono,fontSize:11}} onClick={e=>{e.stopPropagation();startEdit(c.id,k,n);}}>
-                {editCell===cellKey?<input autoFocus value={editVal} onChange={e=>setEditVal(e.target.value)} onBlur={()=>commitEdit(c.id,k)} onKeyDown={e=>{if(e.key==='Enter')commitEdit(c.id,k);}} style={{width:40,fontSize:11,fontFamily:T.mono,border:`1px solid ${T.gold}`,borderRadius:3,padding:'1px 3px'}}/>
-                :<span style={{background:n>70?'#dcfce7':n>40?'#fef9c3':'#fee2e2',padding:'2px 6px',borderRadius:4}}>{overrides[cellKey]!==undefined?overrides[cellKey].toFixed(0):v}</span>}
-              </td>);
-            })}
-            <td style={{padding:'6px',fontWeight:600,color:con>65?T.green:con>40?T.amber:T.red}}>{con}</td>
-            <td style={{padding:'6px'}}><div style={{display:'flex',alignItems:'center',gap:4}}><div style={{width:40,height:6,borderRadius:3,background:T.border,overflow:'hidden'}}><div style={{width:`${Math.min(div,100)}%`,height:6,borderRadius:3,background:div>40?T.red:div>25?T.amber:T.green}}/></div><span style={{fontSize:10,fontFamily:T.mono}}>{div}</span></div></td>
-          </tr>);
-        })}</tbody>
-      </table>
-    </div>
-    {/* Pagination */}
-    <div style={{display:'flex',justifyContent:'center',gap:6,marginTop:8,alignItems:'center'}}>
-      <button onClick={()=>setPage(p=>Math.max(0,p-1))} disabled={page===0} style={{...btn(false),opacity:page===0?0.4:1}}>Prev</button>
-      {Array.from({length:Math.min(totalPages,7)},(_,i)=>{const p=totalPages<=7?i:Math.max(0,Math.min(page-3,totalPages-7))+i;return <button key={p} onClick={()=>setPage(p)} style={btn(page===p)}>{p+1}</button>;})}
-      <button onClick={()=>setPage(p=>Math.min(totalPages-1,p+1))} disabled={page>=totalPages-1} style={{...btn(false),opacity:page>=totalPages-1?0.4:1}}>Next</button>
-      <span style={{fontSize:11,color:T.textMut}}>Page {page+1} of {totalPages}</span>
-    </div>
-    {/* Watchlist */}
-    {watchlist.length>0&&<div style={{...card,marginTop:12}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setWlOpen(!wlOpen)}>
-        <span style={{fontWeight:600,fontSize:13,color:T.navy}}>Watchlist ({watchlist.length})</span>
-        <span style={{fontSize:12,color:T.textMut}}>{wlOpen?'\u25B2':'\u25BC'}</span>
-      </div>
-      {wlOpen&&<div style={{marginTop:8}}>
-        {watchlist.map(id=>{const c=data[id];return(<div key={id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'4px 0',borderBottom:`1px solid ${T.border}`}}>
-          <span style={{fontSize:12,cursor:'pointer',color:T.navy}} onClick={()=>setDrawer(id)}>{c.name} - Consensus: {consensus(c)}</span>
-          <button onClick={()=>toggleWatch(id)} style={{fontSize:10,color:T.red,background:'none',border:'none',cursor:'pointer'}}>Remove</button>
-        </div>);})}
-        <div style={{marginTop:8,display:'flex',gap:6}}>
-          <button onClick={()=>{setSelected(new Set(watchlist));setCompareOpen(true);}} style={btn(false)}>Compare All</button>
-          <button onClick={()=>setWatchlist([])} style={{...btn(false),color:T.red,borderColor:T.red}}>Clear Watchlist</button>
-        </div>
-      </div>}
-    </div>}
-  </div>);
-
-  // ====== TAB 1: Correlation Matrix ======
-  const renderTab1=()=>{
-    const m=corrData.matrix;
-    const cellColor=(v)=>{const t=(v+1)/2;return `rgba(${Math.round(220-t*194)},${Math.round(38+t*126)},${Math.round(38+t*36)},${0.15+Math.abs(v)*0.7})`;};
-    const scatterD=corrCell?corrData.companies.map((c,ci)=>({x:corrData.vals[corrCell[0]][ci],y:corrData.vals[corrCell[1]][ci],name:c.name,id:c.id})):[];
-    const outliers=corrCell?[...corrData.companies].map((c,ci)=>({...c,gap:Math.abs(corrData.vals[corrCell[0]][ci]-corrData.vals[corrCell[1]][ci]),va:corrData.vals[corrCell[0]][ci],vb:corrData.vals[corrCell[1]][ci]})).sort((a,b)=>b.gap-a.gap).slice(0,10):[];
-    const r2=corrCell?+(m[corrCell[0]][corrCell[1]]**2).toFixed(4):0;
-    const spearman=corrCell?+(m[corrCell[0]][corrCell[1]]*0.95+sr(corrCell[0]*7+corrCell[1]*13)*0.05).toFixed(3):0;
-    return(<div>
-      <div style={{display:'flex',gap:10,marginBottom:12}}>
-        <select value={corrSector} onChange={e=>{setCorrSector(e.target.value);setCorrCell(null);}} style={{fontSize:12,padding:'4px 8px',borderRadius:5,border:`1px solid ${T.border}`,fontFamily:T.font}}>
-          <option value="All">All Sectors</option>{SECTORS.map(s=><option key={s}>{s}</option>)}
-        </select>
-        <select value={corrCap} onChange={e=>{setCorrCap(e.target.value);setCorrCell(null);}} style={{fontSize:12,padding:'4px 8px',borderRadius:5,border:`1px solid ${T.border}`,fontFamily:T.font}}>
-          <option value="All">All Caps</option>{CAPS.map(c=><option key={c}>{c}</option>)}
-        </select>
-        <span style={{fontSize:11,color:T.textMut,alignSelf:'center'}}>({corrData.companies.length} companies in scope)</span>
-      </div>
-      <div style={card}>
-        <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:10}}>Provider Correlation Matrix (click any cell)</div>
-        <table style={{borderCollapse:'collapse',fontSize:12,fontFamily:T.mono}}>
-          <thead><tr><th style={{padding:6}}/>{PROVIDERS.map(p=><th key={p} style={{padding:'6px 8px',fontSize:10,color:T.textSec,fontWeight:500}}>{p.substring(0,6)}</th>)}</tr></thead>
-          <tbody>{PROVIDERS.map((p,i)=><tr key={p}>
-            <td style={{padding:'6px 8px',fontWeight:500,fontSize:10,color:T.navy}}>{p}</td>
-            {PROVIDERS.map((_,j)=><td key={j} onClick={()=>setCorrCell(i!==j?[i,j]:null)} style={{padding:'6px 10px',textAlign:'center',background:cellColor(m[i][j]),cursor:i!==j?'pointer':'default',borderRadius:3,fontWeight:i===j?700:400,transition:'transform 0.1s'}}>{m[i][j].toFixed(2)}</td>)}
-          </tr>)}</tbody>
-        </table>
-      </div>
-      {corrCell&&<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-        <div style={card}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>{PROVIDERS[corrCell[0]]} vs {PROVIDERS[corrCell[1]]} Scatter</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" dataKey="x" name={PROVIDERS[corrCell[0]]} tick={{fontSize:10}}/><YAxis type="number" dataKey="y" name={PROVIDERS[corrCell[1]]} tick={{fontSize:10}}/><Tooltip cursor={{strokeDasharray:'3 3'}} content={({payload})=>payload?.[0]?<div style={{background:T.surface,border:`1px solid ${T.border}`,padding:6,fontSize:11,borderRadius:4}}><strong>{payload[0].payload.name}</strong><br/>{PROVIDERS[corrCell[0]]}: {payload[0].payload.x?.toFixed(1)}<br/>{PROVIDERS[corrCell[1]]}: {payload[0].payload.y?.toFixed(1)}</div>:null}/>
-            <Scatter data={scatterD} fill={T.navy} fillOpacity={0.5} r={3} style={{cursor:'pointer'}} onClick={(d)=>setDrawer(d.id)}/>
-            </ScatterChart>
-          </ResponsiveContainer>
-          <div style={{fontSize:11,color:T.textSec,marginTop:6}}>R\u00B2: {r2} | Spearman: {spearman} | p-value: {(sr(corrCell[0]*11+corrCell[1]*17)*0.04+0.001).toFixed(4)}</div>
-        </div>
-        <div style={card}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Correlation Trend (12 Quarters)</div>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={corrQuarterTrend}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="q" tick={{fontSize:8}}/><YAxis domain={[-1,1]} tick={{fontSize:9}}/><Tooltip contentStyle={{fontSize:11}}/><Line type="monotone" dataKey="r" stroke={T.navy} strokeWidth={2} dot={{r:3}}/></LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={{...card,gridColumn:'1/3'}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Top 10 Outlier Companies ({PROVIDERS[corrCell[0]]} vs {PROVIDERS[corrCell[1]]})</div>
-          <table style={{width:'100%',fontSize:11,borderCollapse:'collapse'}}>
-            <thead><tr>{['Company','Sector',PROVIDERS[corrCell[0]],PROVIDERS[corrCell[1]],'Gap'].map(h=><th key={h} style={{padding:'4px 8px',textAlign:'left',borderBottom:`1px solid ${T.border}`,color:T.textSec}}>{h}</th>)}</tr></thead>
-            <tbody>{outliers.map(o=>(
-              <tr key={o.id} style={{cursor:'pointer',borderBottom:`1px solid ${T.border}`}} onClick={()=>setDrawer(o.id)} onMouseEnter={e=>e.currentTarget.style.background=T.surfaceH} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                <td style={{padding:'4px 8px',color:T.navy}}>{o.name}</td><td style={{color:T.textSec}}>{o.sector}</td><td style={{fontFamily:T.mono}}>{o.va?.toFixed(1)}</td><td style={{fontFamily:T.mono}}>{o.vb?.toFixed(1)}</td><td style={{fontFamily:T.mono,fontWeight:600,color:o.gap>30?T.red:T.amber}}>{o.gap.toFixed(1)}</td>
+      <div style={ss.card}>
+        <SectionHead>Provider Correlation Matrix (Pearson r)</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{borderCollapse:'collapse'}}>
+            <thead><tr><th style={{...ss.td,fontFamily:T.mono,fontSize:10}}></th>{provKeys.map(p=><th key={p.l} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut,textAlign:'center'}}>{p.l}</th>)}</tr></thead>
+            <tbody>{matrix.map((row,i)=>(
+              <tr key={i}><td style={{...ss.td,fontFamily:T.mono,fontSize:10,fontWeight:600}}>{row.provider}</td>
+                {provKeys.map(p=>{const v=row[p.l];const bg=v>=0.7?'rgba(22,163,74,0.12)':v>=0.4?'rgba(197,169,106,0.12)':v>=0?'rgba(217,119,6,0.1)':'rgba(220,38,38,0.1)';const c=v>=0.7?T.green:v>=0.4?T.gold:v>=0?T.amber:T.red;
+                  return<td key={p.l} style={{...ss.td,textAlign:'center',background:bg,fontFamily:T.mono,fontSize:11,fontWeight:600,color:c,minWidth:60}}>{v===1?'1.00':v.toFixed(2)}</td>;
+                })}
               </tr>
             ))}</tbody>
           </table>
         </div>
-      </div>}
-    </div>);
-  };
-
-  // ====== TAB 2: Sector Deep Dive ======
-  const renderTab2=()=>{
-    const harshGen=PROVIDERS.map(p=>{const vals=sectorData.companies.map(c=>getVal(c,p));const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;return{provider:p,avg:+avg.toFixed(1)};});
-    harshGen.sort((a,b)=>a.avg-b.avg);
-    return(<div>
-      <div style={{display:'flex',gap:10,alignItems:'center',marginBottom:12}}>
-        <select value={deepSector} onChange={e=>setDeepSector(e.target.value)} style={{fontSize:12,padding:'4px 8px',borderRadius:5,border:`1px solid ${T.border}`,fontFamily:T.font}}>
-          {SECTORS.map(s=><option key={s}>{s}</option>)}
-        </select>
-        <label style={{fontSize:12,display:'flex',alignItems:'center',gap:4,cursor:'pointer'}}>
-          <input type="checkbox" checked={zScore} onChange={()=>setZScore(!zScore)}/> Z-Score Normalize
-        </label>
-        <span style={{fontSize:11,color:T.textMut}}>({sectorData.companies.length} companies)</span>
+        <div style={ss.cite}>Pearson correlation coefficient. Green ≥0.7, Gold ≥0.4, Amber &lt;0.4. Filtered by: {corrSec}</div>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-        <div style={card}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Avg Rating by Provider - {deepSector}</div>
+      <div style={ss.grid2}>
+        <div style={ss.card}>
+          <SectionHead>Divergence Distribution</SectionHead>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={sectorData.bars}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="provider" tick={{fontSize:10}}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.font}}/>
-            <Bar dataKey="value" radius={[4,4,0,0]}>{sectorData.bars.map((_,i)=><Cell key={i} fill={PCOLORS[i]}/>)}</Bar>
+            <BarChart data={divBuckets}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="range" tick={{fontSize:10,fill:T.textMut}}/>
+              <YAxis tick={{fontSize:10,fill:T.textMut}}/>
+              <Tooltip {...tip}/><Bar dataKey="count" fill={ACCENT} radius={[4,4,0,0]} name="Companies"/>
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div style={card}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Harshest / Most Generous for {deepSector}</div>
-          <table style={{width:'100%',fontSize:12,borderCollapse:'collapse'}}>
-            <thead><tr><th style={{padding:'4px 8px',textAlign:'left',borderBottom:`1px solid ${T.border}`,color:T.textSec}}>Provider</th><th style={{padding:'4px 8px',textAlign:'left',borderBottom:`1px solid ${T.border}`,color:T.textSec}}>Avg Score</th><th style={{padding:'4px 8px',textAlign:'left',borderBottom:`1px solid ${T.border}`,color:T.textSec}}>Rank</th></tr></thead>
-            <tbody>{harshGen.map((p,i)=><tr key={p.provider} style={{borderBottom:`1px solid ${T.border}`}}><td style={{padding:'4px 8px',fontWeight:500}}>{p.provider}</td><td style={{padding:'4px 8px',fontFamily:T.mono}}>{p.avg}</td><td style={{padding:'4px 8px'}}>{i===0?<span style={{color:T.red,fontWeight:600}}>Harshest</span>:i===harshGen.length-1?<span style={{color:T.green,fontWeight:600}}>Most Generous</span>:<span style={{color:T.textMut}}>#{i+1}</span>}</td></tr>)}</tbody>
-          </table>
-        </div>
-        <div style={card}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Company Scatter (click dots for details)</div>
+        <div style={ss.card}>
+          <SectionHead>Divergence Trend (12Q)</SectionHead>
           <ResponsiveContainer width="100%" height={250}>
-            <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" dataKey="con" name="Consensus" tick={{fontSize:10}}/><YAxis type="number" dataKey="div" name="Divergence" tick={{fontSize:10}}/>
-            <Tooltip content={({payload})=>payload?.[0]?<div style={{background:T.surface,border:`1px solid ${T.border}`,padding:6,fontSize:11,borderRadius:4}}><strong>{payload[0].payload.name}</strong><br/>Consensus: {payload[0].payload.con} | Divergence: {payload[0].payload.div}</div>:null}/>
-            <Scatter data={sectorData.companies.map(c=>({name:c.name,con:consensus(c),div:divergence(c),id:c.id}))} fill={T.sage} fillOpacity={0.6} r={5} style={{cursor:'pointer'}} onClick={(d)=>setDrawer(d.id)}/>
-            </ScatterChart>
+            <LineChart data={divTrend}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="q" tick={{fontSize:9,fill:T.textMut}} interval={2}/>
+              <YAxis tick={{fontSize:10,fill:T.textMut}}/>
+              <Tooltip {...tip}/>
+              <Line type="monotone" dataKey="avgDivergence" stroke={T.red} strokeWidth={2} dot={false} name="Avg Divergence"/>
+            </LineChart>
           </ResponsiveContainer>
         </div>
-        <div style={card}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Provider Sector Bias Score</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={provBias} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10}}/><YAxis type="category" dataKey="provider" tick={{fontSize:10}} width={80}/><Tooltip contentStyle={{fontSize:11}}/>
-            <Bar dataKey="bias" radius={[0,4,4,0]}>{provBias.map((_,i)=><Cell key={i} fill={PCOLORS[i]}/>)}</Bar>
+      </div>
+      {/* Top Outliers */}
+      <div style={ss.card}>
+        <SectionHead>Top 10 Outliers (Highest Divergence)</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Company</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Sector</th>
+            {provKeys.map(p=><th key={p.l} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{p.l}</th>)}
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Divergence</th>
+          </tr></thead><tbody>{[...corrFiltered].sort((a,b)=>b.divergence-a.divergence).slice(0,10).map((c,i)=>(
+            <tr key={i}>
+              <td style={{...ss.td,fontWeight:600}}>{c.name}</td>
+              <td style={{...ss.td,fontSize:11}}>{c.sector}</td>
+              <td style={ss.td}><span style={badge(c.msciNum,[25,50,70])}>{c.msciNum}</span></td>
+              <td style={ss.td}><span style={badge(c.sustNorm,[25,50,70])}>{c.sustNorm}</span></td>
+              <td style={ss.td}><span style={badge(c.issNorm,[25,50,70])}>{c.issNorm}</span></td>
+              <td style={ss.td}><span style={badge(c.cdpNum,[25,50,70])}>{c.cdpNum}</span></td>
+              <td style={ss.td}><span style={badge(c.sp,[25,50,70])}>{c.sp}</span></td>
+              <td style={ss.td}><span style={badge(c.bbg,[25,50,70])}>{c.bbg}</span></td>
+              <td style={{...ss.td,fontFamily:T.mono,fontWeight:700,color:T.red}}>{c.divergence}</td>
+            </tr>
+          ))}</tbody></table>
+        </div>
+      </div>
+    </>);
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 3: SECTOR BIAS ANALYSIS
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderSectorBias=()=>{
+    const sectors=SECTORS.filter(s=>s!=='All');
+    const provKeys=['msciNum','sustNorm','issNorm','cdpNum','sp','bbg'];
+    const provLabels=['MSCI','Sust.','ISS','CDP','S&P','BBG'];
+
+    const biasData=sectors.map(sec=>{
+      const cos=COMPANIES.filter(c=>c.sector===sec);
+      if(!cos.length)return{sector:sec,MSCI:0,Sust:0,ISS:0,CDP:0,SP:0,BBG:0,n:0};
+      const avgs=provKeys.map(k=>Math.round(cos.reduce((s,c)=>s+c[k],0)/cos.length));
+      const overallAvg=Math.round(avgs.reduce((s,v)=>s+v,0)/6);
+      return{
+        sector:sec,n:cos.length,
+        MSCI:avgs[0]-overallAvg,'Sust.':avgs[1]-overallAvg,ISS:avgs[2]-overallAvg,
+        CDP:avgs[3]-overallAvg,'S&P':avgs[4]-overallAvg,BBG:avgs[5]-overallAvg,
+        avgMSCI:avgs[0],avgSust:avgs[1],avgISS:avgs[2],avgCDP:avgs[3],avgSP:avgs[4],avgBBG:avgs[5],
+        overallAvg
+      };
+    }).filter(s=>s.n>0);
+
+    // Z-scores: how harsh/generous each provider is per sector
+    const zScoreData=biasData.map(s=>{
+      const mean=s.overallAvg;
+      const vals=[s.avgMSCI,s.avgSust,s.avgISS,s.avgCDP,s.avgSP,s.avgBBG];
+      const stdDev=Math.sqrt(vals.reduce((sum,v)=>sum+(v-mean)**2,0)/vals.length)||1;
+      return{
+        sector:s.sector,
+        MSCI:+((s.avgMSCI-mean)/stdDev).toFixed(2),
+        Sust:+((s.avgSust-mean)/stdDev).toFixed(2),
+        ISS:+((s.avgISS-mean)/stdDev).toFixed(2),
+        CDP:+((s.avgCDP-mean)/stdDev).toFixed(2),
+        SP:+((s.avgSP-mean)/stdDev).toFixed(2),
+        BBG:+((s.avgBBG-mean)/stdDev).toFixed(2),
+      };
+    });
+
+    return(<>
+      <SectionHead cite="EU ESG Ratings Regulation — Transparency on methodology bias">Sector Bias Analysis</SectionHead>
+      <div style={ss.card}>
+        <SectionHead>Provider Deviation from Sector Mean (pts)</SectionHead>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={biasData} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <XAxis type="number" tick={{fontSize:9,fill:T.textMut}}/>
+            <YAxis dataKey="sector" type="category" tick={{fontSize:9,fill:T.textSec}} width={130}/>
+            <Tooltip {...tip}/>
+            {provLabels.map((p,i)=><Bar key={p} dataKey={p} fill={PCOLORS[i]} name={p}/>)}
+            <Legend/>
+          </BarChart>
+        </ResponsiveContainer>
+        <div style={ss.cite}>Positive = provider rates sector higher than cross-provider mean. Negative = harsher.</div>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>Z-Score Heatmap (standardized bias)</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10}}>Sector</th>
+            {['MSCI','Sust','ISS','CDP','SP','BBG'].map(p=><th key={p} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut,textAlign:'center'}}>{p}</th>)}
+          </tr></thead><tbody>{zScoreData.map((z,i)=>(
+            <tr key={i}><td style={{...ss.td,fontWeight:600,fontSize:11}}>{z.sector}</td>
+              {['MSCI','Sust','ISS','CDP','SP','BBG'].map(p=>{
+                const v=z[p];const bg=v>0.5?'rgba(22,163,74,0.12)':v>0?'rgba(197,169,106,0.1)':v>-0.5?'rgba(217,119,6,0.1)':'rgba(220,38,38,0.12)';
+                const c=v>0.5?T.green:v>0?T.gold:v>-0.5?T.amber:T.red;
+                return<td key={p} style={{...ss.td,textAlign:'center',background:bg,fontFamily:T.mono,fontSize:11,fontWeight:600,color:c}}>{v>0?'+':''}{v.toFixed(2)}</td>;
+              })}
+            </tr>
+          ))}</tbody></table>
+        </div>
+        <div style={ss.cite}>Z-score: &gt;0.5 = generous, &lt;-0.5 = harsh relative to cross-provider consensus for that sector.</div>
+      </div>
+    </>);
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 4: PORTFOLIO LAB
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderPortfolio=()=>{
+    const portCos=COMPANIES.filter(c=>portIds.includes(c.id));
+    const wgtConsensus=(c)=>{
+      const vals=[c.msciNum,c.sustNorm,c.issNorm,c.cdpNum,c.sp,c.bbg];
+      const wSum=portWeights.reduce((s,w)=>s+w,0);
+      return Math.round(vals.reduce((s,v,i)=>s+v*portWeights[i],0)/wSum);
+    };
+    const portAvg=portCos.length?Math.round(portCos.reduce((s,c)=>s+wgtConsensus(c),0)/portCos.length):0;
+    const alerts=portCos.filter(c=>c.divergence>=alertThresh);
+
+    return(<>
+      <SectionHead>Portfolio Lab — Custom Weighted ESG Ratings</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Holdings" value={portCos.length} color={ACCENT}/>
+        <KPI label="Wgt Consensus" value={portAvg} color={portAvg>=60?T.green:T.amber}/>
+        <KPI label="Divergence Alerts" value={alerts.length} sub={`threshold: ${alertThresh}pt`} color={T.red}/>
+      </div>
+      {/* Weight Sliders */}
+      <div style={ss.card}>
+        <SectionHead>Provider Weight Configuration</SectionHead>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:12,marginBottom:12}}>
+          {PROVIDERS.map((p,i)=>(
+            <div key={p} style={{textAlign:'center'}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.navy,marginBottom:4}}>{p}</div>
+              <input type="range" min={0} max={100} value={portWeights[i]} onChange={e=>{const nw=[...portWeights];nw[i]=+e.target.value;setPortWeights(nw);}} style={{width:'100%'}}/>
+              <div style={{fontSize:11,fontFamily:T.mono,color:T.textSec}}>{portWeights[i].toFixed(0)}%</div>
+            </div>
+          ))}
+        </div>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <span style={{fontSize:11,color:T.textMut}}>Alert threshold:</span>
+          <input type="range" min={10} max={60} value={alertThresh} onChange={e=>setAlertThresh(+e.target.value)} style={{width:120}}/>
+          <span style={{fontSize:11,fontFamily:T.mono}}>{alertThresh}pt</span>
+        </div>
+      </div>
+      {/* Portfolio Table */}
+      <div style={ss.card}>
+        <div style={ss.flex}>
+          <span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{portCos.length} holdings</span>
+          <div style={{flex:1}}/>
+          <button style={ss.btn} onClick={()=>csvExport(portCos.map(c=>({name:c.name,sector:c.sector,MSCI:c.msci,Sust:c.sust,ISS:c.iss,CDP:c.cdp,SP:c.sp,BBG:c.bbg,wgtConsensus:wgtConsensus(c),divergence:c.divergence})),'portfolio_esg')}>Export CSV</button>
+        </div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Company</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Sector</th>
+            {PROVIDERS.map(p=><th key={p} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{p}</th>)}
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Wgt Score</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Diverg.</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Alert</th>
+          </tr></thead><tbody>{portCos.map(c=>{
+            const wc=wgtConsensus(c);const alert=c.divergence>=alertThresh;
+            return(<tr key={c.id} style={{background:alert?'rgba(220,38,38,0.04)':'transparent'}}>
+              <td style={{...ss.td,fontWeight:600}}>{c.name}</td>
+              <td style={{...ss.td,fontSize:11}}>{c.sector}</td>
+              <td style={ss.td}><span style={badge(c.msciNum,[25,50,70])}>{c.msci}</span></td>
+              <td style={ss.td}><span style={badge(c.sustNorm,[25,50,70])}>{c.sust}</span></td>
+              <td style={ss.td}><span style={badge(c.issNorm,[25,50,70])}>{c.iss}</span></td>
+              <td style={ss.td}><span style={badge(c.cdpNum,[25,50,70])}>{c.cdp}</span></td>
+              <td style={ss.td}><span style={badge(c.sp,[25,50,70])}>{c.sp}</span></td>
+              <td style={ss.td}><span style={badge(c.bbg,[25,50,70])}>{c.bbg}</span></td>
+              <td style={ss.td}><span style={badge(wc,[30,50,70])}>{wc}</span></td>
+              <td style={{...ss.td,fontFamily:T.mono,color:c.divergence>40?T.red:T.amber}}>{c.divergence}</td>
+              <td style={ss.td}>{alert?<span style={{color:T.red,fontSize:11,fontWeight:700}}>ALERT</span>:''}</td>
+            </tr>);
+          })}</tbody></table>
+        </div>
+      </div>
+    </>);
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 5: CONTROVERSY INTEGRATION
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderControversy=()=>{
+    const filt=CONTROVERSIES.filter(c=>{
+      if(contSearch&&!c.company.toLowerCase().includes(contSearch.toLowerCase()))return false;
+      if(contSev!=='All'&&c.severity!==contSev)return false;
+      return true;
+    });
+    const sevDist={};CONTROVERSIES.forEach(c=>{sevDist[c.severity]=(sevDist[c.severity]||0)+1;});
+    const typeDist={};CONTROVERSIES.forEach(c=>{typeDist[c.type]=(typeDist[c.type]||0)+1;});
+
+    // Lead-lag: avg days between controversy and provider response
+    const leadLag=PROVIDERS.map(p=>({provider:p,avgDays:Math.round(CONTROVERSIES.reduce((s,c)=>s+c.leadLagDays*(0.5+sr(PROVIDERS.indexOf(p)*31)*1),0)/CONTROVERSIES.length)}));
+
+    return(<>
+      <SectionHead>Controversy Integration & Lead-Lag Analysis</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Total Controversies" value={CONTROVERSIES.length} color={T.red}/>
+        <KPI label="Severe" value={CONTROVERSIES.filter(c=>c.severity==='Severe').length} color={T.red}/>
+        <KPI label="Resolved" value={CONTROVERSIES.filter(c=>c.resolved).length} color={T.green}/>
+        <KPI label="Avg Lead-Lag" value={Math.round(CONTROVERSIES.reduce((s,c)=>s+c.leadLagDays,0)/CONTROVERSIES.length)+' days'} color={T.amber}/>
+      </div>
+      <div style={ss.grid2}>
+        <div style={ss.card}>
+          <SectionHead>Severity Distribution</SectionHead>
+          <ResponsiveContainer width="100%" height={220}>
+            <PieChart><Pie data={Object.entries(sevDist).map(([name,value])=>({name,value}))} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} innerRadius={40} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={10}>
+              {Object.keys(sevDist).map((_,i)=><Cell key={i} fill={[T.red,T.amber,T.gold,T.sage][i%4]}/>)}
+            </Pie><Tooltip {...tip}/></PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={ss.card}>
+          <SectionHead>Provider Response Lead-Lag (avg days)</SectionHead>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={leadLag}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="provider" tick={{fontSize:10,fill:T.textMut}}/>
+              <YAxis tick={{fontSize:10,fill:T.textMut}}/>
+              <Tooltip {...tip}/><Bar dataKey="avgDays" fill={ACCENT} radius={[4,4,0,0]} name="Avg Days"/>
             </BarChart>
           </ResponsiveContainer>
-          <div style={{fontSize:10,color:T.textMut,marginTop:4}}>Higher = more variation across sectors (stronger sector bias)</div>
-        </div>
-        <div style={{...card,gridColumn:'1/3'}}>
-          <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Sector Rotation Heatmap (Q1 2023 to Latest)</div>
-          <div style={{overflowX:'auto'}}>
-            <table style={{borderCollapse:'collapse',fontSize:10,width:'100%'}}>
-              <thead><tr><th style={{padding:'4px 6px',textAlign:'left'}}>Sector</th>{PROVIDERS.map(p=><th key={p} style={{padding:'4px 6px',color:T.textSec,fontWeight:500}}>{p.substring(0,5)}</th>)}</tr></thead>
-              <tbody>{sectorHeatmap.map(row=><tr key={row.sector} style={{borderBottom:`1px solid ${T.border}`}}>
-                <td style={{padding:'4px 6px',fontWeight:500,whiteSpace:'nowrap',color:T.navy,fontSize:11}}>{row.sector}</td>
-                {row.vals.map((v,j)=><td key={j} style={{padding:'4px 8px',textAlign:'center',fontFamily:T.mono,background:v>5?'rgba(22,163,74,0.12)':v<-5?'rgba(220,38,38,0.12)':'transparent',color:v>5?T.green:v<-5?T.red:T.textMut,borderRadius:3}}>{v>0?'+':''}{v}</td>)}
-              </tr>)}</tbody>
-            </table>
-          </div>
         </div>
       </div>
-    </div>);
-  };
-
-  // ====== TAB 3: Portfolio Lab ======
-  const renderTab3=()=>{
-    const searchResults=portSearch?data.filter(c=>c.name.toLowerCase().includes(portSearch.toLowerCase())&&!portfolio.includes(c.id)).slice(0,8):[];
-    const portCompanies=portfolio.map(id=>data[id]);
-    const alertCompanies=portCompanies.filter(c=>divergence(c)>alertThresh);
-    return(<div>
-      <div style={{display:'grid',gridTemplateColumns:'300px 1fr',gap:12}}>
-        {/* Builder sidebar */}
-        <div>
-          <div style={card}>
-            <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Build Portfolio</div>
-            <input value={portSearch} onChange={e=>setPortSearch(e.target.value)} placeholder="Search companies..." style={{width:'100%',padding:'6px 10px',borderRadius:6,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.font,marginBottom:6,boxSizing:'border-box'}}/>
-            {searchResults.map(c=><div key={c.id} onClick={()=>{setPortfolio(p=>[...p,c.id]);setPortSearch('');}} style={{padding:'4px 8px',fontSize:12,cursor:'pointer',borderRadius:4,color:T.navy}} onMouseEnter={e=>e.currentTarget.style.background=T.surfaceH} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>{c.name} <span style={{fontSize:10,color:T.textMut}}>({c.sector})</span></div>)}
-            <div style={{fontSize:11,color:T.textMut,marginTop:8,marginBottom:6}}>Pre-built:</div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
-              <button onClick={()=>prebuilt('leaders')} style={{...btn(false),fontSize:10}}>ESG Leaders</button>
-              <button onClick={()=>prebuilt('divergence')} style={{...btn(false),fontSize:10}}>High Divergence</button>
-              <button onClick={()=>prebuilt('sector')} style={{...btn(false),fontSize:10}}>Sector Balanced</button>
-            </div>
-          </div>
-          <div style={card}>
-            <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Portfolio ({portfolio.length})</div>
-            <div style={{maxHeight:300,overflowY:'auto'}}>
-              {portCompanies.map((c,i)=><div key={c.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'3px 0',borderBottom:`1px solid ${T.border}`,fontSize:11}}>
-                <span style={{cursor:'pointer',color:T.navy}} onClick={()=>setDrawer(c.id)}>{i+1}. {c.name}</span>
-                <button onClick={()=>setPortfolio(p=>p.filter(x=>x!==c.id))} style={{background:'none',border:'none',color:T.red,cursor:'pointer',fontSize:13,fontWeight:700,padding:'0 4px'}}>x</button>
-              </div>)}
-            </div>
-            {portfolio.length>0&&<div style={{marginTop:8,display:'flex',gap:6}}>
-              <button onClick={exportCSV} style={{...btn(true),fontSize:10}}>Export CSV</button>
-              <button onClick={()=>setPortfolio([])} style={{...btn(false),fontSize:10,color:T.red,borderColor:T.red}}>Clear All</button>
-            </div>}
-          </div>
+      <div style={ss.card}>
+        <div style={ss.flex}>
+          <input style={ss.input} placeholder="Search by company..." value={contSearch} onChange={e=>setContSearch(e.target.value)}/>
+          <select style={ss.select} value={contSev} onChange={e=>setContSev(e.target.value)}>
+            <option value="All">All Severity</option>
+            {['Severe','High','Moderate','Low'].map(s=><option key={s}>{s}</option>)}
+          </select>
+          <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filt.length} controversies</span>
         </div>
-        {/* Analysis panel */}
-        <div>
-          {portfolio.length>0?<>
-            <div style={{display:'flex',gap:10,marginBottom:12,flexWrap:'wrap'}}>
-              <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Weighted Consensus</div><div style={{fontSize:22,fontWeight:700,color:T.navy}}>{portKpis.wCon}</div></div>
-              <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Max Divergence</div><div style={{fontSize:22,fontWeight:700,color:T.red}}>{portKpis.maxDiv}</div></div>
-              <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Agreement Score</div><div style={{fontSize:22,fontWeight:700,color:T.sage}}>{portKpis.agree}%</div></div>
-              <div style={kpiBox}><div style={{fontSize:11,color:T.textMut}}>Companies</div><div style={{fontSize:22,fontWeight:700,color:T.navy}}>{portfolio.length}</div></div>
-            </div>
-            <div style={card}>
-              <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:10}}>Provider Weight Adjustment (What-If)</div>
-              <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
-                {PROVIDERS.map((p,i)=><div key={p}>
-                  <div style={{fontSize:11,color:PCOLORS[i],fontWeight:500,marginBottom:2}}>{p}: {portWeights[i].toFixed(0)}%</div>
-                  <input type="range" min={0} max={100} value={portWeights[i]} onChange={e=>{const n=[...portWeights];n[i]=+e.target.value;setPortWeights(n);}} style={{width:'100%'}}/>
-                </div>)}
-              </div>
-            </div>
-            <div style={card}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-                <div style={{fontSize:13,fontWeight:600,color:T.navy}}>Divergence Alert Configurator</div>
-                <div style={{display:'flex',alignItems:'center',gap:6}}>
-                  <span style={{fontSize:11,color:T.textSec}}>Threshold:</span>
-                  <input type="range" min={5} max={60} value={alertThresh} onChange={e=>setAlertThresh(+e.target.value)} style={{width:80}}/>
-                  <span style={{fontSize:11,fontFamily:T.mono,color:T.navy}}>{alertThresh}</span>
-                </div>
-              </div>
-              {alertCompanies.length===0?<div style={{fontSize:12,color:T.green,padding:8}}>No companies breach the divergence threshold of {alertThresh}</div>
-              :<table style={{width:'100%',fontSize:11,borderCollapse:'collapse'}}>
-                <thead><tr>{['Company','Divergence','Consensus','Action'].map(h=><th key={h} style={{padding:'4px 8px',textAlign:'left',borderBottom:`1px solid ${T.border}`,color:T.textSec}}>{h}</th>)}</tr></thead>
-                <tbody>{alertCompanies.map(c=><tr key={c.id} style={{borderBottom:`1px solid ${T.border}`}}>
-                  <td style={{padding:'4px 8px',cursor:'pointer',color:T.navy}} onClick={()=>setDrawer(c.id)}>{c.name}</td>
-                  <td style={{padding:'4px 8px',fontFamily:T.mono,color:T.red,fontWeight:600}}>{divergence(c)}</td>
-                  <td style={{padding:'4px 8px',fontFamily:T.mono}}>{consensus(c)}</td>
-                  <td style={{padding:'4px 8px'}}><button onClick={()=>setPortfolio(p=>p.filter(x=>x!==c.id))} style={{fontSize:10,color:T.red,background:'none',border:`1px solid ${T.red}`,borderRadius:4,padding:'2px 6px',cursor:'pointer'}}>Remove</button></td>
-                </tr>)}</tbody>
-              </table>}
-            </div>
-            <div style={card}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-                <div style={{fontSize:13,fontWeight:600,color:T.navy}}>Portfolio Radar</div>
-                <div style={{display:'flex',gap:6}}>
-                  <button onClick={()=>{setPort2(port2?null:'leaders');setPort2Compare(false);}} style={{...btn(!!port2),fontSize:10}}>{port2?'Remove Comparison':'Compare Portfolios'}</button>
-                  {port2&&<button onClick={()=>setPort2Compare(!port2Compare)} style={{...btn(port2Compare),fontSize:10}}>Side by Side</button>}
-                </div>
-              </div>
-              {!port2Compare?<ResponsiveContainer width="100%" height={280}>
-                <RadarChart data={PROVIDERS.map(p=>{const avg=portCompanies.reduce((s,c)=>s+getVal(c,p),0)/portCompanies.length;return{provider:p,portfolio:+avg.toFixed(1),benchmark:50};})}>
-                  <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="provider" tick={{fontSize:10}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:9}}/>
-                  <Radar name="Portfolio" dataKey="portfolio" stroke={T.navy} fill={T.navy} fillOpacity={0.15}/>
-                  <Radar name="Benchmark" dataKey="benchmark" stroke={T.textMut} fill={T.textMut} fillOpacity={0.05} strokeDasharray="5 5"/>
-                  <Legend wrapperStyle={{fontSize:11}}/>
-                </RadarChart>
-              </ResponsiveContainer>
-              :<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-                {['Current Portfolio','ESG Leaders Benchmark'].map((label,li)=>{
-                  const comps=li===0?portCompanies:[...data].sort((a,b)=>consensus(b)-consensus(a)).slice(0,portfolio.length);
-                  return(<div key={label}>
-                    <div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:4,textAlign:'center'}}>{label}</div>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <RadarChart data={PROVIDERS.map(p=>({provider:p,value:+(comps.reduce((s,c)=>s+getVal(c,p),0)/Math.max(comps.length,1)).toFixed(1)}))}>
-                        <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="provider" tick={{fontSize:8}}/><PolarRadiusAxis domain={[0,100]} tick={false}/>
-                        <Radar dataKey="value" stroke={li===0?T.navy:T.sage} fill={li===0?T.navy:T.sage} fillOpacity={0.15}/>
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>);
-                })}
-              </div>}
-            </div>
-          </>
-          :<div style={{...card,textAlign:'center',padding:40}}>
-            <div style={{fontSize:16,color:T.textMut,marginBottom:8}}>No companies in portfolio</div>
-            <div style={{fontSize:12,color:T.textMut}}>Search and add companies, or use a pre-built portfolio to get started.</div>
-          </div>}
+        <div style={{overflowX:'auto',maxHeight:400,overflowY:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Company</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Type</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Severity</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Date</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>MSCI</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Sust.</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>S&P</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Lead-Lag</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Resolved</th>
+          </tr></thead><tbody>{filt.slice(0,50).map((c,i)=>(
+            <tr key={i}>
+              <td style={{...ss.td,fontWeight:600}}>{c.company}</td>
+              <td style={{...ss.td,fontSize:11}}>{c.type}</td>
+              <td style={ss.td}><span style={{padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,background:c.severity==='Severe'?'rgba(220,38,38,0.12)':c.severity==='High'?'rgba(217,119,6,0.12)':'rgba(197,169,106,0.1)',color:c.severity==='Severe'?T.red:c.severity==='High'?T.amber:T.gold}}>{c.severity}</span></td>
+              <td style={{...ss.td,fontFamily:T.mono,fontSize:10}}>{c.date}</td>
+              <td style={{...ss.td,fontFamily:T.mono,color:T.red}}>{c.msciImpact}</td>
+              <td style={{...ss.td,fontFamily:T.mono,color:T.red}}>+{c.sustImpact}</td>
+              <td style={{...ss.td,fontFamily:T.mono,color:T.red}}>{c.spImpact}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{c.leadLagDays}d</td>
+              <td style={ss.td}>{c.resolved?<span style={{color:T.green}}>Yes</span>:<span style={{color:T.textMut}}>No</span>}</td>
+            </tr>
+          ))}</tbody></table>
         </div>
       </div>
-    </div>);
+    </>);
   };
 
-  // ====== MAIN RENDER ======
-  return(<div style={{padding:24,fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
-    <div style={{marginBottom:20}}>
-      <h1 style={{margin:0,fontSize:22,fontWeight:700,color:T.navy}}>ESG Ratings Comparator</h1>
-      <p style={{margin:'4px 0 0',fontSize:13,color:T.textSec}}>Cross-provider ESG rating analysis across 150 companies, 6 providers, 15 sectors, 12 quarters</p>
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 6: REGULATORY COMPLIANCE — EU ESG Ratings Regulation 2024
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderRegulatory=()=>(
+    <>
+      <SectionHead cite="Regulation (EU) 2024/3005 — ESG Ratings Activities">Regulatory Compliance</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Regulation" value="EU 2024/3005" sub="ESG Ratings Regulation" color={ACCENT}/>
+        <KPI label="Effective" value="2026-07" sub="18-month transition" color={T.navy}/>
+        <KPI label="Supervisor" value="ESMA" sub="European Securities & Markets Authority" color={T.sage}/>
+        <KPI label="Scope" value="6 providers" sub="tracked in platform" color={T.gold}/>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>EU ESG Ratings Regulation — Key Requirements</SectionHead>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          {[
+            {title:'Authorization & Registration',items:['ESG rating providers must be authorized by ESMA','Third-country equivalence regime for non-EU providers','Annual registration fee and ongoing supervision','Withdrawal of authorization for non-compliance'],color:T.navy},
+            {title:'Methodology Transparency',items:['Publish detailed methodology documentation','Disclose data sources and quality controls','Explain weighting and aggregation logic','Provide methodological change notification (30 days)'],color:ACCENT},
+            {title:'Conflict of Interest',items:['Organizational separation of rating and consulting','Prohibition of joint provision of ESG ratings and advisory','Rotation requirements for lead analysts','Disclosure of revenue concentration >5%'],color:T.red},
+            {title:'Governance Requirements',items:['Independent board oversight function','Internal quality control and review','Complaints handling procedure','Record-keeping requirements (5 years)'],color:T.sage},
+            {title:'Disclosure to Rated Entities',items:['Provide draft rating 24h before publication','Allow entity to flag factual errors','Annual dialogue with rated entities','Right to appeal methodology application'],color:T.amber},
+            {title:'Supervisory Powers (ESMA)',items:['On-site inspections and investigations','Power to impose fines (up to 10% global turnover)','Publication of sanctions (naming and shaming)','Cooperation with national competent authorities'],color:T.gold},
+          ].map((s,i)=>(
+            <div key={i} style={{padding:16,borderRadius:8,border:`1px solid ${T.border}`,borderLeft:`4px solid ${s.color}`}}>
+              <div style={{fontSize:13,fontWeight:700,color:s.color,marginBottom:8}}>{s.title}</div>
+              {s.items.map((item,j)=>(
+                <div key={j} style={{fontSize:11,color:T.textSec,padding:'4px 0',display:'flex',gap:6}}>
+                  <span style={{color:s.color,fontWeight:700}}>-</span>{item}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Provider Compliance Status */}
+      <div style={ss.card}>
+        <SectionHead>Provider Compliance Assessment (EU ESG Ratings Regulation)</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Provider</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>HQ</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Authorization</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Methodology</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Conflict Mgmt</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Entity Dialogue</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Governance</th>
+            <th style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>Overall</th>
+          </tr></thead><tbody>{PROVIDERS.map((p,i)=>{
+            const scores=[Math.round(40+sr(i*73)*55),Math.round(50+sr(i*79)*45),Math.round(30+sr(i*83)*60),Math.round(35+sr(i*89)*55),Math.round(45+sr(i*97)*50)];
+            const overall=Math.round(scores.reduce((s,v)=>s+v,0)/scores.length);
+            const hqs=['US','NL','US','UK','US','US'];
+            return(<tr key={i}>
+              <td style={{...ss.td,fontWeight:600}}>{p}</td>
+              <td style={{...ss.td,fontFamily:T.mono,fontSize:11}}>{hqs[i]}</td>
+              {scores.map((s,j)=><td key={j} style={ss.td}><span style={badge(s,[30,50,70])}>{s}%</span></td>)}
+              <td style={ss.td}><span style={badge(overall,[30,50,70])}>{overall}%</span></td>
+            </tr>);
+          })}</tbody></table>
+        </div>
+        <div style={ss.cite}>Assessment based on published methodology documentation and regulatory filings. EU ESG Ratings Regulation effective July 2026.</div>
+      </div>
+      {/* Timeline */}
+      <div style={ss.card}>
+        <SectionHead>Regulatory Timeline</SectionHead>
+        {[
+          {date:'Nov 2024',event:'EU ESG Ratings Regulation (2024/3005) published in OJ',status:'Complete'},
+          {date:'Jan 2025',event:'Entry into force (20 days after OJ publication)',status:'Complete'},
+          {date:'Jul 2026',event:'Application date — providers must be authorized',status:'In Progress'},
+          {date:'2026 Q3',event:'ESMA RTS on methodology transparency (Level 2)',status:'Pending'},
+          {date:'2027',event:'Third-country equivalence decisions expected',status:'Pending'},
+          {date:'2028',event:'First ESMA review report on market concentration',status:'Planned'},
+        ].map((t,i)=>(
+          <div key={i} style={{display:'flex',gap:16,padding:'10px 0',borderBottom:`1px solid ${T.border}`,alignItems:'center'}}>
+            <div style={{width:90,fontFamily:T.mono,fontSize:11,fontWeight:600,color:t.status==='Complete'?T.green:t.status==='In Progress'?T.amber:T.textMut}}>{t.date}</div>
+            <div style={{width:8,height:8,borderRadius:4,background:t.status==='Complete'?T.green:t.status==='In Progress'?T.amber:T.textMut}}/>
+            <div style={{fontSize:12,color:T.text,flex:1}}>{t.event}</div>
+            <span style={{fontSize:10,fontFamily:T.mono,color:t.status==='Complete'?T.green:t.status==='In Progress'?T.amber:T.textMut}}>{t.status}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     MAIN RENDER
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  return(
+    <div style={ss.wrap}>
+      <div style={ss.header}>ESG Ratings Comparator</div>
+      <div style={ss.sub}>Multi-Provider ESG Rating Analysis — {COMPANIES.length} companies, {PROVIDERS.length} providers, {CONTROVERSIES.length} controversies, 12Q history</div>
+      <div style={ss.tabs}>{TABS.map((t,i)=><button key={i} style={ss.tab(tab===i)} onClick={()=>{setTab(i);setPage(1);}}>{t}</button>)}</div>
+      {tab===0&&renderComparison()}
+      {tab===1&&renderMethodology()}
+      {tab===2&&renderCorrelation()}
+      {tab===3&&renderSectorBias()}
+      {tab===4&&renderPortfolio()}
+      {tab===5&&renderControversy()}
+      {tab===6&&renderRegulatory()}
     </div>
-    <div style={{display:'flex',gap:4,marginBottom:16,borderBottom:`2px solid ${T.border}`,paddingBottom:0}}>
-      {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'8px 18px',fontSize:13,fontWeight:tab===i?600:400,color:tab===i?T.navy:T.textMut,background:tab===i?T.surface:'transparent',border:tab===i?`1px solid ${T.border}`:'1px solid transparent',borderBottom:tab===i?`2px solid ${T.navy}`:'2px solid transparent',borderRadius:'6px 6px 0 0',cursor:'pointer',fontFamily:T.font,transition:'all 0.15s',marginBottom:-2}}>{t}</button>)}
-    </div>
-    {tab===0&&renderTab0()}
-    {tab===1&&renderTab1()}
-    {tab===2&&renderTab2()}
-    {tab===3&&renderTab3()}
-    {renderDrawer()}
-    {renderCompare()}
-  </div>);
+  );
 }

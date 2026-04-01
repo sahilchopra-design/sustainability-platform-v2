@@ -1,662 +1,663 @@
 // EP-AI1 — SBTi Target Setter
 // Route: /sbti-target-setter
-import React, { useState } from 'react';
-import {
-  AreaChart, Area, BarChart, Bar, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-} from 'recharts';
-import { SECTOR_BENCHMARKS } from '../../../data/referenceData';
+// Framework: SBTi Criteria v5.1 + Net-Zero Standard + FLAG Guidance
+// Reference: Science Based Targets initiative (2024)
+import React,{useState,useMemo,useCallback} from 'react';
+import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend,ScatterChart,Scatter,ZAxis} from 'recharts';
+import {SECTOR_BENCHMARKS,TEMPERATURE_PATHWAYS} from '../../../data/referenceData';
+import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   THEME + HELPERS
+   ═══════════════════════════════════════════════════════════════════════════════ */
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const ACCENT='#059669';
+const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};
+const PIECLRS=[ACCENT,T.navy,T.gold,T.sage,T.amber,T.green,T.red,'#0891b2','#be185d','#ea580c'];
+const PAGE_SIZE=15;
 
-const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
+const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(22,163,74,0.12)':v>=mid?'rgba(197,169,106,0.12)':v>=lo?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)';const c=v>=hi?T.green:v>=mid?T.gold:v>=lo?T.amber:T.red;return{background:bg,color:c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono};};
+const statusBadge=(s)=>{const m={'Net-Zero Validated':{bg:'rgba(5,150,105,0.12)',c:ACCENT},'Targets Validated':{bg:'rgba(22,163,74,0.12)',c:T.green},'Targets Set':{bg:'rgba(90,138,106,0.12)',c:T.sage},'Committed':{bg:'rgba(197,169,106,0.15)',c:T.gold},'Removed':{bg:'rgba(220,38,38,0.12)',c:T.red},'Under Review':{bg:'rgba(217,119,6,0.12)',c:T.amber},'Not Submitted':{bg:'rgba(156,163,174,0.12)',c:T.textMut}};const st=m[s]||m['Committed'];return{background:st.bg,color:st.c,padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600};};
+const csvExport=(rows,name)=>{if(!rows.length)return;const h=Object.keys(rows[0]);const csv=[h.join(','),...rows.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name+'.csv';a.click();URL.revokeObjectURL(u);};
 
-// ── Mock Data ──────────────────────────────────────────────────────────────
+const TABS=['Target Setting','Sector Pathways','FLAG Targets','Portfolio Alignment','Validation Status','Carbon Budget','Export'];
 
-const COMPANIES = [
-  { id:1, name:'Vertex Technologies', sector:'Technology', status:'Net-Zero Approved', committedDate:'2021-03-15', targetType:'Absolute Contraction', validationStatus:'Approved', nearTermS12:50, nearTermS3:30, longTermS12:90, longTermS3:67, scope1:420000, scope2:180000, scope3:2300000, baseYear:2019, tempScore:1.5 },
-  { id:2, name:'Meridian Financial', sector:'Financial Services', status:'Approved', committedDate:'2021-07-22', targetType:'Temperature Rating', validationStatus:'Approved', nearTermS12:42, nearTermS3:25, longTermS12:90, longTermS3:67, scope1:85000, scope2:62000, scope3:4800000, baseYear:2020, tempScore:1.7 },
-  { id:3, name:'Atlas Manufacturing', sector:'Manufacturing', status:'Approved', committedDate:'2020-11-10', targetType:'Sector Decarbonisation', validationStatus:'Approved', nearTermS12:46, nearTermS3:28, longTermS12:90, longTermS3:67, scope1:1850000, scope2:720000, scope3:3200000, baseYear:2018, tempScore:1.8 },
-  { id:4, name:'Solaris Energy', sector:'Energy', status:'Approved', committedDate:'2022-01-05', targetType:'Sector Decarbonisation', validationStatus:'Approved', nearTermS12:55, nearTermS3:35, longTermS12:95, longTermS3:70, scope1:6200000, scope2:380000, scope3:8900000, baseYear:2019, tempScore:1.6 },
-  { id:5, name:'Crestline Retail', sector:'Retail', status:'Target Set', committedDate:'2022-05-18', targetType:'Absolute Contraction', validationStatus:'Under Review', nearTermS12:40, nearTermS3:20, longTermS12:90, longTermS3:67, scope1:220000, scope2:310000, scope3:5600000, baseYear:2020, tempScore:2.1 },
-  { id:6, name:'Pinnacle Pharma', sector:'Healthcare', status:'Approved', committedDate:'2021-09-30', targetType:'Absolute Contraction', validationStatus:'Approved', nearTermS12:50, nearTermS3:30, longTermS12:90, longTermS3:67, scope1:340000, scope2:210000, scope3:1900000, baseYear:2019, tempScore:1.7 },
-  { id:7, name:'Horizon Logistics', sector:'Transportation', status:'Committed', committedDate:'2023-02-14', targetType:'Sector Decarbonisation', validationStatus:'Submitted', nearTermS12:30, nearTermS3:15, longTermS12:90, longTermS3:67, scope1:2800000, scope2:95000, scope3:1200000, baseYear:2021, tempScore:2.4 },
-  { id:8, name:'GreenBuild Corp', sector:'Construction', status:'Net-Zero Approved', committedDate:'2020-06-01', targetType:'Absolute Contraction', validationStatus:'Approved', nearTermS12:50, nearTermS3:30, longTermS12:90, longTermS3:67, scope1:580000, scope2:290000, scope3:4100000, baseYear:2018, tempScore:1.5 },
-  { id:9, name:'Pacific Chemicals', sector:'Chemicals', status:'Approved', committedDate:'2021-12-08', targetType:'Sector Decarbonisation', validationStatus:'Approved', nearTermS12:48, nearTermS3:28, longTermS12:90, longTermS3:67, scope1:3100000, scope2:850000, scope3:2700000, baseYear:2019, tempScore:1.9 },
-  { id:10, name:'NovaTech Systems', sector:'Technology', status:'Net-Zero Approved', committedDate:'2021-04-22', targetType:'Absolute Contraction', validationStatus:'Approved', nearTermS12:50, nearTermS3:30, longTermS12:90, longTermS3:67, scope1:190000, scope2:140000, scope3:1100000, baseYear:2019, tempScore:1.5 },
-  { id:11, name:'Apex Autos', sector:'Automotive', status:'Approved', committedDate:'2022-03-17', targetType:'Sector Decarbonisation', validationStatus:'Approved', nearTermS12:50, nearTermS3:30, longTermS12:90, longTermS3:67, scope1:920000, scope2:430000, scope3:12500000, baseYear:2020, tempScore:1.8 },
-  { id:12, name:'Sterling Foods', sector:'Agriculture & Food', status:'Target Set', committedDate:'2022-09-11', targetType:'Sector Decarbonisation', validationStatus:'Under Review', nearTermS12:30, nearTermS3:20, longTermS12:90, longTermS3:67, scope1:480000, scope2:175000, scope3:6800000, baseYear:2020, tempScore:2.2 },
-  { id:13, name:'Lumina Utilities', sector:'Utilities', status:'Approved', committedDate:'2021-06-30', targetType:'Sector Decarbonisation', validationStatus:'Approved', nearTermS12:65, nearTermS3:35, longTermS12:95, longTermS3:70, scope1:8900000, scope2:210000, scope3:1400000, baseYear:2019, tempScore:1.7 },
-  { id:14, name:'ClearWater Beverage', sector:'Consumer Goods', status:'Net-Zero Approved', committedDate:'2020-10-15', targetType:'Absolute Contraction', validationStatus:'Approved', nearTermS12:50, nearTermS3:30, longTermS12:90, longTermS3:67, scope1:310000, scope2:195000, scope3:2900000, baseYear:2018, tempScore:1.5 },
-  { id:15, name:'Ironside Steel', sector:'Steel', status:'Committed', committedDate:'2023-07-01', targetType:'Sector Decarbonisation', validationStatus:'Not Submitted', nearTermS12:35, nearTermS3:15, longTermS12:90, longTermS3:67, scope1:7200000, scope2:1100000, scope3:3500000, baseYear:2022, tempScore:2.8 },
-  { id:16, name:'Quantum Computing Inc', sector:'Technology', status:'Net-Zero Approved', committedDate:'2022-02-28', targetType:'Absolute Contraction', validationStatus:'Approved', nearTermS12:50, nearTermS3:30, longTermS12:90, longTermS3:67, scope1:95000, scope2:78000, scope3:520000, baseYear:2020, tempScore:1.5 },
-  { id:17, name:'Atlas Insurance Group', sector:'Financial Services', status:'Approved', committedDate:'2022-08-19', targetType:'Temperature Rating', validationStatus:'Approved', nearTermS12:42, nearTermS3:25, longTermS12:90, longTermS3:67, scope1:42000, scope2:38000, scope3:9200000, baseYear:2021, tempScore:1.9 },
-  { id:18, name:'Coastal Shipping Co', sector:'Shipping', status:'Target Set', committedDate:'2023-01-20', targetType:'Sector Decarbonisation', validationStatus:'Under Review', nearTermS12:30, nearTermS3:10, longTermS12:90, longTermS3:67, scope1:4100000, scope2:85000, scope3:780000, baseYear:2021, tempScore:2.5 },
-  { id:19, name:'BioGenic Agriculture', sector:'Agriculture & Food', status:'Committed', committedDate:'2023-09-05', targetType:'Sector Decarbonisation', validationStatus:'Not Submitted', nearTermS12:25, nearTermS3:15, longTermS12:90, longTermS3:67, scope1:1200000, scope2:220000, scope3:11000000, baseYear:2022, tempScore:2.9 },
-  { id:20, name:'Nordic Chemicals', sector:'Chemicals', status:'Approved', committedDate:'2021-11-22', targetType:'Sector Decarbonisation', validationStatus:'Approved', nearTermS12:48, nearTermS3:28, longTermS12:90, longTermS3:67, scope1:2400000, scope2:680000, scope3:2100000, baseYear:2019, tempScore:1.8 },
+const KPI=({label,value,sub,color,cite})=>(
+  <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 20px',flex:'1 1 180px',minWidth:150}}>
+    <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{label}</div>
+    <div style={{fontSize:26,fontWeight:700,color:color||T.navy,fontFamily:T.mono,marginTop:4}}>{value}</div>
+    {sub&&<div style={{fontSize:11,color:T.textSec,marginTop:2}}>{sub}</div>}
+    {cite&&<div style={{fontSize:9,color:T.textMut,fontFamily:T.mono,marginTop:2}}>{cite}</div>}
+  </div>
+);
+const SectionHead=({children,cite})=>(
+  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:12}}>
+    <div style={{fontSize:14,fontWeight:700,color:T.navy}}>{children}</div>
+    {cite&&<span style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>{cite}</span>}
+  </div>
+);
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TARGET METHODS — SBTi Criteria v5.1
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const METHODS=[
+  {id:'abs',name:'Absolute Contraction',desc:'Reduce absolute emissions by a fixed % per year. Minimum 4.2% linear annual reduction for 1.5C. Applicable to all sectors. Simplest approach.',ambition:'1.5°C',minRate:4.2,scope:'All sectors',formula:'Target = Base Emissions * (1 - r)^t, where r >= 4.2% p.a.',pros:['Simple to communicate','Clear accountability','Works for all sectors'],cons:['Penalizes growing companies','Does not account for sector specifics']},
+  {id:'sda',name:'Sectoral Decarbonisation (SDA)',desc:'Convergence approach: company intensity converges to sector benchmark by target year. Based on IEA sector pathways. More nuanced for heavy industry.',ambition:'Well-below 2°C / 1.5°C',minRate:0,scope:'Homogeneous sectors (power, steel, cement, transport, buildings)',formula:'Target Intensity = Current Intensity + (Benchmark - Current) * (t / T)',pros:['Accounts for sector physics','Fair for heavy industry','IEA pathway aligned'],cons:['Complex calculation','Limited to specific sectors','Data-intensive']},
+  {id:'temp',name:'Temperature Rating',desc:'SBTi for Financial Institutions: portfolio temperature score based on company targets. Used by asset managers and banks.',ambition:'1.5°C',minRate:0,scope:'Financial institutions',formula:'Portfolio Temp = sum(weight_i * temp_score_i)',pros:['Applicable to financial portfolios','Forward-looking','Integrates multiple companies'],cons:['Dependent on company target quality','Model uncertainty']},
+  {id:'coverage',name:'Portfolio Coverage',desc:'SBTi for Financial Institutions: % of portfolio by AUM that has set SBTi-validated targets. Minimum thresholds apply.',ambition:'1.5°C / WB2C',minRate:0,scope:'Financial institutions',formula:'Coverage = sum(AUM_with_SBTi) / total_AUM',pros:['Engagement-focused','Clear metric','Drives real-economy action'],cons:['Binary (target set or not)','Does not assess ambition quality']},
 ];
 
-const STATUS_COLOR = {
-  'Net-Zero Approved': T.green,
-  'Approved': T.sage,
-  'Target Set': T.amber,
-  'Committed': T.navyL,
-};
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SECTOR PATHWAYS — SDA methodology per SBTi/IEA
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const SECTOR_PATHS=[
+  {sector:'Power Generation',unit:'gCO2/kWh',base2020:450,target2030:138,target2050:0,pathway:'IEA NZE',convergenceYear:2040,method:'SDA',
+    milestones:[{year:2025,val:310},{year:2030,val:138},{year:2035,val:68},{year:2040,val:20},{year:2045,val:5},{year:2050,val:0}]},
+  {sector:'Steel',unit:'tCO2/t steel',base2020:1.85,target2030:1.18,target2050:0.04,pathway:'IEA NZE + MPP',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:1.55},{year:2030,val:1.18},{year:2035,val:0.82},{year:2040,val:0.45},{year:2045,val:0.15},{year:2050,val:0.04}]},
+  {sector:'Cement',unit:'tCO2/t cement',base2020:0.61,target2030:0.42,target2050:0.04,pathway:'IEA NZE + GCCA',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:0.52},{year:2030,val:0.42},{year:2035,val:0.30},{year:2040,val:0.18},{year:2045,val:0.08},{year:2050,val:0.04}]},
+  {sector:'Road Transport',unit:'gCO2/vkm',base2020:192,target2030:108,target2050:0,pathway:'IEA NZE',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:155},{year:2030,val:108},{year:2035,val:65},{year:2040,val:30},{year:2045,val:8},{year:2050,val:0}]},
+  {sector:'Aviation',unit:'gCO2/RPK',base2020:90,target2030:72,target2050:18,pathway:'IEA NZE + ICAO LTAG',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:82},{year:2030,val:72},{year:2035,val:58},{year:2040,val:42},{year:2045,val:28},{year:2050,val:18}]},
+  {sector:'Shipping',unit:'gCO2/dwt-nm',base2020:8.2,target2030:6.1,target2050:0.8,pathway:'IMO GHG Strategy',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:7.2},{year:2030,val:6.1},{year:2035,val:4.5},{year:2040,val:2.8},{year:2045,val:1.5},{year:2050,val:0.8}]},
+  {sector:'Buildings (Residential)',unit:'kgCO2/m2',base2020:22,target2030:12,target2050:0,pathway:'IEA NZE + CRREM',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:17},{year:2030,val:12},{year:2035,val:7},{year:2040,val:3},{year:2045,val:1},{year:2050,val:0}]},
+  {sector:'Buildings (Commercial)',unit:'kgCO2/m2',base2020:35,target2030:20,target2050:0,pathway:'IEA NZE + CRREM',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:28},{year:2030,val:20},{year:2035,val:12},{year:2040,val:5},{year:2045,val:1.5},{year:2050,val:0}]},
+  {sector:'Aluminium',unit:'tCO2/t aluminium',base2020:11.5,target2030:7.8,target2050:0.5,pathway:'IAI Roadmap',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:9.8},{year:2030,val:7.8},{year:2035,val:5.2},{year:2040,val:2.8},{year:2045,val:1.2},{year:2050,val:0.5}]},
+  {sector:'Pulp & Paper',unit:'tCO2/t product',base2020:0.55,target2030:0.38,target2050:0.05,pathway:'CEPI Roadmap',convergenceYear:2050,method:'SDA',
+    milestones:[{year:2025,val:0.48},{year:2030,val:0.38},{year:2035,val:0.25},{year:2040,val:0.15},{year:2045,val:0.08},{year:2050,val:0.05}]},
+];
 
-const VALIDATION_COLOR = {
-  'Approved': T.green,
-  'Under Review': T.amber,
-  'Submitted': T.navyL,
-  'Not Submitted': T.textMut,
-};
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FLAG TARGETS — Forest, Land & Agriculture Guidance
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const FLAG_COMMODITIES=[
+  {commodity:'Cattle (Beef)',unit:'tCO2e/t product',base:45.0,target2030:30.0,flagRate:3.3,deforestationTarget:'Zero net deforestation by 2025',landUse:'Pasture & feed crops',scope:'Scope 1+2+3 (FLAG)'},
+  {commodity:'Cattle (Dairy)',unit:'tCO2e/t milk',base:2.8,target2030:2.0,flagRate:2.8,deforestationTarget:'Zero net deforestation by 2025',landUse:'Pasture & feed crops',scope:'Scope 1+2+3 (FLAG)'},
+  {commodity:'Palm Oil',unit:'tCO2e/t FFB',base:3.2,target2030:1.8,flagRate:4.4,deforestationTarget:'NDPE policy compliance by 2025',landUse:'Plantation expansion control',scope:'Scope 1+2+3 (FLAG)'},
+  {commodity:'Soy',unit:'tCO2e/t product',base:1.1,target2030:0.7,flagRate:3.6,deforestationTarget:'Amazon Soy Moratorium compliance',landUse:'Conversion-free sourcing',scope:'Scope 3 (purchased goods)'},
+  {commodity:'Pulp & Paper',unit:'tCO2e/t product',base:0.9,target2030:0.6,flagRate:3.3,deforestationTarget:'FSC/PEFC certification 100%',landUse:'Sustainable forest management',scope:'Scope 1+2+3 (FLAG)'},
+  {commodity:'Rice',unit:'tCO2e/t paddy',base:2.5,target2030:1.8,flagRate:2.8,deforestationTarget:'N/A',landUse:'Wetland management',scope:'Scope 1+3 (FLAG)'},
+  {commodity:'Cocoa',unit:'tCO2e/t product',base:4.5,target2030:2.8,flagRate:3.8,deforestationTarget:'Cocoa & Forests Initiative',landUse:'Agroforestry transition',scope:'Scope 3 (FLAG)'},
+  {commodity:'Rubber',unit:'tCO2e/t product',base:3.8,target2030:2.4,flagRate:3.7,deforestationTarget:'Zero deforestation commitment',landUse:'Smallholder engagement',scope:'Scope 3 (FLAG)'},
+];
 
-// Trajectory data for selected company (2020-2050)
-const buildTrajectory = (co) => {
-  const years = [];
-  for (let y = 2020; y <= 2050; y++) years.push(y);
-  const base = co.scope1 + co.scope2;
-  const baseYr = co.baseYear;
-  return years.map(yr => {
-    const elapsed = yr - baseYr;
-    const total = 2050 - baseYr;
-    const sbtiPct = elapsed <= 0 ? 1 : Math.max(1 - (co.nearTermS12/100) * Math.min(elapsed/(2030-baseYr),1) - ((co.longTermS12/100 - co.nearTermS12/100) * Math.max(0,(elapsed-(2030-baseYr))/(2050-2030))), 0.1);
-    const bauPct = elapsed <= 0 ? 1 : 1 + 0.02 * elapsed;
-    const actualPct = yr <= 2025 ? Math.max(1 - (co.nearTermS12/100) * 0.6 * (elapsed/(2030-baseYr)), 0.5) : null;
-    return {
-      year: yr,
-      sbtiPathway: Math.round(base * sbtiPct / 1000),
-      bau: Math.round(base * bauPct / 1000),
-      actual: actualPct !== null ? Math.round(base * actualPct / 1000) : null,
+/* ═══════════════════════════════════════════════════════════════════════════════
+   80 COMPANIES WITH SBTi TARGETS + PROGRESS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const COMPANIES=(()=>{
+  const equities=SECURITY_UNIVERSE.filter(s=>s.assetType==='Equity').slice(0,80);
+  const statuses=['Net-Zero Validated','Targets Validated','Targets Set','Committed','Removed','Under Review'];
+  const methods=['Absolute Contraction','Sectoral Decarbonisation','Temperature Rating','Portfolio Coverage'];
+  return equities.map((sec,i)=>{
+    const base=i*149;
+    const status=statuses[Math.floor(sr(base)*5.5)]; // bias toward validated
+    const method=methods[Math.floor(sr(base+1)*4)];
+    const baseYear=2018+Math.floor(sr(base+3)*4);
+    const scope1=Math.round(50000+sr(base+5)*9950000);
+    const scope2=Math.round(20000+sr(base+7)*2000000);
+    const scope3=Math.round(scope1*2+sr(base+9)*scope1*5);
+    const nearTermS12=Math.round(25+sr(base+11)*30); // 25-55% by 2030
+    const nearTermS3=Math.round(10+sr(base+13)*30);
+    const longTermS12=90; // SBTi requires 90%+
+    const longTermS3=Math.round(60+sr(base+15)*10); // 67% per NZ Standard
+    const tempScore=+(1.3+sr(base+17)*2.0).toFixed(1);
+    const annualRate=+(nearTermS12/(2030-baseYear)).toFixed(1);
+    // Progress: emissions trajectory
+    const currentReduction=Math.round(nearTermS12*0.4+sr(base+19)*nearTermS12*0.3); // 40-70% of target
+    const onTrack=currentReduction>=(nearTermS12*(2026-baseYear)/(2030-baseYear))*0.85;
+    const commitDate=`20${20+Math.floor(sr(base+21)*4)}-${String(1+Math.floor(sr(base+23)*12)).padStart(2,'0')}-${String(1+Math.floor(sr(base+25)*28)).padStart(2,'0')}`;
+    const validationDeadline=`20${22+Math.floor(sr(base+27)*3)}-${String(1+Math.floor(sr(base+29)*12)).padStart(2,'0')}`;
+    const flagExposure=sr(base+31)<0.3;
+    return{
+      id:sec.id||i+1,name:sec.name||`Company_${i+1}`,ticker:sec.ticker||'',
+      sector:sec.sector||'Industrials',country:sec.country||'US',
+      status,method,baseYear,scope1,scope2,scope3,
+      nearTermS12,nearTermS3,longTermS12,longTermS3,
+      tempScore,annualRate,currentReduction,onTrack,
+      commitDate,validationDeadline,flagExposure,
+      totalEmissions:scope1+scope2+scope3,
+      netZeroYear:status.includes('Net-Zero')?2050:status==='Targets Validated'?2050:null,
+      residualTarget:10, // SBTi: max 10% residual
+      neutralization:status.includes('Net-Zero')?Math.round(scope1*0.08):'N/A',
     };
   });
-};
+})();
 
-const SCOPE3_CATEGORIES = [
-  { cat:'Cat 1 - Purchased Goods', value:4200, type:'Upstream' },
-  { cat:'Cat 2 - Capital Goods', value:820, type:'Upstream' },
-  { cat:'Cat 3 - Fuel & Energy', value:610, type:'Upstream' },
-  { cat:'Cat 4 - Upstream Transport', value:1100, type:'Upstream' },
-  { cat:'Cat 5 - Waste Operations', value:290, type:'Upstream' },
-  { cat:'Cat 6 - Business Travel', value:480, type:'Upstream' },
-  { cat:'Cat 7 - Employee Commute', value:310, type:'Upstream' },
-  { cat:'Cat 8 - Upstream Leased', value:175, type:'Upstream' },
-  { cat:'Cat 9 - Downstream Transport', value:920, type:'Downstream' },
-  { cat:'Cat 10 - Processing of Sold', value:640, type:'Downstream' },
-  { cat:'Cat 11 - Use of Sold Products', value:7800, type:'Downstream' },
-  { cat:'Cat 12 - End-of-Life', value:580, type:'Downstream' },
-  { cat:'Cat 13 - Downstream Leased', value:210, type:'Downstream' },
-  { cat:'Cat 14 - Franchises', value:95, type:'Downstream' },
-  { cat:'Cat 15 - Investments', value:3200, type:'Downstream' },
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CARBON BUDGET DATA
+   ═══════════════════════════════════════════════════════════════════════════════ */
+const CARBON_BUDGETS=[
+  {pathway:'1.5°C (50% probability)',remainingGt:400,usedGt:2400,totalGt:2800,yearExhausted:2030,annualBudgetGt:40,perCapitaT:5.0,source:'IPCC AR6 WG1 Table SPM.2'},
+  {pathway:'1.5°C (67% probability)',remainingGt:300,usedGt:2400,totalGt:2700,yearExhausted:2028,annualBudgetGt:30,perCapitaT:3.8,source:'IPCC AR6 WG1'},
+  {pathway:'2°C (50% probability)',remainingGt:1150,usedGt:2400,totalGt:3550,yearExhausted:2046,annualBudgetGt:72,perCapitaT:14.4,source:'IPCC AR6 WG1'},
+  {pathway:'2°C (67% probability)',remainingGt:900,usedGt:2400,totalGt:3300,yearExhausted:2041,annualBudgetGt:56,perCapitaT:11.3,source:'IPCC AR6 WG1'},
+  {pathway:'2.5°C (50% probability)',remainingGt:2300,usedGt:2400,totalGt:4700,yearExhausted:2067,annualBudgetGt:115,perCapitaT:28.8,source:'IPCC AR6 WG1'},
 ];
 
-const SUPPLIER_PROGRAMS = [
-  { company:'Vertex Technologies', suppliersEngaged:342, suppliersWithSBT:198, pctCoverage:82, program:'Supplier Climate Academy', status:'Active' },
-  { company:'Atlas Manufacturing', suppliersEngaged:1240, suppliersWithSBT:520, pctCoverage:61, program:'Supply Chain Zero', status:'Active' },
-  { company:'Apex Autos', suppliersEngaged:2800, suppliersWithSBT:890, pctCoverage:45, program:'EV Supply Chain', status:'Active' },
-  { company:'Lumina Utilities', suppliersEngaged:180, suppliersWithSBT:92, pctCoverage:78, program:'Green Grid Partners', status:'Active' },
-  { company:'Pacific Chemicals', suppliersEngaged:620, suppliersWithSBT:210, pctCoverage:52, program:'ChemNet Zero', status:'Launching' },
-];
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════════════════════════════════════ */
+export default function SbtiTargetSetterPage(){
+  const[tab,setTab]=useState(0);
+  const[search,setSearch]=useState('');
+  const[secF,setSecF]=useState('All');
+  const[statusF,setStatusF]=useState('All');
+  const[sortCol,setSortCol]=useState('tempScore');
+  const[sortDir,setSortDir]=useState('asc');
+  const[page,setPage]=useState(1);
+  const[expanded,setExpanded]=useState(null);
+  const[selMethod,setSelMethod]=useState(0);
+  const[selSector,setSelSector]=useState(0);
+  const[selBudget,setSelBudget]=useState(0);
+  const[portView,setPortView]=useState('coverage');
+  const[exportFormat,setExportFormat]=useState('SBTi Submission');
 
-const METHODS = [
-  { method:'Absolute Contraction Approach (ACA)', applicableSectors:'All sectors', nearTermReduction:'4.2% p.a. (1.5°C aligned)', longTermReduction:'90% by 2050', pros:'Sector agnostic; straightforward', cons:'May be too ambitious for hard-to-abate sectors', tempScore:'1.5°C', companiesUsing:8 },
-  { method:'Sector Decarbonisation Approach (SDA)', applicableSectors:'Steel, Cement, Aluminium, Pulp & Paper, Chemicals, Aviation, Shipping, Buildings, Transport', nearTermReduction:'Sector-specific pathway', longTermReduction:'Sector-specific net-zero', pros:'Accounts for sector decarbonisation economics', cons:'Requires detailed sector data; complex calculation', tempScore:'1.7°C', companiesUsing:9 },
-  { method:'Temperature Rating Method (TRM)', applicableSectors:'Financial Services (financed emissions)', nearTermReduction:'Portfolio alignment to <1.5°C', longTermReduction:'Net-zero portfolio by 2050', pros:'Captures financed emissions; TCFD aligned', cons:'Relies on counterparty target quality', tempScore:'1.9°C', companiesUsing:3 },
-];
+  const sectors=['All',...new Set(COMPANIES.map(c=>c.sector))].sort();
+  const allStatuses=['All','Net-Zero Validated','Targets Validated','Targets Set','Committed','Removed','Under Review'];
+  const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'asc');setPage(1);},[sortCol]);
 
-const VALIDATION_PIPELINE = [
-  { stage:'Committed', count:4, color: T.navyL, desc:'Company has signed SBTi commitment letter; 24-month window to submit targets' },
-  { stage:'Submitted', count:2, color: T.gold, desc:'Targets formally submitted to SBTi for technical review' },
-  { stage:'Validation', count:1, color: T.amber, desc:'SBTi expert team conducting detailed assessment of target ambition and coverage' },
-  { stage:'Approved', count:13, color: T.green, desc:'Targets validated and publicly listed on SBTi target dashboard' },
-];
+  const filtered=useMemo(()=>{
+    let d=[...COMPANIES];
+    if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));
+    if(secF!=='All')d=d.filter(r=>r.sector===secF);
+    if(statusF!=='All')d=d.filter(r=>r.status===statusF);
+    d.sort((a,b)=>{const av=a[sortCol]??0;const bv=b[sortCol]??0;return sortDir==='asc'?(av>bv?1:-1):(av<bv?1:-1);});
+    return d;
+  },[search,secF,statusF,sortCol,sortDir]);
+  const paged=filtered.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
+  const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
 
-const REJECTION_REASONS = [
-  { reason:'Insufficient Scope 3 coverage', freq:'34%', fix:'Expand to all material Scope 3 categories (>40% of total emissions)' },
-  { reason:'Target base year too recent (post-peak)', freq:'22%', fix:'Use earliest available high-quality data year as base year' },
-  { reason:'Near-term target period too short (<5 years)', freq:'18%', fix:'Ensure target extends to at least 5 years from submission date' },
-  { reason:'ACA reduction rate below 4.2% p.a.', freq:'15%', fix:'Recalculate using SBTi Target Validation Tool (TVT)' },
-  { reason:'Scope 2 market-based without location-based check', freq:'7%', fix:'Provide both market-based and location-based Scope 2 data' },
-  { reason:'Other (data quality, documentation gaps)', freq:'4%', fix:'Use SBTi submission checklist; engage SBTi helpdesk' },
-];
+  const validated=COMPANIES.filter(c=>c.status.includes('Validated'));
+  const nzValidated=COMPANIES.filter(c=>c.status==='Net-Zero Validated');
+  const committed=COMPANIES.filter(c=>c.status==='Committed');
+  const onTrackCount=COMPANIES.filter(c=>c.onTrack).length;
+  const avgTemp=+(COMPANIES.reduce((s,c)=>s+c.tempScore,0)/COMPANIES.length).toFixed(1);
 
-const CHECKLIST = [
-  { item:'Signed Commitment Letter submitted to SBTi', required:true },
-  { item:'Scope 1 & 2 emissions inventory (base year)', required:true },
-  { item:'Scope 3 screening and materiality assessment', required:true },
-  { item:'Near-term target (5–10 year) defined', required:true },
-  { item:'Long-term net-zero target defined (by 2050)', required:true },
-  { item:'Target covers ≥95% of Scope 1+2 emissions', required:true },
-  { item:'Scope 3 target if Scope 3 >40% of total GHG', required:true },
-  { item:'Target Validation Tool (TVT) completed', required:true },
-  { item:'Third-party verification of emissions data', required:false },
-  { item:'Interim milestone targets (2025, 2035, 2040)', required:false },
-];
+  const ss={
+    wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},
+    header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},
+    sub:{fontSize:13,color:T.textSec,marginBottom:20},
+    tabs:{display:'flex',gap:2,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:0,overflowX:'auto'},
+    tab:(a)=>({padding:'10px 16px',fontSize:12,fontWeight:a?700:500,color:a?ACCENT:T.textSec,background:a?`${ACCENT}10`:'transparent',border:'none',borderBottom:a?`2px solid ${ACCENT}`:'2px solid transparent',cursor:'pointer',fontFamily:T.font,marginBottom:-2,whiteSpace:'nowrap'}),
+    card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:20},
+    grid2:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20},
+    flex:{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16,alignItems:'center'},
+    td:{padding:'10px 12px',fontSize:12,borderBottom:`1px solid ${T.border}`,fontFamily:T.font},
+    th:(col)=>({padding:'10px 12px',textAlign:'left',fontSize:11,fontFamily:T.mono,color:sortCol===col?ACCENT:T.textMut,cursor:'pointer',borderBottom:`2px solid ${T.border}`,userSelect:'none',textTransform:'uppercase',letterSpacing:0.5,whiteSpace:'nowrap'}),
+    btn:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.surface,background:ACCENT,border:'none',borderRadius:6,cursor:'pointer',fontFamily:T.font},
+    btnSec:{padding:'6px 16px',fontSize:12,fontWeight:600,color:T.textSec,background:'transparent',border:`1px solid ${T.border}`,borderRadius:6,cursor:'pointer',fontFamily:T.font},
+    pg:{display:'flex',gap:8,alignItems:'center',justifyContent:'center',marginTop:16},
+    select:{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:12,fontFamily:T.font,background:T.surface,color:T.text},
+    input:{padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:13,fontFamily:T.font,background:T.surface,color:T.text,outline:'none',width:220},
+    cite:{fontSize:9,color:T.textMut,fontFamily:T.mono,marginTop:4},
+  };
+  const TH=({col,label})=><th style={ss.th(col)} onClick={()=>doSort(col)}>{label}{sortCol===col?(sortDir==='asc'?' \u25B2':' \u25BC'):''}</th>;
 
-// ── Sub-components ─────────────────────────────────────────────────────────
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 0: TARGET SETTING — absolute vs SDA, near/long-term, net-zero
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderTargetSetting=()=>{
+    const m=METHODS[selMethod];
+    // Trajectory for absolute contraction
+    const trajData=Array.from({length:31},(_,i)=>{
+      const yr=2020+i;
+      return{
+        year:yr,
+        sbti15:Math.round(100*Math.pow(1-0.042,yr-2020)),
+        sbtiWB2:Math.round(100*Math.pow(1-0.025,yr-2020)),
+        bau:Math.round(100*Math.pow(1.02,yr-2020)),
+        nzResidual:yr>=2045?10:null,
+      };
+    });
+    return(<>
+      <SectionHead cite="SBTi Criteria v5.1 — Target Setting Approaches">Target Setting Engine</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Companies" value={COMPANIES.length} color={T.navy}/>
+        <KPI label="Validated" value={validated.length} sub={`${Math.round(validated.length/COMPANIES.length*100)}%`} color={ACCENT}/>
+        <KPI label="Net-Zero" value={nzValidated.length} color={T.green}/>
+        <KPI label="Avg Temp" value={avgTemp+'°C'} color={avgTemp<=1.8?T.green:avgTemp<=2.2?T.amber:T.red} cite="SBTi Temp Rating"/>
+        <KPI label="On Track" value={`${onTrackCount}/${COMPANIES.length}`} color={T.sage}/>
+        <KPI label="Min Rate" value="4.2% p.a." sub="for 1.5°C" color={ACCENT} cite="SBTi C6"/>
+      </div>
+      {/* Method Selector */}
+      <div style={ss.flex}>
+        {METHODS.map((mt,i)=><button key={i} style={selMethod===i?ss.btn:ss.btnSec} onClick={()=>setSelMethod(i)}>{mt.name}</button>)}
+      </div>
+      <div style={ss.card}>
+        <SectionHead cite="SBTi Criteria v5.1 §C5-C8">{m.name} Approach</SectionHead>
+        <div style={{fontSize:12,color:T.textSec,lineHeight:1.6,marginBottom:12}}>{m.desc}</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16,marginBottom:16}}>
+          <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>AMBITION</div>
+            <div style={{fontSize:13,fontWeight:600,color:ACCENT,marginTop:4}}>{m.ambition}</div>
+          </div>
+          <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>MIN ANNUAL RATE</div>
+            <div style={{fontSize:13,fontWeight:600,color:T.navy,marginTop:4}}>{m.minRate>0?m.minRate+'% p.a.':'Sector-specific'}</div>
+          </div>
+          <div style={{background:T.surfaceH,borderRadius:8,padding:12}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>SCOPE</div>
+            <div style={{fontSize:13,fontWeight:600,color:T.text,marginTop:4}}>{m.scope}</div>
+          </div>
+        </div>
+        <div style={{marginBottom:12}}>
+          <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,padding:'8px 12px',background:T.surfaceH,borderRadius:6}}>{m.formula}</div>
+        </div>
+        <div style={ss.grid2}>
+          <div>
+            <div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Advantages</div>
+            {m.pros.map((p,i)=><div key={i} style={{fontSize:11,color:T.textSec,padding:'3px 0'}}><span style={{color:T.green,marginRight:6}}>+</span>{p}</div>)}
+          </div>
+          <div>
+            <div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:6}}>Limitations</div>
+            {m.cons.map((c,i)=><div key={i} style={{fontSize:11,color:T.textSec,padding:'3px 0'}}><span style={{color:T.red,marginRight:6}}>-</span>{c}</div>)}
+          </div>
+        </div>
+      </div>
+      {/* SBTi criteria summary */}
+      <div style={ss.card}>
+        <SectionHead cite="SBTi Net-Zero Standard v1.0">SBTi Target Architecture</SectionHead>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+          {[
+            {title:'Near-Term (5-10yr)',color:T.amber,items:['Scope 1+2: 4.2% p.a. linear (1.5°C)','Scope 3: if >40% of total, required','2.5% p.a. minimum for WB2C','Base year: within 2 years','Target year: 5-10 years from submission']},
+            {title:'Long-Term (>10yr)',color:ACCENT,items:['90%+ absolute reduction by 2050','Covers Scope 1+2+3','Sector-specific pathways allowed','Must be validated alongside near-term','1.5°C alignment required (NZ Standard)']},
+            {title:'Net-Zero Residual',color:T.navy,items:['Residual emissions max 10% of base','Neutralization: permanent carbon removal','CDR quality: durable storage >100yr','No forestry offsets for neutralization','Separate from compensation/offsetting']},
+          ].map((s,i)=>(
+            <div key={i} style={{padding:16,borderRadius:8,border:`1px solid ${T.border}`,borderTop:`4px solid ${s.color}`}}>
+              <div style={{fontSize:13,fontWeight:700,color:s.color,marginBottom:8}}>{s.title}</div>
+              {s.items.map((item,j)=><div key={j} style={{fontSize:11,color:T.textSec,padding:'3px 0'}}>- {item}</div>)}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Trajectory Chart */}
+      <div style={ss.card}>
+        <SectionHead>Emissions Reduction Pathways (% of base year)</SectionHead>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={trajData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <XAxis dataKey="year" tick={{fontSize:9,fill:T.textMut}} interval={5}/>
+            <YAxis tick={{fontSize:10,fill:T.textMut}} domain={[0,150]}/>
+            <Tooltip {...tip}/>
+            <Area type="monotone" dataKey="bau" stroke={T.red} fill="rgba(220,38,38,0.08)" name="BAU (+2% p.a.)"/>
+            <Area type="monotone" dataKey="sbtiWB2" stroke={T.amber} fill="rgba(217,119,6,0.08)" name="WB2°C (-2.5% p.a.)"/>
+            <Area type="monotone" dataKey="sbti15" stroke={ACCENT} fill="rgba(5,150,105,0.1)" name="1.5°C (-4.2% p.a.)"/>
+            <Line type="monotone" dataKey="nzResidual" stroke={T.navy} strokeDasharray="5 5" dot={false} name="NZ Residual (10%)"/>
+            <Legend/>
+          </AreaChart>
+        </ResponsiveContainer>
+        <div style={ss.cite}>SBTi Criteria v5.1: 1.5°C requires 4.2% linear annual reduction. WB2°C requires 2.5%. Net-zero residual max 10% of base year.</div>
+      </div>
+    </>);
+  };
 
-const MetricCard = ({ label, value, sub, color }) => (
-  <div style={{
-    background: T.surface, borderRadius: 10, padding: '16px 20px',
-    boxShadow: T.card, border: `1px solid ${T.border}`, flex: 1, minWidth: 160,
-  }}>
-    <div style={{ fontSize: 11, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 700, color: color || T.navy, lineHeight: 1.1 }}>{value}</div>
-    {sub && <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>{sub}</div>}
-  </div>
-);
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 1: SECTOR PATHWAYS — SDA per sector
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderSectorPathways=()=>{
+    const sp=SECTOR_PATHS[selSector];
+    return(<>
+      <SectionHead cite="SBTi SDA Methodology — IEA NZE Sector Pathways">Sector Decarbonisation Pathways</SectionHead>
+      <div style={ss.flex}>
+        {SECTOR_PATHS.map((s,i)=><button key={i} style={selSector===i?ss.btn:ss.btnSec} onClick={()=>setSelSector(i)}>{s.sector}</button>)}
+      </div>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Sector" value={sp.sector} color={ACCENT}/>
+        <KPI label="Base (2020)" value={sp.base2020} sub={sp.unit} color={T.navy}/>
+        <KPI label="Target 2030" value={sp.target2030} sub={sp.unit} color={T.amber}/>
+        <KPI label="Target 2050" value={sp.target2050} sub={sp.unit} color={T.green}/>
+        <KPI label="Convergence" value={sp.convergenceYear} color={T.sage}/>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>Intensity Pathway — {sp.sector}</SectionHead>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={sp.milestones}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <XAxis dataKey="year" tick={{fontSize:10,fill:T.textMut}}/>
+            <YAxis tick={{fontSize:10,fill:T.textMut}} label={{value:sp.unit,angle:-90,position:'left',fontSize:9,fill:T.textSec}}/>
+            <Tooltip {...tip}/>
+            <Area type="monotone" dataKey="val" stroke={ACCENT} fill="rgba(5,150,105,0.12)" name={sp.unit}/>
+          </AreaChart>
+        </ResponsiveContainer>
+        <div style={{display:'flex',gap:8,marginTop:8}}>
+          <span style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>Source: {sp.pathway}</span>
+          <span style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>Method: {sp.method}</span>
+        </div>
+      </div>
+      {/* All Sectors Summary */}
+      <div style={ss.card}>
+        <SectionHead>All Sector Pathways Summary</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['Sector','Unit','Base 2020','Target 2030','Target 2050','Reduction %','Pathway','Convergence'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+          </tr></thead><tbody>{SECTOR_PATHS.map((s,i)=>{
+            const redPct=Math.round((1-s.target2030/s.base2020)*100);
+            return(<tr key={i} style={{background:selSector===i?T.surfaceH:'transparent',cursor:'pointer'}} onClick={()=>setSelSector(i)}>
+              <td style={{...ss.td,fontWeight:600}}>{s.sector}</td>
+              <td style={{...ss.td,fontFamily:T.mono,fontSize:10}}>{s.unit}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{s.base2020}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{s.target2030}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{s.target2050}</td>
+              <td style={ss.td}><span style={badge(redPct,[20,40,60])}>{redPct}%</span></td>
+              <td style={{...ss.td,fontSize:10}}>{s.pathway}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{s.convergenceYear}</td>
+            </tr>);
+          })}</tbody></table>
+        </div>
+      </div>
+    </>);
+  };
 
-const Badge = ({ text, color }) => (
-  <span style={{
-    display: 'inline-block', padding: '2px 8px', borderRadius: 12,
-    fontSize: 11, fontWeight: 600, color: '#fff',
-    background: color || T.navy,
-  }}>{text}</span>
-);
-
-const SectionTitle = ({ children }) => (
-  <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, paddingBottom: 6, borderBottom: `2px solid ${T.gold}` }}>
-    {children}
-  </div>
-);
-
-// ── Tab 1: Target Overview ─────────────────────────────────────────────────
-
-const TargetOverview = () => {
-  const [search, setSearch] = useState('');
-  const [filterSector, setFilterSector] = useState('All');
-  const sectors = ['All', ...Array.from(new Set(COMPANIES.map(c => c.sector))).sort()];
-  const filtered = COMPANIES.filter(c =>
-    (filterSector === 'All' || c.sector === filterSector) &&
-    c.name.toLowerCase().includes(search.toLowerCase())
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 2: FLAG TARGETS
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderFLAG=()=>(
+    <>
+      <SectionHead cite="SBTi FLAG Guidance (Sep 2022) — Forest, Land & Agriculture">FLAG Targets</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Commodities" value={FLAG_COMMODITIES.length} color={ACCENT}/>
+        <KPI label="FLAG Companies" value={COMPANIES.filter(c=>c.flagExposure).length} sub="in portfolio" color={T.navy}/>
+        <KPI label="Avg FLAG Rate" value={+(FLAG_COMMODITIES.reduce((s,c)=>s+c.flagRate,0)/FLAG_COMMODITIES.length).toFixed(1)+'%'} sub="p.a. reduction" color={T.sage}/>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>FLAG Commodity Pathways</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['Commodity','Unit','Base','Target 2030','Annual Rate','Deforestation Target','Land Use','Scope'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+          </tr></thead><tbody>{FLAG_COMMODITIES.map((c,i)=>(
+            <tr key={i}>
+              <td style={{...ss.td,fontWeight:600}}>{c.commodity}</td>
+              <td style={{...ss.td,fontFamily:T.mono,fontSize:10}}>{c.unit}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{c.base}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{c.target2030}</td>
+              <td style={ss.td}><span style={badge(c.flagRate*10,[20,35,45])}>{c.flagRate}% p.a.</span></td>
+              <td style={{...ss.td,fontSize:10,maxWidth:180}}>{c.deforestationTarget}</td>
+              <td style={{...ss.td,fontSize:10}}>{c.landUse}</td>
+              <td style={{...ss.td,fontSize:10,fontFamily:T.mono}}>{c.scope}</td>
+            </tr>
+          ))}</tbody></table>
+        </div>
+        <div style={ss.cite}>SBTi FLAG Guidance: Companies with FLAG emissions &gt;20% of total must set separate FLAG targets. Sector-specific intensity pathways required.</div>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>FLAG Commodity Reduction Targets</SectionHead>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={FLAG_COMMODITIES.map(c=>({name:c.commodity,base:c.base,target:c.target2030,reduction:Math.round((1-c.target2030/c.base)*100)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-20} textAnchor="end" height={60}/>
+            <YAxis tick={{fontSize:10,fill:T.textMut}}/>
+            <Tooltip {...tip}/>
+            <Bar dataKey="base" fill={T.border} name="Base" radius={[4,4,0,0]}/>
+            <Bar dataKey="target" fill={ACCENT} name="2030 Target" radius={[4,4,0,0]}/>
+            <Legend/>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 
-  return (
-    <div>
-      {/* Filters */}
-      <div style={{ display:'flex', gap:12, marginBottom:16, flexWrap:'wrap', alignItems:'center' }}>
-        <input
-          value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Search company..."
-          style={{ padding:'7px 12px', borderRadius:7, border:`1px solid ${T.border}`, fontSize:13, color:T.text, outline:'none', width:200 }}
-        />
-        <select value={filterSector} onChange={e => setFilterSector(e.target.value)}
-          style={{ padding:'7px 12px', borderRadius:7, border:`1px solid ${T.border}`, fontSize:13, color:T.text, background:T.surface }}>
-          {sectors.map(s => <option key={s}>{s}</option>)}
-        </select>
-        <span style={{ fontSize:12, color:T.textMut, marginLeft:'auto' }}>{filtered.length} companies</span>
-      </div>
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 3: PORTFOLIO ALIGNMENT — SBTi for Financial Institutions
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderPortfolio=()=>{
+    const validatedPct=Math.round(validated.length/COMPANIES.length*100);
+    const nzPct=Math.round(nzValidated.length/COMPANIES.length*100);
+    const statusDist={};COMPANIES.forEach(c=>{statusDist[c.status]=(statusDist[c.status]||0)+1;});
+    const tempBuckets={'<1.5°C':0,'1.5-2°C':0,'2-3°C':0,'>3°C':0};
+    COMPANIES.forEach(c=>{if(c.tempScore<1.5)tempBuckets['<1.5°C']++;else if(c.tempScore<2)tempBuckets['1.5-2°C']++;else if(c.tempScore<3)tempBuckets['2-3°C']++;else tempBuckets['>3°C']++;});
+    const sectorTemp={};
+    COMPANIES.forEach(c=>{if(!sectorTemp[c.sector])sectorTemp[c.sector]={sector:c.sector,sum:0,n:0};sectorTemp[c.sector].sum+=c.tempScore;sectorTemp[c.sector].n++;});
+    const sectorTempData=Object.values(sectorTemp).map(s=>({...s,avg:+(s.sum/s.n).toFixed(1)})).sort((a,b)=>a.avg-b.avg);
 
-      {/* Table */}
-      <div style={{ overflowX:'auto' }}>
-        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-          <thead>
-            <tr style={{ background:T.surfaceH }}>
-              {['Company','Sector','Status','Committed','Method','Near-Term S1+2','Near-Term S3','Long-Term S1+2','Temp Score'].map(h => (
-                <th key={h} style={{ padding:'9px 10px', textAlign:'left', color:T.textSec, fontWeight:600, borderBottom:`1px solid ${T.border}`, whiteSpace:'nowrap' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((c, i) => (
-              <tr key={c.id} style={{ background: i%2===0 ? T.surface : T.surfaceH }}>
-                <td style={{ padding:'8px 10px', fontWeight:600, color:T.navy, whiteSpace:'nowrap' }}>{c.name}</td>
-                <td style={{ padding:'8px 10px', color:T.textSec }}>{c.sector}</td>
-                <td style={{ padding:'8px 10px' }}><Badge text={c.status} color={STATUS_COLOR[c.status]} /></td>
-                <td style={{ padding:'8px 10px', color:T.textSec }}>{c.committedDate}</td>
-                <td style={{ padding:'8px 10px', color:T.textSec, maxWidth:140 }}>{c.targetType}</td>
-                <td style={{ padding:'8px 10px', color:T.green, fontWeight:700 }}>-{c.nearTermS12}%</td>
-                <td style={{ padding:'8px 10px', color:T.sage, fontWeight:700 }}>-{c.nearTermS3}%</td>
-                <td style={{ padding:'8px 10px', color:T.navy, fontWeight:700 }}>-{c.longTermS12}%</td>
-                <td style={{ padding:'8px 10px' }}>
-                  <span style={{ color: c.tempScore <= 1.7 ? T.green : c.tempScore <= 2.0 ? T.amber : T.red, fontWeight:700 }}>
-                    {c.tempScore.toFixed(1)}°C
-                  </span>
-                </td>
+    return(<>
+      <SectionHead cite="SBTi for Financial Institutions — Portfolio Alignment">Portfolio Alignment</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Coverage" value={validatedPct+'%'} sub="SBTi-validated" color={validatedPct>=50?T.green:T.amber}/>
+        <KPI label="Net-Zero" value={nzPct+'%'} color={nzPct>=20?T.green:T.amber}/>
+        <KPI label="Avg Temp" value={avgTemp+'°C'} color={avgTemp<=1.8?T.green:avgTemp<=2.2?T.amber:T.red}/>
+        <KPI label="On Track" value={`${onTrackCount}/${COMPANIES.length}`} color={T.sage}/>
+      </div>
+      <div style={ss.flex}>
+        <button style={portView==='coverage'?ss.btn:ss.btnSec} onClick={()=>setPortView('coverage')}>Portfolio Coverage</button>
+        <button style={portView==='temperature'?ss.btn:ss.btnSec} onClick={()=>setPortView('temperature')}>Temperature Rating</button>
+      </div>
+      <div style={ss.grid2}>
+        <div style={ss.card}>
+          <SectionHead>Status Distribution</SectionHead>
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart><Pie data={Object.entries(statusDist).map(([name,value])=>({name,value}))} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={45} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={9}>
+              {Object.keys(statusDist).map((_,i)=><Cell key={i} fill={PIECLRS[i%PIECLRS.length]}/>)}
+            </Pie><Tooltip {...tip}/></PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={ss.card}>
+          <SectionHead>Temperature Score Distribution</SectionHead>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={Object.entries(tempBuckets).map(([name,value])=>({name,value}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="name" tick={{fontSize:10,fill:T.textMut}}/>
+              <YAxis tick={{fontSize:10,fill:T.textMut}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="value" name="Companies" radius={[4,4,0,0]}>
+                {Object.keys(tempBuckets).map((_,i)=><Cell key={i} fill={[T.green,T.sage,T.amber,T.red][i]}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      {/* Sector Temperature */}
+      <div style={ss.card}>
+        <SectionHead>Temperature Score by Sector</SectionHead>
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={sectorTempData} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <XAxis type="number" domain={[0,3.5]} tick={{fontSize:9,fill:T.textMut}}/>
+            <YAxis dataKey="sector" type="category" tick={{fontSize:9,fill:T.textSec}} width={140}/>
+            <Tooltip {...tip}/>
+            <Bar dataKey="avg" name="Avg Temp °C" radius={[0,4,4,0]}>
+              {sectorTempData.map((_,i)=><Cell key={i} fill={sectorTempData[i].avg<=1.8?T.green:sectorTempData[i].avg<=2.2?T.amber:T.red}/>)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </>);
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 4: VALIDATION STATUS — 80 companies progress
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderValidation=()=>(
+    <>
+      <SectionHead cite="SBTi Validation Process — 24-month deadline">Validation Status ({COMPANIES.length} companies)</SectionHead>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Validated" value={validated.length} color={T.green}/>
+        <KPI label="Net-Zero" value={nzValidated.length} color={ACCENT}/>
+        <KPI label="Committed" value={committed.length} sub="24-mo deadline" color={T.gold}/>
+        <KPI label="On Track" value={onTrackCount} color={T.sage}/>
+        <KPI label="Removed" value={COMPANIES.filter(c=>c.status==='Removed').length} color={T.red}/>
+      </div>
+      <div style={ss.card}>
+        <div style={ss.flex}>
+          <input style={ss.input} placeholder="Search companies..." value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
+          <select style={ss.select} value={secF} onChange={e=>{setSecF(e.target.value);setPage(1);}}>{sectors.map(s=><option key={s}>{s}</option>)}</select>
+          <select style={ss.select} value={statusF} onChange={e=>{setStatusF(e.target.value);setPage(1);}}>{allStatuses.map(s=><option key={s}>{s}</option>)}</select>
+          <div style={{flex:1}}/><span style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length} companies</span>
+          <button style={ss.btn} onClick={()=>csvExport(filtered.map(c=>({name:c.name,sector:c.sector,status:c.status,method:c.method,tempScore:c.tempScore,nearTermS12:c.nearTermS12,nearTermS3:c.nearTermS3,scope1:c.scope1,scope2:c.scope2,scope3:c.scope3,onTrack:c.onTrack?'Yes':'No',commitDate:c.commitDate})),'sbti_validation')}>Export CSV</button>
+        </div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            <TH col="name" label="Company"/><TH col="sector" label="Sector"/>
+            <TH col="status" label="Status"/><TH col="method" label="Method"/>
+            <TH col="tempScore" label="Temp °C"/><TH col="nearTermS12" label="Near S1+2"/>
+            <TH col="nearTermS3" label="Near S3"/><TH col="annualRate" label="Rate %/yr"/>
+            <TH col="onTrack" label="Track"/><TH col="commitDate" label="Commit Date"/>
+          </tr></thead><tbody>{paged.map(r=>(
+            <React.Fragment key={r.id}>
+              <tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>
+                <td style={{...ss.td,fontWeight:600}}>{r.name}</td>
+                <td style={{...ss.td,fontSize:11}}>{r.sector}</td>
+                <td style={ss.td}><span style={statusBadge(r.status)}>{r.status}</span></td>
+                <td style={{...ss.td,fontSize:10}}>{r.method}</td>
+                <td style={ss.td}><span style={{padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,fontFamily:T.mono,background:r.tempScore<=1.5?'rgba(5,150,105,0.12)':r.tempScore<=2?'rgba(22,163,74,0.12)':r.tempScore<=2.5?'rgba(217,119,6,0.12)':'rgba(220,38,38,0.12)',color:r.tempScore<=1.5?ACCENT:r.tempScore<=2?T.green:r.tempScore<=2.5?T.amber:T.red}}>{r.tempScore}°C</span></td>
+                <td style={{...ss.td,fontFamily:T.mono}}>{r.nearTermS12}%</td>
+                <td style={{...ss.td,fontFamily:T.mono}}>{r.nearTermS3}%</td>
+                <td style={{...ss.td,fontFamily:T.mono,color:r.annualRate>=4.2?T.green:r.annualRate>=2.5?T.amber:T.red}}>{r.annualRate}%</td>
+                <td style={ss.td}>{r.onTrack?<span style={{color:T.green,fontWeight:600}}>On Track</span>:<span style={{color:T.red}}>Behind</span>}</td>
+                <td style={{...ss.td,fontFamily:T.mono,fontSize:10}}>{r.commitDate}</td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Scope Emissions Summary */}
-      <div style={{ marginTop:20 }}>
-        <SectionTitle>Portfolio Emissions Snapshot (Base Year)</SectionTitle>
-        <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
-          {['Scope 1','Scope 2','Scope 3'].map((sc, si) => {
-            const keys = ['scope1','scope2','scope3'];
-            const total = COMPANIES.reduce((s,c) => s + c[keys[si]], 0);
-            const colors = [T.red, T.amber, T.navyL];
-            return (
-              <div key={sc} style={{ flex:1, minWidth:140, background:T.surface, borderRadius:8, padding:'12px 16px', border:`1px solid ${T.border}`, boxShadow:T.card }}>
-                <div style={{ fontSize:11, color:T.textMut, textTransform:'uppercase', letterSpacing:'0.05em' }}>{sc}</div>
-                <div style={{ fontSize:22, fontWeight:700, color:colors[si], marginTop:2 }}>{(total/1000000).toFixed(1)} Mt</div>
-                <div style={{ fontSize:11, color:T.textSec }}>tCO2e (portfolio total)</div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ── Tab 2: Emission Trajectories ───────────────────────────────────────────
-
-const EmissionTrajectories = () => {
-  const [selectedId, setSelectedId] = useState(1);
-  const co = COMPANIES.find(c => c.id === selectedId);
-  const data = buildTrajectory(co);
-
-  return (
-    <div>
-      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
-        <label style={{ fontSize:13, color:T.textSec, fontWeight:600 }}>Select Company:</label>
-        <select value={selectedId} onChange={e => setSelectedId(Number(e.target.value))}
-          style={{ padding:'7px 12px', borderRadius:7, border:`1px solid ${T.border}`, fontSize:13, color:T.text, background:T.surface }}>
-          {COMPANIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
-        <Badge text={co.status} color={STATUS_COLOR[co.status]} />
-        <span style={{ fontSize:12, color:T.textMut }}>{co.sector} | {co.targetType}</span>
-      </div>
-
-      {/* Company KPIs */}
-      <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:20 }}>
-        <MetricCard label="Base Year" value={co.baseYear} sub="Emissions reference year" />
-        <MetricCard label="Scope 1+2 Base" value={((co.scope1+co.scope2)/1000).toFixed(0)+' kt'} sub="tCO2e (000s)" color={T.red} />
-        <MetricCard label="Near-Term Target" value={'-'+co.nearTermS12+'%'} sub="Scope 1+2 by 2030" color={T.amber} />
-        <MetricCard label="Net-Zero Target" value={'-'+co.longTermS12+'%'} sub="Scope 1+2 by 2050" color={T.green} />
-        <MetricCard label="Temp Score" value={co.tempScore.toFixed(1)+'°C'} sub="ACA aligned" color={co.tempScore<=1.7?T.green:co.tempScore<=2.0?T.amber:T.red} />
-      </div>
-
-      <SectionTitle>Emission Trajectory 2020–2050 (ktCO2e, Scope 1+2)</SectionTitle>
-      <ResponsiveContainer width="100%" height={320}>
-        <AreaChart data={data} margin={{ top:10, right:20, left:10, bottom:10 }}>
-          <defs>
-            <linearGradient id="gradBAU" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={T.red} stopOpacity={0.15}/>
-              <stop offset="95%" stopColor={T.red} stopOpacity={0.02}/>
-            </linearGradient>
-            <linearGradient id="gradSBTi" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={T.sage} stopOpacity={0.25}/>
-              <stop offset="95%" stopColor={T.sage} stopOpacity={0.03}/>
-            </linearGradient>
-            <linearGradient id="gradActual" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={T.navy} stopOpacity={0.3}/>
-              <stop offset="95%" stopColor={T.navy} stopOpacity={0.05}/>
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-          <XAxis dataKey="year" tick={{ fontSize:11, fill:T.textSec }} tickLine={false} interval={4} />
-          <YAxis tick={{ fontSize:11, fill:T.textSec }} tickLine={false} axisLine={false} unit=" kt" />
-          <Tooltip
-            contentStyle={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, fontSize:12 }}
-            formatter={(v, name) => [v ? v.toLocaleString()+' kt' : 'N/A', name]}
-          />
-          <Legend wrapperStyle={{ fontSize:12 }} />
-          <Area type="monotone" dataKey="bau" name="BAU Scenario" stroke={T.red} strokeWidth={2} strokeDasharray="5 3" fill="url(#gradBAU)" dot={false} />
-          <Area type="monotone" dataKey="sbtiPathway" name="SBTi Pathway" stroke={T.sage} strokeWidth={2.5} fill="url(#gradSBTi)" dot={false} />
-          <Area type="monotone" dataKey="actual" name="Actual Emissions" stroke={T.navy} strokeWidth={2.5} fill="url(#gradActual)" dot={{ r:3, fill:T.navy }} connectNulls={false} />
-        </AreaChart>
-      </ResponsiveContainer>
-
-      <div style={{ display:'flex', gap:16, marginTop:16, flexWrap:'wrap' }}>
-        <div style={{ flex:1, minWidth:200, background:T.surfaceH, borderRadius:8, padding:'12px 14px', border:`1px solid ${T.border}` }}>
-          <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:6 }}>2030 Milestone</div>
-          <div style={{ fontSize:11, color:T.textSec }}>Required: reduce S1+2 by <strong>{co.nearTermS12}%</strong> vs base year {co.baseYear}</div>
-          <div style={{ fontSize:11, color:T.textSec, marginTop:4 }}>Required pathway: ~4.2% p.a. linear reduction</div>
-        </div>
-        <div style={{ flex:1, minWidth:200, background:T.surfaceH, borderRadius:8, padding:'12px 14px', border:`1px solid ${T.border}` }}>
-          <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:6 }}>2050 Net-Zero Target</div>
-          <div style={{ fontSize:11, color:T.textSec }}>Required: reduce S1+2 by <strong>{co.longTermS12}%</strong>, S3 by <strong>{co.longTermS3}%</strong></div>
-          <div style={{ fontSize:11, color:T.textSec, marginTop:4 }}>Residual emissions to be neutralised via removals</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ── Tab 3: Method Selector ─────────────────────────────────────────────────
-
-const MethodSelector = () => {
-  const [selected, setSelected] = useState(0);
-
-  return (
-    <div>
-      <SectionTitle>SBTi Validation Method Comparison</SectionTitle>
-      <div style={{ display:'flex', gap:10, marginBottom:20, flexWrap:'wrap' }}>
-        {METHODS.map((m, i) => (
-          <div key={i} onClick={() => setSelected(i)} style={{
-            flex:1, minWidth:200, padding:'14px 16px', borderRadius:10,
-            background: selected===i ? T.navy : T.surface,
-            color: selected===i ? '#fff' : T.text,
-            border: `2px solid ${selected===i ? T.navy : T.border}`,
-            cursor:'pointer', boxShadow: selected===i ? T.cardH : T.card,
-            transition:'all 0.15s',
-          }}>
-            <div style={{ fontSize:13, fontWeight:700, marginBottom:4 }}>{m.method.split('(')[0].trim()}</div>
-            <div style={{ fontSize:11, opacity:0.75 }}>{m.companiesUsing} companies | {m.tempScore} aligned</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Detail panel */}
-      <div style={{ background:T.surface, borderRadius:10, padding:20, border:`1px solid ${T.border}`, boxShadow:T.card, marginBottom:20 }}>
-        <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:16 }}>
-          <MetricCard label="Temp Score" value={METHODS[selected].tempScore} sub="Portfolio alignment" color={T.green} />
-          <MetricCard label="Companies" value={METHODS[selected].companiesUsing} sub="Using this method" color={T.navyL} />
-        </div>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:14 }}>
-          <div>
-            <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:6 }}>Applicable Sectors</div>
-            <div style={{ fontSize:12, color:T.textSec, lineHeight:1.6 }}>{METHODS[selected].applicableSectors}</div>
-          </div>
-          <div>
-            <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:6 }}>Near-Term Reduction</div>
-            <div style={{ fontSize:12, color:T.textSec }}>{METHODS[selected].nearTermReduction}</div>
-            <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:4, marginTop:10 }}>Long-Term Reduction</div>
-            <div style={{ fontSize:12, color:T.textSec }}>{METHODS[selected].longTermReduction}</div>
-          </div>
-        </div>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-          <div style={{ background:'#f0fdf4', borderRadius:8, padding:'10px 14px', border:`1px solid ${T.sage}33` }}>
-            <div style={{ fontSize:11, fontWeight:700, color:T.sage, marginBottom:4 }}>ADVANTAGES</div>
-            <div style={{ fontSize:12, color:T.textSec }}>{METHODS[selected].pros}</div>
-          </div>
-          <div style={{ background:'#fff7ed', borderRadius:8, padding:'10px 14px', border:`1px solid ${T.amber}33` }}>
-            <div style={{ fontSize:11, fontWeight:700, color:T.amber, marginBottom:4 }}>CONSIDERATIONS</div>
-            <div style={{ fontSize:12, color:T.textSec }}>{METHODS[selected].cons}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* All methods table */}
-      <SectionTitle>Method Summary Table</SectionTitle>
-      <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-        <thead>
-          <tr style={{ background:T.surfaceH }}>
-            {['Method','Applicable Sectors','Near-Term Rate','Temp Alignment','Companies Using'].map(h => (
-              <th key={h} style={{ padding:'8px 10px', textAlign:'left', color:T.textSec, fontWeight:600, borderBottom:`1px solid ${T.border}` }}>{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {METHODS.map((m, i) => (
-            <tr key={i} style={{ background: i%2===0 ? T.surface : T.surfaceH }}>
-              <td style={{ padding:'8px 10px', fontWeight:600, color:T.navy }}>{m.method}</td>
-              <td style={{ padding:'8px 10px', color:T.textSec, maxWidth:180 }}>{m.applicableSectors.length>50?m.applicableSectors.slice(0,50)+'...':m.applicableSectors}</td>
-              <td style={{ padding:'8px 10px', color:T.textSec }}>{m.nearTermReduction}</td>
-              <td style={{ padding:'8px 10px' }}>
-                <span style={{ color: parseFloat(m.tempScore)<=1.7?T.green:parseFloat(m.tempScore)<=2.0?T.amber:T.red, fontWeight:700 }}>{m.tempScore}</span>
-              </td>
-              <td style={{ padding:'8px 10px', color:T.navy, fontWeight:600 }}>{m.companiesUsing}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-// ── Tab 4: Scope 3 Engagement ──────────────────────────────────────────────
-
-const Scope3Engagement = () => {
-  const totalS3 = SCOPE3_CATEGORIES.reduce((s,c) => s+c.value, 0);
-
-  return (
-    <div>
-      <div style={{ display:'flex', gap:10, marginBottom:20, flexWrap:'wrap' }}>
-        <MetricCard label="Total Scope 3 (portfolio)" value="87.1 Mt" sub="tCO2e across 20 companies" color={T.navyL} />
-        <MetricCard label="Upstream Scope 3" value="34%" sub="Categories 1-8 share" color={T.amber} />
-        <MetricCard label="Downstream Scope 3" value="66%" sub="Categories 9-15 share" color={T.navy} />
-        <MetricCard label="SBT Coverage" value="67%" sub="Portfolio emissions with S3 targets" color={T.green} />
-      </div>
-
-      <SectionTitle>Scope 3 Category Breakdown (ktCO2e — Portfolio Average)</SectionTitle>
-      <ResponsiveContainer width="100%" height={320}>
-        <BarChart data={SCOPE3_CATEGORIES} layout="vertical" margin={{ top:5, right:20, left:10, bottom:5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke={T.border} horizontal={false} />
-          <XAxis type="number" tick={{ fontSize:10, fill:T.textSec }} tickLine={false} unit=" kt" />
-          <YAxis type="category" dataKey="cat" tick={{ fontSize:10, fill:T.textSec }} tickLine={false} width={180} />
-          <Tooltip
-            contentStyle={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, fontSize:12 }}
-            formatter={(v) => [v.toLocaleString()+' kt', 'Emissions']}
-          />
-          <Bar dataKey="value" name="Emissions (kt)" radius={[0,4,4,0]}>
-            {SCOPE3_CATEGORIES.map((entry, i) => (
-              <Cell key={i} fill={entry.type === 'Upstream' ? T.amber : T.navyL} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-
-      <div style={{ display:'flex', gap:8, margin:'8px 0 20px', fontSize:11 }}>
-        <span style={{ display:'flex', alignItems:'center', gap:4 }}><span style={{ width:12, height:12, background:T.amber, borderRadius:2, display:'inline-block' }}></span> Upstream (Cat 1-8)</span>
-        <span style={{ display:'flex', alignItems:'center', gap:4 }}><span style={{ width:12, height:12, background:T.navyL, borderRadius:2, display:'inline-block' }}></span> Downstream (Cat 9-15)</span>
-      </div>
-
-      <SectionTitle>Supplier Engagement Programs</SectionTitle>
-      <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-        <thead>
-          <tr style={{ background:T.surfaceH }}>
-            {['Company','Program Name','Suppliers Engaged','Suppliers with SBT','Coverage %','Status'].map(h => (
-              <th key={h} style={{ padding:'8px 10px', textAlign:'left', color:T.textSec, fontWeight:600, borderBottom:`1px solid ${T.border}` }}>{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {SUPPLIER_PROGRAMS.map((p, i) => (
-            <tr key={i} style={{ background: i%2===0 ? T.surface : T.surfaceH }}>
-              <td style={{ padding:'8px 10px', fontWeight:600, color:T.navy }}>{p.company}</td>
-              <td style={{ padding:'8px 10px', color:T.textSec }}>{p.program}</td>
-              <td style={{ padding:'8px 10px', color:T.textSec }}>{p.suppliersEngaged.toLocaleString()}</td>
-              <td style={{ padding:'8px 10px', color:T.green, fontWeight:600 }}>{p.suppliersWithSBT.toLocaleString()}</td>
-              <td style={{ padding:'8px 10px' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                  <div style={{ flex:1, background:T.surfaceH, borderRadius:4, height:6 }}>
-                    <div style={{ width:`${p.pctCoverage}%`, background: p.pctCoverage>=70?T.green:p.pctCoverage>=50?T.amber:T.red, height:6, borderRadius:4 }}/>
+              {expanded===r.id&&<tr><td colSpan={10} style={{padding:16,background:T.surfaceH,borderBottom:`1px solid ${T.border}`}}>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+                  <div>
+                    {[['Base Year',r.baseYear],['Scope 1',fmt(r.scope1)+' tCO2e'],['Scope 2',fmt(r.scope2)+' tCO2e'],['Scope 3',fmt(r.scope3)+' tCO2e'],['Total',fmt(r.totalEmissions)+' tCO2e'],['Current Reduction',r.currentReduction+'%'],['Long-term S1+2',r.longTermS12+'%'],['Long-term S3',r.longTermS3+'%'],['Validation Deadline',r.validationDeadline],['FLAG Exposure',r.flagExposure?'Yes':'No']].map(([l,v])=>(
+                      <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',fontSize:11,borderBottom:`1px solid ${T.border}`}}>
+                        <span style={{color:T.textSec}}>{l}</span><span style={{fontFamily:T.mono,fontWeight:600}}>{v}</span>
+                      </div>
+                    ))}
                   </div>
-                  <span style={{ fontWeight:700, color:T.navy, minWidth:30 }}>{p.pctCoverage}%</span>
+                  <div>
+                    <div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Progress vs Target</div>
+                    <div style={{height:12,background:T.surfaceH,borderRadius:6,overflow:'hidden',marginBottom:8}}>
+                      <div style={{width:`${r.currentReduction}%`,height:'100%',background:r.onTrack?ACCENT:T.red,borderRadius:6}}/>
+                    </div>
+                    <div style={{fontSize:10,color:T.textSec}}>Current: {r.currentReduction}% | Target: {r.nearTermS12}% by 2030</div>
+                    {r.netZeroYear&&<div style={{marginTop:8,fontSize:11,color:ACCENT,fontWeight:600}}>Net-Zero target: {r.netZeroYear}</div>}
+                    {r.neutralization!=='N/A'&&<div style={{fontSize:10,color:T.textSec}}>Neutralization budget: {fmt(r.neutralization)} tCO2e/yr</div>}
+                  </div>
+                  <ResponsiveContainer width="100%" height={160}>
+                    <RadarChart data={[{d:'S1+2 Near',v:r.nearTermS12},{d:'S3 Near',v:r.nearTermS3},{d:'S1+2 Long',v:r.longTermS12},{d:'S3 Long',v:r.longTermS3},{d:'Progress',v:r.currentReduction},{d:'Temp',v:Math.round((3-r.tempScore)/3*100)}]} cx="50%" cy="50%" outerRadius={60}>
+                      <PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="d" tick={{fontSize:8,fill:T.textSec}}/>
+                      <PolarRadiusAxis tick={false} domain={[0,100]}/>
+                      <Radar dataKey="v" stroke={ACCENT} fill="rgba(5,150,105,0.15)" strokeWidth={2}/>
+                    </RadarChart>
+                  </ResponsiveContainer>
                 </div>
-              </td>
-              <td style={{ padding:'8px 10px' }}><Badge text={p.status} color={p.status==='Active'?T.green:T.amber}/></td>
+              </td></tr>}
+            </React.Fragment>
+          ))}</tbody></table>
+        </div>
+        <div style={ss.pg}><button style={ss.btnSec} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Prev</button><span style={{fontSize:12,fontFamily:T.mono,color:T.textSec}}>{page}/{totalPages}</span><button style={ss.btnSec} disabled={page>=totalPages} onClick={()=>setPage(p=>p+1)}>Next</button></div>
+      </div>
+    </>
+  );
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 5: CARBON BUDGET
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderBudget=()=>{
+    const cb=CARBON_BUDGETS[selBudget];
+    // Company fair-share allocation
+    const totalPortEmissions=COMPANIES.reduce((s,c)=>s+c.totalEmissions,0);
+    const globalEmissions=40e9; // ~40 GtCO2e/yr
+    const portfolioShare=totalPortEmissions/globalEmissions;
+    const portfolioBudget=Math.round(cb.remainingGt*1e9*portfolioShare);
+
+    return(<>
+      <SectionHead cite="IPCC AR6 WG1 Table SPM.2 — Carbon Budget">Carbon Budget Analysis</SectionHead>
+      <div style={ss.flex}>
+        {CARBON_BUDGETS.map((b,i)=><button key={i} style={selBudget===i?ss.btn:ss.btnSec} onClick={()=>setSelBudget(i)}>{b.pathway}</button>)}
+      </div>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
+        <KPI label="Remaining Budget" value={cb.remainingGt+' Gt'} sub={`CO2 from Jan 2020`} color={cb.remainingGt<500?T.red:T.amber} cite={cb.source}/>
+        <KPI label="Year Exhausted" value={cb.yearExhausted} sub="at current rates" color={cb.yearExhausted<2035?T.red:T.amber}/>
+        <KPI label="Annual Budget" value={cb.annualBudgetGt+' Gt/yr'} color={T.navy}/>
+        <KPI label="Per Capita" value={cb.perCapitaT+' t/yr'} sub="global average" color={T.sage}/>
+        <KPI label="Portfolio Share" value={fmt(portfolioBudget)+' tCO2e'} sub="fair-share allocation" color={ACCENT}/>
+      </div>
+      <div style={ss.grid2}>
+        <div style={ss.card}>
+          <SectionHead>Carbon Budget Comparison</SectionHead>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={CARBON_BUDGETS.map(b=>({pathway:b.pathway.split(' (')[0],remaining:b.remainingGt,used:b.usedGt}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis dataKey="pathway" tick={{fontSize:8,fill:T.textMut}} angle={-15} textAnchor="end" height={60}/>
+              <YAxis tick={{fontSize:10,fill:T.textMut}} label={{value:'GtCO2',angle:-90,position:'left',fontSize:10}}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="used" fill={T.red} name="Used" stackId="a"/>
+              <Bar dataKey="remaining" fill={ACCENT} name="Remaining" stackId="a" radius={[4,4,0,0]}/>
+              <Legend/>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={ss.card}>
+          <SectionHead>Budget Exhaustion Timeline</SectionHead>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={CARBON_BUDGETS.map(b=>({pathway:b.pathway.split(' (')[0],year:b.yearExhausted}))} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+              <XAxis type="number" domain={[2025,2075]} tick={{fontSize:10,fill:T.textMut}}/>
+              <YAxis dataKey="pathway" type="category" tick={{fontSize:8,fill:T.textSec}} width={80}/>
+              <Tooltip {...tip}/>
+              <Bar dataKey="year" name="Exhaustion Year" radius={[0,4,4,0]}>
+                {CARBON_BUDGETS.map((_,i)=><Cell key={i} fill={CARBON_BUDGETS[i].yearExhausted<2035?T.red:CARBON_BUDGETS[i].yearExhausted<2050?T.amber:T.green}/>)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={ss.card}>
+        <SectionHead>All Pathways Detail</SectionHead>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>
+            {['Pathway','Remaining (Gt)','Total (Gt)','Year Exhausted','Annual (Gt/yr)','Per Capita (t/yr)','Source'].map(h=><th key={h} style={{...ss.td,fontFamily:T.mono,fontSize:10,color:T.textMut}}>{h}</th>)}
+          </tr></thead><tbody>{CARBON_BUDGETS.map((b,i)=>(
+            <tr key={i} style={{background:selBudget===i?T.surfaceH:'transparent',cursor:'pointer'}} onClick={()=>setSelBudget(i)}>
+              <td style={{...ss.td,fontWeight:600}}>{b.pathway}</td>
+              <td style={{...ss.td,fontFamily:T.mono,color:b.remainingGt<500?T.red:T.amber}}>{b.remainingGt}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{b.totalGt}</td>
+              <td style={{...ss.td,fontFamily:T.mono,fontWeight:600,color:b.yearExhausted<2035?T.red:T.amber}}>{b.yearExhausted}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{b.annualBudgetGt}</td>
+              <td style={{...ss.td,fontFamily:T.mono}}>{b.perCapitaT}</td>
+              <td style={{...ss.td,fontSize:10}}>{b.source}</td>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div style={{ marginTop:20, background:T.surfaceH, borderRadius:10, padding:'14px 16px', border:`1px solid ${T.border}` }}>
-        <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginBottom:8 }}>Scope 3 Coverage Requirement</div>
-        <div style={{ fontSize:12, color:T.textSec, lineHeight:1.7 }}>
-          Under SBTi Corporate Net-Zero Standard, companies whose Scope 3 emissions exceed 40% of total GHG emissions
-          must set a Scope 3 target. Of the 20 portfolio companies, <strong>18 exceed this threshold</strong>.
-          Coverage must include categories representing at least <strong>two-thirds of total Scope 3 emissions</strong>.
-          Cat 1 (Purchased Goods) and Cat 11 (Use of Sold Products) typically dominate at 45%+ of total Scope 3.
+          ))}</tbody></table>
         </div>
       </div>
-    </div>
+    </>);
+  };
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     TAB 6: EXPORT
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  const renderExport=()=>(
+    <>
+      <SectionHead cite="SBTi Target Submission & Reporting">Export Centre</SectionHead>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        {[
+          {name:'SBTi Submission',desc:'Target submission form for SBTi validation: company info, base year, targets, methodology. Formatted for online portal.',ext:'.xlsx'},
+          {name:'Progress Report',desc:'Annual progress report: emissions trajectory vs target, on-track status, actions taken. Board-ready format.',ext:'.pdf'},
+          {name:'Board Summary',desc:'Executive summary for Board: portfolio SBTi coverage, temperature rating, key risks, FLAG exposure.',ext:'.pptx'},
+          {name:'Portfolio Alignment',desc:'SBTi for Financial Institutions: portfolio coverage %, temperature score, sector breakdown.',ext:'.xlsx'},
+          {name:'Carbon Budget',desc:'Carbon budget allocation per company: fair-share methodology, remaining budget, annual allowance.',ext:'.xlsx'},
+          {name:'FLAG Report',desc:'Forest, Land & Agriculture targets: commodity pathways, deforestation commitments, progress.',ext:'.pdf'},
+        ].map((f,i)=>(
+          <div key={i} style={{...ss.card,cursor:'pointer',background:exportFormat===f.name?`${ACCENT}08`:T.surface}} onClick={()=>setExportFormat(f.name)}>
+            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:4}}>{f.name}</div>
+            <div style={{fontSize:11,color:T.textSec}}>{f.desc}</div>
+            <div style={{fontSize:10,fontFamily:T.mono,color:T.textMut,marginTop:4}}>{f.ext}</div>
+          </div>
+        ))}
+      </div>
+      <div style={ss.card}>
+        <div style={{display:'flex',gap:12}}>
+          <button style={ss.btn} onClick={()=>csvExport(COMPANIES.map(c=>({name:c.name,sector:c.sector,status:c.status,method:c.method,baseYear:c.baseYear,tempScore:c.tempScore,nearTermS12:c.nearTermS12,nearTermS3:c.nearTermS3,longTermS12:c.longTermS12,longTermS3:c.longTermS3,scope1:c.scope1,scope2:c.scope2,scope3:c.scope3,annualRate:c.annualRate,currentReduction:c.currentReduction,onTrack:c.onTrack?'Yes':'No',commitDate:c.commitDate,flagExposure:c.flagExposure?'Yes':'No'})),'sbti_export')}>Generate {exportFormat}</button>
+          <button style={ss.btnSec}>Preview</button>
+        </div>
+      </div>
+    </>
   );
-};
 
-// ── Tab 5: Validation Tracker ──────────────────────────────────────────────
-
-const ValidationTracker = () => {
-  const [checkedItems, setCheckedItems] = useState({});
-
-  const toggleCheck = (i) => setCheckedItems(prev => ({ ...prev, [i]: !prev[i] }));
-
-  return (
-    <div>
-      {/* Pipeline */}
-      <SectionTitle>SBTi Validation Pipeline (20 Portfolio Companies)</SectionTitle>
-      <div style={{ display:'flex', gap:0, marginBottom:20, position:'relative' }}>
-        {VALIDATION_PIPELINE.map((stage, i) => (
-          <div key={i} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', position:'relative' }}>
-            {/* Connector line */}
-            {i < VALIDATION_PIPELINE.length - 1 && (
-              <div style={{ position:'absolute', top:30, left:'50%', width:'100%', height:2, background:T.border, zIndex:0 }}/>
-            )}
-            {/* Circle */}
-            <div style={{
-              width:60, height:60, borderRadius:'50%', background:stage.color,
-              display:'flex', alignItems:'center', justifyContent:'center',
-              fontSize:20, fontWeight:800, color:'#fff', zIndex:1,
-              boxShadow:`0 4px 12px ${stage.color}66`,
-            }}>{stage.count}</div>
-            <div style={{ fontSize:12, fontWeight:700, color:T.navy, marginTop:8, textAlign:'center' }}>{stage.stage}</div>
-            <div style={{ fontSize:10, color:T.textMut, textAlign:'center', maxWidth:120, marginTop:4, lineHeight:1.5 }}>{stage.desc.slice(0,60)}...</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Pipeline detail cards */}
-      <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:24 }}>
-        {VALIDATION_PIPELINE.map((stage, i) => (
-          <div key={i} style={{ flex:1, minWidth:180, background:T.surface, borderRadius:8, padding:'12px 14px', border:`2px solid ${stage.color}44`, boxShadow:T.card }}>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
-              <span style={{ fontSize:13, fontWeight:700, color:stage.color }}>{stage.stage}</span>
-              <span style={{ fontSize:20, fontWeight:800, color:stage.color }}>{stage.count}</span>
-            </div>
-            <div style={{ fontSize:11, color:T.textSec, lineHeight:1.5 }}>{stage.desc}</div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
-        {/* Checklist */}
-        <div>
-          <SectionTitle>SBTi Submission Checklist</SectionTitle>
-          <div style={{ background:T.surface, borderRadius:10, border:`1px solid ${T.border}`, overflow:'hidden' }}>
-            {CHECKLIST.map((item, i) => (
-              <div key={i} onClick={() => toggleCheck(i)} style={{
-                display:'flex', alignItems:'flex-start', gap:10, padding:'10px 14px',
-                borderBottom: i<CHECKLIST.length-1 ? `1px solid ${T.border}` : 'none',
-                cursor:'pointer', background: checkedItems[i] ? '#f0fdf4' : i%2===0 ? T.surface : T.surfaceH,
-                transition:'background 0.1s',
-              }}>
-                <div style={{
-                  width:18, height:18, borderRadius:4, border:`2px solid ${checkedItems[i]?T.green:T.border}`,
-                  background: checkedItems[i]?T.green:'transparent', flexShrink:0, marginTop:1,
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                }}>
-                  {checkedItems[i] && <span style={{ color:'#fff', fontSize:11, fontWeight:700 }}>✓</span>}
-                </div>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:12, color: checkedItems[i] ? T.sage : T.text, textDecoration: checkedItems[i]?'line-through':'none' }}>{item.item}</div>
-                  <div style={{ fontSize:10, color:T.textMut, marginTop:2 }}>{item.required ? 'Required' : 'Recommended'}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ fontSize:11, color:T.textMut, marginTop:8 }}>
-            {Object.values(checkedItems).filter(Boolean).length}/{CHECKLIST.length} items completed
-          </div>
-        </div>
-
-        {/* Common Rejection Reasons */}
-        <div>
-          <SectionTitle>Common Rejection Reasons</SectionTitle>
-          <div style={{ background:T.surface, borderRadius:10, border:`1px solid ${T.border}`, overflow:'hidden' }}>
-            {REJECTION_REASONS.map((r, i) => (
-              <div key={i} style={{
-                padding:'11px 14px', borderBottom: i<REJECTION_REASONS.length-1 ? `1px solid ${T.border}` : 'none',
-                background: i%2===0 ? T.surface : T.surfaceH,
-              }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4 }}>
-                  <div style={{ fontSize:12, fontWeight:600, color:T.navy }}>{r.reason}</div>
-                  <span style={{ fontSize:12, fontWeight:700, color:T.red }}>{r.freq}</span>
-                </div>
-                <div style={{ fontSize:11, color:T.textSec, lineHeight:1.5 }}><strong>Fix: </strong>{r.fix}</div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginTop:16, background:'#fff7ed', borderRadius:8, padding:'12px 14px', border:`1px solid ${T.amber}44` }}>
-            <div style={{ fontSize:12, fontWeight:700, color:T.amber, marginBottom:6 }}>Typical Timeline</div>
-            <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
-              {[
-                ['Commitment to Submission', '~12–18 months'],
-                ['SBTi Review Period', '4–6 months'],
-                ['Approval to Publication', '2–4 weeks'],
-                ['Total: Commitment to Approved', '18–24 months'],
-              ].map(([k,v],i) => (
-                <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:12 }}>
-                  <span style={{ color:T.textSec }}>{k}</span>
-                  <span style={{ fontWeight:600, color:T.navy }}>{v}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ── Main Page ──────────────────────────────────────────────────────────────
-
-const TABS = [
-  { id:'overview', label:'Target Overview' },
-  { id:'trajectories', label:'Emission Trajectories' },
-  { id:'methods', label:'Method Selector' },
-  { id:'scope3', label:'Scope 3 Engagement' },
-  { id:'validation', label:'Validation Tracker' },
-];
-
-export default function SbtiTargetSetterPage() {
-  const [activeTab, setActiveTab] = useState('overview');
-
-  return (
-    <div style={{ fontFamily: T.font, background: T.bg, minHeight:'100vh', padding:'24px 28px' }}>
-      {/* Header */}
-      <div style={{ marginBottom:24 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:8 }}>
-          <div style={{ width:44, height:44, borderRadius:10, background:T.navy, display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <span style={{ fontSize:22 }}>🎯</span>
-          </div>
-          <div>
-            <div style={{ fontSize:11, color:T.textMut, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:2 }}>EP-AI1 · Science-Based Targets Initiative</div>
-            <h1 style={{ fontSize:24, fontWeight:800, color:T.navy, margin:0, letterSpacing:'-0.02em' }}>SBTi Target Setter</h1>
-          </div>
-        </div>
-        <div style={{ fontSize:13, color:T.textSec, maxWidth:700 }}>
-          Corporate climate target setting aligned to the Science-Based Targets initiative. Track commitment status, emission trajectories, validation progress, and Scope 3 engagement programmes across the portfolio.
-        </div>
-      </div>
-
-      {/* KPI Strip */}
-      <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginBottom:24 }}>
-        <MetricCard label="Approved SBTi Targets" value="14/20" sub="Companies with validated targets" color={T.green} />
-        <MetricCard label="Portfolio Temp Score" value="1.8°C" sub="ACA method (weighted)" color={T.sage} />
-        <MetricCard label="Covered Scope 1+2" value="48.2 Mt" sub="tCO2e across portfolio" color={T.navy} />
-        <MetricCard label="Scope 3 SBT Coverage" value="67%" sub="Of portfolio emissions" color={T.navyL} />
-        <MetricCard label="Net-Zero Commitments" value="8" sub="Companies with NZ targets" color={T.gold} />
-      </div>
-
-      {/* Tab Bar */}
-      <div style={{ display:'flex', gap:4, marginBottom:20, background:T.surface, borderRadius:10, padding:4, border:`1px solid ${T.border}`, overflowX:'auto' }}>
-        {TABS.map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-            flex:'none', padding:'8px 18px', borderRadius:8, border:'none', cursor:'pointer', fontSize:13, fontWeight:600,
-            background: activeTab===tab.id ? T.navy : 'transparent',
-            color: activeTab===tab.id ? '#fff' : T.textSec,
-            transition:'all 0.15s',
-          }}>{tab.label}</button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      <div style={{ background:T.surface, borderRadius:12, padding:24, border:`1px solid ${T.border}`, boxShadow:T.card }}>
-        {activeTab === 'overview' && <TargetOverview />}
-        {activeTab === 'trajectories' && <EmissionTrajectories />}
-        {activeTab === 'methods' && <MethodSelector />}
-        {activeTab === 'scope3' && <Scope3Engagement />}
-        {activeTab === 'validation' && <ValidationTracker />}
-      </div>
-
-      {/* Footer */}
-      <div style={{ marginTop:16, fontSize:11, color:T.textMut, textAlign:'center' }}>
-        EP-AI1 · SBTi Target Setter · Data as of Q1 2026 · Science-Based Targets initiative (SBTi) Corporate Net-Zero Standard v1.1
-      </div>
+  return(
+    <div style={ss.wrap}>
+      <div style={ss.header}>SBTi Target Setter</div>
+      <div style={ss.sub}>Science Based Targets initiative — Criteria v5.1 + Net-Zero Standard + FLAG Guidance — {COMPANIES.length} companies, {SECTOR_PATHS.length} sector pathways, {FLAG_COMMODITIES.length} FLAG commodities</div>
+      <div style={ss.tabs}>{TABS.map((t,i)=><button key={i} style={ss.tab(tab===i)} onClick={()=>{setTab(i);setPage(1);}}>{t}</button>)}</div>
+      {tab===0&&renderTargetSetting()}
+      {tab===1&&renderSectorPathways()}
+      {tab===2&&renderFLAG()}
+      {tab===3&&renderPortfolio()}
+      {tab===4&&renderValidation()}
+      {tab===5&&renderBudget()}
+      {tab===6&&renderExport()}
     </div>
   );
 }

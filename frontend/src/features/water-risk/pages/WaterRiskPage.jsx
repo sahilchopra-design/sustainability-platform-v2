@@ -1,450 +1,348 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell,
-} from 'recharts';
+import React,{useState,useMemo} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,ScatterChart,Scatter,ZAxis} from 'recharts';
 
-const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.floor(x); };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const CC=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899','#06b6d4'];
+const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:12},labelStyle:{color:T.navy,fontWeight:600}};
+const TABS=['Risk Dashboard','Company Assessment','Basin Analytics','Mitigation Tracker'];
+const PAGE=12;
 
-const KpiCard = ({ label, value, sub, accent }) => (
-  <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
-    <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
-    {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
-  </div>
-);
-const Btn = ({ children, onClick }) => (
-  <button onClick={onClick} style={{ padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#059669', color: 'white', fontWeight: 600, fontSize: 14 }}>{children}</button>
-);
-const Inp = ({ label, value, onChange, type = 'text' }) => (
-  <div style={{ marginBottom: 12 }}>
-    {label && <div style={{ fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 4 }}>{label}</div>}
-    <input type={type} value={value} onChange={e => onChange(e.target.value)}
-      style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, background: 'white', boxSizing: 'border-box' }} />
-  </div>
-);
-const Sel = ({ label, value, onChange, options }) => (
-  <div style={{ marginBottom: 12 }}>
-    {label && <div style={{ fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 4 }}>{label}</div>}
-    <select value={value} onChange={e => onChange(e.target.value)}
-      style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, background: 'white' }}>
-      {options.map(o => <option key={o.value || o} value={o.value || o}>{o.label || o}</option>)}
-    </select>
-  </div>
-);
-const Section = ({ title, children }) => (
-  <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
-    {children}
-  </div>
-);
-const Row = ({ children, gap = 12 }) => (
-  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${React.Children.count(children)},1fr)`, gap }}>{children}</div>
-);
-const Badge = ({ label, color }) => {
-  const colors = { green: { bg: '#d1fae5', text: '#065f46' }, yellow: { bg: '#fef3c7', text: '#92400e' }, red: { bg: '#fee2e2', text: '#991b1b' }, blue: { bg: '#dbeafe', text: '#1e40af' }, gray: { bg: '#f3f4f6', text: '#374151' }, purple: { bg: '#ede9fe', text: '#5b21b6' }, orange: { bg: '#ffedd5', text: '#9a3412' } };
-  const c = colors[color] || colors.gray;
-  return <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 12, fontWeight: 700, background: c.bg, color: c.text }}>{label}</span>;
-};
+const SECTORS=['Utilities','Agriculture','Mining','Food & Bev','Chemicals','Pharmaceuticals','Semiconductors','Textiles','Oil & Gas','Paper & Pulp','Steel','Power Generation'];
+const BASINS=['Ganges','Yangtze','Nile','Amazon','Colorado','Murray-Darling','Rhine','Danube','Mekong','Indus','Yellow River','Tigris-Euphrates','Niger','Zambezi','Orange'];
+const RISK_LEVELS=['Extremely High','High','Medium-High','Medium','Low-Medium','Low'];
 
-const TABS = ['AQUEDUCT Risk', 'CDP Water Security', 'TNFD E3 Metrics', 'AWS Standard v2', 'Financial Exposure'];
-
-const BASIN_OPTIONS = [
-  { value: 'indus', label: 'Indus Basin (South Asia)' },
-  { value: 'colorado', label: 'Colorado River (North America)' },
-  { value: 'nile', label: 'Nile Basin (Africa)' },
-  { value: 'yangtze', label: 'Yangtze River (China)' },
-  { value: 'danube', label: 'Danube Basin (Europe)' },
-  { value: 'amazon', label: 'Amazon Basin (South America)' },
-  { value: 'tigris', label: 'Tigris-Euphrates (Middle East)' },
-  { value: 'murray', label: 'Murray-Darling (Australia)' },
-];
-
-const SECTOR_OPTIONS = [
-  { value: 'agriculture', label: 'Agriculture / Irrigation' },
-  { value: 'mining', label: 'Mining & Quarrying' },
-  { value: 'beverages', label: 'Food & Beverages' },
-  { value: 'semiconductor', label: 'Semiconductor Manufacturing' },
-  { value: 'textile', label: 'Textile / Apparel' },
-  { value: 'utilities', label: 'Water Utilities' },
-  { value: 'chemicals', label: 'Chemicals' },
-  { value: 'power', label: 'Thermal Power' },
-];
-
-const getAqueductData = (basin, sector) => {
-  const bi = BASIN_OPTIONS.findIndex(b => b.value === basin) + 1;
-  const si = SECTOR_OPTIONS.findIndex(s => s.value === sector) + 1;
-  const subScores = [
-    { name: 'Baseline Water Stress', key: 'baseline_water_stress', value: parseFloat((seed(bi * 7 + si * 3) * 4 + 0.5).toFixed(2)) },
-    { name: 'Interannual Variability', key: 'interannual_variability', value: parseFloat((seed(bi * 11 + si * 5) * 3 + 0.5).toFixed(2)) },
-    { name: 'Seasonal Variability', key: 'seasonal_variability', value: parseFloat((seed(bi * 13 + si * 7) * 3 + 0.5).toFixed(2)) },
-    { name: 'Groundwater Depletion', key: 'groundwater_depletion', value: parseFloat((seed(bi * 17 + si * 11) * 4 + 0.3).toFixed(2)) },
-    { name: 'Riverine Flood Risk', key: 'riverine_flood_risk', value: parseFloat((seed(bi * 19 + si * 13) * 3 + 0.5).toFixed(2)) },
-    { name: 'Coastal Eutrophication', key: 'coastal_eutrophication', value: parseFloat((seed(bi * 23 + si * 17) * 3 + 0.3).toFixed(2)) },
-  ];
-  const overall = parseFloat((subScores.reduce((s, x) => s + x.value, 0) / subScores.length).toFixed(2));
-  const tier = overall >= 3.5 ? 'Extremely High' : overall >= 2.5 ? 'High' : overall >= 1.5 ? 'Medium-High' : overall >= 0.5 ? 'Low-Medium' : 'Low';
-  const tierColor = overall >= 3.5 ? 'red' : overall >= 2.5 ? 'orange' : overall >= 1.5 ? 'yellow' : 'green';
-  return { subScores, overall, tier, tierColor };
-};
-
-const getCdpData = (basin) => {
-  const bi = BASIN_OPTIONS.findIndex(b => b.value === basin) + 1;
-  const pillars = [
-    { dimension: 'Governance', score: Math.round(seed(bi * 31) * 30 + 45) },
-    { dimension: 'Risk Assessment', score: Math.round(seed(bi * 37) * 28 + 48) },
-    { dimension: 'Targets', score: Math.round(seed(bi * 41) * 32 + 42) },
-    { dimension: 'Performance', score: Math.round(seed(bi * 43) * 25 + 50) },
-  ];
-  const composite = Math.round(pillars.reduce((s, p) => s + p.score, 0) / pillars.length);
-  const grade = composite >= 80 ? 'A' : composite >= 65 ? 'B' : composite >= 50 ? 'C' : 'D';
-  const gradeColor = grade === 'A' ? 'green' : grade === 'B' ? 'blue' : grade === 'C' ? 'yellow' : 'red';
-  const aListEligible = composite >= 75;
-  return { pillars, composite, grade, gradeColor, aListEligible };
-};
-
-const getTnfdData = (sector) => {
-  const si = SECTOR_OPTIONS.findIndex(s => s.value === sector) + 1;
-  const withdrawal = Math.round(seed(si * 53) * 4000 + 500);
-  const consumption = Math.round(withdrawal * (seed(si * 59) * 0.4 + 0.3));
-  const discharge = withdrawal - consumption;
-  const recycled = Math.round(seed(si * 61) * 40 + 15);
-  const disclosureScore = Math.round(seed(si * 67) * 30 + 55);
-  const metrics = [
-    { name: 'Withdrawal (m³)', value: withdrawal },
-    { name: 'Consumption (m³)', value: consumption },
-    { name: 'Discharge (m³)', value: discharge },
-    { name: 'Recycled (%)', value: recycled },
-  ];
-  return { metrics, withdrawal, consumption, discharge, recycled, disclosureScore };
-};
-
-const getAwsData = (basin) => {
-  const bi = BASIN_OPTIONS.findIndex(b => b.value === basin) + 1;
-  const criteria = [
-    { dimension: 'Balance', score: Math.round(seed(bi * 71) * 30 + 50) },
-    { dimension: 'Engagement', score: Math.round(seed(bi * 73) * 28 + 48) },
-    { dimension: 'Governance', score: Math.round(seed(bi * 79) * 32 + 45) },
-    { dimension: 'Efficiency', score: Math.round(seed(bi * 83) * 25 + 52) },
-    { dimension: 'Transparency', score: Math.round(seed(bi * 89) * 30 + 47) },
-  ];
-  const overall = Math.round(criteria.reduce((s, c) => s + c.score, 0) / criteria.length);
-  const tier = overall >= 75 ? 'Platinum' : overall >= 60 ? 'Gold' : overall >= 45 ? 'Silver' : 'Core';
-  const tierColor = overall >= 75 ? 'green' : overall >= 60 ? 'blue' : overall >= 45 ? 'yellow' : 'gray';
-  const certEligible = overall >= 55;
-  return { criteria, overall, tier, tierColor, certEligible };
-};
-
-const getFinancialData = (sector) => {
-  const si = SECTOR_OPTIONS.findIndex(s => s.value === sector) + 1;
-  const opex = parseFloat((seed(si * 97) * 50 + 10).toFixed(1));
-  const regulatory = parseFloat((seed(si * 101) * 30 + 5).toFixed(1));
-  const stranded = parseFloat((seed(si * 103) * 80 + 20).toFixed(1));
-  const total = parseFloat((opex + regulatory + stranded).toFixed(1));
-  const bondEligible = seed(si * 107) > 0.4;
-  const bars = [
-    { name: 'Opex Risk', value: opex },
-    { name: 'Regulatory Risk', value: regulatory },
-    { name: 'Stranded Asset Risk', value: stranded },
-  ];
-  return { opex, regulatory, stranded, total, bondEligible, bars };
-};
-
-export default function WaterRiskPage() {
-  const [tab, setTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [basin, setBasin] = useState('indus');
-  const [sector, setSector] = useState('agriculture');
-
-  const aqueduct = getAqueductData(basin, sector);
-  const cdp = getCdpData(basin);
-  const tnfd = getTnfdData(sector);
-  const aws = getAwsData(basin);
-  const financial = getFinancialData(sector);
-
-  const runAssess = async () => {
-    setLoading(true); setError('');
-    try {
-      await axios.post(`${API}/api/v1/water-risk/assess`, {
-        basin, sector,
-        company_id: 'demo-001',
-      });
-    } catch {
-      void 0 /* API fallback to seed data */;
-    } finally { setLoading(false); }
+const COMPANIES=Array.from({length:60},(_,i)=>{
+  const names=['Nestle','Coca-Cola','PepsiCo','AB InBev','Danone','Unilever','P&G','BHP','Rio Tinto','Glencore','BASF','Dow','DuPont','Intel','TSMC','Samsung','Bayer','Syngenta','Cargill','ADM','Deere','Monsanto','Shell','TotalEnergies','BP','Exxon','Chevron','Vale','Anglo American','Freeport','Newmont','Barrick','Veolia','Suez','Xylem','Pentair','Evoqua','Mueller Water','Watts Water','American Water','Thames Water','Severn Trent','United Utilities','Sabesp','Manila Water','Beijing Enterprises','Guangdong Investment','China Water Affairs','SIIC Environment','Ranhill Utilities','Hyflux','Tata Power','Adani Green','JSW Energy','NTPC','CLP Holdings','AES Corp','Duke Energy','Southern Company','Enel'];
+  const sect=SECTORS[Math.floor(sr(i*3)*SECTORS.length)];
+  const basin=BASINS[Math.floor(sr(i*7)*BASINS.length)];
+  return{id:i+1,name:names[i%names.length],sector:sect,primaryBasin:basin,
+    waterWithdrawal:+(sr(i*11)*500+10).toFixed(1),waterConsumption:+(sr(i*13)*200+5).toFixed(1),
+    waterDischarge:+(sr(i*17)*300+5).toFixed(1),waterIntensity:+(sr(i*19)*50+2).toFixed(1),
+    waterStressScore:+(sr(i*23)*100).toFixed(1),physicalRisk:RISK_LEVELS[Math.floor(sr(i*29)*6)],
+    regulatoryRisk:RISK_LEVELS[Math.floor(sr(i*31)*6)],reputationalRisk:RISK_LEVELS[Math.floor(sr(i*37)*6)],
+    recyclingRate:+(sr(i*41)*80+5).toFixed(1),targetReduction:+(sr(i*43)*40+5).toFixed(1),
+    actualReduction:+(sr(i*47)*35).toFixed(1),revenue:+(sr(i*53)*50000+500).toFixed(0),
+    waterRevRisk:+(sr(i*59)*30+2).toFixed(1),cdpScore:['A','A-','B','B-','C','C-','D','D-'][Math.floor(sr(i*61)*8)],
+    sbtnStatus:['Committed','Target Set','Validated','Not Committed'][Math.floor(sr(i*67)*4)],
+    waterPolicy:sr(i*71)>0.3,disclosure:sr(i*73)>0.25,
+    pollutionIndex:+(sr(i*79)*60+10).toFixed(1),biodiversityImpact:+(sr(i*83)*50+10).toFixed(1),
   };
+});
 
-  return (
-    <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Water Risk & Stewardship Finance</h1>
-        <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>WRI AQUEDUCT 4.0 · CDP Water · TNFD E3 · AWS Standard v2</p>
-      </div>
+const BASIN_DATA=BASINS.map((b,i)=>({
+  name:b,stressLevel:+(sr(i*89)*100).toFixed(1),population:Math.floor(sr(i*97)*500+50),
+  irrigatedArea:+(sr(i*101)*200+20).toFixed(0),annualFlow:+(sr(i*103)*1000+50).toFixed(0),
+  groundwaterDepletion:+(sr(i*107)*5+0.1).toFixed(1),floodRisk:+(sr(i*109)*80+10).toFixed(1),
+  droughtRisk:+(sr(i*113)*70+15).toFixed(1),qualityIndex:+(sr(i*117)*60+30).toFixed(1),
+  companiesExposed:Math.floor(sr(i*121)*20+3),regulatoryStrength:['Strong','Moderate','Weak'][Math.floor(sr(i*127)*3)],
+}));
 
-      <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <button key={i} onClick={() => setTab(i)} style={{ padding: '10px 14px', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, background: 'none', color: tab === i ? '#059669' : '#6b7280', borderBottom: tab === i ? '2px solid #059669' : '2px solid transparent' }}>{t}</button>
+const ANNUAL=Array.from({length:10},(_,i)=>({
+  year:2016+i,globalStress:+(sr(i*131)*10+35).toFixed(1),withdrawal:+(sr(i*137)*500+3500).toFixed(0),
+  recycled:+(sr(i*139)*200+800).toFixed(0),incidents:Math.floor(sr(i*143)*50+10),
+  investment:+(sr(i*149)*20+5).toFixed(1),disclosure:+(sr(i*151)*15+30).toFixed(1),
+}));
+
+export default function WaterRiskPage(){
+  const [tab,setTab]=useState(0);
+  const [search,setSearch]=useState('');
+  const [sortCol,setSortCol]=useState('waterStressScore');
+  const [sortDir,setSortDir]=useState('desc');
+  const [page,setPage]=useState(0);
+  const [expanded,setExpanded]=useState(null);
+  const [filterSect,setFilterSect]=useState('All');
+  const [filterRisk,setFilterRisk]=useState('All');
+  const [bSearch,setBSearch]=useState('');
+  const [bSort,setBSort]=useState('stressLevel');
+  const [bDir,setBDir]=useState('desc');
+  const [bExpanded,setBExpanded]=useState(null);
+
+  const filtered=useMemo(()=>{
+    let d=[...COMPANIES];
+    if(search)d=d.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||c.sector.toLowerCase().includes(search.toLowerCase()));
+    if(filterSect!=='All')d=d.filter(c=>c.sector===filterSect);
+    if(filterRisk!=='All')d=d.filter(c=>c.physicalRisk===filterRisk);
+    d.sort((a,b)=>sortDir==='asc'?((a[sortCol]>b[sortCol])?1:-1):((a[sortCol]<b[sortCol])?1:-1));
+    return d;
+  },[search,sortCol,sortDir,filterSect,filterRisk]);
+
+  const paged=filtered.slice(page*PAGE,page*PAGE+PAGE);
+  const totalPages=Math.ceil(filtered.length/PAGE);
+
+  const bFiltered=useMemo(()=>{
+    let d=[...BASIN_DATA];
+    if(bSearch)d=d.filter(b=>b.name.toLowerCase().includes(bSearch.toLowerCase()));
+    d.sort((a,b)=>bDir==='asc'?((a[bSort]>b[bSort])?1:-1):((a[bSort]<b[bSort])?1:-1));
+    return d;
+  },[bSearch,bSort,bDir]);
+
+  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(0);};
+  const doBSort=(col)=>{if(bSort===col)setBDir(d=>d==='asc'?'desc':'asc');else{setBSort(col);setBDir('desc');}};
+
+  const exportCSV=(data,fn)=>{if(!data.length)return;const h=Object.keys(data[0]);const csv=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
+
+  const kpis=useMemo(()=>{
+    const avgStress=filtered.reduce((s,c)=>s+parseFloat(c.waterStressScore),0)/filtered.length;
+    const highRisk=filtered.filter(c=>c.physicalRisk.includes('High')).length;
+    const avgRecycle=filtered.reduce((s,c)=>s+parseFloat(c.recyclingRate),0)/filtered.length;
+    const withPolicy=filtered.filter(c=>c.waterPolicy).length;
+    return{count:filtered.length,avgStress,highRisk,avgRecycle,withPolicy};
+  },[filtered]);
+
+  const SortH=({col,label,w})=><th onClick={()=>doSort(col)} style={{cursor:'pointer',padding:'10px 8px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontSize:11,fontWeight:700,color:T.textSec,fontFamily:T.mono,width:w,userSelect:'none',whiteSpace:'nowrap'}}>{label}{sortCol===col?(sortDir==='asc'?' \u25B2':' \u25BC'):''}</th>;
+  const BSH=({col,label})=><th onClick={()=>doBSort(col)} style={{cursor:'pointer',padding:'10px 8px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontSize:11,fontWeight:700,color:T.textSec,fontFamily:T.mono,userSelect:'none'}}>{label}{bSort===col?(bDir==='asc'?' \u25B2':' \u25BC'):''}</th>;
+
+  const Pg=({pg,setPg,tot})=><div style={{display:'flex',justifyContent:'center',gap:6,marginTop:14}}><button onClick={()=>setPg(p=>Math.max(0,p-1))} disabled={pg===0} style={{padding:'6px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:pg===0?'default':'pointer',opacity:pg===0?0.4:1,fontSize:12}}>Prev</button>{Array.from({length:Math.min(tot,7)},(_,i)=>{const p=tot<=7?i:pg<3?i:pg>tot-4?tot-7+i:pg-3+i;return <button key={p} onClick={()=>setPg(p)} style={{padding:'6px 12px',border:`1px solid ${pg===p?T.gold:T.border}`,borderRadius:6,background:pg===p?T.gold:'transparent',color:pg===p?'#fff':T.text,cursor:'pointer',fontWeight:pg===p?700:400,fontSize:12}}>{p+1}</button>;})}<button onClick={()=>setPg(p=>Math.min(tot-1,p+1))} disabled={pg>=tot-1} style={{padding:'6px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:pg>=tot-1?'default':'pointer',opacity:pg>=tot-1?0.4:1,fontSize:12}}>Next</button></div>;
+
+  const riskColor=r=>r.includes('Extremely')?T.red:r.includes('High')?'#ea580c':r.includes('Medium')?T.amber:T.green;
+
+  const sectDist=useMemo(()=>{const m={};SECTORS.forEach(s=>m[s]=0);filtered.forEach(c=>m[c.sector]++);return Object.entries(m).map(([name,value])=>({name:name.length>12?name.slice(0,12)+'..':name,value}));},[filtered]);
+  const riskDist=useMemo(()=>{const m={};RISK_LEVELS.forEach(r=>m[r]=0);filtered.forEach(c=>m[c.physicalRisk]++);return Object.entries(m).map(([name,value])=>({name,value}));},[filtered]);
+
+  const renderDashboard=()=>(
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:20}}>
+        {[{l:'Companies Assessed',v:kpis.count},{l:'Avg Stress Score',v:kpis.avgStress.toFixed(1)},{l:'High/Extreme Risk',v:kpis.highRisk},{l:'Avg Recycling Rate',v:kpis.avgRecycle.toFixed(1)+'%'},{l:'With Water Policy',v:kpis.withPolicy}].map((k,i)=>(
+          <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{k.l}</div>
+            <div style={{fontSize:24,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div>
+          </div>
         ))}
       </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Global Water Stress Trend</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/>
+              <Area type="monotone" dataKey="globalStress" stroke={T.red} fill={T.red} fillOpacity={0.15} name="Stress Index"/>
+              <Area type="monotone" dataKey="disclosure" stroke={T.navy} fill={T.navy} fillOpacity={0.1} name="Disclosure Rate %"/>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Physical Risk Distribution</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart><Pie data={riskDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`}>{riskDist.map((_,i)=><Cell key={i} fill={CC[i%CC.length]}/>)}</Pie><Tooltip {...tip}/></PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Sector Exposure</div>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={sectDist}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-45} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="value" fill={T.navy} radius={[6,6,0,0]}/></BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Withdrawal vs Recycled Trend</div>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/>
+              <Line type="monotone" dataKey="withdrawal" stroke={T.red} strokeWidth={2} name="Withdrawal (km3)"/>
+              <Line type="monotone" dataKey="recycled" stroke={T.green} strokeWidth={2} name="Recycled (km3)"/>
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+        <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Water Stress vs Revenue at Risk</div>
+        <ResponsiveContainer width="100%" height={260}>
+          <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Stress Score" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="y" name="Revenue at Risk %" tick={{fontSize:10,fill:T.textMut}}/><ZAxis dataKey="z" range={[40,400]}/><Tooltip {...tip}/>
+            <Scatter data={filtered.map(c=>({name:c.name,x:parseFloat(c.waterStressScore),y:parseFloat(c.waterRevRisk),z:parseFloat(c.revenue)}))} fill={T.navy} fillOpacity={0.5}/>
+          </ScatterChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 
-      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
-
-      {/* Shared inputs */}
-      <Section title="Assessment Parameters">
-        <Row>
-          <Sel label="River Basin / Water Region" value={basin} onChange={setBasin} options={BASIN_OPTIONS} />
-          <Sel label="Industry Sector" value={sector} onChange={setSector} options={SECTOR_OPTIONS} />
-          <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: 12 }}>
-            <Btn onClick={runAssess}>{loading ? 'Running…' : 'Run Water Risk Assessment'}</Btn>
-          </div>
-        </Row>
-      </Section>
-
-      {/* TAB 1 — AQUEDUCT Risk */}
-      {tab === 0 && (
-        <div>
-          <Section title="WRI AQUEDUCT 4.0 — Sub-Indicator Scores">
-            <Row gap={12}>
-              <KpiCard label="AQUEDUCT Overall Score" value={`${aqueduct.overall} / 5`} sub="Composite across 6 indicators" accent />
-              <KpiCard label="Risk Tier" value={<Badge label={aqueduct.tier} color={aqueduct.tierColor} />} sub="WRI water risk classification" />
-              <KpiCard label="Highest Risk Indicator" value={[...aqueduct.subScores].sort((a, b) => b.value - a.value)[0].name.split(' ')[0]} sub={`Score: ${[...aqueduct.subScores].sort((a, b) => b.value - a.value)[0].value} / 5`} />
-              <KpiCard label="Indicators Above 2.5" value={`${aqueduct.subScores.filter(s => s.value > 2.5).length} / 6`} sub="High-stress threshold count" />
-            </Row>
-          </Section>
-
-          <Section title="AQUEDUCT Sub-Indicator Scores (0–5 scale)">
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={aqueduct.subScores} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 5]} tickCount={6} />
-                <YAxis type="category" dataKey="name" width={190} tick={{ fontSize: 11 }} />
-                <Tooltip formatter={(val) => [`${val} / 5`, 'Risk Score']} />
-                <Bar dataKey="value" name="Risk Score" radius={[0, 4, 4, 0]}>
-                  {aqueduct.subScores.map((s, i) => (
-                    <Cell key={i} fill={s.value >= 3.5 ? '#ef4444' : s.value >= 2.5 ? '#f97316' : s.value >= 1.5 ? '#f59e0b' : '#059669'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-
-          <Section title="Indicator Detail">
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: '#f9fafb' }}>
-                  {['Indicator', 'Score (0–5)', 'Risk Level'].map(h => (
-                    <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
-                  ))}
+  const renderAssessment=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search companies..." style={{flex:1,minWidth:200,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}/>
+        <select value={filterSect} onChange={e=>{setFilterSect(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}><option value="All">All Sectors</option>{SECTORS.map(s=><option key={s} value={s}>{s}</option>)}</select>
+        <select value={filterRisk} onChange={e=>{setFilterRisk(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}><option value="All">All Risk Levels</option>{RISK_LEVELS.map(r=><option key={r} value={r}>{r}</option>)}</select>
+        <button onClick={()=>exportCSV(filtered,'water_risk.csv')} style={{padding:'8px 16px',border:'none',borderRadius:8,background:T.gold,color:'#fff',fontWeight:600,fontSize:13,cursor:'pointer'}}>Export CSV</button>
+      </div>
+      <div style={{fontSize:12,color:T.textMut,marginBottom:8,fontFamily:T.mono}}>{filtered.length} companies | Page {page+1}/{totalPages}</div>
+      <div style={{overflowX:'auto'}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
+          <thead><tr style={{background:T.surfaceH}}>
+            <SortH col="name" label="Company" w="140px"/><SortH col="sector" label="Sector"/><SortH col="waterStressScore" label="Stress Score"/>
+            <SortH col="physicalRisk" label="Physical Risk"/><SortH col="waterWithdrawal" label="Withdrawal (ML)"/>
+            <SortH col="recyclingRate" label="Recycling %"/><SortH col="cdpScore" label="CDP Score"/><SortH col="waterRevRisk" label="Rev Risk %"/>
+          </tr></thead>
+          <tbody>
+            {paged.map(c=>(
+              <React.Fragment key={c.id}>
+                <tr onClick={()=>setExpanded(expanded===c.id?null:c.id)} style={{cursor:'pointer',background:expanded===c.id?T.surfaceH:'transparent',borderBottom:`1px solid ${T.border}`}}>
+                  <td style={{padding:'10px 8px',fontWeight:600,color:T.navy}}>{expanded===c.id?'\u25BC':'\u25B6'} {c.name}</td>
+                  <td style={{padding:'10px 8px',color:T.textSec}}>{c.sector}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{c.waterStressScore}</td>
+                  <td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,color:'#fff',background:riskColor(c.physicalRisk)}}>{c.physicalRisk}</span></td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{c.waterWithdrawal}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{c.recyclingRate}%</td>
+                  <td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:c.cdpScore.startsWith('A')?'#d1fae5':'#fef3c7',color:c.cdpScore.startsWith('A')?'#065f46':'#92400e'}}>{c.cdpScore}</span></td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono,color:parseFloat(c.waterRevRisk)>15?T.red:T.green}}>{c.waterRevRisk}%</td>
                 </tr>
-              </thead>
-              <tbody>
-                {aqueduct.subScores.map((s, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '8px 12px', color: '#374151' }}>{s.name}</td>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#1b3a5c' }}>{s.value}</td>
-                    <td style={{ padding: '8px 12px' }}>
-                      <Badge label={s.value >= 3.5 ? 'Extremely High' : s.value >= 2.5 ? 'High' : s.value >= 1.5 ? 'Medium-High' : 'Low-Medium'} color={s.value >= 3.5 ? 'red' : s.value >= 2.5 ? 'orange' : s.value >= 1.5 ? 'yellow' : 'green'} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Section>
+                {expanded===c.id&&(
+                  <tr><td colSpan={8} style={{padding:20,background:T.surfaceH,borderBottom:`2px solid ${T.gold}`}}>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Water Metrics</div>
+                        {[['Consumption (ML)',c.waterConsumption],['Discharge (ML)',c.waterDischarge],['Intensity',c.waterIntensity],['Basin',c.primaryBasin],['SBTN Status',c.sbtnStatus],['Policy',c.waterPolicy?'Yes':'No'],['Disclosure',c.disclosure?'Yes':'No']].map(([l,v])=>(
+                          <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:12,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textMut}}>{l}</span><span style={{fontWeight:600,color:T.navy,fontFamily:T.mono}}>{v}</span></div>
+                        ))}
+                      </div>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Risk Profile</div>
+                        {[['Regulatory Risk',c.regulatoryRisk],['Reputational Risk',c.reputationalRisk],['Revenue ($M)',fmt(parseFloat(c.revenue))],['Target Reduction',c.targetReduction+'%'],['Actual Reduction',c.actualReduction+'%'],['Pollution Index',c.pollutionIndex],['Biodiversity Impact',c.biodiversityImpact]].map(([l,v])=>(
+                          <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:12,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textMut}}>{l}</span><span style={{fontWeight:600,color:T.navy,fontFamily:T.mono}}>{v}</span></div>
+                        ))}
+                      </div>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Risk Radar</div>
+                        <ResponsiveContainer width="100%" height={200}>
+                          <RadarChart data={[{m:'Stress',v:parseFloat(c.waterStressScore)},{m:'Physical',v:RISK_LEVELS.indexOf(c.physicalRisk)*20},{m:'Regulatory',v:RISK_LEVELS.indexOf(c.regulatoryRisk)*20},{m:'Pollution',v:parseFloat(c.pollutionIndex)},{m:'Rev Risk',v:parseFloat(c.waterRevRisk)*3},{m:'Biodiversity',v:parseFloat(c.biodiversityImpact)}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:9}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={T.red} fill={T.red} fillOpacity={0.2}/></RadarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </td></tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Pg pg={page} setPg={setPage} tot={totalPages}/>
+    </div>
+  );
+
+  const renderBasins=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+        <input value={bSearch} onChange={e=>setBSearch(e.target.value)} placeholder="Search basins..." style={{flex:1,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}/>
+        <button onClick={()=>exportCSV(BASIN_DATA,'water_basins.csv')} style={{padding:'8px 16px',border:'none',borderRadius:8,background:T.gold,color:'#fff',fontWeight:600,fontSize:13,cursor:'pointer'}}>Export CSV</button>
+      </div>
+      <div style={{overflowX:'auto',marginBottom:20}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
+          <thead><tr style={{background:T.surfaceH}}>
+            <BSH col="name" label="Basin"/><BSH col="stressLevel" label="Stress Level"/><BSH col="population" label="Pop (M)"/>
+            <BSH col="floodRisk" label="Flood Risk"/><BSH col="droughtRisk" label="Drought Risk"/><BSH col="qualityIndex" label="Quality"/>
+            <BSH col="companiesExposed" label="Co. Exposed"/><BSH col="regulatoryStrength" label="Regulation"/>
+          </tr></thead>
+          <tbody>
+            {bFiltered.map(b=>(
+              <React.Fragment key={b.name}>
+                <tr onClick={()=>setBExpanded(bExpanded===b.name?null:b.name)} style={{cursor:'pointer',background:bExpanded===b.name?T.surfaceH:'transparent',borderBottom:`1px solid ${T.border}`}}>
+                  <td style={{padding:'10px 8px',fontWeight:600,color:T.navy}}>{bExpanded===b.name?'\u25BC':'\u25B6'} {b.name}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono,color:parseFloat(b.stressLevel)>60?T.red:T.green}}>{b.stressLevel}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.population}M</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.floodRisk}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.droughtRisk}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.qualityIndex}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.companiesExposed}</td>
+                  <td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:b.regulatoryStrength==='Strong'?'#d1fae5':'#fef3c7',color:b.regulatoryStrength==='Strong'?'#065f46':'#92400e'}}>{b.regulatoryStrength}</span></td>
+                </tr>
+                {bExpanded===b.name&&(
+                  <tr><td colSpan={8} style={{padding:16,background:T.surfaceH,borderBottom:`2px solid ${T.gold}`}}>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                      <div>
+                        {[['Irrigated Area',b.irrigatedArea+' km2'],['Annual Flow',b.annualFlow+' km3'],['Groundwater Depletion',b.groundwaterDepletion+' cm/yr']].map(([l,v])=>(
+                          <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:12,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textMut}}>{l}</span><span style={{fontWeight:600,fontFamily:T.mono}}>{v}</span></div>
+                        ))}
+                      </div>
+                      <ResponsiveContainer width="100%" height={160}>
+                        <RadarChart data={[{m:'Stress',v:parseFloat(b.stressLevel)},{m:'Flood',v:parseFloat(b.floodRisk)},{m:'Drought',v:parseFloat(b.droughtRisk)},{m:'Quality',v:100-parseFloat(b.qualityIndex)},{m:'Depletion',v:parseFloat(b.groundwaterDepletion)*15}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:9}}/><Radar dataKey="v" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/></RadarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </td></tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Basin Stress Levels</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={BASIN_DATA.sort((a,b)=>parseFloat(b.stressLevel)-parseFloat(a.stressLevel))} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><YAxis dataKey="name" type="category" width={110} tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="stressLevel" fill={T.red} radius={[0,6,6,0]} name="Stress Level"/></BarChart>
+          </ResponsiveContainer>
         </div>
-      )}
-
-      {/* TAB 2 — CDP Water Security */}
-      {tab === 1 && (
-        <div>
-          <Section title="CDP Water Security Programme — Summary">
-            <Row gap={12}>
-              <KpiCard label="CDP Water Score" value={cdp.grade} sub={`Composite: ${cdp.composite}/100`} accent />
-              <KpiCard label="CDP A-List Eligible" value={<Badge label={cdp.aListEligible ? 'Eligible' : 'Not Eligible'} color={cdp.aListEligible ? 'green' : 'red'} />} sub="≥75/100 threshold for A-List" />
-              <KpiCard label="Top Pillar" value={[...cdp.pillars].sort((a, b) => b.score - a.score)[0].dimension} sub={`Score: ${[...cdp.pillars].sort((a, b) => b.score - a.score)[0].score}/100`} />
-              <KpiCard label="Lowest Pillar" value={[...cdp.pillars].sort((a, b) => a.score - b.score)[0].dimension} sub={`Score: ${[...cdp.pillars].sort((a, b) => a.score - b.score)[0].score}/100`} />
-            </Row>
-          </Section>
-
-          <Row>
-            <Section title="CDP Water — 4-Pillar Radar">
-              <ResponsiveContainer width="100%" height={320}>
-                <RadarChart data={cdp.pillars} cx="50%" cy="50%" outerRadius={110}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 13 }} />
-                  <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                  <Radar name="CDP Score" dataKey="score" stroke="#059669" fill="#059669" fillOpacity={0.35} />
-                  <Tooltip formatter={(val) => `${val}/100`} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </Section>
-            <Section title="CDP Pillar Scores">
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={cdp.pillars}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="dimension" tick={{ fontSize: 12 }} />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip formatter={(val) => `${val}/100`} />
-                  <Bar dataKey="score" name="CDP Score" radius={[4, 4, 0, 0]}>
-                    {cdp.pillars.map((p, i) => (
-                      <Cell key={i} fill={p.score >= 70 ? '#059669' : p.score >= 55 ? '#f59e0b' : '#ef4444'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </Section>
-          </Row>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Flood vs Drought Risk</div>
+          <ResponsiveContainer width="100%" height={300}>
+            <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Flood Risk" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="y" name="Drought Risk" tick={{fontSize:10,fill:T.textMut}}/><ZAxis dataKey="z" range={[60,400]}/><Tooltip {...tip}/>
+              <Scatter data={BASIN_DATA.map(b=>({name:b.name,x:parseFloat(b.floodRisk),y:parseFloat(b.droughtRisk),z:b.population}))} fill={T.navy} fillOpacity={0.6}/>
+            </ScatterChart>
+          </ResponsiveContainer>
         </div>
-      )}
+      </div>
+    </div>
+  );
 
-      {/* TAB 3 — TNFD E3 Metrics */}
-      {tab === 2 && (
-        <div>
-          <Section title="TNFD ESRS E3 Water & Marine Resources Metrics">
-            <Row gap={12}>
-              <KpiCard label="Water Withdrawal (m³/yr)" value={tnfd.withdrawal.toLocaleString()} sub="Total freshwater withdrawal" accent />
-              <KpiCard label="Water Consumption (m³/yr)" value={tnfd.consumption.toLocaleString()} sub="Net consumptive use" />
-              <KpiCard label="Water Recycled (%)" value={`${tnfd.recycled}%`} sub="Circular water reuse rate" />
-              <KpiCard label="TNFD E3 Disclosure Score" value={`${tnfd.disclosureScore}/100`} sub="ESRS E3 completeness" />
-            </Row>
-          </Section>
-
-          <Section title="Water Volume Breakdown (m³/year)">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={tnfd.metrics}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
-                <Tooltip formatter={(val, name) => [val.toLocaleString(), name]} />
-                <Bar dataKey="value" name="Volume (m³)" radius={[4, 4, 0, 0]}>
-                  {tnfd.metrics.map((m, i) => (
-                    <Cell key={i} fill={['#059669', '#3b82f6', '#f59e0b', '#8b5cf6'][i]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-
-          <Section title="TNFD E3 Disclosure Gap Analysis">
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 16 }}>
-              {[
-                { dp: 'E3-1', desc: 'Policies related to water & marine resources', met: tnfd.disclosureScore >= 65 },
-                { dp: 'E3-2', desc: 'Material water & marine resources-related impacts', met: tnfd.disclosureScore >= 60 },
-                { dp: 'E3-3', desc: 'Water & marine resources-related targets', met: tnfd.disclosureScore >= 70 },
-                { dp: 'E3-4', desc: 'Water consumption KPIs (withdrawal/discharge)', met: true },
-                { dp: 'E3-5', desc: 'Anticipated financial effects from water risks', met: tnfd.disclosureScore >= 75 },
-              ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < 4 ? '1px solid #d1fae5' : 'none' }}>
-                  <div>
-                    <span style={{ fontWeight: 700, color: '#065f46', marginRight: 8, fontSize: 13 }}>{item.dp}</span>
-                    <span style={{ fontSize: 13, color: '#374151' }}>{item.desc}</span>
-                  </div>
-                  <Badge label={item.met ? 'Disclosed' : 'Gap'} color={item.met ? 'green' : 'red'} />
-                </div>
-              ))}
-            </div>
-          </Section>
+  const renderMitigation=()=>(
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+        {[{l:'SBTN Committed',v:filtered.filter(c=>c.sbtnStatus!=='Not Committed').length},{l:'Avg Target',v:(filtered.reduce((s,c)=>s+parseFloat(c.targetReduction),0)/filtered.length).toFixed(1)+'%'},{l:'Avg Achievement',v:(filtered.reduce((s,c)=>s+parseFloat(c.actualReduction),0)/filtered.length).toFixed(1)+'%'},{l:'CDP A/A-',v:filtered.filter(c=>c.cdpScore.startsWith('A')).length}].map((k,i)=>(
+          <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase'}}>{k.l}</div>
+            <div style={{fontSize:22,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Target vs Actual Reduction</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={filtered.slice(0,15).map(c=>({name:c.name.slice(0,10),target:parseFloat(c.targetReduction),actual:parseFloat(c.actualReduction)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-45} textAnchor="end" height={50}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/>
+              <Bar dataKey="target" fill={T.navy} name="Target %" radius={[4,4,0,0]}/>
+              <Bar dataKey="actual" fill={T.green} name="Actual %" radius={[4,4,0,0]}/>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
-      )}
-
-      {/* TAB 4 — AWS Standard v2 */}
-      {tab === 3 && (
-        <div>
-          <Section title="Alliance for Water Stewardship (AWS) Standard v2 Assessment">
-            <Row gap={12}>
-              <KpiCard label="AWS Overall Score" value={`${aws.overall}/100`} sub="5-criteria weighted composite" accent />
-              <KpiCard label="AWS Certification Tier" value={<Badge label={aws.tier} color={aws.tierColor} />} sub="Core / Silver / Gold / Platinum" />
-              <KpiCard label="Certification Eligible" value={<Badge label={aws.certEligible ? 'Eligible' : 'Not Eligible'} color={aws.certEligible ? 'green' : 'red'} />} sub="≥55/100 threshold" />
-              <KpiCard label="Highest Criteria" value={[...aws.criteria].sort((a, b) => b.score - a.score)[0].dimension} sub={`Score: ${[...aws.criteria].sort((a, b) => b.score - a.score)[0].score}/100`} />
-            </Row>
-          </Section>
-
-          <Row>
-            <Section title="AWS Criteria — Radar Assessment">
-              <ResponsiveContainer width="100%" height={320}>
-                <RadarChart data={aws.criteria} cx="50%" cy="50%" outerRadius={110}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 13 }} />
-                  <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                  <Radar name="AWS Score" dataKey="score" stroke="#059669" fill="#059669" fillOpacity={0.35} />
-                  <Tooltip formatter={(val) => `${val}/100`} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </Section>
-            <Section title="AWS Criteria Scores">
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={aws.criteria}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="dimension" tick={{ fontSize: 12 }} />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip formatter={(val) => `${val}/100`} />
-                  <Bar dataKey="score" name="AWS Score" radius={[4, 4, 0, 0]}>
-                    {aws.criteria.map((c, i) => (
-                      <Cell key={i} fill={c.score >= 70 ? '#059669' : c.score >= 55 ? '#f59e0b' : '#ef4444'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </Section>
-          </Row>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>SBTN Status Distribution</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart><Pie data={['Committed','Target Set','Validated','Not Committed'].map(s=>({name:s,value:filtered.filter(c=>c.sbtnStatus===s).length}))} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>{[T.green,T.gold,T.navy,T.border].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/><Legend/></PieChart>
+          </ResponsiveContainer>
         </div>
-      )}
-
-      {/* TAB 5 — Financial Exposure */}
-      {tab === 4 && (
-        <div>
-          <Section title="Water-Related Financial Exposure ($M)">
-            <Row gap={12}>
-              <KpiCard label="Total Water Financial Risk" value={`$${financial.total}M`} sub="Aggregate across 3 risk categories" accent />
-              <KpiCard label="OpEx Risk ($M)" value={`$${financial.opex}M`} sub="Water procurement & treatment costs" />
-              <KpiCard label="Regulatory Risk ($M)" value={`$${financial.regulatory}M`} sub="Water pricing & permit risk" />
-              <KpiCard label="Stranded Asset Risk ($M)" value={`$${financial.stranded}M`} sub="Asset value at risk from water scarcity" />
-            </Row>
-            <div style={{ marginTop: 16 }}>
-              <KpiCard label="Water Bond Eligibility" value={<Badge label={financial.bondEligible ? 'Eligible' : 'Not Eligible'} color={financial.bondEligible ? 'green' : 'red'} />} sub="ICMA Water Social Bond Framework alignment" />
-            </div>
-          </Section>
-
-          <Section title="Financial Risk Breakdown by Category ($M)">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={financial.bars}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 13 }} />
-                <YAxis unit="M" />
-                <Tooltip formatter={(val) => `$${val}M`} />
-                <Bar dataKey="value" name="Risk Exposure ($M)" radius={[4, 4, 0, 0]}>
-                  {financial.bars.map((b, i) => (
-                    <Cell key={i} fill={['#059669', '#3b82f6', '#ef4444'][i]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-
-          <Section title="Water Risk Mitigation Levers">
-            <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: 16 }}>
-              {[
-                { lever: 'Water Recycling & Reuse', savings: `$${parseFloat((financial.opex * 0.3).toFixed(1))}M`, priority: 'High' },
-                { lever: 'On-site Treatment Upgrade', savings: `$${parseFloat((financial.regulatory * 0.5).toFixed(1))}M`, priority: 'Medium' },
-                { lever: 'Supply Chain Water Mapping', savings: `$${parseFloat((financial.stranded * 0.2).toFixed(1))}M`, priority: 'High' },
-                { lever: 'Watershed Stewardship Program', savings: `$${parseFloat((financial.total * 0.15).toFixed(1))}M`, priority: 'Low' },
-                { lever: 'Water Footprint Certification (AWS)', savings: 'Risk premium reduction', priority: 'Medium' },
-              ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < 4 ? '1px solid #dbeafe' : 'none' }}>
-                  <span style={{ fontSize: 13, color: '#1e40af', fontWeight: 500 }}>{item.lever}</span>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <span style={{ fontSize: 13, color: '#374151' }}>{item.savings}</span>
-                    <Badge label={item.priority} color={item.priority === 'High' ? 'green' : item.priority === 'Medium' ? 'yellow' : 'gray'} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Section>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Investment & Incidents Trend</div>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textMut}}/><YAxis yAxisId="l" tick={{fontSize:10,fill:T.textMut}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/>
+              <Line yAxisId="l" type="monotone" dataKey="investment" stroke={T.green} strokeWidth={2} name="Investment ($B)"/>
+              <Line yAxisId="r" type="monotone" dataKey="incidents" stroke={T.red} strokeWidth={2} name="Incidents"/>
+            </LineChart>
+          </ResponsiveContainer>
         </div>
-      )}
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>CDP Score Distribution</div>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={['A','A-','B','B-','C','C-','D','D-'].map(s=>({name:s,value:filtered.filter(c=>c.cdpScore===s).length}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="value" fill={T.navy} radius={[6,6,0,0]}/></BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  return(
+    <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px'}}>
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,textTransform:'uppercase',letterSpacing:1}}>Environmental / Water</div>
+        <h1 style={{fontSize:28,fontWeight:800,color:T.navy,margin:'4px 0 0'}}>Water Risk Assessment</h1>
+        <div style={{width:40,height:3,background:T.gold,borderRadius:2,marginTop:6}}/>
+      </div>
+      <div style={{display:'flex',gap:0,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>
+        {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`3px solid ${T.gold}`:'3px solid transparent',background:'transparent',color:tab===i?T.navy:T.textMut,fontWeight:tab===i?700:500,fontSize:13,cursor:'pointer',fontFamily:T.font}}>{t}</button>)}
+      </div>
+      {tab===0&&renderDashboard()}
+      {tab===1&&renderAssessment()}
+      {tab===2&&renderBasins()}
+      {tab===3&&renderMitigation()}
     </div>
   );
 }

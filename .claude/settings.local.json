@@ -1722,7 +1722,31 @@
       "Bash(powershell -Command \"\\(Get-Content ''GeopoliticalEsgHubPage.jsx''\\) -replace ''GeopoliticalAiGovPage'', ''GeopoliticalEsgHubPage'' | Set-Content ''GeopoliticalEsgHubPage.jsx''\")",
       "Bash(node tmp_scan.js)",
       "Bash(curl -v http://localhost:4000/)",
-      "Bash(findstr \":4002.*LISTENING\")"
+      "Bash(findstr \":4002.*LISTENING\")",
+      "Bash(powershell -Command \"Start-Process -FilePath ''''npx'''' -ArgumentList ''''serve -s build -l 4002'''' -WindowStyle Hidden\")",
+      "Bash(grep -rl \"carbon.*price\\\\|€.*tonne\\\\|$/tCO2\\\\|ETS.*price\\\\|EU_ETS\" features/ --include=\"*.jsx\")",
+      "Bash(ls -la frontend/src/data/dataSourceConnectors.js frontend/src/data/dataSourceRegistry.js frontend/src/data/freeDataSources.js frontend/src/features/data-source-manager/pages/*.jsx frontend/src/features/db-explorer/pages/*.jsx)",
+      "Bash(grep -n \"label: ''''Climate & Health\\\\|label: ''''Geopolitical\\\\|label: ''''Food Systems\" App.js)",
+      "Bash(powershell -Command \"Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(ls -la features/geopolitical-esg-hub/pages/*.jsx features/sanctions-climate-finance/pages/*.jsx features/energy-security-transition/pages/*.jsx features/critical-mineral-geopolitics/pages/*.jsx features/trade-carbon-policy/pages/*.jsx features/climate-migration-risk/pages/*.jsx)",
+      "Bash(powershell -Command \"Start-Process -FilePath ''npx'' -ArgumentList ''serve -s build -l 4002'' -WindowStyle Hidden\")",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:4002/)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://192.168.86.154:4002/)",
+      "Bash(findstr \":4002\")",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://192.168.86.154:4002/calculation-engine-monitor)",
+      "Bash(curl -s \"https://eodhd.com/api/fundamentals/PFC.NSE?api_token=69bf68d49903f5.34977112&fmt=json\")",
+      "Bash(curl -v \"https://eodhd.com/api/fundamentals/PFC.NSE?api_token=69bf68d49903f5.34977112\")",
+      "Bash(curl -s \"https://eodhd.com/api/fundamentals/SPY.US?api_token=69bf68d49903f5.34977112&filter=Components\")",
+      "Bash(node scripts/pullRealData.js)",
+      "Bash(grep \"from ''../data/securityUniverse''\" context/PortfolioContext.jsx)",
+      "Bash(grep \"from ''''../data/securityUniverse''''\" context/PortfolioContext.jsx -A 100)",
+      "Bash(node scan_low.js)",
+      "Bash(ls \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\data\\\\testClosure\"*)",
+      "Bash(ls -la \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\sdg-alignment-engine\\\\pages\"/*.jsx \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\impact-measurement-hub\\\\pages\"/*.jsx)",
+      "Bash(find 'C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features' -path *sdg-alignment* -o -path *impact-measurement* -o -path *impact-attribution* -o -path *theory-of-change* -o -path *impact-weighted* -o -path *additionality*)",
+      "Bash(curl -s \"https://eodhd.com/api/fundamentals/AAPL.US?api_token=69bf68d49903f5.34977112&filter=Financials::Balance_Sheet\")",
+      "Bash(mkdir -p scripts/.cache)",
+      "Bash(node scripts/pullEvicData.js)"
     ]
   }
 }

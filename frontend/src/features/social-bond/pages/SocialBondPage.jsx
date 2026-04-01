@@ -1,427 +1,349 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-} from 'recharts';
+import React,{useState,useMemo} from 'react';
+import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,ScatterChart,Scatter,ZAxis} from 'recharts';
 
-const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.floor(x); };
+const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+const CC=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899','#06b6d4'];
+const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
+const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:12},labelStyle:{color:T.navy,fontWeight:600}};
+const TABS=['Market Overview','Bond Screener','Impact Analytics','Framework Assessment'];
+const PAGE=12;
 
-const KpiCard = ({ label, value, sub, accent }) => (
-  <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
-    <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
-    {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
-  </div>
-);
-const Btn = ({ children, onClick }) => (
-  <button onClick={onClick} style={{ padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#059669', color: 'white', fontWeight: 600, fontSize: 14 }}>{children}</button>
-);
-const Sel = ({ label, value, onChange, options }) => (
-  <div style={{ marginBottom: 12 }}>
-    {label && <div style={{ fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 4 }}>{label}</div>}
-    <select value={value} onChange={e => onChange(e.target.value)}
-      style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, background: 'white' }}>
-      {options.map(o => <option key={o.value || o} value={o.value || o}>{o.label || o}</option>)}
-    </select>
-  </div>
-);
-const Section = ({ title, children }) => (
-  <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
-    {children}
-  </div>
-);
-const Row = ({ children, gap = 12 }) => (
-  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${React.Children.count(children)},1fr)`, gap }}>{children}</div>
-);
-const Badge = ({ label, color }) => {
-  const colors = { green: { bg: '#d1fae5', text: '#065f46' }, yellow: { bg: '#fef3c7', text: '#92400e' }, red: { bg: '#fee2e2', text: '#991b1b' }, blue: { bg: '#dbeafe', text: '#1e40af' }, gray: { bg: '#f3f4f6', text: '#374151' }, purple: { bg: '#ede9fe', text: '#5b21b6' }, gold: { bg: '#fef9c3', text: '#854d0e' } };
-  const c = colors[color] || colors.gray;
-  return <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 12, fontWeight: 700, background: c.bg, color: c.text }}>{label}</span>;
-};
+const CATEGORIES=['Affordable Housing','Healthcare','Education','Employment','Food Security','Socioeconomic Advancement','Financial Inclusion','Water & Sanitation'];
+const ISSUERS=['World Bank','IFC','AfDB','ADB','EIB','CAF','IBRD','Societe Generale','BNP Paribas','HSBC','Morgan Stanley','Goldman Sachs','Citi','Barclays','Credit Agricole','NatWest','Lloyds','Santander','ING','Rabobank','KfW','NIB','NDB','Chile','France','South Korea','Japan','Mexico','Colombia','Peru','Philippines','Indonesia','Spain','Italy','Belgium','Netherlands','Ireland','Portugal','Austria','Sweden'];
+const REGIONS=['Europe','North America','Asia-Pacific','Latin America','Africa','Middle East','Global'];
 
-const TABS = ['ICMA SBP Compliance', 'Use of Proceeds', 'Target Population', 'Social KPIs & SDGs', 'Bond Overview'];
-const PIE_COLORS = ['#059669', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#f97316', '#14b8a6'];
-
-const sbpComponents = [
-  { component: 'Use of Proceeds', score: Math.round(seed(1) * 15 + 78), max: 100, weight: 0.3 },
-  { component: 'Process Evaluation', score: Math.round(seed(2) * 12 + 72), max: 100, weight: 0.25 },
-  { component: 'Management of Proceeds', score: Math.round(seed(3) * 10 + 80), max: 100, weight: 0.25 },
-  { component: 'Reporting', score: Math.round(seed(4) * 14 + 68), max: 100, weight: 0.2 },
-];
-const sbpOverall = Math.round(sbpComponents.reduce((s, c) => s + c.score * c.weight, 0));
-const sbpAligned = sbpOverall >= 72;
-
-const gapChecklist = [
-  { item: 'Eligible project categories defined per ICMA SBP', pass: true },
-  { item: 'Eligible population criteria documented', pass: true },
-  { item: 'SPO / second-party opinion obtained', pass: true },
-  { item: 'Proceeds tracked to separate account', pass: true },
-  { item: 'Annual impact report published', pass: seed(11) > 0.3 },
-  { item: 'Beneficiary count independently verified', pass: seed(12) > 0.5 },
-  { item: 'Additionality demonstrated vs baseline', pass: seed(13) > 0.4 },
-  { item: 'UN SDG cross-reference included', pass: true },
-];
-
-const proceedCategories = [
-  { name: 'Affordable Housing', amount: Math.round(seed(21) * 40 + 80), eligible: true },
-  { name: 'Access to Education', amount: Math.round(seed(22) * 35 + 60), eligible: true },
-  { name: 'Healthcare Services', amount: Math.round(seed(23) * 30 + 55), eligible: true },
-  { name: 'SME Finance', amount: Math.round(seed(24) * 25 + 45), eligible: true },
-  { name: 'Food Security', amount: Math.round(seed(25) * 20 + 35), eligible: true },
-  { name: 'Clean Water & Sanitation', amount: Math.round(seed(26) * 18 + 30), eligible: true },
-  { name: 'Employment Generation', amount: Math.round(seed(27) * 22 + 40), eligible: true },
-  { name: 'Financial Inclusion', amount: Math.round(seed(28) * 15 + 25), eligible: true },
-  { name: 'Digital Inclusion', amount: Math.round(seed(29) * 12 + 20), eligible: seed(30) > 0.3 },
-];
-const totalProceeds = proceedCategories.reduce((s, c) => s + c.amount, 0);
-
-const targetGroups = [
-  'Women & Girls', 'Youth', 'Elderly', 'Migrants & Refugees', 'People with Disabilities',
-  'Rural Communities', 'Indigenous Peoples', 'Unemployed', 'Underbanked', 'Low-Income HH',
-];
-
-const geoData = [
-  { region: 'Sub-Saharan Africa', beneficiaries: Math.round(seed(41) * 30000 + 25000) },
-  { region: 'South Asia', beneficiaries: Math.round(seed(42) * 25000 + 20000) },
-  { region: 'SE Asia', beneficiaries: Math.round(seed(43) * 20000 + 18000) },
-  { region: 'Latin America', beneficiaries: Math.round(seed(44) * 15000 + 12000) },
-  { region: 'MENA', beneficiaries: Math.round(seed(45) * 12000 + 10000) },
-];
-const totalBeneficiaries = geoData.reduce((s, g) => s + g.beneficiaries, 0) + Math.round(seed(46) * 10000 + 15000);
-const additionalityScore = Math.round(seed(47) * 20 + 68);
-
-const kpiList = [
-  { name: 'Households Housed', value: Math.round(seed(51) * 500 + 800), unit: 'units', sdg: 'SDG 11.1', quantified: true },
-  { name: 'Students Enrolled', value: Math.round(seed(52) * 2000 + 5000), unit: 'students', sdg: 'SDG 4.1', quantified: true },
-  { name: 'Patients Treated', value: Math.round(seed(53) * 5000 + 12000), unit: 'patients/yr', sdg: 'SDG 3.8', quantified: true },
-  { name: 'SMEs Financed', value: Math.round(seed(54) * 100 + 150), unit: 'SMEs', sdg: 'SDG 8.3', quantified: true },
-  { name: 'Jobs Created', value: Math.round(seed(55) * 500 + 1200), unit: 'FTE jobs', sdg: 'SDG 8.5', quantified: true },
-  { name: 'Clean Water Access', value: Math.round(seed(56) * 3000 + 8000), unit: 'people', sdg: 'SDG 6.1', quantified: true },
-  { name: 'Women Beneficiaries', value: Math.round(seed(57) * 20 + 45), unit: '%', sdg: 'SDG 5.a', quantified: true },
-  { name: 'Digital Accounts Opened', value: Math.round(seed(58) * 1000 + 2500), unit: 'accounts', sdg: 'SDG 10.2', quantified: seed(59) > 0.3 },
-];
-const kpiQualityScore = Math.round(kpiList.filter(k => k.quantified).length / kpiList.length * 100);
-
-const sdgAlignment = [
-  { sdg: 'SDG 1', name: 'No Poverty', relevance: Math.round(seed(61) * 40 + 50) },
-  { sdg: 'SDG 2', name: 'Zero Hunger', relevance: Math.round(seed(62) * 35 + 45) },
-  { sdg: 'SDG 3', name: 'Good Health', relevance: Math.round(seed(63) * 30 + 60) },
-  { sdg: 'SDG 4', name: 'Education', relevance: Math.round(seed(64) * 35 + 55) },
-  { sdg: 'SDG 5', name: 'Gender Eq.', relevance: Math.round(seed(65) * 30 + 50) },
-  { sdg: 'SDG 6', name: 'Clean Water', relevance: Math.round(seed(66) * 25 + 48) },
-  { sdg: 'SDG 8', name: 'Decent Work', relevance: Math.round(seed(67) * 30 + 62) },
-  { sdg: 'SDG 10', name: 'Reduced Ineq.', relevance: Math.round(seed(68) * 25 + 52) },
-  { sdg: 'SDG 11', name: 'Sustainable Cities', relevance: Math.round(seed(69) * 28 + 55) },
-  { sdg: 'SDG 16', name: 'Peace & Justice', relevance: Math.round(seed(70) * 20 + 40) },
-];
-
-const impactScore = Math.round(seed(81) * 20 + 72);
-const bondTier = impactScore >= 82 ? 'Gold' : impactScore >= 72 ? 'Silver' : 'Bronze';
-const tierColor = bondTier === 'Gold' ? 'gold' : bondTier === 'Silver' ? 'gray' : 'yellow';
-const totalIssuance = Math.round(seed(82) * 200 + 400);
-
-export default function SocialBondPage() {
-  const [tab, setTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [bondSize, setBondSize] = useState('500');
-
-  const runAnalysis = async () => {
-    setLoading(true); setError('');
-    try {
-      await axios.post(`${API}/api/v1/social-bond/assess`, { bond_size_m: parseFloat(bondSize) });
-    } catch {
-      void 0 /* API fallback to seed data */;
-    } finally { setLoading(false); }
+const BONDS=Array.from({length:60},(_,i)=>{
+  const cat=CATEGORIES[Math.floor(sr(i*3)*CATEGORIES.length)];
+  const issuer=ISSUERS[Math.floor(sr(i*7)*ISSUERS.length)];
+  const reg=REGIONS[Math.floor(sr(i*11)*REGIONS.length)];
+  return{id:i+1,name:`Social Bond ${issuer} ${(2020+Math.floor(sr(i*13)*6))}`,issuer,category:cat,region:reg,
+    amount:+(sr(i*17)*3000+100).toFixed(0),currency:['USD','EUR','GBP','JPY','CHF'][Math.floor(sr(i*19)*5)],
+    coupon:+(sr(i*23)*4+0.5).toFixed(2),tenor:Math.floor(sr(i*29)*20+3),maturity:2025+Math.floor(sr(i*31)*15),
+    spread:+(sr(i*37)*150+20).toFixed(0),rating:['AAA','AA+','AA','AA-','A+','A','BBB+','BBB'][Math.floor(sr(i*41)*8)],
+    beneficiaries:Math.floor(sr(i*43)*500000+10000),jobsCreated:Math.floor(sr(i*47)*5000+100),
+    housingUnits:Math.floor(sr(i*53)*2000+50),healthcarePts:Math.floor(sr(i*59)*100000+5000),
+    icmaAligned:sr(i*61)>0.15,externalReview:sr(i*67)>0.2,impactReport:sr(i*71)>0.25,
+    sdgs:[1,2,3,4,5,6,8,10,11].filter((_,j)=>sr(i*73+j)>0.5),
+    greenium:+(sr(i*79)*10-2).toFixed(1),demandRatio:+(sr(i*83)*4+1.5).toFixed(1),
+    useOfProceeds:+(sr(i*89)*100).toFixed(0),reportingFreq:['Annual','Semi-annual','Quarterly'][Math.floor(sr(i*97)*3)],
+    framework:['ICMA SBP','Own Framework','National Framework'][Math.floor(sr(i*101)*3)],
+    verifier:['Sustainalytics','ISS ESG','Vigeo Eiris','CICERO','DNV','S&P SPO'][Math.floor(sr(i*103)*6)],
   };
+});
 
-  return (
-    <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Social Bond & Impact Finance (E85)</h1>
-        <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>ICMA SBP Compliance · Use of Proceeds · Target Population · Social KPIs & SDGs · Bond Overview</p>
-      </div>
+const ANNUAL=Array.from({length:10},(_,i)=>({
+  year:2016+i,issuance:+(sr(i*107)*200+50).toFixed(0),outstanding:+(sr(i*109)*800+100).toFixed(0),
+  count:Math.floor(sr(i*113)*80+10),avgSize:+(sr(i*117)*500+100).toFixed(0),
+  sovereign:+(sr(i*121)*100+20).toFixed(0),corporate:+(sr(i*127)*80+15).toFixed(0),
+  supra:+(sr(i*131)*60+10).toFixed(0),avgCoupon:+(sr(i*137)*2+1).toFixed(2),
+}));
 
-      <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #e5e7eb' }}>
-        {TABS.map((t, i) => (
-          <button key={i} onClick={() => setTab(i)} style={{ padding: '10px 14px', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 500, background: 'none', color: tab === i ? '#059669' : '#6b7280', borderBottom: tab === i ? '2px solid #059669' : '2px solid transparent' }}>{t}</button>
+const IMPACT_CATS=CATEGORIES.map((c,i)=>({
+  name:c,totalFunding:+(sr(i*139)*5000+500).toFixed(0),projects:Math.floor(sr(i*143)*200+20),
+  beneficiaries:Math.floor(sr(i*149)*2000000+50000),avgImpact:+(sr(i*151)*40+50).toFixed(1),
+  dataQuality:['High','Medium','Low'][Math.floor(sr(i*157)*3)],
+}));
+
+export default function SocialBondPage(){
+  const [tab,setTab]=useState(0);
+  const [search,setSearch]=useState('');
+  const [sortCol,setSortCol]=useState('amount');
+  const [sortDir,setSortDir]=useState('desc');
+  const [page,setPage]=useState(0);
+  const [expanded,setExpanded]=useState(null);
+  const [filterCat,setFilterCat]=useState('All');
+  const [filterReg,setFilterReg]=useState('All');
+  const [impSearch,setImpSearch]=useState('');
+  const [impSort,setImpSort]=useState('totalFunding');
+  const [impDir,setImpDir]=useState('desc');
+  const [impExpanded,setImpExpanded]=useState(null);
+
+  const filtered=useMemo(()=>{
+    let d=[...BONDS];
+    if(search)d=d.filter(b=>b.name.toLowerCase().includes(search.toLowerCase())||b.issuer.toLowerCase().includes(search.toLowerCase()));
+    if(filterCat!=='All')d=d.filter(b=>b.category===filterCat);
+    if(filterReg!=='All')d=d.filter(b=>b.region===filterReg);
+    d.sort((a,b)=>sortDir==='asc'?((a[sortCol]>b[sortCol])?1:-1):((a[sortCol]<b[sortCol])?1:-1));
+    return d;
+  },[search,sortCol,sortDir,filterCat,filterReg]);
+
+  const paged=filtered.slice(page*PAGE,page*PAGE+PAGE);
+  const totalPages=Math.ceil(filtered.length/PAGE);
+
+  const impFiltered=useMemo(()=>{
+    let d=[...IMPACT_CATS];
+    if(impSearch)d=d.filter(c=>c.name.toLowerCase().includes(impSearch.toLowerCase()));
+    d.sort((a,b)=>impDir==='asc'?((a[impSort]>b[impSort])?1:-1):((a[impSort]<b[impSort])?1:-1));
+    return d;
+  },[impSearch,impSort,impDir]);
+
+  const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(0);};
+  const doImpSort=(col)=>{if(impSort===col)setImpDir(d=>d==='asc'?'desc':'asc');else{setImpSort(col);setImpDir('desc');}};
+
+  const exportCSV=(data,fn)=>{if(!data.length)return;const h=Object.keys(data[0]);const csv=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
+
+  const kpis=useMemo(()=>{
+    const total=filtered.reduce((s,b)=>s+b.amount,0);
+    const avgCoup=filtered.reduce((s,b)=>s+parseFloat(b.coupon),0)/filtered.length;
+    const avgTenor=filtered.reduce((s,b)=>s+b.tenor,0)/filtered.length;
+    const icma=filtered.filter(b=>b.icmaAligned).length;
+    return{count:filtered.length,total,avgCoup,avgTenor,icma};
+  },[filtered]);
+
+  const catDist=useMemo(()=>{const m={};CATEGORIES.forEach(c=>m[c]=0);filtered.forEach(b=>m[b.category]++);return Object.entries(m).map(([name,value])=>({name:name.length>16?name.slice(0,16)+'..':name,value,full:name}));},[filtered]);
+  const regDist=useMemo(()=>{const m={};REGIONS.forEach(r=>m[r]=0);filtered.forEach(b=>m[b.region]++);return Object.entries(m).map(([name,value])=>({name,value}));},[filtered]);
+  const ratingDist=useMemo(()=>{const m={};filtered.forEach(b=>{m[b.rating]=(m[b.rating]||0)+1;});return Object.entries(m).sort().map(([name,value])=>({name,value}));},[filtered]);
+
+  const SortH=({col,label,w})=><th onClick={()=>doSort(col)} style={{cursor:'pointer',padding:'10px 8px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontSize:11,fontWeight:700,color:T.textSec,fontFamily:T.mono,letterSpacing:0.5,width:w,userSelect:'none',whiteSpace:'nowrap'}}>{label}{sortCol===col?(sortDir==='asc'?' \u25B2':' \u25BC'):''}</th>;
+  const ImpSH=({col,label})=><th onClick={()=>doImpSort(col)} style={{cursor:'pointer',padding:'10px 8px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontSize:11,fontWeight:700,color:T.textSec,fontFamily:T.mono,userSelect:'none'}}>{label}{impSort===col?(impDir==='asc'?' \u25B2':' \u25BC'):''}</th>;
+
+  const Pg=({pg,setPg,tot})=>(
+    <div style={{display:'flex',justifyContent:'center',gap:6,marginTop:14}}>
+      <button onClick={()=>setPg(p=>Math.max(0,p-1))} disabled={pg===0} style={{padding:'6px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:pg===0?'default':'pointer',opacity:pg===0?0.4:1,fontSize:12}}>Prev</button>
+      {Array.from({length:Math.min(tot,7)},(_,i)=>{const p=tot<=7?i:pg<3?i:pg>tot-4?tot-7+i:pg-3+i;return <button key={p} onClick={()=>setPg(p)} style={{padding:'6px 12px',border:`1px solid ${pg===p?T.gold:T.border}`,borderRadius:6,background:pg===p?T.gold:'transparent',color:pg===p?'#fff':T.text,cursor:'pointer',fontWeight:pg===p?700:400,fontSize:12}}>{p+1}</button>;})}
+      <button onClick={()=>setPg(p=>Math.min(tot-1,p+1))} disabled={pg>=tot-1} style={{padding:'6px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:pg>=tot-1?'default':'pointer',opacity:pg>=tot-1?0.4:1,fontSize:12}}>Next</button>
+    </div>
+  );
+
+  const renderOverview=()=>(
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:20}}>
+        {[{l:'Total Bonds',v:kpis.count},{l:'Total Volume',v:'$'+fmt(kpis.total)+'M'},{l:'Avg Coupon',v:kpis.avgCoup.toFixed(2)+'%'},{l:'Avg Tenor',v:kpis.avgTenor.toFixed(1)+'yr'},{l:'ICMA Aligned',v:kpis.icma}].map((k,i)=>(
+          <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}>
+            <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{k.l}</div>
+            <div style={{fontSize:24,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div>
+          </div>
         ))}
       </div>
-
-      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
-
-      {/* TAB 1 — ICMA SBP Compliance */}
-      {tab === 0 && (
-        <div>
-          <Section title="SBP Overall Score">
-            <Row gap={12}>
-              <KpiCard label="Overall SBP Score" value={`${sbpOverall}/100`} sub="Weighted across 4 core components" accent />
-              <KpiCard label="SBP Aligned" value={<Badge label={sbpAligned ? 'SBP Aligned ✓' : 'Partial Alignment'} color={sbpAligned ? 'green' : 'yellow'} />} sub="ICMA Social Bond Principles 2023" />
-              <KpiCard label="Gaps Identified" value={gapChecklist.filter(g => !g.pass).length} sub="Items requiring remediation" />
-              <KpiCard label="Passing Checks" value={`${gapChecklist.filter(g => g.pass).length}/${gapChecklist.length}`} sub="SBP compliance checklist" />
-            </Row>
-          </Section>
-
-          <Section title="4-Component SBP Scores">
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={sbpComponents}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="component" tick={{ fontSize: 12 }} />
-                <YAxis domain={[0, 100]} unit="%" />
-                <Tooltip formatter={(val) => `${val}/100`} />
-                <Legend />
-                <Bar dataKey="score" fill="#059669" name="Score" radius={[4, 4, 0, 0]}>
-                  {sbpComponents.map((c, i) => <Cell key={i} fill={c.score >= 80 ? '#059669' : c.score >= 70 ? '#10b981' : '#f59e0b'} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-
-          <Section title="SBP Gap Checklist">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              {gapChecklist.map((g, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 6, background: g.pass ? '#f0fdf4' : '#fef2f2', border: `1px solid ${g.pass ? '#bbf7d0' : '#fca5a5'}` }}>
-                  <span style={{ fontSize: 18, color: g.pass ? '#059669' : '#dc2626' }}>{g.pass ? '✓' : '✗'}</span>
-                  <span style={{ fontSize: 13, color: '#374151' }}>{g.item}</span>
-                </div>
-              ))}
-            </div>
-          </Section>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Annual Issuance by Issuer Type</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/>
+              <Area type="monotone" dataKey="sovereign" stackId="1" stroke={T.navy} fill={T.navy} fillOpacity={0.3} name="Sovereign ($B)"/>
+              <Area type="monotone" dataKey="corporate" stackId="1" stroke={T.gold} fill={T.gold} fillOpacity={0.3} name="Corporate ($B)"/>
+              <Area type="monotone" dataKey="supra" stackId="1" stroke={T.sage} fill={T.sage} fillOpacity={0.3} name="Supranational ($B)"/>
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
-      )}
-
-      {/* TAB 2 — Use of Proceeds */}
-      {tab === 1 && (
-        <div>
-          <Section title="Proceeds Summary">
-            <Row gap={12}>
-              <KpiCard label="Total Bond Issuance" value={`€${totalIssuance}M`} sub="Net proceeds allocated" accent />
-              <KpiCard label="Eligible Categories" value={proceedCategories.filter(c => c.eligible).length} sub="Out of 9 ICMA categories" />
-              <KpiCard label="Largest Allocation" value={proceedCategories.sort((a, b) => b.amount - a.amount)[0].name} sub={`€${proceedCategories[0].amount}M`} />
-              <KpiCard label="100% Allocation" value={<Badge label="Fully Allocated ✓" color="green" />} sub="All proceeds earmarked" />
-            </Row>
-          </Section>
-
-          <Section title="Allocation by ICMA Eligible Category">
-            <Row>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie data={proceedCategories} cx="50%" cy="50%" outerRadius={110} dataKey="amount" nameKey="name" label={({ name, percent }) => `${name.split(' ')[0]}: ${(percent * 100).toFixed(0)}%`}>
-                    {proceedCategories.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip formatter={(val) => `€${val}M`} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-              <div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ background: '#f9fafb' }}>
-                      {['Category', 'Amount (€M)', '% Total', 'ICMA Eligible'].map(h => (
-                        <th key={h} style={{ padding: '8px 10px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {proceedCategories.map((r, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                        <td style={{ padding: '8px 10px', fontWeight: 500, color: '#1b3a5c' }}>{r.name}</td>
-                        <td style={{ padding: '8px 10px', color: '#374151' }}>{r.amount}</td>
-                        <td style={{ padding: '8px 10px', color: '#6b7280' }}>{((r.amount / totalProceeds) * 100).toFixed(1)}%</td>
-                        <td style={{ padding: '8px 10px' }}><span style={{ fontSize: 16, color: r.eligible ? '#059669' : '#9ca3af' }}>{r.eligible ? '✓' : '✗'}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Row>
-          </Section>
-
-          <Section title="Excluded Activities">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {['Fossil Fuel Production', 'Weapons Manufacturing', 'Gambling', 'Tobacco', 'Alcohol (excl. artisanal)', 'Adult Entertainment', 'Predatory Lending', 'Animal Testing (cosmetics)'].map((a, i) => (
-                <span key={i} style={{ padding: '4px 12px', borderRadius: 12, background: '#fee2e2', color: '#991b1b', fontSize: 12, fontWeight: 600 }}>✗ {a}</span>
-              ))}
-            </div>
-          </Section>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Social Category Distribution</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart><Pie data={catDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`}>{catDist.map((_,i)=><Cell key={i} fill={CC[i%CC.length]}/>)}</Pie><Tooltip {...tip}/></PieChart>
+          </ResponsiveContainer>
         </div>
-      )}
-
-      {/* TAB 3 — Target Population */}
-      {tab === 2 && (
-        <div>
-          <Section title="Beneficiary Overview">
-            <Row gap={12}>
-              <KpiCard label="Total Beneficiaries" value={totalBeneficiaries.toLocaleString()} sub="Across all funded projects" accent />
-              <KpiCard label="Target Groups" value={targetGroups.length} sub="Covered by ICMA SBP criteria" />
-              <KpiCard label="Additionality Score" value={`${additionalityScore}/100`} sub="vs business-as-usual baseline" />
-              <KpiCard label="Geographic Reach" value={`${geoData.length} Regions`} sub="Multi-regional programme" />
-            </Row>
-          </Section>
-
-          <Section title="Target Population Group Coverage">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-              {targetGroups.map((g, i) => (
-                <span key={i} style={{ padding: '5px 14px', borderRadius: 16, background: PIE_COLORS[i % PIE_COLORS.length] + '22', color: PIE_COLORS[i % PIE_COLORS.length], fontSize: 13, fontWeight: 600, border: `1px solid ${PIE_COLORS[i % PIE_COLORS.length]}44` }}>{g}</span>
-              ))}
-            </div>
-          </Section>
-
-          <Section title="Geographic Beneficiary Distribution">
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={geoData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis type="category" dataKey="region" width={130} tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(val) => val.toLocaleString() + ' people'} />
-                <Bar dataKey="beneficiaries" fill="#059669" name="Beneficiaries" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-
-          <Section title="Additionality Assessment">
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 16 }}>
-              <Row gap={12}>
-                <KpiCard label="Additionality Score" value={`${additionalityScore}/100`} sub="Above 65 = demonstrated" accent />
-                <KpiCard label="Assessment Method" value="Counterfactual" sub="vs BAU baseline scenario" />
-                <KpiCard label="Independent Verification" value={<Badge label={seed(90) > 0.4 ? 'Verified ✓' : 'Pending'} color={seed(90) > 0.4 ? 'green' : 'yellow'} />} sub="Third-party review" />
-                <KpiCard label="Additionality Status" value={<Badge label={additionalityScore >= 65 ? 'Demonstrated' : 'Partial'} color={additionalityScore >= 65 ? 'green' : 'yellow'} />} sub="ICMA additionality criteria" />
-              </Row>
-              <div style={{ marginTop: 12, fontSize: 13, color: '#374151' }}>
-                Social bond projects demonstrate additionality through: (1) targeting underserved populations excluded from commercial markets; (2) below-market pricing / subsidised rates; (3) geographic concentration in bottom-2-quintile income areas; (4) provision of services with documented unmet demand (housing shortage: {Math.round(seed(91) * 10000 + 15000).toLocaleString()} units; education gap: {Math.round(seed(92) * 5000 + 8000).toLocaleString()} enrolment deficit).
-              </div>
-            </div>
-          </Section>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Region Breakdown</div>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={regDist} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="name" type="category" width={100} tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="value" fill={T.sage} radius={[0,6,6,0]}/></BarChart>
+          </ResponsiveContainer>
         </div>
-      )}
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Credit Rating Distribution</div>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={ratingDist}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="value" fill={T.navy} radius={[6,6,0,0]}/></BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+        <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Market Size & Deal Count Trend</div>
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={ANNUAL}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:10,fill:T.textMut}}/><YAxis yAxisId="l" tick={{fontSize:10,fill:T.textMut}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/>
+            <Line yAxisId="l" type="monotone" dataKey="outstanding" stroke={T.navy} strokeWidth={2} name="Outstanding ($B)"/>
+            <Line yAxisId="r" type="monotone" dataKey="count" stroke={T.gold} strokeWidth={2} name="Deal Count"/>
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 
-      {/* TAB 4 — Social KPIs & SDGs */}
-      {tab === 3 && (
-        <div>
-          <Section title="KPI Quality Overview">
-            <Row gap={12}>
-              <KpiCard label="KPI Quality Score" value={`${kpiQualityScore}/100`} sub="% quantified with baseline" accent />
-              <KpiCard label="Total KPIs Tracked" value={kpiList.length} sub="Per ICMA impact reporting" />
-              <KpiCard label="SDGs Addressed" value={sdgAlignment.length} sub="UN Sustainable Development Goals" />
-              <KpiCard label="Quantified KPIs" value={kpiList.filter(k => k.quantified).length} sub="With measurable targets" />
-            </Row>
-          </Section>
-
-          <Section title="Social KPI Register">
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-              <thead>
-                <tr style={{ background: '#f9fafb' }}>
-                  {['KPI', 'Value', 'Unit', 'SDG Target', 'Quantified'].map(h => (
-                    <th key={h} style={{ padding: '10px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
-                  ))}
+  const renderScreener=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+        <input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search bonds or issuers..." style={{flex:1,minWidth:200,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,fontFamily:T.font,background:T.surface}}/>
+        <select value={filterCat} onChange={e=>{setFilterCat(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}><option value="All">All Categories</option>{CATEGORIES.map(c=><option key={c} value={c}>{c}</option>)}</select>
+        <select value={filterReg} onChange={e=>{setFilterReg(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}><option value="All">All Regions</option>{REGIONS.map(r=><option key={r} value={r}>{r}</option>)}</select>
+        <button onClick={()=>exportCSV(filtered,'social_bonds.csv')} style={{padding:'8px 16px',border:'none',borderRadius:8,background:T.gold,color:'#fff',fontWeight:600,fontSize:13,cursor:'pointer'}}>Export CSV</button>
+      </div>
+      <div style={{fontSize:12,color:T.textMut,marginBottom:8,fontFamily:T.mono}}>Showing {filtered.length} bonds | Page {page+1}/{totalPages}</div>
+      <div style={{overflowX:'auto'}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:12,fontFamily:T.font}}>
+          <thead><tr style={{background:T.surfaceH}}>
+            <SortH col="name" label="Bond" w="180px"/><SortH col="issuer" label="Issuer"/><SortH col="category" label="Category"/>
+            <SortH col="amount" label="Amount ($M)"/><SortH col="coupon" label="Coupon %"/><SortH col="tenor" label="Tenor"/>
+            <SortH col="rating" label="Rating"/><SortH col="spread" label="Spread (bp)"/>
+            <SortH col="beneficiaries" label="Beneficiaries"/><SortH col="greenium" label="Greenium"/>
+          </tr></thead>
+          <tbody>
+            {paged.map(b=>(
+              <React.Fragment key={b.id}>
+                <tr onClick={()=>setExpanded(expanded===b.id?null:b.id)} style={{cursor:'pointer',background:expanded===b.id?T.surfaceH:'transparent',borderBottom:`1px solid ${T.border}`}}>
+                  <td style={{padding:'10px 8px',fontWeight:600,color:T.navy}}>{expanded===b.id?'\u25BC':'\u25B6'} {b.name.slice(0,25)}</td>
+                  <td style={{padding:'10px 8px',color:T.textSec}}>{b.issuer}</td>
+                  <td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:T.surfaceH,color:T.navy}}>{b.category}</span></td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{fmt(b.amount)}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.coupon}%</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.tenor}yr</td>
+                  <td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:b.rating.startsWith('AA')?'#d1fae5':'#fef3c7',color:b.rating.startsWith('AA')?'#065f46':'#92400e'}}>{b.rating}</span></td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{b.spread}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{fmt(b.beneficiaries)}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono,color:parseFloat(b.greenium)<0?T.green:T.red}}>{b.greenium}bp</td>
                 </tr>
-              </thead>
-              <tbody>
-                {kpiList.map((k, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#1b3a5c' }}>{k.name}</td>
-                    <td style={{ padding: '10px 12px', color: '#374151', fontWeight: 600 }}>{k.value.toLocaleString()}</td>
-                    <td style={{ padding: '10px 12px', color: '#6b7280' }}>{k.unit}</td>
-                    <td style={{ padding: '10px 12px' }}><Badge label={k.sdg} color="blue" /></td>
-                    <td style={{ padding: '10px 12px' }}><span style={{ fontSize: 16, color: k.quantified ? '#059669' : '#9ca3af' }}>{k.quantified ? '✓' : '✗'}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Section>
-
-          <Section title="SDG Alignment Radar">
-            <Row>
-              <ResponsiveContainer width="100%" height={300}>
-                <RadarChart data={sdgAlignment}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="sdg" tick={{ fontSize: 11 }} />
-                  <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                  <Radar name="Relevance" dataKey="relevance" stroke="#059669" fill="#059669" fillOpacity={0.3} />
-                  <Tooltip />
-                </RadarChart>
-              </ResponsiveContainer>
-              <div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ background: '#f9fafb' }}>
-                      {['SDG', 'Goal', 'Relevance', 'Level'].map(h => (
-                        <th key={h} style={{ padding: '8px 10px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sdgAlignment.map((s, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                        <td style={{ padding: '8px 10px', fontWeight: 700, color: '#059669' }}>{s.sdg}</td>
-                        <td style={{ padding: '8px 10px', color: '#374151' }}>{s.name}</td>
-                        <td style={{ padding: '8px 10px', fontWeight: 600 }}>{s.relevance}</td>
-                        <td style={{ padding: '8px 10px' }}><Badge label={s.relevance >= 70 ? 'Primary' : s.relevance >= 50 ? 'Secondary' : 'Supporting'} color={s.relevance >= 70 ? 'green' : s.relevance >= 50 ? 'blue' : 'gray'} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Row>
-          </Section>
-        </div>
-      )}
-
-      {/* TAB 5 — Bond Overview */}
-      {tab === 4 && (
-        <div>
-          <Section title="Bond Summary">
-            <Row gap={12}>
-              <KpiCard label="Bond Tier" value={<Badge label={`${bondTier} Standard`} color={tierColor} />} sub="ICMA SBP impact tier" accent />
-              <KpiCard label="Impact Score" value={`${impactScore}/100`} sub="Composite impact assessment" />
-              <KpiCard label="Total Issuance" value={`€${totalIssuance}M`} sub="Outstanding social bonds" />
-              <KpiCard label="SBP Composite Score" value={`${sbpOverall}/100`} sub="4-component weighted average" />
-            </Row>
-            <Row gap={12}>
-              <KpiCard label="SPO Provider" value="Sustainalytics" sub="Second-party opinion issued" />
-              <KpiCard label="Beneficiaries" value={totalBeneficiaries.toLocaleString()} sub="Total impact beneficiaries" />
-              <KpiCard label="SDGs Addressed" value={sdgAlignment.length} sub="UN Global Goals" />
-              <KpiCard label="Additionality" value={<Badge label={additionalityScore >= 65 ? 'Demonstrated' : 'Partial'} color={additionalityScore >= 65 ? 'green' : 'yellow'} />} sub="vs BAU baseline" />
-            </Row>
-          </Section>
-
-          <Section title="Issuance Breakdown by Category">
-            <Row>
-              <ResponsiveContainer width="100%" height={280}>
-                <PieChart>
-                  <Pie data={proceedCategories.slice(0, 6)} cx="50%" cy="50%" innerRadius={60} outerRadius={110} dataKey="amount" nameKey="name" label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}>
-                    {proceedCategories.slice(0, 6).map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                  </Pie>
-                  <Tooltip formatter={(val) => `€${val}M`} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-              <div>
-                <Section title="Recommendations">
-                  <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 14 }}>
-                    {[
-                      `Obtain independent verification for beneficiary count (currently ${gapChecklist.filter(g => !g.pass).length} gap(s) identified).`,
-                      `Upgrade SBP alignment from ${sbpAligned ? 'aligned' : 'partial'} to Gold Standard by improving annual impact reporting frequency.`,
-                      `Expand geographic coverage — add Eastern Europe + Pacific Islands to reach 7-region mandate.`,
-                      `Commission third-party additionality study to raise score from ${additionalityScore} to ≥80 for institutional investor eligibility.`,
-                      `Consider green-social hybrid issuance (Sustainability Bond) to capture dual-label premium (~15-20bps greenium).`,
-                    ].map((rec, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 7, fontSize: 13, color: '#374151' }}>
-                        <span style={{ color: '#059669', fontWeight: 700, minWidth: 18 }}>{i + 1}.</span>
-                        <span>{rec}</span>
+                {expanded===b.id&&(
+                  <tr><td colSpan={10} style={{padding:20,background:T.surfaceH,borderBottom:`2px solid ${T.gold}`}}>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Bond Details</div>
+                        {[['Currency',b.currency],['Maturity',b.maturity],['Region',b.region],['Framework',b.framework],['Verifier',b.verifier],['Reporting',b.reportingFreq],['Demand Ratio',b.demandRatio+'x']].map(([l,v])=>(
+                          <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:12,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textMut}}>{l}</span><span style={{fontWeight:600,color:T.navy,fontFamily:T.mono}}>{v}</span></div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </Section>
-              </div>
-            </Row>
-          </Section>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Social Impact</div>
+                        {[['Jobs Created',fmt(b.jobsCreated)],['Housing Units',fmt(b.housingUnits)],['Healthcare Pts',fmt(b.healthcarePts)],['ICMA Aligned',b.icmaAligned?'Yes':'No'],['External Review',b.externalReview?'Yes':'No'],['Impact Report',b.impactReport?'Yes':'No'],['SDGs',b.sdgs.join(', ')]].map(([l,v])=>(
+                          <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:12,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textMut}}>{l}</span><span style={{fontWeight:600,color:T.navy,fontFamily:T.mono}}>{v}</span></div>
+                        ))}
+                      </div>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Use of Proceeds</div>
+                        <ResponsiveContainer width="100%" height={200}>
+                          <PieChart><Pie data={[{name:'Deployed',value:parseFloat(b.useOfProceeds)},{name:'Unallocated',value:100-parseFloat(b.useOfProceeds)}]} dataKey="value" cx="50%" cy="50%" outerRadius={70} label><Cell fill={T.green}/><Cell fill={T.border}/></Pie><Tooltip {...tip}/></PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </td></tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Pg pg={page} setPg={setPage} tot={totalPages}/>
+    </div>
+  );
+
+  const renderImpact=()=>(
+    <div>
+      <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
+        <input value={impSearch} onChange={e=>setImpSearch(e.target.value)} placeholder="Search impact categories..." style={{flex:1,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}/>
+        <button onClick={()=>exportCSV(IMPACT_CATS,'social_impact.csv')} style={{padding:'8px 16px',border:'none',borderRadius:8,background:T.gold,color:'#fff',fontWeight:600,fontSize:13,cursor:'pointer'}}>Export CSV</button>
+      </div>
+      <div style={{overflowX:'auto',marginBottom:20}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
+          <thead><tr style={{background:T.surfaceH}}>
+            <ImpSH col="name" label="Category"/><ImpSH col="totalFunding" label="Total Funding ($M)"/>
+            <ImpSH col="projects" label="Projects"/><ImpSH col="beneficiaries" label="Beneficiaries"/>
+            <ImpSH col="avgImpact" label="Impact Score"/><ImpSH col="dataQuality" label="Data Quality"/>
+          </tr></thead>
+          <tbody>
+            {impFiltered.map(c=>(
+              <React.Fragment key={c.name}>
+                <tr onClick={()=>setImpExpanded(impExpanded===c.name?null:c.name)} style={{cursor:'pointer',background:impExpanded===c.name?T.surfaceH:'transparent',borderBottom:`1px solid ${T.border}`}}>
+                  <td style={{padding:'10px 8px',fontWeight:600,color:T.navy}}>{impExpanded===c.name?'\u25BC':'\u25B6'} {c.name}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>${fmt(parseFloat(c.totalFunding))}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{c.projects}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{fmt(c.beneficiaries)}</td>
+                  <td style={{padding:'10px 8px',fontFamily:T.mono}}>{c.avgImpact}</td>
+                  <td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:c.dataQuality==='High'?'#d1fae5':c.dataQuality==='Medium'?'#fef3c7':'#fee2e2',color:c.dataQuality==='High'?'#065f46':c.dataQuality==='Medium'?'#92400e':'#991b1b'}}>{c.dataQuality}</span></td>
+                </tr>
+                {impExpanded===c.name&&(
+                  <tr><td colSpan={6} style={{padding:16,background:T.surfaceH,borderBottom:`2px solid ${T.gold}`}}>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                      <div style={{fontSize:12,color:T.textSec,lineHeight:1.6}}>
+                        <p><strong>{c.name}</strong> encompasses social bond projects under ICMA Social Bond Principles.</p>
+                        <p>Total ${fmt(parseFloat(c.totalFunding))}M across {c.projects} projects reaching {fmt(c.beneficiaries)} beneficiaries.</p>
+                        <p>Impact score of {c.avgImpact}/100 with {c.dataQuality.toLowerCase()} data quality.</p>
+                      </div>
+                      <ResponsiveContainer width="100%" height={180}>
+                        <RadarChart data={[{m:'Funding',v:parseFloat(c.totalFunding)/50},{m:'Projects',v:c.projects/2},{m:'Beneficiaries',v:c.beneficiaries/20000},{m:'Impact',v:parseFloat(c.avgImpact)},{m:'Quality',v:c.dataQuality==='High'?90:c.dataQuality==='Medium'?60:30}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:9}}/><Radar dataKey="v" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/></RadarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </td></tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Funding by Category</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={IMPACT_CATS} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="name" type="category" width={120} tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="totalFunding" fill={T.navy} radius={[0,6,6,0]} name="Funding ($M)"/></BarChart>
+          </ResponsiveContainer>
         </div>
-      )}
+        <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Impact Score vs Beneficiaries</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Impact" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="y" name="Beneficiaries" tick={{fontSize:10,fill:T.textMut}}/><ZAxis dataKey="z" range={[60,400]}/><Tooltip {...tip}/><Scatter data={IMPACT_CATS.map(c=>({name:c.name,x:parseFloat(c.avgImpact),y:c.beneficiaries,z:parseFloat(c.totalFunding)}))} fill={T.gold} fillOpacity={0.7}/></ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderFramework=()=>{
+    const frameDist=[];const fMap={};filtered.forEach(b=>{fMap[b.framework]=(fMap[b.framework]||0)+1;});Object.entries(fMap).forEach(([name,value])=>frameDist.push({name,value}));
+    const verDist=[];const vMap={};filtered.forEach(b=>{vMap[b.verifier]=(vMap[b.verifier]||0)+1;});Object.entries(vMap).forEach(([name,value])=>verDist.push({name,value}));
+    return(
+      <div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+          {[{l:'ICMA Aligned',v:filtered.filter(b=>b.icmaAligned).length+'/'+filtered.length},{l:'External Review',v:filtered.filter(b=>b.externalReview).length},{l:'Impact Reports',v:filtered.filter(b=>b.impactReport).length},{l:'Avg Demand',v:(filtered.reduce((s,b)=>s+parseFloat(b.demandRatio),0)/filtered.length).toFixed(1)+'x'}].map((k,i)=>(
+            <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}>
+              <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase'}}>{k.l}</div>
+              <div style={{fontSize:22,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
+          <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Framework Distribution</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart><Pie data={frameDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label>{frameDist.map((_,i)=><Cell key={i} fill={CC[i%CC.length]}/>)}</Pie><Tooltip {...tip}/><Legend/></PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Verifier Distribution</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={verDist}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9,fill:T.textMut}} angle={-30} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="value" fill={T.sage} radius={[6,6,0,0]}/></BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Greenium Analysis</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={filtered.slice(0,20).map(b=>({name:b.issuer.slice(0,12),greenium:parseFloat(b.greenium)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-45} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="greenium" fill={T.navy} radius={[4,4,0,0]} name="Greenium (bp)"/></BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Reporting Frequency</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart><Pie data={['Annual','Semi-annual','Quarterly'].map(f=>({name:f,value:filtered.filter(b=>b.reportingFreq===f).length}))} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label>{[T.navy,T.gold,T.sage].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/><Legend/></PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return(
+    <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px'}}>
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,textTransform:'uppercase',letterSpacing:1}}>Fixed Income / Social</div>
+        <h1 style={{fontSize:28,fontWeight:800,color:T.navy,margin:'4px 0 0'}}>Social Bond Analytics</h1>
+        <div style={{width:40,height:3,background:T.gold,borderRadius:2,marginTop:6}}/>
+      </div>
+      <div style={{display:'flex',gap:0,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>
+        {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`3px solid ${T.gold}`:'3px solid transparent',background:'transparent',color:tab===i?T.navy:T.textMut,fontWeight:tab===i?700:500,fontSize:13,cursor:'pointer',fontFamily:T.font}}>{t}</button>)}
+      </div>
+      {tab===0&&renderOverview()}
+      {tab===1&&renderScreener()}
+      {tab===2&&renderImpact()}
+      {tab===3&&renderFramework()}
     </div>
   );
 }
