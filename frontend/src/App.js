@@ -322,6 +322,9 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BF — Data Hub Ingester Monitor · OWID CO₂ & EVIC Analytics
+const DataHubIngesterPage    = React.lazy(() => import("./features/data-hub-ingester/pages/DataHubIngesterPage"));
+const OwIdEvicAnalyticsPage  = React.lazy(() => import("./features/owid-evic-analytics/pages/OwIdEvicAnalyticsPage"));
 // Sprint BE — DME Financial Risk · DME PD Engine · DME Dynamic Materiality Index
 const DmeFinancialRiskPage = React.lazy(() => import("./features/dme-financial-risk/pages/DmeFinancialRiskPage"));
 const DmePdEnginePage      = React.lazy(() => import("./features/dme-pd-engine/pages/DmePdEnginePage"));
@@ -911,6 +914,10 @@ const NAV_GROUPS = [
     { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
     { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
+  ]},
+  { label: 'Data Hub & Ingesters', icon: '🔄', color: '#0891b2', items: [
+    { path: '/data-hub-ingester',   label: 'Data Hub Ingester Monitor',  badge: 'APScheduler · 15 Jobs · GLEIF · OWID · yfinance · BaseIngester', code: 'EP-BF1' },
+    { path: '/owid-evic-analytics', label: 'OWID CO₂ & EVIC Analytics',  badge: 'OWID 207C · EVIC 3.5K · WACI · PCAF · 1990–2023',              code: 'EP-BF2' },
   ]},
   { label: 'Dynamic Materiality Engine', icon: '⚙️', color: '#0f766e', items: [
     { path: '/dme-financial-risk', label: 'DME Financial Risk',           badge: 'VaR · WACC · LCR · ECL · IFRS 9 · 40 Entities',     code: 'EP-BE1' },
@@ -1677,6 +1684,9 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BF — Data Hub Ingester Monitor · OWID CO₂ & EVIC Analytics */}
+            <Route path="/data-hub-ingester"   element={<DataHubIngesterPage />} />
+            <Route path="/owid-evic-analytics" element={<OwIdEvicAnalyticsPage />} />
             {/* Sprint BE — DME Financial Risk · DME PD Engine · DME Dynamic Materiality Index */}
             <Route path="/dme-financial-risk" element={<DmeFinancialRiskPage />} />
             <Route path="/dme-pd-engine"      element={<DmePdEnginePage />} />
