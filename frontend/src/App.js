@@ -322,6 +322,9 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BD — Greenium Signal Engine · Sentiment Pipeline Engine
+const GreeniumSignalPage    = React.lazy(() => import("./features/greenium-signal/pages/GreeniumSignalPage"));
+const SentimentPipelinePage = React.lazy(() => import("./features/sentiment-pipeline/pages/SentimentPipelinePage"));
 // Sprint BC — Residential RE Assessment · XBRL Ingestion
 const ResidentialReAssessmentPage = React.lazy(() => import("./features/residential-re-assessment/pages/ResidentialReAssessmentPage"));
 const XbrlIngestionPage            = React.lazy(() => import("./features/xbrl-ingestion/pages/XbrlIngestionPage"));
@@ -772,6 +775,7 @@ const NAV_GROUPS = [
     { path: '/esg-momentum-scanner',       label: 'ESG Momentum Scanner',       badge: 'Improvers · 847 Signals · Controversy Recovery · Rotation', code: 'EP-AF3' },
     { path: '/net-zero-portfolio-builder', label: 'Net Zero Portfolio Builder', badge: 'SBTi · PAII · NZBA · 1.8°C Rating · Paris-Aligned',        code: 'EP-AF4' },
     { path: '/esg-factor-alpha',           label: 'ESG Factor Alpha Engine',    badge: '10 Factors · +187bps Alpha · IC 0.09 · Barra-Style',       code: 'EP-AF5' },
+    { path: '/greenium-signal',            label: 'Greenium Alpha Signal Engine',badge: '5-Model Ensemble · BUY/SELL · 40 Instruments · 52w Backtest', code: 'EP-BD1' },
   ]},
   { label: 'Corporate Governance', icon: '🏛️', color: '#6366f1', items: [
     { path: '/board-composition',          label: 'Board Composition & Effectiveness', badge: '34% Female · 78% Indep · Skills Matrix · Tenure',       code: 'EP-AE1' },
@@ -911,6 +915,7 @@ const NAV_GROUPS = [
     { path: '/portfolio-optimizer',  label: 'Portfolio Optimizer',       badge: 'Markowitz · ESG Constraints',  code: 'EP-H3' },
     { path: '/controversy-monitor',  label: 'Controversy Monitor',      badge: 'RepRisk · Severity 1-5',       code: 'EP-H4' },
     { path: '/ai-sentiment',         label: 'AI Sentiment Intelligence', badge: 'NLP · E/S/G · 30-Day Feed',   code: 'EP-H5' },
+    { path: '/sentiment-pipeline',   label: 'Sentiment Pipeline Engine',  badge: '8-Step · 60 Signals · Credibility Tiers · EWMA · Alerts', code: 'EP-BD2' },
     { path: '/regulatory-gap',       label: 'Regulatory Gap Analyzer',  badge: '8 Frameworks · 60+ Reqs',      code: 'EP-H6' },
     { path: '/climate-physical-risk',  label: 'Physical Risk Engine',    badge: 'IPCC AR6 · 6 Hazards · SSP',  code: 'EP-H7' },
     { path: '/climate-transition-risk',label: 'Transition Risk Engine',  badge: 'NGFS · 4 Channels · Carbon',  code: 'EP-H8' },
@@ -1663,6 +1668,9 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BD — Greenium Signal Engine · Sentiment Pipeline Engine */}
+            <Route path="/greenium-signal"    element={<GreeniumSignalPage />} />
+            <Route path="/sentiment-pipeline" element={<SentimentPipelinePage />} />
             {/* Sprint BC — Residential RE Assessment · XBRL Ingestion */}
             <Route path="/residential-re-assessment" element={<ResidentialReAssessmentPage />} />
             <Route path="/xbrl-ingestion"            element={<XbrlIngestionPage />} />

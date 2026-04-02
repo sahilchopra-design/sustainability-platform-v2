@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null, info: null }; }
@@ -28,7 +29,13 @@ try {
   );
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5 * 60 * 1000, retry: 1 } },
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  React.createElement(ErrorBoundary, null, React.createElement(App))
+  React.createElement(QueryClientProvider, { client: queryClient },
+    React.createElement(ErrorBoundary, null, React.createElement(App))
+  )
 );
