@@ -322,6 +322,14 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BL — ML Risk Scorer · NLP Disclosure Parser · Predictive Analytics Hub
+const MLRiskScorerPage            = React.lazy(() => import("./features/ml-risk-scorer/pages/MLRiskScorerPage"));
+const NLPDisclosureParserPage     = React.lazy(() => import("./features/nlp-disclosure-parser/pages/NLPDisclosureParserPage"));
+const PredictiveAnalyticsHubPage2 = React.lazy(() => import("./features/predictive-analytics-hub/pages/PredictiveAnalyticsHubPage"));
+// Sprint BK — Asset Valuation Engine · Infrastructure Valuation · Real Estate Valuation
+const AssetValuationEnginePage    = React.lazy(() => import("./features/asset-valuation-engine/pages/AssetValuationEnginePage"));
+const InfrastructureValuationPage = React.lazy(() => import("./features/infrastructure-valuation/pages/InfrastructureValuationPage"));
+const RealEstateValuationPage     = React.lazy(() => import("./features/real-estate-valuation/pages/RealEstateValuationPage"));
 // Sprint BJ — NGFS×IEA Scenario Engine · Climate-Credit Integration
 const NgfsIeaScenarioPage        = React.lazy(() => import("./features/ngfs-iea-scenario/pages/NgfsIeaScenarioPage"));
 const ClimateCreditIntegrationPage = React.lazy(() => import("./features/climate-credit-integration/pages/ClimateCreditIntegrationPage"));
@@ -926,6 +934,16 @@ const NAV_GROUPS = [
     { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
     { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
+  ]},
+  { label: 'ML & Predictive Analytics', icon: '🤖', color: '#4f46e5', items: [
+    { path: '/ml-risk-scorer',          label: 'XGBoost Climate Risk Scorer',    badge: 'XGBoost · Quantile Regression · SHAP · Conformal Prediction · Training UI', code: 'EP-BL1' },
+    { path: '/nlp-disclosure-parser',   label: 'NLP Disclosure & Greenwashing',  badge: 'BERT · Greenwashing Detection · CSRD Extraction · Sentiment · Calibration',  code: 'EP-BL2' },
+    { path: '/predictive-analytics-hub', label: 'Predictive Analytics Hub',      badge: 'iTransformer · Model Registry · Anomaly Detection · Drift Monitor',          code: 'EP-BL3' },
+  ]},
+  { label: 'Asset Valuation & Real Estate', icon: '🏗️', color: '#92400e', items: [
+    { path: '/asset-valuation-engine',    label: 'Climate-Adjusted DCF Engine',   badge: 'DCF · Monte Carlo · Real Options · Black-Scholes · M&A Comps · Interactive', code: 'EP-BK1' },
+    { path: '/infrastructure-valuation',  label: 'Infrastructure Valuation',      badge: 'RAB Model · Greenfield DCF · PPP · Stranded Assets · ESG Greenium',          code: 'EP-BK2' },
+    { path: '/real-estate-valuation',     label: 'Real Estate Valuation & ESG',   badge: 'RICS Red Book · Climate Haircut · GRESB · EPC Premium · Physical Risk',       code: 'EP-BK3' },
   ]},
   { label: 'NGFS × IEA Climate Scenarios', icon: '🌡️', color: '#0f766e', items: [
     { path: '/ngfs-iea-scenario',          label: 'NGFS × IEA Scenario Engine',     badge: 'NGFS Ph5 · IEA WEO 2024 · IPCC AR6 · 14 Scenarios · BMA Ensemble · Carbon Price', code: 'EP-BJ1' },
@@ -1712,6 +1730,14 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BL — ML Risk Scorer · NLP Disclosure Parser · Predictive Analytics Hub */}
+            <Route path="/ml-risk-scorer"          element={<MLRiskScorerPage />} />
+            <Route path="/nlp-disclosure-parser"   element={<NLPDisclosureParserPage />} />
+            <Route path="/predictive-analytics-hub" element={<PredictiveAnalyticsHubPage2 />} />
+            {/* Sprint BK — Asset Valuation Engine · Infrastructure Valuation · Real Estate Valuation */}
+            <Route path="/asset-valuation-engine"   element={<AssetValuationEnginePage />} />
+            <Route path="/infrastructure-valuation" element={<InfrastructureValuationPage />} />
+            <Route path="/real-estate-valuation"    element={<RealEstateValuationPage />} />
             {/* Sprint BJ — NGFS×IEA Scenario Engine · Climate-Credit Integration */}
             <Route path="/ngfs-iea-scenario"          element={<NgfsIeaScenarioPage />} />
             <Route path="/climate-credit-integration" element={<ClimateCreditIntegrationPage />} />
