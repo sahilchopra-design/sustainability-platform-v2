@@ -322,6 +322,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint AY — EUDR Engine · CSDDD Engine · Entity 360 Intelligence
+const EudrEnginePage   = React.lazy(() => import("./features/eudr-engine/pages/EudrEnginePage"));
+const CsdddEnginePage  = React.lazy(() => import("./features/csddd-engine/pages/CsdddEnginePage"));
+const Entity360Page    = React.lazy(() => import("./features/entity-360/pages/Entity360Page"));
 // Sprint AX — Sovereign & Country Climate Risk Intelligence (new analytical modules)
 const SovereignEsgScorerPage   = React.lazy(() => import("./features/sovereign-esg-scorer/pages/SovereignEsgScorerPage"));
 const NdcAlignmentTrackerPage  = React.lazy(() => import("./features/ndc-alignment-tracker/pages/NdcAlignmentTrackerPage"));
@@ -729,6 +733,8 @@ const NAV_GROUPS = [
     { path: '/issb-disclosure',       label: 'ISSB / IFRS S1-S2 Disclosure', badge: 'IFRS S1/S2 · 20+ Jurisdictions · TCFD Superseded · Metrics',  code: 'EP-AH3' },
     { path: '/uk-sdr',                label: 'UK SDR Labelling Engine',       badge: 'FCA 4 Labels · Anti-Greenwash · KPIs · SDR Compliance',        code: 'EP-AH4' },
     { path: '/sec-climate-rule',      label: 'SEC Climate Rule Compliance',  badge: 'Reg S-K/S-X · March 2024 · Scopes · Financial Impact',         code: 'EP-AH5' },
+    { path: '/eudr-engine',           label: 'EUDR Due Diligence Engine',    badge: 'Reg 2023/1115 · 7 Commodities · 80 Suppliers · DDS · Art 29', code: 'EP-AY1' },
+    { path: '/csddd-engine',          label: 'CSDDD Due Diligence Engine',   badge: 'Dir 2024/1760 · Art 6-11 · Value Chain · Art 22 · Art 29',   code: 'EP-AY2' },
   ]},
   { label: 'Private Markets ESG', icon: '🏢', color: '#0369a1', items: [
     { path: '/private-markets-esg-hub', label: 'Private Markets ESG Hub',    badge: 'Hub · PE+Credit+Infra+RE+VC · $8.4T AUM · ESG DD',        code: 'EP-AG6' },
@@ -877,6 +883,7 @@ const NAV_GROUPS = [
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
   ]},
   { label: 'Institutional Analytics & AI', icon: '🧠', color: '#7e22ce', items: [
+    { path: '/entity-360',           label: 'Entity 360° Intelligence',  badge: 'Cross-Module · ESG+Climate+Regulatory+Supply Chain · 20 Entities', code: 'EP-AY3' },
     { path: '/risk-attribution',     label: 'Risk Attribution Engine',   badge: 'Barra · 6 Factors · Alpha',   code: 'EP-H1' },
     { path: '/fixed-income-esg',     label: 'Fixed Income & Green Bonds', badge: 'ICMA GBP · Greenium · SLB',  code: 'EP-H2' },
     { path: '/portfolio-optimizer',  label: 'Portfolio Optimizer',       badge: 'Markowitz · ESG Constraints',  code: 'EP-H3' },
@@ -1634,6 +1641,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint AY — EUDR Engine · CSDDD Engine · Entity 360 Intelligence */}
+            <Route path="/eudr-engine"  element={<EudrEnginePage />} />
+            <Route path="/csddd-engine" element={<CsdddEnginePage />} />
+            <Route path="/entity-360"   element={<Entity360Page />} />
             {/* Sprint AX — Sovereign & Country Climate Risk Intelligence (new modules) */}
             <Route path="/sovereign-esg-scorer"     element={<SovereignEsgScorerPage />} />
             <Route path="/ndc-alignment-tracker"    element={<NdcAlignmentTrackerPage />} />
