@@ -322,6 +322,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BE — DME Financial Risk · DME PD Engine · DME Dynamic Materiality Index
+const DmeFinancialRiskPage = React.lazy(() => import("./features/dme-financial-risk/pages/DmeFinancialRiskPage"));
+const DmePdEnginePage      = React.lazy(() => import("./features/dme-pd-engine/pages/DmePdEnginePage"));
+const DmeIndexPage         = React.lazy(() => import("./features/dme-index/pages/DmeIndexPage"));
 // Sprint BD — Greenium Signal Engine · Sentiment Pipeline Engine
 const GreeniumSignalPage    = React.lazy(() => import("./features/greenium-signal/pages/GreeniumSignalPage"));
 const SentimentPipelinePage = React.lazy(() => import("./features/sentiment-pipeline/pages/SentimentPipelinePage"));
@@ -907,6 +911,11 @@ const NAV_GROUPS = [
     { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
     { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
+  ]},
+  { label: 'Dynamic Materiality Engine', icon: '⚙️', color: '#0f766e', items: [
+    { path: '/dme-financial-risk', label: 'DME Financial Risk',           badge: 'VaR · WACC · LCR · ECL · IFRS 9 · 40 Entities',     code: 'EP-BE1' },
+    { path: '/dme-pd-engine',      label: 'DME Probability of Default',   badge: '4-Branch PD · Merton DD · Sector Coefficients · 40E', code: 'EP-BE2' },
+    { path: '/dme-index',          label: 'DME Dynamic Materiality Index', badge: 'DMI=40%+40%+20% · Regime · EMA · Portfolio HHI',     code: 'EP-BE3' },
   ]},
   { label: 'Institutional Analytics & AI', icon: '🧠', color: '#7e22ce', items: [
     { path: '/entity-360',           label: 'Entity 360° Intelligence',  badge: 'Cross-Module · ESG+Climate+Regulatory+Supply Chain · 20 Entities', code: 'EP-AY3' },
@@ -1668,6 +1677,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BE — DME Financial Risk · DME PD Engine · DME Dynamic Materiality Index */}
+            <Route path="/dme-financial-risk" element={<DmeFinancialRiskPage />} />
+            <Route path="/dme-pd-engine"      element={<DmePdEnginePage />} />
+            <Route path="/dme-index"          element={<DmeIndexPage />} />
             {/* Sprint BD — Greenium Signal Engine · Sentiment Pipeline Engine */}
             <Route path="/greenium-signal"    element={<GreeniumSignalPage />} />
             <Route path="/sentiment-pipeline" element={<SentimentPipelinePage />} />
