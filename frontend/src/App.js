@@ -322,6 +322,9 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BI — Credit Risk Analytics · Platform Analytics Dashboard
+const CreditRiskAnalyticsPage = React.lazy(() => import("./features/credit-risk-analytics/pages/CreditRiskAnalyticsPage"));
+const PlatformAnalyticsPage   = React.lazy(() => import("./features/platform-analytics/pages/PlatformAnalyticsPage"));
 // Sprint BH — DB Migration Console · Multi-Tenancy & Org Management
 const DbMigrationConsolePage  = React.lazy(() => import("./features/db-migration-console/pages/DbMigrationConsolePage"));
 const MultiTenancyAuditPage   = React.lazy(() => import("./features/multi-tenancy-audit/pages/MultiTenancyAuditPage"));
@@ -920,6 +923,10 @@ const NAV_GROUPS = [
     { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
     { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
+  ]},
+  { label: 'Credit & Platform Intelligence', icon: '📈', color: '#1b3a5c', items: [
+    { path: '/credit-risk-analytics', label: 'Credit Risk Analytics',        badge: '45 Obligors · PD/LGD/EAD/ECL · Migration Matrix · Basel IV RWA', code: 'EP-BI1' },
+    { path: '/platform-analytics',    label: 'Platform Analytics Dashboard', badge: 'DAU · API Perf · Module Adoption · System Health · 90d Trend',    code: 'EP-BI2' },
   ]},
   { label: 'Platform Operations', icon: '🗄️', color: '#1b3a5c', items: [
     { path: '/db-migration-console',  label: 'DB Migration Console',        badge: 'Alembic · 87 Revisions · 060 Applied · 027 Pending · Runbook', code: 'EP-BH1' },
@@ -1698,6 +1705,9 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BI — Credit Risk Analytics · Platform Analytics Dashboard */}
+            <Route path="/credit-risk-analytics" element={<CreditRiskAnalyticsPage />} />
+            <Route path="/platform-analytics"    element={<PlatformAnalyticsPage />} />
             {/* Sprint BH — DB Migration Console · Multi-Tenancy & Org Management */}
             <Route path="/db-migration-console"  element={<DbMigrationConsolePage />} />
             <Route path="/multi-tenancy-audit"   element={<MultiTenancyAuditPage />} />
