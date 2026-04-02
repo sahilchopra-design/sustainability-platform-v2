@@ -322,6 +322,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint AZ — Double Materiality Workshop · SFDR PAI Dashboard · XBRL Export Wizard
+const DoubleMaterialityWorkshopPage = React.lazy(() => import("./features/double-materiality-workshop/pages/DoubleMaterialityWorkshopPage"));
+const SfdrPaiDashboardPage          = React.lazy(() => import("./features/sfdr-pai-dashboard/pages/SfdrPaiDashboardPage"));
+const XbrlExportWizardPage          = React.lazy(() => import("./features/xbrl-export-wizard/pages/XbrlExportWizardPage"));
 // Sprint AY — EUDR Engine · CSDDD Engine · Entity 360 Intelligence
 const EudrEnginePage   = React.lazy(() => import("./features/eudr-engine/pages/EudrEnginePage"));
 const CsdddEnginePage  = React.lazy(() => import("./features/csddd-engine/pages/CsdddEnginePage"));
@@ -733,8 +737,11 @@ const NAV_GROUPS = [
     { path: '/issb-disclosure',       label: 'ISSB / IFRS S1-S2 Disclosure', badge: 'IFRS S1/S2 · 20+ Jurisdictions · TCFD Superseded · Metrics',  code: 'EP-AH3' },
     { path: '/uk-sdr',                label: 'UK SDR Labelling Engine',       badge: 'FCA 4 Labels · Anti-Greenwash · KPIs · SDR Compliance',        code: 'EP-AH4' },
     { path: '/sec-climate-rule',      label: 'SEC Climate Rule Compliance',  badge: 'Reg S-K/S-X · March 2024 · Scopes · Financial Impact',         code: 'EP-AH5' },
-    { path: '/eudr-engine',           label: 'EUDR Due Diligence Engine',    badge: 'Reg 2023/1115 · 7 Commodities · 80 Suppliers · DDS · Art 29', code: 'EP-AY1' },
-    { path: '/csddd-engine',          label: 'CSDDD Due Diligence Engine',   badge: 'Dir 2024/1760 · Art 6-11 · Value Chain · Art 22 · Art 29',   code: 'EP-AY2' },
+    { path: '/eudr-engine',                  label: 'EUDR Due Diligence Engine',        badge: 'Reg 2023/1115 · 7 Commodities · 80 Suppliers · DDS · Art 29',  code: 'EP-AY1' },
+    { path: '/csddd-engine',                 label: 'CSDDD Due Diligence Engine',       badge: 'Dir 2024/1760 · Art 6-11 · Value Chain · Art 22 · Art 29',    code: 'EP-AY2' },
+    { path: '/double-materiality-workshop',  label: 'Double Materiality Workshop',      badge: 'ESRS 1 · 10 Topics · IRO Registry · Matrix · EFRAG IG 1',     code: 'EP-AZ1' },
+    { path: '/sfdr-pai-dashboard',           label: 'SFDR PAI Dashboard',               badge: '18 Mandatory PAIs · Art 6/8/9 · Annex I RTS · 8 Funds',       code: 'EP-AZ2' },
+    { path: '/xbrl-export-wizard',           label: 'XBRL Export Wizard',               badge: 'iXBRL · EFRAG ESRS 2024 · ESEF · ESMA Validation · Filing',    code: 'EP-AZ3' },
   ]},
   { label: 'Private Markets ESG', icon: '🏢', color: '#0369a1', items: [
     { path: '/private-markets-esg-hub', label: 'Private Markets ESG Hub',    badge: 'Hub · PE+Credit+Infra+RE+VC · $8.4T AUM · ESG DD',        code: 'EP-AG6' },
@@ -1641,6 +1648,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint AZ — Double Materiality Workshop · SFDR PAI Dashboard · XBRL Export Wizard */}
+            <Route path="/double-materiality-workshop" element={<DoubleMaterialityWorkshopPage />} />
+            <Route path="/sfdr-pai-dashboard"          element={<SfdrPaiDashboardPage />} />
+            <Route path="/xbrl-export-wizard"          element={<XbrlExportWizardPage />} />
             {/* Sprint AY — EUDR Engine · CSDDD Engine · Entity 360 Intelligence */}
             <Route path="/eudr-engine"  element={<EudrEnginePage />} />
             <Route path="/csddd-engine" element={<CsdddEnginePage />} />
