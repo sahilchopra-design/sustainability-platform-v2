@@ -322,6 +322,9 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BB — PE Deal Pipeline & Fund Structure · Technology Risk Panel
+const PeDealPipelinePage   = React.lazy(() => import("./features/pe-deal-pipeline/pages/PeDealPipelinePage"));
+const TechnologyRiskPage   = React.lazy(() => import("./features/technology-risk/pages/TechnologyRiskPage"));
 // Sprint BA — Sovereign Climate Risk Intelligence · SEC Climate Disclosure
 const SovereignClimateIntelligencePage = React.lazy(() => import("./features/sovereign-climate-intelligence/pages/SovereignClimateIntelligencePage"));
 const SecClimateDisclosurePage         = React.lazy(() => import("./features/sec-climate-disclosure/pages/SecClimateDisclosurePage"));
@@ -482,6 +485,7 @@ const NAV_GROUPS = [
     { path: '/climate-insurance', label: 'Climate Insurance', badge: 'IAIS', code: 'E79' },
     { path: '/climate-litigation', label: 'Climate Litigation Risk', badge: 'CPLI', code: 'E91' },
     { path: '/em-climate-risk', label: 'EM Climate Risk', badge: 'IFC PS6', code: 'E87' },
+    { path: '/technology-risk', label: 'Technology Risk Panel', badge: 'Cyber · AI/Model · OT · DORA · NIS2 · EU AI Act · 45 Entities', code: 'EP-BB2' },
   ]},
   { label: 'Carbon & Emissions', icon: '\uD83C\uDF2B\uFE0F', color: PASTEL[1], items: [
     { path: '/integrated-carbon-emissions', label: 'Integrated Carbon Hub', badge: 'Hub · All Scopes · 150 Holdings · 8 Tabs · Board Report', code: 'ICE-001' },
@@ -869,6 +873,7 @@ const NAV_GROUPS = [
     { path: '/fund-of-funds',             label: 'Fund-of-Funds',              badge: '12 Funds · 5 Asset Classes',    code: 'EP-L3' },
     { path: '/lp-reporting',              label: 'LP Reporting Engine',         badge: 'EDCI · SFDR · PRI · TCFD',     code: 'EP-L4' },
     { path: '/co-investment',             label: 'Co-Investment ESG',           badge: '10 Opportunities · Scoring',    code: 'EP-L5' },
+    { path: '/pe-deal-pipeline',          label: 'PE Deal Pipeline & Fund Structure', badge: '50 Deals · 5 Funds · J-Curve · DPI/TVPI · Waterfall', code: 'EP-BB1' },
   ]},
   { label: 'Supply Chain & Scope 3', icon: '🔗', color: '#7e22ce', items: [
     { path: '/value-chain-dashboard',     label: 'Value Chain Hub',            badge: 'Hub · Scope 3 · CSDDD · EUDR', code: 'EP-K6' },
@@ -1653,6 +1658,9 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BB — PE Deal Pipeline · Technology Risk */}
+            <Route path="/pe-deal-pipeline"  element={<PeDealPipelinePage />} />
+            <Route path="/technology-risk"   element={<TechnologyRiskPage />} />
             {/* Sprint BA — Sovereign Climate Risk Intelligence · SEC Climate Disclosure */}
             <Route path="/sovereign-climate-intelligence" element={<SovereignClimateIntelligencePage />} />
             <Route path="/sec-climate-disclosure"         element={<SecClimateDisclosurePage />} />
