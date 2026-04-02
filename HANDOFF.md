@@ -275,4 +275,103 @@ Key files:
 
 ---
 
+## The Plan — What Comes Next
+
+> Full plan docs: `PLAN_STATUS.md`, `WORK_PLAN.md`, `FUNCTIONAL_GAPS_AND_PLAN.md`, `IMPLEMENTATION_PLAN_V2.md`
+
+### Priority 0 — Infrastructure (blocking production / demo)
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| P0-1 | Auth/RBAC enforcement on write routes | ⚠️ Partial | `Depends(get_current_user)` wired to 6 route groups on `remediation-v1`. Still many unprotected write endpoints. Full sweep needed. |
+| P0-2 | Frontend build passes (`npm run build`) | ❓ Not verified | Must pass clean before any PR to main |
+| P0-3 | Backend startup clean (no import errors) | ❓ Not verified | Run `uvicorn backend.main:app` and check for 500s / import failures |
+| P0-4 | Migration chain gap at revision 020 | ⚠️ Open | Alembic chain jumps 019 → 021. Add or verify missing revision. |
+| P0-5 | Apply migrations 061–087 to Supabase | ❌ Not done | Generate SQL with `--sql` flag, review, apply via Supabase SQL editor |
+
+### Priority 1 — Frontend Coverage (new engines have no UI)
+
+These backend engines are complete but have zero frontend panels. Build in sprint order:
+
+| # | Engine | Sprint target | Nav group |
+|---|--------|---------------|-----------|
+| F-1 | EUDR Engine | Sprint AY | "Regulatory" |
+| F-2 | CSDDD Engine | Sprint AY | "Regulatory" |
+| F-3 | Entity 360 (cross-module unified view) | Sprint AY | "Analytics" |
+| F-4 | Double Materiality workshop UI (ESRS VSME) | Sprint AZ | "ESG" |
+| F-5 | SFDR PAI full disclosure dashboard | Sprint AZ | "Regulatory" |
+| F-6 | XBRL Export wizard | Sprint AZ | "Regulatory" |
+| F-7 | Sovereign Climate Risk panel | Sprint BA | "Risk & Macro" |
+| F-8 | SEC Climate Disclosure panel | Sprint BA | "Regulatory" |
+| F-9 | PE Deal Pipeline + Fund Structure UI | Sprint BB | "Private Markets" |
+| F-10 | Technology Risk panel | Sprint BB | "Risk & Sector" |
+| F-11 | Residential RE assessment panel | Sprint BC | "Real Estate" |
+| F-12 | XBRL Ingestion filing import workflow | Sprint BC | "Data" |
+
+**~12 sprint-modules of frontend work outstanding for existing engines.**
+
+### Priority 2 — @tanstack/react-query Wiring
+
+`@tanstack/react-query` v5 was added to `package.json` but **not wired up yet**.
+
+Steps:
+1. Add `QueryClient` + `QueryClientProvider` to `frontend/src/index.js`
+2. Optionally add `ReactQueryDevtools` to `App.js` (dev only)
+3. Migrate the highest-traffic data fetching hooks (portfolio, dashboard) to `useQuery`
+
+```jsx
+// index.js
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient();
+root.render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
+);
+```
+
+### Priority 3 — Data Hub Ingesters
+
+The Data Hub scaffold exists (54 files). The actual ingestion runners do not exist yet.
+Build order (each is ~M effort, 1 session per 3–4 ingesters):
+
+```
+BaseIngester + APScheduler → GLEIF LEI → OWID CO2 → yfinance EVIC
+→ SBTi Registry → Climate TRACE → Sanctions (OFAC/EU/UN)
+→ WDPA + GFW spatial → SEC EDGAR XBRL → GDELT BigQuery
+```
+
+### Priority 4 — Infrastructure / Production Readiness
+
+| Task | Notes |
+|------|-------|
+| CI/CD pipeline (GitHub Actions) | Lint → test → build on PR |
+| Sentry / APM error monitoring | Wire to FastAPI middleware |
+| Celery/RQ task queue | Replace synchronous PDF extraction |
+| PostGIS spatial queries | `spatial_hazard_service.py` needs `ST_Within`/`ST_Intersects` |
+| Multi-tenancy `org_id` FK audit | Ensure `org_id` on all core tables |
+| TimescaleDB time-series | `migration 018` exists; services don't use it yet |
+
+### Session Efficiency Rules (from WORK_PLAN.md)
+
+1. **One theme per session** — don't mix backend engine work with frontend restyling
+2. **Cap at 8–10 file creates OR 5–6 large file edits per session**
+3. **Migrations are cheap** — batch multiple together
+4. **Frontend components are expensive** — JSX files 400–1000+ lines; limit 3–4 per session
+5. **Always commit at end of session**
+6. **Read only what you need** — don't read 2000-line files to edit 20 lines
+
+### Platform Completeness Estimates (as of 2026-04-02)
+
+| Layer | Completeness |
+|-------|-------------|
+| Backend engines | ~95% |
+| API routes | ~90% |
+| Frontend modules | ~270+ routed, but ~12 new engines lack any UI |
+| Migrations applied to Supabase | ~69% (001–060 of 087) |
+| Auth/RBAC enforcement | ~30% of routes |
+| Production readiness | ~50% |
+
+---
+
 *Generated: 2026-04-02 | Branch: remediation-v1 | Commit: c7ec5a9*
