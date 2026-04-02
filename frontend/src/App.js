@@ -322,6 +322,9 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BC — Residential RE Assessment · XBRL Ingestion
+const ResidentialReAssessmentPage = React.lazy(() => import("./features/residential-re-assessment/pages/ResidentialReAssessmentPage"));
+const XbrlIngestionPage            = React.lazy(() => import("./features/xbrl-ingestion/pages/XbrlIngestionPage"));
 // Sprint BB — PE Deal Pipeline & Fund Structure · Technology Risk Panel
 const PeDealPipelinePage   = React.lazy(() => import("./features/pe-deal-pipeline/pages/PeDealPipelinePage"));
 const TechnologyRiskPage   = React.lazy(() => import("./features/technology-risk/pages/TechnologyRiskPage"));
@@ -662,6 +665,7 @@ const NAV_GROUPS = [
     { path: '/embodied-carbon',              label: 'Embodied Carbon',              badge: '80 Projects · A1-D Lifecycle · 30 Materials · RIBA 2030',           code: 'EP-AS3' },
     { path: '/climate-resilient-design',     label: 'Climate Resilient Design',     badge: '100 Buildings · 6 Hazards · Adaptation · Insurance Impact',         code: 'EP-AS4' },
     { path: '/tenant-engagement-esg',        label: 'Tenant Engagement ESG',        badge: '80 Tenants · Green Leases · Scope 3 Downstream · CRM',             code: 'EP-AS5' },
+    { path: '/residential-re-assessment',   label: 'Residential RE Assessment',    badge: '60 Properties · EPC A-G · Flood Zone · Stranded · Mortgage Stress', code: 'EP-BC1' },
   ]},
   { label: 'Insurance & Underwriting Climate', icon: '🛡️', color: '#9f1239', items: [
     { path: '/insurance-climate-hub',        label: 'Insurance Climate Hub',        badge: 'Hub · Cat Model+Underwriting+Parametric+Re · Board',                code: 'EP-AR6' },
@@ -749,6 +753,7 @@ const NAV_GROUPS = [
     { path: '/double-materiality-workshop',  label: 'Double Materiality Workshop',      badge: 'ESRS 1 · 10 Topics · IRO Registry · Matrix · EFRAG IG 1',     code: 'EP-AZ1' },
     { path: '/sfdr-pai-dashboard',           label: 'SFDR PAI Dashboard',               badge: '18 Mandatory PAIs · Art 6/8/9 · Annex I RTS · 8 Funds',       code: 'EP-AZ2' },
     { path: '/xbrl-export-wizard',           label: 'XBRL Export Wizard',               badge: 'iXBRL · EFRAG ESRS 2024 · ESEF · ESMA Validation · Filing',    code: 'EP-AZ3' },
+    { path: '/xbrl-ingestion',               label: 'XBRL Ingestion & Filing Import',   badge: '30 Filings · EFRAG ESRS 2024 · 12 Validation Rules · Pipeline', code: 'EP-BC2' },
     { path: '/sovereign-climate-intelligence',label: 'Sovereign Climate Intelligence', badge: 'ND-GAIN · NGFS Scenarios · Spread Impact · 25 Sovereigns',   code: 'EP-BA1' },
     { path: '/sec-climate-disclosure',        label: 'SEC Climate Disclosure Panel',   badge: 'RESCINDED 27-Mar-25 · Items 1500-1505 · TCFD · ISSB S2',    code: 'EP-BA2' },
   ]},
@@ -1658,6 +1663,9 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BC — Residential RE Assessment · XBRL Ingestion */}
+            <Route path="/residential-re-assessment" element={<ResidentialReAssessmentPage />} />
+            <Route path="/xbrl-ingestion"            element={<XbrlIngestionPage />} />
             {/* Sprint BB — PE Deal Pipeline · Technology Risk */}
             <Route path="/pe-deal-pipeline"  element={<PeDealPipelinePage />} />
             <Route path="/technology-risk"   element={<TechnologyRiskPage />} />
