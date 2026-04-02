@@ -322,6 +322,9 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BA — Sovereign Climate Risk Intelligence · SEC Climate Disclosure
+const SovereignClimateIntelligencePage = React.lazy(() => import("./features/sovereign-climate-intelligence/pages/SovereignClimateIntelligencePage"));
+const SecClimateDisclosurePage         = React.lazy(() => import("./features/sec-climate-disclosure/pages/SecClimateDisclosurePage"));
 // Sprint AZ — Double Materiality Workshop · SFDR PAI Dashboard · XBRL Export Wizard
 const DoubleMaterialityWorkshopPage = React.lazy(() => import("./features/double-materiality-workshop/pages/DoubleMaterialityWorkshopPage"));
 const SfdrPaiDashboardPage          = React.lazy(() => import("./features/sfdr-pai-dashboard/pages/SfdrPaiDashboardPage"));
@@ -742,6 +745,8 @@ const NAV_GROUPS = [
     { path: '/double-materiality-workshop',  label: 'Double Materiality Workshop',      badge: 'ESRS 1 · 10 Topics · IRO Registry · Matrix · EFRAG IG 1',     code: 'EP-AZ1' },
     { path: '/sfdr-pai-dashboard',           label: 'SFDR PAI Dashboard',               badge: '18 Mandatory PAIs · Art 6/8/9 · Annex I RTS · 8 Funds',       code: 'EP-AZ2' },
     { path: '/xbrl-export-wizard',           label: 'XBRL Export Wizard',               badge: 'iXBRL · EFRAG ESRS 2024 · ESEF · ESMA Validation · Filing',    code: 'EP-AZ3' },
+    { path: '/sovereign-climate-intelligence',label: 'Sovereign Climate Intelligence', badge: 'ND-GAIN · NGFS Scenarios · Spread Impact · 25 Sovereigns',   code: 'EP-BA1' },
+    { path: '/sec-climate-disclosure',        label: 'SEC Climate Disclosure Panel',   badge: 'RESCINDED 27-Mar-25 · Items 1500-1505 · TCFD · ISSB S2',    code: 'EP-BA2' },
   ]},
   { label: 'Private Markets ESG', icon: '🏢', color: '#0369a1', items: [
     { path: '/private-markets-esg-hub', label: 'Private Markets ESG Hub',    badge: 'Hub · PE+Credit+Infra+RE+VC · $8.4T AUM · ESG DD',        code: 'EP-AG6' },
@@ -1648,6 +1653,9 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BA — Sovereign Climate Risk Intelligence · SEC Climate Disclosure */}
+            <Route path="/sovereign-climate-intelligence" element={<SovereignClimateIntelligencePage />} />
+            <Route path="/sec-climate-disclosure"         element={<SecClimateDisclosurePage />} />
             {/* Sprint AZ — Double Materiality Workshop · SFDR PAI Dashboard · XBRL Export Wizard */}
             <Route path="/double-materiality-workshop" element={<DoubleMaterialityWorkshopPage />} />
             <Route path="/sfdr-pai-dashboard"          element={<SfdrPaiDashboardPage />} />
