@@ -322,6 +322,9 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BJ — NGFS×IEA Scenario Engine · Climate-Credit Integration
+const NgfsIeaScenarioPage        = React.lazy(() => import("./features/ngfs-iea-scenario/pages/NgfsIeaScenarioPage"));
+const ClimateCreditIntegrationPage = React.lazy(() => import("./features/climate-credit-integration/pages/ClimateCreditIntegrationPage"));
 // Sprint BI — Credit Risk Analytics · Platform Analytics Dashboard
 const CreditRiskAnalyticsPage = React.lazy(() => import("./features/credit-risk-analytics/pages/CreditRiskAnalyticsPage"));
 const PlatformAnalyticsPage   = React.lazy(() => import("./features/platform-analytics/pages/PlatformAnalyticsPage"));
@@ -923,6 +926,10 @@ const NAV_GROUPS = [
     { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
     { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
+  ]},
+  { label: 'NGFS × IEA Climate Scenarios', icon: '🌡️', color: '#0f766e', items: [
+    { path: '/ngfs-iea-scenario',          label: 'NGFS × IEA Scenario Engine',     badge: 'NGFS Ph5 · IEA WEO 2024 · IPCC AR6 · 14 Scenarios · BMA Ensemble · Carbon Price', code: 'EP-BJ1' },
+    { path: '/climate-credit-integration', label: 'Climate-Credit Risk Integration', badge: '5 NGFS Scenarios · ECL Uplift · IFRS 9 Stage Migration · Hazard Matrix · 12 Module Links', code: 'EP-BJ2' },
   ]},
   { label: 'Credit & Platform Intelligence', icon: '📈', color: '#1b3a5c', items: [
     { path: '/credit-risk-analytics', label: 'Credit Risk Analytics',        badge: '45 Obligors · PD/LGD/EAD/ECL · Migration Matrix · Basel IV RWA', code: 'EP-BI1' },
@@ -1705,6 +1712,9 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BJ — NGFS×IEA Scenario Engine · Climate-Credit Integration */}
+            <Route path="/ngfs-iea-scenario"          element={<NgfsIeaScenarioPage />} />
+            <Route path="/climate-credit-integration" element={<ClimateCreditIntegrationPage />} />
             {/* Sprint BI — Credit Risk Analytics · Platform Analytics Dashboard */}
             <Route path="/credit-risk-analytics" element={<CreditRiskAnalyticsPage />} />
             <Route path="/platform-analytics"    element={<PlatformAnalyticsPage />} />
