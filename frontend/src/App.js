@@ -322,6 +322,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BM — NatCat Loss Engine · Cat Bond & ILS · Insurance Protection Gap
+const NatCatLossEnginePage        = React.lazy(() => import("./features/natcat-loss-engine/pages/NatCatLossEnginePage"));
+const CatBondILSPage              = React.lazy(() => import("./features/cat-bond-ils/pages/CatBondILSPage"));
+const InsuranceProtectionGapPage  = React.lazy(() => import("./features/insurance-protection-gap/pages/InsuranceProtectionGapPage"));
 // Sprint BL — ML Risk Scorer · NLP Disclosure Parser · Predictive Analytics Hub
 const MLRiskScorerPage            = React.lazy(() => import("./features/ml-risk-scorer/pages/MLRiskScorerPage"));
 const NLPDisclosureParserPage     = React.lazy(() => import("./features/nlp-disclosure-parser/pages/NLPDisclosureParserPage"));
@@ -934,6 +938,11 @@ const NAV_GROUPS = [
     { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
     { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
+  ]},
+  { label: 'Insurance & Catastrophe Risk', icon: '🛡️', color: '#b91c1c', items: [
+    { path: '/natcat-loss-engine',         label: 'NatCat Climate Loss Engine',     badge: 'EP Curves · AAL · PML · IPCC AR6 · 8 Perils · 4 Scenarios · Portfolio',   code: 'EP-BM1' },
+    { path: '/cat-bond-ils',               label: 'Cat Bond & ILS Analytics',       badge: 'Bond Universe · Pricer · Trigger Analysis · Spread · Historical Events',   code: 'EP-BM2' },
+    { path: '/insurance-protection-gap',   label: 'Physical Risk Insurance Gap',    badge: 'Protection Gap · 15 Countries · Climate Stress · Public-Private Schemes',  code: 'EP-BM3' },
   ]},
   { label: 'ML & Predictive Analytics', icon: '🤖', color: '#4f46e5', items: [
     { path: '/ml-risk-scorer',          label: 'XGBoost Climate Risk Scorer',    badge: 'XGBoost · Quantile Regression · SHAP · Conformal Prediction · Training UI', code: 'EP-BL1' },
@@ -1730,6 +1739,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BM — NatCat Loss Engine · Cat Bond & ILS · Insurance Protection Gap */}
+            <Route path="/natcat-loss-engine"        element={<NatCatLossEnginePage />} />
+            <Route path="/cat-bond-ils"              element={<CatBondILSPage />} />
+            <Route path="/insurance-protection-gap"  element={<InsuranceProtectionGapPage />} />
             {/* Sprint BL — ML Risk Scorer · NLP Disclosure Parser · Predictive Analytics Hub */}
             <Route path="/ml-risk-scorer"          element={<MLRiskScorerPage />} />
             <Route path="/nlp-disclosure-parser"   element={<NLPDisclosureParserPage />} />
