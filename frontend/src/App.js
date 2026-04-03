@@ -322,6 +322,26 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
+const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
+const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
+const CcMethodologyComparisonPage= React.lazy(() => import("./features/cc-methodology-comparison/pages/CcMethodologyComparisonPage"));
+// Sprint BV — Credit Retirement & Certificates (Workflow · Certificate Mgmt · Registry Hub)
+const CcRetirementWorkflowPage   = React.lazy(() => import("./features/cc-retirement-workflow/pages/CcRetirementWorkflowPage"));
+const CcCertificateMgmtPage      = React.lazy(() => import("./features/cc-certificate-mgmt/pages/CcCertificateMgmtPage"));
+const CcRegistryHubPage          = React.lazy(() => import("./features/cc-registry-hub/pages/CcRegistryHubPage"));
+// Sprint BU — Engineered CDR & Removals (Mineralization · DAC · BiCRS Hub)
+const CcMineralizationPage       = React.lazy(() => import("./features/cc-mineralization/pages/CcMineralizationPage"));
+const CcDacPage                  = React.lazy(() => import("./features/cc-dac/pages/CcDacPage"));
+const CcBicrsHubPage             = React.lazy(() => import("./features/cc-bicrs-hub/pages/CcBicrsHubPage"));
+// Sprint BT — Waste & Industrial Credits (Landfill/WW · Industrial Gases · CCS/Biochar Hub)
+const CcLandfillWastewaterPage   = React.lazy(() => import("./features/cc-landfill-wastewater/pages/CcLandfillWastewaterPage"));
+const CcIndustrialGasesPage      = React.lazy(() => import("./features/cc-industrial-gases/pages/CcIndustrialGasesPage"));
+const CcCcsBiocharHubPage        = React.lazy(() => import("./features/cc-ccs-biochar-hub/pages/CcCcsBiocharHubPage"));
+// Sprint BS — Energy Carbon Credits (Grid Renewables · Clean Cooking · EE Hub)
+const CcGridRenewablesPage       = React.lazy(() => import("./features/cc-grid-renewables/pages/CcGridRenewablesPage"));
+const CcCleanCookingPage         = React.lazy(() => import("./features/cc-clean-cooking/pages/CcCleanCookingPage"));
+const CcEnergyEfficiencyHubPage  = React.lazy(() => import("./features/cc-energy-efficiency-hub/pages/CcEnergyEfficiencyHubPage"));
 // Sprint BR — Agriculture Carbon Credits (Soil Carbon · Livestock Methane · Rice Cultivation)
 const CcSoilCarbonPage           = React.lazy(() => import("./features/cc-soil-carbon/pages/CcSoilCarbonPage"));
 const CcLivestockMethanePage     = React.lazy(() => import("./features/cc-livestock-methane/pages/CcLivestockMethanePage"));
@@ -960,6 +980,31 @@ const NAV_GROUPS = [
     { path: '/vcm-registry-analytics',  label: 'VCM Registry Analytics',          badge: 'Verra · Gold Standard · ACR · Issuance · Retirements · 20 Projects · Quality', code: 'EP-BN1' },
     { path: '/carbon-forward-curve',    label: 'Carbon Forward Curve & ETS',       badge: 'EU ETS · UK ETS · California · RGGI · China ETS · Forward Curve · Scenarios',   code: 'EP-BN2' },
     { path: '/credit-integrity-dd',     label: 'Credit Integrity & Due Diligence', badge: 'Additionality · Permanence · ICVCM CCP · Greenwashing · Integrity Pricing',     code: 'EP-BN3' },
+  ]},
+  { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
+    { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
+    { path: '/cc-portfolio-analytics',     label: 'CC Portfolio Analytics',         badge: 'Risk · Attribution · Vintage · Geography · Export · 25 Positions',                code: 'EP-BW2' },
+    { path: '/cc-methodology-comparison',  label: 'Cross-Methodology Comparison',  badge: 'MACC · Permanence · Integrity · Co-Benefits · Scenario Builder · 20 Clusters',   code: 'EP-BW3' },
+  ]},
+  { label: 'Credit Retirement & Certificates', icon: '📜', color: '#0f766e', items: [
+    { path: '/cc-retirement-workflow',  label: 'Retirement Workflow Engine',    badge: 'Multi-Registry · Verra · GS · Puro · Isometric · Step Wizard · Compliance',      code: 'EP-BV1' },
+    { path: '/cc-certificate-mgmt',     label: 'Certificate & Inventory Mgmt', badge: 'Serial Numbers · Batches · Vintage · Transfer · Custody · Audit Trail',           code: 'EP-BV2' },
+    { path: '/cc-registry-hub',         label: 'Registry Integration Hub',     badge: 'Verra · Gold Standard · Puro · Isometric · ACR · API Status · Cross-Registry',    code: 'EP-BV3' },
+  ]},
+  { label: 'Engineered CDR & Removals', icon: '🔬', color: '#6d28d9', items: [
+    { path: '/cc-mineralization',  label: 'Enhanced Weathering & Mineralization', badge: 'ERW · Ca/Mg Carbonation · Puro · Isometric · Cumulative Uptake · XRF',         code: 'EP-BU1' },
+    { path: '/cc-dac',             label: 'Direct Air Capture (DAC)',             badge: 'Net Removal · Premium/Standard/Basic · Energy Source · Permanence Tiers',        code: 'EP-BU2' },
+    { path: '/cc-bicrs-hub',       label: 'BiCRS & Biomass CDR Hub',             badge: 'BiCRS · BECCS · Biomass Sustainability · CDR Portfolio Builder · Hub',           code: 'EP-BU3' },
+  ]},
+  { label: 'Waste & Industrial Credits', icon: '🏭', color: '#57534e', items: [
+    { path: '/cc-landfill-wastewater',  label: 'Landfill Gas & Wastewater',      badge: 'FOD Model · ACM0001 · AMS-III.H · Capture Efficiency · Waste Composition',      code: 'EP-BT1' },
+    { path: '/cc-industrial-gases',     label: 'Industrial Gases & Process',     badge: 'HFC · N₂O · SF₆ · AM0001 · Destruction Efficiency · Kigali Amendment',          code: 'EP-BT2' },
+    { path: '/cc-ccs-biochar-hub',      label: 'CCS/CCUS & Biochar Hub',        badge: 'Net Storage · H:C Ratio · Transport · Permanence · Utilization Pathways',        code: 'EP-BT3' },
+  ]},
+  { label: 'Energy Carbon Credits', icon: '⚡', color: '#b45309', items: [
+    { path: '/cc-grid-renewables',       label: 'Grid Renewable Energy Credits',  badge: 'ACM0002 · OM/BM · Combined Margin · Dispatch · RECs · 12 Projects',            code: 'EP-BS1' },
+    { path: '/cc-clean-cooking',         label: 'Clean Cooking Credits',          badge: 'AMS-II.G · fNRB · Rebound · Gold Standard · SDG Co-Benefits · 8 Projects',     code: 'EP-BS2' },
+    { path: '/cc-energy-efficiency-hub', label: 'Energy Efficiency & Distributed Hub', badge: 'EE · Distributed · HDD/CDD · Building Retrofit · Industrial · Hub',      code: 'EP-BS3' },
   ]},
   { label: 'Agriculture Carbon Credits', icon: '🌾', color: '#854d0e', items: [
     { path: '/cc-soil-carbon',         label: 'Soil Carbon Sequestration',      badge: 'VM0042 · SOC Baseline · Bulk Density · Practice Comparison · 15yr Permanence',      code: 'EP-BR1' },
@@ -1779,6 +1824,26 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BW — Carbon Credit Engine Hub */}
+            <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
+            <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
+            <Route path="/cc-methodology-comparison"  element={<CcMethodologyComparisonPage />} />
+            {/* Sprint BV — Credit Retirement & Certificates */}
+            <Route path="/cc-retirement-workflow"  element={<CcRetirementWorkflowPage />} />
+            <Route path="/cc-certificate-mgmt"     element={<CcCertificateMgmtPage />} />
+            <Route path="/cc-registry-hub"         element={<CcRegistryHubPage />} />
+            {/* Sprint BU — Engineered CDR & Removals */}
+            <Route path="/cc-mineralization"  element={<CcMineralizationPage />} />
+            <Route path="/cc-dac"             element={<CcDacPage />} />
+            <Route path="/cc-bicrs-hub"       element={<CcBicrsHubPage />} />
+            {/* Sprint BT — Waste & Industrial Credits */}
+            <Route path="/cc-landfill-wastewater"  element={<CcLandfillWastewaterPage />} />
+            <Route path="/cc-industrial-gases"     element={<CcIndustrialGasesPage />} />
+            <Route path="/cc-ccs-biochar-hub"      element={<CcCcsBiocharHubPage />} />
+            {/* Sprint BS — Energy Carbon Credits */}
+            <Route path="/cc-grid-renewables"       element={<CcGridRenewablesPage />} />
+            <Route path="/cc-clean-cooking"         element={<CcCleanCookingPage />} />
+            <Route path="/cc-energy-efficiency-hub" element={<CcEnergyEfficiencyHubPage />} />
             {/* Sprint BR — Agriculture Carbon Credits */}
             <Route path="/cc-soil-carbon"         element={<CcSoilCarbonPage />} />
             <Route path="/cc-livestock-methane"   element={<CcLivestockMethanePage />} />
