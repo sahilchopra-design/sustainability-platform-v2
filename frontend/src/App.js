@@ -322,6 +322,11 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BO — Critical Minerals · Battery & EV Analytics · ET Commodity Risk
+const BatteryEVAnalyticsPage      = React.lazy(() => import("./features/battery-ev-analytics/pages/BatteryEVAnalyticsPage"));
+const ETCommodityRiskPage         = React.lazy(() => import("./features/et-commodity-risk/pages/ETCommodityRiskPage"));
+// Sprint BP — Equitable Earth Methodologies (standalone with calculation engine)
+const EquitableEarthMethodologiesPage = React.lazy(() => import("./features/equitable-earth-methodologies/pages/EquitableEarthMethodologiesPage"));
 // Sprint BN — VCM Registry Analytics · Carbon Forward Curve · Credit Integrity DD
 const VcmRegistryAnalyticsPage   = React.lazy(() => import("./features/vcm-registry-analytics/pages/VcmRegistryAnalyticsPage"));
 const CarbonForwardCurvePage     = React.lazy(() => import("./features/carbon-forward-curve/pages/CarbonForwardCurvePage"));
@@ -947,6 +952,14 @@ const NAV_GROUPS = [
     { path: '/vcm-registry-analytics',  label: 'VCM Registry Analytics',          badge: 'Verra · Gold Standard · ACR · Issuance · Retirements · 20 Projects · Quality', code: 'EP-BN1' },
     { path: '/carbon-forward-curve',    label: 'Carbon Forward Curve & ETS',       badge: 'EU ETS · UK ETS · California · RGGI · China ETS · Forward Curve · Scenarios',   code: 'EP-BN2' },
     { path: '/credit-integrity-dd',     label: 'Credit Integrity & Due Diligence', badge: 'Additionality · Permanence · ICVCM CCP · Greenwashing · Integrity Pricing',     code: 'EP-BN3' },
+  ]},
+  { label: 'Equitable Earth Methodologies', icon: '🌍', color: '#059669', items: [
+    { path: '/equitable-earth-methodologies', label: 'Equitable Earth Methodology Framework', badge: '5-Pillar · 6 Standards · Project Scoring · Calc Engine · Credit Integrity', code: 'EP-BP1' },
+  ]},
+  { label: 'Critical Minerals & Energy Transition', icon: '⛏️', color: '#92400e', items: [
+    { path: '/critical-minerals',   label: 'Critical Minerals Supply Chain',  badge: '8 Minerals · Country Concentration · Demand Outlook · Mine Pipeline · HHI', code: 'EP-BO1' },
+    { path: '/battery-ev-analytics',label: 'Battery & EV Analytics',          badge: 'LFP/NMC/NCA · Cost Curves · EV Adoption · Gigafactories · Chemistry Mix',   code: 'EP-BO2' },
+    { path: '/et-commodity-risk',   label: 'Energy Transition Commodity Risk',badge: 'Portfolio Exposure · NGFS Scenarios · Supply Chain Risk · Revenue at Risk',  code: 'EP-BO3' },
   ]},
   { label: 'Insurance & Catastrophe Risk', icon: '🛡️', color: '#b91c1c', items: [
     { path: '/natcat-loss-engine',         label: 'NatCat Climate Loss Engine',     badge: 'EP Curves · AAL · PML · IPCC AR6 · 8 Perils · 4 Scenarios · Portfolio',   code: 'EP-BM1' },
@@ -1748,6 +1761,11 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BP — Equitable Earth Methodologies */}
+            <Route path="/equitable-earth-methodologies" element={<EquitableEarthMethodologiesPage />} />
+            {/* Sprint BO — Critical Minerals · Battery & EV Analytics · ET Commodity Risk */}
+            <Route path="/battery-ev-analytics"   element={<BatteryEVAnalyticsPage />} />
+            <Route path="/et-commodity-risk"       element={<ETCommodityRiskPage />} />
             {/* Sprint BN — VCM Registry Analytics · Carbon Forward Curve · Credit Integrity DD */}
             <Route path="/vcm-registry-analytics" element={<VcmRegistryAnalyticsPage />} />
             <Route path="/carbon-forward-curve"   element={<CarbonForwardCurvePage />} />
