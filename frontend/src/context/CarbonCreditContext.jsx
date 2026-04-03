@@ -6,9 +6,10 @@
  *
  * State: projects, calculations, credits, retirements, aggregates
  * Persistence: localStorage key 'cc_engine_state'
- * Seed: 40 sample projects across 7 families on first mount
+ * Seed: 819 real Verra registry projects (CCB + SD VISta + PWR) on first mount
  */
 import React, { createContext, useContext, useReducer, useCallback, useMemo, useEffect } from 'react';
+import { VERRA_PROJECTS, VERRA_STATS } from '../data/verraRegistryData';
 
 /* ── Seeded random (same as all CC pages) ── */
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
@@ -40,64 +41,70 @@ const REGISTRIES = ['Verra VCS','Gold Standard','ACR','Puro.earth','Isometric','
 const COUNTRIES = ['Brazil','Indonesia','India','Kenya','Colombia','Peru','USA','Germany','China','Cambodia','DRC','Honduras','Chile','New Zealand','Finland','Belize','Vietnam','Thailand','Ethiopia','Australia','UK','Japan','Mexico','Senegal','Madagascar','Bolivia','Myanmar','Fiji','Tanzania','Cameroon','Ecuador','Gabon','Canada','Sweden','Philippines','Nepal','Laos','Malaysia','Papua NG','Nigeria'];
 
 const generateSeedProjects = () => {
-  const projects = [];
-  let idx = 0;
-  const familyKeys = ['nature','agriculture','energy','waste','industrial','cdr'];
-  const counts = [10, 6, 7, 5, 5, 7]; // 40 total
+  // Use real Verra registry data (819 projects from CCB + SD VISta + PWR)
+  return VERRA_PROJECTS.map((vp, idx) => {
+    const meths = METHODOLOGIES[vp.family] || METHODOLOGIES.nature;
+    const meth = vp.methodology || meths[idx % meths.length];
+    const area = Math.round(2000 + sr(idx * 11) * 198000);
+    const creditingYrs = Math.round(15 + sr(idx * 13) * 25);
+    const annualCredits = Math.round(area * (3 + sr(idx * 17) * 15));
+    const totalCredits = annualCredits * creditingYrs;
+    const retired = Math.round(totalCredits * (0.1 + sr(idx * 19) * 0.5));
+    const vintage = 2016 + Math.floor(sr(idx * 23) * 8);
+    const price = Math.round((5 + sr(idx * 29) * 30) * 10) / 10;
 
-  familyKeys.forEach((fam, fi) => {
-    const clusters = CLUSTERS[fam];
-    const meths = METHODOLOGIES[fam];
-    for (let i = 0; i < counts[fi]; i++) {
-      const ci = i % clusters.length;
-      const mi = i % meths.length;
-      const ri = Math.floor(sr(idx * 7) * REGISTRIES.length);
-      const area = Math.round(2000 + sr(idx * 11) * 198000);
-      const creditingYrs = Math.round(15 + sr(idx * 13) * 25);
-      const annualCredits = Math.round(area * (3 + sr(idx * 17) * 15));
-      const totalCredits = annualCredits * creditingYrs;
-      const retired = Math.round(totalCredits * (0.1 + sr(idx * 19) * 0.5));
-      const vintage = 2016 + Math.floor(sr(idx * 23) * 8);
-      const price = Math.round((5 + sr(idx * 29) * 30) * 10) / 10;
+    // Map Verra status to platform status
+    const statusMap = { 'Verification approved':'Active', 'Under validation':'Pipeline', 'Under Verification':'Verification', 'Under validation and verification':'Pipeline', 'Validation expired':'Suspended', 'Project withdrawn':'Suspended', 'Rejected by Administrator':'Suspended' };
+    const mappedStatus = statusMap[vp.status] || (vp.status.includes('approved') ? 'Active' : vp.status.includes('Under') ? 'Pipeline' : 'Pipeline');
 
-      projects.push({
-        id: `CC-${String(idx + 1).padStart(4, '0')}`,
-        name: `${COUNTRIES[idx % 40]} ${clusters[ci]} Project ${i + 1}`,
-        family: fam,
-        familyLabel: FAMILY_LABELS[fam],
-        cluster: clusters[ci],
-        methodology: meths[mi],
-        registry: REGISTRIES[ri],
-        country: COUNTRIES[idx % 40],
-        area_ha: area,
-        crediting_period_yrs: creditingYrs,
-        start_year: vintage,
-        status: sr(idx * 31) > 0.8 ? 'Pipeline' : sr(idx * 37) > 0.7 ? 'Verification' : 'Active',
-        // Credit summary
-        total_credits_tco2e: totalCredits,
-        annual_credits_tco2e: annualCredits,
-        credits_retired_tco2e: retired,
-        credits_available_tco2e: totalCredits - retired,
-        avg_price_usd: price,
-        total_value_usd: Math.round(totalCredits * price),
-        vintage_year: vintage,
-        // Quality metrics
-        additionality_score: Math.round(55 + sr(idx * 41) * 40),
-        permanence_score: Math.round(50 + sr(idx * 43) * 45),
-        mrv_quality: Math.round(60 + sr(idx * 47) * 35),
-        leakage_risk: Math.round(5 + sr(idx * 53) * 25),
-        buffer_pct: Math.round(10 + sr(idx * 59) * 20),
-        co_benefits: ['Community','Biodiversity','Water','Gender','Health'].filter((_, bi) => sr(idx * 61 + bi) > 0.4),
-        // Regulatory mapping
-        csrd_esrs_e1: sr(idx * 67) > 0.3,
-        sfdr_pai: sr(idx * 71) > 0.4,
-        issb_s2: sr(idx * 73) > 0.35,
-        eu_taxonomy_aligned: sr(idx * 79) > 0.5,
-      });
-      idx++;
-    }
+    // Merge real co-benefits with generated ones
+    const realCoBenefits = vp.coBenefits || [];
+    const genCoBenefits = ['Community','Biodiversity','Water','Gender','Health'].filter((_, bi) => sr(idx * 61 + bi) > 0.4);
+    const allCoBenefits = [...new Set([...realCoBenefits, ...genCoBenefits])];
+
+    return {
+      id: `VERRA-${vp.id}`,
+      verra_id: vp.id,
+      name: vp.name,
+      proponent: vp.proponent,
+      family: vp.family,
+      familyLabel: FAMILY_LABELS[vp.family] || vp.family,
+      cluster: vp.cluster,
+      project_type: vp.type,
+      methodology: meth,
+      registry: vp.registry,
+      standard: vp.standard,
+      country: vp.country,
+      region: vp.region,
+      area_ha: area,
+      crediting_period_yrs: creditingYrs,
+      start_year: vintage,
+      status: mappedStatus,
+      original_status: vp.status,
+      // Credit summary (seeded — deterministic from Verra ID)
+      total_credits_tco2e: totalCredits,
+      annual_credits_tco2e: annualCredits,
+      credits_retired_tco2e: retired,
+      credits_available_tco2e: totalCredits - retired,
+      avg_price_usd: price,
+      total_value_usd: Math.round(totalCredits * price),
+      vintage_year: vintage,
+      registration_date: vp.regDate,
+      // Quality metrics (seeded)
+      additionality_score: Math.round(55 + sr(idx * 41) * 40),
+      permanence_score: Math.round(50 + sr(idx * 43) * 45),
+      mrv_quality: Math.round(60 + sr(idx * 47) * 35),
+      leakage_risk: Math.round(5 + sr(idx * 53) * 25),
+      buffer_pct: Math.round(10 + sr(idx * 59) * 20),
+      co_benefits: allCoBenefits,
+      sdgs: vp.sdgs || [],
+      // Regulatory mapping
+      csrd_esrs_e1: sr(idx * 67) > 0.3,
+      sfdr_pai: sr(idx * 71) > 0.4,
+      issb_s2: sr(idx * 73) > 0.35,
+      eu_taxonomy_aligned: sr(idx * 79) > 0.5,
+    };
   });
-  return projects;
 };
 
 const generateSeedCalculations = (projects) => {

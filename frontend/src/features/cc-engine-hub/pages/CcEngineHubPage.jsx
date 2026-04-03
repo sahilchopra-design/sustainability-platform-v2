@@ -3,6 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis,
 } from 'recharts';
+import { VERRA_PROJECTS, VERRA_STATS } from '../../../data/verraRegistryData';
 
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 
