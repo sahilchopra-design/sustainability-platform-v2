@@ -322,6 +322,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BN — VCM Registry Analytics · Carbon Forward Curve · Credit Integrity DD
+const VcmRegistryAnalyticsPage   = React.lazy(() => import("./features/vcm-registry-analytics/pages/VcmRegistryAnalyticsPage"));
+const CarbonForwardCurvePage     = React.lazy(() => import("./features/carbon-forward-curve/pages/CarbonForwardCurvePage"));
+const CreditIntegrityDDPage      = React.lazy(() => import("./features/credit-integrity-dd/pages/CreditIntegrityDDPage"));
 // Sprint BM — NatCat Loss Engine · Cat Bond & ILS · Insurance Protection Gap
 const NatCatLossEnginePage        = React.lazy(() => import("./features/natcat-loss-engine/pages/NatCatLossEnginePage"));
 const CatBondILSPage              = React.lazy(() => import("./features/cat-bond-ils/pages/CatBondILSPage"));
@@ -938,6 +942,11 @@ const NAV_GROUPS = [
     { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
     { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
     { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
+  ]},
+  { label: 'Carbon Markets & VCM', icon: '🌿', color: '#065f46', items: [
+    { path: '/vcm-registry-analytics',  label: 'VCM Registry Analytics',          badge: 'Verra · Gold Standard · ACR · Issuance · Retirements · 20 Projects · Quality', code: 'EP-BN1' },
+    { path: '/carbon-forward-curve',    label: 'Carbon Forward Curve & ETS',       badge: 'EU ETS · UK ETS · California · RGGI · China ETS · Forward Curve · Scenarios',   code: 'EP-BN2' },
+    { path: '/credit-integrity-dd',     label: 'Credit Integrity & Due Diligence', badge: 'Additionality · Permanence · ICVCM CCP · Greenwashing · Integrity Pricing',     code: 'EP-BN3' },
   ]},
   { label: 'Insurance & Catastrophe Risk', icon: '🛡️', color: '#b91c1c', items: [
     { path: '/natcat-loss-engine',         label: 'NatCat Climate Loss Engine',     badge: 'EP Curves · AAL · PML · IPCC AR6 · 8 Perils · 4 Scenarios · Portfolio',   code: 'EP-BM1' },
@@ -1739,6 +1748,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BN — VCM Registry Analytics · Carbon Forward Curve · Credit Integrity DD */}
+            <Route path="/vcm-registry-analytics" element={<VcmRegistryAnalyticsPage />} />
+            <Route path="/carbon-forward-curve"   element={<CarbonForwardCurvePage />} />
+            <Route path="/credit-integrity-dd"    element={<CreditIntegrityDDPage />} />
             {/* Sprint BM — NatCat Loss Engine · Cat Bond & ILS · Insurance Protection Gap */}
             <Route path="/natcat-loss-engine"        element={<NatCatLossEnginePage />} />
             <Route path="/cat-bond-ils"              element={<CatBondILSPage />} />
