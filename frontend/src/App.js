@@ -322,6 +322,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BQ — Nature-Based Carbon Credits (ARR · IFM · REDD+/Wetlands Hub)
+const CcArrReforestationPage     = React.lazy(() => import("./features/cc-arr-reforestation/pages/CcArrReforestationPage"));
+const CcIfmCreditsPage           = React.lazy(() => import("./features/cc-ifm-credits/pages/CcIfmCreditsPage"));
+const CcReddWetlandsHubPage      = React.lazy(() => import("./features/cc-redd-wetlands-hub/pages/CcReddWetlandsHubPage"));
 // Sprint BO — Critical Minerals · Battery & EV Analytics · ET Commodity Risk
 const BatteryEVAnalyticsPage      = React.lazy(() => import("./features/battery-ev-analytics/pages/BatteryEVAnalyticsPage"));
 const ETCommodityRiskPage         = React.lazy(() => import("./features/et-commodity-risk/pages/ETCommodityRiskPage"));
@@ -952,6 +956,11 @@ const NAV_GROUPS = [
     { path: '/vcm-registry-analytics',  label: 'VCM Registry Analytics',          badge: 'Verra · Gold Standard · ACR · Issuance · Retirements · 20 Projects · Quality', code: 'EP-BN1' },
     { path: '/carbon-forward-curve',    label: 'Carbon Forward Curve & ETS',       badge: 'EU ETS · UK ETS · California · RGGI · China ETS · Forward Curve · Scenarios',   code: 'EP-BN2' },
     { path: '/credit-integrity-dd',     label: 'Credit Integrity & Due Diligence', badge: 'Additionality · Permanence · ICVCM CCP · Greenwashing · Integrity Pricing',     code: 'EP-BN3' },
+  ]},
+  { label: 'Nature-Based Carbon Credits', icon: '🌳', color: '#166534', items: [
+    { path: '/cc-arr-reforestation',  label: 'ARR & Reforestation Credits',     badge: 'VM0047 · Biomass Growth · Leakage · Buffer Pool · 30yr Crediting · 12 Projects',    code: 'EP-BQ1' },
+    { path: '/cc-ifm-credits',        label: 'Improved Forest Management',      badge: 'VM0010 · RIL · Extended Rotation · Harvest Deferral · Market Leakage · Baseline',    code: 'EP-BQ2' },
+    { path: '/cc-redd-wetlands-hub',   label: 'REDD+ & Wetlands Carbon Hub',   badge: 'REDD+ · Wetlands Multi-Gas · Blue Carbon · VM0007 · VM0033 · Buffer Pool · 20 Proj', code: 'EP-BQ3' },
   ]},
   { label: 'Equitable Earth Methodologies', icon: '🌍', color: '#059669', items: [
     { path: '/equitable-earth-methodologies', label: 'Equitable Earth Methodology Framework', badge: '5-Pillar · 6 Standards · Project Scoring · Calc Engine · Credit Integrity', code: 'EP-BP1' },
@@ -1761,6 +1770,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BQ — Nature-Based Carbon Credits */}
+            <Route path="/cc-arr-reforestation"   element={<CcArrReforestationPage />} />
+            <Route path="/cc-ifm-credits"         element={<CcIfmCreditsPage />} />
+            <Route path="/cc-redd-wetlands-hub"    element={<CcReddWetlandsHubPage />} />
             {/* Sprint BP — Equitable Earth Methodologies */}
             <Route path="/equitable-earth-methodologies" element={<EquitableEarthMethodologiesPage />} />
             {/* Sprint BO — Critical Minerals · Battery & EV Analytics · ET Commodity Risk */}
