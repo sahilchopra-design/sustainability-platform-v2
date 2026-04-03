@@ -5,6 +5,7 @@
 import React,{useState,useMemo,useCallback} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend,ScatterChart,Scatter,ZAxis} from 'recharts';
 import {REGULATORY_THRESHOLDS,NGFS_SCENARIOS,SECTOR_BENCHMARKS} from '../../../data/referenceData';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME + HELPERS
@@ -239,6 +240,7 @@ const CONNECTIVITY=[
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════════════════ */
 export default function IssbDisclosurePage(){
+  const ccData = useCarbonCredit(); const ccReg = ccData.adaptForRegulatory();
   const[tab,setTab]=useState(0);
   const[selPillar,setSelPillar]=useState(null);
   const[selS2,setSelS2]=useState(null);
@@ -279,6 +281,7 @@ export default function IssbDisclosurePage(){
         <KPI label="Complete" value={complete} sub={`${Math.round(complete/totalReqs*100)}%`} color={T.green}/>
         <KPI label="Avg Score" value={Math.round(S1_PILLARS.reduce((s,p)=>s+p.score,0)/4)+'%'} color={T.gold}/>
         <KPI label="Jurisdictions" value={ADOPTION.filter(a=>a.status==='Mandatory').length} sub="mandatory adoption" color={T.sage}/>
+        <KPI label="CC Retirements" value={(ccReg.totalRetired ?? 0).toLocaleString()} sub="Scope disclosure (CC Engine)" color={'#059669'} cite="IFRS S2 §29(a)(vi)"/>
       </div>
       <div style={ss.grid2}>
         <div style={ss.card}>

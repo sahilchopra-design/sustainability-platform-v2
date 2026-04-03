@@ -7,6 +7,7 @@ import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieCh
 import {REGULATORY_THRESHOLDS,TAXONOMY_THRESHOLDS} from '../../../data/referenceData';
 import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
 import {buildEvidencePackage,downloadEvidencePackage,downloadOpinionText,EVIDENCE_CATEGORIES,evidenceStatusColor,opinionColor,getPortfolioAssuranceReadiness} from '../../../data/isae3000EvidenceExport';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME + CORE HELPERS
@@ -222,6 +223,7 @@ const SectionHead=({children,cite})=>(
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════════════════ */
 export default function CsrdEsrsAutomationPage(){
+  const ccData = useCarbonCredit(); const ccReg = ccData.adaptForRegulatory();
   const[tab,setTab]=useState(0);
   const[search,setSearch]=useState('');
   const[secF,setSecF]=useState('All');
@@ -385,6 +387,15 @@ export default function CsrdEsrsAutomationPage(){
         <KPI label="Avg Financial Score" value={avgFinancial} sub="scale 1-5" color={avgFinancial>=3.5?T.red:avgFinancial>=2.5?T.amber:T.green} cite="ESRS 1 §49"/>
         <KPI label="DMA Completeness" value={co.doubleMateriality+'%'} color={ACCENT} cite="ESRS 1 §62"/>
         <KPI label="Portfolio Avg Material" value={Math.round(heatmapData.reduce((s,h)=>s+h.materialPct,0)/10)+'%'} sub="across 80 companies" color={T.navy}/>
+      </div>
+      {/* CC Credits mapped to ESRS E1 */}
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'14px 20px',marginBottom:20,display:'flex',gap:24,alignItems:'center',flexWrap:'wrap',borderLeft:`4px solid #059669`}}>
+        <div><div style={{fontSize:9,fontFamily:T.mono,color:T.textMut,textTransform:'uppercase',letterSpacing:1}}>ESRS E1-7 Credits Retired</div><div style={{fontSize:20,fontWeight:700,color:T.navy,fontFamily:T.mono}}>{(ccReg.totalRetired ?? 0).toLocaleString()}</div></div>
+        <div style={{width:1,height:28,background:T.border}}/>
+        <div><div style={{fontSize:9,fontFamily:T.mono,color:T.textMut,textTransform:'uppercase',letterSpacing:1}}>Removal Credits</div><div style={{fontSize:20,fontWeight:700,color:'#059669',fontFamily:T.mono}}>{(ccReg.removalCredits ?? 0).toLocaleString()}</div></div>
+        <div style={{width:1,height:28,background:T.border}}/>
+        <div><div style={{fontSize:9,fontFamily:T.mono,color:T.textMut,textTransform:'uppercase',letterSpacing:1}}>Reduction Credits</div><div style={{fontSize:20,fontWeight:700,color:ACCENT,fontFamily:T.mono}}>{(ccReg.reductionCredits ?? 0).toLocaleString()}</div></div>
+        <div style={{fontSize:10,color:T.textSec,marginLeft:'auto'}}>Carbon Credit Engine — ESRS E1 Overlay</div>
       </div>
 
       {dmaView==='matrix'&&(

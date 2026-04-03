@@ -7,6 +7,7 @@ import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Radar
 import {SECTOR_BENCHMARKS} from '../../../data/referenceData';
 import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
 import {getEsgRatings,hasRealEsgData,realEsgCoverage,getCoverageStats,PROVIDER_META} from '../../../data/eohdEsgService';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME + HELPERS
@@ -230,6 +231,7 @@ const SectionHead=({children,cite})=>(
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════════════════ */
 export default function EsgRatingsComparatorPage(){
+  const ccData = useCarbonCredit(); const ccEsg = ccData.adaptForEsgRatings();
   const[tab,setTab]=useState(0);
   const[search,setSearch]=useState('');
   const[secF,setSecF]=useState('All');
@@ -298,6 +300,9 @@ export default function EsgRatingsComparatorPage(){
         <KPI label="Avg Consensus" value={avgConsensus} sub="normalized 0-100" color={avgConsensus>=60?T.green:T.amber}/>
         <KPI label="Avg Divergence" value={avgDivergence+'pt'} sub="max-min spread" color={avgDivergence>30?T.red:T.amber}/>
         <KPI label="High Divergence" value={highDiv} sub=">40pt spread" color={T.red}/>
+        <KPI label="CC Additionality" value={(ccEsg.avgAdditionality ?? 0).toFixed(0)} sub="Carbon Credit Engine" color={T.green}/>
+        <KPI label="CC Permanence" value={(ccEsg.avgPermanence ?? 0).toFixed(0)} sub="Avg credit quality" color={T.sage}/>
+        <KPI label="CC MRV Quality" value={(ccEsg.avgMrvQuality ?? 0).toFixed(0)} sub="Monitoring score" color={T.navyL}/>
       </div>
       <div style={ss.card}>
         <div style={ss.flex}>

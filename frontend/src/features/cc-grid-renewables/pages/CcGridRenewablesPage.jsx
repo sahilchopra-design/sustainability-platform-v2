@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, PieChart, Pie,
@@ -80,6 +81,7 @@ const calcCombinedMargin=(netGen,omEF,bmEF,omW,bmW)=>{
 };
 
 export default function CcGridRenewablesPage(){
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS=['Methodology Overview','Combined Margin Calculator','Dispatch Model','Grid EF Builder','Project Portfolio','Additionality & RECs'];
   const [tab,setTab]=useState(TABS[0]);
 
@@ -119,6 +121,20 @@ export default function CcGridRenewablesPage(){
     ];
     return {...r,netGen:netGenCalc,sensOM,sensBM,waterfall,netCredits:Math.round(r.be*0.92)};
   },[p]);
+
+  useEffect(() => {
+    if (cmResult && cmResult.netCredits > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'ACM0002',
+        family: 'energy',
+        cluster: 'Grid Renewables',
+        inputs: p,
+        outputs: cmResult,
+        net_tco2e: cmResult.netCredits || 0,
+      });
+    }
+  }, [cmResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Dispatch model */
   const dispatchData=useMemo(()=>{

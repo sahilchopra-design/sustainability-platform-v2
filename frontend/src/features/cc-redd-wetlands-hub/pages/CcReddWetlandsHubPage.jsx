@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -105,6 +106,7 @@ const HUB_PROJECTS = Array.from({length:20},(_, i)=>{
 const PIE_COLORS = [T.emerald, T.teal, '#0891b2', '#854d0e'];
 
 export default function CcReddWetlandsHubPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['REDD+ Calculator','Wetlands Multi-Gas','Blue Carbon','Risk & Buffer Pool','Cross-Methodology','Hub Dashboard'];
   const [tab, setTab] = useState(TABS[0]);
 
@@ -112,6 +114,20 @@ export default function CcReddWetlandsHubPage() {
   const [reddP, setReddP] = useState({ bdr_pct:1.2, forest_area_ha:100000, cs_forest:350, cs_post:50, crediting_yrs:30, leakage_pct:12, buffer_pct:25, uncertainty_pct:10 });
   const setR = useCallback((k,v)=>setReddP(p=>({...p,[k]:v})),[]);
   const reddResult = useMemo(()=>calcREDD(reddP),[reddP]);
+
+  useEffect(() => {
+    if (reddResult && reddResult.total > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'VM0007',
+        family: 'nature',
+        cluster: 'REDD+',
+        inputs: reddP,
+        outputs: reddResult,
+        net_tco2e: reddResult.total || 0,
+      });
+    }
+  }, [reddResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Wetlands state */
   const [wetP, setWetP] = useState({ area_ha:5000, co2_rate:22.4, ch4_rate:0.08, n2o_rate:0.002, gwp_version:'AR5', crediting_yrs:25, project_co2_rate:1.8, project_ch4_rate:0.01, project_n2o_rate:0.0005, leakage_pct:7, buffer_pct:20 });

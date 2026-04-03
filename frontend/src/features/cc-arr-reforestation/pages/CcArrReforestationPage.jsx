@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -132,6 +133,7 @@ const SENS_PARAMS = [
 
 /* ══════════════════════════════════════════════════════════════════ */
 export default function CcArrReforestationPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['Methodology Overview','Biomass Growth Model','Credit Calculator','Project Registry','Sensitivity Analysis','Monitoring & MRV'];
   const [tab, setTab] = useState(TABS[0]);
   const [selMethod, setSelMethod] = useState(METHODOLOGIES[0]);
@@ -144,6 +146,20 @@ export default function CcArrReforestationPage() {
   const setP = useCallback((k, v) => setParams(prev => ({ ...prev, [k]: v })), []);
 
   const result = useMemo(() => calcARR(params), [params]);
+
+  useEffect(() => {
+    if (result && result.total_net > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'VM0047',
+        family: 'nature',
+        cluster: 'ARR',
+        inputs: params,
+        outputs: result,
+        net_tco2e: result.total_net || 0,
+      });
+    }
+  }, [result]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Growth model visualization data */
   const growthData = useMemo(() => {

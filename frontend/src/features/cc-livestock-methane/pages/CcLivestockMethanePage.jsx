@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, RadarChart,
@@ -75,6 +76,7 @@ const calcManure = (params) => {
 };
 
 export default function CcLivestockMethanePage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['Methodology Overview','Enteric Fermentation Calculator','Manure Management Calculator','Feed Additive Scenarios','GWP Accounting','Herd Monitoring'];
   const [tab, setTab] = useState(TABS[0]);
 
@@ -96,6 +98,22 @@ export default function CcLivestockMethanePage() {
 
   const entResult = useMemo(() => calcEnteric(ent), [ent]);
   const manResult = useMemo(() => calcManure(man), [man]);
+
+  useEffect(() => {
+    const total = (entResult?.net_credits || 0) + (manResult?.net_credits || 0);
+    if (total > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'AMS-III.BF',
+        family: 'agriculture',
+        cluster: 'Livestock Methane',
+        inputs: { enteric: ent, manure: man },
+        outputs: { entResult, manResult },
+        net_tco2e: total,
+      });
+    }
+  }, [entResult, manResult]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const totalCH4Avoided = useMemo(() => PROJECTS.reduce((s,p)=>s+p.ch4_avoided_tco2e,0), []);
   const avgHerd = useMemo(() => Math.round(PROJECTS.reduce((s,p)=>s+p.herd_size,0)/PROJECTS.length), []);
 

@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -85,6 +86,7 @@ const calcCleanCooking=(params)=>{
 };
 
 export default function CcCleanCookingPage(){
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS=['Methodology Overview','Baseline Emissions Calculator','Emission Reductions','fNRB Assessment','SDG Co-Benefits','Usage Monitoring'];
   const [tab,setTab]=useState(TABS[0]);
 
@@ -101,6 +103,20 @@ export default function CcCleanCookingPage(){
   const [fnrbSupply,setFnrbSupply]=useState(35);
 
   const cookResult=useMemo(()=>calcCleanCooking(cp),[cp]);
+
+  useEffect(() => {
+    if (cookResult && cookResult.netCredits > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'AMS-II.G',
+        family: 'energy',
+        cluster: 'Clean Cooking',
+        inputs: cp,
+        outputs: cookResult,
+        net_tco2e: cookResult.netCredits || 0,
+      });
+    }
+  }, [cookResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fnrbCalc=useMemo(()=>{
     const fnrb=Math.min(1,Math.max(0,(fnrbDemand-fnrbSupply)/Math.max(fnrbDemand,1)));

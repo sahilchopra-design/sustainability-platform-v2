@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine,
@@ -68,6 +69,7 @@ const calcRiceCH4 = (params) => {
 };
 
 export default function CcRiceCultivationPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['Methodology Overview','Rice CH4 Calculator','AWD Practice Model','Multi-Season Analysis','Regional Benchmarks'];
   const [tab, setTab] = useState(TABS[0]);
 
@@ -86,6 +88,20 @@ export default function CcRiceCultivationPage() {
   const [msBuf, setMsBuf] = useState(12);
 
   const riceResult = useMemo(() => calcRiceCH4(rp), [rp]);
+
+  useEffect(() => {
+    if (riceResult && riceResult.net > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'AMS-III.AU',
+        family: 'agriculture',
+        cluster: 'Rice Cultivation',
+        inputs: rp,
+        outputs: riceResult,
+        net_tco2e: riceResult.net || 0,
+      });
+    }
+  }, [riceResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const awdComparison = useMemo(() => WATER_REGIMES.map(w => {
     const r = calcRiceCH4({...rp, awd_scaling:w.scaling});

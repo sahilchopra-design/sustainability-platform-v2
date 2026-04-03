@@ -1,4 +1,5 @@
-import React,{useState,useMemo} from 'react';
+import React,{useState,useMemo,useEffect} from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,LineChart,Line,AreaChart,Area,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,PieChart,Pie,Cell} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -47,6 +48,7 @@ const genLearningCurve=()=>Array.from({length:27},(_,i)=>{
 });
 
 export default function CcDacPage(){
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const [tab,setTab]=useState(0);
   const tabs=['Methodology Overview','Net Removal Calculator','Permanence Tier Assessment','Energy & Cost Model','Facility Design','Lifecycle Assessment'];
 
@@ -80,6 +82,20 @@ export default function CcDacPage(){
     const costPerNetTonne=netRemoval>0?(totalCost/netRemoval):0;
     return{energyEmissions:+energyEmissions.toFixed(1),sorbentEmissions:+sorbentEmissions.toFixed(1),constructionEmissions:+constructionEmissions.toFixed(1),transportEmissions:+transportEmissions.toFixed(1),totalLifecycle:+totalLifecycle.toFixed(1),grossNet:+grossNet.toFixed(1),netRemoval:+netRemoval.toFixed(1),captureEfficiency:+captureEfficiency.toFixed(1),totalCost:+totalCost.toFixed(0),costPerNetTonne:+costPerNetTonne.toFixed(0),permAdj};
   },[grossCapture,energySource,energyIntensity,sorbentPct,constructionPct,transportPct,permTier,lcod]);
+
+  useEffect(() => {
+    if (netCalc && netCalc.netRemoval > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'Iso-DAC',
+        family: 'cdr',
+        cluster: 'DAC',
+        inputs: { grossCapture, energySource, energyIntensity, sorbentPct, constructionPct, transportPct, permTier, lcod },
+        outputs: netCalc,
+        net_tco2e: netCalc.netRemoval || 0,
+      });
+    }
+  }, [netCalc]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* lifecycle breakdown for pie */
   const lcBreakdown=useMemo(()=>[

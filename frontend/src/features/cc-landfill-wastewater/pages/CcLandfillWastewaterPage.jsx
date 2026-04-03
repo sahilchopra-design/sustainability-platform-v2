@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, PieChart, Pie,
@@ -79,6 +80,7 @@ const calcWastewater = (params) => {
 };
 
 export default function CcLandfillWastewaterPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['Methodology Overview','FOD Landfill Gas Calculator','Wastewater CH4 Calculator','Gas Collection Design','Waste Composition','Monitoring & Metering'];
   const [tab, setTab] = useState(TABS[0]);
 
@@ -116,6 +118,21 @@ export default function CcLandfillWastewaterPage() {
   /* FOD results */
   const fodData = useMemo(() => calcFOD({...fod, doc_weighted:docWeighted}), [fod, docWeighted]);
   const fodTotal = useMemo(() => fodData.length > 0 ? fodData[fodData.length-1].cumulative : 0, [fodData]);
+
+  useEffect(() => {
+    if (fodTotal > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'ACM0001',
+        family: 'waste',
+        cluster: 'Landfill Gas',
+        inputs: fod,
+        outputs: { fodData, fodTotal },
+        net_tco2e: fodTotal || 0,
+      });
+    }
+  }, [fodTotal]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const fodPeak = useMemo(() => fodData.reduce((mx,d)=>d.net>mx?d.net:mx, 0), [fodData]);
 
   /* Wastewater results */

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, NavLink, useLocation, useNavigate } from 
 import { TestDataProvider } from './context/TestDataContext';
 import { CompanyEnrichmentProvider } from './context/CompanyEnrichmentContext';
 import { PortfolioProvider } from './context/PortfolioContext';
+import { CarbonCreditProvider } from './context/CarbonCreditContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
 // Platform Admin & Data Management
@@ -2019,9 +2020,11 @@ export default function App() {
     <TestDataProvider>
       <CompanyEnrichmentProvider>
         <PortfolioProvider>
+          <CarbonCreditProvider>
           <BrowserRouter>
             <AppContent />
           </BrowserRouter>
+          </CarbonCreditProvider>
         </PortfolioProvider>
       </CompanyEnrichmentProvider>
     </TestDataProvider>

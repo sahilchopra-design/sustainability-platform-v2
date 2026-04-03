@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   LineChart, Line, Legend, ScatterChart, Scatter, ZAxis, Cell,
   AreaChart, Area, ReferenceLine, PieChart, Pie,
 } from 'recharts';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 
 /* ── theme ──────────────────────────────────────────────────────── */
 const T = {
@@ -268,8 +269,15 @@ export default function EquitableEarthMethodologiesPage() {
     return { area: s.defaultArea, creditingPeriod: s.defaultCreditingPeriod, baselineRate: s.baselineRate, projectRate: s.projectRate, leakagePct: s.defaultLeakage, bufferPct: s.defaultBuffer, uncertaintyPct: s.uncertaintyBase, cobenefitMult: s.cobenefitMultiplier, activityType: s.activityTypes[0] };
   });
 
+  const ccData = useCarbonCredit(); const ccEE = ccData.adaptForEquitableEarth();
+
   const pillarResult = useMemo(() => calcPillarScores(calcInputs), [calcInputs]);
   const creditResult = useMemo(() => calcCredits(calcParams, pillarResult), [calcParams, pillarResult]);
+
+  /* ── Wire EE scores back to CC context ── */
+  useEffect(() => {
+    if (pillarResult) ccData.setEeScores({ latest: pillarResult });
+  }, [pillarResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ── Sensitivity State ── */
   const [savedScenarios, setSavedScenarios] = useState([]);
@@ -347,6 +355,22 @@ export default function EquitableEarthMethodologiesPage() {
       {/* ═══════════════════════════════════════ TAB 1 — Methodology Overview ══ */}
       {tab === 'Methodology Overview' && (
         <>
+          {/* ── CC Nature-Based Overlay ── */}
+          <Card border={T.emerald} style={{ marginBottom:16 }}>
+            <div style={{ display:'flex', gap:24, alignItems:'center', flexWrap:'wrap' }}>
+              <div>
+                <div style={{ fontSize:9, fontFamily:T.mono, color:T.textMut, textTransform:'uppercase', letterSpacing:'0.1em' }}>CC Nature-Based Projects</div>
+                <div style={{ fontSize:22, fontWeight:700, color:T.emerald, fontFamily:T.mono }}>{ccEE.natureBasedCount ?? 0}</div>
+              </div>
+              <div style={{ width:1, height:32, background:T.border }} />
+              <div>
+                <div style={{ fontSize:9, fontFamily:T.mono, color:T.textMut, textTransform:'uppercase', letterSpacing:'0.1em' }}>Total Nature Credits</div>
+                <div style={{ fontSize:22, fontWeight:700, color:T.navy, fontFamily:T.mono }}>{(ccEE.totalNatureCredits ?? 0).toLocaleString()}</div>
+              </div>
+              <div style={{ width:1, height:32, background:T.border }} />
+              <div style={{ fontSize:10, color:T.textSec }}>Carbon Credit Engine overlay</div>
+            </div>
+          </Card>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:20 }}>
             <Card>
               <Section title="5-Pillar Architecture & Weights">

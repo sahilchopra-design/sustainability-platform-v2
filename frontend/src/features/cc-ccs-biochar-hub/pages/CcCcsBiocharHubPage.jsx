@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, ScatterChart,
@@ -107,6 +108,7 @@ const calcBiochar = (params) => {
 };
 
 export default function CcCcsBiocharHubPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['CCS Net Storage Calculator','CCUS Utilization Pathways','Biochar Carbon Calculator','Biochar Stability Model','Storage Site Assessment','Hub Dashboard'];
   const [tab, setTab] = useState(TABS[0]);
 
@@ -126,6 +128,21 @@ export default function CcCcsBiocharHubPage() {
 
   const ccsResult = useMemo(() => calcCCS(ccs), [ccs]);
   const bcResult = useMemo(() => calcBiochar(bc), [bc]);
+
+  useEffect(() => {
+    const total = (ccsResult?.net_stored || 0) + (bcResult?.co2_equiv || 0);
+    if (total > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'VM0040',
+        family: 'industrial',
+        cluster: 'CCS/CCUS',
+        inputs: { ccs, bc },
+        outputs: { ccsResult, bcResult },
+        net_tco2e: total,
+      });
+    }
+  }, [ccsResult, bcResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Aggregate KPIs */
   const totalCCSStored = useMemo(() => CCS_PROJECTS.reduce((s,p)=>s+p.net_stored_tco2e,0), []);

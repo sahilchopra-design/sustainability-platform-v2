@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, PieChart, Pie,
@@ -82,6 +83,7 @@ const calcWeatherNorm=(measured,hddActual,hddNormal,baseTemp)=>{
 };
 
 export default function CcEnergyEfficiencyHubPage(){
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS=['Energy Efficiency Calculator','Distributed Energy Model','Building Retrofit','Industrial Efficiency','Weather Normalization','Hub Dashboard'];
   const [tab,setTab]=useState(TABS[0]);
 
@@ -106,6 +108,20 @@ export default function CcEnergyEfficiencyHubPage(){
   const [wnBaseTemp,setWnBaseTemp]=useState(18);
 
   const eeResult=useMemo(()=>calcEnergyEff(ep),[ep]);
+
+  useEffect(() => {
+    if (eeResult && eeResult.netCredits > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'AMS-II.C',
+        family: 'energy',
+        cluster: 'Energy Efficiency',
+        inputs: ep,
+        outputs: eeResult,
+        net_tco2e: eeResult.netCredits || 0,
+      });
+    }
+  }, [eeResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Distributed energy result */
   const derResult=useMemo(()=>{

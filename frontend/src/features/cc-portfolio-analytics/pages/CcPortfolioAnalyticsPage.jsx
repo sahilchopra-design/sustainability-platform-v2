@@ -5,6 +5,8 @@ import {
   ScatterChart, Scatter, ZAxis, LineChart, Line,
 } from 'recharts';
 
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
+
 const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -78,6 +80,7 @@ const genPositions = () => {
 const POSITIONS = genPositions();
 
 export default function CcPortfolioAnalyticsPage() {
+  const ccData = useCarbonCredit(); const ccPortfolio = ccData.adaptForPortfolio();
   const [tab, setTab] = useState(TABS[0]);
 
   const portfolio = useMemo(() => {
@@ -192,9 +195,9 @@ export default function CcPortfolioAnalyticsPage() {
         {tab === 'Portfolio Overview' && (
           <>
             <Row>
-              <KpiCard label="TOTAL PORTFOLIO VALUE" value={'$' + (portfolio.totalValue / 1e6).toFixed(2) + 'M'} sub="Mark-to-market" accent={T.gold} />
-              <KpiCard label="TOTAL CREDITS" value={(portfolio.totalCredits / 1e6).toFixed(2) + 'M'} sub="tCO2e across 25 positions" />
-              <KpiCard label="RETIREMENT RATE" value={portfolio.retirementRate + '%'} sub={`${(portfolio.totalRetired / 1e6).toFixed(2)}M retired`} />
+              <KpiCard label="TOTAL PORTFOLIO VALUE" value={'$' + ((ccPortfolio.totalValue || portfolio.totalValue) / 1e6).toFixed(2) + 'M'} sub="Mark-to-market" accent={T.gold} />
+              <KpiCard label="TOTAL CREDITS" value={((ccPortfolio.totalCredits || portfolio.totalCredits) / 1e6).toFixed(2) + 'M'} sub="tCO2e across 25 positions" />
+              <KpiCard label="RETIREMENT RATE" value={(ccPortfolio.retirementRate || portfolio.retirementRate) + '%'} sub={`${((ccPortfolio.totalRetired || portfolio.totalRetired) / 1e6).toFixed(2)}M retired`} />
               <KpiCard label="AVG CREDIT AGE" value={portfolio.avgAge + ' yrs'} sub="Weighted by volume" />
             </Row>
 

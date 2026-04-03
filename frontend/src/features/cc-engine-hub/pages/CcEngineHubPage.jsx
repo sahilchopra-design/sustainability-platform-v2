@@ -4,6 +4,8 @@ import {
   PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis,
 } from 'recharts';
 
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
+
 const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -133,6 +135,7 @@ const genProjects = () => {
 const PROJECTS = genProjects();
 
 export default function CcEngineHubPage() {
+  const ccData = useCarbonCredit(); const summary = ccData.getSummary();
   const [tab, setTab] = useState(TABS[0]);
   const [searchLib, setSearchLib] = useState('');
   const [calcFamily, setCalcFamily] = useState(FAMILIES[0]);
@@ -221,10 +224,10 @@ export default function CcEngineHubPage() {
         {tab === 'Executive Dashboard' && (
           <>
             <Row>
-              <KpiCard label="TOTAL CREDITS ISSUED" value={(totals.issued / 1e6).toFixed(2) + 'M'} sub="Across all projects" accent={T.gold} />
-              <KpiCard label="CREDITS RETIRED" value={(totals.retired / 1e6).toFixed(2) + 'M'} sub={((totals.retired / totals.issued) * 100).toFixed(1) + '% retirement rate'} />
-              <KpiCard label="CREDITS AVAILABLE" value={(totals.available / 1e6).toFixed(2) + 'M'} sub="Active on registries" />
-              <KpiCard label="PIPELINE PROJECTS" value={totals.pipeline} sub="Under development" />
+              <KpiCard label="TOTAL CREDITS ISSUED" value={summary.totalIssued ? (summary.totalIssued / 1e6).toFixed(2) + 'M' : (totals.issued / 1e6).toFixed(2) + 'M'} sub="Across all projects" accent={T.gold} />
+              <KpiCard label="CREDITS RETIRED" value={summary.totalRetired ? (summary.totalRetired / 1e6).toFixed(2) + 'M' : (totals.retired / 1e6).toFixed(2) + 'M'} sub={((summary.totalRetired || totals.retired) / (summary.totalIssued || totals.issued) * 100).toFixed(1) + '% retirement rate'} />
+              <KpiCard label="CREDITS AVAILABLE" value={summary.totalAvailable ? (summary.totalAvailable / 1e6).toFixed(2) + 'M' : (totals.available / 1e6).toFixed(2) + 'M'} sub="Active on registries" />
+              <KpiCard label="PIPELINE PROJECTS" value={summary.pipelineCount ?? totals.pipeline} sub="Under development" />
             </Row>
 
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginTop: 20 }}>

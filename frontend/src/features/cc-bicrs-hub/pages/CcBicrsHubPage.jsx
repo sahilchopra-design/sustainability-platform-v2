@@ -1,4 +1,5 @@
-import React,{useState,useMemo} from 'react';
+import React,{useState,useMemo,useEffect} from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,LineChart,Line,AreaChart,Area,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,PieChart,Pie,Cell} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -51,6 +52,7 @@ const genBeccsProjects=()=>Array.from({length:4},(_,i)=>({id:i+1,
 }));
 
 export default function CcBicrsHubPage(){
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const [tab,setTab]=useState(0);
   const tabs=['BiCRS Calculator','BECCS Pathway','Biomass Sustainability','CDR Technology Comparison','CDR Portfolio Builder','Hub Dashboard'];
 
@@ -86,6 +88,20 @@ export default function CcBicrsHubPage(){
     const finalRemoval=co2Equiv*(1-permAdj)*(1-uncertaintyAdj)-lifecycleEm;
     return{biomassC:+biomassC.toFixed(1),cInjected:+cInjected.toFixed(1),cStored:+cStored.toFixed(1),co2Equiv:+co2Equiv.toFixed(1),permAdj,lifecycleEm:+lifecycleEm.toFixed(1),finalRemoval:+finalRemoval.toFixed(1),conversionEff:biomassInput>0?(cStored/biomassInput*100).toFixed(1):'0'};
   },[biomassInput,carbonContent,injectionVol,leakageRate,permTier,lifecyclePct]);
+
+  useEffect(() => {
+    if (bicrsCalc && bicrsCalc.finalRemoval > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'Iso-BiCRS',
+        family: 'cdr',
+        cluster: 'BiCRS',
+        inputs: { biomassInput, carbonContent, injectionVol, leakageRate, permTier, lifecyclePct },
+        outputs: bicrsCalc,
+        net_tco2e: bicrsCalc.finalRemoval || 0,
+      });
+    }
+  }, [bicrsCalc]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* BECCS summary */
   const beccsSummary=useMemo(()=>{

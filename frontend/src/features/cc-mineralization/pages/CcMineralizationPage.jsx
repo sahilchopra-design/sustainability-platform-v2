@@ -1,4 +1,5 @@
-import React,{useState,useMemo,useCallback} from 'react';
+import React,{useState,useMemo,useCallback,useEffect} from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,LineChart,Line,AreaChart,Area,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,ScatterChart,Scatter,Cell,PieChart,Pie} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -22,6 +23,7 @@ const genProjects=()=>Array.from({length:8},(_,i)=>{const s=sr(i*7);const s2=sr(
 
 /* ── main component ── */
 export default function CcMineralizationPage(){
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const [tab,setTab]=useState(0);
   const tabs=['Methodology Overview','Ca-Rich Carbonation Calculator','ERW Cumulative Model','Rock Characterization','Field Application Design','Measurement & Verification'];
 
@@ -54,6 +56,20 @@ export default function CcMineralizationPage(){
     const netRemoval=practicalCapture-energyEmissions;
     return{caCO2:+caCO2.toFixed(2),mgCO2:+mgCO2.toFixed(2),totalTheoretical:+totalTheoretical.toFixed(2),sizeFactor,practicalCapture:+practicalCapture.toFixed(2),energyEmissions:+energyEmissions.toFixed(2),netRemoval:+netRemoval.toFixed(2),efficiency:totalTheoretical>0?+(practicalCapture/totalTheoretical*100).toFixed(1):0};
   },[rockQty,caoPct,mgoPct,particleSize,weatherRate,energyGrind]);
+
+  useEffect(() => {
+    if (carbonation && carbonation.netRemoval > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'Puro-ERW',
+        family: 'cdr',
+        cluster: 'Mineralization/ERW',
+        inputs: { rockQty, caoPct, mgoPct, particleSize, weatherRate, energyGrind },
+        outputs: carbonation,
+        net_tco2e: carbonation.netRemoval || 0,
+      });
+    }
+  }, [carbonation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ERW cumulative dissolution */
   const erwCumulative=useMemo(()=>{

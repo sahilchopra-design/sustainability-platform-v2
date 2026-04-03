@@ -4,6 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend,
 } from 'recharts';
 import { GLOBAL_COMPANY_MASTER, EXCHANGES, globalSearch } from '../../../data/globalCompanyMaster';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
@@ -70,6 +71,7 @@ function WeightInput({ value, onChange }) {
    MAIN PAGE
 ════════════════════════════════════════════════════════════════════════════ */
 export default function PortfolioManagerPage() {
+  const ccData = useCarbonCredit(); const ccPortfolio = ccData.adaptForPortfolio();
 
   // ── Portfolios state (localStorage persisted) ─────────────────────────────
   // Storage format: { portfolios: { name: { holdings: [] } }, activePortfolio: name }
@@ -601,6 +603,8 @@ export default function PortfolioManagerPage() {
                 <KpiCard label="Agg. Scope 1+2" value={fmtCO2(analytics.totalScope1 + analytics.totalScope2)} sub="Weighted tCO₂e" color="#ea580c" />
                 <KpiCard label="SBTi Committed" value={`${analytics.sbtiPct}%`} sub="of holdings" color={T.green} />
                 <KpiCard label="Portfolio Mkt Cap" value={fmtMn(analytics.totalMarketCap)} sub="Weighted USD" color={T.blue} />
+                <KpiCard label="CC Credits" value={(ccPortfolio.totalCredits ?? 0).toLocaleString()} sub="Carbon Credit Engine" color={'#059669'} />
+                <KpiCard label="CC Retire Rate" value={(ccPortfolio.retirementRate ?? 0).toFixed(1) + '%'} sub="Credit retirement" color={'#059669'} />
               </div>
 
               {/* Weight check */}

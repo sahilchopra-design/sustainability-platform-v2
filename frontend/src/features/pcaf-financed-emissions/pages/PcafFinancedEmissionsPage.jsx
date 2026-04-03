@@ -17,6 +17,7 @@ import { EMISSION_FACTORS, SECTOR_BENCHMARKS, PCAF_DATA_QUALITY, CARBON_PRICES }
 import { SECURITY_UNIVERSE, MOCK_PORTFOLIO } from '../../../data/securityUniverse';
 import { getEVIC } from '../../../data/evicService';
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME, PRNG, UTILITIES
@@ -713,6 +714,7 @@ function PartATab({positions,setPositions}){
       <KPICard label="WACI" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="Portfolio average" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
       <KPICard label="Carbon Cost" value={'$'+carbonCostM+'M'} sub={`@ $${carbonPrice}/tCO2e`} color={T.red}/>
+      <KPICard label="CC Credits Financed" value={ccPcaf.totalFinancedCredits?.toLocaleString() || '0'} sub="Carbon Credit Engine" color={'#059669'}/>
     </div>
 
     {/* Charts */}
@@ -1339,6 +1341,7 @@ const TABS=['Part A: Financed','Part B: Insurance','Part C: Facilitated','Data Q
 export default function PcafFinancedEmissionsPage(){
   const[activeTab,setActiveTab]=useState(TABS[0]);
   const[positions,setPositions]=useState(INITIAL_POSITIONS);
+  const ccData = useCarbonCredit(); const ccPcaf = ccData.adaptForPcaf();
 
   return(
     <div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>

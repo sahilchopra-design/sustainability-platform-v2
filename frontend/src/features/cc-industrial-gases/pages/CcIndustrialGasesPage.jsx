@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, RadarChart,
@@ -79,6 +80,7 @@ const calcIndustrialGas = (params) => {
 };
 
 export default function CcIndustrialGasesPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['Methodology Overview','Industrial Gas Calculator','Destruction Technology','Regulatory Baseline','Monitoring Protocol'];
   const [tab, setTab] = useState(TABS[0]);
 
@@ -90,6 +92,20 @@ export default function CcIndustrialGasesPage() {
   const [selTech, setSelTech] = useState(0);
 
   const igResult = useMemo(() => calcIndustrialGas(ig), [ig]);
+
+  useEffect(() => {
+    if (igResult && igResult.net_credits > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'AM0001',
+        family: 'industrial',
+        cluster: 'Industrial Gases',
+        inputs: ig,
+        outputs: igResult,
+        net_tco2e: igResult.net_credits || 0,
+      });
+    }
+  }, [igResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Aggregates */
   const totalAvoided = useMemo(() => PROJECTS.reduce((s,p)=>s+p.tco2e_avoided,0), []);

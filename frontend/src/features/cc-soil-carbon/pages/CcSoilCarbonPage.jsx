@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine, PieChart, Pie,
@@ -91,6 +92,7 @@ const calcSampleSize = (variance, confidence, margin) => {
 };
 
 export default function CcSoilCarbonPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['Methodology Overview','SOC Baseline Calculator','Credit Calculator','Practice Comparison','Sampling Design','Permanence & Reversals'];
   const [tab, setTab] = useState(TABS[0]);
 
@@ -115,6 +117,21 @@ export default function CcSoilCarbonPage() {
 
   const socBL = useMemo(() => calcSOC_BL(socPct, bulkDensity, samplingDepth), [socPct, bulkDensity, samplingDepth]);
   const creditResult = useMemo(() => calcCredits(cp), [cp]);
+
+  useEffect(() => {
+    if (creditResult && creditResult.net > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'VM0042',
+        family: 'agriculture',
+        cluster: 'Soil Carbon',
+        inputs: cp,
+        outputs: creditResult,
+        net_tco2e: creditResult.net || 0,
+      });
+    }
+  }, [creditResult]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const sampleN = useMemo(() => calcSampleSize(sVariance, sConfidence, sMargin), [sVariance, sConfidence, sMargin]);
 
   const practiceChartData = useMemo(() => PRACTICES.map(p => ({

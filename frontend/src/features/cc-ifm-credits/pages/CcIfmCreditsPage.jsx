@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, Cell, ReferenceLine,
@@ -74,6 +75,7 @@ const PROJECTS_IFM = Array.from({length:10},(_, i)=>{
 });
 
 export default function CcIfmCreditsPage() {
+  const { addCalculation, addProject, getSummary } = useCarbonCredit();
   const TABS = ['Methodology Overview','Baseline Modeler','Credit Calculator','Harvest Scheduling','Leakage Assessment','Verification Timeline'];
   const [tab, setTab] = useState(TABS[0]);
   const [ifmType, setIfmType] = useState(IFM_TYPES[0]);
@@ -85,6 +87,20 @@ export default function CcIfmCreditsPage() {
   });
   const setP = useCallback((k,v) => setParams(prev=>({...prev,[k]:v})),[]);
   const result = useMemo(() => calcIFM(params), [params]);
+
+  useEffect(() => {
+    if (result && result.total > 0) {
+      addCalculation({
+        projectId: 'CC-LIVE',
+        methodology: 'VM0010',
+        family: 'nature',
+        cluster: 'IFM',
+        inputs: params,
+        outputs: result,
+        net_tco2e: result.total || 0,
+      });
+    }
+  }, [result]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div style={{ fontFamily:T.font, background:T.cream, minHeight:'100vh', padding:'20px 24px' }}>
