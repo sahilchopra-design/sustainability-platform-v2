@@ -322,6 +322,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BR — Agriculture Carbon Credits (Soil Carbon · Livestock Methane · Rice Cultivation)
+const CcSoilCarbonPage           = React.lazy(() => import("./features/cc-soil-carbon/pages/CcSoilCarbonPage"));
+const CcLivestockMethanePage     = React.lazy(() => import("./features/cc-livestock-methane/pages/CcLivestockMethanePage"));
+const CcRiceCultivationPage      = React.lazy(() => import("./features/cc-rice-cultivation/pages/CcRiceCultivationPage"));
 // Sprint BQ — Nature-Based Carbon Credits (ARR · IFM · REDD+/Wetlands Hub)
 const CcArrReforestationPage     = React.lazy(() => import("./features/cc-arr-reforestation/pages/CcArrReforestationPage"));
 const CcIfmCreditsPage           = React.lazy(() => import("./features/cc-ifm-credits/pages/CcIfmCreditsPage"));
@@ -956,6 +960,11 @@ const NAV_GROUPS = [
     { path: '/vcm-registry-analytics',  label: 'VCM Registry Analytics',          badge: 'Verra · Gold Standard · ACR · Issuance · Retirements · 20 Projects · Quality', code: 'EP-BN1' },
     { path: '/carbon-forward-curve',    label: 'Carbon Forward Curve & ETS',       badge: 'EU ETS · UK ETS · California · RGGI · China ETS · Forward Curve · Scenarios',   code: 'EP-BN2' },
     { path: '/credit-integrity-dd',     label: 'Credit Integrity & Due Diligence', badge: 'Additionality · Permanence · ICVCM CCP · Greenwashing · Integrity Pricing',     code: 'EP-BN3' },
+  ]},
+  { label: 'Agriculture Carbon Credits', icon: '🌾', color: '#854d0e', items: [
+    { path: '/cc-soil-carbon',         label: 'Soil Carbon Sequestration',      badge: 'VM0042 · SOC Baseline · Bulk Density · Practice Comparison · 15yr Permanence',      code: 'EP-BR1' },
+    { path: '/cc-livestock-methane',   label: 'Livestock Methane Reduction',    badge: 'Enteric · Manure · Feed Additives · GWP-100/GWP* · VS/B0/MCF · 10 Projects',      code: 'EP-BR2' },
+    { path: '/cc-rice-cultivation',    label: 'Rice Cultivation Methane',       badge: 'AWD · AMS-III.AU · EF Scaling · Multi-Season · Regional Benchmarks',                code: 'EP-BR3' },
   ]},
   { label: 'Nature-Based Carbon Credits', icon: '🌳', color: '#166534', items: [
     { path: '/cc-arr-reforestation',  label: 'ARR & Reforestation Credits',     badge: 'VM0047 · Biomass Growth · Leakage · Buffer Pool · 30yr Crediting · 12 Projects',    code: 'EP-BQ1' },
@@ -1770,6 +1779,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BR — Agriculture Carbon Credits */}
+            <Route path="/cc-soil-carbon"         element={<CcSoilCarbonPage />} />
+            <Route path="/cc-livestock-methane"   element={<CcLivestockMethanePage />} />
+            <Route path="/cc-rice-cultivation"    element={<CcRiceCultivationPage />} />
             {/* Sprint BQ — Nature-Based Carbon Credits */}
             <Route path="/cc-arr-reforestation"   element={<CcArrReforestationPage />} />
             <Route path="/cc-ifm-credits"         element={<CcIfmCreditsPage />} />
