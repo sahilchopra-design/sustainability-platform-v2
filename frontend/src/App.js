@@ -323,6 +323,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BX — Quantitative Physical Risk Engine
+const PhysicalHazardMapPage         = React.lazy(() => import("./features/physical-hazard-map/pages/PhysicalHazardMapPage"));
+const DamageFunctionCalculatorPage  = React.lazy(() => import("./features/damage-function-calculator/pages/DamageFunctionCalculatorPage"));
+const PhysicalRiskPortfolioPage     = React.lazy(() => import("./features/physical-risk-portfolio/pages/PhysicalRiskPortfolioPage"));
 // Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
 const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
 const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
@@ -981,6 +985,11 @@ const NAV_GROUPS = [
     { path: '/vcm-registry-analytics',  label: 'VCM Registry Analytics',          badge: 'Verra · Gold Standard · ACR · Issuance · Retirements · 20 Projects · Quality', code: 'EP-BN1' },
     { path: '/carbon-forward-curve',    label: 'Carbon Forward Curve & ETS',       badge: 'EU ETS · UK ETS · California · RGGI · China ETS · Forward Curve · Scenarios',   code: 'EP-BN2' },
     { path: '/credit-integrity-dd',     label: 'Credit Integrity & Due Diligence', badge: 'Additionality · Permanence · ICVCM CCP · Greenwashing · Integrity Pricing',     code: 'EP-BN3' },
+  ]},
+  { label: 'Quantitative Physical Risk', icon: '🌊', color: '#0c4a6e', items: [
+    { path: '/physical-hazard-map',          label: 'Hazard Mapping Dashboard',         badge: 'IPCC AR6 · 8 Perils · SSP1-2.6→SSP5-8.5 · 40 Assets · JRC · FIRMS · WBGT',    code: 'EP-BX1' },
+    { path: '/damage-function-calculator',   label: 'Damage Function Calculator',       badge: 'JRC · HAZUS-MH · FEMA P-58 · WBGT ISO 7933 · AAL · EAL · PML 100yr/250yr',   code: 'EP-BX2' },
+    { path: '/physical-risk-portfolio',      label: 'Physical Risk Portfolio Aggregator', badge: 'ECB CST · BoE CBES · APRA CPG 229 · Insurance Gap · Double-Hit · 30 Assets',  code: 'EP-BX3' },
   ]},
   { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
     { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
@@ -1825,6 +1834,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BX — Quantitative Physical Risk Engine */}
+            <Route path="/physical-hazard-map"         element={<PhysicalHazardMapPage />} />
+            <Route path="/damage-function-calculator"  element={<DamageFunctionCalculatorPage />} />
+            <Route path="/physical-risk-portfolio"     element={<PhysicalRiskPortfolioPage />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
             <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
             <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
