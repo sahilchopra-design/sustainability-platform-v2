@@ -323,6 +323,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BY — AI Intelligence Layer (LLM Extraction · Greenwashing · Narrative Arc)
+const LLMESGExtractorPage          = React.lazy(() => import("./features/llm-esg-extractor/pages/LLMESGExtractorPage"));
+const GreenwashingDetectionPage    = React.lazy(() => import("./features/greenwashing-detection/pages/GreenwashingDetectionPage"));
+const ESGNarrativeIntelligencePage = React.lazy(() => import("./features/esg-narrative-intelligence/pages/ESGNarrativeIntelligencePage"));
 // Sprint BX — Quantitative Physical Risk Engine
 const PhysicalHazardMapPage         = React.lazy(() => import("./features/physical-hazard-map/pages/PhysicalHazardMapPage"));
 const DamageFunctionCalculatorPage  = React.lazy(() => import("./features/damage-function-calculator/pages/DamageFunctionCalculatorPage"));
@@ -657,12 +661,15 @@ const NAV_GROUPS = [
     { path: '/impact-verification',       label: 'Impact Verification',      badge: 'IMP · Evidence Tiers · Impact Washing',  code: 'EP-X5' },
   ]},
   { label: 'AI & NLP Analytics', icon: '🤖', color: '#0891b2', items: [
-    { path: '/ai-hub',                  label: 'AI Analytics Hub',          badge: 'Hub · NLP · ML · Anomaly · Clustering',  code: 'EP-W6' },
-    { path: '/esg-report-parser',       label: 'ESG Report Parser',        badge: 'NLP · TF-IDF · Entity Extraction',       code: 'EP-W1' },
-    { path: '/predictive-esg',          label: 'Predictive ESG Model',     badge: '3 Models · Regression · KNN · R²',       code: 'EP-W2' },
-    { path: '/anomaly-detection',       label: 'Anomaly Detection',        badge: 'Z-Score · IQR · Isolation · 10 Fields',  code: 'EP-W3' },
-    { path: '/ai-engagement',           label: 'AI Engagement Advisor',    badge: '20 Rules · Priority · Templates',        code: 'EP-W4' },
-    { path: '/document-similarity',     label: 'Document Similarity',      badge: 'Cosine · K-Means · Boilerplate',         code: 'EP-W5' },
+    { path: '/ai-hub',                     label: 'AI Analytics Hub',              badge: 'Mission Control · 9 Modules · Agentic Workflows · Signal Bus',   code: 'EP-W6' },
+    { path: '/esg-report-parser',          label: 'ESG Report Parser',             badge: 'LLM Pipeline · ESRS/ISSB/TCFD · JSON Output · Multi-Doc Compare', code: 'EP-W1' },
+    { path: '/predictive-esg',             label: 'Predictive ESG Model',          badge: 'XGBoost · LightGBM · Ensemble · SHAP · 15 Features · CI Bands',   code: 'EP-W2' },
+    { path: '/llm-esg-extractor',          label: 'LLM ESG Field Extractor',       badge: 'Claude · GPT-4o · 42 ESRS Fields · Confidence Scoring · KPI',     code: 'EP-BY1' },
+    { path: '/greenwashing-detection',     label: 'Greenwashing Detection Engine', badge: '7-Signal Model · EU Green Claims · ESMA · FCA SDR · Severity',    code: 'EP-BY2' },
+    { path: '/esg-narrative-intelligence', label: 'ESG Narrative Intelligence',    badge: '5-Year Arc · Topic Drift · Commitment Tracker · Controversy',     code: 'EP-BY3' },
+    { path: '/anomaly-detection',          label: 'Anomaly Detection',             badge: 'Z-Score · IQR · Isolation · 10 Fields',                           code: 'EP-W3' },
+    { path: '/ai-engagement',              label: 'AI Engagement Advisor',         badge: '20 Rules · Priority · Templates',                                  code: 'EP-W4' },
+    { path: '/document-similarity',        label: 'Document Similarity',           badge: 'Cosine · K-Means · Boilerplate',                                   code: 'EP-W5' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -1834,6 +1841,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BY — AI Intelligence Layer */}
+            <Route path="/llm-esg-extractor"          element={<LLMESGExtractorPage />} />
+            <Route path="/greenwashing-detection"     element={<GreenwashingDetectionPage />} />
+            <Route path="/esg-narrative-intelligence" element={<ESGNarrativeIntelligencePage />} />
             {/* Sprint BX — Quantitative Physical Risk Engine */}
             <Route path="/physical-hazard-map"         element={<PhysicalHazardMapPage />} />
             <Route path="/damage-function-calculator"  element={<DamageFunctionCalculatorPage />} />

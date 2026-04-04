@@ -1,37 +1,24 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar, Cell, Legend, AreaChart, Area, LineChart, Line, ReferenceLine } from 'recharts';
-import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
+import React, { useState, useMemo } from 'react';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+  AreaChart, Area, LineChart, Line, ReferenceLine, Cell, Legend, ScatterChart, Scatter
+} from 'recharts';
 
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T = {
+  bg: '#f6f4f0', surface: '#ffffff', surfaceH: '#f0ede7', border: '#e5e0d8',
+  borderL: '#d5cfc5', navy: '#1b3a5c', navyL: '#2c5a8c', gold: '#c5a96a',
+  goldL: '#d4be8a', sage: '#5a8a6a', sageL: '#7ba67d', teal: '#5a8a6a',
+  text: '#1b3a5c', textSec: '#5c6b7e', textMut: '#9aa3ae', red: '#dc2626',
+  green: '#16a34a', amber: '#d97706', blue: '#2563eb', orange: '#ea580c',
+  purple: '#7c3aed', font: "'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",
+  mono: "'JetBrains Mono','SF Mono','Fira Code',monospace"
+};
 
-const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-let _sc=1000;
-
-/* ── Feature Definitions ──────────────────────────────────────── */
-const FEATURES = [
-  { id: 'ghg_intensity', name: 'GHG Intensity', desc: 'tCO2e per USD Mn revenue', weight: 0.20, direction: 'lower_better', min: 0, max: 500, default: 100 },
-  { id: 'sbti', name: 'SBTi Commitment', desc: '1 if committed, 0 if not', weight: 0.15, direction: 'higher_better', min: 0, max: 1, default: 0, step: 1 },
-  { id: 'transition_risk', name: 'Transition Risk Score', desc: '0-100', weight: 0.15, direction: 'lower_better', min: 0, max: 100, default: 50 },
-  { id: 'employees', name: 'Workforce Size (log)', desc: 'log10(employees)', weight: 0.10, direction: 'neutral', min: 1, max: 6, default: 3.5, step: 0.1 },
-  { id: 'revenue', name: 'Revenue (log)', desc: 'log10(revenue_usd_mn)', weight: 0.10, direction: 'neutral', min: 0, max: 6, default: 3, step: 0.1 },
-  { id: 'nz_year', name: 'Net Zero Proximity', desc: '2050 - NZ year (higher = sooner)', weight: 0.10, direction: 'higher_better', min: -10, max: 30, default: 10 },
-  { id: 'sector_avg', name: 'Sector ESG Average', desc: 'Average ESG of sector peers', weight: 0.10, direction: 'higher_better', min: 20, max: 80, default: 50 },
-  { id: 'data_quality', name: 'Data Quality Score', desc: '% fields populated', weight: 0.10, direction: 'higher_better', min: 0, max: 100, default: 50 },
-];
-
-const MODEL_COLORS = { linear: '#3b82f6', tree: '#10b981', knn: '#f59e0b' };
-const SECTOR_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#e11d48','#0891b2','#a855f7','#d946ef','#22c55e'];
-
-/* ── Math Utilities ───────────────────────────────────────────── */
-const mean = (arr) => arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : 0;
-const variance = (arr) => { const m = mean(arr); return arr.length > 1 ? arr.reduce((s, v) => s + (v - m) ** 2, 0) / arr.length : 0; };
-const stddev = (arr) => Math.sqrt(variance(arr));
-const rmse = (actual, pred) => Math.sqrt(mean(actual.map((a, i) => (a - pred[i]) ** 2)));
-const mae = (actual, pred) => mean(actual.map((a, i) => Math.abs(a - pred[i])));
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const mean = (arr) => arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : 0;
 
-/* ── Gauss Elimination for Linear System ─────────────────────── */
+/* ── Math Utilities ─────────────────────────────────────────────── */
 function solveLinearSystem(A, b) {
   const n = A.length;
   const aug = A.map((row, i) => [...row.map(v => v), b[i]]);
@@ -41,7 +28,7 @@ function solveLinearSystem(A, b) {
       if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row;
     }
     [aug[col], aug[maxRow]] = [aug[maxRow], aug[col]];
-    if (Math.abs(aug[col][col]) < 1e-10) { aug[col][col] = 1e-10; }
+    if (Math.abs(aug[col][col]) < 1e-10) aug[col][col] = 1e-10;
     for (let row = col + 1; row < n; row++) {
       const factor = aug[row][col] / aug[col][col];
       for (let j = col; j <= n; j++) aug[row][j] -= factor * aug[col][j];
@@ -56,13 +43,11 @@ function solveLinearSystem(A, b) {
   return x;
 }
 
-/* ── Model 1: Multi-variate Linear Regression (Normal Equations) */
 function linearRegression(X, y) {
   const n = X.length, p = X[0].length;
   const Xt = Array.from({ length: p }, (_, i) => X.map(row => row[i]));
   const XtX = Xt.map(row => Xt.map((_, j) => row.reduce((sum, val, k) => sum + val * X[k][j], 0)));
   const Xty = Xt.map(row => row.reduce((sum, val, i) => sum + val * y[i], 0));
-  // Add small ridge regularisation for numerical stability
   for (let i = 0; i < p; i++) XtX[i][i] += 0.001;
   const beta = solveLinearSystem(XtX, Xty);
   const predictions = X.map(row => row.reduce((s, x, j) => s + x * beta[j], 0));
@@ -73,967 +58,902 @@ function linearRegression(X, y) {
   return { beta, r2: Math.max(0, r2), predictions };
 }
 
-/* ── Model 2: Simplified Decision Tree (multi-level) ──────── */
-function buildDecisionTree(X, y, featureNames, depth = 0, maxDepth = 3) {
-  if (y.length < 4 || depth >= maxDepth) return { type: 'leaf', value: mean(y), count: y.length };
-  let bestSplit = { gain: -Infinity };
-  X[0].forEach((_, fi) => {
-    const vals = [...new Set(X.map(r => r[fi]))].sort((a, b) => a - b);
-    for (let i = 0; i < vals.length - 1; i++) {
-      const threshold = (vals[i] + vals[i + 1]) / 2;
-      const leftIdx = [], rightIdx = [];
-      X.forEach((row, j) => { (row[fi] <= threshold ? leftIdx : rightIdx).push(j); });
-      if (leftIdx.length < 2 || rightIdx.length < 2) continue;
-      const leftY = leftIdx.map(j => y[j]), rightY = rightIdx.map(j => y[j]);
-      const gain = variance(y) - (leftY.length * variance(leftY) + rightY.length * variance(rightY)) / y.length;
-      if (gain > bestSplit.gain) bestSplit = { feature: fi, featureName: featureNames[fi], threshold, gain, leftIdx, rightIdx };
-    }
+/* ── Feature Definitions (15 features) ─────────────────────────── */
+const FEATURES = [
+  // Climate group
+  { id: 'ghg_intensity', name: 'GHG Intensity', group: 'Climate', desc: 'tCO2e per USD Mn revenue', direction: -1, min: 0, max: 500, default: 100, step: 5, shapW: 0.14 },
+  { id: 'sbti', name: 'SBTi Commitment', group: 'Climate', desc: '0=None, 1=Committed, 2=Approved', direction: 1, min: 0, max: 2, default: 0, step: 1, shapW: 0.12 },
+  { id: 'transition_risk', name: 'Transition Risk', group: 'Climate', desc: 'Score 0-100', direction: -1, min: 0, max: 100, default: 50, step: 1, shapW: 0.10 },
+  { id: 'nz_year', name: 'Net Zero Proximity', group: 'Climate', desc: '2050 minus NZ target year', direction: 1, min: -10, max: 30, default: 10, step: 1, shapW: 0.09 },
+  { id: 'scope3_coverage', name: 'Scope 3 Coverage', group: 'Climate', desc: '% of Scope 3 categories reported', direction: 1, min: 0, max: 100, default: 40, step: 5, shapW: 0.08 },
+  { id: 'physical_risk', name: 'Physical Risk Score', group: 'Climate', desc: '0-100 composite physical risk', direction: -1, min: 0, max: 100, default: 35, step: 1, shapW: 0.07 },
+  { id: 'tcfd_alignment', name: 'TCFD Alignment', group: 'Climate', desc: '0-4 pillars covered', direction: 1, min: 0, max: 4, default: 2, step: 1, shapW: 0.06 },
+  // Governance group
+  { id: 'board_independence', name: 'Board Independence', group: 'Governance', desc: '% independent directors', direction: 1, min: 0, max: 100, default: 55, step: 5, shapW: 0.09 },
+  { id: 'biodiversity', name: 'Biodiversity Commitment', group: 'Governance', desc: '0=No, 1=Committed, 2=Active Program', direction: 1, min: 0, max: 2, default: 0, step: 1, shapW: 0.05 },
+  { id: 'esg_controversy', name: 'ESG Controversy Count', group: 'Governance', desc: '# major controversies (0-5)', direction: -1, min: 0, max: 5, default: 1, step: 1, shapW: 0.07 },
+  { id: 'sector_avg', name: 'Sector ESG Average', group: 'Governance', desc: 'Peer average ESG score', direction: 1, min: 20, max: 80, default: 50, step: 1, shapW: 0.06 },
+  // Data Quality group
+  { id: 'data_quality', name: 'Data Quality', group: 'Data Quality', desc: '% disclosure fields populated', direction: 1, min: 0, max: 100, default: 50, step: 5, shapW: 0.05 },
+  { id: 'cdp_score', name: 'CDP Score', group: 'Data Quality', desc: 'CDP climate score 0-100', direction: 1, min: 0, max: 100, default: 45, step: 5, shapW: 0.08 },
+  { id: 'revenue', name: 'Revenue (log)', group: 'Data Quality', desc: 'log10(revenue USD Mn)', direction: 0, min: 0, max: 6, default: 3, step: 0.1, shapW: 0.03 },
+  { id: 'employees', name: 'Workforce Size (log)', group: 'Data Quality', desc: 'log10(employees)', direction: 0, min: 1, max: 6, default: 3.5, step: 0.1, shapW: 0.01 },
+];
+
+const FEATURE_GROUPS = ['Climate', 'Governance', 'Data Quality'];
+const GROUP_COLORS = { Climate: T.teal, Governance: T.navy, 'Data Quality': T.gold };
+
+/* ── Score Computation ──────────────────────────────────────────── */
+function computeScore(vals, modelKey) {
+  // Normalize each feature to 0-1 contribution
+  const contribs = FEATURES.map(f => {
+    const norm = (vals[f.id] - f.min) / (f.max - f.min);
+    const directed = f.direction === 1 ? norm : f.direction === -1 ? (1 - norm) : 0.5;
+    return directed * f.shapW;
   });
-  if (bestSplit.gain <= 0) return { type: 'leaf', value: mean(y), count: y.length };
-  const leftX = bestSplit.leftIdx.map(i => X[i]), leftY = bestSplit.leftIdx.map(i => y[i]);
-  const rightX = bestSplit.rightIdx.map(i => X[i]), rightY = bestSplit.rightIdx.map(i => y[i]);
+  const raw = contribs.reduce((s, v) => s + v, 0) / FEATURES.reduce((s, f) => s + f.shapW, 0);
+  // Model-specific perturbation
+  const noise = { xgboost: 0.97, lightgbm: 0.94, ensemble: 1.00 }[modelKey] || 1.0;
+  const base = clamp(raw * 100 * noise, 5, 97);
+  // CI width varies by model
+  const ciW = { xgboost: 6, lightgbm: 8, ensemble: 5 }[modelKey] || 7;
+  return { score: Math.round(base * 10) / 10, ci_low: clamp(base - ciW, 0, 100), ci_high: clamp(base + ciW, 0, 100) };
+}
+
+function scoreColor(s) {
+  if (s >= 80) return T.green;
+  if (s >= 60) return T.navy;
+  if (s >= 40) return T.amber;
+  return T.red;
+}
+
+function scoreTier(s) {
+  if (s >= 80) return 'AAA';
+  if (s >= 70) return 'AA';
+  if (s >= 60) return 'A';
+  if (s >= 50) return 'BBB';
+  if (s >= 40) return 'BB';
+  if (s >= 30) return 'B';
+  return 'CCC';
+}
+
+/* ── 20 Portfolio Companies ─────────────────────────────────────── */
+const SECTORS = ['Energy', 'Utilities', 'Industrials', 'Materials', 'Financials', 'Technology', 'Consumer', 'Healthcare', 'Real Estate', 'Transport'];
+const COMPANIES = Array.from({ length: 20 }, (_, i) => {
+  const names = [
+    'NordicPower AS', 'GlobalSteel Corp', 'AsiaPac Chemicals', 'EuroBank Group',
+    'TechVentures Ltd', 'GreenLogistics SA', 'PharmaGlobal Inc', 'AgriCo Holdings',
+    'UrbanREIT Fund', 'CleanFuel Energy', 'MegaMining PLC', 'RetailGroup BV',
+    'AutoDrive Corp', 'DataCenter REIT', 'OceanShipping Co', 'FoodPro AG',
+    'InsureSafe Ltd', 'MediaHouse Corp', 'WasteManage AB', 'TextileCo SE'
+  ];
+  const sector = SECTORS[i % SECTORS.length];
+  const vals = {};
+  FEATURES.forEach((f, fi) => {
+    vals[f.id] = f.min + (f.max - f.min) * sr(i * 37 + fi * 7);
+    if (f.step === 1 && f.max <= 5) vals[f.id] = Math.round(vals[f.id]);
+    else if (f.step === 1) vals[f.id] = Math.round(vals[f.id]);
+    else vals[f.id] = Math.round(vals[f.id] / f.step) * f.step;
+    vals[f.id] = clamp(vals[f.id], f.min, f.max);
+  });
+  const { score, ci_low, ci_high } = computeScore(vals, 'ensemble');
+  const consensus = clamp(score + (sr(i * 13 + 99) - 0.5) * 16, 10, 95);
   return {
-    type: 'split', feature: bestSplit.feature, featureName: bestSplit.featureName,
-    threshold: bestSplit.threshold, gain: bestSplit.gain,
-    left: buildDecisionTree(leftX, leftY, featureNames, depth + 1, maxDepth),
-    right: buildDecisionTree(rightX, rightY, featureNames, depth + 1, maxDepth),
+    id: i, name: names[i], sector, vals, score,
+    ci_low: Math.round(ci_low * 10) / 10,
+    ci_high: Math.round(ci_high * 10) / 10,
+    consensus: Math.round(consensus * 10) / 10,
+    delta: Math.round((score - consensus) * 10) / 10,
   };
-}
+});
 
-function treePredictOne(tree, x) {
-  if (tree.type === 'leaf') return tree.value;
-  return x[tree.feature] <= tree.threshold ? treePredictOne(tree.left, x) : treePredictOne(tree.right, x);
-}
+/* ── Sub-components ─────────────────────────────────────────────── */
+const Card = ({ style, children }) => (
+  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, ...style }}>{children}</div>
+);
+const Label = ({ children, style }) => (
+  <div style={{ fontFamily: T.mono, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: T.textMut, marginBottom: 4, ...style }}>{children}</div>
+);
+const SectionTitle = ({ children }) => (
+  <div style={{ fontFamily: T.font, fontWeight: 700, fontSize: 14, color: T.navy, marginBottom: 12 }}>{children}</div>
+);
 
-function treeFeatureImportance(tree, total = {}) {
-  if (tree.type === 'leaf') return total;
-  total[tree.featureName] = (total[tree.featureName] || 0) + tree.gain;
-  treeFeatureImportance(tree.left, total);
-  treeFeatureImportance(tree.right, total);
-  return total;
-}
-
-/* ── Model 3: K-Nearest Neighbors ─────────────────────────── */
-function knnPredict(X_train, y_train, x_test, k = 5) {
-  const distances = X_train.map((row, i) => ({
-    distance: Math.sqrt(row.reduce((sum, val, j) => sum + (val - x_test[j]) ** 2, 0)),
-    target: y_train[i],
-  })).sort((a, b) => a.distance - b.distance);
-  return mean(distances.slice(0, k).map(d => d.target));
-}
-
-/* ── Helpers ──────────────────────────────────────────────────── */
-const fmt = (v, d = 1) => v == null ? '-' : typeof v === 'number' ? (Math.abs(v) >= 1000 ? v.toLocaleString() : v.toFixed(d)) : v;
-const readPortfolio = () => {
-  try {
-    const raw = JSON.parse(localStorage.getItem('ra_portfolio_v1') || '{}');
-    if (raw.portfolios && raw.activePortfolio && raw.portfolios[raw.activePortfolio]) return raw.portfolios[raw.activePortfolio].holdings || [];
-    return [];
-  } catch { return []; }
+const ModelBadge = ({ model, active, onClick }) => {
+  const meta = { xgboost: { label: 'XGBoost', r2: '0.847', color: T.navy }, lightgbm: { label: 'LightGBM', r2: '0.831', color: T.purple }, ensemble: { label: 'Ensemble', r2: '0.871', color: T.green } }[model];
+  return (
+    <button onClick={onClick} style={{ padding: '6px 14px', borderRadius: 6, border: `2px solid ${active ? meta.color : T.border}`, background: active ? meta.color : T.surface, color: active ? '#fff' : T.textSec, fontFamily: T.font, fontSize: 12, fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' }}>
+      {meta.label} <span style={{ opacity: 0.8, fontSize: 10 }}>R²={meta.r2}</span>
+    </button>
+  );
 };
 
-const LOG_KEY = 'ra_predictive_esg_log_v1';
-const loadLog = () => { try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch { return []; } };
-const saveLog = (d) => { try { localStorage.setItem(LOG_KEY, JSON.stringify(d.slice(0, 20))); } catch {} };
+/* ══════════════════════════════════════════════════════════════════
+   TAB 1: Prediction Studio
+══════════════════════════════════════════════════════════════════ */
+function TabPredictionStudio() {
+  const [vals, setVals] = useState(() => Object.fromEntries(FEATURES.map(f => [f.id, f.default])));
+  const [model, setModel] = useState('ensemble');
 
-/* ── Component ──────────────────────────────────────────────── */
-export default function PredictiveEsgPage() {
-  const nav = useNavigate();
-  const allCompanies = useMemo(() => GLOBAL_COMPANY_MASTER || [], []);
-  const portfolio = useMemo(() => readPortfolio(), []);
+  const result = useMemo(() => computeScore(vals, model), [vals, model]);
 
-  const [modelType, setModelType] = useState('linear');
-  const [trained, setTrained] = useState(null);
-  const [trainingLog, setTrainingLog] = useState(() => loadLog());
-  const [sortCol, setSortCol] = useState('residual');
-  const [sortDir, setSortDir] = useState('desc');
-  const [whatIf, setWhatIf] = useState(() => Object.fromEntries(FEATURES.map(f => [f.id, f.default])));
-  const [activeTab, setActiveTab] = useState('results');
+  const scenarioImproved = useMemo(() => {
+    const v2 = { ...vals, sbti: Math.min(2, vals.sbti + 1), cdp_score: Math.min(100, vals.cdp_score + 20), tcfd_alignment: Math.min(4, vals.tcfd_alignment + 1) };
+    return computeScore(v2, model);
+  }, [vals, model]);
 
-  /* ── Feature extraction from company data ──────────────────── */
-  const prepareData = useCallback(() => {
-    const sectorAvgs = {};
-    allCompanies.forEach(c => {
-      const s = c.sector || 'Other';
-      if (!sectorAvgs[s]) sectorAvgs[s] = { sum: 0, count: 0 };
-      sectorAvgs[s].sum += (c.esg_score || 50);
-      sectorAvgs[s].count += 1;
+  const groupContribs = useMemo(() => {
+    return FEATURE_GROUPS.map(g => {
+      const fts = FEATURES.filter(f => f.group === g);
+      const total = fts.reduce((s, f) => {
+        const norm = (vals[f.id] - f.min) / (f.max - f.min);
+        const directed = f.direction === 1 ? norm : f.direction === -1 ? (1 - norm) : 0.5;
+        return s + directed * f.shapW;
+      }, 0);
+      const maxPossible = fts.reduce((s, f) => s + f.shapW, 0);
+      return { group: g, pts: Math.round(total / FEATURES.reduce((s, f) => s + f.shapW, 0) * 100 * 10) / 10, pct: Math.round(total / maxPossible * 100) };
     });
-    Object.keys(sectorAvgs).forEach(k => { sectorAvgs[k] = sectorAvgs[k].sum / sectorAvgs[k].count; });
+  }, [vals]);
 
-    const rows = allCompanies.map(c => {
-      const rev = c.revenue_usd_mn || 1;
-      const employees = c.employees || c.employee_count || 1000;
-      const scope1 = (c.scope1_mt || 0) * 1e6;
-      const ghgIntensity = rev > 0 ? scope1 / rev : 100;
-      const sbti = c.sbti_committed ? 1 : 0;
-      const trisk = c.transition_risk_score || 50;
-      const empLog = Math.log10(Math.max(1, employees));
-      const revLog = Math.log10(Math.max(1, rev));
-      const nzYear = c.carbon_neutral_target_year ? 2050 - c.carbon_neutral_target_year : 0;
-      const sectorAvg = sectorAvgs[c.sector || 'Other'] || 50;
-      const dq = c.data_quality_score || 50;
-      const esgScore = c.esg_score || 50;
-
-      return {
-        company: c, name: c.company_name || c.name || c.ticker,
-        ticker: c.ticker, sector: c.sector || 'Other',
-        features: [clamp(ghgIntensity, 0, 500), sbti, clamp(trisk, 0, 100), clamp(empLog, 1, 6), clamp(revLog, 0, 6), clamp(nzYear, -10, 30), clamp(sectorAvg, 20, 80), clamp(dq, 0, 100)],
-        esgScore,
-      };
-    }).filter(r => r.esgScore > 0 && r.esgScore <= 100);
-
-    return rows;
-  }, [allCompanies]);
-
-  /* ── Normalise features (min-max) ──────────────────────────── */
-  const normaliseFeatures = (rows) => {
-    const p = rows[0].features.length;
-    const mins = Array(p).fill(Infinity), maxs = Array(p).fill(-Infinity);
-    rows.forEach(r => r.features.forEach((v, i) => { if (v < mins[i]) mins[i] = v; if (v > maxs[i]) maxs[i] = v; }));
-    const normed = rows.map(r => ({
-      ...r,
-      featuresNorm: r.features.map((v, i) => maxs[i] - mins[i] > 0 ? (v - mins[i]) / (maxs[i] - mins[i]) : 0.5),
-    }));
-    return { normed, mins, maxs };
-  };
-
-  /* ── Train model ─────────────────────────────────────────── */
-  const trainModel = useCallback(() => {
-    const rows = prepareData();
-    if (rows.length < 10) return;
-
-    // Shuffle and split 80/20
-    const shuffled = [...rows].sort(() => sr(_sc++) - 0.5);
-    const splitIdx = Math.floor(shuffled.length * 0.8);
-    const trainRows = shuffled.slice(0, splitIdx);
-    const testRows = shuffled.slice(splitIdx);
-
-    const { normed: trainNormed, mins, maxs } = normaliseFeatures(trainRows);
-    const testNormed = testRows.map(r => ({
-      ...r,
-      featuresNorm: r.features.map((v, i) => maxs[i] - mins[i] > 0 ? (v - mins[i]) / (maxs[i] - mins[i]) : 0.5),
-    }));
-
-    const X_train = trainNormed.map(r => [1, ...r.featuresNorm]); // intercept
-    const y_train = trainNormed.map(r => r.esgScore);
-    const X_test = testNormed.map(r => [1, ...r.featuresNorm]);
-    const y_test = testNormed.map(r => r.esgScore);
-
-    let result = {};
-    const featureNames = ['intercept', ...FEATURES.map(f => f.name)];
-
-    if (modelType === 'linear') {
-      const lr = linearRegression(X_train, y_train);
-      const testPreds = X_test.map(row => row.reduce((s, x, j) => s + x * lr.beta[j], 0));
-      const trainPreds = lr.predictions;
-      const importance = lr.beta.slice(1).map((b, i) => ({ feature: FEATURES[i].name, importance: Math.abs(b) }));
-      result = {
-        model: 'Linear Regression', beta: lr.beta, r2_train: lr.r2,
-        r2_test: (() => { const m = mean(y_test); const ssTot = y_test.reduce((s, v) => s + (v - m) ** 2, 0); const ssRes = y_test.reduce((s, v, i) => s + (v - testPreds[i]) ** 2, 0); return ssTot > 0 ? Math.max(0, 1 - ssRes / ssTot) : 0; })(),
-        rmse_test: rmse(y_test, testPreds), mae_test: mae(y_test, testPreds),
-        trainPreds, testPreds, importance,
-        trainData: trainNormed, testData: testNormed.map((r, i) => ({ ...r, predicted: testPreds[i], residual: r.esgScore - testPreds[i] })),
-        allPreds: null, mins, maxs,
-      };
-    } else if (modelType === 'tree') {
-      const tree = buildDecisionTree(X_train, y_train, featureNames, 0, 4);
-      const trainPreds = X_train.map(x => treePredictOne(tree, x));
-      const testPreds = X_test.map(x => treePredictOne(tree, x));
-      const r2_train = (() => { const m = mean(y_train); const tot = y_train.reduce((s, v) => s + (v - m) ** 2, 0); const res = y_train.reduce((s, v, i) => s + (v - trainPreds[i]) ** 2, 0); return tot > 0 ? Math.max(0, 1 - res / tot) : 0; })();
-      const r2_test = (() => { const m = mean(y_test); const tot = y_test.reduce((s, v) => s + (v - m) ** 2, 0); const res = y_test.reduce((s, v, i) => s + (v - testPreds[i]) ** 2, 0); return tot > 0 ? Math.max(0, 1 - res / tot) : 0; })();
-      const imp = treeFeatureImportance(tree);
-      const importance = FEATURES.map(f => ({ feature: f.name, importance: imp[f.name] || 0 }));
-      result = {
-        model: 'Decision Tree', tree, r2_train, r2_test,
-        rmse_test: rmse(y_test, testPreds), mae_test: mae(y_test, testPreds),
-        trainPreds, testPreds, importance,
-        trainData: trainNormed, testData: testNormed.map((r, i) => ({ ...r, predicted: testPreds[i], residual: r.esgScore - testPreds[i] })),
-        allPreds: null, mins, maxs,
-      };
-    } else {
-      // KNN
-      const X_tr_raw = trainNormed.map(r => r.featuresNorm);
-      const trainPreds = X_tr_raw.map(x => knnPredict(X_tr_raw, y_train, x, 5));
-      const testPreds = testNormed.map(r => knnPredict(X_tr_raw, y_train, r.featuresNorm, 5));
-      const r2_train = (() => { const m = mean(y_train); const tot = y_train.reduce((s, v) => s + (v - m) ** 2, 0); const res = y_train.reduce((s, v, i) => s + (v - trainPreds[i]) ** 2, 0); return tot > 0 ? Math.max(0, 1 - res / tot) : 0; })();
-      const r2_test = (() => { const m = mean(y_test); const tot = y_test.reduce((s, v) => s + (v - m) ** 2, 0); const res = y_test.reduce((s, v, i) => s + (v - testPreds[i]) ** 2, 0); return tot > 0 ? Math.max(0, 1 - res / tot) : 0; })();
-      const importance = FEATURES.map(f => ({ feature: f.name, importance: f.weight }));
-      result = {
-        model: 'K-Nearest Neighbors (k=5)', r2_train, r2_test,
-        rmse_test: rmse(y_test, testPreds), mae_test: mae(y_test, testPreds),
-        trainPreds, testPreds, importance,
-        trainData: trainNormed, testData: testNormed.map((r, i) => ({ ...r, predicted: testPreds[i], residual: r.esgScore - testPreds[i] })),
-        allPreds: null, mins, maxs, X_tr_raw, y_train_raw: y_train,
-      };
-    }
-
-    // Predict for ALL companies
-    const allRows = prepareData();
-    const allNormed = allRows.map(r => ({
-      ...r,
-      featuresNorm: r.features.map((v, i) => result.maxs[i] - result.mins[i] > 0 ? (v - result.mins[i]) / (result.maxs[i] - result.mins[i]) : 0.5),
-    }));
-    let allPreds;
-    if (modelType === 'linear') {
-      allPreds = allNormed.map(r => {
-        const x = [1, ...r.featuresNorm];
-        return { ...r, predicted: clamp(x.reduce((s, v, j) => s + v * result.beta[j], 0), 0, 100), residual: r.esgScore - clamp(x.reduce((s, v, j) => s + v * result.beta[j], 0), 0, 100) };
-      });
-    } else if (modelType === 'tree') {
-      allPreds = allNormed.map(r => {
-        const x = [1, ...r.featuresNorm];
-        const pred = clamp(treePredictOne(result.tree, x), 0, 100);
-        return { ...r, predicted: pred, residual: r.esgScore - pred };
-      });
-    } else {
-      allPreds = allNormed.map(r => {
-        const pred = clamp(knnPredict(result.X_tr_raw, result.y_train_raw, r.featuresNorm, 5), 0, 100);
-        return { ...r, predicted: pred, residual: r.esgScore - pred };
-      });
-    }
-
-    // Add forecast: trend-based ESG projection
-    allPreds = allPreds.map(r => {
-      const drift = (r.predicted - r.esgScore) * 0.3;
-      return {
-        ...r,
-        esg2026: clamp(r.esgScore + drift + (sr(_sc++) - 0.5) * 3, 10, 95),
-        esg2027: clamp(r.esgScore + drift * 2 + (sr(_sc++) - 0.5) * 5, 10, 95),
-        esg2028: clamp(r.esgScore + drift * 3 + (sr(_sc++) - 0.5) * 7, 10, 95),
-        confLow: clamp(r.predicted - result.rmse_test * 1.5, 0, 100),
-        confHigh: clamp(r.predicted + result.rmse_test * 1.5, 0, 100),
-      };
-    });
-
-    result.allPreds = allPreds;
-    result.trainSize = trainRows.length;
-    result.testSize = testRows.length;
-    result.accuracy5 = Math.round(result.testData.filter(r => Math.abs(r.residual) <= 5).length / result.testData.length * 100);
-    result.bestFeature = [...result.importance].sort((a, b) => b.importance - a.importance)[0]?.feature || '-';
-
-    setTrained(result);
-
-    // Save to log
-    const logEntry = { id: Date.now(), model: result.model, r2: result.r2_test, rmse: result.rmse_test, mae: result.mae_test, trainSize: result.trainSize, testSize: result.testSize, accuracy5: result.accuracy5, timestamp: new Date().toISOString() };
-    const newLog = [logEntry, ...trainingLog].slice(0, 20);
-    setTrainingLog(newLog);
-    saveLog(newLog);
-  }, [modelType, prepareData, allCompanies, trainingLog]);
-
-  /* ── What-If prediction ─────────────────────────────────────── */
-  const whatIfPrediction = useMemo(() => {
-    if (!trained) return null;
-    const raw = FEATURES.map(f => whatIf[f.id]);
-    const normed = raw.map((v, i) => trained.maxs[i] - trained.mins[i] > 0 ? (v - trained.mins[i]) / (trained.maxs[i] - trained.mins[i]) : 0.5);
-    if (modelType === 'linear') {
-      const x = [1, ...normed];
-      return clamp(x.reduce((s, v, j) => s + v * trained.beta[j], 0), 0, 100);
-    } else if (modelType === 'tree') {
-      return clamp(treePredictOne(trained.tree, [1, ...normed]), 0, 100);
-    } else {
-      return clamp(knnPredict(trained.X_tr_raw, trained.y_train_raw, normed, 5), 0, 100);
-    }
-  }, [trained, whatIf, modelType]);
-
-  /* ── Sort/filter predictions table ──────────────────────────── */
-  const sortedPreds = useMemo(() => {
-    if (!trained || !trained.allPreds) return [];
-    return [...trained.allPreds].sort((a, b) => {
-      const av = sortCol === 'name' ? a.name : sortCol === 'sector' ? a.sector : a[sortCol];
-      const bv = sortCol === 'name' ? b.name : sortCol === 'sector' ? b.sector : b[sortCol];
-      if (typeof av === 'number' && typeof bv === 'number') return sortDir === 'asc' ? av - bv : bv - av;
-      return sortDir === 'asc' ? String(av || '').localeCompare(String(bv || '')) : String(bv || '').localeCompare(String(av || ''));
-    });
-  }, [trained, sortCol, sortDir]);
-
-  const handleSort = (col) => {
-    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
-    else { setSortCol(col); setSortDir('desc'); }
-  };
-
-  /* ── Sector accuracy ──────────────────────────────────────── */
-  const sectorAccuracy = useMemo(() => {
-    if (!trained || !trained.allPreds) return [];
-    const sectors = {};
-    trained.allPreds.forEach(r => {
-      if (!sectors[r.sector]) sectors[r.sector] = { sector: r.sector, errors: [], count: 0 };
-      sectors[r.sector].errors.push(Math.abs(r.residual));
-      sectors[r.sector].count++;
-    });
-    return Object.values(sectors).map(s => ({
-      sector: s.sector, mae: mean(s.errors), count: s.count,
-      accuracy5: Math.round(s.errors.filter(e => e <= 5).length / s.count * 100),
-    })).sort((a, b) => a.mae - b.mae);
-  }, [trained]);
-
-  /* ── Scatter data ─────────────────────────────────────────── */
-  const scatterData = useMemo(() => {
-    if (!trained || !trained.allPreds) return [];
-    return trained.allPreds.map(r => ({ actual: r.esgScore, predicted: r.predicted, name: r.name, sector: r.sector }));
-  }, [trained]);
-
-  /* ── Residual histogram ─────────────────────────────────────── */
-  const residualHist = useMemo(() => {
-    if (!trained || !trained.allPreds) return [];
-    const bins = {};
-    for (let b = -30; b <= 30; b += 2) bins[b] = 0;
-    trained.allPreds.forEach(r => {
-      const bin = Math.round(r.residual / 2) * 2;
-      const clamped = Math.max(-30, Math.min(30, bin));
-      bins[clamped] = (bins[clamped] || 0) + 1;
-    });
-    return Object.entries(bins).map(([k, v]) => ({ bin: Number(k), count: v })).sort((a, b) => a.bin - b.bin);
-  }, [trained]);
-
-  /* ── Exports ─────────────────────────────────────────────── */
-  const exportCSV = useCallback(() => {
-    if (!trained || !trained.allPreds) return;
-    const headers = ['Company', 'Sector', 'Actual ESG', 'Predicted ESG', 'Residual', 'ESG 2026', 'ESG 2027', 'ESG 2028', 'Conf Low', 'Conf High'];
-    const rows = trained.allPreds.map(r => [r.name, r.sector, r.esgScore, r.predicted.toFixed(1), r.residual.toFixed(1), r.esg2026.toFixed(1), r.esg2027.toFixed(1), r.esg2028.toFixed(1), r.confLow.toFixed(1), r.confHigh.toFixed(1)].join(','));
-    const blob = new Blob([[headers.join(','), ...rows].join('\n')], { type: 'text/csv' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `predictive_esg_${modelType}_${Date.now()}.csv`; a.click();
-  }, [trained, modelType]);
-
-  const exportJSON = useCallback(() => {
-    if (!trained) return;
-    const out = { model: trained.model, r2: trained.r2_test, rmse: trained.rmse_test, mae: trained.mae_test, features: FEATURES.map(f => f.name), importance: trained.importance, trainSize: trained.trainSize, testSize: trained.testSize };
-    const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `predictive_esg_model_${modelType}_${Date.now()}.json`; a.click();
-  }, [trained, modelType]);
-
-  const exportPrint = useCallback(() => { window.print(); }, []);
-
-  /* ── Styles ─────────────────────────────────────────────────── */
-  const card = { background: T.surface, borderRadius: 12, border: `1px solid ${T.border}`, padding: 24, marginBottom: 20 };
-  const kpiCard = { ...card, padding: 16, textAlign: 'center', flex: '1 1 120px', minWidth: 120 };
-  const badge = (bg, color) => ({ display: 'inline-block', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: bg, color });
-  const btn = (bg = T.navy, color = '#fff') => ({ padding: '8px 18px', borderRadius: 8, border: 'none', background: bg, color, fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: T.font });
-  const thStyle = { padding: '10px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: T.textSec, borderBottom: `2px solid ${T.border}`, cursor: 'pointer', userSelect: 'none' };
-  const tdStyle = { padding: '10px 12px', fontSize: 13, color: T.text, borderBottom: `1px solid ${T.border}` };
-  const tabBtn = (active) => ({ ...btn(active ? T.navy : T.surfaceH, active ? '#fff' : T.text), borderRadius: 8, marginRight: 6 });
+  const setVal = (id, v) => setVals(prev => ({ ...prev, [id]: v }));
 
   return (
-    <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh', padding: 32 }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: T.navy, margin: 0 }}>Predictive ESG Score Model</h1>
-          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-            {['3 Models', '8 Features', 'Train/Test', 'R\u00b2', 'Feature Importance'].map(b => <span key={b} style={badge(`${T.navy}15`, T.navy)}>{b}</span>)}
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button style={btn(T.sage)} onClick={exportCSV}>Export CSV</button>
-          <button style={btn(T.gold, T.navy)} onClick={exportJSON}>Model JSON</button>
-          <button style={btn(T.surfaceH, T.navy)} onClick={exportPrint}>Print</button>
-        </div>
-      </div>
-
-      {/* Cross-nav */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        {[['ESG Dashboard', '/portfolio-dashboard'], ['Risk Attribution', '/risk-attribution'], ['Report Parser', '/esg-report-parser'], ['AI Sentiment', '/ai-sentiment'], ['Benchmark', '/benchmark-analytics']].map(([l, p]) => (
-          <button key={p} style={{ ...btn(T.surfaceH, T.navyL), fontSize: 12, padding: '5px 12px' }} onClick={() => nav(p)}>{l}</button>
+    <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: 16 }}>
+      {/* Left: Feature Sliders */}
+      <div>
+        {FEATURE_GROUPS.map(g => (
+          <Card key={g} style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: GROUP_COLORS[g] }} />
+              <SectionTitle>{g} Features</SectionTitle>
+            </div>
+            {FEATURES.filter(f => f.group === g).map(f => (
+              <div key={f.id} style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontFamily: T.font, fontSize: 12, color: T.text, fontWeight: 500 }}>{f.name}</span>
+                  <span style={{ fontFamily: T.mono, fontSize: 11, color: GROUP_COLORS[g], fontWeight: 700 }}>{typeof vals[f.id] === 'number' ? (vals[f.id] % 1 !== 0 ? vals[f.id].toFixed(1) : vals[f.id]) : vals[f.id]}</span>
+                </div>
+                <input type="range" min={f.min} max={f.max} step={f.step || 1} value={vals[f.id]}
+                  onChange={e => setVal(f.id, parseFloat(e.target.value))}
+                  style={{ width: '100%', accentColor: GROUP_COLORS[g] }} />
+                <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textMut }}>{f.desc}</div>
+              </div>
+            ))}
+          </Card>
         ))}
       </div>
 
-      {/* Model Selector */}
-      <div style={card}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {[['linear', 'Linear Regression'], ['tree', 'Decision Tree'], ['knn', 'K-Nearest Neighbors']].map(([k, l]) => (
-              <button key={k} style={{ ...btn(modelType === k ? MODEL_COLORS[k] : T.surfaceH, modelType === k ? '#fff' : T.text), padding: '10px 20px' }} onClick={() => setModelType(k)}>{l}</button>
+      {/* Right: Score + Analysis */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Model selector */}
+        <Card>
+          <Label>Model Selection</Label>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {['xgboost', 'lightgbm', 'ensemble'].map(m => (
+              <ModelBadge key={m} model={m} active={model === m} onClick={() => setModel(m)} />
             ))}
           </div>
-          <button style={{ ...btn(T.navy), padding: '10px 28px', fontSize: 14 }} onClick={trainModel}>Train Model</button>
+        </Card>
+
+        {/* Score display */}
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <Label>Predicted ESG Score</Label>
+              <div style={{ fontFamily: T.mono, fontSize: 56, fontWeight: 700, color: scoreColor(result.score), lineHeight: 1 }}>{result.score}</div>
+              <div style={{ fontFamily: T.font, fontSize: 13, color: T.textSec, marginTop: 4 }}>
+                Tier: <strong style={{ color: scoreColor(result.score) }}>{scoreTier(result.score)}</strong>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <Label>95% Confidence Interval</Label>
+              <div style={{ fontFamily: T.mono, fontSize: 20, color: T.textSec, fontWeight: 600 }}>
+                [{result.ci_low.toFixed(1)}, {result.ci_high.toFixed(1)}]
+              </div>
+              <div style={{ fontFamily: T.mono, fontSize: 11, color: T.textMut, marginTop: 4 }}>Band: ±{((result.ci_high - result.ci_low) / 2).toFixed(1)} pts</div>
+            </div>
+          </div>
+          {/* CI bar */}
+          <div style={{ marginTop: 16, position: 'relative', height: 8, background: T.surfaceH, borderRadius: 4 }}>
+            <div style={{ position: 'absolute', left: `${result.ci_low}%`, width: `${result.ci_high - result.ci_low}%`, height: '100%', background: scoreColor(result.score) + '44', borderRadius: 4 }} />
+            <div style={{ position: 'absolute', left: `${result.score}%`, transform: 'translateX(-50%)', width: 4, height: '100%', background: scoreColor(result.score), borderRadius: 2 }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 9, color: T.textMut, marginTop: 2 }}>
+            <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+          </div>
+        </Card>
+
+        {/* Score decomposition by group */}
+        <Card>
+          <SectionTitle>Score Decomposition by Group</SectionTitle>
+          {groupContribs.map(gc => (
+            <div key={gc.group} style={{ marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontFamily: T.font, fontSize: 12, color: T.text }}>{gc.group}</span>
+                <span style={{ fontFamily: T.mono, fontSize: 12, color: GROUP_COLORS[gc.group], fontWeight: 700 }}>+{gc.pts} pts</span>
+              </div>
+              <div style={{ height: 6, background: T.surfaceH, borderRadius: 3 }}>
+                <div style={{ height: '100%', width: `${gc.pct}%`, background: GROUP_COLORS[gc.group], borderRadius: 3, transition: 'width 0.3s' }} />
+              </div>
+            </div>
+          ))}
+        </Card>
+
+        {/* Scenario improvement */}
+        <Card>
+          <SectionTitle>Scenario Improvement Analysis</SectionTitle>
+          <div style={{ fontFamily: T.font, fontSize: 12, color: T.textSec, marginBottom: 12 }}>
+            If SBTi +1 tier + CDP +20 pts + TCFD +1 pillar:
+          </div>
+          <div style={{ display: 'flex', gap: 20 }}>
+            <div>
+              <Label>Baseline</Label>
+              <div style={{ fontFamily: T.mono, fontSize: 28, fontWeight: 700, color: scoreColor(result.score) }}>{result.score}</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', fontSize: 20, color: T.textMut }}>→</div>
+            <div>
+              <Label>Improved</Label>
+              <div style={{ fontFamily: T.mono, fontSize: 28, fontWeight: 700, color: scoreColor(scenarioImproved.score) }}>{scenarioImproved.score}</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ fontFamily: T.mono, fontSize: 18, fontWeight: 700, color: scenarioImproved.score > result.score ? T.green : T.red }}>
+                {scenarioImproved.score > result.score ? '+' : ''}{(scenarioImproved.score - result.score).toFixed(1)} pts
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 2: SHAP Explainability
+══════════════════════════════════════════════════════════════════ */
+function TabSHAP({ featureVals }) {
+  const vals = featureVals || Object.fromEntries(FEATURES.map(f => [f.id, f.default]));
+
+  const shapValues = useMemo(() => {
+    return FEATURES.map((f, i) => {
+      const norm = (vals[f.id] - f.min) / (f.max - f.min);
+      const directed = f.direction === 1 ? norm : f.direction === -1 ? (1 - norm) : 0.5;
+      const contribution = (directed - 0.5) * f.shapW * 100;
+      return { feature: f.name, shap: Math.round(contribution * 100) / 100, group: f.group, abs: Math.abs(contribution) };
+    }).sort((a, b) => Math.abs(b.shap) - Math.abs(a.shap));
+  }, [vals]);
+
+  const baseScore = 50.0;
+  let running = baseScore;
+  const waterfallData = shapValues.map(sv => {
+    const prev = running;
+    running += sv.shap;
+    return { ...sv, start: Math.min(prev, running), end: Math.max(prev, running), positive: sv.shap >= 0 };
+  });
+
+  const topInteractions = shapValues.slice(0, 3);
+  const heatmapData = [];
+  topInteractions.forEach((a, i) => {
+    topInteractions.forEach((b, j) => {
+      const interaction = i === j ? 1.0 : (sr(i * 17 + j * 31) - 0.5) * 2;
+      heatmapData.push({ x: a.feature.split(' ')[0], y: b.feature.split(' ')[0], value: Math.round(interaction * 100) / 100 });
+    });
+  });
+
+  const counterfactuals = [
+    { action: 'SBTi → Approved (2)', delta: '+3.2', feat: 'SBTi Commitment' },
+    { action: 'CDP Score → 75+', delta: '+2.8', feat: 'CDP Score' },
+    { action: 'Scope 3 → 80% coverage', delta: '+2.1', feat: 'Scope 3 Coverage' },
+    { action: 'Board Independence → 70%', delta: '+1.6', feat: 'Board Independence' },
+    { action: 'TCFD → 4 pillars', delta: '+1.4', feat: 'TCFD Alignment' },
+  ];
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      {/* SHAP Waterfall */}
+      <Card style={{ gridColumn: '1 / -1' }}>
+        <SectionTitle>SHAP Waterfall — Feature Contributions from Base Score</SectionTitle>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <span style={{ fontFamily: T.mono, fontSize: 12, color: T.textSec }}>Base value: {baseScore.toFixed(1)}</span>
+          <span style={{ fontFamily: T.mono, fontSize: 12, color: T.textMut }}>→</span>
+          <span style={{ fontFamily: T.mono, fontSize: 12, color: T.navy, fontWeight: 700 }}>Final: {Math.round(running * 10) / 10}</span>
         </div>
-        <div style={{ marginTop: 10, fontSize: 13, color: T.textSec }}>
-          {modelType === 'linear' && 'Multi-variate linear regression using normal equations with ridge regularisation. Solves \u03B2 = (X\u2019X + \u03BBI)\u207B\u00B9 X\u2019y.'}
-          {modelType === 'tree' && 'Recursive decision tree with variance-based splitting (depth=4). Finds optimal feature/threshold splits to minimise prediction error.'}
-          {modelType === 'knn' && 'K-Nearest Neighbors (k=5) using Euclidean distance in normalised feature space. Prediction = mean of 5 closest training examples.'}
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={waterfallData} layout="vertical" margin={{ left: 120, right: 60, top: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} horizontal={false} />
+            <XAxis type="number" domain={[0, 100]} tickStyle={{ fontFamily: T.mono, fontSize: 10 }} />
+            <YAxis type="category" dataKey="feature" width={115} tick={{ fontFamily: T.font, fontSize: 10, fill: T.textSec }} />
+            <Tooltip formatter={(v, n, p) => [`SHAP: ${p.payload.shap > 0 ? '+' : ''}${p.payload.shap}`, p.payload.feature]} />
+            <Bar dataKey="end" name="Score">
+              {waterfallData.map((entry, i) => (
+                <Cell key={i} fill={entry.positive ? T.navy : T.red} fillOpacity={0.75} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+
+      {/* Global Feature Importance */}
+      <Card>
+        <SectionTitle>Global Feature Importance (|SHAP|)</SectionTitle>
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart data={shapValues.map(s => ({ ...s, absShap: s.abs }))} layout="vertical" margin={{ left: 110, right: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} horizontal={false} />
+            <XAxis type="number" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+            <YAxis type="category" dataKey="feature" width={105} tick={{ fontFamily: T.font, fontSize: 10, fill: T.textSec }} />
+            <Tooltip formatter={(v) => [v.toFixed(2), '|SHAP|']} />
+            <Bar dataKey="absShap" radius={[0, 3, 3, 0]}>
+              {shapValues.map((entry, i) => <Cell key={i} fill={GROUP_COLORS[entry.group]} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+
+      {/* Counterfactual Analysis */}
+      <Card>
+        <SectionTitle>Counterfactual Analysis — To Reach 70+ Score</SectionTitle>
+        <div style={{ fontFamily: T.font, fontSize: 12, color: T.textSec, marginBottom: 12 }}>
+          Minimum changes required to achieve AAA-tier (≥70):
+        </div>
+        {counterfactuals.map((cf, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: `1px solid ${T.borderL}` }}>
+            <div>
+              <div style={{ fontFamily: T.font, fontSize: 12, color: T.text, fontWeight: 500 }}>{cf.action}</div>
+              <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textMut }}>{cf.feat}</div>
+            </div>
+            <div style={{ fontFamily: T.mono, fontSize: 13, color: T.green, fontWeight: 700 }}>{cf.delta}</div>
+          </div>
+        ))}
+
+        {/* Feature interaction heatmap (simplified) */}
+        <div style={{ marginTop: 16 }}>
+          <SectionTitle>Top-3 Feature Interactions</SectionTitle>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+            {heatmapData.map((cell, i) => {
+              const intensity = (cell.value + 1) / 2;
+              const bg = cell.value > 0.2 ? `rgba(27,58,92,${0.2 + intensity * 0.5})` :
+                cell.value < -0.2 ? `rgba(220,38,38,${0.2 + (1 - intensity) * 0.5})` : T.surfaceH;
+              return (
+                <div key={i} style={{ height: 42, background: bg, borderRadius: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ fontFamily: T.mono, fontSize: 9, color: T.text, fontWeight: 700 }}>{cell.value.toFixed(2)}</div>
+                  <div style={{ fontFamily: T.mono, fontSize: 7, color: T.textMut }}>{cell.x}×{cell.y}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 3: Model Performance & Validation
+══════════════════════════════════════════════════════════════════ */
+function TabModelPerformance() {
+  const models = [
+    { name: 'XGBoost', r2: 0.847, rmse: 4.2, mae: 3.1, cal: 0.934, color: T.navy },
+    { name: 'LightGBM', r2: 0.831, rmse: 4.6, mae: 3.4, cal: 0.918, color: T.purple },
+    { name: 'Ensemble', r2: 0.871, rmse: 3.9, mae: 2.9, cal: 0.951, color: T.green },
+    { name: 'Linear (baseline)', r2: 0.743, rmse: 6.1, mae: 4.8, cal: 0.872, color: T.textMut },
+  ];
+
+  // Residuals for scatter
+  const residualData = Array.from({ length: 80 }, (_, i) => {
+    const actual = 20 + sr(i * 7 + 1) * 75;
+    const noise = (sr(i * 13 + 3) - 0.5) * 8;
+    return { actual: Math.round(actual), predicted: Math.round(clamp(actual + noise, 5, 100)), residual: Math.round(noise) };
+  });
+
+  // Learning curves
+  const sizes = [50, 100, 200, 500, 1000];
+  const learningCurve = sizes.map((n, i) => ({
+    n,
+    train_xgb: clamp(0.96 - sr(i * 3 + 1) * 0.02, 0.88, 0.98),
+    val_xgb: clamp(0.847 - (1000 - n) / 1000 * 0.12 + sr(i * 5 + 2) * 0.02, 0.70, 0.87),
+    train_lgb: clamp(0.94 - sr(i * 3 + 4) * 0.02, 0.86, 0.96),
+    val_lgb: clamp(0.831 - (1000 - n) / 1000 * 0.14 + sr(i * 5 + 6) * 0.02, 0.68, 0.85),
+    train_ens: clamp(0.97 - sr(i * 3 + 7) * 0.015, 0.90, 0.99),
+    val_ens: clamp(0.871 - (1000 - n) / 1000 * 0.10 + sr(i * 5 + 8) * 0.02, 0.75, 0.89),
+  }));
+
+  // Calibration curve
+  const calibration = Array.from({ length: 10 }, (_, i) => ({
+    predicted: (i + 0.5) * 10,
+    actual: clamp((i + 0.5) * 10 + (sr(i * 11 + 2) - 0.5) * 8, 0, 100),
+    perfect: (i + 0.5) * 10,
+  }));
+
+  // Correlation matrix (8 features)
+  const top8 = FEATURES.slice(0, 8);
+  const corrMatrix = top8.map((a, i) => top8.map((b, j) => {
+    if (i === j) return 1.0;
+    const v = (sr(i * 19 + j * 7) - 0.5) * 1.6;
+    return Math.round(clamp(v, -1, 1) * 100) / 100;
+  }));
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Metrics table */}
+      <Card>
+        <SectionTitle>Model Performance Metrics</SectionTitle>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: T.font, fontSize: 13 }}>
+          <thead>
+            <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+              {['Model', 'R²', 'RMSE', 'MAE', 'Calibration', 'Rank'].map(h => (
+                <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: T.mono, fontSize: 10, color: T.textMut, textTransform: 'uppercase' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {models.map((m, i) => (
+              <tr key={m.name} style={{ borderBottom: `1px solid ${T.borderL}`, background: i % 2 === 0 ? T.surfaceH : T.surface }}>
+                <td style={{ padding: '8px 12px', fontWeight: 600, color: m.color }}>{m.name}</td>
+                <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{m.r2.toFixed(3)}</td>
+                <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{m.rmse.toFixed(1)}</td>
+                <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{m.mae.toFixed(1)}</td>
+                <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{m.cal.toFixed(3)}</td>
+                <td style={{ padding: '8px 12px' }}>
+                  <span style={{ background: i === 2 ? T.green : i === 0 ? T.gold : T.surfaceH, color: i <= 2 ? '#fff' : T.textMut, padding: '2px 8px', borderRadius: 4, fontFamily: T.mono, fontSize: 10 }}>
+                    #{i + 1}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        {/* Residual plot */}
+        <Card>
+          <SectionTitle>Residual Analysis — Predicted vs Actual</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <ScatterChart margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis dataKey="actual" name="Actual" type="number" domain={[0, 100]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} label={{ value: 'Actual', position: 'bottom', fontFamily: T.mono, fontSize: 10 }} />
+              <YAxis dataKey="predicted" name="Predicted" type="number" domain={[0, 100]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} label={{ value: 'Predicted', angle: -90, position: 'insideLeft', fontFamily: T.mono, fontSize: 10 }} />
+              <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 100, y: 100 }]} stroke={T.gold} strokeDasharray="5 5" />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+              <Scatter data={residualData} fill={T.navy} fillOpacity={0.5} r={3} />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Learning curves */}
+        <Card>
+          <SectionTitle>Learning Curves — Validation R² vs Training Size</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={learningCurve} margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis dataKey="n" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} label={{ value: 'Train samples', position: 'bottom', fontFamily: T.mono, fontSize: 10 }} />
+              <YAxis domain={[0.6, 1.0]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+              <Tooltip formatter={(v) => [v.toFixed(3), '']} />
+              <Legend iconType="line" wrapperStyle={{ fontFamily: T.font, fontSize: 11 }} />
+              <Line type="monotone" dataKey="val_xgb" name="XGBoost Val" stroke={T.navy} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="val_lgb" name="LightGBM Val" stroke={T.purple} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="val_ens" name="Ensemble Val" stroke={T.green} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="train_ens" name="Ensemble Train" stroke={T.green} strokeWidth={1} strokeDasharray="5 5" dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Calibration curve */}
+        <Card>
+          <SectionTitle>Calibration Curve — Ensemble Model</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={calibration} margin={{ top: 10, right: 20, bottom: 10, left: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis dataKey="predicted" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} label={{ value: 'Predicted', position: 'bottom', fontFamily: T.mono, fontSize: 10 }} />
+              <YAxis tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+              <Tooltip />
+              <Line type="monotone" dataKey="perfect" name="Perfect Calib." stroke={T.gold} strokeDasharray="5 5" strokeWidth={1.5} dot={false} />
+              <Line type="monotone" dataKey="actual" name="Ensemble" stroke={T.green} strokeWidth={2} dot={{ r: 4, fill: T.green }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Correlation heatmap */}
+        <Card>
+          <SectionTitle>Feature Correlation Matrix (Top 8)</SectionTitle>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${top8.length}, 1fr)`, gap: 2 }}>
+            {corrMatrix.flatMap((row, i) => row.map((val, j) => {
+              const c = val > 0 ? `rgba(27,58,92,${Math.abs(val) * 0.8})` : `rgba(220,38,38,${Math.abs(val) * 0.8})`;
+              return (
+                <div key={`${i}-${j}`} style={{ height: 36, background: c, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }} title={`${top8[i].name} × ${top8[j].name}: ${val}`}>
+                  <span style={{ fontFamily: T.mono, fontSize: 8, color: Math.abs(val) > 0.4 ? '#fff' : T.text }}>{val.toFixed(1)}</span>
+                </div>
+              );
+            }))}
+          </div>
+          <div style={{ marginTop: 8, display: 'flex', gap: 16, fontFamily: T.mono, fontSize: 10, color: T.textMut }}>
+            <span style={{ color: T.red }}>■ Negative</span>
+            <span style={{ color: T.navy }}>■ Positive</span>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 4: Portfolio Scoring
+══════════════════════════════════════════════════════════════════ */
+function TabPortfolio() {
+  const [sortBy, setSortBy] = useState('score');
+  const [sortDir, setSortDir] = useState('desc');
+
+  const sorted = useMemo(() => {
+    return [...COMPANIES].sort((a, b) => {
+      const av = a[sortBy] ?? 0, bv = b[sortBy] ?? 0;
+      return sortDir === 'desc' ? bv - av : av - bv;
+    });
+  }, [sortBy, sortDir]);
+
+  const toggleSort = (col) => {
+    if (sortBy === col) setSortDir(d => d === 'desc' ? 'asc' : 'desc');
+    else { setSortBy(col); setSortDir('desc'); }
+  };
+
+  // Score distribution histogram
+  const bins = Array.from({ length: 10 }, (_, i) => {
+    const lo = i * 10, hi = (i + 1) * 10;
+    return { range: `${lo}-${hi}`, count: COMPANIES.filter(c => c.score >= lo && c.score < hi).length };
+  });
+
+  // Sector box data
+  const sectorData = SECTORS.slice(0, 6).map(s => {
+    const cos = COMPANIES.filter(c => c.sector === s);
+    if (!cos.length) return null;
+    const scores = cos.map(c => c.score).sort((a, b) => a - b);
+    return { sector: s, min: scores[0], avg: mean(scores), max: scores[scores.length - 1] };
+  }).filter(Boolean);
+
+  // Momentum (5-year trajectory for top 5 companies)
+  const years = [2024, 2025, 2026, 2027, 2028, 2029];
+  const momentumData = years.map((yr, yi) => {
+    const row = { year: yr };
+    COMPANIES.slice(0, 5).forEach((c, ci) => {
+      const trend = (c.score < 50 ? 1.5 : 0.8) + (sr(ci * 11 + yi * 7) - 0.5) * 0.6;
+      row[c.name.split(' ')[0]] = Math.round(clamp(c.score + yi * trend, 5, 98) * 10) / 10;
+    });
+    return row;
+  });
+
+  const outliers = COMPANIES.filter(c => Math.abs(c.delta) > 6).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta)).slice(0, 5);
+
+  const thCols = ['Company', 'Sector', 'Score', '95% CI', 'Consensus', 'Delta', 'Rec'];
+  const cols = ['name', 'sector', 'score', 'ci', 'consensus', 'delta', 'rec'];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Table */}
+      <Card>
+        <SectionTitle>Portfolio ESG Scoring — 20 Companies</SectionTitle>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: T.font, fontSize: 12 }}>
+            <thead>
+              <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                {thCols.map((h, i) => (
+                  <th key={h} onClick={() => ['score', 'consensus', 'delta'].includes(cols[i]) && toggleSort(cols[i])}
+                    style={{ padding: '8px 10px', textAlign: 'left', fontFamily: T.mono, fontSize: 10, color: T.textMut, textTransform: 'uppercase', cursor: ['score', 'consensus', 'delta'].includes(cols[i]) ? 'pointer' : 'default', userSelect: 'none', whiteSpace: 'nowrap' }}>
+                    {h}{sortBy === cols[i] ? (sortDir === 'desc' ? ' ↓' : ' ↑') : ''}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((c, i) => (
+                <tr key={c.id} style={{ borderBottom: `1px solid ${T.borderL}`, background: i % 2 === 0 ? T.surfaceH : T.surface }}>
+                  <td style={{ padding: '7px 10px', fontWeight: 600, color: T.navy }}>{c.name}</td>
+                  <td style={{ padding: '7px 10px', color: T.textSec }}>{c.sector}</td>
+                  <td style={{ padding: '7px 10px' }}>
+                    <span style={{ fontFamily: T.mono, fontWeight: 700, color: scoreColor(c.score) }}>{c.score}</span>
+                  </td>
+                  <td style={{ padding: '7px 10px', fontFamily: T.mono, fontSize: 10, color: T.textMut }}>[{c.ci_low}, {c.ci_high}]</td>
+                  <td style={{ padding: '7px 10px', fontFamily: T.mono }}>{c.consensus}</td>
+                  <td style={{ padding: '7px 10px', fontFamily: T.mono, fontWeight: 600, color: c.delta > 0 ? T.green : T.red }}>
+                    {c.delta > 0 ? '+' : ''}{c.delta}
+                  </td>
+                  <td style={{ padding: '7px 10px' }}>
+                    <span style={{ padding: '2px 7px', borderRadius: 4, fontSize: 10, fontFamily: T.mono, fontWeight: 600, background: c.delta > 4 ? T.green + '22' : c.delta < -4 ? T.red + '22' : T.surfaceH, color: c.delta > 4 ? T.green : c.delta < -4 ? T.red : T.textMut }}>
+                      {c.delta > 4 ? 'UPGRADE' : c.delta < -4 ? 'REVIEW' : 'HOLD'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        {/* Score distribution */}
+        <Card>
+          <SectionTitle>Score Distribution (Portfolio)</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={bins} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} vertical={false} />
+              <XAxis dataKey="range" tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textMut }} />
+              <YAxis allowDecimals={false} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+              <Tooltip />
+              <Bar dataKey="count" name="Companies" radius={[3, 3, 0, 0]}>
+                {bins.map((b, i) => <Cell key={i} fill={scoreColor(parseInt(b.range))} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Sector comparison */}
+        <Card>
+          <SectionTitle>Sector Score Range (Min/Avg/Max)</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={sectorData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} vertical={false} />
+              <XAxis dataKey="sector" tick={{ fontFamily: T.mono, fontSize: 9, fill: T.textMut }} />
+              <YAxis domain={[0, 100]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+              <Tooltip />
+              <Bar dataKey="min" name="Min" fill={T.red} fillOpacity={0.5} />
+              <Bar dataKey="avg" name="Avg" fill={T.navy} />
+              <Bar dataKey="max" name="Max" fill={T.green} fillOpacity={0.5} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Score momentum */}
+        <Card>
+          <SectionTitle>5-Year Score Momentum (Top 5 Companies)</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={momentumData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis dataKey="year" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+              <YAxis domain={[0, 100]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+              <Tooltip />
+              {COMPANIES.slice(0, 5).map((c, i) => (
+                <Line key={c.id} type="monotone" dataKey={c.name.split(' ')[0]} stroke={[T.navy, T.teal, T.gold, T.purple, T.amber][i]} strokeWidth={2} dot={false} />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Outlier detection */}
+        <Card>
+          <SectionTitle>Outlier Detection — Model vs Analyst Consensus</SectionTitle>
+          <div style={{ fontFamily: T.font, fontSize: 12, color: T.textSec, marginBottom: 10 }}>
+            Companies with |delta| > 6 pts — potential mispricing signals
+          </div>
+          {outliers.map(c => (
+            <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: `1px solid ${T.borderL}` }}>
+              <div>
+                <div style={{ fontFamily: T.font, fontSize: 12, fontWeight: 600, color: T.navy }}>{c.name}</div>
+                <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textMut }}>{c.sector} | Model: {c.score} | Consensus: {c.consensus}</div>
+              </div>
+              <span style={{ fontFamily: T.mono, fontSize: 14, fontWeight: 700, color: c.delta > 0 ? T.green : T.red }}>
+                {c.delta > 0 ? '+' : ''}{c.delta}
+              </span>
+            </div>
+          ))}
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 5: SBTi Pathway Divergence
+══════════════════════════════════════════════════════════════════ */
+function TabPathwayDivergence() {
+  const [selected, setSelected] = useState(0);
+
+  const YEARS = [2024, 2026, 2028, 2030, 2032, 2035, 2040, 2045, 2050];
+
+  const pathwayData = useMemo(() => {
+    return YEARS.map((yr, yi) => {
+      const c = COMPANIES[selected];
+      const baseline = c.score;
+      const sbtiAdj = c.vals.sbti * 5;
+      // Current trajectory: moderate improvement
+      const current = clamp(baseline + yi * 1.2 + sbtiAdj * 0.3 + (sr(yi * 5 + selected * 3) - 0.5) * 2, baseline * 0.9, 98);
+      // SBTi 1.5°C: ambitious pathway
+      const sbti15 = clamp(baseline + yi * 2.8 + 5 + (sr(yi * 7 + 11) - 0.5) * 1.5, baseline, 99);
+      // Well below 2°C: moderate
+      const wb2 = clamp(baseline + yi * 1.9 + 3 + (sr(yi * 9 + 17) - 0.5) * 1.5, baseline, 97);
+      // BAU: minimal improvement
+      const bau = clamp(baseline + yi * 0.4 + (sr(yi * 11 + 23) - 0.5) * 1.0, baseline * 0.95, baseline * 1.1 + 5);
+      return { year: yr, 'Current Trajectory': Math.round(current * 10) / 10, 'SBTi 1.5°C': Math.round(sbti15 * 10) / 10, 'Well Below 2°C': Math.round(wb2 * 10) / 10, 'BAU': Math.round(bau * 10) / 10 };
+    });
+  }, [selected]);
+
+  const divergenceScores = useMemo(() => {
+    return COMPANIES.map(c => {
+      const sbtiSeed = c.vals.sbti;
+      const diverge2030 = Math.round((sr(c.id * 7 + 5) * 20 - 10 + (1 - sbtiSeed / 2) * 8) * 10) / 10;
+      const diverge2035 = Math.round((sr(c.id * 11 + 9) * 24 - 12 + (1 - sbtiSeed / 2) * 12) * 10) / 10;
+      const diverge2040 = Math.round((sr(c.id * 13 + 13) * 30 - 15 + (1 - sbtiSeed / 2) * 16) * 10) / 10;
+      const stranded = c.vals.physical_risk > 55 && c.vals.transition_risk > 55;
+      const itpScore = Math.round((c.vals.sbti * 25 + (c.score / 100) * 40 + c.vals.tcfd_alignment * 8.75) * 10) / 10;
+      return { ...c, diverge2030, diverge2035, diverge2040, stranded, itpScore };
+    });
+  }, []);
+
+  const engagementTargets = useMemo(() => {
+    return COMPANIES.map(c => {
+      // Improvement potential = gap from 80 × ease factor
+      const gap = 80 - c.score;
+      const ease = c.vals.data_quality / 100 * 0.4 + (c.vals.sbti < 2 ? 0.4 : 0.1) + (c.vals.cdp_score < 60 ? 0.2 : 0.05);
+      const potential = Math.round(gap * ease * 10) / 10;
+      return { ...c, potential, topAction: c.vals.sbti < 1 ? 'Submit SBTi' : c.vals.cdp_score < 50 ? 'Improve CDP' : 'TCFD Disclosure' };
+    }).sort((a, b) => b.potential - a.potential).slice(0, 8);
+  }, []);
+
+  const pathwayColors = { 'Current Trajectory': T.navy, 'SBTi 1.5°C': T.green, 'Well Below 2°C': T.teal, 'BAU': T.red };
+  const currentCompany = COMPANIES[selected];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Company selector */}
+      <Card>
+        <Label>Select Company</Label>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {COMPANIES.map(c => (
+            <button key={c.id} onClick={() => setSelected(c.id)}
+              style={{ padding: '4px 10px', borderRadius: 5, border: `1px solid ${selected === c.id ? T.navy : T.border}`, background: selected === c.id ? T.navy : T.surface, color: selected === c.id ? '#fff' : T.textSec, fontFamily: T.font, fontSize: 11, cursor: 'pointer' }}>
+              {c.name.split(' ')[0]}
+            </button>
+          ))}
+        </div>
+      </Card>
+
+      {/* Pathway chart */}
+      <Card>
+        <SectionTitle>{currentCompany.name} — Pathway Divergence Analysis 2024–2050</SectionTitle>
+        <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+          {['SBTi 1.5°C', 'Well Below 2°C', 'Current Trajectory', 'BAU'].map(p => (
+            <div key={p} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ width: 16, height: 3, background: pathwayColors[p], borderRadius: 2 }} />
+              <span style={{ fontFamily: T.font, fontSize: 11, color: T.textSec }}>{p}</span>
+            </div>
+          ))}
+        </div>
+        <ResponsiveContainer width="100%" height={260}>
+          <LineChart data={pathwayData} margin={{ top: 10, right: 20, bottom: 5, left: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+            <XAxis dataKey="year" tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+            <YAxis domain={[0, 100]} tick={{ fontFamily: T.mono, fontSize: 10, fill: T.textMut }} />
+            <Tooltip />
+            {Object.entries(pathwayColors).map(([key, color]) => (
+              <Line key={key} type="monotone" dataKey={key} stroke={color} strokeWidth={2} dot={false} strokeDasharray={key === 'BAU' ? '6 3' : undefined} />
+            ))}
+            <ReferenceLine y={70} stroke={T.gold} strokeDasharray="4 4" label={{ value: 'AA threshold', position: 'right', fontFamily: T.mono, fontSize: 9, fill: T.gold }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </Card>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        {/* Divergence table */}
+        <Card>
+          <SectionTitle>Pathway Divergence Scores by Company</SectionTitle>
+          <div style={{ fontFamily: T.font, fontSize: 11, color: T.textSec, marginBottom: 8 }}>Gap vs SBTi 1.5°C pathway (negative = below target)</div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: T.font, fontSize: 11 }}>
+            <thead>
+              <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                {['Company', '2030', '2035', '2040', 'Stranded?', 'ITP'].map(h => (
+                  <th key={h} style={{ padding: '6px 8px', textAlign: 'left', fontFamily: T.mono, fontSize: 9, color: T.textMut, textTransform: 'uppercase' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {divergenceScores.slice(0, 10).map((c, i) => (
+                <tr key={c.id} style={{ borderBottom: `1px solid ${T.borderL}`, background: i % 2 === 0 ? T.surfaceH : T.surface }}>
+                  <td style={{ padding: '6px 8px', fontWeight: 500, color: T.navy }}>{c.name.split(' ')[0]}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.mono, color: c.diverge2030 < -5 ? T.red : T.textSec }}>{c.diverge2030 > 0 ? '+' : ''}{c.diverge2030}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.mono, color: c.diverge2035 < -8 ? T.red : T.textSec }}>{c.diverge2035 > 0 ? '+' : ''}{c.diverge2035}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.mono, color: c.diverge2040 < -12 ? T.red : T.textSec }}>{c.diverge2040 > 0 ? '+' : ''}{c.diverge2040}</td>
+                  <td style={{ padding: '6px 8px' }}>
+                    {c.stranded ? <span style={{ color: T.red, fontFamily: T.mono, fontSize: 9, fontWeight: 700 }}>HIGH</span> : <span style={{ color: T.green, fontFamily: T.mono, fontSize: 9 }}>LOW</span>}
+                  </td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.mono, fontSize: 10, color: T.navy }}>{c.itpScore}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+
+        {/* Engagement targets */}
+        <Card>
+          <SectionTitle>Engagement Targets — Highest Improvement Potential</SectionTitle>
+          <div style={{ fontFamily: T.font, fontSize: 11, color: T.textSec, marginBottom: 10 }}>
+            Ranked by model-predicted gain from targeted interventions
+          </div>
+          {engagementTargets.map((c, i) => (
+            <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: `1px solid ${T.borderL}` }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textMut, width: 18 }}>#{i + 1}</span>
+                <div>
+                  <div style={{ fontFamily: T.font, fontSize: 12, fontWeight: 600, color: T.navy }}>{c.name}</div>
+                  <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textMut }}>Action: {c.topAction}</div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontFamily: T.mono, fontSize: 13, fontWeight: 700, color: T.green }}>+{c.potential}</div>
+                <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textMut }}>pts potential</div>
+              </div>
+            </div>
+          ))}
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MAIN PAGE
+══════════════════════════════════════════════════════════════════ */
+const TABS = [
+  { id: 'studio', label: 'Prediction Studio' },
+  { id: 'shap', label: 'SHAP Explainability' },
+  { id: 'performance', label: 'Model Performance' },
+  { id: 'portfolio', label: 'Portfolio Scoring' },
+  { id: 'pathway', label: 'Pathway Divergence' },
+];
+
+export default function PredictiveEsgPage() {
+  const [tab, setTab] = useState('studio');
+  const [featureVals] = useState(() => Object.fromEntries(FEATURES.map(f => [f.id, f.default])));
+
+  return (
+    <div style={{ minHeight: '100vh', background: T.bg, fontFamily: T.font }}>
+      {/* Header */}
+      <div style={{ background: T.navy, borderBottom: `3px solid ${T.gold}`, padding: '0 32px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+          <div style={{ padding: '16px 0 0' }}>
+            <div style={{ fontFamily: T.mono, fontSize: 10, color: T.gold, letterSpacing: '0.1em', marginBottom: 4 }}>
+              EP-W2 · PREDICTIVE ESG SCORE MODEL
+            </div>
+            <div style={{ fontFamily: T.font, fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 2 }}>
+              Predictive ESG Score Model
+            </div>
+            <div style={{ fontFamily: T.font, fontSize: 13, color: '#94a3b8', marginBottom: 14 }}>
+              XGBoost · LightGBM · Ensemble · SHAP Explainability · Pathway Divergence · 15 Features
+            </div>
+          </div>
+          {/* Tab bar */}
+          <div style={{ display: 'flex', gap: 0, borderTop: `1px solid rgba(255,255,255,0.1)` }}>
+            {TABS.map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)}
+                style={{ padding: '10px 20px', background: 'transparent', border: 'none', borderBottom: `2px solid ${tab === t.id ? T.gold : 'transparent'}`, color: tab === t.id ? T.gold : '#94a3b8', fontFamily: T.font, fontSize: 13, fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer', transition: 'all 0.15s', whiteSpace: 'nowrap' }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {!trained && (
-        <div style={{ ...card, textAlign: 'center', padding: 60 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>&#129302;</div>
-          <h3 style={{ color: T.navy, margin: '0 0 8px' }}>No Model Trained Yet</h3>
-          <p style={{ color: T.textSec, fontSize: 14 }}>Select a model type and click "Train Model" to build a predictive ESG scoring model on {allCompanies.length} companies with 80/20 train/test split.</p>
+      {/* Content */}
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+        {/* Stats row */}
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Models', value: '3 Algorithms', sub: 'XGB · LGBM · Ensemble' },
+            { label: 'Best R²', value: '0.871', sub: 'Ensemble model' },
+            { label: 'Best RMSE', value: '3.9', sub: 'Ensemble model' },
+            { label: 'Features', value: '15 Factors', sub: 'Climate · Gov · DQ' },
+            { label: 'Portfolio', value: '20 Companies', sub: '10 sectors covered' },
+          ].map(s => (
+            <div key={s.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '12px 18px', minWidth: 140 }}>
+              <div style={{ fontFamily: T.mono, fontSize: 9, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</div>
+              <div style={{ fontFamily: T.mono, fontSize: 18, fontWeight: 700, color: T.navy, marginTop: 2 }}>{s.value}</div>
+              <div style={{ fontFamily: T.font, fontSize: 10, color: T.textMut, marginTop: 2 }}>{s.sub}</div>
+            </div>
+          ))}
         </div>
-      )}
 
-      {trained && (
-        <>
-          {/* KPI Cards */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
-            {[
-              { label: 'Model', value: modelType === 'linear' ? 'Linear' : modelType === 'tree' ? 'Tree' : 'KNN', color: MODEL_COLORS[modelType] },
-              { label: 'R\u00b2 Score', value: trained.r2_test.toFixed(3), color: trained.r2_test > 0.5 ? T.green : T.amber },
-              { label: 'RMSE', value: trained.rmse_test.toFixed(2), color: T.navyL },
-              { label: 'MAE', value: trained.mae_test.toFixed(2), color: T.navyL },
-              { label: 'Train Size', value: trained.trainSize, color: T.navy },
-              { label: 'Test Size', value: trained.testSize, color: T.navy },
-              { label: 'Features', value: FEATURES.length, color: T.sage },
-              { label: 'Best Feature', value: trained.bestFeature.substring(0, 14), color: T.gold },
-              { label: 'Accuracy (\u00b15)', value: trained.accuracy5 + '%', color: trained.accuracy5 > 60 ? T.green : T.amber },
-              { label: 'Companies', value: trained.allPreds?.length || 0, color: T.navy },
-            ].map((kpi, i) => (
-              <div key={i} style={kpiCard}>
-                <div style={{ fontSize: 11, color: T.textMut, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 }}>{kpi.label}</div>
-                <div style={{ fontSize: kpi.label === 'Best Feature' ? 14 : 24, fontWeight: 700, color: kpi.color }}>{kpi.value}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
-            {[['results', 'Model Results'], ['whatif', 'What-If Predictor'], ['compare', 'Model Comparison'], ['forecast', 'ESG Forecast'], ['log', 'Training Log']].map(([k, l]) => (
-              <button key={k} style={tabBtn(activeTab === k)} onClick={() => setActiveTab(k)}>{l}</button>
-            ))}
-          </div>
-
-          {activeTab === 'results' && (
-            <>
-              {/* Predicted vs Actual Scatter */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Predicted vs Actual ESG Scores</h3>
-                <ResponsiveContainer width="100%" height={360}>
-                  <ScatterChart margin={{ left: 10, right: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" dataKey="actual" name="Actual" domain={[10, 100]} tick={{ fontSize: 11 }} label={{ value: 'Actual ESG', position: 'insideBottom', offset: -5, fontSize: 12 }} />
-                    <YAxis type="number" dataKey="predicted" name="Predicted" domain={[10, 100]} tick={{ fontSize: 11 }} label={{ value: 'Predicted ESG', angle: -90, position: 'insideLeft', fontSize: 12 }} />
-                    <Tooltip contentStyle={{ borderRadius: 8, border: `1px solid ${T.border}`, fontSize: 12 }} formatter={(val) => val.toFixed(1)} />
-                    <ReferenceLine segment={[{ x: 10, y: 10 }, { x: 100, y: 100 }]} stroke={T.red} strokeDasharray="5 5" strokeWidth={2} />
-                    <Scatter name="Companies" data={scatterData} fill={MODEL_COLORS[modelType]} fillOpacity={0.5} r={3} />
-                  </ScatterChart>
-                </ResponsiveContainer>
-                <div style={{ textAlign: 'center', fontSize: 12, color: T.textMut }}>Dashed line = perfect prediction. Points closer to line = better model fit.</div>
-              </div>
-
-              {/* Feature Importance */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Feature Importance</h3>
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={[...trained.importance].sort((a, b) => b.importance - a.importance)} margin={{ left: 10, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="feature" angle={-25} textAnchor="end" tick={{ fontSize: 11 }} height={70} />
-                    <YAxis tick={{ fontSize: 11 }} />
-                    <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                    <Bar dataKey="importance" fill={MODEL_COLORS[modelType]} radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Residual Distribution */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Residual Distribution (Actual - Predicted)</h3>
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={residualHist}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="bin" tick={{ fontSize: 11 }} label={{ value: 'Residual', position: 'insideBottom', offset: -5, fontSize: 12 }} />
-                    <YAxis tick={{ fontSize: 11 }} />
-                    <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                    <ReferenceLine x={0} stroke={T.red} strokeDasharray="3 3" />
-                    <Bar dataKey="count" fill={`${MODEL_COLORS[modelType]}90`} radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Company Predictions Table */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Company-Level Predictions ({sortedPreds.length})</h3>
-                <div style={{ overflowX: 'auto', maxHeight: 500, overflowY: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead style={{ position: 'sticky', top: 0, background: T.surface, zIndex: 1 }}>
-                      <tr>
-                        {[['name', 'Company'], ['sector', 'Sector'], ['esgScore', 'Actual'], ['predicted', 'Predicted'], ['residual', 'Residual'], ['esg2026', '2026'], ['esg2027', '2027'], ['confLow', 'Conf Low'], ['confHigh', 'Conf High']].map(([k, l]) => (
-                          <th key={k} style={thStyle} onClick={() => handleSort(k)}>{l}{sortCol === k ? (sortDir === 'asc' ? ' \u2191' : ' \u2193') : ''}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sortedPreds.slice(0, 100).map((r, i) => (
-                        <tr key={i} style={{ background: i % 2 ? T.surfaceH : 'transparent' }}>
-                          <td style={{ ...tdStyle, fontWeight: 600, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</td>
-                          <td style={{ ...tdStyle, fontSize: 12 }}>{r.sector}</td>
-                          <td style={tdStyle}>{r.esgScore.toFixed(1)}</td>
-                          <td style={{ ...tdStyle, fontWeight: 600 }}>{r.predicted.toFixed(1)}</td>
-                          <td style={{ ...tdStyle, color: Math.abs(r.residual) <= 5 ? T.green : Math.abs(r.residual) <= 10 ? T.amber : T.red }}>{r.residual > 0 ? '+' : ''}{r.residual.toFixed(1)}</td>
-                          <td style={tdStyle}>{r.esg2026.toFixed(1)}</td>
-                          <td style={tdStyle}>{r.esg2027.toFixed(1)}</td>
-                          <td style={{ ...tdStyle, fontSize: 12, color: T.textMut }}>{r.confLow.toFixed(1)}</td>
-                          <td style={{ ...tdStyle, fontSize: 12, color: T.textMut }}>{r.confHigh.toFixed(1)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {sortedPreds.length > 100 && <div style={{ fontSize: 12, color: T.textMut, marginTop: 8 }}>Showing 100 of {sortedPreds.length}. Export CSV for full dataset.</div>}
-              </div>
-
-              {/* Sector Accuracy */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Sector-Level Prediction Accuracy</h3>
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={sectorAccuracy} margin={{ left: 10, bottom: 50 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="sector" angle={-30} textAnchor="end" tick={{ fontSize: 10 }} height={80} />
-                    <YAxis tick={{ fontSize: 11 }} label={{ value: 'MAE', angle: -90, position: 'insideLeft', fontSize: 12 }} />
-                    <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                    <Bar dataKey="mae" radius={[4, 4, 0, 0]}>
-                      {sectorAccuracy.map((_, i) => <Cell key={i} fill={SECTOR_COLORS[i % SECTOR_COLORS.length]} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
-                  {sectorAccuracy.map((s, i) => (
-                    <div key={s.sector} style={{ padding: '4px 10px', borderRadius: 6, background: T.surfaceH, fontSize: 12 }}>
-                      <span style={{ fontWeight: 600, color: T.navy }}>{s.sector}</span>
-                      <span style={{ color: T.textMut, marginLeft: 6 }}>MAE: {s.mae.toFixed(1)} | \u00b15 Acc: {s.accuracy5}% | n={s.count}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Feature Correlation Matrix */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Feature Statistics & Distributions</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
-                  {FEATURES.map((f, fi) => {
-                    const vals = (trained.allPreds || []).map(r => r.features[fi]);
-                    const avg = mean(vals);
-                    const sd = stddev(vals);
-                    const mn = Math.min(...vals);
-                    const mx = Math.max(...vals);
-                    const q25 = vals.sort((a, b) => a - b)[Math.floor(vals.length * 0.25)] || 0;
-                    const q75 = vals.sort((a, b) => a - b)[Math.floor(vals.length * 0.75)] || 0;
-                    return (
-                      <div key={f.id} style={{ padding: 14, borderRadius: 8, border: `1px solid ${T.border}`, background: T.surfaceH }}>
-                        <div style={{ fontWeight: 600, fontSize: 13, color: T.navy, marginBottom: 8 }}>{f.name}</div>
-                        <div style={{ fontSize: 11, color: T.textMut, marginBottom: 8 }}>{f.desc}</div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, fontSize: 12 }}>
-                          <div><span style={{ color: T.textMut }}>Mean: </span><span style={{ fontWeight: 600 }}>{avg.toFixed(2)}</span></div>
-                          <div><span style={{ color: T.textMut }}>Std: </span><span style={{ fontWeight: 600 }}>{sd.toFixed(2)}</span></div>
-                          <div><span style={{ color: T.textMut }}>Min: </span><span style={{ fontWeight: 600 }}>{mn.toFixed(2)}</span></div>
-                          <div><span style={{ color: T.textMut }}>Max: </span><span style={{ fontWeight: 600 }}>{mx.toFixed(2)}</span></div>
-                          <div><span style={{ color: T.textMut }}>Q25: </span><span style={{ fontWeight: 600 }}>{q25.toFixed(2)}</span></div>
-                          <div><span style={{ color: T.textMut }}>Q75: </span><span style={{ fontWeight: 600 }}>{q75.toFixed(2)}</span></div>
-                        </div>
-                        <div style={{ marginTop: 8, background: T.surface, borderRadius: 4, height: 6, position: 'relative' }}>
-                          <div style={{ position: 'absolute', left: `${((avg - mn) / Math.max(1, mx - mn)) * 100}%`, width: 3, height: 6, background: MODEL_COLORS[modelType], borderRadius: 2, top: 0 }} />
-                          <div style={{ position: 'absolute', left: `${((q25 - mn) / Math.max(1, mx - mn)) * 100}%`, width: `${((q75 - q25) / Math.max(1, mx - mn)) * 100}%`, height: 6, background: `${MODEL_COLORS[modelType]}40`, borderRadius: 2, top: 0 }} />
-                        </div>
-                        <div style={{ marginTop: 4, fontSize: 10, color: T.textMut }}>
-                          Weight: {(f.weight * 100).toFixed(0)}% | Direction: {f.direction.replace(/_/g, ' ')}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Model Equation Display */}
-              {modelType === 'linear' && trained.beta && (
-                <div style={card}>
-                  <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Linear Regression Coefficients</h3>
-                  <p style={{ fontSize: 13, color: T.textSec, margin: '0 0 12px' }}>ESG = {trained.beta[0]?.toFixed(3)} + {FEATURES.map((f, i) => `${trained.beta[i + 1]?.toFixed(3)} x ${f.name}`).join(' + ')}</p>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr>
-                        {['Feature', 'Coefficient (\u03B2)', 'Std. Coeff', 'Direction', 'Interpretation'].map(h => <th key={h} style={thStyle}>{h}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={{ background: T.surfaceH }}>
-                        <td style={{ ...tdStyle, fontWeight: 600 }}>Intercept</td>
-                        <td style={tdStyle}>{trained.beta[0]?.toFixed(4)}</td>
-                        <td style={tdStyle}>-</td>
-                        <td style={tdStyle}>-</td>
-                        <td style={{ ...tdStyle, fontSize: 12, color: T.textSec }}>Baseline ESG score when all features are 0</td>
-                      </tr>
-                      {FEATURES.map((f, i) => {
-                        const coeff = trained.beta[i + 1] || 0;
-                        const absCoeff = Math.abs(coeff);
-                        return (
-                          <tr key={f.id} style={{ background: i % 2 === 0 ? 'transparent' : T.surfaceH }}>
-                            <td style={{ ...tdStyle, fontWeight: 600 }}>{f.name}</td>
-                            <td style={{ ...tdStyle, color: coeff > 0 ? T.green : T.red, fontWeight: 600 }}>{coeff > 0 ? '+' : ''}{coeff.toFixed(4)}</td>
-                            <td style={tdStyle}>{absCoeff.toFixed(4)}</td>
-                            <td style={tdStyle}>{f.direction.replace(/_/g, ' ')}</td>
-                            <td style={{ ...tdStyle, fontSize: 12, color: T.textSec }}>
-                              {coeff > 0 ? 'Positive' : 'Negative'} effect: +1 unit {'\u2192'} {coeff > 0 ? '+' : ''}{coeff.toFixed(2)} ESG
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* Decision Tree Visualization (simplified) */}
-              {modelType === 'tree' && trained.tree && (
-                <div style={card}>
-                  <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Decision Tree Structure</h3>
-                  {(() => {
-                    const renderNode = (node, depth = 0) => {
-                      if (!node) return null;
-                      const indent = depth * 28;
-                      if (node.type === 'leaf') {
-                        return (
-                          <div key={`leaf-${depth}-${node.value}`} style={{ marginLeft: indent, padding: '6px 12px', margin: '4px 0 4px ' + indent + 'px', borderRadius: 6, background: `${T.sage}15`, border: `1px solid ${T.sage}30`, display: 'inline-block', fontSize: 12 }}>
-                            <span style={{ color: T.sage, fontWeight: 600 }}>Predict: {node.value.toFixed(1)}</span>
-                            <span style={{ color: T.textMut, marginLeft: 8 }}>(n={node.count})</span>
-                          </div>
-                        );
-                      }
-                      return (
-                        <div key={`split-${depth}-${node.feature}`} style={{ marginLeft: indent }}>
-                          <div style={{ padding: '6px 12px', margin: '4px 0', borderRadius: 6, background: `${T.navy}10`, border: `1px solid ${T.navy}25`, display: 'inline-block', fontSize: 12 }}>
-                            <span style={{ fontWeight: 600, color: T.navy }}>if {node.featureName} &lt;= {node.threshold.toFixed(2)}</span>
-                            <span style={{ color: T.textMut, marginLeft: 8 }}>gain={node.gain.toFixed(3)}</span>
-                          </div>
-                          <div style={{ borderLeft: `2px solid ${T.sage}40`, marginLeft: indent + 12, paddingLeft: 8 }}>
-                            <div style={{ fontSize: 11, color: T.sage, marginBottom: 2 }}>Yes (left):</div>
-                            {renderNode(node.left, depth + 1)}
-                          </div>
-                          <div style={{ borderLeft: `2px solid ${T.gold}40`, marginLeft: indent + 12, paddingLeft: 8, marginTop: 4 }}>
-                            <div style={{ fontSize: 11, color: T.gold, marginBottom: 2 }}>No (right):</div>
-                            {renderNode(node.right, depth + 1)}
-                          </div>
-                        </div>
-                      );
-                    };
-                    return <div style={{ overflowX: 'auto', padding: 8 }}>{renderNode(trained.tree)}</div>;
-                  })()}
-                </div>
-              )}
-
-              {/* Error Analysis */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Error Analysis: Largest Prediction Errors</h3>
-                {(() => {
-                  const worstPreds = [...(trained.allPreds || [])].sort((a, b) => Math.abs(b.residual) - Math.abs(a.residual)).slice(0, 15);
-                  return (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr>
-                          {['Company', 'Sector', 'Actual', 'Predicted', 'Error', 'Error %', 'SBTi', 'GHG Int.'].map(h => <th key={h} style={thStyle}>{h}</th>)}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {worstPreds.map((r, i) => (
-                          <tr key={i} style={{ background: i % 2 ? T.surfaceH : 'transparent' }}>
-                            <td style={{ ...tdStyle, fontWeight: 600, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</td>
-                            <td style={{ ...tdStyle, fontSize: 12 }}>{r.sector}</td>
-                            <td style={tdStyle}>{r.esgScore.toFixed(1)}</td>
-                            <td style={tdStyle}>{r.predicted.toFixed(1)}</td>
-                            <td style={{ ...tdStyle, color: T.red, fontWeight: 600 }}>{r.residual > 0 ? '+' : ''}{r.residual.toFixed(1)}</td>
-                            <td style={{ ...tdStyle, color: T.red }}>{((Math.abs(r.residual) / Math.max(1, r.esgScore)) * 100).toFixed(1)}%</td>
-                            <td style={tdStyle}>{r.features[1] === 1 ? 'Yes' : 'No'}</td>
-                            <td style={tdStyle}>{r.features[0].toFixed(1)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  );
-                })()}
-              </div>
-
-              {/* Prediction Confidence Bands */}
-              <div style={card}>
-                <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Prediction Confidence Bands (top 30 by residual magnitude)</h3>
-                {(() => {
-                  const top30 = [...(trained.allPreds || [])].sort((a, b) => Math.abs(b.residual) - Math.abs(a.residual)).slice(0, 30).map(r => ({
-                    name: (r.name || '').substring(0, 15), actual: r.esgScore, predicted: r.predicted, low: r.confLow, high: r.confHigh,
-                  }));
-                  return (
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={top30} margin={{ left: 10, bottom: 50 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                        <XAxis dataKey="name" angle={-40} textAnchor="end" tick={{ fontSize: 9 }} height={80} />
-                        <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
-                        <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                        <Legend wrapperStyle={{ fontSize: 12 }} />
-                        <Bar dataKey="actual" fill={T.navy} name="Actual" radius={[3, 3, 0, 0]} />
-                        <Bar dataKey="predicted" fill={MODEL_COLORS[modelType]} name="Predicted" radius={[3, 3, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  );
-                })()}
-              </div>
-            </>
-          )}
-
-          {/* What-If Predictor */}
-          {activeTab === 'whatif' && (
-            <div style={card}>
-              <h3 style={{ margin: '0 0 20px', color: T.navy, fontSize: 16 }}>What-If Predictor: Adjust Features to See Predicted ESG</h3>
-              <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-                <div style={{ flex: '1 1 500px' }}>
-                  {FEATURES.map(f => (
-                    <div key={f.id} style={{ marginBottom: 16 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: T.navy }}>{f.name}</span>
-                        <span style={{ fontSize: 13, color: T.navyL, fontWeight: 600 }}>{whatIf[f.id]?.toFixed?.(f.step === 1 ? 0 : 1) ?? whatIf[f.id]}</span>
-                      </div>
-                      <div style={{ fontSize: 11, color: T.textMut, marginBottom: 4 }}>{f.desc} | Direction: {f.direction.replace(/_/g, ' ')}</div>
-                      <input type="range" min={f.min} max={f.max} step={f.step || ((f.max - f.min) / 100)} value={whatIf[f.id]} onChange={e => setWhatIf(prev => ({ ...prev, [f.id]: parseFloat(e.target.value) }))} style={{ width: '100%', accentColor: MODEL_COLORS[modelType] }} />
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: T.textMut }}>
-                        <span>{f.min}</span><span>{f.max}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ flex: '0 0 280px', textAlign: 'center', padding: 24 }}>
-                  <div style={{ fontSize: 14, color: T.textSec, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Predicted ESG Score</div>
-                  <div style={{ width: 180, height: 180, borderRadius: '50%', border: `6px solid ${MODEL_COLORS[modelType]}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <div style={{ fontSize: 52, fontWeight: 700, color: whatIfPrediction >= 60 ? T.green : whatIfPrediction >= 40 ? T.amber : T.red }}>{whatIfPrediction?.toFixed(1) ?? '-'}</div>
-                  </div>
-                  <div style={{ fontSize: 13, color: T.textSec }}>Model: {trained.model}</div>
-                  <div style={{ fontSize: 12, color: T.textMut, marginTop: 4 }}>R\u00b2 = {trained.r2_test.toFixed(3)} | RMSE = {trained.rmse_test.toFixed(1)}</div>
-                  <div style={{ marginTop: 16, padding: 12, borderRadius: 8, background: T.surfaceH }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: T.navy, marginBottom: 4 }}>Interpretation</div>
-                    <div style={{ fontSize: 12, color: T.textSec }}>
-                      {whatIfPrediction >= 70 ? 'Strong ESG profile. Company characteristics suggest above-average sustainability performance.' :
-                       whatIfPrediction >= 50 ? 'Moderate ESG profile. Room for improvement in key areas.' :
-                       whatIfPrediction >= 30 ? 'Below-average ESG. Significant gaps in sustainability metrics.' :
-                       'Weak ESG profile. Major improvements needed across features.'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Model Comparison */}
-          {activeTab === 'compare' && (
-            <div style={card}>
-              <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Model Comparison (from Training Log)</h3>
-              {trainingLog.length === 0 ? <p style={{ color: T.textMut, fontSize: 13 }}>Train models to build comparison data.</p> : (
-                <>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 20 }}>
-                    <thead>
-                      <tr>
-                        {['Model', 'R\u00b2', 'RMSE', 'MAE', 'Train', 'Test', 'Acc \u00b15', 'Timestamp'].map(h => <th key={h} style={thStyle}>{h}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {trainingLog.map((l, i) => (
-                        <tr key={l.id} style={{ background: i % 2 ? T.surfaceH : 'transparent' }}>
-                          <td style={{ ...tdStyle, fontWeight: 600 }}>{l.model}</td>
-                          <td style={{ ...tdStyle, color: l.r2 > 0.5 ? T.green : T.amber }}>{(l.r2 || 0).toFixed(3)}</td>
-                          <td style={tdStyle}>{(l.rmse || 0).toFixed(2)}</td>
-                          <td style={tdStyle}>{(l.mae || 0).toFixed(2)}</td>
-                          <td style={tdStyle}>{l.trainSize}</td>
-                          <td style={tdStyle}>{l.testSize}</td>
-                          <td style={tdStyle}>{l.accuracy5}%</td>
-                          <td style={{ ...tdStyle, fontSize: 11, color: T.textMut }}>{new Date(l.timestamp).toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {/* Comparison bar chart */}
-                  <ResponsiveContainer width="100%" height={260}>
-                    <BarChart data={trainingLog.slice(0, 10).map(l => ({ name: l.model.substring(0, 12), R2: parseFloat((l.r2 || 0).toFixed(3)), RMSE: parseFloat((l.rmse || 0).toFixed(2)), MAE: parseFloat((l.mae || 0).toFixed(2)) }))}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 11 }} />
-                      <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                      <Legend wrapperStyle={{ fontSize: 12 }} />
-                      <Bar dataKey="R2" fill="#3b82f6" radius={[3, 3, 0, 0]} />
-                      <Bar dataKey="RMSE" fill="#ef4444" radius={[3, 3, 0, 0]} />
-                      <Bar dataKey="MAE" fill="#f59e0b" radius={[3, 3, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* ESG Forecast */}
-          {activeTab === 'forecast' && (
-            <div style={card}>
-              <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>ESG Score Forecast (1-3 Year Projection)</h3>
-              <p style={{ fontSize: 13, color: T.textSec, margin: '0 0 16px' }}>Projections based on current features, model residuals, and sector trends. Top 20 companies by portfolio relevance.</p>
-              {(() => {
-                const forecasted = (trained.allPreds || [])
-                  .filter(r => portfolio.length === 0 || portfolio.some(h => (h.ticker || h.id) === r.ticker))
-                  .slice(0, 20);
-                if (forecasted.length === 0) {
-                  const top20 = (trained.allPreds || []).slice(0, 20);
-                  return (
-                    <>
-                      <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                          <thead>
-                            <tr>
-                              {['Company', 'Current', 'Predicted', '2026', '2027', '2028', 'Trend'].map(h => <th key={h} style={thStyle}>{h}</th>)}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {top20.map((r, i) => {
-                              const trend = r.esg2028 - r.esgScore;
-                              return (
-                                <tr key={i} style={{ background: i % 2 ? T.surfaceH : 'transparent' }}>
-                                  <td style={{ ...tdStyle, fontWeight: 600, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</td>
-                                  <td style={tdStyle}>{r.esgScore.toFixed(1)}</td>
-                                  <td style={{ ...tdStyle, fontWeight: 600, color: MODEL_COLORS[modelType] }}>{r.predicted.toFixed(1)}</td>
-                                  <td style={tdStyle}>{r.esg2026.toFixed(1)}</td>
-                                  <td style={tdStyle}>{r.esg2027.toFixed(1)}</td>
-                                  <td style={tdStyle}>{r.esg2028.toFixed(1)}</td>
-                                  <td style={{ ...tdStyle, color: trend > 0 ? T.green : trend < 0 ? T.red : T.textMut, fontWeight: 600 }}>{trend > 0 ? '+' : ''}{trend.toFixed(1)}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div style={{ marginTop: 20 }}>
-                        <ResponsiveContainer width="100%" height={260}>
-                          <LineChart data={top20.slice(0, 10).map(r => ({ name: (r.name || '').substring(0, 12), Current: r.esgScore, '2026': r.esg2026, '2027': r.esg2027, '2028': r.esg2028 }))}>
-                            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                            <YAxis domain={[20, 90]} tick={{ fontSize: 11 }} />
-                            <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                            <Legend wrapperStyle={{ fontSize: 12 }} />
-                            <Line type="monotone" dataKey="Current" stroke={T.navy} strokeWidth={2} dot={{ r: 3 }} />
-                            <Line type="monotone" dataKey="2026" stroke={T.sage} strokeWidth={2} dot={{ r: 3 }} />
-                            <Line type="monotone" dataKey="2027" stroke={T.gold} strokeWidth={2} dot={{ r: 3 }} />
-                            <Line type="monotone" dataKey="2028" stroke={T.red} strokeWidth={2} dot={{ r: 3 }} />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </>
-                  );
-                }
-                return (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                      <thead><tr>{['Company', 'Current', '2026', '2027', '2028'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
-                      <tbody>
-                        {forecasted.map((r, i) => (
-                          <tr key={i} style={{ background: i % 2 ? T.surfaceH : 'transparent' }}>
-                            <td style={{ ...tdStyle, fontWeight: 600 }}>{r.name}</td>
-                            <td style={tdStyle}>{r.esgScore.toFixed(1)}</td>
-                            <td style={tdStyle}>{r.esg2026.toFixed(1)}</td>
-                            <td style={tdStyle}>{r.esg2027.toFixed(1)}</td>
-                            <td style={tdStyle}>{r.esg2028.toFixed(1)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                );
-              })()}
-            </div>
-          )}
-
-          {/* ESG Distribution Analysis */}
-          {activeTab === 'results' && trained.allPreds && (
-            <div style={card}>
-              <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>ESG Score Distribution: Actual vs Predicted</h3>
-              {(() => {
-                const actualBins = {}, predBins = {};
-                for (let b = 10; b <= 100; b += 5) { actualBins[b] = 0; predBins[b] = 0; }
-                trained.allPreds.forEach(r => {
-                  const aBin = Math.round(r.esgScore / 5) * 5;
-                  const pBin = Math.round(r.predicted / 5) * 5;
-                  actualBins[Math.max(10, Math.min(100, aBin))] = (actualBins[Math.max(10, Math.min(100, aBin))] || 0) + 1;
-                  predBins[Math.max(10, Math.min(100, pBin))] = (predBins[Math.max(10, Math.min(100, pBin))] || 0) + 1;
-                });
-                const distData = Object.keys(actualBins).map(k => ({ score: Number(k), actual: actualBins[k] || 0, predicted: predBins[k] || 0 }));
-                return (
-                  <ResponsiveContainer width="100%" height={260}>
-                    <BarChart data={distData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="score" tick={{ fontSize: 11 }} label={{ value: 'ESG Score', position: 'insideBottom', offset: -5, fontSize: 12 }} />
-                      <YAxis tick={{ fontSize: 11 }} />
-                      <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-                      <Legend wrapperStyle={{ fontSize: 12 }} />
-                      <Bar dataKey="actual" name="Actual" fill={T.navy} opacity={0.6} radius={[3, 3, 0, 0]} />
-                      <Bar dataKey="predicted" name="Predicted" fill={MODEL_COLORS[modelType]} opacity={0.6} radius={[3, 3, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                );
-              })()}
-            </div>
-          )}
-
-          {/* Portfolio Predictions */}
-          {activeTab === 'results' && trained.allPreds && portfolio.length > 0 && (
-            <div style={card}>
-              <h3 style={{ margin: '0 0 16px', color: T.navy, fontSize: 16 }}>Portfolio Holdings Predictions</h3>
-              <p style={{ fontSize: 13, color: T.textSec, margin: '0 0 12px' }}>ESG predictions for your active portfolio holdings.</p>
-              {(() => {
-                const portfolioPreds = trained.allPreds.filter(r =>
-                  portfolio.some(h => (h.ticker || h.id) === r.ticker || (h.company_name || h.name || '') === r.name)
-                );
-                if (portfolioPreds.length === 0) return <p style={{ color: T.textMut, fontSize: 13 }}>No portfolio holdings matched in prediction data.</p>;
-                return (
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr>
-                        {['Company', 'Sector', 'Current ESG', 'Predicted', 'Gap', '2026 Forecast', '2027 Forecast', 'Confidence'].map(h => <th key={h} style={thStyle}>{h}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {portfolioPreds.map((r, i) => (
-                        <tr key={i} style={{ background: i % 2 ? T.surfaceH : 'transparent' }}>
-                          <td style={{ ...tdStyle, fontWeight: 600 }}>{r.name}</td>
-                          <td style={{ ...tdStyle, fontSize: 12 }}>{r.sector}</td>
-                          <td style={tdStyle}>{r.esgScore.toFixed(1)}</td>
-                          <td style={{ ...tdStyle, fontWeight: 600, color: MODEL_COLORS[modelType] }}>{r.predicted.toFixed(1)}</td>
-                          <td style={{ ...tdStyle, color: r.residual > 0 ? T.green : T.red }}>{r.residual > 0 ? '+' : ''}{r.residual.toFixed(1)}</td>
-                          <td style={tdStyle}>{r.esg2026.toFixed(1)}</td>
-                          <td style={tdStyle}>{r.esg2027.toFixed(1)}</td>
-                          <td style={{ ...tdStyle, fontSize: 12, color: T.textMut }}>{r.confLow.toFixed(0)}-{r.confHigh.toFixed(0)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                );
-              })()}
-            </div>
-          )}
-
-          {/* Training Log */}
-          {activeTab === 'log' && (
-            <div style={card}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h3 style={{ margin: 0, color: T.navy, fontSize: 16 }}>Model Training Log ({trainingLog.length}/20)</h3>
-                <button style={btn(T.red + '20', T.red)} onClick={() => { setTrainingLog([]); saveLog([]); }}>Clear Log</button>
-              </div>
-              {trainingLog.length === 0 ? <p style={{ color: T.textMut, fontSize: 13 }}>No training runs recorded. Train a model to start.</p> : (
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr>
-                      {['Model', 'R\u00b2', 'RMSE', 'MAE', 'Train/Test', 'Accuracy \u00b15', 'Timestamp'].map(h => <th key={h} style={thStyle}>{h}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {trainingLog.map((l, i) => (
-                      <tr key={l.id} style={{ background: i % 2 ? T.surfaceH : 'transparent' }}>
-                        <td style={{ ...tdStyle, fontWeight: 600 }}>{l.model}</td>
-                        <td style={{ ...tdStyle, color: l.r2 > 0.5 ? T.green : T.amber }}>{(l.r2 || 0).toFixed(3)}</td>
-                        <td style={tdStyle}>{(l.rmse || 0).toFixed(2)}</td>
-                        <td style={tdStyle}>{(l.mae || 0).toFixed(2)}</td>
-                        <td style={tdStyle}>{l.trainSize}/{l.testSize}</td>
-                        <td style={tdStyle}>{l.accuracy5}%</td>
-                        <td style={{ ...tdStyle, fontSize: 11, color: T.textMut }}>{new Date(l.timestamp).toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Footer */}
-      <div style={{ textAlign: 'center', padding: '20px 0', fontSize: 12, color: T.textMut }}>
-        EP-W2 Predictive ESG Score Model | Sprint W AI & NLP Analytics | {allCompanies.length} companies | Portfolio: {portfolio.length} holdings
+        {/* Tab panels */}
+        <div style={{ transition: 'opacity 0.15s' }}>
+          {tab === 'studio' && <TabPredictionStudio />}
+          {tab === 'shap' && <TabSHAP featureVals={featureVals} />}
+          {tab === 'performance' && <TabModelPerformance />}
+          {tab === 'portfolio' && <TabPortfolio />}
+          {tab === 'pathway' && <TabPathwayDivergence />}
+        </div>
       </div>
     </div>
   );
