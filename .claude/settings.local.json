@@ -1777,7 +1777,26 @@
       "Bash(\"%TEMP%\\\\backend.log\")",
       "Bash(findstr \":8001\\\\|:3000\\\\|:8000\")",
       "Bash(powershell -Command \"Get-NetTCPConnection -State Listen | Where-Object {$_LocalPort -in @\\(3000,8000,8001\\)} | Select-Object LocalPort,OwningProcess | Sort-Object LocalPort\")",
-      "Bash(powershell -Command \"Get-Process python,node -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,MainWindowTitle | Format-Table\")"
+      "Bash(powershell -Command \"Get-Process python,node -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,MainWindowTitle | Format-Table\")",
+      "Bash(gh pr:*)",
+      "Bash(ls \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\backend\\\\services\"\" | grep -i \"eudr)",
+      "Bash(csddd\" && ls \"C:UsersSahilChopraDocumentsRisk Analyticsfrontendsrcfeatures\"\")",
+      "Bash(wc -l \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\Kimi_Agent_NGFS IEA Scenario Integration\"/*.md)",
+      "Bash(wc -l *.md)",
+      "Bash(ls -lh *.md)",
+      "Bash(ls \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\"\" 2>/dev/null || dir \"C:UsersSahilChopraDocumentsRisk Analytics\"\")",
+      "Bash(find 'C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics' -maxdepth 2 -type d -name *Carbon* -o -name *Equitable* -o -name *credit*engine*)",
+      "Bash(ls C:/Users/SahilChopra/Documents/Risk Analytics/frontend/src/features/cc-*)",
+      "Bash(head -5 \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\allprojects \\(1\\).csv\")",
+      "Bash(head -3 \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\allprojects \\(2\\).csv\")",
+      "Bash(head -3 \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\allprojects \\(3\\).csv\")",
+      "Bash(head -3 \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\Climate, Community & Biodiversity Standards.csv\")",
+      "Bash(head -2 \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\allprojects \\(1\\).csv\")",
+      "Bash(wc -l \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\allprojects \\(1\\).csv\" \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\allprojects \\(2\\).csv\" \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\allprojects \\(3\\).csv\" \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\Sustainable Development Verified Impact Standard.csv\" \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\Plastic Waste Reduction Verra.csv\" \"C:\\\\Users\\\\SahilChopra\\\\Downloads\\\\Climate, Community & Biodiversity Standards.csv\")",
+      "Bash(cd /c/Users/SahilChopra/Documents/\"Risk\\\\ Analytics\")",
+      "Bash(find /c/Users/SahilChopra/AppData/Local/Temp/sp-tmp/backend -type f -name *regulatory*)",
+      "Bash(find '/c/Users/SahilChopra/Documents/Risk Analytics/frontend/src/features' -path *ai-hub* -o -path *ai-sentiment* -o -path *ai-engagement* -o -path *nlp-disclosure* -o -path *predictive-analytics-hub* -o -path *predictive-esg* -o -path *sentiment-analysis* -o -path *sentiment-pipeline* -o -path *disclosure-hub*)",
+      "Bash(ls \"C:\\\\Users\\\\SahilChopra\\\\Documents\\\\Risk Analytics\\\\frontend\\\\src\\\\features\\\\esg-narrative-intelligence\\\\pages\"\" 2>/dev/null || echo \"DIR_NOT_FOUND \")"
     ]
   }
 }

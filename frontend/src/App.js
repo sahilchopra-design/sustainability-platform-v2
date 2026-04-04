@@ -323,6 +323,10 @@ const BlockchainCarbonRegistryPage = React.lazy(() => import("./features/blockch
 const ClimateDataMarketplacePage = React.lazy(() => import("./features/climate-data-marketplace/pages/ClimateDataMarketplacePage"));
 const IotEmissionsTrackerPage = React.lazy(() => import("./features/iot-emissions-tracker/pages/IotEmissionsTrackerPage"));
 const ClimateFintechHubPage = React.lazy(() => import("./features/climate-fintech-hub/pages/ClimateFintechHubPage"));
+// Sprint BZ — Advanced Predictive & Agentic Analytics
+const ESGTimeSeriesForecasterPage  = React.lazy(() => import("./features/esg-time-series-forecaster/pages/ESGTimeSeriesForecasterPage"));
+const SentimentAlphaEnginePage     = React.lazy(() => import("./features/sentiment-alpha-engine/pages/SentimentAlphaEnginePage"));
+const AIComplianceAgentPage        = React.lazy(() => import("./features/ai-compliance-agent/pages/AIComplianceAgentPage"));
 // Sprint BY — AI Intelligence Layer (LLM Extraction · Greenwashing · Narrative Arc)
 const LLMESGExtractorPage          = React.lazy(() => import("./features/llm-esg-extractor/pages/LLMESGExtractorPage"));
 const GreenwashingDetectionPage    = React.lazy(() => import("./features/greenwashing-detection/pages/GreenwashingDetectionPage"));
@@ -659,6 +663,11 @@ const NAV_GROUPS = [
     { path: '/sdg-bond-impact',           label: 'SDG Bond Impact',          badge: '7 Categories · 25 Metrics · ICMA',       code: 'EP-X3' },
     { path: '/blended-finance',           label: 'Blended Finance',          badge: '6 Instruments · Capital Stack · Leverage', code: 'EP-X4' },
     { path: '/impact-verification',       label: 'Impact Verification',      badge: 'IMP · Evidence Tiers · Impact Washing',  code: 'EP-X5' },
+  ]},
+  { label: 'Advanced Predictive Analytics', icon: '📈', color: '#6d28d9', items: [
+    { path: '/esg-time-series-forecaster',  label: 'ESG Time Series Forecaster',   badge: 'ARIMA · Holt-Winters · Ensemble · SBTi Divergence · CI Bands',   code: 'EP-BZ1' },
+    { path: '/sentiment-alpha-engine',      label: 'Sentiment Alpha Engine',       badge: '6 Signals · FF5 Attribution · IC Decay · L/S Portfolio · Backtest', code: 'EP-BZ2' },
+    { path: '/ai-compliance-agent',         label: 'AI Compliance Agent',          badge: '8 Frameworks · Agentic Scan · CSRD/ISSB/TCFD/SFDR · Evidence Map', code: 'EP-BZ3' },
   ]},
   { label: 'AI & NLP Analytics', icon: '🤖', color: '#0891b2', items: [
     { path: '/ai-hub',                     label: 'AI Analytics Hub',              badge: 'Mission Control · 9 Modules · Agentic Workflows · Signal Bus',   code: 'EP-W6' },
@@ -1841,6 +1850,10 @@ function AppContent() {
             <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
             <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
             <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            {/* Sprint BZ — Advanced Predictive & Agentic Analytics */}
+            <Route path="/esg-time-series-forecaster"  element={<ESGTimeSeriesForecasterPage />} />
+            <Route path="/sentiment-alpha-engine"      element={<SentimentAlphaEnginePage />} />
+            <Route path="/ai-compliance-agent"         element={<AIComplianceAgentPage />} />
             {/* Sprint BY — AI Intelligence Layer */}
             <Route path="/llm-esg-extractor"          element={<LLMESGExtractorPage />} />
             <Route path="/greenwashing-detection"     element={<GreenwashingDetectionPage />} />

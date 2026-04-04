@@ -2,6 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "risk-analytics-dev",
+      "runtimeExecutable": "C:\\Users\\SahilChopra\\Documents\\Risk Analytics\\.claude\\start-dev.bat",
+      "runtimeArgs": [],
+      "port": 3000
+    },
+    {
       "name": "risk-analytics-prod",
       "runtimeExecutable": "node",
       "runtimeArgs": ["frontend/node_modules/serve/build/main.js", "-s", "frontend/build", "-l", "4001"],
