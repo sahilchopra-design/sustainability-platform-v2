@@ -335,6 +335,26 @@ const ESGNarrativeIntelligencePage = React.lazy(() => import("./features/esg-nar
 const PhysicalHazardMapPage         = React.lazy(() => import("./features/physical-hazard-map/pages/PhysicalHazardMapPage"));
 const DamageFunctionCalculatorPage  = React.lazy(() => import("./features/damage-function-calculator/pages/DamageFunctionCalculatorPage"));
 const PhysicalRiskPortfolioPage     = React.lazy(() => import("./features/physical-risk-portfolio/pages/PhysicalRiskPortfolioPage"));
+// Sprint CA — Transition Risk DCF & Stranded Assets & Tech Displacement
+const TransitionRiskDcfPage         = React.lazy(() => import("./features/transition-risk-dcf/pages/TransitionRiskDcfPage"));
+const StrandedAssetAnalyzerPage     = React.lazy(() => import("./features/stranded-asset-analyzer/pages/StrandedAssetAnalyzerPage"));
+const TechDisplacementModelerPage   = React.lazy(() => import("./features/tech-displacement-modeler/pages/TechDisplacementModelerPage"));
+// Sprint CB — Sector Scorecard · Just Transition · Policy Impact
+const SectorTransitionScorecardPage = React.lazy(() => import("./features/sector-transition-scorecard/pages/SectorTransitionScorecardPage"));
+const JustTransitionIntelligencePage= React.lazy(() => import("./features/just-transition-intelligence/pages/JustTransitionIntelligencePage"));
+const PolicyRegulatoryImpactPage    = React.lazy(() => import("./features/policy-regulatory-impact/pages/PolicyRegulatoryImpactPage"));
+// Sprint CC — Portfolio Alignment · Financed Emissions · Transition Finance Screener
+const PortfolioTransitionAlignmentPage = React.lazy(() => import("./features/portfolio-transition-alignment/pages/PortfolioTransitionAlignmentPage"));
+const FinancedEmissionsAttributorPage  = React.lazy(() => import("./features/financed-emissions-attributor/pages/FinancedEmissionsAttributorPage"));
+const TransitionFinanceScreenerPage    = React.lazy(() => import("./features/transition-finance-screener/pages/TransitionFinanceScreenerPage"));
+// Sprint CD — Multi-Dim Scorer · Heatmap · Carbon Footprint
+const MultiDimTransitionScorerPage  = React.lazy(() => import("./features/multi-dim-transition-scorer/pages/MultiDimTransitionScorerPage"));
+const TransitionRiskHeatmapPage     = React.lazy(() => import("./features/transition-risk-heatmap/pages/TransitionRiskHeatmapPage"));
+const CarbonFootprintIntelligencePage= React.lazy(() => import("./features/carbon-footprint-intelligence/pages/CarbonFootprintIntelligencePage"));
+// Sprint CE — Climate VaR · Transition Dashboard · Reg Reporting
+const ClimateVarEnginePage          = React.lazy(() => import("./features/climate-var-engine/pages/ClimateVarEnginePage"));
+const TransitionRiskDashboardPage   = React.lazy(() => import("./features/transition-risk-dashboard/pages/TransitionRiskDashboardPage"));
+const TransitionRegReportingPage    = React.lazy(() => import("./features/transition-reg-reporting/pages/TransitionRegReportingPage"));
 // Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
 const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
 const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
@@ -1006,6 +1026,23 @@ const NAV_GROUPS = [
     { path: '/physical-hazard-map',          label: 'Hazard Mapping Dashboard',         badge: 'IPCC AR6 · 8 Perils · SSP1-2.6→SSP5-8.5 · 40 Assets · JRC · FIRMS · WBGT',    code: 'EP-BX1' },
     { path: '/damage-function-calculator',   label: 'Damage Function Calculator',       badge: 'JRC · HAZUS-MH · FEMA P-58 · WBGT ISO 7933 · AAL · EAL · PML 100yr/250yr',   code: 'EP-BX2' },
     { path: '/physical-risk-portfolio',      label: 'Physical Risk Portfolio Aggregator', badge: 'ECB CST · BoE CBES · APRA CPG 229 · Insurance Gap · Double-Hit · 30 Assets',  code: 'EP-BX3' },
+  ]},
+  { label: 'Climate Transition Risk Intelligence', icon: '🌡️', color: '#0f4c81', items: [
+    { path: '/transition-risk-dcf',            label: 'Transition Risk DCF Engine',        badge: '5 NGFS Scenarios · Carbon Price Trajectory · WACC Adjustment · Stranded CAPEX · 8 Assets',  code: 'EP-CA1' },
+    { path: '/stranded-asset-analyzer',        label: 'Stranded Asset Analyzer',           badge: 'Write-Down Schedule · Residual Value Curves · Sector Matrix · Remediation · 8 Sectors',    code: 'EP-CA2' },
+    { path: '/tech-displacement-modeler',      label: 'Technology Displacement Modeler',   badge: 'S-Curve · Wright\'s Law LCOE · 6 Technologies · Job Transition · Crossover Years',         code: 'EP-CA3' },
+    { path: '/sector-transition-scorecard',    label: 'Sector Transition Scorecard',       badge: 'PACE Framework · SBTi Pathways · MAC Curves · Abatement Cost · 6 GICS Sectors',           code: 'EP-CB1' },
+    { path: '/just-transition-intelligence',   label: 'Just Transition Intelligence',      badge: 'ILO JTF 5 Pillars · 10 Regions · Financing Gap · Vulnerability · Green Job Pipeline',     code: 'EP-CB2' },
+    { path: '/policy-regulatory-impact',       label: 'Policy & Regulatory Impact',        badge: 'EU ETS · CBAM · UK MEES · IRA · EU Taxonomy · CORSIA · 6 Instruments',                    code: 'EP-CB3' },
+    { path: '/portfolio-transition-alignment', label: 'Portfolio Transition Alignment',    badge: 'ITR · GFANZ · TPT · PACTA · Engagement Register · 2 Portfolios',                           code: 'EP-CC1' },
+    { path: '/financed-emissions-attributor',  label: 'Financed Emissions Attributor',     badge: 'PCAF 5 Asset Classes · Data Quality 1–5 · WACI · Scope 3 Cat 15 · Company Drill-Down',    code: 'EP-CC2' },
+    { path: '/transition-finance-screener',    label: 'Transition Finance Screener',       badge: 'ICMA GBP/SBP/SLB · EU Taxonomy · Greenium · DNSH · KPI Tracking · 8 Instruments',        code: 'EP-CC3' },
+    { path: '/multi-dim-transition-scorer',    label: 'Multi-Dim Transition Scorer',       badge: '6 Pillars · Public + Proprietary Tiers · CDP/SBTi/Bloomberg · Rating A–E · 6 Companies', code: 'EP-CD1' },
+    { path: '/transition-risk-heatmap',        label: 'Transition Risk Heatmap',           badge: '10 Sectors × 5 Geographies · 3 NGFS Scenarios · 50-Cell Matrix · Scenario Sensitivity',   code: 'EP-CD2' },
+    { path: '/carbon-footprint-intelligence',  label: 'Carbon Footprint Intelligence',     badge: 'Scope 1/2/3 · 15 Categories · GHG Protocol · SBTi Trajectory · Intensity Benchmark',     code: 'EP-CD3' },
+    { path: '/climate-var-engine',             label: 'Climate Value-at-Risk Engine',      badge: 'CVaR = Trans+Phys+ρ·Inter · NGFS 5 Scenarios · Delta CoVaR · Stress Matrix · 30yr',       code: 'EP-CE1' },
+    { path: '/transition-risk-dashboard',      label: 'Transition Risk Dashboard',         badge: 'Executive KPIs · Sector Heatmap · Holdings Monitor · Reg Readiness · Engagement',         code: 'EP-CE2' },
+    { path: '/transition-reg-reporting',       label: 'Transition Regulatory Reporting',   badge: 'TCFD · ISSB S2 · CSRD ESRS E1 · Board Narrative · Metrics Register · Export Centre',      code: 'EP-CE3' },
   ]},
   { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
     { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
@@ -1862,6 +1899,26 @@ function AppContent() {
             <Route path="/physical-hazard-map"         element={<PhysicalHazardMapPage />} />
             <Route path="/damage-function-calculator"  element={<DamageFunctionCalculatorPage />} />
             <Route path="/physical-risk-portfolio"     element={<PhysicalRiskPortfolioPage />} />
+            {/* Sprint CA — Transition Risk DCF & Stranded Assets & Tech Displacement */}
+            <Route path="/transition-risk-dcf"           element={<TransitionRiskDcfPage />} />
+            <Route path="/stranded-asset-analyzer"       element={<StrandedAssetAnalyzerPage />} />
+            <Route path="/tech-displacement-modeler"     element={<TechDisplacementModelerPage />} />
+            {/* Sprint CB — Sector Scorecard · Just Transition · Policy Impact */}
+            <Route path="/sector-transition-scorecard"   element={<SectorTransitionScorecardPage />} />
+            <Route path="/just-transition-intelligence"  element={<JustTransitionIntelligencePage />} />
+            <Route path="/policy-regulatory-impact"      element={<PolicyRegulatoryImpactPage />} />
+            {/* Sprint CC — Portfolio Alignment · Financed Emissions · Transition Finance */}
+            <Route path="/portfolio-transition-alignment" element={<PortfolioTransitionAlignmentPage />} />
+            <Route path="/financed-emissions-attributor"  element={<FinancedEmissionsAttributorPage />} />
+            <Route path="/transition-finance-screener"    element={<TransitionFinanceScreenerPage />} />
+            {/* Sprint CD — Multi-Dim Scorer · Heatmap · Carbon Footprint */}
+            <Route path="/multi-dim-transition-scorer"   element={<MultiDimTransitionScorerPage />} />
+            <Route path="/transition-risk-heatmap"       element={<TransitionRiskHeatmapPage />} />
+            <Route path="/carbon-footprint-intelligence" element={<CarbonFootprintIntelligencePage />} />
+            {/* Sprint CE — Climate VaR · Transition Dashboard · Reg Reporting */}
+            <Route path="/climate-var-engine"            element={<ClimateVarEnginePage />} />
+            <Route path="/transition-risk-dashboard"     element={<TransitionRiskDashboardPage />} />
+            <Route path="/transition-reg-reporting"      element={<TransitionRegReportingPage />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
             <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
             <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
