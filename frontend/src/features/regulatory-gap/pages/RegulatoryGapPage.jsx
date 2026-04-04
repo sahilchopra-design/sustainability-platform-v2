@@ -298,10 +298,13 @@ function RegulatoryGapPage() {
   });
 
   /* ── UI state ──────────────────────────────────────────────────── */
+  const [activeTab, setActiveTab] = useState('Compliance Dashboard');
   const [selectedFramework, setSelectedFramework] = useState('ALL');
   const [showCompareView, setShowCompareView] = useState(false);
   const [compareFrameworks, setCompareFrameworks] = useState([]);
   const [expandedAction, setExpandedAction] = useState(null);
+  const [expandedFw, setExpandedFw] = useState(null);
+  const [simOverrides, setSimOverrides] = useState({});
 
   /* ── Dynamic compliance assessment ─────────────────────────────── */
   const assess = useMemo(() => assessCompliance(holdings), [holdings]);
@@ -354,6 +357,34 @@ function RegulatoryGapPage() {
     const tot = reqs.length;
     return { ...fw, compliant: c, partial: p, gaps: g, total: tot, score: tot > 0 ? Math.round(((c + p * 0.5) / tot) * 100) : 0 };
   }), [FRAMEWORKS, allReqs]);
+
+  /* ── Scenario Simulator ────────────────────────────────────────── */
+  const simAssess = useMemo(() => {
+    const sim = { ...assess };
+    if (simOverrides.ghg !== undefined) { sim.ghgCoverage = simOverrides.ghg; sim.holdingsWithGHG = Math.round(sim.totalHoldings * simOverrides.ghg / 100); }
+    if (simOverrides.esg !== undefined) { sim.esgCoverage = simOverrides.esg; sim.holdingsWithESG = Math.round(sim.totalHoldings * simOverrides.esg / 100); }
+    if (simOverrides.sbti !== undefined) { sim.sbtiPct = simOverrides.sbti; sim.sbtiCount = Math.round(sim.totalHoldings * simOverrides.sbti / 100); }
+    if (simOverrides.scenarios !== undefined) { sim.hasScenarios = simOverrides.scenarios; sim.scenarioCount = simOverrides.scenarios ? 3 : 0; }
+    if (simOverrides.reports !== undefined) { sim.hasReports = simOverrides.reports; sim.reportCount = simOverrides.reports ? 2 : 0; }
+    if (simOverrides.revenue !== undefined) { sim.revenueCoverage = simOverrides.revenue; }
+    if (simOverrides.hasWACI !== undefined) sim.hasWACI = simOverrides.hasWACI;
+    return sim;
+  }, [assess, simOverrides]);
+  const simFrameworks = useMemo(() => buildFrameworks(simAssess, actionStatuses), [simAssess, actionStatuses]);
+  const simAllReqs = useMemo(() => {
+    const items = [];
+    simFrameworks.forEach(fw => fw.requirements.forEach(r => {
+      const effectiveStatus = (actionStatuses[r.id] === 'complete' && r.status === 'gap') ? 'partial' : r.status;
+      items.push({ ...r, status: effectiveStatus, framework: fw.name, frameworkId: fw.id });
+    }));
+    return items;
+  }, [simFrameworks, actionStatuses]);
+  const simCompliance = useMemo(() => {
+    const t = simAllReqs.length;
+    const c = simAllReqs.filter(r => r.status === 'compliant').length;
+    const p = simAllReqs.filter(r => r.status === 'partial').length;
+    return t > 0 ? Math.round(((c + p * 0.5) / t) * 100) : 0;
+  }, [simAllReqs]);
 
   /* ── Stacked bar data ──────────────────────────────────────────── */
   const barData = useMemo(() => fwScores.map(fw => ({
@@ -563,6 +594,30 @@ function RegulatoryGapPage() {
         ))}
       </div>
 
+      {/* ── Tab Navigation ───────────────────────────────────────── */}
+      <div style={{ display:'flex', gap:2, borderBottom:`2px solid ${T.border}`, marginBottom:20, flexWrap:'wrap' }}>
+        {['Compliance Dashboard','Framework Deep-Dive','Requirements & Actions','Scenario Simulator','Heatmap & Timeline','Data Quality'].map(t=>(
+          <button key={t} onClick={()=>setActiveTab(t)} style={{
+            padding:'9px 16px', fontSize:12, fontWeight:600, cursor:'pointer', border:'none',
+            background:'transparent', color: activeTab===t ? T.navy : T.textMut,
+            borderBottom: activeTab===t ? `2px solid ${T.gold}` : '2px solid transparent',
+            marginBottom:-2, fontFamily:T.font, transition:'all 0.15s',
+          }}>{t}</button>
+        ))}
+      </div>
+
+      {/* ═══ TAB 1: Compliance Dashboard ═══ */}
+      {activeTab === 'Compliance Dashboard' && (<>
+
+      {/* ── Alert Banner ─────────────────────────────────────────── */}
+      {criticalGaps > 0 && (
+        <div style={{ background:'#fef2f2', border:'1px solid #fecaca', borderRadius:8, padding:'12px 16px', marginBottom:16, display:'flex', alignItems:'center', gap:10 }}>
+          <span style={{ fontSize:16 }}>&#9888;&#65039;</span>
+          <span style={{ fontSize:12, color:T.red, fontWeight:600 }}>{criticalGaps} P1 critical gap{criticalGaps > 1 ? 's' : ''} require immediate attention</span>
+          <button onClick={()=>setActiveTab('Requirements & Actions')} style={{ marginLeft:'auto', ...btnStyle(T.red,'#fff'), padding:'5px 12px', fontSize:11 }}>View Actions →</button>
+        </div>
+      )}
+
       {/* ── Data Completeness Dashboard ──────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24 }}>
         <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}` }}>
@@ -672,6 +727,11 @@ function RegulatoryGapPage() {
         })}
       </div>
 
+      </>)}
+
+      {/* ═══ TAB 2: Framework Deep-Dive ═══ */}
+      {activeTab === 'Framework Deep-Dive' && (<>
+
       {/* ── Framework Comparison View ────────────────────────────── */}
       {showCompareView && (
         <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `2px solid ${T.gold}`, marginBottom: 24 }}>
@@ -751,6 +811,10 @@ function RegulatoryGapPage() {
         </ResponsiveContainer>
       </div>
 
+      </>)}
+
+      {/* ═══ TAB 3: Requirements & Actions ═══ */}
+      {activeTab === 'Requirements & Actions' && (<>
       {/* ── Detailed Requirements Table ──────────────────────────── */}
       <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -872,6 +936,93 @@ function RegulatoryGapPage() {
         </div>
       </div>
 
+      </>)}
+
+      {/* ═══ TAB 4: Scenario Simulator ═══ */}
+      {activeTab === 'Scenario Simulator' && (<>
+      <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 8px', color: T.navy }}>What-If Scenario Simulator</h2>
+        <p style={{ fontSize: 12, color: T.textSec, margin: '0 0 16px' }}>Drag the sliders to simulate data improvements and see how they would impact your compliance score in real-time.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          <div>
+            {[
+              { key:'ghg', label:'GHG Data Coverage (%)', value: simOverrides.ghg !== undefined ? simOverrides.ghg : Math.round(assess.ghgCoverage), actual: Math.round(assess.ghgCoverage), max:100, color:T.green },
+              { key:'esg', label:'ESG Score Coverage (%)', value: simOverrides.esg !== undefined ? simOverrides.esg : Math.round(assess.esgCoverage), actual: Math.round(assess.esgCoverage), max:100, color:'#2563eb' },
+              { key:'sbti', label:'SBTi Commitment (%)', value: simOverrides.sbti !== undefined ? simOverrides.sbti : Math.round(assess.sbtiPct), actual: Math.round(assess.sbtiPct), max:100, color:T.sage },
+              { key:'revenue', label:'Revenue Coverage (%)', value: simOverrides.revenue !== undefined ? simOverrides.revenue : Math.round(assess.revenueCoverage), actual: Math.round(assess.revenueCoverage), max:100, color:T.gold },
+            ].map(s => (
+              <div key={s.key} style={{ marginBottom: 14 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                  <span style={{ fontSize:12, fontWeight:600, color:T.text }}>{s.label}</span>
+                  <span style={{ fontSize:12, fontFamily:T.mono, fontWeight:700, color: s.value > s.actual ? T.green : s.value < s.actual ? T.red : T.textMut }}>{s.value}%{s.value !== s.actual ? ` (actual: ${s.actual}%)` : ''}</span>
+                </div>
+                <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+                  <input type="range" min={0} max={s.max} value={s.value}
+                    onChange={e => setSimOverrides(p => ({...p, [s.key]: +e.target.value}))}
+                    style={{ flex:1, accentColor:s.color, height:6, cursor:'pointer' }} />
+                  <input type="number" min={0} max={s.max} value={s.value}
+                    onChange={e => setSimOverrides(p => ({...p, [s.key]: Math.min(s.max, Math.max(0, +e.target.value||0))}))}
+                    style={{ width:54, padding:'4px 6px', border:`1px solid ${T.border}`, borderRadius:4, fontSize:11, fontFamily:T.mono, color:T.navy, background:T.bg, textAlign:'right' }} />
+                </div>
+              </div>
+            ))}
+            {[
+              { key:'scenarios', label:'Scenario Analysis Completed', value: simOverrides.scenarios !== undefined ? simOverrides.scenarios : assess.hasScenarios },
+              { key:'reports', label:'Reports Generated', value: simOverrides.reports !== undefined ? simOverrides.reports : assess.hasReports },
+              { key:'hasWACI', label:'WACI Calculable', value: simOverrides.hasWACI !== undefined ? simOverrides.hasWACI : assess.hasWACI },
+            ].map(s => (
+              <div key={s.key} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8, padding:'6px 0' }}>
+                <span style={{ fontSize:12, fontWeight:500, color:T.text }}>{s.label}</span>
+                <button onClick={() => setSimOverrides(p => ({...p, [s.key]: !s.value}))}
+                  style={{ padding:'4px 12px', borderRadius:4, border:`1px solid ${s.value ? T.green : T.border}`, background: s.value ? `${T.green}15` : T.surface, color: s.value ? T.green : T.textMut, fontSize:11, fontWeight:600, cursor:'pointer' }}>
+                  {s.value ? '✓ Yes' : '✗ No'}
+                </button>
+              </div>
+            ))}
+            <button onClick={() => setSimOverrides({})} style={{ ...btnStyle(T.textMut, '#fff'), padding:'6px 14px', fontSize:11, marginTop:8 }}>Reset to Actual</button>
+          </div>
+          <div>
+            <div style={{ background:T.navy, borderRadius:12, padding:20, color:'#fff', marginBottom:16, textAlign:'center' }}>
+              <div style={{ fontSize:11, letterSpacing:1, color:'rgba(255,255,255,0.6)', marginBottom:4 }}>SIMULATED COMPLIANCE</div>
+              <div style={{ fontSize:56, fontWeight:700, fontFamily:T.mono, lineHeight:1 }}>{simCompliance}%</div>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.7)', marginTop:6 }}>
+                {simCompliance > overallCompliance ? `+${simCompliance - overallCompliance}% improvement` : simCompliance < overallCompliance ? `${simCompliance - overallCompliance}% decrease` : 'No change from actual'}
+              </div>
+              <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12 }}>
+                <div><div style={{ fontSize:9, color:'rgba(255,255,255,0.5)' }}>ACTUAL</div><div style={{ fontSize:18, fontWeight:700, fontFamily:T.mono }}>{overallCompliance}%</div></div>
+                <div style={{ width:1, background:'rgba(255,255,255,0.2)' }} />
+                <div><div style={{ fontSize:9, color:'rgba(255,255,255,0.5)' }}>DELTA</div><div style={{ fontSize:18, fontWeight:700, fontFamily:T.mono, color: simCompliance >= overallCompliance ? '#86efac' : '#fca5a5' }}>{simCompliance >= overallCompliance ? '+' : ''}{simCompliance - overallCompliance}%</div></div>
+              </div>
+            </div>
+            <div style={{ background:T.surface, borderRadius:8, padding:16, border:`1px solid ${T.border}` }}>
+              <div style={{ fontSize:12, fontWeight:600, color:T.navy, marginBottom:8 }}>Framework Impact Breakdown</div>
+              {simFrameworks.map(fw => {
+                const simReqs = simAllReqs.filter(r => r.frameworkId === fw.id);
+                const c = simReqs.filter(r => r.status === 'compliant').length;
+                const p = simReqs.filter(r => r.status === 'partial').length;
+                const t = simReqs.length;
+                const sc = t > 0 ? Math.round(((c + p * 0.5) / t) * 100) : 0;
+                const origFw = fwScores.find(f => f.id === fw.id);
+                const delta = sc - (origFw?.score || 0);
+                return (
+                  <div key={fw.id} style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
+                    <span style={{ width:60, fontSize:11, fontWeight:600, color:fw.color }}>{fw.name}</span>
+                    <div style={{ flex:1, height:8, background:T.surfaceH, borderRadius:4, overflow:'hidden' }}>
+                      <div style={{ height:'100%', width:`${sc}%`, background:fw.color, borderRadius:4, transition:'width 0.3s' }} />
+                    </div>
+                    <span style={{ width:36, fontSize:11, fontFamily:T.mono, fontWeight:700, textAlign:'right' }}>{sc}%</span>
+                    {delta !== 0 && <span style={{ fontSize:10, fontFamily:T.mono, fontWeight:600, color:delta>0?T.green:T.red }}>{delta>0?'+':''}{delta}</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+      </>)}
+
+      {/* ═══ TAB 5: Heatmap & Timeline ═══ */}
+      {activeTab === 'Heatmap & Timeline' && (<>
       {/* ── Compliance Heatmap ────────────────────────────────────── */}
       <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
         <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 16px', color: T.navy }}>Compliance Heatmap</h2>
@@ -933,6 +1084,48 @@ function RegulatoryGapPage() {
           })}
         </div>
       </div>
+
+      </>)}
+
+      {/* ═══ TAB 6: Data Quality ═══ */}
+      {activeTab === 'Data Quality' && (<>
+      <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 8px', color: T.navy }}>Data Quality Deep-Dive</h2>
+        <p style={{ fontSize: 12, color: T.textSec, margin: '0 0 16px' }}>Expand any metric row to see which holdings are missing data. Improving coverage directly improves compliance scores.</p>
+        {dataFields.map((f, i) => (
+          <div key={i} style={{ marginBottom: 12, padding: '10px 12px', background: T.bg, borderRadius: 8, border: `1px solid ${T.border}`, cursor: 'pointer' }}
+            onClick={() => setExpandedFw(expandedFw === f.field ? null : f.field)}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ width: 120, fontSize: 12, fontWeight: 600, color: T.text }}>{f.field}</span>
+              <div style={{ flex: 1, height: 12, background: T.surfaceH, borderRadius: 6, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: f.coverage + '%', background: f.coverage >= 80 ? T.green : f.coverage >= 50 ? T.amber : T.red, borderRadius: 6 }} />
+              </div>
+              <span style={{ width: 50, fontSize: 13, fontWeight: 700, textAlign: 'right', color: f.coverage >= 80 ? T.green : f.coverage >= 50 ? T.amber : T.red, fontFamily: T.mono }}>{f.coverage.toFixed(0)}%</span>
+              <span style={{ width: 70, fontSize: 11, color: T.textMut, textAlign: 'right' }}>{f.count}/{assess.totalHoldings}</span>
+              <span style={{ fontSize: 12, color: T.textMut }}>{expandedFw === f.field ? '▼' : '▶'}</span>
+            </div>
+            {expandedFw === f.field && f.missing.length > 0 && (
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: `1px solid ${T.border}` }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: T.red, marginBottom: 6 }}>Missing Data — Top {f.missing.length} Holdings:</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                  {f.missing.map(m => (
+                    <span key={m} style={{ fontSize: 10, padding: '2px 8px', background: '#fef2f2', color: T.red, borderRadius: 4, fontFamily: T.mono }}>{m}</span>
+                  ))}
+                </div>
+                <div style={{ marginTop: 8, fontSize: 11, color: T.textSec }}>
+                  Impact: Adding {f.field} data for these {f.missing.length} holdings would increase coverage to ~{Math.min(100, Math.round(f.coverage + (f.missing.length / assess.totalHoldings * 100)))}%
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        <div style={{ marginTop: 16, padding: 16, background: T.navy, borderRadius: 8, color: '#fff', textAlign: 'center' }}>
+          <div style={{ fontSize: 11, letterSpacing: 1, color: 'rgba(255,255,255,0.6)', marginBottom: 4 }}>WEIGHTED DATA QUALITY SCORE</div>
+          <div style={{ fontSize: 40, fontWeight: 700, fontFamily: T.mono }}>{overallDataQuality}%</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>GHG + ESG weighted 2x | Other metrics weighted 1x</div>
+        </div>
+      </div>
+      </>)}
 
       {/* ── Footer ───────────────────────────────────────────────── */}
       <div style={{ textAlign: 'center', padding: '16px 0', fontSize: 11, color: T.textMut }}>
