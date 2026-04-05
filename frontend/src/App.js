@@ -355,6 +355,10 @@ const CarbonFootprintIntelligencePage= React.lazy(() => import("./features/carbo
 const ClimateVarEnginePage          = React.lazy(() => import("./features/climate-var-engine/pages/ClimateVarEnginePage"));
 const TransitionRiskDashboardPage   = React.lazy(() => import("./features/transition-risk-dashboard/pages/TransitionRiskDashboardPage"));
 const TransitionRegReportingPage    = React.lazy(() => import("./features/transition-reg-reporting/pages/TransitionRegReportingPage"));
+// Sprint CF — Climate Adaptation & Resilience Intelligence
+const ClimateAdaptationPathwaysPage = React.lazy(() => import("./features/climate-adaptation-pathways/pages/ClimateAdaptationPathwaysPage"));
+const InfrastructureResilienceScorerPage = React.lazy(() => import("./features/infrastructure-resilience-scorer/pages/InfrastructureResilienceScorerPage"));
+const NatureBasedAdaptationPage     = React.lazy(() => import("./features/nature-based-adaptation/pages/NatureBasedAdaptationPage"));
 // Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
 const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
 const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
@@ -1043,6 +1047,11 @@ const NAV_GROUPS = [
     { path: '/climate-var-engine',             label: 'Climate Value-at-Risk Engine',      badge: 'CVaR = Trans+Phys+ρ·Inter · NGFS 5 Scenarios · Delta CoVaR · Stress Matrix · 30yr',       code: 'EP-CE1' },
     { path: '/transition-risk-dashboard',      label: 'Transition Risk Dashboard',         badge: 'Executive KPIs · Sector Heatmap · Holdings Monitor · Reg Readiness · Engagement',         code: 'EP-CE2' },
     { path: '/transition-reg-reporting',       label: 'Transition Regulatory Reporting',   badge: 'TCFD · ISSB S2 · CSRD ESRS E1 · Board Narrative · Metrics Register · Export Centre',      code: 'EP-CE3' },
+  ]},
+  { label: 'Climate Adaptation & Resilience', icon: '🌊', color: '#0e7490', items: [
+    { path: '/climate-adaptation-pathways',      label: 'Adaptation Pathways Engine',        badge: '8 Strategies · CBA · Maladaptation Risk · Adaptation Finance Gap · SSP Sensitivity',         code: 'EP-CF1' },
+    { path: '/infrastructure-resilience-scorer', label: 'Infrastructure Resilience Scorer',   badge: '10 Assets · 5-Pillar Resilience · Retrofit Priority · Climate Haircut · Trend',              code: 'EP-CF2' },
+    { path: '/nature-based-adaptation',          label: 'Nature-Based Adaptation Solutions', badge: '6 NbS Projects · Co-Benefit Valuation · Ecosystem Services · SDG Alignment · Investment',    code: 'EP-CF3' },
   ]},
   { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
     { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
@@ -1919,6 +1928,10 @@ function AppContent() {
             <Route path="/climate-var-engine"            element={<ClimateVarEnginePage />} />
             <Route path="/transition-risk-dashboard"     element={<TransitionRiskDashboardPage />} />
             <Route path="/transition-reg-reporting"      element={<TransitionRegReportingPage />} />
+            {/* Sprint CF — Climate Adaptation & Resilience Intelligence */}
+            <Route path="/climate-adaptation-pathways"      element={<ClimateAdaptationPathwaysPage />} />
+            <Route path="/infrastructure-resilience-scorer" element={<InfrastructureResilienceScorerPage />} />
+            <Route path="/nature-based-adaptation"          element={<NatureBasedAdaptationPage />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
             <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
             <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
