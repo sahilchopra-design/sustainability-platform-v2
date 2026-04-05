@@ -23,23 +23,42 @@ function comp(key, label, value, weight, children, source) {
   return { key, label, value, weight, children: children || [], source, drillable: !!(children && children.length) };
 }
 
-/** Find a metric in module metadata by matching displayed text */
+/** Find a metric in module metadata by matching displayed text — searches children recursively */
 export function findMetricByText(text, moduleData) {
   if (!moduleData || !moduleData.metrics) return null;
   const cleanText = text.replace(/[$,%\u00b0\u20ac\u00a3B\bM\b]/g, '').trim();
 
+  function matchNode(node) {
+    if (node.matchTexts && node.matchTexts.some(t => text.includes(t))) return node;
+    if (node.value && text.includes(String(node.value))) return node;
+    if (node.label && text === node.label) return node;
+    // Search children recursively — return the PARENT metric if a child matches
+    if (node.children) {
+      for (const child of node.children) {
+        if (child.value && text.includes(String(child.value))) return node;
+        if (child.label && text === child.label) return node;
+      }
+    }
+    return null;
+  }
+
   for (const metric of moduleData.metrics) {
-    if (metric.matchTexts && metric.matchTexts.some(t => text.includes(t))) return metric;
-    if (metric.value && text.includes(String(metric.value))) return metric;
-    if (metric.label && text.includes(metric.label)) return metric;
+    const match = matchNode(metric);
+    if (match) return match;
   }
 
   // Fuzzy: try matching numeric values
-  const numMatch = cleanText.match(/[\d.]+/);
+  const numMatch = cleanText.match(/^[\d.]+$/);
   if (numMatch) {
     const num = parseFloat(numMatch[0]);
     for (const metric of moduleData.metrics) {
       if (metric.numericMatch && Math.abs(metric.numericMatch - num) < 0.01) return metric;
+      // Check children numeric values
+      if (metric.children) {
+        for (const child of metric.children) {
+          if (child.value && String(child.value).replace(/[^0-9.]/g, '') === String(num)) return metric;
+        }
+      }
     }
   }
   return null;
