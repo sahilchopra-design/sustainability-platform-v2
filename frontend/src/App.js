@@ -442,6 +442,48 @@ const AssuranceReadinessEnginePage  = React.lazy(() => import("./features/assura
 const XbrlClimateTaxonomyPage       = React.lazy(() => import("./features/xbrl-climate-taxonomy/pages/XbrlClimateTaxonomyPage"));
 const RegulatoryChangeRadarPage     = React.lazy(() => import("./features/regulatory-change-radar/pages/RegulatoryChangeRadarPage"));
 const ComplianceWorkflowAutomationPage = React.lazy(() => import("./features/compliance-workflow-automation/pages/ComplianceWorkflowAutomationPage"));
+// Sprint CS — Taxonomy & Assessment Engine Core
+const TransitionRiskTaxonomyBrowserPage = React.lazy(() => import("./features/transition-risk-taxonomy-browser/pages/TransitionRiskTaxonomyBrowserPage"));
+const AssessmentEngineDashboardPage  = React.lazy(() => import("./features/assessment-engine-dashboard/pages/AssessmentEngineDashboardPage"));
+const DataSourceRegistryPage         = React.lazy(() => import("./features/data-source-registry/pages/DataSourceRegistryPage"));
+const MlTaxonomyScoringPage          = React.lazy(() => import("./features/ml-taxonomy-scoring/pages/MlTaxonomyScoringPage"));
+const TaxonomyRiskReportPage         = React.lazy(() => import("./features/taxonomy-risk-report/pages/TaxonomyRiskReportPage"));
+const AssessmentConfigurationPage    = React.lazy(() => import("./features/assessment-configuration/pages/AssessmentConfigurationPage"));
+// Sprint CT — Financial Institution Profiler
+const FiClientPortfolioAnalyzerPage  = React.lazy(() => import("./features/fi-client-portfolio-analyzer/pages/FiClientPortfolioAnalyzerPage"));
+const FiInstrumentExposurePage       = React.lazy(() => import("./features/fi-instrument-exposure/pages/FiInstrumentExposurePage"));
+const FiLineOfBusinessPage           = React.lazy(() => import("./features/fi-line-of-business/pages/FiLineOfBusinessPage"));
+const FiRegulatoryCapitalOverlayPage = React.lazy(() => import("./features/fi-regulatory-capital-overlay/pages/FiRegulatoryCapitalOverlayPage"));
+const FiConcentrationMonitorPage     = React.lazy(() => import("./features/fi-concentration-monitor/pages/FiConcentrationMonitorPage"));
+const FiTransitionDashboardPage      = React.lazy(() => import("./features/fi-transition-dashboard/pages/FiTransitionDashboardPage"));
+// Sprint CU — Energy Company Profiler
+const EnergyAssetRegistryPage        = React.lazy(() => import("./features/energy-asset-registry/pages/EnergyAssetRegistryPage"));
+const EnergySegmentAnalysisPage      = React.lazy(() => import("./features/energy-segment-analysis/pages/EnergySegmentAnalysisPage"));
+const EnergySupplierNetworkPage      = React.lazy(() => import("./features/energy-supplier-network/pages/EnergySupplierNetworkPage"));
+const EnergyRevenueSplitPage         = React.lazy(() => import("./features/energy-revenue-split/pages/EnergyRevenueSplitPage"));
+const EnergyDecommissioningLiabilityPage = React.lazy(() => import("./features/energy-decommissioning-liability/pages/EnergyDecommissioningLiabilityPage"));
+const EnergyTransitionDashboardPage  = React.lazy(() => import("./features/energy-transition-dashboard/pages/EnergyTransitionDashboardPage"));
+// Sprint CV — Geopolitical Risk Engine
+const GeopoliticalRiskIndexPage      = React.lazy(() => import("./features/geopolitical-risk-index/pages/GeopoliticalRiskIndexPage"));
+const SanctionsTradeMonitorPage      = React.lazy(() => import("./features/sanctions-trade-monitor/pages/SanctionsTradeMonitorPage"));
+const CriticalMineralGeoRiskPage     = React.lazy(() => import("./features/critical-mineral-geo-risk/pages/CriticalMineralGeoRiskPage"));
+const ConflictStabilityTrackerPage   = React.lazy(() => import("./features/conflict-stability-tracker/pages/ConflictStabilityTrackerPage"));
+const GeoTransitionNexusPage         = React.lazy(() => import("./features/geo-transition-nexus/pages/GeoTransitionNexusPage"));
+const GeopoliticalDashboardPage      = React.lazy(() => import("./features/geopolitical-dashboard/pages/GeopoliticalDashboardPage"));
+// Sprint CW — Cross-Entity Assessment & Benchmarking
+const UniversalEntityComparatorPage  = React.lazy(() => import("./features/universal-entity-comparator/pages/UniversalEntityComparatorPage"));
+const SectorPeerBenchmarkingEnginePage = React.lazy(() => import("./features/sector-peer-benchmarking-engine/pages/SectorPeerBenchmarkingEnginePage"));
+const SupplyChainNetworkVizPage      = React.lazy(() => import("./features/supply-chain-network-viz/pages/SupplyChainNetworkVizPage"));
+const PortfolioStressTestDrilldownPage = React.lazy(() => import("./features/portfolio-stress-test-drilldown/pages/PortfolioStressTestDrilldownPage"));
+const AssessmentAuditTrailV2Page     = React.lazy(() => import("./features/assessment-audit-trail-v2/pages/AssessmentAuditTrailV2Page"));
+const CrossEntityIntelligenceDashboardPage = React.lazy(() => import("./features/cross-entity-intelligence-dashboard/pages/CrossEntityIntelligenceDashboardPage"));
+// Sprint CX — Advanced ML & Predictive Analytics
+const MlFeatureEngineeringPage       = React.lazy(() => import("./features/ml-feature-engineering/pages/MlFeatureEngineeringPage"));
+const EnsemblePredictionEnginePage   = React.lazy(() => import("./features/ensemble-prediction-engine/pages/EnsemblePredictionEnginePage"));
+const AnomalyDetectionEnginePage     = React.lazy(() => import("./features/anomaly-detection-engine/pages/AnomalyDetectionEnginePage"));
+const PeerClusteringSegmentationPage = React.lazy(() => import("./features/peer-clustering-segmentation/pages/PeerClusteringSegmentationPage"));
+const ScenarioConditionalPredictionPage = React.lazy(() => import("./features/scenario-conditional-prediction/pages/ScenarioConditionalPredictionPage"));
+const MlGovernanceDashboardPage      = React.lazy(() => import("./features/ml-governance-dashboard/pages/MlGovernanceDashboardPage"));
 // Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
 const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
 const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
@@ -1231,6 +1273,54 @@ const NAV_GROUPS = [
     { path: '/xbrl-climate-taxonomy',           label: 'XBRL Climate Taxonomy Mapper',     badge: 'ISSB S2 Tags · ESRS E1 ESEF · Tag Mapping · Validation · Filing Preview',              code: 'EP-CR4' },
     { path: '/regulatory-change-radar',         label: 'Regulatory Change Radar',           badge: '50 Changes · Active Consultations · Effective Dates · Impact Assessment · Intelligence', code: 'EP-CR5' },
     { path: '/compliance-workflow-automation',   label: 'Compliance Workflow Automation',    badge: 'CSRD/TCFD/ISSB/SFDR/TPT Workflows · Tasks · Deadlines · Evidence · Approval Chain',    code: 'EP-CR6' },
+  ]},
+  { label: 'Taxonomy & Assessment Engine', icon: '🧬', color: '#164e63', items: [
+    { path: '/transition-risk-taxonomy-browser', label: 'Taxonomy Browser',              badge: '472 Nodes · 4-Level Tree · Drill-Down · Coverage Matrix · Sector Overlay',              code: 'EP-CS1' },
+    { path: '/assessment-engine-dashboard',      label: 'Assessment Engine Dashboard',    badge: 'Score Aggregation · Sunburst · Heatmap · Radar · Scenario Comparison · Trend',          code: 'EP-CS2' },
+    { path: '/data-source-registry',             label: 'Data Source Registry',           badge: '24 Sources · Quality Monitor · Coverage Gaps · Refresh Status · New Source ID',         code: 'EP-CS3' },
+    { path: '/ml-taxonomy-scoring',              label: 'ML Taxonomy Scoring Engine',     badge: 'XGBoost · 316 Features · SHAP · Conformal Prediction · Training UI · Calibration',     code: 'EP-CS4' },
+    { path: '/taxonomy-risk-report',             label: 'Taxonomy Risk Report',           badge: 'Executive Summary · Entity Reports · Regulatory Mapping · Export · Scheduling',         code: 'EP-CS5' },
+    { path: '/assessment-configuration',         label: 'Assessment Configuration',       badge: 'Weight Editor · Thresholds · Rating Scale · Scenario Config · DQ Rules · Audit',        code: 'EP-CS6' },
+  ]},
+  { label: 'Financial Institution Profiler', icon: '🏦', color: '#1e40af', items: [
+    { path: '/fi-client-portfolio-analyzer',     label: 'FI Client Portfolio Analyzer',   badge: '50 Borrowers · 12 Sectors · Geography · Transition Score · LoB · Watchlist',            code: 'EP-CT1' },
+    { path: '/fi-instrument-exposure',           label: 'FI Instrument Exposure',         badge: '200 Instruments · 8 Types · Maturity · Climate VaR · Green/Brown · Hedging',            code: 'EP-CT2' },
+    { path: '/fi-line-of-business',              label: 'FI Line of Business Risk',       badge: '6 LoBs · Risk Attribution · Revenue vs Risk · Marginal Contribution · Benchmarking',    code: 'EP-CT3' },
+    { path: '/fi-regulatory-capital-overlay',    label: 'FI Regulatory Capital Overlay',  badge: 'RWA · Pillar 2 Climate Add-on · Stress Capital Buffer · ECB/BoE · Basel IV',           code: 'EP-CT4' },
+    { path: '/fi-concentration-monitor',         label: 'FI Concentration Monitor',       badge: 'Sector/Country/Name Limits · HHI · Traffic Light · Breach History',                     code: 'EP-CT5' },
+    { path: '/fi-transition-dashboard',          label: 'FI Transition Dashboard',        badge: 'Executive KPIs · Taxonomy Drill · Client Risk Map · Reg Readiness · Board Report',      code: 'EP-CT6' },
+  ]},
+  { label: 'Energy Company Profiler', icon: '🛢️', color: '#78350f', items: [
+    { path: '/energy-asset-registry',            label: 'Energy Asset Registry',          badge: '30 Assets · Carbon Intensity · Capacity Mix · Age/Retirement · WRI GPPD',              code: 'EP-CU1' },
+    { path: '/energy-segment-analysis',          label: 'Energy Segment Analysis',        badge: 'Upstream · Midstream · Downstream · Revenue/EBITDA/CapEx · Transition Score',           code: 'EP-CU2' },
+    { path: '/energy-supplier-network',          label: 'Energy Supplier Network',        badge: '40 Suppliers · Tier 1/2/3 · Concentration · Critical Dependencies · Engagement',        code: 'EP-CU3' },
+    { path: '/energy-revenue-split',             label: 'Energy Revenue Split',           badge: 'Legacy vs Renewable · Green Revenue Ratio · CapEx Alignment · Peer Comparison',         code: 'EP-CU4' },
+    { path: '/energy-decommissioning-liability', label: 'Decommissioning Liability',      badge: 'Cost Estimation · Funding Gap · Regulatory Requirements · Stranded Link · Write-Down',  code: 'EP-CU5' },
+    { path: '/energy-transition-dashboard',      label: 'Energy Transition Dashboard',    badge: 'Executive KPIs · Asset Score · Decarbonization · Supplier Risk · Peer Ranking',         code: 'EP-CU6' },
+  ]},
+  { label: 'Geopolitical Risk Engine', icon: '🌐', color: '#4c1d95', items: [
+    { path: '/geopolitical-risk-index',          label: 'Geopolitical Risk Index',        badge: '50 Countries · WGI 6 Dimensions · Sanctions · Conflict · Custom Weights',              code: 'EP-CV1' },
+    { path: '/sanctions-trade-monitor',          label: 'Sanctions & Trade Monitor',      badge: 'OFAC · EU · UK OFSI · Trade Policy · Portfolio Exposure · New Designation Alerts',      code: 'EP-CV2' },
+    { path: '/critical-mineral-geo-risk',        label: 'Critical Mineral Geo Risk',      badge: '8 Minerals · Processing Concentration · Friendshoring · Export Controls · Price',       code: 'EP-CV3' },
+    { path: '/conflict-stability-tracker',       label: 'Conflict & Stability Tracker',   badge: 'ACLED Events · Political Stability · Fragile States · Asset Proximity · Early Warning', code: 'EP-CV4' },
+    { path: '/geo-transition-nexus',             label: 'Geo-Transition Nexus',           badge: 'Combined Score · Correlation · Fossil State Risk · Policy Reversal · Portfolio Overlay', code: 'EP-CV5' },
+    { path: '/geopolitical-dashboard',           label: 'Geopolitical Dashboard',         badge: 'Risk Heatmap · Top 10 Exposures · Sanctions Alerts · Mineral Supply · Board Report',    code: 'EP-CV6' },
+  ]},
+  { label: 'Cross-Entity Assessment & Benchmarking', icon: '📊', color: '#0f766e', items: [
+    { path: '/universal-entity-comparator',      label: 'Universal Entity Comparator',    badge: '15 Entities · Side-by-Side · Taxonomy Compare · Spider · Gap Analysis · Historical',   code: 'EP-CW1' },
+    { path: '/sector-peer-benchmarking-engine',  label: 'Sector Peer Benchmarking',       badge: '6 Sectors × 8 Peers · Distribution · Quartile · Best Practice · Convergence',          code: 'EP-CW2' },
+    { path: '/supply-chain-network-viz',         label: 'Supply Chain Network Viz',       badge: '20 Nodes · 25 Links · Risk Propagation · Critical Paths · Scenario Simulator',         code: 'EP-CW3' },
+    { path: '/portfolio-stress-test-drilldown',  label: 'Portfolio Stress Test Drill',    badge: '5 NGFS · Entity Contribution · Taxonomy Drill · Reverse Stress · Historical',          code: 'EP-CW4' },
+    { path: '/assessment-audit-trail-v2',        label: 'Assessment Audit Trail',         badge: 'Change Log · Version History · Score Drift · Data Lineage · ISAE 3000 Compliance',     code: 'EP-CW5' },
+    { path: '/cross-entity-intelligence-dashboard', label: 'Cross-Entity Dashboard',      badge: 'Platform KPIs · Entity Type Comparison · Risk Heat Map · Alert Center · Board Pack',   code: 'EP-CW6' },
+  ]},
+  { label: 'Advanced ML & Predictive Analytics', icon: '🤖', color: '#7c3aed', items: [
+    { path: '/ml-feature-engineering',           label: 'ML Feature Engineering',         badge: '948 Features · Correlation · PCA · Feature Selection · Feature Store · DQ Impact',     code: 'EP-CX1' },
+    { path: '/ensemble-prediction-engine',       label: 'Ensemble Prediction Engine',     badge: 'XGBoost+LightGBM+MLP · Weight Optimization · 12-Month Forward · Backtest · Deploy',   code: 'EP-CX2' },
+    { path: '/anomaly-detection-engine',         label: 'Anomaly Detection Engine',       badge: 'Isolation Forest · Flagged Entities · Investigation Workflow · FPR Tracking',           code: 'EP-CX3' },
+    { path: '/peer-clustering-segmentation',     label: 'Peer Clustering Segmentation',   badge: 'K-Means · Silhouette · Cluster Profiles · Migration Tracker · Engagement Priority',    code: 'EP-CX4' },
+    { path: '/scenario-conditional-prediction',  label: 'Scenario Conditional Prediction', badge: 'Custom Scenarios · Conditional Scores · Sensitivity Surface · Pathway Analysis',      code: 'EP-CX5' },
+    { path: '/ml-governance-dashboard',          label: 'ML Governance Dashboard',        badge: 'Model Inventory · Drift Detection · SHAP · Fed SR 11-7 · EU AI Act Alignment',        code: 'EP-CX6' },
   ]},
   { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
     { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
@@ -2194,6 +2284,48 @@ function AppContent() {
             <Route path="/xbrl-climate-taxonomy"           element={<XbrlClimateTaxonomyPage />} />
             <Route path="/regulatory-change-radar"         element={<RegulatoryChangeRadarPage />} />
             <Route path="/compliance-workflow-automation"   element={<ComplianceWorkflowAutomationPage />} />
+            {/* Sprint CS — Taxonomy & Assessment Engine Core */}
+            <Route path="/transition-risk-taxonomy-browser" element={<TransitionRiskTaxonomyBrowserPage />} />
+            <Route path="/assessment-engine-dashboard"      element={<AssessmentEngineDashboardPage />} />
+            <Route path="/data-source-registry"             element={<DataSourceRegistryPage />} />
+            <Route path="/ml-taxonomy-scoring"              element={<MlTaxonomyScoringPage />} />
+            <Route path="/taxonomy-risk-report"             element={<TaxonomyRiskReportPage />} />
+            <Route path="/assessment-configuration"         element={<AssessmentConfigurationPage />} />
+            {/* Sprint CT — Financial Institution Profiler */}
+            <Route path="/fi-client-portfolio-analyzer"     element={<FiClientPortfolioAnalyzerPage />} />
+            <Route path="/fi-instrument-exposure"           element={<FiInstrumentExposurePage />} />
+            <Route path="/fi-line-of-business"              element={<FiLineOfBusinessPage />} />
+            <Route path="/fi-regulatory-capital-overlay"    element={<FiRegulatoryCapitalOverlayPage />} />
+            <Route path="/fi-concentration-monitor"         element={<FiConcentrationMonitorPage />} />
+            <Route path="/fi-transition-dashboard"          element={<FiTransitionDashboardPage />} />
+            {/* Sprint CU — Energy Company Profiler */}
+            <Route path="/energy-asset-registry"            element={<EnergyAssetRegistryPage />} />
+            <Route path="/energy-segment-analysis"          element={<EnergySegmentAnalysisPage />} />
+            <Route path="/energy-supplier-network"          element={<EnergySupplierNetworkPage />} />
+            <Route path="/energy-revenue-split"             element={<EnergyRevenueSplitPage />} />
+            <Route path="/energy-decommissioning-liability" element={<EnergyDecommissioningLiabilityPage />} />
+            <Route path="/energy-transition-dashboard"      element={<EnergyTransitionDashboardPage />} />
+            {/* Sprint CV — Geopolitical Risk Engine */}
+            <Route path="/geopolitical-risk-index"          element={<GeopoliticalRiskIndexPage />} />
+            <Route path="/sanctions-trade-monitor"          element={<SanctionsTradeMonitorPage />} />
+            <Route path="/critical-mineral-geo-risk"        element={<CriticalMineralGeoRiskPage />} />
+            <Route path="/conflict-stability-tracker"       element={<ConflictStabilityTrackerPage />} />
+            <Route path="/geo-transition-nexus"             element={<GeoTransitionNexusPage />} />
+            <Route path="/geopolitical-dashboard"           element={<GeopoliticalDashboardPage />} />
+            {/* Sprint CW — Cross-Entity Assessment & Benchmarking */}
+            <Route path="/universal-entity-comparator"      element={<UniversalEntityComparatorPage />} />
+            <Route path="/sector-peer-benchmarking-engine"  element={<SectorPeerBenchmarkingEnginePage />} />
+            <Route path="/supply-chain-network-viz"         element={<SupplyChainNetworkVizPage />} />
+            <Route path="/portfolio-stress-test-drilldown"  element={<PortfolioStressTestDrilldownPage />} />
+            <Route path="/assessment-audit-trail-v2"        element={<AssessmentAuditTrailV2Page />} />
+            <Route path="/cross-entity-intelligence-dashboard" element={<CrossEntityIntelligenceDashboardPage />} />
+            {/* Sprint CX — Advanced ML & Predictive Analytics */}
+            <Route path="/ml-feature-engineering"           element={<MlFeatureEngineeringPage />} />
+            <Route path="/ensemble-prediction-engine"       element={<EnsemblePredictionEnginePage />} />
+            <Route path="/anomaly-detection-engine"         element={<AnomalyDetectionEnginePage />} />
+            <Route path="/peer-clustering-segmentation"     element={<PeerClusteringSegmentationPage />} />
+            <Route path="/scenario-conditional-prediction"  element={<ScenarioConditionalPredictionPage />} />
+            <Route path="/ml-governance-dashboard"          element={<MlGovernanceDashboardPage />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
             <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
             <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
