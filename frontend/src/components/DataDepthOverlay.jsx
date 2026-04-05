@@ -79,12 +79,19 @@ export default function DataDepthOverlay() {
     if (!isActive) return;
     if (overlayRef.current && overlayRef.current.contains(e.target)) return;
 
-    // Find the nearest metric-like element
-    const target = e.target.closest('[style*="fontFamily"][style*="Mono"]') ||
-                   e.target.closest('[style*="fontWeight: 700"]') ||
-                   e.target.closest('[style*="font-weight: 700"]');
-
-    if (!target) { clearSelection(); return; }
+    // Find the nearest metric-like element using computed styles (works with React inline styles)
+    let target = e.target;
+    // Walk up max 3 levels to find a metric element
+    for (let i = 0; i < 4 && target && target !== document.body; i++) {
+      const cs = window.getComputedStyle(target);
+      const isBold = parseInt(cs.fontWeight) >= 700;
+      const isMono = cs.fontFamily.includes('Mono') || cs.fontFamily.includes('monospace');
+      const isLargeText = parseInt(cs.fontSize) >= 18;
+      const hasNumericContent = /^[\d$€£%°.,BMKyr/\s\-+×·]+$/.test(target.textContent.trim());
+      if ((isBold && (isMono || isLargeText || hasNumericContent)) || (isMono && isBold)) break;
+      target = target.parentElement;
+    }
+    if (!target || target === document.body) { clearSelection(); return; }
 
     const text = target.textContent.trim();
     if (!text || text.length > 30 || text.length < 1) { clearSelection(); return; }
