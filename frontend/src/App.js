@@ -4,6 +4,9 @@ import { TestDataProvider } from './context/TestDataContext';
 import { CompanyEnrichmentProvider } from './context/CompanyEnrichmentContext';
 import { PortfolioProvider } from './context/PortfolioContext';
 import { CarbonCreditProvider } from './context/CarbonCreditContext';
+import { GuidedModeProvider } from './context/GuidedModeContext';
+import GuidedModeOverlay from './components/GuidedModeOverlay';
+import GuidedModeToggle from './components/GuidedModeToggle';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
 // Platform Admin & Data Management
@@ -1808,6 +1811,9 @@ function HeaderBar({ sidebarOpen, setSidebarOpen }) {
           )}
         </div>
 
+        {/* Guided Mode Toggle */}
+        <GuidedModeToggle />
+
         {/* Status Indicators */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -2510,6 +2516,7 @@ function AppContent() {
           </Routes>
             </Suspense>
         </main>
+        <GuidedModeOverlay />
       </div>
       <StatusBar />
     </div>
@@ -2523,7 +2530,9 @@ export default function App() {
         <PortfolioProvider>
           <CarbonCreditProvider>
           <BrowserRouter>
-            <AppContent />
+            <GuidedModeProvider>
+              <AppContent />
+            </GuidedModeProvider>
           </BrowserRouter>
           </CarbonCreditProvider>
         </PortfolioProvider>
