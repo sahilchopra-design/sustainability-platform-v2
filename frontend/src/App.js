@@ -359,6 +359,90 @@ const TransitionRegReportingPage    = React.lazy(() => import("./features/transi
 const ClimateAdaptationPathwaysPage = React.lazy(() => import("./features/climate-adaptation-pathways/pages/ClimateAdaptationPathwaysPage"));
 const InfrastructureResilienceScorerPage = React.lazy(() => import("./features/infrastructure-resilience-scorer/pages/InfrastructureResilienceScorerPage"));
 const NatureBasedAdaptationPage     = React.lazy(() => import("./features/nature-based-adaptation/pages/NatureBasedAdaptationPage"));
+// Sprint CG — Physical-Transition Risk Integration
+const PhysicalTransitionNexusPage   = React.lazy(() => import("./features/physical-transition-nexus/pages/PhysicalTransitionNexusPage"));
+const RegionalClimateImpactPage     = React.lazy(() => import("./features/regional-climate-impact/pages/RegionalClimateImpactPage"));
+const SupplyChainContagionPage      = React.lazy(() => import("./features/supply-chain-contagion/pages/SupplyChainContagionPage"));
+const PhysicalRiskEarlyWarningPage  = React.lazy(() => import("./features/physical-risk-early-warning/pages/PhysicalRiskEarlyWarningPage"));
+const CompoundEventModelerPage      = React.lazy(() => import("./features/compound-event-modeler/pages/CompoundEventModelerPage"));
+const ClimateRiskMigrationPage      = React.lazy(() => import("./features/climate-migration-risk/pages/ClimateRiskMigrationPage"));
+// Sprint CH — Probabilistic Scenario & Monte Carlo Engine
+const MonteCarloClimatePage         = React.lazy(() => import("./features/monte-carlo-climate/pages/MonteCarloClimatePage"));
+const ScenarioBlendingOptimizerPage = React.lazy(() => import("./features/scenario-blending-optimizer/pages/ScenarioBlendingOptimizerPage"));
+const ClimateStressTestSuitePage    = React.lazy(() => import("./features/climate-stress-test-suite/pages/ClimateStressTestSuitePage"));
+const TailRiskAnalyzerPage          = React.lazy(() => import("./features/tail-risk-analyzer/pages/TailRiskAnalyzerPage"));
+const ScenarioDashboardBuilderPage  = React.lazy(() => import("./features/scenario-dashboard-builder/pages/ScenarioDashboardBuilderPage"));
+const RegulatoryStressSubmissionPage= React.lazy(() => import("./features/regulatory-stress-submission/pages/RegulatoryStressSubmissionPage"));
+// Sprint CI — Extended Asset Class Coverage
+const SovereignClimateRiskPage      = React.lazy(() => import("./features/sovereign-climate-risk/pages/SovereignClimateRiskPage"));
+const PrivateAssetsTransitionPage   = React.lazy(() => import("./features/private-assets-transition/pages/PrivateAssetsTransitionPage"));
+const StructuredCreditClimatePage   = React.lazy(() => import("./features/structured-credit-climate/pages/StructuredCreditClimatePage"));
+const CommodityDerivativesClimatePage= React.lazy(() => import("./features/commodity-derivatives-climate/pages/CommodityDerivativesClimatePage"));
+const InsurancePortfolioClimatePage = React.lazy(() => import("./features/insurance-portfolio-climate/pages/InsurancePortfolioClimatePage"));
+const PcafUniversalAttributorPage   = React.lazy(() => import("./features/pcaf-universal-attributor/pages/PcafUniversalAttributorPage"));
+// Sprint CJ — Emerging Market Transition Intelligence
+const ChinaIndiaTransitionPage      = React.lazy(() => import("./features/china-india-transition/pages/ChinaIndiaTransitionPage"));
+const AseanGccTransitionPage        = React.lazy(() => import("./features/asean-gcc-transition/pages/AseanGccTransitionPage"));
+const EmCarbonCreditHubPage         = React.lazy(() => import("./features/em-carbon-credit-hub/pages/EmCarbonCreditHubPage"));
+const LatamTransitionPage           = React.lazy(() => import("./features/latam-transition-engine/pages/LatamTransitionPage"));
+const AfricaClimateFinancePage      = React.lazy(() => import("./features/africa-climate-finance/pages/AfricaClimateFinancePage"));
+const FrontierMarketClimatePage     = React.lazy(() => import("./features/frontier-market-climate/pages/FrontierMarketClimatePage"));
+// Sprint CK — Stranded Asset Dynamics v2
+const VintageCohortStrandedPage     = React.lazy(() => import("./features/vintage-cohort-stranded/pages/VintageCohortStrandedPage"));
+const CascadingDefaultModelerPage   = React.lazy(() => import("./features/cascading-default-modeler/pages/CascadingDefaultModelerPage"));
+const StrandedRecoveryPathwaysPage  = React.lazy(() => import("./features/stranded-recovery-pathways/pages/StrandedRecoveryPathwaysPage"));
+const DecommissioningCostEnginePage = React.lazy(() => import("./features/decommissioning-cost-engine/pages/DecommissioningCostEnginePage"));
+const StrandedAssetWatchlistPage    = React.lazy(() => import("./features/stranded-asset-watchlist/pages/StrandedAssetWatchlistPage"));
+const CovenantBreachPredictorPage   = React.lazy(() => import("./features/covenant-breach-predictor/pages/CovenantBreachPredictorPage"));
+// Sprint CL — Technology & Supply Chain Disruption v2
+const CriticalMineralConstraintPage = React.lazy(() => import("./features/critical-mineral-constraint/pages/CriticalMineralConstraintPage"));
+const GridStabilityTransitionPage   = React.lazy(() => import("./features/grid-stability-transition/pages/GridStabilityTransitionPage"));
+const HydrogenEconomyModelerPage    = React.lazy(() => import("./features/hydrogen-economy-modeler/pages/HydrogenEconomyModelerPage"));
+const NuclearSmrViabilityPage       = React.lazy(() => import("./features/nuclear-smr-viability/pages/NuclearSmrViabilityPage"));
+const NegativeEmissionsTechPage     = React.lazy(() => import("./features/negative-emissions-tech/pages/NegativeEmissionsTechPage"));
+const TechDisruptionWatchlistPage   = React.lazy(() => import("./features/tech-disruption-watchlist/pages/TechDisruptionWatchlistPage"));
+// Sprint CM — SBTi Credibility Suite
+const SbtiCredibilityScorerPage     = React.lazy(() => import("./features/sbti-credibility-scorer/pages/SbtiCredibilityScorerPage"));
+const TemperatureAlignmentWaterfallPage = React.lazy(() => import("./features/temperature-alignment-waterfall/pages/TemperatureAlignmentWaterfallPage"));
+const NetZeroCredibilityIndexPage   = React.lazy(() => import("./features/net-zero-credibility-index/pages/NetZeroCredibilityIndexPage"));
+const Scope3MaterialityEnginePage   = React.lazy(() => import("./features/scope3-materiality-engine/pages/Scope3MaterialityEnginePage"));
+const TargetVsActionTrackerPage     = React.lazy(() => import("./features/target-vs-action-tracker/pages/TargetVsActionTrackerPage"));
+const PeerTransitionBenchmarkerPage = React.lazy(() => import("./features/peer-transition-benchmarker/pages/PeerTransitionBenchmarkerPage"));
+// Sprint CN — Carbon Credit & Offset Economics
+const CarbonCreditPricingPage       = React.lazy(() => import("./features/carbon-credit-pricing/pages/CarbonCreditPricingPage"));
+const OffsetPermanenceRiskPage      = React.lazy(() => import("./features/offset-permanence-risk/pages/OffsetPermanenceRiskPage"));
+const CorporateOffsetOptimizerPage  = React.lazy(() => import("./features/corporate-offset-optimizer/pages/CorporateOffsetOptimizerPage"));
+const CreditQualityScreenerPage     = React.lazy(() => import("./features/credit-quality-screener/pages/CreditQualityScreenerPage"));
+const OffsetPortfolioTrackerPage    = React.lazy(() => import("./features/offset-portfolio-tracker/pages/OffsetPortfolioTrackerPage"));
+const CarbonMarketIntelligencePage  = React.lazy(() => import("./features/carbon-market-intelligence/pages/CarbonMarketIntelligencePage"));
+// Sprint CO — Advanced Just Transition
+const WorkforceTransitionTrackerPage= React.lazy(() => import("./features/workforce-transition-tracker/pages/WorkforceTransitionTrackerPage"));
+const SocialLicenseRiskPage         = React.lazy(() => import("./features/social-license-risk/pages/SocialLicenseRiskPage"));
+const RegionalEconomicImpactPage    = React.lazy(() => import("./features/regional-economic-impact/pages/RegionalEconomicImpactPage"));
+const IndigenousRightsFpicPage      = React.lazy(() => import("./features/indigenous-rights-fpic/pages/IndigenousRightsFpicPage"));
+const GreenJobsPipelineTrackerPage  = React.lazy(() => import("./features/green-jobs-pipeline-tracker/pages/GreenJobsPipelineTrackerPage"));
+const JustTransitionFinanceHubPage  = React.lazy(() => import("./features/just-transition-finance-hub/pages/JustTransitionFinanceHubPage"));
+// Sprint CP — ESG Stewardship Analytics
+const EngagementOutcomeTrackerPage  = React.lazy(() => import("./features/engagement-outcome-tracker/pages/EngagementOutcomeTrackerPage"));
+const ProxyVotingClimatePage        = React.lazy(() => import("./features/proxy-voting-climate/pages/ProxyVotingClimatePage"));
+const StewardshipReportGeneratorPage= React.lazy(() => import("./features/stewardship-report-generator/pages/StewardshipReportGeneratorPage"));
+const ShareholderResolutionAnalyzerPage = React.lazy(() => import("./features/shareholder-resolution-analyzer/pages/ShareholderResolutionAnalyzerPage"));
+const BoardClimateCompetencePage    = React.lazy(() => import("./features/board-climate-competence/pages/BoardClimateCompetencePage"));
+const EsgIntegrationDashboardPage   = React.lazy(() => import("./features/esg-integration-dashboard/pages/EsgIntegrationDashboardPage"));
+// Sprint CQ — Transition Finance Portfolio Construction
+const GreenBondPortfolioOptimizerPage = React.lazy(() => import("./features/green-bond-portfolio-optimizer/pages/GreenBondPortfolioOptimizerPage"));
+const TransitionBondCredibilityPage = React.lazy(() => import("./features/transition-bond-credibility/pages/TransitionBondCredibilityPage"));
+const BlendedFinanceStructurerPage  = React.lazy(() => import("./features/blended-finance-structurer/pages/BlendedFinanceStructurerPage"));
+const ClimateBondIndexTrackerPage   = React.lazy(() => import("./features/climate-bond-index-tracker/pages/ClimateBondIndexTrackerPage"));
+const GreenLoanFrameworkPage        = React.lazy(() => import("./features/green-loan-framework/pages/GreenLoanFrameworkPage"));
+const ImpactBondAnalyticsPage       = React.lazy(() => import("./features/impact-bond-analytics/pages/ImpactBondAnalyticsPage"));
+// Sprint CR — Multi-Jurisdiction Regulatory Compliance
+const CsrdEsrsFullSuitePage        = React.lazy(() => import("./features/csrd-esrs-full-suite/pages/CsrdEsrsFullSuitePage"));
+const GlobalDisclosureTrackerPage   = React.lazy(() => import("./features/global-disclosure-tracker/pages/GlobalDisclosureTrackerPage"));
+const AssuranceReadinessEnginePage  = React.lazy(() => import("./features/assurance-readiness-engine/pages/AssuranceReadinessEnginePage"));
+const XbrlClimateTaxonomyPage       = React.lazy(() => import("./features/xbrl-climate-taxonomy/pages/XbrlClimateTaxonomyPage"));
+const RegulatoryChangeRadarPage     = React.lazy(() => import("./features/regulatory-change-radar/pages/RegulatoryChangeRadarPage"));
+const ComplianceWorkflowAutomationPage = React.lazy(() => import("./features/compliance-workflow-automation/pages/ComplianceWorkflowAutomationPage"));
 // Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
 const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
 const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
@@ -1052,6 +1136,102 @@ const NAV_GROUPS = [
     { path: '/climate-adaptation-pathways',      label: 'Adaptation Pathways Engine',        badge: '8 Strategies · CBA · Maladaptation Risk · Adaptation Finance Gap · SSP Sensitivity',         code: 'EP-CF1' },
     { path: '/infrastructure-resilience-scorer', label: 'Infrastructure Resilience Scorer',   badge: '10 Assets · 5-Pillar Resilience · Retrofit Priority · Climate Haircut · Trend',              code: 'EP-CF2' },
     { path: '/nature-based-adaptation',          label: 'Nature-Based Adaptation Solutions', badge: '6 NbS Projects · Co-Benefit Valuation · Ecosystem Services · SDG Alignment · Investment',    code: 'EP-CF3' },
+  ]},
+  { label: 'Physical-Transition Risk Integration', icon: '🔗', color: '#0c4a6e', items: [
+    { path: '/physical-transition-nexus',       label: 'Physical-Transition Nexus',         badge: 'Integrated CVaR · Double-Hit · Sector Interaction · 20 Scenario Combos · Correlation', code: 'EP-CG1' },
+    { path: '/regional-climate-impact',         label: 'Regional Climate Impact Engine',    badge: '20 Regions × 8 Perils × 4 SSP · GDP Shock · Labor Productivity · Agriculture Yield',  code: 'EP-CG2' },
+    { path: '/supply-chain-contagion',          label: 'Supply Chain Climate Contagion',    badge: '15 Companies · Tier 1/2/3 · 5 Chokepoints · Cascade Simulation · Network Graph',      code: 'EP-CG3' },
+    { path: '/physical-risk-early-warning',     label: 'Physical Risk Early Warning',       badge: '12 Active Alerts · 72hr Forecast · Asset Exposure · Historical Events · Response',     code: 'EP-CG4' },
+    { path: '/compound-event-modeler',          label: 'Compound Event Modeler',            badge: '10 Event Pairs · Joint Probability · Loss Amplification · Copula · Historical',        code: 'EP-CG5' },
+    { path: '/climate-migration-risk',          label: 'Climate Migration Risk',            badge: '15 Corridors · 216M Migrants by 2050 · Urban Stress · RE Demand · Investment',         code: 'EP-CG6' },
+  ]},
+  { label: 'Probabilistic Scenario & Monte Carlo', icon: '🎲', color: '#4338ca', items: [
+    { path: '/monte-carlo-climate',             label: 'Monte Carlo Climate Engine',        badge: '5,000 Paths · VaR 99% · CVaR 99.5% · Fan Chart · Correlation · Sensitivity',           code: 'EP-CH1' },
+    { path: '/scenario-blending-optimizer',     label: 'Scenario Blending Optimizer',       badge: 'BMA Posterior Weights · Custom Blend · Orderly vs Disorderly · Consensus',              code: 'EP-CH2' },
+    { path: '/climate-stress-test-suite',       label: 'Climate Stress Test Suite',         badge: 'ECB CST 2024 · BoE CBES · APRA CPG 229 · Reverse Stress · Submission',                 code: 'EP-CH3' },
+    { path: '/tail-risk-analyzer',              label: 'Tail Risk & Black Swan Analyzer',   badge: 'EVT GEV · 5 Black Swans · Loss Exceedance 1000yr · Systemic Risk · Insurance',         code: 'EP-CH4' },
+    { path: '/scenario-dashboard-builder',      label: 'Scenario Dashboard Builder',        badge: '20 Widgets · 8 Templates · Drag-Drop · Share · Schedule Refresh · Export',              code: 'EP-CH5' },
+    { path: '/regulatory-stress-submission',    label: 'Regulatory Stress Submission',      badge: 'ECB/BoE/APRA Templates · Data Quality · Audit Trail · Approval Workflow',               code: 'EP-CH6' },
+  ]},
+  { label: 'Extended Asset Class Coverage', icon: '🏛️', color: '#7e22ce', items: [
+    { path: '/sovereign-climate-risk',          label: 'Sovereign Climate Risk',            badge: '50 Countries · ND-GAIN · Fossil Export · Stranded Revenue · Sovereign ITR · Spread',    code: 'EP-CI1' },
+    { path: '/private-assets-transition',       label: 'Private Assets Transition Risk',    badge: 'PE/VC · 10 Funds · LP Look-Through · GP Engagement · Exit Haircut · DD Checklist',     code: 'EP-CI2' },
+    { path: '/structured-credit-climate',       label: 'Structured Credit Climate',         badge: 'MBS/ABS/CLO · 500 Loans · Collateral Haircut · Tranche Loss · PCAF Class 5/7/8',      code: 'EP-CI3' },
+    { path: '/commodity-derivatives-climate',   label: 'Commodity Derivatives Climate',     badge: 'Oil/Gas Forward Curves · Contango Shift · Black-76 · Crack/Dark/Spark Spreads',        code: 'EP-CI4' },
+    { path: '/insurance-portfolio-climate',     label: 'Insurance Portfolio Climate',       badge: 'Investment + Underwriting · Reserve Adequacy · ORSA · Solvency II SCR · ESG Rating',   code: 'EP-CI5' },
+    { path: '/pcaf-universal-attributor',       label: 'PCAF 8/8 Universal Attributor',     badge: 'All 8 PCAF Classes · DQ Heatmap · Attribution Formulas · WACI · Target Tracking',      code: 'EP-CI6' },
+  ]},
+  { label: 'Emerging Market Transition Intelligence', icon: '🌏', color: '#b45309', items: [
+    { path: '/china-india-transition',          label: 'China & India Transition Engine',   badge: 'China ETS · India BRSR/H₂ · Coal Phase-Down · RE Curves · Carbon Price',               code: 'EP-CJ1' },
+    { path: '/asean-gcc-transition',            label: 'ASEAN & GCC Transition Hub',        badge: 'ASEAN Taxonomy · GCC NZ Targets · JETP · Green Sukuk · H₂ Export',                     code: 'EP-CJ2' },
+    { path: '/em-carbon-credit-hub',            label: 'EM Carbon Credit Hub',              badge: 'Article 6.2 · ITMO Pricing · Corresponding Adjustments · ACMI · EM Challenges',        code: 'EP-CJ3' },
+    { path: '/latam-transition',                label: 'Latin America Transition',          badge: 'Brazil RE/Amazon · Chile Li/H₂ · Colombia JETP · Mexico Reform',                       code: 'EP-CJ4' },
+    { path: '/africa-climate-finance',          label: 'Africa Climate Finance',            badge: '600M Electrification · $250B Need · L&D Fund · Adaptation · Green Minerals',            code: 'EP-CJ5' },
+    { path: '/frontier-market-climate',         label: 'Frontier & SIDS Climate',           badge: '39 SIDS · Sea Level Rise · Parametric Insurance · Debt Swaps · Blue Economy',           code: 'EP-CJ6' },
+  ]},
+  { label: 'Stranded Asset Dynamics v2', icon: '⚠️', color: '#991b1b', items: [
+    { path: '/vintage-cohort-stranded',         label: 'Vintage Cohort Stranded Engine',    badge: '20 Assets by Vintage · Book Value Decay · Age-Depreciation · Regulatory Closure',      code: 'EP-CK1' },
+    { path: '/cascading-default-modeler',       label: 'Cascading Default Modeler',         badge: '6-Step Chain · Sector Dominos · Delta CoVaR · Loan Loss Cascade · Capital Impact',     code: 'EP-CK2' },
+    { path: '/stranded-recovery-pathways',      label: 'Stranded Recovery Pathways',        badge: '10 Repurposing Routes · Conversion CapEx · IRR · Green Industrial Zones · Cases',      code: 'EP-CK3' },
+    { path: '/decommissioning-cost-engine',     label: 'Decommissioning Cost Engine',       badge: '8 Asset Types · Unit Costs · Funding Gap · Bond Adequacy · Regulatory Requirements',   code: 'EP-CK4' },
+    { path: '/stranded-asset-watchlist',        label: 'Stranded Asset Watchlist',          badge: '20 Assets · 6 Alert Types · Trigger Events · Peer Comparison · Engagement Status',     code: 'EP-CK5' },
+    { path: '/covenant-breach-predictor',       label: 'Covenant Breach Predictor',         badge: '15 Borrowers · Leverage/ICR/DSCR · Scenario-Conditional · Early Warning · Remediation', code: 'EP-CK6' },
+  ]},
+  { label: 'Technology & Supply Chain Disruption v2', icon: '⚡', color: '#0891b2', items: [
+    { path: '/critical-mineral-constraint',     label: 'Critical Mineral Constraint Engine', badge: '8 Minerals · Supply-Demand Gap · Price Spike · Substitution · Recycling · Geopolitics', code: 'EP-CL1' },
+    { path: '/grid-stability-transition',       label: 'Grid Stability Transition Risk',    badge: '0-100% RE Slider · Inertia · Storage GWh · Curtailment · Interconnectors · Capacity',  code: 'EP-CL2' },
+    { path: '/hydrogen-economy-modeler',        label: 'Hydrogen Economy Modeler',          badge: 'Green/Blue/Gray · Electrolyzer Learning · Infrastructure · Demand Sectors · Export',    code: 'EP-CL3' },
+    { path: '/nuclear-smr-viability',           label: 'Nuclear SMR Viability',             badge: '5 Designs · LCOE Learning · Deployment Pipeline · Regulatory · Grid Services · Thesis', code: 'EP-CL4' },
+    { path: '/negative-emissions-tech',         label: 'Negative Emissions Tech Landscape', badge: '6 NETs · DAC Trajectory · BECCS · Enhanced Weathering · Ocean CDR · Portfolio Builder', code: 'EP-CL5' },
+    { path: '/tech-disruption-watchlist',       label: 'Tech Disruption Watchlist',         badge: '15 Disruptions · Patents · VC Funding · Cost Crossover · Tipping Points · Exposure',   code: 'EP-CL6' },
+  ]},
+  { label: 'SBTi Credibility & Target Validation', icon: '🎯', color: '#065f46', items: [
+    { path: '/sbti-credibility-scorer',         label: 'SBTi Credibility Scorer',           badge: '30 Companies · 5-Pillar Scoring · Validation Status · Say-Do Gap · Rating A-E',        code: 'EP-CM1' },
+    { path: '/temperature-alignment-waterfall', label: 'Temperature Alignment Waterfall',   badge: 'Portfolio ITR Decomposition · Sector → Company → Scope · What-If Simulator',           code: 'EP-CM2' },
+    { path: '/net-zero-credibility-index',      label: 'Net Zero Credibility Index',        badge: '15-KPI Framework · CapEx · Lobbying · Exec Comp · Offset Ratio · Rating A-E',          code: 'EP-CM3' },
+    { path: '/scope3-materiality-engine',       label: 'Scope 3 Materiality Engine',        badge: '15 Categories × 6 Sectors · DQ Scoring · Supplier Engagement · Improvement Roadmap',   code: 'EP-CM4' },
+    { path: '/target-vs-action-tracker',        label: 'Target vs. Action Tracker',         badge: '12 Companies · Emissions Gap · CapEx Tracking · Tech Deployment · Lobbying Check',     code: 'EP-CM5' },
+    { path: '/peer-transition-benchmarker',     label: 'Peer Transition Benchmarker',       badge: '6 Sectors × 5 Peers · 6-Pillar Radar · Best/Laggard · Convergence · Engagement',      code: 'EP-CM6' },
+  ]},
+  { label: 'Carbon Credit & Offset Economics', icon: '💎', color: '#059669', items: [
+    { path: '/carbon-credit-pricing',           label: 'Carbon Credit Pricing Engine',      badge: '20 Credit Types · Multi-Factor Model · Vintage × Method × Permanence · Calculator',    code: 'EP-CN1' },
+    { path: '/offset-permanence-risk',          label: 'Offset Permanence Risk Modeler',    badge: '12 Types · Reversal Probability · Buffer Stress · Climate-Driven · Insurance',         code: 'EP-CN2' },
+    { path: '/corporate-offset-optimizer',      label: 'Corporate Offset Optimizer',        badge: 'Quality-Cost Frontier · Blend Optimizer · Regulatory Acceptance · Multi-Year',          code: 'EP-CN3' },
+    { path: '/credit-quality-screener',         label: 'Credit Quality Screener',           badge: '100 Credits · ICVCM CCP · Additionality · Leakage · Co-Benefits · Red Flags',          code: 'EP-CN4' },
+    { path: '/offset-portfolio-tracker',        label: 'Offset Portfolio Tracker',          badge: '25 Positions · MTM · Vintage · Retirement Schedule · Performance · Compliance',        code: 'EP-CN5' },
+    { path: '/carbon-market-intelligence',      label: 'Carbon Market Intelligence',        badge: '$950B Compliance · $1.7B VCM · 8 Markets · Policy Tracker · 3 Forecast Models',       code: 'EP-CN6' },
+  ]},
+  { label: 'Advanced Just Transition', icon: '🤝', color: '#b91c1c', items: [
+    { path: '/workforce-transition-tracker',    label: 'Workforce Transition Tracker',      badge: '10 Regions · Reskilling Outcomes · Skills Gap · Training ROI · Case Studies',           code: 'EP-CO1' },
+    { path: '/social-license-risk',             label: 'Social License Risk Engine',        badge: '15 Projects · FPIC · Community Benefits · Timeline Risk · Protest/Litigation',          code: 'EP-CO2' },
+    { path: '/regional-economic-impact',        label: 'Regional Economic Impact Modeler',  badge: '10 Fossil Regions · I/O Multiplier · Fiscal Impact · Migration · Inequality',          code: 'EP-CO3' },
+    { path: '/indigenous-rights-fpic',          label: 'Indigenous Rights & FPIC',          badge: '20 Projects · Consent Status · UNDRIP/ILO 169 · Cultural Heritage · Benefit Sharing',  code: 'EP-CO4' },
+    { path: '/green-jobs-pipeline-tracker',     label: 'Green Jobs Pipeline Tracker',       badge: '8 Sectors · 2025-2040 Pipeline · Skills Taxonomy · Wages · Geographic Distribution',   code: 'EP-CO5' },
+    { path: '/just-transition-finance-hub',     label: 'Just Transition Finance Hub',       badge: 'EU JTF €17.5B · JETP Tracker · Sovereign JT Bonds · MDB Programmes · Impact',         code: 'EP-CO6' },
+  ]},
+  { label: 'ESG Stewardship Analytics', icon: '🗳️', color: '#6d28d9', items: [
+    { path: '/engagement-outcome-tracker',      label: 'Engagement Outcome Tracker',        badge: '30 Engagements · CA100+ · Milestones · Escalation · Collaborative · Impact',           code: 'EP-CP1' },
+    { path: '/proxy-voting-climate',            label: 'Proxy Voting Climate Analyzer',     badge: '50 Resolutions · Say-on-Climate · Management vs Shareholder · Director Score',         code: 'EP-CP2' },
+    { path: '/stewardship-report-generator',    label: 'Stewardship Report Generator',      badge: 'UK Code 2020 · ICGN · PRI · Case Studies · Templates · Export',                        code: 'EP-CP3' },
+    { path: '/shareholder-resolution-analyzer', label: 'Shareholder Resolution Analyzer',   badge: '100 Resolutions · Success Trends · Topics · Filers · Management Response · Impact',    code: 'EP-CP4' },
+    { path: '/board-climate-competence',        label: 'Board Climate Competence',          badge: '25 Companies · Director Profiles · Climate Committee · Training · Diversity · Peers',   code: 'EP-CP5' },
+    { path: '/esg-integration-dashboard',       label: 'ESG Integration Dashboard',         badge: 'Alpha Attribution · Risk Reduction · Client Reporting · PRI Assessment · Maturity',     code: 'EP-CP6' },
+  ]},
+  { label: 'Transition Finance Portfolio Construction', icon: '🏦', color: '#0e7490', items: [
+    { path: '/green-bond-portfolio-optimizer',  label: 'Green Bond Portfolio Optimizer',    badge: '50 Bonds · Mean-Variance · Greenium · Duration Match · Taxonomy Constraint · TE',      code: 'EP-CQ1' },
+    { path: '/transition-bond-credibility',     label: 'Transition Bond Credibility',       badge: '20 SLBs · KPI Strength · Step-Up Probability · UoP Verification · Issuer Cross-Check', code: 'EP-CQ2' },
+    { path: '/blended-finance-structurer',      label: 'Blended Finance Structurer',        badge: '5 Templates · Tranche Design · DFI Catalytic Ratio · Impact-Return Frontier',          code: 'EP-CQ3' },
+    { path: '/climate-bond-index-tracker',      label: 'Climate Bond Index Tracker',        badge: 'CBI Certified Universe · Performance vs Conventional · Sector · Geography · Issuance', code: 'EP-CQ4' },
+    { path: '/green-loan-framework',            label: 'Green Loan Framework',              badge: '20 Loans · GLP/SLLP · Margin Ratchet · ESG KPIs · Covenant Design · Reporting',       code: 'EP-CQ5' },
+    { path: '/impact-bond-analytics',           label: 'Impact Bond Analytics',             badge: '15 Impact Bonds · SROI · Outcome Measurement · Additionality · Investor Return',       code: 'EP-CQ6' },
+  ]},
+  { label: 'Multi-Jurisdiction Regulatory Compliance', icon: '⚖️', color: '#1e3a5f', items: [
+    { path: '/csrd-esrs-full-suite',            label: 'CSRD ESRS E1-E5 Full Suite',       badge: 'E1 Climate · E2 Pollution · E3 Water · E4 Biodiversity · E5 Circular · Double Materiality', code: 'EP-CR1' },
+    { path: '/global-disclosure-tracker',       label: 'Global Disclosure Tracker',         badge: '12 Jurisdictions · Cross-Walk Matrix · Gap Analysis · Timelines · Overlap Efficiency',  code: 'EP-CR2' },
+    { path: '/assurance-readiness-engine',      label: 'Assurance Readiness Engine',        badge: 'ISAE 3000/3410 · Evidence Scoring · Controls · Limited vs Reasonable · Providers',      code: 'EP-CR3' },
+    { path: '/xbrl-climate-taxonomy',           label: 'XBRL Climate Taxonomy Mapper',     badge: 'ISSB S2 Tags · ESRS E1 ESEF · Tag Mapping · Validation · Filing Preview',              code: 'EP-CR4' },
+    { path: '/regulatory-change-radar',         label: 'Regulatory Change Radar',           badge: '50 Changes · Active Consultations · Effective Dates · Impact Assessment · Intelligence', code: 'EP-CR5' },
+    { path: '/compliance-workflow-automation',   label: 'Compliance Workflow Automation',    badge: 'CSRD/TCFD/ISSB/SFDR/TPT Workflows · Tasks · Deadlines · Evidence · Approval Chain',    code: 'EP-CR6' },
   ]},
   { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
     { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
@@ -1932,6 +2112,90 @@ function AppContent() {
             <Route path="/climate-adaptation-pathways"      element={<ClimateAdaptationPathwaysPage />} />
             <Route path="/infrastructure-resilience-scorer" element={<InfrastructureResilienceScorerPage />} />
             <Route path="/nature-based-adaptation"          element={<NatureBasedAdaptationPage />} />
+            {/* Sprint CG — Physical-Transition Risk Integration */}
+            <Route path="/physical-transition-nexus"       element={<PhysicalTransitionNexusPage />} />
+            <Route path="/regional-climate-impact"         element={<RegionalClimateImpactPage />} />
+            <Route path="/supply-chain-contagion"          element={<SupplyChainContagionPage />} />
+            <Route path="/physical-risk-early-warning"     element={<PhysicalRiskEarlyWarningPage />} />
+            <Route path="/compound-event-modeler"          element={<CompoundEventModelerPage />} />
+            <Route path="/climate-migration-risk"          element={<ClimateRiskMigrationPage />} />
+            {/* Sprint CH — Probabilistic Scenario & Monte Carlo */}
+            <Route path="/monte-carlo-climate"             element={<MonteCarloClimatePage />} />
+            <Route path="/scenario-blending-optimizer"     element={<ScenarioBlendingOptimizerPage />} />
+            <Route path="/climate-stress-test-suite"       element={<ClimateStressTestSuitePage />} />
+            <Route path="/tail-risk-analyzer"              element={<TailRiskAnalyzerPage />} />
+            <Route path="/scenario-dashboard-builder"      element={<ScenarioDashboardBuilderPage />} />
+            <Route path="/regulatory-stress-submission"    element={<RegulatoryStressSubmissionPage />} />
+            {/* Sprint CI — Extended Asset Class Coverage */}
+            <Route path="/sovereign-climate-risk"          element={<SovereignClimateRiskPage />} />
+            <Route path="/private-assets-transition"       element={<PrivateAssetsTransitionPage />} />
+            <Route path="/structured-credit-climate"       element={<StructuredCreditClimatePage />} />
+            <Route path="/commodity-derivatives-climate"   element={<CommodityDerivativesClimatePage />} />
+            <Route path="/insurance-portfolio-climate"     element={<InsurancePortfolioClimatePage />} />
+            <Route path="/pcaf-universal-attributor"       element={<PcafUniversalAttributorPage />} />
+            {/* Sprint CJ — Emerging Market Transition Intelligence */}
+            <Route path="/china-india-transition"          element={<ChinaIndiaTransitionPage />} />
+            <Route path="/asean-gcc-transition"            element={<AseanGccTransitionPage />} />
+            <Route path="/em-carbon-credit-hub"            element={<EmCarbonCreditHubPage />} />
+            <Route path="/latam-transition"                element={<LatamTransitionPage />} />
+            <Route path="/africa-climate-finance"          element={<AfricaClimateFinancePage />} />
+            <Route path="/frontier-market-climate"         element={<FrontierMarketClimatePage />} />
+            {/* Sprint CK — Stranded Asset Dynamics v2 */}
+            <Route path="/vintage-cohort-stranded"         element={<VintageCohortStrandedPage />} />
+            <Route path="/cascading-default-modeler"       element={<CascadingDefaultModelerPage />} />
+            <Route path="/stranded-recovery-pathways"      element={<StrandedRecoveryPathwaysPage />} />
+            <Route path="/decommissioning-cost-engine"     element={<DecommissioningCostEnginePage />} />
+            <Route path="/stranded-asset-watchlist"        element={<StrandedAssetWatchlistPage />} />
+            <Route path="/covenant-breach-predictor"       element={<CovenantBreachPredictorPage />} />
+            {/* Sprint CL — Technology & Supply Chain Disruption v2 */}
+            <Route path="/critical-mineral-constraint"     element={<CriticalMineralConstraintPage />} />
+            <Route path="/grid-stability-transition"       element={<GridStabilityTransitionPage />} />
+            <Route path="/hydrogen-economy-modeler"        element={<HydrogenEconomyModelerPage />} />
+            <Route path="/nuclear-smr-viability"           element={<NuclearSmrViabilityPage />} />
+            <Route path="/negative-emissions-tech"         element={<NegativeEmissionsTechPage />} />
+            <Route path="/tech-disruption-watchlist"       element={<TechDisruptionWatchlistPage />} />
+            {/* Sprint CM — SBTi Credibility Suite */}
+            <Route path="/sbti-credibility-scorer"         element={<SbtiCredibilityScorerPage />} />
+            <Route path="/temperature-alignment-waterfall" element={<TemperatureAlignmentWaterfallPage />} />
+            <Route path="/net-zero-credibility-index"      element={<NetZeroCredibilityIndexPage />} />
+            <Route path="/scope3-materiality-engine"       element={<Scope3MaterialityEnginePage />} />
+            <Route path="/target-vs-action-tracker"        element={<TargetVsActionTrackerPage />} />
+            <Route path="/peer-transition-benchmarker"     element={<PeerTransitionBenchmarkerPage />} />
+            {/* Sprint CN — Carbon Credit & Offset Economics */}
+            <Route path="/carbon-credit-pricing"           element={<CarbonCreditPricingPage />} />
+            <Route path="/offset-permanence-risk"          element={<OffsetPermanenceRiskPage />} />
+            <Route path="/corporate-offset-optimizer"      element={<CorporateOffsetOptimizerPage />} />
+            <Route path="/credit-quality-screener"         element={<CreditQualityScreenerPage />} />
+            <Route path="/offset-portfolio-tracker"        element={<OffsetPortfolioTrackerPage />} />
+            <Route path="/carbon-market-intelligence"      element={<CarbonMarketIntelligencePage />} />
+            {/* Sprint CO — Advanced Just Transition */}
+            <Route path="/workforce-transition-tracker"    element={<WorkforceTransitionTrackerPage />} />
+            <Route path="/social-license-risk"             element={<SocialLicenseRiskPage />} />
+            <Route path="/regional-economic-impact"        element={<RegionalEconomicImpactPage />} />
+            <Route path="/indigenous-rights-fpic"          element={<IndigenousRightsFpicPage />} />
+            <Route path="/green-jobs-pipeline-tracker"     element={<GreenJobsPipelineTrackerPage />} />
+            <Route path="/just-transition-finance-hub"     element={<JustTransitionFinanceHubPage />} />
+            {/* Sprint CP — ESG Stewardship Analytics */}
+            <Route path="/engagement-outcome-tracker"      element={<EngagementOutcomeTrackerPage />} />
+            <Route path="/proxy-voting-climate"            element={<ProxyVotingClimatePage />} />
+            <Route path="/stewardship-report-generator"    element={<StewardshipReportGeneratorPage />} />
+            <Route path="/shareholder-resolution-analyzer" element={<ShareholderResolutionAnalyzerPage />} />
+            <Route path="/board-climate-competence"        element={<BoardClimateCompetencePage />} />
+            <Route path="/esg-integration-dashboard"       element={<EsgIntegrationDashboardPage />} />
+            {/* Sprint CQ — Transition Finance Portfolio Construction */}
+            <Route path="/green-bond-portfolio-optimizer"  element={<GreenBondPortfolioOptimizerPage />} />
+            <Route path="/transition-bond-credibility"     element={<TransitionBondCredibilityPage />} />
+            <Route path="/blended-finance-structurer"      element={<BlendedFinanceStructurerPage />} />
+            <Route path="/climate-bond-index-tracker"      element={<ClimateBondIndexTrackerPage />} />
+            <Route path="/green-loan-framework"            element={<GreenLoanFrameworkPage />} />
+            <Route path="/impact-bond-analytics"           element={<ImpactBondAnalyticsPage />} />
+            {/* Sprint CR — Multi-Jurisdiction Regulatory Compliance */}
+            <Route path="/csrd-esrs-full-suite"            element={<CsrdEsrsFullSuitePage />} />
+            <Route path="/global-disclosure-tracker"       element={<GlobalDisclosureTrackerPage />} />
+            <Route path="/assurance-readiness-engine"      element={<AssuranceReadinessEnginePage />} />
+            <Route path="/xbrl-climate-taxonomy"           element={<XbrlClimateTaxonomyPage />} />
+            <Route path="/regulatory-change-radar"         element={<RegulatoryChangeRadarPage />} />
+            <Route path="/compliance-workflow-automation"   element={<ComplianceWorkflowAutomationPage />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
             <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
             <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
