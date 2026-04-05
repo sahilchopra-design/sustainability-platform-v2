@@ -29,7 +29,8 @@ const ENTITIES = Array.from({ length: 10 }, (_, i) => {
   const scores = {};
   TAXONOMY_TREE.forEach((t, j) => { scores[t.code] = Math.round(25 + sr(i * 8 + j * 3) * 65); });
   const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / TAXONOMY_TREE.length);
-  return { id: i + 1, name: names[i], sector: sectors[i], scores, overall, rating: scoreToRating(overall) };
+  const rt = scoreToRating(overall);
+  return { id: i + 1, name: names[i], sector: sectors[i], scores, overall, rating: rt.label, ratingColor: rt.color };
 });
 
 const SCENARIOS = ['Current Policies', 'NGFS Below 2°C', 'NGFS Net Zero 2050', 'Delayed Transition', 'Fragmented World', 'Low Demand'];
@@ -65,7 +66,7 @@ export default function AssessmentEngineDashboardPage() {
   const [selectedScenario, setSelectedScenario] = useState(SCENARIOS[0]);
 
   const portfolioAvg = useMemo(() => Math.round(ENTITIES.reduce((s, e) => s + e.overall, 0) / ENTITIES.length), []);
-  const portfolioRating = useMemo(() => scoreToRating(portfolioAvg), [portfolioAvg]);
+  const portfolioRating = useMemo(() => { const r = scoreToRating(portfolioAvg); return r.label; }, [portfolioAvg]);
 
   const sunburstData = useMemo(() => TAXONOMY_TREE.map((l1, i) => ({
     name: l1.code, fullName: l1.name, value: Math.round(l1.weight * 100),
@@ -224,10 +225,10 @@ export default function AssessmentEngineDashboardPage() {
                         <tr key={t.code} style={{ borderBottom: `1px solid ${T.border}` }}>
                           <td style={{ padding: 6 }}><span style={{ fontFamily: T.mono, color: T.textMut, marginRight: 8 }}>{t.code}</span>{t.name}</td>
                           <td style={{ padding: 6, textAlign: 'right', fontFamily: T.mono, fontWeight: 700 }}>{sc}</td>
-                          <td style={{ textAlign: 'center', padding: 6 }}><RatingBadge rating={rt} /></td>
+                          <td style={{ textAlign: 'center', padding: 6 }}><RatingBadge rating={rt.label} /></td>
                           <td style={{ padding: 6 }}>
                             <div style={{ width: '100%', height: 10, background: T.border, borderRadius: 5 }}>
-                              <div style={{ width: `${sc}%`, height: '100%', background: RATING_COLORS[rt], borderRadius: 5 }} />
+                              <div style={{ width: `${sc}%`, height: '100%', background: rt.color || RATING_COLORS[rt.label], borderRadius: 5 }} />
                             </div>
                           </td>
                         </tr>

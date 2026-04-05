@@ -55,7 +55,7 @@ const ENTITIES = ['Shell plc', 'BP plc', 'TotalEnergies', 'Enel SpA', 'NextEra E
 const PREDICTIONS = ENTITIES.map((name, i) => ({
   entity: name, predicted: Math.round(30 + sr(i * 8) * 55), actual: Math.round(28 + sr(i * 11) * 58),
   lower: Math.round(22 + sr(i * 8) * 50), upper: Math.round(38 + sr(i * 8) * 60),
-  rating: scoreToRating(Math.round(30 + sr(i * 8) * 55)),
+  rating: scoreToRating(Math.round(30 + sr(i * 8) * 55)).label,
 }));
 
 const TOP_FEATURES = leaves.slice(0, 15).map((l, i) => ({

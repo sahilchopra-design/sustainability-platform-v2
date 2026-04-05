@@ -25,7 +25,8 @@ const ENTITIES = ['Shell plc', 'BP plc', 'TotalEnergies', 'Enel SpA', 'NextEra E
   const scores = {};
   TAXONOMY_TREE.forEach((t, j) => { scores[t.code] = Math.round(25 + sr(i * 8 + j * 3) * 65); });
   const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / TAXONOMY_TREE.length);
-  return { id: i + 1, name, scores, overall, rating: scoreToRating(overall) };
+  const rt = scoreToRating(overall);
+  return { id: i + 1, name, scores, overall, rating: rt.label, ratingColor: rt.color };
 });
 
 const TabBar = ({ tabs, active, onSelect }) => (
@@ -64,7 +65,7 @@ export default function TaxonomyRiskReportPage() {
   const l1PortfolioScores = useMemo(() => TAXONOMY_TREE.map(t => ({
     topic: t.code, name: t.name,
     score: Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / ENTITIES.length),
-    rating: scoreToRating(Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / ENTITIES.length)),
+    rating: scoreToRating(Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / ENTITIES.length)).label,
   })), []);
 
   const radarData = useMemo(() => TAXONOMY_TREE.map(t => {
@@ -100,7 +101,7 @@ export default function TaxonomyRiskReportPage() {
               <Card style={{ textAlign: 'center', padding: 14 }}>
                 <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono }}>PORTFOLIO SCORE</div>
                 <div style={{ fontSize: 32, fontWeight: 800, color: T.navy }}>{portfolioAvg}</div>
-                <RatingBadge rating={scoreToRating(portfolioAvg)} />
+                <RatingBadge rating={scoreToRating(portfolioAvg).label} />
               </Card>
               <Card style={{ textAlign: 'center', padding: 14 }}>
                 <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono }}>ENTITIES</div>
@@ -163,7 +164,7 @@ export default function TaxonomyRiskReportPage() {
                       <tr key={t.code} style={{ borderBottom: `1px solid ${T.border}` }}>
                         <td style={{ padding: 6 }}><span style={{ fontFamily: T.mono, color: T.textMut }}>{t.code}</span> {t.name}</td>
                         <td style={{ padding: 6, textAlign: 'right', fontFamily: T.mono, fontWeight: 700 }}>{sc}</td>
-                        <td style={{ textAlign: 'center', padding: 6 }}><RatingBadge rating={rt} /></td>
+                        <td style={{ textAlign: 'center', padding: 6 }}><RatingBadge rating={rt.label} /></td>
                         <td style={{ padding: 6, color: T.textSec, fontSize: 11 }}>{sc >= 70 ? 'Aligned' : sc >= 50 ? 'Partially aligned' : sc >= 30 ? 'Significant gaps' : 'Critical attention'}</td>
                       </tr>
                     );
@@ -219,7 +220,7 @@ export default function TaxonomyRiskReportPage() {
                         <td style={{ padding: 6, fontFamily: T.mono }}>{t.code}</td>
                         {compareEntities.map(idx => {
                           const sc = ENTITIES[idx].scores[t.code];
-                          return <td key={idx} style={{ textAlign: 'center', padding: 6, fontFamily: T.mono, fontWeight: 700, color: RATING_COLORS[scoreToRating(sc)] }}>{sc}</td>;
+                          return <td key={idx} style={{ textAlign: 'center', padding: 6, fontFamily: T.mono, fontWeight: 700, color: scoreToRating(sc).color }}>{sc}</td>;
                         })}
                       </tr>
                     ))}

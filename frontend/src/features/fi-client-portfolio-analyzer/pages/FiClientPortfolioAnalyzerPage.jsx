@@ -35,7 +35,7 @@ const BORROWERS = Array.from({ length: 50 }, (_, i) => {
   return {
     id: i + 1, name: names[i], sector: HIGH_IMPACT_SECTORS[sectorIdx].name, sectorCode: HIGH_IMPACT_SECTORS[sectorIdx].code,
     region: GEOGRAPHIC_REGIONS[regionIdx].name, regionCode: GEOGRAPHIC_REGIONS[regionIdx].code,
-    exposure: Math.round(10 + sr(i * 11) * 490), score, rating: scoreToRating(score),
+    exposure: Math.round(10 + sr(i * 11) * 490), score, rating: scoreToRating(score).label,
     lob: LOBS[i % LOBS.length],
   };
 });
@@ -292,7 +292,7 @@ export default function FiClientPortfolioAnalyzerPage() {
                     <td style={{ padding: 8, textAlign: 'right', fontFamily: T.mono }}>{l.clients}</td>
                     <td style={{ padding: 8, textAlign: 'right', fontFamily: T.mono }}>{l.exposure.toLocaleString()}</td>
                     <td style={{ padding: 8, textAlign: 'right', fontFamily: T.mono, fontWeight: 700 }}>{l.avgScore}</td>
-                    <td style={{ textAlign: 'center', padding: 8 }}><RatingBadge rating={scoreToRating(l.avgScore)} /></td>
+                    <td style={{ textAlign: 'center', padding: 8 }}><RatingBadge rating={scoreToRating(l.avgScore).label} /></td>
                     <td style={{ padding: 8, textAlign: 'right', fontFamily: T.mono }}>{((l.exposure / totalExposure) * 100).toFixed(1)}%</td>
                   </tr>
                 ))}
