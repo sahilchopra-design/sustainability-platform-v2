@@ -373,8 +373,7 @@ const ClimateStressTestSuitePage    = React.lazy(() => import("./features/climat
 const TailRiskAnalyzerPage          = React.lazy(() => import("./features/tail-risk-analyzer/pages/TailRiskAnalyzerPage"));
 const ScenarioDashboardBuilderPage  = React.lazy(() => import("./features/scenario-dashboard-builder/pages/ScenarioDashboardBuilderPage"));
 const RegulatoryStressSubmissionPage= React.lazy(() => import("./features/regulatory-stress-submission/pages/RegulatoryStressSubmissionPage"));
-// Sprint CI — Extended Asset Class Coverage
-const SovereignClimateRiskPage      = React.lazy(() => import("./features/sovereign-climate-risk/pages/SovereignClimateRiskPage"));
+// Sprint CI — Extended Asset Class Coverage (SovereignClimateRiskPage imported above)
 const PrivateAssetsTransitionPage   = React.lazy(() => import("./features/private-assets-transition/pages/PrivateAssetsTransitionPage"));
 const StructuredCreditClimatePage   = React.lazy(() => import("./features/structured-credit-climate/pages/StructuredCreditClimatePage"));
 const CommodityDerivativesClimatePage= React.lazy(() => import("./features/commodity-derivatives-climate/pages/CommodityDerivativesClimatePage"));
@@ -2126,8 +2125,7 @@ function AppContent() {
             <Route path="/tail-risk-analyzer"              element={<TailRiskAnalyzerPage />} />
             <Route path="/scenario-dashboard-builder"      element={<ScenarioDashboardBuilderPage />} />
             <Route path="/regulatory-stress-submission"    element={<RegulatoryStressSubmissionPage />} />
-            {/* Sprint CI — Extended Asset Class Coverage */}
-            <Route path="/sovereign-climate-risk"          element={<SovereignClimateRiskPage />} />
+            {/* Sprint CI — Extended Asset Class Coverage (sovereign-climate-risk routed above) */}
             <Route path="/private-assets-transition"       element={<PrivateAssetsTransitionPage />} />
             <Route path="/structured-credit-climate"       element={<StructuredCreditClimatePage />} />
             <Route path="/commodity-derivatives-climate"   element={<CommodityDerivativesClimatePage />} />
