@@ -490,6 +490,13 @@ const AnomalyDetectionEnginePage     = React.lazy(() => import("./features/anoma
 const PeerClusteringSegmentationPage = React.lazy(() => import("./features/peer-clustering-segmentation/pages/PeerClusteringSegmentationPage"));
 const ScenarioConditionalPredictionPage = React.lazy(() => import("./features/scenario-conditional-prediction/pages/ScenarioConditionalPredictionPage"));
 const MlGovernanceDashboardPage      = React.lazy(() => import("./features/ml-governance-dashboard/pages/MlGovernanceDashboardPage"));
+// Sprint CY — Real-Time Climate Risk Intelligence
+const LiveCarbonPriceMonitorPage         = React.lazy(() => import("./features/live-carbon-price-monitor/pages/LiveCarbonPriceMonitorPage"));
+const PortfolioClimatePulsePage          = React.lazy(() => import("./features/portfolio-climate-pulse/pages/PortfolioClimatePulsePage"));
+const RegulatoryDeadlineTrackerPage      = React.lazy(() => import("./features/regulatory-deadline-tracker/pages/RegulatoryDeadlineTrackerPage"));
+const ClimateNewsSentimentFeedPage       = React.lazy(() => import("./features/climate-news-sentiment-feed/pages/ClimateNewsSentimentFeedPage"));
+const RealTimeEmissionsMonitorPage       = React.lazy(() => import("./features/real-time-emissions-monitor/pages/RealTimeEmissionsMonitorPage"));
+const ClientTransitionCommandCenterPage  = React.lazy(() => import("./features/client-transition-command-center/pages/ClientTransitionCommandCenterPage"));
 // Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
 const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
 const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
@@ -1327,6 +1334,14 @@ const NAV_GROUPS = [
     { path: '/peer-clustering-segmentation',     label: 'Peer Clustering Segmentation',   badge: 'K-Means · Silhouette · Cluster Profiles · Migration Tracker · Engagement Priority',    code: 'EP-CX4' },
     { path: '/scenario-conditional-prediction',  label: 'Scenario Conditional Prediction', badge: 'Custom Scenarios · Conditional Scores · Sensitivity Surface · Pathway Analysis',      code: 'EP-CX5' },
     { path: '/ml-governance-dashboard',          label: 'ML Governance Dashboard',        badge: 'Model Inventory · Drift Detection · SHAP · Fed SR 11-7 · EU AI Act Alignment',        code: 'EP-CX6' },
+  ]},
+  { label: 'Real-Time Climate Intelligence', icon: '📡', color: '#0891b2', items: [
+    { path: '/live-carbon-price-monitor',          label: 'Live Carbon Price Monitor',          badge: '8 Markets · 5s Refresh · Forward Curves · Portfolio Exposure · NGFS Overlay',           code: 'EP-CY1' },
+    { path: '/portfolio-climate-pulse',            label: 'Portfolio Climate Pulse',             badge: 'Intraday VaR · Transition Scores · Heatmap · Alert Engine · Holdings Monitor',          code: 'EP-CY2' },
+    { path: '/regulatory-deadline-tracker',        label: 'Regulatory Deadline Tracker',         badge: 'CSRD · ISSB · EU Taxonomy · Gap Analysis · Submission History · Countdown',             code: 'EP-CY3' },
+    { path: '/climate-news-sentiment-feed',        label: 'Climate News Sentiment Feed',         badge: 'NLP Sentiment · Topic Clustering · Portfolio Impact · Source Attribution · Timeline',   code: 'EP-CY4' },
+    { path: '/real-time-emissions-monitor',        label: 'Real-Time Emissions Monitor',         badge: 'Facility CEMS · EWMA Anomaly · Permit Compliance · YTD Tracking · Alert Engine',       code: 'EP-CY5' },
+    { path: '/client-transition-command-center',   label: 'Client Transition Command Center',    badge: 'Risk Quadrants · Engagement Pipeline · Instruments · Regulatory Readiness · Profiles',  code: 'EP-CY6' },
   ]},
   { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
     { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
@@ -2337,6 +2352,13 @@ function AppContent() {
             <Route path="/peer-clustering-segmentation"     element={<PeerClusteringSegmentationPage />} />
             <Route path="/scenario-conditional-prediction"  element={<ScenarioConditionalPredictionPage />} />
             <Route path="/ml-governance-dashboard"          element={<MlGovernanceDashboardPage />} />
+            {/* Sprint CY — Real-Time Climate Intelligence */}
+            <Route path="/live-carbon-price-monitor"          element={<LiveCarbonPriceMonitorPage />} />
+            <Route path="/portfolio-climate-pulse"            element={<PortfolioClimatePulsePage />} />
+            <Route path="/regulatory-deadline-tracker"        element={<RegulatoryDeadlineTrackerPage />} />
+            <Route path="/climate-news-sentiment-feed"        element={<ClimateNewsSentimentFeedPage />} />
+            <Route path="/real-time-emissions-monitor"        element={<RealTimeEmissionsMonitorPage />} />
+            <Route path="/client-transition-command-center"   element={<ClientTransitionCommandCenterPage />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
             <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
             <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
