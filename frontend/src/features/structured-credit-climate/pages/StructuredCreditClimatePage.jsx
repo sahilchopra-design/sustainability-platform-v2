@@ -16,19 +16,25 @@ const T = {
 const STATES = ['CA', 'FL', 'TX', 'NY', 'NJ', 'LA', 'NC', 'SC', 'GA', 'VA', 'MA', 'WA', 'OR', 'AZ', 'CO', 'IL', 'PA', 'OH', 'MI', 'MN'];
 const EPC_RATINGS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
+// Deterministic PRNG — replaces Math.random() so loan pool is stable across renders
+const _sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const COASTAL_STATES = new Set(['FL', 'NJ', 'NC', 'SC', 'LA', 'TX', 'NY', 'MA']);
+const WILDFIRE_STATES = new Set(['CA', 'OR', 'WA', 'CO']);
+const HEAT_STATES = new Set(['TX', 'AZ', 'FL', 'LA', 'GA']);
+
 const LOANS = Array.from({ length: 500 }, (_, i) => {
   const state = STATES[i % 20];
-  const floodZone = Math.random() > 0.7;
-  const wildfireZone = state === 'CA' || state === 'OR' || state === 'WA' || state === 'CO' ? Math.random() > 0.5 : Math.random() > 0.85;
-  const coastal = ['FL', 'NJ', 'NC', 'SC', 'LA', 'TX', 'NY', 'MA'].includes(state) ? Math.random() > 0.4 : Math.random() > 0.9;
-  const epc = EPC_RATINGS[Math.floor(Math.random() * 7)];
-  const ltv = 50 + Math.round(Math.random() * 45);
-  const balance = 80 + Math.round(Math.random() * 720);
-  const rate = 3.5 + +(Math.random() * 4).toFixed(2);
-  const propValue = Math.round(balance / (ltv / 100));
-  const floodProb = floodZone ? 0.05 + Math.random() * 0.25 : Math.random() * 0.03;
-  const fireProb = wildfireZone ? 0.03 + Math.random() * 0.15 : Math.random() * 0.01;
-  const heatProb = ['TX', 'AZ', 'FL', 'LA', 'GA'].includes(state) ? 0.3 + Math.random() * 0.4 : 0.05 + Math.random() * 0.2;
+  const floodZone    = _sr(i * 11) > 0.7;
+  const wildfireZone = WILDFIRE_STATES.has(state) ? _sr(i * 13) > 0.5 : _sr(i * 13) > 0.85;
+  const coastal      = COASTAL_STATES.has(state) ? _sr(i * 17) > 0.4 : _sr(i * 17) > 0.9;
+  const epc          = EPC_RATINGS[Math.floor(_sr(i * 19) * 7)];
+  const ltv          = 50 + Math.round(_sr(i * 23) * 45);
+  const balance      = 80 + Math.round(_sr(i * 29) * 720);
+  const rate         = 3.5 + +(_sr(i * 31) * 4).toFixed(2);
+  const propValue    = Math.round(balance / (ltv / 100));
+  const floodProb    = floodZone    ? 0.05 + _sr(i * 37) * 0.25 : _sr(i * 37) * 0.03;
+  const fireProb     = wildfireZone ? 0.03 + _sr(i * 41) * 0.15 : _sr(i * 41) * 0.01;
+  const heatProb     = HEAT_STATES.has(state) ? 0.3 + _sr(i * 43) * 0.4 : 0.05 + _sr(i * 43) * 0.2;
   return {
     id: `L${String(i + 1).padStart(4, '0')}`, state, floodZone, wildfireZone, coastal, epc, ltv, balance,
     rate, propValue, floodProb: +floodProb.toFixed(3), fireProb: +fireProb.toFixed(3), heatProb: +heatProb.toFixed(2),

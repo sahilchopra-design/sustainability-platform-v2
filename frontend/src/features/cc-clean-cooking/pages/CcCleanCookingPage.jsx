@@ -70,9 +70,12 @@ const PROJECTS_CC=Array.from({length:8},(_,i)=>{
 const calcCleanCooking=(params)=>{
   const {fuelKg,ncv,ef,fnrb,blEff,pjEff,stackFactor,rebound,stoves,adoption}=params;
   const blFuelAnnual=fuelKg*365;
+  // BE = baseline biomass consumed × NCV × EF × fNRB (GS/AMS-II.G)
   const bePerHH=blFuelAnnual*ncv*ef*1e-6*fnrb;
+  // PE = project biomass consumed × NCV × EF × fNRB (efficiency ratio × stacking factor)
+  // fNRB applies to project fuel too (still biomass); no arbitrary *0.1 adjustment
   const pjFuelAnnual=blFuelAnnual*(blEff/pjEff)*stackFactor;
-  const pjEmissions=pjFuelAnnual*ncv*ef*1e-6*fnrb*0.1;
+  const pjEmissions=pjFuelAnnual*ncv*ef*1e-6*fnrb;
   const erPerHH=bePerHH*(1-rebound)-pjEmissions;
   const totalER=erPerHH*stoves*adoption;
   const waterfall=[

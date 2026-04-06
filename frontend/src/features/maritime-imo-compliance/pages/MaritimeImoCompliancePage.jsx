@@ -5,6 +5,44 @@ import { CII_THRESHOLDS } from '../../../data/referenceData';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 
+// ── IMO CII Formula — MEPC.338(76) ────────────────────────────────────────────
+// CII = Annual CO2 (g) / (DWT × Distance_nm) = gCO2 / (tonne·nm)
+// Fuel conversion: HFO 3.114, VLSFO 3.151, MGO 3.206, LNG 2.750, Methanol 1.375 (tCO2/t fuel)
+const FUEL_CO2_FACTOR = { HFO:3114, VLSFO:3151, MGO:3206, LNG:2750, Methanol:1375 }; // gCO2/kg fuel
+const calcCIIValue = (annualEmissions_tCO2, dwt, distance_nm) =>
+  distance_nm > 0 ? (annualEmissions_tCO2 * 1e6) / (dwt * distance_nm) : null; // gCO2/(tonne·nm)
+
+// IMO reference CII by ship type (bulk carrier basis; others use type-specific formula)
+// MEPC.339(76) Table 1 — reference line coefficients: CII_ref = a × (DWT)^-c
+const CII_REF_PARAMS = {
+  'Bulk Carrier':  { a:4745,  c:0.622  },
+  'Container':     { a:1984,  c:0.489  },
+  'Tanker':        { a:5247,  c:0.610  },
+  'LNG Carrier':   { a:144050,c:0.7345 },
+  'Car Carrier':   { a:5739,  c:0.631  },
+  'Cruise':        { a:930,   c:0.383  },
+  'RoRo':          { a:10952, c:0.637  },
+  'Offshore':      { a:3627,  c:0.590  },
+};
+const calcCIIRef = (shipType, dwt) => {
+  const p = CII_REF_PARAMS[shipType] || CII_REF_PARAMS['Bulk Carrier'];
+  return p.a * Math.pow(dwt, -p.c);
+};
+// IMO 2023 reduction factors: 2023=5%, 2024=7%, 2025=9%, 2026=11%
+const CII_REDUCTION = { 2023:0.05, 2024:0.07, 2025:0.09, 2026:0.11 };
+const calcCIIRequired = (shipType, dwt, year=2025) => {
+  const red = CII_REDUCTION[year] ?? 0.09;
+  return calcCIIRef(shipType, dwt) * (1 - red);
+};
+// Grade: A<0.82, B<0.94, C<1.06, D<1.18, E>=1.18 (of required CII)
+const ciiGradeFromRatio = (ratio) => {
+  if (ratio < 0.82) return 'A';
+  if (ratio < 0.94) return 'B';
+  if (ratio < 1.06) return 'C';
+  if (ratio < 1.18) return 'D';
+  return 'E';
+};
+
 const SHIP_TYPES=['Bulk Carrier','Container','Tanker','LNG Carrier','Car Carrier','Cruise','RoRo','Offshore'];
 const CII_GRADES=['A','B','C','D','E'];
 const CII_COLORS={A:T.green,B:'#22c55e',C:T.amber,D:'#f97316',E:T.red};
@@ -61,32 +99,48 @@ const VESSEL_NAMES=['Pacific Voyager','Atlantic Spirit','Nordic Star','Eastern P
 const genVessels=()=>Array.from({length:150},(_,i)=>{
   const typeIdx=Math.floor(sr(i*13)*8);
   const compIdx=Math.floor(sr(i*17)*20);
-  const gradeIdx=Math.min(4,Math.floor(sr(i*23)*5));
   const dwt=Math.floor(sr(i*31)*180000)+20000;
-  const aer=Math.floor(sr(i*37)*15)+3+gradeIdx*2;
-  const eexiComp=sr(i*41)>0.25;
   const built=Math.floor(sr(i*43)*25)+2000;
   const speed=Math.floor(sr(i*47)*10)+10;
   const flagIdx=Math.floor(sr(i*51)*10);
-  const ciiHist=QUARTERS.map((q,qi)=>{
-    const base=gradeIdx;
-    const drift=sr(i*53+qi*7)*1.5-0.5;
-    return{q,grade:CII_GRADES[Math.max(0,Math.min(4,Math.round(base+drift)))],
-      aer:Math.max(1,aer+Math.floor(sr(i*59+qi*11)*6)-3)};
-  });
+  const shipType=SHIP_TYPES[typeIdx];
+  const fuelType=['HFO','VLSFO','MGO','LNG','Methanol'][Math.floor(sr(i*79)*5)];
   const voyages=Math.floor(sr(i*61)*40)+5;
   const lastDrydock=2021+Math.floor(sr(i*63)*4);
-  return{id:i,name:VESSEL_NAMES[i],imo:9100000+i*137,type:SHIP_TYPES[typeIdx],
+  const eexiComp=sr(i*41)>0.25;
+
+  // ── IMO CII computed from actual formula ──────────────────────────────────
+  // Realistic: bulk carrier ~20k nm/yr, container ~60k nm/yr, tanker ~25k nm/yr
+  const BASE_DISTANCE = { 'Bulk Carrier':18000,'Container':58000,'Tanker':24000,
+    'LNG Carrier':20000,'Car Carrier':30000,'Cruise':35000,'RoRo':28000,'Offshore':8000 };
+  const distance_nm = Math.round((BASE_DISTANCE[shipType]||20000) * (0.7 + sr(i*89)*0.6));
+  // Fuel consumption: ~180-220 g/kWh × engine kW × hours; simplified as tCO2 from sr
+  const annualEmissions = Math.floor(sr(i*81)*50000+5000); // tCO2
+  const ciiValue = calcCIIValue(annualEmissions, dwt, distance_nm);
+  const ciiRequired = calcCIIRequired(shipType, dwt, 2025);
+  const ciiRatio = ciiValue != null ? ciiValue / ciiRequired : 1.0;
+  const ciiGrade = ciiGradeFromRatio(ciiRatio);
+  const gradeIdx = CII_GRADES.indexOf(ciiGrade);
+  const aer = +(ciiValue ?? 0).toFixed(2);
+
+  const ciiHist=QUARTERS.map((q,qi)=>{
+    // Historical CII: trend toward current grade, ±variation from fuel/season effects
+    const hist_ratio = ciiRatio * (0.92 + qi * 0.006 + sr(i*53+qi*7)*0.12);
+    const hist_grade = ciiGradeFromRatio(hist_ratio);
+    return{q, grade:hist_grade, aer:+(ciiRequired*hist_ratio).toFixed(2), ratio:+hist_ratio.toFixed(3)};
+  });
+
+  return{id:i,name:VESSEL_NAMES[i],imo:9100000+i*137,type:shipType,
     dwt,company:COMPANIES[compIdx].name,companyIdx:compIdx,
-    ciiGrade:CII_GRADES[gradeIdx],eexiCompliant:eexiComp,aer,built,speed,
+    ciiGrade,ciiValue:+(ciiValue||0).toFixed(3),ciiRequired:+ciiRequired.toFixed(3),ciiRatio:+ciiRatio.toFixed(3),
+    eexiCompliant:eexiComp,aer,built,speed,
+    distance_nm,annualEmissions,fuelType,
     flag:FLAG_STATES[flagIdx],ciiHistory:ciiHist,
     retrofitCost:Math.floor(sr(i*65)*8+2)*1e6,
     fuelSavings:Math.floor(sr(i*67)*20+5),
     co2Reduction:Math.floor(sr(i*71)*30+10),
     voyages,lastDrydock,
     mainEngine:['MAN B&W','Wartsila','Mitsubishi','Hyundai HiMSEN','Rolls-Royce'][Math.floor(sr(i*73)*5)],
-    fuelType:['HFO','VLSFO','MGO','LNG','Methanol'][Math.floor(sr(i*79)*5)],
-    annualEmissions:Math.floor(sr(i*81)*50000+5000),
     classSociety:['DNV','Lloyds','Bureau Veritas','ClassNK','ABS'][Math.floor(sr(i*83)*5)],
   };
 });

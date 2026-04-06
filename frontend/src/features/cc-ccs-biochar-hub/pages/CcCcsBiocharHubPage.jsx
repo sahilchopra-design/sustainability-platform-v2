@@ -63,9 +63,14 @@ const UTILIZATION_PATHWAYS = [
 
 const calcCCS = (params) => {
   const { co2_captured_tpa, transport_mode, distance_km, compression_energy_kwh, injection_rate_tpd, storage_capacity_mt } = params;
-  const transport_ef = transport_mode === 'Pipeline' ? 0.006 : 0.012; // tCO2/t-km
-  const transport_emissions = co2_captured_tpa * distance_km * transport_ef / 1000;
-  const compression_emissions = co2_captured_tpa * compression_energy_kwh * 0.0004; // grid EF
+  // Transport: pipeline ~6 gCO2/(t·km), ship ~12 gCO2/(t·km) (IEA CCS 2020)
+  const transport_ef = transport_mode === 'Pipeline' ? 0.006 : 0.012; // kgCO2/(t-km) → divide by 1000 for tCO2
+  const transport_emissions = co2_captured_tpa * distance_km * transport_ef / 1000; // tCO2/yr
+  // Compression: energy (kWh/tCO2) × grid EF (tCO2/kWh)
+  // Grid EF corrected to 0.55 tCO2/MWh = 0.00055 tCO2/kWh (global average, IEA 2023)
+  // Previous 0.0004 was 50% too low (UK/EU-only value, not global average for CCS sites)
+  const grid_ef_tco2_per_kwh = 0.00055;
+  const compression_emissions = co2_captured_tpa * compression_energy_kwh * grid_ef_tco2_per_kwh;
   const process_emissions = transport_emissions + compression_emissions;
   const net_stored = co2_captured_tpa - process_emissions;
   const years_to_fill = storage_capacity_mt * 1e6 / co2_captured_tpa;
@@ -88,13 +93,26 @@ const getStabilityFactor = (h_c) => {
 
 const calcBiochar = (params) => {
   const { biomass_input_t, carbon_content_pct, pyrolysis_temp_c, h_c_ratio, counterfactual_avoided } = params;
-  const carbon_in = biomass_input_t * carbon_content_pct / 100;
-  const biochar_yield = 0.55 - (pyrolysis_temp_c - 350) / 1000 * 0.8; // yield decreases with temp
-  const biochar_carbon = carbon_in * Math.max(0.2, biochar_yield);
+  const carbon_in = biomass_input_t * carbon_content_pct / 100; // t Carbon in feedstock
+
+  // Biochar mass yield (fraction of dry feedstock mass)
+  // Corrected model: exponential decay with temperature (Qian et al. 2015, meta-analysis n=300)
+  // At 300°C: ~45%, 400°C: ~35%, 500°C: ~28%, 600°C: ~22%, 700°C: ~17%
+  const biochar_mass_yield = Math.max(0.12, 0.68 * Math.exp(-0.0026 * pyrolysis_temp_c));
+
+  // Biochar carbon content (% of biochar mass that is C)
+  // Carbon concentrates with higher temperature: 300°C→55%, 500°C→70%, 700°C→80%
+  const biochar_carbon_pct = Math.min(0.90, 0.40 + 0.0006 * pyrolysis_temp_c);
+
+  // Biochar carbon = feedstock mass × mass yield × biochar carbon fraction
+  const biochar_carbon = biomass_input_t * biochar_mass_yield * biochar_carbon_pct;
+
   const stability = getStabilityFactor(h_c_ratio);
   const durable_carbon = biochar_carbon * stability;
-  const pyrolysis_energy = biomass_input_t * 0.15; // simplified process emissions tCO2
-  const co2_equiv = (durable_carbon + counterfactual_avoided - pyrolysis_energy) * 44 / 12;
+  // Pyrolysis process emissions: ~10% of feedstock carbon as process CO2 (syngas combustion)
+  const pyrolysis_energy = carbon_in * 0.10 * (44 / 12); // tCO2
+  const co2_equiv = (durable_carbon * (44 / 12) + counterfactual_avoided - pyrolysis_energy);
+  const biochar_yield = biochar_mass_yield; // expose for display
   return {
     carbon_in:Math.round(carbon_in),
     biochar_yield:Math.round(biochar_yield*100)/100,

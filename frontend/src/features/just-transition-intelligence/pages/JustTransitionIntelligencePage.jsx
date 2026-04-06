@@ -241,7 +241,8 @@ export default function JustTransitionIntelligencePage() {
                 {REGIONS.slice(0, 5).map((reg, i) => {
                   const scores = ILO_PILLARS.map(p => ({
                     pillar: p.name.split(' ')[0],
-                    score: Math.round(40 + Math.sin(i * 1.5 + ILO_PILLARS.indexOf(p)) * 30 + Math.random() * 15),
+                    // ILO JTF pillar score — deterministic per region+pillar (no Math.random)
+                    score: Math.round(40 + Math.sin(i * 1.5 + ILO_PILLARS.indexOf(p)) * 30 + 7.5 * (Math.sin(i * 3.7 + ILO_PILLARS.indexOf(p) * 2.1) + 1)),
                   }));
                   const overall = Math.round(scores.reduce((s, x) => s + x.score, 0) / scores.length);
                   return (

@@ -4,6 +4,7 @@ import { TestDataProvider } from './context/TestDataContext';
 import { CompanyEnrichmentProvider } from './context/CompanyEnrichmentContext';
 import { PortfolioProvider } from './context/PortfolioContext';
 import { CarbonCreditProvider } from './context/CarbonCreditContext';
+import { ClimateRiskProvider } from './context/ClimateRiskContext';
 import { GuidedModeProvider } from './context/GuidedModeContext';
 import GuidedModeOverlay from './components/GuidedModeOverlay';
 import GuidedModeToggle from './components/GuidedModeToggle';
@@ -2579,6 +2580,7 @@ export default function App() {
       <CompanyEnrichmentProvider>
         <PortfolioProvider>
           <CarbonCreditProvider>
+          <ClimateRiskProvider>
           <BrowserRouter>
             <GuidedModeProvider>
               <DataDepthProvider>
@@ -2586,6 +2588,7 @@ export default function App() {
               </DataDepthProvider>
             </GuidedModeProvider>
           </BrowserRouter>
+          </ClimateRiskProvider>
           </CarbonCreditProvider>
         </PortfolioProvider>
       </CompanyEnrichmentProvider>

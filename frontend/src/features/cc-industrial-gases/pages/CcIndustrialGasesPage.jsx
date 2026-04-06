@@ -23,13 +23,15 @@ const DualInput=({label,value,min=0,max=100,step=1,onChange,color,unit=''})=>(<d
    INDUSTRIAL GASES & PROCESS EMISSIONS ENGINE
    ══════════════════════════════════════════════════════════════════ */
 
+// GWP values — IPCC AR6 WGI Table 7.SM.7 (2021)
+// AR5→AR6 key changes: SF6 23500→17500, HFC-134a 1300→1526, N2O 265→273, HFC-23 14800→14600, HFC-32 677→771
 const GAS_TYPES = [
-  { id:'HFC-23', name:'HFC-23 (CHF3)', gwp:14800, sector:'HCFC-22 Production', color:T.red },
-  { id:'N2O', name:'Nitrous Oxide (N2O)', gwp:265, sector:'Adipic / Nitric Acid', color:T.emerald },
-  { id:'SF6', name:'Sulfur Hexafluoride (SF6)', gwp:23500, sector:'Electrical Switchgear', color:T.purple },
-  { id:'HFC-134a', name:'HFC-134a', gwp:1300, sector:'Refrigeration / AC', color:T.teal },
-  { id:'HFC-32', name:'HFC-32', gwp:677, sector:'Refrigeration', color:T.navy },
-  { id:'PFC-14', name:'PFC-14 (CF4)', gwp:7390, sector:'Aluminium Smelting', color:T.gold },
+  { id:'HFC-23', name:'HFC-23 (CHF3)', gwp:14600, sector:'HCFC-22 Production', color:T.red },
+  { id:'N2O', name:'Nitrous Oxide (N2O)', gwp:273, sector:'Adipic / Nitric Acid', color:T.emerald },
+  { id:'SF6', name:'Sulfur Hexafluoride (SF6)', gwp:17500, sector:'Electrical Switchgear', color:T.purple },
+  { id:'HFC-134a', name:'HFC-134a', gwp:1526, sector:'Refrigeration / AC', color:T.teal },
+  { id:'HFC-32', name:'HFC-32', gwp:771, sector:'Refrigeration', color:T.navy },
+  { id:'PFC-14', name:'PFC-14 (CF4)', gwp:7380, sector:'Aluminium Smelting', color:T.gold },
 ];
 
 const DESTRUCTION_TECHS = [

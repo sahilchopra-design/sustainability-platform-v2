@@ -19,6 +19,17 @@ const COMPLIANCE_STATUSES=['Compliant','Partial','Non-compliant','Exempt'];
 const IATA_CODES=['LH','BA','AF','KL','AZ','SK','IB','TP','OS','LX','SN','EI','DL','AA','UA','WN','B6','AS','NK','F9','AC','WS','AM','4O','JL','NH','SQ','CX','QF','MH','TG','GA','CI','BR','VN','KE','OZ','EK','QR','EY','SV','WY','RJ','GF','LA','AV','CM','G3','AR','JJ','ET','KQ','SA','RW','MS','AT','W3','TK','LO','OK','BT','RO','BU','JU','WZ','OU','U2','FR','W6','VY','PC','QS','DY','HV','BE','ZB','SW','HU','CZ','MU','CA','FM','ZH','3U','SC','GS','KA','UO','9C','AK','QZ','TR','VJ','DD','SL','FD','BI','PW','KC','HY','FZ','XY','IG','5J','PR','PK','UL','AI','UK','6E','SG','H9','NZ','VA','FJ','PX','ZL','BX','TW','7C','LJ','RS','8M'];
 const AIRLINE_NAMES=['Lufthansa','British Airways','Air France','KLM','Alitalia','SAS','Iberia','TAP','Austrian','Swiss','Brussels Airlines','Aer Lingus','Delta','American Airlines','United Airlines','Southwest','JetBlue','Alaska Air','Spirit','Frontier','Air Canada','WestJet','Aeromexico','Interjet','JAL','ANA','Singapore Airlines','Cathay Pacific','Qantas','Malaysia Airlines','Thai Airways','Garuda','China Airlines','EVA Air','Vietnam Airlines','Korean Air','Asiana','Emirates','Qatar Airways','Etihad','Saudia','Oman Air','Royal Jordanian','Gulf Air','LATAM','Avianca','Copa Airlines','Gol','Aerolineas Arg','Azul','Ethiopian Airlines','Kenya Airways','South African','RwandAir','EgyptAir','Royal Air Maroc','Asky Airlines','Turkish Airlines','LOT Polish','Czech Airlines','airBaltic','TAROM','Bulgaria Air','Air Serbia','Wizz Air','Croatia Airlines','easyJet','Ryanair','Wizz Air HU','Vueling','Pegasus','SmartWings','Norwegian','Transavia','Flybe','Nordwind','Suparna','Spring Airlines','Hainan Airlines','China Southern','China Eastern','Air China','Shanghai Airlines','Shenzhen Airlines','Sichuan Airlines','Shandong Airlines','GX Airlines','HK Express','Hong Kong Airlines','9 Air','AirAsia','AirAsia X','Scoot','VietJet','Nok Air','Srilankan','Thai Lion Air','Royal Brunei','Palau Pacific','Air Astana','Uzbekistan','FlyDubai','Flynas','Indigo Partners','Cebu Pacific','Philippine Air','PIA','SriLankan','Air India','Vistara','IndiGo','SpiceJet','Himalaya','Air NZ','Virgin Australia','Fiji Airways','Air Niugini','Air Nelson','Air Busan','T\'way Air','Jeju Air','Air Seoul','Air RS','Myanmar Air'];
 
+// ── CORSIA baseline — ICAO Doc 9501 Vol.IV ────────────────────────────────────
+// Baseline = average(2019 emissions, 2020 emissions) per CORSIA 2024 update
+// Offsetting = max(0, sector_CO2_year - baseline) × offset_ratio
+// offset_ratio = 1.0 (Pilot phase), scaling in Phase 1/2
+const calcCORSIA_offset = (annualCO2, baseline2019_factor, baseline2020_factor, offset_ratio=1.0) => {
+  const b2019 = annualCO2 * baseline2019_factor;
+  const b2020 = annualCO2 * baseline2020_factor; // 2020 was ~60% of 2019 due to COVID
+  const baseline = (b2019 + b2020) / 2;
+  return { baseline: +baseline.toFixed(3), offsetting: +Math.max(0, (annualCO2 - baseline) * offset_ratio).toFixed(3) };
+};
+
 const genAirlines=()=>{
   const out=[];
   for(let i=0;i<120;i++){
@@ -29,7 +40,11 @@ const genAirlines=()=>{
     const annualCO2=parseFloat((fleetSize*0.018+sr(i*19+5)*8).toFixed(2));
     const phaseIdx=s<0.3?0:s<0.75?1:2;
     const compIdx=sr(i*23+7)<0.55?0:sr(i*23+7)<0.8?1:sr(i*23+7)<0.95?2:3;
-    const offsetReq=parseFloat((annualCO2*(0.12+sr(i*31+4)*0.18)).toFixed(2));
+    // CORSIA offset: computed from 2019/2020 baseline (COVID depression factor 0.4-0.65 for 2020)
+    const b2020_factor = 0.4 + sr(i*89+4)*0.25;
+    const { baseline: corsiaBaseline, offsetting: corsiaOffset } =
+      calcCORSIA_offset(annualCO2, 1.0, b2020_factor, phaseIdx===0?1.0:0.85);
+    const offsetReq = corsiaOffset; // replaces random offsetReq
     const safPct=parseFloat((sr(i*37+9)*12).toFixed(1));
     const fleetAge=parseFloat((5+sr(i*41+6)*20).toFixed(1));
     const emissionsIntensity=parseFloat((55+sr(i*43+8)*65).toFixed(1));
@@ -46,7 +61,7 @@ const genAirlines=()=>{
     const riskScore=parseFloat((20+sr(i*67+3)*75).toFixed(0));
     const offsets=[];
     for(let q=0;q<12;q++){offsets.push({q:quarters[q].q,purchased:parseFloat((offsetReq/12*(0.6+sr(i*71+q*3)*0.8)).toFixed(3))});}
-    out.push({id:i+1,name:AIRLINE_NAMES[i]||`Airline ${i+1}`,iata:IATA_CODES[i]||`X${i}`,region,fleetSize,annualCO2,phase:CORSIA_PHASES[phaseIdx],offsetReq,compliance:COMPLIANCE_STATUSES[compIdx],safPct,fleetAge,emissionsIntensity,quarters,fleet,riskScore,offsets});
+    out.push({id:i+1,name:AIRLINE_NAMES[i]||`Airline ${i+1}`,iata:IATA_CODES[i]||`X${i}`,region,fleetSize,annualCO2,corsiaBaseline,phase:CORSIA_PHASES[phaseIdx],offsetReq,compliance:COMPLIANCE_STATUSES[compIdx],safPct,fleetAge,emissionsIntensity,quarters,fleet,riskScore,offsets});
   }
   return out;
 };

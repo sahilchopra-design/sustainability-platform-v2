@@ -28,12 +28,26 @@ const CORR_MATRIX = [
 ];
 const CORR_LABELS = ['Carbon Price', 'GDP Shock', 'Energy Price', 'Tech Cost'];
 
+// Mulberry32 seeded PRNG — reproducible Monte Carlo results
+let _mc_seed = 0xdeadbeef;
+function seededRng() {
+  _mc_seed += 0x6d2b79f5;
+  let t = _mc_seed;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+function resetSeed(seed = 42) { _mc_seed = seed >>> 0; }
+
+// Box-Muller using seeded PRNG (never Math.random())
 function boxMuller() {
-  const u1 = Math.random(), u2 = Math.random();
+  const u1 = Math.max(seededRng(), 1e-10);
+  const u2 = seededRng();
   return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
 }
 
-function simulatePaths(nPaths, horizon, dist, corrAdj) {
+function simulatePaths(nPaths, horizon, dist, corrAdj, seed = 42) {
+  resetSeed(seed); // Reset for reproducibility
   const paths = [];
   const annualVals = [];
   for (let p = 0; p < nPaths; p++) {

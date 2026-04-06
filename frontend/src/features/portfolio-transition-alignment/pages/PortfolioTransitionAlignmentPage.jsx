@@ -64,9 +64,17 @@ export default function PortfolioTransitionAlignmentPage() {
   const port = PORTFOLIOS.find(p => p.id === selectedPort);
   const tptOverall = ((port.tpt_strategy + port.tpt_governance + port.tpt_metrics) / 3).toFixed(1);
 
+  // ITR formula: weighted average across sectors per TCFD/MSCI methodology
+  // ITR_portfolio = Σ(w_i × ITR_i) / Σ w_i
+  const computedITR = useMemo(() => {
+    const totalW = port.sectors.reduce((s, sec) => s + sec.weight, 0);
+    if (totalW === 0) return port.itr;
+    return +(port.sectors.reduce((s, sec) => s + sec.weight * sec.itr, 0) / totalW).toFixed(2);
+  }, [port]);
+
   const itrHistory = [
     { year: 2020, itr: 3.4 }, { year: 2021, itr: 3.2 }, { year: 2022, itr: 3.0 },
-    { year: 2023, itr: 2.9 }, { year: 2024, itr: port.itr },
+    { year: 2023, itr: 2.9 }, { year: 2024, itr: computedITR },
     { year: 2025, itr: null }, { year: 2028, itr: null }, { year: 2030, itr: 2.2 },
   ];
 
@@ -96,7 +104,7 @@ export default function PortfolioTransitionAlignmentPage() {
         <div style={{ display: 'flex', gap: 20, marginBottom: 16 }}>
           {[
             { label: 'AUM', val: `$${(port.aum/1000).toFixed(1)}B` },
-            { label: 'Portfolio ITR', val: `${port.itr}°C`, col: port.itr < 2 ? T.green : port.itr < 2.5 ? T.amber : T.red },
+            { label: 'Portfolio ITR', val: `${computedITR}°C`, col: computedITR < 2 ? T.green : computedITR < 2.5 ? T.amber : T.red },
             { label: 'GFANZ Status', val: port.gfanz, col: port.gfanz === 'Committed' ? T.green : T.amber },
             { label: '2030 Reduction', val: `−${port.interim_2030}%`, col: T.blue },
             { label: 'PACTA Aligned', val: `${port.pacta_aligned}%`, col: T.teal },
@@ -126,9 +134,12 @@ export default function PortfolioTransitionAlignmentPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20, marginBottom: 20 }}>
               <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 24 }}>
                 <h3 style={{ color: T.navy, margin: '0 0 4px', fontSize: 15 }}>Portfolio ITR — Historical Trend & 2030 Target</h3>
-                <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 16px' }}>
+                <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 8px' }}>
                   Implied Temperature Rise (ITR) per MSCI/TCFD methodology. 2°C Paris-aligned target requires ITR ≤ 2.0°C by 2030.
                 </p>
+                <div style={{ fontFamily: T.mono, fontSize: 11, background: T.bg, padding: '8px 12px', borderRadius: 6, color: T.navy, marginBottom: 12, lineHeight: 1.7 }}>
+                  ITR_portfolio = Σ(w_i × ITR_i) / Σ w_i &nbsp;|&nbsp; Computed: {computedITR}°C from {port.sectors.length} sectors
+                </div>
                 <ResponsiveContainer width="100%" height={280}>
                   <LineChart data={itrHistory}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
@@ -144,8 +155,8 @@ export default function PortfolioTransitionAlignmentPage() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
-                  { label: 'Current ITR', val: `${port.itr}°C`, sub: 'Portfolio-weighted', col: port.itr < 2 ? T.green : port.itr < 2.5 ? T.amber : T.red },
-                  { label: 'ITR Method', val: 'MSCI/TCFD', sub: 'Financed emissions + targets' },
+                  { label: 'Current ITR', val: `${computedITR}°C`, sub: 'Σ(w_i×ITR_i) / Σw_i', col: computedITR < 2 ? T.green : computedITR < 2.5 ? T.amber : T.red },
+                  { label: 'ITR Method', val: 'MSCI/TCFD', sub: 'Sector-weighted avg' },
                   { label: 'Net Zero Year', val: port.nz_year, sub: 'Committed target' },
                   { label: '2030 Reduction', val: `−${port.interim_2030}%`, sub: 'vs. 2020 baseline', col: T.blue },
                   { label: 'Engagement Cover', val: `${port.engagement_cov}%`, sub: 'of AUM by emissions' },
@@ -219,7 +230,12 @@ export default function PortfolioTransitionAlignmentPage() {
             <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 24 }}>
               <h3 style={{ color: T.navy, margin: '0 0 16px', fontSize: 15 }}>PACTA Technology Alignment by Sector</h3>
               <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={port.sectors.map(s => ({ name: s.name, aligned: port.pacta_aligned * (0.8 + Math.random() * 0.4), misaligned: port.pacta_misaligned * (0.8 + Math.random() * 0.4) }))}>
+                <BarChart data={port.sectors.map((s, si) => {
+                  // Deterministic per-sector PACTA variation (no Math.random)
+                  const factor = 0.8 + 0.2 * (Math.sin(si * 2.3 + port.sectors.length) + 1);
+                  return { name: s.name, aligned: +(port.pacta_aligned * factor).toFixed(1), misaligned: +(port.pacta_misaligned * (1.4 - factor + 0.8)).toFixed(1) };
+                })}>
+
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                   <YAxis tickFormatter={v => `${v.toFixed(0)}%`} tick={{ fontSize: 11 }} />
