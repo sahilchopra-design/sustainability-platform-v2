@@ -8,7 +8,7 @@ import DataUploadPanel from '../../../components/DataUploadPanel';
 import { useTestData } from '../../../context/TestDataContext';
 
 const API = 'http://localhost:8001';
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',blue:'#2563eb',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const FRAMEWORKS = ['ESRS', 'GRI', 'ISSB', 'EU_TAXONOMY', 'BRSR'];
 const FW_COLOR   = { ESRS: T.indigo, GRI: T.sage, ISSB: T.blue, EU_TAXONOMY: T.green, BRSR: T.amber };
@@ -37,7 +37,7 @@ const MULTI_FW = [
   { indicator: 'Water Withdrawal',     esrs: 'ESRS E3-4', gri: 'GRI 303-3', issb: '—',           eu_tax: 'Annex III', brsr: 'P6 W1' },
   { indicator: 'Biodiversity Impact',  esrs: 'ESRS E4-6', gri: 'GRI 304-3', issb: '—',           eu_tax: 'Annex II',  brsr: 'P6 B1' },
   { indicator: 'TCFD Climate Strategy',esrs: 'ESRS 2-GOV',gri: 'GRI 201-2', issb: 'IFRS S2-10',  eu_tax: '—',         brsr: 'P1 L4' },
-  { indicator: 'Carbon Price Internal',esrs: 'ESRS E1-7', gri: 'GRI 201-2', issb: 'IFRS S2-29',  eu_tax: '—',         brsr: '—'     },
+  { indicator: 'Carbon Price Internal',esrs: 'ESRS E1-8', gri: 'GRI 201-2', issb: 'IFRS S2-29',  eu_tax: '—',         brsr: '—'     },
 ];
 
 const BADGE = (label, color) => !label || label === '—'
@@ -126,8 +126,8 @@ export default function CSRDiXBRLPage() {
 
   const coverageBarData = ESRS_STANDARDS.map(e => ({
     name: e.standard, mapped: e.mapped, gap: e.total - e.mapped,
-    pct: Math.round(e.mapped / e.total * 100),
-    belowThreshold: Math.round(e.mapped / e.total * 100) < threshold,
+    pct: e.total ? Math.round(e.mapped / e.total * 100) : 0,
+    belowThreshold: e.total ? Math.round(e.mapped / e.total * 100) < threshold : false,
   }));
 
   const allFWResults = compareAll ? FRAMEWORKS.map(fw => ({

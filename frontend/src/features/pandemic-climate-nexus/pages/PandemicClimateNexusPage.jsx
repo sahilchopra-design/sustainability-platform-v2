@@ -76,9 +76,9 @@ export default function PandemicClimateNexusPage(){
 
   const topKPIs=useMemo(()=>({
     criticalCount:COUNTRIES.filter(c=>c.riskTier==='Critical').length,
-    avgSpillover:Math.floor(COUNTRIES.reduce((s,c)=>s+c.spilloverRisk,0)/COUNTRIES.length),
+    avgSpillover:Math.floor(COUNTRIES.reduce((s,c)=>s+c.spilloverRisk,0)/Math.max(1,COUNTRIES.length)),
     totalDeforest:COUNTRIES.reduce((s,c)=>s+c.deforestKm2,0),
-    avgGHS:+(COUNTRIES.reduce((s,c)=>s+c.ghsIndex,0)/COUNTRIES.length).toFixed(1)
+    avgGHS:+(COUNTRIES.reduce((s,c)=>s+c.ghsIndex,0)/Math.max(1,COUNTRIES.length)).toFixed(1)
   }),[]);
 
   const scatterData=useMemo(()=>COUNTRIES.map(c=>({name:c.name,x:c.deforestKm2,y:c.spilloverRisk,z:c.popM,tier:c.riskTier})),[]);
@@ -260,8 +260,8 @@ export default function PandemicClimateNexusPage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Avg GHS Index',topKPIs.avgGHS+'/100','Global Health Security',T.gold)}
         {kpiBox('Low Prepared',COUNTRIES.filter(c=>c.ghsIndex<40).length,'GHS <40',T.red)}
-        {kpiBox('Avg Pharma Vuln',Math.floor(COUNTRIES.reduce((s,c)=>s+c.pharmaSupplyVuln,0)/COUNTRIES.length)+'/100','Supply chain vulnerability',T.amber)}
-        {kpiBox('Avg AMR Index',Math.floor(COUNTRIES.reduce((s,c)=>s+c.amrIndex,0)/COUNTRIES.length)+'/100','Antimicrobial resistance',T.red)}
+        {kpiBox('Avg Pharma Vuln',Math.floor(COUNTRIES.reduce((s,c)=>s+c.pharmaSupplyVuln,0)/Math.max(1,COUNTRIES.length))+'/100','Supply chain vulnerability',T.amber)}
+        {kpiBox('Avg AMR Index',Math.floor(COUNTRIES.reduce((s,c)=>s+c.amrIndex,0)/Math.max(1,COUNTRIES.length))+'/100','Antimicrobial resistance',T.red)}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
         <div style={card()}>
@@ -296,7 +296,7 @@ export default function PandemicClimateNexusPage(){
       <div style={card({marginBottom:20})}>
         <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>GHS Index Trend (12 Quarters)</div>
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={QUARTERS.map((q,qi)=>({q,avgGHS:+(COUNTRIES.reduce((s,c)=>s+c.qTrend[qi].ghs,0)/COUNTRIES.length).toFixed(1)}))} margin={{top:5,right:20,bottom:5,left:10}}>
+          <AreaChart data={QUARTERS.map((q,qi)=>({q,avgGHS:+(COUNTRIES.reduce((s,c)=>s+c.qTrend[qi].ghs,0)/Math.max(1,COUNTRIES.length)).toFixed(1)}))} margin={{top:5,right:20,bottom:5,left:10}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}} domain={[0,100]}/>
             <Tooltip contentStyle={{fontSize:12,borderRadius:8}}/><Area type="monotone" dataKey="avgGHS" stroke={T.green} fill={T.green+'20'} strokeWidth={2} name="Avg GHS Index"/>
           </AreaChart>

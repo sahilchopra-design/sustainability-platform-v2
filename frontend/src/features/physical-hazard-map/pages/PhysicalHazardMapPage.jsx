@@ -110,13 +110,13 @@ export default function PhysicalHazardMapPage() {
   ), [filterClass, filterRisk]);
 
   const highRisk = filteredAssets.filter(a => a.riskTier === 'High').length;
-  const avgComposite = Math.round(filteredAssets.reduce((s, a) => s + a.composite, 0) / filteredAssets.length * scenarioMult);
+  const avgComposite = filteredAssets.length ? Math.round(filteredAssets.reduce((s, a) => s + a.composite, 0) / filteredAssets.length * scenarioMult) : 0;
   const totalExposure = filteredAssets.reduce((s, a) => s + a.value, 0);
 
   // Peril comparison data for selected scenario
   const perilData = PERILS.map(p => ({
     peril: p.label.replace(/ Flood$/, '').replace(/^Flood /, ''),
-    score: Math.round(filteredAssets.reduce((s, a) => s + (a[p.id] || 0), 0) / filteredAssets.length * scenarioMult),
+    score: filteredAssets.length ? Math.round(filteredAssets.reduce((s, a) => s + (a[p.id] || 0), 0) / filteredAssets.length * scenarioMult) : 0,
     color: p.color,
   }));
 
@@ -131,7 +131,7 @@ export default function PhysicalHazardMapPage() {
   const radarData = PERILS.map(p => {
     const row = { peril: p.label.split(' ')[0] };
     SCENARIOS.forEach(s => {
-      row[s.id] = Math.round(filteredAssets.reduce((acc, a) => acc + (a[p.id] || 0), 0) / filteredAssets.length * s.mult);
+      row[s.id] = filteredAssets.length ? Math.round(filteredAssets.reduce((acc, a) => acc + (a[p.id] || 0), 0) / filteredAssets.length * s.mult) : 0;
     });
     return row;
   });

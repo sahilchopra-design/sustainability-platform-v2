@@ -412,7 +412,7 @@ export default function DigitalProductPassportPage() {
           <Section title="EPR Levy by EU Country (€k/yr)">
             <Row gap={12}>
               <KpiCard label="Total Annual EPR Exposure" value={`€ ${totalEprExposure}k`} sub="Across 10 EU countries" accent />
-              <KpiCard label="Highest Levy Country" value={eprCountries.sort((a, b) => b.levy - a.levy)[0].country} sub={`€ ${eprCountries[0].levy}k/yr`} />
+              <KpiCard label="Highest Levy Country" value={[...eprCountries].sort((a, b) => b.levy - a.levy)[0].country} sub={`€ ${eprCountries[0].levy}k/yr`} />
             </Row>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={eprCountries}>

@@ -624,7 +624,7 @@ export default function ActAssessmentPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sectorHeatmap.sort((a,b)=>b.avg-a.avg).map(sh => (
+                    {[...sectorHeatmap].sort((a,b)=>b.avg-a.avg).map(sh => (
                       <tr key={sh.sector} style={{ borderBottom:`1px solid ${T.border}` }}>
                         <td style={{ padding:'6px 8px', fontWeight:600 }}>{sh.sector}</td>
                         <td style={{ padding:'6px 8px', textAlign:'center', fontFamily:T.mono }}>{sh.count}</td>

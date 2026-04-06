@@ -195,7 +195,7 @@ export default function ParisAlignmentPage() {
       const budgetUsed = +(20 + s * 60).toFixed(1);
       const hasSBTi = h.sbti_committed || s > 0.55;
       const nzYear = h.carbon_neutral_target_year || (s > 0.3 ? (2035 + Math.floor(s * 25)) : null);
-      const onTrack15 = itr <= 1.8;
+      const onTrack15 = itr <= 1.5;
       const onTrack20 = itr <= 2.2;
       const nzQuality = nzYear && hasSBTi ? (s > 0.7 ? 'Law-Backed' : 'SBTi-Verified') : nzYear ? 'Pledged' : 'None';
       const annualEmissions = (h.scope1_co2e || 50000) + (h.scope2_co2e || 20000);
@@ -216,7 +216,8 @@ export default function ParisAlignmentPage() {
   /* Aggregates */
   const agg = useMemo(() => {
     const n = enriched.length || 1;
-    const wtdITR = enriched.reduce((s, e) => s + e.itr * (e.weight || 1/n), 0) / enriched.reduce((s, e) => s + (e.weight || 1/n), 0);
+    const _wDenom = enriched.reduce((s, e) => s + (e.weight || 1/n), 0);
+    const wtdITR = _wDenom ? enriched.reduce((s, e) => s + e.itr * (e.weight || 1/n), 0) / _wDenom : 0;
     const budgetAligned = enriched.filter(e => e.budgetUsed < 50).length;
     const on15 = enriched.filter(e => e.onTrack15).length;
     const on20 = enriched.filter(e => e.onTrack20).length;

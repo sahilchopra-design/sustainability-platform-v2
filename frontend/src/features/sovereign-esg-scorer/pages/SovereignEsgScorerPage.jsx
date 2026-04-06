@@ -99,7 +99,7 @@ const PROVIDER_DATA=COUNTRIES.slice(0,20).map(c=>({
 
 /* ─── Portfolio exposure: 30 holdings ──────────────────────────────────── */
 const PORTFOLIO=Array.from({length:30},(_,i)=>{
-  const c=COUNTRIES[Math.floor(sr(i*17)*60)];
+  const c=COUNTRIES[Math.floor(sr(i*17)*COUNTRIES.length)];
   return {
     id:i,country:c.name,iso2:c.iso2,esgRating:c.esgRating,totalEsg:c.totalEsg,
     weightPct:+(sr(i*19)*8+0.5).toFixed(2),
@@ -195,7 +195,7 @@ export default function SovereignEsgScorerPage(){
   },[]);
 
   const portfolioFiltered=useMemo(()=>{
-    return [...PORTFOLIO].sort((a,b)=>portfolioSortAsc?(a[portfolioSort]-b[portfolioSort]):(b[portfolioSort]-a[portfolioSort]));
+    return [...PORTFOLIO].sort((a,b)=>{const av=a[portfolioSort]??0,bv=b[portfolioSort]??0;return portfolioSortAsc?(av<bv?-1:av>bv?1:0):(bv<av?-1:bv>av?1:0);});
   },[portfolioSort,portfolioSortAsc]);
 
   const handlePortSort=useCallback((col)=>{
@@ -212,13 +212,13 @@ export default function SovereignEsgScorerPage(){
     const ratingDist=RATING_TIERS.map(r=>({name:r,count:COUNTRIES.filter(c=>c.esgRating===r).length,color:ratingColor(r)}));
     const kpis=[
       {label:'Universe',value:'60',unit:'countries',delta:'+4 QoQ',good:true},
-      {label:'Avg ESG Score',value:(COUNTRIES.reduce((s,c)=>s+c.totalEsg,0)/60).toFixed(1),unit:'/100',delta:'+1.2',good:true},
+      {label:'Avg ESG Score',value:(COUNTRIES.reduce((s,c)=>s+c.totalEsg,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'+1.2',good:true},
       {label:'AAA/AA Rated',value:COUNTRIES.filter(c=>c.esgRating==='AAA'||c.esgRating==='AA').length,unit:'ctys',delta:'+2',good:true},
       {label:'Deteriorating',value:COUNTRIES.filter(c=>c.trend==='deteriorating').length,unit:'ctys',delta:'+3',good:false},
-      {label:'Avg E-Score',value:(COUNTRIES.reduce((s,c)=>s+c.eScore,0)/60).toFixed(1),unit:'/100',delta:'+0.8',good:true},
-      {label:'Avg S-Score',value:(COUNTRIES.reduce((s,c)=>s+c.sScore,0)/60).toFixed(1),unit:'/100',delta:'+1.4',good:true},
-      {label:'Avg G-Score',value:(COUNTRIES.reduce((s,c)=>s+c.gScore,0)/60).toFixed(1),unit:'/100',delta:'-0.3',good:false},
-      {label:'Avg Renewables',value:(COUNTRIES.reduce((s,c)=>s+c.renewableSharePct,0)/60).toFixed(1),unit:'%',delta:'+2.1',good:true},
+      {label:'Avg E-Score',value:(COUNTRIES.reduce((s,c)=>s+c.eScore,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'+0.8',good:true},
+      {label:'Avg S-Score',value:(COUNTRIES.reduce((s,c)=>s+c.sScore,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'+1.4',good:true},
+      {label:'Avg G-Score',value:(COUNTRIES.reduce((s,c)=>s+c.gScore,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'-0.3',good:false},
+      {label:'Avg Renewables',value:(COUNTRIES.reduce((s,c)=>s+c.renewableSharePct,0)/COUNTRIES.length).toFixed(1),unit:'%',delta:'+2.1',good:true},
     ];
     return (<>
       <div style={S.grid(4)}>
@@ -252,7 +252,7 @@ export default function SovereignEsgScorerPage(){
               <span style={{...S.pill(ratingColor(r.name)),fontSize:11}}>{r.name}</span>
               <span style={{fontFamily:T.mono,fontSize:12,fontWeight:700,color:T.navy}}>{r.count}</span>
             </div>
-            {S.bar(r.count/60*100,ratingColor(r.name))}
+            {S.bar(r.count/COUNTRIES.length*100,ratingColor(r.name))}
           </div>))}
         </div>
       </div>
@@ -458,7 +458,7 @@ export default function SovereignEsgScorerPage(){
         {[{label:'Improving',val:improving,color:T.green},{label:'Stable',val:stable,color:T.amber},{label:'Deteriorating',val:deteriorating,color:T.red}].map(m=>(<div key={m.label} style={{...S.kpi,borderLeft:`4px solid ${m.color}`}}>
           <div style={S.kpiLabel}>{m.label}</div>
           <div style={{...S.kpiVal,color:m.color}}>{m.val}</div>
-          <div style={{fontSize:11,color:T.textMut}}>{(m.val/60*100).toFixed(0)}% of universe</div>
+          <div style={{fontSize:11,color:T.textMut}}>{(m.val/COUNTRIES.length*100).toFixed(0)}% of universe</div>
         </div>))}
       </div>
       <div style={{...S.card,marginTop:14}}>

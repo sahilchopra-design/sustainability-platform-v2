@@ -380,7 +380,7 @@ export default function SovereignClimateRiskPage() {
                         <td style={{ padding: '8px 6px', fontFamily: T.mono }}>{c.fossilPct}%</td>
                         <td style={{ padding: '8px 6px', fontFamily: T.mono }}>${c.gdp}B</td>
                         <td style={{ padding: '8px 6px', fontFamily: T.mono, color: T.red, fontWeight: 600 }}>${stranded.toFixed(1)}B</td>
-                        <td style={{ padding: '8px 6px', fontFamily: T.mono }}>{(stranded / c.gdp * 100).toFixed(1)}%</td>
+                        <td style={{ padding: '8px 6px', fontFamily: T.mono }}>{(c.gdp>0?(stranded/c.gdp*100):0).toFixed(1)}%</td>
                       </tr>
                     );
                   })}

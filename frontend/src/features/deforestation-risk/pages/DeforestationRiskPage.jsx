@@ -563,7 +563,7 @@ export default function DeforestationRiskPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {COUNTRY_RISK.sort((a, b) => b.forest_loss_kha - a.forest_loss_kha).map(c => (
+                  {[...COUNTRY_RISK].sort((a, b) => b.forest_loss_kha - a.forest_loss_kha).map(c => (
                     <tr key={c.code} style={{ borderBottom: `1px solid ${T.border}` }}>
                       <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{c.name}</td>
                       <td style={{ padding: '10px 12px' }}><Badge label={c.code} /></td>
@@ -691,7 +691,7 @@ export default function DeforestationRiskPage() {
                   <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 11, fill: T.text }} />
                   <Tooltip contentStyle={{ borderRadius: 8, border: `1px solid ${T.border}`, fontFamily: T.font, fontSize: 12 }} formatter={v => [`${v} Mha`, 'Area Loss']} />
                   <Bar dataKey="loss" radius={[0, 4, 4, 0]}>
-                    {DEFORESTATION_COMMODITIES.sort((a, b) => b.area_loss_mha - a.area_loss_mha).map((c, i) => <Cell key={i} fill={c.color} />)}
+                    {[...DEFORESTATION_COMMODITIES].sort((a, b) => b.area_loss_mha - a.area_loss_mha).map((c, i) => <Cell key={i} fill={c.color} />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>

@@ -69,7 +69,7 @@ export default function SentimentAnalysisPage(){
 
   const toggleSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}};
 
-  const avgSent=Math.round(COMPANIES.reduce((a,c)=>a+c.overall,0)/COMPANIES.length);
+  const avgSent=Math.round(COMPANIES.reduce((a,c)=>a+c.overall,0)/Math.max(1,COMPANIES.length));
   const improving=COMPANIES.filter(c=>c.trend==='Improving').length;
   const totalControversies=COMPANIES.reduce((a,c)=>a+c.controversies,0);
 
@@ -211,7 +211,7 @@ export default function SentimentAnalysisPage(){
     const signalCompanies=COMPANIES.filter(c=>Math.abs(c.priceCorr)>=signalThreshold).sort((a,b)=>Math.abs(b.priceCorr)-Math.abs(a.priceCorr));
     const buckets=[{label:'Strong Positive (>30)',count:COMPANIES.filter(c=>c.priceCorr>30).length},{label:'Weak Positive (0-30)',count:COMPANIES.filter(c=>c.priceCorr>=0&&c.priceCorr<=30).length},{label:'Weak Negative (-30-0)',count:COMPANIES.filter(c=>c.priceCorr<0&&c.priceCorr>=-30).length},{label:'Strong Negative (<-30)',count:COMPANIES.filter(c=>c.priceCorr<-30).length}];
     return(<div>
-      <Row cols="1fr 1fr 1fr 1fr"><Kpi label="Avg Sentiment-Price Corr" value={`${Math.round(COMPANIES.reduce((a,c)=>a+c.priceCorr,0)/COMPANIES.length)}%`} accent={T.navy}/><Kpi label="Strong Signals" value={signalCompanies.length} sub={`Threshold: ${signalThreshold}%`} accent={T.gold}/><Kpi label="Positive Correlation" value={COMPANIES.filter(c=>c.priceCorr>0).length} accent={T.green}/><Kpi label="Negative Correlation" value={COMPANIES.filter(c=>c.priceCorr<0).length} accent={T.red}/></Row>
+      <Row cols="1fr 1fr 1fr 1fr"><Kpi label="Avg Sentiment-Price Corr" value={`${Math.round(COMPANIES.reduce((a,c)=>a+c.priceCorr,0)/Math.max(1,COMPANIES.length))}%`} accent={T.navy}/><Kpi label="Strong Signals" value={signalCompanies.length} sub={`Threshold: ${signalThreshold}%`} accent={T.gold}/><Kpi label="Positive Correlation" value={COMPANIES.filter(c=>c.priceCorr>0).length} accent={T.green}/><Kpi label="Negative Correlation" value={COMPANIES.filter(c=>c.priceCorr<0).length} accent={T.red}/></Row>
       <div style={{display:'flex',gap:12,marginBottom:14,alignItems:'center',flexWrap:'wrap'}}>
         <div style={{display:'flex',alignItems:'center',gap:8}}><span style={{fontSize:12,color:T.textSec}}>Signal Threshold:</span><input type="range" min={10} max={60} value={signalThreshold} onChange={e=>setSignalThreshold(+e.target.value)} style={{width:150,accentColor:T.navy}}/><span style={{fontSize:12,fontWeight:700,fontFamily:T.mono,color:T.navy}}>{signalThreshold}%</span></div>
         <select value={corrWindow} onChange={e=>setCorrWindow(e.target.value)} style={{border:`1px solid ${T.border}`,borderRadius:6,padding:'7px 10px',fontSize:12,fontFamily:T.font}}><option value="1m">1 Month</option><option value="3m">3 Months</option><option value="6m">6 Months</option><option value="12m">12 Months</option></select>

@@ -61,7 +61,7 @@ const COUNTRIES_PHY=COUNTRY_NAMES.map((name,i)=>{
   const coastalPopExposedM=+(sr(s+26)*80+0.5).toFixed(1);
   const infrastructureVulnerabilityScore=+Math.min(100,(compositePhysicalRisk*8+sr(s+27)*25)).toFixed(1);
   const adaptationCapacity=+(95-(compositePhysicalRisk*6)-(regionIdx>=4?15:0)+sr(s+28)*20).toFixed(1);
-  const climateVulnerabilityIndex=+(100-adaptationCapacity+compositePhysicalRisk*2).toFixed(1);
+  const climateVulnerabilityIndex=+(Math.min(100,100-adaptationCapacity)).toFixed(1);
   /* Scenario data */
   const scenario2030RCP26=+(gdpAtRisk2030Pct*0.6).toFixed(1);
   const scenario2030RCP45=+(gdpAtRisk2030Pct*0.85).toFixed(1);
@@ -91,7 +91,7 @@ const NGFS_DATA=NGFS_ECONOMIES.map((eco,ei)=>{
       scenario:scen,
       gdpImpact:NGFS_YEARS.map((yr,yi)=>({
         year:yr,
-        impact:+((si*0.8+yi*0.5+(base?.compositePhysicalRisk||50)/20)*(-1)+(sr(ei*13+si*7+yi*3)-0.5)*2).toFixed(2),
+        impact:+(([1.0,0.7,0.3,0.6,1.3][si]*2+yi*0.5+(base?.compositePhysicalRisk||50)/20)*(-1)+(sr(ei*13+si*7+yi*3)-0.5)*2).toFixed(2),
       })),
     })),
   };

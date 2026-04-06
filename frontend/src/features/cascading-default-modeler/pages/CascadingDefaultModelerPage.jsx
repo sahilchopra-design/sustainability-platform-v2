@@ -44,7 +44,7 @@ export default function CascadingDefaultModelerPage(){
 
   const totalExposure = ENTITIES.reduce((s,e)=>s+e.exposure,0);
   const totalCapHit = ENTITIES.reduce((s,e)=>s+e.capitalHit,0);
-  const avgCoVaR = ENTITIES.reduce((s,e)=>s+e.deltaCoVaR,0)/ENTITIES.length;
+  const avgCoVaR = ENTITIES.reduce((s,e)=>s+e.deltaCoVaR,0)/Math.max(1,ENTITIES.length);
 
   const cascadeData = useMemo(()=>CHAIN_STEPS.map(s=>({...s,lossAccum:Math.round(s.lossAccum*severity*(carbonPrice/120))})),[severity,carbonPrice]);
   const loanLoss = useMemo(()=>ENTITIES.map(e=>({...e,el:Math.round(e.exposure*e.pd*e.lgd*severity),uel:Math.round(e.exposure*e.pd*e.lgd*severity*2.5)})),[severity]);

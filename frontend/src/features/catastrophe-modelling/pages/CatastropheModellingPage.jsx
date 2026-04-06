@@ -164,8 +164,8 @@ export default function CatastropheModellingPage(){
   const portfolioStats=useMemo(()=>{
     const totalTIV=ASSETS.reduce((a,b)=>a+b.tiv,0);
     const totalAAL=ASSETS.reduce((a,b)=>a+b.aal,0);
-    const avgPML100=ASSETS.reduce((a,b)=>a+b.pml100,0)/ASSETS.length;
-    const avgVulnerability=ASSETS.reduce((a,b)=>a+b.vulnerability,0)/ASSETS.length;
+    const avgPML100=ASSETS.reduce((a,b)=>a+b.pml100,0)/Math.max(1,ASSETS.length);
+    const avgVulnerability=ASSETS.reduce((a,b)=>a+b.vulnerability,0)/Math.max(1,ASSETS.length);
     const sorted=[...ASSETS].sort((a,b)=>b.pml500-a.pml500);
     const var99=sorted[Math.floor(ASSETS.length*0.01)]?.pml500||0;
     const tvar99=sorted.slice(0,Math.floor(ASSETS.length*0.01)+1).reduce((a,b)=>a+b.pml500,0)/(Math.floor(ASSETS.length*0.01)+1);

@@ -75,7 +75,7 @@ export default function StructuredCreditClimatePage() {
   const [selectedTranche, setSelectedTranche] = useState('All');
 
   const totalBalance = LOANS.reduce((s, l) => s + l.balance, 0);
-  const avgLTV = Math.round(LOANS.reduce((s, l) => s + l.ltv, 0) / LOANS.length);
+  const avgLTV = Math.round(LOANS.reduce((s, l) => s + l.ltv, 0) / Math.max(1, LOANS.length));
   const floodCount = LOANS.filter(l => l.floodZone).length;
   const fireCount = LOANS.filter(l => l.wildfireZone).length;
 

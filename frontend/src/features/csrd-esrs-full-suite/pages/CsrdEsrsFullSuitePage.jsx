@@ -17,8 +17,7 @@ const E1_DRS = [
   { dr:'E1-3 Actions', status:'Complete', score:78 },{ dr:'E1-4 Targets', status:'In Progress', score:65 },
   { dr:'E1-5 Energy Consumption', status:'Complete', score:90 },{ dr:'E1-6 GHG Emissions (S1+S2)', status:'Complete', score:88 },
   { dr:'E1-7 GHG Removals', status:'In Progress', score:55 },{ dr:'E1-8 Internal Carbon Pricing', status:'Draft', score:42 },
-  { dr:'E1-9 Financial Effects', status:'In Progress', score:60 },{ dr:'E1-10 GHG Emissions (S3)', status:'Draft', score:35 },
-  { dr:'E1-11 Green Revenue', status:'In Progress', score:58 },{ dr:'E1-12 CapEx/OpEx', status:'Draft', score:40 },
+  { dr:'E1-9 Financial Effects', status:'In Progress', score:60 },
 ];
 
 const E2_DRS = [

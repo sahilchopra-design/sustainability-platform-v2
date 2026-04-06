@@ -363,14 +363,14 @@ export default function SocialImpactPage() {
                   <ResponsiveContainer width="50%" height={280}>
                     <PieChart>
                       <Pie data={SDG_FRAMEWORK.map(sdg => ({ name: sdg.name, value: kpis.sdgAgg ? kpis.sdgAgg[sdg.id] : 0, color: sdg.color })).sort((a, b) => b.value - a.value).slice(0, 5)} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}>
-                        {SDG_FRAMEWORK.sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5).map((sdg, i) => <Cell key={i} fill={sdg.color} />)}
+                        {[...SDG_FRAMEWORK].sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5).map((sdg, i) => <Cell key={i} fill={sdg.color} />)}
                       </Pie>
                       <Tooltip />
                     </PieChart>
                   </ResponsiveContainer>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 10 }}>Revenue-Aligned SDGs</div>
-                    {SDG_FRAMEWORK.sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5).map(sdg => (
+                    {[...SDG_FRAMEWORK].sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5).map(sdg => (
                       <div key={sdg.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                         <span style={{ fontSize: 18 }}>{sdg.icon}</span>
                         <span style={{ fontSize: 12, color: T.text, flex: 1 }}>SDG {sdg.id}: {sdg.name}</span>
@@ -815,7 +815,7 @@ export default function SocialImpactPage() {
           <Card>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025'].map((q, qi) => {
-                const top5 = SDG_FRAMEWORK.sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5);
+                const top5 = [...SDG_FRAMEWORK].sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5);
                 const obj = { quarter: q };
                 top5.forEach(sdg => {
                   const base = (kpis.sdgAgg?.[sdg.id] || 40) - 15 + qi * 3;
@@ -828,7 +828,7 @@ export default function SocialImpactPage() {
                 <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ borderRadius: 8, fontFamily: T.font }} />
                 <Legend />
-                {SDG_FRAMEWORK.sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5).map(sdg => (
+                {[...SDG_FRAMEWORK].sort((a, b) => (kpis.sdgAgg?.[b.id] || 0) - (kpis.sdgAgg?.[a.id] || 0)).slice(0, 5).map(sdg => (
                   <Bar key={sdg.id} dataKey={`SDG ${sdg.id}`} name={`SDG ${sdg.id}: ${sdg.name}`} fill={sdg.color} radius={[3, 3, 0, 0]} />
                 ))}
               </BarChart>

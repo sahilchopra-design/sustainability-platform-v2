@@ -159,7 +159,7 @@ export default function PhysicalRiskPortfolioPage() {
           sub={`${pct(highRiskPct)} of portfolio`}
           color={T.red} alert={highRiskPct > 0.20} />
         <KpiCard label="Insurance Gap" value={fmt(uninsuredAAL)}
-          sub={`${pct(1 - insuredExp / totalExposure)} uninsured`}
+          sub={`${pct(totalExposure ? 1 - insuredExp / totalExposure : 0)} uninsured`}
           color={T.purple} alert={uninsuredAAL > totalAAL * 0.4} />
         <KpiCard label="Reg. Breaches" value={regChecks.filter(r => r.breach).length}
           sub="ECB/BoE/APRA thresholds"
@@ -478,7 +478,7 @@ export default function PhysicalRiskPortfolioPage() {
               </thead>
               <tbody>
                 {[
-                  { reg: 'ECB', framework: 'CST 2022 Short-term', scenario: '3°C (Disorderly)', metric: 'NII impact', addon: `${pct(totalPML100 / (totalExposure * 0.12))} of Tier 1`, breach: totalPML100 / (totalExposure * 0.12) > 0.05 },
+                  { reg: 'ECB', framework: 'CST 2022 Short-term', scenario: '3°C (Disorderly)', metric: 'NII impact', addon: `${pct(totalPML100 / tier1)} of Tier 1`, breach: totalPML100 / tier1 > 0.05 },
                   { reg: 'BoE', framework: 'CBES 2021 ELE', scenario: 'Late Action', metric: 'AAL / RWA', addon: `${pct(totalAAL / (totalExposure * 0.85), 3)}`, breach: totalAAL / (totalExposure * 0.85) > 0.01 },
                   { reg: 'APRA', framework: 'CPG 229', scenario: 'Orderly Transition', metric: 'High-Risk Concentration', addon: `${pct(highRiskPct)} of portfolio`, breach: highRiskPct > 0.2 },
                   { reg: 'ECB', framework: 'DFAST 2024', scenario: 'Physical Shock', metric: 'Regional Concentration', addon: `${pct(maxRegionExp)} top region`, breach: maxRegionExp > 0.3 },

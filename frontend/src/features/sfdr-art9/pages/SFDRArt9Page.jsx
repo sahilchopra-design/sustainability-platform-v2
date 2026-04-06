@@ -43,7 +43,7 @@ const MONTHLY=Array.from({length:24},(_,i)=>{
 });
 
 const PAI_INDICATORS=Array.from({length:18},(_,i)=>{
-  const names=['GHG Scope 1','GHG Scope 2','GHG Scope 3','Carbon Footprint','GHG Intensity','Fossil Fuel Exposure','Non-renewable Energy','Energy Intensity','Biodiversity Impact','Water Emissions','Hazardous Waste','UNGC Violations','Gender Pay Gap','Board Gender Diversity','Controversial Weapons','Social Violations','Land Degradation','Deforestation Risk'];
+  const names=['GHG Scope 1','GHG Scope 2','GHG Scope 3','Carbon Footprint','GHG Intensity','Fossil Fuel Exposure','Non-renewable Energy','Energy Intensity','Biodiversity Impact','Water Emissions','Hazardous Waste','UNGC Violations','Gender Pay Gap','Board Gender Diversity','Controversial Weapons','Social Violations','RE Fossil Fuel Exposure','RE Energy Inefficiency'];
   return{id:i+1,name:names[i],category:i<8?'Environmental':'Social',mandatory:i<14,
     coverage:+(sr(i*117)*30+65).toFixed(1),avgScore:+(sr(i*121)*40+40).toFixed(1),
     trend:sr(i*127)>0.5?'Improving':'Stable',dataQuality:['High','Medium','Low'][Math.floor(sr(i*131)*3)]};
@@ -98,10 +98,11 @@ export default function SFDRArt9Page(){
 
   const kpis=useMemo(()=>{
     const tot=filtered.length;
-    const avgAum=filtered.reduce((s,f)=>s+f.aum,0)/tot;
-    const avgSust=filtered.reduce((s,f)=>s+parseFloat(f.sustainableInvPct),0)/tot;
-    const avgTax=filtered.reduce((s,f)=>s+parseFloat(f.taxonomyAligned),0)/tot;
-    const avgCarb=filtered.reduce((s,f)=>s+parseFloat(f.carbonIntensity),0)/tot;
+    const d=Math.max(1,tot);
+    const avgAum=filtered.reduce((s,f)=>s+f.aum,0)/d;
+    const avgSust=filtered.reduce((s,f)=>s+parseFloat(f.sustainableInvPct),0)/d;
+    const avgTax=filtered.reduce((s,f)=>s+parseFloat(f.taxonomyAligned),0)/d;
+    const avgCarb=filtered.reduce((s,f)=>s+parseFloat(f.carbonIntensity),0)/d;
     return{tot,avgAum,avgSust,avgTax,avgCarb};
   },[filtered]);
 

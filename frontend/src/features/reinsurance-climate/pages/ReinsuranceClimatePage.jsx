@@ -143,8 +143,8 @@ export default function ReinsuranceClimatePage(){
     const active=TREATIES.filter(t=>t.status==='Active');
     const totalLimit=active.reduce((a,b)=>a+b.limit,0);
     const totalPremium=active.reduce((a,b)=>a+b.premium,0);
-    const avgLR=+(active.reduce((a,b)=>a+b.historicalLR,0)/active.length).toFixed(2);
-    const avgClimateAdj=+(active.reduce((a,b)=>a+b.climateUplift,0)/active.length).toFixed(2);
+    const avgLR=+(active.reduce((a,b)=>a+b.historicalLR,0)/Math.max(1,active.length)).toFixed(2);
+    const avgClimateAdj=+(active.reduce((a,b)=>a+b.climateUplift,0)/Math.max(1,active.length)).toFixed(2);
     const totalCatBonds=CAT_BONDS.filter(b=>b.status==='Outstanding').reduce((a,b)=>a+b.size,0);
     return {active:active.length,totalLimit,totalPremium:+totalPremium.toFixed(1),avgLR,avgClimateAdj,totalCatBonds,reinsurers:new Set(TREATIES.map(t=>t.reinsurer)).size,treaties:TREATIES.length};
   },[]);

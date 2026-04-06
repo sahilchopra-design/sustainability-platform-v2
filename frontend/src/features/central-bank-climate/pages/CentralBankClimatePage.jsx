@@ -479,7 +479,7 @@ function DetailPanel({cb,onClose}){
     return{dim:d,val:cb.greenQE?75+sr(cb.id*9)*20:10};
   });
 
-  const policyScore=Math.round(radarSingle.reduce((s,r)=>s+r.val,0)/radarSingle.length);
+  const policyScore=Math.round(radarSingle.reduce((s,r)=>s+r.val,0)/Math.max(1,radarSingle.length));
 
   return (
     <div style={{position:'fixed',top:0,right:0,width:540,height:'100vh',background:T.surface,borderLeft:`2px solid ${T.gold}`,zIndex:1000,overflowY:'auto',padding:24,boxShadow:'-4px 0 24px rgba(0,0,0,0.12)'}}>
@@ -564,7 +564,7 @@ function Tab2(){
       <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
         <KPI label="Active Frameworks" value={STRESS_FRAMEWORKS.length} sub="major CB stress test programs" color={T.navy}/>
         <KPI label="Banks Tested" value={STRESS_FRAMEWORKS.reduce((s,f)=>s+f.banks,0)} sub="across all frameworks" color={T.gold}/>
-        <KPI label="Avg Horizon" value={Math.round(STRESS_FRAMEWORKS.reduce((s,f)=>s+f.horizonYears,0)/STRESS_FRAMEWORKS.length)+' yrs'} sub="scenario projection period" color={T.sage}/>
+        <KPI label="Avg Horizon" value={Math.round(STRESS_FRAMEWORKS.reduce((s,f)=>s+f.horizonYears,0)/Math.max(1,STRESS_FRAMEWORKS.length))+' yrs'} sub="scenario projection period" color={T.sage}/>
         <KPI label="Upcoming Tests" value={UPCOMING_TESTS.length} sub="scheduled 2025-2026" color={T.teal}/>
       </div>
 
@@ -742,8 +742,8 @@ function Tab3(){
     <div style={{display:'flex',flexDirection:'column',gap:20}}>
       <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
         <KPI label="Green QE Total" value={'\u20AC'+GREEN_PROGRAMS.reduce((s,p)=>s+p.volumeBn,0)+'bn'} sub="across 7 programs" color={T.navy}/>
-        <KPI label="Avg Carbon Reduction" value={Math.round(GREEN_PROGRAMS.reduce((s,p)=>s+p.carbonReduction,0)/GREEN_PROGRAMS.length)+'%'} sub="portfolio weighted intensity" color={T.sage}/>
-        <KPI label="Reserve ESG Score" value={Math.round(RESERVE_ESG.reduce((s,r)=>s+r.esgIntegration,0)/RESERVE_ESG.length)+'/100'} sub="average across 8 CBs" color={T.gold}/>
+        <KPI label="Avg Carbon Reduction" value={Math.round(GREEN_PROGRAMS.reduce((s,p)=>s+p.carbonReduction,0)/Math.max(1,GREEN_PROGRAMS.length))+'%'} sub="portfolio weighted intensity" color={T.sage}/>
+        <KPI label="Reserve ESG Score" value={Math.round(RESERVE_ESG.reduce((s,r)=>s+r.esgIntegration,0)/Math.max(1,RESERVE_ESG.length))+'/100'} sub="average across 8 CBs" color={T.gold}/>
         <KPI label="Green Collateral Frameworks" value={COLLATERAL_FRAMEWORKS.length} sub="CBs with green haircut benefits" color={T.teal}/>
       </div>
 
@@ -1114,9 +1114,9 @@ function Tab4(){
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12}}>
           {[
             {label:'Sectors with Positive Tilt',value:SECTOR_IMPACT.filter(s=>s.greenTiltImpact.startsWith('+')).length,total:SECTOR_IMPACT.length,color:T.sage},
-            {label:'Avg Positive Spread Compression',value:Math.round(SECTOR_IMPACT.filter(s=>s.spreadChange<0).reduce((s,x)=>s+x.spreadChange,0)/SECTOR_IMPACT.filter(s=>s.spreadChange<0).length)+'bps',total:null,color:T.green},
+            {label:'Avg Positive Spread Compression',value:(()=>{const neg=SECTOR_IMPACT.filter(s=>s.spreadChange<0);return Math.round(neg.reduce((s,x)=>s+x.spreadChange,0)/Math.max(1,neg.length))})()+'bps',total:null,color:T.green},
             {label:'Sectors with CB Bond Buying',value:SECTOR_IMPACT.filter(s=>s.cbBondBuying).length,total:SECTOR_IMPACT.length,color:T.navy},
-            {label:'Avg Negative Spread Widening',value:'+'+Math.round(SECTOR_IMPACT.filter(s=>s.spreadChange>0).reduce((s,x)=>s+x.spreadChange,0)/SECTOR_IMPACT.filter(s=>s.spreadChange>0).length)+'bps',total:null,color:T.red},
+            {label:'Avg Negative Spread Widening',value:(()=>{const pos=SECTOR_IMPACT.filter(s=>s.spreadChange>0);return'+'+Math.round(pos.reduce((s,x)=>s+x.spreadChange,0)/Math.max(1,pos.length))})()+'bps',total:null,color:T.red},
           ].map((m,i)=>(
             <div key={i} style={{background:T.bg,borderRadius:10,padding:14,textAlign:'center'}}>
               <div style={{fontSize:24,fontWeight:700,color:m.color}}>{m.value}{m.total?`/${m.total}`:''}</div>

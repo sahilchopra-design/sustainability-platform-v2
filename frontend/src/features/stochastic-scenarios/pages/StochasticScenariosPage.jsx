@@ -326,7 +326,7 @@ function StochasticScenariosPage() {
       stdev: stdev(impacts),
       skewness: (() => {
         const m = mean(impacts); const sd = stdev(impacts) || 1;
-        return impacts.reduce((s, v) => s + ((v - m) / sd) ** 3, 0) / impacts.length;
+        return impacts.length ? impacts.reduce((s, v) => s + ((v - m) / sd) ** 3, 0) / impacts.length : 0;
       })(),
     };
   }, [impacts, scenarios]);

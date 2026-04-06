@@ -98,7 +98,7 @@ const S2_REQUIREMENTS=[
   {id:2,title:'Climate Strategy — Risks & Opportunities',para:'IFRS S2 §10-12',tcfd:'Strategy a/b',status:'In Progress',score:65,module:'Climate Risk Analytics',
     disclosure:'12 material climate risks identified across value chain. Transition risks: policy, technology, market. Physical risks: acute + chronic.',
     subItems:['Identified climate risks (transition + physical)','Identified climate opportunities','Time horizons for each risk/opportunity','Effects on business model','Effects on value chain']},
-  {id:3,title:'Transition Plan',para:'IFRS S2 §14',tcfd:'Strategy c',status:'In Progress',score:55,module:'Transition Plan Builder',
+  {id:3,title:'Transition Plan',para:'IFRS S2 §14',tcfd:'Strategy b',status:'In Progress',score:55,module:'Transition Plan Builder',
     disclosure:'Transition plan aligned with 1.5C target. Net-zero commitment by 2050. Interim targets: 50% Scope 1+2 reduction by 2030.',
     subItems:['Key assumptions in transition plan','Dependencies on external factors','CapEx and OpEx commitments','Carbon pricing assumptions','Locked-in GHG emissions from assets']},
   {id:4,title:'Climate Scenario Analysis',para:'IFRS S2 §22',tcfd:'Strategy d',status:'Not Started',score:30,module:'Scenario Analysis Engine',

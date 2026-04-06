@@ -877,7 +877,7 @@ function PartBTab(){
       <KPICard label="Total Exposure" value={'$'+fmt(totalExposure)+'M'} sub="Sum insured" color={T.gold}/>
       <KPICard label="Loss Ratio" value={lossRatio+'%'} sub="Claims / Premium" color={+lossRatio>70?T.red:T.green}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="LOB weighted" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
-      <KPICard label="Avg Intensity" value={(totalFE/totalPremium).toFixed(3)} sub="tCO2e per $M GWP" color={T.sage}/>
+      <KPICard label="Avg Intensity" value={(totalPremium ? totalFE/totalPremium : 0).toFixed(3)} sub="tCO2e per $M GWP" color={T.sage}/>
     </div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
       <Card title="FE by Line of Business" citation="Ch.5, Table 5.2-5.3">
@@ -1008,8 +1008,8 @@ function DataQualityTab({positions,setPositions}){
   const[targetDqs,setTargetDqs]=useState(Object.fromEntries(ALL_ASSET_CLASSES.map(ac=>[ac,['Mortgages','Vehicle Loans','Securitisations'].includes(ac)?3:2])));
 
   const byDqs=useMemo(()=>{const g={1:[],2:[],3:[],4:[],5:[]};positions.forEach(p=>g[p.dqs].push(p));return g;},[positions]);
-  const currentAvg=(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(2);
-  const simulatedAvg=useMemo(()=>{let t=0;positions.forEach(p=>{t+=Math.min(p.dqs,targetDqs[p.assetClass]||p.dqs);});return(t/positions.length).toFixed(2);},[positions,targetDqs]);
+  const currentAvg=(positions.length ? positions.reduce((s,p)=>s+p.dqs,0)/positions.length : 0).toFixed(2);
+  const simulatedAvg=useMemo(()=>{let t=0;positions.forEach(p=>{t+=Math.min(p.dqs,targetDqs[p.assetClass]||p.dqs);});return(positions.length ? t/positions.length : 0).toFixed(2);},[positions,targetDqs]);
   const improved=Object.values(actionStatus).filter(v=>v==='complete').length;
   const dqsByAC=useMemo(()=>{const m={};positions.forEach(p=>{if(!m[p.assetClass])m[p.assetClass]={ac:p.assetClass,avg:0,n:0,t:0};m[p.assetClass].t+=p.dqs;m[p.assetClass].n++;});Object.values(m).forEach(v=>v.avg=+(v.t/v.n).toFixed(1));return Object.values(m).sort((a,b)=>b.avg-a.avg);},[positions]);
   const coverageByScope=useMemo(()=>[{scope:'Scope 1',pct:Math.round(positions.filter(p=>p.scope1>0).length/positions.length*100)},{scope:'Scope 2',pct:Math.round(positions.filter(p=>p.scope2>0).length/positions.length*100)},{scope:'Scope 3',pct:Math.round(positions.filter(p=>p.scope3>0).length/positions.length*100)}],[positions]);
@@ -1141,7 +1141,7 @@ function DownstreamTab({positions}){
 
   const downstream=useMemo(()=>{
     const waci=totalOut>0?positions.reduce((s,p)=>s+p.outstanding*p.waci,0)/totalOut:0;
-    const avgDqs=(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(1);
+    const avgDqs=(positions.length ? positions.reduce((s,p)=>s+p.dqs,0)/positions.length : 0).toFixed(1);
     return DOWNSTREAM_MODULES.map(m=>{
       let v='\u2014';
       if(m.field==='totalFinancedEmissions')v=fmt(totalFE)+' tCO2e';
@@ -1157,7 +1157,7 @@ function DownstreamTab({positions}){
   },[positions,totalFE,totalOut,aumBn]);
 
   const doExport=useCallback(()=>{
-    const payload={timestamp:new Date().toISOString(),portfolio:{totalFE:totalFE,totalExposure:totalOut,count:positions.length,avgDqs:+(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(2)},modules:Object.fromEntries(downstream.map(m=>[m.field,{value:m.value,regulation:m.regulation}])),holdings:positions.map(p=>({name:p.name,ac:p.assetClass,fe:p.financedEmissions,dqs:p.dqs,attr:p.attrFactor}))};
+    const payload={timestamp:new Date().toISOString(),portfolio:{totalFE:totalFE,totalExposure:totalOut,count:positions.length,avgDqs:+(positions.length ? positions.reduce((s,p)=>s+p.dqs,0)/positions.length : 0).toFixed(2)},modules:Object.fromEntries(downstream.map(m=>[m.field,{value:m.value,regulation:m.regulation}])),holdings:positions.map(p=>({name:p.name,ac:p.assetClass,fe:p.financedEmissions,dqs:p.dqs,attr:p.attrFactor}))};
     const str=JSON.stringify(payload,null,2);
     const blob=new Blob([str],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='pcaf_downstream.json';a.click();URL.revokeObjectURL(u);
   },[positions,totalFE,totalOut,downstream]);

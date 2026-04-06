@@ -124,9 +124,9 @@ export default function ParametricInsurancePage(){
     const active=PRODUCTS.filter(p=>p.status==='Active');
     const totalCoverage=active.reduce((a,b)=>a+b.maxPayout,0);
     const totalPremium=active.reduce((a,b)=>a+b.premium,0);
-    const avgBasisRisk=+(active.reduce((a,b)=>a+b.basisRisk,0)/active.length).toFixed(1);
+    const avgBasisRisk=+(active.reduce((a,b)=>a+b.basisRisk,0)/Math.max(1,active.length)).toFixed(1);
     const totalBeneficiaries=active.reduce((a,b)=>a+b.beneficiaries,0);
-    const avgPayoutTime=Math.round(active.reduce((a,b)=>a+b.avgPayoutTime,0)/active.length);
+    const avgPayoutTime=Math.round(active.reduce((a,b)=>a+b.avgPayoutTime,0)/Math.max(1,active.length));
     return {active:active.length,totalCoverage,totalPremium:+totalPremium.toFixed(1),avgBasisRisk,totalBeneficiaries,avgPayoutTime,countries:new Set(PRODUCTS.map(p=>p.country)).size,triggerTypes:TRIGGER_TYPES.length};
   },[]);
 

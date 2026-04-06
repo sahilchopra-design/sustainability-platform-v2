@@ -144,7 +144,7 @@ export default function CreditIntegrityDDPage() {
     [sortBy]
   );
 
-  const avgIntegrity = Math.round(CREDITS.reduce((a, c) => a + c.overall, 0) / CREDITS.length);
+  const avgIntegrity = Math.round(CREDITS.reduce((a, c) => a + c.overall, 0) / Math.max(1, CREDITS.length));
   const flagged = CREDITS.filter(c => c.flag).length;
   const avgAdjustedPremium = ((CREDITS.reduce((a, c) => a + c.adjustedPrice, 0) / CREDITS.reduce((a, c) => a + c.price, 0) - 1) * 100).toFixed(1);
 
@@ -198,11 +198,11 @@ export default function CreditIntegrityDDPage() {
             <Section title="Integrity Dimensions — Portfolio Average">
               <ResponsiveContainer width="100%" height={240}>
                 <RadarChart data={[
-                  { dim: 'Additionality', score: Math.round(CREDITS.reduce((a, c) => a + c.additionality, 0) / CREDITS.length) },
-                  { dim: 'Permanence',    score: Math.round(CREDITS.reduce((a, c) => a + c.permanence, 0)    / CREDITS.length) },
-                  { dim: 'MRV Quality',   score: Math.round(CREDITS.reduce((a, c) => a + c.mrv, 0)           / CREDITS.length) },
-                  { dim: 'Co-Benefits',   score: Math.round(CREDITS.reduce((a, c) => a + c.cobenefits, 0)    / CREDITS.length) },
-                  { dim: 'Safeguards',    score: Math.round(CREDITS.reduce((a, c) => a + c.safeguards, 0)    / CREDITS.length) },
+                  { dim: 'Additionality', score: Math.round(CREDITS.reduce((a, c) => a + c.additionality, 0) / Math.max(1, CREDITS.length)) },
+                  { dim: 'Permanence',    score: Math.round(CREDITS.reduce((a, c) => a + c.permanence, 0)    / Math.max(1, CREDITS.length)) },
+                  { dim: 'MRV Quality',   score: Math.round(CREDITS.reduce((a, c) => a + c.mrv, 0)           / Math.max(1, CREDITS.length)) },
+                  { dim: 'Co-Benefits',   score: Math.round(CREDITS.reduce((a, c) => a + c.cobenefits, 0)    / Math.max(1, CREDITS.length)) },
+                  { dim: 'Safeguards',    score: Math.round(CREDITS.reduce((a, c) => a + c.safeguards, 0)    / Math.max(1, CREDITS.length)) },
                 ]}>
                   <PolarGrid stroke="#e5e0d8" />
                   <PolarAngleAxis dataKey="dim" style={{ fontSize: 11, fontFamily: 'DM Sans, sans-serif' }} />
@@ -393,7 +393,7 @@ export default function CreditIntegrityDDPage() {
         <>
           <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
             <Kpi label="High-Risk Flags Found" value={`${GREENWASH_FLAGS.filter(f => f.severity === 'High' || f.severity === 'Very High').length}`} sub="Across portfolio" color={T.red} />
-            <Kpi label="Avg Flag Frequency" value={`${Math.round(GREENWASH_FLAGS.reduce((a, f) => a + f.frequency, 0) / GREENWASH_FLAGS.length)}%`} sub="Of reviewed credits" color={T.orange} />
+            <Kpi label="Avg Flag Frequency" value={`${Math.round(GREENWASH_FLAGS.reduce((a, f) => a + f.frequency, 0) / Math.max(1, GREENWASH_FLAGS.length))}%`} sub="Of reviewed credits" color={T.orange} />
             <Kpi label="FPIC Compliance" value="62%" sub="Free, Prior & Informed Consent" color={T.teal} />
             <Kpi label="Leakage Assessed" value="71%" sub="Of forest-based projects" color={T.emerald} />
           </div>
