@@ -102,7 +102,7 @@ export default function StrandedAssetAnalyzerPage() {
   const totalAum = SECTORS.reduce((s, x) => s + x.aum, 0);
   const totalStranded = SECTORS.reduce((s, x) => s + x.aum * x[`stranded_pct_${sk}`] / 100, 0);
   const totalCapex = SECTORS.reduce((s, x) => s + x.capex_locked, 0);
-  const avgStranded = (totalStranded / totalAum) * 100;
+  const avgStranded = totalAum > 0 ? (totalStranded / totalAum) * 100 : 0;
 
   const writeDownData = useMemo(() =>
     buildWriteDownSchedule(SECTORS[selectedSector], scenario), [selectedSector, scenario]);

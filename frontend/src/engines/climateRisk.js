@@ -110,7 +110,7 @@ export function historicalCVaR(returns, alpha = 0.95) {
   const cutoff = Math.floor((1 - alpha) * sorted.length);
   const tail   = sorted.slice(0, cutoff);
 
-  const varVal  = -sorted[cutoff] ?? 0;
+  const varVal  = cutoff < sorted.length ? -sorted[cutoff] : 0;
   const cvarVal = tail.length > 0 ? -tail.reduce((s, v) => s + v, 0) / tail.length : varVal;
 
   return { var: +varVal.toFixed(4), cvar: +cvarVal.toFixed(4) };
