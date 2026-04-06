@@ -38,7 +38,7 @@ function computeCVaR(aum, scenario, horizon, confidence = 95) {
   // Bilinear copula interaction via engine: ρ · transVaR · physVaR / aum (keeps units)
   const totalVaR = climateCVaR(transVaR, physVaR, p.correlation);
   const interVaR = totalVaR - transVaR - physVaR;
-  return { transVaR, physVaR, interVaR, totalVaR, pct: totalVaR / aum * 100 };
+  return { transVaR, physVaR, interVaR, totalVaR, pct: aum > 0 ? totalVaR / aum * 100 : 0 };
 };
 
 const SCENARIOS = {

@@ -109,10 +109,10 @@ const TECHNOLOGIES = [
 function buildTechTrajectory(tech, scenario) {
   const years = Array.from({ length: 27 }, (_, i) => 2024 + i);
   return years.map(yr => {
-    const t = yr - 2020;
     const share = sCurve(yr, tech.s_curve.k, tech.s_curve.t_mid, tech.s_curve.L);
     const cost = learningCurve(yr - 2024, tech.lcoe.base, tech.lcoe.rate);
-    const incumbentShare = Math.max(0, (tech.id === 'ev' ? 85 : 90) - share * 0.9);
+    const incumbentStart = 100 - (tech.current_share || 0);
+    const incumbentShare = Math.max(0, incumbentStart - share * 0.9);
     return { year: yr, market_share: share, incumbent_share: incumbentShare, cost_reduction: cost };
   });
 }
@@ -294,7 +294,7 @@ export default function TechDisplacementModelerPage() {
             <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 24, marginBottom: 20 }}>
               <h3 style={{ color: T.navy, margin: '0 0 4px', fontSize: 15 }}>Technology Cost Learning Curves — 2024–2050</h3>
               <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 16px' }}>
-                Wright's Law: LCOE(t) = LCOE₀ × (1 − r)^t where r = learning rate per year
+                Exponential Cost Learning Model: LCOE(t) = LCOE₀ × (1 − r)^t where r = annual learning rate
               </p>
               <ResponsiveContainer width="100%" height={320}>
                 <LineChart data={costData}>
@@ -332,7 +332,7 @@ export default function TechDisplacementModelerPage() {
                       ))}
                     </div>
                     <div style={{ marginTop: 8, fontSize: 11, color: T.textSec }}>
-                      2050: <span style={{ color: T.green, fontWeight: 700, fontFamily: T.mono }}>{cost2050.toFixed(1)}</span> ({((1 - cost2050/t.lcoe.base)*100).toFixed(0)}% reduction)
+                      2050: <span style={{ color: T.green, fontWeight: 700, fontFamily: T.mono }}>{cost2050.toFixed(1)}</span> ({t.lcoe.base > 0 ? ((1 - cost2050/t.lcoe.base)*100).toFixed(0) : '—'}% reduction)
                     </div>
                   </div>
                 );

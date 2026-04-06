@@ -268,7 +268,7 @@ export default function TransitionRiskDashboardPage() {
                     <YAxis type="category" dataKey="sector" tick={{ fontSize: 10 }} width={80} />
                     <Tooltip formatter={v => [`${v}`, 'Transition Score']} />
                     <Bar dataKey="score" radius={[0, 6, 6, 0]}>
-                      {SECTOR_HEAT.sort((a, b) => a.score - b.score).map((e, i) => (
+                      {[...SECTOR_HEAT].sort((a, b) => a.score - b.score).map((e, i) => (
                         <Cell key={i} fill={sectorRiskColor(e.score)} />
                       ))}
                     </Bar>
@@ -286,7 +286,7 @@ export default function TransitionRiskDashboardPage() {
                     <YAxis tick={{ fontSize: 10 }} />
                     <Tooltip formatter={v => [`${v}%`, 'Climate VaR']} />
                     <Bar dataKey="vaR" radius={[6, 6, 0, 0]}>
-                      {SECTOR_HEAT.sort((a, b) => b.vaR - a.vaR).map((e, i) => (
+                      {[...SECTOR_HEAT].sort((a, b) => b.vaR - a.vaR).map((e, i) => (
                         <Cell key={i} fill={e.vaR > 15 ? T.red : e.vaR > 10 ? T.orange : e.vaR > 7 ? T.amber : T.green} />
                       ))}
                     </Bar>
