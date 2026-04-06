@@ -130,7 +130,7 @@ export default function CcReddWetlandsHubPage() {
   }, [reddResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Wetlands state */
-  const [wetP, setWetP] = useState({ area_ha:5000, co2_rate:22.4, ch4_rate:0.08, n2o_rate:0.002, gwp_version:'AR5', crediting_yrs:25, project_co2_rate:1.8, project_ch4_rate:0.01, project_n2o_rate:0.0005, leakage_pct:7, buffer_pct:20 });
+  const [wetP, setWetP] = useState({ area_ha:5000, co2_rate:22.4, ch4_rate:0.08, n2o_rate:0.002, gwp_version:'AR6', crediting_yrs:25, project_co2_rate:1.8, project_ch4_rate:0.01, project_n2o_rate:0.0005, leakage_pct:7, buffer_pct:20 }); // default AR6: CH4=27.2, N2O=273
   const setW = useCallback((k,v)=>setWetP(p=>({...p,[k]:v})),[]);
   const wetResult = useMemo(()=>calcWetlands(wetP),[wetP]);
 

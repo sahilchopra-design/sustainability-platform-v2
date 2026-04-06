@@ -75,7 +75,7 @@ export default function CcRiceCultivationPage() {
 
   /* Rice CH4 calc inputs */
   const [rp, setRp] = useState({
-    ef_baseline: 350, area_ha: 15000, seasons: 2, awd_scaling: 0.5, gwp_ch4: 28, buffer_pct: 12,
+    ef_baseline: 350, area_ha: 15000, seasons: 2, awd_scaling: 0.5, gwp_ch4: 27.2, buffer_pct: 12, // AR6 GWP-100: CH4=27.2
   });
   const setR = useCallback((k,v) => setRp(prev=>({...prev,[k]:v})),[]);
 
@@ -111,7 +111,7 @@ export default function CcRiceCultivationPage() {
   const multiSeasonData = useMemo(() => {
     const efs = [s1EF, s2EF, s3EF];
     const seasons = efs.map((ef,i) => {
-      const bl = ef * msArea * 1 * 1e-6 * 28;
+      const bl = ef * msArea * 1 * 1e-6 * 27.2; // AR6 GWP-100: CH4=27.2
       const pj = bl * msAWD;
       const net = (bl - pj) * (1 - msBuf/100);
       return { season:`Season ${i+1}`, ef, baseline:Math.round(bl), project:Math.round(pj), net:Math.round(net) };
@@ -176,7 +176,7 @@ export default function CcRiceCultivationPage() {
                   <div><strong>Net:</strong> (CH4_BL - CH4_PJ) x (1 - Buffer%)</div>
                 </div>
                 <div style={{marginTop:8,fontSize:10,color:T.textSec,lineHeight:1.5}}>
-                  Where: EF = emission factor (kg CH4/ha), AWD_SF = scaling factor (0.3-1.0), GWP = 28 (AR5)
+                  Where: EF = emission factor (kg CH4/ha), AWD_SF = scaling factor (0.3-1.0), GWP = 27.2 (IPCC AR6)
                 </div>
               </Section>
             </Card>

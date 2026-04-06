@@ -197,10 +197,10 @@ function computePortfolioMetrics(securities, holdings) {
 const PortfolioContext = createContext(null);
 
 export function PortfolioProvider({ children }) {
-  // Pre-compute metrics once
+  // Pre-compute metrics; deps listed so React can re-run if data sources ever become dynamic
   const portfolioMetrics = useMemo(
     () => computePortfolioMetrics(SECURITY_UNIVERSE, PORTFOLIO_HOLDINGS),
-    []
+    [SECURITY_UNIVERSE, PORTFOLIO_HOLDINGS] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   // ── Search / filter utilities (stable refs via useCallback) ──

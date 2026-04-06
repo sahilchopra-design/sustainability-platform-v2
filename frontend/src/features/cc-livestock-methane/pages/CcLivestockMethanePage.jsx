@@ -53,8 +53,8 @@ const PROJECTS = Array.from({length:10},(_, i)=>{
 
 const calcEnteric = (params) => {
   const { gross_energy_mj, ym_bl, ym_pj, head_count, gwp, buffer_pct } = params;
-  const ch4_bl = gross_energy_mj * ym_bl * 365 * head_count / 55.65; // kg CH4/yr
-  const ch4_pj = gross_energy_mj * ym_pj * 365 * head_count / 55.65;
+  const ch4_bl = gross_energy_mj * ym_bl * 365 * head_count / 55.5; // kg CH4/yr — IPCC 2019: 55.5 MJ/kg CH4
+  const ch4_pj = gross_energy_mj * ym_pj * 365 * head_count / 55.5;
   const ch4_avoided_kg = ch4_bl - ch4_pj;
   const tco2e_bl = ch4_bl / 1000 * gwp;
   const tco2e_pj = ch4_pj / 1000 * gwp;
@@ -85,13 +85,13 @@ export default function CcLivestockMethanePage() {
 
   /* Enteric inputs */
   const [ent, setEnt] = useState({
-    gross_energy_mj:180, ym_bl:0.065, ym_pj:0.040, head_count:5000, gwp:28, buffer_pct:15,
+    gross_energy_mj:180, ym_bl:0.065, ym_pj:0.040, head_count:5000, gwp:27.2, buffer_pct:15, // AR6 GWP-100: CH4=27.2
   });
   const setE = useCallback((k,v) => setEnt(prev=>({...prev,[k]:v})),[]);
 
   /* Manure inputs */
   const [man, setMan] = useState({
-    vs_kg:6.0, b0:0.24, mcf:0.30, head_count:5000, gwp:28, buffer_pct:15, reduction_pct:50,
+    vs_kg:6.0, b0:0.24, mcf:0.30, head_count:5000, gwp:27.2, buffer_pct:15, reduction_pct:50, // AR6 GWP-100: CH4=27.2
   });
   const setM = useCallback((k,v) => setMan(prev=>({...prev,[k]:v})),[]);
   const [climateIdx, setClimateIdx] = useState(1);
@@ -127,8 +127,8 @@ export default function CcLivestockMethanePage() {
   const gwpCompare = useMemo(() => {
     const years = [];
     for(let t=0;t<=50;t++){
-      const pulse100 = 28; // constant GWP-100
-      const flowRate = t < 20 ? 28 * (1 - t/40) : 28 * 0.5; // simplified declining
+      const pulse100 = 27.2; // IPCC AR6 GWP-100: CH4=27.2
+      const flowRate = t < 20 ? 27.2 * (1 - t/40) : 27.2 * 0.5; // simplified declining
       years.push({ year:t, gwp100:pulse100, gwpStar:Math.round(flowRate*10)/10 });
     }
     return years;

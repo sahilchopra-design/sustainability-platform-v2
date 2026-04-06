@@ -89,14 +89,16 @@ const calcARR = (params) => {
     const after_buffer = after_leakage - buffer;
     const uncertainty_ded = after_buffer * (uncertainty_pct / 100);
     const net = Math.max(0, after_buffer - uncertainty_ded);
-    const annual_increment = t === 1 ? net : net - (years[t - 2]?.cumulative_net || 0);
+    // cumulative_net is a running sum of all net credits issued to date (fixed: was incorrectly storing only current-year net)
+    const prior_cumulative = years[t - 2]?.cumulative_net || 0;
+    const cumulative_net = prior_cumulative + net;
     years.push({
       year: t, agb: Math.round(agb * 10) / 10, bgb: Math.round(bgb * 10) / 10,
       total_biomass: Math.round(total_biomass * 10) / 10,
       carbon_stock_ha: Math.round(carbon_stock * 10) / 10,
       gross: Math.round(gross), leakage: Math.round(leakage), buffer: Math.round(buffer),
       uncertainty_ded: Math.round(uncertainty_ded), net: Math.round(net),
-      annual_increment: Math.round(annual_increment), cumulative_net: Math.round(net),
+      annual_increment: Math.round(net), cumulative_net: Math.round(cumulative_net),
     });
   }
   const total_net = years.length > 0 ? years[years.length - 1].cumulative_net : 0;
