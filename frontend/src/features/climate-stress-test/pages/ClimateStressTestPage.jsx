@@ -532,7 +532,7 @@ const TabCET1Waterfall = () => {
     const d = CET1_DATA[k];
     if(!d) return {name:s.label,closing:14.8,color:s.color};
     const c = d.opening + d.credit_trans + d.credit_phys + d.market_risk + d.op_risk + d.nii_impact + d.green_benefit;
-    return {name:s.label,closing:rng(c*0.98,c*1.02,s.id.charCodeAt(0)),impact:c-d.opening,color:s.color};
+    return {name:s.label,closing:+c.toFixed(2),impact:+(c-d.opening).toFixed(2),color:s.color};
   });
 
   return (

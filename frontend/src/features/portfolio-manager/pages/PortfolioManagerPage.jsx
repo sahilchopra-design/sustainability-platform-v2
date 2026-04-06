@@ -232,8 +232,8 @@ export default function PortfolioManagerPage() {
     const totalW = holdings.reduce((s, h) => s + h.weight, 0);
     const totalExp = holdings.reduce((s, h) => s + (h.exposure_usd_mn || 0), 0);
 
-    // WACI = Σ (weight_i × Scope1+2_i / Revenue_i)
-    let waciNum = 0, waciDen = 0;
+    // WACI = Σ (weight_i × Scope1+2_i / Revenue_i) — sum-of-ratios per TCFD/SFDR PAI #3
+    let waciSum = 0, waciW = 0;
     let totalScope1 = 0, totalScope2 = 0, totalScope3 = 0;
     let totalMarketCap = 0;
     const sectorMap = {}, exchangeMap = {}, riskMap = {}, dqsMap = {};
@@ -248,7 +248,7 @@ export default function PortfolioManagerPage() {
       totalScope1 += s1 * w;
       totalScope2 += s2 * w;
       totalScope3 += (c.scope3_co2e || 0) * w;
-      if (rev > 0) { waciNum += w * (s1 + s2); waciDen += w * rev; }
+      if (rev > 0) { waciSum += w * ((s1 + s2) / rev); waciW += w; }
 
       totalMarketCap += (c.market_cap_usd_mn || 0) * w;
 
@@ -269,7 +269,7 @@ export default function PortfolioManagerPage() {
       dqsMap[dqs] = (dqsMap[dqs] || 0) + h.weight;
     });
 
-    const waci = waciDen > 0 ? waciNum / waciDen : null;
+    const waci = waciW > 0 ? waciSum / waciW : null;
 
     return {
       totalW, totalExp,

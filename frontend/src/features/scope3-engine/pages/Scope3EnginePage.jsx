@@ -288,7 +288,8 @@ export default function Scope3EnginePage() {
     return holdings.map(h => {
       const cats = estimateScope3(h.company);
       const total = cats.reduce((s, c) => s + c.estimated_mt, 0);
-      const attribution = (h.exposure_usd_mn || 0) / (h.company.market_cap_usd_mn || h.company.revenue_usd_mn || 1);
+      const evicOrMktCap = h.company.evic_usd_mn || h.company.market_cap_usd_mn || h.company.revenue_usd_mn || 0;
+      const attribution = evicOrMktCap > 0 ? (h.exposure_usd_mn || 0) / evicOrMktCap : 0;
       return {
         name: h.company.company_name,
         sector: h.company.sector,

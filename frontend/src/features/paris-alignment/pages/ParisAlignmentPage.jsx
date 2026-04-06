@@ -17,7 +17,7 @@ const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x);
    GLOBAL CARBON BUDGET STATUS
    ══════════════════════════════════════════════════════════════ */
 const CARBON_BUDGET = {
-  remaining_1_5: { gt: 400, year_exhausted_at_current_rate: 2032, annual_reduction_needed: -7.6 },
+  remaining_1_5: { gt: 420, year_exhausted_at_current_rate: 2032, annual_reduction_needed: -7.6 }, // IPCC AR6 WGI SPM Table SPM.2 (50th pctile, 2020 baseline)
   remaining_2_0: { gt: 1150, year_exhausted_at_current_rate: 2046, annual_reduction_needed: -4.2 },
   current_annual_global: 40,
   cumulative_since_1850: 2560,

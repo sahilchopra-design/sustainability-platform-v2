@@ -675,7 +675,7 @@ function PartATab({positions,setPositions}){
   const totalFE=useMemo(()=>positions.reduce((s,p)=>s+p.financedEmissions,0),[positions]);
   const totalFEScope3=useMemo(()=>positions.reduce((s,p)=>s+p.financedScope3,0),[positions]);
   const totalOut=useMemo(()=>positions.reduce((s,p)=>s+p.outstanding,0),[positions]);
-  const avgDqs=useMemo(()=>(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(2),[positions]);
+  const avgDqs=useMemo(()=>positions.length?(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(2):'—',[positions]);
   const carbonFootprint=useMemo(()=>totalOut>0?totalFE/(totalOut/1000):0,[totalFE,totalOut]);
   const waci=useMemo(()=>{let num=0,den=0;positions.forEach(p=>{num+=p.outstanding*p.waci;den+=p.outstanding;});return den>0?num/den:0;},[positions]);
   const carbonCostM=useMemo(()=>(totalFE*carbonPrice/1e6).toFixed(1),[totalFE,carbonPrice]);
@@ -862,7 +862,7 @@ function PartBTab(){
   const totalFE=useMemo(()=>lobData.reduce((s,l)=>s+Math.round(l.premiumM*l.efPerPremium),0),[lobData]);
   const totalClaims=useMemo(()=>lobData.reduce((s,l)=>s+l.claimsM,0),[lobData]);
   const totalExposure=useMemo(()=>lobData.reduce((s,l)=>s+l.exposureM,0),[lobData]);
-  const avgDqs=useMemo(()=>(lobData.reduce((s,l)=>s+l.dqs,0)/lobData.length).toFixed(1),[lobData]);
+  const avgDqs=useMemo(()=>lobData.length?(lobData.reduce((s,l)=>s+l.dqs,0)/lobData.length).toFixed(1):'—',[lobData]);
   const lobFE=useMemo(()=>lobData.map(l=>({lob:l.lob,fe:Math.round(l.premiumM*l.efPerPremium),premium:l.premiumM,intensity:(l.efPerPremium).toFixed(2)})),[lobData]);
   const lossRatio=useMemo(()=>(totalClaims/totalPremium*100).toFixed(1),[totalClaims,totalPremium]);
 
