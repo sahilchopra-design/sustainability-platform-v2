@@ -1,4 +1,4 @@
-/**
+﻿/**
  * EP-U3 — DME NGFS Scenario Engine
  * Sprint U — DME Platform Port
  *
@@ -19,7 +19,7 @@ const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',bord
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */
 const hashStr = s => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-const seededRandom = seed => { let x = Math.sin(Math.abs(seed) * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const seededRandom = seed => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const sr = (seed, off = 0) => seededRandom(seed + off);
 const fmt = (v, d = 1) => v == null ? '—' : typeof v === 'number' ? (Math.abs(v) >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : Math.abs(v) >= 1e3 ? `${(v / 1e3).toFixed(1)}K` : v.toFixed(d)) : v;
 const pct = (v, d = 1) => v == null ? '—' : `${v.toFixed(d)}%`;

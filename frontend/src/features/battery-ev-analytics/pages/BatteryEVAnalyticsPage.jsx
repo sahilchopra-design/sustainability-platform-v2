@@ -10,13 +10,14 @@ const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', red: '#991b1b', 
 const usd = (n, d = 0) => `$${Number(n).toLocaleString('en-US', { maximumFractionDigits: d })}`;
 
 const CHEMISTRIES = [
-  { name: 'LFP',            full: 'LiFePO₄',      color: '#0f766e', energy: 160, cost2024: 68,  cost2030: 42,  cycle: 4000, safety: 98, maturity: 'Commercial' },
-  { name: 'NMC 811',        full: 'NMC 811',       color: '#1d4ed8', energy: 270, cost2024: 82,  cost2030: 54,  cycle: 1500, safety: 80, maturity: 'Commercial' },
-  { name: 'NMC 622',        full: 'NMC 622',       color: '#6d28d9', energy: 240, cost2024: 92,  cost2030: 62,  cycle: 2000, safety: 84, maturity: 'Commercial' },
-  { name: 'NCA',            full: 'NCA (Tesla)',    color: '#c2410c', energy: 260, cost2024: 88,  cost2030: 58,  cycle: 1200, safety: 78, maturity: 'Commercial' },
-  { name: 'LMFP',           full: 'LMFP (Mn-rich)',color: '#b45309', energy: 190, cost2024: 72,  cost2030: 45,  cycle: 3000, safety: 95, maturity: 'Scaling' },
-  { name: 'Solid State',    full: 'Solid State',   color: '#059669', energy: 400, cost2024: 280, cost2030: 100, cycle: 5000, safety: 99, maturity: 'Pilot' },
-  { name: 'Na-Ion',         full: 'Sodium-Ion',    color: '#374151', energy: 140, cost2024: 55,  cost2030: 38,  cycle: 3500, safety: 97, maturity: 'Commercial' },
+  // key_use: primary critical minerals per IEA Global EV Outlook 2024 / BloombergNEF Battery Price Survey
+  { name: 'LFP',            full: 'LiFePO₄',      color: '#0f766e', energy: 160, cost2024: 68,  cost2030: 42,  cycle: 4000, safety: 98, maturity: 'Commercial', key_use: 'Iron, Phosphate' },
+  { name: 'NMC 811',        full: 'NMC 811',       color: '#1d4ed8', energy: 270, cost2024: 82,  cost2030: 54,  cycle: 1500, safety: 80, maturity: 'Commercial', key_use: 'Nickel, Manganese, Cobalt' },
+  { name: 'NMC 622',        full: 'NMC 622',       color: '#6d28d9', energy: 240, cost2024: 92,  cost2030: 62,  cycle: 2000, safety: 84, maturity: 'Commercial', key_use: 'Nickel, Manganese, Cobalt' },
+  { name: 'NCA',            full: 'NCA (Tesla)',    color: '#c2410c', energy: 260, cost2024: 88,  cost2030: 58,  cycle: 1200, safety: 78, maturity: 'Commercial', key_use: 'Nickel, Cobalt, Aluminium' },
+  { name: 'LMFP',           full: 'LMFP (Mn-rich)',color: '#b45309', energy: 190, cost2024: 72,  cost2030: 45,  cycle: 3000, safety: 95, maturity: 'Scaling',    key_use: 'Manganese, Iron, Phosphate' },
+  { name: 'Solid State',    full: 'Solid State',   color: '#059669', energy: 400, cost2024: 280, cost2030: 100, cycle: 5000, safety: 99, maturity: 'Pilot',       key_use: 'Lithium (solid electrolyte)' },
+  { name: 'Na-Ion',         full: 'Sodium-Ion',    color: '#374151', energy: 140, cost2024: 55,  cost2030: 38,  cycle: 3500, safety: 97, maturity: 'Commercial', key_use: 'Sodium, Manganese' },
 ];
 
 // Battery cost learning curve ($/kWh)
@@ -347,7 +348,7 @@ export default function BatteryEVAnalyticsPage() {
                         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{c.safety}</span>
                       </div>
                     </td>
-                    <td style={{ padding: '7px 10px', fontSize: 11, color: T.purple }}>{MINERALS.find(m => m.name.includes(c.name.split(' ')[0]))?.key_use || 'EV/Storage'}</td>
+                    <td style={{ padding: '7px 10px', fontSize: 11, color: T.purple }}>{c.key_use}</td>
                     <td style={{ padding: '7px 10px' }}>
                       <span style={{ background: c.maturity === 'Commercial' ? T.emerald : c.maturity === 'Scaling' ? T.teal : T.orange, color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{c.maturity}</span>
                     </td>

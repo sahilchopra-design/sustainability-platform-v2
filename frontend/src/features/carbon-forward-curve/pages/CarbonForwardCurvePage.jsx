@@ -7,7 +7,7 @@ import {
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', red: '#991b1b', green: '#065f46', gray: '#6b7280', orange: '#c2410c', teal: '#0f766e', purple: '#6d28d9', emerald: '#059669' };
-const usd = (n, d = 2) => `€${parseFloat(n).toFixed(d)}`;
+const eur = (n, d = 2) => `€${parseFloat(n).toFixed(d)}`; // renamed from 'usd' — this module is EU ETS only, always formats in EUR
 const fmt = (n) => n >= 1e9 ? `${(n / 1e9).toFixed(1)}B` : n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : `${n}`;
 
 const ETS_MARKETS = [

@@ -226,7 +226,7 @@ export default function CcEngineHubPage() {
           <>
             <Row>
               <KpiCard label="TOTAL CREDITS ISSUED" value={summary.totalIssued ? (summary.totalIssued / 1e6).toFixed(2) + 'M' : (totals.issued / 1e6).toFixed(2) + 'M'} sub="Across all projects" accent={T.gold} />
-              <KpiCard label="CREDITS RETIRED" value={summary.totalRetired ? (summary.totalRetired / 1e6).toFixed(2) + 'M' : (totals.retired / 1e6).toFixed(2) + 'M'} sub={((summary.totalRetired || totals.retired) / (summary.totalIssued || totals.issued) * 100).toFixed(1) + '% retirement rate'} />
+              <KpiCard label="CREDITS RETIRED" value={summary.totalRetired ? (summary.totalRetired / 1e6).toFixed(2) + 'M' : (totals.retired / 1e6).toFixed(2) + 'M'} sub={((summary.totalIssued || totals.issued) > 0 ? ((summary.totalRetired || totals.retired) / (summary.totalIssued || totals.issued) * 100).toFixed(1) : '0.0') + '% retirement rate'} />
               <KpiCard label="CREDITS AVAILABLE" value={summary.totalAvailable ? (summary.totalAvailable / 1e6).toFixed(2) + 'M' : (totals.available / 1e6).toFixed(2) + 'M'} sub="Active on registries" />
               <KpiCard label="PIPELINE PROJECTS" value={summary.pipelineCount ?? totals.pipeline} sub="Under development" />
             </Row>
@@ -322,7 +322,7 @@ export default function CcEngineHubPage() {
 
         {tab === 'Family Navigator' && (
           <Section title="Project Families">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320, 1fr))', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
               {familyNav.map(f => (
                 <div key={f.family} style={{ border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, background: T.surface, borderLeft: `4px solid ${FAMILY_COLORS[f.family] || T.sage}` }}>
                   <div style={{ fontSize: 16, fontWeight: 700, color: T.navy, marginBottom: 8 }}>{f.family}</div>

@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   ScatterChart, Scatter, BarChart, Bar, LineChart, Line, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend, Cell, ZAxis
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -25,18 +28,18 @@ const ENTITIES = Array.from({length:20}, (_,i) => {
     name:['JPMorgan','Microsoft','Allianz','NextEra','HSBC','Unilever','Enel','Siemens','Shell','BNP','Nestle','BlackRock','TotalEnergies','BP','Tesla','ArcelorMittal','Glencore','ExxonMobil','Peabody','Vedanta'][i],
     sector:['Banking','Tech','Insurance','Renewables','Banking','Consumer','Utilities','Industrials','Oil & Gas','Banking','Consumer','Asset Mgmt','Oil & Gas','Oil & Gas','Auto','Steel','Mining','Oil & Gas','Coal','Mining'][i],
     cluster,
-    pc1: Math.round((base-50+Math.sin(i*2.1)*15)*10)/10,
-    pc2: Math.round((Math.cos(i*1.7)*20+cluster*5-10)*10)/10,
-    scores: { env:Math.round(base+Math.sin(i)*10), soc:Math.round(base+Math.cos(i)*8), gov:Math.round(base+5+Math.sin(i*0.7)*7), climate:Math.round(base-3+Math.cos(i*1.2)*12) },
-    q1Cluster: Math.min(4, Math.max(0, cluster + (Math.sin(i*3.1)>0.4 ? (Math.sin(i*5.7)>0?1:-1) : 0))),
-    q2Cluster: Math.min(4, Math.max(0, cluster + (Math.sin(i*2.9+1)>0.6 ? (Math.sin(i*4.3)>0?1:-1) : 0))),
-    q3Cluster: Math.min(4, Math.max(0, cluster + (Math.sin(i*2.1+2)>0.7 ? -1 : 0))),
+    pc1: Math.round((base-50+(sr(i * 21) * 2 - 1)*15)*10)/10,
+    pc2: Math.round(((sr(i * 517) * 2 - 1)*20+cluster*5-10)*10)/10,
+    scores: { env:Math.round(base+(sr(i * 10) * 2 - 1)*10), soc:Math.round(base+(sr(i * 510) * 2 - 1)*8), gov:Math.round(base+5+(sr(i * 7) * 2 - 1)*7), climate:Math.round(base-3+(sr(i * 512) * 2 - 1)*12) },
+    q1Cluster: Math.min(4, Math.max(0, cluster + ((sr(i * 31) * 2 - 1)>0.4 ? ((sr(i * 57) * 2 - 1)>0?1:-1) : 0))),
+    q2Cluster: Math.min(4, Math.max(0, cluster + ((sr(i * 29 + 10) * 2 - 1)>0.6 ? ((sr(i * 43) * 2 - 1)>0?1:-1) : 0))),
+    q3Cluster: Math.min(4, Math.max(0, cluster + ((sr(i * 21 + 20) * 2 - 1)>0.7 ? -1 : 0))),
     q4Cluster: cluster,
   };
 });
 
 const SILHOUETTE_DATA = Array.from({length:9}, (_,i) => ({
-  k: i+2, silhouette: Math.round((0.3+Math.sin(i*0.8)*0.15+0.05*(i===3?0.1:0))*100)/100
+  k: i+2, silhouette: Math.round((0.3+(sr(i * 8) * 2 - 1)*0.15+0.05*(i===3?0.1:0))*100)/100
 }));
 
 const TABS = ['Cluster Visualization','Silhouette Analysis','Cluster Profiles','Migration Tracker','Custom Groups','Engagement by Cluster'];

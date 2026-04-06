@@ -1,8 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import {
+
   AreaChart, Area, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
@@ -72,7 +75,7 @@ const Ref = ({ text }) => (
 function MiniWidget({ widget }) {
   const w = WIDGET_CATALOG.find(wc => wc.id === widget);
   if (!w) return null;
-  const chartData = Array.from({ length: 12 }, (_, i) => ({ m: i + 1, v: 40 + Math.abs(Math.sin(i * 1.5 + (WIDGET_CATALOG.findIndex(wc=>wc.id===widget)||0))) * 30 }));
+  const chartData = Array.from({ length: 12 }, (_, i) => ({ m: i + 1, v: 40 + sr(i * 15 + (WIDGET_CATALOG.findIndex(wc=>wc.id===widget)||0) * 10) * 30 }));
   return (
     <div style={{ background: T.bg, borderRadius: 10, padding: 14, border: `1px solid ${T.border}`, minHeight: 140 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>

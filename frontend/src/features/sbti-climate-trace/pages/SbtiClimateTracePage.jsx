@@ -114,7 +114,7 @@ export default function SbtiClimateTracePage() {
     committed: SBTI_COMPANIES.filter(c => c.status === 'Committed').length,
     removed: SBTI_COMPANIES.filter(c => c.status === 'Removed').length,
     net0: SBTI_COMPANIES.filter(c => c.longTerm).length,
-    avgReduction: +(SBTI_COMPANIES.reduce((s,c)=>s+c.reductionPct,0)/SBTI_COMPANIES.length).toFixed(1),
+    avgReduction: SBTI_COMPANIES.length > 0 ? +(SBTI_COMPANIES.reduce((s,c)=>s+c.reductionPct,0)/SBTI_COMPANIES.length).toFixed(1) : 0,
   }), []);
 
   const sectorBreakdown = useMemo(() => SECTORS_SBTI.map(s => ({

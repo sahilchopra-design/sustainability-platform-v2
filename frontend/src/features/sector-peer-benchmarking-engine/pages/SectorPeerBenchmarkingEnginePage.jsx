@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   BarChart, Bar, LineChart, Line, ScatterChart, Scatter, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine,
   ZAxis, AreaChart, Area
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -21,13 +24,13 @@ const genPeers = (sector, base, spread) => Array.from({length:8},(_,i) => ({
   id:`${sector.slice(0,3).toUpperCase()}-${i+1}`,
   name:`${sector} Co ${i+1}`,
   sector,
-  score: Math.round(base + (Math.sin(i*2.7+sector.charCodeAt(0))*spread)),
-  greenCapex: Math.round(15 + Math.sin(i*1.8)*12),
+  score: Math.round(base + (sr(i*27+sector.charCodeAt(0))*2-1)*spread),
+  greenCapex: Math.round(15 + (sr(i * 18) * 2 - 1)*12),
   sbtiValidated: i % 3 === 0,
-  lobbyingScore: Math.round(40 + Math.cos(i*2)*25),
-  q1: Math.round(base-6+Math.sin(i)*4), q2: Math.round(base-4+Math.sin(i)*3),
-  q3: Math.round(base-2+Math.sin(i)*2), q4: Math.round(base+Math.sin(i)),
-  q5: Math.round(base+2+Math.sin(i)*1.5),
+  lobbyingScore: Math.round(40 + (sr(i * 520) * 2 - 1)*25),
+  q1: Math.round(base-6+(sr(i * 10) * 2 - 1)*4), q2: Math.round(base-4+(sr(i * 10) * 2 - 1)*3),
+  q3: Math.round(base-2+(sr(i * 10) * 2 - 1)*2), q4: Math.round(base+(sr(i * 10) * 2 - 1)),
+  q5: Math.round(base+2+(sr(i * 10) * 2 - 1)*1.5),
 }));
 
 const ALL_PEERS = SECTORS.flatMap((s,si) => genPeers(s, [68,42,75,60,70,65][si], [12,15,10,13,11,14][si]));

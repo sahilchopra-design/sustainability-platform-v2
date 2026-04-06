@@ -8,7 +8,7 @@ import {
 
 const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>
@@ -74,6 +74,24 @@ const TECH_OPTIONS = [
   { value: 'fuel_cell', label: 'Hydrogen Fuel Cells' },
 ];
 
+// EU Critical Raw Materials Act — Regulation (EU) 2024/1252
+// Annex I: Strategic Raw Materials (17 materials — supply-side critical for green & digital)
+const EU_CRMA_ANNEX_I_STRATEGIC = new Set([
+  'lithium','cobalt','nickel','copper','rare_earths','manganese',
+  'graphite','platinum_group','silicon','gallium','germanium',
+  'tungsten','titanium','antimony','bismuth','boron','arsenic',
+]);
+// Annex II: Critical Raw Materials (34 materials — includes all Annex I + additional)
+const EU_CRMA_ANNEX_II_CRITICAL = new Set([
+  // All Annex I (Strategic) are also Critical
+  ...EU_CRMA_ANNEX_I_STRATEGIC,
+  // Additional Annex II — critical but not yet strategic tier
+  'barite','beryllium','chromium','coking_coal','feldspar',
+  'fluorspar','hafnium','indium','magnesium','phosphate',
+  'scandium','strontium','tantalum','vanadium','natural_rubber',
+  'phosphorus', // hafnium deduplicated — already in Annex I Strategic set above
+]);
+
 const getIeaData = (mineral) => {
   const mi = MINERAL_OPTIONS.findIndex(m => m.value === mineral) + 1;
   const subScores = [
@@ -90,8 +108,9 @@ const getIeaData = (mineral) => {
 
 const getEuCrmData = (mineral) => {
   const mi = MINERAL_OPTIONS.findIndex(m => m.value === mineral) + 1;
-  const strategic = seed(mi * 19) > 0.4;
-  const critical = seed(mi * 23) > 0.3;
+  // Official EU CRMA (Regulation EU 2024/1252) Annex I/II classification
+  const strategic = EU_CRMA_ANNEX_I_STRATEGIC.has(mineral); // Annex I: Strategic
+  const critical = EU_CRMA_ANNEX_II_CRITICAL.has(mineral);   // Annex II: Critical
   const compliance = Math.round(seed(mi * 29) * 35 + 50);
   const gaps = [
     { name: 'Domestic Production', value: Math.round(seed(mi * 31) * 40 + 20) },
@@ -129,7 +148,7 @@ const getSupplyChainData = (mineral) => {
     { name: 'Fuel Cells', value: parseFloat((seed(mi * 97) * 30 + 5).toFixed(1)) },
   ];
   const total = parseFloat(exposures.reduce((s, e) => s + e.value, 0).toFixed(1));
-  const hhi = parseFloat((exposures.reduce((s, e) => s + Math.pow(e.value / total, 2), 0) * 10000).toFixed(0));
+  const hhi = total > 0 ? parseFloat((exposures.reduce((s, e) => s + Math.pow(e.value / total, 2), 0) * 10000).toFixed(0)) : 0;
   const hhiTier = hhi >= 2500 ? 'High Concentration' : hhi >= 1500 ? 'Moderate' : 'Diversified';
   const hhiColor = hhi >= 2500 ? 'red' : hhi >= 1500 ? 'yellow' : 'green';
   return { exposures, total, hhi, hhiTier, hhiColor };
@@ -251,8 +270,8 @@ export default function CriticalMineralsPage() {
         <div>
           <Section title="EU Critical Raw Materials Act (Regulation (EU) 2024/1252)">
             <Row gap={12}>
-              <KpiCard label="EU Strategic Mineral" value={<Badge label={euCrm.strategic ? 'Yes — Strategic' : 'No'} color={euCrm.strategic ? 'green' : 'gray'} />} sub="Annex II (34 strategic CRMs)" accent />
-              <KpiCard label="EU Critical Mineral" value={<Badge label={euCrm.critical ? 'Yes — Critical' : 'No'} color={euCrm.critical ? 'blue' : 'gray'} />} sub="Annex I (50 critical CRMs)" />
+              <KpiCard label="EU Strategic Mineral" value={<Badge label={euCrm.strategic ? 'Yes — Strategic' : 'No'} color={euCrm.strategic ? 'green' : 'gray'} />} sub="Annex I — Strategic Raw Materials (EU CRMA 2024/1252)" accent />
+              <KpiCard label="EU Critical Mineral" value={<Badge label={euCrm.critical ? 'Yes — Critical' : 'No'} color={euCrm.critical ? 'blue' : 'gray'} />} sub="Annex II — Critical Raw Materials (EU CRMA 2024/1252)" />
               <KpiCard label="CRM Compliance Score" value={`${euCrm.compliance}/100`} sub="Across 5 compliance dimensions" />
               <KpiCard label="Compliance Status" value={<Badge label={euCrm.compliance >= 70 ? 'Compliant' : euCrm.compliance >= 50 ? 'Partial' : 'Non-Compliant'} color={euCrm.compliance >= 70 ? 'green' : euCrm.compliance >= 50 ? 'yellow' : 'red'} />} sub="EU CRM Act Art 5 & 6 assessment" />
             </Row>

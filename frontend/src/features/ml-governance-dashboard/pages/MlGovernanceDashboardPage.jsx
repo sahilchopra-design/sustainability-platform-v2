@@ -5,6 +5,8 @@ import {
   Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
   navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae',
@@ -24,8 +26,8 @@ const MODELS = [
 ];
 
 const PERF_TREND = ['2025-Q1','2025-Q2','2025-Q3','2025-Q4','2026-Q1'].map((q,i) => ({
-  q, rmse: Math.round((4.2-i*0.1+Math.sin(i)*0.15)*100)/100,
-  r2: Math.round((0.88+i*0.01+Math.cos(i)*0.005)*100)/100
+  q, rmse: Math.round((4.2-i*0.1+(sr(i * 10) * 2 - 1)*0.15)*100)/100,
+  r2: Math.round((0.88+i*0.01+(sr(i * 510) * 2 - 1)*0.005)*100)/100
 }));
 
 const SHAP_FEATURES = [

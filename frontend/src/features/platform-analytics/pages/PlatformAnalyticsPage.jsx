@@ -68,7 +68,7 @@ const API_ENDPOINTS = [
 ];
 
 // ── Domain breakdown ──────────────────────────────────────────────────────────
-const DOMAIN_VIEWS = useMemo ? null : null;
+// DOMAIN_VIEWS removed — was dead code (useMemo ? null : null always evaluated to null)
 const domainBreakdown = (() => {
   const map = {};
   MODULE_USAGE.forEach(m => { map[m.domain] = (map[m.domain]||0) + m.views; });
@@ -100,7 +100,7 @@ const WEEKLY = Array.from({ length: 13 }, (_, w) => {
   const slice = USAGE_90D.slice(w * 7, (w+1) * 7);
   return {
     week: `W${w+1}`,
-    dau: Math.round(slice.reduce((s,d)=>s+d.dau,0)/slice.length),
+    dau: slice.length ? Math.round(slice.reduce((s,d)=>s+d.dau,0)/slice.length) : 0,
     apiCalls: slice.reduce((s,d)=>s+d.apiCalls,0),
     errors: slice.reduce((s,d)=>s+d.errors,0),
   };
@@ -118,7 +118,7 @@ export default function PlatformAnalyticsPage() {
   const totalApi    = slicedUsage.reduce((s,d)=>s+d.apiCalls,0);
   const totalErrors = slicedUsage.reduce((s,d)=>s+d.errors,0);
   const avgLatency  = Math.round(slicedUsage.reduce((s,d)=>s+d.p95Latency,0)/slicedUsage.length);
-  const errorRate   = (totalErrors / totalApi * 100).toFixed(3);
+  const errorRate   = totalApi > 0 ? (totalErrors / totalApi * 100).toFixed(3) : '0.000';
 
   return (
     <div style={{ fontFamily: T.font, background: T.cream, minHeight: '100vh', padding: 24 }}>

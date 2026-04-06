@@ -71,7 +71,7 @@ const calcIndustrialGas = (params) => {
   const tco2e_baseline = baseline_quantity * gas.gwp;
   const tco2e_destroyed = quantity_t * destruction_eff * gas.gwp;
   const tco2e_project = quantity_t * (1 - destruction_eff) * gas.gwp;
-  const net_credits = (tco2e_baseline - tco2e_project);
+  const net_credits = Math.max(0, tco2e_baseline - tco2e_project); // clamp: policy_baseline=100% makes baseline=0, which would produce negative credits
   const additionality_gap = tco2e_destroyed - tco2e_baseline;
   return {
     gas_name:gas.name, gwp:gas.gwp, baseline_quantity:Math.round(baseline_quantity*100)/100,

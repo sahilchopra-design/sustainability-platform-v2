@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis,
@@ -96,7 +96,7 @@ const SDG_COLORS = {
 /* ══════════════════════════════════════════════════════════════
    SEED / HELPERS
    ══════════════════════════════════════════════════════════════ */
-const seed = (s) => { let x = Math.sin(s * 9.1 + 7.3) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const fmt = (v) => typeof v === 'number' ? (v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toFixed(v < 10 ? 2 : 0)) : v;
 const pct = (v) => (v * 100).toFixed(1) + '%';
 

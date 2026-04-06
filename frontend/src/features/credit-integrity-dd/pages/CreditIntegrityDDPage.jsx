@@ -28,7 +28,8 @@ const CREDITS = Array.from({ length: 18 }, (_, i) => {
   const safeguards    = Math.round(45 + sr(i * 13) * 50);
   const overall       = Math.round((additionality + permanence + mrv + cobenefits + safeguards) / 5);
   const price         = +(2 + sr(i * 17) * 18).toFixed(2);
-  const adjustedPrice = +(price * (0.5 + overall / 100)).toFixed(2);
+  // Guard: clamp overall to [0,100] so adjustedPrice stays non-negative
+  const adjustedPrice = +(price * (0.5 + Math.min(100, Math.max(0, overall)) / 100)).toFixed(2);
   return {
     id: `CR-${String(i + 1).padStart(3, '0')}`,
     type: types[i % types.length],

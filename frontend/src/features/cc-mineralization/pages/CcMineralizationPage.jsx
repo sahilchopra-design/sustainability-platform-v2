@@ -73,14 +73,15 @@ export default function CcMineralizationPage(){
 
   /* ERW cumulative dissolution */
   const erwCumulative=useMemo(()=>{
-    const yrs=[];let cumulative=0;
+    const yrs=[];let cumulative=0;let cumulativeEnergy=0; // track running energy separately so net = cumulative_removal - cumulative_energy (not annualEnergy×y which misaccumulates under decay)
     for(let y=1;y<=horizon;y++){
       const annualDissolution=rockQty*(weatherRate/100)*Math.pow(0.97,y-1);
       const caRem=annualDissolution*(caoPct/100)*(44/56);
       const mgRem=annualDissolution*(mgoPct/100)*(44/40);
       cumulative+=(caRem+mgRem);
       const annualEnergy=annualDissolution*energyGrind*0.0004;
-      yrs.push({year:y,annual:+(caRem+mgRem).toFixed(1),cumulative:+cumulative.toFixed(1),energyCost:+annualEnergy.toFixed(1),net:+(cumulative-annualEnergy*y).toFixed(1)});
+      cumulativeEnergy+=annualEnergy;
+      yrs.push({year:y,annual:+(caRem+mgRem).toFixed(1),cumulative:+cumulative.toFixed(1),energyCost:+annualEnergy.toFixed(1),net:+(cumulative-cumulativeEnergy).toFixed(1)});
     }
     return yrs;
   },[rockQty,caoPct,mgoPct,weatherRate,horizon,energyGrind]);

@@ -207,7 +207,7 @@ export default function RealEstateValuationPage() {
 
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ fontSize: 12, fontWeight: 600, color: T.navy, display: 'block', marginBottom: 4 }}>Net Operating Income (£m p.a.)</label>
-                  <input type="number" step={0.1} value={propNOI} onChange={e => setPropNOI(+e.target.value)}
+                  <input type="number" step={0.1} value={propNOI} onChange={e => setPropNOI(Math.max(0.01, +e.target.value))}
                     style={{ width: '100%', padding: '6px 10px', border: `1px solid ${T.gold}50`, borderRadius: 4, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box' }} />
                 </div>
 
@@ -263,7 +263,7 @@ export default function RealEstateValuationPage() {
                   <div style={{ background: '#fff', border: `2px solid ${greenDelta > 0 ? T.green : T.red}`, borderRadius: 8, padding: 18, textAlign: 'center' }}>
                     <div style={{ fontSize: 11, color: T.gray, fontWeight: 600, marginBottom: 4 }}>GREEN/BROWN ADJ</div>
                     <div style={{ fontSize: 22, fontWeight: 700, color: greenApplied ? (greenDelta > 0 ? T.green : T.red) : T.gray, fontFamily: 'monospace' }}>
-                      {greenApplied ? `${greenDelta >= 0 ? '+' : ''}${((greenDelta / grossValue) * 100).toFixed(1)}%` : 'Not Applied'}
+                      {greenApplied ? (grossValue > 0 ? `${greenDelta >= 0 ? '+' : ''}${((greenDelta / grossValue) * 100).toFixed(1)}%` : 'N/A') : 'Not Applied'}
                     </div>
                     <div style={{ fontSize: 11, color: T.gray }}>EPC {epcRating} ({EPC_PREMIUM[epcRating] >= 0 ? '+' : ''}{(EPC_PREMIUM[epcRating] * 100).toFixed(0)}%) + BREEAM {breeamRating}</div>
                   </div>

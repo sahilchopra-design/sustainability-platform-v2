@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+let _jobSeq = 0; // module-level counter — replaces non-deterministic Date.now() seed in job ID generator
 const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', teal: '#0f766e', red: '#991b1b', green: '#065f46', gray: '#6b7280' };
 
 const MODEL_COLORS = [T.navy, T.gold, T.teal, T.red];
@@ -118,7 +119,7 @@ export default function PredictiveAnalyticsHubPage() {
   }), []);
 
   const submitTrainingJob = useCallback(() => {
-    const jobId = `JOB-${Math.floor(sr(Date.now() % 1000) * 99999).toString().padStart(5, '0')}`;
+    const jobId = `JOB-${Math.floor(sr(++_jobSeq * 31 + 7) * 99999).toString().padStart(5, '0')}`;
     setJobQueued({ id: jobId, model: trainJobModel, dataset: trainJobDataset, target: trainJobTarget });
     setShowTrainPanel(false);
   }, [trainJobModel, trainJobDataset, trainJobTarget]);
@@ -214,10 +215,10 @@ export default function PredictiveAnalyticsHubPage() {
 
   const perfData90 = useMemo(() => Array.from({ length: 90 }, (_, i) => ({
     day: i + 1,
-    xgb: +(0.085 + sr(i * 7 + 3) * 0.04 + Math.sin(i * 0.1) * 0.008).toFixed(4),
-    lgbm: +(0.091 + sr(i * 11 + 5) * 0.045 + Math.sin(i * 0.12) * 0.009).toFixed(4),
-    bert: +(0.063 + sr(i * 13 + 7) * 0.03 + Math.sin(i * 0.08) * 0.007).toFixed(4),
-    itrans: +(0.075 + sr(i * 17 + 9) * 0.038 + Math.sin(i * 0.11) * 0.008).toFixed(4),
+    xgb: +(0.085 + sr(i * 7 + 3) * 0.04 + (sr(i * 1) * 2 - 1) * 0.008).toFixed(4),
+    lgbm: +(0.091 + sr(i * 11 + 5) * 0.045 + (sr(i * 1) * 2 - 1) * 0.009).toFixed(4),
+    bert: +(0.063 + sr(i * 13 + 7) * 0.03 + (sr(i * 1) * 2 - 1) * 0.007).toFixed(4),
+    itrans: +(0.075 + sr(i * 17 + 9) * 0.038 + (sr(i * 1) * 2 - 1) * 0.008).toFixed(4),
   })), []);
 
   const driftMetrics = useMemo(() => CLIMATE_VARS.slice(0, 6).map((v, i) => ({

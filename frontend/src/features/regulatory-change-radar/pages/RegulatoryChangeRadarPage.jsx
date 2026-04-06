@@ -99,7 +99,7 @@ export default function RegulatoryChangeRadarPage() {
             {card('Changes Tracked', filtered.length.toString(), 'Active regulatory changes', T.navy)}
             {card('High Impact', filtered.filter(c=>c.impact==='High').length.toString(), 'Significant changes', T.red)}
             {card('Open Consultations', CONSULTATIONS.length.toString(), CONSULTATIONS.filter(c=>c.responded).length+' responded', T.amber)}
-            {card('Modules Affected', Math.max(...filtered.map(c=>c.modulesAffected)).toString(), 'Max per change', T.blue)}
+            {card('Modules Affected', (filtered.length?Math.max(...filtered.map(c=>c.modulesAffected)):0).toString(), 'Max per change', T.blue)}
           </div>
           <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, overflowX:'auto' }}>
             <table style={{ width:'100%', borderCollapse:'collapse', minWidth:800 }}>

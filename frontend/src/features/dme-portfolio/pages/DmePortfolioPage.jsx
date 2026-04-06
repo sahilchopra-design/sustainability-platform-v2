@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area, RadarChart, Radar,
@@ -20,7 +20,7 @@ const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null
 const fmt = (n) => typeof n === 'number' ? n.toLocaleString(undefined, { maximumFractionDigits: 1 }) : '---';
 const pct = (n) => typeof n === 'number' ? `${n.toFixed(1)}%` : '---';
 const seed = (s) => { let h = 5381; for (let i = 0; i < String(s).length; i++) h = ((h << 5) + h) ^ String(s).charCodeAt(i); return Math.abs(h); };
-const sRand = (n) => { let x = Math.sin(n * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sRand = (n) => { let x = Math.sin(n + 1) * 10000; return x - Math.floor(x); };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 /* ── Primitives ───────────────────────────────────────────────────────────── */
@@ -261,7 +261,7 @@ export default function DmePortfolioPage() {
   /* ── Marginal risk contribution ────────────────────────────────────────── */
   const marginalContributions = useMemo(() => {
     const benchDMI = 50;
-    const equalWeight = 100 / holdings.length;
+    const equalWeight = 100 / (holdings.length || 1);
     return holdings.map(h => {
       const mc = marginalContribution(h.dmi, portDMI, h.weight / 100, equalWeight / 100, benchDMI);
       return { name: h.name, sector: h.sector, weight: h.weight, dmi: h.dmi, selection: Math.round(mc.selection * 100) / 100, allocation: Math.round(mc.allocation * 100) / 100, interaction: Math.round(mc.interaction * 100) / 100, total: Math.round(mc.total * 100) / 100 };
@@ -282,8 +282,8 @@ export default function DmePortfolioPage() {
 
   /* ── SFDR Classification ───────────────────────────────────────────────── */
   const sfdrClassification = useMemo(() => {
-    const avgESG = holdings.reduce((s, h) => s + (h.esg_score || 0), 0) / holdings.length;
-    const pctImprover = classificationCounts.IMPROVER / holdings.length * 100;
+    const avgESG = holdings.reduce((s, h) => s + (h.esg_score || 0), 0) / (holdings.length || 1);
+    const pctImprover = classificationCounts.IMPROVER / (holdings.length || 1) * 100;
     if (avgTaxonomy > 70 && avgESG > 70) return { article: 'Article 9', label: 'Dark Green', color: 'green', desc: 'Sustainable investment objective' };
     if (avgTaxonomy > 40 && avgESG > 55) return { article: 'Article 8+', label: 'Light Green+', color: 'sage', desc: 'E/S characteristics with sustainable investments' };
     if (pctImprover > 30 || avgESG > 45) return { article: 'Article 8', label: 'Light Green', color: 'blue', desc: 'Promotes E/S characteristics' };
@@ -797,7 +797,7 @@ export default function DmePortfolioPage() {
             ))}
           </div>
           <div style={{ marginTop: 14, fontSize: 12, color: T.textSec }}>
-            <strong>Rationale:</strong> {sfdrClassification.desc}. Avg taxonomy alignment: {avgTaxonomy}%, Avg ESG: {Math.round(holdings.reduce((s, h) => s + h.esg_score, 0) / holdings.length)}, Improver %: {Math.round(classificationCounts.IMPROVER / holdings.length * 100)}%
+            <strong>Rationale:</strong> {sfdrClassification.desc}. Avg taxonomy alignment: {avgTaxonomy}%, Avg ESG: {Math.round(holdings.reduce((s, h) => s + h.esg_score, 0) / holdings.length)}, Improver %: {Math.round(classificationCounts.IMPROVER / (holdings.length || 1) * 100)}%
           </div>
         </div>
       </Section>

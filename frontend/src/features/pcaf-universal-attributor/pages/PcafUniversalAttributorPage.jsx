@@ -1,8 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   BarChart, Bar, LineChart, Line, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ComposedChart, ReferenceLine
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
@@ -41,7 +44,7 @@ const totalEmissions = PCAF_CLASSES.reduce((s, c) => s + c.emissions, 0);
 const TARGET_YEARS = Array.from({ length: 8 }, (_, i) => {
   const year = 2020 + i;
   const target = 100 * Math.pow(0.93, i);
-  const actual = 100 * Math.pow(0.95, i) * (1 + Math.sin(i * 3.1 + 1) * 0.025);
+  const actual = 100 * Math.pow(0.95, i) * (1 + (sr(i * 31 + 10) * 2 - 1) * 0.025);
   return { year, target: +target.toFixed(1), actual: +actual.toFixed(1), gap: +(actual - target).toFixed(1) };
 });
 

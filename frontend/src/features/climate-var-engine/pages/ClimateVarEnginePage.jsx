@@ -3,6 +3,7 @@ import {
   AreaChart, Area, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
+import { climateCVaR } from '../../../engines/climateRisk';
 
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
@@ -13,21 +14,31 @@ const T = {
   mono: "'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
 
-// Climate VaR model: CVaR = transition_var + physical_var + interaction_term
-function computeCVaR(aum, scenario, horizon) {
+// Normal quantile table (one-sided, standard normal) for VaR confidence scaling
+// Source: Abramowitz & Stegun §26.2.17; values to 4 d.p.
+const NQ = { 90: 1.2816, 91: 1.3408, 92: 1.4051, 93: 1.4758, 94: 1.5548, 95: 1.6449, 96: 1.7507, 97: 1.8808, 98: 2.0537, 99: 2.3263 };
+
+// Climate VaR model: CVaR = trans + phys + ρ·trans·phys  (NGFS/ECB bilinear copula)
+// Uses climateCVaR() from engines/climateRisk.js
+// confidence: one-sided confidence level (90–99). VaR scaled linearly with z_α / z_95 relative
+// to the 95% baseline calibration of the underlying trans/phys sensitivity factors.
+function computeCVaR(aum, scenario, horizon, confidence = 95) {
   const params = {
-    current_policies:    { trans: 0.028, phys: 0.012, interact: 0.004, correlation: 0.15 },
-    delayed_transition:  { trans: 0.042, phys: 0.018, interact: 0.009, correlation: 0.25 },
-    below_2c:           { trans: 0.055, phys: 0.010, interact: 0.008, correlation: 0.20 },
-    divergent_net_zero: { trans: 0.065, phys: 0.014, interact: 0.012, correlation: 0.28 },
-    net_zero_2050:      { trans: 0.072, phys: 0.008, interact: 0.010, correlation: 0.22 },
+    current_policies:    { trans: 0.028, phys: 0.012, correlation: 0.15 },
+    delayed_transition:  { trans: 0.042, phys: 0.018, correlation: 0.25 },
+    below_2c:           { trans: 0.055, phys: 0.010, correlation: 0.20 },
+    divergent_net_zero: { trans: 0.065, phys: 0.014, correlation: 0.28 },
+    net_zero_2050:      { trans: 0.072, phys: 0.008, correlation: 0.22 },
   };
   const p = params[scenario];
   const horizon_adj = Math.sqrt(horizon / 10);
-  const transVaR = aum * p.trans * horizon_adj;
-  const physVaR  = aum * p.phys * horizon_adj;
-  const interVaR = aum * p.interact * horizon_adj * p.correlation;
-  return { transVaR, physVaR, interVaR, totalVaR: transVaR + physVaR + interVaR, pct: (transVaR + physVaR + interVaR) / aum * 100 };
+  const z_adj = (NQ[confidence] ?? NQ[95]) / NQ[95]; // scale VaR linearly with confidence quantile
+  const transVaR = aum * p.trans * horizon_adj * z_adj;
+  const physVaR  = aum * p.phys * horizon_adj * z_adj;
+  // Bilinear copula interaction via engine: ρ · transVaR · physVaR / aum (keeps units)
+  const totalVaR = climateCVaR(transVaR, physVaR, p.correlation);
+  const interVaR = totalVaR - transVaR - physVaR;
+  return { transVaR, physVaR, interVaR, totalVaR, pct: totalVaR / aum * 100 };
 };
 
 const SCENARIOS = {
@@ -55,7 +66,7 @@ export default function ClimateVarEnginePage() {
   const [horizon, setHorizon] = useState(10);
   const [confidence, setConfidence] = useState(95);
 
-  const cvar = useMemo(() => computeCVaR(aum, scenario, horizon), [aum, scenario, horizon]);
+  const cvar = useMemo(() => computeCVaR(aum, scenario, horizon, confidence), [aum, scenario, horizon, confidence]);
 
   const allScenarioCVaR = useMemo(() =>
     Object.keys(SCENARIOS).map(s => ({ ...computeCVaR(aum, s, horizon), ...SCENARIOS[s], id: s })),
@@ -66,7 +77,13 @@ export default function ClimateVarEnginePage() {
     return { horizon: h, var: r.totalVaR, transition: r.transVaR, physical: r.physVaR };
   });
 
-  const distribution = useMemo(() => buildDistribution(-cvar.totalVaR / aum * 100, 8), [cvar]);
+  const distribution = useMemo(() => {
+    // σ derived from scenario VaR under normal model: σ = VaR_pct / z_α
+    // This ensures the distribution width scales correctly with scenario and confidence level.
+    const z = NQ[confidence] ?? NQ[95];
+    const std = Math.max(1, cvar.pct / z);
+    return buildDistribution(-cvar.totalVaR / aum * 100, std);
+  }, [cvar, aum, confidence]);
 
   return (
     <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh' }}>
@@ -137,14 +154,14 @@ export default function ClimateVarEnginePage() {
             <div style={{ background: T.surface, borderRadius: 10, border: `2px solid ${SCENARIOS[scenario].color}44`, padding: 24, marginBottom: 20 }}>
               <h3 style={{ color: T.navy, margin: '0 0 4px', fontSize: 15 }}>Climate VaR Decomposition — {SCENARIOS[scenario].label} · {horizon}yr · {confidence}% CI</h3>
               <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 16px' }}>
-                CVaR_total = CVaR_transition + CVaR_physical + ρ·CVaR_interaction<br />
+                CVaR_total = CVaR_transition + CVaR_physical + ρ·CVaR_transition·CVaR_physical / AUM  (NGFS/ECB bilinear copula)<br />
                 Scaled by horizon: √(T/10). Correlation (ρ) = {({ current_policies: 0.15, delayed_transition: 0.25, below_2c: 0.20, divergent_net_zero: 0.28, net_zero_2050: 0.22 }[scenario]).toFixed(2)} under {SCENARIOS[scenario].label}.
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
                 {[
-                  { label: 'Transition VaR', val: `$${(cvar.transVaR/1000).toFixed(3)}B`, sub: `${(cvar.transVaR/cvar.totalVaR*100).toFixed(0)}% of total`, col: T.red },
-                  { label: 'Physical VaR', val: `$${(cvar.physVaR/1000).toFixed(3)}B`, sub: `${(cvar.physVaR/cvar.totalVaR*100).toFixed(0)}% of total`, col: T.orange },
-                  { label: 'Interaction Term', val: `$${(cvar.interVaR/1000).toFixed(3)}B`, sub: `${(cvar.interVaR/cvar.totalVaR*100).toFixed(0)}% of total`, col: T.amber },
+                  { label: 'Transition VaR', val: `$${(cvar.transVaR/1000).toFixed(3)}B`, sub: `${cvar.totalVaR > 0 ? (cvar.transVaR/cvar.totalVaR*100).toFixed(0) : '0'}% of total`, col: T.red },
+                  { label: 'Physical VaR', val: `$${(cvar.physVaR/1000).toFixed(3)}B`, sub: `${cvar.totalVaR > 0 ? (cvar.physVaR/cvar.totalVaR*100).toFixed(0) : '0'}% of total`, col: T.orange },
+                  { label: 'Interaction Term', val: `$${(cvar.interVaR/1000).toFixed(3)}B`, sub: `${cvar.totalVaR > 0 ? (cvar.interVaR/cvar.totalVaR*100).toFixed(0) : '0'}% of total`, col: T.amber },
                   { label: 'Total Climate VaR', val: `$${(cvar.totalVaR/1000).toFixed(3)}B`, sub: `${cvar.pct.toFixed(2)}% of AUM`, col: SCENARIOS[scenario].color },
                 ].map(m => (
                   <div key={m.label} style={{ background: T.bg, borderRadius: 8, padding: 16, textAlign: 'center' }}>

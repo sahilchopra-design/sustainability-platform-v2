@@ -17,8 +17,8 @@ const PROJECTS=Array.from({length:60},(_,i)=>{
   const type=['Mitigation','Adaptation','Cross-cutting','Loss & Damage'][Math.floor(sr(i*13)*4)];const status=['Active','Completed','Pipeline','Disbursing'][Math.floor(sr(i*17)*4)];
   const approved=+(sr(i*19)*500+10).toFixed(1);const disbursed=+(approved*(sr(i*23)*0.6+0.2)).toFixed(1);const cofinance=+(approved*(sr(i*29)*2+0.5)).toFixed(1);
   const countries=Math.round(sr(i*31)*8+1);const beneficiaries=Math.round(sr(i*37)*5+0.1);const emissions=Math.round(sr(i*41)*50+5);const jobs=Math.round(sr(i*43)*20000+1000);
-  const yearly=Array.from({length:5},(_,y)=>({year:2020+y,approved:+(approved/5+sr(i*100+y)*20-10).toFixed(1),disbursed:+(disbursed/5+sr(i*100+y*3)*10-5).toFixed(1)}));
-  return{id:i+1,name:`${sector} - ${region.split(' ')[0]}`,fund,region,sector,type,status,approvedM:approved,disbursedM:disbursed,cofinanceM:cofinance,disbursementRate:Math.round(disbursed/approved*100),countries,beneficiariesM:beneficiaries,emissionsReduced:emissions,jobsCreated:jobs,startYear:2019+Math.floor(sr(i*47)*4),endYear:2025+Math.floor(sr(i*49)*5),genderMarker:['G0','G1','G2'][Math.floor(sr(i*51)*3)],resultArea:['Energy','REDD+','Transport','Adaptation','Health','Food','Water','Cities'][Math.floor(sr(i*53)*8)],riskRating:['Low','Medium','High'][Math.floor(sr(i*57)*3)],yearly};
+  const yearly=Array.from({length:5},(_,y)=>({year:2020+y,approved:+Math.max(0,approved/5+sr(i*100+y)*20-10).toFixed(1),disbursed:+Math.max(0,disbursed/5+sr(i*100+y*3)*10-5).toFixed(1)}));
+  return{id:i+1,name:`${sector} - ${region.split(' ')[0]}`,fund,region,sector,type,status,approvedM:approved,disbursedM:disbursed,cofinanceM:cofinance,disbursementRate:approved>0?Math.round(disbursed/approved*100):0,countries,beneficiariesM:beneficiaries,emissionsReduced:emissions,jobsCreated:jobs,startYear:2019+Math.floor(sr(i*47)*4),endYear:2025+Math.floor(sr(i*49)*5),genderMarker:['G0','G1','G2'][Math.floor(sr(i*51)*3)],resultArea:['Energy','REDD+','Transport','Adaptation','Health','Food','Water','Cities'][Math.floor(sr(i*53)*8)],riskRating:['Low','Medium','High'][Math.floor(sr(i*57)*3)],yearly};
 });
 
 export default function ClimateFinanceHubPage(){
@@ -28,7 +28,7 @@ export default function ClimateFinanceHubPage(){
   const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
   const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
 
-  const stats=useMemo(()=>({count:filtered.length,totalApproved:fmt(filtered.reduce((s,r)=>s+r.approvedM,0)*1e6),totalDisbursed:fmt(filtered.reduce((s,r)=>s+r.disbursedM,0)*1e6),avgDisbRate:Math.round(filtered.reduce((s,r)=>s+r.disbursementRate,0)/filtered.length||0),totalCofinance:fmt(filtered.reduce((s,r)=>s+r.cofinanceM,0)*1e6),totalEmissions:fmt(filtered.reduce((s,r)=>s+r.emissionsReduced,0)),active:filtered.filter(r=>r.status==='Active').length}),[filtered]);
+  const stats=useMemo(()=>({count:filtered.length,totalApproved:fmt(filtered.reduce((s,r)=>s+r.approvedM,0)*1e6),totalDisbursed:fmt(filtered.reduce((s,r)=>s+r.disbursedM,0)*1e6),avgDisbRate:filtered.length?Math.round(filtered.reduce((s,r)=>s+r.disbursementRate,0)/filtered.length):0,totalCofinance:fmt(filtered.reduce((s,r)=>s+r.cofinanceM,0)*1e6),totalEmissions:fmt(filtered.reduce((s,r)=>s+r.emissionsReduced,0)),active:filtered.filter(r=>r.status==='Active').length}),[filtered]);
 
   const typeDist=useMemo(()=>{const m={};PROJECTS.forEach(r=>{m[r.type]=(m[r.type]||0)+r.approvedM;});return Object.entries(m).map(([k,v])=>({name:k,value:Math.round(v)}));},[]);
   const regionFlow=useMemo(()=>{const m={};PROJECTS.forEach(r=>{if(!m[r.region])m[r.region]={region:r.region,approved:0,disbursed:0};m[r.region].approved+=r.approvedM;m[r.region].disbursed+=r.disbursedM;});return Object.values(m).sort((a,b)=>b.approved-a.approved);},[]);

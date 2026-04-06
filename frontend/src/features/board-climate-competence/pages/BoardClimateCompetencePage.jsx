@@ -39,7 +39,7 @@ export default function BoardClimateCompetencePage() {
 
   const sectors = [...new Set(COMPANIES.map(c => c.sector))];
   const filtered = useMemo(() => sectorFilter === 'All' ? COMPANIES : COMPANIES.filter(c => c.sector === sectorFilter), [sectorFilter]);
-  const avgScore = Math.round(filtered.reduce((s, c) => s + c.score, 0) / filtered.length);
+  const avgScore = filtered.length ? Math.round(filtered.reduce((s, c) => s + c.score, 0) / filtered.length) : 0;
 
   const card = (title, value, sub, color) => (
     <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, flex:1, minWidth:150 }}>

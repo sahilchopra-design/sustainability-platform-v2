@@ -307,7 +307,7 @@ export default function NetZeroCommitmentTrackerPage() {
     const nzaoa = PORTFOLIO_HOLDINGS.filter(h => h.alliance === 'NZAOA').reduce((s, h) => s + h.allocationPct, 0);
     const nzba = PORTFOLIO_HOLDINGS.filter(h => h.alliance === 'NZBA').reduce((s, h) => s + h.allocationPct, 0);
     const notCovered = total - committed;
-    return { total, committed, nzam, nzaoa, nzba, notCovered, pctCovered: Math.round(committed / total * 100) };
+    return { total, committed, nzam, nzaoa, nzba, notCovered, pctCovered: Math.round(committed / (total || 1) * 100) };
   }, []);
 
   const allianceDonut = useMemo(() => [
@@ -324,7 +324,7 @@ export default function NetZeroCommitmentTrackerPage() {
     const target = PORTFOLIO_HOLDINGS.find(h => h.manager.toLowerCase().includes(whatIfTarget.toLowerCase()) && !h.isNzCommitted);
     if (!target) return null;
     const newCommitted = portfolioStats.committed + target.allocationPct;
-    const newPct = Math.round(newCommitted / portfolioStats.total * 100);
+    const newPct = Math.round(newCommitted / (portfolioStats.total || 1) * 100);
     return { manager: target.manager, addedPct: target.allocationPct, newCoverage: newPct, oldCoverage: portfolioStats.pctCovered, aumAdded: target.aumAllocated };
   }, [whatIfTarget, portfolioStats]);
 

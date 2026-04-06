@@ -52,7 +52,7 @@ export default function BenchmarkAnalyticsPage(){
   const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(0);};
   const exportCSV=(data,fn)=>{if(!data.length)return;const h=Object.keys(data[0]);const csv=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
 
-  const kpis=useMemo(()=>({count:filtered.length,totalAum:filtered.reduce((s,b)=>s+b.aum,0),avgEsg:(filtered.reduce((s,b)=>s+parseFloat(b.esgScore),0)/filtered.length),avgReturn:(filtered.reduce((s,b)=>s+parseFloat(b.returnYtd),0)/filtered.length),avgCarbon:(filtered.reduce((s,b)=>s+parseFloat(b.carbonIntensity),0)/filtered.length)}),[filtered]);
+  const kpis=useMemo(()=>{const n=filtered.length||1;return{count:filtered.length,totalAum:filtered.reduce((s,b)=>s+b.aum,0),avgEsg:(filtered.reduce((s,b)=>s+parseFloat(b.esgScore),0)/n),avgReturn:(filtered.reduce((s,b)=>s+parseFloat(b.returnYtd),0)/n),avgCarbon:(filtered.reduce((s,b)=>s+parseFloat(b.carbonIntensity),0)/n)};},[filtered]);
 
   const provDist=useMemo(()=>{const m={};PROVIDERS.forEach(p=>m[p]=0);filtered.forEach(b=>m[b.provider]++);return Object.entries(m).filter(([,v])=>v>0).map(([name,value])=>({name,value}));},[filtered]);
   const typeDist=useMemo(()=>{const m={};TYPES.forEach(t=>m[t]=0);filtered.forEach(b=>m[b.type]++);return Object.entries(m).filter(([,v])=>v>0).map(([name,value])=>({name:name.length>14?name.slice(0,14)+'..':name,value}));},[filtered]);
@@ -223,7 +223,7 @@ export default function BenchmarkAnalyticsPage(){
     return(
       <div>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
-          {[{l:'Unique Providers',v:new Set(filtered.map(b=>b.provider)).size},{l:'Avg Constituents',v:Math.round(filtered.reduce((s,b)=>s+b.constituents,0)/filtered.length)},{l:'Avg Exclusions',v:Math.round(filtered.reduce((s,b)=>s+b.exclusions,0)/filtered.length)},{l:'Avg Turnover',v:(filtered.reduce((s,b)=>s+parseFloat(b.turnover),0)/filtered.length).toFixed(1)+'%'}].map((k,i)=>(
+          {[{l:'Unique Providers',v:new Set(filtered.map(b=>b.provider)).size},{l:'Avg Constituents',v:filtered.length?Math.round(filtered.reduce((s,b)=>s+b.constituents,0)/filtered.length):0},{l:'Avg Exclusions',v:filtered.length?Math.round(filtered.reduce((s,b)=>s+b.exclusions,0)/filtered.length):0},{l:'Avg Turnover',v:filtered.length?(filtered.reduce((s,b)=>s+parseFloat(b.turnover),0)/filtered.length).toFixed(1)+'%':'0.0%'}].map((k,i)=>(
             <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase'}}>{k.l}</div><div style={{fontSize:22,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div></div>
           ))}
         </div>

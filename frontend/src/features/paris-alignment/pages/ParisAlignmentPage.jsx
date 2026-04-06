@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell,
@@ -11,7 +11,7 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
    THEME
    ══════════════════════════════════════════════════════════════ */
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const seed = (s) => { let x = Math.sin(s * 2.7183 + 1) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 /* ══════════════════════════════════════════════════════════════
    GLOBAL CARBON BUDGET STATUS
@@ -444,7 +444,7 @@ export default function ParisAlignmentPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
                   <XAxis type="number" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Gt CO2 cumulative', position: 'bottom', style: { fontSize: 11, fill: T.textMut } }} />
                   <YAxis dataKey="country" type="category" tick={{ fontSize: 11, fill: T.textSec }} width={110} />
-                  <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, borderRadius: 8 }} formatter={(v, n) => [`${v} Gt (${HISTORICAL_EMISSIONS.find(h => h.cumulative_gt === v)?.share_pct}% global)`, 'Cumulative']} />
+                  <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, borderRadius: 8 }} formatter={(v, n) => [`${v} Gt (${HISTORICAL_EMISSIONS.find(h => h.cumulative_gt === v)?.share_pct ?? 'N/A'}% global)`, 'Cumulative']} />
                   <Bar dataKey="cumulative_gt" name="Cumulative Gt" radius={[0, 6, 6, 0]}>
                     {HISTORICAL_EMISSIONS.map((_, i) => <Cell key={i} fill={[T.navy, T.red, T.gold, T.sage, T.navyL, T.amber, '#7c3aed', '#0d9488', '#ec4899', '#6366f1'][i]} />)}
                   </Bar>
@@ -499,7 +499,7 @@ export default function ParisAlignmentPage() {
                       </td>
                       <td style={{ padding: '8px 12px', textAlign: 'center' }}>{h.hasSBTi ? '\u2705' : '\u274C'}</td>
                       <td style={{ padding: '8px 12px', color: T.textSec }}>{h.nzYear || '-'}</td>
-                      <td style={{ padding: '8px 12px' }}><Badge label={h.nzQuality} color={NZ_QUALITY_TIERS.find(t => t.tier === h.nzQuality)?.color} /></td>
+                      <td style={{ padding: '8px 12px' }}><Badge label={h.nzQuality} color={NZ_QUALITY_TIERS.find(t => t.tier === h.nzQuality)?.color ?? T.textMut} /></td>
                       <td style={{ padding: '8px 12px', textAlign: 'center', fontSize: 14 }}>{h.onTrack15 ? '\u2705' : h.onTrack20 ? '\u26A0\uFE0F' : '\u274C'}</td>
                     </tr>
                   ))}
@@ -734,7 +734,7 @@ export default function ParisAlignmentPage() {
                         <td style={{ padding: '8px 12px', fontWeight: 700, color: itrColor(h.itr) }}>{h.itr}C</td>
                         <td style={{ padding: '8px 12px', fontWeight: 700, color: T.red }}>+{gap}C</td>
                         <td style={{ padding: '8px 12px', textAlign: 'center' }}>{h.hasSBTi ? '\u2705' : '\u274C'}</td>
-                        <td style={{ padding: '8px 12px' }}><Badge label={h.nzQuality} color={NZ_QUALITY_TIERS.find(t => t.tier === h.nzQuality)?.color} /></td>
+                        <td style={{ padding: '8px 12px' }}><Badge label={h.nzQuality} color={NZ_QUALITY_TIERS.find(t => t.tier === h.nzQuality)?.color ?? T.textMut} /></td>
                         <td style={{ padding: '8px 12px' }}><Badge label={priority} color={priority === 'Critical' ? T.red : priority === 'High' ? T.amber : T.sage} /></td>
                         <td style={{ padding: '8px 12px', color: T.textSec, fontSize: 11, maxWidth: 220 }}>{action}</td>
                       </tr>

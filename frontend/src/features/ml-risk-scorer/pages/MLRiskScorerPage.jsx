@@ -132,7 +132,7 @@ export default function MLRiskScorerPage() {
 
   const importanceData = useMemo(() => {
     const raw = FEATURES.map((f, i) => ({ feature: f, value: sr(i * 17 + 3) }));
-    const total = raw.reduce((a, b) => a + b.value, 0);
+    const total = Math.max(1e-10, raw.reduce((a, b) => a + b.value, 0)); // floor prevents NaN if all feature importances are 0
     return raw.map(d => ({ ...d, value: +(d.value / total).toFixed(4) }))
       .sort((a, b) => b.value - a.value);
   }, []);
@@ -148,10 +148,10 @@ export default function MLRiskScorerPage() {
   const predictions = useMemo(() => Array.from({ length: 50 }, (_, i) => {
     const actual = +(0.3 + sr(i * 19) * 0.6).toFixed(3);
     const p50 = +(actual + (sr(i * 23 + 1) - 0.5) * 0.08).toFixed(3);
-    const p5 = +(p50 - 0.15 - sr(i * 5) * 0.05).toFixed(3);
-    const p25 = +(p50 - 0.07 - sr(i * 7) * 0.03).toFixed(3);
-    const p75 = +(p50 + 0.07 + sr(i * 11) * 0.03).toFixed(3);
-    const p95 = +(p50 + 0.15 + sr(i * 13) * 0.05).toFixed(3);
+    const p5  = +Math.max(0, p50 - 0.15 - sr(i * 5)  * 0.05).toFixed(3); // clamp: risk scores ∈ [0,1]
+    const p25 = +Math.max(0, p50 - 0.07 - sr(i * 7)  * 0.03).toFixed(3);
+    const p75 = +Math.min(1, p50 + 0.07 + sr(i * 11) * 0.03).toFixed(3);
+    const p95 = +Math.min(1, p50 + 0.15 + sr(i * 13) * 0.05).toFixed(3);
     return { id: `AST-${1000 + i}`, actual, p5, p25, p50, p75, p95, covered: actual >= p5 && actual <= p95 };
   }), []);
 

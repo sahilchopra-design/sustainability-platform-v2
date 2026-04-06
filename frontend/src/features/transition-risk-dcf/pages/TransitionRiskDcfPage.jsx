@@ -4,6 +4,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   ReferenceLine, Legend, ComposedChart
 } from 'recharts';
+import { ngfsCarbonPrice } from '../../../engines/climateRisk';
 
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', surfaceH: '#f0ede7', border: '#e5e0d8',
@@ -17,20 +18,22 @@ const T = {
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-// ─── NGFS CARBON PRICE MODEL ─────────────────────────────────────────────────
+// ─── NGFS CARBON PRICE MODEL (Phase 4, Sept 2023 — tabular, no sinusoidal approximation) ──
+// P0/g0/alpha/T_cycle: display-only parameters for the formula illustration panel.
+// Actual price computation uses ngfsCarbonPrice() tabular lookup, NOT this analytic form.
+// Approximate values derived from NGFS Phase 4 scenario narratives (Sept 2023).
 const SCENARIOS = {
-  current_policies:    { label: 'Current Policies',    short: 'CP',  color: T.red,    P0: 25,  g0: 0.04, alpha: 0.12, T_cycle: 5,  beta: 0,     gamma: 0    },
-  delayed_transition:  { label: 'Delayed Transition',  short: 'DT',  color: T.orange, P0: 30,  g0: 0.05, alpha: 0.08, T_cycle: 4,  beta: 0.001, gamma: 0.08 },
-  below_2c:           { label: 'Below 2°C',            short: 'B2C', color: T.amber,  P0: 45,  g0: 0.08, alpha: 0.06, T_cycle: 5,  beta: 0.002, gamma: 0.12 },
-  divergent_net_zero: { label: 'Divergent Net Zero',   short: 'DNZ', color: T.blue,   P0: 55,  g0: 0.10, alpha: 0.05, T_cycle: 4,  beta: 0.003, gamma: 0.15 },
-  net_zero_2050:      { label: 'Net Zero 2050',        short: 'NZ',  color: T.green,  P0: 60,  g0: 0.12, alpha: 0.04, T_cycle: 4,  beta: 0.004, gamma: 0.18 },
+  current_policies:    { label: 'Current Policies',    short: 'CP',  color: T.red,    ngfsKey: 'CurrPol', P0: 12,  g0: 0.02, alpha: 0.05, T_cycle: 8  },
+  delayed_transition:  { label: 'Delayed Transition',  short: 'DT',  color: T.orange, ngfsKey: 'DP',      P0: 15,  g0: 0.07, alpha: 0.30, T_cycle: 6  },
+  below_2c:           { label: 'Below 2°C',            short: 'B2C', color: T.amber,  ngfsKey: 'BelowAc', P0: 35,  g0: 0.05, alpha: 0.15, T_cycle: 7  },
+  divergent_net_zero: { label: 'NDC / Divergent',      short: 'NDC', color: T.blue,   ngfsKey: 'NatAmbI', P0: 18,  g0: 0.04, alpha: 0.20, T_cycle: 7  },
+  net_zero_2050:      { label: 'Net Zero 2050',        short: 'NZ',  color: T.green,  ngfsKey: 'NZ2050',  P0: 48,  g0: 0.07, alpha: 0.10, T_cycle: 5  },
 };
 
+// Wrapper: local scenario key + year → NGFS Phase 4 price (USD/tCO2e, 2022 real)
 function carbonPrice(scenario, t) {
-  const s = SCENARIOS[scenario];
-  const base = s.P0 * Math.exp(s.g0 * t) * (1 + s.alpha * Math.sin(2 * Math.PI * t / s.T_cycle));
-  const acceleration = s.P0 * Math.exp((s.g0 + s.beta * t) * t);
-  return scenario === 'net_zero_2050' ? acceleration : base;
+  const key = SCENARIOS[scenario]?.ngfsKey ?? 'CurrPol';
+  return ngfsCarbonPrice(key, 2024 + t);
 }
 
 function buildPriceTrajectory() {
@@ -119,7 +122,7 @@ export default function TransitionRiskDcfPage() {
   const scenarioCompare = useMemo(() =>
     Object.keys(SCENARIOS).map(s => {
       const total = ASSETS.reduce((acc, a) => acc + computeDcfImpairment(a, s, horizon).impairment, 0);
-      const pct = (total / totalBook) * 100;
+      const pct = (total / (totalBook || 1)) * 100;
       return { scenario: SCENARIOS[s].label, short: SCENARIOS[s].short, impairment: total, pct, color: SCENARIOS[s].color };
     }), [horizon, totalBook]);
 
@@ -187,7 +190,7 @@ export default function TransitionRiskDcfPage() {
             <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 24, marginBottom: 20 }}>
               <h3 style={{ color: T.navy, margin: '0 0 4px' }}>NGFS Carbon Price Trajectories — 5 Scenarios (2024–2050)</h3>
               <p style={{ color: T.textSec, fontSize: 13, margin: '0 0 20px' }}>
-                Based on NGFS Phase 5 (2023). CP: gradual +4%/yr · DT: delayed action → sudden shock · B2C: Well-below 2°C · DNZ: Regional divergence · NZ: Net Zero 2050 steep path
+                NGFS Phase 4 (Sept 2023) tabular data. CP: Current Policies ~$12→$42 · DT: Delayed Policy, back-loaded shock → $550 · B2C: Below 2°C $35→$580 · NDC: NatAmb $18→$195 · NZ: Net Zero 2050 $48→$860
               </p>
               <ResponsiveContainer width="100%" height={360}>
                 <LineChart data={priceData}>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+﻿import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -23,7 +23,7 @@ const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } c
 const fmt = (n) => typeof n === 'number' ? n.toLocaleString(undefined, { maximumFractionDigits: 1 }) : '---';
 const pct = (n) => typeof n === 'number' ? `${n.toFixed(1)}%` : '---';
 const seed = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i); return Math.abs(h); };
-const sRand = (n) => { let x = Math.sin(n * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sRand = (n) => { let x = Math.sin(n + 1) * 10000; return x - Math.floor(x); };
 
 const VALID_SECTORS = ['Energy','Materials','Industrials','Consumer Discretionary','Consumer Staples','Health Care','Financials','Information Technology','Communication Services','Utilities','Real Estate'];
 
@@ -739,7 +739,7 @@ export default function DataValidationPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
               {['name','ticker','sector','revenue_usd_mn','market_cap_usd_mn','evic_usd_mn','esg_score','scope1_mt','scope2_mt','employees','transition_risk_score','sbti_committed','carbon_neutral_target_year','ghg_intensity_tco2e_per_mn','data_quality_score'].map((field, i) => {
                 const hasData = companies.filter(c => c[field] !== undefined && c[field] !== null && c[field] !== 0 && c[field] !== '').length;
-                const coverage = (hasData / companies.length) * 100;
+                const coverage = companies.length ? (hasData / companies.length) * 100 : 0;
                 return (
                   <div key={i} style={{ padding: 10, background: T.surfaceH, borderRadius: 8, textAlign: 'center' }}>
                     <div style={{ fontSize: 10, color: T.textMut, marginBottom: 4 }}>{field}</div>

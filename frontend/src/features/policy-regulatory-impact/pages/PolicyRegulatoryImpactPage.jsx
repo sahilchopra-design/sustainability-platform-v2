@@ -68,7 +68,7 @@ const POLICIES = [
       { year: 2030, total_credits_bn: 74, ptc_solar: 0.0275, ptc_wind: 0.0265, ev_credit: 7500 },
     ],
     revenue_impact_bn: 48.0, cost_impact_bn: -8.2, stranded_trigger: false,
-    desc: '$369B in clean energy tax credits 2022–2032. PTC/ITC for solar/wind. $7,500 EV credit. $3/kg clean hydrogen credit. ~$0.85/t carbon capture. Massive green capex accelerator.',
+    desc: '$369B in clean energy tax credits 2022–2032. PTC/ITC for solar/wind. $7,500 EV credit. $3/kg clean hydrogen credit. $85/t geological carbon capture (45Q), $180/t for DAC. Massive green capex accelerator.',
   },
   {
     id: 'eu_taxonomy', name: 'EU Taxonomy for Sustainable Finance', type: 'Disclosure/Label', jurisdiction: 'EU',
@@ -293,7 +293,7 @@ export default function PolicyRegulatoryImpactPage() {
                 { label: 'Wind PTC', val: '$0.0265/kWh', desc: 'Wind production tax credit, 10yr, prevailing wage requirement' },
                 { label: 'Clean H₂', val: '$3.00/kg', desc: '45V credit, $0.60–$3.00/kg based on lifecycle GHG intensity' },
                 { label: 'EV Credit', val: '$7,500', desc: '30D clean vehicle credit, income limits, final assembly requirement' },
-                { label: 'Carbon Capture', val: '$0.85/t', desc: '45Q, enhanced $180/t for DAC, $85/t geological, $60/t EOR' },
+                { label: 'Carbon Capture', val: '$85/t', desc: '45Q: $85/t geological sequestration, $180/t for DAC, $60/t EOR (IRA 2022)' },
                 { label: 'Battery Mfg', val: '$35/kWh', desc: '45X credit for domestically manufactured battery cells & modules' },
               ].map(m => (
                 <div key={m.label} style={{ background: T.surface, borderRadius: 8, border: `1px solid ${T.border}`, padding: 16 }}>

@@ -9,10 +9,16 @@ import {
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', teal: '#0f766e', red: '#991b1b', green: '#065f46', gray: '#6b7280', amber: '#b45309' };
 
-const strandingProb = (carbonIntensity, carbonPrice2030, remainingLife) => {
+// policyShock: NGFS regulatory tightening multiplier (beyond carbon price mechanism)
+// Encodes policy phase-out risk, demand substitution, and market competition effects
+// Sources: NGFS Phase 4 (2023) sector-specific transition risk taxonomy
+const strandingProb = (carbonIntensity, carbonPrice2030, remainingLife, policyShock = 1.0) => {
   const carbonCostRatio = (carbonIntensity * carbonPrice2030) / 1000;
   const timeDiscountFactor = Math.max(0, 1 - (remainingLife / 30));
-  return Math.min(0.95, carbonCostRatio * 0.8 + timeDiscountFactor * 0.15);
+  // demandSubstitution: high-intensity assets face accelerating market share loss
+  const demandSubstitution = Math.min(0.12, carbonIntensity * 0.08);
+  const base = carbonCostRatio * 0.8 + timeDiscountFactor * 0.15 + demandSubstitution;
+  return Math.min(0.95, base * policyShock);
 };
 
 const UK_UTILITIES = [
@@ -72,11 +78,13 @@ const ENERGY_ASSETS = Array.from({ length: 25 }, (_, i) => {
 });
 
 const CP_SCENARIOS = {
-  'NZ2050': { cp2030: 250, cp2040: 600, cp2050: 1200, label: 'Net Zero 2050', color: T.green },
-  'Below2C': { cp2030: 150, cp2040: 350, cp2050: 800, label: 'Below 2°C', color: T.teal },
-  'Delayed': { cp2030: 80, cp2040: 200, cp2050: 500, label: 'Delayed Action', color: T.amber },
-  'NDC': { cp2030: 50, cp2040: 120, cp2050: 280, label: 'NDC Policies', color: '#f97316' },
-  'CurrentPolicy': { cp2030: 25, cp2040: 60, cp2050: 120, label: 'Current Policy', color: T.red },
+  // policyShock: NGFS policy risk multiplier on strandingProb (regulatory bans + demand substitution)
+  // NZ2050: aggressive phase-outs (UK ban, EU ETS reform, CBAM); Below2C: orderly; Delayed: deferred risk; CurrentPolicy: minimal
+  'NZ2050':        { cp2030: 250, cp2040: 600,  cp2050: 1200, label: 'Net Zero 2050',   color: T.green,  policyShock: 1.35 },
+  'Below2C':       { cp2030: 150, cp2040: 350,  cp2050: 800,  label: 'Below 2°C',       color: T.teal,   policyShock: 1.20 },
+  'Delayed':       { cp2030: 80,  cp2040: 200,  cp2050: 500,  label: 'Delayed Action',  color: T.amber,  policyShock: 1.05 },
+  'NDC':           { cp2030: 50,  cp2040: 120,  cp2050: 280,  label: 'NDC Policies',    color: '#f97316',policyShock: 0.95 },
+  'CurrentPolicy': { cp2030: 25,  cp2040: 60,   cp2050: 120,  label: 'Current Policy',  color: T.red,    policyShock: 0.80 },
 };
 
 const GREENIUM_DATA = [
@@ -145,7 +153,7 @@ export default function InfrastructureValuationPage() {
     const projectLife = 25;
     const irr = gfTargetIRR / 100 * (1 - gfConstRisk * 0.008);
     const equityIRR = irr + 0.025 + (1 - gfEquity / 100) * 0.015;
-    const dscr = (annualRev - annualOpex) / annualDsvc;
+    const dscr = (annualRev - annualOpex) / Math.max(annualDsvc, 0.001); // guard: equity=100% → debt=0 → annualDsvc=0
     const dscrMin = dscr * (0.85 + sr(selectedProject * 5 + 2) * 0.1);
     const payback = equity / Math.max(0.01, fcf);
     let npv = 0;
@@ -167,7 +175,7 @@ export default function InfrastructureValuationPage() {
   const strandedAssets = useMemo(() => {
     const scenario = CP_SCENARIOS[cpScenario];
     return ENERGY_ASSETS.map(a => {
-      const prob = strandingProb(a.carbonIntensity, scenario.cp2030, a.remainingLife);
+      const prob = strandingProb(a.carbonIntensity, scenario.cp2030, a.remainingLife, scenario.policyShock);
       const npvHaircut = prob * 0.85;
       const climateValue = a.bookValue * (1 - npvHaircut);
       const strandYear = prob > 0.7 ? 2030 + Math.floor((1 - prob) * 20) : prob > 0.4 ? 2035 + Math.floor((1 - prob) * 15) : 2045 + Math.floor((1 - prob) * 10);

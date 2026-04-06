@@ -22,7 +22,7 @@ const CAT_BONDS = Array.from({ length: 24 }, (_, i) => {
   const tenor = 3 + Math.floor(sr(i * 7) * 2);
   const attachment = 0.02 + sr(i * 11) * 0.06;
   const exhaustion = attachment + 0.03 + sr(i * 13) * 0.05;
-  const eloss = attachment * (0.3 + sr(i * 17) * 0.4);
+  const eloss = (exhaustion - attachment) * (0.15 + sr(i * 17) * 0.35); // EL as fraction of layer thickness, not attachment trigger (actuarially correct)
   const spread = eloss * (2.5 + sr(i * 19) * 2.0);
   return {
     id: `Bond-${String(i + 1).padStart(3, '0')}`,
@@ -62,7 +62,7 @@ const MARKET_SIZE = Array.from({ length: 12 }, (_, i) => ({
   year: 2013 + i,
   outstanding: Math.round((17 + i * 2.8 + sr(i * 7) * 3) * 1e9),
   issuance:    Math.round((6 + i * 1.4 + sr(i * 11) * 2) * 1e9),
-  spread_index: (650 + Math.sin(i * 0.9) * 120 + sr(i * 13) * 80).toFixed(0),
+  spread_index: (650 + (sr(i * 9) * 2 - 1) * 120 + sr(i * 13) * 80).toFixed(0),
 }));
 
 // Spread term structure
@@ -130,8 +130,8 @@ export default function CatBondILSPage() {
 
   const totalOutstanding = Math.round(62.4 * 1e9);
   const totalIssuance2024 = Math.round(17.8 * 1e9);
-  const avgSpread = activeBonds.reduce((a, b) => a + parseFloat(b.spread), 0) / activeBonds.length;
-  const avgMultiple = activeBonds.reduce((a, b) => a + parseFloat(b.multipleOfEL), 0) / activeBonds.length;
+  const avgSpread = activeBonds.length ? activeBonds.reduce((a, b) => a + parseFloat(b.spread), 0) / activeBonds.length : 0;
+  const avgMultiple = activeBonds.length ? activeBonds.reduce((a, b) => a + parseFloat(b.multipleOfEL), 0) / activeBonds.length : 0;
 
   const filteredBonds = activeBonds.filter(b =>
     (perilFilter === 'All' || b.peril === perilFilter) &&

@@ -58,17 +58,18 @@ const computeKPIs=(companies,period)=>{
   const totalAvoided=companies.reduce((a,c)=>a+c.avoided,0)*pMul/1000;
   const totalEmitted=companies.reduce((a,c)=>a+c.emitted,0)*pMul/1000;
   const avoidedRatio=totalEmitted>0?totalAvoided/totalEmitted:0;
-  const avgSolRev=companies.reduce((a,c)=>a+c.solutionRev,0)/companies.length;
+  const _n=companies.length||1;
+  const avgSolRev=companies.reduce((a,c)=>a+c.solutionRev,0)/_n;
   const netImpact=totalAvoided-totalEmitted;
-  const avgHandprint=companies.reduce((a,c)=>a+c.handprint,0)/companies.length;
-  const avgEnablement=companies.reduce((a,c)=>a+c.enablement,0)/companies.length;
-  const avgCred=companies.reduce((a,c)=>a+c.credScore,0)/companies.length;
-  const solutionExp=companies.filter(c=>c.solutionRev>50).length/companies.length*100;
+  const avgHandprint=companies.reduce((a,c)=>a+c.handprint,0)/_n;
+  const avgEnablement=companies.reduce((a,c)=>a+c.enablement,0)/_n;
+  const avgCred=companies.reduce((a,c)=>a+c.credScore,0)/_n;
+  const solutionExp=companies.filter(c=>c.solutionRev>50).length/_n*100;
   const purePlayCount=companies.filter(c=>c.purePlay).length;
   const cats={};companies.forEach(c=>{cats[c.sector]=(cats[c.sector]||0)+c.avoided;});
   const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0]?.[0]||'N/A';
-  const attrCov=companies.filter(c=>c.attribution>0).length/companies.length*100;
-  const avgTax=companies.reduce((a,c)=>a+c.taxonomyPct,0)/companies.length;
+  const attrCov=companies.filter(c=>c.attribution>0).length/_n*100;
+  const avgTax=companies.reduce((a,c)=>a+c.taxonomyPct,0)/_n;
   return{totalAvoided,avoidedRatio,solutionRev:avgSolRev,netImpact,handprint:avgHandprint,
     enablement:avgEnablement,credibility:avgCred,solutionExp,purePlay:purePlayCount,
     topCategory:topCat,attrCoverage:attrCov,taxAlign:avgTax};

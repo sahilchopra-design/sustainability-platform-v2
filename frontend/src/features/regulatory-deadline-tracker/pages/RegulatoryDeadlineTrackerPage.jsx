@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area, RadarChart, Radar, PolarGrid,
   PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -14,7 +14,7 @@ const T = {
   mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
 
-function sr(seed){let x=Math.sin(seed*9301+49297)*49297;return x-Math.floor(x);}
+function sr(seed){let x=Math.sin(seed + 1) * 10000;return x-Math.floor(x);}
 
 const JURISDICTIONS = [
   {code:'EU',name:'EU CSRD',flag:'\uD83C\uDDEA\uD83C\uDDFA'},{code:'UK',name:'UK TPT',flag:'\uD83C\uDDEC\uD83C\uDDE7'},

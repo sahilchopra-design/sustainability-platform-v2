@@ -17,7 +17,7 @@ const LS_PORT='ra_portfolio_v1';
 const LS_SC='ra_commodity_supply_chains_v1';
 const loadLS=k=>{try{return JSON.parse(localStorage.getItem(k))||null}catch{return null}};
 const saveLS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
-const seed=s=>{let x=Math.sin(s*9973+7)*10000;return x-Math.floor(x)};
+const seed=s=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x)};
 const fmt=(n,d=1)=>n==null?'\u2014':Number(n).toFixed(d);
 const pct=n=>n==null?'\u2014':`${Math.round(n)}%`;
 

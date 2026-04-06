@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+﻿import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
@@ -21,7 +21,7 @@ const LS_EXEC_LOG = 'ra_schedule_exec_log_v1';
 const LS_NOTIFICATIONS = 'ra_schedule_notifications_v1';
 
 const hashStr = s => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-const sr = (seed, off = 0) => { let x = Math.sin(Math.abs(seed + off) * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sr = (seed, off = 0) => { let x = Math.sin(seed + off + 1) * 10000; return x - Math.floor(x); };
 const fmtD = d => d ? new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—';
 const fmtDT = d => d ? new Date(d).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
 const daysBetween = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);

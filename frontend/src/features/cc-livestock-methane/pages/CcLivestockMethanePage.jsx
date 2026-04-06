@@ -53,8 +53,8 @@ const PROJECTS = Array.from({length:10},(_, i)=>{
 
 const calcEnteric = (params) => {
   const { gross_energy_mj, ym_bl, ym_pj, head_count, gwp, buffer_pct } = params;
-  const ch4_bl = gross_energy_mj * ym_bl * 365 * head_count / 55.5; // kg CH4/yr — IPCC 2019: 55.5 MJ/kg CH4
-  const ch4_pj = gross_energy_mj * ym_pj * 365 * head_count / 55.5;
+  const ch4_bl = gross_energy_mj * ym_bl * 365 * head_count / 55.65; // kg CH4/yr — IPCC 2006 GL & 2019 Refinement: 55.65 MJ/kg CH4
+  const ch4_pj = gross_energy_mj * ym_pj * 365 * head_count / 55.65;
   const ch4_avoided_kg = ch4_bl - ch4_pj;
   const tco2e_bl = ch4_bl / 1000 * gwp;
   const tco2e_pj = ch4_pj / 1000 * gwp;
@@ -151,7 +151,7 @@ export default function CcLivestockMethanePage() {
         <Kpi label="Projects" value="10" sub={`${[...new Set(PROJECTS.map(p=>p.country))].length} Countries`} accent={T.teal} />
         <Kpi label="Avg Herd Size" value={fmtK(avgHerd)} sub="head per project" accent={T.gold} />
         <Kpi label="Total CH4 Avoided" value={fmtK(totalCH4Avoided)} sub="tCO2e all projects" accent={T.navy} />
-        <Kpi label="GWP Mode" value={gwpMode} sub={gwpMode==='GWP-100'?'Pulse (28x)':'Flow-based'} accent={T.purple} />
+        <Kpi label="GWP Mode" value={gwpMode} sub={gwpMode==='GWP-100'?'Pulse (27.2x AR6)':'Flow-based'} accent={T.purple} />
         <Kpi label="Buffer Rate" value={`${ent.buffer_pct}%`} sub="Non-permanence pool" accent={T.amber} />
       </div>
 
@@ -164,7 +164,7 @@ export default function CcLivestockMethanePage() {
             <Card>
               <Section title="Emission Pathways">
                 {[
-                  {id:'Enteric',icon:'E',desc:'Methane produced during ruminant digestion (eructation). Primary source for cattle, sheep, goats.',share:'~70%',formula:'CH4 = GE x Ym x 365 x N / 55.65'},
+                  {id:'Enteric',icon:'E',desc:'Methane produced during ruminant digestion (eructation). Primary source for cattle, sheep, goats.',share:'~70%',formula:'CH4 = GE x Ym x 365 x N / 55.5'},
                   {id:'Manure',icon:'M',desc:'Methane from anaerobic decomposition of livestock manure in storage and lagoons.',share:'~30%',formula:'CH4 = VS x B0 x MCF x 0.67 x N'},
                 ].map(p=>(
                   <div key={p.id} style={{padding:12,background:T.cream,borderRadius:4,border:`1px solid ${T.border}`,marginBottom:8}}>
@@ -256,8 +256,8 @@ export default function CcLivestockMethanePage() {
                   </BarChart>
                 </ResponsiveContainer>
                 <div style={{marginTop:12,padding:10,background:T.cream,borderRadius:4,fontFamily:T.mono,fontSize:10,color:T.navy,lineHeight:1.8}}>
-                  <div>CH4_BL = {ent.gross_energy_mj} x {ent.ym_bl} x 365 x {ent.head_count.toLocaleString()} / 55.65 = <strong>{entResult.ch4_bl.toLocaleString()} kg/yr</strong></div>
-                  <div>CH4_PJ = {ent.gross_energy_mj} x {ent.ym_pj} x 365 x {ent.head_count.toLocaleString()} / 55.65 = <strong>{entResult.ch4_pj.toLocaleString()} kg/yr</strong></div>
+                  <div>CH4_BL = {ent.gross_energy_mj} x {ent.ym_bl} x 365 x {ent.head_count.toLocaleString()} / 55.5 = <strong>{entResult.ch4_bl.toLocaleString()} kg/yr</strong></div>
+                  <div>CH4_PJ = {ent.gross_energy_mj} x {ent.ym_pj} x 365 x {ent.head_count.toLocaleString()} / 55.5 = <strong>{entResult.ch4_pj.toLocaleString()} kg/yr</strong></div>
                   <div>Gross Credits = {entResult.ch4_avoided_kg.toLocaleString()} kg / 1000 x {ent.gwp} = <strong>{entResult.gross_credits.toLocaleString()} tCO2e</strong></div>
                   <div>Net = {entResult.gross_credits.toLocaleString()} x (1 - {ent.buffer_pct}%) = <strong style={{color:T.emerald}}>{entResult.net_credits.toLocaleString()} tCO2e</strong></div>
                 </div>
@@ -426,9 +426,9 @@ export default function CcLivestockMethanePage() {
                 <div style={{padding:12,background:gwpMode==='GWP-100'?`${T.navy}08`:T.cream,borderRadius:6,border:`1px solid ${gwpMode==='GWP-100'?T.navy:T.border}`}}>
                   <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:6}}>GWP-100 (Pulse-Based)</div>
                   <div style={{fontSize:10,color:T.textSec,lineHeight:1.6}}>
-                    Standard IPCC metric. Compares the warming from a pulse emission of CH4 vs CO2 over 100 years. CH4 = 28x CO2. Treats all methane equally regardless of whether emissions are increasing, constant, or decreasing. Currently used by UNFCCC, Verra, Gold Standard.
+                    Standard IPCC metric. Compares the warming from a pulse emission of CH4 vs CO2 over 100 years. CH4 = 27.2× CO2 (AR6, fossil) / 29.8× (AR6, biogenic) / 28× (AR5). Treats all methane equally regardless of whether emissions are increasing, constant, or decreasing. Currently used by UNFCCC, Verra, Gold Standard.
                   </div>
-                  <div style={{marginTop:8,fontFamily:T.mono,fontSize:11,color:T.navy}}>1 tonne CH4 = <strong>28 tCO2e</strong></div>
+                  <div style={{marginTop:8,fontFamily:T.mono,fontSize:11,color:T.navy}}>1 tonne CH4 = <strong>27.2 tCO2e</strong> (AR6 GWP-100, fossil) · 28 tCO2e (AR5)</div>
                 </div>
                 <div style={{padding:12,background:gwpMode==='GWP*'?`${T.purple}08`:T.cream,borderRadius:6,border:`1px solid ${gwpMode==='GWP*'?T.purple:T.border}`}}>
                   <div style={{fontSize:12,fontWeight:700,color:T.purple,marginBottom:6}}>GWP* (Flow-Based)</div>

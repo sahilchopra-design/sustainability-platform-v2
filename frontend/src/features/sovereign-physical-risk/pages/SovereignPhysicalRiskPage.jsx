@@ -270,9 +270,10 @@ export default function SovereignPhysicalRiskPage(){
   /* ── Tab 1: Hazard Matrix ────────────────────────────────────────────────── */
   const renderHazardMatrix=()=>{
     const top25=[...COUNTRIES_PHY].sort((a,b)=>b.compositePhysicalRisk-a.compositePhysicalRisk).slice(0,25);
-    const hazardAvg=HAZARDS.map(h=>({hazard:h,global:+(COUNTRIES_PHY.reduce((s,c)=>s+c[h.toLowerCase().replace(' ','')+'Risk']||s+c[Object.keys(c).find(k=>k.includes(h.toLowerCase().split(' ')[0]))||'floodRisk'],0)/70).toFixed(1)}));
+    const cphyLen=COUNTRIES_PHY.length||1;
+    const hazardAvg=HAZARDS.map(h=>({hazard:h,global:+(COUNTRIES_PHY.reduce((s,c)=>s+c[h.toLowerCase().replace(' ','')+'Risk']||s+c[Object.keys(c).find(k=>k.includes(h.toLowerCase().split(' ')[0]))||'floodRisk'],0)/cphyLen).toFixed(1)}));
     const hazardKey={Flood:'floodRisk',Drought:'droughtRisk','Heat Stress':'heatStressRisk',Cyclone:'cycloneRisk','Sea Level Rise':'seaLevelRiskRating',Wildfire:'wildfireRisk'};
-    const globalHazardAvg=HAZARDS.map(h=>({name:h,avg:+(COUNTRIES_PHY.reduce((s,c)=>s+c[hazardKey[h]],0)/70).toFixed(1)}));
+    const globalHazardAvg=HAZARDS.map(h=>({name:h,avg:+(COUNTRIES_PHY.reduce((s,c)=>s+c[hazardKey[h]],0)/cphyLen).toFixed(1)}));
     return (<>
       <div style={S.card}>
         <div style={S.cardTitle}>Hazard Risk Heatmap — Top 25 Countries</div>

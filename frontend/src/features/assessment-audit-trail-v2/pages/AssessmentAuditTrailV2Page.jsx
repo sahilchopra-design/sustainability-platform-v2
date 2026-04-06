@@ -4,6 +4,8 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
   navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae',
@@ -19,24 +21,24 @@ const ENTITIES_LIST = ['JPMorgan','Shell plc','Microsoft','Unilever','Enel SpA',
 const CHANGE_LOG = Array.from({length:30}, (_,i) => ({
   id:`CL-${1000+i}`, timestamp: `2026-0${3-Math.floor(i/15)}-${String(28-i%28).padStart(2,'0')} ${String(9+i%8).padStart(2,'0')}:${String(i*7%60).padStart(2,'0')}`,
   entity: ENTITIES_LIST[i%8], user: USERS[i%5], field: ['env','soc','gov','climate','bio','supply','human','innovation'][i%8],
-  oldValue: Math.round(50+Math.sin(i)*15), newValue: Math.round(52+Math.sin(i)*15+Math.cos(i)*3),
+  oldValue: Math.round(50+(sr(i * 10) * 2 - 1)*15), newValue: Math.round(52+(sr(i * 10) * 2 - 1)*15+(sr(i * 510) * 2 - 1)*3),
   reason: ['Quarterly re-assessment','New disclosure data','Methodology update','Peer benchmark adjustment','Regulatory update'][i%5]
 }));
 
 const VERSIONS = Array.from({length:8}, (_,i) => ({
   version: `v${8-i}.0`, date: `2026-0${1+Math.floor(i/3)}-${String(15-i*3).padStart(2,'0')}`,
-  entity: ENTITIES_LIST[i], totalScore: Math.round(65-i*1.5+Math.sin(i)*5),
-  changes: Math.round(3+Math.sin(i)*4), assessor: USERS[i%5], status: i===0?'Current':i===1?'Reviewed':'Archived'
+  entity: ENTITIES_LIST[i], totalScore: Math.round(65-i*1.5+(sr(i * 10) * 2 - 1)*5),
+  changes: Math.round(3+(sr(i * 10) * 2 - 1)*4), assessor: USERS[i%5], status: i===0?'Current':i===1?'Reviewed':'Archived'
 }));
 
 const DRIFT_DATA = ENTITIES_LIST.map((e,i) => ({
-  entity: e, q1: Math.round(60+Math.sin(i)*12), q2: Math.round(61+Math.sin(i)*11),
-  q3: Math.round(63+Math.sin(i)*10), drift: Math.round(3+Math.cos(i)*5),
-  alert: Math.abs(3+Math.cos(i)*5) > 5
+  entity: e, q1: Math.round(60+(sr(i * 10) * 2 - 1)*12), q2: Math.round(61+(sr(i * 10) * 2 - 1)*11),
+  q3: Math.round(63+(sr(i * 10) * 2 - 1)*10), drift: Math.round(3+(sr(i * 510) * 2 - 1)*5),
+  alert: Math.abs(3+(sr(i * 510) * 2 - 1)*5) > 5
 }));
 
 const USER_ACTIVITY = USERS.map((u,i) => ({
-  user: u, assessments: Math.round(12+Math.sin(i)*8), lastActive: `2026-04-0${4-i}`,
+  user: u, assessments: Math.round(12+(sr(i * 10) * 2 - 1)*8), lastActive: `2026-04-0${4-i}`,
   avgTime: Math.round(35+i*5), entitiesAssessed: Math.round(5+i*2), qualityScore: Math.round(88-i*3)
 }));
 

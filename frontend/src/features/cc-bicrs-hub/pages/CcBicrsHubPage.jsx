@@ -85,7 +85,9 @@ export default function CcBicrsHubPage(){
     const permAdj=PERM_TIERS[permTier].adj;
     const uncertaintyAdj=0.05;
     const lifecycleEm=co2Equiv*(lifecyclePct/100);
-    const finalRemoval=co2Equiv*(1-permAdj)*(1-uncertaintyAdj)-lifecycleEm;
+    // Correct order: deduct lifecycle emissions first (occur regardless of storage permanence),
+    // then apply permanence and uncertainty discounts per registry standard sequencing.
+    const finalRemoval=(co2Equiv-lifecycleEm)*(1-permAdj)*(1-uncertaintyAdj);
     return{biomassC:+biomassC.toFixed(1),cInjected:+cInjected.toFixed(1),cStored:+cStored.toFixed(1),co2Equiv:+co2Equiv.toFixed(1),permAdj,lifecycleEm:+lifecycleEm.toFixed(1),finalRemoval:+finalRemoval.toFixed(1),conversionEff:biomassInput>0?(cStored/biomassInput*100).toFixed(1):'0'};
   },[biomassInput,carbonContent,injectionVol,leakageRate,permTier,lifecyclePct]);
 

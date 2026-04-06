@@ -95,18 +95,18 @@ export default function PhysicalRiskPortfolioPage() {
   // By peril
   const byPeril = PERILS.map(p => ({
     peril: p,
-    avgScore: Math.round(filtered.reduce((s, a) => s + (a[p] || 0), 0) / filtered.length * mult),
+    avgScore: filtered.length ? Math.round(filtered.reduce((s, a) => s + (a[p] || 0), 0) / filtered.length * mult) : 0,
     highRiskCount: filtered.filter(a => Math.round((a[p] || 0) * mult) > 65).length,
   }));
 
   // Double-hit scenario: physical + transition
   const doubleHit = useMemo(() => SCENARIOS_MAP, []);
 
-  // Regulatory metrics
-  const tier1 = totalExposure * 0.12;
-  const rwa = totalExposure * 0.85;
-  const highRiskPct = highRisk.length / filtered.length;
-  const maxRegionExp = Math.max(...byRegion.map(r => r.exposure / totalExposure));
+  // Regulatory metrics — guard: empty filter (totalExposure = 0) → tier1 = 0 → divide-by-zero in regChecks
+  const tier1 = Math.max(totalExposure * 0.12, 1);
+  const rwa   = Math.max(totalExposure * 0.85, 1);
+  const highRiskPct = filtered.length ? highRisk.length / filtered.length : 0;
+  const maxRegionExp = totalExposure > 0 ? Math.max(...byRegion.map(r => r.exposure / totalExposure)) : 0;
 
   const regChecks = [
     { ...REGULATORY_THRESHOLDS[0], actual: totalPML100 / tier1, breach: totalPML100 / tier1 > 0.05 },
@@ -412,7 +412,7 @@ export default function PhysicalRiskPortfolioPage() {
               <BarChart data={byRegion.map(r => {
                 const assets = filtered.filter(a => a.region.replace('North ', 'N. ') === r.region);
                 const insured = assets.filter(a => a.insured).reduce((s, a) => s + a.value, 0);
-                return { ...r, insured, uninsured: r.exposure - insured, gap: Math.round((r.exposure - insured) / r.exposure * r.aal) };
+                return { ...r, insured, uninsured: r.exposure - insured, gap: r.exposure > 0 ? Math.round((r.exposure - insured) / r.exposure * r.aal) : 0 };
               })}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="region" tick={{ fontSize: 10 }} />
@@ -482,7 +482,7 @@ export default function PhysicalRiskPortfolioPage() {
                   { reg: 'BoE', framework: 'CBES 2021 ELE', scenario: 'Late Action', metric: 'AAL / RWA', addon: `${pct(totalAAL / (totalExposure * 0.85), 3)}`, breach: totalAAL / (totalExposure * 0.85) > 0.01 },
                   { reg: 'APRA', framework: 'CPG 229', scenario: 'Orderly Transition', metric: 'High-Risk Concentration', addon: `${pct(highRiskPct)} of portfolio`, breach: highRiskPct > 0.2 },
                   { reg: 'ECB', framework: 'DFAST 2024', scenario: 'Physical Shock', metric: 'Regional Concentration', addon: `${pct(maxRegionExp)} top region`, breach: maxRegionExp > 0.3 },
-                  { reg: 'PRA', framework: 'SS3/19', scenario: 'Long-run (30yr)', metric: 'Physical Risk Score', addon: `${Math.round(filtered.reduce((s, a) => s + a.compositeHazard, 0) / filtered.length * mult)}/100`, breach: false },
+                  { reg: 'PRA', framework: 'SS3/19', scenario: 'Long-run (30yr)', metric: 'Physical Risk Score', addon: `${filtered.length ? Math.round(filtered.reduce((s, a) => s + a.compositeHazard, 0) / filtered.length * mult) : 0}/100`, breach: false },
                 ].map((r, i) => (
                   <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : T.bg }}>
                     <td style={{ padding: '7px 10px', fontWeight: 700, color: T.navy }}>{r.reg}</td>
@@ -514,8 +514,10 @@ export default function PhysicalRiskPortfolioPage() {
             <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 14 }}>Priority Engagement Targets · {scenarioLabels[scenario]}</div>
             {sorted.slice(0, 12).map((a, i) => {
               const adjHazard = Math.min(100, Math.round(a.compositeHazard * mult));
-              const pmlShare = a.pml100 / filtered.reduce((s, x) => s + x.pml100, 0);
-              const priority = Math.round(adjHazard * 0.4 + pmlShare * 100 * 35 + (a.insured ? 0 : 25));
+              const totalPml = filtered.reduce((s, x) => s + x.pml100, 0);
+              const pmlShare = totalPml > 0 ? a.pml100 / totalPml : 0; // guard: prevents Infinity when all PML100 = 0
+              // Priority Score = (Composite × 0.4) + (PML Share × 100 × 0.35) + (Uninsured ? 25 : 0) × 0.25
+              const priority = Math.round(adjHazard * 0.4 + pmlShare * 100 * 0.35 + (a.insured ? 0 : 25) * 0.25);
               const tier = priority > 60 ? 'Critical' : priority > 35 ? 'High' : 'Medium';
               const tierColor = tier === 'Critical' ? T.red : tier === 'High' ? T.orange : T.amber;
               return (

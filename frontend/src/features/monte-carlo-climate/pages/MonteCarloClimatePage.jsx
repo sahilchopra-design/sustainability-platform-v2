@@ -28,21 +28,15 @@ const CORR_MATRIX = [
 ];
 const CORR_LABELS = ['Carbon Price', 'GDP Shock', 'Energy Price', 'Tech Cost'];
 
-// Mulberry32 seeded PRNG — reproducible Monte Carlo results
-let _mc_seed = 0xdeadbeef;
-function seededRng() {
-  _mc_seed += 0x6d2b79f5;
-  let t = _mc_seed;
-  t = Math.imul(t ^ (t >>> 15), t | 1);
-  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-}
-function resetSeed(seed = 42) { _mc_seed = seed >>> 0; }
+// Platform-standard seeded PRNG (sr) — reproducible Monte Carlo results
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+let _mc_idx = 0;
+function resetSeed(seed = 42) { _mc_idx = seed | 0; }
 
-// Box-Muller using seeded PRNG (never Math.random())
+// Box-Muller using platform sr PRNG (never Math.random())
 function boxMuller() {
-  const u1 = Math.max(seededRng(), 1e-10);
-  const u2 = seededRng();
+  const u1 = Math.max(sr(_mc_idx++), 1e-10);
+  const u2 = sr(_mc_idx++);
   return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
 }
 

@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell,
   ReferenceLine, ZAxis
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -17,14 +20,14 @@ const T = {
 const FEATURE_CATALOG = Array.from({length:20}, (_,i) => ({
   id:`F${i+1}`, name:['env_score','soc_score','gov_score','climate_transition','bio_land_use','supply_audit','human_dd','innov_greenrd','env_velocity','soc_velocity','climate_velocity','gov_acceleration','emissions_intensity','green_capex_pct','sbti_alignment','lobbying_score','board_diversity','water_stress','deforestation_risk','circular_economy'][i],
   category:['Base Score','Base Score','Base Score','Base Score','Base Score','Base Score','Base Score','Base Score','Velocity','Velocity','Velocity','Acceleration','Derived','Derived','Derived','Derived','Derived','Derived','Derived','Derived'][i],
-  importance: Math.round(100-i*4.2+Math.sin(i)*8), dqAvg: Math.round(2.5+Math.sin(i)*1.2, 1),
-  completeness: Math.round(85+Math.sin(i)*12), correlation: Math.round(30+Math.cos(i)*25+Math.sin(i*2)*15)
+  importance: Math.round(100-i*4.2+(sr(i * 10) * 2 - 1)*8), dqAvg: Math.round(2.5+(sr(i * 10) * 2 - 1)*1.2, 1),
+  completeness: Math.round(85+(sr(i * 10) * 2 - 1)*12), correlation: Math.round(30+(sr(i * 510) * 2 - 1)*25+(sr(i * 20) * 2 - 1)*15)
 }));
 
 const CORR_MATRIX = Array.from({length:20}, (_,i) => {
   const row = { feature: FEATURE_CATALOG[i].name.slice(0,12) };
   FEATURE_CATALOG.slice(0,20).forEach((f,j) => {
-    row[f.name.slice(0,12)] = i===j ? 100 : Math.round(Math.cos((i-j)*0.8)*40+Math.sin(i*j*0.1)*20);
+    row[f.name.slice(0,12)] = i===j ? 100 : Math.round((sr((i-j)*8+500)*2-1)*40+(sr(i*j+200)*2-1)*20);
   });
   return row;
 });

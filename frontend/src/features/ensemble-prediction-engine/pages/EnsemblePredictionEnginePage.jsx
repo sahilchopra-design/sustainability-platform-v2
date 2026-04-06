@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   BarChart, Bar, LineChart, Line, AreaChart, Area, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -30,15 +33,15 @@ const WEIGHT_GRID = [
 
 const PREDICTIONS = Array.from({length:15}, (_,i) => ({
   entity: ['JPMorgan','Shell','Microsoft','HSBC','TotalEnergies','Unilever','Allianz','Enel','Siemens','BNP','BP','Nestle','BlackRock','NextEra','Tesla'][i],
-  current: Math.round(55+Math.sin(i*2.3)*20),
-  predicted: Math.round(57+Math.sin(i*2.3)*19+Math.cos(i)*3),
-  ciLow: Math.round(53+Math.sin(i*2.3)*19),
-  ciHigh: Math.round(61+Math.sin(i*2.3)*19+Math.cos(i)*5),
-  confidence: Math.round(82+Math.sin(i)*8)
+  current: Math.round(55+(sr(i * 23) * 2 - 1)*20),
+  predicted: Math.round(57+(sr(i * 23) * 2 - 1)*19+(sr(i * 510) * 2 - 1)*3),
+  ciLow: Math.round(53+(sr(i * 23) * 2 - 1)*19),
+  ciHigh: Math.round(61+(sr(i * 23) * 2 - 1)*19+(sr(i * 510) * 2 - 1)*5),
+  confidence: Math.round(82+(sr(i * 10) * 2 - 1)*8)
 }));
 
 const BACKTEST = ['2023-Q1','2023-Q2','2023-Q3','2023-Q4','2024-Q1','2024-Q2','2024-Q3','2024-Q4','2025-Q1','2025-Q2','2025-Q3','2025-Q4'].map((q,i) => ({
-  q, rmse: Math.round((4.5-i*0.05+Math.sin(i)*0.3)*100)/100, r2: Math.round((0.85+i*0.005+Math.cos(i)*0.02)*100)/100
+  q, rmse: Math.round((4.5-i*0.05+(sr(i * 10) * 2 - 1)*0.3)*100)/100, r2: Math.round((0.85+i*0.005+(sr(i * 510) * 2 - 1)*0.02)*100)/100
 }));
 
 const AB_TEST = { control:{ model:'Ensemble v2.1', n:500, rmse:4.1, r2:0.88 }, treatment:{ model:'Ensemble v3.0', n:500, rmse:3.8, r2:0.92 }, pValue:0.003, significant:true };

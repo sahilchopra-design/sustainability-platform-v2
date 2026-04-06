@@ -12,7 +12,7 @@ const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',bord
 const CAT_COLORS=['#16a34a','#dc2626','#7c3aed','#d97706','#6b7280','#c5a96a','#06b6d4','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#6366f1'];
 
 /* ================================================================= HELPERS (hoisted — used in module-level data init below) */
-function seed(s){let x=Math.sin(s*9973+7)*10000;return x-Math.floor(x)}
+function seed(s){let x=Math.sin(s+1)*10000;return x-Math.floor(x)}
 const LS_PORT='ra_portfolio_v1';
 const loadLS=k=>{try{return JSON.parse(localStorage.getItem(k))||null}catch{return null}};
 const saveLS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};

@@ -405,7 +405,7 @@ function SectorComparisonTab({ measures }) {
     });
     return Object.values(map).map(s => ({
       ...s,
-      weightedMAC: Math.round(s.totalCost / s.totalPotential),
+      weightedMAC: s.totalPotential > 0 ? Math.round(s.totalCost / s.totalPotential) : 0,
       avgTRL: Math.round((s.trlSum / s.count) * 10) / 10,
     })).sort((a, b) => b.totalPotential - a.totalPotential);
   }, [measures]);
@@ -502,7 +502,7 @@ function CarbonPriceScenariosTab({ measures }) {
         {spotScenarios.map(sc => {
           const viable = measures.filter(m => m.mac <= sc.price);
           const totalPot = viable.reduce((s, m) => s + m.potential, 0);
-          const pct = Math.round((viable.length / measures.length) * 100);
+          const pct = Math.round((viable.length / (measures.length || 1)) * 100);
           return (
             <div key={sc.label} style={{ background: T.surface, borderRadius: 10, padding: '16px 18px', boxShadow: T.card, border:`1px solid ${T.border}` }}>
               <div style={{ fontSize: 16, fontWeight: 800, color: T.gold, marginBottom: 6 }}>{sc.label}</div>
@@ -721,7 +721,7 @@ function PortfolioBuilderTab({ measures }) {
                       <span style={{ fontSize: 12, fontWeight: 700, color: T.navy }}>{pot.toFixed(1)}</span>
                     </div>
                     <div style={{ background: T.border, borderRadius: 4, height: 6 }}>
-                      <div style={{ width: Math.round((pot / totalPotential) * 100) + '%', height:'100%', background: SECTOR_COLORS[sec], borderRadius: 4 }} />
+                      <div style={{ width: Math.round((pot / (totalPotential || 1)) * 100) + '%', height:'100%', background: SECTOR_COLORS[sec], borderRadius: 4 }} />
                     </div>
                   </div>
                 ))}
@@ -748,7 +748,7 @@ export default function AbatementCostCurvePage() {
   ];
 
   const negativeMACCount = MEASURES.filter(m => m.mac < 0).length;
-  const avgNegMAC = Math.round(MEASURES.filter(m => m.mac < 0).reduce((s, m) => s + m.mac, 0) / negativeMACCount);
+  const avgNegMAC = negativeMACCount ? Math.round(MEASURES.filter(m => m.mac < 0).reduce((s, m) => s + m.mac, 0) / negativeMACCount) : 0;
   const viable100 = MEASURES.filter(m => m.mac <= 100).length;
   const lowestMAC = MEASURES.reduce((a, b) => a.mac < b.mac ? a : b);
   const highestPotential = MEASURES.reduce((a, b) => a.potential > b.potential ? a : b);

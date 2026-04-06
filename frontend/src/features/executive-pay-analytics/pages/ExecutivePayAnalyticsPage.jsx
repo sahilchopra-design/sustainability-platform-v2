@@ -24,7 +24,7 @@ export default function ExecutivePayAnalyticsPage(){
   const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
   const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
 
-  const stats=useMemo(()=>({count:filtered.length,avgCeo:'$'+(filtered.reduce((s,r)=>s+r.ceoPayM,0)/filtered.length||0).toFixed(1)+'M',avgRatio:Math.round(filtered.reduce((s,r)=>s+r.payRatio,0)/filtered.length||0),avgESG:Math.round(filtered.reduce((s,r)=>s+r.esgLinkedPct,0)/filtered.length||0)+'%',avgSoP:Math.round(filtered.reduce((s,r)=>s+r.sayOnPayPct,0)/filtered.length||0)+'%',clawback:filtered.filter(r=>r.clawback==='Yes').length,maxPay:'$'+Math.max(...filtered.map(r=>r.ceoPayM)).toFixed(1)+'M'}),[filtered]);
+  const stats=useMemo(()=>({count:filtered.length,avgCeo:'$'+(filtered.reduce((s,r)=>s+r.ceoPayM,0)/filtered.length||0).toFixed(1)+'M',avgRatio:Math.round(filtered.reduce((s,r)=>s+r.payRatio,0)/filtered.length||0),avgESG:Math.round(filtered.reduce((s,r)=>s+r.esgLinkedPct,0)/filtered.length||0)+'%',avgSoP:Math.round(filtered.reduce((s,r)=>s+r.sayOnPayPct,0)/filtered.length||0)+'%',clawback:filtered.filter(r=>r.clawback==='Yes').length,maxPay:filtered.length?'$'+Math.max(...filtered.map(r=>r.ceoPayM)).toFixed(1)+'M':'$0M'}),[filtered]);
 
   const sectorPay=useMemo(()=>{const m={};COS.forEach(c=>{if(!m[c.sector])m[c.sector]={s:c.sector,pay:0,ratio:0,esg:0,n:0};m[c.sector].pay+=c.ceoPayM;m[c.sector].ratio+=c.payRatio;m[c.sector].esg+=c.esgLinkedPct;m[c.sector].n++;});return Object.values(m).map(s=>({sector:s.s,avgPay:+(s.pay/s.n).toFixed(1),avgRatio:Math.round(s.ratio/s.n),avgESG:Math.round(s.esg/s.n)}));},[]);
 

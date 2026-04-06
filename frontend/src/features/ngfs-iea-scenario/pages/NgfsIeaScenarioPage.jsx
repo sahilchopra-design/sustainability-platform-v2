@@ -63,7 +63,7 @@ const VARIABLES = {
   gdp_usd:      { label: 'GDP (USD tn PPP)',        unit: 'USD tn', nz: [106,122,145,175,210,255], cp: [106,118,135,158,185,218] },
 };
 const VAR_DATA = (varKey) => VAR_YEARS.map((yr, i) => {
-  const v = VARIABLES[varKey];
+  const v = VARIABLES[varKey] ?? VARIABLES['co2_gt']; // fallback prevents TypeError crash on unknown varKey
   return { year: yr, 'NZ2050': v.nz[i], 'Current Policies': v.cp[i] };
 });
 
@@ -83,7 +83,7 @@ const computeWeights = (method, targetTemp) => {
   if (method === 'temperature') {
     const sigma = 0.4;
     const raw = SCENARIOS.map(s => Math.exp(-0.5*Math.pow((s.temp - targetTemp)/sigma, 2)));
-    const sum = raw.reduce((a,b)=>a+b,0);
+    const sum = Math.max(1e-10, raw.reduce((a,b)=>a+b,0)); // floor guard: prevents NaN/Infinity if targetTemp far from all scenario temps
     return raw.map(v => (v/sum).toFixed(4));
   }
   // BMA / skill / expert / performance — seeded pseudo-random normalised

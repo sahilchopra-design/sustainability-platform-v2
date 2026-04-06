@@ -130,7 +130,7 @@ const TABS = ['Entity Assessment','Portfolio Exposure','Incident Scorer','Data S
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const seed = 111;
-const rng = (i) => Math.abs(Math.sin(i*9301+seed*49297)*233280)%233280/233280;
+const rng = (i) => { let x = Math.sin(i + seed + 1) * 10000; return x - Math.floor(x); };
 
 const donutData = (val, max=100) => [{ name:'Score', value:val },{ name:'Rem', value:max-val }];
 

@@ -1,8 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -39,7 +42,7 @@ export default function ScenarioConditionalPredictionPage() {
   const [watchlist, setWatchlist] = useState([]);
 
   const predictions = useMemo(() => ENTITIES.map((e,i) => {
-    const base = 55 + Math.sin(i*2.3)*18;
+    const base = 55 + (sr(i * 23) * 2 - 1)*18;
     const carbonEffect = (carbonPrice - 100) * 0.03;
     const gdpEffect = (gdpGrowth - 2) * 2;
     const techEffect = (1 - techCost) * 15;

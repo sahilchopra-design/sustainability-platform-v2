@@ -762,7 +762,7 @@ export default function DataQualityMonitorPage() {
                   { metric: 'Overall DQ Score', current: avgComposite, q2: 75, q4: 85 },
                   { metric: 'Completeness', current: avgCompleteness, q2: 70, q4: 85 },
                   { metric: 'Accuracy', current: avgAccuracy, q2: 90, q4: 95 },
-                  { metric: 'Companies at Tier 1-2', current: Math.round((pcafTiers[0].value + pcafTiers[1].value) / companies.length * 100), q2: 40, q4: 60 },
+                  { metric: 'Companies at Tier 1-2', current: companies.length ? Math.round((pcafTiers[0].value + pcafTiers[1].value) / companies.length * 100) : 0, q2: 40, q4: 60 },
                   { metric: 'Critical Violations', current: criticalViolations, q2: 0, q4: 0 },
                 ].map((r, i) => (
                   <tr key={i}>

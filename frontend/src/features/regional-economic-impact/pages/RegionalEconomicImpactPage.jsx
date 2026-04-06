@@ -104,7 +104,7 @@ export default function RegionalEconomicImpactPage() {
             {card('Direct Fossil Jobs', totalDirect.toLocaleString(), 'At risk of displacement', T.red)}
             {card('Total Royalties at Risk', '$' + totalRoyalties.toFixed(1) + 'B', 'Annual fiscal impact', T.amber)}
             {card('Regions Tracked', filtered.length, 'Fossil-dependent', T.navy)}
-            {card('Avg Fossil GDP Share', Math.round(filtered.reduce((s, r) => s + r.fossilShare, 0) / filtered.length) + '%', 'Regional dependency', T.orange)}
+            {card('Avg Fossil GDP Share', (filtered.length ? Math.round(filtered.reduce((s, r) => s + r.fossilShare, 0) / filtered.length) : 0) + '%', 'Regional dependency', T.orange)}
           </div>
           <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
             <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Fossil GDP Share by Region</h3>

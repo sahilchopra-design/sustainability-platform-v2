@@ -1,4 +1,4 @@
-/**
+﻿/**
  * EP-V4 — Compliance Evidence Manager
  * Sprint V — Governance & Audit Trail
  *
@@ -21,7 +21,7 @@ const PIE_COLORS = [T.navy, T.gold, T.sage, T.navyL, T.goldL, T.sageL, T.amber, 
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */
 const hashStr = s => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-const seededRandom = seed => { let x = Math.sin(Math.abs(seed) * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const seededRandom = seed => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const sr = (seed, off = 0) => seededRandom(seed + off);
 const readLS = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
 const writeLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };

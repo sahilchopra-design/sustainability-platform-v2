@@ -68,7 +68,7 @@ export default function StrandedAssetWatchlistPage(){
 
   const sectorPeers = useMemo(()=>{
     const sectors=[...new Set(WATCHLIST.map(w=>w.sector))];
-    return sectors.map(s=>{const group=WATCHLIST.filter(w=>w.sector===s); return { sector:s, count:group.length, avgRisk:Math.round(group.reduce((a,w)=>a+w.strandingRisk,0)/group.length), totalExp:group.reduce((a,w)=>a+w.exposure,0) };});
+    return sectors.map(s=>{const group=WATCHLIST.filter(w=>w.sector===s); return { sector:s, count:group.length, avgRisk:group.length?Math.round(group.reduce((a,w)=>a+w.strandingRisk,0)/group.length):0, totalExp:group.reduce((a,w)=>a+w.exposure,0) };});
   },[]);
 
   return (

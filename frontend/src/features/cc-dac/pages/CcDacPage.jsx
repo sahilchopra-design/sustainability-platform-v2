@@ -136,12 +136,13 @@ export default function CcDacPage(){
   const [designLand,setDesignLand]=useState(5);
 
   const facilityDesign=useMemo(()=>{
-    const capPerModule=designCapacity/designModules;
+    const safeModules=Math.max(designModules,1); // guard: user can type 0 in number field bypassing slider min=2, which would produce Infinity
+    const capPerModule=designCapacity/safeModules;
     const energyReq=designCapacity*energyIntensity;
     const waterReq=designCapacity*1.5;
     const annualCost=designCapacity*lcod;
-    const landPerModule=designLand/designModules;
-    return{capPerModule:+capPerModule.toFixed(0),energyReq,waterReq:+waterReq.toFixed(0),annualCost,landPerModule:+landPerModule.toFixed(2),modules:Array.from({length:designModules},(_,i)=>({id:i+1,capacity:+capPerModule.toFixed(0),status:sr(i*201)<0.7?'Online':'Standby',utilization:+(sr(i*203)*30+65).toFixed(1),temp:+(sr(i*207)*15+80).toFixed(0),pressure:+(sr(i*209)*2+1).toFixed(1)}))};
+    const landPerModule=designLand/safeModules;
+    return{capPerModule:+capPerModule.toFixed(0),energyReq,waterReq:+waterReq.toFixed(0),annualCost,landPerModule:+landPerModule.toFixed(2),modules:Array.from({length:safeModules},(_,i)=>({id:i+1,capacity:+capPerModule.toFixed(0),status:sr(i*201)<0.7?'Online':'Standby',utilization:+(sr(i*203)*30+65).toFixed(1),temp:+(sr(i*207)*15+80).toFixed(0),pressure:+(sr(i*209)*2+1).toFixed(1)}))};
   },[designCapacity,designModules,designLand,energyIntensity,lcod]);
 
   /* LCA waterfall */

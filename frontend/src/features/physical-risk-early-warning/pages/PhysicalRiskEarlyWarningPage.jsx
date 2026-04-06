@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 const T = { bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', blue:'#2563eb', orange:'#ea580c', purple:'#7c3aed', teal:'#0891b2', sage:'#5a8a6a', font:"'DM Sans','SF Pro Display',system-ui,sans-serif", mono:"'JetBrains Mono','SF Mono','Fira Code',monospace" };
 
 const TABS = ['Alert Dashboard','Active Hazard Monitor','72hr Forecast','Asset Exposure Check','Historical Event Library','Response Protocol'];
@@ -212,10 +214,10 @@ export default function PhysicalRiskEarlyWarningPage() {
           <div style={s.cardTitle}>Alert Trend (Last 7 Days)</div>
           <ResponsiveContainer width="100%" height={260}>
             <AreaChart data={Array.from({ length: 7 }, (_, i) => ({ day: `Day ${i + 1}`,
-              critical: Math.floor(1 + Math.abs(Math.sin(i*2.3+1))*3),
-              high:     Math.floor(2 + Math.abs(Math.sin(i*1.7+2))*4),
-              medium:   Math.floor(3 + Math.abs(Math.sin(i*1.1+3))*5),
-              low:      Math.floor(1 + Math.abs(Math.sin(i*3.1+0.5))*3) }))}>
+              critical: Math.floor(1 + sr(i * 23 + 10)*3),
+              high:     Math.floor(2 + sr(i * 17 + 20)*4),
+              medium:   Math.floor(3 + sr(i * 11 + 30)*5),
+              low:      Math.floor(1 + sr(i * 31 + 5)*3) }))}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="day" tick={{ fontSize:11 }} />
               <YAxis tick={{ fontSize:11 }} />

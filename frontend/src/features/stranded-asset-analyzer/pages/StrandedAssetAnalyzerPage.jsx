@@ -3,6 +3,7 @@ import {
   AreaChart, Area, LineChart, Line, BarChart, Bar, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
+import { hazardRatePD, survivalProb, ngfsCarbonPrice } from '../../../engines/climateRisk';
 
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', surfaceH: '#f0ede7', border: '#e5e0d8',
@@ -41,7 +42,7 @@ function buildWriteDownSchedule(sector, scenario) {
   return years.map(yr => {
     let cumPct = 0;
     if (yr >= start && yr <= end) {
-      const progress = (yr - start) / (end - start);
+      const progress = (yr - start) / Math.max(1, end - start);
       cumPct = strandedPct * (1 - Math.exp(-3 * progress));
     } else if (yr > end) {
       cumPct = strandedPct;
@@ -60,7 +61,7 @@ function residualValueCurve(sector, scenario) {
   const sk = SCENARIO_KEYS[scenario];
   const strandedPct = sector[`stranded_pct_${sk}`] / 100;
   const years = Array.from({ length: 27 }, (_, i) => 2024 + i);
-  const halfLife = (sector.full_stranded - sector.write_down_start) / 2;
+  const halfLife = Math.max(1, (sector.full_stranded - sector.write_down_start) / 2);
   return years.map(yr => {
     const t = Math.max(0, yr - sector.write_down_start);
     const decay = yr < sector.write_down_start ? 1 : Math.max(1 - strandedPct, Math.exp(-Math.log(2) * t / halfLife));
@@ -68,7 +69,29 @@ function residualValueCurve(sector, scenario) {
   });
 }
 
-const TABS = ['Sector Overview', 'Write-Down Schedule', 'Residual Value Curves', 'Bubble Map', 'Remediation Pathways'];
+// ─── MERTON HAZARD RATE PARAMETERS — per sector ─────────────────────────────
+// lambda_base: baseline annual PD (at CP=0); cp_threshold: price at which
+// stranding accelerates exponentially; alpha: price sensitivity (0.8–1.5)
+const SECTOR_HAZARD = [
+  { lambda_base: 0.060, cp_threshold: 80,  alpha: 1.40 }, // Coal
+  { lambda_base: 0.035, cp_threshold: 120, alpha: 1.25 }, // Oil Sands
+  { lambda_base: 0.018, cp_threshold: 160, alpha: 1.10 }, // Conv O&G
+  { lambda_base: 0.012, cp_threshold: 140, alpha: 1.00 }, // Gas Power
+  { lambda_base: 0.015, cp_threshold: 130, alpha: 1.05 }, // Cement
+  { lambda_base: 0.020, cp_threshold: 110, alpha: 1.15 }, // Steel
+  { lambda_base: 0.008, cp_threshold: 180, alpha: 0.90 }, // Aviation
+  { lambda_base: 0.010, cp_threshold: 100, alpha: 0.85 }, // Real Estate
+];
+
+// Map local scenario labels to NGFS engine keys
+const SCENARIO_NGFS_KEY = {
+  'Current Policies': 'CurrPol',
+  'Delayed Transition': 'DP',
+  'Below 2°C': 'BelowAc',
+  'Net Zero 2050': 'NZ2050',
+};
+
+const TABS = ['Sector Overview', 'Write-Down Schedule', 'Residual Value Curves', 'Bubble Map', 'Remediation Pathways', 'Default Risk Model'];
 
 export default function StrandedAssetAnalyzerPage() {
   const [tab, setTab] = useState(0);
@@ -391,6 +414,104 @@ export default function StrandedAssetAnalyzerPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: Default Risk Model (Merton hazard rate) */}
+        {tab === 5 && (
+          <div style={{ paddingTop: 24 }}>
+            <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 24, marginBottom: 20 }}>
+              <h3 style={{ color: T.navy, margin: '0 0 4px', fontSize: 15 }}>Merton Jump-to-Default Hazard Rate Model</h3>
+              <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 4px' }}>
+                h(t) = λ_base × exp(α × CP(t) / CP_threshold) — carbon price from NGFS Phase 4 · S(T) = exp(−h × T)
+              </p>
+              <p style={{ color: T.textMut, fontSize: 11, margin: '0 0 20px' }}>
+                Scenario: <strong>{scenario}</strong> · Carbon prices: NGFS Phase 4 (Sept 2023), USD/tCO₂e
+              </p>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                  <thead>
+                    <tr style={{ background: T.navy }}>
+                      {['Sector', 'λ_base (yr⁻¹)', 'CP_threshold', 'α', 'CP(2030)', 'h(2030)', 'S(5yr)', 'S(10yr)', 'Implied PD 10yr', 'Risk'].map(h => (
+                        <th key={h} style={{ padding: '10px 10px', color: '#fff', fontWeight: 600, textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SECTORS.map((s, i) => {
+                      const hp = SECTOR_HAZARD[i];
+                      const ngfsKey = SCENARIO_NGFS_KEY[scenario] ?? 'CurrPol';
+                      const cp2030 = ngfsCarbonPrice(ngfsKey, 2030);
+                      const h2030 = hazardRatePD(hp.lambda_base, cp2030, hp.cp_threshold, hp.alpha);
+                      const surv5  = survivalProb(h2030, 5);
+                      const surv10 = survivalProb(h2030, 10);
+                      const pd10   = (1 - surv10) * 100;
+                      const risk   = pd10 > 40 ? 'CRITICAL' : pd10 > 20 ? 'HIGH' : pd10 > 8 ? 'MEDIUM' : 'LOW';
+                      const rc     = risk === 'CRITICAL' ? '#7c3aed' : risk === 'HIGH' ? T.red : risk === 'MEDIUM' ? T.amber : T.green;
+                      return (
+                        <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
+                          <td style={{ padding: '8px 10px', color: T.navy, fontWeight: 500 }}>{s.name}</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono }}>{hp.lambda_base.toFixed(3)}</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono }}>${hp.cp_threshold}</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono }}>{hp.alpha.toFixed(2)}</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono }}>${cp2030.toFixed(0)}</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono, color: T.orange }}>{h2030.toFixed(4)}</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono }}>{(surv5*100).toFixed(1)}%</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono }}>{(surv10*100).toFixed(1)}%</td>
+                          <td style={{ padding: '8px 10px', fontFamily: T.mono, color: rc, fontWeight: 600 }}>{pd10.toFixed(1)}%</td>
+                          <td style={{ padding: '8px 10px' }}>
+                            <span style={{ background: rc + '22', color: rc, padding: '2px 6px', borderRadius: 8, fontSize: 10, fontWeight: 700 }}>{risk}</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Survival probability curves */}
+            <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 24 }}>
+              <h3 style={{ color: T.navy, margin: '0 0 4px', fontSize: 15 }}>Survival Probability Curves — {SECTORS[selectedSector].name}</h3>
+              <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 16px' }}>
+                S(T) = exp(−h × T) where h uses NGFS carbon price trajectory · Sector selector above applies
+              </p>
+              <div style={{ marginBottom: 12, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {SECTORS.map((s, i) => (
+                  <button key={i} onClick={() => setSelectedSector(i)} style={{
+                    padding: '4px 10px', borderRadius: 16, border: `2px solid ${selectedSector === i ? s.color : 'transparent'}`,
+                    background: selectedSector === i ? s.color + '22' : T.bg,
+                    color: selectedSector === i ? s.color : T.textSec, cursor: 'pointer', fontSize: 11, fontWeight: 600
+                  }}>{s.name.split('(')[0].trim()}</button>
+                ))}
+              </div>
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={(() => {
+                  const hp = SECTOR_HAZARD[selectedSector];
+                  return Array.from({ length: 26 }, (_, i) => {
+                    const yr = 2025 + i;
+                    const row = { year: yr };
+                    SCENARIOS.forEach(sc => {
+                      const nk = SCENARIO_NGFS_KEY[sc] ?? 'CurrPol';
+                      const cp = ngfsCarbonPrice(nk, yr);
+                      const h  = hazardRatePD(hp.lambda_base, cp, hp.cp_threshold, hp.alpha);
+                      const t  = yr - 2024;
+                      row[sc] = +(survivalProb(h, t) * 100).toFixed(2);
+                    });
+                    return row;
+                  });
+                })()}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                  <YAxis domain={[0, 100]} tickFormatter={v => `${v}%`} tick={{ fontSize: 11 }} />
+                  <Tooltip formatter={v => [`${v}%`, 'Survival Prob.']} />
+                  <Legend />
+                  {SCENARIOS.map((sc, i) => (
+                    <Line key={sc} dataKey={sc} stroke={SCENARIO_COLORS[i]} dot={false} strokeWidth={2} name={sc} />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
         )}

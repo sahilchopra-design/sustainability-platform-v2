@@ -111,7 +111,7 @@ const calcBiochar = (params) => {
   const durable_carbon = biochar_carbon * stability;
   // Pyrolysis process emissions: ~10% of feedstock carbon as process CO2 (syngas combustion)
   const pyrolysis_energy = carbon_in * 0.10 * (44 / 12); // tCO2
-  const co2_equiv = (durable_carbon * (44 / 12) + counterfactual_avoided - pyrolysis_energy);
+  const co2_equiv = Math.max(0, durable_carbon * (44 / 12) + counterfactual_avoided - pyrolysis_energy); // clamp: very low temp pyrolysis with high energy can produce negative net removal
   const biochar_yield = biochar_mass_yield; // expose for display
   return {
     carbon_in:Math.round(carbon_in),

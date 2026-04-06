@@ -191,12 +191,13 @@ const api = async (path, body) => {
 // ── Mock result generators (used as fallback when API unavailable) ─────────
 const mockCalculateAll = (holdings) => {
   const totalAUM = holdings.reduce((s,h) => s + h.marketValue, 0);
-  const wSum = (field) => holdings.reduce((s,h) => s + h[field] * (h.marketValue/totalAUM), 0);
+  const safeTotalAUM = totalAUM || 1; // guard: prevents Infinity/NaN when all holdings removed
+  const wSum = (field) => holdings.reduce((s,h) => s + h[field] * (h.marketValue/safeTotalAUM), 0);
   const totalGHG = holdings.reduce((s,h) => s + h.scope1+h.scope2+h.scope3, 0);
   return {
     indicators: [
       { id:1, name:'GHG Emissions (S1+S2+S3)', value: totalGHG, unit:'tCO2e', trend:3.2, benchmark:'above' },
-      { id:2, name:'Carbon Footprint', value: (totalGHG/(totalAUM/1e6)).toFixed(1), unit:'tCO2e/EUR M', trend:-2.1, benchmark:'below' },
+      { id:2, name:'Carbon Footprint', value: (totalGHG/(safeTotalAUM/1e6)).toFixed(1), unit:'tCO2e/EUR M', trend:-2.1, benchmark:'below' },
       { id:3, name:'GHG Intensity (WACI)', value: wSum('scope1')+(wSum('scope2')), unit:'tCO2e/EUR M rev', trend:1.8, benchmark:'above' },
       { id:4, name:'Fossil Fuel Exposure', value: wSum('fossilExposure').toFixed(1), unit:'%', trend:0, benchmark:'below' },
       { id:5, name:'Non-Renewable Energy', value: wSum('nonRenewable').toFixed(1), unit:'%', trend:-4.5, benchmark:'below' },

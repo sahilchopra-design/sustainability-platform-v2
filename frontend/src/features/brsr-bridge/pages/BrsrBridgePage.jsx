@@ -1,4 +1,4 @@
-// EP-P5 -- BRSR Supabase Data Bridge
+﻿// EP-P5 -- BRSR Supabase Data Bridge
 // Sprint P -- Data Infrastructure & Live Feeds
 // Bridges the Supabase BRSR database (1,323 Indian companies) with the frontend platform
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -16,7 +16,7 @@ const LS_KEY = 'ra_brsr_bridge_v1';
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
 const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; } return Math.abs(h); };
-const seeded = (seed) => { let x = Math.sin(seed * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const seeded = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const fmt = (n) => n == null ? '--' : typeof n === 'number' ? (n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : n.toLocaleString()) : String(n);
 const pct = (n) => n == null ? '--' : n.toFixed(1) + '%';
 const PIE_COLORS = [T.navy, T.sage, T.gold, T.red, T.navyL, T.sageL, T.goldL, '#8b5cf6', '#06b6d4'];

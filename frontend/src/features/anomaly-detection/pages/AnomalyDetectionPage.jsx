@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+﻿import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -20,7 +20,7 @@ const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } c
 const fmt = (n) => typeof n === 'number' ? n.toLocaleString(undefined, { maximumFractionDigits: 1 }) : '---';
 const pct = (n) => typeof n === 'number' ? `${n.toFixed(1)}%` : '---';
 const seed = (s) => { let h = 5381; for (let i = 0; i < String(s).length; i++) h = ((h << 5) + h) ^ String(s).charCodeAt(i); return Math.abs(h); };
-const sRand = (n) => { let x = Math.sin(n * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sRand = (n) => { let x = Math.sin(n + 1) * 10000; return x - Math.floor(x); };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 /* ── Primitives ───────────────────────────────────────────────────────────── */
@@ -403,7 +403,7 @@ export default function AnomalyDetectionPage() {
       <Section title="Detection Summary" badge="8 KPIs">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))', gap: 12 }}>
           <KpiCard label="Companies Scanned" value={holdings.length} sub="Full universe" accent={T.navy} />
-          <KpiCard label="Anomalies Detected" value={kpis.total} sub={`${(kpis.total / holdings.length * 100).toFixed(1)}% hit rate`} accent={T.red} />
+          <KpiCard label="Anomalies Detected" value={kpis.total} sub={`${(kpis.total / (holdings.length || 1) * 100).toFixed(1)}% hit rate`} accent={T.red} />
           <KpiCard label="Critical (>4\u03C3)" value={kpis.critical} sub="Immediate review" accent="#dc2626" />
           <KpiCard label="Fields Monitored" value={MONITOR_FIELDS.length} sub="ESG + Financial" accent={T.sage} />
           <KpiCard label="Most Anomalous Co." value={kpis.mostAnomalousCompany.length > 16 ? kpis.mostAnomalousCompany.slice(0, 14) + '..' : kpis.mostAnomalousCompany} sub="Highest flag count" />

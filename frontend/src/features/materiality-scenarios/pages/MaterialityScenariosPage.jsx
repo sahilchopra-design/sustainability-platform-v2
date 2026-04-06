@@ -1,4 +1,4 @@
-/**
+﻿/**
  * EP-T5 — Materiality Scenario Simulator
  * Sprint T — Dynamic Materiality Engine
  *
@@ -20,7 +20,7 @@ const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',bord
 
 /* ── Deterministic seed helpers ────────────────────────────────────────────── */
 const hashStr = s => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-const seededRandom = seed => { let x = Math.sin(Math.abs(seed) * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const seededRandom = seed => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const sr = (seed, off = 0) => seededRandom(seed + off);
 
 /* ── ESRS Topics ───────────────────────────────────────────────────────────── */

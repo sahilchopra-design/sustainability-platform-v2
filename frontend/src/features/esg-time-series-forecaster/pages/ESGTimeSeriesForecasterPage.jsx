@@ -662,15 +662,15 @@ function Tab4({companies,metrics}){
   const timelineData=useMemo(()=>HIST_YEARS.map(y=>({
     year:y,
     ...Object.fromEntries(companies.map(c=>{
-      const ts=allTs.find(a=>a.id===c.id).ts;
+      const ts=(allTs.find(a=>a.id===c.id)?.ts) ?? {data:[],changePoints:[]};
       const cp=ts.changePoints.find(p=>p.year===y);
       return[c.ticker,cp?cp.magnitude:null];
     }))
   })),[allTs,companies]);
 
   const heatmapData=useMemo(()=>companies.map(c=>{
-    const ts=allTs.find(a=>a.id===c.id).ts;
-    const mean=ts.data.reduce((a,b)=>a+b,0)/ts.data.length;
+    const ts=(allTs.find(a=>a.id===c.id)?.ts) ?? {data:[],changePoints:[]};
+    const mean=ts.data.length ? ts.data.reduce((a,b)=>a+b,0)/ts.data.length : 0;
     const std=Math.sqrt(ts.data.reduce((s,d)=>s+(d-mean)**2,0)/ts.data.length)||1;
     const zscores=ts.data.map(d=>(d-mean)/std);
     return{name:c.ticker,zscores};

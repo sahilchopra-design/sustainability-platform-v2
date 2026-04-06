@@ -7,7 +7,7 @@ import {
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', red: '#991b1b', green: '#065f46', gray: '#6b7280', orange: '#c2410c', teal: '#0f766e', purple: '#6d28d9', emerald: '#059669' };
-const fmt = (n, d = 1) => n >= 1e9 ? `${(n / 1e9).toFixed(d)}B` : n >= 1e6 ? `${(n / 1e6).toFixed(d)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(d)}K` : `${n.toFixed(d)}`;
+const fmt = (n, d = 1) => { if (n == null || !isFinite(n)) return '—'; return n >= 1e9 ? `${(n / 1e9).toFixed(d)}B` : n >= 1e6 ? `${(n / 1e6).toFixed(d)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(d)}K` : `${n.toFixed(d)}`; };
 
 const CREDIT_STATUSES = ['Available', 'Reserved', 'Retired', 'Cancelled'];
 const STATUS_COLORS = { Available: '#059669', Reserved: '#b45309', Retired: '#0f766e', Cancelled: '#991b1b' };
@@ -445,7 +445,7 @@ export default function CcCertificateMgmtPage() {
             <Kpi label="Oldest Vintage" value="2016" sub="8 years aged" color={T.red} />
             <Kpi label="Newest Vintage" value="2024" sub="Current year" color={T.emerald} />
             <Kpi label="Avg Vintage Age" value="3.8 yrs" color={T.navy} />
-            <Kpi label="Avg Price Spread" value={`$${(CREDITS.reduce((a, c) => a + c.price, 0) / CREDITS.length).toFixed(2)}/t`} color={T.gold} />
+            <Kpi label="Avg Price Spread" value={`$${CREDITS.length ? (CREDITS.reduce((a, c) => a + c.price, 0) / CREDITS.length).toFixed(2) : '0.00'}/t`} color={T.gold} />
           </div>
 
           <Section title="Credits by Vintage Year (Stacked)" badge="tCO2e + Price">

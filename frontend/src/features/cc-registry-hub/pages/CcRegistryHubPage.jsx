@@ -8,7 +8,7 @@ import { VERRA_PROJECTS, VERRA_STATS } from '../../../data/verraRegistryData';
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', red: '#991b1b', green: '#065f46', gray: '#6b7280', orange: '#c2410c', teal: '#0f766e', purple: '#6d28d9', emerald: '#059669' };
-const fmt = (n, d = 1) => n >= 1e9 ? `${(n / 1e9).toFixed(d)}B` : n >= 1e6 ? `${(n / 1e6).toFixed(d)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(d)}K` : `${n.toFixed(d)}`;
+const fmt = (n, d = 1) => { if (n == null || !isFinite(n)) return '—'; return n >= 1e9 ? `${(n / 1e9).toFixed(d)}B` : n >= 1e6 ? `${(n / 1e6).toFixed(d)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(d)}K` : `${n.toFixed(d)}`; };
 
 const REGISTRIES = [
   { id: 'verra', name: 'Verra (VCS)', short: 'Verra', color: '#0f766e', url: 'verra.org' },
@@ -222,7 +222,7 @@ export default function CcRegistryHubPage() {
           <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
             <Kpi label="Total Registries" value={REGISTRIES.length} color={T.navy} />
             <Kpi label="Total Issued" value={`${fmt(totalIssued)} tCO2e`} sub="All registries" color={T.teal} />
-            <Kpi label="Total Retired" value={`${fmt(totalRetired)} tCO2e`} sub={`${(totalRetired / totalIssued * 100).toFixed(0)}% rate`} color={T.emerald} />
+            <Kpi label="Total Retired" value={`${fmt(totalRetired)} tCO2e`} sub={`${totalIssued > 0 ? (totalRetired / totalIssued * 100).toFixed(0) : '0'}% rate`} color={T.emerald} />
             <Kpi label="Active Projects" value={totalProjects.toLocaleString()} color={T.gold} />
           </div>
 

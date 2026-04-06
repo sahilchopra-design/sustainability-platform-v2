@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell,
@@ -71,7 +71,7 @@ const LS_PORT = 'ra_portfolio_v1';
 const LS_VERIFY = 'ra_impact_verification_v1';
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
 const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-const seed = (s) => { let x = Math.sin(s * 9973 + 7) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const fmt = (n, d=1) => n == null ? '\u2014' : Number(n).toFixed(d);
 const pct = (n) => n == null ? '\u2014' : `${Math.round(n)}%`;
 
@@ -196,13 +196,13 @@ export default function ImpactVerificationPage() {
     const tw = holdings.reduce((s, h) => s + (h.weight || 1), 0) || 1;
     const wAvg = fn => holdings.reduce((s, h) => s + fn(h) * (h.weight || 1), 0) / tw;
     const avgEvTier = wAvg(h => h.evidenceTier);
-    const goldPct = holdings.filter(h => h.evidenceTier === 1).length / holdings.length * 100;
-    const highPct = holdings.filter(h => h.evidenceTier <= 2).length / holdings.length * 100;
-    const lowPct = holdings.filter(h => h.evidenceTier >= 4).length / holdings.length * 100;
+    const goldPct = holdings.filter(h => h.evidenceTier === 1).length / (holdings.length || 1) * 100;
+    const highPct = holdings.filter(h => h.evidenceTier <= 2).length / (holdings.length || 1) * 100;
+    const lowPct = holdings.filter(h => h.evidenceTier >= 4).length / (holdings.length || 1) * 100;
     const totalFlags = holdings.reduce((s, h) => s + h.flags.length, 0);
     const avgIMP = wAvg(h => h.impScore);
     const totalVerifiedMn = holdings.reduce((s, h) => s + h.verifiedImpactMn, 0);
-    const addPct = holdings.filter(h => h.additionalityProven).length / holdings.length * 100;
+    const addPct = holdings.filter(h => h.additionalityProven).length / (holdings.length || 1) * 100;
     const sdgVerPct = holdings.reduce((s, h) => s + h.sdgsVerified, 0) / Math.max(1, holdings.reduce((s, h) => s + h.sdgsClaimed, 0)) * 100;
     const dimAvgs = {};
     IMP_DIMENSIONS.forEach(d => { dimAvgs[d.id] = Math.round(wAvg(h => h.impDims[d.id]) * 10) / 10; });

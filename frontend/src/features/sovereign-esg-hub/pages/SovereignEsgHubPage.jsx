@@ -212,8 +212,8 @@ export default function SovereignEsgHubPage() {
     return c;
   }, [regionFilter, searchQuery, sortField, sortDir]);
 
-  const portfolioEsgAvg = (PORTFOLIO.reduce((s,p) => s+(p.esgScore*p.weightPct),0)/PORTFOLIO.reduce((s,p)=>s+p.weightPct,0)).toFixed(1);
-  const portfolioPhysAvg= (PORTFOLIO.reduce((s,p) => s+(p.physicalRisk*p.weightPct),0)/PORTFOLIO.reduce((s,p)=>s+p.weightPct,0)).toFixed(1);
+  const portfolioEsgAvg = (PORTFOLIO.reduce((s,p) => s+(p.esgScore*p.weightPct),0)/(PORTFOLIO.reduce((s,p)=>s+p.weightPct,0)||1)).toFixed(1);
+  const portfolioPhysAvg= (PORTFOLIO.reduce((s,p) => s+(p.physicalRisk*p.weightPct),0)/(PORTFOLIO.reduce((s,p)=>s+p.weightPct,0)||1)).toFixed(1);
   const totalGreenExposure= (PORTFOLIO.reduce((s,p)=>s+p.greenBondExposureMnUSD,0)/1000).toFixed(1);
 
   const comparatorCountries = [comparatorA,comparatorB,comparatorC,comparatorD].map(iso2 => COUNTRIES.find(c=>c.iso2===iso2)).filter(Boolean);

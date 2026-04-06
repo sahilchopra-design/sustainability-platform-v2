@@ -120,7 +120,7 @@ export default function AgriBiodiversityPage(){
         <KPI label="Avg Species Richness" value={stats.avgSpecies} sub="species per operation" color={T.navy}/>
         <KPI label="Avg Habitat Quality" value={stats.avgHabitat+'%'} sub="habitat index" color={T.sage}/>
         <KPI label="High Biodiv" value={stats.highPct+'%'} sub="MSA ≥ 0.70" color={T.green}/>
-        <KPI label="Practice Adoption" value={Math.floor(filtered.reduce((a,o)=>a+o.practiceScore,0)/filtered.length)+'%'} sub="avg score" color={T.gold}/>
+        <KPI label="Practice Adoption" value={(filtered.length?Math.floor(filtered.reduce((a,o)=>a+o.practiceScore,0)/filtered.length):0)+'%'} sub="avg score" color={T.gold}/>
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
@@ -229,8 +229,8 @@ export default function AgriBiodiversityPage(){
         <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
           <KPI label="Avg Neonic Exposure" value={stats.avgNeonic+' µg/L'} sub="across operations" color={stats.avgNeonic>4?T.red:T.amber}/>
           <KPI label="High Risk" value={filtered.filter(o=>o.pollinatorRisk==='High').length} sub="operations at high risk" color={T.red}/>
-          <KPI label="Avg Wildflower" value={Math.floor(filtered.reduce((a,o)=>a+o.wildflowerCoverage,0)/filtered.length)+'%'} sub="corridor coverage" color={T.sage}/>
-          <KPI label="Pollinator-Dependent" value={Math.floor(filtered.reduce((a,o)=>a+o.pollinatorDependency,0)/filtered.length)+'%'} sub="crop dependency" color={T.gold}/>
+          <KPI label="Avg Wildflower" value={(filtered.length?Math.floor(filtered.reduce((a,o)=>a+o.wildflowerCoverage,0)/filtered.length):0)+'%'} sub="corridor coverage" color={T.sage}/>
+          <KPI label="Pollinator-Dependent" value={(filtered.length?Math.floor(filtered.reduce((a,o)=>a+o.pollinatorDependency,0)/filtered.length):0)+'%'} sub="crop dependency" color={T.gold}/>
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>

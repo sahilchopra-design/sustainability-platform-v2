@@ -9,10 +9,7 @@ import {
 const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
-const seededRandom = (seed) => {
-  let x = Math.sin(seed * 9301 + 49297) * 233280;
-  return x - Math.floor(x);
-};
+const seededRandom = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const hashStr = (s) => {
   let h = 5381;
@@ -102,8 +99,15 @@ const getICVCMData = (projectType, registry, vintage, seed0) => {
     { id: 'C10', name: 'Transition to Net Zero', score: Math.round(r(10) * 28 + 54) },
   ];
   const composite = Math.round(criteria.reduce((s, c) => s + c.score, 0) / criteria.length);
-  const ccpEligible = composite >= 65 && criteria.every(c => c.score >= 50);
-  const tier = composite >= 80 ? 'A' : composite >= 68 ? 'B' : composite >= 55 ? 'C' : 'D';
+  // ICVCM CCP 2023: Additionality (C3) and Permanence (C4) carry minimum thresholds
+  // beyond the global ≥50 floor — they are the two "essential" criteria in the Assessment
+  // Framework (ICVCM Core Carbon Principles Assessment Framework v2.0, Sep 2023, §4.3)
+  const c3 = criteria.find(c => c.id === 'C3')?.score ?? 0;
+  const c4 = criteria.find(c => c.id === 'C4')?.score ?? 0;
+  const ccpEligible = composite >= 65 && criteria.every(c => c.score >= 50) && c3 >= 60 && c4 >= 55;
+  // Tier A requires both key criteria to meet elevated minimums (ICVCM §4.4 "High Performance")
+  const canBeA = c3 >= 70 && c4 >= 65;
+  const tier = (canBeA && composite >= 80) ? 'A' : composite >= 68 ? 'B' : composite >= 55 ? 'C' : 'D';
   const priceBase = { afolu: 8, redd: 6, arr: 9, blue_carbon: 18, cookstoves: 4, methane_capture: 12, soil_carbon: 7, biochar: 22, dac: 180, beccs: 60 };
   const price = Math.round((priceBase[projectType] || 10) * (0.8 + r(11) * 0.6));
   return { criteria, composite, ccpEligible, tier, price };
@@ -461,8 +465,8 @@ export default function VCMIntegrityPage() {
             <Row gap={12}>
               <KpiCard label="Total Volume (MtCO2e)" value={`${market.totalVolume} Mt`} sub="Estimated VCM annual issuance" accent />
               <KpiCard label="Vintage Range" value={market.vintageRange} sub="Active market vintages" />
-              <KpiCard label="Highest Price Type" value={market.priceByType.reduce((a, b) => a.price > b.price ? a : b).type} sub={`$${market.priceByType.reduce((a, b) => a.price > b.price ? a : b).price}/t`} />
-              <KpiCard label="Lowest Price Type" value={market.priceByType.reduce((a, b) => a.price < b.price ? a : b).type} sub={`$${market.priceByType.reduce((a, b) => a.price < b.price ? a : b).price}/t`} />
+              <KpiCard label="Highest Price Type" value={market.priceByType.length > 0 ? market.priceByType.reduce((a, b) => a.price > b.price ? a : b, {type:'N/A',price:0}).type : 'N/A'} sub={market.priceByType.length > 0 ? `$${market.priceByType.reduce((a, b) => a.price > b.price ? a : b, {type:'N/A',price:0}).price}/t` : '—'} />
+              <KpiCard label="Lowest Price Type" value={market.priceByType.length > 0 ? market.priceByType.reduce((a, b) => a.price < b.price ? a : b, {type:'N/A',price:0}).type : 'N/A'} sub={market.priceByType.length > 0 ? `$${market.priceByType.reduce((a, b) => a.price < b.price ? a : b, {type:'N/A',price:0}).price}/t` : '—'} />
             </Row>
           </Section>
           <Row>

@@ -572,8 +572,8 @@ function computePortfolioMetrics(holdings) {
     if (['Energy', 'Materials', 'Utilities'].includes(sec)) highImpactExp += h.exposure_usd_mn || 0;
   }
 
-  const sbtiPct = (sbtiCount / holdings.length) * 100;
-  const dataCoverage = (dataCount / holdings.length) * 100;
+  const sbtiPct = (sbtiCount / (holdings.length || 1)) * 100;
+  const dataCoverage = (dataCount / (holdings.length || 1)) * 100;
   const resolvedWaci = isFinite(waci) && waci > 0 ? waci : 210;
   const impliedTemp = resolvedWaci < 120 ? '1.6' : resolvedWaci < 180 ? '1.9' : resolvedWaci < 250 ? '2.4' : resolvedWaci < 320 ? '2.8' : '3.2';
 

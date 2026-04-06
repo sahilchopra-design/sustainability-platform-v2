@@ -162,10 +162,11 @@ const TOP_OPPS = [
 /* ── Sector heatmap data ────────────────────────────────────────────────────── */
 const genSectorHeatmap = () => SECTORS.map((sec, i) => {
   const cos = COMPANIES.filter(c => c.sector === sec);
-  const avgReady = cos.reduce((a, c) => a + c.readiness, 0) / cos.length;
-  const tptPct = (cos.filter(c => c.tptStatus === 'Published').length / cos.length) * 100;
-  const gfanzPct = (cos.filter(c => c.gfanzAligned).length / cos.length) * 100;
-  const nzPct = (cos.filter(c => c.nzCommitted).length / cos.length) * 100;
+  const cn = cos.length || 1;
+  const avgReady = cos.reduce((a, c) => a + c.readiness, 0) / cn;
+  const tptPct = (cos.filter(c => c.tptStatus === 'Published').length / cn) * 100;
+  const gfanzPct = (cos.filter(c => c.gfanzAligned).length / cn) * 100;
+  const nzPct = (cos.filter(c => c.nzCommitted).length / cn) * 100;
   return { sector: sec, readiness: Math.round(avgReady), tpt: Math.round(tptPct), gfanz: Math.round(gfanzPct), nz: Math.round(nzPct) };
 });
 

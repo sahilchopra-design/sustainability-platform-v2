@@ -88,7 +88,7 @@ export default function CcPortfolioAnalyticsPage() {
     const totalCredits = POSITIONS.reduce((s, p) => s + p.credits, 0);
     const totalRetired = POSITIONS.reduce((s, p) => s + p.retired, 0);
     const retirementRate = ((totalRetired / totalCredits) * 100).toFixed(1);
-    const avgAge = (POSITIONS.reduce((s, p) => s + (2026 - p.vintage), 0) / POSITIONS.length).toFixed(1);
+    const avgAge = (POSITIONS.reduce((s, p) => s + (2026 - p.vintage), 0) / (POSITIONS.length || 1)).toFixed(1);
     return { totalValue, totalCredits, totalRetired, retirementRate, avgAge };
   }, []);
 
@@ -103,25 +103,27 @@ export default function CcPortfolioAnalyticsPage() {
   })), []);
 
   const riskMetrics = useMemo(() => {
-    const avgReversal = parseFloat((POSITIONS.reduce((s, p) => s + p.reversalRisk, 0) / POSITIONS.length * 100).toFixed(1));
-    const avgRegulatory = parseFloat((POSITIONS.reduce((s, p) => s + p.regulatoryRisk, 0) / POSITIONS.length * 100).toFixed(1));
-    const priceVol = parseFloat((POSITIONS.reduce((s, p) => s + Math.abs(p.priceCurrent - p.priceAcquired) / p.priceAcquired, 0) / POSITIONS.length * 100).toFixed(1));
+    const avgReversal = parseFloat((POSITIONS.reduce((s, p) => s + p.reversalRisk, 0) / (POSITIONS.length || 1) * 100).toFixed(1));
+    const avgRegulatory = parseFloat((POSITIONS.reduce((s, p) => s + p.regulatoryRisk, 0) / (POSITIONS.length || 1) * 100).toFixed(1));
+    // Guard priceAcquired: use Math.max(..., 0.01) so real-data positions with priceAcquired=0 don't produce Infinity
+    const priceVol = parseFloat((POSITIONS.reduce((s, p) => s + Math.abs(p.priceCurrent - p.priceAcquired) / Math.max(p.priceAcquired, 0.01), 0) / (POSITIONS.length || 1) * 100).toFixed(1));
 
+    const tv = portfolio.totalValue || 1; // guard: avoid Infinity/NaN in HHI shares when portfolio is empty
     const familyShares = FAMILIES.map(f => {
       const fv = POSITIONS.filter(p => p.family === f).reduce((s, p) => s + p.value, 0);
-      return fv / portfolio.totalValue;
+      return fv / tv;
     });
     const hhiFamily = Math.round(familyShares.reduce((s, sh) => s + sh * sh, 0) * 10000);
 
     const geoShares = REGIONS.map(r => {
       const rv = POSITIONS.filter(p => p.region === r).reduce((s, p) => s + p.value, 0);
-      return rv / portfolio.totalValue;
+      return rv / tv;
     });
     const hhiGeo = Math.round(geoShares.reduce((s, sh) => s + sh * sh, 0) * 10000);
 
     const vintShares = VINTAGES.map(v => {
       const vv = POSITIONS.filter(p => p.vintage === v).reduce((s, p) => s + p.value, 0);
-      return vv / portfolio.totalValue;
+      return vv / tv;
     });
     const hhiVintage = Math.round(vintShares.reduce((s, sh) => s + sh * sh, 0) * 10000);
 
@@ -137,7 +139,7 @@ export default function CcPortfolioAnalyticsPage() {
   }, [portfolio.totalValue]);
 
   const attribution = useMemo(() => {
-    const priceMov = parseFloat((POSITIONS.reduce((s, p) => s + (p.priceCurrent - p.priceAcquired) * p.credits, 0) / portfolio.totalValue * 100).toFixed(1));
+    const priceMov = parseFloat((POSITIONS.reduce((s, p) => s + (p.priceCurrent - p.priceAcquired) * p.credits, 0) / (portfolio.totalValue || 1) * 100).toFixed(1));
     const vintageAging = parseFloat((sr(201) * 3 + 1).toFixed(1));
     const methQuality = parseFloat((sr(203) * 2.5 + 0.5).toFixed(1));
     const registryPremium = parseFloat((sr(207) * 1.5 + 0.3).toFixed(1));

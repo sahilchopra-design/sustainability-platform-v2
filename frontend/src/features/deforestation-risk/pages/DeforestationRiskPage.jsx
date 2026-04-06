@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, PieChart, Pie, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
@@ -75,7 +75,7 @@ const DEFORESTATION_TREND = [
 /* ══════════════════════════════════════════════════════════════
    HELPER: deterministic pseudo-random
    ══════════════════════════════════════════════════════════════ */
-const seed = (s) => { let x = Math.sin(s * 2.7183 + 1) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 /* ══════════════════════════════════════════════════════════════
    SCORING FUNCTION

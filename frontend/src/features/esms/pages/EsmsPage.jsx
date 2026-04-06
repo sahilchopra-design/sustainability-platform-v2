@@ -595,7 +595,7 @@ export default function EsmsPage() {
               <div style={{ fontSize: 11, fontWeight: 700, color: T.text, marginBottom: 4 }}>Applicable ESMS Components:</div>
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 {ps.components.map(cid => (
-                  <Badge key={cid} text={`${cid}. ${ESMS_COMPONENTS.find(c => c.id === cid).name}`} color={T.sage} />
+                  <Badge key={cid} text={`${cid}. ${ESMS_COMPONENTS.find(c => c.id === cid)?.name ?? cid}`} color={T.sage} />
                 ))}
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+﻿import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
@@ -17,7 +17,7 @@ const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } c
 const LS_PORT = 'ra_portfolio_v1';
 const LS_OVERRIDES = 'ra_materiality_overrides_v1';
 const hashStr = s => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-const sr = (seed, off = 0) => { let x = Math.sin(Math.abs(seed + off) * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sr = (seed, off = 0) => { let x = Math.sin(seed + off + 1) * 10000; return x - Math.floor(x); };
 const pct = v => `${(v * 100).toFixed(1)}%`;
 
 /* ══════════════════════════════════════════════════════════════

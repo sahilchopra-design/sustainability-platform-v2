@@ -58,7 +58,7 @@ export default function CarbonFootprintIntelligencePage() {
 
   const co = COMPANIES.find(c => c.id === selected);
   const totalS123 = co.scope1 + co.scope2_mkt + co.scope3;
-  const scope3Pct = (co.scope3 / totalS123) * 100;
+  const scope3Pct = totalS123 > 0 ? (co.scope3 / totalS123) * 100 : 0;
 
   const scopePie = [
     { name: 'Scope 1', value: co.scope1, color: T.red },
@@ -194,7 +194,9 @@ export default function CarbonFootprintIntelligencePage() {
           <div style={{ paddingTop: 24 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               {COMPANIES.map(c => {
-                const reduction2030 = ((c.trajectory[4].actual - (c.trajectory.find(d => d.year === 2030)?.target || 0)) / c.trajectory[4].actual * 100).toFixed(0);
+                const base2023 = c.trajectory.find(d => d.year === 2023)?.actual ?? c.trajectory[4]?.actual ?? 1;
+                const target2030val = c.trajectory.find(d => d.year === 2030)?.target ?? 0;
+                const reduction2030 = base2023 > 0 ? ((base2023 - target2030val) / base2023 * 100).toFixed(0) : '0';
                 return (
                   <div key={c.id} style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 20 }}>
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 12 }}>
@@ -205,10 +207,10 @@ export default function CarbonFootprintIntelligencePage() {
                       </div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 10 }}>
-                      {[['2023', c.trajectory[4]?.actual, T.red], ['2025T', c.trajectory.find(d => d.year === 2025)?.target, T.amber], ['2030T', c.trajectory.find(d => d.year === 2030)?.target, T.green]].map(([yr, val, col]) => (
+                      {[['2023', c.trajectory.find(d => d.year === 2023)?.actual, T.red], ['2025T', c.trajectory.find(d => d.year === 2025)?.target, T.amber], ['2030T', c.trajectory.find(d => d.year === 2030)?.target, T.green]].map(([yr, val, col]) => (
                         <div key={yr} style={{ background: T.bg, borderRadius: 6, padding: 10, textAlign: 'center' }}>
                           <div style={{ fontSize: 10, color: T.textMut }}>{yr}</div>
-                          <div style={{ fontFamily: T.mono, fontSize: 14, fontWeight: 700, color: col }}>{val?.toFixed(1)}Mt</div>
+                          <div style={{ fontFamily: T.mono, fontSize: 14, fontWeight: 700, color: col }}>{val != null ? val.toFixed(1) : 'N/A'}Mt</div>
                         </div>
                       ))}
                     </div>

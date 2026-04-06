@@ -127,7 +127,7 @@ export default function InfrastructureResilienceScorerPage() {
                 { label: 'Portfolio Resilience', value: `${portfolioAvg}/100`, sub: scoreBand(portfolioAvg), color: scoreColor(portfolioAvg) },
                 { label: 'Total Asset Value', value: `$${(totalValue/1000).toFixed(1)}B`, sub: '10 infrastructure assets', color: T.navy },
                 { label: 'Climate Haircut', value: `$${totalHaircut}M`, sub: `${(totalHaircut/totalValue*100).toFixed(1)}% of portfolio value`, color: T.red },
-                { label: 'Retrofit Investment', value: `$${totalRetrofitCost}M`, sub: `BCR ${(totalRetrofitBenefit/totalRetrofitCost).toFixed(1)}x weighted`, color: T.blue },
+                { label: 'Retrofit Investment', value: `$${totalRetrofitCost}M`, sub: `BCR ${totalRetrofitCost ? (totalRetrofitBenefit/totalRetrofitCost).toFixed(1) : 'N/A'}x weighted`, color: T.blue },
                 { label: 'Critical Assets', value: ASSETS.filter(a => a.resilience_score < 50).length.toString(), sub: 'score < 50', color: T.red },
               ].map(k => (
                 <div key={k.label} style={{ flex: 1, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: '14px 18px' }}>
@@ -313,7 +313,7 @@ export default function InfrastructureResilienceScorerPage() {
               </ResponsiveContainer>
 
               <div style={{ marginTop: 16, padding: 16, background: T.bg, borderRadius: 8 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>Portfolio Climate Haircut: ${totalHaircut}M ({(totalHaircut/totalValue*100).toFixed(1)}% of ${ (totalValue/1000).toFixed(1)}B portfolio)</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>Portfolio Climate Haircut: ${totalHaircut}M ({totalValue > 0 ? (totalHaircut/totalValue*100).toFixed(1) : '0.0'}% of ${ (totalValue/1000).toFixed(1)}B portfolio)</div>
                 <div style={{ fontSize: 12, color: T.textSec }}>
                   Highest impact: Bangladesh Delta (32.5%), California Grid (18.2%), Mumbai Coastal Road (15.8%). These 3 assets account for 68% of the total portfolio haircut despite being only 18% of portfolio value.
                 </div>

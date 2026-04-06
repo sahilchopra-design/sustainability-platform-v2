@@ -1,8 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   BarChart, Bar, LineChart, Line, ScatterChart, Scatter, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine, ZAxis
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -16,9 +19,9 @@ const T = {
 const ENTITIES = Array.from({length:15}, (_,i) => ({
   id:`E${i+1}`, name:['JPMorgan','Shell','Microsoft','HSBC','TotalEnergies','Unilever','Allianz','Enel','Siemens','BNP','BP','Nestle','BlackRock','NextEra','Tesla'][i],
   sector:['Banking','Oil & Gas','Tech','Banking','Oil & Gas','Consumer','Insurance','Utilities','Industrials','Banking','Oil & Gas','Consumer','Asset Mgmt','Renewables','Automotive'][i],
-  score: Math.round(60+Math.sin(i*2.3)*20),
-  peerAvg: Math.round(62+Math.sin(i*2.3)*12),
-  anomalyScore: Math.round(Math.max(0, Math.sin(i*1.7)*100))/100,
+  score: Math.round(60+(sr(i * 23) * 2 - 1)*20),
+  peerAvg: Math.round(62+(sr(i * 23) * 2 - 1)*12),
+  anomalyScore: Math.round(Math.max(0, (sr(i * 17) * 2 - 1)*100))/100,
   isAnomaly: [false,false,false,false,true,false,false,false,false,false,true,false,false,false,true][i],
   outlierTopics: i===4?['Climate (-22 vs peer)','Biodiversity (-18 vs peer)']:i===10?['Environmental (-25 vs peer)','Governance (-15 vs peer)']:i===14?['Social (-30 vs peer)','Governance (-28 vs peer)']:[],
 }));
@@ -28,7 +31,7 @@ const ALERT_HISTORY = Array.from({length:12}, (_,i) => ({
   entity:['TotalEnergies','BP','Tesla','Shell','Nestle','HSBC','TotalEnergies','BP','Tesla','Siemens','BlackRock','Enel'][i],
   type:i<3?'Confirmed Anomaly':'False Positive',
   resolution:i<3?'Under Review':i<6?'Dismissed':'Resolved',
-  score: Math.round(0.6+Math.sin(i)*0.3,2)
+  score: Math.round(0.6+(sr(i * 10) * 2 - 1)*0.3,2)
 }));
 
 const FPR_DATA = ['2025-Q1','2025-Q2','2025-Q3','2025-Q4','2026-Q1'].map((q,i) => ({

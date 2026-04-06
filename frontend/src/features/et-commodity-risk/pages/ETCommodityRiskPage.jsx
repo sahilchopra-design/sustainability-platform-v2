@@ -8,8 +8,8 @@ import {
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', red: '#991b1b', green: '#065f46', gray: '#6b7280', orange: '#c2410c', teal: '#0f766e', purple: '#6d28d9', emerald: '#059669', amber: '#92400e' };
-const pct = (n, d = 1) => `${parseFloat(n).toFixed(d)}%`;
-const usd = (n, d = 1) => `$${parseFloat(n).toFixed(d)}B`;
+const pct = (n, d = 1) => isFinite(+n) ? `${parseFloat(n).toFixed(d)}%` : '—%';
+const usd = (n, d = 1) => isFinite(+n) ? `$${parseFloat(n).toFixed(d)}B` : '$—B';
 
 const MINERALS_LIST = ['Lithium', 'Cobalt', 'Nickel', 'Copper', 'Rare Earths', 'Graphite'];
 const SCENARIOS = ['NZE 2050', 'Announced Pledges', 'Stated Policies', 'Current Policies'];
@@ -44,7 +44,7 @@ const PORTFOLIO = Array.from({ length: 20 }, (_, i) => {
 // Demand surge by scenario
 const DEMAND_SURGE = MINERALS_LIST.map((m, mi) => {
   const obj = { mineral: m };
-  SCENARIOS.forEach((s, si) => { obj[s] = Math.round(2 + si * 0.8 + sr(mi * 5 + si * 11) * 8); });
+  SCENARIOS.forEach((s, si) => { obj[s] = Math.round(2 + (SCENARIOS.length - 1 - si) * 0.8 + sr(mi * 5 + si * 11) * 8); }); // NZE 2050 (si=0) gets highest base; Current Policies (si=3) gets lowest — correct NGFS direction
   return obj;
 });
 
@@ -121,8 +121,8 @@ export default function ETCommodityRiskPage() {
   const [scenario, setScenario] = useState('NZE 2050');
 
   const totalWeight = PORTFOLIO.reduce((a, p) => a + p.weight, 0);
-  const avgMineralExp = (PORTFOLIO.reduce((a, p) => a + p.total_mineral_exposure * p.weight, 0) / totalWeight).toFixed(1);
-  const avgRevRisk = (PORTFOLIO.reduce((a, p) => a + p.revenue_at_risk_pct * p.weight, 0) / totalWeight).toFixed(1);
+  const avgMineralExp = totalWeight > 0 ? (PORTFOLIO.reduce((a, p) => a + p.total_mineral_exposure * p.weight, 0) / totalWeight).toFixed(1) : '0.0';
+  const avgRevRisk = totalWeight > 0 ? (PORTFOLIO.reduce((a, p) => a + p.revenue_at_risk_pct * p.weight, 0) / totalWeight).toFixed(1) : '0.0';
   const highRisk = PORTFOLIO.filter(p => p.total_mineral_exposure > 25).length;
 
   const TABS = ['Portfolio Exposure', 'Scenario Impact', 'Supply Chain Risk', 'Revenue at Risk', 'Sector Analysis'];

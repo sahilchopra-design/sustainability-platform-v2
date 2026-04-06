@@ -643,7 +643,7 @@ const RegulatoryTrackerTab=()=>{
     return d;
   },[regulatorFilter,statusFilter]);
 
-  const avgCompliance=filtered.reduce((s,r)=>s+r.compliance,0)/filtered.length;
+  const avgCompliance=filtered.length?filtered.reduce((s,r)=>s+r.compliance,0)/filtered.length:0;
   const byStatus=useMemo(()=>{
     const map={};
     filtered.forEach(r=>{map[r.status]=(map[r.status]||0)+1;});
@@ -1023,7 +1023,7 @@ const NZBACommitmentTab=()=>{
         <div style={S.kpi}>
           <div style={S.kpiValue}>{totalEngagements}</div>
           <div style={S.kpiLabel}>Active Engagements</div>
-          <div style={S.kpiSub}>{(totalEngagements/totalClients*100).toFixed(0)}% engaged</div>
+          <div style={S.kpiSub}>{(totalEngagements/(totalClients||1)*100).toFixed(0)}% engaged</div>
         </div>
         <div style={S.kpi}>
           <div style={{...S.kpiValue,color:T.red}}>{NZBA_SECTORS.reduce((s,sec)=>s+sec.highRisk,0)}</div>

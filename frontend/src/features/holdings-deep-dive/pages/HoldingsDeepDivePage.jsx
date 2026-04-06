@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 // ─── Theme ───────────────────────────────────────────────────────────────────
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const CHART_COLORS = ['#1b3a5c', '#c5a96a', '#5a8a6a', '#3b82f6', '#f97316', '#ec4899'];
 
@@ -433,9 +434,9 @@ function HoldingsDeepDivePage() {
 
               // ESG sub-scores (estimate if not available)
               const esgScore = c.esg_score || 50;
-              const envScore = c.env_score ?? Math.round(esgScore * 0.9 + (Math.sin(esgScore) * 5));
-              const socScore = c.soc_score ?? Math.round(esgScore * 1.05 + (Math.cos(esgScore) * 3));
-              const govScore = c.gov_score ?? Math.round(esgScore * 1.1 - (Math.sin(esgScore * 0.5) * 4));
+              const envScore = c.env_score ?? Math.round(esgScore * 0.9 + (sr(esgScore) * 2 - 1) * 5);
+              const socScore = c.soc_score ?? Math.round(esgScore * 1.05 + (sr(esgScore + 500) * 2 - 1) * 3);
+              const govScore = c.gov_score ?? Math.round(esgScore * 1.1 - (sr(esgScore * 5) * 2 - 1) * 4);
               const esgSubData = [
                 { name: 'Environmental', score: Math.max(0, Math.min(100, envScore)), color: T.sage },
                 { name: 'Social', score: Math.max(0, Math.min(100, socScore)), color: '#3b82f6' },
@@ -460,7 +461,7 @@ function HoldingsDeepDivePage() {
               // ESG trend (simulated)
               const esgTrend = Array.from({ length: 12 }, (_, i) => ({
                 month: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][i],
-                score: Math.max(0, Math.min(100, (esgScore || 50) + (Math.sin(i * 0.5) * 3) + (i * 0.2))),
+                score: Math.max(0, Math.min(100, (esgScore || 50) + ((sr(i * 5) * 2 - 1) * 3) + (i * 0.2))),
               }));
 
               const suggestions = getEngagementSuggestions(h);

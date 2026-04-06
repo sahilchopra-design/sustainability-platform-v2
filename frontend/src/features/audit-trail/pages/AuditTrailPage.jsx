@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+﻿import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 import {
@@ -31,7 +31,7 @@ const DATE_RANGES = [{l:'7d',d:7},{l:'30d',d:30},{l:'90d',d:90},{l:'All',d:9999}
 
 /* ─── Helpers ─── */
 const hash = s => { let h=0; for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0; return Math.abs(h); };
-const sRand = seed => { let x=Math.sin(seed*9301+49297)*233280; return x-Math.floor(x); };
+const sRand = seed => { let x=Math.sin(seed + 1) * 10000; return x-Math.floor(x); };
 const fmtDate = d => new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 const fmtTime = d => new Date(d).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 const daysBetween = (a,b) => Math.floor((new Date(b)-new Date(a))/(86400000));

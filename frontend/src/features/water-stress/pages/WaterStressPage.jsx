@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, PieChart, Pie, AreaChart, Area, ScatterChart, Scatter, ZAxis } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
@@ -64,7 +64,7 @@ const CDP_WATER_TIERS = { A: 'Leadership', 'A-': 'Leadership', B: 'Management', 
 /* ================================================================
    HELPERS
    ================================================================ */
-const seed = (s) => { let x = Math.sin(s * 2.7183 + 1) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 function scoreWaterRisk(company, idx) {
   const country = company.country || 'US';

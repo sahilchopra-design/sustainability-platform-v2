@@ -129,7 +129,7 @@ export default function VcmRegistryAnalyticsPage() {
   const totalIssued   = REGISTRY_DATA.reduce((a, r) => a + r.issued, 0);
   const totalRetired  = REGISTRY_DATA.reduce((a, r) => a + r.retired, 0);
   const totalProjects = REGISTRY_DATA.reduce((a, r) => a + r.projects, 0);
-  const retirePct     = (totalRetired / totalIssued * 100).toFixed(0);
+  const retirePct     = totalIssued ? (totalRetired / totalIssued * 100).toFixed(0) : '0';
 
   const filtered = PROJECTS.filter(p =>
     (regFilter === 'All' || p.registry === regFilter.split(' ')[0]) &&
@@ -203,7 +203,7 @@ export default function VcmRegistryAnalyticsPage() {
                     <td style={{ padding: '8px 14px', fontWeight: 700, color: r.color }}>{r.full}</td>
                     <td style={{ padding: '8px 14px', fontFamily: 'JetBrains Mono, monospace' }}>{fmt(r.issued)}</td>
                     <td style={{ padding: '8px 14px', fontFamily: 'JetBrains Mono, monospace', color: T.emerald }}>{fmt(r.retired)}</td>
-                    <td style={{ padding: '8px 14px', fontFamily: 'JetBrains Mono, monospace' }}>{(r.retired / r.issued * 100).toFixed(1)}%</td>
+                    <td style={{ padding: '8px 14px', fontFamily: 'JetBrains Mono, monospace' }}>{r.issued ? (r.retired / r.issued * 100).toFixed(1) : '0.0'}%</td>
                     <td style={{ padding: '8px 14px', fontFamily: 'JetBrains Mono, monospace', color: T.gray }}>{fmt(r.buffer)}</td>
                     <td style={{ padding: '8px 14px', fontFamily: 'JetBrains Mono, monospace' }}>{r.projects.toLocaleString()}</td>
                   </tr>

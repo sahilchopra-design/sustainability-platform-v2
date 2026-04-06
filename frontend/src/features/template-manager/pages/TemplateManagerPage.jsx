@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+﻿import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -14,7 +14,7 @@ let _sc=1000;
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 const seed = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i); return Math.abs(h); };
-const sRand = (n) => { let x = Math.sin(n * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sRand = (n) => { let x = Math.sin(n + 1) * 10000; return x - Math.floor(x); };
 const LS_PORTFOLIO = 'ra_portfolio_v1';
 const LS_TEMPLATES = 'ra_report_templates_v2';
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };

@@ -196,9 +196,10 @@ function TabExecutive(){
 
   const stats=useMemo(()=>{
     const active=COMPANIES.filter(c=>c.included);
-    const avgR=active.reduce((a,c)=>a+c.avgScore,0)/active.length;
-    const maxDiv=Math.max(...active.map(c=>c.maxDivergence));
-    const cov=active.filter(c=>c.coverage>=3).length/active.length*100;
+    const n=active.length||1;
+    const avgR=active.reduce((a,c)=>a+c.avgScore,0)/n;
+    const maxDiv=active.length?Math.max(...active.map(c=>c.maxDivergence)):0;
+    const cov=active.filter(c=>c.coverage>=3).length/n*100;
     const ups=active.filter(c=>c.momentum==='Upgrade').length;
     const downs=active.filter(c=>c.momentum==='Downgrade').length;
     const gw=active.filter(c=>c.greenwashRisk).length;

@@ -4,6 +4,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
   navyL: '#2c5a8c', gold: '#c5a96a', textSec: '#5c6b7e', textMut: '#9aa3ae',
@@ -102,11 +104,11 @@ export default function ClimateStressTestSuitePage() {
     return { carbonPrice, gdpShock, physicalLoss };
   }, [reverseTarget]);
 
-  // Deterministic PD/LGD timeline — no Math.random(); noise encoded as fixed offsets per year
+  // Deterministic PD/LGD timeline — platform sr() PRNG; noise encoded as fixed offsets per year
   const ecbTimeline = Array.from({ length: 30 }, (_, i) => {
-    // Fixed noise: sin-derived variation tied to year index (reproducible, smooth)
-    const pdNoise  = 0.05 * (Math.sin(i * 1.3) + 1) / 2;  // [0, 0.05]
-    const lgdNoise = 0.025 * (Math.sin(i * 0.9 + 1) + 1) / 2; // [0, 0.025]
+    // Fixed noise: sr()-derived variation tied to year index (reproducible)
+    const pdNoise  = 0.05 * sr(i * 13);   // [0, 0.05]
+    const lgdNoise = 0.025 * sr(i * 9 + 100); // [0, 0.025]
     return {
       year: 2025 + i,
       pdRate:  activeEcb.pdShock  * (1 + i * 0.04) * (1 + pdNoise),
@@ -291,9 +293,9 @@ export default function ClimateStressTestSuitePage() {
                 <AreaChart data={Array.from({ length: 30 }, (_, i) => ({
                   year: 2025 + i,
                   // BoE 2021 Climate Biennial Exploratory Scenario trajectories (deterministic)
-                  early:     1.2 * (1 + i * 0.02) + 0.1 * (Math.sin(i * 1.1) + 1) / 2,
-                  late:      0.5 * (1 + Math.max(0, i - 8) * 0.15) + 0.15 * (Math.sin(i * 0.8 + 2) + 1) / 2,
-                  no_action: 0.3 * (1 + i * 0.08) + 0.2 * (Math.sin(i * 0.6 + 1) + 1) / 2,
+                  early:     1.2 * (1 + i * 0.02) + 0.1 * sr(i * 11),
+                  late:      0.5 * (1 + Math.max(0, i - 8) * 0.15) + 0.15 * sr(i * 8 + 200),
+                  no_action: 0.3 * (1 + i * 0.08) + 0.2 * sr(i * 6 + 300),
                 }))}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="year" fontSize={10} />
@@ -365,8 +367,8 @@ export default function ClimateStressTestSuitePage() {
                 <AreaChart data={Array.from({ length: 20 }, (_, i) => ({
                   year: 2025 + i,
                   // APRA TRS 2022 coal revenue decline + managed transition investment
-                  coalRev:    Math.max(0, 22 - i * 1.5 + 0.5 * Math.sin(i * 0.7)),
-                  transition: i * 0.8 + 0.75 * Math.sin(i * 0.5 + 1),
+                  coalRev:    Math.max(0, 22 - i * 1.5 + 0.5 * (sr(i * 7) * 2 - 1)),
+                  transition: i * 0.8 + 0.75 * (sr(i * 5 + 10) * 2 - 1),
                 }))}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="year" fontSize={10} />

@@ -200,7 +200,7 @@ export default function PortfolioTransitionAlignmentPage() {
                   { label: 'GFANZ Membership', val: 'NZAM Alliance', col: T.teal },
                   { label: 'Portfolio Decarbonization Rate', val: '7.8%/yr required', col: T.amber },
                   { label: 'Current Decarbonization', val: '4.2%/yr actual', col: T.red },
-                  { label: 'Engagement Priority AUM', val: `$${((port.aum * (100 - port.pacta_aligned)) / 100 / 1000).toFixed(1)}B`, col: T.orange },
+                  { label: 'Engagement Priority AUM', val: `$${((port.aum * Math.max(0, 100 - port.pacta_aligned)) / 100 / 1000).toFixed(1)}B`, col: T.orange },
                 ].map(m => (
                   <div key={m.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: `1px solid ${T.border}` }}>
                     <span style={{ fontSize: 13, color: T.textSec }}>{m.label}</span>
@@ -233,7 +233,7 @@ export default function PortfolioTransitionAlignmentPage() {
                 <BarChart data={port.sectors.map((s, si) => {
                   // Deterministic per-sector PACTA variation (no Math.random)
                   const factor = 0.8 + 0.2 * (Math.sin(si * 2.3 + port.sectors.length) + 1);
-                  return { name: s.name, aligned: +(port.pacta_aligned * factor).toFixed(1), misaligned: +(port.pacta_misaligned * (1.4 - factor + 0.8)).toFixed(1) };
+                  return { name: s.name, aligned: +Math.min(100, port.pacta_aligned * factor).toFixed(1), misaligned: +(port.pacta_misaligned * (1.4 - factor + 0.8)).toFixed(1) };
                 })}>
 
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />

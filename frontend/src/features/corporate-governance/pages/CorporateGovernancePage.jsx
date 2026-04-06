@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+﻿import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -21,7 +21,7 @@ const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } c
 const fmt = (n) => typeof n === 'number' ? n.toLocaleString(undefined, { maximumFractionDigits: 1 }) : '---';
 const pct = (n) => typeof n === 'number' ? `${n.toFixed(1)}%` : '---';
 const seed = (s) => { let h = 5381; for (let i = 0; i < String(s).length; i++) h = ((h << 5) + h) ^ String(s).charCodeAt(i); return Math.abs(h); };
-const sRand = (n) => { let x = Math.sin(n * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sRand = (n) => { let x = Math.sin(n + 1) * 10000; return x - Math.floor(x); };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 /* ── Primitives ───────────────────────────────────────────────────────────── */
@@ -247,12 +247,13 @@ export default function CorporateGovernancePage() {
     DIM_KEYS.forEach(dk => { dimAvgs[dk] = Math.round(wAvg(h => h.dims[dk]) * 10) / 10; });
     const portGovScore = Math.round(wAvg(h => h.overall) * 10) / 10;
     const boardIndepAvg = Math.round(wAvg(h => h.boardIndep) * 10) / 10;
-    const ceoChairPct = Math.round((holdings.filter(h => h.ceoChairSplit).length / holdings.length) * 100);
+    const n = holdings.length || 1; // guard: prevent NaN% when portfolio is empty
+    const ceoChairPct = Math.round((holdings.filter(h => h.ceoChairSplit).length / n) * 100);
     const antiCorruptCov = Math.round(wAvg(h => h.antiCorruptTrain) * 10) / 10;
     const esgLinkedAvg = Math.round(wAvg(h => h.esgLinkedComp) * 10) / 10;
-    const whistleblowerCov = Math.round((holdings.filter(h => h.whistleblower).length / holdings.length) * 100);
-    const taxTranspPct = Math.round((holdings.filter(h => h.taxTransp).length / holdings.length) * 100);
-    const cyberOversightPct = Math.round((holdings.filter(h => h.cyberOversight).length / holdings.length) * 100);
+    const whistleblowerCov = Math.round((holdings.filter(h => h.whistleblower).length / n) * 100);
+    const taxTranspPct = Math.round((holdings.filter(h => h.taxTransp).length / n) * 100);
+    const cyberOversightPct = Math.round((holdings.filter(h => h.cyberOversight).length / n) * 100);
     const totalBreaches = holdings.reduce((s, h) => s + h.dataBreaches, 0);
     const auditIndepAvg = Math.round(wAvg(h => h.auditIndep) * 10) / 10;
     const shareholderScore = Math.round(wAvg(h => h.dims.shareholder_rights) * 10) / 10;
@@ -435,7 +436,7 @@ export default function CorporateGovernancePage() {
               <thead><tr><th style={thS}>ID</th><th style={thS}>Indicator</th><th style={thS}>Description</th><th style={thS}>Benchmark</th><th style={thS}>Portfolio Avg</th><th style={thS}>Status</th></tr></thead>
               <tbody>
                 {GOV_FRAMEWORK[activeDim].indicators.map((ind, ii) => {
-                  const avg = Math.round(holdings.reduce((s, h) => s + clamp(h.dims[activeDim] + (sRand(seed(h.company_name) + ii) - 0.5) * 15, 10, 100), 0) / holdings.length);
+                  const avg = Math.round(holdings.reduce((s, h) => s + clamp(h.dims[activeDim] + (sRand(seed(h.company_name) + ii) - 0.5) * 15, 10, 100), 0) / (holdings.length || 1));
                   const met = typeof ind.benchmark === 'boolean' ? avg >= 65 : avg >= (typeof ind.benchmark === 'number' ? ind.benchmark * 0.8 : 60);
                   return (
                     <tr key={ind.id}>

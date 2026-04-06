@@ -42,14 +42,17 @@ const calcIFM = (params) => {
     const total_leak = mkt_leak + act_leak;
     const after_leak = gross - total_leak;
     const buffer = after_leak * (buffer_pct / 100);
-    const net = (after_leak - buffer) * uncertainty_factor;
-    const annual = t === 1 ? net : net - (years[t-2]?.cumulative || 0);
+    const pre_unc = after_leak - buffer;
+    const uncertainty_ded = pre_unc * (1 - uncertainty_factor); // VM0010: uncertainty deduction = (1 - UF)
+    const net = Math.max(0, pre_unc - uncertainty_ded); // ≡ pre_unc × UF but expressed as explicit deduction
+    const prior_cumulative = years.length > 0 ? years[years.length-1].cumulative : 0;
+    const cumulative = prior_cumulative + net; // true running sum
     years.push({
       year: t, bl_cs: Math.round(bl_cs*10)/10, pj_cs: Math.round(pj_cs*10)/10,
       cs_diff: Math.round(cs_diff*10)/10,
       gross: Math.round(gross), total_leak: Math.round(total_leak),
-      buffer: Math.round(buffer), net: Math.round(net),
-      annual: Math.round(annual), cumulative: Math.round(net),
+      buffer: Math.round(buffer), uncertainty_ded: Math.round(uncertainty_ded), net: Math.round(net),
+      annual: Math.round(net), cumulative: Math.round(cumulative),
     });
   }
   return { years, total: years.length > 0 ? years[years.length-1].cumulative : 0 };
@@ -248,7 +251,7 @@ export default function CcIfmCreditsPage() {
               <div style={{fontSize:48,fontWeight:700,fontFamily:T.mono,lineHeight:1}}>{fmtK(result.total)}</div>
               <div style={{fontSize:11,color:`${T.cream}80`,marginTop:4}}>tCO₂e over {params.crediting_yrs}yr · {params.area_ha.toLocaleString()} ha</div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginTop:12}}>
-                {[['Avg Annual',fmtK(Math.round(result.total/params.crediting_yrs)),'tCO₂e/yr'],['Per Hectare',fmt(Math.round(result.total/params.area_ha*10)/10),'tCO₂e/ha'],['Market Leak',`${params.leakage_mkt_pct}%`,'deducted']].map(([l,v,u])=>(
+                {[['Avg Annual',fmtK(Math.round(result.total/(params.crediting_yrs||1))),'tCO₂e/yr'],['Per Hectare',fmt(Math.round(result.total/params.area_ha*10)/10),'tCO₂e/ha'],['Market Leak',`${params.leakage_mkt_pct}%`,'deducted']].map(([l,v,u])=>(
                   <div key={l} style={{padding:8,background:'rgba(255,255,255,0.08)',borderRadius:4,textAlign:'center'}}>
                     <div style={{fontSize:9,color:`${T.cream}60`}}>{l}</div>
                     <div style={{fontSize:14,fontWeight:700,fontFamily:T.mono}}>{v}</div>

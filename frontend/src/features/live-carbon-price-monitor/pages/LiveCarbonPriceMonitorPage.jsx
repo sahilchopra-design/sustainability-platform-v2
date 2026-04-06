@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, ComposedChart,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend, ReferenceLine
@@ -14,7 +14,7 @@ const T = {
 };
 
 // ─── Simulated live carbon price data ───────────────────────────────────────
-function sr(seed) { let x = Math.sin(seed * 9301 + 49297) * 49297; return x - Math.floor(x); }
+function sr(seed) { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); }
 
 const MARKETS = [
   { id: 'eu_ets', name: 'EU ETS', currency: '\u20ac', base: 68.5, vol: 2.8, color: T.blue, unit: '/tCO\u2082' },

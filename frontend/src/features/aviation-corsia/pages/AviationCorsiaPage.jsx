@@ -732,8 +732,8 @@ function FleetEmissionsTab({airlines}){
           <BarChart data={REGIONS.map(r=>{
             const ra=airlines.filter(a=>a.region===r);
             const avg=ra.reduce((s,a)=>s+a.fleetAge,0)/(ra.length||1);
-            const newest=Math.min(...ra.map(a=>a.fleetAge));
-            const oldest=Math.max(...ra.map(a=>a.fleetAge));
+            const newest=ra.length?Math.min(...ra.map(a=>a.fleetAge)):0;
+            const oldest=ra.length?Math.max(...ra.map(a=>a.fleetAge)):0;
             return{region:r,avgAge:parseFloat(avg.toFixed(1)),youngest:parseFloat(newest.toFixed(1)),oldest:parseFloat(oldest.toFixed(1))};
           })}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>

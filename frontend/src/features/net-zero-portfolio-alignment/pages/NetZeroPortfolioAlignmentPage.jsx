@@ -45,7 +45,7 @@ const holdings = names.map((name, i) => {
   return { name, sector: sect, weight: +w.toFixed(1), waci: +waci.toFixed(0), sbti, alignment: cat, itr: +itr.toFixed(1), greenRev: +greenRev.toFixed(1) };
 });
 const totalW = holdings.reduce((s, h) => s + h.weight, 0);
-holdings.forEach(h => { h.weight = +((h.weight / totalW) * 100).toFixed(1); });
+holdings.forEach(h => { h.weight = totalW ? +((h.weight / totalW) * 100).toFixed(1) : 0; });
 
 const pathwayData = [];
 for (let y = 2020; y <= 2050; y++) {

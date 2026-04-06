@@ -5,6 +5,8 @@ import {
   Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
   navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae',
@@ -28,10 +30,10 @@ const HOLDINGS = Array.from({length:20}, (_,i) => {
   const s = sectors[i%10];
   return {
     id:`H${i+1}`, name:`${s} Corp ${Math.floor(i/10)+1}`, sector:s, geo:geos[i%10],
-    weight: Math.round(3+Math.sin(i*1.7)*2.5,1),
-    baseScore: Math.round(45+Math.sin(i*2.3)*25),
-    topicScores: { env:Math.round(50+Math.sin(i)*20), climate:Math.round(45+Math.cos(i)*22), gov:Math.round(60+Math.sin(i*0.8)*15), soc:Math.round(55+Math.cos(i*1.2)*18), bio:Math.round(35+Math.sin(i*1.5)*20), supply:Math.round(50+Math.cos(i*0.6)*15), human:Math.round(55+Math.sin(i*1.1)*14), innov:Math.round(60+Math.cos(i*0.9)*18) },
-    scenarioImpact: { NZ2050:Math.round(-2+Math.sin(i)*6), BELOW2:Math.round(-4+Math.sin(i)*8), DIV:Math.round(-6+Math.sin(i)*10), DEL:Math.round(-8+Math.sin(i)*12), CPS:Math.round(-12+Math.sin(i)*15) }
+    weight: Math.round(3+(sr(i * 17) * 2 - 1)*2.5,1),
+    baseScore: Math.round(45+(sr(i * 23) * 2 - 1)*25),
+    topicScores: { env:Math.round(50+(sr(i * 10) * 2 - 1)*20), climate:Math.round(45+(sr(i * 510) * 2 - 1)*22), gov:Math.round(60+(sr(i * 8) * 2 - 1)*15), soc:Math.round(55+(sr(i * 512) * 2 - 1)*18), bio:Math.round(35+(sr(i * 15) * 2 - 1)*20), supply:Math.round(50+(sr(i * 506) * 2 - 1)*15), human:Math.round(55+(sr(i * 11) * 2 - 1)*14), innov:Math.round(60+(sr(i * 509) * 2 - 1)*18) },
+    scenarioImpact: { NZ2050:Math.round(-2+(sr(i * 10) * 2 - 1)*6), BELOW2:Math.round(-4+(sr(i * 10) * 2 - 1)*8), DIV:Math.round(-6+(sr(i * 10) * 2 - 1)*10), DEL:Math.round(-8+(sr(i * 10) * 2 - 1)*12), CPS:Math.round(-12+(sr(i * 10) * 2 - 1)*15) }
   };
 });
 
@@ -74,7 +76,7 @@ export default function PortfolioStressTestDrilldownPage() {
 
   const histComparison = useMemo(() => ['2024-Q1','2024-Q2','2024-Q3','2024-Q4','2025-Q1'].map((q,qi) => {
     const row = { q };
-    SCENARIOS.forEach(s => { row[s.name] = Math.round(portfolioImpact.find(p=>p.name===s.name).totalLoss * (0.8+qi*0.05) * 10)/10; });
+    SCENARIOS.forEach(s => { row[s.name] = Math.round((portfolioImpact.find(p=>p.name===s.name)?.totalLoss ?? 0) * (0.8+qi*0.05) * 10)/10; });
     return row;
   }), [portfolioImpact]);
 

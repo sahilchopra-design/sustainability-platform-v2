@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell,
@@ -138,7 +138,7 @@ const SCENARIO_PRESETS = [
    ================================================================= */
 const LS_PORT = 'ra_portfolio_v1';
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
-const seed = (s) => { let x = Math.sin(s * 9973 + 7) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const fmt = (n, d=1) => n == null ? '\u2014' : Number(n).toFixed(d);
 const pct = (n) => n == null ? '\u2014' : `${Math.round(n)}%`;
 const fmtMn = (n) => n >= 1000 ? `$${(n/1000).toFixed(1)}Bn` : `$${Math.round(n)}Mn`;
@@ -276,7 +276,7 @@ export default function CommodityHubPage() {
 
   /* -- Aggregate KPIs ------------------------------------------------ */
   const kpis = useMemo(() => {
-    const n = portfolio.length;
+    const n = portfolio.length || 1;
     const totalCommodityExp = portfolio.reduce((a, c) => a + c.commodityExposurePct, 0) / n;
     const totalExternalityMn = portfolio.reduce((a, c) => a + c.externalityCostMn, 0);
     const totalFinFlowMn = portfolio.reduce((a, c) => a + c.financialFlowMn, 0);
@@ -1272,10 +1272,10 @@ export default function CommodityHubPage() {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:12 }}>
           {[
             { label:'Green Revenue Share', value:`${Math.round(25 + kpis.circularScore * 0.3)}%`, target:'50% by 2030', color:T.green, progress:Math.round(25 + kpis.circularScore * 0.3) },
-            { label:'Science-Based Targets', value:`${Math.round(portfolio.filter(c=>c.esgVCScore>55).length / portfolio.length * 100)}%`, target:'100% by 2027', color:T.sage, progress:Math.round(portfolio.filter(c=>c.esgVCScore>55).length / portfolio.length * 100) },
+            { label:'Science-Based Targets', value:`${Math.round(portfolio.filter(c=>c.esgVCScore>55).length / (portfolio.length || 1) * 100)}%`, target:'100% by 2027', color:T.sage, progress:Math.round(portfolio.filter(c=>c.esgVCScore>55).length / (portfolio.length || 1) * 100) },
             { label:'CBAM Preparedness', value:`${100 - kpis.avgCBAM}%`, target:'95% by 2026', color:T.navyL, progress:100 - kpis.avgCBAM },
             { label:'Circular Economy', value:`${kpis.circularScore}/100`, target:'70/100 by 2028', color:'#0d9488', progress:kpis.circularScore },
-            { label:'Supply Chain Visibility', value:`${Math.round(kpis.totalSC / portfolio.length * 8)}%`, target:'90% by 2027', color:'#7c3aed', progress:Math.round(kpis.totalSC / portfolio.length * 8) },
+            { label:'Supply Chain Visibility', value:`${Math.round(kpis.totalSC / (portfolio.length || 1) * 8)}%`, target:'90% by 2027', color:'#7c3aed', progress:Math.round(kpis.totalSC / (portfolio.length || 1) * 8) },
             { label:'Product Passport Coverage', value:`${kpis.avgDPP}%`, target:'80% by 2027', color:'#ec4899', progress:kpis.avgDPP },
           ].map(item => (
             <div key={item.label} style={{ padding:14, borderRadius:10, border:`1px solid ${T.borderL}`, background:T.surfaceH }}>
@@ -1428,7 +1428,7 @@ export default function CommodityHubPage() {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:12, marginBottom:16 }}>
           {[
             { label:'Fossil Fuel Holdings', value:`${portfolio.filter(c => ['Oil & Gas','Energy','Mining'].includes(c.topCommodity)).length}`, sub:'Direct exposure', color:T.red },
-            { label:'Avg Stranded Risk', value:`${Math.round(portfolio.reduce((a,c) => a + c.strandedAssetRisk, 0) / portfolio.length)}/100`, sub:'Portfolio average', color:T.amber },
+            { label:'Avg Stranded Risk', value:`${Math.round(portfolio.reduce((a,c) => a + c.strandedAssetRisk, 0) / (portfolio.length || 1))}/100`, sub:'Portfolio average', color:T.amber },
             { label:'Carbon Price Sensitivity', value:`-${fmt(kpis.totalFinFlowMn * 0.032, 0)}Mn`, sub:'Per +$10/tCO2', color:T.red },
             { label:'Transition-Ready', value:`${portfolio.filter(c => c.strandedAssetRisk < 15).length}`, sub:'Low stranding risk', color:T.green },
           ].map(item => (

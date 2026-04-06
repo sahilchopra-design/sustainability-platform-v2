@@ -198,7 +198,7 @@ const calcPillarScores = (inputs) => {
 
 const calcCredits = (params, pillarResult) => {
   const { area, creditingPeriod, baselineRate, projectRate, leakagePct, bufferPct, uncertaintyPct, cobenefitMult } = params;
-  const netRate = Math.abs(baselineRate - projectRate);
+  const netRate = Math.max(0, baselineRate - projectRate); // projects exceeding baseline yield 0 credits, not phantom positive credits
   const grossAnnual = netRate * area;
   const grossTotal = grossAnnual * creditingPeriod;
   const leakageDeduction = grossTotal * (leakagePct / 100);
@@ -675,13 +675,13 @@ export default function EquitableEarthMethodologiesPage() {
                   <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                     <div style={{textAlign:'center',padding:8,background:`${T.emerald}08`,borderRadius:4}}>
                       <div style={{fontSize:9,color:T.textMut}}>Price ({pillarResult.tier} Tier)</div>
-                      <div style={{fontSize:16,fontWeight:700,color:T.emerald,fontFamily:T.mono}}>${(calcMethod.avgPrice * (pillarResult.overall/calcMethod.score)).toFixed(2)}</div>
+                      <div style={{fontSize:16,fontWeight:700,color:T.emerald,fontFamily:T.mono}}>${calcMethod.score > 0 ? (calcMethod.avgPrice * (pillarResult.overall/calcMethod.score)).toFixed(2) : calcMethod.avgPrice.toFixed(2)}</div>
                       <div style={{fontSize:9,color:T.textMut}}>per tCO₂e</div>
                     </div>
                     <div style={{textAlign:'center',padding:8,background:`${T.gold}15`,borderRadius:4}}>
                       <div style={{fontSize:9,color:T.textMut}}>Total Project Value</div>
                       <div style={{fontSize:16,fontWeight:700,color:T.goldD,fontFamily:T.mono}}>
-                        ${fmtK(Math.round(creditResult.cobCredits * calcMethod.avgPrice * (pillarResult.overall/calcMethod.score)))}
+                        ${fmtK(Math.round(creditResult.cobCredits * (calcMethod.score > 0 ? calcMethod.avgPrice * (pillarResult.overall/calcMethod.score) : calcMethod.avgPrice)))}
                       </div>
                       <div style={{fontSize:9,color:T.textMut}}>over {calcParams.creditingPeriod}yr</div>
                     </div>

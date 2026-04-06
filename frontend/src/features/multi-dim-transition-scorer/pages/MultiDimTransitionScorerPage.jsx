@@ -144,7 +144,7 @@ const COMPANIES = [
 
 function computeScore(company, usePropriety) {
   const data = usePropriety ? company.proprietary_data : company.public_data;
-  const weighted = PILLARS.reduce((sum, p) => sum + data[p.id] * p.weight / 100, 0);
+  const weighted = PILLARS.reduce((sum, p) => sum + (data[p.id] ?? 0) * p.weight / 100, 0);
   return weighted;
 }
 
@@ -205,7 +205,7 @@ export default function MultiDimTransitionScorerPage() {
               </div>
             </div>
             {[
-              { label: 'Avg Score', val: `${(COMPANIES.reduce((s, c) => s + computeScore(c, usePropriety), 0) / COMPANIES.length).toFixed(1)}` },
+              { label: 'Avg Score', val: `${COMPANIES.length > 0 ? (COMPANIES.reduce((s, c) => s + computeScore(c, usePropriety), 0) / COMPANIES.length).toFixed(1) : '—'}` },
               { label: 'Scored Companies', val: COMPANIES.length },
             ].map(m => (
               <div key={m.label} style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '10px 16px', textAlign: 'right' }}>

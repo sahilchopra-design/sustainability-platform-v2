@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell,
@@ -324,7 +324,7 @@ const LS_PORT = 'ra_portfolio_v1';
 const LS_LCA  = 'ra_lca_overrides_v1';
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
 const saveLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-const seed = (s) => { let x = Math.sin(s * 9973 + 7) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const fmt = (n, d=1) => n == null ? '\u2014' : Number(n).toFixed(d);
 const fmtK = (n) => { if(Math.abs(n)>=1e6) return `${(n/1e6).toFixed(1)}M`; if(Math.abs(n)>=1e3) return `${(n/1e3).toFixed(1)}K`; return fmt(n,0); };
 const pct = (n) => n == null ? '\u2014' : `${(n*100).toFixed(1)}%`;

@@ -256,7 +256,7 @@ export default function CommodityDerivativesClimatePage() {
                 <tbody>
                   {NGFS.map(s => {
                     const vol = s === 'Net Zero 2050' ? 0.40 : s === 'Divergent NZ' ? 0.45 : s === 'Below 2C' ? 0.35 : 0.28;
-                    const cp = blackScholes76(comm.base, optStrike, 0.04, optExpiry, vol);
+                    const cp = blackScholes76(comm.base, optStrike, 0.04, Math.max(0.01, optExpiry), vol);
                     return (
                       <tr key={s} style={{ borderBottom: `1px solid ${T.border}` }}>
                         <td style={{ padding: '8px 6px', color: NGFS_COLORS[s], fontWeight: 600 }}>{s}</td>

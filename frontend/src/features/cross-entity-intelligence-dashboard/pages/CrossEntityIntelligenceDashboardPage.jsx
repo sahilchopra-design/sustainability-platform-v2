@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   BarChart, Bar, LineChart, Line, AreaChart, Area, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine, PieChart, Pie
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -23,7 +26,7 @@ const ENTITIES = Array.from({length:15}, (_,i) => {
   const base = type==='FI'?68:type==='Energy'?48:72;
   return {
     id:`E${i+1}`, name:['JPMorgan','Shell','Microsoft','HSBC','TotalEnergies','Unilever','Allianz','Enel','Siemens','BNP','BP','Nestle','BlackRock','NextEra','Tesla'][i],
-    type, scores: L1_TOPICS.map((_,ti) => Math.round(base + Math.sin(i*2.3+ti)*18)),
+    type, scores: L1_TOPICS.map((_,ti) => Math.round(base + (sr(i*23+ti*10)*2-1)*18)),
     trend: [0.8,1.2,-0.3,0.5,1.8,-0.5,0.9,1.1,0.7,0.4,-0.8,0.3,1.5,2.1,1.7][i]
   };
 });

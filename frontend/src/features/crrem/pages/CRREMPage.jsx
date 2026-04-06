@@ -268,7 +268,11 @@ export default function CRREMPage() {
     const strandBefore2030 = strandings.filter(s => s <= 2030).length;
     const totalNOI = f.reduce((s,p)=>s+p.noi_usd_mn,0);
     const avgWater = f.reduce((s,p)=>s+p.water_intensity_l_m2,0)/f.length;
-    return { avgEnergy, avgCarbon, totalGFA, totalGAV, totalS1, totalS2, avgRenewable, avgOccupancy, avgGreenLease, avgStrand, strandBefore2030, totalNOI, count: f.length, avgWater };
+    // EU Taxonomy Art.6 proxy: property on 1.5°C CRREM pathway ⇒ Climate Change Mitigation aligned
+    // Methodology: GRESB/JLL/INREV consensus — strandYear(1.5°C) = '>2050' ⇔ EU Taxonomy aligned
+    const euTaxAligned = f.filter(p => computeStrandYear(p.carbon_intensity_kgco2, getTypeKey(p.type), '1.5') === '>2050').length;
+    const euTaxAlignedPct = f.length ? Math.round(euTaxAligned / f.length * 100) : 0;
+    return { avgEnergy, avgCarbon, totalGFA, totalGAV, totalS1, totalS2, avgRenewable, avgOccupancy, avgGreenLease, avgStrand, strandBefore2030, totalNOI, count: f.length, avgWater, euTaxAligned, euTaxAlignedPct };
   }, [filtered, scenario]);
 
   /* CRREM pathway chart data for selected property */
@@ -530,6 +534,7 @@ export default function CRREMPage() {
             <KpiCard title="Avg Renewable" value={fmtPct(kpis.avgRenewable)} color={kpis.avgRenewable >= 30 ? T.green : T.amber} />
             <KpiCard title="Avg Strand Year" value={fmt(kpis.avgStrand,0)} color={strandColor(kpis.avgStrand)} />
             <KpiCard title="Strand Before 2030" value={kpis.strandBefore2030} color={kpis.strandBefore2030 > 0 ? T.red : T.green} sub={`of ${kpis.count} properties`} />
+            <KpiCard title="EU Taxonomy Aligned" value={`${kpis.euTaxAligned} (${kpis.euTaxAlignedPct}%)`} color={kpis.euTaxAlignedPct >= 50 ? T.green : T.amber} sub="Art.6 — 1.5°C CRREM proxy" />
             <KpiCard title="Avg Occupancy" value={fmtPct(kpis.avgOccupancy)} />
             <KpiCard title="Avg Green Lease" value={fmtPct(kpis.avgGreenLease)} />
             <KpiCard title="Avg Water Intensity" value={`${(kpis.avgWater||0).toFixed(1)} l/m\u00b2`} />

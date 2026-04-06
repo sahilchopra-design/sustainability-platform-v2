@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 const T = { bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', blue:'#2563eb', orange:'#ea580c', purple:'#7c3aed', teal:'#0891b2', sage:'#5a8a6a', font:"'DM Sans','SF Pro Display',system-ui,sans-serif", mono:"'JetBrains Mono','SF Mono','Fira Code',monospace" };
 
 const TABS = ['Supply Chain Map','Contagion Network Graph','Tier 1/2/3 Exposure','Chokepoint Analysis','Cascade Simulation','Risk Mitigation Strategies'];
@@ -90,8 +92,8 @@ export default function SupplyChainContagionPage() {
   const tierData = COMPANIES.map(c => ({ name: c.name.length > 14 ? c.name.slice(0, 14) + '..' : c.name, t1: c.t1, t2: c.t2, t3: c.t3 }));
 
   const networkNodes = COMPANIES.slice(0, 8).map((c, i) => ({
-    x: 100 + Math.cos(i * Math.PI / 4) * 200 + Math.abs(Math.sin(i * 3.7 + 1)) * 40,
-    y: 150 + Math.sin(i * Math.PI / 4) * 120 + Math.abs(Math.sin(i * 2.9 + 2)) * 40,
+    x: 100 + Math.cos(i * Math.PI / 4) * 200 + sr(i * 37 + 10) * 40,
+    y: 150 + Math.sin(i * Math.PI / 4) * 120 + sr(i * 29 + 20) * 40,
     name: c.name.split(' ')[0], exposure: c.exposure, size: c.revImpact / 20,
   }));
 

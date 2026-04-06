@@ -15,7 +15,7 @@ const Btn = ({children,...p})=>(<button style={{background:'#059669',color:'#fff
 const Badge = ({children,color='green'})=>{ const c={green:{background:'#d1fae5',color:'#065f46'},red:{background:'#fee2e2',color:'#991b1b'},yellow:{background:'#fef3c7',color:'#92400e'},blue:{background:'#dbeafe',color:'#1e40af'},gray:{background:'#f3f4f6',color:'#374151'}}; const s=c[color]||c.green; return(<span style={{padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,...s}}>{children}</span>); };
 
 const seed = 108;
-const rng = (i, s=seed) => Math.abs(Math.sin(i*9301+s*49297)*233280)%233280/233280;
+const rng = (i, s=seed) => { let x = Math.sin(i + s + 1) * 10000; return x - Math.floor(x); };
 
 const TABS = ['Capital Ratios','RWA Breakdown','FRTB SA/IMA','Climate P2R Overlay','Optimization Actions'];
 

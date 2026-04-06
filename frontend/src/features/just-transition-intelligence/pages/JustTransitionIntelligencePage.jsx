@@ -4,6 +4,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
   navyL: '#2c5a8c', gold: '#c5a96a', sage: '#5a8a6a', text: '#1b3a5c',
@@ -142,7 +144,7 @@ export default function JustTransitionIntelligencePage() {
                       <div style={{ fontSize: 12, color: T.textSec, marginBottom: 8 }}>Wage Differential</div>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div><div style={{ fontSize: 11, color: T.textMut }}>Fossil</div><div style={{ fontFamily: T.mono, fontWeight: 700, color: T.red }}>${(r.wage_fossil/1000).toFixed(0)}K/yr</div></div>
-                        <div style={{ textAlign: 'center' }}><div style={{ fontSize: 20 }}>→</div><div style={{ fontSize: 11, color: wageGap > 0 ? T.green : T.red }}>{wageGap > 0 ? '+' : ''}{((wageGap/r.wage_fossil)*100).toFixed(0)}%</div></div>
+                        <div style={{ textAlign: 'center' }}><div style={{ fontSize: 20 }}>→</div><div style={{ fontSize: 11, color: wageGap > 0 ? T.green : T.red }}>{wageGap > 0 ? '+' : ''}{r.wage_fossil > 0 ? ((wageGap/r.wage_fossil)*100).toFixed(0) : '0'}%</div></div>
                         <div><div style={{ fontSize: 11, color: T.textMut }}>Green</div><div style={{ fontFamily: T.mono, fontWeight: 700, color: T.green }}>${(r.wage_green/1000).toFixed(0)}K/yr</div></div>
                       </div>
                     </div>
@@ -151,9 +153,9 @@ export default function JustTransitionIntelligencePage() {
                       <div style={{ fontSize: 11, color: T.textMut }}>Needed: <strong style={{ color: T.red }}>${(r.jtf_need/1000).toFixed(1)}B</strong></div>
                       <div style={{ fontSize: 11, color: T.textMut }}>Available: <strong style={{ color: T.green }}>${(r.jtf_avail/1000).toFixed(1)}B</strong></div>
                       <div style={{ height: 8, background: T.border, borderRadius: 4, marginTop: 8 }}>
-                        <div style={{ height: '100%', width: `${(r.jtf_avail/r.jtf_need)*100}%`, background: jtfGap > r.jtf_need * 0.6 ? T.red : T.amber, borderRadius: 4 }} />
+                        <div style={{ height: '100%', width: `${r.jtf_need > 0 ? (r.jtf_avail/r.jtf_need)*100 : 0}%`, background: jtfGap > r.jtf_need * 0.6 ? T.red : T.amber, borderRadius: 4 }} />
                       </div>
-                      <div style={{ fontSize: 11, color: T.red, marginTop: 4 }}>Gap: ${(jtfGap/1000).toFixed(1)}B ({((jtfGap/r.jtf_need)*100).toFixed(0)}% unfunded)</div>
+                      <div style={{ fontSize: 11, color: T.red, marginTop: 4 }}>Gap: ${(jtfGap/1000).toFixed(1)}B ({r.jtf_need > 0 ? ((jtfGap/r.jtf_need)*100).toFixed(0) : '0'}% unfunded)</div>
                     </div>
                   </div>
                 </div>
@@ -169,7 +171,7 @@ export default function JustTransitionIntelligencePage() {
               <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 16px' }}>X: Community Vulnerability Score (0–100) · Y: JTF Financing Gap ($M)</p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14 }}>
                 {REGIONS.map((reg, i) => {
-                  const gapPct = (reg.jtf_need - reg.jtf_avail) / reg.jtf_need * 100;
+                  const gapPct = reg.jtf_need > 0 ? (reg.jtf_need - reg.jtf_avail) / reg.jtf_need * 100 : 0;
                   return (
                     <div key={i} style={{ background: T.bg, borderRadius: 8, padding: '12px 16px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                       <div style={{ width: 12, height: 12, borderRadius: '50%', background: reg.color, marginTop: 3, flexShrink: 0 }} />
@@ -237,12 +239,13 @@ export default function JustTransitionIntelligencePage() {
                 ))}
               </div>
               <div>
-                <h3 style={{ color: T.navy, margin: '0 0 16px', fontSize: 15 }}>Regional JTF Pillar Alignment</h3>
+                <h3 style={{ color: T.navy, margin: '0 0 4px', fontSize: 15 }}>Regional JTF Pillar Alignment</h3>
+                <p style={{ color: T.textMut, fontSize: 11, margin: '0 0 12px', fontStyle: 'italic' }}>Illustrative / Demo scores — not authoritative ILO assessment data</p>
                 {REGIONS.slice(0, 5).map((reg, i) => {
                   const scores = ILO_PILLARS.map(p => ({
                     pillar: p.name.split(' ')[0],
-                    // ILO JTF pillar score — deterministic per region+pillar (no Math.random)
-                    score: Math.round(40 + Math.sin(i * 1.5 + ILO_PILLARS.indexOf(p)) * 30 + 7.5 * (Math.sin(i * 3.7 + ILO_PILLARS.indexOf(p) * 2.1) + 1)),
+                    // ILO JTF pillar score — deterministic per region+pillar using platform sr() PRNG
+                    score: Math.round(40 + sr(i * 15 + ILO_PILLARS.indexOf(p)) * 30 + sr(i * 37 + ILO_PILLARS.indexOf(p) * 21) * 15),
                   }));
                   const overall = Math.round(scores.reduce((s, x) => s + x.score, 0) / scores.length);
                   return (

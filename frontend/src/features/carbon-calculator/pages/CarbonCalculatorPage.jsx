@@ -1285,7 +1285,7 @@ export default function CarbonCalculatorPage(){
                         style={{fontFamily:T.mono,fontSize:12,width:70,border:`1px solid ${T.border}`,borderRadius:3,padding:'2px 4px',textAlign:'right'}} />
                       {DISTRICT_HEATING_EFS.find(dh=>dh.country===f.country)&&(
                         <span style={{fontFamily:T.mono,fontSize:9,color:T.textMut,marginLeft:4}}>
-                          Default: {DISTRICT_HEATING_EFS.find(dh=>dh.country===f.country).ef}
+                          Default: {DISTRICT_HEATING_EFS.find(dh=>dh.country===f.country)?.ef}
                         </span>
                       )}
                     </TD>

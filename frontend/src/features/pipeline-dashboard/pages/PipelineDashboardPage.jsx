@@ -38,8 +38,8 @@ const DEMO_HISTORY = Array.from({ length: 20 }, (_, i) => ({
   pipeline_id: DEFAULT_PIPELINES[i % DEFAULT_PIPELINES.length].id,
   started_at: new Date(Date.now() - i * 86400000 / 4).toISOString(),
   status: i === 2 ? 'failed' : i === 5 ? 'partial' : i === 9 ? 'failed' : 'success',
-  records_processed: 1200 + Math.round(Math.sin(i) * 300),
-  duration_ms: 3000 + Math.round(Math.cos(i) * 1500),
+  records_processed: 1200 + Math.round((sr(i * 10) * 2 - 1) * 300),
+  duration_ms: 3000 + Math.round((sr(i * 510) * 2 - 1) * 1500),
   error_count: i === 2 ? 3 : i === 9 ? 1 : 0,
 }));
 

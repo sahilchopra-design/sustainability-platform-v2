@@ -180,7 +180,7 @@ export default function BuildingEnergyPerformancePage(){
       {tab===0&&(
         <div>
           <div style={sty.kpiRow}>
-            {[{v:filtered.length,l:'Buildings'},{v:`${avgIntensity} kWh/m²`,l:'Avg Intensity'},{v:`${totalCo2.toLocaleString()} tCO₂`,l:'Total Emissions'},{v:`${Math.floor(crremAligned/filtered.length*100)}%`,l:'CRREM 1.5°C Aligned'},{v:`£${(totalValue/1e9).toFixed(1)}B`,l:'Portfolio Value'},{v:meesNonCompliant,l:'MEES Non-Compliant'}].map((k,i)=>(
+            {[{v:filtered.length,l:'Buildings'},{v:`${avgIntensity} kWh/m²`,l:'Avg Intensity'},{v:`${totalCo2.toLocaleString()} tCO₂`,l:'Total Emissions'},{v:`${filtered.length?Math.floor(crremAligned/filtered.length*100):0}%`,l:'CRREM 1.5°C Aligned'},{v:`£${(totalValue/1e9).toFixed(1)}B`,l:'Portfolio Value'},{v:meesNonCompliant,l:'MEES Non-Compliant'}].map((k,i)=>(
               <div key={i} style={sty.kpi}><div style={sty.kpiVal}>{k.v}</div><div style={sty.kpiLabel}>{k.l}</div></div>
             ))}
           </div>
@@ -418,7 +418,7 @@ export default function BuildingEnergyPerformancePage(){
           </div>
 
           <div style={sty.kpiRow}>
-            {[{v:meesImpact.affected.length,l:'Buildings Affected'},{v:`EPC ${meesImpact.minEPC}`,l:'Minimum Rating'},{v:`£${(meesImpact.cost/1e6).toFixed(1)}M`,l:'Total Retrofit Cost'},{v:`${Math.floor(meesImpact.affected.length/filtered.length*100)}%`,l:'Portfolio at Risk'},{v:meesImpact.desc||'',l:'Regulation'}].map((k,i)=>(
+            {[{v:meesImpact.affected.length,l:'Buildings Affected'},{v:`EPC ${meesImpact.minEPC}`,l:'Minimum Rating'},{v:`£${(meesImpact.cost/1e6).toFixed(1)}M`,l:'Total Retrofit Cost'},{v:`${filtered.length?Math.floor(meesImpact.affected.length/filtered.length*100):0}%`,l:'Portfolio at Risk'},{v:meesImpact.desc||'',l:'Regulation'}].map((k,i)=>(
               <div key={i} style={sty.kpi}><div style={{...sty.kpiVal,fontSize:k.l==='Regulation'?13:24}}>{k.v}</div><div style={sty.kpiLabel}>{k.l}</div></div>
             ))}
           </div>

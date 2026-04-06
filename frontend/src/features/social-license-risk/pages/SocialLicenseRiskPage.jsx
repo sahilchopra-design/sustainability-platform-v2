@@ -43,7 +43,7 @@ export default function SocialLicenseRiskPage() {
 
   const filtered = useMemo(() => sectorFilter === 'All' ? PROJECTS : PROJECTS.filter(p => p.sector === sectorFilter), [sectorFilter]);
   const sectors = [...new Set(PROJECTS.map(p => p.sector))];
-  const avgSL = Math.round(filtered.reduce((s, p) => s + p.slScore, 0) / filtered.length);
+  const avgSL = filtered.length ? Math.round(filtered.reduce((s, p) => s + p.slScore, 0) / filtered.length) : 0;
   const totalProtests = filtered.reduce((s, p) => s + p.protests, 0);
 
   const card = (title, value, sub, color) => (

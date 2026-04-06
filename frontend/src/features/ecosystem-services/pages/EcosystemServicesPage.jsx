@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ScatterChart, Scatter, ZAxis } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
@@ -92,7 +92,7 @@ const SBTN_STATUS_MAP = { committed: 'Committed', target_set: 'Target Set', in_p
 /* ================================================================
    HELPER — deterministic pseudo-random
    ================================================================ */
-const seed = (s) => { let x = Math.sin(s * 2.7183 + 1) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 /* ================================================================
    SCORING

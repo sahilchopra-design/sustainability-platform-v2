@@ -106,7 +106,7 @@ export default function ClimateFinanceTrackerPage(){
   const filteredPipeline=useMemo(()=>{let d=[...PIPELINE];if(stageFilter!=='All')d=d.filter(r=>r.stage===stageFilter);d.sort((a,b)=>pipeSortDir==='asc'?(a[pipeSort]>b[pipeSort]?1:-1):(a[pipeSort]<b[pipeSort]?1:-1));return d;},[stageFilter,pipeSort,pipeSortDir]);
 
   const totalFlows=flows.reduce((s,f)=>s+f.amountMn,0);
-  const adaptPct=Math.round(flows.filter(f=>f.purpose==='Adaptation').reduce((s,f)=>s+f.amountMn,0)/totalFlows*100);
+  const adaptPct=totalFlows?Math.round(flows.filter(f=>f.purpose==='Adaptation').reduce((s,f)=>s+f.amountMn,0)/totalFlows*100):0;
   const channels=[...new Set(flows.map(f=>f.channel))];
   const currentTotal=annualTrend[annualTrend.length-1].total;
   const targetGap=targetSlider-currentTotal;

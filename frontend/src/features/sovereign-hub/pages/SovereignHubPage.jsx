@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell,
@@ -12,7 +12,7 @@ import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
    ══════════════════════════════════════════════════════════════ */
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const PIE_COLORS = [T.navy, T.gold, T.sage, T.red, T.amber, '#7c3aed', '#0d9488', '#ec4899', '#f97316', '#6366f1'];
-const seed = (s) => { let x = Math.sin(s * 2.7183 + 1) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 /* ══════════════════════════════════════════════════════════════
    SPRINT O MODULES
@@ -199,7 +199,7 @@ export default function SovereignHubPage() {
     const map = {};
     holdings.forEach(h => {
       const c = h.country || 'India';
-      map[c] = (map[c] || 0) + (h.weight || 1 / holdings.length);
+      map[c] = (map[c] || 0) + (h.weight || 1 / (holdings.length || 1));
     });
     return Object.entries(map).map(([country, weight]) => {
       const cd = COUNTRY_DATA.find(d => d.name === country);

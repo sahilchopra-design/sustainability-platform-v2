@@ -1,8 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   AreaChart, Area, LineChart, Line, BarChart, Bar, ComposedChart,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine, PieChart, Pie
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = { bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', blue:'#2563eb', orange:'#ea580c', purple:'#7c3aed', teal:'#0891b2', sage:'#5a8a6a', font:"'DM Sans','SF Pro Display',system-ui,sans-serif", mono:"'JetBrains Mono','SF Mono','Fira Code',monospace" };
 
@@ -16,7 +19,7 @@ const ASSETS = Array.from({length:20},(_, i)=>{
   const baseYear = dec==='pre-2000'?1990+i%10 : dec==='2000-2010'?2000+i%10 : dec==='2010-2020'?2010+i%10 : 2020+i%4;
   const age = 2026 - baseYear;
   const sector = SECTORS[i%5];
-  const bv0 = 200 + (Math.abs(Math.sin(i * 7.3 + 2.1)) * 800);
+  const bv0 = 200 + (sr(i * 73 + 21) * 800);
   const lambda = dec==='pre-2000'?0.08 : dec==='2000-2010'?0.05 : dec==='2010-2020'?0.03 : 0.015;
   return { id:`A-${(i+1).toString().padStart(3,'0')}`, name:`${sector} Asset ${i+1}`, sector, vintage:dec, commissionYear:baseYear, age, bv0:Math.round(bv0), lambda, strandingProb: Math.min(0.95, 0.1+age*0.025), currentBV: Math.round(bv0*Math.exp(-lambda*age)), region:['US','EU','APAC','LatAm','Africa'][i%5] };
 });

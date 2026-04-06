@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -14,7 +14,7 @@ const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',bord
 /* ═══════════════════════════════════════════════════════════════════════════
    HELPERS
    ═══════════════════════════════════════════════════════════════════════════ */
-const seed = (s) => { let x = Math.sin(s * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const hashStr = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i); return Math.abs(h); };
 const fmt = (n, d = 1) => n == null ? '--' : Number(n).toFixed(d);
 const fmtPct = (n) => n == null ? '--' : Number(n).toFixed(1) + '%';
@@ -218,7 +218,7 @@ const EuTaxonomyEnginePage = () => {
       const alignedPct = ov?.alignedRevenuePct != null ? ov.alignedRevenuePct : assessment.alignedRevenuePct;
       const eligibleOv = ov?.eligible != null ? ov.eligible : assessment.eligible;
       const revenue = c.revenue_usd_mn || (c.revenue_inr_cr ? c.revenue_inr_cr * 0.12 : 500);
-      const weight = c.weight || (1 / portfolio.length) * 100;
+      const weight = c.weight || (1 / (portfolio.length || 1)) * 100;
       return {
         ...c, ...assessment,
         alignedRevenuePct: +alignedPct,

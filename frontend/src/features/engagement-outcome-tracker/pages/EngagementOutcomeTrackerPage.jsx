@@ -103,7 +103,7 @@ export default function EngagementOutcomeTrackerPage() {
             {card('Active Engagements', ENGAGEMENTS.filter(e => e.status === 'Active').length, 'Across ' + sectors.length + ' sectors', T.navy)}
             {card('CA100+ Companies', ENGAGEMENTS.filter(e => e.ca100).length, 'Focus companies', T.green)}
             {card('Verified Outcomes', ENGAGEMENTS.filter(e => e.milestone === 'Verified').length, 'Confirmed actions', T.gold)}
-            {card('Avg NZ Score', Math.round(filtered.reduce((s, e) => s + e.nzScore, 0) / filtered.length), 'Net Zero benchmark', T.blue)}
+            {card('Avg NZ Score', filtered.length ? Math.round(filtered.reduce((s, e) => s + e.nzScore, 0) / filtered.length) : 0, 'Net Zero benchmark', T.blue)}
           </div>
           <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
             <div style={{ flex:1, background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, minWidth:300 }}>

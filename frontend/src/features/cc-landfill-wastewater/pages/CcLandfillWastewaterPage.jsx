@@ -59,7 +59,7 @@ const calcFOD = (params) => {
     }
     const ch4_captured = ch4_gen * collection_eff;
     const ch4_destroyed = ch4_captured * destruction_eff;
-    const tco2e = ch4_destroyed / 1000 * 28;
+    const tco2e = ch4_destroyed / 1000 * 27.2; // IPCC AR6 WGI Table 7.SM.7: CH4 GWP100 = 27.2 (fossil); AR5 value 28 retired
     const net = tco2e * (1 - buffer_pct/100);
     cumulative += net;
     data.push({ year:t, ch4_gen:Math.round(ch4_gen), ch4_captured:Math.round(ch4_captured), ch4_destroyed:Math.round(ch4_destroyed), tco2e:Math.round(tco2e), net:Math.round(net), cumulative:Math.round(cumulative) });
@@ -72,9 +72,9 @@ const calcWastewater = (params) => {
   const ch4_bl = organic_load * b0 * mcf_bl * 365 / 1000; // tonnes CH4/yr
   const ch4_pj = organic_load * b0 * mcf_pj * (1 - capture_eff) * 365 / 1000;
   const ch4_avoided = ch4_bl - ch4_pj;
-  const tco2e_bl = ch4_bl * 28;
-  const tco2e_pj = ch4_pj * 28;
-  const gross = ch4_avoided * 28;
+  const tco2e_bl = ch4_bl * 27.2; // IPCC AR6 CH4 GWP100 = 27.2 (fossil)
+  const tco2e_pj = ch4_pj * 27.2;
+  const gross = ch4_avoided * 27.2;
   const net = gross * (1 - buffer_pct/100);
   return { ch4_bl:Math.round(ch4_bl*100)/100, ch4_pj:Math.round(ch4_pj*100)/100, ch4_avoided:Math.round(ch4_avoided*100)/100, tco2e_bl:Math.round(tco2e_bl), tco2e_pj:Math.round(tco2e_pj), gross:Math.round(gross), net:Math.round(net) };
 };
@@ -358,7 +358,7 @@ export default function CcLandfillWastewaterPage() {
                 <div style={{marginTop:12,padding:10,background:T.cream,borderRadius:4,fontFamily:T.mono,fontSize:9,color:T.navy,lineHeight:1.8}}>
                   <div>CH4_BL = {ww.organic_load.toLocaleString()} x {ww.b0} x {ww.mcf_bl} x 365 / 1000 = <strong>{wwResult.ch4_bl} t CH4/yr</strong></div>
                   <div>CH4_PJ = {ww.organic_load.toLocaleString()} x {ww.b0} x {ww.mcf_pj} x (1 - {ww.capture_eff}) x 365 / 1000 = <strong>{wwResult.ch4_pj} t CH4/yr</strong></div>
-                  <div>Gross = ({wwResult.ch4_bl} - {wwResult.ch4_pj}) x 28 = <strong>{wwResult.gross.toLocaleString()} tCO2e</strong></div>
+                  <div>Gross = ({wwResult.ch4_bl} - {wwResult.ch4_pj}) x 27.2 (AR6 GWP) = <strong>{wwResult.gross.toLocaleString()} tCO2e</strong></div>
                   <div>Net = {wwResult.gross.toLocaleString()} x (1 - {ww.buffer_pct}%) = <strong style={{color:T.purple}}>{wwResult.net.toLocaleString()} tCO2e</strong></div>
                 </div>
               </div>

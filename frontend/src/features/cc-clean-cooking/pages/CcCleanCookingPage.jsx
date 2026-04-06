@@ -85,7 +85,8 @@ const calcCleanCooking=(params)=>{
     {name:'Rebound Effect',value:-Math.round(bePerHH*stoves*adoption*rebound),fill:T.purple},
     {name:'Net ER',value:Math.round(totalER),fill:T.navy},
   ];
-  return {bePerHH:parseFloat(bePerHH.toFixed(3)),erPerHH:parseFloat(erPerHH.toFixed(3)),totalER:Math.round(totalER),pjFuelAnnual:Math.round(pjFuelAnnual),blFuelAnnual:Math.round(blFuelAnnual),waterfall,netCredits:Math.round(totalER*0.90)};
+  // Guard: clamp netCredits to 0 — AMS-II.G requires project to be more efficient than baseline; if inputs are reversed, display 0 not negative
+  return {bePerHH:parseFloat(bePerHH.toFixed(3)),erPerHH:parseFloat(erPerHH.toFixed(3)),totalER:Math.round(totalER),pjFuelAnnual:Math.round(pjFuelAnnual),blFuelAnnual:Math.round(blFuelAnnual),waterfall,netCredits:Math.max(0,Math.round(totalER*0.90))};
 };
 
 export default function CcCleanCookingPage(){

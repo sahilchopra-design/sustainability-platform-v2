@@ -23,9 +23,10 @@ const DualInput=({label,value,min=0,max=100,step=1,onChange,color,unit=''})=>(<d
    REDD+ & WETLANDS CALCULATION ENGINES
    ══════════════════════════════════════════════════════════════════ */
 
-/* REDD+ : E_BL(t) = BDR × Forest_Area_at_Risk × (CS_Forest − CS_Post) × 44/12 */
+/* REDD+ : E_BL(t) = BDR × Forest_Area_at_Risk × (CS_Forest − CS_Post) × 44/12
+   VM0007/VM0033: leakage split into Activity-Shifting (displaced deforestation) + Market (timber demand) */
 const calcREDD = (p) => {
-  const { bdr_pct, forest_area_ha, cs_forest, cs_post, crediting_yrs, leakage_pct, buffer_pct, uncertainty_pct } = p;
+  const { bdr_pct, forest_area_ha, cs_forest, cs_post, crediting_yrs, leakage_act_pct, leakage_mkt_pct, buffer_pct, uncertainty_pct } = p;
   const bdr = bdr_pct / 100;
   const years = [];
   let remaining = forest_area_ha;
@@ -34,12 +35,14 @@ const calcREDD = (p) => {
     remaining -= deforested;
     const baseline_emissions = deforested * (cs_forest - cs_post) * (44/12);
     const gross = Math.round(baseline_emissions);
-    const leak = Math.round(gross * leakage_pct / 100);
+    const leak_act = Math.round(gross * leakage_act_pct / 100); // Activity-shifting leakage
+    const leak_mkt = Math.round(gross * leakage_mkt_pct / 100); // Market leakage (timber substitution)
+    const leak = leak_act + leak_mkt;
     const buf = Math.round((gross - leak) * buffer_pct / 100);
     const unc = Math.round((gross - leak - buf) * uncertainty_pct / 100);
     const net = Math.max(0, gross - leak - buf - unc);
     const cum = (years.length > 0 ? years[years.length-1].cumulative : 0) + net;
-    years.push({ year:t, area_deforested:Math.round(deforested), remaining:Math.round(remaining), baseline_emissions:gross, leakage:leak, buffer:buf, uncertainty:unc, net, cumulative:cum });
+    years.push({ year:t, area_deforested:Math.round(deforested), remaining:Math.round(remaining), baseline_emissions:gross, leakage_act:leak_act, leakage_mkt:leak_mkt, leakage:leak, buffer:buf, uncertainty:unc, net, cumulative:cum });
   }
   return { years, total: years.length>0?years[years.length-1].cumulative:0 };
 };
@@ -111,7 +114,7 @@ export default function CcReddWetlandsHubPage() {
   const [tab, setTab] = useState(TABS[0]);
 
   /* REDD+ state */
-  const [reddP, setReddP] = useState({ bdr_pct:1.2, forest_area_ha:100000, cs_forest:350, cs_post:50, crediting_yrs:30, leakage_pct:12, buffer_pct:25, uncertainty_pct:10 });
+  const [reddP, setReddP] = useState({ bdr_pct:1.2, forest_area_ha:100000, cs_forest:350, cs_post:50, crediting_yrs:30, leakage_act_pct:8, leakage_mkt_pct:4, buffer_pct:25, uncertainty_pct:10 }); // leakage split: Activity-shifting 8% + Market 4% = 12% total (VM0007)
   const setR = useCallback((k,v)=>setReddP(p=>({...p,[k]:v})),[]);
   const reddResult = useMemo(()=>calcREDD(reddP),[reddP]);
 
@@ -182,7 +185,8 @@ export default function CcReddWetlandsHubPage() {
                 <DualInput label="Forest Carbon Stock (tCO₂e/ha)" value={reddP.cs_forest} min={100} max={600} step={10} onChange={v=>setR('cs_forest',v)} color={T.navy} />
                 <DualInput label="Post-Deforestation CS (tCO₂e/ha)" value={reddP.cs_post} min={0} max={150} step={5} onChange={v=>setR('cs_post',v)} color={T.amber} />
                 <DualInput label="Crediting Period (yr)" value={reddP.crediting_yrs} min={10} max={50} onChange={v=>setR('crediting_yrs',v)} color={T.navy} unit=" yr" />
-                <DualInput label="Leakage (%)" value={reddP.leakage_pct} min={0} max={30} onChange={v=>setR('leakage_pct',v)} color={T.red} unit="%" />
+                <DualInput label="Activity-Shifting Leakage (%)" value={reddP.leakage_act_pct} min={0} max={25} onChange={v=>setR('leakage_act_pct',v)} color={T.red} unit="%" />
+                <DualInput label="Market Leakage — Timber Substitution (%)" value={reddP.leakage_mkt_pct} min={0} max={15} onChange={v=>setR('leakage_mkt_pct',v)} color={T.amber} unit="%" />
                 <DualInput label="Buffer Pool (%)" value={reddP.buffer_pct} min={15} max={40} onChange={v=>setR('buffer_pct',v)} color={T.amber} unit="%" />
                 <DualInput label="Uncertainty (%)" value={reddP.uncertainty_pct} min={0} max={25} onChange={v=>setR('uncertainty_pct',v)} color={T.purple} unit="%" />
               </Section>
@@ -196,7 +200,7 @@ export default function CcReddWetlandsHubPage() {
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:12}}>
                 <div style={{padding:8,background:'rgba(255,255,255,0.08)',borderRadius:4,textAlign:'center'}}>
                   <div style={{fontSize:9,color:`${T.cream}60`}}>Avg Annual</div>
-                  <div style={{fontSize:16,fontWeight:700,fontFamily:T.mono}}>{fmtK(Math.round(reddResult.total/reddP.crediting_yrs))}</div>
+                  <div style={{fontSize:16,fontWeight:700,fontFamily:T.mono}}>{fmtK(Math.round(reddResult.total/(reddP.crediting_yrs||1)))}</div>
                 </div>
                 <div style={{padding:8,background:'rgba(255,255,255,0.08)',borderRadius:4,textAlign:'center'}}>
                   <div style={{fontSize:9,color:`${T.cream}60`}}>Forest Protected</div>

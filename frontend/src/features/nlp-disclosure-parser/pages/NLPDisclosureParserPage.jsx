@@ -147,7 +147,7 @@ export default function NLPDisclosureParserPage() {
       if (p >= 100) {
         clearInterval(iv);
         const risk = ['LOW','MEDIUM','HIGH','CRITICAL'];
-        const riskLevel = risk[Math.floor(sr(inputText.length % 100) * 4)];
+        const riskLevel = risk[Math.min(3, Math.floor(sr(inputText.length % 100) * 4))]; // clamp to [0,3] — floor(x*4) can return 4 at float boundary
         setAnalysisResult({ riskLevel, confidence: +(0.82 + sr(inputText.length) * 0.1).toFixed(3) });
         setAnalysisState({ status: 'complete', progress: 100 });
       }

@@ -188,7 +188,7 @@ function AiSentimentPage() {
       const matched = allArticles.filter(a => (a.ticker || '').toUpperCase() === ticker);
       if (matched.length === 0) return;
       const avgS = matched.reduce((s, a) => s + a.sentiment, 0) / matched.length;
-      const w = h.weight != null ? h.weight : (h.allocation != null ? h.allocation : (1 / holdings.length));
+      const w = h.weight != null ? h.weight : (h.allocation != null ? h.allocation : (1 / (holdings.length || 1)));
       weightedSum += w * avgS;
       totalWeight += w;
     });

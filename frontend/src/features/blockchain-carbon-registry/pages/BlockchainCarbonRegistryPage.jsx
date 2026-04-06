@@ -856,7 +856,7 @@ export default function BlockchainCarbonRegistryPage() {
   const totalValue = portfolio.reduce((a, h) => a + h.volume * h.currentPrice, 0);
   const totalCost = portfolio.reduce((a, h) => a + h.volume * h.costBasis, 0);
   const totalPL = totalValue - totalCost;
-  const avgQuality = Math.round(portfolio.reduce((a, h) => a + h.quality, 0) / portfolio.length);
+  const avgQuality = Math.round(portfolio.reduce((a, h) => a + h.quality, 0) / (portfolio.length || 1));
   const scheduledRetirements = portfolio.filter(h => h.scheduledRetire);
 
   const portfolioByType = useMemo(() => {
@@ -1067,7 +1067,7 @@ export default function BlockchainCarbonRegistryPage() {
 
       <Section title="Risk Metrics & Sensitivity">
         <Row cols="repeat(4,1fr)">
-          <Kpi label="Avg Vintage Age" value={`${(2025 - Math.round(portfolio.reduce((a, h) => a + h.vintage, 0) / portfolio.length)).toFixed(0)} yrs`} sub="Newer is better" color={T.navy} />
+          <Kpi label="Avg Vintage Age" value={`${(2025 - Math.round(portfolio.reduce((a, h) => a + h.vintage, 0) / (portfolio.length || 1))).toFixed(0)} yrs`} sub="Newer is better" color={T.navy} />
           <Kpi label="Concentration Risk" value={`${Math.round(Math.max(...Object.values(portfolio.reduce((m, h) => { m[h.registry] = (m[h.registry] || 0) + h.volume; return m; }, {}))) / totalVolume * 100)}%`} sub="Top registry share" color={T.amber} />
           <Kpi label="Price Volatility" value="18.4%" sub="30-day rolling" color={T.red} />
           <Kpi label="Retirement Coverage" value={`${((scheduledRetirements.reduce((a, h) => a + h.volume, 0) / 50000) * 100).toFixed(0)}%`} sub="vs 2025 target" color={T.sage} />

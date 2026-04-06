@@ -36,7 +36,10 @@ const OBLIGORS_CC = Array.from({ length: 40 }, (_, i) => {
   const stage_base = pd_base > 0.03 ? 3 : pd_base > 0.01 ? 2 : 1;
   // Climate adjustments per scenario
   const scenarios_adj = SCENARIOS_CC.map(sc => {
-    // Carbon intensity amplifies transition risk; physScore amplifies physical
+    // Carbon intensity amplifies transition risk; physScore amplifies physical risk
+    // carbonInt normalised to 800 tCO₂e/GWh — coal power carbon intensity ceiling (IEA Electricity 2023,
+    // Table 3.1: supercritical coal ≈ 820 gCO₂/kWh). At carbonInt = 800, full pdMultiplier applies.
+    // Analogously physScore normalised to 80 (platform max physical risk score, ×0.3 weight).
     const carbonFactor = 1 + (sc.pdMultiplier - 1) * (carbonInt / 800);
     const physFactor   = 1 + (sc.pdMultiplier - 1) * (physScore / 80) * 0.3;
     const pd_adj = Math.min(1, pd_base * carbonFactor * physFactor);
@@ -131,13 +134,14 @@ export default function ClimateCreditIntegrationPage() {
 
   const selectedSc = SCENARIOS_CC.find(s => s.code === activeScenario);
   const scIdx = SCENARIOS_CC.findIndex(s => s.code === activeScenario);
+  const safeScIdx = scIdx >= 0 ? scIdx : 0; // guard: invalid activeScenario → fall back to first scenario
 
   const filteredObligors = useMemo(() => {
     let obs = OBLIGORS_CC;
     if (sectorFilter !== 'ALL') obs = obs.filter(o => o.sector === sectorFilter);
     return obs.map(o => ({
       ...o,
-      adj: o.scenarios_adj[scIdx],
+      adj: o.scenarios_adj[safeScIdx],
     })).sort((a, b) => b.adj.uplift_pct - a.adj.uplift_pct);
   }, [sectorFilter, scIdx]);
 

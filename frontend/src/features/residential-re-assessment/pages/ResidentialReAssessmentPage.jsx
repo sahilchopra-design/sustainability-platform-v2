@@ -128,7 +128,7 @@ const PortfolioOverview = () => {
   const totalValue  = PROPERTIES.reduce((s,p) => s + p.value, 0);
   const floodCount  = PROPERTIES.filter(p => p.floodZone).length;
   const strandedCnt = PROPERTIES.filter(p => p.stranded).length;
-  const avgLtv      = (PROPERTIES.reduce((s,p) => s + p.ltv, 0) / PROPERTIES.length * 100).toFixed(1);
+  const avgLtv      = (PROPERTIES.reduce((s,p) => s + p.ltv, 0) / (PROPERTIES.length || 1) * 100).toFixed(1);
 
   const regionAgg = REGIONS.map(r => {
     const props = PROPERTIES.filter(p => p.region === r);
@@ -142,7 +142,7 @@ const PortfolioOverview = () => {
   const epcDist = EPC_GRADES.map(g => ({
     grade: g,
     count: PROPERTIES.filter(p => p.epc === g).length,
-    pct: +(PROPERTIES.filter(p => p.epc === g).length / PROPERTIES.length * 100).toFixed(1),
+    pct: +(PROPERTIES.filter(p => p.epc === g).length / (PROPERTIES.length || 1) * 100).toFixed(1),
   }));
 
   return (

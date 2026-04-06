@@ -6,6 +6,8 @@ import {
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, Legend
 } from 'recharts';
 
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
 /* ── Theme ────────────────────────────────────────────────────────────────────── */
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
@@ -202,7 +204,7 @@ export default function PropertyPhysicalRiskPage() {
       const basePremium = insuranceOverrides[propId] !== undefined ? insuranceOverrides[propId] : (p.insurance_premium_usd || 50000);
       const insuranceMult = 1 + composite / 100;
       const climateAdjPremium = basePremium * insuranceMult;
-      const resilience = p.building_resilience_score || (50 + Math.round(Math.sin(idx + 1) * 20));
+      const resilience = p.building_resilience_score || (50 + Math.round((sr(idx) * 2 - 1) * 20));
       return {
         ...p,
         id: propId,
@@ -707,9 +709,9 @@ export default function PropertyPhysicalRiskPage() {
                   <td style={tdS}>{p.type || 'Office'}</td>
                   <td style={tdS}><span style={{ fontWeight:700, color:p.resGrade.color }}>{p.resilience}</span></td>
                   <td style={tdS}><span style={{ padding:'2px 8px', borderRadius:4, fontWeight:700, fontSize:12, color:'#fff', background:p.resGrade.color }}>{p.resGrade.grade}</span></td>
-                  <td style={tdS}>{p.elevation_m || Math.round(10 + Math.sin(i + 3) * 30 + 30)}m</td>
+                  <td style={tdS}>{p.elevation_m || Math.round(40 + (sr(i * 10 + 30) * 2 - 1) * 30)}m</td>
                   <td style={tdS}>{p.floodZone || 'X'}</td>
-                  <td style={tdS}>{p.coastal_distance_km || (Math.round(Math.abs(Math.sin(i + 7) * 40) + 1))} km</td>
+                  <td style={tdS}>{p.coastal_distance_km || (Math.round(sr(i * 10 + 70) * 40 + 1))} km</td>
                   <td style={tdS}><span style={{ fontWeight:600, color: (p.insuranceRiskScore || p.composite) >= 70 ? T.red : (p.insuranceRiskScore || p.composite) >= 50 ? T.amber : T.green }}>{(p.insuranceRiskScore || Math.round(p.composite))}</span></td>
                 </tr>
               ))}

@@ -81,9 +81,9 @@ export default function ImpactBondAnalyticsPage() {
         <div>
           <div style={{ display:'flex', gap:16, marginBottom:20, flexWrap:'wrap' }}>
             {card('Bonds Tracked', filtered.length.toString(), '5 instrument types', T.navy)}
-            {card('Avg SROI', (filtered.reduce((s,b)=>s+b.sroi,0)/filtered.length).toFixed(1)+'x', 'Social value per $', T.green)}
-            {card('Outcome Hit Rate', Math.round(filtered.filter(b=>b.outcomeActual>=b.outcomeTarget).length/filtered.length*100)+'%', 'Meeting targets', T.gold)}
-            {card('Avg Additionality', Math.round(filtered.reduce((s,b)=>s+b.additionality,0)/filtered.length)+'/100', 'Impact beyond BAU', T.blue)}
+            {card('Avg SROI', (filtered.length?(filtered.reduce((s,b)=>s+b.sroi,0)/filtered.length):0).toFixed(1)+'x', 'Social value per $', T.green)}
+            {card('Outcome Hit Rate', (filtered.length?Math.round(filtered.filter(b=>b.outcomeActual>=b.outcomeTarget).length/filtered.length*100):0)+'%', 'Meeting targets', T.gold)}
+            {card('Avg Additionality', (filtered.length?Math.round(filtered.reduce((s,b)=>s+b.additionality,0)/filtered.length):0)+'/100', 'Impact beyond BAU', T.blue)}
           </div>
           <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
             <div style={{ flex:2, background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, minWidth:400 }}>

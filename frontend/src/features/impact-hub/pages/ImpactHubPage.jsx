@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell,
@@ -44,7 +44,7 @@ const LS_IRIS = 'ra_iris_data_v1';
 const LS_BOND = 'ra_bond_impact_v1';
 const LS_VERI = 'ra_impact_verification_v1';
 const loadLS = (k) => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
-const seed = (s) => { let x = Math.sin(s * 9973 + 7) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const fmt = (n, d=1) => n == null ? '\u2014' : Number(n).toFixed(d);
 const pct = (n) => n == null ? '\u2014' : `${Math.round(n)}%`;
 const fmtMn = (n) => n >= 1000 ? `$${(n/1000).toFixed(1)}Bn` : `$${Math.round(n)}Mn`;
@@ -188,11 +188,11 @@ export default function ImpactHubPage() {
       return { ...sdg, contribution: contrib };
     });
     /* module statuses */
-    const iwaComplete = Math.round(holdings.filter(h => Math.abs(h.iwaTotalMn) > 0).length / holdings.length * 100);
-    const irisComplete = Math.round(holdings.filter(h => h.irisMetrics > 5).length / holdings.length * 100);
-    const bondComplete = Math.round(holdings.filter(h => h.bondImpactMn > 10).length / holdings.length * 100);
-    const blendedComplete = Math.round(holdings.filter(h => h.blendedMn > 5).length / holdings.length * 100);
-    const verifyComplete = Math.round(holdings.filter(h => h.evidenceTier <= 3).length / holdings.length * 100);
+    const iwaComplete = Math.round(holdings.filter(h => Math.abs(h.iwaTotalMn) > 0).length / (holdings.length || 1) * 100);
+    const irisComplete = Math.round(holdings.filter(h => h.irisMetrics > 5).length / (holdings.length || 1) * 100);
+    const bondComplete = Math.round(holdings.filter(h => h.bondImpactMn > 10).length / (holdings.length || 1) * 100);
+    const blendedComplete = Math.round(holdings.filter(h => h.blendedMn > 5).length / (holdings.length || 1) * 100);
+    const verifyComplete = Math.round(holdings.filter(h => h.evidenceTier <= 3).length / (holdings.length || 1) * 100);
     return { totalImpactMn, envImpactMn, emplImpactMn, prodImpactMn, irisTracked, bondImpactTotal, ghgTotal, benefTotal, avgEvidence, totalFlags, blendedTotal, avgLeverage, avgAdditionality, avgROI, sdgAgg, iwaComplete, irisComplete, bondComplete, blendedComplete, verifyComplete };
   }, [holdings]);
 
@@ -759,10 +759,10 @@ export default function ImpactHubPage() {
         <div style={{ background:T.surface, borderRadius:12, border:`1px solid ${T.border}`, padding:16 }}>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginBottom:16 }}>
             {[
-              { label:'Data Completeness', value:Math.round(holdings.filter(h=>h.iwaScore > 30 && h.irisScore > 30).length / holdings.length * 100), color:T.sage },
-              { label:'Cross-Validation', value:Math.round(holdings.filter(h=>Math.abs(h.iwaScore - h.irisScore) < 20).length / holdings.length * 100), color:T.navyL },
+              { label:'Data Completeness', value:Math.round(holdings.filter(h=>h.iwaScore > 30 && h.irisScore > 30).length / (holdings.length || 1) * 100), color:T.sage },
+              { label:'Cross-Validation', value:Math.round(holdings.filter(h=>Math.abs(h.iwaScore - h.irisScore) < 20).length / (holdings.length || 1) * 100), color:T.navyL },
               { label:'Timeliness', value:Math.round(78 + seed(999) * 15), color:T.gold },
-              { label:'Auditability', value:Math.round(holdings.filter(h=>h.evidenceTier <= 3).length / holdings.length * 100), color:T.green },
+              { label:'Auditability', value:Math.round(holdings.filter(h=>h.evidenceTier <= 3).length / (holdings.length || 1) * 100), color:T.green },
             ].map(d => (
               <div key={d.label} style={{ padding:12, borderRadius:8, background:T.surfaceH, textAlign:'center' }}>
                 <div style={{ fontSize:22, fontWeight:800, color:d.color }}>{d.value}%</div>

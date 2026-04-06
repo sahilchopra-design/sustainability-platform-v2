@@ -682,8 +682,8 @@ export default function ClimateFintechHubPage() {
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={TECH_CATEGORIES.map(cat => {
               const cos = COMPANIES.filter(c=>c.cat===cat);
-              const avg = cos.reduce((a,c)=>a+c.trl,0)/cos.length;
-              return { cat, avgTrl:parseFloat(avg.toFixed(1)), max:Math.max(...cos.map(c=>c.trl)), min:Math.min(...cos.map(c=>c.trl)) };
+              const avg = cos.length?cos.reduce((a,c)=>a+c.trl,0)/cos.length:0;
+              return { cat, avgTrl:parseFloat(avg.toFixed(1)), max:cos.length?Math.max(...cos.map(c=>c.trl)):0, min:cos.length?Math.min(...cos.map(c=>c.trl)):0 };
             })} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.surfaceH} />
               <XAxis type="number" domain={[0,10]} tick={{ fontSize:10, fill:T.textMut }} />

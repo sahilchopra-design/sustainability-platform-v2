@@ -61,7 +61,7 @@ const calcEnergyEff=(params)=>{
   const {capacity,opHours,lf,blEff,pjEff,gridEF}=params;
   const blEnergy=capacity*opHours*lf/blEff;
   const pjEnergy=capacity*opHours*lf/pjEff;
-  const savings=blEnergy-pjEnergy;
+  const savings=Math.max(0,blEnergy-pjEnergy); // clamp: pjEff < blEff (invalid AMS-II.C config) would give negative savings
   const be=savings*gridEF*1e-3;
   const netCredits=be*0.92;
   const savingsPct=(1-pjEnergy/blEnergy)*100;

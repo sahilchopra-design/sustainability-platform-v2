@@ -1,4 +1,4 @@
-/**
+﻿/**
  * EP-U4 — DME Alert Center & Risk Monitoring
  * Sprint U — DME Platform Port
  *
@@ -19,7 +19,7 @@ const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',bord
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */
 const hashStr = s => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-const seededRandom = seed => { let x = Math.sin(Math.abs(seed) * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const seededRandom = seed => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const sr = (seed, off = 0) => seededRandom(seed + off);
 const readLS = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
 const LS_PORTFOLIO = 'ra_portfolio_v1';

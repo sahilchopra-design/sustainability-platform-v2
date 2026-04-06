@@ -56,9 +56,9 @@ export default function TransitionRiskHeatmapPage() {
 
   const scenarioSensitivity = SECTORS.map(s => ({
     name: s,
-    cp: Math.round(riskMatrix(SCENARIOS[0], 0)[s].reduce((a, b) => a + b) / GEOS.length),
-    b2c: Math.round(riskMatrix(SCENARIOS[1], 1)[s].reduce((a, b) => a + b) / GEOS.length),
-    nz: Math.round(riskMatrix(SCENARIOS[2], 2)[s].reduce((a, b) => a + b) / GEOS.length),
+    cp:  Math.round(riskMatrix(SCENARIOS[0], 0)[s].reduce((a, b) => a + b, 0) / GEOS.length),
+    b2c: Math.round(riskMatrix(SCENARIOS[1], 1)[s].reduce((a, b) => a + b, 0) / GEOS.length),
+    nz:  Math.round(riskMatrix(SCENARIOS[2], 2)[s].reduce((a, b) => a + b, 0) / GEOS.length),
   }));
 
   return (

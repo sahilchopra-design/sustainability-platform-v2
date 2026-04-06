@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -8,7 +8,7 @@ import {
 const API = 'http://localhost:8000';
 
 /* ── Deterministic seed helpers ─────────────────────────────────────────── */
-const seededRandom = (seed) => { let x = Math.sin(seed * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const seededRandom = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const hashStr = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i); return Math.abs(h); };
 
 /* ── Theme ──────────────────────────────────────────────────────────────── */

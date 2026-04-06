@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+﻿import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -25,7 +25,7 @@ const fmtPct = (n) => typeof n === 'number' ? `${n.toFixed(2)}%` : '---';
 const fmtBps = (n) => typeof n === 'number' ? `${n.toFixed(0)} bps` : '---';
 const fmtUsd = (n) => typeof n === 'number' ? `$${n.toFixed(1)}M` : '---';
 const seed = (s) => { let h = 5381; for (let i = 0; i < String(s).length; i++) h = ((h << 5) + h) ^ String(s).charCodeAt(i); return Math.abs(h); };
-const sRand = (n) => { let x = Math.sin(n * 9301 + 49297) * 233280; return x - Math.floor(x); };
+const sRand = (n) => { let x = Math.sin(n + 1) * 10000; return x - Math.floor(x); };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 /* =========================================================================
@@ -394,7 +394,7 @@ export default function DmeRiskEnginePage() {
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return months.map((m, i) => {
       const base = portfolioStats ? portfolioStats.avgDMI : 45;
-      const drift = Math.sin(i * 0.5) * 8 + sRand(i * 137) * 12;
+      const drift = (sr(i * 5) * 2 - 1) * 8 + sRand(i * 137) * 12;
       const val = clamp(base + drift, 10, 95);
       const z = calculateZScore(val, 45, 18);
       return { month: m, dmi: +val.toFixed(1), zScore: +z.toFixed(2) };

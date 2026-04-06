@@ -165,7 +165,7 @@ export default function CcMethodologyComparisonPage() {
     const avgPermanence = allocs.length ? Math.round(allocs.reduce((s, a) => s + a.permanence * a.credits, 0) / Math.max(totalCredits, 1)) : 0;
     const avgCoBenefit = allocs.length ? Math.round(allocs.reduce((s, a) => s + a.coBenefit * a.credits, 0) / Math.max(totalCredits, 1)) : 0;
 
-    return { allocations: allocs, totalCredits, totalCost, avgPermanence, avgCoBenefit, budgetUsed: ((totalCost / budget) * 100).toFixed(1), targetMet: ((totalCredits / retireTarget) * 100).toFixed(1) };
+    return { allocations: allocs, totalCredits, totalCost, avgPermanence, avgCoBenefit, budgetUsed: (budget > 0 ? (totalCost / budget) * 100 : 0).toFixed(1), targetMet: (retireTarget > 0 ? (totalCredits / retireTarget) * 100 : 0).toFixed(1) };
   }, [retireTarget, budget, minPermanence, minCoBenefits, maxConcentration]);
 
   const RADAR_COLORS = ['#059669', '#3b82f6', '#f59e0b'];

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -14,7 +14,7 @@ const T = {
   mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
 
-function sr(seed){let x=Math.sin(seed*9301+49297)*49297;return x-Math.floor(x);}
+function sr(seed){let x=Math.sin(seed + 1) * 10000;return x-Math.floor(x);}
 
 const FACILITY_TYPES = ['Power Plant','Refinery','Cement Plant','Steel Mill','Chemical Plant','LNG Terminal','Data Center','Smelter','Paper Mill','Fertilizer Plant'];
 const FACILITIES = Array.from({length:20},(_,i)=>{

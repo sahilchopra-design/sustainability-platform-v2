@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -14,7 +14,7 @@ const T = {
   mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
 
-function sr(seed){let x=Math.sin(seed*9301+49297)*49297;return x-Math.floor(x);}
+function sr(seed){let x=Math.sin(seed + 1) * 10000;return x-Math.floor(x);}
 
 const TOPICS = ['Carbon Pricing','Regulation','Clean Technology','Physical Risk','Engagement','Litigation','Greenwashing','Just Transition','Biodiversity','Net Zero'];
 const SENTIMENTS = ['positive','neutral','negative'];

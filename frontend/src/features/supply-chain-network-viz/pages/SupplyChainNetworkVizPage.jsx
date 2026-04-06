@@ -92,7 +92,7 @@ export default function SupplyChainNetworkVizPage() {
 
   const tierAnalysis = useMemo(() => [0,1,2,3].map(tier => {
     const nodes = COMPANIES.filter(c=>c.tier===tier);
-    return { tier:`Tier ${tier}`, count:nodes.length, avgRisk:Math.round(nodes.reduce((a,c)=>a+c.risk,0)/nodes.length), maxRisk:Math.max(...nodes.map(c=>c.risk)) };
+    return { tier:`Tier ${tier}`, count:nodes.length, avgRisk:nodes.length?Math.round(nodes.reduce((a,c)=>a+c.risk,0)/nodes.length):0, maxRisk:nodes.length?Math.max(...nodes.map(c=>c.risk)):0 };
   }), []);
 
   const renderNetwork = () => (

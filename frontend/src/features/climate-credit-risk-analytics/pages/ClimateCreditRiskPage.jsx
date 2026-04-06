@@ -321,8 +321,8 @@ const BorrowerPortfolioTab=({borrowers,onSelect})=>{
   };
 
   const totalExposure=filtered.reduce((s,b)=>s+b.exposure,0);
-  const avgPD=filtered.reduce((s,b)=>s+b.basePD,0)/filtered.length;
-  const avgLGD=filtered.reduce((s,b)=>s+b.baseLGD,0)/filtered.length;
+  const avgPD=filtered.length?filtered.reduce((s,b)=>s+b.basePD,0)/filtered.length:0;
+  const avgLGD=filtered.length?filtered.reduce((s,b)=>s+b.baseLGD,0)/filtered.length:0;
   const stage1=filtered.filter(b=>b.stage===1).length;
   const stage2=filtered.filter(b=>b.stage===2).length;
   const stage3=filtered.filter(b=>b.stage===3).length;
@@ -331,7 +331,7 @@ const BorrowerPortfolioTab=({borrowers,onSelect})=>{
   const sectorConcentration=useMemo(()=>{
     const map={};
     filtered.forEach(b=>{map[b.sector]=(map[b.sector]||0)+b.exposure;});
-    return Object.entries(map).map(([s,v])=>({sector:s,exposure:v,pct:v/totalExposure*100})).sort((a,b)=>b.exposure-a.exposure);
+    return Object.entries(map).map(([s,v])=>({sector:s,exposure:v,pct:totalExposure?v/totalExposure*100:0})).sort((a,b)=>b.exposure-a.exposure);
   },[filtered,totalExposure]);
 
   const ratingDist=useMemo(()=>{
@@ -1016,7 +1016,7 @@ const IFRS9ECLTab=({borrowers,carbonPrice})=>{
           <div style={S.kpiSub}>Additional provision</div>
         </div>
         <div style={S.kpi}>
-          <div style={{...S.kpiValue,color:T.amber}}>{(totals.overlay/totals.baseECL*100).toFixed(1)}%</div>
+          <div style={{...S.kpiValue,color:T.amber}}>{(totals.overlay/(totals.baseECL||1)*100).toFixed(1)}%</div>
           <div style={S.kpiLabel}>Overlay as % of Base</div>
           <div style={S.kpiSub}>P&L impact</div>
         </div>
@@ -1192,10 +1192,10 @@ const ScenarioAnalysisTab=({borrowers,carbonPrice})=>{
       borrowerImpacts.push({...b,baseECL,climateECL,delta:climateECL-baseECL,climatePD,climateStage});
     });
 
-    const cet1Impact=(totalClimateECL-totalBaseECL)/totalExposure*100*-1;
+    const cet1Impact=totalExposure?(totalClimateECL-totalBaseECL)/totalExposure*100*-1:0;
     return{
       ...scen,totalBaseECL,totalClimateECL,overlay:totalClimateECL-totalBaseECL,
-      overlayPct:(totalClimateECL-totalBaseECL)/totalBaseECL*100,
+      overlayPct:totalBaseECL?(totalClimateECL-totalBaseECL)/totalBaseECL*100:0,
       cet1Impact,sectorImpact:Object.entries(sectorImpact).map(([s,v])=>({sector:s,...v,delta:v.climate-v.base})).sort((a,b)=>b.delta-a.delta),
       topBorrowers:borrowerImpacts.sort((a,b)=>b.delta-a.delta).slice(0,10),
     };

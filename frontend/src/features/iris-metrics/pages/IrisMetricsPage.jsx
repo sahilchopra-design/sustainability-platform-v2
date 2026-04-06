@@ -69,7 +69,7 @@ function computeIrisScores(company, irisData) {
   const rev = company.revenue_usd_mn || 0;
   const userData = irisData[company.company_id] || {};
   const seed = (company.company_id || '').split('').reduce((s, c) => s + c.charCodeAt(0), 0);
-  const rng = (off) => ((seed * 9301 + 49297 + off * 13) % 233280) / 233280;
+  const rng = (off) => { let x = Math.sin(seed + off + 1) * 10000; return x - Math.floor(x); };
 
   const scores = {};
   DIM_KEYS.forEach((dk, di) => {

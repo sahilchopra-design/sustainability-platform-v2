@@ -53,7 +53,7 @@ const calcDCF = (inputs) => {
     });
   }
   const lastFCF = cashFlows[cashFlows.length - 1].fcf;
-  const tv = dr > tg ? (lastFCF * (1 + tg)) / (dr - tg) : lastFCF * 15;
+  const tv = (dr - tg) > 0.005 ? (lastFCF * (1 + tg)) / (dr - tg) : lastFCF * 15; // 50bps min spread prevents implausibly large TV when WACC ≈ TG (near-singularity guard)
   const pvTV = tv / Math.pow(1 + dr, inputs.projYears);
   return { npv: pvSum + pvTV, pvCF: pvSum, tv, pvTV, cashFlows };
 };
@@ -127,7 +127,7 @@ export default function AssetValuationEnginePage() {
       const mean = results.reduce((a, b) => a + b, 0) / nSims;
       const pPos = results.filter(v => v > 0).length / nSims * 100;
       const minV = results[0], maxV = results[results.length - 1];
-      const binW = (maxV - minV) / 20 || 1;
+      const binW = maxV !== minV ? (maxV - minV) / 20 : (Math.abs(maxV) * 0.01 || 1);
       const hist = Array.from({ length: 20 }, (_, i) => ({
         bin: +((minV + i * binW)).toFixed(0),
         count: results.filter(v => v >= minV + i * binW && v < minV + (i + 1) * binW).length

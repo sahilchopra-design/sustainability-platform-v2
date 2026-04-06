@@ -80,7 +80,7 @@ export default function AdditionalityAssessmentPage(){
 
   const kpis=useMemo(()=>[
     {label:'Investments',value:investments.length},
-    {label:'Avg Composite',value:Math.round(investments.reduce((a,i)=>a+i.compositeScore,0)/investments.length)},
+    {label:'Avg Composite',value:investments.length?Math.round(investments.reduce((a,i)=>a+i.compositeScore,0)/investments.length):0},
     {label:'A-Rated',value:investments.filter(i=>i.rating==='A').length},
     {label:'Catalytic Capital',value:investments.filter(i=>i.catalytic==='Yes').length},
     {label:'Total Invested',value:`$${Math.round(investments.reduce((a,i)=>a+i.investedM,0))}M`}
@@ -281,7 +281,7 @@ export default function AdditionalityAssessmentPage(){
   );
 
   const renderTab3=()=>{
-    const avgByDim=DIMENSIONS.map(d=>({dimension:d,avg:Math.round(investments.reduce((a,i)=>a+i[`${d.toLowerCase()}Score`],0)/investments.length)}));
+    const avgByDim=DIMENSIONS.map(d=>({dimension:d,avg:investments.length?Math.round(investments.reduce((a,i)=>a+i[`${d.toLowerCase()}Score`],0)/investments.length):0}));
     const ratingDist=['A','B','C','D'].map(r=>({rating:r,count:investments.filter(i=>i.rating===r).length}));
     return(
       <div>
@@ -328,7 +328,7 @@ export default function AdditionalityAssessmentPage(){
           <h4 style={{fontSize:'14px',color:T.navy,marginBottom:'12px'}}>DFI Benchmark Comparison</h4>
           <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:'12px'}}>
             {DFI_NAMES.slice(0,5).map((d,di)=>{
-              const dfiAvg=Math.round(investments.reduce((a,inv)=>{const comp=inv.dfiComparison.find(c=>c.name===d);return a+(comp?comp.score:50);},0)/investments.length);
+              const dfiAvg=investments.length?Math.round(investments.reduce((a,inv)=>{const comp=inv.dfiComparison.find(c=>c.name===d);return a+(comp?comp.score:50);},0)/investments.length):0;
               return(
                 <div key={di} style={{...st.card,textAlign:'center',padding:'12px'}}>
                   <div style={{fontSize:'20px',fontWeight:700,color:T.navy}}>{dfiAvg}</div>

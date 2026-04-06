@@ -131,7 +131,7 @@ export default function OwIdEvicAnalyticsPage() {
   const sectorWaci = useMemo(() => {
     return SECTORS.map(s => {
       const items = EVIC_DATA.filter(e => e.sector === s);
-      const avg = items.reduce((sum, e) => sum + e.waci, 0) / items.length;
+      const avg = items.length ? items.reduce((sum, e) => sum + e.waci, 0) / items.length : 0;
       return { sector: s, waci: +avg.toFixed(1) };
     }).sort((a, b) => b.waci - a.waci);
   }, []);

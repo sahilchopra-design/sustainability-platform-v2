@@ -68,7 +68,7 @@ const KPICard = ({ label, value, sub, color = T.navy, icon }) => (
 /* ── Generate simulated timeline data ───────────────────────────────────────── */
 const genTimeline = () => Array.from({ length: 24 }, (_, i) => ({
   hour: `${String(i).padStart(2, '0')}:00`,
-  latency: 200 + Math.round(sr(_sc++) * 400 + Math.sin(i / 3) * 150),
+  latency: 200 + Math.round(sr(_sc++) * 400 + (sr(i * 300 + 1) * 2 - 1) * 150),
   errors: sr(_sc++) < 0.15 ? Math.ceil(sr(_sc++) * 3) : 0,
   calls: 5 + Math.round(sr(_sc++) * 15),
 }));
@@ -347,7 +347,7 @@ export default function ApiOrchestrationPage() {
                     <td style={tdStyle}>{c.ttl}</td>
                     <td style={tdStyle}>{c.size_kb}</td>
                     <td style={tdStyle}><span style={{ color: c.hit_rate > 70 ? T.green : T.amber }}>{c.hit_rate}%</span></td>
-                    <td style={tdStyle}>{sources.find(s => s.id === c.id)?.cache_cleared_at ? fmtTime(sources.find(s => s.id === c.id).cache_cleared_at) : 'Never'}</td>
+                    <td style={tdStyle}>{sources.find(s => s.id === c.id)?.cache_cleared_at ? fmtTime(sources.find(s => s.id === c.id)?.cache_cleared_at) : 'Never'}</td>
                     <td style={tdStyle}><button style={{ ...btnStyle, fontSize: 10, padding: '3px 10px' }} onClick={() => clearCache(c.id)}>Clear</button></td>
                   </tr>
                 ))}

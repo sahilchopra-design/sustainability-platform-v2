@@ -265,9 +265,9 @@ export default function NatCatLossEnginePage() {
                   <XAxis dataKey="returnPeriod" tickFormatter={v => `${v}yr`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v.toFixed(1)}%`} />
-                  <Bar dataKey={d => ((d.rcp45Loss / d.currentLoss - 1) * 100).toFixed(1)} name="RCP 4.5" fill="#0f766e" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey={d => ((d.rcp85Loss / d.currentLoss - 1) * 100).toFixed(1)} name="RCP 8.5" fill={T.orange} radius={[3, 3, 0, 0]} />
-                  <Bar dataKey={d => ((d.rcp85_2100 / d.currentLoss - 1) * 100).toFixed(1)} name="RCP 8.5 2100" fill={T.red} radius={[3, 3, 0, 0]} />
+                  <Bar dataKey={d => d.currentLoss ? parseFloat(((d.rcp45Loss / d.currentLoss - 1) * 100).toFixed(1)) : 0} name="RCP 4.5" fill="#0f766e" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey={d => d.currentLoss ? parseFloat(((d.rcp85Loss / d.currentLoss - 1) * 100).toFixed(1)) : 0} name="RCP 8.5" fill={T.orange} radius={[3, 3, 0, 0]} />
+                  <Bar dataKey={d => d.currentLoss ? parseFloat(((d.rcp85_2100 / d.currentLoss - 1) * 100).toFixed(1)) : 0} name="RCP 8.5 2100" fill={T.red} radius={[3, 3, 0, 0]} />
                   <Legend />
                 </BarChart>
               </ResponsiveContainer>

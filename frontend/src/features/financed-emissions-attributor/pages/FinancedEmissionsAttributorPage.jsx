@@ -19,6 +19,16 @@ const PCAF_CLASSES = [
     id: 'listed_equity', name: 'Listed Equity', pcaf: 'PCAF Cat. 1', quality: 2.1, color: T.blue,
     outstanding: 4200, evic: 12400, attribution: 0.339,
     scope1: 8.24, scope2: 2.18, scope3: 14.62, financed: 8.48,
+    // GHG Protocol Scope 3 Category breakdown (PCAF v3.0 / GHG Protocol)
+    scope3_cats: [
+      { cat: 11, name: 'Use of Sold Products', mt: 9.84, note: 'Dominant for O&G/Coal' },
+      { cat: 1,  name: 'Purchased Goods & Services', mt: 1.46, note: 'Supply chain' },
+      { cat: 4,  name: 'Upstream Transportation', mt: 0.88, note: 'Logistics' },
+      { cat: 3,  name: 'Fuel & Energy Activities', mt: 0.58, note: 'Non-S1/S2 energy' },
+      { cat: 12, name: 'End-of-Life Treatment', mt: 0.62, note: 'Waste & disposal' },
+      { cat: 15, name: 'Investments', mt: 0.80, note: 'Financial subs only' },
+      { cat: 6,  name: 'Business Travel', mt: 0.44, note: 'Remaining' },
+    ],  // Total ≈ 14.62 MtCO₂e
     target_2025: 7.20, target_2030: 4.80, target_2050: 0.85, on_track: false,
     waci: 68.4, companies: [
       { name: 'Shell', financed_mt: 1.84, attribution: 0.148, quality: 2 },
@@ -33,6 +43,14 @@ const PCAF_CLASSES = [
     id: 'corporate_bonds', name: 'Corporate Bonds', pcaf: 'PCAF Cat. 2', quality: 2.4, color: T.teal,
     outstanding: 2800, evic: 9600, attribution: 0.292,
     scope1: 5.12, scope2: 1.44, scope3: 8.28, financed: 4.32,
+    scope3_cats: [
+      { cat: 11, name: 'Use of Sold Products', mt: 5.44, note: 'Power utilities output' },
+      { cat: 1,  name: 'Purchased Goods & Services', mt: 1.02, note: 'Supply chain' },
+      { cat: 4,  name: 'Upstream Transportation', mt: 0.62, note: 'Logistics' },
+      { cat: 3,  name: 'Fuel & Energy Activities', mt: 0.48, note: 'Non-S1/S2 energy' },
+      { cat: 12, name: 'End-of-Life Treatment', mt: 0.44, note: 'Cement & steel waste' },
+      { cat: 6,  name: 'Business Travel', mt: 0.28, note: 'Remaining' },
+    ],  // Total ≈ 8.28 MtCO₂e
     target_2025: 3.80, target_2030: 2.50, target_2050: 0.40, on_track: true,
     waci: 54.2, companies: [
       { name: 'EDF', financed_mt: 0.92, attribution: 0.082, quality: 2 },
@@ -186,7 +204,7 @@ export default function FinancedEmissionsAttributorPage() {
                   Data Quality {cls.quality}/5
                 </span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: cls.scope3_cats ? 12 : 0 }}>
                 {[
                   { label: 'Outstanding', val: `$${(cls.outstanding/1000).toFixed(1)}B` },
                   { label: 'Scope 1', val: `${cls.scope1} Mt` },
@@ -200,6 +218,26 @@ export default function FinancedEmissionsAttributorPage() {
                   </div>
                 ))}
               </div>
+              {cls.scope3_cats && cls.scope3 > 0 && (
+                <div>
+                  <div style={{ fontSize: 10, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                    Scope 3 Category Breakdown — GHG Protocol / PCAF v3.0
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    {cls.scope3_cats.map(c => (
+                      <div key={c.cat} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontFamily: T.mono, fontSize: 10, color: T.textMut, minWidth: 44 }}>Cat. {c.cat}</span>
+                        <div style={{ flex: 1, background: T.border, borderRadius: 2, height: 8, overflow: 'hidden' }}>
+                          <div style={{ width: `${(c.mt / (cls.scope3 || 1)) * 100}%`, height: '100%', background: cls.color, borderRadius: 2 }} />
+                        </div>
+                        <span style={{ fontFamily: T.mono, fontSize: 10, fontWeight: 700, color: T.navy, minWidth: 44 }}>{c.mt.toFixed(2)} Mt</span>
+                        <span style={{ fontSize: 10, color: T.textSec, minWidth: 180 }}>{c.name}</span>
+                        <span style={{ fontSize: 9, color: T.textMut }}>{c.note}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

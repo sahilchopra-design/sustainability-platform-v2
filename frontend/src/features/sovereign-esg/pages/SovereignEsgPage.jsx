@@ -142,7 +142,7 @@ const SovereignEsgPage = () => {
       const c = h.country || h._region || 'Unknown';
       if (!map[c]) map[c] = { count: 0, weight: 0 };
       map[c].count += 1;
-      map[c].weight += (h.weight || 1 / portfolio.length) * 100;
+      map[c].weight += (h.weight || 1 / (portfolio.length || 1)) * 100;
     });
     return map;
   }, [portfolio]);
@@ -187,7 +187,7 @@ const SovereignEsgPage = () => {
       if (!map[c.region]) map[c.region] = { region: c.region, climate: 0, social: 0, governance: 0, n: 0 };
       map[c.region].climate += c.climate_score; map[c.region].social += c.social_score; map[c.region].governance += c.governance_score; map[c.region].n += 1;
     });
-    return Object.values(map).map(r => ({ region: r.region, Climate: +(r.climate / r.n).toFixed(1), Social: +(r.social / r.n).toFixed(1), Governance: +(r.governance / r.n).toFixed(1) }));
+    return Object.values(map).map(r => ({ region: r.region, Climate: +(r.climate / (r.n || 1)).toFixed(1), Social: +(r.social / (r.n || 1)).toFixed(1), Governance: +(r.governance / (r.n || 1)).toFixed(1) }));
   }, []);
 
   const catDistribution = useMemo(() => {

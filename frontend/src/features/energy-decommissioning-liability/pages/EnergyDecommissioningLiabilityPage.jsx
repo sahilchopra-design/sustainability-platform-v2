@@ -137,7 +137,7 @@ export default function EnergyDecommissioningLiabilityPage() {
             </BarChart>
           </ResponsiveContainer>
           <div style={{ marginTop: 14, padding: 12, background: '#fef2f2', borderRadius: 8, fontSize: 12, color: T.red }}>
-            <strong>Liability concentration:</strong> {retirementByDecade.find(d => d.decade === '2030s')?.cost ? `$${retirementByDecade.find(d => d.decade === '2030s').cost}M due in 2030s` : 'N/A'} represents the largest exposure decade.
+            <strong>Liability concentration:</strong> {(retirementByDecade.find(d => d.decade === '2030s')?.cost ?? null) !== null ? `$${retirementByDecade.find(d => d.decade === '2030s')?.cost}M due in 2030s` : 'N/A'} represents the largest exposure decade.
           </div>
         </div>
       )}

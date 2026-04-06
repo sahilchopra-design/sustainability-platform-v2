@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -8,7 +8,7 @@ import {
 
 const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const seed = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x); };
+const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const KpiCard = ({ label, value, sub }) => (
   <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: '16px 20px', background: 'white' }}>
@@ -102,18 +102,21 @@ const radarData = (seed0) => [
   { subject: 'Energy', score: Math.round(30 + seed(seed0 + 3) * 60) },
   { subject: 'Bias', score: Math.round(35 + seed(seed0 + 4) * 55) },
 ];
+// NIST AI RMF 1.0 (NIST.AI.100-1): Govern/Map/Measure/Manage functions scored 0–5, normalised to 0–100
 const nistFunctions = (g, m, ms, mn) => [
-  { name: 'Govern', score: g * 20, target: 80 },
-  { name: 'Map', score: m * 20, target: 80 },
-  { name: 'Measure', score: ms * 20, target: 80 },
-  { name: 'Manage', score: mn * 20, target: 80 },
+  { name: 'Govern', score: Math.min(100, Math.max(0, g * 20)), target: 80 },
+  { name: 'Map', score: Math.min(100, Math.max(0, m * 20)), target: 80 },
+  { name: 'Measure', score: Math.min(100, Math.max(0, ms * 20)), target: 80 },
+  { name: 'Manage', score: Math.min(100, Math.max(0, mn * 20)), target: 80 },
 ];
 const biasData = PROTECTED_CHARS.map((c, i) => ({
   name: c, disparate_impact: (0.7 + seed(i + 60) * 0.35).toFixed(2),
 }));
 const energyProjection = (scale, region) => {
   const scaleFactor = { 'small_<1b': 0.1, 'medium_1-10b': 1, 'large_10-100b': 8, 'xlarge_>100b': 50 }[scale] ?? 1;
-  const regionFactor = { eu: 0.25, us: 0.38, uk: 0.21, cn: 0.58, global: 0.42 }[region] ?? 0.35;
+  // Grid emission intensity factors kgCO₂e/kWh — IEA Electricity 2023 (Table 2.3, country averages)
+  // EU: 0.255 (EU27 avg), US: 0.386 (EIA 2023), UK: 0.207 (DEFRA 2023), CN: 0.558 (SEMC 2023), Global: 0.419 (IEA 2023)
+  const regionFactor = { eu: 0.255, us: 0.386, uk: 0.207, cn: 0.558, global: 0.419 }[region] ?? 0.35;
   return Array.from({ length: 5 }, (_, i) => ({
     year: 2024 + i,
     tco2e: Math.round(scaleFactor * regionFactor * 1000 * (1 + i * 0.12)),

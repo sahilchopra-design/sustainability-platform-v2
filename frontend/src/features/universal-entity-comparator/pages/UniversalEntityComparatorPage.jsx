@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import {
+
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
+
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
@@ -110,7 +113,7 @@ export default function UniversalEntityComparatorPage() {
     const subs = L2_DATA[drillTopic] || [];
     return subs.map((s,i) => {
       const row = { sub: s };
-      entities.forEach(e => { row[e.name] = Math.round(e.scores[drillTopic] + (Math.sin(i*3+e.id.charCodeAt(1))*12)); });
+      entities.forEach(e => { row[e.name] = Math.round(e.scores[drillTopic] + (sr(i*30+e.id.charCodeAt(1))*2-1)*12); });
       return row;
     });
   }, [entities, drillTopic]);

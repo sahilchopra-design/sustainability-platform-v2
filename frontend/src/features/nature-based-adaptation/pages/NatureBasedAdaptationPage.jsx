@@ -104,13 +104,19 @@ export default function NatureBasedAdaptationPage() {
   const totalJobs = NBS_SOLUTIONS.reduce((s, n) => s + n.community_jobs, 0);
   const totalCarbonTons = NBS_SOLUTIONS.reduce((s, n) => s + n.co_benefits.carbon_tco2, 0);
 
+  // Dynamic normalization denominators — computed from dataset max so radar scales correctly if data changes
+  const maxProtection = Math.max(1, ...NBS_SOLUTIONS.map(n => n.protection_value_m));
+  const maxCarbon = Math.max(1, ...NBS_SOLUTIONS.map(n => n.carbon_value_m));
+  const maxJobs = Math.max(1, ...NBS_SOLUTIONS.map(n => n.community_jobs));
+  const maxBcr = Math.max(1, ...NBS_SOLUTIONS.map(n => n.bcr));
+  const maxArea = Math.max(1, ...NBS_SOLUTIONS.map(n => n.area_ha));
   const radarData = selectedNbs ? [
-    { axis: 'Protection', val: Math.min(100, selectedNbs.protection_value_m / 4.2) },
-    { axis: 'Carbon', val: Math.min(100, selectedNbs.carbon_value_m / 2) },
+    { axis: 'Protection', val: Math.min(100, (selectedNbs.protection_value_m / maxProtection) * 100) },
+    { axis: 'Carbon', val: Math.min(100, (selectedNbs.carbon_value_m / maxCarbon) * 100) },
     { axis: 'Biodiversity', val: selectedNbs.biodiversity_score },
-    { axis: 'Community', val: Math.min(100, selectedNbs.community_jobs / 34) },
-    { axis: 'BCR', val: Math.min(100, selectedNbs.bcr * 7) },
-    { axis: 'Scalability', val: Math.min(100, selectedNbs.area_ha / 180) },
+    { axis: 'Community', val: Math.min(100, (selectedNbs.community_jobs / maxJobs) * 100) },
+    { axis: 'BCR', val: Math.min(100, (selectedNbs.bcr / maxBcr) * 100) },
+    { axis: 'Scalability', val: Math.min(100, (selectedNbs.area_ha / maxArea) * 100) },
   ] : [];
 
   return (
