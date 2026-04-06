@@ -497,6 +497,13 @@ const RegulatoryDeadlineTrackerPage      = React.lazy(() => import("./features/r
 const ClimateNewsSentimentFeedPage       = React.lazy(() => import("./features/climate-news-sentiment-feed/pages/ClimateNewsSentimentFeedPage"));
 const RealTimeEmissionsMonitorPage       = React.lazy(() => import("./features/real-time-emissions-monitor/pages/RealTimeEmissionsMonitorPage"));
 const ClientTransitionCommandCenterPage  = React.lazy(() => import("./features/client-transition-command-center/pages/ClientTransitionCommandCenterPage"));
+// Sprint CZ — Climate Portfolio Construction & Optimization
+const ClimatePortfolioOptimizerPage      = React.lazy(() => import("./features/climate-portfolio-optimizer/pages/ClimatePortfolioOptimizerPage"));
+const NetZeroPortfolioAlignmentPage      = React.lazy(() => import("./features/net-zero-portfolio-alignment/pages/NetZeroPortfolioAlignmentPage"));
+const ClimateBenchmarkConstructorPage    = React.lazy(() => import("./features/climate-benchmark-constructor/pages/ClimateBenchmarkConstructorPage"));
+const GreenBondPortfolioAnalyticsPage    = React.lazy(() => import("./features/green-bond-portfolio-analytics/pages/GreenBondPortfolioAnalyticsPage"));
+const ClimateRiskBudgetAllocatorPage     = React.lazy(() => import("./features/climate-risk-budget-allocator/pages/ClimateRiskBudgetAllocatorPage"));
+const TransitionAlphaSignalGeneratorPage = React.lazy(() => import("./features/transition-alpha-signal-generator/pages/TransitionAlphaSignalGeneratorPage"));
 // Sprint BW — Carbon Credit Engine Hub (Hub · Portfolio Analytics · Cross-Methodology)
 const CcEngineHubPage            = React.lazy(() => import("./features/cc-engine-hub/pages/CcEngineHubPage"));
 const CcPortfolioAnalyticsPage   = React.lazy(() => import("./features/cc-portfolio-analytics/pages/CcPortfolioAnalyticsPage"));
@@ -1342,6 +1349,14 @@ const NAV_GROUPS = [
     { path: '/climate-news-sentiment-feed',        label: 'Climate News Sentiment Feed',         badge: 'NLP Sentiment · Topic Clustering · Portfolio Impact · Source Attribution · Timeline',   code: 'EP-CY4' },
     { path: '/real-time-emissions-monitor',        label: 'Real-Time Emissions Monitor',         badge: 'Facility CEMS · EWMA Anomaly · Permit Compliance · YTD Tracking · Alert Engine',       code: 'EP-CY5' },
     { path: '/client-transition-command-center',   label: 'Client Transition Command Center',    badge: 'Risk Quadrants · Engagement Pipeline · Instruments · Regulatory Readiness · Profiles',  code: 'EP-CY6' },
+  ]},
+  { label: 'Climate Portfolio Construction', icon: '📊', color: '#0f4c81', items: [
+    { path: '/climate-portfolio-optimizer',        label: 'Climate Portfolio Optimizer',         badge: 'Markowitz + Carbon Constraints · Efficient Frontier · Sector Allocation · NGFS Scenarios',   code: 'EP-CZ1' },
+    { path: '/net-zero-portfolio-alignment',       label: 'Net Zero Portfolio Alignment',        badge: 'PAII Framework · Decarbonization Pathway · ITR Analysis · Asset Alignment · 1.5°C Budget',   code: 'EP-CZ2' },
+    { path: '/climate-benchmark-constructor',      label: 'Climate Benchmark Constructor',       badge: 'PAB / CTB Builder · EU BMR · Tracking Error · Carbon Pathway · Constituents',                code: 'EP-CZ3' },
+    { path: '/green-bond-portfolio-analytics',     label: 'Green Bond Portfolio Analytics',      badge: 'ICMA GBP · Use of Proceeds · Impact Metrics · Greenium · EU GBS Alignment',                  code: 'EP-CZ4' },
+    { path: '/climate-risk-budget-allocator',      label: 'Climate Risk Budget Allocator',       badge: 'Factor Decomposition · Marginal Contributions · What-If · Budget Utilization',                code: 'EP-CZ5' },
+    { path: '/transition-alpha-signal-generator',  label: 'Transition Alpha Signal Generator',   badge: '6 Climate Factors · Factor Model · Backtesting · Alpha Attribution · Signal Decay',           code: 'EP-CZ6' },
   ]},
   { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
     { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
@@ -2359,6 +2374,13 @@ function AppContent() {
             <Route path="/climate-news-sentiment-feed"        element={<ClimateNewsSentimentFeedPage />} />
             <Route path="/real-time-emissions-monitor"        element={<RealTimeEmissionsMonitorPage />} />
             <Route path="/client-transition-command-center"   element={<ClientTransitionCommandCenterPage />} />
+            {/* Sprint CZ — Climate Portfolio Construction & Optimization */}
+            <Route path="/climate-portfolio-optimizer"        element={<ClimatePortfolioOptimizerPage />} />
+            <Route path="/net-zero-portfolio-alignment"       element={<NetZeroPortfolioAlignmentPage />} />
+            <Route path="/climate-benchmark-constructor"      element={<ClimateBenchmarkConstructorPage />} />
+            <Route path="/green-bond-portfolio-analytics"     element={<GreenBondPortfolioAnalyticsPage />} />
+            <Route path="/climate-risk-budget-allocator"      element={<ClimateRiskBudgetAllocatorPage />} />
+            <Route path="/transition-alpha-signal-generator"  element={<TransitionAlphaSignalGeneratorPage />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
             <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
             <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
