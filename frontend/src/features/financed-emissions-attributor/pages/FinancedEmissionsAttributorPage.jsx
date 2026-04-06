@@ -347,7 +347,7 @@ export default function FinancedEmissionsAttributorPage() {
                       <td style={{ padding: '10px 12px' }}>
                         <span style={{ fontFamily: T.mono, background: c2.quality <= 2 ? T.green + '22' : c2.quality <= 3 ? T.amber + '22' : T.red + '22', color: c2.quality <= 2 ? T.green : c2.quality <= 3 ? T.amber : T.red, padding: '2px 8px', borderRadius: 8 }}>{c2.quality}/5</span>
                       </td>
-                      <td style={{ padding: '10px 12px', fontFamily: T.mono }}>{((c2.financed_mt / cls.financed) * 100).toFixed(1)}%</td>
+                      <td style={{ padding: '10px 12px', fontFamily: T.mono }}>{(cls.financed ? (c2.financed_mt / cls.financed) * 100 : 0).toFixed(1)}%</td>
                     </tr>
                   ))}
                 </tbody>

@@ -233,7 +233,7 @@ export default function PortfolioTransitionAlignmentPage() {
                 <BarChart data={port.sectors.map((s, si) => {
                   // Deterministic per-sector PACTA variation (no Math.random)
                   const factor = 0.8 + 0.2 * (Math.sin(si * 2.3 + port.sectors.length) + 1);
-                  return { name: s.name, aligned: +Math.min(100, port.pacta_aligned * factor).toFixed(1), misaligned: +(port.pacta_misaligned * (1.4 - factor + 0.8)).toFixed(1) };
+                  return { name: s.name, aligned: +Math.min(100, port.pacta_aligned * factor).toFixed(1), misaligned: +Math.min(100, port.pacta_misaligned * (1.4 - factor + 0.8)).toFixed(1) };
                 })}>
 
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />

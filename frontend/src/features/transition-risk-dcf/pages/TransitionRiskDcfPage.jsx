@@ -80,8 +80,19 @@ function computeDcfImpairment(asset, scenario, horizonYears = 10) {
   const discountBase = (cf, i) => cf.base_cf / Math.pow(1 + asset.wacc_base, i + 1);
   const discountAdj  = (cf, i) => cf.adjusted_cf / Math.pow(1 + waccAdjusted, i + 1);
 
-  const npvBase = adjustedCFs.reduce((acc, cf, i) => acc + discountBase(cf, i), 0);
-  const npvAdj  = adjustedCFs.reduce((acc, cf, i) => acc + discountAdj(cf, i), 0);
+  // Terminal value via Gordon Growth Model (g = 2% perpetuity; guard WACC > g)
+  const G_TV = 0.02;
+  const finalCfBase = adjustedCFs[adjustedCFs.length - 1]?.base_cf ?? 0;
+  const finalCfAdj  = adjustedCFs[adjustedCFs.length - 1]?.adjusted_cf ?? 0;
+  const tvBase = asset.wacc_base > G_TV
+    ? (finalCfBase * (1 + G_TV)) / (asset.wacc_base - G_TV) / Math.pow(1 + asset.wacc_base, horizonYears)
+    : 0;
+  const tvAdj = waccAdjusted > G_TV
+    ? (finalCfAdj  * (1 + G_TV)) / (waccAdjusted  - G_TV) / Math.pow(1 + waccAdjusted,  horizonYears)
+    : 0;
+
+  const npvBase = adjustedCFs.reduce((acc, cf, i) => acc + discountBase(cf, i), 0) + tvBase;
+  const npvAdj  = adjustedCFs.reduce((acc, cf, i) => acc + discountAdj(cf, i), 0) + tvAdj;
   const impairment = npvBase - npvAdj;
   const strandedYear = adjustedCFs.find(cf => cf.adjusted_cf <= 0)?.year || null;
 

@@ -358,7 +358,7 @@ export default function SectorTransitionScorecardPage() {
                     ))}
                   </div>
                   <div style={{ marginTop: 10, fontSize: 11, color: T.textSec }}>
-                    Required reduction: <strong style={{ color: T.red }}>{(((s.emissions_2019 - s.emissions_2030_target) / s.emissions_2019) * 100).toFixed(0)}%</strong> by 2030
+                    Required reduction: <strong style={{ color: T.red }}>{s.emissions_2019 > 0 ? (((s.emissions_2019 - s.emissions_2030_target) / s.emissions_2019) * 100).toFixed(0) : '—'}%</strong> by 2030
                   </div>
                 </div>
               ))}
