@@ -41,7 +41,7 @@ const totalEmissions = PCAF_CLASSES.reduce((s, c) => s + c.emissions, 0);
 const TARGET_YEARS = Array.from({ length: 8 }, (_, i) => {
   const year = 2020 + i;
   const target = 100 * Math.pow(0.93, i);
-  const actual = 100 * Math.pow(0.95, i) * (1 + (Math.random() - 0.5) * 0.05);
+  const actual = 100 * Math.pow(0.95, i) * (1 + Math.sin(i * 3.1 + 1) * 0.025);
   return { year, target: +target.toFixed(1), actual: +actual.toFixed(1), gap: +(actual - target).toFixed(1) };
 });
 

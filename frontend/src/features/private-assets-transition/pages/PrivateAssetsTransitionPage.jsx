@@ -29,14 +29,17 @@ const PE_FUNDS = [
   { id: 'F10', name: 'Real Assets Climate I', vintage: 2023, aum: 2100, strategy: 'Real Assets', companies: 6, avgClimate: 62, transRisk: 'Medium', physRisk: 'Medium' },
 ];
 
+const _sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const PORTFOLIO_COS = Array.from({ length: 50 }, (_, i) => ({
   id: `PC${i + 1}`, name: `PortCo ${i + 1}`, fund: PE_FUNDS[i % 10].id,
-  sector: SECTORS[i % 10], revenue: 20 + Math.round(Math.random() * 480),
-  employees: 50 + Math.round(Math.random() * 2000),
-  climateScore: 25 + Math.round(Math.random() * 70),
-  transFlag: Math.random() > 0.65, physFlag: Math.random() > 0.7,
-  co2Intensity: 5 + Math.round(Math.random() * 120),
-  exitMultiple: 4 + +(Math.random() * 14).toFixed(1),
+  sector: SECTORS[i % 10],
+  revenue:      20  + Math.round(_sr(i*11) * 480),
+  employees:    50  + Math.round(_sr(i*13) * 2000),
+  climateScore: 25  + Math.round(_sr(i*17) * 70),
+  transFlag: _sr(i*19) > 0.65,
+  physFlag:  _sr(i*23) > 0.7,
+  co2Intensity: 5  + Math.round(_sr(i*29) * 120),
+  exitMultiple: 4  + +(_sr(i*31) * 14).toFixed(1),
 }));
 
 const DD_CHECKLIST = [

@@ -255,7 +255,7 @@ export default function PeerTransitionBenchmarkerPage() {
                 <XAxis dataKey="x" name="Current Score" tick={{ fontSize: 10 }} label={{ value: 'Transition Score', position: 'bottom', fontSize: 10 }} />
                 <YAxis dataKey="y" name="Engagement Potential" tick={{ fontSize: 10 }} label={{ value: 'Engagement Potential', angle: -90, position: 'insideLeft', fontSize: 10 }} />
                 <ZAxis dataKey="z" range={[60, 200]} /><Tooltip />
-                <Scatter data={peers.map(p => ({ x: Math.round(p.total), y: Math.round(100 - p.total + Math.random() * 20), z: 100, name: p.name }))} fill={T.navy} />
+                <Scatter data={peers.map((p, pi) => ({ x: Math.round(p.total), y: Math.round(100 - p.total + Math.abs(Math.sin(pi*2.7+1))*20), z: 100, name: p.name }))} fill={T.navy} />
               </ScatterChart>
             </ResponsiveContainer>
           </div>

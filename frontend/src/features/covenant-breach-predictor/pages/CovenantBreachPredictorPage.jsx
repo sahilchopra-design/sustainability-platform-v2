@@ -9,13 +9,20 @@ const T = { bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c', n
 const TABS = ['Breach Probability Dashboard','Financial Covenants at Risk','Scenario-Conditional Breach','Early Warning Signals','Remediation Options','Lender Action Framework'];
 const SCENARIOS = ['Current Policies','Delayed Transition','Below 2\u00b0C','Net Zero 2050'];
 
+const _sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const BORROWERS = Array.from({length:15},(_, i)=>{
   const names = ['CoalCo Holdings','PetroGlobal Inc','CementWorks Ltd','SteelForge Corp','PowerGen Alpha','ChemProcess AG','MiningDeep Ltd','GasTurbine Co','RefineryPlus','PipelineNet','AviationHvy','LNG Global','Coal Port Inc','OilSands Corp','ThermalGen Ltd'];
   const sectors = ['Coal','Oil & Gas','Cement','Steel','Power','Chemicals','Mining','Gas','Refining','Pipeline','Aviation','LNG','Ports','Oil Sands','Thermal'];
-  const leverage = 2.5+Math.random()*4;
-  const icr = 1.2+Math.random()*5;
-  const dscr = 0.8+Math.random()*1.5;
-  return { id:`B-${i+1}`, name:names[i], sector:sectors[i], leverage:+leverage.toFixed(1), leverageCov:4.5, icr:+icr.toFixed(1), icrCov:2.0, dscr:+dscr.toFixed(2), dscrCov:1.2, breachProb_cp:Math.round(5+Math.random()*30), breachProb_dt:Math.round(10+Math.random()*40), breachProb_b2c:Math.round(20+Math.random()*50), breachProb_nz:Math.round(30+Math.random()*60), earlyWarning:i<5?'Red':i<10?'Amber':'Green', leadTime:Math.round(3+Math.random()*15) };
+  const leverage = 2.5 + _sr(i*11) * 4;
+  const icr  = 1.2 + _sr(i*13) * 5;
+  const dscr = 0.8 + _sr(i*17) * 1.5;
+  return { id:`B-${i+1}`, name:names[i], sector:sectors[i], leverage:+leverage.toFixed(1), leverageCov:4.5, icr:+icr.toFixed(1), icrCov:2.0, dscr:+dscr.toFixed(2), dscrCov:1.2,
+    breachProb_cp: Math.round(5  + _sr(i*19) * 30),
+    breachProb_dt: Math.round(10 + _sr(i*23) * 40),
+    breachProb_b2c:Math.round(20 + _sr(i*29) * 50),
+    breachProb_nz: Math.round(30 + _sr(i*31) * 60),
+    earlyWarning: i<5?'Red':i<10?'Amber':'Green',
+    leadTime: Math.round(3 + _sr(i*37) * 15) };
 });
 
 const SCENARIO_KEYS = { 'Current Policies':'cp', 'Delayed Transition':'dt', 'Below 2\u00b0C':'b2c', 'Net Zero 2050':'nz' };
@@ -51,7 +58,12 @@ export default function CovenantBreachPredictorPage(){
   const avgBreach = Math.round(BORROWERS.reduce((s,b)=>s+b[`breachProb_${sk}`],0)/BORROWERS.length);
 
   const scenarioComparison = useMemo(()=>BORROWERS.map(b=>({ name:b.name, CP:b.breachProb_cp, DT:b.breachProb_dt, B2C:b.breachProb_b2c, NZ:b.breachProb_nz })),[]);
-  const earlyWarnings = useMemo(()=>Array.from({length:18},(_, i)=>({ month:i+1, leverageDrift:+(0.1+i*0.08+Math.random()*0.3).toFixed(2), icrDrift:+(-0.05-i*0.06+Math.random()*0.2).toFixed(2), breachProb:Math.min(95,Math.round(15+i*3+Math.random()*8)) })),[]);
+  const earlyWarnings = useMemo(()=>Array.from({length:18},(_, i)=>({
+    month: i+1,
+    leverageDrift: +(0.1 + i*0.08 + _sr(i*41)*0.3).toFixed(2),
+    icrDrift:      +(-0.05 - i*0.06 + _sr(i*43)*0.2).toFixed(2),
+    breachProb:    Math.min(95, Math.round(15 + i*3 + _sr(i*47)*8)),
+  })),[]);
 
   return (
     <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24}}>

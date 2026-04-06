@@ -80,7 +80,7 @@ export default function OffsetPortfolioTrackerPage() {
   }));
 
   const perfData = [2022, 2023, 2024, 2025, 2026].map((y, i) => ({
-    year: y, planned: 30000 + i * 15000, actual: i <= 2 ? 25000 + i * 12000 + Math.round(Math.random() * 5000) : null
+    year: y, planned: 30000 + i * 15000, actual: i <= 2 ? 25000 + i * 12000 + Math.round(Math.abs(Math.sin(i*2.3+1))*5000) : null
   }));
 
   return (
@@ -265,7 +265,7 @@ export default function OffsetPortfolioTrackerPage() {
           <div style={card}>
             <div style={lbl}>Offset Dependency Ratio Over Time</div>
             <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={[2022, 2023, 2024, 2025, 2026].map((y, i) => ({ year: y, ratio: 15 - i * 2 + Math.round(Math.random() * 2) }))}>
+              <LineChart data={[2022, 2023, 2024, 2025, 2026].map((y, i) => ({ year: y, ratio: 15 - i * 2 + Math.round(Math.abs(Math.sin(i*1.7))*2) }))}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="year" tick={{ fontSize: 10 }} /><YAxis domain={[0, 20]} tick={{ fontSize: 10 }} />
                 <Tooltip /><Line type="monotone" dataKey="ratio" stroke={T.amber} strokeWidth={2} name="Offset Dependency %" dot={{ r: 3 }} />

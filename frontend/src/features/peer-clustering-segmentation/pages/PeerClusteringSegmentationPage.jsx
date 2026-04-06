@@ -28,9 +28,9 @@ const ENTITIES = Array.from({length:20}, (_,i) => {
     pc1: Math.round((base-50+Math.sin(i*2.1)*15)*10)/10,
     pc2: Math.round((Math.cos(i*1.7)*20+cluster*5-10)*10)/10,
     scores: { env:Math.round(base+Math.sin(i)*10), soc:Math.round(base+Math.cos(i)*8), gov:Math.round(base+5+Math.sin(i*0.7)*7), climate:Math.round(base-3+Math.cos(i*1.2)*12) },
-    q1Cluster: Math.min(4, Math.max(0, cluster + (Math.random()>0.7 ? (Math.random()>0.5?1:-1) : 0))),
-    q2Cluster: Math.min(4, Math.max(0, cluster + (Math.random()>0.8 ? (Math.random()>0.5?1:-1) : 0))),
-    q3Cluster: Math.min(4, Math.max(0, cluster + (Math.random()>0.85 ? -1 : 0))),
+    q1Cluster: Math.min(4, Math.max(0, cluster + (Math.sin(i*3.1)>0.4 ? (Math.sin(i*5.7)>0?1:-1) : 0))),
+    q2Cluster: Math.min(4, Math.max(0, cluster + (Math.sin(i*2.9+1)>0.6 ? (Math.sin(i*4.3)>0?1:-1) : 0))),
+    q3Cluster: Math.min(4, Math.max(0, cluster + (Math.sin(i*2.1+2)>0.7 ? -1 : 0))),
     q4Cluster: cluster,
   };
 });

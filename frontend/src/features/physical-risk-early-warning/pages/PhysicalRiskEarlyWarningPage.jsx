@@ -211,7 +211,11 @@ export default function PhysicalRiskEarlyWarningPage() {
         <div style={s.card}>
           <div style={s.cardTitle}>Alert Trend (Last 7 Days)</div>
           <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={Array.from({ length: 7 }, (_, i) => ({ day: `Day ${i + 1}`, critical: Math.floor(1 + Math.random() * 3), high: Math.floor(2 + Math.random() * 4), medium: Math.floor(3 + Math.random() * 5), low: Math.floor(1 + Math.random() * 3) }))}>
+            <AreaChart data={Array.from({ length: 7 }, (_, i) => ({ day: `Day ${i + 1}`,
+              critical: Math.floor(1 + Math.abs(Math.sin(i*2.3+1))*3),
+              high:     Math.floor(2 + Math.abs(Math.sin(i*1.7+2))*4),
+              medium:   Math.floor(3 + Math.abs(Math.sin(i*1.1+3))*5),
+              low:      Math.floor(1 + Math.abs(Math.sin(i*3.1+0.5))*3) }))}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="day" tick={{ fontSize:11 }} />
               <YAxis tick={{ fontSize:11 }} />

@@ -16,7 +16,7 @@ const ASSETS = Array.from({length:20},(_, i)=>{
   const baseYear = dec==='pre-2000'?1990+i%10 : dec==='2000-2010'?2000+i%10 : dec==='2010-2020'?2010+i%10 : 2020+i%4;
   const age = 2026 - baseYear;
   const sector = SECTORS[i%5];
-  const bv0 = 200+Math.random()*800;
+  const bv0 = 200 + (Math.abs(Math.sin(i * 7.3 + 2.1)) * 800);
   const lambda = dec==='pre-2000'?0.08 : dec==='2000-2010'?0.05 : dec==='2010-2020'?0.03 : 0.015;
   return { id:`A-${(i+1).toString().padStart(3,'0')}`, name:`${sector} Asset ${i+1}`, sector, vintage:dec, commissionYear:baseYear, age, bv0:Math.round(bv0), lambda, strandingProb: Math.min(0.95, 0.1+age*0.025), currentBV: Math.round(bv0*Math.exp(-lambda*age)), region:['US','EU','APAC','LatAm','Africa'][i%5] };
 });

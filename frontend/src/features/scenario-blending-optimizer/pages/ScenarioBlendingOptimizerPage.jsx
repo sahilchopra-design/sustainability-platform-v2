@@ -30,7 +30,7 @@ const OBSERVED_EMISSIONS = [
 function generateScenarioPath(base, slope, startYear, endYear) {
   return Array.from({ length: endYear - startYear + 1 }, (_, i) => ({
     year: startYear + i,
-    value: Math.max(0, base + slope * i + (Math.random() - 0.5) * 0.8)
+    value: Math.max(0, base + slope * i + Math.sin(i * 1.3 + base) * 0.4)
   }));
 }
 
@@ -341,7 +341,9 @@ export default function ScenarioBlendingOptimizerPage() {
             </Card>
             <Card title="Transition Speed Comparison" span={2}>
               <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={Array.from({ length: 36 }, (_, i) => ({ year: 2025 + i, orderly: Math.max(0, 38 - 0.95 * i + Math.random() * 0.5), disorderly: Math.max(0, 38 - 0.1 * Math.min(i, 10) - 2.2 * Math.max(0, i - 10) + Math.random() * 0.5) }))}>
+                <LineChart data={Array.from({ length: 36 }, (_, i) => ({ year: 2025 + i,
+                  orderly:    Math.max(0, 38 - 0.95 * i + Math.abs(Math.sin(i*1.2))*0.5),
+                  disorderly: Math.max(0, 38 - 0.1 * Math.min(i, 10) - 2.2 * Math.max(0, i - 10) + Math.abs(Math.sin(i*0.9+2))*0.5) }))}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="year" fontSize={10} />
                   <YAxis fontSize={10} domain={[0, 45]} />

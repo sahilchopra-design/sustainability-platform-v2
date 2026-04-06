@@ -72,7 +72,7 @@ const Ref = ({ text }) => (
 function MiniWidget({ widget }) {
   const w = WIDGET_CATALOG.find(wc => wc.id === widget);
   if (!w) return null;
-  const chartData = Array.from({ length: 12 }, (_, i) => ({ m: i + 1, v: 40 + Math.random() * 30 }));
+  const chartData = Array.from({ length: 12 }, (_, i) => ({ m: i + 1, v: 40 + Math.abs(Math.sin(i * 1.5 + (WIDGET_CATALOG.findIndex(wc=>wc.id===widget)||0))) * 30 }));
   return (
     <div style={{ background: T.bg, borderRadius: 10, padding: 14, border: `1px solid ${T.border}`, minHeight: 140 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>

@@ -8,10 +8,21 @@ const T = { bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c', n
 
 const TABS = ['Watchlist Dashboard','Alert Configuration','Trigger Events','Peer Comparison','Engagement Status','Export & Report'];
 
+const _sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const WATCHLIST = Array.from({length:20},(_, i)=>{
   const sectors = ['Coal','Oil & Gas','Cement','Steel','Power Gen','Chemicals','Mining','Aviation'];
   const names = ['CoalCo Alpha','PetroGlobal','CementWorks','SteelForge','PowerGen Beta','ChemProcess','MineCo Deep','AviationHvy','FossilFuel Inc','GasTurbine Ltd','CoalPort Corp','RefineryCo','PipelineCo','LNG Terminal','IronWorks','HeavyInd','CarbonCo','ThermalGen','OilSands Ltd','GasExplore'];
-  return { id:`W-${i+1}`, name:names[i], sector:sectors[i%8], exposure:Math.round(100+Math.random()*900), strandingRisk:Math.round(15+Math.random()*80), carbonPrice_trigger:Math.round(60+Math.random()*140), rating:['AAA','AA','A','BBB','BB','B'][Math.floor(Math.random()*6)], lastAlert:i<8?'2026-03-'+(10+i).toString().padStart(2,'0'):'None', alertCount:Math.floor(Math.random()*8), engagementStatus:['Active','Pending','Escalated','Resolved','Not Started'][i%5], responseRate:Math.round(20+Math.random()*80), trend:Math.random()>0.5?'Worsening':'Stable' };
+  return { id:`W-${i+1}`, name:names[i], sector:sectors[i%8],
+    exposure:        Math.round(100 + _sr(i*11) * 900),
+    strandingRisk:   Math.round(15  + _sr(i*13) * 80),
+    carbonPrice_trigger: Math.round(60 + _sr(i*17) * 140),
+    rating: ['AAA','AA','A','BBB','BB','B'][Math.floor(_sr(i*19)*6)],
+    lastAlert: i<8 ? '2026-03-'+(10+i).toString().padStart(2,'0') : 'None',
+    alertCount: Math.floor(_sr(i*23) * 8),
+    engagementStatus: ['Active','Pending','Escalated','Resolved','Not Started'][i%5],
+    responseRate: Math.round(20 + _sr(i*29) * 80),
+    trend: _sr(i*31) > 0.5 ? 'Worsening' : 'Stable',
+  };
 });
 
 const TRIGGERS = [

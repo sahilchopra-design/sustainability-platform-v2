@@ -90,8 +90,8 @@ export default function SupplyChainContagionPage() {
   const tierData = COMPANIES.map(c => ({ name: c.name.length > 14 ? c.name.slice(0, 14) + '..' : c.name, t1: c.t1, t2: c.t2, t3: c.t3 }));
 
   const networkNodes = COMPANIES.slice(0, 8).map((c, i) => ({
-    x: 100 + Math.cos(i * Math.PI / 4) * 200 + Math.random() * 40,
-    y: 150 + Math.sin(i * Math.PI / 4) * 120 + Math.random() * 40,
+    x: 100 + Math.cos(i * Math.PI / 4) * 200 + Math.abs(Math.sin(i * 3.7 + 1)) * 40,
+    y: 150 + Math.sin(i * Math.PI / 4) * 120 + Math.abs(Math.sin(i * 2.9 + 2)) * 40,
     name: c.name.split(' ')[0], exposure: c.exposure, size: c.revImpact / 20,
   }));
 

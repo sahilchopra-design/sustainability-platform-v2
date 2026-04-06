@@ -198,7 +198,7 @@ export default function RegulatoryStressSubmissionPage() {
                     {section.fields.map(field => (
                       <div key={field} style={{ background: T.bg, borderRadius: 8, padding: '8px 12px', fontSize: 11, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span>{field}</span>
-                        <span style={{ color: Math.random() > 0.3 ? T.green : T.amber, fontSize: 10, fontWeight: 600 }}>{Math.random() > 0.3 ? 'Populated' : 'Pending'}</span>
+                        <span style={{ color: (field.charCodeAt(0) % 10 > 2) ? T.green : T.amber, fontSize: 10, fontWeight: 600 }}>{(field.charCodeAt(0) % 10 > 2) ? 'Populated' : 'Pending'}</span>
                       </div>
                     ))}
                   </div>
@@ -227,7 +227,7 @@ export default function RegulatoryStressSubmissionPage() {
                     {section.fields.map(field => (
                       <div key={field} style={{ background: T.bg, borderRadius: 8, padding: '8px 12px', fontSize: 11, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span>{field}</span>
-                        <span style={{ color: Math.random() > 0.5 ? T.green : T.amber, fontSize: 10, fontWeight: 600 }}>{Math.random() > 0.5 ? 'Populated' : 'Pending'}</span>
+                        <span style={{ color: (field.charCodeAt(0) % 2 === 0) ? T.green : T.amber, fontSize: 10, fontWeight: 600 }}>{(field.charCodeAt(0) % 2 === 0) ? 'Populated' : 'Pending'}</span>
                       </div>
                     ))}
                   </div>
