@@ -1018,7 +1018,7 @@ function TabBoardReport(){
   const toggleExpand=(key)=>setExpanded(p=>({...p,[key]:!p[key]}));
 
   const active=COMPANIES.filter(c=>c.included);
-  const avgScore=active.reduce((a,c)=>a+c.avgScore,0)/active.length;
+  const avgScore=active.length?active.reduce((a,c)=>a+c.avgScore,0)/active.length:0;
   const upgrades=active.filter(c=>c.momentum==='Upgrade').length;
   const downgrades=active.filter(c=>c.momentum==='Downgrade').length;
   const gwCount=active.filter(c=>c.greenwashRisk).length;

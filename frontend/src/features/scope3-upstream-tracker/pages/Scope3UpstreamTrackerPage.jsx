@@ -325,7 +325,7 @@ export default function Scope3UpstreamTrackerPage() {
       <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:20 }}>
         <KPI label="Total Upstream Scope 3" value={fmt(totalUpstream)+' tCO2e'} sub={`${filteredCompanies.length} companies`} accent={T.navy} />
         <KPI label="Largest Category" value={categoryAgg.sort((a,b)=>b.total-a.total)[0]?.name?.split(' ').slice(0,2).join(' ')} sub={fmt(categoryAgg.sort((a,b)=>b.total-a.total)[0]?.total)+' tCO2e'} accent='#0ea5e9' />
-        <KPI label="Avg DQS" value={(filteredCompanies.reduce((a,c)=>a+c.categories.reduce((s,x)=>s+x.dqs,0)/8,0)/filteredCompanies.length).toFixed(1)} sub="1=Best, 5=Worst" accent={T.amber} />
+        <KPI label="Avg DQS" value={filteredCompanies.length?(filteredCompanies.reduce((a,c)=>a+c.categories.reduce((s,x)=>s+x.dqs,0)/8,0)/filteredCompanies.length).toFixed(1):'0.0'} sub="1=Best, 5=Worst" accent={T.amber} />
         <KPI label="Methodology" value={selMethodology.split('-')[0]} sub="Click to toggle" accent={T.gold} />
       </div>
 

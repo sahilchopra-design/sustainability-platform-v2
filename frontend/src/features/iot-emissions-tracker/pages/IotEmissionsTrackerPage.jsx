@@ -958,7 +958,7 @@ export default function IotEmissionsTrackerPage(){
   /* ======================== TAB 4: COMPLIANCE & REPORTING ======================== */
   const renderCompliance=()=>{
     const filteredCompliance=complianceItems.filter(c=>regFilter==='All'||c.reg===regFilter);
-    const completePct=Math.round(filteredCompliance.filter(c=>c.status==='complete').length/filteredCompliance.length*100);
+    const completePct=filteredCompliance.length?Math.round(filteredCompliance.filter(c=>c.status==='complete').length/filteredCompliance.length*100):0;
     return(<div>
       <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
         {statBox('Verification',`${verificationScore}%`,verificationScore>=80?'Audit ready':'Needs attention',

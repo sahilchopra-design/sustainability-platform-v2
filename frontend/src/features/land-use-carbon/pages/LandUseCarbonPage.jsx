@@ -381,7 +381,7 @@ export default function LandUseCarbonPage(){
           <KPI label="Total Annual Credits" value={(stats.totalCredits/1000).toFixed(0)+'k tCO2e'} sub="issuable credits" color={T.green}/>
           <KPI label="Projected Revenue" value={'$'+stats.totalRevenue.toLocaleString()+'k'} sub="annual" color={T.gold}/>
           <KPI label="Verified" value={stats.verifiedPct+'%'} sub="of parcels" color={T.sage}/>
-          <KPI label="Avg Credit Price" value={'$'+Math.floor(filtered.reduce((a,p)=>a+p.creditPrice,0)/filtered.length)} sub="per tCO2e" color={T.navy}/>
+          <KPI label="Avg Credit Price" value={'$'+(filtered.length?Math.floor(filtered.reduce((a,p)=>a+p.creditPrice,0)/filtered.length):0)} sub="per tCO2e" color={T.navy}/>
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>

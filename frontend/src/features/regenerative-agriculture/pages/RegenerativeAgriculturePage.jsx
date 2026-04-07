@@ -556,7 +556,7 @@ export default function RegenerativeAgriculturePage(){
             <div style={{fontSize:13,color:T.textSec,lineHeight:1.8}}>
               <div><strong>Scope 3 Insetting:</strong> {filtered.filter(o=>o.insettingEligible).length} operations eligible for value chain insetting — emissions reductions within the company supply chain count toward Scope 3 targets.</div>
               <div style={{marginTop:8}}><strong>Offset Market:</strong> {filtered.filter(o=>!o.insettingEligible).length} operations generating credits for voluntary carbon market sale to third-party buyers.</div>
-              <div style={{marginTop:8,fontFamily:T.mono,fontSize:11,color:T.textMut}}>Avg carbon price: ${Math.floor(filtered.reduce((a,o)=>a+o.carbonPrice,0)/filtered.length)}/tCO2e | Registry split: {registryBreakdown.map(r=>r.name+': '+r.count).join(' | ')}</div>
+              <div style={{marginTop:8,fontFamily:T.mono,fontSize:11,color:T.textMut}}>Avg carbon price: ${filtered.length?Math.floor(filtered.reduce((a,o)=>a+o.carbonPrice,0)/filtered.length):0}/tCO2e | Registry split: {registryBreakdown.map(r=>r.name+': '+r.count).join(' | ')}</div>
             </div>
           </div>
         </Card>

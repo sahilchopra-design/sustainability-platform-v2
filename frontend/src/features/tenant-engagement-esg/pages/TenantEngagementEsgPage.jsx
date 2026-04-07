@@ -94,7 +94,7 @@ export default function TenantEngagementEsgPage(){
   const totalScope3=useMemo(()=>filtered.reduce((s,t)=>s+t.scope3Contribution,0),[filtered]);
   const avgEsgScore=useMemo(()=>Math.floor(filtered.reduce((s,t)=>s+t.esgScore,0)/(filtered.length||1)),[filtered]);
 
-  const clauseAdoption=useMemo(()=>CLAUSES.map(c=>({clause:c,adopted:filtered.filter(t=>t.clauses.find(cl=>cl.clause===c)?.adopted).length,total:filtered.length,rate:Math.floor(filtered.filter(t=>t.clauses.find(cl=>cl.clause===c)?.adopted).length/filtered.length*100)})),[filtered]);
+  const clauseAdoption=useMemo(()=>CLAUSES.map(c=>({clause:c,adopted:filtered.filter(t=>t.clauses.find(cl=>cl.clause===c)?.adopted).length,total:filtered.length,rate:filtered.length?Math.floor(filtered.filter(t=>t.clauses.find(cl=>cl.clause===c)?.adopted).length/filtered.length*100):0})),[filtered]);
 
   const sectorDist=useMemo(()=>SECTORS.map(s=>({sector:s,count:filtered.filter(t=>t.sector===s).length,avgEsg:Math.floor(filtered.filter(t=>t.sector===s).reduce((sum,t)=>sum+t.esgScore,0)/(filtered.filter(t=>t.sector===s).length||1))})).filter(d=>d.count>0),[filtered]);
 

@@ -205,7 +205,7 @@ function SectorPathwaysTab(){
   const onTrack=sectorCos.filter(c=>c.alignment>=50).length;
   const offTrack=sectorCos.length-onTrack;
   const sectorMilestones=MILESTONES_DATA.filter(m=>m.sector===activeSector);
-  const avgAlign=+(sectorCos.reduce((a,c)=>a+c.alignment,0)/sectorCos.length).toFixed(1);
+  const avgAlign=sectorCos.length?+(sectorCos.reduce((a,c)=>a+c.alignment,0)/sectorCos.length).toFixed(1):'0.0';
 
   /* build chart data combining pathway + company scatter overlay */
   const chartData=useMemo(()=>{
@@ -249,8 +249,8 @@ function SectorPathwaysTab(){
     {/* KPI row */}
     <div style={{...sCard,display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:16}}>
       <KPI label="Companies Tracked" value={sectorCos.length}/>
-      <KPI label="On Track" value={onTrack} sub={`${(onTrack/sectorCos.length*100).toFixed(0)}% of sector`}/>
-      <KPI label="Off Track" value={offTrack} sub={`${(offTrack/sectorCos.length*100).toFixed(0)}% of sector`}/>
+      <KPI label="On Track" value={onTrack} sub={`${(sectorCos.length?(onTrack/sectorCos.length*100):0).toFixed(0)}% of sector`}/>
+      <KPI label="Off Track" value={offTrack} sub={`${(sectorCos.length?(offTrack/sectorCos.length*100):0).toFixed(0)}% of sector`}/>
       <KPI label="Avg Alignment" value={`${avgAlign}%`}/>
       <KPI label="2050 Target" value={target2050} sub={SECTOR_UNITS[activeSector]}/>
     </div>
@@ -366,7 +366,7 @@ function SectorPathwaysTab(){
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={SECTORS.map(sec=>{
           const cos=COMPANIES.filter(c=>c.sector===sec);
-          const avgIntensity=cos.reduce((a,c)=>a+c.currentIntensity,0)/cos.length;
+          const avgIntensity=Math.max(1,cos.length)?cos.reduce((a,c)=>a+c.currentIntensity,0)/Math.max(1,cos.length):0;
           const base=SECTOR_2020[sec];const tgt=SECTOR_2050_15[sec];
           const pct=base!==tgt?((base-avgIntensity)/(base-tgt))*100:100;
           return {sector:sec,progress:+Math.max(0,Math.min(100,pct)).toFixed(1)};
@@ -386,7 +386,7 @@ function SectorPathwaysTab(){
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:10,marginBottom:16}}>
       {SECTORS.map(sec=>{
         const cos=COMPANIES.filter(c=>c.sector===sec);
-        const avg=+(cos.reduce((a,c)=>a+c.alignment,0)/cos.length).toFixed(0);
+        const avg=cos.length?+(cos.reduce((a,c)=>a+c.alignment,0)/cos.length).toFixed(0):0;
         const isActive=sec===activeSector;
         return <div key={sec} onClick={()=>setActiveSector(sec)} style={{
           ...sCard,marginBottom:0,cursor:'pointer',borderColor:isActive?T.navy:T.border,
@@ -832,9 +832,9 @@ function PortfolioPathwayTab(){
 
   const sectorStats=useMemo(()=>SECTORS.map(sec=>{
     const cos=COMPANIES.filter(c=>c.sector===sec);
-    const avgAlign=+(cos.reduce((a,c)=>a+c.alignment,0)/cos.length).toFixed(1);
-    const avgGap=+(cos.reduce((a,c)=>a+c.gap,0)/cos.length).toFixed(1);
-    const avgCapex=+(cos.reduce((a,c)=>a+c.capexAlign,0)/cos.length).toFixed(0);
+    const avgAlign=cos.length?+(cos.reduce((a,c)=>a+c.alignment,0)/cos.length).toFixed(1):'0.0';
+    const avgGap=cos.length?+(cos.reduce((a,c)=>a+c.gap,0)/cos.length).toFixed(1):'0.0';
+    const avgCapex=cos.length?+(cos.reduce((a,c)=>a+c.capexAlign,0)/cos.length).toFixed(0):0;
     return {sector:sec,avgAlign,avgGap,count:cos.length,avgCapex:+avgCapex,weight:sliders[sec]};
   }),[sliders]);
 

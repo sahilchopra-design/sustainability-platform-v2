@@ -138,7 +138,7 @@ export default function BuildingEnergyPerformancePage(){
 
   const strandingTimeline=useMemo(()=>{
     const years=[2025,2026,2027,2028,2029,2030,2032,2035,2040,2045,2050];
-    return years.map(y=>({year:y,stranded:filtered.filter(b=>b.strandingYear<=y).length,percentage:Math.floor(filtered.filter(b=>b.strandingYear<=y).length/filtered.length*100)}));
+    return years.map(y=>({year:y,stranded:filtered.filter(b=>b.strandingYear<=y).length,percentage:filtered.length?Math.floor(filtered.filter(b=>b.strandingYear<=y).length/filtered.length*100):0}));
   },[filtered]);
 
   const handleSort=(col)=>{if(sortCol===col){setSortDir(d=>d==='asc'?'desc':'asc');}else{setSortCol(col);setSortDir('desc');}};

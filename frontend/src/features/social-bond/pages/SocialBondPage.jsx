@@ -85,8 +85,8 @@ export default function SocialBondPage(){
 
   const kpis=useMemo(()=>{
     const total=filtered.reduce((s,b)=>s+b.amount,0);
-    const avgCoup=filtered.reduce((s,b)=>s+parseFloat(b.coupon),0)/filtered.length;
-    const avgTenor=filtered.reduce((s,b)=>s+b.tenor,0)/filtered.length;
+    const avgCoup=filtered.length?filtered.reduce((s,b)=>s+parseFloat(b.coupon),0)/filtered.length:0;
+    const avgTenor=filtered.length?filtered.reduce((s,b)=>s+b.tenor,0)/filtered.length:0;
     const icma=filtered.filter(b=>b.icmaAligned).length;
     return{count:filtered.length,total,avgCoup,avgTenor,icma};
   },[filtered]);
@@ -291,7 +291,7 @@ export default function SocialBondPage(){
     return(
       <div>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
-          {[{l:'ICMA Aligned',v:filtered.filter(b=>b.icmaAligned).length+'/'+filtered.length},{l:'External Review',v:filtered.filter(b=>b.externalReview).length},{l:'Impact Reports',v:filtered.filter(b=>b.impactReport).length},{l:'Avg Demand',v:(filtered.reduce((s,b)=>s+parseFloat(b.demandRatio),0)/filtered.length).toFixed(1)+'x'}].map((k,i)=>(
+          {[{l:'ICMA Aligned',v:filtered.filter(b=>b.icmaAligned).length+'/'+filtered.length},{l:'External Review',v:filtered.filter(b=>b.externalReview).length},{l:'Impact Reports',v:filtered.filter(b=>b.impactReport).length},{l:'Avg Demand',v:filtered.length?(filtered.reduce((s,b)=>s+parseFloat(b.demandRatio),0)/filtered.length).toFixed(1)+'x':'0.0x'}].map((k,i)=>(
             <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}>
               <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase'}}>{k.l}</div>
               <div style={{fontSize:22,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div>

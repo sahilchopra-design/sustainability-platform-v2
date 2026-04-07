@@ -43,7 +43,7 @@ export default function VintageCohortStrandedPage(){
   const filtered = useMemo(()=>ASSETS.filter(a=>(vintageFilter==='All'||a.vintage===vintageFilter)&&(sectorFilter==='All'||a.sector===sectorFilter)),[vintageFilter,sectorFilter]);
   const totalBV0 = filtered.reduce((s,a)=>s+a.bv0,0);
   const totalCurrent = filtered.reduce((s,a)=>s+a.currentBV,0);
-  const avgStrandProb = filtered.reduce((s,a)=>s+a.strandingProb,0)/filtered.length;
+  const avgStrandProb = filtered.length?filtered.reduce((s,a)=>s+a.strandingProb,0)/filtered.length:0;
 
   const cohortStats = useMemo(()=>COHORTS.map(c=>{
     const group = ASSETS.filter(a=>a.vintage===c);

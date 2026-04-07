@@ -73,7 +73,7 @@ export default function TransitionBondCredibilityPage() {
         <div>
           <div style={{ display:'flex', gap:16, marginBottom:20, flexWrap:'wrap' }}>
             {card('Bonds Tracked', filtered.length.toString(), 'SLB + Transition', T.navy)}
-            {card('Avg KPI Score', Math.round(filtered.reduce((s,b)=>s+b.kpiScore,0)/filtered.length)+'/100', 'Credibility score', T.gold)}
+            {card('Avg KPI Score', (filtered.length?Math.round(filtered.reduce((s,b)=>s+b.kpiScore,0)/filtered.length):0)+'/100', 'Credibility score', T.gold)}
             {card('Total Volume', '$'+filtered.reduce((s,b)=>s+b.amount,0).toFixed(1)+'B', 'Outstanding', T.green)}
             {card('High Credibility', filtered.filter(b=>b.kpiScore>=75).length.toString(), 'KPI ≥ 75', T.blue)}
           </div>

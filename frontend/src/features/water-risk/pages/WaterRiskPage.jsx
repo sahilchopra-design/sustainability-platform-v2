@@ -84,6 +84,7 @@ export default function WaterRiskPage(){
   const exportCSV=(data,fn)=>{if(!data.length)return;const h=Object.keys(data[0]);const csv=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
 
   const kpis=useMemo(()=>{
+    if(!filtered.length)return{count:0,avgStress:0,highRisk:0,avgRecycle:0,withPolicy:0};
     const avgStress=filtered.reduce((s,c)=>s+parseFloat(c.waterStressScore),0)/filtered.length;
     const highRisk=filtered.filter(c=>c.physicalRisk.includes('High')).length;
     const avgRecycle=filtered.reduce((s,c)=>s+parseFloat(c.recyclingRate),0)/filtered.length;
@@ -285,7 +286,7 @@ export default function WaterRiskPage(){
   const renderMitigation=()=>(
     <div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
-        {[{l:'SBTN Committed',v:filtered.filter(c=>c.sbtnStatus!=='Not Committed').length},{l:'Avg Target',v:(filtered.reduce((s,c)=>s+parseFloat(c.targetReduction),0)/filtered.length).toFixed(1)+'%'},{l:'Avg Achievement',v:(filtered.reduce((s,c)=>s+parseFloat(c.actualReduction),0)/filtered.length).toFixed(1)+'%'},{l:'CDP A/A-',v:filtered.filter(c=>c.cdpScore.startsWith('A')).length}].map((k,i)=>(
+        {[{l:'SBTN Committed',v:filtered.filter(c=>c.sbtnStatus!=='Not Committed').length},{l:'Avg Target',v:filtered.length?(filtered.reduce((s,c)=>s+parseFloat(c.targetReduction),0)/filtered.length).toFixed(1)+'%':'0.0%'},{l:'Avg Achievement',v:filtered.length?(filtered.reduce((s,c)=>s+parseFloat(c.actualReduction),0)/filtered.length).toFixed(1)+'%':'0.0%'},{l:'CDP A/A-',v:filtered.filter(c=>c.cdpScore.startsWith('A')).length}].map((k,i)=>(
           <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}>
             <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase'}}>{k.l}</div>
             <div style={{fontSize:22,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div>
