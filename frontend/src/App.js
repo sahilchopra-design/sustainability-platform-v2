@@ -491,6 +491,13 @@ const AnomalyDetectionEnginePage     = React.lazy(() => import("./features/anoma
 const PeerClusteringSegmentationPage = React.lazy(() => import("./features/peer-clustering-segmentation/pages/PeerClusteringSegmentationPage"));
 const ScenarioConditionalPredictionPage = React.lazy(() => import("./features/scenario-conditional-prediction/pages/ScenarioConditionalPredictionPage"));
 const MlGovernanceDashboardPage      = React.lazy(() => import("./features/ml-governance-dashboard/pages/MlGovernanceDashboardPage"));
+// Sprint DC — Climate-Integrated Actuarial Intelligence
+const ClimateMortalityLongevityPage      = React.lazy(() => import("./features/climate-mortality-longevity/pages/ClimateMortalityLongevityPage"));
+const PCClimatePricingPage               = React.lazy(() => import("./features/pc-climate-pricing/pages/PCClimatePricingPage"));
+const ClimateReserveAdequacyPage         = React.lazy(() => import("./features/climate-reserve-adequacy/pages/ClimateReserveAdequacyPage"));
+const SolvencyCapitalClimatePage         = React.lazy(() => import("./features/solvency-capital-climate/pages/SolvencyCapitalClimatePage"));
+const ClimateClaimsForecastingPage       = React.lazy(() => import("./features/climate-claims-forecasting/pages/ClimateClaimsForecastingPage"));
+// InsuranceClimateHubPage already declared at line 297
 // Sprint DB — Enterprise Climate Risk Capital & Supervisory Analytics
 const ClimateCapitalAdequacyPage         = React.lazy(() => import("./features/climate-capital-adequacy/pages/ClimateCapitalAdequacyPage"));
 const ClimateCVaRSuitePage               = React.lazy(() => import("./features/climate-cvar-suite/pages/ClimateCVaRSuitePage"));
@@ -1364,6 +1371,14 @@ const NAV_GROUPS = [
     { path: '/climate-risk-premium',           label: 'Climate Risk Premium Decomposer',      badge: '50 issuers · Spread decomposition · PD/LGD adjustment · Sector attribution · Factors',  code: 'EP-DB4' },
     { path: '/enterprise-climate-risk',        label: 'Enterprise Climate Risk Aggregator',   badge: '30 exposures · 8 entities · Diversification · HHI · TCFD Board Reporting · NGFS',      code: 'EP-DB5' },
     { path: '/systemic-climate-risk',          label: 'Systemic Climate Risk Monitor',        badge: '12 sectors · Network contagion · 15 CB indicators · 4 amplifiers · Macro-prudential',  code: 'EP-DB6' },
+  ]},
+  { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
+    { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
+    { path: '/pc-climate-pricing',             label: 'P&C Climate Pricing Engine',           badge: '6 perils · 30 zones · Rate adequacy · Climate loading · Scenario stress · Lloyd\'s',     code: 'EP-DC2' },
+    { path: '/climate-reserve-adequacy',       label: 'Climate Reserve Adequacy Analyzer',    badge: '8 LoB · IBNR · Climate dev factors · Run-off triangle · Solvency II · Tail risk',       code: 'EP-DC3' },
+    { path: '/solvency-capital-climate',       label: 'Solvency Capital Climate Engine',      badge: '15 insurers · SCR NatCat · Solvency II/NAIC · ORSA stress · Capital efficiency',        code: 'EP-DC4' },
+    { path: '/climate-claims-forecasting',     label: 'Climate Claims Forecasting Suite',     badge: '50 region-peril combos · Freq×Severity · NGFS 2025-2050 · Insurance gap · F×S model',  code: 'EP-DC5' },
+    { path: '/insurance-climate-hub',          label: 'Insurance Climate Intelligence Hub',   badge: '6 domains · 20 KRIs · 12 regulatory milestones · Board reporting · CRO dashboard',     code: 'EP-DC6' },
   ]},
   { label: 'Disclosure & Stranded Asset Analytics', icon: '📋', color: '#4f46e5', items: [
     { path: '/climate-litigation-risk-scorer',      label: 'Climate Litigation Risk Scorer',      badge: '50 companies · GCEL & Sabin Center · 8 claim types · 12 jurisdictions · Portfolio Overlay', code: 'EP-DA1' },
@@ -2398,6 +2413,14 @@ function AppContent() {
             <Route path="/peer-clustering-segmentation"     element={<PeerClusteringSegmentationPage />} />
             <Route path="/scenario-conditional-prediction"  element={<ScenarioConditionalPredictionPage />} />
             <Route path="/ml-governance-dashboard"          element={<MlGovernanceDashboardPage />} />
+            {/* Sprint DC — Insurance Climate Actuarial Suite */}
+            <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
+            <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
+            <Route path="/climate-reserve-adequacy"      element={<ClimateReserveAdequacyPage />} />
+            <Route path="/solvency-capital-climate"      element={<SolvencyCapitalClimatePage />} />
+            <Route path="/climate-claims-forecasting"    element={<ClimateClaimsForecastingPage />} />
+            <Route path="/insurance-climate-hub"         element={<InsuranceClimateHubPage />} />
+            {/* Note: /insurance-climate-hub also served by existing route at line 2214 — keeping Sprint DC entry as canonical */}
             {/* Sprint DB — Climate Risk Capital & Supervisory Analytics */}
             <Route path="/climate-capital-adequacy"        element={<ClimateCapitalAdequacyPage />} />
             <Route path="/climate-cvar-suite"              element={<ClimateCVaRSuitePage />} />
