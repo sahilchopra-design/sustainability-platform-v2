@@ -379,7 +379,7 @@ export default function IntegratedCarbonEmissionsPage(){
     if(dqSort==='dqs')d.sort((a,b)=>b.dqs-a.dqs);
     else if(dqSort==='total')d.sort((a,b)=>b.total-a.total);
     const hist=[0,0,0,0,0];d.forEach(r=>hist[r.dqs-1]++);
-    const avgDqs=+(d.reduce((a,r)=>a+r.dqs,0)/d.length).toFixed(1);
+    const avgDqs=d.length?+(d.reduce((a,r)=>a+r.dqs,0)/d.length).toFixed(1):0;
     const bySource={CDP:Math.round(d.length*0.35),AnnualReport:Math.round(d.length*0.25),Estimated:Math.round(d.length*0.22),Proxy:Math.round(d.length*0.18)};
     return{holdings:d,hist,avgDqs,bySource};
   },[portfolioData,dqScope,dqSort]);
