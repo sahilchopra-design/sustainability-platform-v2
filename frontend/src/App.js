@@ -491,6 +491,13 @@ const AnomalyDetectionEnginePage     = React.lazy(() => import("./features/anoma
 const PeerClusteringSegmentationPage = React.lazy(() => import("./features/peer-clustering-segmentation/pages/PeerClusteringSegmentationPage"));
 const ScenarioConditionalPredictionPage = React.lazy(() => import("./features/scenario-conditional-prediction/pages/ScenarioConditionalPredictionPage"));
 const MlGovernanceDashboardPage      = React.lazy(() => import("./features/ml-governance-dashboard/pages/MlGovernanceDashboardPage"));
+// Sprint DB — Enterprise Climate Risk Capital & Supervisory Analytics
+const ClimateCapitalAdequacyPage         = React.lazy(() => import("./features/climate-capital-adequacy/pages/ClimateCapitalAdequacyPage"));
+const ClimateCVaRSuitePage               = React.lazy(() => import("./features/climate-cvar-suite/pages/ClimateCVaRSuitePage"));
+const SupervisoryStressOrchestratorPage  = React.lazy(() => import("./features/supervisory-stress-orchestrator/pages/SupervisoryStressOrchestratorPage"));
+const ClimateRiskPremiumPage             = React.lazy(() => import("./features/climate-risk-premium/pages/ClimateRiskPremiumPage"));
+const EnterpriseClimateRiskPage          = React.lazy(() => import("./features/enterprise-climate-risk/pages/EnterpriseClimateRiskPage"));
+const SystemicClimateRiskPage            = React.lazy(() => import("./features/systemic-climate-risk/pages/SystemicClimateRiskPage"));
 // Sprint DA — Disclosure & Stranded Asset Analytics
 const ClimateLitigationRiskScorerPage    = React.lazy(() => import("./features/climate-litigation-risk-scorer/pages/ClimateLitigationRiskScorerPage"));
 const GreenwashingExposureMonitorPage    = React.lazy(() => import("./features/greenwashing-exposure-monitor/pages/GreenwashingExposureMonitorPage"));
@@ -1349,6 +1356,14 @@ const NAV_GROUPS = [
     { path: '/peer-clustering-segmentation',     label: 'Peer Clustering Segmentation',   badge: 'K-Means · Silhouette · Cluster Profiles · Migration Tracker · Engagement Priority',    code: 'EP-CX4' },
     { path: '/scenario-conditional-prediction',  label: 'Scenario Conditional Prediction', badge: 'Custom Scenarios · Conditional Scores · Sensitivity Surface · Pathway Analysis',      code: 'EP-CX5' },
     { path: '/ml-governance-dashboard',          label: 'ML Governance Dashboard',        badge: 'Model Inventory · Drift Detection · SHAP · Fed SR 11-7 · EU AI Act Alignment',        code: 'EP-CX6' },
+  ]},
+  { label: 'Climate Risk Capital & Supervisory', icon: '🏦', color: '#991b1b', items: [
+    { path: '/climate-capital-adequacy',       label: 'Climate Capital Adequacy Engine',      badge: '25 institutions · Pillar 2 add-ons · Basel IV haircuts · ECB/PRA/OSFI thresholds',     code: 'EP-DB1' },
+    { path: '/climate-cvar-suite',             label: 'Climate CVaR Quantification Suite',    badge: 'Physical + Transition CVaR · NGFS Phase IV · 5 asset classes · 3 horizons · 99th pct', code: 'EP-DB2' },
+    { path: '/supervisory-stress-orchestrator',label: 'Supervisory Stress Test Orchestrator', badge: 'ECB · PRA · OSFI · FED · 20 institutions · Adverse calibration · Submission tracker',  code: 'EP-DB3' },
+    { path: '/climate-risk-premium',           label: 'Climate Risk Premium Decomposer',      badge: '50 issuers · Spread decomposition · PD/LGD adjustment · Sector attribution · Factors',  code: 'EP-DB4' },
+    { path: '/enterprise-climate-risk',        label: 'Enterprise Climate Risk Aggregator',   badge: '30 exposures · 8 entities · Diversification · HHI · TCFD Board Reporting · NGFS',      code: 'EP-DB5' },
+    { path: '/systemic-climate-risk',          label: 'Systemic Climate Risk Monitor',        badge: '12 sectors · Network contagion · 15 CB indicators · 4 amplifiers · Macro-prudential',  code: 'EP-DB6' },
   ]},
   { label: 'Disclosure & Stranded Asset Analytics', icon: '📋', color: '#4f46e5', items: [
     { path: '/climate-litigation-risk-scorer',      label: 'Climate Litigation Risk Scorer',      badge: '50 companies · GCEL & Sabin Center · 8 claim types · 12 jurisdictions · Portfolio Overlay', code: 'EP-DA1' },
@@ -2383,6 +2398,13 @@ function AppContent() {
             <Route path="/peer-clustering-segmentation"     element={<PeerClusteringSegmentationPage />} />
             <Route path="/scenario-conditional-prediction"  element={<ScenarioConditionalPredictionPage />} />
             <Route path="/ml-governance-dashboard"          element={<MlGovernanceDashboardPage />} />
+            {/* Sprint DB — Climate Risk Capital & Supervisory Analytics */}
+            <Route path="/climate-capital-adequacy"        element={<ClimateCapitalAdequacyPage />} />
+            <Route path="/climate-cvar-suite"              element={<ClimateCVaRSuitePage />} />
+            <Route path="/supervisory-stress-orchestrator" element={<SupervisoryStressOrchestratorPage />} />
+            <Route path="/climate-risk-premium"            element={<ClimateRiskPremiumPage />} />
+            <Route path="/enterprise-climate-risk"         element={<EnterpriseClimateRiskPage />} />
+            <Route path="/systemic-climate-risk"           element={<SystemicClimateRiskPage />} />
             {/* Sprint DA — Disclosure & Stranded Asset Analytics */}
             <Route path="/climate-litigation-risk-scorer"      element={<ClimateLitigationRiskScorerPage />} />
             <Route path="/greenwashing-exposure-monitor"       element={<GreenwashingExposureMonitorPage />} />
