@@ -30,6 +30,7 @@ from sqlalchemy.orm import Session
 
 from db.base import get_db
 from db.models.portfolio_pg import UserPG, UserSessionPG
+from db.models.rbac import RbacUserProfilePG
 
 
 # ── Token extraction ─────────────────────────────────────────────────────────
@@ -106,13 +107,18 @@ def get_current_user_optional(
 # ── Role-based access ────────────────────────────────────────────────────────
 
 # Canonical role hierarchy (higher index = more privileged)
+# Includes both legacy platform roles and RBAC roles.
 ROLE_HIERARCHY: list[str] = [
     "viewer",
+    "demo",
+    "partner",
     "data_engineer",
     "compliance",
     "risk_analyst",
     "portfolio_manager",
+    "team_member",
     "admin",
+    "super_admin",
 ]
 
 
@@ -172,3 +178,32 @@ def require_min_role(minimum_role: str):
             )
         return user
     return _dependency
+
+
+def require_super_admin(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> UserPG:
+    """
+    Dependency: require the authenticated user to have rbac_role='super_admin'
+    in rbac_user_profiles.
+
+    Usage:
+        @router.delete("/admin-action")
+        def admin_action(user: UserPG = Depends(require_super_admin)):
+            ...
+    """
+    user = get_current_user(request, db)
+    try:
+        profile = db.query(RbacUserProfilePG).filter(
+            RbacUserProfilePG.user_id == user.user_id
+        ).first()
+    except Exception:
+        profile = None
+
+    if not profile or profile.rbac_role != "super_admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Super admin access required",
+        )
+    return user

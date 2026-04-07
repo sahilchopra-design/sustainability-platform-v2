@@ -12,6 +12,12 @@ import { DataDepthProvider } from './context/DataDepthContext';
 import DataDepthOverlay from './components/DataDepthOverlay';
 import DataDepthToggle from './components/DataDepthToggle';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import DemoBanner from './components/auth/DemoBanner';
+const LoginPage = React.lazy(() => import('./features/auth/pages/LoginPage'));
+const InviteAcceptPage = React.lazy(() => import('./features/auth/pages/InviteAcceptPage'));
+const AccessExpiredPage = React.lazy(() => import('./features/auth/pages/AccessExpiredPage'));
+const AdminPanelPage = React.lazy(() => import('./features/admin-panel/pages/AdminPanelPage'));
 
 // Platform Admin & Data Management
 const DataSourceManagerPage = React.lazy(() => import("./features/data-source-manager/pages/DataSourceManagerPage"));
@@ -1744,13 +1750,18 @@ function Sidebar({ search, setSearch, sidebarOpen }) {
   const [collapsed, setCollapsed] = useState({});
   const toggle = (label) => setCollapsed(c => ({ ...c, [label]: !c[label] }));
 
+  const { canAccess } = useAuth();
+
   const filtered = useMemo(() => {
-    if (!search) return NAV_GROUPS;
+    const accessible = NAV_GROUPS.map(g => ({
+      ...g, items: g.items.filter(i => canAccess(i.path)),
+    })).filter(g => g.items.length > 0);
+    if (!search) return accessible;
     const q = search.toLowerCase();
-    return NAV_GROUPS.map(g => ({
+    return accessible.map(g => ({
       ...g, items: g.items.filter(i => i.label.toLowerCase().includes(q) || i.badge.toLowerCase().includes(q) || i.code.toLowerCase().includes(q)),
     })).filter(g => g.items.length > 0);
-  }, [search]);
+  }, [search, canAccess]);
 
   if (!sidebarOpen) return null;
 
@@ -1950,15 +1961,44 @@ function StatusBar() {
 function AppContent() {
   const [search, setSearch] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { user, loading, daysRemaining } = useAuth();
+
+  if (loading) return <LoadingFallback />;
+
+  if (!user) {
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/invite/:token" element={<InviteAcceptPage />} />
+          <Route path="/access-expired" element={<AccessExpiredPage />} />
+          <Route path="*" element={<LoginPage />} />
+        </Routes>
+      </Suspense>
+    );
+  }
+
+  if (daysRemaining !== null && daysRemaining <= 0) {
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="*" element={<AccessExpiredPage />} />
+        </Routes>
+      </Suspense>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: T.font, color: T.text }}>
       <HeaderBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <DemoBanner />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar search={search} setSearch={setSearch} sidebarOpen={sidebarOpen} />
         <main style={{ flex: 1, overflowY: 'auto', background: T.bg, color: T.text }}>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
+            <Route path="/admin" element={<AdminPanelPage />} />
+            <Route path="/invite/:token" element={<InviteAcceptPage />} />
+            <Route path="/access-expired" element={<AccessExpiredPage />} />
             <Route path="/crypto-climate" element={<CryptoClimatePage />} />
             <Route path="/ai-governance" element={<AIGovernancePage />} />
             <Route path="/carbon-accounting-ai" element={<CarbonAccountingAIPage />} />
@@ -2649,11 +2689,13 @@ export default function App() {
           <CarbonCreditProvider>
           <ClimateRiskProvider>
           <BrowserRouter>
-            <GuidedModeProvider>
-              <DataDepthProvider>
-                <AppContent />
-              </DataDepthProvider>
-            </GuidedModeProvider>
+            <AuthProvider>
+              <GuidedModeProvider>
+                <DataDepthProvider>
+                  <AppContent />
+                </DataDepthProvider>
+              </GuidedModeProvider>
+            </AuthProvider>
           </BrowserRouter>
           </ClimateRiskProvider>
           </CarbonCreditProvider>

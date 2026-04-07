@@ -53,6 +53,7 @@ _PUBLIC_PATH_PREFIXES: tuple[str, ...] = (
     "/api/health",
     "/api/auth/",
     "/api/auth",       # exact match (login / register live here)
+    "/api/auth/invite/",  # invite token validation + acceptance (public)
     "/docs",
     "/redoc",
     "/openapi.json",

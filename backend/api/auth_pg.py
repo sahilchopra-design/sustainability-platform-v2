@@ -14,6 +14,7 @@ from fastapi import Depends
 
 from db.base import get_db
 from db.models.portfolio_pg import UserPG, UserSessionPG
+from db.models.rbac import RbacUserProfilePG, RbacModuleAccessPG, RbacRolePresetPG
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -191,6 +192,58 @@ def get_me(request: Request, db: Session = Depends(get_db)):
         except Exception:
             pass
 
+    # ── RBAC enrichment ───────────────────────────────────────────────────────
+    rbac_role = None
+    access_expires_at = None
+    is_read_only = False
+    allowed_module_paths = None  # None = all (super_admin)
+    display_org = None
+    days_remaining = None
+
+    try:
+        profile = db.query(RbacUserProfilePG).filter(
+            RbacUserProfilePG.user_id == user.user_id
+        ).first()
+
+        if profile:
+            rbac_role = profile.rbac_role
+            is_read_only = profile.is_read_only or False
+            display_org = profile.display_org
+            access_expires_at = profile.access_expires_at
+
+            if profile.access_expires_at:
+                exp = profile.access_expires_at
+                if exp.tzinfo is None:
+                    exp = exp.replace(tzinfo=timezone.utc)
+                delta = exp - datetime.now(timezone.utc)
+                days_remaining = max(0, delta.days)
+
+            if rbac_role == "super_admin":
+                allowed_module_paths = None  # unrestricted
+            else:
+                # Build effective path list: preset + grants - denies
+                base_paths: list = []
+                if profile.preset_id:
+                    preset = db.get(RbacRolePresetPG, profile.preset_id)
+                    if preset and preset.module_paths:
+                        base_paths = list(preset.module_paths)
+
+                overrides = db.query(RbacModuleAccessPG).filter(
+                    RbacModuleAccessPG.user_id == user.user_id
+                ).all()
+                now = datetime.now(timezone.utc)
+                grants = {
+                    o.module_path for o in overrides
+                    if o.access_type == "grant" and (o.expires_at is None or o.expires_at > now)
+                }
+                denies = {
+                    o.module_path for o in overrides
+                    if o.access_type == "deny" and (o.expires_at is None or o.expires_at > now)
+                }
+                allowed_module_paths = sorted((set(base_paths) | grants) - denies)
+    except Exception:
+        pass  # RBAC tables may not yet be migrated — degrade gracefully
+
     return {
         "user_id": user.user_id,
         "email": user.email,
@@ -200,6 +253,138 @@ def get_me(request: Request, db: Session = Depends(get_db)):
         "org_id": str(org_id) if org_id else None,
         "org_name": org_name,
         "is_active": getattr(user, "is_active", True),
+        # RBAC fields
+        "rbac_role": rbac_role,
+        "access_expires_at": access_expires_at.isoformat() if access_expires_at else None,
+        "is_read_only": is_read_only,
+        "allowed_module_paths": allowed_module_paths,
+        "display_org": display_org,
+        "days_remaining": days_remaining,
+    }
+
+
+@router.get("/invite/{token}")
+def get_invite(token: str, db: Session = Depends(get_db)):
+    """Public — validate an invite token and return invite metadata."""
+    from db.models.rbac import RbacAccessInvitePG
+    invite = db.query(RbacAccessInvitePG).filter(
+        RbacAccessInvitePG.invite_token == token
+    ).first()
+    if not invite:
+        raise HTTPException(404, "Invite not found")
+    now = datetime.now(timezone.utc)
+    expires = invite.invite_expires_at
+    if expires and expires.tzinfo is None:
+        expires = expires.replace(tzinfo=timezone.utc)
+    if invite.status != "pending":
+        raise HTTPException(410, f"Invite is {invite.status}")
+    if expires and expires < now:
+        invite.status = "expired"
+        db.commit()
+        raise HTTPException(410, "Invite has expired")
+    return {
+        "email": invite.email,
+        "rbac_role": invite.rbac_role,
+        "display_org": invite.display_org,
+        "access_duration_days": invite.access_duration_days,
+    }
+
+
+class AcceptInviteReq(BaseModel):
+    name: str
+    password: str
+
+
+@router.post("/invite/{token}/accept")
+def accept_invite(
+    token: str,
+    body: AcceptInviteReq,
+    response: Response,
+    db: Session = Depends(get_db),
+):
+    """Public — create account + RBAC profile from invite token."""
+    from db.models.rbac import RbacAccessInvitePG, RbacUserProfilePG
+    invite = db.query(RbacAccessInvitePG).filter(
+        RbacAccessInvitePG.invite_token == token
+    ).first()
+    if not invite:
+        raise HTTPException(404, "Invite not found")
+
+    now = datetime.now(timezone.utc)
+    expires = invite.invite_expires_at
+    if expires and expires.tzinfo is None:
+        expires = expires.replace(tzinfo=timezone.utc)
+    if invite.status != "pending":
+        raise HTTPException(410, f"Invite is {invite.status}")
+    if expires and expires < now:
+        invite.status = "expired"
+        db.commit()
+        raise HTTPException(410, "Invite has expired")
+
+    # Create user (or re-use if email already registered)
+    existing_user = db.query(UserPG).filter(UserPG.email == invite.email).first()
+    if existing_user:
+        user = existing_user
+        user.name = body.name
+        user.password_hash = _hash_pw(body.password)
+        user.is_active = True
+    else:
+        user = UserPG(
+            user_id=f"user_{uuid.uuid4().hex[:12]}",
+            email=invite.email,
+            name=body.name,
+            password_hash=_hash_pw(body.password),
+        )
+        db.add(user)
+        db.flush()
+
+    # Create / update RBAC profile
+    access_expires_at = None
+    if invite.access_duration_days:
+        access_expires_at = now + timedelta(days=invite.access_duration_days)
+
+    profile = db.query(RbacUserProfilePG).filter(
+        RbacUserProfilePG.user_id == user.user_id
+    ).first()
+    if profile:
+        profile.rbac_role = invite.rbac_role
+        profile.preset_id = invite.preset_id
+        profile.display_org = invite.display_org
+        profile.access_duration_days = invite.access_duration_days
+        profile.access_expires_at = access_expires_at
+        profile.is_active = True
+        profile.updated_by = "invite_accept"
+        profile.updated_at = now
+    else:
+        profile = RbacUserProfilePG(
+            user_id=user.user_id,
+            rbac_role=invite.rbac_role,
+            preset_id=invite.preset_id,
+            display_org=invite.display_org,
+            access_duration_days=invite.access_duration_days,
+            access_expires_at=access_expires_at,
+            created_by="invite_accept",
+            updated_by="invite_accept",
+        )
+        db.add(profile)
+
+    # Mark invite accepted
+    invite.status = "accepted"
+    invite.accepted_by_user_id = user.user_id
+    invite.accepted_at = now
+
+    session_token = _create_session(db, user.user_id)
+    db.commit()
+
+    _set_cookie(response, session_token)
+    return {
+        "session_token": session_token,
+        "user_id": user.user_id,
+        "email": user.email,
+        "name": user.name,
+        "rbac_role": invite.rbac_role,
+        "display_org": invite.display_org,
+        "access_expires_at": access_expires_at.isoformat() if access_expires_at else None,
     }
 
 

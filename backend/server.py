@@ -291,6 +291,9 @@ from api.v1.routes.regulatory_horizon import router as regulatory_horizon_router
 from api.v1.routes.climate_tech import router as climate_tech_router                            # E118 Climate Tech Investment — CTVC 11 sectors / IEA NZE / BloombergNEF / MAC curves / VC data
 from api.v1.routes.comprehensive_reporting import router as comprehensive_reporting_router      # E119 Comprehensive Report Aggregator — CSRD/SFDR/TCFD/TNFD/ISSB / XBRL / ESAP / cross-framework
 
+# RBAC Admin
+from api.v1.routes.rbac_admin import router as rbac_admin_router
+
 # Market Data Stack (added 2026-03-23)
 # yfinance India service + Finnhub ESG are service-layer only (no dedicated router needed)
 # Accessed via unified_market_data.py auto-routing and directly in E105/E138 route files
@@ -642,6 +645,9 @@ app.include_router(nature_capital_accounting_router)  # E116 Nature Capital Acco
 app.include_router(regulatory_horizon_router)         # E117 Regulatory Horizon Scanning
 app.include_router(climate_tech_router)               # E118 Climate Tech Investment
 app.include_router(comprehensive_reporting_router)    # E119 Comprehensive Report Aggregator
+
+# RBAC Admin
+app.include_router(rbac_admin_router)
 
 # ── Global error handlers ─────────────────────────────────────────────────────
 from middleware.error_handler import register_error_handlers
