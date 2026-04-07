@@ -121,7 +121,7 @@ function readPortfolio() {
 
 function demoHoldings() {
   const sample = GLOBAL_COMPANY_MASTER.filter(c => c.scope1_mt > 0 && c.revenue_usd_mn > 0).slice(0, 20);
-  const w = 100 / sample.length;
+  const w = sample.length ? 100 / sample.length : 0;
   return sample.map(c => ({ isin: c.isin, name: c.company_name, company: c, weight: w, exposure_usd_mn: c.market_cap_usd_mn ? c.market_cap_usd_mn * 0.01 : 50 }));
 }
 
