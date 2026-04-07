@@ -231,7 +231,7 @@ export default function LandUseCarbonPage(){
           <KPI label="Net LULUCF Flux" value={(stats.netFlux>0?'+':'')+stats.netFlux+'k tCO2e'} sub="land sector balance" color={stats.netFlux>0?T.green:T.red}/>
           <KPI label="Conversion Events" value={filtered.filter(p=>p.priorLandUse!==p.landType).length} sub="land use changes" color={T.amber}/>
           <KPI label="Conversion Emissions" value={Math.floor(filtered.reduce((a,p)=>a+p.conversionEmissions,0)/1000)+'k tCO2e'} sub="from LUC" color={T.red}/>
-          <KPI label="Tier 3 Coverage" value={Math.floor(filtered.filter(p=>p.ipccTier==='Tier 3 (Modelled)').length/filtered.length*100)+'%'} sub="highest accuracy" color={T.navy}/>
+          <KPI label="Tier 3 Coverage" value={(filtered.length?Math.floor(filtered.filter(p=>p.ipccTier==='Tier 3 (Modelled)').length/filtered.length*100):0)+'%'} sub="highest accuracy" color={T.navy}/>
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>

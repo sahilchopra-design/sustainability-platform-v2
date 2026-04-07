@@ -629,7 +629,7 @@ export default function CsrdEsrsAutomationPage(){
     // Coverage by standard
     const covByStd=ESRS_STANDARDS.map(std=>{
       const dps=DATAPOINT_INVENTORY.filter(d=>d.standard===std.id);
-      const avg=Math.round(dps.reduce((s,d)=>s+d.coverage,0)/dps.length);
+      const avg=dps.length?Math.round(dps.reduce((s,d)=>s+d.coverage,0)/dps.length):0;
       return{standard:std.id,name:std.name,avgCoverage:avg,total:dps.length,gaps:dps.filter(d=>d.gap).length};
     });
 

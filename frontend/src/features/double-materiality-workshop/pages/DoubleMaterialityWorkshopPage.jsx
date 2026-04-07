@@ -273,7 +273,7 @@ function IroRegistry({scores}){
                 <span style={{fontSize:11,color:T.text}}>{tc.type}</span>
                 <div style={{display:'flex',alignItems:'center',gap:6}}>
                   <div style={{width:40,height:4,background:T.borderL,borderRadius:2,overflow:'hidden'}}>
-                    <div style={{width:(tc.count/allIros.length*100)+'%',height:'100%',background:iroTypeColor(tc.type),borderRadius:2}}/>
+                    <div style={{width:(allIros.length?tc.count/allIros.length*100:0)+'%',height:'100%',background:iroTypeColor(tc.type),borderRadius:2}}/>
                   </div>
                   <span style={{fontFamily:T.mono,fontSize:12,fontWeight:700,color:iroTypeColor(tc.type),minWidth:16}}>{tc.count}</span>
                 </div>
