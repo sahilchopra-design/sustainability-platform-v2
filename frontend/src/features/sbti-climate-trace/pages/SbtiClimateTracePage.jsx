@@ -282,7 +282,7 @@ export default function SbtiClimateTracePage() {
                 </tr>
               </thead>
               <tbody>
-                {CT_SECTORS.sort((a,b)=>b.emissions_Mt-a.emissions_Mt).map((s, i) => (
+                {[...CT_SECTORS].sort((a,b)=>b.emissions_Mt-a.emissions_Mt).map((s, i) => (
                   <tr key={s.sector} style={{ background: i % 2 === 0 ? '#fff' : T.cream + '80',
                     borderBottom: `1px solid ${T.navy}11` }}>
                     <td style={{ padding: '9px 12px', fontWeight: 600, color: T.navy }}>{s.sector}</td>

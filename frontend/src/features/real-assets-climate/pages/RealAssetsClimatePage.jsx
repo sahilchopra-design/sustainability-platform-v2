@@ -103,7 +103,7 @@ export default function RealAssetsClimatePage(){
     <div style={{marginTop:12}}><button style={ss.btn} onClick={()=>csvExport(CRREM,'crrem_pathways')}>Export CSV</button></div>
   </div>);
 
-  const renderStrand=()=>{const strandData=ASSETS.sort((a,b)=>a.strandingYear-b.strandingYear);const yearDist=useMemo(()=>{const m={};strandData.forEach(a=>{const bucket=a.strandingYear<=2030?'By 2030':a.strandingYear<=2035?'2031-2035':a.strandingYear<=2040?'2036-2040':'After 2040';m[bucket]=(m[bucket]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
+  const renderStrand=()=>{const strandData=[...ASSETS].sort((a,b)=>a.strandingYear-b.strandingYear);const yearDist=useMemo(()=>{const m={};strandData.forEach(a=>{const bucket=a.strandingYear<=2030?'By 2030':a.strandingYear<=2035?'2031-2035':a.strandingYear<=2040?'2036-2040':'After 2040';m[bucket]=(m[bucket]||0)+1;});return Object.entries(m).map(([name,value])=>({name,value}));},[]);
   return(<div style={ss.card}>
     <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Asset Stranding Analysis</div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>

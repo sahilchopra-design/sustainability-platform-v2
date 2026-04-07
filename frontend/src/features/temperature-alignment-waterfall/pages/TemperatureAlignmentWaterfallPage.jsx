@@ -65,7 +65,7 @@ export default function TemperatureAlignmentWaterfallPage() {
   const waterfallData = useMemo(() => {
     let running = BASE_ITR;
     const items = [{ name: 'Base (1.5C)', value: BASE_ITR, fill: T.green, running: BASE_ITR }];
-    SECTORS.sort((a, b) => b.itrContrib - a.itrContrib).forEach(s => {
+    [...SECTORS].sort((a, b) => b.itrContrib - a.itrContrib).forEach(s => {
       if (!excludeList.includes(s.name)) {
         running += s.itrContrib;
         items.push({ name: s.name, value: s.itrContrib, fill: s.itrContrib > 0 ? T.red : T.green, running });

@@ -110,7 +110,7 @@ export default function ClimateTechPage(){
   const renderInvestment=()=>{
     const co=COMPANIES[selectedCo];
     const stageDist=STAGES.map(s=>({name:s,count:COMPANIES.filter(c=>c.stage===s).length,funding:Math.round(COMPANIES.filter(c=>c.stage===s).reduce((a,c)=>a+c.fundingTotal,0))}));
-    const topFunded=COMPANIES.sort((a,b)=>b.fundingTotal-a.fundingTotal).slice(0,15).map(c=>({name:c.name.slice(0,18),funding:c.fundingTotal,valuation:Math.round(c.valuation/10)}));
+    const topFunded=[...COMPANIES].sort((a,b)=>b.fundingTotal-a.fundingTotal).slice(0,15).map(c=>({name:c.name.slice(0,18),funding:c.fundingTotal,valuation:Math.round(c.valuation/10)}));
     const yearlyFunding=[{year:2021,total:Math.round(totalFunding*0.12)},{year:2022,total:Math.round(totalFunding*0.18)},{year:2023,total:Math.round(totalFunding*0.22)},{year:2024,total:Math.round(totalFunding*0.25)},{year:2025,total:Math.round(totalFunding*0.23)}];
     return(<div>
       <Row cols="1fr 1fr 1fr 1fr"><Kpi label="Total Funding" value={`$${(totalFunding/1000).toFixed(1)}B`} accent={T.navy}/><Kpi label="Avg Round Size" value={`$${Math.round(COMPANIES.reduce((a,c)=>a+c.lastRound,0)/COMPANIES.length)}M`} accent={T.gold}/><Kpi label="IPO Pipeline" value={COMPANIES.filter(c=>c.ipoReady).length} sub={`${Math.round(COMPANIES.filter(c=>c.ipoReady).length/80*100)}% of universe`} accent={T.sage}/><Kpi label="Pre-Seed/Seed" value={COMPANIES.filter(c=>c.stage==='Seed').length} accent={T.amber}/></Row>
@@ -146,7 +146,7 @@ export default function ClimateTechPage(){
 
   const renderImpact=()=>{
     const co=COMPANIES[selectedCo];
-    const topImpact=COMPANIES.sort((a,b)=>b.avoidedEmissions-a.avoidedEmissions).slice(0,20).map(c=>({name:c.name.slice(0,18),co2:c.avoidedEmissions,scalability:c.scalabilityScore}));
+    const topImpact=[...COMPANIES].sort((a,b)=>b.avoidedEmissions-a.avoidedEmissions).slice(0,20).map(c=>({name:c.name.slice(0,18),co2:c.avoidedEmissions,scalability:c.scalabilityScore}));
     const sectorImpact=SECTORS.map(s=>{const cs=COMPANIES.filter(c=>c.sector===s);return{name:s,avgCO2:Math.round(cs.reduce((a,c)=>a+c.avoidedEmissions,0)/(cs.length||1)),avgScale:Math.round(cs.reduce((a,c)=>a+c.scalabilityScore,0)/(cs.length||1))};});
     const scatterData=COMPANIES.slice(0,50).map(c=>({name:c.name,x:c.scalabilityScore,y:c.avoidedEmissions,z:c.fundingTotal}));
     return(<div>

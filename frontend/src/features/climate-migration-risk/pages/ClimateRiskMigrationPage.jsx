@@ -288,7 +288,7 @@ export default function ClimateRiskMigrationPage() {
           <div style={s.card}>
             <div style={s.cardTitle}>Displacement Rate by Sector</div>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={LABOR_SECTORS.sort((a, b) => b.displacement - a.displacement)}>
+              <BarChart data={[...LABOR_SECTORS].sort((a, b) => b.displacement - a.displacement)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="sector" tick={{ fontSize:11 }} />
                 <YAxis tick={{ fontSize:11 }} />

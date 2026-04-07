@@ -111,7 +111,7 @@ export default function CascadingDefaultModelerPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Systemic Risk Contribution (Delta CoVaR)</h3>
           <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={ENTITIES.sort((a,b)=>b.deltaCoVaR-a.deltaCoVaR)} layout="vertical">
+            <BarChart data={[...ENTITIES].sort((a,b)=>b.deltaCoVaR-a.deltaCoVaR)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:11}} tickFormatter={v=>`${(v*100).toFixed(1)}%`}/><YAxis dataKey="name" type="category" tick={{fontSize:10}} width={140}/>
               <Tooltip formatter={v=>`${(v*100).toFixed(2)}%`} contentStyle={{fontFamily:T.mono,fontSize:11}}/><Bar dataKey="deltaCoVaR" name="Delta CoVaR" fill={T.purple}>
                 {ENTITIES.map((e,i)=><Cell key={i} fill={e.deltaCoVaR>0.05?T.red:e.deltaCoVaR>0.03?T.orange:T.blue}/>)}
@@ -156,7 +156,7 @@ export default function CascadingDefaultModelerPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Capital Impact Assessment</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={ENTITIES.sort((a,b)=>b.capitalHit-a.capitalHit)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <BarChart data={[...ENTITIES].sort((a,b)=>b.capitalHit-a.capitalHit)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis dataKey="name" tick={{fontSize:10}} angle={-15}/><YAxis tick={{fontSize:11}}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/>
               <Bar dataKey="capitalHit" name="Capital Hit ($M)">

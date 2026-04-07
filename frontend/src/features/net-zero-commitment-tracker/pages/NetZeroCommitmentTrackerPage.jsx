@@ -1063,7 +1063,7 @@ export default function NetZeroCommitmentTrackerPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {PORTFOLIO_HOLDINGS.sort((a,b) => b.allocationPct - a.allocationPct).map(h => (
+                  {[...PORTFOLIO_HOLDINGS].sort((a,b) => b.allocationPct - a.allocationPct).map(h => (
                     <tr key={h.id} style={{ borderBottom:`1px solid ${T.border}` }}>
                       <td style={{ padding:'7px 8px', fontWeight:500 }}>{h.manager}</td>
                       <td style={{ padding:'7px 8px', fontFamily:T.mono, fontSize:10 }}>{h.allocationPct}%</td>

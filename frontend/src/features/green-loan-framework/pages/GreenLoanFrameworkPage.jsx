@@ -139,9 +139,9 @@ export default function GreenLoanFrameworkPage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Borrower ESG Assessment Scores</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={LOANS.sort((a,b)=>b.score-a.score)}>
+            <BarChart data={[...LOANS].sort((a,b)=>b.score-a.score)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="borrower" tick={{ fontSize:10, fontFamily:T.mono }}/><YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0,100]}/><Tooltip/>
-              <Bar dataKey="score" name="ESG Score">{LOANS.sort((a,b)=>b.score-a.score).map((l,i)=><Cell key={i} fill={l.score>=80?T.green:l.score>=65?T.gold:T.amber}/>)}</Bar>
+              <Bar dataKey="score" name="ESG Score">{[...LOANS].sort((a,b)=>b.score-a.score).map((l,i)=><Cell key={i} fill={l.score>=80?T.green:l.score>=65?T.gold:T.amber}/>)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

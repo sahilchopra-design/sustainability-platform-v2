@@ -117,7 +117,7 @@ export default function TargetVsActionTrackerPage() {
           <div style={card}>
             <div style={lbl}>Target vs Projected Achievement — All Companies</div>
             <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={COMPANIES.sort((a, b) => b.gapPct - a.gapPct)}>
+              <BarChart data={[...COMPANIES].sort((a, b) => b.gapPct - a.gapPct)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} /><Tooltip /><Legend wrapperStyle={{ fontSize: 10 }} />

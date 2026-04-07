@@ -89,7 +89,7 @@ export default function PandemicClimateNexusPage(){
     return{disease:d,totalCurrent:+totalCurrent.toFixed(1),projections};
   }),[]);
 
-  const ghsData=useMemo(()=>COUNTRIES.sort((a,b)=>b.ghsIndex-a.ghsIndex).map(c=>({name:c.name,ghs:c.ghsIndex,capacity:c.healthcareCapacityBeds/10,pharmaVuln:c.pharmaSupplyVuln})),[]);
+  const ghsData=useMemo(()=>[...COUNTRIES].sort((a,b)=>b.ghsIndex-a.ghsIndex).map(c=>({name:c.name,ghs:c.ghsIndex,capacity:c.healthcareCapacityBeds/10,pharmaVuln:c.pharmaSupplyVuln})),[]);
 
   const investData=useMemo(()=>{
     const totalPharma=COUNTRIES.reduce((s,c)=>s+c.pharmaExposure,0);
@@ -242,7 +242,7 @@ export default function PandemicClimateNexusPage(){
               {DISEASES.map(d=>(<th key={d} style={thStyle}>{d} (M)</th>))}
               <th style={thStyle}>Total (M)</th>
             </tr></thead>
-            <tbody>{COUNTRIES.sort((a,b)=>{const aT=a.diseaseRange.reduce((s,d)=>s+ +d.rcpProjections[rcpIdx][horizonIdx],0);const bT=b.diseaseRange.reduce((s,d)=>s+ +d.rcpProjections[rcpIdx][horizonIdx],0);return bT-aT;}).slice(0,30).map(c=>{
+            <tbody>{[...COUNTRIES].sort((a,b)=>{const aT=a.diseaseRange.reduce((s,d)=>s+ +d.rcpProjections[rcpIdx][horizonIdx],0);const bT=b.diseaseRange.reduce((s,d)=>s+ +d.rcpProjections[rcpIdx][horizonIdx],0);return bT-aT;}).slice(0,30).map(c=>{
               const total=c.diseaseRange.reduce((s,d)=>s+ +d.rcpProjections[rcpIdx][horizonIdx],0);
               return(<tr key={c.id}><td style={{...tdStyle,fontWeight:600}}>{c.name}</td>
                 {c.diseaseRange.map((d,di)=>(<td key={di} style={tdStyle}>{d.rcpProjections[rcpIdx][horizonIdx]}</td>))}
@@ -309,7 +309,7 @@ export default function PandemicClimateNexusPage(){
             <thead style={{position:'sticky',top:0,background:T.surface}}><tr>
               <th style={thStyle}>Country</th><th style={thStyle}>GHS Index</th><th style={thStyle}>Beds/10K</th><th style={thStyle}>Pharma Vuln</th><th style={thStyle}>AMR Index</th><th style={thStyle}>Pop (M)</th>
             </tr></thead>
-            <tbody>{COUNTRIES.sort((a,b)=>a.ghsIndex-b.ghsIndex).slice(0,30).map(c=>(<tr key={c.id}>
+            <tbody>{[...COUNTRIES].sort((a,b)=>a.ghsIndex-b.ghsIndex).slice(0,30).map(c=>(<tr key={c.id}>
               <td style={{...tdStyle,fontWeight:600}}>{c.name}</td>
               <td style={{...tdStyle,color:c.ghsIndex<40?T.red:T.text}}>{c.ghsIndex}</td>
               <td style={tdStyle}>{(c.healthcareCapacityBeds/10).toFixed(0)}</td>
@@ -335,7 +335,7 @@ export default function PandemicClimateNexusPage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Healthcare Infrastructure Investment Needs ($M)</div>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={COUNTRIES.sort((a,b)=>b.healthInfraGapM-a.healthInfraGapM).slice(0,20).map(c=>({name:c.name,gap:c.healthInfraGapM}))} layout="vertical" margin={{left:90,right:20,top:5,bottom:5}}>
+            <BarChart data={[...COUNTRIES].sort((a,b)=>b.healthInfraGapM-a.healthInfraGapM).slice(0,20).map(c=>({name:c.name,gap:c.healthInfraGapM}))} layout="vertical" margin={{left:90,right:20,top:5,bottom:5}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:10,fill:T.textSec}} width={85}/>
@@ -347,7 +347,7 @@ export default function PandemicClimateNexusPage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>One Health Investment vs Pandemic Bond Issuance ($M)</div>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={COUNTRIES.sort((a,b)=>b.oneHealthInvestM-a.oneHealthInvestM).slice(0,20).map(c=>({name:c.name,oneHealth:c.oneHealthInvestM,bonds:c.pandemicBondM}))} margin={{top:5,right:20,bottom:30,left:10}}>
+            <BarChart data={[...COUNTRIES].sort((a,b)=>b.oneHealthInvestM-a.oneHealthInvestM).slice(0,20).map(c=>({name:c.name,oneHealth:c.oneHealthInvestM,bonds:c.pandemicBondM}))} margin={{top:5,right:20,bottom:30,left:10}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec,angle:-35,textAnchor:'end'}} height={60}/>
               <YAxis tick={{fontSize:10,fill:T.textSec}}/>
@@ -362,7 +362,7 @@ export default function PandemicClimateNexusPage(){
       <div style={card({marginBottom:20})}>
         <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Pharma Portfolio Exposure by Country ($M)</div>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={COUNTRIES.sort((a,b)=>b.pharmaExposure-a.pharmaExposure).slice(0,25).map(c=>({name:c.name,exposure:c.pharmaExposure}))} margin={{top:5,right:20,bottom:30,left:10}}>
+          <BarChart data={[...COUNTRIES].sort((a,b)=>b.pharmaExposure-a.pharmaExposure).slice(0,25).map(c=>({name:c.name,exposure:c.pharmaExposure}))} margin={{top:5,right:20,bottom:30,left:10}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
             <XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec,angle:-35,textAnchor:'end'}} height={60}/>
             <YAxis tick={{fontSize:10,fill:T.textSec}}/>
@@ -378,7 +378,7 @@ export default function PandemicClimateNexusPage(){
             <thead style={{position:'sticky',top:0,background:T.surface}}><tr>
               <th style={thStyle}>Country</th><th style={thStyle}>Pharma Exp ($M)</th><th style={thStyle}>Infra Gap ($M)</th><th style={thStyle}>Pandemic Bonds ($M)</th><th style={thStyle}>One Health ($M)</th><th style={thStyle}>GHS</th><th style={thStyle}>Risk Tier</th>
             </tr></thead>
-            <tbody>{COUNTRIES.sort((a,b)=>b.healthInfraGapM-a.healthInfraGapM).map(c=>(<tr key={c.id}>
+            <tbody>{[...COUNTRIES].sort((a,b)=>b.healthInfraGapM-a.healthInfraGapM).map(c=>(<tr key={c.id}>
               <td style={{...tdStyle,fontWeight:600}}>{c.name}</td>
               <td style={tdStyle}>${fmt(c.pharmaExposure*1e6)}</td><td style={tdStyle}>${fmt(c.healthInfraGapM*1e6)}</td>
               <td style={tdStyle}>${fmt(c.pandemicBondM*1e6)}</td><td style={tdStyle}>${fmt(c.oneHealthInvestM*1e6)}</td>

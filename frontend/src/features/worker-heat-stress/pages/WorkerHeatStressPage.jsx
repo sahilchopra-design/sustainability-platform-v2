@@ -104,7 +104,7 @@ export default function WorkerHeatStressPage(){
     return{reg,avgScore:avg,compliantPct:Math.floor(compliant/scores.length*100),nonCompliant:scores.filter(s=>s<40).length};
   }),[]);
 
-  const portfolioData=useMemo(()=>COMPANIES.sort((a,b)=>b.litigationRisk-a.litigationRisk).slice(0,30).map(c=>({
+  const portfolioData=useMemo(()=>[...COMPANIES].sort((a,b)=>b.litigationRisk-a.litigationRisk).slice(0,30).map(c=>({
     name:c.name,sector:c.sector,litRisk:c.litigationRisk,esg:c.esgIntegration,outdoorPct:c.outdoorPct,priority:c.engagementPriority
   })),[]);
 
