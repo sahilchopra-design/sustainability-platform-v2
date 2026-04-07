@@ -1,502 +1,583 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  Cell, Legend, PieChart, Pie, LineChart, Line, ScatterChart, Scatter,
+  LineChart, Line, ComposedChart, Area,
+  ResponsiveContainer, Cell,
 } from 'recharts';
 
 const T = {
-  bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
-  navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a',
-  sageL:'#7ba67d', teal:'#5a8a6a', text:'#1b3a5c', textSec:'#5c6b7e',
-  textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706',
-  blue:'#2563eb', orange:'#ea580c', purple:'#7c3aed', card:'#ffffff',
-  sub:'#f6f4f0', indigo:'#4f46e5',
-  font:"'DM Sans','SF Pro Display',system-ui,sans-serif",
-  mono:"'JetBrains Mono','SF Mono','Fira Code',monospace",
+  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
+  sub: '#f6f4f0', muted: '#6b7280', indigo: '#4f46e5', gold: '#b8860b',
+  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706',
+  navy: '#1e3a5f', teal: '#0f766e', purple: '#7c3aed', orange: '#ea580c',
 };
 
-const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-const FRAMEWORKS = ['TCFD','IFRS S1','IFRS S2','ESRS E1','ESRS E2','ESRS E3','ESRS E4','ESRS E5','GRI 305'];
-const SECTORS = ['Energy','Materials','Utilities','Financials','Industrials','Consumer','Technology','Healthcare','Transport'];
+const FRAMEWORKS = ['TCFD', 'IFRS_S1', 'IFRS_S2', 'ESRS_E1', 'ESRS_E2', 'ESRS_E3', 'ESRS_E4', 'ESRS_E5', 'GRI_305', 'CDP', 'SASB', 'UK_TCFD'];
+const FRAMEWORK_LABELS = { TCFD: 'TCFD', IFRS_S1: 'IFRS S1', IFRS_S2: 'IFRS S2', ESRS_E1: 'ESRS E1', ESRS_E2: 'ESRS E2', ESRS_E3: 'ESRS E3', ESRS_E4: 'ESRS E4', ESRS_E5: 'ESRS E5', GRI_305: 'GRI 305', CDP: 'CDP', SASB: 'SASB', UK_TCFD: 'UK TCFD' };
+const SECTORS = ['Energy', 'Utilities', 'Materials', 'Financials', 'Industrials', 'Consumer Staples', 'Real Estate', 'Transport', 'Agriculture', 'Technology', 'Healthcare', 'Services'];
+const JURISDICTIONS = ['USA', 'UK', 'EU', 'Germany', 'France', 'Australia', 'Canada', 'Japan', 'Netherlands', 'Switzerland', 'Ireland', 'Singapore'];
+const REPORT_TYPES = ['Standalone', 'Integrated', 'Proxy', 'Form10K'];
+const ASSURANCE_LEVELS = ['None', 'Limited', 'Reasonable'];
 
-const COMPANY_NAMES = [
-  'Atlas Energy','Nordic Power','Meridian Capital','Pacific Holdings','Summit Materials',
-  'Coastal Utilities','BlueWave Corp','Verdant Finance','Ironclad Industries','Aurelia Partners',
-  'Zenith Logistics','Cascade Power','Obsidian Capital','Terraverde Inc','Silver Ridge',
-  'Boreal Industries','Eclipse Energy','Polaris Group','Ember Resources','Cobalt Mining',
-  'Solstice Holdings','Quarry Systems','Forgepoint Ltd','Riviera Assets','Tempest Finance',
-  'Glacier Corp','Nexus Materials','Opal Holdings','Prism Utilities','Quantum Energy',
-  'Redwood Capital','Sterling Group','Titan Industries','Umbra Partners','Vortex Power',
-  'Westfield Corp','Xenon Holdings','Yeldon Finance','Zephyr Energy','Acumen Capital',
-  'Bridgepoint Ltd','Canopy Resources','Delta Industrials','Enviro Corp','Frontier Assets',
-];
+// Which frameworks are mandatory per jurisdiction
+const JUR_MANDATORY = {
+  UK: ['TCFD', 'UK_TCFD', 'GRI_305'],
+  EU: ['ESRS_E1', 'ESRS_E2', 'ESRS_E3', 'ESRS_E4', 'ESRS_E5', 'TCFD'],
+  Germany: ['ESRS_E1', 'ESRS_E2', 'ESRS_E3', 'ESRS_E4', 'ESRS_E5'],
+  France: ['ESRS_E1', 'ESRS_E2', 'TCFD', 'GRI_305'],
+  USA: ['TCFD', 'SASB', 'CDP', 'GRI_305'],
+  Australia: ['TCFD', 'UK_TCFD', 'SASB'],
+  Canada: ['TCFD', 'IFRS_S1', 'IFRS_S2', 'SASB'],
+  Japan: ['TCFD', 'IFRS_S1', 'IFRS_S2'],
+  Netherlands: ['ESRS_E1', 'ESRS_E2', 'TCFD'],
+  Switzerland: ['TCFD', 'IFRS_S1', 'IFRS_S2'],
+  Ireland: ['ESRS_E1', 'ESRS_E2', 'TCFD'],
+  Singapore: ['TCFD', 'IFRS_S1', 'IFRS_S2', 'SASB'],
+};
 
-const RAW_COMPANIES = Array.from({ length: 45 }, (_, i) => {
-  const tcfd = Math.round(20 + sr(i * 13) * 75);
-  const ifrsS1 = Math.round(15 + sr(i * 13 + 1) * 80);
-  const ifrsS2 = Math.round(10 + sr(i * 13 + 2) * 85);
-  const esrsE1 = Math.round(25 + sr(i * 13 + 3) * 70);
-  const esrsE2 = Math.round(10 + sr(i * 13 + 4) * 80);
-  const esrsE3 = Math.round(15 + sr(i * 13 + 5) * 75);
-  const esrsE4 = Math.round(5 + sr(i * 13 + 6) * 85);
-  const esrsE5 = Math.round(10 + sr(i * 13 + 7) * 80);
-  const gri305 = Math.round(20 + sr(i * 13 + 8) * 75);
-  const overall = Math.round(
-    tcfd * 0.20 + ifrsS2 * 0.20 + esrsE1 * 0.20 + gri305 * 0.15 +
-    ifrsS1 * 0.05 + esrsE2 * 0.05 + esrsE3 * 0.05 + esrsE4 * 0.05 + esrsE5 * 0.05
-  );
+const IMPROVEMENT_TIPS = {
+  TCFD: 'Add scenario analysis covering 1.5°C, 2°C, and 3°C+ pathways with quantitative financial impact.',
+  IFRS_S1: 'Disclose all significant sustainability-related risks and opportunities with financial materiality assessments.',
+  IFRS_S2: 'Include Scope 1-3 emissions, transition plans with interim milestones, and physical risk quantification.',
+  ESRS_E1: 'Complete all E1 disclosure requirements including GHG inventory, climate targets, and transition plan financing.',
+  ESRS_E2: 'Disclose pollution sources, targets, and monitoring metrics per ESRS E2 requirements.',
+  ESRS_E3: 'Report water consumption, withdrawal, and stress exposure per ESRS E3 framework.',
+  ESRS_E4: 'Assess biodiversity impacts and dependencies, disclosing material sites and TNFD alignment.',
+  ESRS_E5: 'Report circular economy metrics including resource flows, waste, and circularity KPIs.',
+  GRI_305: 'Report Scope 1, 2, and 3 emissions with GHG intensity metrics against base year.',
+  CDP: 'Submit complete CDP questionnaire covering governance, strategy, risk management, and targets.',
+  SASB: 'Apply sector-specific SASB standards with quantitative metrics for each material topic.',
+  UK_TCFD: 'Meet all UK TCFD mandatory reporting requirements including quantified scenario analysis.',
+};
+
+const ENTITY_NAMES = Array.from({ length: 180 }, (_, i) => {
+  const corps = ['Apex Corp', 'GlobalCo', 'TerraPlc', 'InvestFirst', 'CapitalSE', 'AssetMgmt', 'PrimeFund', 'ClearCo', 'TrustFirst', 'NovaCorp', 'MarketAG', 'VentureLtd', 'EquityInc', 'FundPrime', 'PortfolioGrp', 'AlphaHoldings', 'BetaPartners', 'GammaTrust', 'DeltaCo', 'EpsilonSE'];
+  return `${corps[i % corps.length]} ${Math.floor(i / corps.length) > 0 ? String.fromCharCode(65 + (Math.floor(i / corps.length) - 1) % 26) : ''}`.trim();
+});
+
+const ENTITIES = Array.from({ length: 180 }, (_, i) => {
+  const sectorIdx = Math.floor(sr(i * 7) * 12);
+  const jurIdx = Math.floor(sr(i * 11) * 12);
+  const jur = JURISDICTIONS[jurIdx];
+  const reportTypeIdx = Math.floor(sr(i * 13) * 4);
+  const assuranceIdx = Math.floor(sr(i * 17) * 3);
+  const assuranceLevel = ASSURANCE_LEVELS[assuranceIdx];
+  const assuranceMult = assuranceIdx === 2 ? 1.2 : assuranceIdx === 1 ? 1.1 : 1.0;
+  const frameworkScores = {};
+  FRAMEWORKS.forEach((f, fi) => {
+    frameworkScores[f] = Math.round(sr(i * 19 + fi * 100) * 90 + 5) * assuranceMult;
+    frameworkScores[f] = Math.min(100, Math.round(frameworkScores[f]));
+  });
+  const overallScore = Math.round(FRAMEWORKS.reduce((s, f) => s + frameworkScores[f], 0) / FRAMEWORKS.length);
+  const gapCount = FRAMEWORKS.filter(f => frameworkScores[f] < 50).length;
+  const mandatory = JUR_MANDATORY[jur] || ['TCFD'];
+  const mandatoryGap = mandatory.filter(f => frameworkScores[f] < 60).length;
+  const marketCapB = +(sr(i * 23) * 200 + 0.5).toFixed(1);
+  const dataQualityScore = Math.round(sr(i * 29) * 70 + 25);
+  const peerRank = i + 1;
+  const disclosureYear = 2021 + Math.floor(sr(i * 31) * 3);
+  const trajectory3yr = +(sr(i * 37) * 20 - 5).toFixed(1);
   return {
     id: i + 1,
-    name: COMPANY_NAMES[i],
-    sector: SECTORS[i % SECTORS.length],
-    tcfd, ifrsS1, ifrsS2, esrsE1, esrsE2, esrsE3, esrsE4, esrsE5, gri305,
-    overall,
-    mandatory: sr(i * 13 + 9) > 0.4,
+    name: ENTITY_NAMES[i] || `Entity ${i + 1}`,
+    sector: SECTORS[sectorIdx],
+    jurisdiction: jur,
+    marketCapB,
+    frameworkScores,
+    overallScore,
+    peerRank,
+    disclosureYear,
+    reportType: REPORT_TYPES[reportTypeIdx],
+    assuranceLevel,
+    dataQualityScore,
+    gapCount,
+    mandatoryGap,
+    materialityAssessed: sr(i * 41) > 0.4,
+    doubleMaterialityDone: sr(i * 43) > 0.55,
+    quantitativeTargets: sr(i * 47) > 0.35,
+    forwardLookingScenarios: sr(i * 53) > 0.5,
+    thirdPartyVerified: assuranceIdx > 0,
+    trajectory3yr,
   };
 });
 
-// assign peer ranks by overall desc
-const sorted45 = [...RAW_COMPANIES].sort((a, b) => b.overall - a.overall);
-const COMPANIES = RAW_COMPANIES.map(c => ({
-  ...c,
-  peerRank: sorted45.findIndex(s => s.id === c.id) + 1,
-}));
+const fmtPct = v => `${v.toFixed(0)}%`;
+const scoreColor = s => s >= 70 ? T.green : s >= 40 ? T.amber : T.red;
 
-const TCFD_RECS = [
-  { id: 'G-a', area: 'Governance', recommendation: 'Board oversight of climate-related risks & opportunities' },
-  { id: 'G-b', area: 'Governance', recommendation: 'Management role in assessing climate-related issues' },
-  { id: 'S-a', area: 'Strategy', recommendation: 'Climate-related risks & opportunities over short/medium/long term' },
-  { id: 'S-b', area: 'Strategy', recommendation: 'Impact of climate-related risks on business, strategy & financial planning' },
-  { id: 'S-c', area: 'Strategy', recommendation: 'Resilience of strategy under different climate scenarios' },
-  { id: 'RM-a', area: 'Risk Management', recommendation: 'Processes for identifying and assessing climate-related risks' },
-  { id: 'RM-b', area: 'Risk Management', recommendation: 'Processes for managing climate-related risks' },
-  { id: 'RM-c', area: 'Risk Management', recommendation: 'Integration into overall risk management' },
-  { id: 'MT-a', area: 'Metrics & Targets', recommendation: 'Metrics used to assess climate-related risks & opportunities' },
-  { id: 'MT-b', area: 'Metrics & Targets', recommendation: 'Scope 1, 2 and 3 GHG emissions and related risks' },
-  { id: 'MT-c', area: 'Metrics & Targets', recommendation: 'Targets used to manage climate-related risks & opportunities' },
-].map((r, j) => ({
-  ...r,
-  industryAvg: Math.round(30 + sr(j * 29) * 55),
-  topQuartile: Math.round(60 + sr(j * 29 + 1) * 35),
-}));
-
-const IMPROVEMENT_ROADMAP = [
-  { milestone: 'TCFD Governance & Strategy Full Disclosure', framework: 'TCFD', deadline: '2026-Q3', effort: 'Medium', impact: Math.round(2 + sr(0 * 41) * 12) },
-  { milestone: 'IFRS S2 Climate Risk Quantification', framework: 'IFRS S2', deadline: '2026-Q4', effort: 'High', impact: Math.round(2 + sr(1 * 41) * 12) },
-  { milestone: 'ESRS E1 Scope 1/2/3 Complete Reporting', framework: 'ESRS E1', deadline: '2026-Q3', effort: 'High', impact: Math.round(2 + sr(2 * 41) * 12) },
-  { milestone: 'GRI 305 Emissions Intensity Metrics', framework: 'GRI 305', deadline: '2026-Q4', effort: 'Low', impact: Math.round(2 + sr(3 * 41) * 12) },
-  { milestone: 'ESRS E2-E5 Biodiversity & Water Coverage', framework: 'ESRS E2', deadline: '2027-Q1', effort: 'Medium', impact: Math.round(2 + sr(4 * 41) * 12) },
-  { milestone: 'IFRS S1 General Sustainability Baseline', framework: 'IFRS S1', deadline: '2027-Q2', effort: 'Low', impact: Math.round(2 + sr(5 * 41) * 12) },
-];
-
-const FW_KEYS = ['tcfd','ifrsS1','ifrsS2','esrsE1','esrsE2','esrsE3','esrsE4','esrsE5','gri305'];
-const FW_COLORS = [T.navy, T.navyL, T.indigo, T.green, T.sage, T.teal, T.amber, T.orange, T.gold];
-
-const scoreColor = (v) => v >= 70 ? T.green : v >= 40 ? T.amber : T.red;
-const scoreBg = (v) => v >= 70 ? '#dcfce7' : v >= 40 ? '#fef3c7' : '#fee2e2';
-const quartile = (rank) => rank <= 11 ? 'Q1' : rank <= 22 ? 'Q2' : rank <= 33 ? 'Q3' : 'Q4';
-const qColor = (q) => ({ Q1: T.green, Q2: T.sage, Q3: T.amber, Q4: T.red }[q]);
-
-const EFFORT_X = { Low: 1, Medium: 2, High: 3 };
-
-const TABS = ['Adequacy Scores', 'Gap Heatmap', 'Framework Alignment', 'Peer Ranking', 'Improvement Roadmap'];
-
-const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', minWidth: 150, flex: 1 }}>
-    <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 24, fontWeight: 700, color: color || T.navy, fontFamily: T.mono }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>{sub}</div>}
+const KpiCard = ({ label, value, sub, color }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', flex: 1, minWidth: 130 }}>
+    <div style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 5 }}>{label}</div>
+    <div style={{ fontSize: 20, fontWeight: 700, color: color || T.text }}>{value}</div>
+    {sub && <div style={{ fontSize: 10, color: T.muted, marginTop: 3 }}>{sub}</div>}
   </div>
 );
 
-const Badge = ({ label, color, bg }) => (
-  <span style={{ background: bg || '#e0e7ff', color: color || T.indigo, borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 600, fontFamily: T.mono }}>{label}</span>
+const ScoreBadge = ({ val }) => (
+  <span style={{ background: scoreColor(val) + '18', color: scoreColor(val), border: `1px solid ${scoreColor(val)}40`, borderRadius: 4, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{val}</span>
 );
 
+const MiniBar = ({ val, max = 100 }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+    <div style={{ width: 50, height: 6, background: T.border, borderRadius: 3 }}>
+      <div style={{ height: 6, width: `${Math.min(100, val / max * 100)}%`, background: scoreColor(val), borderRadius: 3 }} />
+    </div>
+    <span style={{ fontSize: 10, color: scoreColor(val), fontWeight: 600 }}>{val}</span>
+  </div>
+);
+
+const TABS = ['Disclosure Dashboard', 'Entity Database', 'Framework Deep Dive', 'Peer Benchmarking', 'Mandatory Requirements', 'Assurance & Quality', 'Summary & Export'];
+
 export default function DisclosureAdequacyAnalyzerPage() {
-  const [tab, setTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [sectorFilter, setSectorFilter] = useState('All');
-  const [mandatoryFilter, setMandatoryFilter] = useState('All');
-  const [sortRankDir, setSortRankDir] = useState('asc');
+  const [jurFilter, setJurFilter] = useState('All');
+  const [frameworkFilter, setFrameworkFilter] = useState([]);
+  const [assuranceFilter, setAssuranceFilter] = useState('All');
+  const [scoreMin, setScoreMin] = useState(0);
+  const [reportTypeFilter, setReportTypeFilter] = useState('All');
+  const [gapFilter, setGapFilter] = useState(12);
+  const [search, setSearch] = useState('');
+  const [sortCol, setSortCol] = useState('overallScore');
+  const [sortDir, setSortDir] = useState('desc');
+  const [selectedEntity, setSelectedEntity] = useState(null);
+  const [compareA, setCompareA] = useState(null);
+  const [compareB, setCompareB] = useState(null);
+  const [compareMode, setCompareMode] = useState(false);
 
   const filtered = useMemo(() => {
-    let arr = COMPANIES;
-    if (sectorFilter !== 'All') arr = arr.filter(c => c.sector === sectorFilter);
-    if (mandatoryFilter === 'Mandatory') arr = arr.filter(c => c.mandatory);
-    if (mandatoryFilter === 'Voluntary') arr = arr.filter(c => !c.mandatory);
-    return arr;
-  }, [sectorFilter, mandatoryFilter]);
-
-  // Tab 0 KPIs
-  const kpis0 = useMemo(() => {
-    if (!filtered.length) return { avg: 0, mandatoryRate: 0, voluntaryRate: 0, above70: 0, lowest: 0 };
-    const avg = Math.round(filtered.reduce((s, c) => s + c.overall, 0) / filtered.length);
-    const mandatory = filtered.filter(c => c.mandatory);
-    const voluntary = filtered.filter(c => !c.mandatory);
-    const mandatoryRate = mandatory.length ? Math.round(mandatory.filter(c => c.overall >= 50).length / mandatory.length * 100) : 0;
-    const voluntaryRate = voluntary.length ? Math.round(voluntary.filter(c => c.overall >= 50).length / voluntary.length * 100) : 0;
-    const above70 = filtered.filter(c => c.overall >= 70).length;
-    const lowest = filtered.length ? Math.min(...filtered.map(c => c.overall)) : 0;
-    return { avg, mandatoryRate, voluntaryRate, above70, lowest };
-  }, [filtered]);
-
-  const barData0 = useMemo(() => {
-    if (!filtered.length) return [];
-    return [...filtered].sort((a, b) => b.overall - a.overall).slice(0, 30).map(c => ({
-      name: c.name.split(' ').slice(-1)[0],
-      fullName: c.name,
-      score: c.overall,
-      fill: scoreColor(c.overall),
-    }));
-  }, [filtered]);
-
-  const pieData0 = useMemo(() => {
-    if (!filtered.length) return [];
-    const q1 = filtered.filter(c => c.peerRank <= 11).length;
-    const q2 = filtered.filter(c => c.peerRank > 11 && c.peerRank <= 22).length;
-    const q3 = filtered.filter(c => c.peerRank > 22 && c.peerRank <= 33).length;
-    const q4 = filtered.filter(c => c.peerRank > 33).length;
-    return [
-      { name: 'Q1 (Top)', value: q1, fill: T.green },
-      { name: 'Q2', value: q2, fill: T.sage },
-      { name: 'Q3', value: q3, fill: T.amber },
-      { name: 'Q4 (Bottom)', value: q4, fill: T.red },
-    ].filter(d => d.value > 0);
-  }, [filtered]);
-
-  const fwAvgBar = useMemo(() => {
-    if (!COMPANIES.length) return [];
-    return FRAMEWORKS.map((fw, fi) => {
-      const key = FW_KEYS[fi];
-      const avg = Math.round(COMPANIES.reduce((s, c) => s + c[key], 0) / COMPANIES.length);
-      return { fw: fw.replace(' ', '\u00a0'), avg, fill: FW_COLORS[fi] };
+    if (!ENTITIES.length) return [];
+    let arr = [...ENTITIES];
+    if (sectorFilter !== 'All') arr = arr.filter(e => e.sector === sectorFilter);
+    if (jurFilter !== 'All') arr = arr.filter(e => e.jurisdiction === jurFilter);
+    if (assuranceFilter !== 'All') arr = arr.filter(e => e.assuranceLevel === assuranceFilter);
+    if (reportTypeFilter !== 'All') arr = arr.filter(e => e.reportType === reportTypeFilter);
+    if (frameworkFilter.length > 0) arr = arr.filter(e => frameworkFilter.every(f => e.frameworkScores[f] >= 50));
+    if (search) arr = arr.filter(e => e.name.toLowerCase().includes(search.toLowerCase()));
+    arr = arr.filter(e => e.overallScore >= scoreMin && e.gapCount <= gapFilter);
+    return [...arr].sort((a, b) => {
+      const av = a[sortCol], bv = b[sortCol];
+      if (typeof av === 'number') return sortDir === 'asc' ? av - bv : bv - av;
+      return sortDir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
     });
-  }, []);
+  }, [sectorFilter, jurFilter, frameworkFilter, assuranceFilter, scoreMin, reportTypeFilter, gapFilter, search, sortCol, sortDir]);
 
-  // Tab 1
-  const heatRows = useMemo(() => [...filtered].sort((a, b) => b.overall - a.overall).slice(0, 30), [filtered]);
+  const avgScore = filtered.length ? (filtered.reduce((s, e) => s + e.overallScore, 0) / filtered.length).toFixed(1) : '0';
 
-  const gapBarData = useMemo(() => {
-    if (!filtered.length) return [];
-    return FRAMEWORKS.map((fw, fi) => {
-      const key = FW_KEYS[fi];
-      const avg = filtered.reduce((s, c) => s + c[key], 0) / filtered.length;
-      return { fw, gap: Math.round(100 - avg) };
+  const scoreDist = useMemo(() => [
+    [0, 25], [25, 50], [50, 70], [70, 85], [85, 100]
+  ].map(([lo, hi]) => ({
+    range: `${lo}-${hi}`,
+    count: filtered.filter(e => e.overallScore >= lo && e.overallScore < hi).length,
+  })), [filtered]);
+
+  const frameworkCoverage = useMemo(() => FRAMEWORKS.map(f => ({
+    framework: FRAMEWORK_LABELS[f],
+    avgScore: filtered.length ? Math.round(filtered.reduce((s, e) => s + e.frameworkScores[f], 0) / filtered.length) : 0,
+    above70: filtered.filter(e => e.frameworkScores[f] >= 70).length,
+    below50: filtered.filter(e => e.frameworkScores[f] < 50).length,
+  })), [filtered]);
+
+  const sectorLeaders = useMemo(() => SECTORS.map(s => {
+    const ents = filtered.filter(e => e.sector === s);
+    if (!ents.length) return null;
+    const sorted = [...ents].sort((a, b) => b.overallScore - a.overallScore);
+    return { sector: s, count: ents.length, avgScore: Math.round(ents.reduce((a, e) => a + e.overallScore, 0) / ents.length), leader: sorted[0]?.name, laggard: sorted[sorted.length - 1]?.name };
+  }).filter(Boolean).sort((a, b) => b.avgScore - a.avgScore), [filtered]);
+
+  const jurMandatoryMatrix = useMemo(() => JURISDICTIONS.map(jur => {
+    const mandatoryFwks = JUR_MANDATORY[jur] || [];
+    const ents = ENTITIES.filter(e => e.jurisdiction === jur);
+    const complianceScores = mandatoryFwks.map(f => {
+      const avg = ents.length ? ents.reduce((s, e) => s + e.frameworkScores[f], 0) / ents.length : 0;
+      return { framework: FRAMEWORK_LABELS[f], score: Math.round(avg) };
     });
-  }, [filtered]);
-
-  const tcfdGrouped = useMemo(() => TCFD_RECS.map(r => ({
-    name: r.id,
-    industryAvg: r.industryAvg,
-    topQuartile: r.topQuartile,
-  })), []);
-
-  // Tab 2
-  const fwTableData = useMemo(() => FRAMEWORKS.map((fw, fi) => {
-    const key = FW_KEYS[fi];
-    const avg = Math.round(COMPANIES.reduce((s, c) => s + c[key], 0) / COMPANIES.length);
-    const above70 = COMPANIES.filter(c => c[key] >= 70).length;
-    const gap = 100 - avg;
-    const mandatory = ['ESRS E1','ESRS E2','ESRS E3','ESRS E4','ESRS E5'].includes(fw) ? 'CSRD' :
-      fw === 'IFRS S1' || fw === 'IFRS S2' ? 'ISSB' : 'Voluntary';
-    const keyGap = gap > 50 ? 'Scenario analysis missing' : gap > 30 ? 'Metrics incomplete' : 'Near compliant';
-    return { fw, mandatory, avg, above70, keyGap };
+    return { jur, mandatoryCount: mandatoryFwks.length, entityCount: ents.length, avgGap: ents.length ? Math.round(ents.reduce((s, e) => s + e.mandatoryGap, 0) / ents.length) : 0, complianceScores };
   }), []);
 
-  const radarData = useMemo(() => FRAMEWORKS.map((fw, fi) => {
-    const key = FW_KEYS[fi];
-    const avg = Math.round(COMPANIES.reduce((s, c) => s + c[key], 0) / COMPANIES.length);
-    return { subject: fw, A: avg, fullMark: 100 };
-  }), []);
+  const drillEntity = selectedEntity;
 
-  const tcfdSorted = useMemo(() => [...TCFD_RECS].sort((a, b) => b.industryAvg - a.industryAvg), []);
+  const radarData = useMemo(() => {
+    if (!drillEntity) return [];
+    return FRAMEWORKS.map(f => ({ subject: FRAMEWORK_LABELS[f], score: drillEntity.frameworkScores[f], fullMark: 100 }));
+  }, [drillEntity]);
 
-  const esrsBar = useMemo(() => ['esrsE1','esrsE2','esrsE3','esrsE4','esrsE5'].map((key, i) => {
-    const avg = Math.round(COMPANIES.reduce((s, c) => s + c[key], 0) / COMPANIES.length);
-    return { name: `ESRS E${i + 1}`, avg, fill: FW_COLORS[3 + i] };
-  }), []);
+  const compareRadarData = useMemo(() => {
+    if (!compareA || !compareB) return [];
+    return FRAMEWORKS.map(f => ({ subject: FRAMEWORK_LABELS[f], a: compareA.frameworkScores[f], b: compareB.frameworkScores[f], fullMark: 100 }));
+  }, [compareA, compareB]);
 
-  // Tab 3
-  const rankTable = useMemo(() => {
-    const arr = [...filtered].sort((a, b) => sortRankDir === 'asc' ? a.peerRank - b.peerRank : b.peerRank - a.peerRank);
-    return arr;
-  }, [filtered, sortRankDir]);
+  const handleSort = useCallback(col => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortCol(col); setSortDir('desc'); }
+  }, [sortCol]);
 
-  const histData = useMemo(() => {
-    const buckets = Array.from({ length: 10 }, (_, i) => ({ range: `${i * 10}-${i * 10 + 10}`, count: 0 }));
-    COMPANIES.forEach(c => {
-      const idx = Math.min(9, Math.floor(c.overall / 10));
-      buckets[idx].count++;
-    });
-    return buckets;
-  }, []);
-
-  const sectorAvg = useMemo(() => SECTORS.map(sec => {
-    const arr = COMPANIES.filter(c => c.sector === sec);
-    const avg = arr.length ? Math.round(arr.reduce((s, c) => s + c.overall, 0) / arr.length) : 0;
-    return { sector: sec, avg };
-  }), []);
-
-  const percentileCurve = useMemo(() => sorted45.map((c, i) => ({
-    rank: i + 1,
-    score: c.overall,
-  })), []);
-
-  // Tab 4
-  const scatterData = useMemo(() => IMPROVEMENT_ROADMAP.map(r => ({
-    x: EFFORT_X[r.effort],
-    y: r.impact,
-    name: r.milestone.split(' ').slice(0, 3).join(' '),
-  })), []);
-
-  const roadmapBar = useMemo(() => [...IMPROVEMENT_ROADMAP].sort((a, b) => b.impact - a.impact).map(r => ({
-    name: r.framework,
-    impact: r.impact,
-    fill: FW_COLORS[FRAMEWORKS.indexOf(r.framework)] || T.indigo,
-  })), []);
-
-  const effortPie = useMemo(() => {
-    const map = {};
-    IMPROVEMENT_ROADMAP.forEach(r => { map[r.framework] = (map[r.framework] || 0) + 1; });
-    return Object.entries(map).map(([fw, count], i) => ({ name: fw, value: count, fill: FW_COLORS[i % FW_COLORS.length] }));
+  const toggleFramework = useCallback(f => {
+    setFrameworkFilter(prev => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', background: T.bg, fontFamily: T.font, color: T.text }}>
-      {/* Header */}
-      <div style={{ background: T.navy, borderBottom: `3px solid ${T.gold}`, padding: '18px 32px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-          <span style={{ background: T.gold, color: T.navy, borderRadius: 4, padding: '3px 10px', fontFamily: T.mono, fontWeight: 700, fontSize: 12 }}>EP-DA3</span>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#ffffff' }}>Disclosure Adequacy Analyzer</h1>
+    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+            <div style={{ background: T.blue, borderRadius: 8, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 12 }}>EP</div>
+            <div>
+              <div style={{ fontSize: 10, color: T.muted, letterSpacing: 1, textTransform: 'uppercase' }}>EP-DA3 · Disclosure & Stranded Asset Analytics</div>
+              <h1 style={{ fontSize: 21, fontWeight: 700, margin: 0 }}>Disclosure Adequacy Analyzer</h1>
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: T.muted }}>180 entities · 12 disclosure frameworks · jurisdiction mandatory matrix · assurance-adjusted scoring · peer benchmarking</div>
         </div>
-        <div style={{ color: T.goldL, fontSize: 13, fontFamily: T.mono }}>45 companies · TCFD 11 recommendations · IFRS S1/S2 · ESRS E1-E5 · GRI 305 · peer ranking</div>
-      </div>
 
-      {/* Tab Bar */}
-      <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, padding: '0 32px', display: 'flex', gap: 0 }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{
-            padding: '12px 20px', border: 'none', background: 'none', cursor: 'pointer',
-            fontFamily: T.font, fontSize: 13, fontWeight: tab === i ? 700 : 400,
-            color: tab === i ? T.navy : T.textSec,
-            borderBottom: tab === i ? `2px solid ${T.gold}` : '2px solid transparent',
-          }}>{t}</button>
-        ))}
-      </div>
-
-      <div style={{ padding: '24px 32px', maxWidth: 1600 }}>
+        <div style={{ display: 'flex', gap: 2, marginBottom: 20, borderBottom: `2px solid ${T.border}`, overflowX: 'auto', paddingBottom: 1 }}>
+          {TABS.map((t, i) => (
+            <button key={t} onClick={() => setActiveTab(i)} style={{ padding: '8px 14px', border: 'none', background: activeTab === i ? T.blue : 'transparent', color: activeTab === i ? '#fff' : T.muted, borderRadius: '6px 6px 0 0', cursor: 'pointer', fontWeight: activeTab === i ? 600 : 400, fontSize: 12, whiteSpace: 'nowrap' }}>{t}</button>
+          ))}
+        </div>
 
         {/* Filters */}
-        {(tab === 0 || tab === 1 || tab === 3) && (
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, textTransform: 'uppercase' }}>Sector</label>
-              <select value={sectorFilter} onChange={e => setSectorFilter(e.target.value)}
-                style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surface, fontFamily: T.font, fontSize: 13, color: T.text }}>
-                <option value="All">All Sectors</option>
-                {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 14, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-end' }}>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Search</div>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Entity name..." style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12, width: 140 }} />
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Sector</div>
+            <select value={sectorFilter} onChange={e => setSectorFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {SECTORS.map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Jurisdiction</div>
+            <select value={jurFilter} onChange={e => setJurFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {JURISDICTIONS.map(j => <option key={j}>{j}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Assurance</div>
+            <select value={assuranceFilter} onChange={e => setAssuranceFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {ASSURANCE_LEVELS.map(a => <option key={a}>{a}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Report Type</div>
+            <select value={reportTypeFilter} onChange={e => setReportTypeFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {REPORT_TYPES.map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Min Score: {scoreMin}</div>
+            <input type="range" min={0} max={90} value={scoreMin} onChange={e => setScoreMin(+e.target.value)} style={{ width: 90 }} />
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Max Gaps: {gapFilter}</div>
+            <input type="range" min={0} max={12} value={gapFilter} onChange={e => setGapFilter(+e.target.value)} style={{ width: 90 }} />
+          </div>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, cursor: 'pointer' }}>
+            <input type="checkbox" checked={compareMode} onChange={e => setCompareMode(e.target.checked)} />Compare Mode
+          </label>
+          <div style={{ fontSize: 11, color: T.muted, marginLeft: 'auto' }}>{filtered.length}/{ENTITIES.length}</div>
+        </div>
+
+        {/* Framework filter chips */}
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 10, marginBottom: 14, display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center' }}>
+          <span style={{ fontSize: 10, color: T.muted, marginRight: 4 }}>FRAMEWORK FILTER:</span>
+          {FRAMEWORKS.map(f => (
+            <button key={f} onClick={() => toggleFramework(f)} style={{ padding: '2px 9px', fontSize: 10, border: `1px solid ${frameworkFilter.includes(f) ? T.blue : T.border}`, borderRadius: 10, background: frameworkFilter.includes(f) ? T.blue + '18' : 'transparent', color: frameworkFilter.includes(f) ? T.blue : T.muted, cursor: 'pointer' }}>
+              {FRAMEWORK_LABELS[f]}
+            </button>
+          ))}
+          {frameworkFilter.length > 0 && <button onClick={() => setFrameworkFilter([])} style={{ padding: '2px 8px', fontSize: 10, border: `1px solid ${T.red}`, borderRadius: 10, background: T.red + '15', color: T.red, cursor: 'pointer' }}>Clear</button>}
+        </div>
+
+        {/* Compare Mode Panel */}
+        {compareMode && (
+          <div style={{ background: T.card, border: `2px solid ${T.blue}`, borderRadius: 8, padding: 14, marginBottom: 14 }}>
+            <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 14 }}>Side-by-Side Framework Comparison</div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+              {[['A', compareA, setCompareA], ['B', compareB, setCompareB]].map(([lbl, val, setter]) => (
+                <div key={lbl} style={{ flex: 1 }}>
+                  <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Entity {lbl}</div>
+                  <select value={val?.id || ''} onChange={e => setter(ENTITIES.find(x => x.id === +e.target.value) || null)} style={{ width: '100%', padding: '5px 8px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+                    <option value="">-- Select --</option>
+                    {ENTITIES.slice(0, 60).map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                  </select>
+                </div>
+              ))}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, textTransform: 'uppercase' }}>Status</label>
-              <select value={mandatoryFilter} onChange={e => setMandatoryFilter(e.target.value)}
-                style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surface, fontFamily: T.font, fontSize: 13, color: T.text }}>
-                <option value="All">All</option>
-                <option value="Mandatory">Mandatory (CSRD)</option>
-                <option value="Voluntary">Voluntary</option>
-              </select>
-            </div>
+            {compareA && compareB && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16 }}>
+                <div>
+                  {[compareA, compareB].map((ent, idx) => (
+                    <div key={idx} style={{ background: T.sub, borderRadius: 6, padding: 10, marginBottom: 8 }}>
+                      <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 6 }}>{ent.name}</div>
+                      {[['Sector', ent.sector], ['Jurisdiction', ent.jurisdiction], ['Overall Score', ent.overallScore], ['Gaps', ent.gapCount], ['Assurance', ent.assuranceLevel], ['Data Quality', ent.dataQualityScore]].map(([k, v]) => (
+                        <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, padding: '2px 0', borderBottom: `1px solid ${T.border}` }}>
+                          <span style={{ color: T.muted }}>{k}</span><span style={{ fontWeight: 600 }}>{v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <ResponsiveContainer width="100%" height={280}>
+                    <RadarChart data={compareRadarData}>
+                      <PolarGrid stroke={T.border} />
+                      <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9 }} />
+                      <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 8 }} />
+                      <Radar name={compareA.name} dataKey="a" stroke={T.blue} fill={T.blue} fillOpacity={0.2} />
+                      <Radar name={compareB.name} dataKey="b" stroke={T.orange} fill={T.orange} fillOpacity={0.2} />
+                      <Legend />
+                      <Tooltip />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* TAB 0 — Adequacy Scores */}
-        {tab === 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <Kpi label="Industry Avg Score" value={kpis0.avg} sub="weighted composite" />
-              <Kpi label="Mandatory Compliance" value={`${kpis0.mandatoryRate}%`} sub="score ≥ 50" color={T.indigo} />
-              <Kpi label="Voluntary Adoption" value={`${kpis0.voluntaryRate}%`} sub="score ≥ 50" color={T.sage} />
-              <Kpi label="Companies >70 Score" value={kpis0.above70} sub="strong disclosers" color={T.green} />
-              <Kpi label="Lowest Score" value={kpis0.lowest} sub="weakest discloser" color={T.red} />
+        {/* ── TAB 0: Disclosure Dashboard ── */}
+        {activeTab === 0 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <KpiCard label="Entities Analyzed" value={filtered.length} />
+              <KpiCard label="Avg Overall Score" value={`${avgScore}/100`} color={scoreColor(+avgScore)} />
+              <KpiCard label="Reasonable Assurance" value={filtered.filter(e => e.assuranceLevel === 'Reasonable').length} color={T.green} />
+              <KpiCard label="Avg Gap Count" value={filtered.length ? (filtered.reduce((s, e) => s + e.gapCount, 0) / filtered.length).toFixed(1) : '0'} color={T.red} />
+              <KpiCard label="Double Materiality" value={filtered.filter(e => e.doubleMaterialityDone).length} color={T.teal} />
+              <KpiCard label="3rd Party Verified" value={filtered.filter(e => e.thirdPartyVerified).length} color={T.blue} />
             </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 2, minWidth: 380, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Overall Adequacy Score — Top 30 Companies</div>
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={barData0} margin={{ top: 4, right: 12, left: 0, bottom: 40 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Overall Score Distribution</div>
+                <ResponsiveContainer width="100%" height={230}>
+                  <BarChart data={scoreDist}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} angle={-45} textAnchor="end" interval={0} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip formatter={(v, n, p) => [v, p.payload.fullName]} contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="score" radius={[3, 3, 0, 0]}>
-                      {barData0.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                    <XAxis dataKey="range" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Entities" radius={[4, 4, 0, 0]}>
+                      {scoreDist.map((d, i) => <Cell key={i} fill={i < 2 ? T.red : i < 3 ? T.amber : T.green} />)}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div style={{ flex: 1, minWidth: 260, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Companies by Score Quartile</div>
-                <ResponsiveContainer width="100%" height={280}>
-                  <PieChart>
-                    <Pie data={pieData0} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                      {pieData0.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                  </PieChart>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Average Framework Coverage Score</div>
+                <ResponsiveContainer width="100%" height={230}>
+                  <BarChart data={frameworkCoverage} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10 }} />
+                    <YAxis type="category" dataKey="framework" tick={{ fontSize: 9 }} width={60} />
+                    <Tooltip />
+                    <Bar dataKey="avgScore" name="Avg Score" radius={[0, 4, 4, 0]}>
+                      {frameworkCoverage.map((d, i) => <Cell key={i} fill={scoreColor(d.avgScore)} />)}
+                    </Bar>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
-
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Average Score by Framework (All 45 Companies)</div>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={fwAvgBar} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="fw" tick={{ fontSize: 11, fill: T.textSec }} />
-                  <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} />
-                  <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                  <Bar dataKey="avg" name="Avg Score" radius={[3, 3, 0, 0]}>
-                    {fwAvgBar.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+            {/* Framework coverage heatmap */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Framework Coverage Heatmap</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr>
+                      <th style={{ padding: '5px 8px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, fontSize: 10, color: T.muted }}>Entity</th>
+                      {FRAMEWORKS.map(f => <th key={f} style={{ padding: '5px 6px', borderBottom: `2px solid ${T.border}`, fontSize: 9, whiteSpace: 'nowrap', textAlign: 'center' }}>{FRAMEWORK_LABELS[f]}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...filtered].sort((a, b) => b.overallScore - a.overallScore).slice(0, 20).map((e, i) => (
+                      <tr key={e.id} style={{ borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '4px 8px', fontWeight: 600, whiteSpace: 'nowrap', fontSize: 10 }}>{e.name}</td>
+                        {FRAMEWORKS.map(f => (
+                          <td key={f} style={{ padding: '4px 6px', textAlign: 'center' }}>
+                            <div style={{ width: 28, height: 20, background: scoreColor(e.frameworkScores[f]) + '50', border: `1px solid ${scoreColor(e.frameworkScores[f])}60`, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 600, color: scoreColor(e.frameworkScores[f]) }}>
+                              {e.frameworkScores[f]}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{ fontSize: 10, color: T.muted, marginTop: 6, textAlign: 'right' }}>Top 20 entities by overall score</div>
+              </div>
             </div>
           </div>
         )}
 
-        {/* TAB 1 — Gap Heatmap */}
-        {tab === 1 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, overflowX: 'auto' }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Framework Score Heatmap — Top 30 Companies</div>
+        {/* ── TAB 1: Entity Database ── */}
+        {activeTab === 1 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+            <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Entity Database — {filtered.length} records</div>
+            <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                 <thead>
-                  <tr>
-                    <th style={{ textAlign: 'left', padding: '6px 8px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>Company</th>
-                    <th style={{ textAlign: 'left', padding: '6px 8px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>Sector</th>
-                    {FRAMEWORKS.map(fw => (
-                      <th key={fw} style={{ textAlign: 'center', padding: '6px 6px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap', fontSize: 10 }}>{fw}</th>
+                  <tr style={{ background: T.sub }}>
+                    {[['name', 'Name'], ['sector', 'Sector'], ['jurisdiction', 'Jur.'], ['overallScore', 'Score'], ['gapCount', 'Gaps'], ['assuranceLevel', 'Assurance'], ['dataQualityScore', 'Data Q.'], ['reportType', 'Report']].map(([col, label]) => (
+                      <th key={col} onClick={() => handleSort(col)} style={{ padding: '7px 8px', textAlign: 'left', cursor: 'pointer', borderBottom: `2px solid ${T.border}`, color: sortCol === col ? T.blue : T.text, userSelect: 'none', whiteSpace: 'nowrap' }}>
+                        {label} {sortCol === col ? (sortDir === 'asc' ? '▲' : '▼') : ''}
+                      </th>
                     ))}
+                    {FRAMEWORKS.slice(0, 6).map(f => <th key={f} style={{ padding: '7px 5px', textAlign: 'center', borderBottom: `2px solid ${T.border}`, fontSize: 9 }}>{FRAMEWORK_LABELS[f]}</th>)}
+                    <th style={{ padding: '7px 8px' }}>Detail</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {heatRows.map((c, ri) => (
-                    <tr key={c.id} style={{ background: ri % 2 === 0 ? T.surface : T.card }}>
-                      <td style={{ padding: '5px 8px', color: T.text, fontWeight: 600, whiteSpace: 'nowrap' }}>{c.name}</td>
-                      <td style={{ padding: '5px 8px', color: T.textSec, fontSize: 11 }}>{c.sector}</td>
-                      {FW_KEYS.map(key => (
-                        <td key={key} style={{ padding: '4px 4px', textAlign: 'center' }}>
-                          <span style={{
-                            display: 'inline-block', minWidth: 36, padding: '2px 4px', borderRadius: 4,
-                            background: scoreBg(c[key]), color: scoreColor(c[key]),
-                            fontFamily: T.mono, fontWeight: 600, fontSize: 11,
-                          }}>{c[key]}</span>
+                  {filtered.slice(0, 100).map((e, i) => (
+                    <tr key={e.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '6px 8px', fontWeight: 600, whiteSpace: 'nowrap' }}>{e.name}</td>
+                      <td style={{ padding: '6px 8px' }}>{e.sector}</td>
+                      <td style={{ padding: '6px 8px' }}>{e.jurisdiction}</td>
+                      <td style={{ padding: '6px 8px' }}><ScoreBadge val={e.overallScore} /></td>
+                      <td style={{ padding: '6px 8px', textAlign: 'center', color: e.gapCount > 6 ? T.red : T.amber }}>{e.gapCount}</td>
+                      <td style={{ padding: '6px 8px' }}>{e.assuranceLevel}</td>
+                      <td style={{ padding: '6px 8px' }}><MiniBar val={e.dataQualityScore} /></td>
+                      <td style={{ padding: '6px 8px', fontSize: 10 }}>{e.reportType}</td>
+                      {FRAMEWORKS.slice(0, 6).map(f => (
+                        <td key={f} style={{ padding: '6px 5px', textAlign: 'center' }}>
+                          <div style={{ width: 24, height: 18, background: scoreColor(e.frameworkScores[f]) + '40', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 600, color: scoreColor(e.frameworkScores[f]) }}>
+                            {e.frameworkScores[f]}
+                          </div>
                         </td>
                       ))}
+                      <td style={{ padding: '6px 8px' }}>
+                        <button onClick={() => setSelectedEntity(e)} style={{ background: T.blue, color: '#fff', border: 'none', borderRadius: 3, padding: '2px 7px', fontSize: 10, cursor: 'pointer' }}>View</button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 320, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Average Gap by Framework (100 − Score)</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={gapBarData} margin={{ top: 4, right: 12, left: 0, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="fw" tick={{ fontSize: 10, fill: T.textSec }} angle={-30} textAnchor="end" interval={0} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="gap" name="Avg Gap" fill={T.red} radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ flex: 1, minWidth: 380, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>TCFD 11-Recommendation Completion — Industry Avg vs Top Quartile</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={tcfdGrouped} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
-                    <Bar dataKey="industryAvg" name="Industry Avg" fill={T.navyL} radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="topQuartile" name="Top Quartile" fill={T.green} radius={[2, 2, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+              {filtered.length > 100 && <div style={{ textAlign: 'center', padding: 10, color: T.muted, fontSize: 11 }}>Showing 100 of {filtered.length}</div>}
             </div>
           </div>
         )}
 
-        {/* TAB 2 — Framework Alignment */}
-        {tab === 2 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, overflowX: 'auto' }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Framework Summary Table</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                    {['Framework','Regime','Avg Completion %','Companies >70%','Key Gap'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, fontSize: 11 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {fwTableData.map((row, i) => (
-                    <tr key={row.fw} style={{ background: i % 2 === 0 ? T.surface : T.card, borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '8px 12px', fontWeight: 700, color: T.navy }}>{row.fw}</td>
-                      <td style={{ padding: '8px 12px' }}><Badge label={row.mandatory} color={row.mandatory === 'CSRD' ? T.green : row.mandatory === 'ISSB' ? T.indigo : T.textSec} bg={row.mandatory === 'CSRD' ? '#dcfce7' : row.mandatory === 'ISSB' ? '#e0e7ff' : T.sub} /></td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono, color: scoreColor(row.avg), fontWeight: 600 }}>{row.avg}%</td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{row.above70}</td>
-                      <td style={{ padding: '8px 12px', color: T.textSec, fontSize: 11 }}>{row.keyGap}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {/* ── TAB 2: Framework Deep Dive ── */}
+        {activeTab === 2 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 8, fontSize: 13 }}>Select Entity for Deep Dive</div>
+              <select value={selectedEntity?.id || ''} onChange={e => setSelectedEntity(ENTITIES.find(x => x.id === +e.target.value) || null)} style={{ padding: '6px 10px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12, width: 280 }}>
+                <option value="">-- Select Entity --</option>
+                {ENTITIES.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+              </select>
             </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 300, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Portfolio Avg — All 9 Frameworks (Radar)</div>
-                <ResponsiveContainer width="100%" height={260}>
-                  <RadarChart cx="50%" cy="50%" outerRadius={100} data={radarData}>
-                    <PolarGrid stroke={T.border} />
-                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: T.textSec }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: T.textMut }} />
-                    <Radar name="Avg Score" dataKey="A" stroke={T.navy} fill={T.navy} fillOpacity={0.25} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                  </RadarChart>
-                </ResponsiveContainer>
+            {drillEntity ? (
+              <div>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+                  <KpiCard label="Overall Score" value={drillEntity.overallScore} color={scoreColor(drillEntity.overallScore)} />
+                  <KpiCard label="Framework Gaps" value={drillEntity.gapCount} color={T.red} />
+                  <KpiCard label="Assurance" value={drillEntity.assuranceLevel} />
+                  <KpiCard label="Data Quality" value={drillEntity.dataQualityScore} color={scoreColor(drillEntity.dataQualityScore)} />
+                  <KpiCard label="Mandatory Gap" value={drillEntity.mandatoryGap} color={drillEntity.mandatoryGap > 0 ? T.red : T.green} />
+                  <KpiCard label="3yr Trajectory" value={`${drillEntity.trajectory3yr > 0 ? '+' : ''}${drillEntity.trajectory3yr}`} color={drillEntity.trajectory3yr > 0 ? T.green : T.red} />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 18 }}>
+                  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                    <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Framework Scores — Radar</div>
+                    <ResponsiveContainer width="100%" height={280}>
+                      <RadarChart data={radarData}>
+                        <PolarGrid stroke={T.border} />
+                        <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10 }} />
+                        <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 8 }} />
+                        <Radar name="Score" dataKey="score" stroke={T.blue} fill={T.blue} fillOpacity={0.3} />
+                        <Tooltip />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                    <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Gap Analysis & Recommendations</div>
+                    <div style={{ maxHeight: 280, overflowY: 'auto' }}>
+                      {FRAMEWORKS.map(f => {
+                        const score = drillEntity.frameworkScores[f];
+                        const isGap = score < 70;
+                        return (
+                          <div key={f} style={{ marginBottom: 10, padding: 10, background: isGap ? T.red + '08' : T.green + '08', borderRadius: 6, border: `1px solid ${isGap ? T.red : T.green}20` }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                              <span style={{ fontWeight: 600, fontSize: 12 }}>{FRAMEWORK_LABELS[f]}</span>
+                              <ScoreBadge val={score} />
+                            </div>
+                            {isGap && <div style={{ fontSize: 11, color: T.muted }}>{IMPROVEMENT_TIPS[f]}</div>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div style={{ flex: 1, minWidth: 300, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>TCFD Recommendations — Industry Avg (Sorted)</div>
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={tcfdSorted.map(r => ({ name: r.id, avg: r.industryAvg, area: r.area }))} layout="vertical" margin={{ top: 4, right: 16, left: 20, bottom: 4 }}>
+            ) : (
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 40, textAlign: 'center', color: T.muted }}>
+                Select an entity above to view detailed framework scores and improvement recommendations.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── TAB 3: Peer Benchmarking ── */}
+        {activeTab === 3 && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Percentile Ranking (Top 25)</div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[...filtered].sort((a, b) => b.overallScore - a.overallScore).slice(0, 25).map((e, i) => ({ name: e.name.split(' ')[0], score: e.overallScore, pct: Math.round((1 - i / filtered.length) * 100) }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: T.textSec }} />
-                    <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: T.textSec, fontFamily: T.mono }} width={40} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="avg" name="Industry Avg" fill={T.navyL} radius={[0, 3, 3, 0]} />
+                    <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-30} textAnchor="end" height={45} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="score" name="Score" radius={[4, 4, 0, 0]}>
+                      {[...filtered].sort((a, b) => b.overallScore - a.overallScore).slice(0, 25).map((e, i) => <Cell key={i} fill={scoreColor(e.overallScore)} />)}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Sector Leaders & Laggards</div>
+                <div style={{ maxHeight: 300, overflowY: 'auto' }}>
+                  {sectorLeaders.map(s => (
+                    <div key={s.sector} style={{ background: T.sub, borderRadius: 6, padding: 8, marginBottom: 7 }}>
+                      <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>{s.sector}</div>
+                      <div style={{ display: 'flex', gap: 8, fontSize: 11 }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 10, color: T.muted }}>Avg Score</div>
+                          <ScoreBadge val={s.avgScore} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 10, color: T.muted }}>Leader</div>
+                          <div style={{ fontWeight: 600, color: T.green, fontSize: 10 }}>{s.leader}</div>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 10, color: T.muted }}>Laggard</div>
+                          <div style={{ fontWeight: 600, color: T.red, fontSize: 10 }}>{s.laggard}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>ESRS E1–E5 Portfolio Average Scores</div>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={esrsBar} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Average Disclosure Score by Sector</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={sectorLeaders}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: T.textSec }} />
-                  <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} />
-                  <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                  <Bar dataKey="avg" name="Avg Score" radius={[3, 3, 0, 0]}>
-                    {esrsBar.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                  <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" height={45} />
+                  <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Bar dataKey="avgScore" name="Avg Score" radius={[4, 4, 0, 0]}>
+                    {sectorLeaders.map((s, i) => <Cell key={i} fill={scoreColor(s.avgScore)} />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -504,163 +585,181 @@ export default function DisclosureAdequacyAnalyzerPage() {
           </div>
         )}
 
-        {/* TAB 3 — Peer Ranking */}
-        {tab === 3 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, overflowX: 'auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, color: T.navy }}>Peer Ranking Table</div>
-                <button onClick={() => setSortRankDir(d => d === 'asc' ? 'desc' : 'asc')}
-                  style={{ padding: '5px 12px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, cursor: 'pointer', fontFamily: T.mono, fontSize: 11, color: T.navy }}>
-                  Sort: Rank {sortRankDir === 'asc' ? '▲' : '▼'}
-                </button>
-              </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                    {['Rank','Company','Sector','Overall','Mandatory','Quartile'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, fontSize: 11 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rankTable.map((c, i) => {
-                    const q = quartile(c.peerRank);
-                    return (
-                      <tr key={c.id} style={{ background: i % 2 === 0 ? T.surface : T.card, borderBottom: `1px solid ${T.border}` }}>
-                        <td style={{ padding: '7px 12px', fontFamily: T.mono, fontWeight: 700, color: c.peerRank <= 11 ? T.green : T.textSec }}>#{c.peerRank}</td>
-                        <td style={{ padding: '7px 12px', fontWeight: 600, color: T.navy }}>{c.name}</td>
-                        <td style={{ padding: '7px 12px', color: T.textSec }}>{c.sector}</td>
-                        <td style={{ padding: '7px 12px', fontFamily: T.mono, fontWeight: 700, color: scoreColor(c.overall) }}>{c.overall}</td>
-                        <td style={{ padding: '7px 12px' }}><Badge label={c.mandatory ? 'CSRD' : 'Vol'} color={c.mandatory ? T.green : T.textSec} bg={c.mandatory ? '#dcfce7' : T.sub} /></td>
-                        <td style={{ padding: '7px 12px' }}><Badge label={q} color={qColor(q)} bg={`${qColor(q)}22`} /></td>
+        {/* ── TAB 4: Mandatory Requirements ── */}
+        {activeTab === 4 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Jurisdiction × Framework Mandatory Compliance Matrix</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      <th style={{ padding: '6px 10px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, whiteSpace: 'nowrap' }}>Jurisdiction</th>
+                      <th style={{ padding: '6px 8px', borderBottom: `2px solid ${T.border}` }}>Entities</th>
+                      <th style={{ padding: '6px 8px', borderBottom: `2px solid ${T.border}` }}>Mandatory Fwks</th>
+                      <th style={{ padding: '6px 8px', borderBottom: `2px solid ${T.border}` }}>Avg Gap</th>
+                      {FRAMEWORKS.map(f => <th key={f} style={{ padding: '6px 5px', textAlign: 'center', borderBottom: `2px solid ${T.border}`, whiteSpace: 'nowrap', fontSize: 9 }}>{FRAMEWORK_LABELS[f]}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {jurMandatoryMatrix.map((jd, i) => (
+                      <tr key={jd.jur} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '5px 10px', fontWeight: 600 }}>{jd.jur}</td>
+                        <td style={{ padding: '5px 8px', textAlign: 'center' }}>{jd.entityCount}</td>
+                        <td style={{ padding: '5px 8px', textAlign: 'center' }}>{jd.mandatoryCount}</td>
+                        <td style={{ padding: '5px 8px', textAlign: 'center', fontWeight: 600, color: jd.avgGap > 2 ? T.red : T.green }}>{jd.avgGap}</td>
+                        {FRAMEWORKS.map(f => {
+                          const mandatory = (JUR_MANDATORY[jd.jur] || []).includes(f);
+                          const sc = jd.complianceScores.find(c => c.framework === FRAMEWORK_LABELS[f]);
+                          return (
+                            <td key={f} style={{ padding: '5px 5px', textAlign: 'center' }}>
+                              {mandatory ? (
+                                <div style={{ width: 28, height: 18, background: sc ? scoreColor(sc.score) + '40' : T.border, border: `1px solid ${sc ? scoreColor(sc.score) : T.border}`, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 600, color: sc ? scoreColor(sc.score) : T.muted }}>
+                                  {sc ? sc.score : 'M'}
+                                </div>
+                              ) : (
+                                <div style={{ width: 28, height: 18, background: T.sub, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, color: T.muted }}>—</div>
+                              )}
+                            </td>
+                          );
+                        })}
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 280, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Score Distribution Histogram</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Mandatory Gap Count by Jurisdiction</div>
                 <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={histData} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
+                  <BarChart data={jurMandatoryMatrix.filter(d => d.entityCount > 0)}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="range" tick={{ fontSize: 10, fill: T.textSec }} />
-                    <YAxis tick={{ fontSize: 11, fill: T.textSec }} allowDecimals={false} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="count" name="Companies" fill={T.navyL} radius={[3, 3, 0, 0]} />
+                    <XAxis dataKey="jur" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" height={45} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="avgGap" name="Avg Mandatory Gaps" fill={T.red} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div style={{ flex: 1, minWidth: 280, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Sector Average Overall Score</div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Mandatory Framework Count by Jurisdiction</div>
                 <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={sectorAvg} layout="vertical" margin={{ top: 4, right: 16, left: 60, bottom: 4 }}>
+                  <BarChart data={jurMandatoryMatrix.filter(d => d.entityCount > 0)}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: T.textSec }} />
-                    <YAxis type="category" dataKey="sector" tick={{ fontSize: 11, fill: T.textSec }} width={60} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="avg" name="Avg Score" fill={T.sage} radius={[0, 3, 3, 0]} />
+                    <XAxis dataKey="jur" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" height={45} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="mandatoryCount" name="Mandatory Frameworks" fill={T.amber} radius={[4, 4, 0, 0]} />
                   </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ flex: 1, minWidth: 280, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Percentile Curve (Rank vs Score)</div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <LineChart data={percentileCurve} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="rank" tick={{ fontSize: 10, fill: T.textSec }} label={{ value: 'Rank', position: 'insideBottom', offset: -2, fontSize: 11 }} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={v => [v, 'Score']} />
-                    <Line type="monotone" dataKey="score" stroke={T.gold} strokeWidth={2} dot={false} />
-                  </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 4 — Improvement Roadmap */}
-        {tab === 4 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Improvement Roadmap</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                    {['Milestone','Framework','Deadline','Effort','Impact (pts)'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, fontSize: 11 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {IMPROVEMENT_ROADMAP.map((r, i) => (
-                    <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.card, borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: T.navy }}>{r.milestone}</td>
-                      <td style={{ padding: '8px 12px' }}><Badge label={r.framework} color={T.indigo} bg="#e0e7ff" /></td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono, fontSize: 11 }}>{r.deadline}</td>
-                      <td style={{ padding: '8px 12px' }}>
-                        <Badge label={r.effort}
-                          color={r.effort === 'Low' ? T.green : r.effort === 'Medium' ? T.amber : T.red}
-                          bg={r.effort === 'Low' ? '#dcfce7' : r.effort === 'Medium' ? '#fef3c7' : '#fee2e2'} />
-                      </td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono, fontWeight: 700, color: T.navy }}>+{r.impact} pts</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {/* ── TAB 5: Assurance & Quality ── */}
+        {activeTab === 5 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              {ASSURANCE_LEVELS.map(lvl => (
+                <KpiCard key={lvl} label={`${lvl} Assurance`} value={ENTITIES.filter(e => e.assuranceLevel === lvl).length} color={lvl === 'Reasonable' ? T.green : lvl === 'Limited' ? T.amber : T.red} />
+              ))}
+              <KpiCard label="3rd Party Verified" value={ENTITIES.filter(e => e.thirdPartyVerified).length} color={T.blue} />
+              <KpiCard label="Avg Data Quality" value={ENTITIES.length ? Math.round(ENTITIES.reduce((s, e) => s + e.dataQualityScore, 0) / ENTITIES.length) : 0} color={T.teal} />
             </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 280, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Effort vs Impact (Bubble)</div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <ScatterChart margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Assurance Level Distribution</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={ASSURANCE_LEVELS.map(lvl => ({ level: lvl, count: filtered.filter(e => e.assuranceLevel === lvl).length, avgScore: (() => { const ents = filtered.filter(e => e.assuranceLevel === lvl); return ents.length ? Math.round(ents.reduce((s, e) => s + e.overallScore, 0) / ents.length) : 0; })() }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" dataKey="x" name="Effort" domain={[0, 4]} ticks={[1, 2, 3]} tickFormatter={v => ['', 'Low', 'Med', 'High'][v] || ''} tick={{ fontSize: 11, fill: T.textSec }} />
-                    <YAxis type="number" dataKey="y" name="Impact (pts)" tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={(v, n) => [v, n]} />
-                    <Scatter data={scatterData} fill={T.gold} />
-                  </ScatterChart>
+                    <XAxis dataKey="level" tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Entities" fill={T.blue} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="avgScore" name="Avg Score" fill={T.green} radius={[4, 4, 0, 0]} />
+                    <Legend />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div style={{ flex: 1, minWidth: 280, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Score Improvement by Initiative</div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={roadmapBar} layout="vertical" margin={{ top: 4, right: 16, left: 70, bottom: 4 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Data Quality Score Distribution</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={[[0, 40], [40, 60], [60, 80], [80, 100]].map(([lo, hi]) => ({ range: `${lo}-${hi}`, count: filtered.filter(e => e.dataQualityScore >= lo && e.dataQualityScore < hi).length }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" tick={{ fontSize: 10, fill: T.textSec }} />
-                    <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} width={70} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="impact" name="Impact (pts)" radius={[0, 3, 3, 0]}>
-                      {roadmapBar.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                    <XAxis dataKey="range" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Entities" radius={[4, 4, 0, 0]}>
+                      {[[0, 40], [40, 60], [60, 80], [80, 100]].map((_, i) => <Cell key={i} fill={i < 1 ? T.red : i < 2 ? T.amber : i < 3 ? T.teal : T.green} />)}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div style={{ flex: 1, minWidth: 260, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Effort Split by Framework</div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <PieChart>
-                    <Pie data={effortPie} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                      {effortPie.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                  </PieChart>
-                </ResponsiveContainer>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Materiality & Disclosure Completeness</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+                {[['Materiality Assessed', filtered.filter(e => e.materialityAssessed).length], ['Double Materiality', filtered.filter(e => e.doubleMaterialityDone).length], ['Quantitative Targets', filtered.filter(e => e.quantitativeTargets).length], ['Forward-Looking', filtered.filter(e => e.forwardLookingScenarios).length], ['3rd Party Verified', filtered.filter(e => e.thirdPartyVerified).length]].map(([label, count]) => (
+                  <div key={label} style={{ background: T.sub, borderRadius: 8, padding: 12, textAlign: 'center' }}>
+                    <div style={{ fontSize: 24, fontWeight: 700, color: T.blue }}>{count}</div>
+                    <div style={{ fontSize: 11, color: T.muted, marginTop: 4 }}>{label}</div>
+                    <div style={{ fontSize: 12, color: T.muted }}>of {filtered.length}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         )}
-      </div>
 
-      {/* Footer */}
-      <div style={{ background: T.navy, borderTop: `2px solid ${T.gold}`, padding: '14px 32px', marginTop: 40 }}>
-        <div style={{ fontSize: 11, color: T.goldL, fontFamily: T.mono, lineHeight: 1.6 }}>
-          <strong>Methodology:</strong> Adequacy score = weighted completion rate across disclosure requirements per framework. TCFD: 11 recommendations (Governance 2, Strategy 3, Risk Mgmt 3, Metrics 3). IFRS S1/S2: aligned with ISSB sustainability-related financial disclosure standard. ESRS E1-E5: EU CSRD environmental topical standards. GRI 305: emissions-specific disclosures. Peer ranking covers reporting universe of 45 large-cap entities.
-        </div>
+        {/* ── TAB 6: Summary & Export ── */}
+        {activeTab === 6 && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 18 }}>
+              <KpiCard label="Total Entities" value={ENTITIES.length} />
+              <KpiCard label="Frameworks Tracked" value={FRAMEWORKS.length} />
+              <KpiCard label="Jurisdictions" value={JURISDICTIONS.length} />
+              <KpiCard label="Filtered" value={filtered.length} />
+              <KpiCard label="Avg Overall Score" value={avgScore} color={scoreColor(+avgScore)} />
+              <KpiCard label="Reasonable Assurance" value={ENTITIES.filter(e => e.assuranceLevel === 'Reasonable').length} color={T.green} />
+              <KpiCard label="Avg Gap Count" value={(ENTITIES.reduce((s, e) => s + e.gapCount, 0) / ENTITIES.length).toFixed(1)} color={T.red} />
+              <KpiCard label="Double Materiality" value={ENTITIES.filter(e => e.doubleMaterialityDone).length} color={T.teal} />
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Full KPI Table — Top 50 by Overall Score</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['#', 'Name', 'Sector', 'Jur.', 'Score', 'Gaps', 'Assurance', 'Data Q.', 'Materiality', 'DoubleM', 'QuantTgt', 'FwdLook', 'Verified', 'Trajectory'].map(h => <th key={h} style={{ padding: '6px 7px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, whiteSpace: 'nowrap', fontSize: 10 }}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...ENTITIES].sort((a, b) => b.overallScore - a.overallScore).slice(0, 50).map((e, i) => (
+                      <tr key={e.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '4px 7px' }}>{i + 1}</td>
+                        <td style={{ padding: '4px 7px', fontWeight: 600, whiteSpace: 'nowrap' }}>{e.name}</td>
+                        <td style={{ padding: '4px 7px' }}>{e.sector}</td>
+                        <td style={{ padding: '4px 7px' }}>{e.jurisdiction}</td>
+                        <td style={{ padding: '4px 7px' }}><ScoreBadge val={e.overallScore} /></td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center', color: e.gapCount > 6 ? T.red : T.amber }}>{e.gapCount}</td>
+                        <td style={{ padding: '4px 7px' }}>{e.assuranceLevel}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{e.dataQualityScore}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{e.materialityAssessed ? '✓' : '✗'}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{e.doubleMaterialityDone ? '✓' : '✗'}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{e.quantitativeTargets ? '✓' : '✗'}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{e.forwardLookingScenarios ? '✓' : '✗'}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{e.thirdPartyVerified ? '✓' : '✗'}</td>
+                        <td style={{ padding: '4px 7px', color: e.trajectory3yr > 0 ? T.green : T.red, fontWeight: 600 }}>{e.trajectory3yr > 0 ? '+' : ''}{e.trajectory3yr}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

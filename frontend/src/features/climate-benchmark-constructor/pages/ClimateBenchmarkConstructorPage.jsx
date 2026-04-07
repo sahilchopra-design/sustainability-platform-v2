@@ -1,639 +1,926 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
-  LineChart, BarChart, AreaChart, PieChart, Line, Bar, Area, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  ComposedChart, Line, ReferenceLine, LineChart,
 } from 'recharts';
 
 const T = {
-  bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
-  gold: '#c5a96a', textSec: '#5c6b7e', textMut: '#9aa3ae',
-  red: '#dc2626', green: '#16a34a', amber: '#d97706', blue: '#2563eb',
-  teal: '#0891b2', purple: '#7c3aed',
-  card: '#ffffff', sub: '#5c6b7e', indigo: '#4f46e5', font: "'DM Sans','SF Pro Display',system-ui,sans-serif",
-  mono: "'JetBrains Mono','SF Mono','Fira Code',monospace",
+  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
+  sub: '#f6f4f0', muted: '#6b7280', indigo: '#4f46e5', gold: '#b8860b',
+  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706',
+  navy: '#1e3a5f', teal: '#0f766e', purple: '#7c3aed', orange: '#ea580c',
 };
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-function sr(seed) { let s = seed; return () => { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; }; }
+const PARENT_INDICES = ['MSCI World','STOXX 600','S&P 500','FTSE 100','EM'];
+const CB_SECTORS = ['Energy','Materials','Industrials','Technology','Financials','Healthcare','Utilities','Consumer Disc.','Consumer Stap.','Real Estate','Telecom','Basic Res.'];
 
-const TABS = ['Benchmark Overview', 'PAB / CTB Builder', 'Tracking Error', 'Carbon Pathway', 'Constituent Analysis'];
-const SECTORS = ['Technology', 'Healthcare', 'Financials', 'Consumer Disc.', 'Industrials', 'Energy', 'Materials', 'Utilities', 'Comm. Services', 'Real Estate', 'Consumer Staples'];
-const BENCH_COLORS = [T.navy, T.gold, T.teal, T.purple];
+const UNIVERSE = Array.from({ length: 300 }, (_, i) => {
+  const sec = CB_SECTORS[Math.floor(sr(i * 7 + 1) * CB_SECTORS.length)];
+  const parent = PARENT_INDICES[Math.floor(sr(i * 11 + 2) * PARENT_INDICES.length)];
+  const ci = sr(i * 13 + 3) * 900 + 5;
+  const mc = sr(i * 17 + 4) * 200 + 0.5; // $Bn
+  const rawW = mc / 1000;
+  return {
+    id: i,
+    name: `${sec.substring(0, 3).toUpperCase()}-C${String(i + 1).padStart(3, '0')}`,
+    sector: sec,
+    country: ['US','UK','DE','FR','JP','CN','CH','NL'][Math.floor(sr(i * 19 + 5) * 8)],
+    parentIndex: parent,
+    marketCap: mc,
+    carbonIntensity: ci,
+    temperature: sr(i * 23 + 6) * 3 + 1.5,
+    greenRevenue: sr(i * 29 + 7),
+    controversyFlag: sr(i * 31 + 8) > 0.85,
+    esgScore: sr(i * 37 + 9) * 100,
+    taxonomyAligned: sr(i * 41 + 10) > 0.55,
+    weight_parent: rawW,
+    euTaxonomyPct: sr(i * 43 + 11) * 60,
+    parisAligned: sr(i * 47 + 12) > 0.45,
+    volume: sr(i * 53 + 13) * 5000 + 100,
+    divYield: sr(i * 59 + 14) * 0.06,
+  };
+});
 
-/* ── seed data generators ── */
-const r1 = sr(42);
-const benchmarks = [
-  { name: 'MSCI World PAB', type: 'PAB', parent: 'MSCI World', carbonInt: 68, returnYtd: 8.4, te: 0.92, constituents: 1247, reduction: 58, status: 'Active' },
-  { name: 'S&P 500 CTB', type: 'CTB', parent: 'S&P 500', carbonInt: 112, returnYtd: 11.2, te: 0.48, constituents: 478, reduction: 34, status: 'Active' },
-  { name: 'Custom ESG-Tilted', type: 'CTB', parent: 'STOXX Europe 600', carbonInt: 85, returnYtd: 6.1, te: 1.35, constituents: 523, reduction: 47, status: 'Active' },
-  { name: 'Fossil-Free Core', type: 'PAB', parent: 'FTSE All-World', carbonInt: 42, returnYtd: 7.8, te: 1.72, constituents: 2104, reduction: 71, status: 'Active' },
+// Normalize parent weights per index
+const byIndex = {};
+PARENT_INDICES.forEach(idx => {
+  const subs = UNIVERSE.filter(s => s.parentIndex === idx);
+  const tot = subs.reduce((s, x) => s + x.weight_parent, 0);
+  subs.forEach(s => { s.weight_norm = tot > 0 ? s.weight_parent / tot : 0; });
+  byIndex[idx] = subs;
+});
+
+// Sector avg CI for exclusion threshold
+const sectorAvgCI = {};
+CB_SECTORS.forEach(sec => {
+  const subs = UNIVERSE.filter(s => s.sector === sec);
+  sectorAvgCI[sec] = subs.length ? subs.reduce((s, x) => s + x.carbonIntensity, 0) / subs.length : 0;
+});
+
+const EU_BMR_RULES = [
+  'Exclude UNGC violators',
+  'Exclude controversial weapons',
+  'Exclude coal >1% revenue',
+  'Exclude oil sands >10% revenue',
+  'Minimum 50% CI reduction vs parent (PAB)',
+  'Minimum 30% CI reduction vs parent (CTB)',
+  '7% annual decarbonization path (PAB)',
+  'Climate-related ESG controversy screen',
+  'Minimum ESG score disclosure coverage',
+  'Taxonomy alignment data availability',
+  'Weighted average ITR disclosed',
+  'Physical risk assessment conducted',
 ];
 
-const r2 = sr(101);
-const teTimeSeries = Array.from({ length: 36 }, (_, i) => {
-  const m = i + 1;
-  return {
-    month: `M${m}`,
-    'MSCI World PAB': +(0.7 + r2() * 0.6 + Math.sin(i / 6) * 0.15).toFixed(2),
-    'S&P 500 CTB': +(0.3 + r2() * 0.35 + Math.sin(i / 5) * 0.08).toFixed(2),
-    'Custom ESG-Tilted': +(1.0 + r2() * 0.7 + Math.sin(i / 4) * 0.2).toFixed(2),
-    'Fossil-Free Core': +(1.3 + r2() * 0.8 + Math.sin(i / 7) * 0.25).toFixed(2),
-  };
-});
+const TABS = ['Benchmark Builder','Constituent Universe','Construction Rules','Carbon Analytics','EU BMR Compliance','Greenium Analysis','Summary & Export'];
 
-const r3 = sr(200);
-const carbonPathway = Array.from({ length: 11 }, (_, i) => {
-  const yr = 2020 + i;
-  const target = 162 * Math.pow(0.93, i);
-  return {
-    year: yr,
-    target: +target.toFixed(1),
-    'MSCI World PAB': +(target * (0.95 + r3() * 0.12)).toFixed(1),
-    'S&P 500 CTB': +(target * (1.15 + r3() * 0.15)).toFixed(1),
-    'Custom ESG-Tilted': +(target * (1.02 + r3() * 0.1)).toFixed(1),
-    'Fossil-Free Core': +(target * (0.82 + r3() * 0.1)).toFixed(1),
-  };
-});
+const KpiCard = ({ label, value, sub, color }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', minWidth: 150 }}>
+    <div style={{ fontSize: 11, color: T.muted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{label}</div>
+    <div style={{ fontSize: 20, fontWeight: 700, color: color || T.text }}>{value}</div>
+    {sub && <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>{sub}</div>}
+  </div>
+);
 
-const r4 = sr(303);
-const sectorWeights = SECTORS.map(s => {
-  const parent = +(3 + r4() * 18).toFixed(1);
-  const climate = +(parent * (0.6 + r4() * 0.8)).toFixed(1);
-  return { sector: s, parent, climate, delta: +(climate - parent).toFixed(1) };
-});
+export default function ClimateBenchmarkConstructorPage() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [parentIndex, setParentIndex] = useState('MSCI World');
+  const [benchmarkType, setBenchmarkType] = useState('PAB');
+  const [carbonReduction, setCarbonReduction] = useState(50);
+  const [exclusionMultiplier, setExclusionMultiplier] = useState(20);
+  const [esgMin, setEsgMin] = useState(30);
+  const [excludeControversy, setExcludeControversy] = useState(true);
+  const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState('marketCap');
+  const [sortDir, setSortDir] = useState('desc');
 
-const r5 = sr(404);
-const factors = ['Value', 'Growth', 'Size', 'Momentum', 'Quality', 'Low-Vol'].map(f => ({
-  factor: f, parent: +(r5() * 0.6 - 0.3).toFixed(2), pab: +(r5() * 0.8 - 0.2).toFixed(2), ctb: +(r5() * 0.5 - 0.15).toFixed(2),
-}));
+  const parentConstituents = useMemo(() => byIndex[parentIndex] || [], [parentIndex]);
+  const parentAvgCI = useMemo(() => parentConstituents.length ? parentConstituents.reduce((s, x) => s + x.weight_norm * x.carbonIntensity, 0) : 0, [parentConstituents]);
 
-const r6 = sr(505);
-const countries = ['United States', 'Japan', 'United Kingdom', 'France', 'Germany', 'Switzerland', 'Canada', 'Australia', 'Netherlands', 'Sweden'];
-const constituents = Array.from({ length: 50 }, (_, i) => {
-  const names = ['NovaTech Corp', 'GreenField Energy', 'Pacific Renewables', 'Nordic Clean Power', 'Alpine Materials', 'Cascade Biotech', 'SolarEdge Holdings', 'BlueWave Infra', 'TerraCarbon Inc', 'Meridian Finance',
-    'Zenith Healthcare', 'EverGreen Capital', 'Apex Wind Systems', 'Quantum Storage', 'Cirrus Cloud Tech', 'AquaPure Systems', 'Helix Genomics', 'Phoenix Batteries', 'Stratos Aerospace', 'Lumen Networks',
-    'Catalyst Pharma', 'Boreal Mining', 'Nexus Semiconductors', 'Harbor Logistics', 'Pinnacle Insurance', 'Aurora Chemicals', 'Vanguard Robotics', 'Summit Real Estate', 'Horizon Telecom', 'Atlas Utilities',
-    'Prism Analytics', 'EcoMotion Auto', 'Tidal Power Co', 'Vertex Diagnostics', 'Nova Materials', 'SilverLine Rail', 'ClearSky Aviation', 'BrightPath Solar', 'IronForge Steel', 'SafeHarbor Bank',
-    'Redwood Timber', 'DigiPay Finance', 'BioFuel Dynamics', 'CloudNine Software', 'GreenLink Infra', 'PureAir Tech', 'Cobalt Resources', 'WaveRider Marine', 'TrueNorth ESG', 'Solaris Power'];
-  const w = +(3.5 - i * 0.055 + r6() * 0.3).toFixed(2);
-  const parentW = +(w + (r6() - 0.5) * 0.8).toFixed(2);
-  const tiltReasons = ['Low carbon intensity', 'Green revenue >50%', 'SBTi validated', 'Transition leader', 'Renewable capacity', 'Scope 3 reduction', 'Circular economy'];
-  return {
-    rank: i + 1, name: names[i], sector: SECTORS[Math.floor(r6() * SECTORS.length)],
-    country: countries[Math.floor(r6() * countries.length)],
-    weight: Math.max(0.05, w), parentWeight: Math.max(0.05, parentW),
-    delta: +(w - parentW).toFixed(2), carbonInt: Math.round(20 + r6() * 280),
-    tiltReason: tiltReasons[Math.floor(r6() * tiltReasons.length)],
-  };
-});
+  const benchmarkConstituents = useMemo(() => {
+    let pool = [...parentConstituents];
+    // Step 1: ESG filter
+    pool = pool.filter(s => s.esgScore >= esgMin);
+    // Step 2: controversy exclusion
+    if (excludeControversy) pool = pool.filter(s => !s.controversyFlag);
+    // Step 3: high-carbon exclusion
+    pool = pool.filter(s => s.carbonIntensity <= sectorAvgCI[s.sector] * exclusionMultiplier);
+    // Step 4: carbon reduction target
+    const targetCI = parentAvgCI * (1 - carbonReduction / 100);
+    // Tilt weights: reduce high-CI
+    const tilted = pool.map(s => ({
+      ...s,
+      benchWeight: s.weight_norm * Math.exp(-Math.max(0, s.carbonIntensity - targetCI) / (targetCI + 1)),
+    }));
+    const tw = tilted.reduce((s, x) => s + x.benchWeight, 0);
+    return tw > 0 ? tilted.map(s => ({ ...s, benchWeight: s.benchWeight / tw })) : tilted;
+  }, [parentConstituents, parentAvgCI, esgMin, excludeControversy, exclusionMultiplier, carbonReduction]);
 
-const excluded = [
-  { name: 'PetroGlobal Corp', sector: 'Energy', reason: 'Fossil fuel revenue >10%' },
-  { name: 'CoalPower Ltd', sector: 'Utilities', reason: 'Coal-fired generation >5%' },
-  { name: 'TarSands Inc', sector: 'Energy', reason: 'Unconventional O&G extraction' },
-  { name: 'DeepDrill Offshore', sector: 'Energy', reason: 'Arctic drilling operations' },
-  { name: 'BrownField Mining', sector: 'Materials', reason: 'Thermal coal mining >1% revenue' },
-  { name: 'HeavyCrude Refining', sector: 'Energy', reason: 'No credible transition plan' },
-  { name: 'CementMax Global', sector: 'Materials', reason: 'Carbon intensity >95th percentile' },
-  { name: 'LegacyGas Holdings', sector: 'Utilities', reason: 'Gas expansion capex >30%' },
-];
+  const benchmarkAvgCI = useMemo(() => benchmarkConstituents.length ? benchmarkConstituents.reduce((s, x) => s + x.benchWeight * x.carbonIntensity, 0) : 0, [benchmarkConstituents]);
+  const actualReduction = useMemo(() => parentAvgCI > 0 ? (1 - benchmarkAvgCI / parentAvgCI) * 100 : 0, [parentAvgCI, benchmarkAvgCI]);
+  const trackingError = useMemo(() => {
+    const bmkVol = Math.sqrt(benchmarkConstituents.reduce((s, x) => s + Math.pow(x.benchWeight * (0.08 + sr(x.id * 7 + 1) * 0.2), 2), 0));
+    const parVol = Math.sqrt(parentConstituents.reduce((s, x) => s + Math.pow(x.weight_norm * (0.08 + sr(x.id * 7 + 1) * 0.2), 2), 0));
+    return Math.abs(bmkVol - parVol) * 100;
+  }, [benchmarkConstituents, parentConstituents]);
 
-const geoData = countries.map(c => {
-  const pw = +(2 + r6() * 20).toFixed(1);
-  return { country: c, parent: pw, climate: +(pw * (0.7 + r6() * 0.6)).toFixed(1) };
-});
+  const sectorTilts = useMemo(() => {
+    const map = {};
+    CB_SECTORS.forEach(sec => {
+      const bw = benchmarkConstituents.filter(s => s.sector === sec).reduce((s, x) => s + x.benchWeight, 0);
+      const pw = parentConstituents.filter(s => s.sector === sec).reduce((s, x) => s + x.weight_norm, 0);
+      map[sec] = { sector: sec, benchWeight: +(bw * 100).toFixed(2), parentWeight: +(pw * 100).toFixed(2), tilt: +((bw - pw) * 100).toFixed(2) };
+    });
+    return Object.values(map);
+  }, [benchmarkConstituents, parentConstituents]);
 
-/* ── style helpers ── */
-const card = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 16 };
-const kpiCard = { ...card, textAlign: 'center', flex: 1, minWidth: 140 };
-const label = { fontSize: 11, color: T.textMut, fontFamily: T.mono, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 };
-const bigNum = { fontSize: 26, fontWeight: 700, color: T.navy, fontFamily: T.font, lineHeight: 1.2 };
-const subText = { fontSize: 12, color: T.textSec, fontFamily: T.font };
-const tableHead = { fontSize: 11, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', letterSpacing: 0.6, padding: '8px 10px', borderBottom: `2px solid ${T.navy}`, textAlign: 'left', whiteSpace: 'nowrap' };
-const tableCell = { fontSize: 13, fontFamily: T.font, color: T.navy, padding: '7px 10px', borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' };
-const sectionTitle = { fontSize: 14, fontWeight: 700, color: T.navy, fontFamily: T.font, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 };
-const badge = (bg, fg) => ({ display: 'inline-block', fontSize: 10, fontFamily: T.mono, fontWeight: 600, padding: '2px 7px', borderRadius: 3, background: bg, color: fg });
+  const filteredUniverse = useMemo(() => {
+    let d = benchmarkConstituents.filter(s =>
+      search === '' || s.name.toLowerCase().includes(search.toLowerCase()) || s.sector.toLowerCase().includes(search.toLowerCase())
+    );
+    d = [...d].sort((a, b) => {
+      const v = sortDir === 'asc' ? 1 : -1;
+      if (sortField === 'benchWeight') return v * (a.benchWeight - b.benchWeight);
+      if (sortField === 'carbonIntensity') return v * (a.carbonIntensity - b.carbonIntensity);
+      if (sortField === 'esgScore') return v * (a.esgScore - b.esgScore);
+      return v * (a.marketCap - b.marketCap);
+    });
+    return d;
+  }, [benchmarkConstituents, search, sortField, sortDir]);
 
-/* ── Tab panels ── */
-function BenchmarkOverview() {
-  const kpis = [
-    { label: 'Active Benchmarks', value: '4', sub: '2 PAB / 2 CTB' },
-    { label: 'Avg Carbon Reduction', value: '52%', sub: 'vs parent indices' },
-    { label: 'TE Range', value: '0.3-1.8%', sub: 'annualized' },
-    { label: 'Total Constituents', value: '500+', sub: 'across benchmarks' },
-    { label: 'Rebalance Freq.', value: 'Quarterly', sub: 'next: 2026-06-30' },
-  ];
+  const bmrCompliance = useMemo(() => {
+    return EU_BMR_RULES.map((rule, i) => {
+      let pass = true;
+      let detail = '';
+      if (i === 0) { pass = true; detail = 'No UNGC violators in benchmark'; }
+      else if (i === 4) { pass = actualReduction >= 50; detail = `Actual: ${actualReduction.toFixed(1)}% (req ≥50%)`; }
+      else if (i === 5) { pass = actualReduction >= 30; detail = `Actual: ${actualReduction.toFixed(1)}% (req ≥30%)`; }
+      else if (i === 6) { pass = true; detail = '7% annual decarbonization path applied'; }
+      else { pass = sr(i * 13 + 77) > 0.25; detail = pass ? 'Compliant' : 'Derogation applied'; }
+      return { rule, pass, detail };
+    });
+  }, [actualReduction]);
+
+  // Greenium: sr-seeded yield spread vs brown equivalent
+  const greeniumData = useMemo(() => {
+    return CB_SECTORS.map((sec, i) => {
+      const greenYield = sr(i * 11 + 3) * 0.04 + 0.02;
+      const brownYield = greenYield + (sr(i * 17 + 5) * 0.003 - 0.0015);
+      return { sector: sec.substring(0, 7), greenium: +((brownYield - greenYield) * 10000).toFixed(1) };
+    });
+  }, []);
+
+  const constructionSteps = useMemo(() => {
+    const step1 = parentConstituents.length;
+    const step2 = parentConstituents.filter(s => s.esgScore >= esgMin).length;
+    const step3 = step2 - (excludeControversy ? parentConstituents.filter(s => s.esgScore >= esgMin && s.controversyFlag).length : 0);
+    const step4 = parentConstituents.filter(s => s.esgScore >= esgMin && (!excludeControversy || !s.controversyFlag) && s.carbonIntensity <= sectorAvgCI[s.sector] * exclusionMultiplier).length;
+    const step5 = benchmarkConstituents.length;
+    return [
+      { step: '1. Parent Index', count: step1, excluded: 0 },
+      { step: '2. ESG Filter', count: step2, excluded: step1 - step2 },
+      { step: '3. Controversy', count: step3, excluded: step2 - step3 },
+      { step: '4. Carbon Excl.', count: step4, excluded: step3 - step4 },
+      { step: `5. ${benchmarkType} Tilt`, count: step5, excluded: step4 - step5 },
+    ];
+  }, [parentConstituents, esgMin, excludeControversy, exclusionMultiplier, benchmarkConstituents, benchmarkType]);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        {kpis.map((k, i) => (
-          <div key={i} style={kpiCard}>
-            <div style={label}>{k.label}</div>
-            <div style={bigNum}>{k.value}</div>
-            <div style={subText}>{k.sub}</div>
-          </div>
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+      <div style={{ background: T.navy, padding: '20px 32px', borderBottom: `3px solid ${T.gold}` }}>
+        <div style={{ fontSize: 11, color: T.gold, fontWeight: 700, letterSpacing: '0.1em', marginBottom: 4 }}>EP-CZ3 · CLIMATE BENCHMARK CONSTRUCTOR</div>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#fff', margin: 0 }}>Climate Benchmark Constructor</h1>
+        <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>PAB/CTB construction · 300 constituent universe · EU BMR compliance · Greenium analysis</div>
+      </div>
+
+      {/* Controls */}
+      <div style={{ background: T.sub, borderBottom: `1px solid ${T.border}`, padding: '12px 32px', display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}>
+        <select value={parentIndex} onChange={e => setParentIndex(e.target.value)} style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12 }}>
+          {PARENT_INDICES.map(i => <option key={i} value={i}>{i}</option>)}
+        </select>
+        <select value={benchmarkType} onChange={e => setBenchmarkType(e.target.value)} style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12 }}>
+          <option value="PAB">PAB (Paris-Aligned)</option>
+          <option value="CTB">CTB (Climate Transition)</option>
+          <option value="Custom">Custom</option>
+        </select>
+        <label style={{ fontSize: 12, color: T.muted }}>CI Reduction: <strong style={{ color: T.text }}>{carbonReduction}%</strong>
+          <input type="range" min={30} max={70} value={carbonReduction} onChange={e => setCarbonReduction(+e.target.value)} style={{ marginLeft: 8, width: 90 }} />
+        </label>
+        <label style={{ fontSize: 12, color: T.muted }}>Excl. Threshold: <strong style={{ color: T.text }}>{exclusionMultiplier}×</strong>
+          <input type="range" min={5} max={50} value={exclusionMultiplier} onChange={e => setExclusionMultiplier(+e.target.value)} style={{ marginLeft: 8, width: 80 }} />
+        </label>
+        <label style={{ fontSize: 12, color: T.muted }}>ESG Min: <strong style={{ color: T.text }}>{esgMin}</strong>
+          <input type="range" min={0} max={70} value={esgMin} onChange={e => setEsgMin(+e.target.value)} style={{ marginLeft: 8, width: 80 }} />
+        </label>
+        <label style={{ fontSize: 12, color: T.muted, display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input type="checkbox" checked={excludeControversy} onChange={e => setExcludeControversy(e.target.checked)} />
+          Exclude Controversy
+        </label>
+        <input placeholder="Search constituents..." value={search} onChange={e => setSearch(e.target.value)} style={{ padding: '4px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, width: 160 }} />
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', background: T.card, borderBottom: `1px solid ${T.border}`, padding: '0 32px', overflowX: 'auto' }}>
+        {TABS.map((t, i) => (
+          <button key={t} onClick={() => setActiveTab(i)} style={{ padding: '12px 16px', fontSize: 12, fontWeight: activeTab === i ? 700 : 500, color: activeTab === i ? T.indigo : T.muted, background: 'none', border: 'none', borderBottom: activeTab === i ? `2px solid ${T.indigo}` : '2px solid transparent', cursor: 'pointer', whiteSpace: 'nowrap' }}>{t}</button>
         ))}
       </div>
-      <div style={card}>
-        <div style={sectionTitle}>Climate Benchmark Registry</div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr>
-              {['Benchmark', 'Type', 'Parent Index', 'Carbon Int. (tCO2e/$M)', 'YTD Return', 'TE (ann.)', 'Constituents', 'Reduction', 'Status'].map(h => (
-                <th key={h} style={tableHead}>{h}</th>
-              ))}
-            </tr></thead>
-            <tbody>
-              {benchmarks.map((b, i) => (
-                <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                  <td style={{ ...tableCell, fontWeight: 600 }}>{b.name}</td>
-                  <td style={tableCell}><span style={badge(b.type === 'PAB' ? '#dbeafe' : '#fef3c7', b.type === 'PAB' ? T.blue : T.amber)}>{b.type}</span></td>
-                  <td style={tableCell}>{b.parent}</td>
-                  <td style={{ ...tableCell, fontFamily: T.mono }}>{b.carbonInt}</td>
-                  <td style={{ ...tableCell, color: b.returnYtd >= 0 ? T.green : T.red, fontFamily: T.mono }}>{b.returnYtd > 0 ? '+' : ''}{b.returnYtd}%</td>
-                  <td style={{ ...tableCell, fontFamily: T.mono }}>{b.te}%</td>
-                  <td style={{ ...tableCell, fontFamily: T.mono }}>{b.constituents.toLocaleString()}</td>
-                  <td style={{ ...tableCell, fontFamily: T.mono, color: T.green }}>{b.reduction}%</td>
-                  <td style={tableCell}><span style={badge('#dcfce7', T.green)}>{b.status}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Carbon Intensity Comparison</div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={benchmarks} barSize={28}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textSec }} interval={0} angle={-15} textAnchor="end" height={50} />
-              <YAxis tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} />
-              <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-              <Bar dataKey="carbonInt" name="Carbon Intensity" radius={[3, 3, 0, 0]}>
-                {benchmarks.map((_, i) => <Cell key={i} fill={BENCH_COLORS[i]} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Reduction vs Parent (%)</div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={benchmarks} barSize={28} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis type="number" tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} domain={[0, 80]} />
-              <YAxis dataKey="name" type="category" width={130} tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-              <Bar dataKey="reduction" name="Reduction %" radius={[0, 3, 3, 0]}>
-                {benchmarks.map((_, i) => <Cell key={i} fill={BENCH_COLORS[i]} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-function PabCtbBuilder() {
-  const [mode, setMode] = useState('PAB');
-  const [parentIdx, setParentIdx] = useState('MSCI World');
-  const [sectorNeutral, setSectorNeutral] = useState(true);
-  const parents = ['MSCI World', 'S&P 500', 'STOXX Europe 600', 'FTSE All-World', 'MSCI EM'];
-  const pabRules = [
-    { rule: 'Minimum carbon reduction vs parent', value: '50%' },
-    { rule: 'Year-on-year decarbonization', value: '7% p.a.' },
-    { rule: 'Fossil fuel exclusion (coal)', value: '>1% revenue' },
-    { rule: 'Fossil fuel exclusion (O&G)', value: '>10% revenue' },
-    { rule: 'Controversial weapons', value: 'Full exclusion' },
-    { rule: 'UN Global Compact violators', value: 'Full exclusion' },
-  ];
-  const ctbRules = [
-    { rule: 'Minimum carbon reduction vs parent', value: '30%' },
-    { rule: 'Year-on-year decarbonization', value: '7% p.a.' },
-    { rule: 'Fossil fuel exclusion', value: 'No hard exclusion' },
-    { rule: 'Sector constraints', value: 'Soft tilt only' },
-    { rule: 'Controversial weapons', value: 'Full exclusion' },
-  ];
-  const rules = mode === 'PAB' ? pabRules : ctbRules;
-  const tiltFactors = [
-    { factor: 'Carbon Intensity Tilt', weight: 35, desc: 'Overweight low-carbon, underweight high-carbon' },
-    { factor: 'Green Revenue Tilt', weight: 25, desc: 'Favor companies with >20% green revenue' },
-    { factor: 'SBTi Target Tilt', weight: 20, desc: 'Overweight science-based target holders' },
-    { factor: 'Transition Readiness', weight: 15, desc: 'Capex alignment to low-carbon transition' },
-    { factor: 'Physical Risk Discount', weight: 5, desc: 'Underweight high physical risk exposure' },
-  ];
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>EU BMR Benchmark Mode</div>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-            {['PAB', 'CTB'].map(m => (
-              <button key={m} onClick={() => setMode(m)} style={{ padding: '6px 20px', borderRadius: 4, fontFamily: T.mono, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: `1px solid ${mode === m ? T.navy : T.border}`, background: mode === m ? T.navy : T.surface, color: mode === m ? '#fff' : T.textSec, transition: 'all .15s' }}>{m === 'PAB' ? 'Paris-Aligned (PAB)' : 'Climate Transition (CTB)'}</button>
-            ))}
-          </div>
-          <div style={{ fontSize: 12, color: T.textSec, fontFamily: T.font, marginBottom: 12 }}>
-            {mode === 'PAB' ? 'EU BMR Art. 19a(1) Paris-Aligned Benchmark: stringent decarbonization with hard fossil fuel exclusions aligned to 1.5C pathway.' : 'EU BMR Art. 19a(1) Climate Transition Benchmark: moderate decarbonization with sector exposure maintained through tilt-based reweighting.'}
-          </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr><th style={tableHead}>Rule</th><th style={tableHead}>Threshold</th></tr></thead>
-            <tbody>{rules.map((r, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                <td style={tableCell}>{r.rule}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono, fontWeight: 600 }}>{r.value}</td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Builder Configuration</div>
-          <div style={{ marginBottom: 12 }}>
-            <div style={label}>Parent Index</div>
-            <select value={parentIdx} onChange={e => setParentIdx(e.target.value)} style={{ width: '100%', padding: '6px 10px', borderRadius: 4, border: `1px solid ${T.border}`, fontFamily: T.font, fontSize: 13, color: T.navy, background: T.surface }}>
-              {parents.map(p => <option key={p}>{p}</option>)}
-            </select>
-          </div>
-          <div style={{ marginBottom: 12 }}>
-            <div style={label}>Sector Neutrality</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div onClick={() => setSectorNeutral(!sectorNeutral)} style={{ width: 36, height: 20, borderRadius: 10, background: sectorNeutral ? T.green : T.border, cursor: 'pointer', position: 'relative', transition: 'all .2s' }}>
-                <div style={{ width: 16, height: 16, borderRadius: 8, background: '#fff', position: 'absolute', top: 2, left: sectorNeutral ? 18 : 2, transition: 'all .2s', boxShadow: '0 1px 3px rgba(0,0,0,.2)' }} />
-              </div>
-              <span style={{ fontSize: 12, fontFamily: T.font, color: T.textSec }}>{sectorNeutral ? 'Enabled' : 'Disabled'} - constrains sector deviations to +/-5%</span>
-            </div>
-          </div>
-          <div style={sectionTitle}>Tilt Factors</div>
-          {tiltFactors.map((tf, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <div style={{ flex: 1, fontSize: 12, fontFamily: T.font, color: T.navy }}>{tf.factor}</div>
-              <div style={{ width: 120, height: 6, borderRadius: 3, background: T.border, position: 'relative' }}>
-                <div style={{ width: `${tf.weight}%`, height: '100%', borderRadius: 3, background: T.gold }} />
-              </div>
-              <div style={{ width: 32, fontSize: 11, fontFamily: T.mono, color: T.textSec, textAlign: 'right' }}>{tf.weight}%</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={card}>
-        <div style={sectionTitle}>Sector Weight Preview: {parentIdx} {mode}</div>
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={sectorWeights} barGap={2}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="sector" tick={{ fontSize: 9, fontFamily: T.mono, fill: T.textSec }} interval={0} angle={-20} textAnchor="end" height={55} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} unit="%" />
-            <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-            <Legend wrapperStyle={{ fontSize: 11, fontFamily: T.font }} />
-            <Bar dataKey="parent" name="Parent" fill={T.textMut} barSize={16} radius={[2, 2, 0, 0]} />
-            <Bar dataKey="climate" name={`${mode} Benchmark`} fill={mode === 'PAB' ? T.blue : T.amber} barSize={16} radius={[2, 2, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
+      <div style={{ padding: '24px 32px' }}>
 
-function TrackingError() {
-  const teDecomp = [
-    { component: 'Sector Allocation TE', pab: 0.31, ctb: 0.14, esg: 0.52, ff: 0.68 },
-    { component: 'Stock Selection TE', pab: 0.28, ctb: 0.18, esg: 0.41, ff: 0.55 },
-    { component: 'Climate Tilt TE', pab: 0.33, ctb: 0.16, esg: 0.42, ff: 0.49 },
-    { component: 'Total TE', pab: 0.92, ctb: 0.48, esg: 1.35, ff: 1.72 },
-  ];
-  const teBudget = benchmarks.map(b => ({ name: b.name, budget: 2.0, actual: b.te, utilization: +((b.te / 2.0) * 100).toFixed(0) }));
-  const activeShare = [
-    { name: 'MSCI World PAB', share: 38.2 },
-    { name: 'S&P 500 CTB', share: 22.7 },
-    { name: 'Custom ESG-Tilted', share: 45.1 },
-    { name: 'Fossil-Free Core', share: 52.8 },
-  ];
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={card}>
-        <div style={sectionTitle}>Tracking Error vs Parent (36-Month Rolling)</div>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={teTimeSeries}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="month" tick={{ fontSize: 9, fontFamily: T.mono, fill: T.textMut }} interval={5} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} unit="%" domain={[0, 'auto']} />
-            <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-            <Legend wrapperStyle={{ fontSize: 11, fontFamily: T.font }} />
-            {benchmarks.map((b, i) => (
-              <Line key={i} type="monotone" dataKey={b.name} stroke={BENCH_COLORS[i]} strokeWidth={2} dot={false} />
-            ))}
-            <ReferenceLine y={2.0} stroke={T.red} strokeDasharray="6 3" label={{ value: 'TE Budget 2.0%', fill: T.red, fontSize: 10, fontFamily: T.mono }} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ ...card, flex: 1.2 }}>
-          <div style={sectionTitle}>TE Decomposition</div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr>
-              <th style={tableHead}>Component</th>
-              <th style={tableHead}>MSCI PAB</th>
-              <th style={tableHead}>S&P CTB</th>
-              <th style={tableHead}>ESG-Tilted</th>
-              <th style={tableHead}>Fossil-Free</th>
-            </tr></thead>
-            <tbody>{teDecomp.map((r, i) => (
-              <tr key={i} style={{ background: i === teDecomp.length - 1 ? '#f0f4ff' : i % 2 === 0 ? T.surface : T.bg }}>
-                <td style={{ ...tableCell, fontWeight: i === teDecomp.length - 1 ? 700 : 400 }}>{r.component}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{r.pab}%</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{r.ctb}%</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{r.esg}%</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{r.ff}%</td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-        <div style={{ ...card, flex: 0.8 }}>
-          <div style={sectionTitle}>TE Budget Utilization</div>
-          {teBudget.map((b, i) => (
-            <div key={i} style={{ marginBottom: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                <span style={{ fontSize: 11, fontFamily: T.font, color: T.navy }}>{b.name}</span>
-                <span style={{ fontSize: 11, fontFamily: T.mono, color: b.utilization > 80 ? T.red : b.utilization > 50 ? T.amber : T.green }}>{b.utilization}%</span>
-              </div>
-              <div style={{ height: 8, borderRadius: 4, background: T.border }}>
-                <div style={{ height: '100%', borderRadius: 4, width: `${Math.min(b.utilization, 100)}%`, background: b.utilization > 80 ? T.red : b.utilization > 50 ? T.amber : T.green, transition: 'width .3s' }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Active Share</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={activeShare} barSize={32}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 9, fontFamily: T.mono, fill: T.textSec }} interval={0} angle={-12} textAnchor="end" height={45} />
-              <YAxis tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} unit="%" domain={[0, 70]} />
-              <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-              <Bar dataKey="share" name="Active Share" radius={[3, 3, 0, 0]}>
-                {activeShare.map((_, i) => <Cell key={i} fill={BENCH_COLORS[i]} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Factor Exposure Comparison</div>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={factors} barGap={1}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="factor" tick={{ fontSize: 9, fontFamily: T.mono, fill: T.textSec }} interval={0} />
-              <YAxis tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} domain={[-0.5, 0.7]} />
-              <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-              <Legend wrapperStyle={{ fontSize: 10, fontFamily: T.font }} />
-              <Bar dataKey="parent" name="Parent" fill={T.textMut} barSize={10} radius={[2, 2, 0, 0]} />
-              <Bar dataKey="pab" name="PAB" fill={T.blue} barSize={10} radius={[2, 2, 0, 0]} />
-              <Bar dataKey="ctb" name="CTB" fill={T.amber} barSize={10} radius={[2, 2, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CarbonPathway() {
-  const deviations = benchmarks.map(b => {
-    const last = carbonPathway[carbonPathway.length - 1];
-    const actual = last[b.name];
-    const target = last.target;
-    return { name: b.name, actual, target, deviation: +((actual - target) / target * 100).toFixed(1) };
-  });
-  const budgetRemaining = [
-    { name: 'MSCI World PAB', budgetTotal: 820, used: 512, remaining: 308 },
-    { name: 'S&P 500 CTB', budgetTotal: 1050, used: 745, remaining: 305 },
-    { name: 'Custom ESG-Tilted', budgetTotal: 900, used: 588, remaining: 312 },
-    { name: 'Fossil-Free Core', budgetTotal: 680, used: 352, remaining: 328 },
-  ];
-  const attribution = [
-    { name: 'MSCI World PAB', constituentImprovement: 62, rebalancing: 38 },
-    { name: 'S&P 500 CTB', constituentImprovement: 45, rebalancing: 55 },
-    { name: 'Custom ESG-Tilted', constituentImprovement: 55, rebalancing: 45 },
-    { name: 'Fossil-Free Core', constituentImprovement: 70, rebalancing: 30 },
-  ];
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={card}>
-        <div style={sectionTitle}>Carbon Intensity Trajectory (tCO2e / $M Revenue)</div>
-        <ResponsiveContainer width="100%" height={280}>
-          <AreaChart data={carbonPathway}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="year" tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} domain={[0, 'auto']} />
-            <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-            <Legend wrapperStyle={{ fontSize: 11, fontFamily: T.font }} />
-            <Area type="monotone" dataKey="Fossil-Free Core" fill={T.purple} fillOpacity={0.08} stroke={T.purple} strokeWidth={2} dot={false} />
-            <Area type="monotone" dataKey="MSCI World PAB" fill={T.navy} fillOpacity={0.08} stroke={T.navy} strokeWidth={2} dot={false} />
-            <Area type="monotone" dataKey="Custom ESG-Tilted" fill={T.teal} fillOpacity={0.06} stroke={T.teal} strokeWidth={1.5} dot={false} />
-            <Area type="monotone" dataKey="S&P 500 CTB" fill={T.gold} fillOpacity={0.06} stroke={T.gold} strokeWidth={1.5} dot={false} />
-            <Line type="monotone" dataKey="target" stroke={T.red} strokeWidth={2} strokeDasharray="6 4" dot={false} name="7% YoY Target" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Actual vs Target Deviation (2030)</div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr>
-              {['Benchmark', 'Actual', 'Target', 'Deviation'].map(h => <th key={h} style={tableHead}>{h}</th>)}
-            </tr></thead>
-            <tbody>{deviations.map((d, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                <td style={{ ...tableCell, fontWeight: 600 }}>{d.name}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{d.actual}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{d.target}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono, color: d.deviation <= 0 ? T.green : d.deviation < 10 ? T.amber : T.red }}>
-                  {d.deviation > 0 ? '+' : ''}{d.deviation}%
-                </td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Carbon Budget Remaining (tCO2e cumul.)</div>
-          {budgetRemaining.map((b, i) => (
-            <div key={i} style={{ marginBottom: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                <span style={{ fontSize: 11, fontFamily: T.font, color: T.navy }}>{b.name}</span>
-                <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textSec }}>{b.remaining} / {b.budgetTotal}</span>
-              </div>
-              <div style={{ height: 8, borderRadius: 4, background: T.border }}>
-                <div style={{ height: '100%', borderRadius: 4, width: `${(b.remaining / b.budgetTotal * 100).toFixed(0)}%`, background: b.remaining / b.budgetTotal > 0.4 ? T.green : b.remaining / b.budgetTotal > 0.2 ? T.amber : T.red }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={card}>
-        <div style={sectionTitle}>Decarbonization Attribution</div>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={attribution} layout="vertical" barGap={0}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis type="number" tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} unit="%" domain={[0, 100]} />
-            <YAxis dataKey="name" type="category" width={140} tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textSec }} />
-            <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-            <Legend wrapperStyle={{ fontSize: 11, fontFamily: T.font }} />
-            <Bar dataKey="constituentImprovement" name="Constituent Improvement" stackId="a" fill={T.teal} barSize={18} />
-            <Bar dataKey="rebalancing" name="Rebalancing Effect" stackId="a" fill={T.gold} barSize={18} radius={[0, 3, 3, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
-
-function ConstituentAnalysis() {
-  const [page, setPage] = useState(0);
-  const perPage = 15;
-  const pageData = constituents.slice(page * perPage, (page + 1) * perPage);
-  const totalPages = Math.ceil(constituents.length / perPage);
-  const pieColors = [T.navy, T.gold, T.teal, T.purple, T.blue, T.amber, T.green, T.red, '#6366f1', '#ec4899', '#78716c'];
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={card}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <div style={sectionTitle}>Top 50 Constituents (MSCI World PAB)</div>
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <button disabled={page === 0} onClick={() => setPage(p => p - 1)} style={{ padding: '3px 10px', borderRadius: 3, border: `1px solid ${T.border}`, background: T.surface, fontFamily: T.mono, fontSize: 11, cursor: page === 0 ? 'default' : 'pointer', opacity: page === 0 ? 0.4 : 1 }}>Prev</button>
-            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textSec }}>{page + 1}/{totalPages}</span>
-            <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} style={{ padding: '3px 10px', borderRadius: 3, border: `1px solid ${T.border}`, background: T.surface, fontFamily: T.mono, fontSize: 11, cursor: page >= totalPages - 1 ? 'default' : 'pointer', opacity: page >= totalPages - 1 ? 0.4 : 1 }}>Next</button>
-          </div>
-        </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr>
-              {['#', 'Name', 'Sector', 'Country', 'Weight %', 'Parent Wt %', 'Delta', 'Carbon Int.', 'Tilt Reason'].map(h => (
-                <th key={h} style={tableHead}>{h}</th>
-              ))}
-            </tr></thead>
-            <tbody>{pageData.map((c, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                <td style={{ ...tableCell, fontFamily: T.mono, color: T.textMut }}>{c.rank}</td>
-                <td style={{ ...tableCell, fontWeight: 600 }}>{c.name}</td>
-                <td style={tableCell}>{c.sector}</td>
-                <td style={tableCell}>{c.country}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{c.weight.toFixed(2)}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{c.parentWeight.toFixed(2)}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono, color: c.delta >= 0 ? T.green : T.red }}>{c.delta > 0 ? '+' : ''}{c.delta}</td>
-                <td style={{ ...tableCell, fontFamily: T.mono }}>{c.carbonInt}</td>
-                <td style={tableCell}><span style={badge('#f0fdf4', T.green)}>{c.tiltReason}</span></td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Sector Breakdown (Parent vs Climate)</div>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={sectorWeights} barGap={2}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="sector" tick={{ fontSize: 8, fontFamily: T.mono, fill: T.textSec }} interval={0} angle={-25} textAnchor="end" height={60} />
-              <YAxis tick={{ fontSize: 10, fontFamily: T.mono, fill: T.textMut }} unit="%" />
-              <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-              <Legend wrapperStyle={{ fontSize: 10, fontFamily: T.font }} />
-              <Bar dataKey="parent" name="Parent" fill={T.textMut} barSize={14} radius={[2, 2, 0, 0]} />
-              <Bar dataKey="climate" name="Climate Benchmark" fill={T.navy} barSize={14} radius={[2, 2, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={{ ...card, flex: 0.7 }}>
-          <div style={sectionTitle}>Geographic Distribution</div>
-          <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie data={geoData} dataKey="climate" nameKey="country" cx="50%" cy="50%" innerRadius={45} outerRadius={85} paddingAngle={2} label={({ name, value }) => `${name.slice(0, 3)} ${value}%`} labelLine={false} style={{ fontSize: 8, fontFamily: T.mono }}>
-                {geoData.map((_, i) => <Cell key={i} fill={pieColors[i % pieColors.length]} />)}
-              </Pie>
-              <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12, border: `1px solid ${T.border}` }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>Excluded Companies</div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr>
-              {['Company', 'Sector', 'Exclusion Reason'].map(h => <th key={h} style={tableHead}>{h}</th>)}
-            </tr></thead>
-            <tbody>{excluded.map((e, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                <td style={{ ...tableCell, fontWeight: 600 }}>{e.name}</td>
-                <td style={tableCell}>{e.sector}</td>
-                <td style={tableCell}><span style={badge('#fef2f2', T.red)}>{e.reason}</span></td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-        <div style={{ ...card, flex: 1 }}>
-          <div style={sectionTitle}>New Additions from Climate Tilt</div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr>
-              {['Company', 'Sector', 'Climate Rationale'].map(h => <th key={h} style={tableHead}>{h}</th>)}
-            </tr></thead>
-            <tbody>
-              {constituents.filter(c => c.delta > 0.3).slice(0, 8).map((c, i) => (
-                <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                  <td style={{ ...tableCell, fontWeight: 600 }}>{c.name}</td>
-                  <td style={tableCell}>{c.sector}</td>
-                  <td style={tableCell}><span style={badge('#f0fdf4', T.green)}>{c.tiltReason}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── Main Page ── */
-export default function ClimateBenchmarkConstructorPage() {
-  const [tab, setTab] = useState(0);
-  const panels = [BenchmarkOverview, PabCtbBuilder, TrackingError, CarbonPathway, ConstituentAnalysis];
-  const Panel = panels[tab];
-  return (
-    <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh', padding: '0 0 32px 0' }}>
-      {/* header */}
-      <div style={{ background: T.navy, padding: '18px 28px 0 28px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+        {/* TAB 0: Benchmark Builder */}
+        {activeTab === 0 && (
           <div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#fff', letterSpacing: 0.3 }}>Climate Benchmark Constructor</div>
-            <div style={{ fontSize: 11, fontFamily: T.mono, color: T.gold, letterSpacing: 0.6, marginTop: 2 }}>EP-CZ3 // EU BMR PAB &amp; CTB Construction &amp; Monitoring</div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+              <KpiCard label="Parent Constituents" value={parentConstituents.length} sub={parentIndex} />
+              <KpiCard label="Benchmark Constituents" value={benchmarkConstituents.length} sub={`after ${benchmarkType} rules`} color={T.indigo} />
+              <KpiCard label="Tracking Error" value={`${trackingError.toFixed(2)}%`} sub="vs parent index" color={T.amber} />
+              <KpiCard label="CI Reduction" value={`${actualReduction.toFixed(1)}%`} sub={`Target: ${carbonReduction}%`} color={actualReduction >= carbonReduction ? T.green : T.red} />
+              <KpiCard label="Parent Avg CI" value={`${parentAvgCI.toFixed(0)}`} sub="tCO₂e/$M revenue" />
+              <KpiCard label="Benchmark CI" value={`${benchmarkAvgCI.toFixed(0)}`} sub="tCO₂e/$M revenue" color={T.teal} />
+              <KpiCard label="BMR Compliant" value={`${bmrCompliance.filter(r => r.pass).length}/12`} sub="EU BMR rules" color={bmrCompliance.filter(r => r.pass).length >= 10 ? T.green : T.amber} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Benchmark vs Parent CI by Sector</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={sectorTilts} margin={{ top: 5, right: 20, left: 0, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 10 }} unit="%" />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="parentWeight" fill={T.muted} name="Parent %" opacity={0.6} />
+                    <Bar dataKey="benchWeight" fill={T.indigo} name={`${benchmarkType} %`} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Sector Weight Tilts (Benchmark - Parent)</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={sectorTilts} margin={{ top: 5, right: 20, left: 0, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 10 }} unit="%" />
+                    <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v > 0 ? '+' : ''}${v}%`, 'Tilt']} />
+                    <ReferenceLine y={0} stroke={T.border} />
+                    <Bar dataKey="tilt" fill={T.teal} radius={[4, 4, 0, 0]} name="Weight Tilt" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-            <span style={{ fontSize: 10, fontFamily: T.mono, color: 'rgba(255,255,255,.5)' }}>LAST REBAL: 2026-03-31</span>
-            <span style={{ fontSize: 10, fontFamily: T.mono, color: T.gold }}>NEXT: 2026-06-30</span>
+        )}
+
+        {/* TAB 1: Constituent Universe */}
+        {activeTab === 1 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
+              <span style={{ fontSize: 12, color: T.muted }}>Sort by:</span>
+              {['marketCap','benchWeight','carbonIntensity','esgScore'].map(f => (
+                <button key={f} onClick={() => { setSortField(f); setSortDir(sortField === f && sortDir === 'desc' ? 'asc' : 'desc'); }}
+                  style={{ padding: '4px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 11, fontWeight: sortField === f ? 700 : 400, background: sortField === f ? T.indigo : T.card, color: sortField === f ? '#fff' : T.text, cursor: 'pointer' }}>
+                  {f} {sortField === f ? (sortDir === 'desc' ? '↓' : '↑') : ''}
+                </button>
+              ))}
+              <span style={{ fontSize: 12, color: T.muted, marginLeft: 'auto' }}>{filteredUniverse.length} constituents</span>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+              <div style={{ overflowX: 'auto', maxHeight: 520, overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub, position: 'sticky', top: 0 }}>
+                      {['Name','Sector','Country','Parent Index','Mkt Cap $Bn','Bench Weight %','CI','Temp','ESG','Taxonomy','Paris','Controversy'].map(h => (
+                        <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredUniverse.map((s, i) => (
+                      <tr key={s.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                        <td style={{ padding: '6px 10px', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace' }}>{s.name}</td>
+                        <td style={{ padding: '6px 10px', color: T.muted, fontSize: 10 }}>{s.sector}</td>
+                        <td style={{ padding: '6px 10px' }}>{s.country}</td>
+                        <td style={{ padding: '6px 10px', fontSize: 10, color: T.blue }}>{s.parentIndex}</td>
+                        <td style={{ padding: '6px 10px' }}>{s.marketCap.toFixed(1)}</td>
+                        <td style={{ padding: '6px 10px', fontWeight: 600 }}>{(s.benchWeight * 100).toFixed(3)}%</td>
+                        <td style={{ padding: '6px 10px', color: s.carbonIntensity > benchmarkAvgCI ? T.amber : T.text }}>{s.carbonIntensity.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: s.temperature <= 2 ? T.green : T.amber }}>{s.temperature.toFixed(2)}</td>
+                        <td style={{ padding: '6px 10px' }}>{s.esgScore.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: s.taxonomyAligned ? T.green : T.red }}>{s.taxonomyAligned ? 'Yes' : 'No'}</td>
+                        <td style={{ padding: '6px 10px', color: s.parisAligned ? T.green : T.red }}>{s.parisAligned ? 'Yes' : 'No'}</td>
+                        <td style={{ padding: '6px 10px', color: s.controversyFlag ? T.red : T.green }}>{s.controversyFlag ? 'Flag' : 'Clean'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
-        <div style={{ borderTop: `1px solid ${T.gold}`, display: 'flex', gap: 0 }}>
-          {TABS.map((t, i) => (
-            <button key={i} onClick={() => setTab(i)} style={{
-              padding: '10px 18px', border: 'none', cursor: 'pointer', fontFamily: T.mono,
-              fontSize: 11, letterSpacing: 0.4, fontWeight: tab === i ? 700 : 400,
-              color: tab === i ? T.gold : 'rgba(255,255,255,.55)',
-              background: tab === i ? 'rgba(197,169,106,.12)' : 'transparent',
-              borderBottom: tab === i ? `2px solid ${T.gold}` : '2px solid transparent',
-              transition: 'all .15s',
-            }}>{t}</button>
-          ))}
-        </div>
-      </div>
-      {/* gold accent line */}
-      <div style={{ height: 2, background: `linear-gradient(90deg, ${T.gold}, transparent)` }} />
-      {/* content */}
-      <div style={{ padding: '16px 28px', maxWidth: 1400, margin: '0 auto' }}>
-        <Panel />
-      </div>
-      {/* terminal bar */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 26, background: T.navy, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', zIndex: 50 }}>
-        <span style={{ fontSize: 10, fontFamily: T.mono, color: 'rgba(255,255,255,.45)' }}>CLIMATE_BENCH v3.2.0</span>
-        <span style={{ fontSize: 10, fontFamily: T.mono, color: T.gold }}>4 benchmarks active // TE budget OK // Next rebalance T-86d</span>
-        <span style={{ fontSize: 10, fontFamily: T.mono, color: 'rgba(255,255,255,.35)' }}>EU BMR Art.19a compliant</span>
+        )}
+
+        {/* TAB 2: Construction Rules */}
+        {activeTab === 2 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>{benchmarkType} Construction — Step by Step</h3>
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={constructionSteps} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="step" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="count" fill={T.indigo} name="Included" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="excluded" fill={T.red} name="Excluded" opacity={0.5} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>PAB Construction Rules</h3>
+                {['Start from parent index','Exclude high-carbon (>20× sector avg CI)','Exclude UNGC violators','Apply 50% CI reduction vs parent','Apply 7%/yr annual decarbonization path','Maximize Paris alignment','Minimize tracking error'].map((r, i) => (
+                  <div key={r} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 0', borderBottom: `1px solid ${T.border}` }}>
+                    <span style={{ background: T.indigo, color: '#fff', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
+                    <span style={{ fontSize: 12 }}>{r}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>CTB Construction Rules</h3>
+                {['Start from parent index','Exclude high-carbon (>10× sector avg CI)','Apply 30% CI reduction vs parent','Climate transition pathway alignment','5%/yr annual decarbonization path','Positive ESG momentum screen','Minimize active share vs parent'].map((r, i) => (
+                  <div key={r} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 0', borderBottom: `1px solid ${T.border}` }}>
+                    <span style={{ background: T.teal, color: '#fff', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{i + 1}</span>
+                    <span style={{ fontSize: 12 }}>{r}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: Carbon Analytics */}
+        {activeTab === 3 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+              <KpiCard label="Parent CI" value={`${parentAvgCI.toFixed(0)}`} sub="tCO₂e/$M" />
+              <KpiCard label={`${benchmarkType} CI`} value={`${benchmarkAvgCI.toFixed(0)}`} sub="tCO₂e/$M" color={T.indigo} />
+              <KpiCard label="Actual Reduction" value={`${actualReduction.toFixed(1)}%`} color={actualReduction >= carbonReduction ? T.green : T.red} />
+              <KpiCard label="Target Reduction" value={`${carbonReduction}%`} color={T.navy} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>CI Comparison: {benchmarkType} vs Parent vs CTB</h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={CB_SECTORS.map((sec, i) => {
+                    const pSubs = parentConstituents.filter(s => s.sector === sec);
+                    const bSubs = benchmarkConstituents.filter(s => s.sector === sec);
+                    const pW = pSubs.reduce((s, x) => s + x.weight_norm, 0);
+                    const bW = bSubs.reduce((s, x) => s + x.benchWeight, 0);
+                    const pCI = pW > 0 ? pSubs.reduce((s, x) => s + (x.weight_norm / pW) * x.carbonIntensity, 0) : 0;
+                    const bCI = bW > 0 ? bSubs.reduce((s, x) => s + (x.benchWeight / bW) * x.carbonIntensity, 0) : 0;
+                    return { sector: sec.substring(0, 6), parent: +pCI.toFixed(0), benchmark: +bCI.toFixed(0), ctb: +(pCI * 0.7).toFixed(0) };
+                  })} margin={{ top: 5, right: 20, left: 0, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="parent" fill={T.muted} name="Parent" opacity={0.7} />
+                    <Bar dataKey="benchmark" fill={T.indigo} name={benchmarkType} />
+                    <Bar dataKey="ctb" fill={T.teal} name="CTB" opacity={0.8} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Annual Decarbonization Path (2025–2040)</h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={Array.from({ length: 16 }, (_, i) => ({
+                    year: 2025 + i,
+                    pab: +(benchmarkAvgCI * Math.pow(0.93, i)).toFixed(0),
+                    ctb: +(parentAvgCI * 0.7 * Math.pow(0.95, i)).toFixed(0),
+                    parent: +(parentAvgCI * Math.pow(0.99, i)).toFixed(0),
+                  }))} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="year" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Line type="monotone" dataKey="parent" stroke={T.muted} strokeWidth={1.5} name="Parent" dot={false} strokeDasharray="4 4" />
+                    <Line type="monotone" dataKey="pab" stroke={T.indigo} strokeWidth={2.5} name="PAB" dot={false} />
+                    <Line type="monotone" dataKey="ctb" stroke={T.teal} strokeWidth={2} name="CTB" dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: EU BMR Compliance */}
+        {activeTab === 4 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+              <KpiCard label="Rules Passed" value={`${bmrCompliance.filter(r => r.pass).length}/12`} color={T.green} />
+              <KpiCard label="Rules Failed" value={`${bmrCompliance.filter(r => !r.pass).length}/12`} color={T.red} />
+              <KpiCard label="Compliance Score" value={`${(bmrCompliance.filter(r => r.pass).length / 12 * 100).toFixed(0)}%`} color={bmrCompliance.filter(r => r.pass).length >= 10 ? T.green : T.amber} />
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>EU Benchmark Regulation (BMR) Compliance Checklist — {benchmarkType}</h3>
+              {bmrCompliance.map((r, i) => (
+                <div key={r.rule} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: i % 2 === 0 ? T.card : T.sub, borderRadius: 6, marginBottom: 4 }}>
+                  <span style={{ fontSize: 16, color: r.pass ? T.green : T.red, width: 20 }}>{r.pass ? '✓' : '✗'}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, flex: 1 }}>{r.rule}</span>
+                  <span style={{ fontSize: 11, color: T.muted }}>{r.detail}</span>
+                  <span style={{ background: r.pass ? T.green : T.red, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10, fontWeight: 700 }}>{r.pass ? 'PASS' : 'FAIL'}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: Greenium Analysis */}
+        {activeTab === 5 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+              <KpiCard label="Avg Portfolio Greenium" value={`${(greeniumData.reduce((s, x) => s + x.greenium, 0) / greeniumData.length).toFixed(1)} bps`} sub="Green vs brown yield" color={T.teal} />
+              <KpiCard label="Max Greenium" value={`${Math.max(...greeniumData.map(x => x.greenium)).toFixed(1)} bps`} color={T.green} />
+              <KpiCard label="Sectors with Premium" value={greeniumData.filter(x => x.greenium > 0).length} sub="of 12 sectors" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Greenium by Sector (bps)</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={greeniumData} margin={{ top: 5, right: 20, left: 0, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 10 }} unit=" bps" />
+                    <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v} bps`, 'Greenium']} />
+                    <ReferenceLine y={0} stroke={T.border} strokeWidth={2} />
+                    <Bar dataKey="greenium" fill={T.teal} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Duration-Adjusted Greenium Comparison</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={CB_SECTORS.map((sec, i) => ({
+                    sector: sec.substring(0, 6),
+                    green: +(sr(i * 13 + 3) * 0.04 + 0.02).toFixed(4),
+                    brown: +(sr(i * 13 + 3) * 0.04 + 0.02 + sr(i * 17 + 5) * 0.003).toFixed(4),
+                  }))} margin={{ top: 5, right: 20, left: 0, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `${(v * 100).toFixed(2)}%`} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${(v * 100).toFixed(3)}%`, '']} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="green" fill={T.green} name="Green Yield" />
+                    <Bar dataKey="brown" fill={T.amber} name="Brown Yield" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: Summary & Export */}
+        {activeTab === 6 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>Benchmark Construction Summary — {benchmarkType} on {parentIndex}</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Metric','Parent Index','PAB','CTB','Target'].map(h => (
+                      <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Constituents', parentConstituents.length, benchmarkConstituents.length, Math.round(benchmarkConstituents.length * 1.3), 'N/A'],
+                    ['Avg CI (tCO₂e/$M)', parentAvgCI.toFixed(0), benchmarkAvgCI.toFixed(0), (parentAvgCI * 0.7).toFixed(0), `${(parentAvgCI * (1 - carbonReduction/100)).toFixed(0)} (${carbonReduction}% red.)`],
+                    ['CI Reduction %', '0%', `${actualReduction.toFixed(1)}%`, '30%', `${carbonReduction}%`],
+                    ['Tracking Error %', '0%', `${trackingError.toFixed(2)}%`, `${(trackingError * 0.7).toFixed(2)}%`, '<5%'],
+                    ['BMR Compliance', 'N/A', `${bmrCompliance.filter(r => r.pass).length}/12`, `${Math.min(12, bmrCompliance.filter(r => r.pass).length + 1)}/12`, '12/12'],
+                    ['Avg Greenium bps', 'N/A', `${(greeniumData.reduce((s, x) => s + x.greenium, 0) / greeniumData.length).toFixed(1)}`, 'N/A', '>0'],
+                    ['Excluded (ESG)', '0', parentConstituents.length - benchmarkConstituents.length, 'Variable', 'Min needed'],
+                  ].map(([m, p, pab, ctb, t], i) => (
+                    <tr key={m} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '8px 12px', fontWeight: 600 }}>{m}</td>
+                      <td style={{ padding: '8px 12px', color: T.muted }}>{p}</td>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: T.indigo }}>{pab}</td>
+                      <td style={{ padding: '8px 12px', color: T.teal }}>{ctb}</td>
+                      <td style={{ padding: '8px 12px', color: T.muted, fontSize: 11 }}>{t}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Top 50 Benchmark Constituents ({benchmarkType})</h3>
+              <div style={{ overflowX: 'auto', maxHeight: 360, overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Name','Sector','Country','Bench Wt %','Parent Wt %','Active Wt %','CI','ESG','ITR','Taxonomy'].map(h => (
+                        <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...benchmarkConstituents].sort((a, b) => b.benchWeight - a.benchWeight).slice(0, 50).map((s, i) => (
+                      <tr key={s.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                        <td style={{ padding: '5px 10px', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace' }}>{s.name}</td>
+                        <td style={{ padding: '5px 10px', fontSize: 10, color: T.muted }}>{s.sector}</td>
+                        <td style={{ padding: '5px 10px' }}>{s.country}</td>
+                        <td style={{ padding: '5px 10px', fontWeight: 700 }}>{(s.benchWeight * 100).toFixed(3)}%</td>
+                        <td style={{ padding: '5px 10px', color: T.muted }}>{(s.weight_norm * 100).toFixed(3)}%</td>
+                        <td style={{ padding: '5px 10px', color: (s.benchWeight - s.weight_norm) >= 0 ? T.green : T.red }}>
+                          {((s.benchWeight - s.weight_norm) * 100 >= 0 ? '+' : '')}{((s.benchWeight - s.weight_norm) * 100).toFixed(3)}%
+                        </td>
+                        <td style={{ padding: '5px 10px' }}>{s.carbonIntensity.toFixed(0)}</td>
+                        <td style={{ padding: '5px 10px' }}>{s.esgScore.toFixed(0)}</td>
+                        <td style={{ padding: '5px 10px', color: s.temperature <= 2 ? T.green : T.amber }}>{s.temperature.toFixed(2)}</td>
+                        <td style={{ padding: '5px 10px', color: s.taxonomyAligned ? T.green : T.red }}>{s.taxonomyAligned ? 'Y' : 'N'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {/* Parent index comparison */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Benchmark vs All Parent Indices — CI Comparison</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={PARENT_INDICES.map(idx => {
+                  const subs = byIndex[idx] || [];
+                  const tot = subs.reduce((s, x) => s + x.weight_norm, 0);
+                  const ci = tot > 0 ? subs.reduce((s, x) => s + (x.weight_norm / tot) * x.carbonIntensity, 0) : 0;
+                  return { index: idx, ci: +ci.toFixed(0) };
+                })} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="index" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v} tCO₂e/$M`, 'Carbon Intensity']} />
+                  <ReferenceLine y={benchmarkAvgCI} stroke={T.indigo} strokeDasharray="5 5" label={{ value: `${benchmarkType}: ${benchmarkAvgCI.toFixed(0)}`, fontSize: 9, fill: T.indigo }} />
+                  <Bar dataKey="ci" fill={T.navy} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Country distribution */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Country Weight Distribution — {benchmarkType}</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={['US','UK','DE','FR','JP','CN','CH','NL'].map(cty => ({
+                  country: cty,
+                  weight: +(benchmarkConstituents.filter(s => s.country === cty).reduce((s, x) => s + x.benchWeight * 100, 0)).toFixed(2),
+                }))} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="country" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} unit="%" />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v}%`, 'Weight']} />
+                  <Bar dataKey="weight" fill={T.teal} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* ESG distribution */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>ESG Score Distribution — {benchmarkType} Constituents</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={Array.from({ length: 10 }, (_, i) => ({
+                  range: `${i * 10}-${(i + 1) * 10}`,
+                  count: benchmarkConstituents.filter(s => s.esgScore >= i * 10 && s.esgScore < (i + 1) * 10).length,
+                }))} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="range" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v} constituents`, 'Count']} />
+                  <Bar dataKey="count" fill={T.green} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Temperature distribution */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>ITR Distribution — {benchmarkType}</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={[
+                  { range: '1.5-2.0', count: benchmarkConstituents.filter(s => s.temperature < 2).length },
+                  { range: '2.0-2.5', count: benchmarkConstituents.filter(s => s.temperature >= 2 && s.temperature < 2.5).length },
+                  { range: '2.5-3.0', count: benchmarkConstituents.filter(s => s.temperature >= 2.5 && s.temperature < 3).length },
+                  { range: '3.0-3.5', count: benchmarkConstituents.filter(s => s.temperature >= 3 && s.temperature < 3.5).length },
+                  { range: '3.5-4.5', count: benchmarkConstituents.filter(s => s.temperature >= 3.5).length },
+                ]} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="range" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v}`, 'Count']} />
+                  <Bar dataKey="count" fill={T.amber} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Taxonomy & Paris alignment metrics table */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Sector-Level Taxonomy & Paris Alignment</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Sector','# Constituents','Bench Wt %','Taxonomy Aligned %','Paris Aligned %','Controversy-Free %','Avg ESG','Avg CI','Avg ITR'].map(h => (
+                      <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {CB_SECTORS.map((sec, i) => {
+                    const sh = benchmarkConstituents.filter(s => s.sector === sec);
+                    if (!sh.length) return null;
+                    const bw = sh.reduce((s, x) => s + x.benchWeight * 100, 0);
+                    const taxPct = sh.filter(s => s.taxonomyAligned).length / sh.length * 100;
+                    const parisPct = sh.filter(s => s.parisAligned).length / sh.length * 100;
+                    const cleanPct = sh.filter(s => !s.controversyFlag).length / sh.length * 100;
+                    const avgESG2 = sh.reduce((s, x) => s + x.esgScore, 0) / sh.length;
+                    const avgCI2 = sh.reduce((s, x) => s + x.carbonIntensity, 0) / sh.length;
+                    const avgITR2 = sh.reduce((s, x) => s + x.temperature, 0) / sh.length;
+                    return (
+                      <tr key={sec} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                        <td style={{ padding: '6px 10px', fontWeight: 600 }}>{sec}</td>
+                        <td style={{ padding: '6px 10px' }}>{sh.length}</td>
+                        <td style={{ padding: '6px 10px', fontWeight: 600 }}>{bw.toFixed(2)}%</td>
+                        <td style={{ padding: '6px 10px', color: taxPct >= 50 ? T.green : T.amber }}>{taxPct.toFixed(1)}%</td>
+                        <td style={{ padding: '6px 10px', color: parisPct >= 50 ? T.green : T.amber }}>{parisPct.toFixed(1)}%</td>
+                        <td style={{ padding: '6px 10px', color: cleanPct >= 80 ? T.green : T.red }}>{cleanPct.toFixed(1)}%</td>
+                        <td style={{ padding: '6px 10px' }}>{avgESG2.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: avgCI2 > benchmarkAvgCI ? T.amber : T.text }}>{avgCI2.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: avgITR2 <= 2 ? T.green : T.amber }}>{avgITR2.toFixed(2)}</td>
+                      </tr>
+                    );
+                  }).filter(Boolean)}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom panel: quick stats */}
+        {activeTab !== 6 && (
+          <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase', marginBottom: 10 }}>Construction Settings</div>
+              {[
+                ['Parent Index', parentIndex],
+                ['Benchmark Type', benchmarkType],
+                ['CI Reduction', `${carbonReduction}%`],
+                ['Excl. Multiplier', `${exclusionMultiplier}×`],
+                ['ESG Min Score', esgMin],
+                ['Controversy Filter', excludeControversy ? 'Active' : 'Off'],
+                ['Actual CI Reduction', `${actualReduction.toFixed(1)}%`],
+              ].map(([l, v]) => (
+                <div key={l} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
+                  <span style={{ color: T.muted }}>{l}</span>
+                  <span style={{ fontWeight: 600 }}>{v}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase', marginBottom: 10 }}>Benchmark KPIs</div>
+              {[
+                ['Parent Constituents', parentConstituents.length],
+                ['Benchmark Constituents', benchmarkConstituents.length],
+                ['Excluded', parentConstituents.length - benchmarkConstituents.length],
+                ['Tracking Error', `${trackingError.toFixed(2)}%`],
+                ['Parent Avg CI', `${parentAvgCI.toFixed(0)}`],
+                ['Benchmark CI', `${benchmarkAvgCI.toFixed(0)}`],
+                ['BMR Rules Passed', `${bmrCompliance.filter(r => r.pass).length}/12`],
+              ].map(([l, v]) => (
+                <div key={l} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
+                  <span style={{ color: T.muted }}>{l}</span>
+                  <span style={{ fontWeight: 600 }}>{v}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase', marginBottom: 10 }}>Taxonomy & Paris Alignment</div>
+              {[
+                ['Taxonomy Aligned', `${(benchmarkConstituents.filter(s => s.taxonomyAligned).length / (benchmarkConstituents.length || 1) * 100).toFixed(1)}%`],
+                ['Paris Aligned', `${(benchmarkConstituents.filter(s => s.parisAligned).length / (benchmarkConstituents.length || 1) * 100).toFixed(1)}%`],
+                ['Controversy-Free', `${(benchmarkConstituents.filter(s => !s.controversyFlag).length / (benchmarkConstituents.length || 1) * 100).toFixed(1)}%`],
+                ['Avg ESG Score', benchmarkConstituents.length ? (benchmarkConstituents.reduce((s, x) => s + x.esgScore, 0) / benchmarkConstituents.length).toFixed(1) : 0],
+                ['Avg ITR', benchmarkConstituents.length ? (benchmarkConstituents.reduce((s, x) => s + x.temperature, 0) / benchmarkConstituents.length).toFixed(2) + '°C' : '—'],
+                ['EU Taxonomy %', `${(benchmarkConstituents.filter(s => s.euTaxonomyPct > 50).length / (benchmarkConstituents.length || 1) * 100).toFixed(1)}%`],
+                ['Avg Greenium', `${(greeniumData.reduce((s, x) => s + x.greenium, 0) / greeniumData.length).toFixed(1)} bps`],
+              ].map(([l, v]) => (
+                <div key={l} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
+                  <span style={{ color: T.muted }}>{l}</span>
+                  <span style={{ fontWeight: 600 }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Annual decarbonization milestones */}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Annual Decarbonization Milestones — PAB vs CTB</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Year','PAB CI Target','CTB CI Target','Parent CI','PAB Reduction %','CTB Reduction %','PAB Status','CTB Status'].map(h => (
+                    <th key={h} style={{ padding: '7px 12px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[2025, 2026, 2027, 2028, 2029, 2030, 2035, 2040, 2050].map((yr, i) => {
+                  const yOffset = yr - 2025;
+                  const pabCI = +(benchmarkAvgCI * Math.pow(0.93, yOffset)).toFixed(0);
+                  const ctbCI = +(parentAvgCI * 0.7 * Math.pow(0.95, yOffset)).toFixed(0);
+                  const parCI = +(parentAvgCI * Math.pow(0.99, yOffset)).toFixed(0);
+                  const pabRed = +((1 - pabCI / parCI) * 100).toFixed(1);
+                  const ctbRed = +((1 - ctbCI / parCI) * 100).toFixed(1);
+                  return (
+                    <tr key={yr} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '7px 12px', fontWeight: 700 }}>{yr}</td>
+                      <td style={{ padding: '7px 12px', color: T.indigo }}>{pabCI}</td>
+                      <td style={{ padding: '7px 12px', color: T.teal }}>{ctbCI}</td>
+                      <td style={{ padding: '7px 12px', color: T.muted }}>{parCI}</td>
+                      <td style={{ padding: '7px 12px', color: pabRed >= carbonReduction ? T.green : T.red }}>{pabRed}%</td>
+                      <td style={{ padding: '7px 12px', color: ctbRed >= 30 ? T.green : T.red }}>{ctbRed}%</td>
+                      <td style={{ padding: '7px 12px' }}><span style={{ background: pabRed >= carbonReduction ? T.green : T.red, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{pabRed >= carbonReduction ? 'On Track' : 'Lagging'}</span></td>
+                      <td style={{ padding: '7px 12px' }}><span style={{ background: ctbRed >= 30 ? T.green : T.red, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{ctbRed >= 30 ? 'On Track' : 'Lagging'}</span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* PAB vs CTB vs Parent detailed comparison */}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>PAB vs CTB vs Parent Index — Detailed Risk Comparison</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Metric','Parent Index','CTB','PAB (Current)','Delta PAB vs Parent','Notes'].map(h => (
+                    <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ['Constituents', parentConstituents.length, Math.round(benchmarkConstituents.length * 1.3), benchmarkConstituents.length, '', 'After exclusions'],
+                  ['Avg CI', parentAvgCI.toFixed(0), (parentAvgCI * 0.7).toFixed(0), benchmarkAvgCI.toFixed(0), `${actualReduction.toFixed(1)}% reduction`, 'tCO₂e/$M'],
+                  ['Tracking Error', '0%', `${(trackingError * 0.7).toFixed(2)}%`, `${trackingError.toFixed(2)}%`, '', 'vs parent'],
+                  ['Taxonomy Aligned', `${(parentConstituents.filter(s => s.taxonomyAligned).length / (parentConstituents.length || 1) * 100).toFixed(0)}%`, '', `${(benchmarkConstituents.filter(s => s.taxonomyAligned).length / (benchmarkConstituents.length || 1) * 100).toFixed(0)}%`, '', 'EU taxonomy'],
+                  ['Paris Aligned', `${(parentConstituents.filter(s => s.parisAligned).length / (parentConstituents.length || 1) * 100).toFixed(0)}%`, '', `${(benchmarkConstituents.filter(s => s.parisAligned).length / (benchmarkConstituents.length || 1) * 100).toFixed(0)}%`, '', '≤2°C'],
+                  ['Controversy-Free', `${(parentConstituents.filter(s => !s.controversyFlag).length / (parentConstituents.length || 1) * 100).toFixed(0)}%`, '', `${(benchmarkConstituents.filter(s => !s.controversyFlag).length / (benchmarkConstituents.length || 1) * 100).toFixed(0)}%`, '', 'Excl. filter'],
+                  ['Avg ESG Score', parentConstituents.length ? (parentConstituents.reduce((s, x) => s + x.esgScore, 0) / parentConstituents.length).toFixed(0) : 0, '', benchmarkConstituents.length ? (benchmarkConstituents.reduce((s, x) => s + x.esgScore, 0) / benchmarkConstituents.length).toFixed(0) : 0, '', 'ESG min filter'],
+                  ['BMR Rules Passed', 'N/A', 'N/A', `${bmrCompliance.filter(r => r.pass).length}/12`, '', 'EU BMR compliance'],
+                ].map(([m, p, ctb, pab, delta, note], i) => (
+                  <tr key={m} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                    <td style={{ padding: '6px 10px', fontWeight: 600 }}>{m}</td>
+                    <td style={{ padding: '6px 10px', color: T.muted }}>{p}</td>
+                    <td style={{ padding: '6px 10px', color: T.teal }}>{ctb || '—'}</td>
+                    <td style={{ padding: '6px 10px', fontWeight: 600, color: T.indigo }}>{pab}</td>
+                    <td style={{ padding: '6px 10px', color: T.green }}>{delta || '—'}</td>
+                    <td style={{ padding: '6px 10px', color: T.muted, fontSize: 11 }}>{note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Sector tilt detailed */}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Sector Weight Tilt Detail — {benchmarkType} vs {parentIndex}</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Sector','Parent Wt %','Benchmark Wt %','Active Tilt %','Tilt Direction','Avg CI Sector','Avg ESG Sector','Tilt Rationale'].map(h => (
+                    <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sectorTilts.map((st, i) => {
+                  const sh = benchmarkConstituents.filter(s => s.sector === st.sector);
+                  const avgCI2 = sh.length ? sh.reduce((s, x) => s + x.carbonIntensity, 0) / sh.length : 0;
+                  const avgESG2 = sh.length ? sh.reduce((s, x) => s + x.esgScore, 0) / sh.length : 0;
+                  const rationale = st.tilt > 1 ? 'Low CI / High ESG' : st.tilt < -1 ? 'High CI excluded' : 'Neutral';
+                  return (
+                    <tr key={st.sector} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '6px 10px', fontWeight: 600 }}>{st.sector}</td>
+                      <td style={{ padding: '6px 10px', color: T.muted }}>{st.parentWeight.toFixed(2)}%</td>
+                      <td style={{ padding: '6px 10px', fontWeight: 600 }}>{st.benchWeight.toFixed(2)}%</td>
+                      <td style={{ padding: '6px 10px', fontWeight: 600, color: st.tilt > 0 ? T.green : st.tilt < 0 ? T.red : T.muted }}>
+                        {st.tilt > 0 ? '+' : ''}{st.tilt.toFixed(2)}%
+                      </td>
+                      <td style={{ padding: '6px 10px' }}>{st.tilt > 0.5 ? '▲ Overweight' : st.tilt < -0.5 ? '▼ Underweight' : '= Neutral'}</td>
+                      <td style={{ padding: '6px 10px', color: avgCI2 > benchmarkAvgCI ? T.amber : T.text }}>{avgCI2.toFixed(0)}</td>
+                      <td style={{ padding: '6px 10px' }}>{avgESG2.toFixed(0)}</td>
+                      <td style={{ padding: '6px 10px', color: T.muted, fontSize: 11 }}>{rationale}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Constituent classification grid */}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Constituent Classification Summary — {benchmarkType} on {parentIndex}</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+              {[
+                { label: 'Taxonomy\nAligned', value: benchmarkConstituents.filter(s => s.taxonomyAligned).length, total: benchmarkConstituents.length, color: T.green },
+                { label: 'Paris\nAligned', value: benchmarkConstituents.filter(s => s.parisAligned).length, total: benchmarkConstituents.length, color: T.teal },
+                { label: 'High ESG\n(≥70)', value: benchmarkConstituents.filter(s => s.esgScore >= 70).length, total: benchmarkConstituents.length, color: T.indigo },
+                { label: 'Low CI\n(<100)', value: benchmarkConstituents.filter(s => s.carbonIntensity < 100).length, total: benchmarkConstituents.length, color: T.blue },
+                { label: 'Clean\n(No Contr.)', value: benchmarkConstituents.filter(s => !s.controversyFlag).length, total: benchmarkConstituents.length, color: T.purple },
+              ].map(item => (
+                <div key={item.label} style={{ background: T.sub, borderRadius: 8, padding: 12, textAlign: 'center', borderLeft: `3px solid ${item.color}` }}>
+                  <div style={{ fontSize: 9, color: T.muted, fontWeight: 700, marginBottom: 4, whiteSpace: 'pre' }}>{item.label}</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: item.color }}>{item.value}</div>
+                  <div style={{ fontSize: 10, color: T.muted }}>{item.total > 0 ? (item.value / item.total * 100).toFixed(0) : 0}%</div>
+                  <div style={{ background: T.border, borderRadius: 4, height: 4, marginTop: 6 }}>
+                    <div style={{ background: item.color, borderRadius: 4, height: 4, width: `${item.total > 0 ? item.value / item.total * 100 : 0}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: T.text }}>Annual Decarbonisation Compliance Audit — PAB 7% Year-on-Year Pathway</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Year', 'PAB Target CI', 'CTB Target CI', 'Portfolio CI', 'PAB Status', 'CTB Status', 'Δ vs PAB', 'Δ vs CTB', 'Correction Required'].map(h => (
+                    <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.text, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 8 }, (_, y) => {
+                  const year = 2024 + y;
+                  const basePAB = 120;
+                  const baseCTB = 180;
+                  const decayPAB = Math.pow(0.93, y);
+                  const decayCTB = Math.pow(0.95, y);
+                  const pabTarget = +(basePAB * decayPAB).toFixed(1);
+                  const ctbTarget = +(baseCTB * decayCTB).toFixed(1);
+                  const portCI = +(pabTarget * (0.85 + sr(y * 7 + 3) * 0.4)).toFixed(1);
+                  const pabOK = portCI <= pabTarget;
+                  const ctbOK = portCI <= ctbTarget;
+                  const dPAB = +(portCI - pabTarget).toFixed(1);
+                  const dCTB = +(portCI - ctbTarget).toFixed(1);
+                  const corr = !pabOK ? `Reduce by ${Math.abs(dPAB).toFixed(0)} tCO₂e/$M` : !ctbOK ? 'Minor tilt' : 'None';
+                  return (
+                    <tr key={year} style={{ background: y % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '6px 10px', fontWeight: 700 }}>{year}</td>
+                      <td style={{ padding: '6px 10px' }}>{pabTarget}</td>
+                      <td style={{ padding: '6px 10px' }}>{ctbTarget}</td>
+                      <td style={{ padding: '6px 10px', fontWeight: 600, color: pabOK ? T.green : T.red }}>{portCI}</td>
+                      <td style={{ padding: '6px 10px' }}><span style={{ background: pabOK ? T.green : T.red, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{pabOK ? '✓ Pass' : '✗ Fail'}</span></td>
+                      <td style={{ padding: '6px 10px' }}><span style={{ background: ctbOK ? T.green : T.amber, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{ctbOK ? '✓ Pass' : '! Warn'}</span></td>
+                      <td style={{ padding: '6px 10px', color: dPAB > 0 ? T.red : T.green, fontWeight: 600 }}>{dPAB > 0 ? '+' : ''}{dPAB}</td>
+                      <td style={{ padding: '6px 10px', color: dCTB > 0 ? T.amber : T.green }}>{dCTB > 0 ? '+' : ''}{dCTB}</td>
+                      <td style={{ padding: '6px 10px', fontSize: 10, color: corr === 'None' ? T.green : T.red }}>{corr}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 10, color: T.text }}>Greenium vs Carbon Intensity — Percentile Correlation Summary</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+              {['P10', 'P25', 'P50', 'P75', 'P90'].map((pct, pi) => {
+                const ciBound = [50, 100, 200, 350, 500][pi];
+                const avgGreenium = +(sr(pi * 13 + 5) * 0.2 - 0.1).toFixed(4);
+                const inBench = benchmarkConstituents.filter(s => s.carbonIntensity <= ciBound).length;
+                const pctCov = benchmarkConstituents.length > 0 ? (inBench / benchmarkConstituents.length * 100).toFixed(0) : 0;
+                return (
+                  <div key={pct} style={{ background: T.sub, borderRadius: 8, padding: 12, textAlign: 'center', borderTop: `3px solid ${T.indigo}` }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: T.muted }}>{pct}</div>
+                    <div style={{ fontSize: 11, color: T.text, marginTop: 4 }}>CI ≤ {ciBound}</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: avgGreenium >= 0 ? T.red : T.green, marginTop: 4 }}>{avgGreenium >= 0 ? '+' : ''}{avgGreenium.toFixed(4)}</div>
+                    <div style={{ fontSize: 10, color: T.muted }}>Avg Greenium</div>
+                    <div style={{ fontSize: 10, color: T.blue, marginTop: 4 }}>{pctCov}% in bench</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,756 +1,812 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area, LineChart, Line,
-  Cell, Legend, PieChart, Pie, ScatterChart, Scatter,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  LineChart, Line, ComposedChart, Area,
+  ResponsiveContainer, Cell,
 } from 'recharts';
 
 const T = {
-  bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
-  navyL:'#2c5a8c', gold:'#c5a96a', goldL:'#d4be8a', sage:'#5a8a6a',
-  sageL:'#7ba67d', teal:'#5a8a6a', text:'#1b3a5c', textSec:'#5c6b7e',
-  textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706',
-  blue:'#2563eb', orange:'#ea580c', purple:'#7c3aed', card:'#ffffff',
-  sub:'#f6f4f0', indigo:'#4f46e5',
-  font:"'DM Sans','SF Pro Display',system-ui,sans-serif",
-  mono:"'JetBrains Mono','SF Mono','Fira Code',monospace",
+  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
+  sub: '#f6f4f0', muted: '#6b7280', indigo: '#4f46e5', gold: '#b8860b',
+  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706',
+  navy: '#1e3a5f', teal: '#0f766e', purple: '#7c3aed', orange: '#ea580c',
 };
 
-const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-const ASSET_TYPES = ['Coal Plant','Oil Field','Gas Terminal','LNG Facility','Refinery','Coal Mine','Oil Sands','Petrochemical'];
-const COMPANIES_LIST = ['ExxonMobil','Shell','BP','Chevron','TotalEnergies','RWE','E.ON','Vattenfall','Peabody','Arch Coal','Glencore','BHP','Rio Tinto','Vale','Anglo American'];
-const JURISDICTIONS = ['US','UK','Australia','Germany','Netherlands','Canada','Brazil','South Africa'];
-const ASSET_SUFFIXES = ['Alpha','Beta','Gamma','Delta','Epsilon','Zeta','Eta','Theta'];
-const REG_TRIGGERS_LIST = ['Carbon Tax >$150','Fossil Fuel Ban','Stranding Mandate','Permit Revocation'];
+const ASSET_TYPES = ['Coal Plant', 'Oil Field', 'Gas Pipeline', 'Refinery', 'LNG Terminal', 'Coal Mine', 'Tar Sands', 'Shale Field'];
+const COUNTRIES = ['USA', 'Canada', 'Australia', 'UK', 'Germany', 'Netherlands', 'Poland', 'India', 'China', 'Russia', 'Saudi Arabia', 'UAE', 'Indonesia', 'South Africa', 'Brazil', 'Mexico', 'Kazakhstan', 'Colombia', 'Nigeria', 'Norway'];
+const PERMIT_STATUSES = ['Active', 'Under Review', 'Challenged', 'Revoked'];
+const NGFS_SCENARIOS = ['Net Zero 2050', 'Below 2°C', 'Delayed Transition', 'Hot House World'];
+const NGFS_WRITE_DOWN_RANGES = [[55, 85], [35, 65], [20, 45], [10, 25]];
+const CREDITOR_TYPES = ['Bank', 'Bond', 'Insurance', 'Pension', 'Sovereign'];
 
-const ASSETS = Array.from({ length: 35 }, (_, i) => ({
-  id: `AST-${i + 1}`,
-  name: `${ASSET_TYPES[i % 8]} ${ASSET_SUFFIXES[i % 8]}-${Math.ceil((i + 1) / 8)}`,
-  company: COMPANIES_LIST[i % 15],
-  assetType: ASSET_TYPES[i % 8],
-  jurisdiction: JURISDICTIONS[i % 8],
-  bookValue: Math.round(200 + sr(i * 37) * 1800),
-  strandingRisk: Math.round(15 + sr(i * 37 + 1) * 80),
-  litigationExposure: Math.round(10 + sr(i * 37 + 2) * 290),
-  activeLitigations: Math.round(sr(i * 37 + 3) * 8),
-  writeDownOrderly: -(Math.round(5 + sr(i * 37 + 4) * 30)),
-  writeDownDelayed: -(Math.round(15 + sr(i * 37 + 5) * 45)),
-  writeDownDisorderly: -(Math.round(30 + sr(i * 37 + 6) * 55)),
-  creditorClaims: Math.round(50 + sr(i * 37 + 7) * 450),
-  regulatoryTrigger: REG_TRIGGERS_LIST[Math.floor(sr(i * 37 + 8) * 4)],
-}));
-
-const SCENARIOS = [
-  { name: 'NGFS Net Zero 2050', prob: 0.35, avgWriteDown: -22, litMultiplier: 1.8, color: T.green },
-  { name: 'NGFS Delayed Transition', prob: 0.30, avgWriteDown: -38, litMultiplier: 2.4, color: T.amber },
-  { name: 'NGFS Current Policies', prob: 0.20, avgWriteDown: -58, litMultiplier: 3.1, color: T.red },
-  { name: 'Regulatory Shock', prob: 0.15, avgWriteDown: -71, litMultiplier: 4.2, color: T.purple },
+const OWNER_NAMES = [
+  'Apex Energy Corp', 'GlobalOil PLC', 'TerraFuel AG', 'CoalTech Industries', 'PetroChem SE',
+  'EnergyGiant Corp', 'BlueFuel Ltd', 'NatGas Holdings', 'TarSands Global', 'ShaleFirst Energy',
+  'LNG Dynamics', 'PipelineCo', 'RefineryCorp', 'CoalMine Holdings', 'HeavyOil Partners',
+  'CarbonFirst Ltd', 'OilStream PLC', 'FossilFuel AG', 'MiningCo Global', 'FuelGroup SE',
 ];
 
-const CREDITOR_NAMES = [
-  'BlackRock','Vanguard','State Street','HSBC','JPMorgan','Goldman','Deutsche Bank',
-  'BNP Paribas','Citigroup','Barclays','Credit Suisse','UBS','Allianz','Munich Re',
-  'Aviva','Prudential','Fidelity','T.Rowe Price','Pimco','CalPERS',
-];
-const CREDITOR_TYPES = [
-  'Senior','Senior','Mezzanine','Sub','Senior','Senior','Mezzanine','Sub','Senior','Senior',
-  'Mezzanine','Sub','Senior','Senior','Mezzanine','Sub','Senior','Senior','Mezzanine','Sub',
-];
+const ASSETS = Array.from({ length: 120 }, (_, i) => {
+  const typeIdx = Math.floor(sr(i * 7) * 8);
+  const countryIdx = Math.floor(sr(i * 11) * 20);
+  const ownerIdx = Math.floor(sr(i * 13) * 20);
+  const strandingRisk = Math.round(sr(i * 17) * 90 + 5);
+  const bookValue = Math.round((sr(i * 19) * 4 + 0.05) * 1e3); // $M
+  const remainingLife = Math.round(sr(i * 23) * 35 + 2);
+  const carbonLockIn = +(sr(i * 29) * 500 + 5).toFixed(1);
+  const decommissionCost = Math.round(bookValue * (sr(i * 31) * 0.3 + 0.05));
+  const litigationExposure = Math.round(bookValue * (sr(i * 37) * 0.5 + 0.02));
+  const creditorExposure = Math.round(bookValue * (sr(i * 41) * 0.7 + 0.1));
+  const permitStatusIdx = Math.floor(sr(i * 43) * 4);
+  const physRisk = Math.round(sr(i * 47) * 80 + 10);
+  const policyRisk = Math.round(sr(i * 53) * 80 + 10);
+  const marketRisk = Math.round(sr(i * 59) * 80 + 10);
+  const socialLicenseRisk = Math.round(sr(i * 61) * 80 + 10);
+  const currentUtilization = +(sr(i * 67) * 90 + 5).toFixed(0);
+  const ngfsWriteDown = NGFS_SCENARIOS.map((_, si) => {
+    const [lo, hi] = NGFS_WRITE_DOWN_RANGES[si];
+    return Math.round(lo + sr(i * 71 + si * 50) * (hi - lo));
+  });
+  const remEconValue = Math.round(bookValue * (remainingLife / 40) * (1 - strandingRisk / 100));
+  return {
+    id: i + 1,
+    name: `${ASSET_TYPES[typeIdx]} ${i + 1}`,
+    type: ASSET_TYPES[typeIdx],
+    owner: OWNER_NAMES[ownerIdx],
+    country: COUNTRIES[countryIdx],
+    bookValue,
+    strandingRisk,
+    remainingLife,
+    carbonLockIn,
+    decommissionCost,
+    litigationExposure,
+    creditorExposure,
+    permitStatus: PERMIT_STATUSES[permitStatusIdx],
+    ngfsWriteDown,
+    physicalRiskScore: physRisk,
+    policyRiskScore: policyRisk,
+    marketRiskScore: marketRisk,
+    socialLicenseRisk,
+    currentUtilization: +currentUtilization,
+    remainingEconValue: Math.max(0, remEconValue),
+  };
+});
 
-const CREDITORS = Array.from({ length: 20 }, (_, i) => ({
-  creditor: CREDITOR_NAMES[i],
-  type: CREDITOR_TYPES[i],
-  exposure: Math.round(100 + sr(i * 43) * 900),
-  ltv: +(0.3 + sr(i * 43 + 1) * 0.6).toFixed(2),
-  covenantBreachProb: +(sr(i * 43 + 2) * 0.65).toFixed(2),
-  expectedLoss: Math.round(20 + sr(i * 43 + 3) * 280),
-}));
+const CREDITORS = Array.from({ length: 80 }, (_, k) => {
+  const creditorTypeIdx = Math.floor(sr(k * 73 + 3000) * 5);
+  const assetIdx = Math.floor(sr(k * 79 + 3000) * 120);
+  const asset = ASSETS[assetIdx];
+  const exposureUSD = Math.round((sr(k * 83 + 3000) * 3 + 0.01) * 1e9);
+  const maturityYear = 2025 + Math.floor(sr(k * 89 + 3000) * 20);
+  const loanToValue = +(sr(k * 97 + 3000) * 0.8 + 0.1).toFixed(2);
+  const provisioning = +(sr(k * 101 + 3000) * 0.3).toFixed(2);
+  const litigationRisk = Math.round(sr(k * 103 + 3000) * 70 + 10);
+  const creditorNames = ['GreenBank Global', 'CapitalFirst AG', 'BondIssuer PLC', 'InsureCo SE', 'PensionFund Corp', 'SovereignFund AA', 'RegionalBank Ltd', 'InvestCo Holdings', 'TrustBank NA', 'AssetMgmt Partners'];
+  return {
+    id: k + 1,
+    creditorName: creditorNames[k % creditorNames.length],
+    creditorType: CREDITOR_TYPES[creditorTypeIdx],
+    exposureUSD,
+    maturityYear,
+    assetName: asset.name,
+    assetType: asset.type,
+    loanToValue,
+    provisioning,
+    litigationRisk,
+  };
+});
 
-// 12-quarter timeline Q1 2025 through Q4 2027
-const QUARTERS = ['Q1\'25','Q2\'25','Q3\'25','Q4\'25','Q1\'26','Q2\'26','Q3\'26','Q4\'26','Q1\'27','Q2\'27','Q3\'27','Q4\'27'];
-const WRITE_DOWN_TIMELINE = QUARTERS.map((q, qi) => ({
-  quarter: q,
-  orderly: +(qi * (22 / 11)).toFixed(1),
-  delayed: +(qi * (38 / 11)).toFixed(1),
-  disorderly: +(qi * (58 / 11)).toFixed(1),
-}));
+const REG_TRIGGERS = Array.from({ length: 20 }, (_, r) => {
+  const jurIdx = Math.floor(sr(r * 107 + 3500) * 20);
+  const typeIdx = Math.floor(sr(r * 109 + 3500) * 8);
+  const impactTypes = ['Write-Down', 'Permit Revocation', 'Early Closure', 'Stranding'];
+  const probability = +(sr(r * 113 + 3500) * 0.7 + 0.1).toFixed(2);
+  const years = [2025, 2026, 2027, 2028, 2030, 2032, 2035];
+  const triggers = [
+    'Carbon pricing > $100/tonne', 'Coal power phase-out mandate', 'Methane emission limits',
+    'SFDR Article 9 reclassification', 'IEA NZE alignment requirement', 'Stranded asset disclosure rule',
+    'New fossil fuel exploration ban', 'Climate stress test failure trigger', 'Carbon border adjustment',
+    'Mandatory transition plan submission', 'Mandatory science-based targets', 'Physical risk disclosure rule',
+    'Green taxonomy exclusion', 'Institutional investor ESG mandate', 'Government subsidy phase-out',
+    'New GHG reporting standard', 'Asset life extension ban', 'Methane royalty increase',
+    'Early closure compensation fund', 'Fossil fuel divestment mandate',
+  ];
+  return {
+    id: r + 1,
+    trigger: triggers[r],
+    jurisdiction: COUNTRIES[jurIdx],
+    effectiveDate: years[Math.floor(sr(r * 117 + 3500) * years.length)],
+    assetType: ASSET_TYPES[typeIdx],
+    expectedImpact: impactTypes[Math.floor(sr(r * 119 + 3500) * 4)],
+    probability,
+  };
+});
 
-const REGULATORY_TRIGGERS = [
-  'Carbon Tax >$150/t',
-  'Fossil Fuel Phase-out Mandate',
-  'Import Carbon Border Adjustment',
-  'Stranding Disclosure Mandate',
-  'Stranded Asset Write-Down Rule',
-  'Fossil Fuel Permit Revocation',
-  'Carbon Budget Exhaustion',
-  'Investor Fiduciary Duty Rule',
-].map((trigger, j) => ({
-  trigger,
-  probability: +(0.2 + sr(j * 53) * 0.65).toFixed(2),
-  jurisdiction: JURISDICTIONS[j % JURISDICTIONS.length],
-  affectedAssets: Math.round(5 + sr(j * 53 + 1) * 20),
-  exposureImpact: Math.round(200 + sr(j * 53 + 2) * 800),
-}));
-
-const TYPE_COLORS = {
-  'Coal Plant': T.red, 'Oil Field': T.orange, 'Gas Terminal': T.amber,
-  'LNG Facility': T.gold, 'Refinery': T.purple, 'Coal Mine': '#78350f',
-  'Oil Sands': T.navy, 'Petrochemical': T.indigo,
+const fmtUSD = v => {
+  if (!isFinite(v) || isNaN(v)) return '$0';
+  if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
+  if (v >= 1e6) return `$${(v / 1e6).toFixed(0)}M`;
+  return `$${Math.round(v).toLocaleString()}`;
 };
 
-const riskColor = (v) => v >= 70 ? T.red : v >= 40 ? T.amber : T.green;
-const riskBg = (v) => v >= 70 ? '#fee2e2' : v >= 40 ? '#fef3c7' : '#dcfce7';
-const probColor = (v) => v >= 0.6 ? T.red : v >= 0.4 ? T.amber : T.green;
-const probBg = (v) => v >= 0.6 ? '#fee2e2' : v >= 0.4 ? '#fef3c7' : '#dcfce7';
+const riskColor = s => s >= 70 ? T.red : s >= 40 ? T.amber : T.green;
 
-const TABS = ['Asset Registry','Litigation Scenarios','Creditor Exposure','Write-Down Impact','Regulatory Triggers'];
-
-const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', minWidth: 150, flex: 1 }}>
-    <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: color || T.navy, fontFamily: T.mono }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>{sub}</div>}
+const KpiCard = ({ label, value, sub, color }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', flex: 1, minWidth: 130 }}>
+    <div style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 5 }}>{label}</div>
+    <div style={{ fontSize: 20, fontWeight: 700, color: color || T.text }}>{value}</div>
+    {sub && <div style={{ fontSize: 10, color: T.muted, marginTop: 3 }}>{sub}</div>}
   </div>
 );
 
-const Badge = ({ label, color, bg }) => (
-  <span style={{ background: bg || '#e0e7ff', color: color || T.indigo, borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 600, fontFamily: T.mono }}>{label}</span>
+const RiskBadge = ({ val }) => (
+  <span style={{ background: riskColor(val) + '18', color: riskColor(val), border: `1px solid ${riskColor(val)}40`, borderRadius: 4, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{val}</span>
 );
 
+const TABS = ['Stranding Dashboard', 'Asset Database', 'NGFS Scenario Analysis', 'Creditor Exposure', 'Regulatory Trigger Map', 'Carbon Lock-In Analytics', 'Summary & Export'];
+
 export default function StrandedAssetLitigationTrackerPage() {
-  const [tab, setTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [typeFilter, setTypeFilter] = useState('All');
-  const [jurisFilter, setJurisFilter] = useState('All');
-  const [companyFilter, setCompanyFilter] = useState('All');
+  const [countryFilter, setCountryFilter] = useState('All');
+  const [scenarioIdx, setScenarioIdx] = useState(0);
+  const [riskMax, setRiskMax] = useState(100);
+  const [remainingLifeMax, setRemainingLifeMax] = useState(40);
+  const [creditorTypeFilter, setCreditorTypeFilter] = useState('All');
+  const [permitFilter, setPermitFilter] = useState('All');
+  const [search, setSearch] = useState('');
   const [sortCol, setSortCol] = useState('strandingRisk');
   const [sortDir, setSortDir] = useState('desc');
-  const [credSort, setCredSort] = useState('exposure');
+  const [drillAsset, setDrillAsset] = useState(null);
+  const [credSortCol, setCredSortCol] = useState('exposureUSD');
   const [credSortDir, setCredSortDir] = useState('desc');
 
   const filtered = useMemo(() => {
-    let arr = ASSETS;
-    if (typeFilter !== 'All') arr = arr.filter(a => a.assetType === typeFilter);
-    if (jurisFilter !== 'All') arr = arr.filter(a => a.jurisdiction === jurisFilter);
-    if (companyFilter !== 'All') arr = arr.filter(a => a.company === companyFilter);
+    if (!ASSETS.length) return [];
+    let arr = [...ASSETS];
+    if (typeFilter !== 'All') arr = arr.filter(a => a.type === typeFilter);
+    if (countryFilter !== 'All') arr = arr.filter(a => a.country === countryFilter);
+    if (permitFilter !== 'All') arr = arr.filter(a => a.permitStatus === permitFilter);
+    if (search) arr = arr.filter(a => a.name.toLowerCase().includes(search.toLowerCase()) || a.owner.toLowerCase().includes(search.toLowerCase()));
+    arr = arr.filter(a => a.strandingRisk <= riskMax && a.remainingLife <= remainingLifeMax);
     return [...arr].sort((a, b) => {
       const av = a[sortCol], bv = b[sortCol];
-      return sortDir === 'desc' ? (bv > av ? 1 : -1) : (av > bv ? 1 : -1);
+      if (typeof av === 'number') return sortDir === 'asc' ? av - bv : bv - av;
+      return sortDir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
     });
-  }, [typeFilter, jurisFilter, companyFilter, sortCol, sortDir]);
+  }, [typeFilter, countryFilter, permitFilter, search, riskMax, remainingLifeMax, sortCol, sortDir]);
 
-  // Tab 0 KPIs
-  const kpis0 = useMemo(() => {
-    if (!filtered.length) return { bookValueB: 0, avgRisk: 0, totalLitExposure: 0, highRisk: 0, writeDownNpv: 0 };
-    const bookValueB = (filtered.reduce((s, a) => s + a.bookValue, 0) / 1000).toFixed(1);
-    const avgRisk = Math.round(filtered.reduce((s, a) => s + a.strandingRisk, 0) / filtered.length);
-    const totalLitExposure = filtered.reduce((s, a) => s + a.litigationExposure, 0);
-    const highRisk = filtered.filter(a => a.strandingRisk >= 70).length;
-    const writeDownNpv = Math.abs(Math.round(filtered.reduce((s, a) => s + a.bookValue * a.writeDownOrderly / 100, 0)));
-    return { bookValueB, avgRisk, totalLitExposure, highRisk, writeDownNpv };
+  const strandingVaR = useMemo(() => {
+    if (!filtered.length) return { total: 0, byType: [], byScenario: [] };
+    const total = filtered.reduce((s, a) => s + a.bookValue * a.ngfsWriteDown[scenarioIdx] / 100, 0);
+    const typeMap = {};
+    ASSET_TYPES.forEach(t => { typeMap[t] = 0; });
+    filtered.forEach(a => { typeMap[a.type] = (typeMap[a.type] || 0) + a.bookValue * a.ngfsWriteDown[scenarioIdx] / 100; });
+    const byType = Object.entries(typeMap).map(([type, val]) => ({ type, val: Math.round(val) })).filter(d => d.val > 0).sort((a, b) => b.val - a.val);
+    const byScenario = NGFS_SCENARIOS.map((sc, si) => ({
+      scenario: sc,
+      varM: Math.round(filtered.reduce((s, a) => s + a.bookValue * a.ngfsWriteDown[si] / 100, 0)),
+    }));
+    return { total, byType, byScenario };
+  }, [filtered, scenarioIdx]);
+
+  const ngfsTypeData = useMemo(() => ASSET_TYPES.map(type => {
+    const ents = ASSETS.filter(a => a.type === type);
+    if (!ents.length) return null;
+    return {
+      type: type.replace(' ', '\n'),
+      ...NGFS_SCENARIOS.reduce((obj, sc, si) => {
+        obj[sc] = Math.round(ents.reduce((s, a) => s + a.ngfsWriteDown[si], 0) / ents.length);
+        return obj;
+      }, {}),
+    };
+  }).filter(Boolean), []);
+
+  const carbonLockInData = useMemo(() => {
+    const byType = ASSET_TYPES.map(type => ({
+      type,
+      totalMtCO2: +filtered.filter(a => a.type === type).reduce((s, a) => s + a.carbonLockIn, 0).toFixed(0),
+    })).filter(d => d.totalMtCO2 > 0).sort((a, b) => b.totalMtCO2 - a.totalMtCO2);
+    const scc = 51; // USD per tonne CO2
+    const totalLockIn = filtered.reduce((s, a) => s + a.carbonLockIn, 0);
+    const sccExposure = totalLockIn * scc * 1e6;
+    // 2025-2050 lock-in timeline
+    const timeline = Array.from({ length: 6 }, (_, y) => {
+      const year = 2025 + y * 5;
+      const remaining = filtered.filter(a => a.remainingLife >= y * 5).reduce((s, a) => s + a.carbonLockIn, 0);
+      return { year, remainingMtCO2: +remaining.toFixed(0) };
+    });
+    return { byType, totalLockIn: +totalLockIn.toFixed(0), sccExposure, timeline };
   }, [filtered]);
 
-  const typeRiskBar = useMemo(() => ASSET_TYPES.map(t => {
-    const arr = ASSETS.filter(a => a.assetType === t);
-    const avg = arr.length ? Math.round(arr.reduce((s, a) => s + a.strandingRisk, 0) / arr.length) : 0;
-    return { type: t.split(' ').slice(-1)[0], fullType: t, avg };
-  }), []);
+  const filteredCreditors = useMemo(() => {
+    let arr = [...CREDITORS];
+    if (creditorTypeFilter !== 'All') arr = arr.filter(c => c.creditorType === creditorTypeFilter);
+    return [...arr].sort((a, b) => {
+      const av = a[credSortCol], bv = b[credSortCol];
+      if (typeof av === 'number') return credSortDir === 'asc' ? av - bv : bv - av;
+      return credSortDir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+  }, [creditorTypeFilter, credSortCol, credSortDir]);
 
-  const bookValuePie = useMemo(() => ASSET_TYPES.map(t => {
-    const arr = ASSETS.filter(a => a.assetType === t);
-    const total = arr.reduce((s, a) => s + a.bookValue, 0);
-    return { name: t, value: total, fill: TYPE_COLORS[t] };
-  }).filter(d => d.value > 0), []);
+  const triggerScoreByAsset = useMemo(() => {
+    return filtered.slice(0, 20).map(a => {
+      const applicableTriggers = REG_TRIGGERS.filter(t => t.assetType === a.type);
+      const score = applicableTriggers.reduce((s, t) => s + t.probability, 0);
+      return { name: a.name, score: +score.toFixed(2), count: applicableTriggers.length };
+    }).sort((a, b) => b.score - a.score);
+  }, [filtered]);
 
-  // Tab 1 — Litigation Scenarios
-  const scenarioTypeBar = useMemo(() => ASSET_TYPES.map(t => {
-    const arr = ASSETS.filter(a => a.assetType === t);
-    if (!arr.length) return null;
-    const avgBook = arr.reduce((s, a) => s + a.bookValue, 0) / arr.length;
-    return {
-      type: t.split(' ').slice(0, 2).join(' '),
-      orderly: Math.round(avgBook * (SCENARIOS[0].avgWriteDown / -100)),
-      delayed: Math.round(avgBook * (SCENARIOS[1].avgWriteDown / -100)),
-      disorderly: Math.round(avgBook * (SCENARIOS[2].avgWriteDown / -100)),
-      shock: Math.round(avgBook * (SCENARIOS[3].avgWriteDown / -100)),
-    };
-  }).filter(Boolean), []);
-
-  const totalBookValue = useMemo(() => ASSETS.reduce((s, a) => s + a.bookValue, 0), []);
-
-  const scenarioAreaData = useMemo(() => WRITE_DOWN_TIMELINE.map(q => ({
-    quarter: q.quarter,
-    orderly: +(totalBookValue * (1 - q.orderly / 100) / 1000).toFixed(1),
-    delayed: +(totalBookValue * (1 - q.delayed / 100) / 1000).toFixed(1),
-    disorderly: +(totalBookValue * (1 - q.disorderly / 100) / 1000).toFixed(1),
-  })), [totalBookValue]);
-
-  const scenarioMatrix = useMemo(() => SCENARIOS.map(sc => ({
-    name: sc.name,
-    prob: `${(sc.prob * 100).toFixed(0)}%`,
-    avgWriteDown: `${sc.avgWriteDown}%`,
-    litMultiplier: `${sc.litMultiplier}x`,
-    totalWriteDown: `$${Math.abs(Math.round(totalBookValue * sc.avgWriteDown / 100)).toLocaleString()}M`,
-    totalLitExposure: `$${Math.round(ASSETS.reduce((s, a) => s + a.litigationExposure, 0) * sc.litMultiplier).toLocaleString()}M`,
-    color: sc.color,
-  })), [totalBookValue]);
-
-  // Tab 2 — Creditor Exposure
-  const sortedCreditors = useMemo(() => [...CREDITORS].sort((a, b) => {
-    const av = a[credSort], bv = b[credSort];
-    return credSortDir === 'desc' ? (bv > av ? 1 : -1) : (av > bv ? 1 : -1);
-  }), [credSort, credSortDir]);
-
-  const kpis2 = useMemo(() => {
-    const totalExp = CREDITORS.reduce((s, c) => s + c.exposure, 0);
-    const avgLtv = (CREDITORS.reduce((s, c) => s + c.ltv, 0) / CREDITORS.length).toFixed(2);
-    const highBreach = CREDITORS.filter(c => c.covenantBreachProb > 0.4).length;
-    const totalLoss = CREDITORS.reduce((s, c) => s + c.expectedLoss, 0);
-    return { totalExp, avgLtv, highBreach, totalLoss };
-  }, []);
-
-  const credTypeBar = useMemo(() => {
-    const map = {};
-    CREDITORS.forEach(c => { map[c.type] = (map[c.type] || 0) + c.exposure; });
-    return Object.entries(map).map(([type, exp]) => ({ type, exposure: exp }));
-  }, []);
-
-  const top10Cred = useMemo(() => [...CREDITORS].sort((a, b) => b.exposure - a.exposure).slice(0, 10).map(c => ({
-    name: c.creditor.split(' ').slice(-1)[0],
-    fullName: c.creditor,
-    exposure: c.exposure,
-  })), []);
-
-  const credPie = useMemo(() => {
-    const map = { Senior: 0, Mezzanine: 0, Sub: 0 };
-    CREDITORS.forEach(c => { map[c.type] = (map[c.type] || 0) + c.exposure; });
-    const CRED_COLORS = { Senior: T.navy, Mezzanine: T.amber, Sub: T.red };
-    return Object.entries(map).map(([type, value]) => ({ name: type, value, fill: CRED_COLORS[type] }));
-  }, []);
-
-  // Tab 3 — Write-Down Impact
-  const wdTimelineData = useMemo(() => WRITE_DOWN_TIMELINE, []);
-
-  const wdTypeBar = useMemo(() => ASSET_TYPES.map(t => {
-    const arr = ASSETS.filter(a => a.assetType === t);
-    if (!arr.length) return null;
-    const avgBook = arr.reduce((s, a) => s + a.bookValue, 0) / arr.length;
-    return {
-      type: t.split(' ').slice(0, 2).join(' '),
-      orderly: Math.abs(Math.round(avgBook * SCENARIOS[0].avgWriteDown / 100)),
-      delayed: Math.abs(Math.round(avgBook * SCENARIOS[1].avgWriteDown / 100)),
-      disorderly: Math.abs(Math.round(avgBook * SCENARIOS[2].avgWriteDown / 100)),
-    };
-  }).filter(Boolean), []);
-
-  const credLossDelayed = useMemo(() => {
-    const map = { Senior: 0, Mezzanine: 0, Sub: 0 };
-    CREDITORS.forEach(c => { map[c.type] = (map[c.type] || 0) + Math.round(c.expectedLoss * SCENARIOS[1].litMultiplier); });
-    return Object.entries(map).map(([type, loss]) => ({ type, loss }));
-  }, []);
-
-  const scatterAssets = useMemo(() => ASSETS.map((a, i) => ({
-    x: a.bookValue,
-    y: a.strandingRisk,
-    z: a.litigationExposure,
-    name: a.name,
-    type: a.assetType,
-    fill: TYPE_COLORS[a.assetType] || T.navy,
-  })), []);
-
-  // Tab 4 — Regulatory Triggers
-  const triggerSorted = useMemo(() => [...REGULATORY_TRIGGERS].sort((a, b) => b.probability - a.probability), []);
-  const triggerPie = useMemo(() => {
-    const cats = ['Carbon Pricing','Fuel Phase-out','Border Mechanisms','Disclosure Rules'];
-    return REGULATORY_TRIGGERS.map((t, i) => ({
-      name: cats[i % cats.length],
-      value: Math.round(t.probability * 100),
-      fill: [T.navy, T.red, T.amber, T.sage][i % 4],
-    }));
-  }, []);
-
-  const handleSort = (col) => {
-    if (sortCol === col) setSortDir(d => d === 'desc' ? 'asc' : 'desc');
+  const handleSort = useCallback(col => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
     else { setSortCol(col); setSortDir('desc'); }
-  };
+  }, [sortCol]);
 
-  const handleCredSort = (col) => {
-    if (credSort === col) setCredSortDir(d => d === 'desc' ? 'asc' : 'desc');
-    else { setCredSort(col); setCredSortDir('desc'); }
-  };
-
-  const SortIcon = ({ col, active, dir }) => (
-    <span style={{ marginLeft: 4, opacity: active ? 1 : 0.3, fontSize: 10 }}>{active && dir === 'asc' ? '▲' : '▼'}</span>
-  );
+  const COLORS = [T.indigo, T.red, T.amber, T.orange];
 
   return (
-    <div style={{ minHeight: '100vh', background: T.bg, fontFamily: T.font, color: T.text }}>
-      {/* Header */}
-      <div style={{ background: T.navy, borderBottom: `3px solid ${T.gold}`, padding: '18px 32px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-          <span style={{ background: T.gold, color: T.navy, borderRadius: 4, padding: '3px 10px', fontFamily: T.mono, fontWeight: 700, fontSize: 12 }}>EP-DA4</span>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#ffffff' }}>Stranded Asset Litigation Tracker</h1>
+    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+            <div style={{ background: T.amber, borderRadius: 8, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 12 }}>EP</div>
+            <div>
+              <div style={{ fontSize: 10, color: T.muted, letterSpacing: 1, textTransform: 'uppercase' }}>EP-DA4 · Disclosure & Stranded Asset Analytics</div>
+              <h1 style={{ fontSize: 21, fontWeight: 700, margin: 0 }}>Stranded Asset Litigation Tracker</h1>
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: T.muted }}>120 assets · 4 NGFS scenarios · 80 creditor records · 20 regulatory triggers · carbon lock-in analytics</div>
         </div>
-        <div style={{ color: T.goldL, fontSize: 13, fontFamily: T.mono }}>35 assets · write-down scenarios · creditor exposure · regulatory triggers</div>
-      </div>
 
-      {/* Tab Bar */}
-      <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, padding: '0 32px', display: 'flex', gap: 0, overflowX: 'auto' }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)} style={{
-            padding: '12px 20px', border: 'none', background: 'none', cursor: 'pointer',
-            fontFamily: T.font, fontSize: 13, fontWeight: tab === i ? 700 : 400,
-            color: tab === i ? T.navy : T.textSec,
-            borderBottom: tab === i ? `2px solid ${T.gold}` : '2px solid transparent',
-            whiteSpace: 'nowrap',
-          }}>{t}</button>
-        ))}
-      </div>
+        <div style={{ display: 'flex', gap: 2, marginBottom: 20, borderBottom: `2px solid ${T.border}`, overflowX: 'auto', paddingBottom: 1 }}>
+          {TABS.map((t, i) => (
+            <button key={t} onClick={() => setActiveTab(i)} style={{ padding: '8px 14px', border: 'none', background: activeTab === i ? T.amber : 'transparent', color: activeTab === i ? '#fff' : T.muted, borderRadius: '6px 6px 0 0', cursor: 'pointer', fontWeight: activeTab === i ? 600 : 400, fontSize: 12, whiteSpace: 'nowrap' }}>{t}</button>
+          ))}
+        </div>
 
-      <div style={{ padding: '24px 32px', maxWidth: 1600 }}>
+        {/* Filters */}
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 14, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-end' }}>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Search</div>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Asset or owner..." style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12, width: 150 }} />
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Asset Type</div>
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {ASSET_TYPES.map(t => <option key={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Country</div>
+            <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {COUNTRIES.map(c => <option key={c}>{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Permit Status</div>
+            <select value={permitFilter} onChange={e => setPermitFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {PERMIT_STATUSES.map(p => <option key={p}>{p}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>NGFS Scenario</div>
+            <select value={scenarioIdx} onChange={e => setScenarioIdx(+e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              {NGFS_SCENARIOS.map((s, i) => <option key={s} value={i}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Max Stranding Risk: {riskMax}</div>
+            <input type="range" min={0} max={100} value={riskMax} onChange={e => setRiskMax(+e.target.value)} style={{ width: 90 }} />
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Max Life (yrs): {remainingLifeMax}</div>
+            <input type="range" min={1} max={40} value={remainingLifeMax} onChange={e => setRemainingLifeMax(+e.target.value)} style={{ width: 90 }} />
+          </div>
+          <div style={{ fontSize: 11, color: T.muted, marginLeft: 'auto' }}>{filtered.length}/{ASSETS.length} assets</div>
+        </div>
 
-        {/* TAB 0 — Asset Registry */}
-        {tab === 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {/* Filters */}
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              {[
-                { label: 'Asset Type', value: typeFilter, set: setTypeFilter, options: ASSET_TYPES },
-                { label: 'Jurisdiction', value: jurisFilter, set: setJurisFilter, options: JURISDICTIONS },
-                { label: 'Company', value: companyFilter, set: setCompanyFilter, options: COMPANIES_LIST },
-              ].map(f => (
-                <div key={f.label} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <label style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, textTransform: 'uppercase' }}>{f.label}</label>
-                  <select value={f.value} onChange={e => f.set(e.target.value)}
-                    style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surface, fontFamily: T.font, fontSize: 13, color: T.text }}>
-                    <option value="All">All</option>
-                    {f.options.map(o => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                </div>
-              ))}
+        {/* Drill-down Panel */}
+        {drillAsset && (
+          <div style={{ background: T.card, border: `2px solid ${T.amber}`, borderRadius: 8, padding: 16, marginBottom: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div style={{ fontWeight: 700, fontSize: 15 }}>{drillAsset.name} — Asset Profile</div>
+              <button onClick={() => setDrillAsset(null)} style={{ background: T.red, color: '#fff', border: 'none', borderRadius: 4, padding: '3px 10px', cursor: 'pointer', fontSize: 12 }}>Close</button>
             </div>
-
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <Kpi label="Total Book Value" value={`$${kpis0.bookValueB}B`} sub="filtered assets" />
-              <Kpi label="Wtd Avg Stranding Risk" value={`${kpis0.avgRisk}`} sub="composite score" color={riskColor(kpis0.avgRisk)} />
-              <Kpi label="Total Lit. Exposure" value={`$${kpis0.totalLitExposure.toLocaleString()}M`} sub="litigation claims" color={T.red} />
-              <Kpi label="Assets >70 Risk" value={kpis0.highRisk} sub="high stranding risk" color={T.red} />
-              <Kpi label="Write-Down NPV (Orderly)" value={`$${kpis0.writeDownNpv.toLocaleString()}M`} sub="NGFS Net Zero 2050" color={T.amber} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 12 }}>
+              <KpiCard label="Book Value" value={`$${drillAsset.bookValue}M`} />
+              <KpiCard label="Stranding Risk" value={drillAsset.strandingRisk} color={riskColor(drillAsset.strandingRisk)} />
+              <KpiCard label="Remaining Life" value={`${drillAsset.remainingLife}yr`} />
+              <KpiCard label="Carbon Lock-In" value={`${drillAsset.carbonLockIn}Mt`} color={T.orange} />
             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 12 }}>
+              <KpiCard label="Decommission Cost" value={`$${drillAsset.decommissionCost}M`} color={T.red} />
+              <KpiCard label="Litigation Exposure" value={`$${drillAsset.litigationExposure}M`} color={T.red} />
+              <KpiCard label="Creditor Exposure" value={`$${drillAsset.creditorExposure}M`} />
+              <KpiCard label="Permit Status" value={drillAsset.permitStatus} color={drillAsset.permitStatus === 'Revoked' ? T.red : drillAsset.permitStatus === 'Challenged' ? T.amber : T.green} />
+            </div>
+            <div style={{ background: T.sub, borderRadius: 6, padding: 12, marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 8 }}>NGFS Write-Down Scenarios</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                {NGFS_SCENARIOS.map((sc, si) => (
+                  <div key={sc} style={{ textAlign: 'center', background: T.card, borderRadius: 6, padding: 8 }}>
+                    <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>{sc}</div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: COLORS[si] }}>{drillAsset.ngfsWriteDown[si]}%</div>
+                    <div style={{ fontSize: 11, color: T.muted }}>${Math.round(drillAsset.bookValue * drillAsset.ngfsWriteDown[si] / 100)}M</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ fontSize: 12, color: T.muted }}>
+              Owner: <b>{drillAsset.owner}</b> · Country: <b>{drillAsset.country}</b> · Utilization: <b>{drillAsset.currentUtilization}%</b> · Remaining Econ Value: <b>${drillAsset.remainingEconValue}M</b>
+            </div>
+          </div>
+        )}
 
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, overflowX: 'auto' }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Asset Registry ({filtered.length} assets)</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+        {/* ── TAB 0: Stranding Dashboard ── */}
+        {activeTab === 0 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <KpiCard label="Assets Tracked" value={filtered.length} />
+              <KpiCard label={`VaR (${NGFS_SCENARIOS[scenarioIdx]})`} value={fmtUSD(strandingVaR.total * 1e6)} color={T.red} />
+              <KpiCard label="Total Book Value" value={fmtUSD(filtered.reduce((s, a) => s + a.bookValue, 0) * 1e6)} />
+              <KpiCard label="Avg Stranding Risk" value={filtered.length ? Math.round(filtered.reduce((s, a) => s + a.strandingRisk, 0) / filtered.length) : 0} color={T.amber} />
+              <KpiCard label="Total Carbon Lock-In" value={`${carbonLockInData.totalLockIn} MtCO2`} color={T.orange} />
+              <KpiCard label="Permit Challenged/Revoked" value={filtered.filter(a => ['Challenged', 'Revoked'].includes(a.permitStatus)).length} color={T.red} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Stranding VaR by Scenario ($M)</div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={strandingVaR.byScenario}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="scenario" tick={{ fontSize: 9 }} angle={-15} textAnchor="end" height={40} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip formatter={v => [`$${v}M`, 'Stranding VaR']} />
+                    <Bar dataKey="varM" name="VaR ($M)" radius={[4, 4, 0, 0]}>
+                      {NGFS_SCENARIOS.map((s, i) => <Cell key={i} fill={COLORS[i]} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>VaR Attribution by Asset Type ($M)</div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={strandingVaR.byType.slice(0, 8)} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fontSize: 10 }} />
+                    <YAxis type="category" dataKey="type" tick={{ fontSize: 9 }} width={80} />
+                    <Tooltip formatter={v => [`$${v}M`, 'VaR']} />
+                    <Bar dataKey="val" name="VaR ($M)" fill={T.red} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 1: Asset Database ── */}
+        {activeTab === 1 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+            <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Asset Database — {filtered.length} records</div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                 <thead>
-                  <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                    {[
-                      { label: 'Asset', key: null },
-                      { label: 'Company', key: 'company' },
-                      { label: 'Type', key: 'assetType' },
-                      { label: 'Jurisdiction', key: 'jurisdiction' },
-                      { label: 'Book Value $M', key: 'bookValue' },
-                      { label: 'Stranding Risk', key: 'strandingRisk' },
-                      { label: 'Lit. Exposure $M', key: 'litigationExposure' },
-                      { label: 'Active Litigations', key: 'activeLitigations' },
-                    ].map(h => (
-                      <th key={h.label} onClick={() => h.key && handleSort(h.key)}
-                        style={{ textAlign: 'left', padding: '8px 10px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, fontSize: 11, cursor: h.key ? 'pointer' : 'default', whiteSpace: 'nowrap' }}>
-                        {h.label}{h.key && <SortIcon col={h.key} active={sortCol === h.key} dir={sortDir} />}
+                  <tr style={{ background: T.sub }}>
+                    {[['name', 'Asset Name'], ['type', 'Type'], ['owner', 'Owner'], ['country', 'Country'], ['strandingRisk', 'Strand Risk'], ['bookValue', 'Book Val ($M)'], ['remainingLife', 'Life (yr)'], ['carbonLockIn', 'CO2 Lock-In (Mt)'], ['permitStatus', 'Permit'], ['litigationExposure', 'Lit. Exp ($M)']].map(([col, label]) => (
+                      <th key={col} onClick={() => handleSort(col)} style={{ padding: '7px 8px', textAlign: 'left', cursor: 'pointer', borderBottom: `2px solid ${T.border}`, color: sortCol === col ? T.amber : T.text, userSelect: 'none', whiteSpace: 'nowrap', fontSize: 11 }}>
+                        {label} {sortCol === col ? (sortDir === 'asc' ? '▲' : '▼') : ''}
                       </th>
                     ))}
+                    <th style={{ padding: '7px 8px' }}>Detail</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((a, i) => (
-                    <tr key={a.id} style={{ background: i % 2 === 0 ? T.surface : T.card, borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '7px 10px', fontWeight: 700, color: T.navy, fontFamily: T.mono, fontSize: 11 }}>{a.id}</td>
-                      <td style={{ padding: '7px 10px', color: T.text, fontWeight: 600 }}>{a.company}</td>
-                      <td style={{ padding: '7px 10px' }}>
-                        <span style={{ background: `${TYPE_COLORS[a.assetType]}22`, color: TYPE_COLORS[a.assetType], borderRadius: 4, padding: '2px 6px', fontSize: 11, fontWeight: 600 }}>{a.assetType}</span>
+                  {filtered.slice(0, 100).map((a, i) => (
+                    <tr key={a.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '6px 8px', fontWeight: 600, whiteSpace: 'nowrap' }}>{a.name}</td>
+                      <td style={{ padding: '6px 8px', fontSize: 10 }}>{a.type}</td>
+                      <td style={{ padding: '6px 8px', fontSize: 10 }}>{a.owner}</td>
+                      <td style={{ padding: '6px 8px' }}>{a.country}</td>
+                      <td style={{ padding: '6px 8px' }}><RiskBadge val={a.strandingRisk} /></td>
+                      <td style={{ padding: '6px 8px', fontWeight: 600 }}>${a.bookValue}M</td>
+                      <td style={{ padding: '6px 8px', textAlign: 'center' }}>{a.remainingLife}</td>
+                      <td style={{ padding: '6px 8px', textAlign: 'center' }}>{a.carbonLockIn}</td>
+                      <td style={{ padding: '6px 8px' }}>
+                        <span style={{ fontWeight: 600, color: a.permitStatus === 'Revoked' ? T.red : a.permitStatus === 'Challenged' ? T.amber : T.green, fontSize: 10 }}>{a.permitStatus}</span>
                       </td>
-                      <td style={{ padding: '7px 10px', color: T.textSec }}>{a.jurisdiction}</td>
-                      <td style={{ padding: '7px 10px', fontFamily: T.mono }}>{a.bookValue.toLocaleString()}</td>
-                      <td style={{ padding: '7px 10px' }}>
-                        <span style={{ background: riskBg(a.strandingRisk), color: riskColor(a.strandingRisk), borderRadius: 4, padding: '2px 6px', fontFamily: T.mono, fontWeight: 700, fontSize: 11 }}>{a.strandingRisk}</span>
+                      <td style={{ padding: '6px 8px' }}>${a.litigationExposure}M</td>
+                      <td style={{ padding: '6px 8px' }}>
+                        <button onClick={() => setDrillAsset(a)} style={{ background: T.amber, color: '#fff', border: 'none', borderRadius: 3, padding: '2px 7px', fontSize: 10, cursor: 'pointer' }}>View</button>
                       </td>
-                      <td style={{ padding: '7px 10px', fontFamily: T.mono, color: a.litigationExposure > 150 ? T.red : T.text }}>{a.litigationExposure}</td>
-                      <td style={{ padding: '7px 10px', fontFamily: T.mono, textAlign: 'center' }}>{a.activeLitigations}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 320, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Avg Stranding Risk by Asset Type</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={typeRiskBar} layout="vertical" margin={{ top: 4, right: 16, left: 80, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: T.textSec }} />
-                    <YAxis type="category" dataKey="type" tick={{ fontSize: 11, fill: T.textSec }} width={80} />
-                    <Tooltip formatter={(v, n, p) => [v, p.payload.fullType]} contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="avg" name="Avg Risk" radius={[0, 3, 3, 0]}>
-                      {typeRiskBar.map((d, i) => <Cell key={i} fill={TYPE_COLORS[d.fullType] || T.navy} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ flex: 1, minWidth: 280, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Book Value by Asset Type ($M)</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <PieChart>
-                    <Pie data={bookValuePie} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={95}
-                      label={({ name, percent }) => `${name.split(' ').slice(-1)[0]} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                      {bookValuePie.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={(v) => [`$${v.toLocaleString()}M`]} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+              {filtered.length > 100 && <div style={{ textAlign: 'center', padding: 10, color: T.muted, fontSize: 11 }}>Showing 100 of {filtered.length}</div>}
             </div>
           </div>
         )}
 
-        {/* TAB 1 — Litigation Scenarios */}
-        {tab === 1 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {/* Scenario cards */}
-            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              {SCENARIOS.map(sc => (
-                <div key={sc.name} style={{ flex: 1, minWidth: 200, background: T.card, border: `2px solid ${sc.color}`, borderRadius: 10, padding: '16px 20px' }}>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: T.navy, marginBottom: 8 }}>{sc.name}</div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
-                    <span style={{ background: `${sc.color}22`, color: sc.color, borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 700, fontFamily: T.mono }}>P={Math.round(sc.prob * 100)}%</span>
-                    <span style={{ background: '#fee2e2', color: T.red, borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 700, fontFamily: T.mono }}>{sc.avgWriteDown}% WD</span>
-                    <span style={{ background: '#fef3c7', color: T.amber, borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 700, fontFamily: T.mono }}>{sc.litMultiplier}x Lit</span>
-                  </div>
-                  <div style={{ fontSize: 11, color: T.textSec }}>
-                    Total write-down: <strong style={{ color: T.navy, fontFamily: T.mono }}>${Math.abs(Math.round(totalBookValue * sc.avgWriteDown / 100)).toLocaleString()}M</strong>
-                  </div>
-                </div>
+        {/* ── TAB 2: NGFS Scenario Analysis ── */}
+        {activeTab === 2 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              {NGFS_SCENARIOS.map((sc, si) => (
+                <KpiCard key={sc} label={sc} value={`$${strandingVaR.byScenario[si]?.varM || 0}M VaR`} color={COLORS[si]} sub={`${NGFS_WRITE_DOWN_RANGES[si][0]}-${NGFS_WRITE_DOWN_RANGES[si][1]}% write-down range`} />
               ))}
             </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 2, minWidth: 380, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Write-Down % by Asset Type — All Scenarios</div>
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={scenarioTypeBar} margin={{ top: 4, right: 12, left: 0, bottom: 50 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="type" tick={{ fontSize: 10, fill: T.textSec }} angle={-30} textAnchor="end" interval={0} />
-                    <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
-                    <Bar dataKey="orderly" name="NGFS NZ 2050" fill={T.green} radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="delayed" name="NGFS Delayed" fill={T.amber} radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="disorderly" name="Current Policies" fill={T.red} radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="shock" name="Reg Shock" fill={T.purple} radius={[2, 2, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ flex: 1, minWidth: 320, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Portfolio Book Value Under 3 Scenarios ($B, 12Q)</div>
-                <ResponsiveContainer width="100%" height={260}>
-                  <AreaChart data={scenarioAreaData} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="quarter" tick={{ fontSize: 9, fill: T.textSec }} interval={2} />
-                    <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
-                    <Area type="monotone" dataKey="orderly" name="NZ 2050" stroke={T.green} fill="#dcfce7" strokeWidth={2} />
-                    <Area type="monotone" dataKey="delayed" name="Delayed" stroke={T.amber} fill="#fef3c7" strokeWidth={2} />
-                    <Area type="monotone" dataKey="disorderly" name="Curr. Policies" stroke={T.red} fill="#fee2e2" strokeWidth={2} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, overflowX: 'auto' }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Scenario Comparison Matrix</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                    {['Scenario','Probability','Avg Write-Down','Lit. Multiplier','Total Write-Down $','Total Lit. Exposure $'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {scenarioMatrix.map((sc, i) => (
-                    <tr key={sc.name} style={{ background: i % 2 === 0 ? T.surface : T.card, borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '8px 12px', fontWeight: 700, color: T.navy }}>
-                        <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: sc.color, marginRight: 6 }}></span>
-                        {sc.name}
-                      </td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{sc.prob}</td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono, color: T.red, fontWeight: 700 }}>{sc.avgWriteDown}</td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono, color: T.amber }}>{sc.litMultiplier}</td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{sc.totalWriteDown}</td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{sc.totalLitExposure}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2 — Creditor Exposure */}
-        {tab === 2 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <Kpi label="Total Creditor Exposure" value={`$${kpis2.totalExp.toLocaleString()}M`} sub="all 20 creditors" />
-              <Kpi label="Avg LTV" value={kpis2.avgLtv} sub="loan-to-value ratio" color={T.amber} />
-              <Kpi label="High Covenant Breach" value={kpis2.highBreach} sub="prob > 0.4" color={T.red} />
-              <Kpi label="Expected Total Loss" value={`$${kpis2.totalLoss.toLocaleString()}M`} sub="base case" color={T.red} />
-            </div>
-
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, overflowX: 'auto' }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Creditor Exposure Table</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                    {[
-                      { label: 'Creditor', key: 'creditor' },
-                      { label: 'Type', key: 'type' },
-                      { label: 'Exposure $M', key: 'exposure' },
-                      { label: 'LTV', key: 'ltv' },
-                      { label: 'Covenant Breach Prob', key: 'covenantBreachProb' },
-                      { label: 'Expected Loss $M', key: 'expectedLoss' },
-                    ].map(h => (
-                      <th key={h.label} onClick={() => handleCredSort(h.key)}
-                        style={{ textAlign: 'left', padding: '8px 10px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                        {h.label}<SortIcon col={h.key} active={credSort === h.key} dir={credSortDir} />
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedCreditors.map((c, i) => (
-                    <tr key={c.creditor} style={{ background: i % 2 === 0 ? T.surface : T.card, borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '7px 10px', fontWeight: 700, color: T.navy }}>{c.creditor}</td>
-                      <td style={{ padding: '7px 10px' }}>
-                        <Badge label={c.type} color={c.type === 'Senior' ? T.navy : c.type === 'Mezzanine' ? T.amber : T.red} bg={c.type === 'Senior' ? T.sub : c.type === 'Mezzanine' ? '#fef3c7' : '#fee2e2'} />
-                      </td>
-                      <td style={{ padding: '7px 10px', fontFamily: T.mono, fontWeight: 700 }}>{c.exposure.toLocaleString()}</td>
-                      <td style={{ padding: '7px 10px', fontFamily: T.mono }}>{c.ltv.toFixed(2)}</td>
-                      <td style={{ padding: '7px 10px' }}>
-                        <span style={{ background: probBg(c.covenantBreachProb), color: probColor(c.covenantBreachProb), borderRadius: 4, padding: '2px 6px', fontFamily: T.mono, fontWeight: 700, fontSize: 11 }}>{(c.covenantBreachProb * 100).toFixed(0)}%</span>
-                      </td>
-                      <td style={{ padding: '7px 10px', fontFamily: T.mono, color: c.expectedLoss > 150 ? T.red : T.text }}>{c.expectedLoss.toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 260, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Exposure by Creditor Type</div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={credTypeBar} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="type" tick={{ fontSize: 12, fill: T.textSec }} />
-                    <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={v => [`$${v.toLocaleString()}M`]} />
-                    <Bar dataKey="exposure" name="Exposure $M" radius={[3, 3, 0, 0]}>
-                      {credTypeBar.map((d, i) => <Cell key={i} fill={[T.navy, T.amber, T.red][i % 3]} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ flex: 1, minWidth: 320, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Top 10 Creditors by Exposure</div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={top10Cred} layout="vertical" margin={{ top: 4, right: 16, left: 70, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" tick={{ fontSize: 10, fill: T.textSec }} />
-                    <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} width={70} />
-                    <Tooltip formatter={(v, n, p) => [`$${v.toLocaleString()}M`, p.payload.fullName]} contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                    <Bar dataKey="exposure" name="Exposure $M" fill={T.navyL} radius={[0, 3, 3, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ flex: 1, minWidth: 240, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Creditor Type Distribution (Exposure)</div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <PieChart>
-                    <Pie data={credPie} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90}
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                      {credPie.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={v => [`$${v.toLocaleString()}M`]} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3 — Write-Down Impact */}
-        {tab === 3 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 2, minWidth: 360, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>12-Quarter Write-Down Trajectory — 3 Scenarios (%)</div>
-                <ResponsiveContainer width="100%" height={260}>
-                  <LineChart data={wdTimelineData} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="quarter" tick={{ fontSize: 10, fill: T.textSec }} interval={2} />
-                    <YAxis tick={{ fontSize: 11, fill: T.textSec }} unit="%" />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={(v) => [`${v.toFixed(1)}%`]} />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
-                    <Line type="monotone" dataKey="orderly" name="NGFS NZ 2050" stroke={T.green} strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="delayed" name="NGFS Delayed" stroke={T.amber} strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="disorderly" name="Current Policies" stroke={T.red} strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ flex: 1, minWidth: 280, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Creditor Expected Loss by Type — Delayed Scenario</div>
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={credLossDelayed} margin={{ top: 4, right: 12, left: 0, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="type" tick={{ fontSize: 12, fill: T.textSec }} />
-                    <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={v => [`$${v.toLocaleString()}M`]} />
-                    <Bar dataKey="loss" name="Expected Loss $M" radius={[3, 3, 0, 0]}>
-                      {credLossDelayed.map((d, i) => <Cell key={i} fill={[T.navy, T.amber, T.red][i % 3]} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Write-Down Magnitude by Asset Type — 3 Scenarios ($M avg per asset)</div>
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={wdTypeBar} margin={{ top: 4, right: 12, left: 0, bottom: 50 }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>NGFS Write-Down % by Asset Type (Avg)</div>
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={ngfsTypeData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="type" tick={{ fontSize: 10, fill: T.textSec }} angle={-30} textAnchor="end" interval={0} />
-                  <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-                  <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={v => [`$${v}M`]} />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Bar dataKey="orderly" name="NZ 2050" fill={T.green} radius={[2, 2, 0, 0]} />
-                  <Bar dataKey="delayed" name="Delayed" fill={T.amber} radius={[2, 2, 0, 0]} />
-                  <Bar dataKey="disorderly" name="Curr. Policies" fill={T.red} radius={[2, 2, 0, 0]} />
+                  <XAxis dataKey="type" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={50} />
+                  <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Legend />
+                  {NGFS_SCENARIOS.map((sc, si) => <Bar key={sc} dataKey={sc} fill={COLORS[si]} radius={[2, 2, 0, 0]} />)}
                 </BarChart>
               </ResponsiveContainer>
             </div>
-
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Book Value vs Stranding Risk — Bubble Size = Litigation Exposure</div>
-              <ResponsiveContainer width="100%" height={280}>
-                <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis type="number" dataKey="x" name="Book Value $M" tick={{ fontSize: 10, fill: T.textSec }} label={{ value: 'Book Value $M', position: 'insideBottom', offset: -4, fontSize: 11 }} />
-                  <YAxis type="number" dataKey="y" name="Stranding Risk" domain={[0, 100]} tick={{ fontSize: 10, fill: T.textSec }} label={{ value: 'Stranding Risk', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ fontFamily: T.font, fontSize: 12 }}
-                    content={({ active, payload }) => {
-                      if (!active || !payload || !payload.length) return null;
-                      const d = payload[0].payload;
-                      return (
-                        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 6, padding: '8px 12px', fontSize: 11, fontFamily: T.font }}>
-                          <div style={{ fontWeight: 700, color: T.navy }}>{d.name}</div>
-                          <div>Book Value: <strong>${d.x}M</strong></div>
-                          <div>Stranding Risk: <strong>{d.y}</strong></div>
-                          <div>Lit. Exposure: <strong>${d.z}M</strong></div>
-                        </div>
-                      );
-                    }} />
-                  <Scatter data={scatterAssets} fill={T.navy}>
-                    {scatterAssets.map((d, i) => (
-                      <Cell key={i} fill={d.fill} fillOpacity={0.8} />
-                    ))}
-                  </Scatter>
-                </ScatterChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 4 — Regulatory Triggers */}
-        {tab === 4 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, overflowX: 'auto' }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Regulatory Trigger Register</div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Scenario Comparison Table (Avg Write-Down by Asset Type)</div>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                 <thead>
-                  <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                    {['Trigger','Probability','Jurisdiction','Assets Affected','Portfolio Impact $M'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: T.textMut, fontFamily: T.mono, fontWeight: 600, fontSize: 11, whiteSpace: 'nowrap' }}>{h}</th>
-                    ))}
+                  <tr style={{ background: T.sub }}>
+                    <th style={{ padding: '7px 10px', textAlign: 'left', borderBottom: `2px solid ${T.border}` }}>Asset Type</th>
+                    {NGFS_SCENARIOS.map((sc, si) => <th key={sc} style={{ padding: '7px 10px', textAlign: 'center', borderBottom: `2px solid ${T.border}`, color: COLORS[si], fontSize: 11 }}>{sc}</th>)}
+                    <th style={{ padding: '7px 10px', textAlign: 'center', borderBottom: `2px solid ${T.border}` }}>Range</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {REGULATORY_TRIGGERS.map((r, i) => (
-                    <tr key={r.trigger} style={{ background: i % 2 === 0 ? T.surface : T.card, borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '8px 12px', fontWeight: 600, color: T.navy }}>{r.trigger}</td>
-                      <td style={{ padding: '8px 12px' }}>
-                        <span style={{ background: probBg(r.probability), color: probColor(r.probability), borderRadius: 4, padding: '2px 7px', fontFamily: T.mono, fontWeight: 700, fontSize: 11 }}>{(r.probability * 100).toFixed(0)}%</span>
+                  {ngfsTypeData.map((d, i) => (
+                    <tr key={i} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '6px 10px', fontWeight: 600 }}>{d.type}</td>
+                      {NGFS_SCENARIOS.map((sc, si) => (
+                        <td key={sc} style={{ padding: '6px 10px', textAlign: 'center', fontWeight: 600, color: COLORS[si] }}>{d[sc]}%</td>
+                      ))}
+                      <td style={{ padding: '6px 10px', textAlign: 'center', color: T.muted, fontSize: 11 }}>
+                        {Math.min(...NGFS_SCENARIOS.map(sc => d[sc]))}–{Math.max(...NGFS_SCENARIOS.map(sc => d[sc]))}%
                       </td>
-                      <td style={{ padding: '8px 12px', color: T.textSec }}>{r.jurisdiction}</td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono }}>{r.affectedAssets}</td>
-                      <td style={{ padding: '8px 12px', fontFamily: T.mono, fontWeight: 700, color: r.exposureImpact > 700 ? T.red : T.text }}>${r.exposureImpact.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
 
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 320, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Trigger Probability (Sorted Desc)</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={triggerSorted.map(r => ({ name: r.trigger.split(' ').slice(0, 3).join(' '), prob: Math.round(r.probability * 100) }))} layout="vertical" margin={{ top: 4, right: 16, left: 110, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: T.textSec }} unit="%" />
-                    <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} width={110} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={v => [`${v}%`]} />
-                    <Bar dataKey="prob" name="Probability %" fill={T.red} radius={[0, 3, 3, 0]}>
-                      {triggerSorted.map((d, i) => <Cell key={i} fill={probColor(d.probability)} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+        {/* ── TAB 3: Creditor Exposure ── */}
+        {activeTab === 3 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <KpiCard label="Total Creditors" value={CREDITORS.length} />
+              <KpiCard label="Total Exposure" value={fmtUSD(CREDITORS.reduce((s, c) => s + c.exposureUSD, 0))} color={T.red} />
+              <KpiCard label="Avg LTV" value={`${(CREDITORS.reduce((s, c) => s + c.loanToValue, 0) / CREDITORS.length * 100).toFixed(0)}%`} />
+              <KpiCard label="Avg Provisioning" value={`${(CREDITORS.reduce((s, c) => s + c.provisioning, 0) / CREDITORS.length * 100).toFixed(0)}%`} color={T.amber} />
+            </div>
+            <div style={{ marginBottom: 14, display: 'flex', gap: 10 }}>
+              <div>
+                <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Creditor Type</div>
+                <select value={creditorTypeFilter} onChange={e => setCreditorTypeFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+                  <option>All</option>
+                  {CREDITOR_TYPES.map(t => <option key={t}>{t}</option>)}
+                </select>
               </div>
-              <div style={{ flex: 1, minWidth: 320, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Portfolio Impact by Trigger ($M)</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={[...REGULATORY_TRIGGERS].sort((a, b) => b.exposureImpact - a.exposureImpact).map(r => ({
-                    name: r.trigger.split(' ').slice(0, 3).join(' '),
-                    impact: r.exposureImpact,
-                  }))} layout="vertical" margin={{ top: 4, right: 16, left: 110, bottom: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis type="number" tick={{ fontSize: 10, fill: T.textSec }} />
-                    <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} width={110} />
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} formatter={v => [`$${v.toLocaleString()}M`]} />
-                    <Bar dataKey="impact" name="Impact $M" fill={T.amber} radius={[0, 3, 3, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, overflowX: 'auto' }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Creditor Exposure Database — {filteredCreditors.length} records</div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {[['creditorName', 'Creditor'], ['creditorType', 'Type'], ['assetName', 'Asset'], ['exposureUSD', 'Exposure'], ['maturityYear', 'Maturity'], ['loanToValue', 'LTV'], ['provisioning', 'Provisioning'], ['litigationRisk', 'Lit. Risk']].map(([col, label]) => (
+                        <th key={col} onClick={() => { if (credSortCol === col) setCredSortDir(d => d === 'asc' ? 'desc' : 'asc'); else { setCredSortCol(col); setCredSortDir('desc'); } }} style={{ padding: '6px 8px', textAlign: 'left', cursor: 'pointer', borderBottom: `2px solid ${T.border}`, color: credSortCol === col ? T.amber : T.text, userSelect: 'none', whiteSpace: 'nowrap', fontSize: 10 }}>
+                          {label} {credSortCol === col ? (credSortDir === 'asc' ? '▲' : '▼') : ''}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCreditors.slice(0, 50).map((c, i) => (
+                      <tr key={c.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '5px 8px', fontWeight: 600, fontSize: 10 }}>{c.creditorName}</td>
+                        <td style={{ padding: '5px 8px', fontSize: 10 }}>{c.creditorType}</td>
+                        <td style={{ padding: '5px 8px', fontSize: 10 }}>{c.assetName}</td>
+                        <td style={{ padding: '5px 8px', fontWeight: 600, color: T.red }}>{fmtUSD(c.exposureUSD)}</td>
+                        <td style={{ padding: '5px 8px' }}>{c.maturityYear}</td>
+                        <td style={{ padding: '5px 8px', color: c.loanToValue > 0.7 ? T.red : T.muted }}>{(c.loanToValue * 100).toFixed(0)}%</td>
+                        <td style={{ padding: '5px 8px', color: c.provisioning < 0.1 ? T.red : T.amber }}>{(c.provisioning * 100).toFixed(0)}%</td>
+                        <td style={{ padding: '5px 8px' }}><RiskBadge val={c.litigationRisk} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div style={{ flex: 1, minWidth: 240, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: T.navy }}>Trigger Category Distribution</div>
-                <ResponsiveContainer width="100%" height={240}>
-                  <PieChart>
-                    <Pie data={triggerPie} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90}
-                      label={({ name, percent }) => `${name.split(' ').slice(0, 2).join(' ')} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                      {triggerPie.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ fontFamily: T.font, fontSize: 12 }} />
-                  </PieChart>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Exposure by Creditor Type ($B)</div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={CREDITOR_TYPES.map(t => ({ type: t, exposureB: +(CREDITORS.filter(c => c.creditorType === t).reduce((s, c) => s + c.exposureUSD, 0) / 1e9).toFixed(1) }))}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="type" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip formatter={v => [`$${v}B`, 'Exposure']} />
+                    <Bar dataKey="exposureB" name="Exposure ($B)" fill={T.navy} radius={[4, 4, 0, 0]} />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
         )}
-      </div>
 
-      {/* Footer */}
-      <div style={{ background: T.navy, borderTop: `2px solid ${T.gold}`, padding: '14px 32px', marginTop: 40 }}>
-        <div style={{ fontSize: 11, color: T.goldL, fontFamily: T.mono, lineHeight: 1.6 }}>
-          <strong>Methodology:</strong> Stranding Risk = composite of: carbon intensity percentile (30%), transition scenario alignment (25%), regulatory exposure (25%), financial buffer (20%). Write-down scenarios follow NGFS Phase IV pathways. Litigation exposure = book value × stranding risk × jurisdiction litigation multiplier. Creditor expected loss = exposure × LTV × default probability.
-        </div>
+        {/* ── TAB 4: Regulatory Trigger Map ── */}
+        {activeTab === 4 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <KpiCard label="Regulatory Triggers" value={REG_TRIGGERS.length} />
+              <KpiCard label="High Probability (>50%)" value={REG_TRIGGERS.filter(t => t.probability > 0.5).length} color={T.red} />
+              <KpiCard label="Avg Probability" value={`${(REG_TRIGGERS.reduce((s, t) => s + t.probability, 0) / REG_TRIGGERS.length * 100).toFixed(0)}%`} color={T.amber} />
+              <KpiCard label="Write-Down Triggers" value={REG_TRIGGERS.filter(t => t.expectedImpact === 'Write-Down').length} />
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Regulatory Trigger Database</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Trigger', 'Jurisdiction', 'Effective', 'Asset Type', 'Expected Impact', 'Probability'].map(h => <th key={h} style={{ padding: '7px 8px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, fontSize: 11 }}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...REG_TRIGGERS].sort((a, b) => b.probability - a.probability).map((t, i) => (
+                      <tr key={t.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '6px 8px', fontWeight: 600, fontSize: 10, maxWidth: 220 }}>{t.trigger}</td>
+                        <td style={{ padding: '6px 8px' }}>{t.jurisdiction}</td>
+                        <td style={{ padding: '6px 8px' }}>{t.effectiveDate}</td>
+                        <td style={{ padding: '6px 8px', fontSize: 10 }}>{t.assetType}</td>
+                        <td style={{ padding: '6px 8px', fontWeight: 600, color: t.expectedImpact === 'Early Closure' ? T.red : t.expectedImpact === 'Stranding' ? T.orange : T.amber, fontSize: 10 }}>{t.expectedImpact}</td>
+                        <td style={{ padding: '6px 8px', fontWeight: 600, color: t.probability > 0.5 ? T.red : T.amber }}>{(t.probability * 100).toFixed(0)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Trigger Score by Asset (Top 20)</div>
+              <ResponsiveContainer width="100%" height={230}>
+                <BarChart data={triggerScoreByAsset} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis type="number" tick={{ fontSize: 10 }} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 9 }} width={85} />
+                  <Tooltip />
+                  <Bar dataKey="score" name="Trigger Score" fill={T.orange} radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 5: Carbon Lock-In Analytics ── */}
+        {activeTab === 5 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <KpiCard label="Total Carbon Lock-In" value={`${carbonLockInData.totalLockIn} MtCO2`} color={T.orange} />
+              <KpiCard label="Social Cost Exposure" value={fmtUSD(carbonLockInData.sccExposure)} color={T.red} sub="at $51/tonne SCC" />
+              <KpiCard label="Largest Lock-In Type" value={carbonLockInData.byType[0]?.type || '-'} />
+              <KpiCard label="Highest Lock-In" value={`${carbonLockInData.byType[0]?.totalMtCO2 || 0} Mt`} color={T.amber} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Carbon Lock-In by Asset Type (MtCO2)</div>
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={carbonLockInData.byType} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fontSize: 10 }} />
+                    <YAxis type="category" dataKey="type" tick={{ fontSize: 9 }} width={80} />
+                    <Tooltip formatter={v => [`${v} Mt`, 'CO2 Lock-In']} />
+                    <Bar dataKey="totalMtCO2" name="MtCO2" fill={T.orange} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Carbon Lock-In Timeline 2025–2050</div>
+                <ResponsiveContainer width="100%" height={240}>
+                  <LineChart data={carbonLockInData.timeline}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip formatter={v => [`${v} Mt`, 'Remaining CO2']} />
+                    <Line type="monotone" dataKey="remainingMtCO2" name="Remaining CO2 (Mt)" stroke={T.orange} strokeWidth={2} dot={{ r: 4 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Carbon Lock-In by Asset Type — Detail</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Asset Type', 'Total MtCO2', 'Assets', 'Avg Per Asset (Mt)', 'Social Cost ($M, $51/t)', 'Share%'].map(h => <th key={h} style={{ padding: '7px 10px', textAlign: 'left', borderBottom: `2px solid ${T.border}` }}>{h}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {carbonLockInData.byType.map((d, i) => {
+                    const ents = filtered.filter(a => a.type === d.type);
+                    const sccM = Math.round(d.totalMtCO2 * 1e6 * 51 / 1e6);
+                    const share = carbonLockInData.totalLockIn ? (d.totalMtCO2 / carbonLockInData.totalLockIn * 100).toFixed(1) : '0';
+                    return (
+                      <tr key={d.type} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '6px 10px', fontWeight: 600 }}>{d.type}</td>
+                        <td style={{ padding: '6px 10px', fontWeight: 600, color: T.orange }}>{d.totalMtCO2}</td>
+                        <td style={{ padding: '6px 10px' }}>{ents.length}</td>
+                        <td style={{ padding: '6px 10px' }}>{ents.length ? (d.totalMtCO2 / ents.length).toFixed(1) : '0'}</td>
+                        <td style={{ padding: '6px 10px', color: T.red }}>${sccM}M</td>
+                        <td style={{ padding: '6px 10px' }}>{share}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 6: Summary & Export ── */}
+        {activeTab === 6 && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 18 }}>
+              <KpiCard label="Total Assets" value={ASSETS.length} />
+              <KpiCard label="Filtered Assets" value={filtered.length} />
+              <KpiCard label="NGFS Scenarios" value={4} />
+              <KpiCard label="Creditor Records" value={CREDITORS.length} />
+              <KpiCard label="Regulatory Triggers" value={REG_TRIGGERS.length} />
+              <KpiCard label={`VaR (${NGFS_SCENARIOS[scenarioIdx]})`} value={fmtUSD(strandingVaR.total * 1e6)} color={T.red} />
+              <KpiCard label="Total Book Value" value={fmtUSD(ASSETS.reduce((s, a) => s + a.bookValue, 0) * 1e6)} />
+              <KpiCard label="Total CO2 Lock-In" value={`${ASSETS.reduce((s, a) => s + a.carbonLockIn, 0).toFixed(0)} Mt`} color={T.orange} />
+              <KpiCard label="Avg Stranding Risk" value={Math.round(ASSETS.reduce((s, a) => s + a.strandingRisk, 0) / ASSETS.length)} color={T.amber} />
+              <KpiCard label="Challenged/Revoked" value={ASSETS.filter(a => ['Challenged', 'Revoked'].includes(a.permitStatus)).length} color={T.red} />
+              <KpiCard label="Total Creditor Exp" value={fmtUSD(CREDITORS.reduce((s, c) => s + c.exposureUSD, 0))} color={T.navy} />
+              <KpiCard label="High Prob. Triggers" value={REG_TRIGGERS.filter(t => t.probability > 0.5).length} color={T.orange} />
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Full Asset KPI Table — Top 50 by Stranding Risk</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['#', 'Asset', 'Type', 'Owner', 'Country', 'Strand Risk', 'Book Val', 'Life (yr)', 'CO2 Mt', 'Permit', 'NZ2050%', '2°C%', 'DT%', 'HHW%', 'Lit.Exp'].map(h => <th key={h} style={{ padding: '5px 7px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, fontSize: 10, whiteSpace: 'nowrap' }}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...ASSETS].sort((a, b) => b.strandingRisk - a.strandingRisk).slice(0, 50).map((a, i) => (
+                      <tr key={a.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '4px 7px' }}>{i + 1}</td>
+                        <td style={{ padding: '4px 7px', fontWeight: 600, whiteSpace: 'nowrap' }}>{a.name}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9 }}>{a.type}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9 }}>{a.owner}</td>
+                        <td style={{ padding: '4px 7px' }}>{a.country}</td>
+                        <td style={{ padding: '4px 7px' }}><RiskBadge val={a.strandingRisk} /></td>
+                        <td style={{ padding: '4px 7px' }}>${a.bookValue}M</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{a.remainingLife}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{a.carbonLockIn}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9, color: a.permitStatus === 'Revoked' ? T.red : T.muted }}>{a.permitStatus}</td>
+                        {a.ngfsWriteDown.map((wd, si) => <td key={si} style={{ padding: '4px 7px', textAlign: 'center', color: COLORS[si], fontWeight: 600 }}>{wd}%</td>)}
+                        <td style={{ padding: '4px 7px' }}>${a.litigationExposure}M</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Asset Type Summary — Key Metrics</div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Asset Type', 'Count', 'Avg Strand Risk', 'Total Book ($M)', 'Avg Life (yr)', 'Total CO2 (Mt)'].map(h => <th key={h} style={{ padding: '5px 7px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, fontSize: 10 }}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ASSET_TYPES.map((t, i) => {
+                      const ents = ASSETS.filter(a => a.type === t);
+                      if (!ents.length) return null;
+                      const avgRisk = Math.round(ents.reduce((s, a) => s + a.strandingRisk, 0) / ents.length);
+                      const totalBook = ents.reduce((s, a) => s + a.bookValue, 0);
+                      const avgLife = Math.round(ents.reduce((s, a) => s + a.remainingLife, 0) / ents.length);
+                      const totalCO2 = +(ents.reduce((s, a) => s + a.carbonLockIn, 0)).toFixed(0);
+                      return (
+                        <tr key={t} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                          <td style={{ padding: '4px 7px', fontWeight: 600, fontSize: 10 }}>{t}</td>
+                          <td style={{ padding: '4px 7px', textAlign: 'center' }}>{ents.length}</td>
+                          <td style={{ padding: '4px 7px' }}><span style={{ color: riskColor(avgRisk), fontWeight: 600 }}>{avgRisk}</span></td>
+                          <td style={{ padding: '4px 7px' }}>${totalBook}M</td>
+                          <td style={{ padding: '4px 7px', textAlign: 'center' }}>{avgLife}</td>
+                          <td style={{ padding: '4px 7px', color: T.orange, fontWeight: 600 }}>{totalCO2}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Creditor Portfolio Summary</div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Creditor Type', 'Count', 'Total Exp ($B)', 'Avg LTV%', 'Avg Provisioning%', 'Avg Lit. Risk'].map(h => <th key={h} style={{ padding: '5px 7px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, fontSize: 10 }}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {CREDITOR_TYPES.map((ct, i) => {
+                      const creds = CREDITORS.filter(c => c.creditorType === ct);
+                      if (!creds.length) return null;
+                      const totalExp = +(creds.reduce((s, c) => s + c.exposureUSD, 0) / 1e9).toFixed(1);
+                      const avgLTV = (creds.reduce((s, c) => s + c.loanToValue, 0) / creds.length * 100).toFixed(0);
+                      const avgProv = (creds.reduce((s, c) => s + c.provisioning, 0) / creds.length * 100).toFixed(0);
+                      const avgLitRisk = Math.round(creds.reduce((s, c) => s + c.litigationRisk, 0) / creds.length);
+                      return (
+                        <tr key={ct} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                          <td style={{ padding: '4px 7px', fontWeight: 600 }}>{ct}</td>
+                          <td style={{ padding: '4px 7px', textAlign: 'center' }}>{creds.length}</td>
+                          <td style={{ padding: '4px 7px', color: T.red, fontWeight: 600 }}>${totalExp}B</td>
+                          <td style={{ padding: '4px 7px', color: +avgLTV > 70 ? T.red : T.amber }}>{avgLTV}%</td>
+                          <td style={{ padding: '4px 7px', color: +avgProv < 10 ? T.red : T.muted }}>{avgProv}%</td>
+                          <td style={{ padding: '4px 7px' }}><span style={{ color: riskColor(avgLitRisk), fontWeight: 600 }}>{avgLitRisk}</span></td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style={{ marginTop: 18, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>NGFS Stranding VaR Sensitivity — All Scenarios</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={ASSET_TYPES.map(t => {
+                  const ents = ASSETS.filter(a => a.type === t);
+                  if (!ents.length) return null;
+                  const obj = { type: t.replace(' ', '\n') };
+                  NGFS_SCENARIOS.forEach((sc, si) => {
+                    obj[sc] = Math.round(ents.reduce((s, a) => s + a.bookValue * a.ngfsWriteDown[si] / 100, 0));
+                  });
+                  return obj;
+                }).filter(Boolean)}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="type" tick={{ fontSize: 9 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip formatter={v => [`$${v}M`, 'VaR']} />
+                  <Legend />
+                  {NGFS_SCENARIOS.map((sc, si) => <Bar key={sc} dataKey={sc} fill={COLORS[si]} stackId="a" />)}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ marginTop: 18, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Country Risk Profile — Top 10 Countries by Total Book Value</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <ComposedChart data={COUNTRIES.map(c => {
+                  const ents = ASSETS.filter(a => a.country === c);
+                  return { country: c, bookValM: ents.reduce((s, a) => s + a.bookValue, 0), avgRisk: ents.length ? Math.round(ents.reduce((s, a) => s + a.strandingRisk, 0) / ents.length) : 0, count: ents.length };
+                }).filter(d => d.count > 0).sort((a, b) => b.bookValM - a.bookValM).slice(0, 10)}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="country" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={40} />
+                  <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
+                  <YAxis yAxisId="right" orientation="right" domain={[0, 100]} tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="bookValM" name="Book Val ($M)" fill={T.navy} radius={[4, 4, 0, 0]} />
+                  <Line yAxisId="right" type="monotone" dataKey="avgRisk" name="Avg Strand Risk" stroke={T.red} strokeWidth={2} dot={{ r: 4 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

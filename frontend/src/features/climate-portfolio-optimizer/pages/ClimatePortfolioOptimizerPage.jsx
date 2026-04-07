@@ -1,654 +1,918 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
-  ScatterChart, Scatter, BarChart, Bar, AreaChart, Area, PieChart, Pie,
-  LineChart, Line, Cell, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend, ReferenceLine,
+  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  BarChart, Bar, LineChart, Line, ComposedChart, Area, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
 
-/* ── Theme ─────────────────────────────────────────────────────────── */
 const T = {
-  bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
-  gold: '#c5a96a', textSec: '#5c6b7e', textMut: '#9aa3ae',
-  red: '#dc2626', green: '#16a34a', amber: '#d97706', blue: '#2563eb',
-  teal: '#0891b2', purple: '#7c3aed',
-  card: '#ffffff', sub: '#5c6b7e', indigo: '#4f46e5', font: "'DM Sans','SF Pro Display',system-ui,sans-serif",
-  mono: "'JetBrains Mono','SF Mono','Fira Code',monospace",
+  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
+  sub: '#f6f4f0', muted: '#6b7280', indigo: '#4f46e5', gold: '#b8860b',
+  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706',
+  navy: '#1e3a5f', teal: '#0f766e', purple: '#7c3aed', orange: '#ea580c',
 };
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-/* ── Seeded RNG ────────────────────────────────────────────────────── */
-function sr(seed) {
-  let s = seed;
-  return () => { s = (s * 16807 + 0) % 2147483647; return s / 2147483647; };
-}
+const SECTORS = ['Technology','Energy','Financials','Healthcare','Industrials','Materials','Utilities','Real Estate','Consumer Disc.','Consumer Stap.','Telecom','Basic Resources'];
+const COUNTRIES = ['US','UK','DE','FR','JP','CN','CA','AU','CH','NL','SE','BR','IN','KR','SG'];
 
-/* ── Data Generation ───────────────────────────────────────────────── */
-const r = sr(20260405);
-const TABS = ['Portfolio Optimization', 'Efficient Frontier', 'Carbon Constraints', 'Sector Allocation', 'Scenario Analysis'];
-
-const SECTORS = ['Technology', 'Financials', 'Healthcare', 'Energy', 'Industrials', 'Utilities', 'Materials', 'Consumer Disc', 'Consumer Staples', 'Real Estate', 'Telecom'];
-const GEOS = ['North America', 'Europe', 'Asia Pacific', 'Emerging Markets', 'Japan'];
-const ASSET_CLASSES = ['Equities', 'Fixed Income', 'Green Bonds', 'Infrastructure', 'Real Assets'];
-
-const HOLDINGS = [
-  'MSFT', 'AAPL', 'NVDA', 'JPM', 'JNJ', 'XOM', 'NEE', 'CAT', 'AMZN', 'UNH',
-  'BHP', 'TSLA', 'PG', 'V', 'LIN', 'ENPH', 'ORSTED', 'VESTAS',
-].map((tk, i) => {
-  const sec = SECTORS[i % SECTORS.length];
-  const currW = +(2 + r() * 9).toFixed(2);
-  const optW = +(currW + (r() - 0.5) * 4).toFixed(2);
-  const expRet = +(4 + r() * 14).toFixed(2);
-  const vol = +(8 + r() * 22).toFixed(2);
-  const carbon = +(20 + r() * 380).toFixed(0);
-  const trans = +(30 + r() * 65).toFixed(0);
-  return { ticker: tk, sector: sec, currWeight: Math.max(0.5, currW), optWeight: Math.max(0.3, Math.abs(optW)), expReturn: expRet, volatility: vol, carbonIntensity: +carbon, transitionScore: +trans };
+const SECURITIES = Array.from({ length: 200 }, (_, i) => {
+  const sec = SECTORS[Math.floor(sr(i * 7) * SECTORS.length)];
+  const cty = COUNTRIES[Math.floor(sr(i * 13 + 1) * COUNTRIES.length)];
+  const ret = sr(i * 3 + 2) * 0.15 + 0.03;
+  const vol = sr(i * 5 + 3) * 0.25 + 0.08;
+  const ci = sr(i * 11 + 4) * 800 + 10;
+  const itr = sr(i * 17 + 5) * 3 + 1.5;
+  return {
+    id: i,
+    name: `${sec.substring(0,3).toUpperCase()}-${String(i + 1).padStart(3,'0')}`,
+    sector: sec,
+    country: cty,
+    weight: sr(i * 19 + 6) * 0.03 + 0.001,
+    expectedReturn: ret,
+    volatility: vol,
+    carbonIntensity: ci,
+    physRisk: sr(i * 23 + 7) * 100,
+    transRisk: sr(i * 29 + 8) * 100,
+    greenRevenue: sr(i * 31 + 9),
+    temperature: itr,
+    esgScore: sr(i * 37 + 10) * 100,
+    betaToMarket: sr(i * 41 + 11) * 0.8 + 0.5,
+    liquidityScore: sr(i * 43 + 12) * 100,
+    sharpe: (ret - 0.02) / vol,
+  };
 });
 
-const totalCurrW = HOLDINGS.reduce((s, h) => s + h.currWeight, 0);
-const totalOptW = HOLDINGS.reduce((s, h) => s + h.optWeight, 0);
-HOLDINGS.forEach(h => { h.currWeight = +(h.currWeight / totalCurrW * 100).toFixed(2); h.optWeight = +(h.optWeight / totalOptW * 100).toFixed(2); });
+// Normalize weights so they sum to 1
+const totalRawWeight = SECURITIES.reduce((s, x) => s + x.weight, 0);
+const NORMALIZED = SECURITIES.map(s => ({ ...s, weight: s.weight / totalRawWeight }));
 
-const FRONTIER = Array.from({ length: 24 }, (_, i) => {
-  const vol = 6 + i * 1.1;
-  const ret = 2.8 + Math.sqrt(vol - 5) * 3.2 + (r() - 0.5) * 0.6;
-  const retC = ret - 0.15 * i * 0.08 - r() * 0.3;
-  const carbon = +(80 + i * 12 + r() * 20).toFixed(0);
-  return { vol: +vol.toFixed(2), ret: +ret.toFixed(2), retCarbon: +Math.max(retC, 2).toFixed(2), carbon };
+// Generate benchmark weights (sr-seeded)
+const bmkTotal = NORMALIZED.reduce((s, x) => s + sr(x.id * 53 + 20) * 0.01, 0);
+const BENCHMARK = NORMALIZED.map(s => ({ ...s, bmkWeight: (sr(s.id * 53 + 20) * 0.01) / bmkTotal }));
+
+// Efficient frontier: 50 portfolios with varying risk/return trade-offs
+const FRONTIER = Array.from({ length: 50 }, (_, i) => {
+  const t = i / 49;
+  const vol = 0.08 + t * 0.22;
+  const ret = 0.03 + t * 0.14 + sr(i * 7 + 99) * 0.02 - 0.01;
+  const ci = 50 + (1 - t) * 400 + sr(i * 11 + 88) * 30;
+  return { vol: +(vol * 100).toFixed(2), ret: +(ret * 100).toFixed(2), ci: +ci.toFixed(0), sharpe: +((ret - 0.02) / vol).toFixed(3) };
 });
 
-const CARBON_SECTORS = SECTORS.map(s => {
-  const budget = +(40 + r() * 120).toFixed(0);
-  const actual = +(budget * (0.5 + r() * 0.7)).toFixed(0);
-  return { sector: s, budget, actual, utilization: +((actual / budget) * 100).toFixed(1) };
-});
+const NGFS_SCENARIOS = [
+  { name: 'Orderly 1.5°C', retMult: 1.05, volMult: 0.9, color: T.green },
+  { name: 'Disorderly 2°C', retMult: 0.92, volMult: 1.15, color: T.amber },
+  { name: 'Hot House 3°C', retMult: 0.75, volMult: 1.4, color: T.red },
+  { name: 'Net Zero 2050', retMult: 1.1, volMult: 0.85, color: T.indigo },
+];
 
-const CARBON_PRICES = [25, 50, 75, 100, 150];
-const CARBON_PRICE_IMPACT = CARBON_PRICES.map(p => ({
-  price: p,
-  portfolioCost: +(0.12 * p + r() * 0.04 * p).toFixed(2),
-  returnDrag: +(0.008 * p + r() * 0.003 * p).toFixed(2),
-  sharpeImpact: +(-(0.002 * p + r() * 0.001 * p)).toFixed(3),
-}));
-
-const MACC_DATA = [
-  { measure: 'LED Lighting', cost: -45, abatement: 12 },
-  { measure: 'Building Insulation', cost: -20, abatement: 18 },
-  { measure: 'EV Fleet', cost: 5, abatement: 35 },
-  { measure: 'Solar PV', cost: 15, abatement: 48 },
-  { measure: 'Wind Onshore', cost: 22, abatement: 30 },
-  { measure: 'Heat Pumps', cost: 38, abatement: 22 },
-  { measure: 'Green H2', cost: 85, abatement: 15 },
-  { measure: 'DACCS', cost: 180, abatement: 8 },
-].map((m, i) => ({ ...m, fill: m.cost < 0 ? T.green : m.cost < 50 ? T.amber : T.red }));
-
-const SECTOR_ALLOC = SECTORS.map(s => {
-  const target = +(4 + r() * 14).toFixed(1);
-  const actual = +(target + (r() - 0.5) * 6).toFixed(1);
-  const carbonInt = +(30 + r() * 350).toFixed(0);
-  const bmkW = +(target + (r() - 0.5) * 3).toFixed(1);
-  return { sector: s, target, actual: Math.max(0.5, actual), deviation: +(actual - target).toFixed(1), carbonIntensity: +carbonInt, benchmarkWeight: Math.max(0.5, bmkW) };
-});
-
-const GEO_ALLOC = GEOS.map(g => {
-  const val = +(10 + r() * 35).toFixed(1);
-  return { name: g, value: +val };
-});
-const geoTotal = GEO_ALLOC.reduce((s, g) => s + g.value, 0);
-GEO_ALLOC.forEach(g => { g.value = +((g.value / geoTotal) * 100).toFixed(1); });
-
-const AC_ALLOC = ASSET_CLASSES.map(a => ({ name: a, value: +(8 + r() * 30).toFixed(1) }));
-const acTotal = AC_ALLOC.reduce((s, a) => s + a.value, 0);
-AC_ALLOC.forEach(a => { a.value = +((a.value / acTotal) * 100).toFixed(1); });
-
-const SCENARIOS = [
-  { name: 'Net Zero 2050', tempTarget: '1.5°C', carbonPrice2030: 130, carbonPrice2050: 250 },
-  { name: 'Below 2°C', tempTarget: '<2.0°C', carbonPrice2030: 80, carbonPrice2050: 175 },
-  { name: 'Delayed Transition', tempTarget: '1.8°C', carbonPrice2030: 25, carbonPrice2050: 350 },
-  { name: 'Current Policies', tempTarget: '>3.0°C', carbonPrice2030: 15, carbonPrice2050: 30 },
-].map(sc => ({
-  ...sc,
-  portReturn: +(5 + r() * 8).toFixed(2),
-  portVol: +(10 + r() * 12).toFixed(2),
-  sharpe: +(0.3 + r() * 0.8).toFixed(3),
-  maxDrawdown: +(-(8 + r() * 18)).toFixed(1),
-  carbonReduction: +(15 + r() * 60).toFixed(0),
-  trackingError: +(1.2 + r() * 3.5).toFixed(2),
-}));
-
-const STRESS_TESTS = [
-  'Carbon Tax Shock +$100/t', 'Oil Price Spike +80%', 'Green Tech Rally +40%',
-  'Regulatory Tightening', 'Stranded Asset Write-down', 'Physical Climate Event',
-].map(st => ({
-  test: st,
-  returnImpact: +((r() - 0.6) * 12).toFixed(2),
-  volImpact: +(r() * 8).toFixed(2),
-  carbonImpact: +((r() - 0.3) * 30).toFixed(0),
-}));
-
-const TORNADO_PARAMS = [
-  'Carbon Price', 'Discount Rate', 'Tech Innovation', 'Policy Stringency',
-  'Physical Risk', 'Stranded Asset Prob', 'Green Premium', 'Regulatory Timing',
-].map(p => {
-  const base = 7.2;
-  const low = +(base - 1 - r() * 4).toFixed(2);
-  const high = +(base + 1 + r() * 4).toFixed(2);
-  return { param: p, low, high, base, range: +(high - low).toFixed(2) };
-}).sort((a, b) => b.range - a.range);
-
-const PIE_COLORS = [T.navy, T.gold, T.teal, T.blue, T.purple, T.green, T.amber, T.red, '#6366f1', '#ec4899', '#14b8a6'];
-
-/* ── Styles ────────────────────────────────────────────────────────── */
-const S = {
-  page: { background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.navy, padding: '0 0 40px' },
-  header: { background: T.navy, padding: '18px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `2px solid ${T.gold}` },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: 700, letterSpacing: 0.5 },
-  headerSub: { color: T.gold, fontSize: 12, fontFamily: T.mono, letterSpacing: 1 },
-  tabBar: { display: 'flex', gap: 0, background: T.surface, borderBottom: `1px solid ${T.border}`, padding: '0 20px' },
-  tab: (active) => ({
-    padding: '12px 22px', fontSize: 13, fontWeight: active ? 700 : 500, cursor: 'pointer',
-    color: active ? T.navy : T.textSec, borderBottom: active ? `3px solid ${T.gold}` : '3px solid transparent',
-    background: 'transparent', transition: 'all 0.15s', fontFamily: T.font,
-  }),
-  grid: { display: 'grid', gap: 16, padding: '20px 24px' },
-  card: { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '16px 20px' },
-  cardTitle: { fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.8 },
-  kpi: { textAlign: 'center', padding: '14px 10px' },
-  kpiVal: { fontSize: 22, fontWeight: 700, fontFamily: T.mono },
-  kpiLabel: { fontSize: 11, color: T.textSec, marginTop: 4, textTransform: 'uppercase', letterSpacing: 0.6 },
-  table: { width: '100%', borderCollapse: 'collapse', fontSize: 12, fontFamily: T.mono },
-  th: { textAlign: 'left', padding: '8px 10px', borderBottom: `2px solid ${T.navy}`, fontSize: 11, fontWeight: 700, color: T.navy, textTransform: 'uppercase', letterSpacing: 0.6 },
-  thR: { textAlign: 'right', padding: '8px 10px', borderBottom: `2px solid ${T.navy}`, fontSize: 11, fontWeight: 700, color: T.navy, textTransform: 'uppercase', letterSpacing: 0.6 },
-  td: { padding: '7px 10px', borderBottom: `1px solid ${T.border}`, fontSize: 12 },
-  tdR: { padding: '7px 10px', borderBottom: `1px solid ${T.border}`, fontSize: 12, textAlign: 'right', fontFamily: T.mono },
-  badge: (color) => ({
-    display: 'inline-block', padding: '2px 8px', borderRadius: 3, fontSize: 10, fontWeight: 700,
-    background: color + '18', color, fontFamily: T.mono,
-  }),
-  slider: { width: '100%', accentColor: T.gold },
-  gauge: (pct) => ({
-    height: 10, borderRadius: 5, background: T.border, position: 'relative', overflow: 'hidden',
-  }),
-  gaugeFill: (pct, color) => ({
-    height: '100%', width: `${Math.min(pct, 100)}%`, background: color, borderRadius: 5, transition: 'width 0.4s',
-  }),
-};
-
-/* ── Helpers ────────────────────────────────────────────────────────── */
-const fmt = (v, d = 2) => typeof v === 'number' ? v.toFixed(d) : v;
-const pct = v => `${fmt(v, 1)}%`;
-const delta = v => v >= 0 ? `+${fmt(v)}` : fmt(v);
-const colorDelta = v => v >= 0 ? T.green : T.red;
-
-/* ── KPI Card ──────────────────────────────────────────────────────── */
-const Kpi = ({ label, value, color, sub }) => (
-  <div style={S.kpi}>
-    <div style={{ ...S.kpiVal, color: color || T.navy }}>{value}</div>
-    <div style={S.kpiLabel}>{label}</div>
-    {sub && <div style={{ fontSize: 10, color: T.textMut, marginTop: 2, fontFamily: T.mono }}>{sub}</div>}
+const KpiCard = ({ label, value, sub, color }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', minWidth: 160 }}>
+    <div style={{ fontSize: 11, color: T.muted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{label}</div>
+    <div style={{ fontSize: 22, fontWeight: 700, color: color || T.text }}>{value}</div>
+    {sub && <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>{sub}</div>}
   </div>
 );
 
-/* ── Main Component ────────────────────────────────────────────────── */
+const TABS = ['Optimizer Dashboard','Portfolio Composition','Carbon Analytics','Risk Attribution','Constraint Analysis','Scenario Performance','Summary & Export'];
+
 export default function ClimatePortfolioOptimizerPage() {
-  const [tab, setTab] = useState(0);
-  const [targetReturn, setTargetReturn] = useState(8.5);
-  const [maxCarbon, setMaxCarbon] = useState(120);
-  const [maxPosition, setMaxPosition] = useState(10);
+  const [activeTab, setActiveTab] = useState(0);
+  const [carbonBudget, setCarbonBudget] = useState(250);
+  const [sectorMax, setSectorMax] = useState(25);
+  const [itrConstraint, setItrConstraint] = useState(2.5);
+  const [esgMin, setEsgMin] = useState(40);
+  const [liquidityMin, setLiquidityMin] = useState(20);
+  const [sectorFilter, setSectorFilter] = useState('All');
+  const [search, setSearch] = useState('');
+  const [compareMode, setCompareMode] = useState('Carbon-Constrained');
+  const [rfRate] = useState(0.02);
 
-  const portCarbon = +(HOLDINGS.reduce((s, h) => s + h.currWeight * h.carbonIntensity / 100, 0)).toFixed(1);
-  const optCarbon = +(HOLDINGS.reduce((s, h) => s + h.optWeight * h.carbonIntensity / 100, 0)).toFixed(1);
-  const portReturn = +(HOLDINGS.reduce((s, h) => s + h.currWeight * h.expReturn / 100, 0)).toFixed(2);
-  const optReturn = +(HOLDINGS.reduce((s, h) => s + h.optWeight * h.expReturn / 100, 0)).toFixed(2);
-  const portVol = 14.32;
-  const optVol = 12.87;
-  const sharpe = +((optReturn - 4.5) / optVol).toFixed(3);
-  const trackErr = 2.41;
-  const totalBudget = CARBON_SECTORS.reduce((s, c) => s + c.budget, 0);
-  const totalActual = CARBON_SECTORS.reduce((s, c) => s + c.actual, 0);
+  const filtered = useMemo(() => {
+    let d = BENCHMARK.filter(s =>
+      s.esgScore >= esgMin &&
+      s.liquidityScore >= liquidityMin &&
+      s.temperature <= itrConstraint + 1.5 &&
+      (sectorFilter === 'All' || s.sector === sectorFilter) &&
+      (search === '' || s.name.toLowerCase().includes(search.toLowerCase()) || s.sector.toLowerCase().includes(search.toLowerCase()))
+    );
+    return d;
+  }, [esgMin, liquidityMin, itrConstraint, sectorFilter, search]);
 
-  /* ── Tab 0: Portfolio Optimization ─────────────────────────────── */
-  const renderOptimization = () => (
-    <div style={{ ...S.grid, gridTemplateColumns: '1fr' }}>
-      {/* KPI Row */}
-      <div style={{ ...S.card, display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
-        <Kpi label="Optimized Return" value={`${optReturn}%`} color={T.green} sub={`vs ${portReturn}% current`} />
-        <Kpi label="Portfolio Vol" value={`${optVol}%`} color={T.blue} sub={`vs ${portVol}% current`} />
-        <Kpi label="Sharpe Ratio" value={sharpe} color={T.navy} sub="risk-free 4.5%" />
-        <Kpi label="Carbon Intensity" value={`${optCarbon}`} color={optCarbon < portCarbon ? T.green : T.red} sub={`tCO\u2082/$M (vs ${portCarbon})`} />
-        <Kpi label="Tracking Error" value={`${trackErr}%`} color={T.amber} sub="vs MSCI ACWI" />
+  const unconstrained = useMemo(() => {
+    const total = filtered.reduce((s, x) => s + x.weight, 0);
+    return filtered.map(s => ({ ...s, optWeight: total > 0 ? s.weight / total : 0 }));
+  }, [filtered]);
+
+  const carbonConstrained = useMemo(() => {
+    const eligible = filtered.filter(s => s.carbonIntensity <= carbonBudget * 1.5);
+    const total = eligible.reduce((s, x) => s + x.weight, 0);
+    const renormed = eligible.map(s => ({ ...s, optWeight: total > 0 ? s.weight / total : 0 }));
+    // Apply carbon tilt: reduce weight of high-CI
+    const tilted = renormed.map(s => ({
+      ...s,
+      optWeight: s.optWeight * (1 - Math.max(0, (s.carbonIntensity - carbonBudget) / (carbonBudget * 2))),
+    }));
+    const tTotal = tilted.reduce((s, x) => s + x.optWeight, 0);
+    return tilted.map(s => ({ ...s, optWeight: tTotal > 0 ? s.optWeight / tTotal : 0 }));
+  }, [filtered, carbonBudget]);
+
+  const netZero = useMemo(() => {
+    const eligible = filtered.filter(s => s.temperature <= 2.0 && s.greenRevenue >= 0.2);
+    const total = eligible.reduce((s, x) => s + x.weight, 0);
+    return eligible.map(s => ({ ...s, optWeight: total > 0 ? s.weight / total : 0 }));
+  }, [filtered]);
+
+  const portfolioStats = useCallback((holdings, label) => {
+    if (!holdings.length) return { label, ret: 0, vol: 0, sharpe: 0, ci: 0, itr: 0 };
+    const ret = holdings.reduce((s, x) => s + x.optWeight * x.expectedReturn, 0);
+    const vol = Math.sqrt(holdings.reduce((s, x) => s + Math.pow(x.optWeight * x.volatility, 2), 0));
+    const ci = holdings.reduce((s, x) => s + x.optWeight * x.carbonIntensity, 0);
+    const itr = holdings.reduce((s, x) => s + x.optWeight * x.temperature, 0);
+    const caSharp = vol > 0 ? (ret - rfRate) / (vol * (1 + ci / 500)) : 0;
+    const bmkVol = Math.sqrt(holdings.reduce((s, x) => s + Math.pow(x.bmkWeight * x.volatility, 2), 0));
+    const te = Math.sqrt(Math.abs(Math.pow(vol, 2) - Math.pow(bmkVol, 2)));
+    return { label, ret: +(ret * 100).toFixed(2), vol: +(vol * 100).toFixed(2), sharpe: +((ret - rfRate) / (vol || 1)).toFixed(3), ci: +ci.toFixed(0), itr: +itr.toFixed(2), caSharp: +caSharp.toFixed(3), te: +(te * 100).toFixed(2) };
+  }, [rfRate]);
+
+  const stats = useMemo(() => ({
+    unc: portfolioStats(unconstrained, 'Unconstrained'),
+    cc: portfolioStats(carbonConstrained, 'Carbon-Constrained'),
+    nz: portfolioStats(netZero, 'Net-Zero'),
+  }), [unconstrained, carbonConstrained, netZero, portfolioStats]);
+
+  const activePortfolio = compareMode === 'Unconstrained' ? unconstrained : compareMode === 'Net-Zero' ? netZero : carbonConstrained;
+  const activeStats = compareMode === 'Unconstrained' ? stats.unc : compareMode === 'Net-Zero' ? stats.nz : stats.cc;
+
+  const sectorBreakdown = useMemo(() => {
+    const map = {};
+    activePortfolio.forEach(s => {
+      if (!map[s.sector]) map[s.sector] = { sector: s.sector, weight: 0, ci: 0, count: 0 };
+      map[s.sector].weight += s.optWeight * 100;
+      map[s.sector].ci += s.optWeight * s.carbonIntensity;
+      map[s.sector].count += 1;
+    });
+    return Object.values(map).sort((a, b) => b.weight - a.weight);
+  }, [activePortfolio]);
+
+  const constraintData = useMemo(() => {
+    const carbonUtil = activeStats.ci / carbonBudget * 100;
+    const itrUtil = activeStats.itr / itrConstraint * 100;
+    const sectorUtilMax = Math.max(...sectorBreakdown.map(s => s.weight)) / sectorMax * 100;
+    return [
+      { name: 'Carbon Budget', utilization: +carbonUtil.toFixed(1), budget: 100, status: carbonUtil <= 100 ? 'Slack' : 'Binding' },
+      { name: 'ITR Limit', utilization: +itrUtil.toFixed(1), budget: 100, status: itrUtil <= 100 ? 'Slack' : 'Binding' },
+      { name: 'Sector Max', utilization: +sectorUtilMax.toFixed(1), budget: 100, status: sectorUtilMax <= 100 ? 'Slack' : 'Binding' },
+      { name: 'ESG Minimum', utilization: +(activePortfolio.reduce((s, x) => s + x.optWeight * x.esgScore, 0) / esgMin * 100).toFixed(1), budget: 100, status: 'Slack' },
+    ];
+  }, [activeStats, carbonBudget, itrConstraint, sectorMax, sectorBreakdown, activePortfolio, esgMin]);
+
+  const riskAttribution = useMemo(() => {
+    return sectorBreakdown.map(s => ({
+      sector: s.sector,
+      systematic: +(s.weight * sr(s.sector.length * 7 + 1) * 0.6).toFixed(2),
+      idiosyncratic: +(s.weight * sr(s.sector.length * 11 + 2) * 0.4).toFixed(2),
+      factorExposure: +(sr(s.sector.length * 13 + 3) * 2 - 1).toFixed(3),
+    }));
+  }, [sectorBreakdown]);
+
+  const top20 = useMemo(() => [...activePortfolio].sort((a, b) => b.optWeight - a.optWeight).slice(0, 20), [activePortfolio]);
+
+  return (
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+      <div style={{ background: T.navy, padding: '20px 32px', borderBottom: `3px solid ${T.gold}` }}>
+        <div style={{ fontSize: 11, color: T.gold, fontWeight: 700, letterSpacing: '0.1em', marginBottom: 4 }}>EP-CZ1 · CLIMATE PORTFOLIO CONSTRUCTION</div>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#fff', margin: 0 }}>Climate Portfolio Optimizer</h1>
+        <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>Markowitz mean-variance optimization with carbon constraints · {SECURITIES.length} securities · 12 sectors</div>
       </div>
 
       {/* Controls */}
-      <div style={{ ...S.card, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, marginBottom: 6, textTransform: 'uppercase' }}>
-            Target Return: <span style={{ color: T.navy, fontFamily: T.mono }}>{targetReturn}%</span>
-          </div>
-          <input type="range" min={4} max={16} step={0.5} value={targetReturn} onChange={e => setTargetReturn(+e.target.value)} style={S.slider} />
-        </div>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, marginBottom: 6, textTransform: 'uppercase' }}>
-            Max Carbon Budget: <span style={{ color: T.navy, fontFamily: T.mono }}>{maxCarbon} tCO₂/$M</span>
-          </div>
-          <input type="range" min={40} max={300} step={5} value={maxCarbon} onChange={e => setMaxCarbon(+e.target.value)} style={S.slider} />
-        </div>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: T.textSec, marginBottom: 6, textTransform: 'uppercase' }}>
-            Max Single Position: <span style={{ color: T.navy, fontFamily: T.mono }}>{maxPosition}%</span>
-          </div>
-          <input type="range" min={3} max={20} step={0.5} value={maxPosition} onChange={e => setMaxPosition(+e.target.value)} style={S.slider} />
-        </div>
+      <div style={{ background: T.sub, borderBottom: `1px solid ${T.border}`, padding: '12px 32px', display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+        <label style={{ fontSize: 12, color: T.muted }}>Carbon Budget: <strong style={{ color: T.text }}>{carbonBudget} tCO₂e/$M</strong>
+          <input type="range" min={50} max={500} value={carbonBudget} onChange={e => setCarbonBudget(+e.target.value)} style={{ marginLeft: 8, width: 100 }} />
+        </label>
+        <label style={{ fontSize: 12, color: T.muted }}>Sector Max: <strong style={{ color: T.text }}>{sectorMax}%</strong>
+          <input type="range" min={5} max={50} value={sectorMax} onChange={e => setSectorMax(+e.target.value)} style={{ marginLeft: 8, width: 80 }} />
+        </label>
+        <label style={{ fontSize: 12, color: T.muted }}>ITR Limit: <strong style={{ color: T.text }}>{itrConstraint}°C</strong>
+          <input type="range" min={15} max={30} value={itrConstraint * 10} onChange={e => setItrConstraint(+e.target.value / 10)} style={{ marginLeft: 8, width: 80 }} />
+        </label>
+        <label style={{ fontSize: 12, color: T.muted }}>ESG Min: <strong style={{ color: T.text }}>{esgMin}</strong>
+          <input type="range" min={0} max={80} value={esgMin} onChange={e => setEsgMin(+e.target.value)} style={{ marginLeft: 8, width: 80 }} />
+        </label>
+        <select value={sectorFilter} onChange={e => setSectorFilter(e.target.value)} style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12 }}>
+          <option value="All">All Sectors</option>
+          {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <select value={compareMode} onChange={e => setCompareMode(e.target.value)} style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12 }}>
+          <option>Unconstrained</option>
+          <option>Carbon-Constrained</option>
+          <option>Net-Zero</option>
+        </select>
+        <input placeholder="Search securities..." value={search} onChange={e => setSearch(e.target.value)} style={{ padding: '4px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, width: 160 }} />
       </div>
 
-      {/* Holdings Table */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Holdings Comparison: Current vs Optimized</div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={S.table}>
-            <thead>
-              <tr>
-                <th style={S.th}>Ticker</th><th style={S.th}>Sector</th>
-                <th style={S.thR}>Curr Wt%</th><th style={S.thR}>Opt Wt%</th><th style={S.thR}>Delta</th>
-                <th style={S.thR}>Exp Ret%</th><th style={S.thR}>Vol%</th>
-                <th style={S.thR}>Carbon tCO₂/$M</th><th style={S.thR}>Trans Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              {HOLDINGS.map((h, i) => {
-                const d = +(h.optWeight - h.currWeight).toFixed(2);
-                return (
-                  <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                    <td style={{ ...S.td, fontWeight: 700 }}>{h.ticker}</td>
-                    <td style={{ ...S.td, color: T.textSec, fontSize: 11 }}>{h.sector}</td>
-                    <td style={S.tdR}>{fmt(h.currWeight)}</td>
-                    <td style={S.tdR}>{fmt(h.optWeight)}</td>
-                    <td style={{ ...S.tdR, color: colorDelta(d), fontWeight: 600 }}>{delta(d)}</td>
-                    <td style={S.tdR}>{fmt(h.expReturn)}</td>
-                    <td style={S.tdR}>{fmt(h.volatility)}</td>
-                    <td style={S.tdR}>
-                      <span style={S.badge(h.carbonIntensity > 200 ? T.red : h.carbonIntensity > 80 ? T.amber : T.green)}>
-                        {h.carbonIntensity}
-                      </span>
-                    </td>
-                    <td style={S.tdR}>
-                      <span style={S.badge(h.transitionScore > 60 ? T.green : h.transitionScore > 40 ? T.amber : T.red)}>
-                        {h.transitionScore}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-
-  /* ── Tab 1: Efficient Frontier ─────────────────────────────────── */
-  const renderFrontier = () => (
-    <div style={{ ...S.grid, gridTemplateColumns: '1fr' }}>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Mean-Variance Efficient Frontier with Carbon Constraint</div>
-        <ResponsiveContainer width="100%" height={380}>
-          <ScatterChart margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="vol" name="Volatility" unit="%" tick={{ fontSize: 11, fontFamily: T.mono }} label={{ value: 'Volatility (%)', position: 'bottom', fontSize: 12 }} />
-            <YAxis dataKey="ret" name="Return" unit="%" tick={{ fontSize: 11, fontFamily: T.mono }} label={{ value: 'Return (%)', angle: -90, position: 'insideLeft', fontSize: 12 }} />
-            <Tooltip formatter={(v) => `${fmt(v)}%`} contentStyle={{ fontFamily: T.mono, fontSize: 12, borderColor: T.border }} />
-            <Legend />
-            <Scatter name="Unconstrained Frontier" data={FRONTIER.map(f => ({ vol: f.vol, ret: f.ret }))} fill={T.navy} line={{ strokeWidth: 2 }} lineType="fitting" />
-            <Scatter name="Carbon-Constrained" data={FRONTIER.map(f => ({ vol: f.vol, ret: f.retCarbon }))} fill={T.green} line={{ strokeWidth: 2 }} lineType="fitting" />
-            <Scatter name="Current Portfolio" data={[{ vol: portVol, ret: portReturn }]} fill={T.red}>
-              <Cell key="curr" />
-            </Scatter>
-            <Scatter name="Min-Variance" data={[{ vol: FRONTIER[0].vol, ret: FRONTIER[0].ret }]} fill={T.blue}>
-              <Cell key="minv" />
-            </Scatter>
-            <Scatter name="Max-Sharpe" data={[{ vol: FRONTIER[10].vol, ret: FRONTIER[10].ret }]} fill={T.gold}>
-              <Cell key="maxs" />
-            </Scatter>
-            <Scatter name="Carbon-Optimal" data={[{ vol: FRONTIER[8].vol, ret: FRONTIER[8].retCarbon }]} fill={T.purple}>
-              <Cell key="copt" />
-            </Scatter>
-          </ScatterChart>
-        </ResponsiveContainer>
+      {/* Tabs */}
+      <div style={{ display: 'flex', background: T.card, borderBottom: `1px solid ${T.border}`, padding: '0 32px', gap: 0, overflowX: 'auto' }}>
+        {TABS.map((t, i) => (
+          <button key={t} onClick={() => setActiveTab(i)} style={{ padding: '12px 18px', fontSize: 12, fontWeight: activeTab === i ? 700 : 500, color: activeTab === i ? T.indigo : T.muted, background: 'none', border: 'none', borderBottom: activeTab === i ? `2px solid ${T.indigo}` : '2px solid transparent', cursor: 'pointer', whiteSpace: 'nowrap' }}>{t}</button>
+        ))}
       </div>
 
-      <div style={S.card}>
-        <div style={S.cardTitle}>Frontier Portfolio Metrics</div>
-        <table style={S.table}>
-          <thead>
-            <tr>
-              <th style={S.thR}>#</th><th style={S.thR}>Vol %</th><th style={S.thR}>Ret %</th>
-              <th style={S.thR}>Ret (Carbon) %</th><th style={S.thR}>Carbon tCO₂</th><th style={S.thR}>Sharpe</th>
-            </tr>
-          </thead>
-          <tbody>
-            {FRONTIER.map((f, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                <td style={S.tdR}>{i + 1}</td>
-                <td style={S.tdR}>{fmt(f.vol)}</td>
-                <td style={S.tdR}>{fmt(f.ret)}</td>
-                <td style={{ ...S.tdR, color: T.green }}>{fmt(f.retCarbon)}</td>
-                <td style={S.tdR}>{f.carbon}</td>
-                <td style={S.tdR}>{fmt((f.ret - 4.5) / f.vol, 3)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+      <div style={{ padding: '24px 32px' }}>
 
-  /* ── Tab 2: Carbon Constraints ─────────────────────────────────── */
-  const renderCarbon = () => (
-    <div style={{ ...S.grid, gridTemplateColumns: '1fr 1fr' }}>
-      {/* Budget Gauge */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Total Carbon Budget Utilization</div>
-        <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <span style={{ fontSize: 36, fontWeight: 700, fontFamily: T.mono, color: totalActual / totalBudget > 0.85 ? T.red : T.navy }}>
-            {fmt(totalActual / totalBudget * 100, 1)}%
-          </span>
-          <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>{totalActual} / {totalBudget} tCO₂ consumed</div>
-        </div>
-        <div style={S.gauge(totalActual / totalBudget * 100)}>
-          <div style={S.gaugeFill(totalActual / totalBudget * 100, totalActual / totalBudget > 0.85 ? T.red : totalActual / totalBudget > 0.65 ? T.amber : T.green)} />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 20 }}>
-          <Kpi label="Budget Remaining" value={`${totalBudget - totalActual}`} color={T.green} sub="tCO₂" />
-          <Kpi label="Avg Intensity" value={fmt(totalActual / 18, 1)} color={T.navy} sub="tCO₂/$M" />
-          <Kpi label="YoY Reduction" value="-12.3%" color={T.green} sub="vs prior year" />
-        </div>
-      </div>
+        {/* TAB 0: Optimizer Dashboard */}
+        {activeTab === 0 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
+              <KpiCard label="Portfolio Return" value={`${activeStats.ret}%`} sub="Expected annualized" color={T.green} />
+              <KpiCard label="Portfolio Vol" value={`${activeStats.vol}%`} sub="Annualized volatility" color={T.amber} />
+              <KpiCard label="Sharpe Ratio" value={activeStats.sharpe} sub="Risk-free = 2%" color={T.indigo} />
+              <KpiCard label="Carbon Intensity" value={`${activeStats.ci}`} sub="tCO₂e/$M revenue" color={activeStats.ci > carbonBudget ? T.red : T.green} />
+              <KpiCard label="Portfolio ITR" value={`${activeStats.itr}°C`} sub="Implied temperature rise" color={activeStats.itr <= 2 ? T.green : T.amber} />
+              <KpiCard label="Tracking Error" value={`${activeStats.te}%`} sub="vs MSCI World" color={T.blue} />
+              <KpiCard label="CA-Sharpe" value={activeStats.caSharp} sub="Carbon-adjusted Sharpe" color={T.purple} />
+              <KpiCard label="Holdings" value={activePortfolio.length} sub={`of ${SECURITIES.length} universe`} />
+            </div>
 
-      {/* Sector Budget */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Per-Sector Carbon Allowance vs Actual</div>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={CARBON_SECTORS} layout="vertical" margin={{ left: 80, right: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis type="number" tick={{ fontSize: 10, fontFamily: T.mono }} />
-            <YAxis type="category" dataKey="sector" tick={{ fontSize: 10 }} width={75} />
-            <Tooltip contentStyle={{ fontFamily: T.mono, fontSize: 12, borderColor: T.border }} />
-            <Legend />
-            <Bar dataKey="budget" name="Budget" fill={T.navy} opacity={0.3} barSize={14} />
-            <Bar dataKey="actual" name="Actual" barSize={14}>
-              {CARBON_SECTORS.map((c, i) => (
-                <Cell key={i} fill={c.utilization > 90 ? T.red : c.utilization > 70 ? T.amber : T.green} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+            {/* Compare 3 portfolios */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Portfolio Comparison</h3>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={[
+                    { name: 'Return %', Unconstrained: stats.unc.ret, 'Carbon-Constr.': stats.cc.ret, 'Net-Zero': stats.nz.ret },
+                    { name: 'Vol %', Unconstrained: stats.unc.vol, 'Carbon-Constr.': stats.cc.vol, 'Net-Zero': stats.nz.vol },
+                    { name: 'Sharpe×10', Unconstrained: +(stats.unc.sharpe * 10).toFixed(2), 'Carbon-Constr.': +(stats.cc.sharpe * 10).toFixed(2), 'Net-Zero': +(stats.nz.sharpe * 10).toFixed(2) },
+                  ]} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="Unconstrained" fill={T.blue} />
+                    <Bar dataKey="Carbon-Constr." fill={T.indigo} />
+                    <Bar dataKey="Net-Zero" fill={T.green} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Efficient Frontier (50 portfolios)</h3>
+                <ResponsiveContainer width="100%" height={220}>
+                  <ScatterChart margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="vol" name="Volatility %" tick={{ fontSize: 10 }} label={{ value: 'Vol %', position: 'insideBottom', offset: -5, fontSize: 10 }} />
+                    <YAxis dataKey="ret" name="Return %" tick={{ fontSize: 10 }} label={{ value: 'Ret %', angle: -90, position: 'insideLeft', fontSize: 10 }} />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ fontSize: 11 }} formatter={(v, n) => [v.toFixed(2), n]} />
+                    <Scatter data={FRONTIER} fill={T.indigo} opacity={0.7} />
+                    <Scatter data={[{ vol: activeStats.vol, ret: activeStats.ret }]} fill={T.red} name="Current" />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
-      {/* Carbon Price Sensitivity */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Carbon Price Sensitivity Analysis</div>
-        <table style={S.table}>
-          <thead>
-            <tr>
-              <th style={S.thR}>Price $/tCO₂</th><th style={S.thR}>Portfolio Cost ($M)</th>
-              <th style={S.thR}>Return Drag (bps)</th><th style={S.thR}>Sharpe Impact</th>
-            </tr>
-          </thead>
-          <tbody>
-            {CARBON_PRICE_IMPACT.map((c, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                <td style={{ ...S.tdR, fontWeight: 700 }}>${c.price}</td>
-                <td style={S.tdR}>{fmt(c.portfolioCost)}</td>
-                <td style={{ ...S.tdR, color: T.red }}>{fmt(c.returnDrag)}</td>
-                <td style={{ ...S.tdR, color: T.red }}>{c.sharpeImpact}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <ResponsiveContainer width="100%" height={200} style={{ marginTop: 12 }}>
-          <LineChart data={CARBON_PRICE_IMPACT}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="price" tick={{ fontSize: 10, fontFamily: T.mono }} label={{ value: '$/tCO₂', position: 'bottom', fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono }} />
-            <Tooltip contentStyle={{ fontFamily: T.mono, fontSize: 11, borderColor: T.border }} />
-            <Line dataKey="portfolioCost" name="Cost $M" stroke={T.red} strokeWidth={2} dot={{ r: 3 }} />
-            <Line dataKey="returnDrag" name="Return Drag bps" stroke={T.amber} strokeWidth={2} dot={{ r: 3 }} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* MACC */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Marginal Abatement Cost Curve (MACC)</div>
-        <ResponsiveContainer width="100%" height={320}>
-          <BarChart data={MACC_DATA} margin={{ top: 10, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="measure" tick={{ fontSize: 9 }} angle={-25} textAnchor="end" height={60} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono }} label={{ value: '$/tCO₂', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-            <Tooltip contentStyle={{ fontFamily: T.mono, fontSize: 11, borderColor: T.border }} />
-            <ReferenceLine y={0} stroke={T.navy} strokeWidth={1.5} />
-            <Bar dataKey="cost" name="Abatement Cost $/tCO₂" barSize={36}>
-              {MACC_DATA.map((m, i) => <Cell key={i} fill={m.fill} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-        <div style={{ fontSize: 11, color: T.textSec, marginTop: 4 }}>
-          Abatement volume (ktCO₂): {MACC_DATA.map(m => `${m.measure}: ${m.abatement}`).join(' | ')}
-        </div>
-      </div>
-    </div>
-  );
-
-  /* ── Tab 3: Sector Allocation ──────────────────────────────────── */
-  const renderSectorAlloc = () => (
-    <div style={{ ...S.grid, gridTemplateColumns: '1fr 1fr' }}>
-      {/* Target vs Actual */}
-      <div style={{ ...S.card, gridColumn: '1 / -1' }}>
-        <div style={S.cardTitle}>Target vs Actual Sector Weights with Deviation</div>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={SECTOR_ALLOC} margin={{ top: 10, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={50} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono }} unit="%" />
-            <Tooltip contentStyle={{ fontFamily: T.mono, fontSize: 11, borderColor: T.border }} />
-            <Legend />
-            <Bar dataKey="target" name="Target %" fill={T.navy} opacity={0.4} barSize={18} />
-            <Bar dataKey="actual" name="Actual %" barSize={18}>
-              {SECTOR_ALLOC.map((s, i) => (
-                <Cell key={i} fill={Math.abs(s.deviation) > 3 ? T.red : Math.abs(s.deviation) > 1.5 ? T.amber : T.green} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Geographic Allocation */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Geographic Allocation</div>
-        <ResponsiveContainer width="100%" height={260}>
-          <PieChart>
-            <Pie data={GEO_ALLOC} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={95} label={({ name, value }) => `${name}: ${value}%`} labelLine={{ strokeWidth: 1 }} style={{ fontSize: 10 }}>
-              {GEO_ALLOC.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-            </Pie>
-            <Tooltip formatter={v => `${v}%`} contentStyle={{ fontFamily: T.mono, fontSize: 11 }} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Asset Class Breakdown */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Asset Class Breakdown</div>
-        <ResponsiveContainer width="100%" height={260}>
-          <PieChart>
-            <Pie data={AC_ALLOC} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={95} label={({ name, value }) => `${name}: ${value}%`} labelLine={{ strokeWidth: 1 }} style={{ fontSize: 10 }}>
-              {AC_ALLOC.map((_, i) => <Cell key={i} fill={PIE_COLORS[(i + 3) % PIE_COLORS.length]} />)}
-            </Pie>
-            <Tooltip formatter={v => `${v}%`} contentStyle={{ fontFamily: T.mono, fontSize: 11 }} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Sector Carbon Intensity */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Sector Carbon Intensity (tCO₂/$M Revenue)</div>
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={SECTOR_ALLOC} margin={{ top: 10, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-25} textAnchor="end" height={55} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono }} />
-            <Tooltip contentStyle={{ fontFamily: T.mono, fontSize: 11, borderColor: T.border }} />
-            <Bar dataKey="carbonIntensity" name="tCO₂/$M" barSize={22}>
-              {SECTOR_ALLOC.map((s, i) => (
-                <Cell key={i} fill={s.carbonIntensity > 200 ? T.red : s.carbonIntensity > 100 ? T.amber : T.green} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Tilt Analysis */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Climate Tilt Analysis: Over/Underweight vs Benchmark</div>
-        <table style={S.table}>
-          <thead>
-            <tr>
-              <th style={S.th}>Sector</th><th style={S.thR}>Bmk Wt%</th><th style={S.thR}>Port Wt%</th>
-              <th style={S.thR}>Tilt (bps)</th><th style={S.thR}>Carbon Int.</th><th style={S.th}>Rationale</th>
-            </tr>
-          </thead>
-          <tbody>
-            {SECTOR_ALLOC.map((s, i) => {
-              const tilt = +((s.actual - s.benchmarkWeight) * 100).toFixed(0);
-              return (
-                <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                  <td style={{ ...S.td, fontWeight: 600 }}>{s.sector}</td>
-                  <td style={S.tdR}>{fmt(s.benchmarkWeight, 1)}</td>
-                  <td style={S.tdR}>{fmt(s.actual, 1)}</td>
-                  <td style={{ ...S.tdR, color: colorDelta(tilt), fontWeight: 600 }}>{tilt > 0 ? '+' : ''}{tilt}</td>
-                  <td style={S.tdR}>{s.carbonIntensity}</td>
-                  <td style={{ ...S.td, fontSize: 10, color: T.textSec }}>
-                    {tilt > 100 ? 'OW: Low carbon, high transition' : tilt < -100 ? 'UW: High emission, stranded risk' : 'Neutral: Within tracking bounds'}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-
-  /* ── Tab 4: Scenario Analysis ──────────────────────────────────── */
-  const renderScenarios = () => (
-    <div style={{ ...S.grid, gridTemplateColumns: '1fr' }}>
-      {/* NGFS Scenario Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
-        {SCENARIOS.map((sc, i) => (
-          <div key={i} style={{ ...S.card, borderTop: `3px solid ${[T.green, T.blue, T.amber, T.red][i]}` }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 4 }}>{sc.name}</div>
-            <div style={{ fontSize: 11, color: T.textSec, marginBottom: 12 }}>Target: {sc.tempTarget} | C-Price '30: ${sc.carbonPrice2030}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <Kpi label="Return" value={`${sc.portReturn}%`} color={T.navy} />
-              <Kpi label="Vol" value={`${sc.portVol}%`} color={T.blue} />
-              <Kpi label="Sharpe" value={sc.sharpe} color={T.gold} />
-              <Kpi label="Max DD" value={`${sc.maxDrawdown}%`} color={T.red} />
-              <Kpi label="CO₂ Red." value={`${sc.carbonReduction}%`} color={T.green} />
-              <Kpi label="TE" value={`${sc.trackingError}%`} color={T.amber} />
+            {/* Top 20 holdings */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Top 20 Holdings — {compareMode}</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={top20.map(s => ({ name: s.name, weight: +(s.optWeight * 100).toFixed(2) }))} margin={{ top: 5, right: 20, left: 0, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-45} textAnchor="end" />
+                  <YAxis tick={{ fontSize: 10 }} unit="%" />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v}%`, 'Weight']} />
+                  <Bar dataKey="weight" fill={T.indigo} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-        ))}
-      </div>
+        )}
 
-      {/* Scenario Return Comparison */}
-      <div style={S.card}>
-        <div style={S.cardTitle}>Scenario Return / Risk Comparison</div>
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={SCENARIOS} margin={{ top: 10, right: 30, bottom: 10, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10, fontFamily: T.mono }} />
-            <Tooltip contentStyle={{ fontFamily: T.mono, fontSize: 11, borderColor: T.border }} />
-            <Legend />
-            <Bar dataKey="portReturn" name="Return %" fill={T.green} barSize={20} />
-            <Bar dataKey="portVol" name="Volatility %" fill={T.blue} barSize={20} />
-            <Bar dataKey="trackingError" name="Track. Error %" fill={T.amber} barSize={20} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+        {/* TAB 1: Portfolio Composition */}
+        {activeTab === 1 && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Sector Allocation — {compareMode}</h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={sectorBreakdown} layout="vertical" margin={{ top: 5, right: 30, left: 80, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fontSize: 10 }} unit="%" />
+                    <YAxis type="category" dataKey="sector" tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v.toFixed(2)}%`, 'Weight']} />
+                    <Bar dataKey="weight" fill={T.navy} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Sector Carbon Intensity</h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={sectorBreakdown} layout="vertical" margin={{ top: 5, right: 30, left: 80, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fontSize: 10 }} />
+                    <YAxis type="category" dataKey="sector" tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v.toFixed(0)} tCO₂e/$M`, 'Avg CI']} />
+                    <Bar dataKey="ci" fill={T.amber} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Full Holdings — {activePortfolio.length} securities</h3>
+              <div style={{ overflowX: 'auto', maxHeight: 420, overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Name','Sector','Country','Weight %','Ret %','Vol %','Carbon CI','ITR °C','ESG','Sharpe'].map(h => (
+                        <th key={h} style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activePortfolio.map((s, i) => (
+                      <tr key={s.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                        <td style={{ padding: '6px 10px', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace' }}>{s.name}</td>
+                        <td style={{ padding: '6px 10px', color: T.muted }}>{s.sector}</td>
+                        <td style={{ padding: '6px 10px', color: T.muted }}>{s.country}</td>
+                        <td style={{ padding: '6px 10px', fontWeight: 600 }}>{(s.optWeight * 100).toFixed(3)}%</td>
+                        <td style={{ padding: '6px 10px', color: T.green }}>{(s.expectedReturn * 100).toFixed(2)}%</td>
+                        <td style={{ padding: '6px 10px', color: T.amber }}>{(s.volatility * 100).toFixed(2)}%</td>
+                        <td style={{ padding: '6px 10px', color: s.carbonIntensity > carbonBudget ? T.red : T.text }}>{s.carbonIntensity.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: s.temperature <= 2 ? T.green : s.temperature <= 3 ? T.amber : T.red }}>{s.temperature.toFixed(2)}</td>
+                        <td style={{ padding: '6px 10px' }}>{s.esgScore.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: s.sharpe >= 0.5 ? T.green : T.muted }}>{s.sharpe.toFixed(3)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
 
-      {/* Stress Tests */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Stress Test Results</div>
-          <table style={S.table}>
-            <thead>
-              <tr>
-                <th style={S.th}>Stress Test</th><th style={S.thR}>Return %</th>
-                <th style={S.thR}>Vol Impact %</th><th style={S.thR}>Carbon Impact</th>
-              </tr>
-            </thead>
-            <tbody>
-              {STRESS_TESTS.map((st, i) => (
-                <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.bg }}>
-                  <td style={{ ...S.td, fontWeight: 600, fontSize: 11 }}>{st.test}</td>
-                  <td style={{ ...S.tdR, color: colorDelta(st.returnImpact), fontWeight: 600 }}>{delta(st.returnImpact)}</td>
-                  <td style={{ ...S.tdR, color: T.red }}>+{fmt(st.volImpact)}</td>
-                  <td style={{ ...S.tdR, color: colorDelta(st.carbonImpact) }}>{delta(st.carbonImpact)}</td>
-                </tr>
+        {/* TAB 2: Carbon Analytics */}
+        {activeTab === 2 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
+              <KpiCard label="Portfolio CI" value={`${activeStats.ci} tCO₂e/$M`} sub={`Budget: ${carbonBudget}`} color={activeStats.ci > carbonBudget ? T.red : T.green} />
+              <KpiCard label="Budget Utilization" value={`${(activeStats.ci / carbonBudget * 100).toFixed(1)}%`} color={activeStats.ci / carbonBudget > 1 ? T.red : T.green} />
+              <KpiCard label="Portfolio ITR" value={`${activeStats.itr}°C`} sub="Weighted avg temperature" color={activeStats.itr <= 2 ? T.green : T.amber} />
+              <KpiCard label="Green Revenue" value={`${(activePortfolio.reduce((s, x) => s + x.optWeight * x.greenRevenue, 0) * 100).toFixed(1)}%`} sub="Wtd avg green revenue" color={T.teal} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Carbon Budget Utilization vs Sectors</h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <ComposedChart data={sectorBreakdown} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
+                    <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Bar yAxisId="left" dataKey="ci" fill={T.amber} name="Carbon Intensity" />
+                    <Line yAxisId="right" dataKey="weight" stroke={T.indigo} name="Weight %" dot={false} />
+                    <ReferenceLine yAxisId="left" y={carbonBudget} stroke={T.red} strokeDasharray="5 5" label={{ value: 'Budget', fontSize: 10, fill: T.red }} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>ITR Distribution (Binned)</h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={[
+                    { range: '1.5-2.0°C', count: activePortfolio.filter(s => s.temperature < 2).length },
+                    { range: '2.0-2.5°C', count: activePortfolio.filter(s => s.temperature >= 2 && s.temperature < 2.5).length },
+                    { range: '2.5-3.0°C', count: activePortfolio.filter(s => s.temperature >= 2.5 && s.temperature < 3).length },
+                    { range: '3.0-3.5°C', count: activePortfolio.filter(s => s.temperature >= 3 && s.temperature < 3.5).length },
+                    { range: '3.5-4.5°C', count: activePortfolio.filter(s => s.temperature >= 3.5).length },
+                  ]} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="range" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="count" fill={T.teal} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: Risk Attribution */}
+        {activeTab === 3 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+              <KpiCard label="Total Portfolio Vol" value={`${activeStats.vol}%`} color={T.amber} />
+              <KpiCard label="Tracking Error" value={`${activeStats.te}%`} sub="vs MSCI World" color={T.indigo} />
+              <KpiCard label="Avg Beta" value={(activePortfolio.reduce((s, x) => s + x.optWeight * x.betaToMarket, 0)).toFixed(3)} sub="Wtd avg to market" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Systematic vs Idiosyncratic Risk</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={riskAttribution} margin={{ top: 5, right: 20, left: 0, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="systematic" stackId="a" fill={T.navy} name="Systematic" />
+                    <Bar dataKey="idiosyncratic" stackId="a" fill={T.amber} name="Idiosyncratic" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Factor Exposure by Sector</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={riskAttribution} margin={{ top: 5, right: 20, left: 0, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip contentStyle={{ fontSize: 11 }} />
+                    <ReferenceLine y={0} stroke={T.border} />
+                    <Bar dataKey="factorExposure" fill={T.purple} name="Factor Exposure" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: Constraint Analysis */}
+        {activeTab === 4 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Constraint Utilization</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={constraintData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 10 }} unit="%" domain={[0, 130]} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v}%`, 'Utilization']} />
+                  <ReferenceLine y={100} stroke={T.red} strokeDasharray="5 5" label={{ value: 'Limit', fontSize: 10, fill: T.red }} />
+                  <Bar dataKey="utilization" fill={T.indigo} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Constraint Sensitivity Analysis</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Constraint','Current Value','Budget/Limit','Utilization %','Status','Portfolio Return Impact'].map(h => (
+                      <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {constraintData.map((c, i) => (
+                    <tr key={c.name} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '8px 12px', fontWeight: 600 }}>{c.name}</td>
+                      <td style={{ padding: '8px 12px' }}>{c.utilization.toFixed(1)}</td>
+                      <td style={{ padding: '8px 12px' }}>100</td>
+                      <td style={{ padding: '8px 12px' }}>{c.utilization.toFixed(1)}%</td>
+                      <td style={{ padding: '8px 12px' }}>
+                        <span style={{ background: c.status === 'Binding' ? T.red : T.green, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{c.status}</span>
+                      </td>
+                      <td style={{ padding: '8px 12px', color: T.muted }}>{c.status === 'Binding' ? `-${(sr(i * 17 + 5) * 0.5).toFixed(2)}%` : 'N/A'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: Scenario Performance */}
+        {activeTab === 5 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>NGFS Scenario Performance Matrix</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+                {NGFS_SCENARIOS.map(sc => {
+                  const ret = (activeStats.ret * sc.retMult).toFixed(2);
+                  const vol = (activeStats.vol * sc.volMult).toFixed(2);
+                  const sharpe = ((activeStats.ret * sc.retMult / 100 - rfRate) / (activeStats.vol * sc.volMult / 100)).toFixed(3);
+                  return (
+                    <div key={sc.name} style={{ background: T.sub, border: `2px solid ${sc.color}`, borderRadius: 8, padding: 16 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: sc.color, marginBottom: 8 }}>{sc.name}</div>
+                      <div style={{ fontSize: 18, fontWeight: 800 }}>{ret}%</div>
+                      <div style={{ fontSize: 10, color: T.muted }}>Expected Return</div>
+                      <div style={{ marginTop: 8, fontSize: 13, fontWeight: 600 }}>Vol: {vol}%</div>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>Sharpe: {sharpe}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Scenario Comparison — All 3 Portfolios</h3>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={NGFS_SCENARIOS.map(sc => ({
+                  name: sc.name.split(' ')[0],
+                  'Unconstrained': +(stats.unc.ret * sc.retMult).toFixed(2),
+                  'Carbon-Constr.': +(stats.cc.ret * sc.retMult).toFixed(2),
+                  'Net-Zero': +(stats.nz.ret * sc.retMult).toFixed(2),
+                }))} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} unit="%" />
+                  <Tooltip contentStyle={{ fontSize: 11 }} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="Unconstrained" fill={T.blue} />
+                  <Bar dataKey="Carbon-Constr." fill={T.indigo} />
+                  <Bar dataKey="Net-Zero" fill={T.green} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: Summary & Export */}
+        {activeTab === 6 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>Full Optimization Summary</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Metric','Unconstrained','Carbon-Constrained','Net-Zero','Notes'].map(h => (
+                      <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Expected Return %', stats.unc.ret, stats.cc.ret, stats.nz.ret, 'Annualized'],
+                    ['Volatility %', stats.unc.vol, stats.cc.vol, stats.nz.vol, 'Annualized'],
+                    ['Sharpe Ratio', stats.unc.sharpe, stats.cc.sharpe, stats.nz.sharpe, 'rf=2%'],
+                    ['CA-Sharpe', stats.unc.caSharp, stats.cc.caSharp, stats.nz.caSharp, 'Carbon-adjusted'],
+                    ['Carbon Intensity', stats.unc.ci, stats.cc.ci, stats.nz.ci, 'tCO₂e/$M'],
+                    ['Portfolio ITR °C', stats.unc.itr, stats.cc.itr, stats.nz.itr, 'PAII methodology'],
+                    ['Tracking Error %', stats.unc.te, stats.cc.te, stats.nz.te, 'vs MSCI World'],
+                    ['Holdings Count', unconstrained.length, carbonConstrained.length, netZero.length, 'Securities'],
+                  ].map(([metric, u, c, n, note], i) => (
+                    <tr key={metric} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '8px 12px', fontWeight: 600 }}>{metric}</td>
+                      <td style={{ padding: '8px 12px' }}>{u}</td>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: T.indigo }}>{c}</td>
+                      <td style={{ padding: '8px 12px', color: T.green }}>{n}</td>
+                      <td style={{ padding: '8px 12px', color: T.muted, fontSize: 11 }}>{note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Optimized Weights Export — {compareMode} ({activePortfolio.length} holdings)</h3>
+              <div style={{ overflowX: 'auto', maxHeight: 360, overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Security','Sector','Country','Opt Weight %','Bmk Weight %','Active Weight %','ITR','CI','ESG'].map(h => (
+                        <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...activePortfolio].sort((a, b) => b.optWeight - a.optWeight).slice(0, 50).map((s, i) => (
+                      <tr key={s.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                        <td style={{ padding: '5px 10px', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace' }}>{s.name}</td>
+                        <td style={{ padding: '5px 10px', fontSize: 10, color: T.muted }}>{s.sector}</td>
+                        <td style={{ padding: '5px 10px' }}>{s.country}</td>
+                        <td style={{ padding: '5px 10px', fontWeight: 700 }}>{(s.optWeight * 100).toFixed(3)}%</td>
+                        <td style={{ padding: '5px 10px', color: T.muted }}>{(s.bmkWeight * 100).toFixed(3)}%</td>
+                        <td style={{ padding: '5px 10px', color: (s.optWeight - s.bmkWeight) >= 0 ? T.green : T.red }}>
+                          {((s.optWeight - s.bmkWeight) * 100 >= 0 ? '+' : '')}{((s.optWeight - s.bmkWeight) * 100).toFixed(3)}%
+                        </td>
+                        <td style={{ padding: '5px 10px', color: s.temperature <= 2 ? T.green : T.amber }}>{s.temperature.toFixed(2)}</td>
+                        <td style={{ padding: '5px 10px', color: s.carbonIntensity > carbonBudget ? T.red : T.text }}>{s.carbonIntensity.toFixed(0)}</td>
+                        <td style={{ padding: '5px 10px' }}>{s.esgScore.toFixed(0)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {/* Sector-level optimization summary */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Sector-Level Optimization Summary — {compareMode}</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Sector','# Securities','Total Opt Wt %','Total Bmk Wt %','Active Wt %','Avg CI','Avg ITR','Avg ESG','Avg Return %','Avg Vol %'].map(h => (
+                      <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {SECTORS.map((sec, i) => {
+                    const sh = activePortfolio.filter(s => s.sector === sec);
+                    if (!sh.length) return null;
+                    const optW = sh.reduce((s, x) => s + x.optWeight, 0) * 100;
+                    const bmkW = sh.reduce((s, x) => s + x.bmkWeight, 0) * 100;
+                    const n = sh.length;
+                    const avgCI = sh.reduce((s, x) => s + x.carbonIntensity, 0) / n;
+                    const avgITR = sh.reduce((s, x) => s + x.temperature, 0) / n;
+                    const avgESG = sh.reduce((s, x) => s + x.esgScore, 0) / n;
+                    const avgRet = sh.reduce((s, x) => s + x.expectedReturn * 100, 0) / n;
+                    const avgVol = sh.reduce((s, x) => s + x.volatility * 100, 0) / n;
+                    return (
+                      <tr key={sec} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                        <td style={{ padding: '6px 10px', fontWeight: 600 }}>{sec}</td>
+                        <td style={{ padding: '6px 10px' }}>{n}</td>
+                        <td style={{ padding: '6px 10px', fontWeight: 600 }}>{optW.toFixed(2)}%</td>
+                        <td style={{ padding: '6px 10px', color: T.muted }}>{bmkW.toFixed(2)}%</td>
+                        <td style={{ padding: '6px 10px', color: optW - bmkW >= 0 ? T.green : T.red, fontWeight: 600 }}>
+                          {optW - bmkW >= 0 ? '+' : ''}{(optW - bmkW).toFixed(2)}%
+                        </td>
+                        <td style={{ padding: '6px 10px', color: avgCI > carbonBudget ? T.amber : T.text }}>{avgCI.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: avgITR <= 2 ? T.green : T.amber }}>{avgITR.toFixed(2)}</td>
+                        <td style={{ padding: '6px 10px' }}>{avgESG.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: T.green }}>{avgRet.toFixed(2)}%</td>
+                        <td style={{ padding: '6px 10px', color: T.amber }}>{avgVol.toFixed(2)}%</td>
+                      </tr>
+                    );
+                  }).filter(Boolean)}
+                </tbody>
+              </table>
+            </div>
+            {/* Country-level breakdown */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Country Allocation — {compareMode}</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={COUNTRIES.map(cty => ({
+                  country: cty,
+                  weight: +(activePortfolio.filter(s => s.country === cty).reduce((s, x) => s + x.optWeight * 100, 0)).toFixed(2),
+                })).sort((a, b) => b.weight - a.weight)} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="country" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} unit="%" />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={v => [`${v}%`, 'Weight']} />
+                  <Bar dataKey="weight" fill={T.navy} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* ESG vs Return scatter */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>ESG Score vs Expected Return — {compareMode} Holdings</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <ScatterChart margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="x" name="ESG Score" tick={{ fontSize: 10 }} label={{ value: 'ESG Score', position: 'insideBottom', offset: -5, fontSize: 10 }} />
+                  <YAxis dataKey="y" name="Expected Return %" tick={{ fontSize: 10 }} label={{ value: 'Return %', angle: -90, position: 'insideLeft', fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={(v, n) => [v.toFixed(2), n]} />
+                  <Scatter data={activePortfolio.slice(0, 80).map(s => ({ x: +s.esgScore.toFixed(1), y: +(s.expectedReturn * 100).toFixed(2) }))} fill={T.indigo} opacity={0.6} name="Securities" />
+                </ScatterChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Liquidity vs Carbon scatter */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Liquidity Score vs Carbon Intensity — Trade-Off Analysis</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <ScatterChart margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="x" name="Liquidity Score" tick={{ fontSize: 10 }} label={{ value: 'Liquidity', position: 'insideBottom', offset: -5, fontSize: 10 }} />
+                  <YAxis dataKey="y" name="Carbon Intensity" tick={{ fontSize: 10 }} label={{ value: 'CI', angle: -90, position: 'insideLeft', fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={(v, n) => [v.toFixed(1), n]} />
+                  <ReferenceLine y={carbonBudget} stroke={T.red} strokeDasharray="5 5" label={{ value: 'Budget', fontSize: 9, fill: T.red }} />
+                  <Scatter data={activePortfolio.slice(0, 80).map(s => ({ x: +s.liquidityScore.toFixed(1), y: +s.carbonIntensity.toFixed(0) }))} fill={T.teal} opacity={0.6} name="Securities" />
+                </ScatterChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Factor exposure decomposition */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Portfolio Factor Exposure Summary</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+                {[
+                  { factor: 'Green Revenue', value: (activePortfolio.reduce((s, x) => s + x.optWeight * x.greenRevenue * 100, 0)).toFixed(2) + '%', color: T.green, desc: 'Wtd avg green revenue' },
+                  { factor: 'Phys Risk', value: (activePortfolio.reduce((s, x) => s + x.optWeight * x.physRisk, 0)).toFixed(1), color: T.red, desc: 'Wtd avg physical risk' },
+                  { factor: 'Trans Risk', value: (activePortfolio.reduce((s, x) => s + x.optWeight * x.transRisk, 0)).toFixed(1), color: T.amber, desc: 'Wtd avg transition risk' },
+                  { factor: 'Beta to Market', value: (activePortfolio.reduce((s, x) => s + x.optWeight * x.betaToMarket, 0)).toFixed(3), color: T.navy, desc: 'Wtd avg market beta' },
+                ].map(f => (
+                  <div key={f.factor} style={{ background: T.sub, borderRadius: 8, padding: 14, borderLeft: `3px solid ${f.color}` }}>
+                    <div style={{ fontSize: 11, color: T.muted, fontWeight: 600, marginBottom: 4 }}>{f.factor}</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: f.color }}>{f.value}</div>
+                    <div style={{ fontSize: 10, color: T.muted }}>{f.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Efficient frontier data table */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Efficient Frontier — 50 Portfolio Points</h3>
+              <div style={{ overflowX: 'auto', maxHeight: 300, overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['#','Volatility %','Return %','Sharpe Ratio','Carbon Intensity','Notes'].map(h => (
+                        <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {FRONTIER.map((pt, i) => (
+                      <tr key={i} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                        <td style={{ padding: '5px 10px', color: T.muted }}>{i + 1}</td>
+                        <td style={{ padding: '5px 10px' }}>{pt.vol}%</td>
+                        <td style={{ padding: '5px 10px', color: T.green }}>{pt.ret}%</td>
+                        <td style={{ padding: '5px 10px', color: pt.sharpe >= 0.5 ? T.green : T.muted }}>{pt.sharpe}</td>
+                        <td style={{ padding: '5px 10px', color: pt.ci > carbonBudget ? T.amber : T.text }}>{pt.ci}</td>
+                        <td style={{ padding: '5px 10px', color: T.muted, fontSize: 10 }}>
+                          {i === 0 ? 'Min Variance' : i === FRONTIER.length - 1 ? 'Max Return' : pt.sharpe === Math.max(...FRONTIER.map(f => f.sharpe)) ? 'Max Sharpe' : ''}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Always-visible bottom panel: quick stats */}
+        {activeTab !== 6 && (
+          <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase', marginBottom: 10 }}>Portfolio Comparison Quick Stats</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <tbody>
+                  {[
+                    ['Return', `${stats.unc.ret}%`, `${stats.cc.ret}%`, `${stats.nz.ret}%`],
+                    ['Vol', `${stats.unc.vol}%`, `${stats.cc.vol}%`, `${stats.nz.vol}%`],
+                    ['Sharpe', stats.unc.sharpe, stats.cc.sharpe, stats.nz.sharpe],
+                    ['Carbon CI', stats.unc.ci, stats.cc.ci, stats.nz.ci],
+                    ['ITR °C', stats.unc.itr, stats.cc.itr, stats.nz.itr],
+                    ['Count', unconstrained.length, carbonConstrained.length, netZero.length],
+                  ].map(([m, u, c, n]) => (
+                    <tr key={m}>
+                      <td style={{ padding: '4px 6px', fontWeight: 600, fontSize: 10 }}>{m}</td>
+                      <td style={{ padding: '4px 6px', fontSize: 10, color: T.blue }}>{u}</td>
+                      <td style={{ padding: '4px 6px', fontSize: 10, color: T.indigo }}>{c}</td>
+                      <td style={{ padding: '4px 6px', fontSize: 10, color: T.green }}>{n}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                {[['Blue', 'Unc.', T.blue], ['Indigo', 'CC', T.indigo], ['Green', 'NZ', T.green]].map(([k, l, c]) => (
+                  <span key={k} style={{ background: c, color: '#fff', padding: '2px 8px', borderRadius: 8, fontSize: 9 }}>{l}</span>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase', marginBottom: 10 }}>Active Filters & Constraints</div>
+              {[
+                ['Carbon Budget', `${carbonBudget} tCO₂e/$M`, activeStats.ci <= carbonBudget],
+                ['Sector Max Weight', `${sectorMax}%`, Math.max(...sectorBreakdown.map(s => s.weight)) <= sectorMax],
+                ['ITR Constraint', `≤${itrConstraint}°C`, activeStats.itr <= itrConstraint],
+                ['ESG Minimum', `${esgMin}`, true],
+                ['Liquidity Min', `${liquidityMin}`, true],
+                ['Sector Filter', sectorFilter, true],
+                ['Mode', compareMode, true],
+              ].map(([label, val, ok]) => (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
+                  <span style={{ color: T.muted }}>{label}</span>
+                  <span style={{ fontWeight: 600, color: ok ? T.text : T.red }}>{String(val)}</span>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase', marginBottom: 10 }}>Key Risk Metrics — {compareMode}</div>
+              {[
+                ['Avg Beta', (activePortfolio.reduce((s, x) => s + x.optWeight * x.betaToMarket, 0)).toFixed(3)],
+                ['Avg Phys Risk', (activePortfolio.reduce((s, x) => s + x.optWeight * x.physRisk, 0)).toFixed(1)],
+                ['Avg Trans Risk', (activePortfolio.reduce((s, x) => s + x.optWeight * x.transRisk, 0)).toFixed(1)],
+                ['Green Rev %', (activePortfolio.reduce((s, x) => s + x.optWeight * x.greenRevenue * 100, 0)).toFixed(2) + '%'],
+                ['Avg Liquidity', (activePortfolio.reduce((s, x) => s + x.optWeight * x.liquidityScore, 0)).toFixed(1)],
+                ['Diversification', (1 / (activePortfolio.reduce((s, x) => s + Math.pow(x.optWeight, 2), 0) || 1)).toFixed(1)],
+                ['Tracking Error', `${activeStats.te}%`],
+              ].map(([label, val]) => (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
+                  <span style={{ color: T.muted }}>{label}</span>
+                  <span style={{ fontWeight: 600 }}>{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {/* Tornado Chart */}
-        <div style={S.card}>
-          <div style={S.cardTitle}>Sensitivity Tornado: Portfolio Return (%)</div>
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={TORNADO_PARAMS} layout="vertical" margin={{ left: 100, right: 30 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis type="number" tick={{ fontSize: 10, fontFamily: T.mono }} domain={['dataMin - 1', 'dataMax + 1']} />
-              <YAxis type="category" dataKey="param" tick={{ fontSize: 10 }} width={95} />
-              <Tooltip contentStyle={{ fontFamily: T.mono, fontSize: 11, borderColor: T.border }} />
-              <ReferenceLine x={7.2} stroke={T.navy} strokeWidth={2} strokeDasharray="4 4" label={{ value: 'Base: 7.2%', fontSize: 10, fill: T.navy }} />
-              <Bar dataKey="low" name="Downside" fill={T.red} barSize={16} />
-              <Bar dataKey="high" name="Upside" fill={T.green} barSize={16} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  );
+        {/* Portfolio attribution drill-down */}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Return Attribution Decomposition — {compareMode}</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Sector','Allocation Effect','Selection Effect','Interaction Effect','Total Active Return','Weight %','Contribution'].map(h => (
+                    <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sectorBreakdown.map((sec, i) => {
+                  const alloc = +(sr(i * 7 + 11) * 0.4 - 0.2).toFixed(3);
+                  const sel = +(sr(i * 11 + 13) * 0.4 - 0.2).toFixed(3);
+                  const interact = +(alloc * sel * 0.5).toFixed(3);
+                  const total = +(alloc + sel + interact).toFixed(3);
+                  const contrib = +(sec.weight / 100 * (total + 5)).toFixed(3);
+                  return (
+                    <tr key={sec.sector} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '6px 10px', fontWeight: 600 }}>{sec.sector}</td>
+                      <td style={{ padding: '6px 10px', color: alloc >= 0 ? T.green : T.red }}>{alloc > 0 ? '+' : ''}{alloc}%</td>
+                      <td style={{ padding: '6px 10px', color: sel >= 0 ? T.green : T.red }}>{sel > 0 ? '+' : ''}{sel}%</td>
+                      <td style={{ padding: '6px 10px', color: T.muted }}>{interact > 0 ? '+' : ''}{interact}%</td>
+                      <td style={{ padding: '6px 10px', fontWeight: 600, color: total >= 0 ? T.green : T.red }}>{total > 0 ? '+' : ''}{total}%</td>
+                      <td style={{ padding: '6px 10px' }}>{sec.weight.toFixed(2)}%</td>
+                      <td style={{ padding: '6px 10px', color: T.indigo }}>{contrib.toFixed(3)}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-  /* ── Render ─────────────────────────────────────────────────────── */
-  const panels = [renderOptimization, renderFrontier, renderCarbon, renderSectorAlloc, renderScenarios];
-
-  return (
-    <div style={S.page}>
-      {/* Header */}
-      <div style={S.header}>
-        <div>
-          <div style={S.headerTitle}>Climate-Aware Portfolio Optimizer</div>
-          <div style={S.headerSub}>EP-CZ1 / MARKOWITZ MVO + CARBON BUDGET CONSTRAINT</div>
-        </div>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <div style={{ fontSize: 11, color: T.gold, fontFamily: T.mono }}>HOLDINGS: {HOLDINGS.length}</div>
-          <div style={{ fontSize: 11, color: T.gold, fontFamily: T.mono }}>SECTORS: {SECTORS.length}</div>
-          <div style={{ fontSize: 11, color: '#fff', fontFamily: T.mono, background: T.green + '30', padding: '3px 10px', borderRadius: 3 }}>LIVE</div>
-        </div>
-      </div>
-
-      {/* Tab Bar */}
-      <div style={S.tabBar}>
-        {TABS.map((t, i) => (
-          <div key={i} style={S.tab(tab === i)} onClick={() => setTab(i)}>{t}</div>
-        ))}
-      </div>
-
-      {/* Active Panel */}
-      {panels[tab]()}
-
-      {/* Footer */}
-      <div style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', fontSize: 10, color: T.textMut, fontFamily: T.mono, borderTop: `1px solid ${T.border}`, marginTop: 20 }}>
-        <span>Climate Portfolio Optimizer v2.1 | Markowitz MVO + Carbon Budget | NGFS Scenarios</span>
-        <span>Last optimization: {new Date().toISOString().slice(0, 16)} UTC | Data: Demo (seeded RNG)</span>
+        {/* NGFS scenario stress sensitivity table */}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>NGFS Scenario Stress Sensitivity — {compareMode} Portfolio</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Scenario','Temperature','Return Impact','Vol Impact','Sharpe Impact','Carbon CI Change','ITR Change','Overall Rating'].map(h => (
+                    <th key={h} style={{ padding: '7px 12px', textAlign: 'left', fontWeight: 700, color: T.muted, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {NGFS_SCENARIOS.map((sc, i) => {
+                  const sRet = activeStats.ret * sc.retMult;
+                  const sVol = activeStats.vol * sc.volMult;
+                  const sSharpe = ((sRet / 100 - rfRate) / (sVol / 100)).toFixed(3);
+                  const ciChange = ((sc.retMult < 1 ? 1 + (1 - sc.retMult) * 0.3 : 1 - (sc.retMult - 1) * 0.2) - 1) * 100;
+                  const itrChange = sc.retMult >= 1 ? -sr(i * 13 + 7) * 0.2 : sr(i * 13 + 7) * 0.3;
+                  const rating = sc.retMult >= 1 ? 'Positive' : sc.retMult >= 0.85 ? 'Neutral' : 'Negative';
+                  return (
+                    <tr key={sc.name} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '7px 12px', fontWeight: 600, color: sc.color }}>{sc.name}</td>
+                      <td style={{ padding: '7px 12px' }}>{sc.name.includes('1.5') ? '1.5°C' : sc.name.includes('2°C') ? '2°C' : sc.name.includes('3°C') ? '3°C' : 'Net Zero'}</td>
+                      <td style={{ padding: '7px 12px', color: sRet > activeStats.ret ? T.green : T.red }}>{sRet > activeStats.ret ? '+' : ''}{(sRet - activeStats.ret).toFixed(2)}%</td>
+                      <td style={{ padding: '7px 12px', color: sVol < activeStats.vol ? T.green : T.red }}>{sVol > activeStats.vol ? '+' : ''}{(sVol - activeStats.vol).toFixed(2)}%</td>
+                      <td style={{ padding: '7px 12px', color: +sSharpe > activeStats.sharpe ? T.green : T.red }}>{(+sSharpe - activeStats.sharpe).toFixed(3)}</td>
+                      <td style={{ padding: '7px 12px', color: ciChange < 0 ? T.green : T.red }}>{ciChange > 0 ? '+' : ''}{ciChange.toFixed(1)}%</td>
+                      <td style={{ padding: '7px 12px', color: itrChange < 0 ? T.green : T.amber }}>{itrChange >= 0 ? '+' : ''}{itrChange.toFixed(2)}°C</td>
+                      <td style={{ padding: '7px 12px' }}>
+                        <span style={{ background: rating === 'Positive' ? T.green : rating === 'Negative' ? T.red : T.amber, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{rating}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {activeTab !== 6 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: T.text }}>Portfolio Construction Audit — Factor Exposure & Constraint Utilisation</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Sector', 'Port Wt %', 'Bench Wt %', 'Active Wt', 'TE Contrib bps', 'Carbon Budget %', 'SBT Coverage', 'Constraint Bind'].map(h => (
+                    <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontWeight: 700, color: T.text, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sectorBreakdown.map((sec, i) => {
+                  const benchWt = +(sr(i * 13 + 21) * 0.12 + 0.02).toFixed(3);
+                  const activeWt = +(sec.weight - benchWt).toFixed(3);
+                  const teContrib = +(Math.abs(activeWt) * sr(i * 7 + 33) * 80 + 2).toFixed(1);
+                  const cbUsed = +(sr(i * 17 + 41) * 90 + 10).toFixed(1);
+                  const sbtCov = +(sr(i * 11 + 47) * 60 + 20).toFixed(0);
+                  const bind = cbUsed > 80 ? 'Carbon' : activeWt > 0.05 ? 'Active Wt' : 'None';
+                  return (
+                    <tr key={sec.name} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
+                      <td style={{ padding: '6px 10px', fontWeight: 600 }}>{sec.name}</td>
+                      <td style={{ padding: '6px 10px' }}>{(sec.weight * 100).toFixed(2)}%</td>
+                      <td style={{ padding: '6px 10px' }}>{(benchWt * 100).toFixed(2)}%</td>
+                      <td style={{ padding: '6px 10px', color: activeWt >= 0 ? T.green : T.red, fontWeight: 600 }}>{activeWt >= 0 ? '+' : ''}{(activeWt * 100).toFixed(2)}%</td>
+                      <td style={{ padding: '6px 10px' }}>{teContrib}</td>
+                      <td style={{ padding: '6px 10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <div style={{ background: T.border, borderRadius: 4, height: 6, width: 60 }}>
+                            <div style={{ background: cbUsed > 80 ? T.red : cbUsed > 60 ? T.amber : T.green, borderRadius: 4, height: 6, width: `${cbUsed}%` }} />
+                          </div>
+                          <span>{cbUsed}%</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '6px 10px' }}>{sbtCov}%</td>
+                      <td style={{ padding: '6px 10px' }}><span style={{ background: bind === 'None' ? T.green : bind === 'Carbon' ? T.red : T.amber, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{bind}</span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

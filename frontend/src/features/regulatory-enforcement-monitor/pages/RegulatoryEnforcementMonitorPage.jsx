@@ -1,714 +1,779 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, ComposedChart, Area, AreaChart, Line, LineChart
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  LineChart, Line, ComposedChart, Area,
+  ResponsiveContainer, Cell,
 } from 'recharts';
 
 const T = {
-  bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
-  navyL: '#2c5a8c', gold: '#c5a96a', goldL: '#d4be8a', sage: '#5a8a6a',
-  sageL: '#7ba67d', teal: '#5a8a6a', text: '#1b3a5c', textSec: '#5c6b7e',
-  textMut: '#9aa3ae', red: '#dc2626', green: '#16a34a', amber: '#d97706',
-  blue: '#2563eb', orange: '#ea580c', purple: '#7c3aed', card: '#ffffff',
-  sub: '#f6f4f0', indigo: '#4f46e5',
-  font: "'DM Sans','SF Pro Display',system-ui,sans-serif",
-  mono: "'JetBrains Mono','SF Mono','Fira Code',monospace"
+  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
+  sub: '#f6f4f0', muted: '#6b7280', indigo: '#4f46e5', gold: '#b8860b',
+  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706',
+  navy: '#1e3a5f', teal: '#0f766e', purple: '#7c3aed', orange: '#ea580c',
 };
 
-const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-const PIE_COLORS = ['#1b3a5c', '#c5a96a', '#dc2626', '#16a34a', '#7c3aed', '#2563eb', '#d97706', '#ea580c', '#5a8a6a', '#4f46e5'];
+const ACTION_TYPES = ['Fine', 'Suspension', 'Cease-and-Desist', 'Consent Order', 'Criminal Referral', 'Mandatory Audit', 'Public Censure', 'License Revocation'];
+const VIOLATION_CATEGORIES = ['Greenwashing', 'Failure-to-Disclose', 'Data Falsification', 'ESG Rating Manipulation', 'Climate Commitment Breach', 'Proxy Voting Failure', 'Product Mislabeling', 'Market Manipulation', 'Insider Trading on Climate', 'TCFD Non-Compliance'];
+const SECTORS = ['Energy', 'Financials', 'Materials', 'Industrials', 'Consumer Staples', 'Utilities', 'Real Estate', 'Technology', 'Transport', 'Healthcare'];
+const STATUSES = ['Resolved', 'Ongoing', 'Appealed', 'Dismissed', 'Under Review'];
 
-const REGULATORS = [
-  { name: 'FCA', region: 'UK', jurisdiction: 'United Kingdom', activeInvestigations: 14, closedActions2024: 18, totalFines2024: 285, largestFine: 45, primaryFocus: ['Greenwashing', 'ESG Disclosure', 'Fund Labelling'] },
-  { name: 'SEC', region: 'US', jurisdiction: 'United States', activeInvestigations: 22, closedActions2024: 31, totalFines2024: 524, largestFine: 95, primaryFocus: ['Climate Disclosure', 'ESG Fund Labelling', 'TCFD Compliance'] },
-  { name: 'ASIC', region: 'AUS', jurisdiction: 'Australia', activeInvestigations: 9, closedActions2024: 12, totalFines2024: 143, largestFine: 28, primaryFocus: ['Greenwashing', 'Climate Risk Disclosure'] },
-  { name: 'BaFin', region: 'DE', jurisdiction: 'Germany', activeInvestigations: 7, closedActions2024: 8, totalFines2024: 98, largestFine: 22, primaryFocus: ['ESG Rating Integrity', 'SFDR Compliance'] },
-  { name: 'ESMA', region: 'EU', jurisdiction: 'European Union', activeInvestigations: 11, closedActions2024: 9, totalFines2024: 187, largestFine: 52, primaryFocus: ['SFDR', 'EU Taxonomy', 'ESG Ratings Regulation'] },
-  { name: 'AMF', region: 'FR', jurisdiction: 'France', activeInvestigations: 6, closedActions2024: 7, totalFines2024: 76, largestFine: 18, primaryFocus: ['SFDR', 'Climate Transition Plans'] },
-  { name: 'AFM', region: 'NL', jurisdiction: 'Netherlands', activeInvestigations: 5, closedActions2024: 6, totalFines2024: 54, largestFine: 14, primaryFocus: ['SFDR', 'Greenwashing Claims'] },
-  { name: 'CSSF', region: 'LU', jurisdiction: 'Luxembourg', activeInvestigations: 4, closedActions2024: 5, totalFines2024: 43, largestFine: 12, primaryFocus: ['SFDR Fund Classification'] },
-  { name: 'OSC', region: 'CA', jurisdiction: 'Canada', activeInvestigations: 5, closedActions2024: 6, totalFines2024: 67, largestFine: 16, primaryFocus: ['Climate Disclosure', 'TCFD'] },
-  { name: 'MAS', region: 'SG', jurisdiction: 'Singapore', activeInvestigations: 4, closedActions2024: 4, totalFines2024: 48, largestFine: 11, primaryFocus: ['Green Finance Framework'] },
-  { name: 'FSA', region: 'JP', jurisdiction: 'Japan', activeInvestigations: 3, closedActions2024: 3, totalFines2024: 34, largestFine: 9, primaryFocus: ['TCFD', 'ISSB Alignment'] },
-  { name: 'BIS', region: 'CH', jurisdiction: 'Switzerland', activeInvestigations: 2, closedActions2024: 3, totalFines2024: 28, largestFine: 8, primaryFocus: ['Climate Risk Supervision'] },
-  { name: 'IOSCO', region: 'INT', jurisdiction: 'International', activeInvestigations: 6, closedActions2024: 4, totalFines2024: 0, largestFine: 0, primaryFocus: ['Global ESG Standards'] },
-  { name: 'HKMA', region: 'HK', jurisdiction: 'Hong Kong', activeInvestigations: 3, closedActions2024: 3, totalFines2024: 31, largestFine: 9, primaryFocus: ['TCFD', 'Climate Stress Testing'] },
-  { name: 'APRA', region: 'AUS', jurisdiction: 'Australia', activeInvestigations: 4, closedActions2024: 5, totalFines2024: 52, largestFine: 13, primaryFocus: ['Climate Prudential Risk', 'CPS 229'] }
+const REGULATORS_25 = [
+  { id: 'SEC', jurisdiction: 'USA', avgFineM: 120, region: 'Americas' },
+  { id: 'FCA', jurisdiction: 'UK', avgFineM: 45, region: 'Europe' },
+  { id: 'ESMA', jurisdiction: 'EU', avgFineM: 55, region: 'Europe' },
+  { id: 'BaFin', jurisdiction: 'Germany', avgFineM: 35, region: 'Europe' },
+  { id: 'AFM', jurisdiction: 'Netherlands', avgFineM: 22, region: 'Europe' },
+  { id: 'AMF', jurisdiction: 'France', avgFineM: 28, region: 'Europe' },
+  { id: 'FINMA', jurisdiction: 'Switzerland', avgFineM: 18, region: 'Europe' },
+  { id: 'ASIC', jurisdiction: 'Australia', avgFineM: 30, region: 'Asia-Pac' },
+  { id: 'MAS', jurisdiction: 'Singapore', avgFineM: 15, region: 'Asia-Pac' },
+  { id: 'HKMA', jurisdiction: 'Hong Kong', avgFineM: 20, region: 'Asia-Pac' },
+  { id: 'FSA', jurisdiction: 'Japan', avgFineM: 25, region: 'Asia-Pac' },
+  { id: 'FSB', jurisdiction: 'Global', avgFineM: 10, region: 'Global' },
+  { id: 'ECB', jurisdiction: 'EU', avgFineM: 60, region: 'Europe' },
+  { id: 'PRA', jurisdiction: 'UK', avgFineM: 40, region: 'Europe' },
+  { id: 'FRB', jurisdiction: 'USA', avgFineM: 80, region: 'Americas' },
+  { id: 'OCC', jurisdiction: 'USA', avgFineM: 70, region: 'Americas' },
+  { id: 'CFTC', jurisdiction: 'USA', avgFineM: 90, region: 'Americas' },
+  { id: 'EPA', jurisdiction: 'USA', avgFineM: 50, region: 'Americas' },
+  { id: 'EFRAG', jurisdiction: 'EU', avgFineM: 8, region: 'Europe' },
+  { id: 'CSRD-TF', jurisdiction: 'EU', avgFineM: 12, region: 'Europe' },
+  { id: 'ICO', jurisdiction: 'UK', avgFineM: 15, region: 'Europe' },
+  { id: 'CMA', jurisdiction: 'UK', avgFineM: 20, region: 'Europe' },
+  { id: 'ASA', jurisdiction: 'UK', avgFineM: 5, region: 'Europe' },
+  { id: 'ACCC', jurisdiction: 'Australia', avgFineM: 25, region: 'Asia-Pac' },
+  { id: 'SEBI', jurisdiction: 'India', avgFineM: 10, region: 'Asia-Pac' },
 ];
 
-const SECTORS = ['Energy', 'Materials', 'Utilities', 'Financials', 'Industrials', 'Consumer', 'Technology', 'Healthcare', 'Transport', 'Real Estate'];
+const ENTITY_NAMES_200 = Array.from({ length: 200 }, (_, i) => {
+  const n = ['Apex', 'Global', 'Terra', 'Capital', 'Asset', 'Trust', 'Power', 'Energy', 'Fuel', 'Green', 'Eco', 'Carbon', 'Climate', 'Prime', 'First', 'Next', 'Core', 'Peak', 'Clear', 'Net'];
+  const s = ['Corp', 'Ltd', 'AG', 'SE', 'PLC', 'Inc', 'GmbH', 'Holdings', 'Group', 'Partners'];
+  return `${n[i % n.length]} ${s[i % s.length]} ${Math.floor(i / n.length) > 0 ? Math.floor(i / n.length) + 1 : ''}`.trim();
+});
 
-const COMPANY_NAMES = [
-  'ExxonMobil', 'Shell', 'BP', 'Chevron', 'TotalEnergies',
-  'HSBC', 'JPMorgan', 'BNP Paribas', 'Allianz', 'Munich Re',
-  'Rio Tinto', 'Glencore', 'Anglo American', 'ArcelorMittal', 'Heidelberg Materials',
-  'Duke Energy', 'Enel', 'E.ON', 'Iberdrola', 'Dominion Energy',
-  'Barclays', 'Deutsche Bank', 'Credit Agricole', 'ING Group', 'Zurich Insurance'
-];
+const ENFORCEMENT_ACTIONS = Array.from({ length: 200 }, (_, i) => {
+  const regIdx = Math.floor(sr(i * 7 + 4000) * 25);
+  const sectorIdx = Math.floor(sr(i * 11 + 4000) * 10);
+  const actionTypeIdx = Math.floor(sr(i * 13 + 4000) * 8);
+  const violationIdx = Math.floor(sr(i * 17 + 4000) * 10);
+  const fineUSD = Math.round((sr(i * 19 + 4000) * 150 + 0.5) * 1e6 * (REGULATORS_25[regIdx].avgFineM / 50));
+  const year = 2018 + Math.floor(sr(i * 23 + 4000) * 6);
+  const quarter = 1 + Math.floor(sr(i * 29 + 4000) * 4);
+  const statusIdx = Math.floor(sr(i * 31 + 4000) * 5);
+  const deterrenceScore = Math.round(sr(i * 37 + 4000) * 80 + 10);
+  const precLevels = ['High', 'Medium', 'Low'];
+  return {
+    id: i + 1,
+    regulator: REGULATORS_25[regIdx].id,
+    jurisdiction: REGULATORS_25[regIdx].jurisdiction,
+    entityName: ENTITY_NAMES_200[i],
+    entitySector: SECTORS[sectorIdx],
+    actionType: ACTION_TYPES[actionTypeIdx],
+    violationCategory: VIOLATION_CATEGORIES[violationIdx],
+    fineUSD,
+    actionDate: `${year}-Q${quarter}`,
+    resolutionDate: `${year + 1}-Q${1 + Math.floor(sr(i * 41 + 4000) * 4)}`,
+    status: STATUSES[statusIdx],
+    deterrenceScore,
+    precedentLevel: precLevels[Math.floor(sr(i * 43 + 4000) * 3)],
+    repeatOffender: sr(i * 47 + 4000) > 0.75,
+    portfolioHolding: sr(i * 53 + 4000) > 0.6,
+    year,
+  };
+});
 
-const ACTION_TYPES = ['Investigation', 'Fine', 'Cease and Desist', 'Consent Order', 'Warning Letter'];
-const STATUSES = ['Active', 'Pending', 'Closed', 'Appealed'];
-const ALLEGATIONS = [
-  'Climate disclosure failure', 'Greenwashing claims', 'SFDR misclassification',
-  'TCFD non-compliance', 'ESG rating manipulation', 'Carbon offset misrepresentation',
-  'Transition plan inadequacy', 'Material omission in climate risk'
-];
-const OUTCOMES = ['Settled', 'Dismissed', 'Fined', 'Consent Order'];
+const PORTFOLIO_HOLDINGS = Array.from({ length: 40 }, (_, p) => {
+  const sectorIdx = Math.floor(sr(p * 59 + 5000) * 10);
+  const complianceScore = Math.round(sr(p * 61 + 5000) * 70 + 20);
+  const actions = ENFORCEMENT_ACTIONS.filter(a => a.portfolioHolding && Math.floor(sr(p * 67 + 5000) * 200) === a.id % 200).length;
+  const weight = +(sr(p * 71 + 5000) * 0.05 + 0.005).toFixed(4);
+  return {
+    id: p + 1,
+    name: ENTITY_NAMES_200[p],
+    sector: SECTORS[sectorIdx],
+    complianceScore,
+    enforcementActions: actions,
+    weight,
+    regulatoryGap: Math.round((100 - complianceScore) * 0.6),
+  };
+});
 
-const BASE_DATE = new Date('2024-01-01');
-const fmtDate = (daysOffset) => {
-  const d = new Date(BASE_DATE);
-  d.setDate(d.getDate() + daysOffset);
-  return d.toISOString().slice(0, 10);
+const fmtUSD = v => {
+  if (!isFinite(v) || isNaN(v)) return '$0';
+  if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
+  if (v >= 1e6) return `$${(v / 1e6).toFixed(0)}M`;
+  return `$${Math.round(v).toLocaleString()}`;
 };
 
-const ENFORCEMENT_ACTIONS = Array.from({ length: 60 }, (_, i) => {
-  const regIdx = Math.floor(sr(i * 61) * 15);
-  const statusIdx = Math.floor(sr(i * 61 + 3) * 4);
-  const status = STATUSES[statusIdx];
-  const hasFine = sr(i * 61 + 4) > 0.5;
-  return {
-    id: `ENF-${String(i + 1).padStart(3, '0')}`,
-    regulator: REGULATORS[regIdx].name,
-    company: COMPANY_NAMES[i % 25],
-    sector: SECTORS[Math.floor(sr(i * 61 + 1) * 10)],
-    actionType: ACTION_TYPES[Math.floor(sr(i * 61 + 2) * 5)],
-    status,
-    fine: hasFine ? Math.round(5 + sr(i * 61 + 5) * 90) : 0,
-    announcedDate: fmtDate(Math.floor(sr(i * 61 + 6) * 730)),
-    allegation: ALLEGATIONS[Math.floor(sr(i * 61 + 7) * 8)],
-    outcome: status === 'Closed' ? OUTCOMES[Math.floor(sr(i * 61 + 8) * 4)] : 'Pending'
-  };
-});
+const riskColor = s => s >= 70 ? T.red : s >= 40 ? T.amber : T.green;
 
-const SECTOR_HEAT = SECTORS.map((sector, j) => {
-  const actionCount = Math.round(3 + sr(j * 71) * 18);
-  const totalFines = Math.round(20 + sr(j * 71 + 1) * 280);
-  return {
-    sector,
-    actionCount,
-    totalFines,
-    avgFineSize: actionCount > 0 ? +(totalFines / actionCount).toFixed(1) : 0,
-    trend: ['Rising', 'Stable', 'Falling'][Math.floor(sr(j * 71 + 2) * 3)]
-  };
-});
-
-const PORTFOLIO_HOLDINGS = Array.from({ length: 30 }, (_, i) => {
-  const regCount = Math.floor(sr(i * 83 + 3) * 4);
-  const flags = [];
-  for (let r = 0; r < regCount; r++) {
-    const rName = REGULATORS[Math.floor(sr(i * 83 + 10 + r) * 15)].name;
-    if (!flags.includes(rName)) flags.push(rName);
-  }
-  return {
-    company: COMPANY_NAMES[i % 25],
-    ticker: COMPANY_NAMES[i % 25].slice(0, 4).toUpperCase(),
-    weight: +(1 + sr(i * 83) * 7).toFixed(1),
-    regulatorFlags: flags,
-    actions: Math.round(sr(i * 83 + 1) * 5),
-    fineRisk: Math.round(sr(i * 83 + 2) * 150)
-  };
-});
-
-const MONTHS = ['2024-09','2024-10','2024-11','2024-12','2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'];
-const MONTHLY_TREND = MONTHS.map((month, m) => ({
-  month,
-  newActions: Math.round(3 + sr(m * 13) * 8),
-  closedActions: Math.round(2 + sr(m * 13 + 1) * 6),
-  totalFines: Math.round(20 + sr(m * 13 + 2) * 80)
-}));
-
-const TABS = ['Enforcement Dashboard', 'Action Database', 'Regulator Profiles', 'Sector Heat', 'Portfolio Scan'];
-
-// ---------- shared UI components ----------
-const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', borderTop: `3px solid ${color || T.navy}` }}>
-    <div style={{ fontSize: 11, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 700, color: T.navy, fontFamily: T.mono }}>{value}</div>
-    {sub && <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>{sub}</div>}
+const KpiCard = ({ label, value, sub, color }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', flex: 1, minWidth: 130 }}>
+    <div style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 5 }}>{label}</div>
+    <div style={{ fontSize: 20, fontWeight: 700, color: color || T.text }}>{value}</div>
+    {sub && <div style={{ fontSize: 10, color: T.muted, marginTop: 3 }}>{sub}</div>}
   </div>
 );
 
-const Badge = ({ label, color }) => {
-  const map = {
-    red: { bg: '#fee2e2', text: '#991b1b' },
-    green: { bg: '#dcfce7', text: '#166534' },
-    amber: { bg: '#fef3c7', text: '#92400e' },
-    blue: { bg: '#dbeafe', text: '#1e40af' },
-    purple: { bg: '#ede9fe', text: '#5b21b6' },
-    gray: { bg: '#f3f4f6', text: '#374151' },
-    orange: { bg: '#ffedd5', text: '#9a3412' },
-    indigo: { bg: '#e0e7ff', text: '#3730a3' }
-  };
-  const c = map[color] || map.gray;
-  return <span style={{ padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700, background: c.bg, color: c.text, whiteSpace: 'nowrap' }}>{label}</span>;
-};
+const TABS = ['Enforcement Dashboard', 'Action Database', 'Regulator Intelligence', 'Sector Heat Map', 'Portfolio Compliance', 'Trend Analytics', 'Summary & Export'];
 
-const statusColor = (s) => s === 'Active' ? 'red' : s === 'Pending' ? 'amber' : s === 'Closed' ? 'green' : 'purple';
-const trendColor = (t) => t === 'Rising' ? 'red' : t === 'Stable' ? 'amber' : 'green';
-
-const ChartBox = ({ title, children, height = 240 }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', marginBottom: 16 }}>
-    <div style={{ fontSize: 13, fontWeight: 600, color: T.navy, marginBottom: 12, fontFamily: T.font }}>{title}</div>
-    <div style={{ height }}>{children}</div>
-  </div>
-);
-
-const Sel = ({ value, onChange, options }) => (
-  <select value={value} onChange={e => onChange(e.target.value)}
-    style={{ padding: '6px 10px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 13, background: T.surface, color: T.text, cursor: 'pointer' }}>
-    {options.map(o => <option key={o} value={o}>{o}</option>)}
-  </select>
-);
-
-const Inp = ({ value, onChange, placeholder }) => (
-  <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-    style={{ padding: '6px 10px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 13, background: T.surface, color: T.text, width: 180 }} />
-);
-
-// ---------- Tab 0: Enforcement Dashboard ----------
-function Tab0() {
-  const stats = useMemo(() => {
-    const totalActive = ENFORCEMENT_ACTIONS.filter(a => a.status === 'Active' || a.status === 'Pending').length;
-    const totalFines = REGULATORS.reduce((s, r) => s + r.totalFines2024, 0);
-    const regCount = REGULATORS.filter(r => r.activeInvestigations > 0).length;
-    const sectorCounts = {};
-    ENFORCEMENT_ACTIONS.forEach(a => { sectorCounts[a.sector] = (sectorCounts[a.sector] || 0) + 1; });
-    const mostTargeted = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'N/A';
-    const flagged = new Set(PORTFOLIO_HOLDINGS.filter(h => h.regulatorFlags.length > 0).map(h => h.company)).size;
-
-    const byRegulator = [...REGULATORS]
-      .sort((a, b) => (b.activeInvestigations + b.closedActions2024) - (a.activeInvestigations + a.closedActions2024))
-      .slice(0, 10)
-      .map(r => ({ name: r.name, total: r.activeInvestigations + r.closedActions2024, active: r.activeInvestigations, closed: r.closedActions2024 }));
-
-    const typeCounts = {};
-    ENFORCEMENT_ACTIONS.forEach(a => { typeCounts[a.actionType] = (typeCounts[a.actionType] || 0) + 1; });
-    const byType = Object.entries(typeCounts).map(([name, value]) => ({ name, value }));
-
-    return { totalActive, totalFines, regCount, mostTargeted, flagged, byRegulator, byType };
-  }, []);
-
-  return (
-    <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 20 }}>
-        <Kpi label="Total Active Actions" value={stats.totalActive} sub="Active + Pending" color={T.red} />
-        <Kpi label="Total Fines YTD" value={`$${stats.totalFines}M`} sub="All regulators 2024" color={T.gold} />
-        <Kpi label="Regulators Active" value={stats.regCount} sub="With open investigations" color={T.navy} />
-        <Kpi label="Most Targeted Sector" value={stats.mostTargeted} sub="By action count" color={T.orange} />
-        <Kpi label="Portfolio Companies Flagged" value={stats.flagged} sub="With regulator flags" color={T.purple} />
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 16, marginBottom: 16 }}>
-        <ChartBox title="Enforcement Actions by Regulator (Top 10)">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={stats.byRegulator} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="active" name="Active" stackId="a" fill={T.red} />
-              <Bar dataKey="closed" name="Closed 2024" stackId="a" fill={T.navy} radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Action Type Distribution">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={stats.byType} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={85} label={({ name, percent }) => `${name.split(' ')[0]} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                {stats.byType.map((_, idx) => <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />)}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartBox>
-      </div>
-
-      <ChartBox title="Monthly Trend — New Actions, Closed Actions & Total Fines ($M)" height={260}>
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={MONTHLY_TREND} margin={{ left: -10, right: 30, top: 4, bottom: 4 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="month" tick={{ fontSize: 10, fill: T.textSec }} />
-            <YAxis yAxisId="left" tick={{ fontSize: 11, fill: T.textSec }} />
-            <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: '$M', angle: -90, position: 'insideRight', style: { fontSize: 10, fill: T.textMut } }} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Area yAxisId="left" type="monotone" dataKey="newActions" name="New Actions" fill="#dbeafe" stroke={T.blue} strokeWidth={2} />
-            <Area yAxisId="left" type="monotone" dataKey="closedActions" name="Closed Actions" fill="#dcfce7" stroke={T.green} strokeWidth={2} />
-            <Line yAxisId="right" type="monotone" dataKey="totalFines" name="Total Fines $M" stroke={T.gold} strokeWidth={2} dot={false} />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </ChartBox>
-    </div>
-  );
-}
-
-// ---------- Tab 1: Action Database ----------
-function Tab1() {
-  const [regFilter, setRegFilter] = useState('All');
-  const [sectorFilter, setSectorFilter] = useState('All');
-  const [typeFilter, setTypeFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [search, setSearch] = useState('');
-  const [sortKey, setSortKey] = useState('id');
-  const [sortAsc, setSortAsc] = useState(true);
-
-  const filtered = useMemo(() => {
-    let rows = ENFORCEMENT_ACTIONS.filter(a => {
-      if (regFilter !== 'All' && a.regulator !== regFilter) return false;
-      if (sectorFilter !== 'All' && a.sector !== sectorFilter) return false;
-      if (typeFilter !== 'All' && a.actionType !== typeFilter) return false;
-      if (statusFilter !== 'All' && a.status !== statusFilter) return false;
-      if (search && !a.company.toLowerCase().includes(search.toLowerCase())) return false;
-      return true;
-    });
-    return [...rows].sort((a, b) => {
-      const av = a[sortKey]; const bv = b[sortKey];
-      if (typeof av === 'number') return sortAsc ? av - bv : bv - av;
-      return sortAsc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
-    });
-  }, [regFilter, sectorFilter, typeFilter, statusFilter, search, sortKey, sortAsc]);
-
-  const statusCounts = useMemo(() => {
-    const counts = {};
-    ENFORCEMENT_ACTIONS.forEach(a => { counts[a.status] = (counts[a.status] || 0) + 1; });
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
-  }, []);
-
-  const fineBuckets = useMemo(() => {
-    const buckets = { '0': 0, '1–10': 0, '11–25': 0, '26–50': 0, '50+': 0 };
-    ENFORCEMENT_ACTIONS.forEach(a => {
-      if (a.fine === 0) buckets['0']++;
-      else if (a.fine <= 10) buckets['1–10']++;
-      else if (a.fine <= 25) buckets['11–25']++;
-      else if (a.fine <= 50) buckets['26–50']++;
-      else buckets['50+']++;
-    });
-    return Object.entries(buckets).map(([name, count]) => ({ name, count }));
-  }, []);
-
-  const handleSort = (key) => { if (sortKey === key) setSortAsc(!sortAsc); else { setSortKey(key); setSortAsc(true); } };
-
-  const Col = ({ k, label }) => (
-    <th onClick={() => handleSort(k)} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 11, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', cursor: 'pointer', borderBottom: `2px solid ${T.border}`, whiteSpace: 'nowrap', background: T.sub }}>
-      {label} {sortKey === k ? (sortAsc ? '↑' : '↓') : ''}
-    </th>
-  );
-
-  return (
-    <div>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16, alignItems: 'center' }}>
-        <Sel value={regFilter} onChange={setRegFilter} options={['All', ...REGULATORS.map(r => r.name)]} />
-        <Sel value={sectorFilter} onChange={setSectorFilter} options={['All', ...SECTORS]} />
-        <Sel value={typeFilter} onChange={setTypeFilter} options={['All', ...ACTION_TYPES]} />
-        <Sel value={statusFilter} onChange={setStatusFilter} options={['All', ...STATUSES]} />
-        <Inp value={search} onChange={setSearch} placeholder="Search company..." />
-        <span style={{ fontSize: 12, color: T.textMut, fontFamily: T.mono }}>{filtered.length} / 60 actions</span>
-      </div>
-
-      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, marginBottom: 16, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr>
-              <Col k="id" label="ID" />
-              <Col k="regulator" label="Regulator" />
-              <Col k="company" label="Company" />
-              <Col k="sector" label="Sector" />
-              <Col k="actionType" label="Type" />
-              <Col k="status" label="Status" />
-              <Col k="fine" label="Fine $M" />
-              <Col k="announcedDate" label="Announced" />
-              <th style={{ padding: '8px 12px', textAlign: 'left', fontSize: 11, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', borderBottom: `2px solid ${T.border}`, background: T.sub }}>Allegation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((a, idx) => (
-              <tr key={a.id} style={{ background: idx % 2 === 0 ? T.surface : T.sub, borderBottom: `1px solid ${T.border}` }}>
-                <td style={{ padding: '7px 12px', fontFamily: T.mono, fontSize: 11, color: T.textMut }}>{a.id}</td>
-                <td style={{ padding: '7px 12px', fontWeight: 600, color: T.navy }}>{a.regulator}</td>
-                <td style={{ padding: '7px 12px', color: T.text }}>{a.company}</td>
-                <td style={{ padding: '7px 12px', color: T.textSec }}>{a.sector}</td>
-                <td style={{ padding: '7px 12px', color: T.textSec }}>{a.actionType}</td>
-                <td style={{ padding: '7px 12px' }}><Badge label={a.status} color={statusColor(a.status)} /></td>
-                <td style={{ padding: '7px 12px', fontFamily: T.mono, color: a.fine > 0 ? T.red : T.textMut }}>{a.fine > 0 ? `$${a.fine}M` : '—'}</td>
-                <td style={{ padding: '7px 12px', fontFamily: T.mono, fontSize: 11, color: T.textSec }}>{a.announcedDate}</td>
-                <td style={{ padding: '7px 12px', color: T.textSec, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.allegation}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-        <ChartBox title="Actions by Status" height={200}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={statusCounts} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-              <Bar dataKey="value" name="Actions" fill={T.navy} radius={[4, 4, 0, 0]}>
-                {statusCounts.map((s, i) => <Cell key={i} fill={s.name === 'Active' ? T.red : s.name === 'Closed' ? T.green : s.name === 'Pending' ? T.amber : T.purple} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Fine Distribution ($M Buckets)" height={200}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={fineBuckets} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-              <Bar dataKey="count" name="Actions" fill={T.gold} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Monthly New Actions Filed" height={200}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={MONTHLY_TREND} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 9, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-              <Line type="monotone" dataKey="newActions" name="New Actions" stroke={T.blue} strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartBox>
-      </div>
-    </div>
-  );
-}
-
-// ---------- Tab 2: Regulator Profiles ----------
-function Tab2() {
-  const topFines = useMemo(() => [...REGULATORS].sort((a, b) => b.totalFines2024 - a.totalFines2024).slice(0, 10).map(r => ({ name: r.name, fines: r.totalFines2024 })), []);
-  const topInvest = useMemo(() => [...REGULATORS].sort((a, b) => b.activeInvestigations - a.activeInvestigations).slice(0, 10).map(r => ({ name: r.name, active: r.activeInvestigations })), []);
-
-  const regionMap = { UK: 0, US: 0, EU: 0, AUS: 0, Other: 0 };
-  REGULATORS.forEach(r => {
-    const k = ['UK', 'US', 'EU', 'AUS'].includes(r.region) ? r.region : 'Other';
-    regionMap[k] += r.activeInvestigations + r.closedActions2024;
-  });
-  const byRegion = Object.entries(regionMap).map(([name, value]) => ({ name, value }));
-
-  return (
-    <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 20 }}>
-        {REGULATORS.map((r) => (
-          <div key={r.name} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 16px', borderLeft: `4px solid ${T.navy}` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <span style={{ fontSize: 18, fontWeight: 700, color: T.navy, fontFamily: T.mono }}>{r.name}</span>
-              <Badge label={r.region} color="indigo" />
-            </div>
-            <div style={{ fontSize: 11, color: T.textMut, marginBottom: 8 }}>{r.jurisdiction}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 8 }}>
-              <div>
-                <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>ACTIVE INVEST.</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: T.red }}>{r.activeInvestigations}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>CLOSED 2024</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: T.green }}>{r.closedActions2024}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>TOTAL FINES</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: T.amber }}>${r.totalFines2024}M</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>LARGEST FINE</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: T.navy }}>{r.largestFine > 0 ? `$${r.largestFine}M` : '—'}</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {r.primaryFocus.map(f => <Badge key={f} label={f} color="gray" />)}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 16 }}>
-        <ChartBox title="Total Fines 2024 by Regulator ($M, Top 10)" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={topFines} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} formatter={(v) => [`$${v}M`, 'Total Fines']} />
-              <Bar dataKey="fines" name="Total Fines $M" fill={T.gold} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Active Investigations by Regulator" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={topInvest} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-              <Bar dataKey="active" name="Active" fill={T.red} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Actions by Region" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={byRegion} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                {byRegion.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartBox>
-      </div>
-    </div>
-  );
-}
-
-// ---------- Tab 3: Sector Heat ----------
-function Tab3() {
-  const sorted = useMemo(() => [...SECTOR_HEAT].sort((a, b) => b.actionCount - a.actionCount), []);
-  const highest = sorted[0];
-  const rising = useMemo(() => [...SECTOR_HEAT].filter(s => s.trend === 'Rising').sort((a, b) => b.actionCount - a.actionCount)[0], []);
-
-  const trendDist = useMemo(() => {
-    const counts = { Rising: 0, Stable: 0, Falling: 0 };
-    SECTOR_HEAT.forEach(s => { counts[s.trend]++; });
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
-  }, []);
-
-  return (
-    <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, marginBottom: 20 }}>
-        <Kpi label="Highest-Risk Sector" value={highest?.sector ?? '—'} sub={`${highest?.actionCount ?? 0} actions · $${highest?.totalFines ?? 0}M total fines`} color={T.red} />
-        <Kpi label="Fastest-Rising Sector" value={rising?.sector ?? '—'} sub={`${rising?.actionCount ?? 0} actions · Trend: Rising`} color={T.orange} />
-      </div>
-
-      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, marginBottom: 16, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr style={{ background: T.sub }}>
-              {['Sector', 'Actions', 'Total Fines $M', 'Avg Fine $M', 'Trend'].map(h => (
-                <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', borderBottom: `2px solid ${T.border}` }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sorted.map((s, idx) => (
-              <tr key={s.sector} style={{ background: idx % 2 === 0 ? T.surface : T.sub, borderBottom: `1px solid ${T.border}` }}>
-                <td style={{ padding: '9px 14px', fontWeight: 600, color: T.navy }}>{s.sector}</td>
-                <td style={{ padding: '9px 14px', fontFamily: T.mono }}>{s.actionCount}</td>
-                <td style={{ padding: '9px 14px', fontFamily: T.mono }}>${s.totalFines}M</td>
-                <td style={{ padding: '9px 14px', fontFamily: T.mono }}>${s.avgFineSize}M</td>
-                <td style={{ padding: '9px 14px' }}><Badge label={s.trend} color={trendColor(s.trend)} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 0.6fr', gap: 16 }}>
-        <ChartBox title="Enforcement Actions by Sector" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart layout="horizontal" data={sorted} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="sector" tick={{ fontSize: 10, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-              <Bar dataKey="actionCount" name="Actions" fill={T.navy} radius={[4, 4, 0, 0]}>
-                {sorted.map((s, i) => <Cell key={i} fill={s.trend === 'Rising' ? T.red : s.trend === 'Falling' ? T.green : T.amber} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Total Fines by Sector ($M)" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={sorted} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="sector" tick={{ fontSize: 10, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} formatter={(v) => [`$${v}M`, 'Total Fines']} />
-              <Bar dataKey="totalFines" name="Total Fines $M" fill={T.gold} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Trend Distribution" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={trendDist} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} label={({ name, value }) => `${name} ${value}`} labelLine={false}>
-                {trendDist.map((d, i) => <Cell key={i} fill={d.name === 'Rising' ? T.red : d.name === 'Stable' ? T.amber : T.green} />)}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartBox>
-      </div>
-    </div>
-  );
-}
-
-// ---------- Tab 4: Portfolio Scan ----------
-function Tab4() {
-  const [sortKey, setSortKey] = useState('fineRisk');
-  const [sortAsc, setSortAsc] = useState(false);
-
-  const stats = useMemo(() => {
-    const flagged = PORTFOLIO_HOLDINGS.filter(h => h.regulatorFlags.length > 0).length;
-    const totalRisk = PORTFOLIO_HOLDINGS.reduce((s, h) => s + h.fineRisk, 0);
-    const multiFlag = PORTFOLIO_HOLDINGS.filter(h => h.regulatorFlags.length > 1).length;
-    const highest = [...PORTFOLIO_HOLDINGS].sort((a, b) => b.fineRisk - a.fineRisk)[0];
-    return { flagged, totalRisk, multiFlag, highest };
-  }, []);
-
-  const sorted = useMemo(() => [...PORTFOLIO_HOLDINGS].sort((a, b) => {
-    const av = a[sortKey]; const bv = b[sortKey];
-    if (typeof av === 'number') return sortAsc ? av - bv : bv - av;
-    return sortAsc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
-  }), [sortKey, sortAsc]);
-
-  const top15 = useMemo(() => [...PORTFOLIO_HOLDINGS].sort((a, b) => b.fineRisk - a.fineRisk).slice(0, 15).map(h => ({ name: h.ticker, risk: h.fineRisk })), []);
-
-  const riskTiers = useMemo(() => {
-    let none = 0, low = 0, med = 0, high = 0;
-    PORTFOLIO_HOLDINGS.forEach(h => {
-      if (h.fineRisk === 0) none += h.weight;
-      else if (h.fineRisk < 25) low += h.weight;
-      else if (h.fineRisk < 75) med += h.weight;
-      else high += h.weight;
-    });
-    const totalW = none + low + med + high;
-    return totalW > 0 ? [
-      { name: 'No Risk', value: +((none / totalW) * 100).toFixed(1) },
-      { name: 'Low <$25M', value: +((low / totalW) * 100).toFixed(1) },
-      { name: 'Medium $25–75M', value: +((med / totalW) * 100).toFixed(1) },
-      { name: 'High >$75M', value: +((high / totalW) * 100).toFixed(1) }
-    ] : [];
-  }, []);
-
-  const handleSort = (key) => { if (sortKey === key) setSortAsc(!sortAsc); else { setSortKey(key); setSortAsc(false); } };
-
-  const Col = ({ k, label }) => (
-    <th onClick={() => handleSort(k)} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 11, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', cursor: 'pointer', borderBottom: `2px solid ${T.border}`, whiteSpace: 'nowrap', background: T.sub }}>
-      {label} {sortKey === k ? (sortAsc ? '↑' : '↓') : ''}
-    </th>
-  );
-
-  const riskBg = (v) => v >= 75 ? '#fee2e2' : v >= 25 ? '#fef3c7' : T.surface;
-
-  return (
-    <div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
-        <Kpi label="Companies Flagged" value={stats.flagged} sub="With ≥1 regulator flag" color={T.red} />
-        <Kpi label="Total Fine Risk" value={`$${stats.totalRisk}M`} sub="Portfolio-wide estimate" color={T.gold} />
-        <Kpi label="Multi-Regulator Flag" value={stats.multiFlag} sub="Companies with >1 flag" color={T.orange} />
-        <Kpi label="Highest Risk Holding" value={stats.highest?.company ?? '—'} sub={`$${stats.highest?.fineRisk ?? 0}M estimated risk`} color={T.purple} />
-      </div>
-
-      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, marginBottom: 16, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr>
-              <Col k="company" label="Company" />
-              <Col k="ticker" label="Ticker" />
-              <Col k="weight" label="Weight %" />
-              <th style={{ padding: '8px 12px', textAlign: 'left', fontSize: 11, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', borderBottom: `2px solid ${T.border}`, background: T.sub }}>Regulator Flags</th>
-              <Col k="actions" label="Actions" />
-              <Col k="fineRisk" label="Fine Risk $M" />
-            </tr>
-          </thead>
-          <tbody>
-            {sorted.map((h, idx) => (
-              <tr key={h.company + idx} style={{ background: riskBg(h.fineRisk), borderBottom: `1px solid ${T.border}` }}>
-                <td style={{ padding: '7px 12px', fontWeight: 600, color: T.navy }}>{h.company}</td>
-                <td style={{ padding: '7px 12px', fontFamily: T.mono, fontSize: 11, color: T.textMut }}>{h.ticker}</td>
-                <td style={{ padding: '7px 12px', fontFamily: T.mono }}>{h.weight}%</td>
-                <td style={{ padding: '7px 12px' }}>
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {h.regulatorFlags.length > 0 ? h.regulatorFlags.map(f => <Badge key={f} label={f} color="indigo" />) : <span style={{ color: T.textMut, fontSize: 11 }}>None</span>}
-                  </div>
-                </td>
-                <td style={{ padding: '7px 12px', fontFamily: T.mono }}>{h.actions}</td>
-                <td style={{ padding: '7px 12px', fontFamily: T.mono, fontWeight: h.fineRisk >= 75 ? 700 : 400, color: h.fineRisk >= 75 ? T.red : h.fineRisk >= 25 ? T.amber : T.text }}>
-                  {h.fineRisk > 0 ? `$${h.fineRisk}M` : '—'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 16 }}>
-        <ChartBox title="Top 15 Holdings by Fine Risk $M" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={top15} margin={{ left: -10, right: 10, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: T.textSec }} />
-              <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} formatter={(v) => [`$${v}M`, 'Fine Risk']} />
-              <Bar dataKey="risk" name="Fine Risk $M" radius={[4, 4, 0, 0]}>
-                {top15.map((d, i) => <Cell key={i} fill={d.risk >= 75 ? T.red : d.risk >= 25 ? T.amber : T.green} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartBox>
-        <ChartBox title="Portfolio Weight by Risk Tier (%)" height={220}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={riskTiers} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${value}%`} labelLine={false}>
-                {riskTiers.map((d, i) => <Cell key={i} fill={d.name === 'High >$75M' ? T.red : d.name === 'Medium $25–75M' ? T.amber : d.name === 'Low <$25M' ? T.green : T.textMut} />)}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 6 }} />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartBox>
-      </div>
-    </div>
-  );
-}
-
-// ---------- Main export ----------
 export default function RegulatoryEnforcementMonitorPage() {
   const [activeTab, setActiveTab] = useState(0);
+  const [regFilter, setRegFilter] = useState([]);
+  const [jurFilter, setJurFilter] = useState('All');
+  const [violationFilter, setViolationFilter] = useState('All');
+  const [actionTypeFilter, setActionTypeFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [repeatOffenderFilter, setRepeatOffenderFilter] = useState(false);
+  const [portfolioHoldingFilter, setPortfolioHoldingFilter] = useState(false);
+  const [fineMin, setFineMin] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortCol, setSortCol] = useState('fineUSD');
+  const [sortDir, setSortDir] = useState('desc');
+  const [showRegSelect, setShowRegSelect] = useState(false);
+
+  const filtered = useMemo(() => {
+    if (!ENFORCEMENT_ACTIONS.length) return [];
+    let arr = [...ENFORCEMENT_ACTIONS];
+    if (regFilter.length > 0) arr = arr.filter(a => regFilter.includes(a.regulator));
+    if (jurFilter !== 'All') arr = arr.filter(a => a.jurisdiction === jurFilter);
+    if (violationFilter !== 'All') arr = arr.filter(a => a.violationCategory === violationFilter);
+    if (actionTypeFilter !== 'All') arr = arr.filter(a => a.actionType === actionTypeFilter);
+    if (statusFilter !== 'All') arr = arr.filter(a => a.status === statusFilter);
+    if (repeatOffenderFilter) arr = arr.filter(a => a.repeatOffender);
+    if (portfolioHoldingFilter) arr = arr.filter(a => a.portfolioHolding);
+    if (search) arr = arr.filter(a => a.entityName.toLowerCase().includes(search.toLowerCase()) || a.regulator.toLowerCase().includes(search.toLowerCase()));
+    arr = arr.filter(a => a.fineUSD >= fineMin * 1e6);
+    return [...arr].sort((a, b) => {
+      const av = a[sortCol], bv = b[sortCol];
+      if (typeof av === 'number') return sortDir === 'asc' ? av - bv : bv - av;
+      return sortDir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+  }, [regFilter, jurFilter, violationFilter, actionTypeFilter, statusFilter, repeatOffenderFilter, portfolioHoldingFilter, fineMin, search, sortCol, sortDir]);
+
+  const quarterlyTrend = useMemo(() => {
+    const quarters = [];
+    for (let yr = 2018; yr <= 2023; yr++) {
+      for (let q = 1; q <= 4; q++) {
+        const label = `${yr}-Q${q}`;
+        const acts = ENFORCEMENT_ACTIONS.filter(a => a.actionDate === label);
+        quarters.push({
+          period: label,
+          count: acts.length,
+          totalFineM: Math.round(acts.reduce((s, a) => s + a.fineUSD, 0) / 1e6),
+        });
+      }
+    }
+    return quarters;
+  }, []);
+
+  const violationDist = useMemo(() => VIOLATION_CATEGORIES.map(vc => ({
+    violation: vc.replace('Failure-to-Disclose', 'Fail-to-Disclose').replace('Climate Commitment Breach', 'Climate Breach').replace('Insider Trading on Climate', 'Insider Trading'),
+    count: filtered.filter(a => a.violationCategory === vc).length,
+    totalFineM: Math.round(filtered.filter(a => a.violationCategory === vc).reduce((s, a) => s + a.fineUSD, 0) / 1e6),
+  })).filter(d => d.count > 0).sort((a, b) => b.count - a.count), [filtered]);
+
+  const regulatorStats = useMemo(() => REGULATORS_25.map(r => {
+    const acts = ENFORCEMENT_ACTIONS.filter(a => a.regulator === r.id);
+    const filteredActs = filtered.filter(a => a.regulator === r.id);
+    const totalFineM = Math.round(acts.reduce((s, a) => s + a.fineUSD, 0) / 1e6);
+    const avgFineM = acts.length ? Math.round(totalFineM / acts.length) : 0;
+    return { ...r, actionCount: acts.length, filteredCount: filteredActs.length, totalFineM, avgFineM };
+  }).sort((a, b) => b.actionCount - a.actionCount), [filtered]);
+
+  const sectorHeat = useMemo(() => SECTORS.map(s => {
+    const acts = filtered.filter(a => a.entitySector === s);
+    const fineM = Math.round(acts.reduce((a, x) => a + x.fineUSD, 0) / 1e6);
+    const entityCount = 200 / 10;
+    const heatScore = entityCount > 0 ? +(acts.length / entityCount).toFixed(2) : 0;
+    return { sector: s, count: acts.length, fineM, heatScore };
+  }).sort((a, b) => b.heatScore - a.heatScore), [filtered]);
+
+  const portfolioRisk = useMemo(() => {
+    const totalWeight = PORTFOLIO_HOLDINGS.reduce((s, h) => s + h.weight, 0);
+    const portfolioScore = totalWeight > 0 ? PORTFOLIO_HOLDINGS.reduce((s, h) => s + h.weight * h.complianceScore, 0) / totalWeight : 0;
+    const riskDist = [
+      { range: '0-40', count: PORTFOLIO_HOLDINGS.filter(h => h.complianceScore < 40).length },
+      { range: '40-60', count: PORTFOLIO_HOLDINGS.filter(h => h.complianceScore >= 40 && h.complianceScore < 60).length },
+      { range: '60-80', count: PORTFOLIO_HOLDINGS.filter(h => h.complianceScore >= 60 && h.complianceScore < 80).length },
+      { range: '80-100', count: PORTFOLIO_HOLDINGS.filter(h => h.complianceScore >= 80).length },
+    ];
+    return { portfolioScore: portfolioScore.toFixed(1), riskDist };
+  }, []);
+
+  const yoyFineGrowth = useMemo(() => {
+    const yearData = Array.from({ length: 6 }, (_, y) => {
+      const yr = 2018 + y;
+      const acts = ENFORCEMENT_ACTIONS.filter(a => a.year === yr);
+      return { year: yr, totalFineB: +(acts.reduce((s, a) => s + a.fineUSD, 0) / 1e9).toFixed(2), count: acts.length };
+    });
+    return yearData;
+  }, []);
+
+  const handleSort = useCallback(col => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortCol(col); setSortDir('desc'); }
+  }, [sortCol]);
+
+  const toggleReg = useCallback(r => {
+    setRegFilter(prev => prev.includes(r) ? prev.filter(x => x !== r) : [...prev, r]);
+  }, []);
+
+  const avgFine = filtered.length ? Math.round(filtered.reduce((s, a) => s + a.fineUSD, 0) / filtered.length) : 0;
+  const repeatOffenders = filtered.filter(a => a.repeatOffender).length;
+  const deterrenceEff = ENFORCEMENT_ACTIONS.length > 0 ? (1 - repeatOffenders / ENFORCEMENT_ACTIONS.length) * 100 : 0;
 
   return (
-    <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh', padding: '0 0 40px 0' }}>
-      {/* Header */}
-      <div style={{ background: T.navy, padding: '20px 32px', borderBottom: `3px solid ${T.gold}` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 4 }}>
-          <span style={{ background: T.gold, color: T.navy, fontFamily: T.mono, fontWeight: 700, fontSize: 11, padding: '3px 8px', borderRadius: 4 }}>EP-DA5</span>
-          <span style={{ color: T.gold, fontFamily: T.mono, fontSize: 11 }}>SPRINT DA · REGULATORY INTELLIGENCE</span>
+    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+            <div style={{ background: T.navy, borderRadius: 8, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 12 }}>EP</div>
+            <div>
+              <div style={{ fontSize: 10, color: T.muted, letterSpacing: 1, textTransform: 'uppercase' }}>EP-DA5 · Disclosure & Stranded Asset Analytics</div>
+              <h1 style={{ fontSize: 21, fontWeight: 700, margin: 0 }}>Regulatory Enforcement Monitor</h1>
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: T.muted }}>200 enforcement actions · 25 regulators · 40 portfolio holdings · enforcement trend analytics · deterrence effectiveness</div>
         </div>
-        <div style={{ fontSize: 24, fontWeight: 700, color: '#ffffff', marginBottom: 4 }}>Regulatory Enforcement Monitor</div>
-        <div style={{ fontSize: 13, color: T.goldL, fontFamily: T.mono }}>15 regulators · 60 enforcement actions · sector heat · portfolio scan · fine tracker</div>
-      </div>
 
-      {/* Tab Bar */}
-      <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, padding: '0 32px', display: 'flex', gap: 0 }}>
-        {TABS.map((tab, i) => (
-          <button key={tab} onClick={() => setActiveTab(i)}
-            style={{ padding: '14px 20px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 13, fontWeight: activeTab === i ? 700 : 400, color: activeTab === i ? T.navy : T.textSec, borderBottom: activeTab === i ? `3px solid ${T.gold}` : '3px solid transparent', transition: 'all 0.15s', fontFamily: T.font }}>
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div style={{ padding: '24px 32px' }}>
-        {activeTab === 0 && <Tab0 />}
-        {activeTab === 1 && <Tab1 />}
-        {activeTab === 2 && <Tab2 />}
-        {activeTab === 3 && <Tab3 />}
-        {activeTab === 4 && <Tab4 />}
-      </div>
-
-      {/* Footer */}
-      <div style={{ margin: '0 32px', padding: '16px 20px', background: T.sub, border: `1px solid ${T.border}`, borderRadius: 8, borderLeft: `4px solid ${T.navy}` }}>
-        <div style={{ fontSize: 11, fontFamily: T.mono, color: T.textMut, lineHeight: 1.7 }}>
-          <strong style={{ color: T.textSec }}>METHODOLOGY:</strong> Enforcement data sourced from: FCA Enforcement Notices, SEC Litigation Releases, ASIC Enforcement Actions, ESMA Public Register, IOSCO Annual Report. Fine risk estimate = historical sector fine × enforcement probability × company-specific exposure factor. Data reflects regulatory filings as of Q1 2026. All figures in USD millions unless otherwise stated. Portfolio scan uses regulator-flag weighting: each active investigation contributes proportionally to estimated fine risk based on regulator severity index and sector-specific multipliers.
+        <div style={{ display: 'flex', gap: 2, marginBottom: 20, borderBottom: `2px solid ${T.border}`, overflowX: 'auto', paddingBottom: 1 }}>
+          {TABS.map((t, i) => (
+            <button key={t} onClick={() => setActiveTab(i)} style={{ padding: '8px 14px', border: 'none', background: activeTab === i ? T.navy : 'transparent', color: activeTab === i ? '#fff' : T.muted, borderRadius: '6px 6px 0 0', cursor: 'pointer', fontWeight: activeTab === i ? 600 : 400, fontSize: 12, whiteSpace: 'nowrap' }}>{t}</button>
+          ))}
         </div>
+
+        {/* Filters */}
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 14, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-end' }}>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Search</div>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Entity or regulator..." style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12, width: 160 }} />
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Violation Category</div>
+            <select value={violationFilter} onChange={e => setViolationFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {VIOLATION_CATEGORIES.map(v => <option key={v}>{v}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Action Type</div>
+            <select value={actionTypeFilter} onChange={e => setActionTypeFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {ACTION_TYPES.map(a => <option key={a}>{a}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Status</div>
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '5px 9px', border: `1px solid ${T.border}`, borderRadius: 4, fontSize: 12 }}>
+              <option>All</option>
+              {STATUSES.map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <div style={{ fontSize: 10, color: T.muted, marginBottom: 3 }}>Min Fine ($M): {fineMin}</div>
+            <input type="range" min={0} max={100} value={fineMin} onChange={e => setFineMin(+e.target.value)} style={{ width: 90 }} />
+          </div>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, cursor: 'pointer' }}>
+            <input type="checkbox" checked={repeatOffenderFilter} onChange={e => setRepeatOffenderFilter(e.target.checked)} />Repeat Offenders
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, cursor: 'pointer' }}>
+            <input type="checkbox" checked={portfolioHoldingFilter} onChange={e => setPortfolioHoldingFilter(e.target.checked)} />Portfolio Holdings
+          </label>
+          <div style={{ fontSize: 11, color: T.muted, marginLeft: 'auto' }}>{filtered.length}/200 actions</div>
+        </div>
+
+        {/* Regulator filter chips */}
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 10, marginBottom: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: 11, color: T.muted }}>REGULATOR FILTER ({REGULATORS_25.length} regulators)</span>
+            <button onClick={() => setShowRegSelect(p => !p)} style={{ fontSize: 11, border: `1px solid ${T.border}`, borderRadius: 4, padding: '2px 8px', background: T.sub, cursor: 'pointer' }}>{showRegSelect ? 'Hide' : 'Show'}</button>
+          </div>
+          {showRegSelect && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+              {REGULATORS_25.map(r => (
+                <button key={r.id} onClick={() => toggleReg(r.id)} style={{ padding: '2px 9px', fontSize: 10, border: `1px solid ${regFilter.includes(r.id) ? T.navy : T.border}`, borderRadius: 10, background: regFilter.includes(r.id) ? T.navy + '18' : 'transparent', color: regFilter.includes(r.id) ? T.navy : T.muted, cursor: 'pointer', fontWeight: regFilter.includes(r.id) ? 600 : 400 }}>
+                  {r.id} ({r.jurisdiction})
+                </button>
+              ))}
+              {regFilter.length > 0 && <button onClick={() => setRegFilter([])} style={{ padding: '2px 8px', fontSize: 10, border: `1px solid ${T.red}`, borderRadius: 10, background: T.red + '15', color: T.red, cursor: 'pointer' }}>Clear All</button>}
+            </div>
+          )}
+        </div>
+
+        {/* ── TAB 0: Enforcement Dashboard ── */}
+        {activeTab === 0 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <KpiCard label="Actions (Filtered)" value={filtered.length} />
+              <KpiCard label="Total Fines" value={fmtUSD(filtered.reduce((s, a) => s + a.fineUSD, 0))} color={T.red} />
+              <KpiCard label="Avg Fine" value={fmtUSD(avgFine)} />
+              <KpiCard label="Repeat Offenders" value={repeatOffenders} color={T.orange} />
+              <KpiCard label="Deterrence Eff." value={`${deterrenceEff.toFixed(1)}%`} color={T.green} />
+              <KpiCard label="Portfolio Holdings" value={filtered.filter(a => a.portfolioHolding).length} color={T.amber} />
+              <KpiCard label="Regulators Active" value={new Set(filtered.map(a => a.regulator)).size} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Quarterly Enforcement Trend (All Actions)</div>
+                <ResponsiveContainer width="100%" height={230}>
+                  <ComposedChart data={quarterlyTrend}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="period" tick={{ fontSize: 8 }} angle={-45} textAnchor="end" height={50} />
+                    <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
+                    <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar yAxisId="left" dataKey="count" name="Actions" fill={T.navy} radius={[2, 2, 0, 0]} />
+                    <Line yAxisId="right" type="monotone" dataKey="totalFineM" name="Fines ($M)" stroke={T.red} strokeWidth={2} dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Violation Category Distribution</div>
+                <ResponsiveContainer width="100%" height={230}>
+                  <BarChart data={violationDist.slice(0, 8)} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fontSize: 10 }} />
+                    <YAxis type="category" dataKey="violation" tick={{ fontSize: 8 }} width={105} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Actions" fill={T.indigo} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 1: Action Database ── */}
+        {activeTab === 1 && (
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+            <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Enforcement Action Database — {filtered.length} records</div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {[['regulator', 'Regulator'], ['jurisdiction', 'Jur.'], ['entityName', 'Entity'], ['entitySector', 'Sector'], ['actionType', 'Action'], ['violationCategory', 'Violation'], ['fineUSD', 'Fine'], ['actionDate', 'Date'], ['status', 'Status'], ['repeatOffender', 'Repeat'], ['precedentLevel', 'Precedent']].map(([col, label]) => (
+                      <th key={col} onClick={() => handleSort(col)} style={{ padding: '7px 7px', textAlign: 'left', cursor: 'pointer', borderBottom: `2px solid ${T.border}`, color: sortCol === col ? T.navy : T.text, userSelect: 'none', whiteSpace: 'nowrap', fontSize: 10 }}>
+                        {label} {sortCol === col ? (sortDir === 'asc' ? '▲' : '▼') : ''}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.slice(0, 100).map((a, i) => (
+                    <tr key={a.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '5px 7px', fontWeight: 600, color: T.navy }}>{a.regulator}</td>
+                      <td style={{ padding: '5px 7px', fontSize: 10 }}>{a.jurisdiction}</td>
+                      <td style={{ padding: '5px 7px', fontSize: 10 }}>{a.entityName}</td>
+                      <td style={{ padding: '5px 7px', fontSize: 10 }}>{a.entitySector}</td>
+                      <td style={{ padding: '5px 7px', fontSize: 9 }}>{a.actionType}</td>
+                      <td style={{ padding: '5px 7px', fontSize: 9 }}>{a.violationCategory}</td>
+                      <td style={{ padding: '5px 7px', fontWeight: 600, color: T.red }}>{fmtUSD(a.fineUSD)}</td>
+                      <td style={{ padding: '5px 7px' }}>{a.actionDate}</td>
+                      <td style={{ padding: '5px 7px', fontSize: 10, color: a.status === 'Ongoing' ? T.amber : T.muted }}>{a.status}</td>
+                      <td style={{ padding: '5px 7px', textAlign: 'center' }}>{a.repeatOffender ? <span style={{ color: T.red }}>✓</span> : <span style={{ color: T.muted }}>—</span>}</td>
+                      <td style={{ padding: '5px 7px', fontWeight: 600, color: a.precedentLevel === 'High' ? T.red : a.precedentLevel === 'Medium' ? T.amber : T.muted, fontSize: 10 }}>{a.precedentLevel}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {filtered.length > 100 && <div style={{ textAlign: 'center', padding: 10, color: T.muted, fontSize: 11 }}>Showing 100 of {filtered.length}</div>}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 2: Regulator Intelligence ── */}
+        {activeTab === 2 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Enforcement Count by Regulator</div>
+              <ResponsiveContainer width="100%" height={230}>
+                <BarChart data={regulatorStats.slice(0, 15)}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="id" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" height={45} />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Bar dataKey="actionCount" name="Total Actions" fill={T.navy} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="filteredCount" name="Filtered Actions" fill={T.amber} radius={[4, 4, 0, 0]} />
+                  <Legend />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Total Fines by Regulator ($M)</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={regulatorStats.filter(r => r.totalFineM > 0).slice(0, 15)}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="id" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" height={45} />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip formatter={v => [`$${v}M`, 'Total Fines']} />
+                  <Bar dataKey="totalFineM" name="Total Fines ($M)" fill={T.red} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Regulator Intelligence Table</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Regulator', 'Jurisdiction', 'Region', 'Total Actions', 'Avg Fine', 'Total Fines', 'Filtered Actions'].map(h => <th key={h} style={{ padding: '7px 8px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {regulatorStats.map((r, i) => (
+                      <tr key={r.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '6px 8px', fontWeight: 700, color: T.navy }}>{r.id}</td>
+                        <td style={{ padding: '6px 8px' }}>{r.jurisdiction}</td>
+                        <td style={{ padding: '6px 8px', color: T.muted }}>{r.region}</td>
+                        <td style={{ padding: '6px 8px', fontWeight: 600 }}>{r.actionCount}</td>
+                        <td style={{ padding: '6px 8px' }}>${r.avgFineM}M</td>
+                        <td style={{ padding: '6px 8px', fontWeight: 600, color: T.red }}>${r.totalFineM}M</td>
+                        <td style={{ padding: '6px 8px', color: r.filteredCount > 0 ? T.amber : T.muted }}>{r.filteredCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 3: Sector Heat Map ── */}
+        {activeTab === 3 && (
+          <div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Enforcement Heat Score by Sector</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10, marginBottom: 16 }}>
+                {sectorHeat.map(s => (
+                  <div key={s.sector} style={{ background: riskColor(s.heatScore * 30) + '15', border: `1px solid ${riskColor(s.heatScore * 30)}40`, borderRadius: 8, padding: 12, textAlign: 'center' }}>
+                    <div style={{ fontWeight: 600, fontSize: 11, marginBottom: 4 }}>{s.sector}</div>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: riskColor(s.heatScore * 30) }}>{s.count}</div>
+                    <div style={{ fontSize: 10, color: T.muted }}>actions</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: T.red, marginTop: 3 }}>${s.fineM}M</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Actions by Sector</div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={sectorHeat}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" height={45} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Actions" fill={T.navy} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Fine Volume by Sector ($M)</div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={sectorHeat}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" height={45} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip formatter={v => [`$${v}M`, 'Fines']} />
+                    <Bar dataKey="fineM" name="Fine Volume ($M)" fill={T.red} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 4: Portfolio Compliance ── */}
+        {activeTab === 4 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              <KpiCard label="Portfolio Score" value={`${portfolioRisk.portfolioScore}/100`} color={riskColor(100 - +portfolioRisk.portfolioScore)} />
+              <KpiCard label="Holdings" value={PORTFOLIO_HOLDINGS.length} />
+              <KpiCard label="High Risk (<40)" value={portfolioRisk.riskDist[0]?.count || 0} color={T.red} />
+              <KpiCard label="Low Risk (>80)" value={portfolioRisk.riskDist[3]?.count || 0} color={T.green} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 18, marginBottom: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Portfolio Holdings Compliance Table</div>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                    <thead>
+                      <tr style={{ background: T.sub }}>
+                        {['#', 'Holding', 'Sector', 'Compliance Score', 'Reg. Gap', 'Weight%', 'Enforcement Actions'].map(h => <th key={h} style={{ padding: '6px 8px', textAlign: 'left', borderBottom: `2px solid ${T.border}` }}>{h}</th>)}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...PORTFOLIO_HOLDINGS].sort((a, b) => a.complianceScore - b.complianceScore).map((h, i) => (
+                        <tr key={h.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                          <td style={{ padding: '5px 8px' }}>{i + 1}</td>
+                          <td style={{ padding: '5px 8px', fontWeight: 600 }}>{h.name}</td>
+                          <td style={{ padding: '5px 8px' }}>{h.sector}</td>
+                          <td style={{ padding: '5px 8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <div style={{ width: 50, height: 5, background: T.border, borderRadius: 3 }}>
+                                <div style={{ height: 5, width: `${h.complianceScore}%`, background: riskColor(h.complianceScore), borderRadius: 3 }} />
+                              </div>
+                              <span style={{ fontWeight: 600, color: riskColor(h.complianceScore) }}>{h.complianceScore}</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '5px 8px', color: h.regulatoryGap > 30 ? T.red : T.amber }}>{h.regulatoryGap}</td>
+                          <td style={{ padding: '5px 8px' }}>{(h.weight * 100).toFixed(2)}%</td>
+                          <td style={{ padding: '5px 8px', textAlign: 'center', color: h.enforcementActions > 0 ? T.red : T.muted }}>{h.enforcementActions}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Compliance Score Distribution</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={portfolioRisk.riskDist}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="range" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Holdings" radius={[4, 4, 0, 0]}>
+                      {portfolioRisk.riskDist.map((d, i) => <Cell key={i} fill={i === 0 ? T.red : i === 1 ? T.amber : i === 2 ? T.teal : T.green} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 12 }}>Regulatory Gap by Sector</div>
+                  <ResponsiveContainer width="100%" height={140}>
+                    <BarChart data={SECTORS.map(s => {
+                      const hs = PORTFOLIO_HOLDINGS.filter(h => h.sector === s);
+                      return { sector: s, gap: hs.length ? Math.round(hs.reduce((a, h) => a + h.regulatoryGap, 0) / hs.length) : 0 };
+                    }).filter(d => d.gap > 0)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                      <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-25} textAnchor="end" height={40} />
+                      <YAxis tick={{ fontSize: 10 }} />
+                      <Tooltip />
+                      <Bar dataKey="gap" name="Avg Gap" fill={T.orange} radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 5: Trend Analytics ── */}
+        {activeTab === 5 && (
+          <div>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+              {yoyFineGrowth.length >= 2 && (() => {
+                const growth = yoyFineGrowth[yoyFineGrowth.length - 1].totalFineB - yoyFineGrowth[0].totalFineB;
+                const cagr = yoyFineGrowth[0].totalFineB > 0 ? (Math.pow(yoyFineGrowth[yoyFineGrowth.length - 1].totalFineB / yoyFineGrowth[0].totalFineB, 1 / 5) - 1) * 100 : 0;
+                return (<>
+                  <KpiCard label="2023 Total Fines" value={`$${yoyFineGrowth[5]?.totalFineB || 0}B`} color={T.red} />
+                  <KpiCard label="Fine CAGR (2018-23)" value={`${cagr.toFixed(1)}%`} color={T.orange} />
+                  <KpiCard label="2023 Action Count" value={yoyFineGrowth[5]?.count || 0} />
+                </>);
+              })()}
+              <KpiCard label="High Precedent" value={ENFORCEMENT_ACTIONS.filter(a => a.precedentLevel === 'High').length} color={T.red} />
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>YoY Fine Growth ($B)</div>
+              <ResponsiveContainer width="100%" height={220}>
+                <ComposedChart data={yoyFineGrowth}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                  <YAxis yAxisId="left" tick={{ fontSize: 11 }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="totalFineB" name="Total Fines ($B)" fill={T.red} radius={[4, 4, 0, 0]} />
+                  <Line yAxisId="right" type="monotone" dataKey="count" name="Action Count" stroke={T.navy} strokeWidth={2} dot={{ r: 4 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Action Type Evolution (by Year)</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={yoyFineGrowth.map(d => {
+                    const yearActs = ENFORCEMENT_ACTIONS.filter(a => a.year === d.year);
+                    const obj = { year: d.year };
+                    ACTION_TYPES.forEach(at => { obj[at] = yearActs.filter(a => a.actionType === at).length; });
+                    return obj;
+                  })}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="Fine" stackId="a" fill={T.red} />
+                    <Bar dataKey="Suspension" stackId="a" fill={T.orange} />
+                    <Bar dataKey="Cease-and-Desist" stackId="a" fill={T.amber} />
+                    <Bar dataKey="Consent Order" stackId="a" fill={T.indigo} />
+                    <Bar dataKey="Mandatory Audit" stackId="a" fill={T.teal} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Violation Category by Year</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={yoyFineGrowth.map(d => {
+                    const yearActs = ENFORCEMENT_ACTIONS.filter(a => a.year === d.year);
+                    return { year: d.year, greenwashing: yearActs.filter(a => a.violationCategory === 'Greenwashing').length, disclosure: yearActs.filter(a => a.violationCategory === 'Failure-to-Disclose').length, climate: yearActs.filter(a => a.violationCategory === 'Climate Commitment Breach').length, other: yearActs.filter(a => !['Greenwashing', 'Failure-to-Disclose', 'Climate Commitment Breach'].includes(a.violationCategory)).length };
+                  })}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="greenwashing" stackId="b" name="Greenwashing" fill={T.green} />
+                    <Bar dataKey="disclosure" stackId="b" name="Disclosure" fill={T.blue} />
+                    <Bar dataKey="climate" stackId="b" name="Climate Breach" fill={T.red} />
+                    <Bar dataKey="other" stackId="b" name="Other" fill={T.muted} />
+                    <Legend />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 6: Summary & Export ── */}
+        {activeTab === 6 && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 18 }}>
+              <KpiCard label="Total Actions" value={ENFORCEMENT_ACTIONS.length} />
+              <KpiCard label="Total Regulators" value={REGULATORS_25.length} />
+              <KpiCard label="Portfolio Holdings" value={PORTFOLIO_HOLDINGS.length} />
+              <KpiCard label="Filtered Actions" value={filtered.length} />
+              <KpiCard label="Total Fines (All)" value={fmtUSD(ENFORCEMENT_ACTIONS.reduce((s, a) => s + a.fineUSD, 0))} color={T.red} />
+              <KpiCard label="Avg Fine (All)" value={fmtUSD(ENFORCEMENT_ACTIONS.length ? ENFORCEMENT_ACTIONS.reduce((s, a) => s + a.fineUSD, 0) / ENFORCEMENT_ACTIONS.length : 0)} />
+              <KpiCard label="Repeat Offenders" value={ENFORCEMENT_ACTIONS.filter(a => a.repeatOffender).length} color={T.orange} />
+              <KpiCard label="High Precedent" value={ENFORCEMENT_ACTIONS.filter(a => a.precedentLevel === 'High').length} color={T.red} />
+              <KpiCard label="Portfolio Compliance" value={`${portfolioRisk.portfolioScore}/100`} color={T.amber} />
+              <KpiCard label="Deterrence Eff." value={`${deterrenceEff.toFixed(1)}%`} color={T.green} />
+              <KpiCard label="Portfolio Fines" value={fmtUSD(ENFORCEMENT_ACTIONS.filter(a => a.portfolioHolding).reduce((s, a) => s + a.fineUSD, 0))} color={T.amber} />
+              <KpiCard label="Most Fined Regulator" value={regulatorStats[0]?.id || '-'} />
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Top 50 Enforcement Actions by Fine</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['#', 'Regulator', 'Jur.', 'Entity', 'Sector', 'Action', 'Violation', 'Fine', 'Date', 'Status', 'Repeat', 'Precedent'].map(h => <th key={h} style={{ padding: '5px 7px', textAlign: 'left', borderBottom: `2px solid ${T.border}`, fontSize: 10, whiteSpace: 'nowrap' }}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...ENFORCEMENT_ACTIONS].sort((a, b) => b.fineUSD - a.fineUSD).slice(0, 50).map((a, i) => (
+                      <tr key={a.id} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '4px 7px' }}>{i + 1}</td>
+                        <td style={{ padding: '4px 7px', fontWeight: 700, color: T.navy }}>{a.regulator}</td>
+                        <td style={{ padding: '4px 7px' }}>{a.jurisdiction}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9 }}>{a.entityName}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9 }}>{a.entitySector}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9 }}>{a.actionType}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9 }}>{a.violationCategory}</td>
+                        <td style={{ padding: '4px 7px', fontWeight: 600, color: T.red }}>{fmtUSD(a.fineUSD)}</td>
+                        <td style={{ padding: '4px 7px' }}>{a.actionDate}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9 }}>{a.status}</td>
+                        <td style={{ padding: '4px 7px', textAlign: 'center' }}>{a.repeatOffender ? '✓' : '—'}</td>
+                        <td style={{ padding: '4px 7px', fontSize: 9, color: a.precedentLevel === 'High' ? T.red : T.muted }}>{a.precedentLevel}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Violation Category Fines ($M)</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={violationDist.slice(0, 8)} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fontSize: 9 }} />
+                    <YAxis type="category" dataKey="violation" tick={{ fontSize: 8 }} width={105} />
+                    <Tooltip formatter={v => [`$${v}M`, 'Fines']} />
+                    <Bar dataKey="totalFineM" name="Fines ($M)" fill={T.red} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Action Type Fine Distribution</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={ACTION_TYPES.map(at => {
+                    const acts = ENFORCEMENT_ACTIONS.filter(a => a.actionType === at);
+                    return { type: at.split('-')[0], fineM: Math.round(acts.reduce((s, a) => s + a.fineUSD, 0) / 1e6), count: acts.length };
+                  }).filter(d => d.count > 0).sort((a, b) => b.fineM - a.fineM)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="type" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={40} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip formatter={v => [`$${v}M`, 'Fines']} />
+                    <Bar dataKey="fineM" name="Fines ($M)" fill={T.amber} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Status Breakdown</div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={STATUSES.map(s => ({ status: s, count: ENFORCEMENT_ACTIONS.filter(a => a.status === s).length, fineM: Math.round(ENFORCEMENT_ACTIONS.filter(a => a.status === s).reduce((sum, a) => sum + a.fineUSD, 0) / 1e6) }))}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="status" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={40} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Count" fill={T.navy} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div style={{ marginTop: 18, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Regulator Region Performance Summary</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Region', 'Regulators', 'Total Actions', 'Total Fines ($M)', 'Avg Fine ($M)', 'Repeat Offenders'].map(h => <th key={h} style={{ padding: '6px 9px', textAlign: 'left', borderBottom: `2px solid ${T.border}` }}>{h}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {['Americas', 'Europe', 'Asia-Pac', 'Global'].map((region, i) => {
+                    const regIds = REGULATORS_25.filter(r => r.region === region).map(r => r.id);
+                    const acts = ENFORCEMENT_ACTIONS.filter(a => regIds.includes(a.regulator));
+                    const totalFineM = Math.round(acts.reduce((s, a) => s + a.fineUSD, 0) / 1e6);
+                    const avgFineM = acts.length ? Math.round(totalFineM / acts.length) : 0;
+                    const repeats = acts.filter(a => a.repeatOffender).length;
+                    return (
+                      <tr key={region} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '5px 9px', fontWeight: 700 }}>{region}</td>
+                        <td style={{ padding: '5px 9px' }}>{regIds.length}</td>
+                        <td style={{ padding: '5px 9px', fontWeight: 600 }}>{acts.length}</td>
+                        <td style={{ padding: '5px 9px', color: T.red, fontWeight: 600 }}>${totalFineM}M</td>
+                        <td style={{ padding: '5px 9px' }}>${avgFineM}M</td>
+                        <td style={{ padding: '5px 9px', color: repeats > 10 ? T.red : T.amber }}>{repeats}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ marginTop: 18, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Deterrence Effectiveness Analysis</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+                {SECTORS.slice(0, 8).map(s => {
+                  const acts = ENFORCEMENT_ACTIONS.filter(a => a.entitySector === s);
+                  const repeats = acts.filter(a => a.repeatOffender).length;
+                  const deff = acts.length > 0 ? ((1 - repeats / acts.length) * 100).toFixed(0) : '100';
+                  return (
+                    <div key={s} style={{ background: T.sub, borderRadius: 6, padding: 10, textAlign: 'center' }}>
+                      <div style={{ fontWeight: 600, fontSize: 11, marginBottom: 4 }}>{s}</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: +deff > 80 ? T.green : +deff > 60 ? T.amber : T.red }}>{deff}%</div>
+                      <div style={{ fontSize: 10, color: T.muted }}>Deterrence</div>
+                      <div style={{ fontSize: 11, color: T.muted, marginTop: 3 }}>{repeats} repeats / {acts.length} actions</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
