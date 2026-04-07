@@ -984,8 +984,8 @@ const NAV_GROUPS = [
     { path: '/sovereign-physical-risk',   label: 'Sovereign Physical Risk',     badge: '70 Countries · Flood/Drought/Heat · GDP@Risk · NGFS Scenarios', code: 'EP-AX3' },
     { path: '/em-debt-climate-risk',      label: 'EM Debt & Climate Risk',      badge: '50 EMs · Green Bonds · Debt-for-Nature · Credit Spreads',       code: 'EP-AX4' },
     { path: '/mdb-climate-finance',       label: 'MDB Climate Finance',         badge: '8 MDBs · $120B Flows · Mobilisation · Project Pipeline',        code: 'EP-AX5' },
-    { path: '/sovereign-climate-risk',    label: 'Sovereign Climate Risk',      badge: 'Country Risk · Policy · Physical · Transition · Fiscal Impact',  code: 'EP-AQ2' },
-    { path: '/sovereign-debt-sustainability', label: 'Sovereign Debt Sustainability', badge: 'Climate-Adj Fiscal · Debt Distress · DSA Scenarios',       code: 'EP-AQ3' },
+    { path: '/sovereign-climate-risk',    label: 'Sovereign Climate Risk',      badge: 'Country Risk · Policy · Physical · Transition · Fiscal Impact',  code: 'EP-AX7' },
+    { path: '/sovereign-debt-sustainability', label: 'Sovereign Debt Sustainability', badge: 'Climate-Adj Fiscal · Debt Distress · DSA Scenarios',       code: 'EP-AX8' },
   ]},
   { label: 'Transition Planning & Net Zero', icon: '🧭', color: '#0e7490', items: [
     { path: '/transition-planning-hub',       label: 'Transition Planning Hub',       badge: 'Hub · TPT+GFANZ+ACT+NZAM · Credibility · Board Pack',          code: 'EP-AL6' },
