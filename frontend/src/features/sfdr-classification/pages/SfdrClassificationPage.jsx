@@ -144,21 +144,21 @@ function computePortfolioMetrics(holdings) {
   const totalWeight = holdings.reduce((s, h) => s + (h.weight || 0), 0) || 100;
   const normalise = (w) => w / totalWeight * 100;
   const sustainableInvPct = holdings.filter(h => {
-    const esg = h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '')) * 50);
-    return (h.sbti_committed || seed(hashStr(h.isin || '') + 7) > 0.55) && esg > 60;
+    const esg = h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '') % 997) * 50);
+    return (h.sbti_committed || seed(hashStr(h.isin || '') % 997 + 7) > 0.55) && esg > 60;
   }).reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
   const taxonomyAlignedPct = holdings.filter(h => {
-    const esg = h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '')) * 50);
+    const esg = h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '') % 997) * 50);
     const sector = SECTOR_MAP[h.gics_sector || h.sector || 'Financials'] || 'Industry';
     return esg > 55 && ['Energy', 'ICT', 'Buildings'].includes(sector);
   }).reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
-  const avgEsg = holdings.reduce((s, h) => s + (h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '')) * 50)), 0) / holdings.length;
+  const avgEsg = holdings.reduce((s, h) => s + (h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '') % 997) * 50)), 0) / holdings.length;
   const fossilHoldings = holdings.filter(h => {
     const sector = h.gics_sector || h.sector || '';
-    return ['Energy', 'Oil & Gas', 'Coal'].some(s => sector.includes(s)) && seed(hashStr(h.isin || '') + 3) > 0.4;
+    return ['Energy', 'Oil & Gas', 'Coal'].some(s => sector.includes(s)) && seed(hashStr(h.isin || '') % 997 + 3) > 0.4;
   });
   const fossilPct = fossilHoldings.reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
-  const weaponsPct = holdings.filter(h => seed(hashStr(h.isin || '') + 17) > 0.97).reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
+  const weaponsPct = holdings.filter(h => seed(hashStr(h.isin || '') % 997 + 17) > 0.97).reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
   const dnshCompany = holdings.filter(h => (h.esg_score || 50) > 48);
   const dnshPct = (dnshCompany.length / holdings.length) * 100;
   const govPct = holdings.filter(h => (h.esg_score || 50) > 42).length / holdings.length * 100;
@@ -272,7 +272,7 @@ const SfdrClassificationPage = () => {
   /* ── Holdings enriched ── */
   const holdings = useMemo(() => {
     return portfolio.map(c => {
-      const h = hashStr(c.isin || c.company_name || 'X');
+      const h = hashStr(c.isin || c.company_name || 'X') % 997;
       const s = seed(h);
       const esg = c.esg_score != null ? c.esg_score : 30 + s * 50;
       const weight = c.weight || (100 / portfolio.length);
@@ -335,7 +335,7 @@ const SfdrClassificationPage = () => {
   /* ── PAI values ── */
   const paiValues = useMemo(() => {
     return PAI_INDICATORS.map(pai => {
-      const h2 = hashStr(pai.id);
+      const h2 = hashStr(pai.id) % 997;
       const s2 = seed(h2);
       let value, yoy;
       switch (pai.id) {
@@ -345,11 +345,11 @@ const SfdrClassificationPage = () => {
         case 'PAI-4': value = metrics.fossilPct.toFixed(1); yoy = -1.5; break;
         case 'PAI-5': value = (35 + s2 * 30).toFixed(1); yoy = -4.0; break;
         case 'PAI-6': value = (0.05 + s2 * 0.15).toFixed(3); yoy = -2.1; break;
-        case 'PAI-7': value = holdings.filter(h => seed(hashStr(h.isin || '') + 11) > 0.85).length.toString(); yoy = 0; break;
+        case 'PAI-7': value = holdings.filter(h => seed(hashStr(h.isin || '') % 997 + 11) > 0.85).length.toString(); yoy = 0; break;
         case 'PAI-8': value = (12 + s2 * 80).toFixed(0); yoy = -6.3; break;
         case 'PAI-9': value = (5 + s2 * 40).toFixed(0); yoy = -3.7; break;
         case 'PAI-10': value = holdings.filter(h => h.ungcViolation).length / holdings.length * 100; value = (+value).toFixed(1); yoy = -0.8; break;
-        case 'PAI-11': value = (holdings.filter(h => seed(hashStr(h.isin || '') + 21) > 0.75).length / holdings.length * 100).toFixed(1); yoy = -2.0; break;
+        case 'PAI-11': value = (holdings.filter(h => seed(hashStr(h.isin || '') % 997 + 21) > 0.75).length / holdings.length * 100).toFixed(1); yoy = -2.0; break;
         case 'PAI-12': value = (holdings.reduce((s, h) => s + h.genderPayGap, 0) / holdings.length).toFixed(1); yoy = -0.5; break;
         case 'PAI-13': value = (holdings.reduce((s, h) => s + h.boardDiversity, 0) / holdings.length).toFixed(1); yoy = +1.8; break;
         case 'PAI-14': value = metrics.weaponsPct.toFixed(2); yoy = 0; break;
@@ -386,7 +386,7 @@ const SfdrClassificationPage = () => {
   /* ── Good governance data ── */
   const govData = useMemo(() => {
     return holdings.slice(0, 25).map(h => {
-      const s = seed(hashStr(h.name || '') + 77);
+      const s = seed(hashStr(h.name || '') % 997 + 77);
       const esg = h.esg_score || 50;
       return {
         name: (h.name || '').slice(0, 22), sector: h.gicsSector,
@@ -416,7 +416,7 @@ const SfdrClassificationPage = () => {
   /* ── DNSH per holding ── */
   const dnshData = useMemo(() => {
     return holdings.slice(0, 20).map(h => {
-      const s = seed(hashStr(h.name || '') + 55);
+      const s = seed(hashStr(h.name || '') % 997 + 55);
       const esg = h.esg_score || 50;
       return {
         name: (h.name || '').slice(0, 20),

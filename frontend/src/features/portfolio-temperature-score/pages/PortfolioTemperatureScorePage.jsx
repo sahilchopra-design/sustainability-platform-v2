@@ -330,7 +330,7 @@ function DashboardTab({ methodology, setMethodology, attribution, setAttribution
 }
 
 // ── TAB 2: Holdings Screener ──────────────────────────────────────────────────
-function HoldingsTab() {
+function HoldingsTab({ portfolioTemp = 2.7 }) {
   const [search, setSearch] = useState('');
   const [tempMin, setTempMin] = useState(1.0);
   const [tempMax, setTempMax] = useState(5.0);
@@ -371,7 +371,7 @@ function HoldingsTab() {
 
   const totalWeight = ALL_HOLDINGS.reduce((s,h) => s+h.weight, 0);
   const whatIfDelta = whatIfId !== null ? (ALL_HOLDINGS.find(h=>h.id===whatIfId)?.sbtiDelta || 0) : 0;
-  const portfolioBaseTemp = 2.7;
+  const portfolioBaseTemp = portfolioTemp;
   const whatIfTemp = +(portfolioBaseTemp - (selected.length>0
     ? selected.reduce((s,id) => s + (ALL_HOLDINGS.find(h=>h.id===id)?.sbtiDelta||0), 0) / selected.length
     : 0)).toFixed(2);
@@ -1030,7 +1030,7 @@ export default function PortfolioTemperatureScorePage() {
           yearFilter={yearFilter} setYearFilter={setYearFilter}
           portfolioTemp={portfolioTemp}/>
       )}
-      {tab==='holdings'   && <HoldingsTab/>}
+      {tab==='holdings'   && <HoldingsTab portfolioTemp={portfolioTemp}/>}
       {tab==='pacta'      && <PactaTab/>}
       {tab==='engagement' && <EngagementTab/>}
     </div>

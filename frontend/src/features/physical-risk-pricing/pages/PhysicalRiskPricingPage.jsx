@@ -63,7 +63,7 @@ const COUNTRIES = [
 ];
 
 const getPerilData = (country, assetClass, ngfs) => {
-  const base = hashStr(country + assetClass + ngfs);
+  const base = hashStr(country + assetClass + ngfs) % 997;
   const s = (n) => seededRandom(base + n);
   const acutePerils = [
     { dimension: 'Flood', score: Math.round(s(1) * 60 + 30) },
@@ -84,7 +84,7 @@ const getPerilData = (country, assetClass, ngfs) => {
 };
 
 const getNatCatData = (country, assetClass) => {
-  const base = hashStr(country + assetClass + 'natcat');
+  const base = hashStr(country + assetClass + 'natcat') % 997;
   const s = (n) => seededRandom(base + n);
   const returnPeriods = [10, 25, 50, 100, 200, 500];
   const perils = ['Flood', 'Cyclone', 'Wildfire', 'Earthquake', 'Drought'];
@@ -104,7 +104,7 @@ const getNatCatData = (country, assetClass) => {
 };
 
 const getFinancialData = (country, assetClass, assetValue, ngfs) => {
-  const base = hashStr(country + assetClass + ngfs + 'fin');
+  const base = hashStr(country + assetClass + ngfs + 'fin') % 997;
   const s = (n) => seededRandom(base + n);
   const val = parseFloat(assetValue) || 10000000;
   const ealPct = s(1) * 0.8 + 0.1;
@@ -132,7 +132,7 @@ const getFinancialData = (country, assetClass, assetValue, ngfs) => {
 };
 
 const getStrandingData = (country, assetClass) => {
-  const base = hashStr(country + assetClass + 'strand');
+  const base = hashStr(country + assetClass + 'strand') % 997;
   const s = (n) => seededRandom(base + n);
   const scenarios = ['Orderly', 'Disorderly', 'Hot House'];
   const horizons = ['2030', '2040', '2050'];
@@ -157,7 +157,7 @@ const getStrandingData = (country, assetClass) => {
 };
 
 const getNGFSData = (country, assetClass) => {
-  const base = hashStr(country + assetClass + 'ngfs');
+  const base = hashStr(country + assetClass + 'ngfs') % 997;
   const s = (n) => seededRandom(base + n);
   const years = [2024, 2026, 2028, 2030, 2035, 2040, 2045, 2050];
   const scenarios = ['Orderly', 'Disorderly', 'Hot House'];
