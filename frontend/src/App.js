@@ -1952,11 +1952,11 @@ function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: T.font }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: T.font, color: T.text }}>
       <HeaderBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar search={search} setSearch={setSearch} sidebarOpen={sidebarOpen} />
-        <main style={{ flex: 1, overflowY: 'auto', background: T.bg }}>
+        <main style={{ flex: 1, overflowY: 'auto', background: T.bg, color: T.text }}>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
             <Route path="/crypto-climate" element={<CryptoClimatePage />} />
