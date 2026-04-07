@@ -10,6 +10,7 @@ const T = {
   navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', bg: '#f0ede8',
   red: '#991b1b', green: '#065f46', gray: '#6b7280', orange: '#c2410c',
   blue: '#1d4ed8', teal: '#0f766e', purple: '#6d28d9', amber: '#b45309',
+  card: '#ffffff', sub: '#5c6b7e', indigo: '#4f46e5',
   lightNavy: '#e8eef5', border: '#d6cfc4'
 };
 const fmt = (n) => n >= 1e9 ? `$${(n / 1e9).toFixed(2)}B` : n >= 1e6 ? `$${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `$${(n / 1e3).toFixed(0)}K` : `$${n.toFixed(0)}`;

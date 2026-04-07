@@ -26,6 +26,7 @@ const T = {
   blue:  "#2563eb",
   purple:"#7c3aed",
   teal:  "#0e7490",
+  card:  "#ffffff", sub:  "#5c6b7e", indigo:  "#4f46e5",
 };
 
 /* ── Seeded random ──────────────────────────────────────────────────────────── */

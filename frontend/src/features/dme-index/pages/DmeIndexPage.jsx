@@ -14,7 +14,7 @@ import {
   Legend, ResponsiveContainer, Cell, ReferenceLine
 } from "recharts";
 
-const T={navy:"#1b3a5c",gold:"#c5a96a",cream:"#f7f4ef",slate:"#64748b",font:"'DM Sans', sans-serif",mono:"'JetBrains Mono', monospace",green:"#059669",red:"#dc2626",amber:"#d97706",blue:"#2563eb",purple:"#7c3aed",teal:"#0e7490"};
+const T={navy:"#1b3a5c",gold:"#c5a96a",cream:"#f7f4ef",slate:"#64748b",card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',font:"'DM Sans', sans-serif",mono:"'JetBrains Mono', monospace",green:"#059669",red:"#dc2626",amber:"#d97706",blue:"#2563eb",purple:"#7c3aed",teal:"#0e7490"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 const pick=(arr,s)=>arr[Math.floor(sr(s)*arr.length)];
 

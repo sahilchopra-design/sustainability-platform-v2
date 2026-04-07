@@ -12,7 +12,7 @@ const T = {
   goldL: '#d4be8a', sage: '#5a8a6a', text: '#1b3a5c', textSec: '#5c6b7e',
   textMut: '#9aa3ae', red: '#dc2626', green: '#16a34a', amber: '#d97706',
   blue: '#2563eb', orange: '#ea580c', purple: '#7c3aed',
-  font: "'DM Sans','SF Pro Display',system-ui,sans-serif",
+  card: '#ffffff', sub: '#5c6b7e', indigo: '#4f46e5', font: "'DM Sans','SF Pro Display',system-ui,sans-serif",
   mono: "'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
 

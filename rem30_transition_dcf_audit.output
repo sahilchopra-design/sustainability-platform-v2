@@ -1,0 +1,312 @@
+{
+  "audit_id": "REM-30",
+  "standard": "ISO/IEC/IEEE 29119 UAT",
+  "audit_date": "2026-04-06",
+  "auditor": "Claude Sonnet 4.6 — automated static audit",
+  "modules": [
+    {
+      "file": "TransitionRiskDcfPage.jsx",
+      "path": "frontend/src/features/transition-risk-dcf/pages/TransitionRiskDcfPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 19,
+          "issue": "PRNG implementation — canonical sr() formula present",
+          "detail": "sr = (s) => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); } matches spec exactly. No Math.random() in executable code."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 78,
+          "issue": "WACC_adj formula — correct",
+          "detail": "waccAdjusted = asset.wacc_base + asset.beta_c * carbonPrice(scenario, 5) matches WACC_base + β_carbon × P_carbon(t=5). No sign errors."
+        },
+        {
+          "severity": "P1",
+          "line_approx": 61,
+          "issue": "DCF engine missing terminal value — spec-required TV + spread guard absent",
+          "detail": "computeDcfImpairment sums only explicit annual CFs over horizonYears with no terminal value. The spec requires TV with guard (discount_rate - growth_rate) > 0.005 minimum spread to prevent implosion. TV is entirely absent; NPV is materially understated and the spread-guard cannot fire.",
+          "fix": "After summing annual CFs: const spreadMin = 0.005; const g_terminal = 0.01; const spreadBase = Math.max(spreadMin, asset.wacc_base - g_terminal); const spreadAdj = Math.max(spreadMin, waccAdjusted - g_terminal); const lastCFBase = adjustedCFs[adjustedCFs.length-1].base_cf; const lastCFAdj = adjustedCFs[adjustedCFs.length-1].adjusted_cf; const tvBase = (lastCFBase * (1+g_terminal)) / spreadBase / Math.pow(1+asset.wacc_base, horizonYears); const tvAdj = (lastCFAdj * (1+g_terminal)) / spreadAdj / Math.pow(1+waccAdjusted, horizonYears); npvBase += tvBase; npvAdj += tvAdj;"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 65,
+          "issue": "Hardcoded magic numbers — revenue yield 0.18 and decline rate 0.98",
+          "detail": "baseRevenue = asset.book * 0.18 * Math.pow(0.98, i). The 18% yield and 2%/yr revenue decline are unexplained magic numbers not tied to any documented assumption.",
+          "fix": "Extract as named constants: const BASE_REVENUE_YIELD = 0.18; const ANNUAL_REVENUE_DECLINE_RATE = 0.98; or add as per-asset properties."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 125,
+          "issue": "Division guard on scenarioCompare — totalBook || 1 present",
+          "detail": "pct = (total / (totalBook || 1)) * 100. Guard in place. PASS."
+        }
+      ]
+    },
+    {
+      "file": "TransitionRiskHeatmapPage.jsx",
+      "path": "frontend/src/features/transition-risk-heatmap/pages/TransitionRiskHeatmapPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No PRNG usage — deterministic only",
+          "detail": "No Math.random() or sr() anywhere. All risk scores derive from hardcoded base tables scaled by deterministic multipliers."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 127,
+          "issue": "Division by zero — all denominators are constants (GEOS.length=5, SECTORS.length=10)",
+          "detail": "No risk. PASS."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 33,
+          "issue": "Scenario multipliers are unexplained magic numbers",
+          "detail": "multiplier = scIdx===0 ? 0.8 : scIdx===1 ? 1.0 : 1.35. These values (0.8/1.0/1.35) have no documented NGFS calibration basis.",
+          "fix": "const SCENARIO_MULTIPLIERS = ['Current Policies', 'Below 2°C', 'Net Zero 2050'].reduce((acc,s,i)=>({...acc,[s]:[0.80,1.00,1.35][i]}),{}); Reference by name."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 172,
+          "issue": "sectorAvg array sorted in-place twice — brittle mutation",
+          "detail": "sectorAvg.sort((a,b)=>b.avg-a.avg) called twice (line 172 data prop, line 178 Cell mapping). Mutates same reference. Currently safe but brittle.",
+          "fix": "const sortedSectorAvg = [...sectorAvg].sort((a,b)=>b.avg-a.avg); use sortedSectorAvg in both data and Cells."
+        }
+      ]
+    },
+    {
+      "file": "SectorTransitionScorecardPage.jsx",
+      "path": "frontend/src/features/sector-transition-scorecard/pages/SectorTransitionScorecardPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No PRNG usage",
+          "detail": "No Math.random() or sr() calls. PASS."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 147,
+          "issue": "paceComposite divides by literal 4 — no zero-division risk",
+          "detail": "PASS."
+        },
+        {
+          "severity": "P1",
+          "line_approx": 362,
+          "issue": "NaN propagation — emissions_2019 used as denominator without guard",
+          "detail": "((s.emissions_2019 - s.emissions_2030_target) / s.emissions_2019 * 100) — no guard. Current seed data has all emissions_2019 > 0, but if any future sector has emissions_2019 = 0, this renders NaN% to DOM.",
+          "fix": "Change to: s.emissions_2019 > 0 ? (((s.emissions_2019 - s.emissions_2030_target) / s.emissions_2019) * 100).toFixed(0) : '0'"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 391,
+          "issue": "MAC curve Y-axis uses 'tCO₂' not 'tCO₂e' — inconsistent with GHG Protocol",
+          "detail": "label value='Cost ($/tCO₂)' should be 'Cost ($/tCO₂e)' for consistency with GHG Protocol Scope 3 and IPCC AR6 GWP-weighted units used throughout the platform.",
+          "fix": "Change to: label={{ value: 'Cost ($/tCO₂e)', ... }}"
+        }
+      ]
+    },
+    {
+      "file": "PortfolioTransitionAlignmentPage.jsx",
+      "path": "frontend/src/features/portfolio-transition-alignment/pages/PortfolioTransitionAlignmentPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 69,
+          "issue": "ITR weighted average — division by zero guarded",
+          "detail": "totalW === 0 returns port.itr as fallback. PASS."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 235,
+          "issue": "PACTA factor uses Math.sin() — deterministic, not PRNG",
+          "detail": "Math.sin(si * 2.3 + port.sectors.length) is deterministic. No Math.random(). PASS."
+        },
+        {
+          "severity": "P1",
+          "line_approx": 236,
+          "issue": "PACTA misaligned bar calculation can produce stacked total >100% for some sector/portfolio combos",
+          "detail": "aligned = Math.min(100, port.pacta_aligned * factor); misaligned = +(port.pacta_misaligned * (1.4 - factor + 0.8)).toFixed(1). With factor at minimum (sin=-1, factor=0.8): misaligned multiplier = 1.4-0.8+0.8=1.4. For equity: 35*1.4=49; aligned=42*0.8=33.6; stack=82.6. For fixed_income at factor=0.8: misaligned=22*1.4=30.8; aligned=58*0.8=46.4; stack=77.2. No overflow in current data. However the formula is undocumented and no clamp on misaligned means future data could overflow. Classify P1 for formula integrity.",
+          "fix": "Add explicit clamp: const misaligned = +Math.min(100 - aligned, port.pacta_misaligned * (1.4 - factor + 0.8)).toFixed(1);"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 203,
+          "issue": "Engagement Priority AUM uses (100-pacta_aligned) instead of pacta_misaligned",
+          "detail": "These differ: for equity portfolio, 100-42=58% vs actual pacta_misaligned=35%. Using (100-aligned) overstates engagement AUM by the 'not assessed' fraction.",
+          "fix": "Change to: port.aum * port.pacta_misaligned / 100 / 1000"
+        }
+      ]
+    },
+    {
+      "file": "FinancedEmissionsAttributorPage.jsx",
+      "path": "frontend/src/features/financed-emissions-attributor/pages/FinancedEmissionsAttributorPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No PRNG usage",
+          "detail": "No Math.random() anywhere. PASS."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 17,
+          "issue": "PCAF data quality scores all within [1,5] range",
+          "detail": "Class-level: 2.1, 2.4, 1.8, 3.2, 4.0. Company-level: 1, 2, 3, 4. All within spec. PASS."
+        },
+        {
+          "severity": "P0",
+          "line_approx": 350,
+          "issue": "Division by zero — company share renders Infinity to DOM",
+          "detail": "((c2.financed_mt / cls.financed) * 100).toFixed(1). No guard on cls.financed. If cls.financed === 0, renders 'Infinity%' to DOM. Project Finance class financed=2.80 currently but any class with financed=0 would crash the display.",
+          "fix": "Change to: ((c2.financed_mt / (cls.financed || 1)) * 100).toFixed(1)"
+        },
+        {
+          "severity": "P1",
+          "line_approx": 363,
+          "issue": "WACI values in seed data do not match spec formula WACI = financed_emissions / portfolio_value × 1,000,000",
+          "detail": "Spec: WACI = financed_emissions / portfolio_value × 1,000,000 (per $M). Listed Equity: 8.48 MtCO₂e = 8,480,000 tCO₂e; outstanding=$4,200M; computed WACI = 8,480,000/4,200 = 2,019 tCO₂/$M. Displayed value: 68.4. The displayed WACI appears to be revenue-based (company revenues, not outstanding). The spec formula and displayed values are irreconcilable without a denominator correction.",
+          "fix": "If WACI should be portfolio-level: recompute waci = (c.financed * 1e6) / c.outstanding. If revenue-based is intentional, label as 'Revenue WACI (tCO₂/$M revenue)' and add a note that this differs from PCAF portfolio WACI definition."
+        },
+        {
+          "severity": "P1",
+          "line_approx": 40,
+          "issue": "Financed emissions formula includes full Scope 3 in EVIC attribution — non-standard",
+          "detail": "formula string and calculation at line 265: attribution × (scope1 + scope2 + scope3). The PCAF Standard (v1.1 and v2.0) for listed equity/corporate bonds specifies attribution × (Scope 1 + Scope 2) as the primary method; full Scope 3 inclusion is an optional extension. Including all 14.62 Mt Scope 3 for Listed Equity inflates financed emissions above the standard baseline.",
+          "fix": "Primary: financed = attribution × (scope1 + scope2). Optional separate disclosure: financed_with_S3 = attribution × (scope1 + scope2 + scope3). Update formula string and displayed calculation accordingly."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 231,
+          "issue": "Scope 3 category bar width division — guarded with || 1",
+          "detail": "cls.scope3 || 1 guard present. PASS."
+        }
+      ]
+    },
+    {
+      "file": "TransitionFinanceScreenerPage.jsx",
+      "path": "frontend/src/features/transition-finance-screener/pages/TransitionFinanceScreenerPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No PRNG usage",
+          "detail": "No Math.random() or sr() calls. All data is static seed. PASS."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 41,
+          "issue": "Division by INSTRUMENTS.length — constant 8, no zero risk",
+          "detail": "PASS."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 171,
+          "issue": "inst null guard — {inst && ...} protects DNSH rendering",
+          "detail": "PASS."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 69,
+          "issue": "Greenium sign convention not documented in UI",
+          "detail": "Header KPI shows avgGreenium in bps (e.g. -7.2bps). Negative = issuer benefit (green bond yields less than vanilla). Saudi Aramco shows +0.4 (penalty). No convention note for end users.",
+          "fix": "Add sub-label text: '(neg = green discount)' to the Avg Greenium KPI card."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 158,
+          "issue": "Taxonomy Aligned vs Eligible stacked bar mixes two concepts without clear label",
+          "detail": "Bar stacks 'aligned' and 'eligible-not-aligned'. The label 'Eligible (Not Aligned)' is in Legend but not in the bar data key. Users may interpret eligible+aligned stack as 100% eligible which is correct but the visual hierarchy could cause confusion.",
+          "fix": "Minor P2 — cosmetic. Add chart subtitle: 'Taxonomy Eligible ≥ Taxonomy Aligned. Gap = eligible but criteria not yet met.'"
+        }
+      ]
+    },
+    {
+      "file": "CarbonFootprintIntelligencePage.jsx",
+      "path": "frontend/src/features/carbon-footprint-intelligence/pages/CarbonFootprintIntelligencePage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No PRNG usage",
+          "detail": "No Math.random() or sr() calls. PASS."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 61,
+          "issue": "scope3Pct division — totalS123 > 0 guard present",
+          "detail": "PASS."
+        },
+        {
+          "severity": "P1",
+          "line_approx": 197,
+          "issue": "NaN propagation — base2023 fallback to literal 1 causes absurd reduction percentages",
+          "detail": "base2023 = c.trajectory.find(d=>d.year===2023)?.actual ?? c.trajectory[4]?.actual ?? 1. If actual 2023 data is missing and trajectory[4] is also null/undefined, fallback is 1. Then reduction2030 = ((1 - target2030val) / 1 * 100) which would render e.g. '-29900%' for BP (target2030=290, base=1: reduction = (1-290)/1*100 = -28900%). This would render a wildly wrong value to screen.",
+          "fix": "const base2023 = c.trajectory.find(d => d.year === 2023 && d.actual != null)?.actual; const reduction2030 = (base2023 != null && base2023 > 0) ? (((base2023 - target2030val) / base2023) * 100).toFixed(0) : 'N/A';"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 221,
+          "issue": "Progress bar hardcoded to 30% — not dynamically calculated",
+          "detail": "width: '30%' and label '~30% progress toward 2030 target' are magic literals identical for all 4 companies regardless of actual progress. BP's trajectory shows minimal reduction toward 2030 target vs Microsoft showing substantial reductions — both show 30%.",
+          "fix": "Compute: const progressPct = (base2023 && target2030val && base2023 > target2030val) ? Math.min(100, Math.max(0, ((base2023 - (c.trajectory.find(d=>d.year===2025)?.target ?? base2023)) / (base2023 - target2030val)) * 100)) : 0; Use in bar width and label."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 63,
+          "issue": "Scope 2 market-based slice disappears from pie for companies with scope2_mkt=0",
+          "detail": "Microsoft has scope2_mkt=0.00, Apple has scope2_mkt=0.000. PieChart with value=0 renders invisible slices, making the pie appear to show only S1+S3, which may mislead users into thinking Scope 2 is excluded from the total.",
+          "fix": "Use a minimum display threshold or show scope2_loc when scope2_mkt===0: value: co.scope2_mkt > 0 ? co.scope2_mkt : co.scope2_loc with appropriate label."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "P0": 1,
+    "P1": 6,
+    "P2": 10,
+    "PASS": 18,
+    "total_findings_excluding_pass": 17,
+    "total_findings_including_pass": 35
+  },
+  "p0_findings": [
+    {
+      "module": "FinancedEmissionsAttributorPage.jsx",
+      "line": 350,
+      "issue": "Division by zero: company share = c2.financed_mt / cls.financed with no guard. Renders Infinity% to DOM when cls.financed === 0.",
+      "fix": "Change cls.financed to (cls.financed || 1)"
+    }
+  ],
+  "p1_findings": [
+    {
+      "module": "TransitionRiskDcfPage.jsx",
+      "line": 61,
+      "issue": "Terminal value missing from DCF engine. Spec requires TV with spread guard (discount_rate - growth_rate) > 0.005."
+    },
+    {
+      "module": "SectorTransitionScorecardPage.jsx",
+      "line": 362,
+      "issue": "NaN propagation: emissions_2019 used as denominator without zero guard. Would render NaN% to DOM."
+    },
+    {
+      "module": "PortfolioTransitionAlignmentPage.jsx",
+      "line": 236,
+      "issue": "PACTA misaligned bar lacks upper clamp — formula could produce stack >100% with future data."
+    },
+    {
+      "module": "FinancedEmissionsAttributorPage.jsx",
+      "line": 363,
+      "issue": "WACI seed data values irreconcilable with spec formula (financed_emissions/portfolio_value×1M). Displayed values appear revenue-based not portfolio-value-based."
+    },
+    {
+      "module": "FinancedEmissionsAttributorPage.jsx",
+      "line": 40,
+      "issue": "Financed emissions formula includes full Scope 3 in EVIC attribution — non-standard per PCAF v1.1/v2.0. Primary standard is attribution × (S1+S2)."
+    },
+    {
+      "module": "CarbonFootprintIntelligencePage.jsx",
+      "line": 197,
+      "issue": "NaN/absurd value propagation: base2023 fallback to literal 1 causes reduction percentages like -28900% to render to DOM."
+    }
+  ]
+}

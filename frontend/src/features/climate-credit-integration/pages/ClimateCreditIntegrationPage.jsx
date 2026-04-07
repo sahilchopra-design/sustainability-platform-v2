@@ -9,7 +9,7 @@ const T = {
   navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef',
   teal: '#0f766e', green: '#15803d', red: '#b91c1c',
   amber: '#b45309', purple: '#6d28d9', slate: '#334155',
-  font: 'DM Sans, sans-serif', mono: 'JetBrains Mono, monospace',
+  card: '#ffffff', sub: '#5c6b7e', indigo: '#4f46e5', font: 'DM Sans, sans-serif', mono: 'JetBrains Mono, monospace',
 };
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };

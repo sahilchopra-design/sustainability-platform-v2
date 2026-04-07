@@ -11,7 +11,7 @@ const T = {
   slate:"#1e3a5f", steel:"#2d5282", muted:"#6b7280", white:"#ffffff",
   green:"#059669", red:"#dc2626", amber:"#d97706", teal:"#0e7490",
   indigo:"#4338ca", purple:"#7c3aed", hub:"#312e81",
-  font:"'DM Sans', sans-serif", mono:"'JetBrains Mono', monospace",
+  card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',font:"'DM Sans', sans-serif", mono:"'JetBrains Mono', monospace",
 };
 
 // ─── Seed Data ────────────────────────────────────────────────────────────────

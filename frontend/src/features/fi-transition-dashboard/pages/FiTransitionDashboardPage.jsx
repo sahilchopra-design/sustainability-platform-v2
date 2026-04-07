@@ -15,7 +15,7 @@ import TAXONOMY_TREE, {
   scoreToRating, HIGH_IMPACT_SECTORS, GEOGRAPHIC_REGIONS, REGULATORY_REQUIREMENTS
 } from '../../../data/taxonomyTree';
 
-const T = { bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', blue:'#2563eb', orange:'#ea580c', purple:'#7c3aed', teal:'#0891b2', sage:'#5a8a6a', font:"'DM Sans','SF Pro Display',system-ui,sans-serif", mono:"'JetBrains Mono','SF Mono','Fira Code',monospace" };
+const T = { bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c', navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae', red:'#dc2626', green:'#16a34a', amber:'#d97706', blue:'#2563eb', orange:'#ea580c', purple:'#7c3aed', teal:'#0891b2', sage:'#5a8a6a', card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',font:"'DM Sans','SF Pro Display',system-ui,sans-serif", mono:"'JetBrains Mono','SF Mono','Fira Code',monospace" };
 
 const TABS = ['Executive KPIs', 'Taxonomy Deep Drill', 'Client Risk Map', 'Regulatory Readiness', 'Action Pipeline', 'Board Report'];
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };

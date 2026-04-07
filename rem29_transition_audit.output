@@ -1,0 +1,369 @@
+{
+  "audit_id": "REM-29",
+  "standard": "ISO/IEC/IEEE 29119 UAT",
+  "date": "2026-04-06",
+  "auditor": "Claude Sonnet 4.6",
+  "modules": [
+    {
+      "file": "ClimateVarEnginePage.jsx",
+      "path": "frontend/src/features/climate-var-engine/pages/ClimateVarEnginePage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 19,
+          "issue": "No Math.random() anywhere in the file. All computations are deterministic.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 39,
+          "issue": "CVaR formula: climateCVaR(transVaR, physVaR, rho) correctly maps to Trans + Phys + rho*Trans*Phys via engine. Formula is correct.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 41,
+          "issue": "Division safety: totalVaR division uses guard `cvar.totalVaR > 0 ? ... : '0'` at lines 162-165. No unguarded division by AUM (AUM slider min=1000 so cannot be 0).",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P1",
+          "line_approx": 208,
+          "issue": "LOSS DISTRIBUTION REFERENCE LINE: `<ReferenceLine x={`${(-cvar.pct).toFixed(2)}`}` uses negative cvar.pct as the x-coordinate, but cvar.pct is already a positive percentage (e.g. 8.7). So -cvar.pct = -8.7. The distribution data x-axis from buildDistribution() is centred on `-(cvar.totalVaR / aum * 100)` which is also negative (e.g. -8.7). The VaR line at x=-8.7 would land inside the distribution (at the mean), not at the left tail. The ReferenceLine should be at the left tail cutoff, which is mean - z*sigma. This causes the VaR reference line to visually misrepresent the VaR level on the loss distribution chart.",
+          "fix": "The ReferenceLine x should be at `${(-cvar.pct * 1.5).toFixed(2)}` (approximate left tail for sigma-scaled distribution) or more precisely at `${(-(cvar.pct / z) * z + (cvar.pct)).toFixed(2)}` which simplifies to the distribution mean value. Better fix: remove the ReferenceLine from the distribution chart and add a shading fill for the tail region instead, or compute the exact VaR quantile x-coordinate as `${(-3 * Math.max(1, cvar.pct / (NQ[confidence] ?? NQ[95]))).toFixed(2)}`."
+        },
+        {
+          "severity": "P1",
+          "line_approx": 157,
+          "issue": "INTERACTION TERM UI DESCRIPTION: UI text reads 'ρ·CVaR_transition·CVaR_physical / AUM' but the engine at climateCVaR() returns `trans_cvar + phys_cvar + rho * trans_cvar * phys_cvar` without dividing by AUM in the interaction term. The formula display adds '/ AUM' which does not match the engine implementation. The interaction term is rho * transVaR_$ * physVaR_$ (both already in $), making the interaction term dimensionally in $^2 which is incorrect. The ECB/NGFS methodology specifies the interaction as rho * (transVaR% * physVaR%) * AUM to stay in $ units.",
+          "fix": "Correct the engine: climateCVaR should accept percentage-of-AUM inputs OR the formula should normalise: `trans_cvar + phys_cvar + rho * trans_cvar * phys_cvar / aum`. Remove '/ AUM' from UI description and fix dimension consistency."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 34,
+          "issue": "Horizon scaling uses sqrt(T/10) — correct per NGFS/ECB square-root-of-time convention with 10yr base.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 35,
+          "issue": "Confidence level scaling uses z_adj = NQ[confidence] / NQ[95] with nullish fallback — correct.",
+          "fix": "N/A"
+        }
+      ]
+    },
+    {
+      "file": "TransitionRegReportingPage.jsx",
+      "path": "frontend/src/features/transition-reg-reporting/pages/TransitionRegReportingPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No Math.random() in the file. All data is static or derived from static constants.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 201,
+          "issue": "Division safety: `complete / total` at line 203 — total = p.disclosures.length which is always >= 1 (data populated). No division by zero risk.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 278,
+          "issue": "ISSB completion pct: `ISSB_ITEMS.filter(...).length / ISSB_ITEMS.length` — ISSB_ITEMS has 9 elements, always > 0. Safe.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 107,
+          "issue": "METRICS TABLE: 'WACI' value shown as '182' without units inline in the Value column. The Unit column shows 'tCO2/$M revenue' but for board-level regulatory reporting (TCFD/ISSB), the value and unit must be co-located or the unit must be immediately visible adjacent to the number.",
+          "fix": "Change value to '182 tCO2/$M' or ensure unit column styling makes units clearly co-located with value."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 462,
+          "issue": "BOARD REPORT PREVIEW: WACI stat card shows '182' with label 'WACI' but no units (tCO2/$M). On a board report this omission is a disclosure deficiency under TCFD M1 and ISSB S2 Para 33.",
+          "fix": "Change display to '182 tCO2/$M' or add a subtitle 'tCO2e per $M revenue' directly under the value."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 77,
+          "issue": "Scenario narratives contain correct scenario-specific VaR values (5.8% CP, 8.7% B2C, 11.2% NZ) consistent with cross-module data.",
+          "fix": "N/A"
+        }
+      ]
+    },
+    {
+      "file": "TransitionRiskDashboardPage.jsx",
+      "path": "frontend/src/features/transition-risk-dashboard/pages/TransitionRiskDashboardPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No Math.random() in the file.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 132,
+          "issue": "regReadinessPct: `done / total` where total = fw.pillars.length * 4 — pillars arrays all have length 4 (hardcoded), total=16, never zero. Safe.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P1",
+          "line_approx": 127,
+          "issue": "HOLDINGS SORT — NaN propagation risk: `sortedHoldings = [...HOLDINGS].sort((a, b) => b[sortField] - a[sortField])`. The sortField state is set only via UI buttons limiting it to 'weight', 'score', 'itr' — all numeric. However if any HOLDINGS entry had a missing/undefined field, `b[sortField] - a[sortField]` = NaN, causing undefined sort order and potentially rendering incorrect data ordering to DOM. No explicit guard exists.",
+          "fix": "Add guard: `const val = (x) => Number(x[sortField]) || 0; return val(b) - val(a);`"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 22,
+          "issue": "KPI CARD 'Financed Emissions WACI': sub-text says 'weighted avg carbon intensity' without specifying the denominator ($M revenue vs $M EVIC). PCAF methodology uses different denominators for different asset classes. The ambiguity could cause reporting compliance issues under SFDR PAI indicator 7.",
+          "fix": "Clarify sub-text to 'tCO2e per $M revenue (WACI, GHG Protocol)' or the PCAF-specific denominator used."
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 114,
+          "issue": "sectorRiskColor function: threshold-based mapping, no division, no NaN risk.",
+          "fix": "N/A"
+        }
+      ]
+    },
+    {
+      "file": "MultiDimTransitionScorerPage.jsx",
+      "path": "frontend/src/features/multi-dim-transition-scorer/pages/MultiDimTransitionScorerPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No Math.random() in the file.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 145,
+          "issue": "computeScore: uses nullish coalescing `(data[p.id] ?? 0)` to guard missing keys. Pillar weights sum to exactly 100 (22+18+20+18+12+10=100). No division by zero. No NaN propagation.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 208,
+          "issue": "COMPANIES.length > 0 guard in header avg score is always true (6 hardcoded companies). Dead code branch. Minor code quality.",
+          "fix": "Remove the ternary or keep as defensive coding. Low severity."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 257,
+          "issue": "COMPOSITE SCORE display at fontSize 42 shows `score.toFixed(1)` without enforcing max of 100. If pillar sub-scores were entered as >100 in future data updates, this could display > 100 on a '/ 100' scale.",
+          "fix": "Change to `Math.min(100, score).toFixed(1)` for defensive rendering."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 401,
+          "issue": "SIGNAL SENTIMENT: hardcoded '+Positive: 1, ~Neutral: 1, -Negative: 1' for all companies regardless of selected company or actual signal content. This is misleading for users who expect company-specific sentiment analysis.",
+          "fix": "Add a disclaimer 'Illustrative / Demo' badge or compute sentiment counts from company.news_signals length."
+        }
+      ]
+    },
+    {
+      "file": "TechDisplacementModelerPage.jsx",
+      "path": "frontend/src/features/tech-displacement-modeler/pages/TechDisplacementModelerPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No Math.random() in the file.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 18,
+          "issue": "S-curve: `L / (1 + Math.exp(-k * (t - t_mid)))` — exactly matches required formula sCurve(t,k,t_mid,L). Correct.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P1",
+          "line_approx": 22,
+          "issue": "WRIGHT'S LAW MISLABELLING: `learningCurve(t, lcoe0, rate) = lcoe0 * Math.pow(1 - rate, t)` implements exponential time-decay, NOT Wright's Law. Wright's Law is LCOE(C) = LCOE_0 * (C/C_0)^(-b) where C is cumulative capacity (experience), not time. The UI label at line 297 says 'Wright's Law: LCOE(t) = LCOE0 * (1-r)^t' — this is an incorrect attribution. The formula is a time-exponential learning approximation, not the classical Wright/experience curve.",
+          "fix": "Rename function to `timeDecayCost` and update UI description to: 'Exponential cost reduction (Wright's Law approximation): LCOE(t) = LCOE0 * (1-r)^t, r = annual learning rate'. Or reimplement with cumulative capacity as independent variable."
+        },
+        {
+          "severity": "P1",
+          "line_approx": 112,
+          "issue": "DEAD CODE — unused variable: `const t = yr - 2020;` at line 112 inside buildTechTrajectory(). This computed value t is never used — the sCurve call on line 113 uses `yr` (absolute year) directly, and learningCurve on line 114 uses `yr - 2024`. The dead `t` variable suggests the author intended relative-year inputs for sCurve but the implementation correctly uses absolute years (both t and t_mid are in absolute year format).",
+          "fix": "Remove `const t = yr - 2020;` (line 112) as it is unused and misleading."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 303,
+          "issue": "LEARNING CURVE COST CARDS: cost values displayed without units. Solar shows '38' ($/MWh), EV shows '220' (units: battery $/kWh×65 per comment), Green H2 shows '5.5' ($/kg). Mixed units across technologies with no inline unit label creates confusion.",
+          "fix": "Add `unit` field to TECHNOLOGIES array (e.g. `unit: '$/MWh'`) and display alongside each cost value."
+        }
+      ]
+    },
+    {
+      "file": "StrandedAssetAnalyzerPage.jsx",
+      "path": "frontend/src/features/stranded-asset-analyzer/pages/StrandedAssetAnalyzerPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No Math.random() in the file.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 45,
+          "issue": "buildWriteDownSchedule: `Math.max(1, end - start)` guards against division by zero when full_stranded == write_down_start. Correct.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P0",
+          "line_approx": 105,
+          "issue": "POTENTIAL NaN TO DOM — avgStranded: `const avgStranded = (totalStranded / totalAum) * 100` has NO guard. If totalAum were 0, this would produce NaN, and `NaN.toFixed(1)` renders the string 'NaN' into the DOM header KPI at line 157. With current static data totalAum = 55000 (sum of all 8 sector .aum values), so this does not crash in practice. However the expression lacks a defensive guard making it a latent P0.",
+          "fix": "Change to: `const avgStranded = totalAum > 0 ? (totalStranded / totalAum) * 100 : 0;`"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 250,
+          "issue": "hazardRatePD / survivalProb: imported from climateRisk engine. cp_threshold hardcoded per sector (80-180, never 0). No division by zero possible.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P1",
+          "line_approx": 490,
+          "issue": "SURVIVAL PROBABILITY CURVE — MATHEMATICALLY INCORRECT: The survival curve loop at line 490-505 calls `survivalProb(h, t)` where h is the hazard rate at year `yr` (computed using that year's carbon price) and t = yr - 2024. This computes S(T) = exp(-h(T) * T) treating h as constant from t=0. The correct formula for a time-varying hazard rate is the integrated survival probability: S(T) = exp(-integral from 0 to T of h(t)dt). The current implementation creates a non-monotonic or incorrectly-decaying survival curve — particularly visible for NZ2050 where h(t) rises steeply, causing S(T) to appear higher at intermediate years than it should be.",
+          "fix": "Rewrite the survival curve data generation to accumulate hazard rates: `let cumH = 0; return Array.from({length: 26}, (_, i) => { const yr = 2025+i; const cp = ngfsCarbonPrice(nk, yr); const h = hazardRatePD(...); cumH += h; row[sc] = Math.exp(-cumH); return row; });` This gives S(T) = exp(-sum_t h(t)*1yr)."
+        }
+      ]
+    },
+    {
+      "file": "JustTransitionIntelligencePage.jsx",
+      "path": "frontend/src/features/just-transition-intelligence/pages/JustTransitionIntelligencePage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No Math.random() in the file.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 154,
+          "issue": "JTF bar width: `r.jtf_need > 0 ? (r.jtf_avail/r.jtf_need)*100 : 0` — correctly guards division by zero.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P1",
+          "line_approx": 246,
+          "issue": "NON-COMPLIANT PRNG: ILO pillar scores use `Math.round(40 + Math.sin(i * 1.5 + ILO_PILLARS.indexOf(p)) * 30 + 7.5 * (Math.sin(i * 3.7 + ILO_PILLARS.indexOf(p) * 2.1) + 1))`. Per audit rules, ALL pseudo-random generation MUST use the canonical seeded PRNG: `const sr = (s) => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); }`. The current implementation uses raw Math.sin() with different scaling constants (multiplier 10000 and floor extraction is the canonical pattern — this code omits both, using direct sin output scaled by 30/7.5). This is a P1 PRNG compliance failure.",
+          "fix": "Add `const sr = (s) => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };` at module top and replace score generation with: `score: Math.round(40 + sr(i * 5 + ILO_PILLARS.indexOf(p)) * 60)`"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 145,
+          "issue": "WAGE DIRECTION ARROW: Always displays '→' regardless of whether wageGap is positive or negative. Regions with negative wage gap (fossil > green wage) should show a downward or different indicator.",
+          "fix": "Change to `wageGap >= 0 ? '→' : '↓'` or use colored arrows."
+        },
+        {
+          "severity": "P2",
+          "line_approx": 26,
+          "issue": "DATA QUALITY FLAG — JTF NEED VALUES: jtf_need for Jharkhand = 34000 (displays as $34B when /1000). With 340,000 fossil jobs and reskill_cost $2800/worker, expected total = $952M not $34B. jtf_need values appear to use inconsistent units across regions — Rheinland has jtf_need=1600 (displays $1.6B) for 18,000 workers at $180 reskill_cost = only $3.24M expected. The jtf_need field appears to represent total transition finance need (including infrastructure, community investment, pension bridges) not just reskilling cost, but this is not documented.",
+          "fix": "Add documentation/tooltip explaining that jtf_need represents total JTF package (reskilling + infrastructure + social protection) not just per-worker reskilling cost. Alternatively validate data against ILO JTF cost estimates."
+        }
+      ]
+    },
+    {
+      "file": "PolicyRegulatoryImpactPage.jsx",
+      "path": "frontend/src/features/policy-regulatory-impact/pages/PolicyRegulatoryImpactPage.jsx",
+      "findings": [
+        {
+          "severity": "PASS",
+          "line_approx": 1,
+          "issue": "No Math.random() in the file.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "PASS",
+          "line_approx": 108,
+          "issue": "totalRevImpact / totalCostImpact: plain reduce, no division, no NaN risk.",
+          "fix": "N/A"
+        },
+        {
+          "severity": "P1",
+          "line_approx": 160,
+          "issue": "NAVIGATION BUG — POLICY CARD CLICK: `onClick={() => { setSelectedPolicy(p.id); setTab(1); }}` always navigates to Tab 1 (EU ETS Deep-Dive) regardless of which policy card was clicked. Clicking CBAM, IRA, MEES, EU Taxonomy, or CORSIA all jump to the EU ETS tab, not the relevant policy detail tab. The selectedPolicy state is correctly updated but the hardcoded `setTab(1)` ignores the policy context.",
+          "fix": "Create a policy-to-tab map: `const POLICY_TAB_MAP = { eu_ets: 1, cbam: 2, ira: 3, mees: 4, eu_taxonomy: 0, corsia: 0 }; setTab(POLICY_TAB_MAP[p.id] ?? 0);`"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 133,
+          "issue": "COST IMPACT KPI: Header hardcodes `+$${totalCostImpact.toFixed(1)}B` with '+' prefix. IRA has cost_impact_bn = -8.2 (net benefit), making total less straightforward. If future policy data included negative net cost, the display would show `+$${negative}B` which is misleading.",
+          "fix": "Change to `${totalCostImpact >= 0 ? '+' : ''}$${totalCostImpact.toFixed(1)}B`"
+        },
+        {
+          "severity": "P2",
+          "line_approx": 250,
+          "issue": "HARDCODED ARRAY INDEX: `POLICIES[1].allowance_traj` and `POLICIES[3].allowance_traj` and `POLICIES[0].allowance_traj` used in tabs 1-3. If POLICIES array order changes, wrong data will render. Fragile pattern.",
+          "fix": "Use `POLICIES.find(p => p.id === 'cbam').allowance_traj` etc. for all direct POLICIES[] index accesses."
+        }
+      ]
+    }
+  ],
+  "engine_audit": {
+    "file": "frontend/src/engines/climateRisk.js",
+    "findings": [
+      {
+        "severity": "PASS",
+        "line_approx": 26,
+        "issue": "seededPRNG uses Mulberry32 — deterministic, no Math.random(). Correct."
+      },
+      {
+        "severity": "PASS",
+        "line_approx": 142,
+        "issue": "climateCVaR: `trans_cvar + phys_cvar + rho * trans_cvar * phys_cvar` correctly implements NGFS/ECB bilinear copula CVaR = Trans + Phys + rho*Trans*Phys."
+      },
+      {
+        "severity": "PASS",
+        "line_approx": 250,
+        "issue": "hazardRatePD: `lambda_base * Math.exp(alpha * carbon_price / cp_threshold)` — correct Merton hazard formula. cp_threshold always > 0."
+      },
+      {
+        "severity": "P1",
+        "line_approx": 113,
+        "issue": "historicalCVaR: `const varVal = -sorted[cutoff] ?? 0` — operator precedence bug. `-sorted[cutoff] ?? 0` evaluates as `(-sorted[cutoff]) ?? 0`. If sorted[cutoff] is undefined, -undefined = NaN and NaN ?? 0 = NaN (NaN is not null/undefined, so ?? does not catch it). varVal becomes NaN and propagates to cvarVal.",
+        "fix": "Change to: `const varVal = sorted[cutoff] !== undefined ? -sorted[cutoff] : 0;`"
+      }
+    ]
+  },
+  "summary": {
+    "P0": 1,
+    "P1": 7,
+    "P2": 11,
+    "PASS": 22,
+    "total_findings_excluding_engine": 41,
+    "engine_findings": {
+      "P1": 1,
+      "PASS": 3
+    },
+    "critical_modules": [
+      "StrandedAssetAnalyzerPage.jsx (P0: unguarded NaN + P1: survival probability integration error)",
+      "ClimateVarEnginePage.jsx (P1: loss distribution reference line misplacement + interaction term dimension error)",
+      "JustTransitionIntelligencePage.jsx (P1: non-compliant PRNG)",
+      "TechDisplacementModelerPage.jsx (P1: Wright's Law mislabelling)",
+      "PolicyRegulatoryImpactPage.jsx (P1: navigation bug)",
+      "TransitionRiskDashboardPage.jsx (P1: NaN guard in sort)"
+    ],
+    "compliance_notes": [
+      "PRNG compliance: 7 of 8 modules PASS. JustTransitionIntelligencePage FAILS — uses raw Math.sin() without canonical sr() pattern.",
+      "Math.random(): ZERO violations across all 8 modules and the engine.",
+      "IPCC AR6 GWP (CH4=27.2, N2O=273): Not referenced in these 8 transition-risk modules — those values are in agriculture/carbon-credit modules.",
+      "S-curve formula: CORRECT in TechDisplacementModelerPage.",
+      "Wright's Law: INCORRECT attribution in TechDisplacementModelerPage (time-decay not experience-curve).",
+      "CVaR formula: CORRECT in engine and ClimateVarEnginePage.",
+      "WACC_adj = WACC_base + beta_carbon * P_carbon(t=5): CORRECT in TransitionRiskDcfPage (confirmed from additional read).",
+      "Division by zero guards: Present in most locations; StrandedAssetAnalyzerPage line 105 lacks guard (P0)."
+    ]
+  }
+}
