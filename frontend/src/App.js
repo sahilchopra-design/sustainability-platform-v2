@@ -491,6 +491,13 @@ const AnomalyDetectionEnginePage     = React.lazy(() => import("./features/anoma
 const PeerClusteringSegmentationPage = React.lazy(() => import("./features/peer-clustering-segmentation/pages/PeerClusteringSegmentationPage"));
 const ScenarioConditionalPredictionPage = React.lazy(() => import("./features/scenario-conditional-prediction/pages/ScenarioConditionalPredictionPage"));
 const MlGovernanceDashboardPage      = React.lazy(() => import("./features/ml-governance-dashboard/pages/MlGovernanceDashboardPage"));
+// Sprint DA — Disclosure & Stranded Asset Analytics
+const ClimateLitigationRiskScorerPage    = React.lazy(() => import("./features/climate-litigation-risk-scorer/pages/ClimateLitigationRiskScorerPage"));
+const GreenwashingExposureMonitorPage    = React.lazy(() => import("./features/greenwashing-exposure-monitor/pages/GreenwashingExposureMonitorPage"));
+const DisclosureAdequacyAnalyzerPage     = React.lazy(() => import("./features/disclosure-adequacy-analyzer/pages/DisclosureAdequacyAnalyzerPage"));
+const StrandedAssetLitigationTrackerPage = React.lazy(() => import("./features/stranded-asset-litigation-tracker/pages/StrandedAssetLitigationTrackerPage"));
+const RegulatoryEnforcementMonitorPage   = React.lazy(() => import("./features/regulatory-enforcement-monitor/pages/RegulatoryEnforcementMonitorPage"));
+const ClimateLegalIntelligenceDashboardPage = React.lazy(() => import("./features/climate-legal-intelligence-dashboard/pages/ClimateLegalIntelligenceDashboardPage"));
 // Sprint CY — Real-Time Climate Risk Intelligence
 const LiveCarbonPriceMonitorPage         = React.lazy(() => import("./features/live-carbon-price-monitor/pages/LiveCarbonPriceMonitorPage"));
 const PortfolioClimatePulsePage          = React.lazy(() => import("./features/portfolio-climate-pulse/pages/PortfolioClimatePulsePage"));
@@ -1342,6 +1349,14 @@ const NAV_GROUPS = [
     { path: '/peer-clustering-segmentation',     label: 'Peer Clustering Segmentation',   badge: 'K-Means · Silhouette · Cluster Profiles · Migration Tracker · Engagement Priority',    code: 'EP-CX4' },
     { path: '/scenario-conditional-prediction',  label: 'Scenario Conditional Prediction', badge: 'Custom Scenarios · Conditional Scores · Sensitivity Surface · Pathway Analysis',      code: 'EP-CX5' },
     { path: '/ml-governance-dashboard',          label: 'ML Governance Dashboard',        badge: 'Model Inventory · Drift Detection · SHAP · Fed SR 11-7 · EU AI Act Alignment',        code: 'EP-CX6' },
+  ]},
+  { label: 'Disclosure & Stranded Asset Analytics', icon: '📋', color: '#4f46e5', items: [
+    { path: '/climate-litigation-risk-scorer',      label: 'Climate Litigation Risk Scorer',      badge: '50 companies · GCEL & Sabin Center · 8 claim types · 12 jurisdictions · Portfolio Overlay', code: 'EP-DA1' },
+    { path: '/greenwashing-exposure-monitor',       label: 'Greenwashing Exposure Monitor',       badge: '40 companies · FCA · SEC · ASIC · BaFin · Gap Analysis · Enforcement Tracker',            code: 'EP-DA2' },
+    { path: '/disclosure-adequacy-analyzer',        label: 'Disclosure Adequacy Analyzer',        badge: '45 companies · TCFD 11 recs · IFRS S1/S2 · ESRS E1-E5 · GRI 305 · Peer Ranking',        code: 'EP-DA3' },
+    { path: '/stranded-asset-litigation-tracker',   label: 'Stranded Asset Litigation Tracker',   badge: '35 assets · Write-Down Scenarios · Creditor Exposure · Regulatory Triggers',              code: 'EP-DA4' },
+    { path: '/regulatory-enforcement-monitor',      label: 'Regulatory Enforcement Monitor',       badge: '15 regulators · 60 enforcement actions · Sector Heat · Portfolio Compliance · Fines',    code: 'EP-DA5' },
+    { path: '/climate-legal-intelligence-dashboard',label: 'Climate Legal Intelligence Dashboard', badge: '30 companies · 20 jurisdictions · 15 precedents · Risk Forecast · 3 Scenarios',          code: 'EP-DA6' },
   ]},
   { label: 'Real-Time Climate Intelligence', icon: '📡', color: '#0891b2', items: [
     { path: '/live-carbon-price-monitor',          label: 'Live Carbon Price Monitor',          badge: '8 Markets · 5s Refresh · Forward Curves · Portfolio Exposure · NGFS Overlay',           code: 'EP-CY1' },
@@ -2368,6 +2383,13 @@ function AppContent() {
             <Route path="/peer-clustering-segmentation"     element={<PeerClusteringSegmentationPage />} />
             <Route path="/scenario-conditional-prediction"  element={<ScenarioConditionalPredictionPage />} />
             <Route path="/ml-governance-dashboard"          element={<MlGovernanceDashboardPage />} />
+            {/* Sprint DA — Disclosure & Stranded Asset Analytics */}
+            <Route path="/climate-litigation-risk-scorer"      element={<ClimateLitigationRiskScorerPage />} />
+            <Route path="/greenwashing-exposure-monitor"       element={<GreenwashingExposureMonitorPage />} />
+            <Route path="/disclosure-adequacy-analyzer"        element={<DisclosureAdequacyAnalyzerPage />} />
+            <Route path="/stranded-asset-litigation-tracker"   element={<StrandedAssetLitigationTrackerPage />} />
+            <Route path="/regulatory-enforcement-monitor"      element={<RegulatoryEnforcementMonitorPage />} />
+            <Route path="/climate-legal-intelligence-dashboard" element={<ClimateLegalIntelligenceDashboardPage />} />
             {/* Sprint CY — Real-Time Climate Intelligence */}
             <Route path="/live-carbon-price-monitor"          element={<LiveCarbonPriceMonitorPage />} />
             <Route path="/portfolio-climate-pulse"            element={<PortfolioClimatePulsePage />} />
