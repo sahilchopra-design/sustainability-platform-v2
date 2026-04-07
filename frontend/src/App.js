@@ -1205,7 +1205,7 @@ const NAV_GROUPS = [
     { path: '/supply-chain-contagion',          label: 'Supply Chain Climate Contagion',    badge: '15 Companies · Tier 1/2/3 · 5 Chokepoints · Cascade Simulation · Network Graph',      code: 'EP-CG3' },
     { path: '/physical-risk-early-warning',     label: 'Physical Risk Early Warning',       badge: '12 Active Alerts · 72hr Forecast · Asset Exposure · Historical Events · Response',     code: 'EP-CG4' },
     { path: '/compound-event-modeler',          label: 'Compound Event Modeler',            badge: '10 Event Pairs · Joint Probability · Loss Amplification · Copula · Historical',        code: 'EP-CG5' },
-    { path: '/climate-migration-risk',          label: 'Climate Migration Risk',            badge: '15 Corridors · 216M Migrants by 2050 · Urban Stress · RE Demand · Investment',         code: 'EP-CG6' },
+    { path: '/climate-risk-migration',          label: 'Climate Migration Risk',            badge: '15 Corridors · 216M Migrants by 2050 · Urban Stress · RE Demand · Investment',         code: 'EP-CG6' },
   ]},
   { label: 'Probabilistic Scenario & Monte Carlo', icon: '🎲', color: '#4338ca', items: [
     { path: '/monte-carlo-climate',             label: 'Monte Carlo Climate Engine',        badge: '5,000 Paths · VaR 99% · CVaR 99.5% · Fan Chart · Correlation · Sensitivity',           code: 'EP-CH1' },
@@ -1650,7 +1650,7 @@ function Dashboard() {
             </div>
             <div style={{ padding: '6px 10px' }}>
               {g.items.slice(0, 3).map(item => (
-                <div key={item.path} onClick={() => navigate(item.path)} style={{
+                <div key={item.code || item.path} onClick={() => navigate(item.path)} style={{
                   padding: '5px 6px', borderRadius: 3, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   fontSize: 11, color: T.textSec, transition: 'background 0.12s',
                 }} onMouseEnter={e => { e.currentTarget.style.background = T.surfaceH; }}
@@ -1673,7 +1673,7 @@ function Dashboard() {
         {ALL_ITEMS.map(n => {
           const grp = NAV_GROUPS.find(g => g.items.includes(n));
           return (
-            <div key={n.path} onClick={() => navigate(n.path)} style={{
+            <div key={n.code || n.path} onClick={() => navigate(n.path)} style={{
               padding: '10px 12px', borderRadius: 4, border: `1px solid ${T.border}`, background: T.surface, cursor: 'pointer',
               borderLeft: `3px solid ${grp?.color || T.textMut}`, transition: 'box-shadow 0.15s, background 0.15s', boxShadow: 'none',
             }} onMouseEnter={e => { e.currentTarget.style.boxShadow = T.cardH; e.currentTarget.style.background = T.surfaceH; }}
@@ -1751,7 +1751,7 @@ function Sidebar({ search, setSearch, sidebarOpen }) {
               {!collapsed[group.label] && group.items.map(n => {
                 const isActive = location.pathname === n.path;
                 return (
-                  <NavLink key={n.path} to={n.path} style={{
+                  <NavLink key={n.code || n.path} to={n.path} style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '5px 8px 5px 30px', borderRadius: 3, marginBottom: 0, textDecoration: 'none',
                     background: isActive ? 'rgba(197,169,106,0.15)' : 'transparent',
@@ -2249,7 +2249,7 @@ function AppContent() {
             <Route path="/supply-chain-contagion"          element={<SupplyChainContagionPage />} />
             <Route path="/physical-risk-early-warning"     element={<PhysicalRiskEarlyWarningPage />} />
             <Route path="/compound-event-modeler"          element={<CompoundEventModelerPage />} />
-            <Route path="/climate-migration-risk"          element={<ClimateRiskMigrationPage />} />
+            <Route path="/climate-risk-migration"          element={<ClimateRiskMigrationPage />} />
             {/* Sprint CH — Probabilistic Scenario & Monte Carlo */}
             <Route path="/monte-carlo-climate"             element={<MonteCarloClimatePage />} />
             <Route path="/scenario-blending-optimizer"     element={<ScenarioBlendingOptimizerPage />} />
