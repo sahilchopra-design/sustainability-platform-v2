@@ -63,7 +63,7 @@ const CriticalMineralsPage = React.lazy(() => import("./features/critical-minera
 const NbsFinancePage = React.lazy(() => import("./features/nbs-finance/pages/NbsFinancePage"));
 const SFDRArt9Page = React.lazy(() => import("./features/sfdr-art9/pages/SFDRArt9Page"));
 // Sprint 34 — E96–E99
-const VCMIntegrityPage = React.lazy(() => import("./features/vcm-integrity/pages/VCMIntegrityPage"));
+const VCMIntegrityPage = React.lazy(() => import("./features/vcm-integrity/pages/VcmIntegrityPage"));
 const SocialTaxonomyPage = React.lazy(() => import("./features/social-taxonomy/pages/SocialTaxonomyPage"));
 const GreenHydrogenPage = React.lazy(() => import("./features/green-hydrogen/pages/GreenHydrogenPage"));
 const TransitionFinancePage = React.lazy(() => import("./features/transition-finance/pages/TransitionFinancePage"));
@@ -534,7 +534,7 @@ const CcArrReforestationPage     = React.lazy(() => import("./features/cc-arr-re
 const CcIfmCreditsPage           = React.lazy(() => import("./features/cc-ifm-credits/pages/CcIfmCreditsPage"));
 const CcReddWetlandsHubPage      = React.lazy(() => import("./features/cc-redd-wetlands-hub/pages/CcReddWetlandsHubPage"));
 // Sprint BO — Critical Minerals · Battery & EV Analytics · ET Commodity Risk
-const BatteryEVAnalyticsPage      = React.lazy(() => import("./features/battery-ev-analytics/pages/BatteryEVAnalyticsPage"));
+const BatteryEVAnalyticsPage      = React.lazy(() => import("./features/battery-ev-analytics/pages/BatteryEvAnalyticsPage"));
 const ETCommodityRiskPage         = React.lazy(() => import("./features/et-commodity-risk/pages/ETCommodityRiskPage"));
 // Sprint BP — Equitable Earth Methodologies (standalone with calculation engine)
 const EquitableEarthMethodologiesPage = React.lazy(() => import("./features/equitable-earth-methodologies/pages/EquitableEarthMethodologiesPage"));
@@ -544,7 +544,7 @@ const CarbonForwardCurvePage     = React.lazy(() => import("./features/carbon-fo
 const CreditIntegrityDDPage      = React.lazy(() => import("./features/credit-integrity-dd/pages/CreditIntegrityDDPage"));
 // Sprint BM — NatCat Loss Engine · Cat Bond & ILS · Insurance Protection Gap
 const NatCatLossEnginePage        = React.lazy(() => import("./features/natcat-loss-engine/pages/NatCatLossEnginePage"));
-const CatBondILSPage              = React.lazy(() => import("./features/cat-bond-ils/pages/CatBondILSPage"));
+const CatBondILSPage              = React.lazy(() => import("./features/cat-bond-ils/pages/CatBondIlsPage"));
 const InsuranceProtectionGapPage  = React.lazy(() => import("./features/insurance-protection-gap/pages/InsuranceProtectionGapPage"));
 // Sprint BL — ML Risk Scorer · NLP Disclosure Parser · Predictive Analytics Hub
 const MLRiskScorerPage            = React.lazy(() => import("./features/ml-risk-scorer/pages/MLRiskScorerPage"));
