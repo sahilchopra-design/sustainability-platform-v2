@@ -43,7 +43,7 @@ function DataPointRow({ dp }) {
 }
 
 export default function GuidedModeOverlay() {
-  const { isGuidedMode, expandedSections, toggleSection, panelWidth, showCalculationBrief, showDataPoints, showUserInteraction, showReferences } = useGuidedMode();
+  const { isGuidedMode, expandedSections, toggleSection, panelWidth, showCalculationBrief, showDataPoints, showUserInteraction, showReferences, showAcronyms, showValueSummary, showDataLineage } = useGuidedMode();
   const location = useLocation();
 
   const currentPath = location.pathname;
@@ -95,6 +95,38 @@ export default function GuidedModeOverlay() {
         <div style={{ padding: '10px 14px', fontSize: 12, color: T.textSec, lineHeight: 1.7, borderBottom: `1px solid ${T.border}` }}>
           {guide.description}
         </div>
+      )}
+
+      {/* ── Key Terms (Acronym Glossary) ── */}
+      {showAcronyms && guide.acronyms && guide.acronyms.length > 0 && (
+        <>
+          <SectionHeader title={`Key Terms (${guide.acronyms.length})`} icon="🔤" expanded={expandedSections.includes('acronyms')} onToggle={() => toggleSection('acronyms')} color={T.amber} />
+          {expandedSections.includes('acronyms') && (
+            <div style={{ padding: '8px 14px', borderBottom: `1px solid ${T.border}` }}>
+              {guide.acronyms.map((a, i) => (
+                <div key={i} style={{ marginBottom: 8, fontSize: 11 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                    <span style={{ fontFamily: T.mono, fontWeight: 700, color: T.navy, minWidth: 54, fontSize: 10 }}>{a.abbr}</span>
+                    <span style={{ color: T.gold, fontWeight: 600, fontSize: 11 }}>{a.full}</span>
+                  </div>
+                  {a.def && <div style={{ color: T.textSec, marginTop: 2, paddingLeft: 62, fontSize: 10, lineHeight: 1.5 }}>{a.def}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── Value & Decisions ── */}
+      {showValueSummary && guide.valueSummary && (
+        <>
+          <SectionHeader title="Value & Decisions" icon="💡" expanded={expandedSections.includes('value')} onToggle={() => toggleSection('value')} color={T.green} />
+          {expandedSections.includes('value') && (
+            <div style={{ padding: '10px 14px', fontSize: 12, color: T.textSec, lineHeight: 1.7, borderBottom: `1px solid ${T.border}` }}>
+              {guide.valueSummary}
+            </div>
+          )}
+        </>
       )}
 
       {/* ── Calculation Engine ── */}
@@ -159,6 +191,28 @@ export default function GuidedModeOverlay() {
             <div style={{ padding: '10px 14px', borderBottom: `1px solid ${T.border}` }}>
               {guide.references.map((ref, i) => (
                 <div key={i} style={{ fontSize: 10, color: T.textSec, marginBottom: 4, paddingLeft: 12, borderLeft: `2px solid ${T.gold}22` }}>{ref}</div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── Data Lineage ── */}
+      {showDataLineage && guide.dataLineage && guide.dataLineage.length > 0 && (
+        <>
+          <SectionHeader title={`Data Lineage (${guide.dataLineage.length})`} icon="🔗" expanded={expandedSections.includes('lineage')} onToggle={() => toggleSection('lineage')} color={T.purple} />
+          {expandedSections.includes('lineage') && (
+            <div style={{ padding: '10px 14px', borderBottom: `1px solid ${T.border}` }}>
+              {guide.dataLineage.map((d, i) => (
+                <div key={i} style={{ marginBottom: 10, fontSize: 11 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <span style={{ padding: '2px 6px', borderRadius: 3, background: T.blue + '15', color: T.blue, fontWeight: 600, fontSize: 10 }}>{d.source}</span>
+                    <span style={{ color: T.textMut, fontSize: 10 }}>→</span>
+                    <span style={{ padding: '2px 6px', borderRadius: 3, background: T.teal + '15', color: T.teal, fontWeight: 600, fontSize: 10 }}>{d.flow}</span>
+                    <span style={{ color: T.textMut, fontSize: 10 }}>→</span>
+                    <span style={{ padding: '2px 6px', borderRadius: 3, background: T.green + '15', color: T.green, fontWeight: 600, fontSize: 10 }}>{d.output}</span>
+                  </div>
+                </div>
               ))}
             </div>
           )}

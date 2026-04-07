@@ -8,6 +8,9 @@ const initialState = {
   showDataPoints: true,
   showUserInteraction: true,
   showReferences: true,
+  showAcronyms: true,
+  showValueSummary: true,
+  showDataLineage: true,
   panelPosition: 'right',       // 'right' | 'bottom' | 'floating'
   panelWidth: 380,
   dismissedTips: [],
@@ -35,6 +38,12 @@ function reducer(state, action) {
       return { ...state, showUserInteraction: !state.showUserInteraction };
     case 'TOGGLE_REFERENCES':
       return { ...state, showReferences: !state.showReferences };
+    case 'TOGGLE_ACRONYMS':
+      return { ...state, showAcronyms: !state.showAcronyms };
+    case 'TOGGLE_VALUE_SUMMARY':
+      return { ...state, showValueSummary: !state.showValueSummary };
+    case 'TOGGLE_DATA_LINEAGE':
+      return { ...state, showDataLineage: !state.showDataLineage };
     case 'SET_PANEL_POSITION':
       return { ...state, panelPosition: action.payload };
     case 'SET_PANEL_WIDTH':
@@ -75,6 +84,9 @@ export function GuidedModeProvider({ children }) {
         showDataPoints: state.showDataPoints,
         showUserInteraction: state.showUserInteraction,
         showReferences: state.showReferences,
+        showAcronyms: state.showAcronyms,
+        showValueSummary: state.showValueSummary,
+        showDataLineage: state.showDataLineage,
         panelPosition: state.panelPosition,
         panelWidth: state.panelWidth,
         dismissedTips: state.dismissedTips,
