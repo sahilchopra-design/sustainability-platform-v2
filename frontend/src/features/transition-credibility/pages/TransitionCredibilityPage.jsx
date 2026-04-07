@@ -181,7 +181,7 @@ const ScorecardTab=()=>{
 
   const radarData=selected?KPI_KEYS.map((k,i)=>{
     const sectorPeers=COMPANIES.filter(c=>c.sector===selected.sector);
-    const avg=Math.round(sectorPeers.reduce((s,c)=>s+c[k],0)/sectorPeers.length);
+    const avg=Math.round(sectorPeers.reduce((s,c)=>s+c[k],0)/Math.max(1,sectorPeers.length));
     const best=Math.max(...sectorPeers.map(c=>c[k]));
     return {kpi:KPI_NAMES[i].length>14?KPI_NAMES[i].substring(0,12)+'..':KPI_NAMES[i],value:selected[k],peer:avg,best};
   }):[];

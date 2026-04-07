@@ -63,12 +63,12 @@ export default function DigitalMrvPage(){
 
   const kpis=useMemo(()=>{
     const tot=projects.reduce((a,p)=>a+p.verified,0);
-    const avgAcc=projects.reduce((a,p)=>a+parseFloat(p.accuracy),0)/projects.length;
-    const avgConf=projects.reduce((a,p)=>a+parseFloat(p.confidence),0)/projects.length;
-    const satCov=satSites.filter(s=>s.status!=='Critical').length/satSites.length*100;
+    const avgAcc=projects.length?projects.reduce((a,p)=>a+parseFloat(p.accuracy),0)/projects.length:0;
+    const avgConf=projects.length?projects.reduce((a,p)=>a+parseFloat(p.confidence),0)/projects.length:0;
+    const satCov=satSites.length?satSites.filter(s=>s.status!=='Critical').length/satSites.length*100:0;
     const iotCount=sensors.filter(s=>s.status==='Online').length;
     const costSav=certs.reduce((a,c)=>a+(c.tradCost-c.digiCost),0);
-    const avgTurn=certs.reduce((a,c)=>a+c.digiDays,0)/certs.length;
+    const avgTurn=certs.length?certs.reduce((a,c)=>a+c.digiDays,0)/certs.length:0;
     return[{label:'Total Verified Emissions',value:`${tot.toFixed(1)} MtCO2e`,icon:'🛰️'},{label:'Active Projects',value:projects.length,icon:'📊'},{label:'Avg Verification Accuracy',value:`${avgAcc.toFixed(1)}%`,icon:'✓'},{label:'Satellite Coverage',value:`${satCov.toFixed(0)}%`,icon:'🌍'},{label:'IoT Sensors Online',value:iotCount,icon:'📡'},{label:'AI Confidence Score',value:`${avgConf.toFixed(1)}%`,icon:'🤖'},{label:'Cost Savings vs Manual',value:`$${(costSav/1000).toFixed(0)}K`,icon:'💰'},{label:'Avg Turnaround',value:`${avgTurn.toFixed(1)} days`,icon:'⏱️'}];
   },[projects,satSites,sensors,certs]);
 

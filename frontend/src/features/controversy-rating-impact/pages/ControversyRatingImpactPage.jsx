@@ -588,7 +588,7 @@ function RecoveryAnalytics({events}){
   const recoveryDistData=useMemo(()=>{
     const buckets={'1-2Q':0,'3-4Q':0,'5-6Q':0,'7-8Q':0,'9-10Q':0,'11-12Q':0,'Never':0};
     filtered.forEach(e=>{
-      const avgRec=e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length;
+      const avgRec=e.recoverQ.length?e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length:0;
       if(avgRec<=2)buckets['1-2Q']++;
       else if(avgRec<=4)buckets['3-4Q']++;
       else if(avgRec<=6)buckets['5-6Q']++;
@@ -603,12 +603,12 @@ function RecoveryAnalytics({events}){
   const neverRecovered=useMemo(()=>{
     return filtered.filter(e=>{
       const lastQ=PROVIDERS.map((_,pi)=>e.ratings[pi][11]);
-      const preAvg=e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length;
-      const lastAvg=lastQ.reduce((a,v)=>a+v,0)/lastQ.length;
+      const preAvg=e.preRatings.length?e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length:0;
+      const lastAvg=lastQ.length?lastQ.reduce((a,v)=>a+v,0)/lastQ.length:0;
       return lastAvg<preAvg-2;
     }).map(e=>{
-      const preAvg=e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length;
-      const lastAvg=PROVIDERS.map((_,pi)=>e.ratings[pi][11]).reduce((a,v)=>a+v,0)/PROVIDERS.length;
+      const preAvg=e.preRatings.length?e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length:0;
+      const lastAvg=PROVIDERS.length?PROVIDERS.map((_,pi)=>e.ratings[pi][11]).reduce((a,v)=>a+v,0)/PROVIDERS.length:0;
       return {...e,preAvg:preAvg.toFixed(1),currentAvg:lastAvg.toFixed(1),deficit:(preAvg-lastAvg).toFixed(1)};
     }).sort((a,b)=>b.deficit-a.deficit);
   },[filtered]);
@@ -616,13 +616,13 @@ function RecoveryAnalytics({events}){
   const fullyRecovered=useMemo(()=>{
     return filtered.filter(e=>{
       const lastQ=PROVIDERS.map((_,pi)=>e.ratings[pi][11]);
-      const preAvg=e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length;
-      const lastAvg=lastQ.reduce((a,v)=>a+v,0)/lastQ.length;
+      const preAvg=e.preRatings.length?e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length:0;
+      const lastAvg=lastQ.length?lastQ.reduce((a,v)=>a+v,0)/lastQ.length:0;
       return lastAvg>=preAvg-2;
     }).map(e=>{
-      const preAvg=e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length;
-      const lastAvg=PROVIDERS.map((_,pi)=>e.ratings[pi][11]).reduce((a,v)=>a+v,0)/PROVIDERS.length;
-      const avgRecQ=e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length;
+      const preAvg=e.preRatings.length?e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length:0;
+      const lastAvg=PROVIDERS.length?PROVIDERS.map((_,pi)=>e.ratings[pi][11]).reduce((a,v)=>a+v,0)/PROVIDERS.length:0;
+      const avgRecQ=e.recoverQ.length?e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length:0;
       return {...e,preAvg:preAvg.toFixed(1),currentAvg:lastAvg.toFixed(1),recoveryQ:avgRecQ.toFixed(1)};
     });
   },[filtered]);
@@ -631,7 +631,7 @@ function RecoveryAnalytics({events}){
     const sectorMap={};
     filtered.forEach(e=>{
       if(!sectorMap[e.sector])sectorMap[e.sector]=[];
-      const avgRec=e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length;
+      const avgRec=e.recoverQ.length?e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length:0;
       sectorMap[e.sector].push(avgRec);
     });
     return Object.entries(sectorMap).map(([sector,vals])=>({sector,avgRecovery:parseFloat((vals.reduce((a,v)=>a+v,0)/vals.length).toFixed(1)),count:vals.length})).sort((a,b)=>a.avgRecovery-b.avgRecovery);
@@ -650,7 +650,7 @@ function RecoveryAnalytics({events}){
     ];
     return factors.map(f=>{
       const xs=filtered.map(e=>{
-        const avgRec=e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length;
+        const avgRec=e.recoverQ.length?e.recoverQ.reduce((a,v)=>a+v,0)/e.recoverQ.length:0;
         switch(f.key){
           case 'sev':return {x:6-e.severity,y:avgRec};
           case 'pre':return {x:e.preRatings.reduce((a,v)=>a+v,0)/e.preRatings.length,y:avgRec};

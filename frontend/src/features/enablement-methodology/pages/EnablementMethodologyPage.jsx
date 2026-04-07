@@ -372,8 +372,8 @@ function PortfolioEnablement(){
     return parseFloat(weightedR.toFixed(2));
   },[allocationAdj]);
 
-  const topEnablers=PRODUCTS.sort((a,b)=>b.enabledReduction-a.enabledReduction).slice(0,8);
-  const topEmitters=PRODUCTS.sort((a,b)=>b.financedEmissions-a.financedEmissions).slice(0,8);
+  const topEnablers=[...PRODUCTS].sort((a,b)=>b.enabledReduction-a.enabledReduction).slice(0,8);
+  const topEmitters=[...PRODUCTS].sort((a,b)=>b.financedEmissions-a.financedEmissions).slice(0,8);
 
   const pcafData=CATEGORIES.map((c,i)=>{
     const prods=PRODUCTS.filter(p=>p.category===c);
