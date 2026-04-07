@@ -41,10 +41,10 @@ export default function AccessExpiredPage() {
             fontFamily: "'JetBrains Mono', monospace",
             marginBottom: 16,
           }}>
-            AA
+            A²
           </div>
           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, letterSpacing: '0.06em' }}>
-            AA IMPACT INTELLIGENCE
+            A² INTELLIGENCE
           </div>
         </div>
 
@@ -76,7 +76,7 @@ export default function AccessExpiredPage() {
           maxWidth: 360,
           margin: '0 auto 8px',
         }}>
-          Your access to the AA Impact Intelligence platform has expired.
+          Your access to the A² Intelligence platform has expired.
         </div>
         {(email || org) && (
           <div style={{
@@ -170,7 +170,7 @@ export default function AccessExpiredPage() {
           fontFamily: "'JetBrains Mono', monospace",
           letterSpacing: '0.06em',
         }}>
-          AA IMPACT INTELLIGENCE · CONFIDENTIAL
+          A² INTELLIGENCE · CONFIDENTIAL
         </div>
       </div>
     </div>

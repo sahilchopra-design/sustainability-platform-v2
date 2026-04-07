@@ -238,13 +238,13 @@ export default function InviteAcceptPage() {
             fontFamily: "'JetBrains Mono', monospace",
             boxShadow: '0 0 0 4px rgba(212,168,67,0.2)',
           }}>
-            AA
+            A²
           </div>
           <div style={{ color: '#ffffff', fontSize: 20, fontWeight: 700 }}>
             You've been invited
           </div>
           <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, marginTop: 4 }}>
-            AA Impact Intelligence — Sustainability Risk Platform
+            A² Intelligence by AA Impact Inc.
           </div>
         </div>
 

@@ -1876,10 +1876,10 @@ function HeaderBar({ sidebarOpen, setSidebarOpen }) {
             width: 26, height: 26, borderRadius: 4, background: `linear-gradient(135deg, ${T.gold}, ${T.goldD})`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 9, fontWeight: 800, color: T.navy, fontFamily: T.mono,
-          }}>AA</div>
+          }}>A²</div>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '0.03em' }}>AA Impact</div>
-            <div style={{ fontSize: 8, fontFamily: T.mono, color: 'rgba(255,255,255,0.35)', lineHeight: 1.4, letterSpacing: '0.06em' }}>A2 INTELLIGENCE</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '0.03em' }}>AA Impact Inc.</div>
+            <div style={{ fontSize: 8, fontFamily: T.mono, color: 'rgba(255,255,255,0.35)', lineHeight: 1.4, letterSpacing: '0.06em' }}>A² INTELLIGENCE</div>
           </div>
         </div>
 
@@ -1950,7 +1950,7 @@ function StatusBar() {
         <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
         <span style={{ padding: '0 6px', color: T.goldL, fontWeight: 500, maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{current.badge}</span>
       </>}
-      <span style={{ marginLeft: 'auto', color: T.gold, fontWeight: 600, letterSpacing: '0.08em' }}>AA IMPACT</span>
+      <span style={{ marginLeft: 'auto', color: T.gold, fontWeight: 600, letterSpacing: '0.08em' }}>A² INTELLIGENCE</span>
     </div>
   );
 }

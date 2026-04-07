@@ -86,7 +86,7 @@ export default function LoginPage() {
             fontFamily: "'JetBrains Mono', monospace",
             boxShadow: '0 0 0 4px rgba(212,168,67,0.2), 0 8px 24px rgba(0,0,0,0.3)',
           }}>
-            AA
+            A²
           </div>
           <div style={{
             color: '#ffffff',
@@ -94,7 +94,7 @@ export default function LoginPage() {
             fontWeight: 700,
             letterSpacing: '0.01em',
           }}>
-            AA Impact Intelligence
+            A<sup style={{ fontSize: '0.6em', verticalAlign: 'super', letterSpacing: 0 }}>2</sup>{' '}Intelligence
           </div>
           <div style={{
             color: 'rgba(255,255,255,0.45)',
@@ -102,7 +102,7 @@ export default function LoginPage() {
             marginTop: 4,
             letterSpacing: '0.03em',
           }}>
-            Sustainability Risk Platform
+            by AA Impact Inc.
           </div>
         </div>
 
@@ -217,7 +217,7 @@ export default function LoginPage() {
           fontFamily: "'JetBrains Mono', monospace",
           letterSpacing: '0.06em',
         }}>
-          AA IMPACT INTELLIGENCE · CONFIDENTIAL
+          A² INTELLIGENCE · CONFIDENTIAL
         </div>
       </div>
     </div>

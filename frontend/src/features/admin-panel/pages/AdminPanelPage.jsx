@@ -1136,7 +1136,7 @@ export default function AdminPanelPage() {
             letterSpacing: '0.08em',
             marginBottom: 4,
           }}>
-            AA IMPACT INTELLIGENCE / ADMIN
+            A² INTELLIGENCE / ADMIN
           </div>
           <div style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.01em' }}>
             RBAC Administration

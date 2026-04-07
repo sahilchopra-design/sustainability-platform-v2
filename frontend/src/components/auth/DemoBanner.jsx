@@ -44,7 +44,7 @@ export default function DemoBanner() {
         <span style={{ color: 'rgba(255,255,255,0.7)' }}>Read-only · {expiry}</span>
       </div>
       <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>
-        AA IMPACT INTELLIGENCE — CONFIDENTIAL
+        A² INTELLIGENCE — CONFIDENTIAL
       </div>
     </div>
   );
