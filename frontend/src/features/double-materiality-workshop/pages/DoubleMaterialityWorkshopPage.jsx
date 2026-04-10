@@ -81,8 +81,8 @@ function MaterialityAssessment({scores}){
 
   const material=localScores.filter(s=>s.impact>=2.5||s.financial>=2.5).length;
   const bothMaterial=localScores.filter(s=>s.impact>=2.5&&s.financial>=2.5).length;
-  const avgImpact=+(localScores.reduce((a,s)=>a+s.impact,0)/localScores.length).toFixed(1);
-  const avgFinancial=+(localScores.reduce((a,s)=>a+s.financial,0)/localScores.length).toFixed(1);
+  const avgImpact=+(localScores.reduce((a,s)=>a+s.impact,0)/ Math.max(1, localScores.length)).toFixed(1);
+  const avgFinancial=+(localScores.reduce((a,s)=>a+s.financial,0)/ Math.max(1, localScores.length)).toFixed(1);
 
   const updateScore=(id,field,val)=>{
     setLocalScores(prev=>prev.map(s=>s.id===id?{...s,[field]:+val}:s));
@@ -221,7 +221,7 @@ function MaterialityAssessment({scores}){
               {label:'Impact material (≥2.5)',value:localScores.filter(s=>s.impact>=2.5).length},
               {label:'Financially material (≥2.5)',value:localScores.filter(s=>s.financial>=2.5).length},
               {label:'Mandatory disclosures',value:localScores.filter(s=>s.mandatory).length},
-              {label:'Avg data completeness',value:Math.round(localScores.reduce((a,s)=>a+s.completeness,0)/localScores.length)+'%'},
+              {label:'Avg data completeness',value:Math.round(localScores.reduce((a,s)=>a+s.completeness,0)/ Math.max(1, localScores.length))+'%'},
               {label:'EFRAG IG 1 compliant',value:localScores.filter(s=>s.stakeholders.length>=2).length+' topics'},
             ].map((f,i)=>(
               <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'8px 12px',background:i%2===0?T.surfaceH:'transparent',borderRadius:6,marginBottom:2}}>
@@ -497,8 +497,8 @@ function EsrsGapAnalysis({scores}){
         {[
           {label:'Mandatory DPs Covered',value:`${coveredRequired}/${totalRequired}`,color:coveredRequired/totalRequired>=0.8?T.green:T.amber},
           {label:'Optional DPs Covered',value:`${coveredOptional}/${totalOptional}`,color:T.navy},
-          {label:'Overall Gap',value:Math.round((mandatory_dps.length-mandatory_dps.filter(dp=>dp.covered).length)/mandatory_dps.length*100)+'%',color:T.red},
-          {label:'CSRD Readiness',value:Math.round(mandatory_dps.filter(dp=>dp.covered).length/mandatory_dps.length*100)+'%',color:T.green},
+          {label:'Overall Gap',value:Math.round((mandatory_dps.length-mandatory_dps.filter(dp=>dp.covered).length)/ Math.max(1, mandatory_dps.length)*100)+'%',color:T.red},
+          {label:'CSRD Readiness',value:Math.round(mandatory_dps.filter(dp=>dp.covered).length/ Math.max(1, mandatory_dps.length)*100)+'%',color:T.green},
         ].map((kpi,i)=>(
           <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:'16px 20px'}}>
             <div style={{fontSize:11,fontWeight:600,color:T.textMut,textTransform:'uppercase',letterSpacing:0.5,marginBottom:6}}>{kpi.label}</div>

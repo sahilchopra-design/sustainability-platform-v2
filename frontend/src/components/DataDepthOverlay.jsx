@@ -73,6 +73,130 @@ export default function DataDepthOverlay() {
 
   const currentPath = location.pathname;
   const metadata = MODULE_METADATA[currentPath];
+  const highlightTimerRef = useRef(null);
+
+  // ── Highlight drillable data points when depth mode is active ──
+  useEffect(() => {
+    if (!isActive || !metadata) {
+      // Remove all highlights when depth mode is off
+      document.querySelectorAll('[data-depth-highlight]').forEach(el => {
+        el.removeAttribute('data-depth-highlight');
+        el.style.removeProperty('outline');
+        el.style.removeProperty('outline-offset');
+        el.style.removeProperty('cursor');
+        el.style.removeProperty('position');
+        const badge = el.querySelector('.depth-badge');
+        if (badge) badge.remove();
+      });
+      return;
+    }
+
+    function highlightDrillableElements() {
+      // Remove old highlights first
+      document.querySelectorAll('[data-depth-highlight]').forEach(el => {
+        el.removeAttribute('data-depth-highlight');
+        el.style.removeProperty('outline');
+        el.style.removeProperty('outline-offset');
+        el.style.removeProperty('cursor');
+        el.style.removeProperty('box-shadow');
+        el.style.removeProperty('border-radius');
+        const badge = el.querySelector('.depth-badge');
+        if (badge) badge.remove();
+      });
+
+      // Scan for bold/large numeric text elements that match metadata
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      const candidates = [];
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const text = node.textContent.trim();
+        if (!text || text.length > 50 || text.length < 1) continue;
+        const el = node.parentElement;
+        if (!el) continue;
+        // Skip elements inside the overlay itself
+        if (el.closest('[style*="zIndex: 10000"]') || el.closest('[style*="z-index: 10000"]')) continue;
+
+        const cs = window.getComputedStyle(el);
+        const isBold = parseInt(cs.fontWeight) >= 600;
+        const isLargeText = parseInt(cs.fontSize) >= 16;
+        const hasNumber = /\d/.test(text);
+
+        if (isBold && isLargeText && hasNumber && el.children.length === 0) {
+          // Try to find context (label) from the same card container
+          let contextText = text;
+          let container = el.parentElement;
+          for (let up = 0; up < 4 && container; up++) {
+            const children = container.querySelectorAll('div, span, p');
+            for (const child of children) {
+              const ct = child.textContent.trim();
+              const childCs = window.getComputedStyle(child);
+              const isLabel = parseInt(childCs.fontSize) <= 14 && ct !== text && ct.length > 2 && ct.length < 40 && !/^\d/.test(ct);
+              if (isLabel && child.children.length === 0) {
+                contextText = ct + ' ' + text;
+                break;
+              }
+            }
+            if (contextText !== text) break;
+            container = container.parentElement;
+          }
+
+          // Check if this matches any metric in metadata
+          const match = findMetricByText(contextText, metadata) || findMetricByText(text, metadata);
+          if (match) {
+            candidates.push({ el, match, text });
+          }
+        }
+      }
+
+      // Apply highlights
+      candidates.forEach(({ el, match }) => {
+        if (el.getAttribute('data-depth-highlight')) return; // already highlighted
+        el.setAttribute('data-depth-highlight', match.key);
+        el.style.outline = '2px dashed rgba(8,145,178,0.5)';
+        el.style.outlineOffset = '3px';
+        el.style.cursor = 'pointer';
+        el.style.borderRadius = '4px';
+        el.style.boxShadow = '0 0 8px rgba(8,145,178,0.15)';
+        // Position relative for badge
+        if (!el.style.position || el.style.position === 'static') {
+          el.style.position = 'relative';
+        }
+        // Add small depth icon badge
+        if (!el.querySelector('.depth-badge')) {
+          const badge = document.createElement('span');
+          badge.className = 'depth-badge';
+          badge.textContent = '🔍';
+          badge.style.cssText = 'position:absolute;top:-8px;right:-8px;font-size:10px;background:#0891b2;color:white;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,0.3);z-index:5;';
+          el.appendChild(badge);
+        }
+      });
+    }
+
+    // Run highlighting after a small delay (let React finish rendering)
+    highlightTimerRef.current = setTimeout(highlightDrillableElements, 500);
+
+    // Re-run on DOM changes (tab switches, data updates)
+    const observer = new MutationObserver(() => {
+      clearTimeout(highlightTimerRef.current);
+      highlightTimerRef.current = setTimeout(highlightDrillableElements, 300);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      clearTimeout(highlightTimerRef.current);
+      observer.disconnect();
+      document.querySelectorAll('[data-depth-highlight]').forEach(el => {
+        el.removeAttribute('data-depth-highlight');
+        el.style.removeProperty('outline');
+        el.style.removeProperty('outline-offset');
+        el.style.removeProperty('cursor');
+        el.style.removeProperty('box-shadow');
+        el.style.removeProperty('border-radius');
+        const badge = el.querySelector('.depth-badge');
+        if (badge) badge.remove();
+      });
+    };
+  }, [isActive, metadata, currentPath]);
 
   // Click interceptor — captures clicks on metric elements
   const handleDocumentClick = useCallback((e) => {
@@ -81,24 +205,50 @@ export default function DataDepthOverlay() {
 
     // Find the nearest metric-like element using computed styles (works with React inline styles)
     let target = e.target;
-    // Walk up max 3 levels to find a metric element
-    for (let i = 0; i < 4 && target && target !== document.body; i++) {
+    // Walk up max 5 levels to find a metric element
+    for (let i = 0; i < 6 && target && target !== document.body; i++) {
       const cs = window.getComputedStyle(target);
-      const isBold = parseInt(cs.fontWeight) >= 700;
+      const isBold = parseInt(cs.fontWeight) >= 600;
       const isMono = cs.fontFamily.includes('Mono') || cs.fontFamily.includes('monospace');
-      const isLargeText = parseInt(cs.fontSize) >= 18;
-      const hasNumericContent = /^[\d$€£%°.,BMKyr/\s\-+×·]+$/.test(target.textContent.trim());
-      if ((isBold && (isMono || isLargeText || hasNumericContent)) || (isMono && isBold)) break;
+      const isLargeText = parseInt(cs.fontSize) >= 16;
+      // Match numeric content including units like tCO2e, MWh, %, $, ₹, °C, Cr, L, B, M, K
+      const hasNumericContent = /[\d]/.test(target.textContent.trim()) && /^[\d$€£₹%°.,BMKLCryr/\s\-+×·tCO2eINRUSDMWhGWkgppm°]+$/.test(target.textContent.trim());
+      // Also match if the text contains a number and is inside a KPI-like container
+      const hasNumber = /\d/.test(target.textContent.trim());
+      const isSmallElement = target.textContent.trim().length < 40;
+      if ((isBold && (isMono || isLargeText || hasNumericContent)) || (isMono && isBold) || (isBold && hasNumber && isSmallElement && isLargeText)) break;
       target = target.parentElement;
     }
     if (!target || target === document.body) { clearSelection(); return; }
 
     const text = target.textContent.trim();
-    if (!text || text.length > 30 || text.length < 1) { clearSelection(); return; }
+    if (!text || text.length > 50 || text.length < 1) { clearSelection(); return; }
 
-    // Try to match against module metadata
+
+    // Try to match against module metadata using value text + nearby label text
     if (metadata) {
-      const match = findMetricByText(text, metadata);
+      // Grab label text from within the same KPI card container
+      // Walk UP to find the card container (usually 2-3 levels up), then search its children for a label
+      let contextText = text;
+      let container = target.parentElement;
+      for (let up = 0; up < 4 && container; up++) {
+        // Look for a small text element that's a label (fontSize < 14px, not the value itself)
+        const children = container.querySelectorAll('div, span, p');
+        for (const child of children) {
+          const ct = child.textContent.trim();
+          const cs = window.getComputedStyle(child);
+          const isLabel = parseInt(cs.fontSize) <= 14 && ct !== text && ct.length > 2 && ct.length < 40 && !/^\d/.test(ct);
+          if (isLabel && child.children.length === 0) {
+            contextText = ct + ' ' + text;
+            break;
+          }
+        }
+        if (contextText !== text) break;
+        container = container.parentElement;
+      }
+
+      const match = findMetricByText(contextText, metadata) || findMetricByText(text, metadata);
+
       if (match) {
         const rect = target.getBoundingClientRect();
         setPosition({

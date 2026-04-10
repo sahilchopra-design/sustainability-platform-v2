@@ -178,7 +178,7 @@ export default function ProxyVotingClimatePage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Board Climate Competence Score</h3>
           <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={DIRECTOR_SCORES.sort((a, b) => b.score - a.score)}>
+            <BarChart data={[...DIRECTOR_SCORES].sort((a, b) => b.score - a.score)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="company" tick={{ fontSize:11, fontFamily:T.mono }} />
               <YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0, 100]} />

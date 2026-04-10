@@ -78,9 +78,9 @@ export default function HeatMortalityRiskPage(){
 
   const topKPIs=useMemo(()=>{
     const crit=CITIES.filter(c=>c.riskTier==='Critical').length;
-    const avgWBGT=+(CITIES.reduce((s,c)=>s+c.baseWBGT,0)/CITIES.length).toFixed(1);
+    const avgWBGT=+(CITIES.length?CITIES.reduce((s,c)=>s+c.baseWBGT,0)/CITIES.length:0).toFixed(1);
     const totalMort=CITIES.reduce((s,c)=>s+c.rcpMort[rcpIdx][horizonIdx],0);
-    const avgDays35=Math.floor(CITIES.reduce((s,c)=>s+c.days35,0)/CITIES.length);
+    const avgDays35=CITIES.length?Math.floor(CITIES.reduce((s,c)=>s+c.days35,0)/CITIES.length):0;
     return {crit,avgWBGT,totalMort,avgDays35};
   },[rcpIdx,horizonIdx]);
 
@@ -123,8 +123,8 @@ export default function HeatMortalityRiskPage(){
 
   const totalFinancial=useMemo(()=>({
     healthCost:CITIES.reduce((s,c)=>s+c.healthcostM,0),insurance:CITIES.reduce((s,c)=>s+c.insuranceClaimsM,0),
-    avgREImpact:+(CITIES.reduce((s,c)=>s+c.realEstateImpactPct,0)/CITIES.length).toFixed(1),
-    avgPortfolio:+(CITIES.reduce((s,c)=>s+c.portfolioExposurePct,0)/CITIES.length).toFixed(1)
+    avgREImpact:+(CITIES.length?CITIES.reduce((s,c)=>s+c.realEstateImpactPct,0)/CITIES.length:0).toFixed(1),
+    avgPortfolio:+(CITIES.length?CITIES.reduce((s,c)=>s+c.portfolioExposurePct,0)/CITIES.length:0).toFixed(1)
   }),[]);
 
   const cityDetail=selectedCity?CITIES.find(c=>c.id===selectedCity):null;
@@ -237,7 +237,7 @@ export default function HeatMortalityRiskPage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Total GDP Loss',`$${fmt(labourAgg.reduce((s,l)=>s+l.totalGDPM,0)*1e6)}`,'Heat-related across sectors',T.red)}
         {kpiBox('Workers Exposed',fmt(labourAgg.reduce((s,l)=>s+l.totalWorkersK,0)*1000),'Outdoor/industrial',T.amber)}
-        {kpiBox('Avg Productivity Loss',`${(labourAgg.reduce((s,l)=>s+l.avgLossPct,0)/labourAgg.length).toFixed(1)}%`,'Mean across sectors',T.gold)}
+        {kpiBox('Avg Productivity Loss',`${(labourAgg.length?labourAgg.reduce((s,l)=>s+l.avgLossPct,0)/labourAgg.length:0).toFixed(1)}%`,'Mean across sectors',T.gold)}
         {kpiBox('Most Affected','Construction',`${labourAgg.find(l=>l.sector==='Construction')?.avgLossPct}% avg loss`,T.red)}
       </div>
       <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
@@ -307,9 +307,9 @@ export default function HeatMortalityRiskPage(){
   const renderTab2=()=>(
     <div>
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-        {kpiBox('Avg UHI Intensity',`${(CITIES.reduce((s,c)=>s+c.uhiIntensity,0)/CITIES.length).toFixed(1)}C`,'Urban Heat Island effect',T.red)}
+        {kpiBox('Avg UHI Intensity',`${(CITIES.length?CITIES.reduce((s,c)=>s+c.uhiIntensity,0)/CITIES.length:0).toFixed(1)}C`,'Urban Heat Island effect',T.red)}
         {kpiBox('Green Infra Gap',`$${fmt(CITIES.reduce((s,c)=>s+c.greenInfraGapM,0)*1e6)}`,'Investment needed',T.amber)}
-        {kpiBox('Avg CDD 2050',Math.floor(CITIES.reduce((s,c)=>s+c.cddProjection[2],0)/CITIES.length),'Cooling Degree Days',T.gold)}
+        {kpiBox('Avg CDD 2050',CITIES.length?Math.floor(CITIES.reduce((s,c)=>s+c.cddProjection[2],0)/CITIES.length):0,'Cooling Degree Days',T.gold)}
         {kpiBox('High UHI Cities',CITIES.filter(c=>c.uhiIntensity>5).length,'>5C UHI intensity',T.red)}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>

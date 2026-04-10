@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
-  BarChart, Bar, ScatterChart, Scatter, LineChart, Line, RadarChart, Radar,
-  PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine,
+  BarChart, Bar, ScatterChart, Scatter, LineChart, Line, AreaChart, Area,
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ComposedChart,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  ReferenceLine, Cell, PieChart, Pie,
 } from 'recharts';
 
 const T = {
@@ -17,7 +18,12 @@ const SECTORS = ['Energy','Financials','Utilities','Materials','Consumer','Indus
 const RATINGS = ['AAA','AA','A','BBB','BB','B','CCC'];
 const GEOGRAPHIES = ['US','EU','UK','Asia-Pac','EM','Japan','Canada','Australia'];
 const ISSUER_TYPES = ['Corporate','Sovereign','Financial','Supranational','Municipal'];
-const COVENANT_STRENGTHS = ['Strong','Moderate','Weak'];
+const CLIMATE_FACTORS = [
+  { id: 0, name: 'Physical Acute',    color: T.orange },
+  { id: 1, name: 'Physical Chronic',  color: T.amber  },
+  { id: 2, name: 'Transition Policy', color: T.indigo },
+  { id: 3, name: 'Transition Tech',   color: T.blue   },
+];
 
 const ISSUER_NAMES_BASE = [
   'Apple Inc','Microsoft Corp','Amazon Inc','Tesla Corp','ExxonMobil','BP PLC','Shell PLC','TotalEnergies',
@@ -42,6 +48,9 @@ const ISSUER_NAMES_BASE = [
   'Rusal Alumin','Norsk Hydro','Outokumpu Oy','Aperam SA','Acerinox SA','Tata Steel','JSW Steel','SAIL Bond',
   'Pembina Pipeln','Enbridge Inc','TC Energy','Keyera Corp','Inter Pipeline','Targa Res','Williams Cos','Kinder Morgan',
   'NiSource Inc','Atmos Energy','Sempra Energy','CenterPoint En','Spire Inc','ONE Gas Inc','Southwest Gas','Chesapeake Util',
+  'Renault SA','Stellantis NV','Volvo Group','Scania AB','Wärtsilä Oyj','Michelin SCA','Bridgestone','Sumitomo Rub',
+  'Unilever PLC','Nestlé SA','Danone SA','Procter Gamble','Colgate-Palm','Church Dwight','Henkel AG','Reckitt PLC',
+  'Suncor Energy','Canadian Nat Res','Cenovus Energy','Imperial Oil','MEG Energy','Baytex Energy','Crescent Pt','Tourmaline',
 ];
 
 const ISSUERS = ISSUER_NAMES_BASE.slice(0, 200).map((name, i) => {
@@ -49,8 +58,8 @@ const ISSUERS = ISSUER_NAMES_BASE.slice(0, 200).map((name, i) => {
   const rating = RATINGS[Math.floor(sr(i * 11) * RATINGS.length)];
   const geography = GEOGRAPHIES[Math.floor(sr(i * 13) * GEOGRAPHIES.length)];
   const issuerType = ISSUER_TYPES[Math.floor(sr(i * 17) * ISSUER_TYPES.length)];
-  const maturity = 1 + Math.floor(sr(i * 19) * 29); // 1-30yr
-  const totalSpread = 30 + sr(i * 23) * 470; // 30-500bps
+  const maturity = 1 + Math.floor(sr(i * 19) * 29);
+  const totalSpread = 30 + sr(i * 23) * 470;
   const physRiskScore = 5 + sr(i * 29) * 85;
   const transRiskScore = 5 + sr(i * 31) * 85;
   const physPremium = Math.max(0, totalSpread * (physRiskScore / 100) * (sr(i * 37) * 0.35 + 0.05));
@@ -59,34 +68,222 @@ const ISSUERS = ISSUER_NAMES_BASE.slice(0, 200).map((name, i) => {
   const basePD = 0.001 + sr(i * 43) * 0.08;
   const climatePD = basePD * (1 + transRiskScore / 100 * 0.5);
   const carbonBeta = (physRiskScore * 0.4 + transRiskScore * 0.6) / 100;
-  const greenBondPremium = sr(i * 47) > 0.7 ? -(sr(i * 53) * 15) : 0; // greenium in bps
+  const greenBondPremium = sr(i * 47) > 0.7 ? -(sr(i * 53) * 15) : 0;
   const sectorBeta = 0.5 + sr(i * 59) * 1.5;
   const issuanceYear = 2015 + Math.floor(sr(i * 61) * 10);
-  const callable = sr(i * 67) > 0.6;
-  const covenantStrength = COVENANT_STRENGTHS[Math.floor(sr(i * 71) * 3)];
+  const lgd = 0.20 + sr(i * 73) * 0.60;
+  const ead = 10 + sr(i * 79) * 490;
+  const esgScore = 10 + sr(i * 83) * 85;
+  const spreadZ = (sr(i * 89) * 6) - 3;
+  const climateAdjCDS = 20 + sr(i * 97) * 280;
+  const coupon = 2 + sr(i * 101) * 6;
   return {
     id: i, name, sector, rating, geography, issuerType, maturity,
     totalSpread, physPremium, transPremium, residualPremium,
-    physRiskScore, transRiskScore, climatePD, climateAdjSpread: totalSpread + carbonBeta * 10,
-    greenBondPremium, sectorBeta, carbonBeta, issuanceYear, callable, covenantStrength,
+    physRiskScore, transRiskScore, climatePD, lgd, ead, esgScore,
+    spreadZ, climateAdjCDS, coupon,
+    climateAdjSpread: totalSpread + carbonBeta * 10,
+    greenBondPremium, sectorBeta, carbonBeta, issuanceYear,
     isGreen: greenBondPremium < 0,
   };
 });
 
-const CLIMATE_FACTORS = [
-  { id: 0, name: 'Physical Acute',    color: T.orange },
-  { id: 1, name: 'Physical Chronic',  color: T.amber  },
-  { id: 2, name: 'Transition Policy', color: T.indigo },
-  { id: 3, name: 'Transition Tech',   color: T.blue   },
+// Migration matrices 7x7: row = from-rating, col = to-rating
+const buildMigrationMatrix = (scenario) => {
+  const base = [
+    [0.9200, 0.0550, 0.0180, 0.0050, 0.0015, 0.0003, 0.0002],
+    [0.0080, 0.9100, 0.0650, 0.0120, 0.0035, 0.0010, 0.0005],
+    [0.0020, 0.0260, 0.9050, 0.0560, 0.0080, 0.0020, 0.0010],
+    [0.0005, 0.0030, 0.0590, 0.8700, 0.0550, 0.0095, 0.0030],
+    [0.0003, 0.0010, 0.0060, 0.0780, 0.8300, 0.0750, 0.0097],
+    [0.0002, 0.0005, 0.0020, 0.0060, 0.0820, 0.8200, 0.0893],
+    [0.0001, 0.0002, 0.0008, 0.0020, 0.0150, 0.1200, 0.8619],
+  ];
+  if (scenario === 'adverse') {
+    return base.map((row, ri) => {
+      const shock = ri * 0.012;
+      return row.map((v, ci) => {
+        if (ci === ri) return Math.max(0.5, v - shock * 3);
+        if (ci > ri) return v + shock * (ci - ri) * 0.4;
+        return v;
+      });
+    });
+  }
+  if (scenario === 'severe') {
+    return base.map((row, ri) => {
+      const shock = ri * 0.025;
+      return row.map((v, ci) => {
+        if (ci === ri) return Math.max(0.35, v - shock * 5);
+        if (ci > ri) return v + shock * (ci - ri) * 0.7;
+        return v;
+      });
+    });
+  }
+  return base;
+};
+
+const GREENIUM_BY_YEAR = Array.from({ length: 10 }, (_, i) => {
+  const yr = 2015 + i;
+  const base = -(2 + sr(i * 17) * 12);
+  return { year: String(yr), greenium: +base.toFixed(2), volume: +(50 + sr(i * 23) * 300).toFixed(0) };
+});
+
+const FACTOR_RETURNS_MONTHLY = Array.from({ length: 48 }, (_, m) => ({
+  month: m + 1,
+  'Physical Acute':   +((sr(m * 7)  - 0.48) * 0.06).toFixed(4),
+  'Physical Chronic': +((sr(m * 11) - 0.49) * 0.04).toFixed(4),
+  'Trans Policy':     +((sr(m * 13) - 0.47) * 0.08).toFixed(4),
+  'Trans Tech':       +((sr(m * 17) - 0.50) * 0.05).toFixed(4),
+}));
+
+const TERM_STRUCTURE = RATINGS.map((rating, ri) =>
+  Array.from({ length: 30 }, (_, mi) => {
+    const mat = mi + 1;
+    const baseSpread = sr(ri * 31 + mat * 7) * 300 + 30;
+    const physComp = baseSpread * (0.15 + sr(ri * 31 + mat * 7 + 2) * 0.2);
+    const transComp = baseSpread * (0.10 + sr(ri * 31 + mat * 7 + 4) * 0.18);
+    return { maturity: mat, totalSpread: +baseSpread.toFixed(1), physPremium: +physComp.toFixed(1), transPremium: +transComp.toFixed(1) };
+  })
+);
+
+const SPREAD_HISTOGRAM = Array.from({ length: 20 }, (_, i) => {
+  const bucketMin = i * 25;
+  const count = ISSUERS.filter(x => x.totalSpread >= bucketMin && x.totalSpread < bucketMin + 25).length;
+  return { bucket: `${bucketMin}-${bucketMin + 25}`, count };
+});
+
+// Monthly OAS time series for 36 months — portfolio vs benchmark
+const OAS_TIME_SERIES = Array.from({ length: 36 }, (_, m) => ({
+  month: `M${m + 1}`,
+  portfolioOAS: +(120 + sr(m * 7) * 80 + (m > 18 ? sr(m * 11) * 30 : 0)).toFixed(1),
+  benchmarkOAS: +(100 + sr(m * 13) * 60).toFixed(1),
+  climateOAS: +(130 + sr(m * 17) * 90 + (m > 18 ? sr(m * 19) * 35 : 0)).toFixed(1),
+}));
+
+// Spread by rating over 36 months
+const RATING_OAS_SERIES = RATINGS.map((r, ri) =>
+  Array.from({ length: 36 }, (_, m) => ({
+    month: `M${m + 1}`,
+    spread: +(30 + ri * 45 + sr(ri * 100 + m * 7) * 40).toFixed(1),
+  }))
+);
+
+// Issuer-level EDF (Expected Default Frequency) data
+const EDF_DATA = ISSUERS.slice(0, 60).map((x, i) => ({
+  name: x.name.split(' ')[0],
+  edf: +(x.climatePD * 100).toFixed(3),
+  spread: +x.totalSpread.toFixed(0),
+  sector: x.sector,
+  rating: x.rating,
+}));
+
+// Credit spread vs carbon intensity scatter
+const CARBON_INTENSITY_SCATTER = ISSUERS.slice(0, 80).map((x, i) => ({
+  carbonIntensity: +(sr(i * 53) * 800).toFixed(0),
+  spread: +x.totalSpread.toFixed(0),
+  sector: x.sector,
+  name: x.name.split(' ')[0],
+}));
+
+// 12-factor sensitivity grid (sector × scenario)
+const SCENARIO_SPREADS = SECTORS.map((s, si) => {
+  const base = 50 + sr(si * 23) * 200;
+  return {
+    sector: s,
+    baseline: +base.toFixed(0),
+    adverse: +(base * 1.22).toFixed(0),
+    severe: +(base * 1.55).toFixed(0),
+    disorderly: +(base * 1.38).toFixed(0),
+  };
+});
+
+// Peer comparison — 8 banks' climate spread analytics
+const PEER_BANKS = [
+  'JP Morgan','Goldman Sachs','Morgan Stanley','Deutsche Bank',
+  'BNP Paribas','Barclays','HSBC','Citi',
+].map((bank, i) => ({
+  bank,
+  climPremiumPct: +(15 + sr(i * 37) * 20).toFixed(1),
+  avgGreenium: -(3 + sr(i * 41) * 8).toFixed(1),
+  avgCarbonBeta: +(0.3 + sr(i * 43) * 0.5).toFixed(3),
+  portfolioOAS: +(80 + sr(i * 47) * 120).toFixed(0),
+  rwaImpact: +(5 + sr(i * 53) * 15).toFixed(1),
+}));
+
+// Daily spread changes for volatility display
+const SPREAD_VOL_SERIES = Array.from({ length: 60 }, (_, d) => ({
+  day: d + 1,
+  change: +((sr(d * 7) - 0.5) * 4).toFixed(2),
+  rollingVol: +(1.5 + sr(d * 11) * 1.5).toFixed(2),
+}));
+
+// Z-score distribution
+const ZSCORE_DATA = Array.from({ length: 13 }, (_, i) => {
+  const z = -3 + i * 0.5;
+  const count = ISSUERS.filter(x => Math.abs(x.spreadZ - z) < 0.25).length;
+  return { z: z.toFixed(1), count };
+});
+
+// Greenium by rating group
+const GREENIUM_BY_RATING = RATINGS.map((r, ri) => {
+  const greenIssuers = ISSUERS.filter(x => x.rating === r && x.isGreen);
+  const avgGreenium = greenIssuers.length ? greenIssuers.reduce((a, x) => a + x.greenBondPremium, 0) / greenIssuers.length : 0;
+  return { rating: r, greenium: +avgGreenium.toFixed(2), count: greenIssuers.length };
+});
+
+// 3-year climate scenario sector spreads
+const SCENARIO_SECTOR_3YR = SECTORS.map((s, si) => ({
+  sector: s.split(' ')[0],
+  netzero: +(30 + sr(si * 17) * 80).toFixed(0),
+  delayed: +(50 + sr(si * 19) * 120).toFixed(0),
+  fragmented: +(45 + sr(si * 23) * 100).toFixed(0),
+  hot: +(80 + sr(si * 29) * 160).toFixed(0),
+}));
+
+// Issuer-level CDS premium estimates
+const CDS_DATA = ISSUERS.slice(0, 40).map((x, i) => ({
+  name: x.name.split(' ')[0],
+  cds5yr: +(x.totalSpread * 0.85 + sr(i * 61) * 20).toFixed(0),
+  climAdjCDS: +(x.climateAdjCDS).toFixed(0),
+  basis: +(x.climateAdjCDS - x.totalSpread * 0.85 - sr(i * 61) * 20).toFixed(1),
+  sector: x.sector,
+}));
+
+// Correlation matrix 4×4 (factors)
+const FACTOR_CORR = [
+  [1.00, 0.72, 0.18, 0.24],
+  [0.72, 1.00, 0.22, 0.19],
+  [0.18, 0.22, 1.00, 0.65],
+  [0.24, 0.19, 0.65, 1.00],
 ];
 
-const FACTOR_LOADINGS = SECTORS.map((sector, si) =>
-  CLIMATE_FACTORS.map((f, fi) => ({
-    sector, factor: f.name, loading: sr(si * 10 + fi * 3) * 1.2 - 0.3,
-    factorReturn: sr(si * 10 + fi * 3 + 5) * 0.08 - 0.02,
-    r2: 0.20 + sr(si * 10 + fi * 3 + 8) * 0.60,
-  }))
-).flat();
+// Historical default rates by rating (10yr)
+const DEFAULT_HISTORY = Array.from({ length: 10 }, (_, y) => {
+  const yr = 2014 + y;
+  const row = { year: String(yr) };
+  RATINGS.forEach((r, ri) => {
+    row[r] = +(sr(ri * 31 + y * 7) * (ri < 3 ? 0.05 : ri < 5 ? 0.8 : 3)).toFixed(3);
+  });
+  return row;
+});
+
+// EL (expected loss) table by sector and scenario
+const EL_TABLE = SECTORS.map((s, si) => {
+  const sub = ISSUERS.filter(x => x.sector === s);
+  const n = sub.length || 1;
+  const avgPD = sub.reduce((a, x) => a + x.climatePD, 0) / n;
+  const avgLGD = sub.reduce((a, x) => a + x.lgd, 0) / n;
+  const avgEAD = sub.reduce((a, x) => a + x.ead, 0) / n;
+  return {
+    sector: s,
+    elBase: +(avgPD * avgLGD * avgEAD).toFixed(2),
+    elAdverse: +(avgPD * 1.3 * avgLGD * avgEAD).toFixed(2),
+    elSevere: +(avgPD * 1.8 * avgLGD * avgEAD).toFixed(2),
+    avgPD: +(avgPD * 100).toFixed(3),
+    avgLGD: +(avgLGD * 100).toFixed(1),
+    avgEAD: +avgEAD.toFixed(1),
+  };
+});
 
 const KpiCard = ({ label, value, color = T.text, sub = '' }) => (
   <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', flex: 1, minWidth: 150 }}>
@@ -96,364 +293,582 @@ const KpiCard = ({ label, value, color = T.text, sub = '' }) => (
   </div>
 );
 
-const TABS = ['Spread Overview','Issuer Database','Sector Attribution','Factor Model','Rating Analysis','Portfolio Builder','Summary & Export'];
+const Sel = ({ value, onChange, options, style = {} }) => (
+  <select value={value} onChange={e => onChange(e.target.value)}
+    style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.card, color: T.text, fontSize: 12, ...style }}>
+    {options.map(o => <option key={o} value={o}>{o}</option>)}
+  </select>
+);
+
+const TABS = [
+  'Spread Dashboard','Issuer Database','Greenium Analysis','Sector Attribution',
+  'Factor Model','Rating Migration','Term Structure','Portfolio Builder',
+  'Carbon Beta','Summary & Export'
+];
 
 export default function ClimateRiskPremiumPage() {
   const [tab, setTab] = useState(0);
-  const [sectorFilter, setSectorFilter] = useState('All');
-  const [ratingFilter, setRatingFilter] = useState('All');
-  const [geoFilter, setGeoFilter] = useState('All');
-  const [typeFilter, setTypeFilter] = useState('All');
-  const [maturityMin, setMaturityMin] = useState(0);
-  const [maturityMax, setMaturityMax] = useState(30);
-  const [spreadMin, setSpreadMin] = useState(0);
-  const [greenFilter, setGreenFilter] = useState(false);
-  const [search, setSearch] = useState('');
-  const [sortCol, setSortCol] = useState('totalSpread');
-  const [sortDir, setSortDir] = useState(-1);
-  const [selectedId, setSelectedId] = useState(null);
-  const [compareId, setCompareId] = useState(null);
+
+  // Tab 1
+  const [t1Scenario, setT1Scenario] = useState('Baseline');
+  const [t1SectorFilter, setT1SectorFilter] = useState('All');
+
+  // Tab 2
+  const [t2SectorFilter, setT2SectorFilter] = useState('All');
+  const [t2RatingFilter, setT2RatingFilter] = useState('All');
+  const [t2TypeFilter, setT2TypeFilter] = useState('All');
+  const [t2GreenOnly, setT2GreenOnly] = useState(false);
+  const [t2Search, setT2Search] = useState('');
+  const [t2SortCol, setT2SortCol] = useState('totalSpread');
+  const [t2SortDir, setT2SortDir] = useState(-1);
+  const [t2ExpandedId, setT2ExpandedId] = useState(null);
+
+  // Tab 3
+  const [t3SectorFilter, setT3SectorFilter] = useState('All');
+  const [t3YearMin, setT3YearMin] = useState(2015);
+  const [t3ShowRegression, setT3ShowRegression] = useState(false);
+
+  // Tab 4
+  const [t4Scenario, setT4Scenario] = useState('Baseline');
+  const [t4Normalized, setT4Normalized] = useState(false);
+  const [t4DrillSector, setT4DrillSector] = useState(null);
+
+  // Tab 5
+  const [t5Factor, setT5Factor] = useState('Physical Acute');
+  const [t5MinR2, setT5MinR2] = useState(0);
+  const [t5SectorFilter, setT5SectorFilter] = useState('All');
+
+  // Tab 6
+  const [t6Scenario, setT6Scenario] = useState('baseline');
+  const [t6Horizon, setT6Horizon] = useState('1yr');
+  const [t6FromRating, setT6FromRating] = useState('All');
+
+  // Tab 7
+  const [t7Ratings, setT7Ratings] = useState(new Set(['AAA','AA','A','BBB']));
+  const [t7SectorFilter, setT7SectorFilter] = useState('All');
+  const [t7SplitType, setT7SplitType] = useState('combined');
+  const [t7Notional, setT7Notional] = useState(10);
+
+  // Tab 8
+  const [t8Search, setT8Search] = useState('');
+  const [t8GreenOnly, setT8GreenOnly] = useState(false);
+  const [t8BenchOAS, setT8BenchOAS] = useState(150);
   const [portfolioIds, setPortfolioIds] = useState(new Set());
-  const [factorWeights, setFactorWeights] = useState([0.25, 0.25, 0.25, 0.25]);
 
-  const filtered = useMemo(() => {
+  // Tab 9
+  const [t9CarbonPrice, setT9CarbonPrice] = useState(80);
+  const [t9HedgeRatio, setT9HedgeRatio] = useState(50);
+  const [t9SectorFocus, setT9SectorFocus] = useState('All');
+
+  // Tab 10
+  const [t10Sections, setT10Sections] = useState({ decomp: true, rwa: true, sfdr: true, methodology: true });
+  const [t10Format, setT10Format] = useState('Summary');
+
+  // ---- Tab 2 filtered issuers ----
+  const t2Filtered = useMemo(() => {
     let d = ISSUERS;
-    if (sectorFilter !== 'All') d = d.filter(x => x.sector === sectorFilter);
-    if (ratingFilter !== 'All') d = d.filter(x => x.rating === ratingFilter);
-    if (geoFilter !== 'All') d = d.filter(x => x.geography === geoFilter);
-    if (typeFilter !== 'All') d = d.filter(x => x.issuerType === typeFilter);
-    d = d.filter(x => x.maturity >= maturityMin && x.maturity <= maturityMax);
-    d = d.filter(x => x.totalSpread >= spreadMin);
-    if (greenFilter) d = d.filter(x => x.isGreen);
-    if (search) d = d.filter(x => x.name.toLowerCase().includes(search.toLowerCase()) || x.sector.toLowerCase().includes(search.toLowerCase()));
-    return [...d].sort((a, b) => sortDir * ((a[sortCol] || 0) - (b[sortCol] || 0)));
-  }, [sectorFilter, ratingFilter, geoFilter, typeFilter, maturityMin, maturityMax, spreadMin, greenFilter, search, sortCol, sortDir]);
+    if (t2SectorFilter !== 'All') d = d.filter(x => x.sector === t2SectorFilter);
+    if (t2RatingFilter !== 'All') d = d.filter(x => x.rating === t2RatingFilter);
+    if (t2TypeFilter !== 'All') d = d.filter(x => x.issuerType === t2TypeFilter);
+    if (t2GreenOnly) d = d.filter(x => x.isGreen);
+    if (t2Search) d = d.filter(x => x.name.toLowerCase().includes(t2Search.toLowerCase()) || x.sector.toLowerCase().includes(t2Search.toLowerCase()));
+    return [...d].sort((a, b) => t2SortDir * ((a[t2SortCol] || 0) - (b[t2SortCol] || 0)));
+  }, [t2SectorFilter, t2RatingFilter, t2TypeFilter, t2GreenOnly, t2Search, t2SortCol, t2SortDir]);
 
-  const avgTotalSpread = useMemo(() => filtered.length ? filtered.reduce((s, x) => s + x.totalSpread, 0) / filtered.length : 0, [filtered]);
-  const avgPhysPremium = useMemo(() => filtered.length ? filtered.reduce((s, x) => s + x.physPremium, 0) / filtered.length : 0, [filtered]);
-  const avgTransPremium = useMemo(() => filtered.length ? filtered.reduce((s, x) => s + x.transPremium, 0) / filtered.length : 0, [filtered]);
-  const climateSharePct = useMemo(() => avgTotalSpread > 0 ? (avgPhysPremium + avgTransPremium) / avgTotalSpread * 100 : 0, [avgPhysPremium, avgTransPremium, avgTotalSpread]);
+  // ---- Tab 1 KPIs ----
+  const scenarioMultiplier = t1Scenario === 'Adverse' ? 1.25 : 1.0;
+  const t1Filtered = useMemo(() => t1SectorFilter === 'All' ? ISSUERS : ISSUERS.filter(x => x.sector === t1SectorFilter), [t1SectorFilter]);
+  const avgOAS = t1Filtered.length ? (t1Filtered.reduce((s, x) => s + x.totalSpread, 0) / t1Filtered.length * scenarioMultiplier) : 0;
+  const avgClimatePremium = t1Filtered.length ? (t1Filtered.reduce((s, x) => s + x.physPremium + x.transPremium, 0) / t1Filtered.length * scenarioMultiplier) : 0;
+  const greenPct = t1Filtered.length ? (t1Filtered.filter(x => x.isGreen).length / t1Filtered.length * 100) : 0;
+  const avgCarbonBeta = t1Filtered.length ? (t1Filtered.reduce((s, x) => s + x.carbonBeta, 0) / t1Filtered.length) : 0;
 
-  const top30 = useMemo(() => [...filtered].sort((a, b) => b.totalSpread - a.totalSpread).slice(0, 30).map(x => ({
+  const top10Widest = useMemo(() => [...t1Filtered].sort((a, b) => b.totalSpread - a.totalSpread).slice(0, 10).map(x => ({
     name: x.name.split(' ')[0],
-    physPremium: +x.physPremium.toFixed(1),
-    transPremium: +x.transPremium.toFixed(1),
-    residualPremium: +x.residualPremium.toFixed(1),
-  })), [filtered]);
+    physPremium: +(x.physPremium * scenarioMultiplier).toFixed(1),
+    transPremium: +(x.transPremium * scenarioMultiplier).toFixed(1),
+    residualPremium: +(x.residualPremium * scenarioMultiplier).toFixed(1),
+  })), [t1Filtered, scenarioMultiplier]);
 
+  const decompositionDonut = useMemo(() => {
+    const totPhys = t1Filtered.reduce((s, x) => s + x.physPremium, 0);
+    const totTrans = t1Filtered.reduce((s, x) => s + x.transPremium, 0);
+    const totResid = t1Filtered.reduce((s, x) => s + x.residualPremium, 0);
+    const tot = totPhys + totTrans + totResid || 1;
+    return [
+      { name: 'Physical Risk', value: +(totPhys / tot * 100).toFixed(1), color: T.orange },
+      { name: 'Transition Risk', value: +(totTrans / tot * 100).toFixed(1), color: T.indigo },
+      { name: 'Residual', value: +(totResid / tot * 100).toFixed(1), color: T.muted },
+    ];
+  }, [t1Filtered]);
+
+  // ---- Tab 3 Greenium ----
+  const greeniumByYearFiltered = useMemo(() => GREENIUM_BY_YEAR.filter(d => +d.year >= t3YearMin), [t3YearMin]);
+  const greeniumBySector = useMemo(() => SECTORS.map((s, si) => {
+    const greenIssuers = ISSUERS.filter(x => x.sector === s && x.isGreen);
+    const convIssuers = ISSUERS.filter(x => x.sector === s && !x.isGreen);
+    const avgGreen = greenIssuers.length ? greenIssuers.reduce((a, x) => a + x.totalSpread, 0) / greenIssuers.length : 0;
+    const avgConv = convIssuers.length ? convIssuers.reduce((a, x) => a + x.totalSpread, 0) / convIssuers.length : 0;
+    return { sector: s.split(' ')[0], greenSpread: +avgGreen.toFixed(1), convSpread: +avgConv.toFixed(1), greenium: +(avgGreen - avgConv).toFixed(1) };
+  }), []);
+
+  const greeniumScatter = useMemo(() => ISSUERS.filter(x => x.isGreen).map(x => ({
+    esgScore: +x.esgScore.toFixed(1), greenium: +x.greenBondPremium.toFixed(1), name: x.name,
+  })), []);
+
+  // ---- Tab 4 Sector Attribution ----
   const sectorAttrib = useMemo(() => SECTORS.map(s => {
-    const sub = filtered.filter(x => x.sector === s);
+    const sub = t4SectorFilter === 'All' || t4DrillSector === s ? ISSUERS.filter(x => x.sector === s) : ISSUERS.filter(x => x.sector === s);
     if (!sub.length) return null;
-    const avgPhys = sub.reduce((a, x) => a + x.physPremium, 0) / sub.length;
-    const avgTrans = sub.reduce((a, x) => a + x.transPremium, 0) / sub.length;
-    const avgRes = sub.reduce((a, x) => a + x.residualPremium, 0) / sub.length;
-    const avgTotal = sub.reduce((a, x) => a + x.totalSpread, 0) / sub.length;
-    const avgPhysRisk = sub.reduce((a, x) => a + x.physRiskScore, 0) / sub.length;
-    const avgTransRisk = sub.reduce((a, x) => a + x.transRiskScore, 0) / sub.length;
-    return { sector: s, avgPhys: +avgPhys.toFixed(1), avgTrans: +avgTrans.toFixed(1), avgRes: +avgRes.toFixed(1), avgTotal: +avgTotal.toFixed(1), avgPhysRisk: +avgPhysRisk.toFixed(1), avgTransRisk: +avgTransRisk.toFixed(1), count: sub.length };
-  }).filter(Boolean), [filtered]);
+    const n = sub.length;
+    const avgPhys = sub.reduce((a, x) => a + x.physPremium, 0) / n;
+    const avgTrans = sub.reduce((a, x) => a + x.transPremium, 0) / n;
+    const avgRes = sub.reduce((a, x) => a + x.residualPremium, 0) / n;
+    const avgTotal = sub.reduce((a, x) => a + x.totalSpread, 0) / n;
+    const mult = t4Scenario === 'Adverse' ? 1.2 : t4Scenario === 'Severe' ? 1.5 : 1.0;
+    return {
+      sector: s, count: n,
+      avgPhys: +(avgPhys * mult).toFixed(1),
+      avgTrans: +(avgTrans * mult).toFixed(1),
+      avgRes: +(avgRes * mult).toFixed(1),
+      avgTotal: +(avgTotal * mult).toFixed(1),
+    };
+  }).filter(Boolean), [t4Scenario]);
 
-  const scatterData = useMemo(() => filtered.slice(0, 80).map(x => ({
-    physRisk: +x.physRiskScore.toFixed(1), transRisk: +x.transRiskScore.toFixed(1),
-    spread: +x.totalSpread.toFixed(0), name: x.name, sector: x.sector,
-  })), [filtered]);
+  const sectorRadarData = useMemo(() => SECTORS.map((s, si) => ({
+    sector: s.split(' ')[0],
+    'Physical Acute':   +(sr(si * 10) * 100).toFixed(1),
+    'Physical Chronic': +(sr(si * 10 + 3) * 100).toFixed(1),
+    'Trans Policy':     +(sr(si * 10 + 6) * 100).toFixed(1),
+    'Trans Tech':       +(sr(si * 10 + 9) * 100).toFixed(1),
+  })), []);
 
-  const ratingData = useMemo(() => RATINGS.map(r => {
-    const sub = filtered.filter(x => x.rating === r);
-    if (!sub.length) return null;
-    const avgSpread = sub.reduce((a, x) => a + x.totalSpread, 0) / sub.length;
-    const avgPD = sub.reduce((a, x) => a + x.climatePD * 100, 0) / sub.length;
-    const avgClimate = sub.reduce((a, x) => a + x.climateAdjSpread, 0) / sub.length;
-    return { rating: r, avgSpread: +avgSpread.toFixed(1), avgPD: +avgPD.toFixed(3), avgClimAdj: +avgClimate.toFixed(1), count: sub.length };
-  }).filter(Boolean), [filtered]);
+  const drillTop5 = useMemo(() => t4DrillSector
+    ? [...ISSUERS.filter(x => x.sector === t4DrillSector)].sort((a, b) => b.totalSpread - a.totalSpread).slice(0, 5)
+    : [], [t4DrillSector]);
 
-  const portfolioItems = useMemo(() => ISSUERS.filter(x => portfolioIds.has(x.id)), [portfolioIds]);
-  const portfolioWeightedPremium = useMemo(() => {
-    if (!portfolioItems.length) return 0;
-    const totalSpread = portfolioItems.reduce((s, x) => s + x.totalSpread, 0);
-    if (totalSpread <= 0) return 0;
-    const climPremium = portfolioItems.reduce((s, x) => s + x.physPremium + x.transPremium, 0);
-    return climPremium / portfolioItems.length;
-  }, [portfolioItems]);
-
-  const factorModelData = useMemo(() => SECTORS.map(s => {
-    const sFactors = FACTOR_LOADINGS.filter(f => f.sector === s);
+  // ---- Tab 5 Factor Model ----
+  const factorHeatmap = useMemo(() => SECTORS.map((s, si) => {
     const row = { sector: s.split(' ')[0] };
-    sFactors.forEach(f => { row[f.factor.split(' ')[0]] = +f.loading.toFixed(3); });
+    CLIMATE_FACTORS.forEach((f, fi) => {
+      row[f.name] = +(sr(si * 10 + fi * 3) * 1.2 - 0.3).toFixed(3);
+    });
     return row;
   }), []);
 
-  const sectorR2 = useMemo(() => SECTORS.map((s, si) => ({
-    sector: s,
-    r2: +(0.25 + sr(si * 37) * 0.55).toFixed(3),
-    avgIC: +(sr(si * 41) * 0.25 - 0.05).toFixed(3),
-  })), []);
+  const issuerR2 = useMemo(() => {
+    let d = ISSUERS.map((x, i) => ({
+      name: x.name.split(' ')[0], r2: +(0.15 + sr(i * 37) * 0.75).toFixed(3),
+      loading: +(sr(i * 41) * 1.2 - 0.3).toFixed(3), sector: x.sector,
+    }));
+    if (t5SectorFilter !== 'All') d = d.filter(x => x.sector === t5SectorFilter);
+    d = d.filter(x => x.r2 >= t5MinR2 / 100);
+    return d.slice(0, 60);
+  }, [t5SectorFilter, t5MinR2]);
 
-  const handleSort = useCallback((col) => {
-    if (sortCol === col) setSortDir(d => -d);
-    else { setSortCol(col); setSortDir(-1); }
-  }, [sortCol]);
+  const factorShockImpact = useMemo(() => SECTORS.map((s, si) => {
+    const factorIdx = CLIMATE_FACTORS.findIndex(f => f.name === t5Factor);
+    const loading = sr(si * 10 + factorIdx * 3) * 1.2 - 0.3;
+    const factorVol = 0.03 + sr(si * 10 + factorIdx * 3 + 7) * 0.05;
+    return { sector: s.split(' ')[0], spreadImpact: +(loading * factorVol * 100).toFixed(2) };
+  }), [t5Factor]);
+
+  // ---- Tab 6 Migration ----
+  const migMatrix = useMemo(() => buildMigrationMatrix(t6Scenario), [t6Scenario]);
+  const horizonMultiplier = t6Horizon === '1yr' ? 1 : t6Horizon === '3yr' ? 3 : 5;
+  const defaultRates = useMemo(() => RATINGS.map((r, ri) => {
+    const row = migMatrix[ri];
+    const dr = 1 - Math.pow(1 - (row[6] || 0.001), horizonMultiplier);
+    return { rating: r, defaultRate: +(dr * 100).toFixed(3) };
+  }), [migMatrix, horizonMultiplier]);
+
+  // ---- Tab 7 Term Structure ----
+  const termData = useMemo(() => {
+    const selectedRatings = RATINGS.filter((r, ri) => t7Ratings.has(r));
+    return Array.from({ length: 30 }, (_, mi) => {
+      const mat = mi + 1;
+      const row = { maturity: mat };
+      selectedRatings.forEach((r, ri) => {
+        const riIdx = RATINGS.indexOf(r);
+        const ts = TERM_STRUCTURE[riIdx][mi];
+        if (t7SplitType === 'physical') row[r] = ts.physPremium;
+        else if (t7SplitType === 'transition') row[r] = ts.transPremium;
+        else row[r] = ts.totalSpread;
+      });
+      return row;
+    });
+  }, [t7Ratings, t7SplitType]);
+
+  const cs01Data = useMemo(() => {
+    return RATINGS.filter(r => t7Ratings.has(r)).map(r => {
+      const riIdx = RATINGS.indexOf(r);
+      const midSpread = TERM_STRUCTURE[riIdx][14].totalSpread;
+      const cs01 = (t7Notional * midSpread * 0.0001 * 0.01).toFixed(4);
+      return { rating: r, cs01, midSpread: midSpread.toFixed(1) };
+    });
+  }, [t7Ratings, t7Notional]);
+
+  // ---- Tab 8 Portfolio ----
+  const t8Candidates = useMemo(() => {
+    let d = ISSUERS;
+    if (t8GreenOnly) d = d.filter(x => x.isGreen);
+    if (t8Search) d = d.filter(x => x.name.toLowerCase().includes(t8Search.toLowerCase()));
+    return d.slice(0, 50);
+  }, [t8GreenOnly, t8Search]);
+
+  const portfolioItems = useMemo(() => ISSUERS.filter(x => portfolioIds.has(x.id)), [portfolioIds]);
+  const portfolioOAS = portfolioItems.length ? portfolioItems.reduce((s, x) => s + x.totalSpread, 0) / portfolioItems.length : 0;
+  const portfolioGreenPct = portfolioItems.length ? portfolioItems.filter(x => x.isGreen).length / portfolioItems.length * 100 : 0;
+  const portfolioCVaR = portfolioItems.length ? portfolioItems.reduce((s, x) => s + x.climatePD * x.lgd * x.ead, 0) : 0;
+  const portfolioSharpe = portfolioCVaR > 0 ? (portfolioOAS / portfolioCVaR).toFixed(3) : '—';
+  const portfolioSectorPie = useMemo(() => {
+    const counts = {};
+    portfolioItems.forEach(x => { counts[x.sector] = (counts[x.sector] || 0) + 1; });
+    return Object.entries(counts).map(([name, value]) => ({ name, value }));
+  }, [portfolioItems]);
+  const riskBudgetPie = useMemo(() => {
+    const totPhys = portfolioItems.reduce((s, x) => s + x.physPremium, 0);
+    const totTrans = portfolioItems.reduce((s, x) => s + x.transPremium, 0);
+    const totResid = portfolioItems.reduce((s, x) => s + x.residualPremium, 0);
+    return [
+      { name: 'Physical', value: +totPhys.toFixed(1) },
+      { name: 'Transition', value: +totTrans.toFixed(1) },
+      { name: 'Residual', value: +totResid.toFixed(1) },
+    ];
+  }, [portfolioItems]);
 
   const togglePortfolio = useCallback((id) => {
-    setPortfolioIds(prev => {
-      const n = new Set(prev);
-      if (n.has(id)) n.delete(id); else n.add(id);
-      return n;
-    });
+    setPortfolioIds(prev => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   }, []);
 
-  const filterRow = (
-    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16, padding: '12px 16px', background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, alignItems: 'center' }}>
-      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search issuers..." style={{ padding: '6px 10px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12, width: 150 }} />
-      <select value={sectorFilter} onChange={e => setSectorFilter(e.target.value)} style={{ padding: '6px 8px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}>
-        <option>All</option>{SECTORS.map(s => <option key={s}>{s}</option>)}
-      </select>
-      <select value={ratingFilter} onChange={e => setRatingFilter(e.target.value)} style={{ padding: '6px 8px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}>
-        <option>All</option>{RATINGS.map(r => <option key={r}>{r}</option>)}
-      </select>
-      <select value={geoFilter} onChange={e => setGeoFilter(e.target.value)} style={{ padding: '6px 8px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}>
-        <option>All</option>{GEOGRAPHIES.map(g => <option key={g}>{g}</option>)}
-      </select>
-      <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ padding: '6px 8px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}>
-        <option>All</option>{ISSUER_TYPES.map(t => <option key={t}>{t}</option>)}
-      </select>
-      <label style={{ fontSize: 12 }}>Mat {maturityMin}–{maturityMax}yr
-        <input type="range" min={0} max={30} value={maturityMin} onChange={e => setMaturityMin(+e.target.value)} style={{ width: 60, marginLeft: 4 }} />
-        <input type="range" min={0} max={30} value={maturityMax} onChange={e => setMaturityMax(+e.target.value)} style={{ width: 60, marginLeft: 2 }} />
-      </label>
-      <label style={{ fontSize: 12 }}>Spread≥{spreadMin}bps
-        <input type="range" min={0} max={400} value={spreadMin} onChange={e => setSpreadMin(+e.target.value)} style={{ width: 70, marginLeft: 4 }} />
-      </label>
-      <label style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-        <input type="checkbox" checked={greenFilter} onChange={e => setGreenFilter(e.target.checked)} /> Green Only
-      </label>
-    </div>
-  );
+  // ---- Tab 9 Carbon Beta ----
+  const carbonBetaBySector = useMemo(() => SECTORS.map(s => {
+    const sub = (t9SectorFocus === 'All' || t9SectorFocus === s) ? ISSUERS.filter(x => x.sector === s) : [];
+    if (!sub.length) return null;
+    const avgBeta = sub.reduce((a, x) => a + x.carbonBeta, 0) / sub.length;
+    const spreadWidening = avgBeta * t9CarbonPrice * 0.5;
+    const hedgeCost = spreadWidening * (t9HedgeRatio / 100);
+    return {
+      sector: s.split(' ')[0], avgBeta: +avgBeta.toFixed(3),
+      spreadWidening: +spreadWidening.toFixed(2), hedgeCost: +hedgeCost.toFixed(2),
+      netSpread: +(spreadWidening - hedgeCost).toFixed(2),
+    };
+  }).filter(Boolean), [t9CarbonPrice, t9HedgeRatio, t9SectorFocus]);
 
+  const betaEsgScatter = useMemo(() => ISSUERS.slice(0, 80).map(x => ({
+    esgScore: +x.esgScore.toFixed(1), carbonBeta: +x.carbonBeta.toFixed(3),
+    sector: x.sector, name: x.name.split(' ')[0],
+  })), []);
+
+  const handleT2Sort = useCallback((col) => {
+    if (t2SortCol === col) setT2SortDir(d => -d);
+    else { setT2SortCol(col); setT2SortDir(-1); }
+  }, [t2SortCol]);
+
+  const toggleT7Rating = useCallback((r) => {
+    setT7Ratings(prev => { const n = new Set(prev); if (n.has(r)) n.delete(r); else n.add(r); return n; });
+  }, []);
+
+  const RATING_COLORS = { AAA: T.green, AA: T.teal, A: T.blue, BBB: T.indigo, BB: T.amber, B: T.orange, CCC: T.red };
+  const PIE_COLORS = [T.indigo, T.teal, T.orange, T.gold, T.purple, T.green, T.red, T.blue, T.amber, T.navy];
+
+  // ── RENDER ──
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+    <div style={{ background: T.bg, minHeight: '100vh', padding: '24px', fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+      {/* Header */}
       <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 11, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>EP-DB4 · Sprint DB · Enterprise Climate Risk Capital</div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, margin: '4px 0 2px', color: T.navy }}>Climate Risk Premium Decomposer</h1>
-        <div style={{ fontSize: 13, color: T.muted }}>200 issuers · 10 sectors · 4-factor climate model · Physical/Transition/Residual spread decomposition</div>
+        <div style={{ fontSize: 22, fontWeight: 700, color: T.navy }}>Climate Risk Premium Analytics</div>
+        <div style={{ fontSize: 13, color: T.muted, marginTop: 2 }}>JP Morgan / Goldman Sachs grade climate credit spread decomposition · 200 issuers · 10 sectors</div>
       </div>
 
-      <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
-        <KpiCard label="Avg Total Spread" value={`${avgTotalSpread.toFixed(0)} bps`} color={T.indigo} sub={`${filtered.length} issuers`} />
-        <KpiCard label="Avg Physical Premium" value={`${avgPhysPremium.toFixed(0)} bps`} color={T.orange} sub="acute + chronic" />
-        <KpiCard label="Avg Transition Premium" value={`${avgTransPremium.toFixed(0)} bps`} color={T.blue} sub="policy + tech" />
-        <KpiCard label="Climate Share" value={`${climateSharePct.toFixed(1)}%`} color={T.red} sub="of total spread" />
-      </div>
-
-      <div style={{ display: 'flex', gap: 0, borderBottom: `2px solid ${T.border}`, marginBottom: 24 }}>
+      {/* Tab Bar */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 24, flexWrap: 'wrap', borderBottom: `2px solid ${T.border}`, paddingBottom: 0 }}>
         {TABS.map((t, i) => (
-          <button key={i} onClick={() => setTab(i)} style={{ padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 700 : 400, color: tab === i ? T.indigo : T.muted, borderBottom: tab === i ? `2px solid ${T.indigo}` : '2px solid transparent', marginBottom: -2, whiteSpace: 'nowrap' }}>{t}</button>
+          <button key={t} onClick={() => setTab(i)} style={{
+            padding: '8px 14px', borderRadius: '6px 6px 0 0', border: `1px solid ${tab === i ? T.indigo : T.border}`,
+            borderBottom: tab === i ? `2px solid ${T.card}` : 'none', background: tab === i ? T.card : T.sub,
+            color: tab === i ? T.indigo : T.muted, fontWeight: tab === i ? 700 : 400, fontSize: 12, cursor: 'pointer', marginBottom: -2,
+          }}>{t}</button>
         ))}
       </div>
 
+      {/* ═══════════════════════════════════════════════════════════ TAB 1 */}
       {tab === 0 && (
         <div>
-          {filterRow}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Top 30 Issuers — Stacked Spread Decomposition (bps)</div>
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={top30} margin={{ bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-45} textAnchor="end" interval={0} />
-                  <YAxis tick={{ fontSize: 10 }} />
-                  <Tooltip formatter={v => `${Number(v).toFixed(1)} bps`} />
-                  <Legend />
-                  <Bar dataKey="physPremium" stackId="a" fill={T.orange} name="Physical Premium" />
-                  <Bar dataKey="transPremium" stackId="a" fill={T.indigo} name="Transition Premium" />
-                  <Bar dataKey="residualPremium" stackId="a" fill={T.muted} name="Residual Premium" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Climate Premium Share — Histogram</div>
-              {(() => {
-                const bins = Array.from({ length: 10 }, (_, i) => ({ bin: `${i * 10}-${i * 10 + 10}%`, count: 0 }));
-                filtered.forEach(x => {
-                  const share = x.totalSpread > 0 ? (x.physPremium + x.transPremium) / x.totalSpread * 100 : 0;
-                  const idx = Math.min(9, Math.floor(share / 10));
-                  bins[idx].count++;
-                });
-                return (
-                  <ResponsiveContainer width="100%" height={280}>
-                    <BarChart data={bins}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="bin" tick={{ fontSize: 10 }} />
-                      <YAxis tick={{ fontSize: 10 }} />
-                      <Tooltip />
-                      <Bar dataKey="count" fill={T.indigo} name="Issuers" radius={[2,2,0,0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                );
-              })()}
-            </div>
+          {/* Controls */}
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Sel value={t1Scenario} onChange={setT1Scenario} options={['Baseline','Adverse']} />
+            <Sel value={t1SectorFilter} onChange={setT1SectorFilter} options={['All', ...SECTORS]} />
+            <span style={{ fontSize: 12, color: T.muted }}>Scenario multiplier: <strong style={{ color: T.text }}>{scenarioMultiplier}×</strong></span>
           </div>
-        </div>
-      )}
-
-      {tab === 1 && (
-        <div>
-          {filterRow}
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, overflow: 'auto', maxHeight: 600 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
-              <thead style={{ position: 'sticky', top: 0 }}>
-                <tr style={{ background: T.sub }}>
-                  {[['Name','name'],['Sector','sector'],['Rating','rating'],['Geo','geography'],['Type','issuerType'],['Mat(yr)','maturity'],['TotalSprd','totalSpread'],['PhysPrem','physPremium'],['TransPrem','transPremium'],['Residual','residualPremium'],['ClimatePD%','climatePD'],['CarbonBeta','carbonBeta'],['Green?','isGreen'],['Covenant','covenantStrength']].map(([h,k]) => (
-                    <th key={k} onClick={() => handleSort(k)} style={{ padding: '7px 8px', textAlign: 'left', fontWeight: 600, fontSize: 10, color: sortCol === k ? T.indigo : T.muted, borderBottom: `1px solid ${T.border}`, cursor: 'pointer', whiteSpace: 'nowrap' }}>{h}{sortCol === k ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>
-                  ))}
-                  <th style={{ padding: '7px 8px', textAlign: 'left', fontWeight: 600, fontSize: 10, color: T.muted, borderBottom: `1px solid ${T.border}` }}>Portfolio</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((x, i) => (
-                  <tr key={x.id} onClick={() => setSelectedId(x.id)} style={{ background: x.id === selectedId ? '#eef2ff' : portfolioIds.has(x.id) ? '#f0fdf4' : i % 2 === 0 ? T.card : T.sub, cursor: 'pointer', borderBottom: `1px solid ${T.border}` }}>
-                    <td style={{ padding: '5px 8px', fontWeight: 500 }}>{x.name}</td>
-                    <td style={{ padding: '5px 8px', color: T.muted }}>{x.sector}</td>
-                    <td style={{ padding: '5px 8px' }}>{x.rating}</td>
-                    <td style={{ padding: '5px 8px' }}>{x.geography}</td>
-                    <td style={{ padding: '5px 8px', color: T.muted }}>{x.issuerType.split(' ')[0]}</td>
-                    <td style={{ padding: '5px 8px' }}>{x.maturity}yr</td>
-                    <td style={{ padding: '5px 8px', fontWeight: 600 }}>{x.totalSpread.toFixed(0)}</td>
-                    <td style={{ padding: '5px 8px', color: T.orange }}>{x.physPremium.toFixed(1)}</td>
-                    <td style={{ padding: '5px 8px', color: T.indigo }}>{x.transPremium.toFixed(1)}</td>
-                    <td style={{ padding: '5px 8px', color: T.muted }}>{x.residualPremium.toFixed(1)}</td>
-                    <td style={{ padding: '5px 8px', color: T.red }}>{(x.climatePD * 100).toFixed(3)}%</td>
-                    <td style={{ padding: '5px 8px' }}>{x.carbonBeta.toFixed(3)}</td>
-                    <td style={{ padding: '5px 8px', color: x.isGreen ? T.green : T.muted }}>{x.isGreen ? `${x.greenBondPremium.toFixed(1)}` : '—'}</td>
-                    <td style={{ padding: '5px 8px', color: x.covenantStrength === 'Strong' ? T.green : x.covenantStrength === 'Weak' ? T.red : T.amber }}>{x.covenantStrength}</td>
-                    <td style={{ padding: '5px 8px' }}>
-                      <button onClick={e => { e.stopPropagation(); togglePortfolio(x.id); }} style={{ padding: '2px 8px', background: portfolioIds.has(x.id) ? '#f0fdf4' : T.sub, border: `1px solid ${portfolioIds.has(x.id) ? T.green : T.border}`, borderRadius: 4, cursor: 'pointer', fontSize: 10, color: portfolioIds.has(x.id) ? T.green : T.muted }}>
-                        {portfolioIds.has(x.id) ? '✓ Added' : '+ Add'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* KPI Row */}
+          <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+            <KpiCard label="Avg OAS" value={`${avgOAS.toFixed(0)} bps`} color={T.navy} sub="Option-adjusted spread" />
+            <KpiCard label="Avg Climate Premium" value={`${avgClimatePremium.toFixed(0)} bps`} color={T.indigo} sub="Phys + Trans components" />
+            <KpiCard label="Green Bond %" value={`${greenPct.toFixed(1)}%`} color={T.green} sub="of filtered issuers" />
+            <KpiCard label="Avg Carbon Beta" value={avgCarbonBeta.toFixed(3)} color={T.orange} sub="Sensitivity to carbon price" />
           </div>
-          <div style={{ marginTop: 8, fontSize: 12, color: T.muted }}>{filtered.length} issuers · {portfolioIds.size} in portfolio · Click to select or add to portfolio</div>
-        </div>
-      )}
-
-      {tab === 2 && (
-        <div>
-          {filterRow}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Sector Avg Spread Decomposition (bps)</div>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={sectorAttrib}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={40} />
-                  <YAxis tick={{ fontSize: 10 }} />
-                  <Tooltip formatter={v => `${Number(v).toFixed(1)} bps`} />
-                  <Legend />
-                  <Bar dataKey="avgPhys" stackId="a" fill={T.orange} name="Avg Physical" />
-                  <Bar dataKey="avgTrans" stackId="a" fill={T.indigo} name="Avg Transition" />
-                  <Bar dataKey="avgRes" stackId="a" fill={T.muted} name="Avg Residual" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Physical vs Transition Risk — Scatter (80 issuers)</div>
-              <ResponsiveContainer width="100%" height={300}>
-                <ScatterChart margin={{ left: 10, right: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="physRisk" name="Physical Risk" tick={{ fontSize: 10 }} label={{ value: 'Physical Risk Score', position: 'insideBottom', fontSize: 10 }} height={30} />
-                  <YAxis dataKey="transRisk" name="Transition Risk" tick={{ fontSize: 10 }} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.[0] ? <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: '6px 10px', borderRadius: 6, fontSize: 12 }}><div style={{ fontWeight: 600 }}>{payload[0]?.payload?.name}</div><div>{payload[0]?.payload?.sector}</div><div>Phys: {payload[0]?.payload?.physRisk} | Trans: {payload[0]?.payload?.transRisk}</div><div>Spread: {payload[0]?.payload?.spread} bps</div></div> : null} />
-                  <Scatter data={scatterData} fill={T.indigo} fillOpacity={0.6} />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Sector Ranking Table</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: T.sub }}>{['Sector','Issuers','Avg Total Spread','Avg Phys Premium','Avg Trans Premium','Avg Residual','Climate Share%','Avg Phys Risk','Avg Trans Risk'].map(h => <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>)}</tr>
-              </thead>
-              <tbody>
-                {[...sectorAttrib].sort((a, b) => b.avgTotal - a.avgTotal).map((s, i) => (
-                  <tr key={i} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                    <td style={{ padding: '7px 10px', fontWeight: 500 }}>{s.sector}</td>
-                    <td style={{ padding: '7px 10px' }}>{s.count}</td>
-                    <td style={{ padding: '7px 10px', fontWeight: 600 }}>{s.avgTotal} bps</td>
-                    <td style={{ padding: '7px 10px', color: T.orange }}>{s.avgPhys} bps</td>
-                    <td style={{ padding: '7px 10px', color: T.indigo }}>{s.avgTrans} bps</td>
-                    <td style={{ padding: '7px 10px', color: T.muted }}>{s.avgRes} bps</td>
-                    <td style={{ padding: '7px 10px', color: T.red }}>{s.avgTotal > 0 ? ((s.avgPhys + s.avgTrans) / s.avgTotal * 100).toFixed(1) : 0}%</td>
-                    <td style={{ padding: '7px 10px' }}>{s.avgPhysRisk}</td>
-                    <td style={{ padding: '7px 10px' }}>{s.avgTransRisk}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {tab === 3 && (
-        <div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>4-Factor Climate Loading by Sector</div>
-            <div style={{ marginBottom: 12, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              {CLIMATE_FACTORS.map((f, fi) => (
-                <div key={f.id} style={{ display: 'flex', gap: 4, alignItems: 'center', fontSize: 12 }}>
-                  <span style={{ width: 12, height: 12, borderRadius: '50%', background: f.color, display: 'inline-block' }} />
-                  <span>{f.name}</span>
-                  <label style={{ marginLeft: 8, fontSize: 11 }}>Weight:
-                    <input type="range" min={0} max={100} value={Math.round(factorWeights[fi] * 100)} onChange={e => setFactorWeights(prev => { const n = [...prev]; n[fi] = +e.target.value / 100; return n; })} style={{ width: 60, marginLeft: 4 }} />
-                    {(factorWeights[fi] * 100).toFixed(0)}%
-                  </label>
-                </div>
-              ))}
-            </div>
+          {/* Top 10 Stacked Bar */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Top-10 Widest Climate Spreads — Decomposition (bps)</div>
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={factorModelData}>
+              <BarChart data={top10Widest} margin={{ top: 4, right: 20, left: 0, bottom: 40 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={40} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip formatter={v => Number(v).toFixed(3)} />
+                <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-35} textAnchor="end" />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
                 <Legend />
-                {CLIMATE_FACTORS.map(f => <Bar key={f.id} dataKey={f.name.split(' ')[0]} fill={f.color} name={f.name} radius={[2,2,0,0]} />)}
-                <ReferenceLine y={0} stroke={T.border} />
+                <Bar dataKey="physPremium" stackId="a" fill={T.orange} name="Physical" />
+                <Bar dataKey="transPremium" stackId="a" fill={T.indigo} name="Transition" />
+                <Bar dataKey="residualPremium" stackId="a" fill={T.muted} name="Residual" />
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>R² by Sector (Climate Factor Explanatory Power)</div>
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={sectorR2}>
+          {/* Bottom row: donut + histogram */}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 280 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Physical vs Transition Decomposition</div>
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie data={decompositionDonut} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${name}: ${value}%`}>
+                    {decompositionDonut.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 2, minWidth: 340 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Spread Distribution Histogram (25 bps buckets)</div>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={SPREAD_HISTOGRAM} margin={{ top: 4, right: 20, left: 0, bottom: 40 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={40} />
-                  <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `${(v * 100).toFixed(0)}%`} domain={[0, 1]} />
-                  <Tooltip formatter={v => `${(Number(v) * 100).toFixed(1)}%`} />
-                  <Bar dataKey="r2" fill={T.blue} name="R² (Climate Factors)" radius={[2,2,0,0]} />
+                  <XAxis dataKey="bucket" tick={{ fontSize: 9 }} angle={-45} textAnchor="end" />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill={T.blue} name="Issuers" />
+                  <ReferenceLine x="100-125" stroke={T.red} strokeDasharray="4 4" label={{ value: 'Median', fontSize: 10 }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Factor IC Table (Information Coefficient by Sector)</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          </div>
+
+          {/* OAS time series vs benchmark */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>OAS Time Series — Portfolio vs Benchmark vs Climate-Tilted (36 months)</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>Portfolio = equal-weight 200 issuers · Benchmark = ICE BofA IG proxy · Climate-tilted = high-carbon-beta subset</div>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={OAS_TIME_SERIES} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="month" tick={{ fontSize: 9 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="portfolioOAS" stroke={T.indigo} strokeWidth={2} dot={false} name="Portfolio OAS" />
+                <Line type="monotone" dataKey="benchmarkOAS" stroke={T.gold} strokeWidth={2} dot={false} name="Benchmark OAS" strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="climateOAS" stroke={T.red} strokeWidth={2} dot={false} name="Climate-Tilted OAS" />
+                <ReferenceLine x="M19" stroke={T.amber} strokeDasharray="4 4" label={{ value: 'Scenario shock', fontSize: 10 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Z-score distribution + Peer comparison */}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 16 }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 260 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Spread Z-Score Distribution</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={ZSCORE_DATA} margin={{ top: 4, right: 10, left: 0, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="z" tick={{ fontSize: 9 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill={T.teal} name="Issuers">
+                    {ZSCORE_DATA.map((entry, i) => (
+                      <Cell key={i} fill={+entry.z > 1.5 ? T.red : +entry.z < -1.5 ? T.green : T.teal} />
+                    ))}
+                  </Bar>
+                  <ReferenceLine x="0.0" stroke={T.navy} strokeDasharray="4 4" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 2, minWidth: 340 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Peer Bank Climate Spread Analytics Comparison</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                 <thead>
-                  <tr style={{ background: T.sub }}>{['Sector','R²','Avg IC','Factor Exposure','Significance'].map(h => <th key={h} style={{ padding: '6px 8px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>)}</tr>
+                  <tr style={{ background: T.sub }}>
+                    {['Bank','Climate % of OAS','Avg Greenium','Avg Carbon β','Portfolio OAS','RWA Impact %'].map(h => (
+                      <th key={h} style={{ padding: '6px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, fontSize: 10, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr>
                 </thead>
                 <tbody>
-                  {sectorR2.map((s, i) => (
-                    <tr key={i} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                      <td style={{ padding: '6px 8px', fontWeight: 500 }}>{s.sector}</td>
-                      <td style={{ padding: '6px 8px', color: s.r2 > 0.6 ? T.green : T.muted, fontWeight: 600 }}>{(s.r2 * 100).toFixed(1)}%</td>
-                      <td style={{ padding: '6px 8px', color: s.avgIC > 0 ? T.green : T.red }}>{s.avgIC.toFixed(3)}</td>
-                      <td style={{ padding: '6px 8px' }}>{CLIMATE_FACTORS.map(f => `${f.name.split(' ')[0]}`).join(', ')}</td>
-                      <td style={{ padding: '6px 8px', color: s.r2 > 0.6 ? T.green : s.r2 > 0.4 ? T.amber : T.muted }}>{s.r2 > 0.6 ? 'High' : s.r2 > 0.4 ? 'Moderate' : 'Low'}</td>
+                  {PEER_BANKS.map(row => (
+                    <tr key={row.bank} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '5px 10px', fontWeight: 700, color: T.navy }}>{row.bank}</td>
+                      <td style={{ padding: '5px 10px' }}>{row.climPremiumPct}%</td>
+                      <td style={{ padding: '5px 10px', color: T.green }}>{row.avgGreenium} bps</td>
+                      <td style={{ padding: '5px 10px', fontFamily: 'monospace' }}>{row.avgCarbonBeta}</td>
+                      <td style={{ padding: '5px 10px', fontWeight: 700 }}>{row.portfolioOAS} bps</td>
+                      <td style={{ padding: '5px 10px', color: T.amber }}>{row.rwaImpact}%</td>
                     </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* 4-scenario sector spread heatmap */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>4-Scenario Sector Spread Heatmap (bps) — NGFS Aligned</div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ borderCollapse: 'collapse', fontSize: 12, width: '100%' }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    <th style={{ padding: '8px 12px', textAlign: 'left', color: T.muted }}>Sector</th>
+                    <th style={{ padding: '8px 12px', color: T.green }}>Net Zero 2050</th>
+                    <th style={{ padding: '8px 12px', color: T.amber }}>Delayed Transition</th>
+                    <th style={{ padding: '8px 12px', color: T.orange }}>Fragmented World</th>
+                    <th style={{ padding: '8px 12px', color: T.red }}>Hot House World</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {SCENARIO_SPREADS.map(row => {
+                    const maxV = Math.max(row.netzero, row.adverse, row.fragmented, row.hot);
+                    const cell = (v) => {
+                      const intensity = v / maxV;
+                      return (
+                        <td style={{ padding: '7px 12px', textAlign: 'center', background: `rgba(220,38,38,${intensity * 0.4})`, fontWeight: 600 }}>{v}</td>
+                      );
+                    };
+                    return (
+                      <tr key={row.sector} style={{ borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '7px 12px', fontWeight: 700 }}>{row.sector}</td>
+                        {cell(row.netzero)}
+                        {cell(row.adverse)}
+                        {cell(row.fragmented)}
+                        {cell(row.hot)}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ TAB 2 */}
+      {tab === 1 && (
+        <div>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+            <input value={t2Search} onChange={e => setT2Search(e.target.value)} placeholder="Search issuer / sector..."
+              style={{ padding: '5px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, width: 180 }} />
+            <Sel value={t2SectorFilter} onChange={setT2SectorFilter} options={['All', ...SECTORS]} />
+            <Sel value={t2RatingFilter} onChange={setT2RatingFilter} options={['All', ...RATINGS]} />
+            <Sel value={t2TypeFilter} onChange={setT2TypeFilter} options={['All', ...ISSUER_TYPES]} />
+            <label style={{ fontSize: 12, color: T.text, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={t2GreenOnly} onChange={e => setT2GreenOnly(e.target.checked)} /> Green only
+            </label>
+            <span style={{ fontSize: 12, color: T.muted, marginLeft: 'auto' }}>{t2Filtered.length} issuers</span>
+          </div>
+          {/* Quick stats row */}
+          <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '12px 16px', flex: 1, minWidth: 180 }}>
+              <div style={{ fontSize: 11, color: T.muted, marginBottom: 4 }}>FILTERED ISSUERS</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: T.navy }}>{t2Filtered.length}</div>
+              <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>of 200 total</div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '12px 16px', flex: 1, minWidth: 180 }}>
+              <div style={{ fontSize: 11, color: T.muted, marginBottom: 4 }}>AVG OAS</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: T.indigo }}>
+                {t2Filtered.length ? (t2Filtered.reduce((s, x) => s + x.totalSpread, 0) / t2Filtered.length).toFixed(0) : '—'} bps
+              </div>
+              <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>filtered universe</div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '12px 16px', flex: 2, minWidth: 280 }}>
+              <div style={{ fontSize: 11, color: T.muted, marginBottom: 6 }}>RATING DISTRIBUTION</div>
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                {RATINGS.map(r => {
+                  const cnt = t2Filtered.filter(x => x.rating === r).length;
+                  const pct = t2Filtered.length ? cnt / t2Filtered.length * 100 : 0;
+                  return (
+                    <div key={r} style={{ textAlign: 'center', minWidth: 36 }}>
+                      <div style={{ height: `${Math.max(4, pct * 1.5)}px`, background: RATING_COLORS[r], borderRadius: 2, marginBottom: 2 }} />
+                      <div style={{ fontSize: 9, color: RATING_COLORS[r], fontWeight: 700 }}>{r}</div>
+                      <div style={{ fontSize: 9, color: T.muted }}>{cnt}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '12px 16px', flex: 2, minWidth: 280 }}>
+              <div style={{ fontSize: 11, color: T.muted, marginBottom: 6 }}>AVG OAS BY SECTOR (filtered)</div>
+              <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                {SECTORS.map((s, si) => {
+                  const sub = t2Filtered.filter(x => x.sector === s);
+                  const avg = sub.length ? sub.reduce((a, x) => a + x.totalSpread, 0) / sub.length : 0;
+                  const maxAvg = 300;
+                  return (
+                    <div key={s} title={`${s}: ${avg.toFixed(0)} bps`} style={{ textAlign: 'center' }}>
+                      <div style={{ height: `${Math.max(2, avg / maxAvg * 40)}px`, width: 18, background: PIE_COLORS[si], borderRadius: 2 }} />
+                      <div style={{ fontSize: 8, color: T.muted, marginTop: 2 }}>{s.slice(0, 4)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['name','sector','rating','maturity','totalSpread','physPremium','transPremium','greenBondPremium','carbonBeta','climatePD','lgd'].map(col => (
+                      <th key={col} onClick={() => handleT2Sort(col)}
+                        style={{ padding: '8px 10px', textAlign: 'left', cursor: 'pointer', whiteSpace: 'nowrap', color: T.muted, fontWeight: 600, fontSize: 10, textTransform: 'uppercase', borderBottom: `1px solid ${T.border}` }}>
+                        {col} {t2SortCol === col ? (t2SortDir === -1 ? '↓' : '↑') : ''}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {t2Filtered.slice(0, 80).map(x => (
+                    <React.Fragment key={x.id}>
+                      <tr onClick={() => setT2ExpandedId(t2ExpandedId === x.id ? null : x.id)}
+                        style={{ borderBottom: `1px solid ${T.border}`, cursor: 'pointer', background: t2ExpandedId === x.id ? '#eef2ff' : (x.isGreen ? '#f0fdf4' : T.card) }}>
+                        <td style={{ padding: '6px 10px', fontWeight: 600, color: T.navy }}>{x.name}</td>
+                        <td style={{ padding: '6px 10px' }}>{x.sector}</td>
+                        <td style={{ padding: '6px 10px' }}>
+                          <span style={{ background: RATING_COLORS[x.rating] + '22', color: RATING_COLORS[x.rating], padding: '1px 6px', borderRadius: 4, fontWeight: 700, fontSize: 10 }}>{x.rating}</span>
+                        </td>
+                        <td style={{ padding: '6px 10px' }}>{x.maturity}yr</td>
+                        <td style={{ padding: '6px 10px', fontWeight: 700 }}>{x.totalSpread.toFixed(0)}</td>
+                        <td style={{ padding: '6px 10px', color: T.orange }}>{x.physPremium.toFixed(1)}</td>
+                        <td style={{ padding: '6px 10px', color: T.indigo }}>{x.transPremium.toFixed(1)}</td>
+                        <td style={{ padding: '6px 10px', color: x.greenBondPremium < 0 ? T.green : T.muted }}>{x.greenBondPremium.toFixed(1)}</td>
+                        <td style={{ padding: '6px 10px' }}>{x.carbonBeta.toFixed(3)}</td>
+                        <td style={{ padding: '6px 10px', color: T.red }}>{(x.climatePD * 100).toFixed(2)}%</td>
+                        <td style={{ padding: '6px 10px' }}>{(x.lgd * 100).toFixed(0)}%</td>
+                      </tr>
+                      {t2ExpandedId === x.id && (
+                        <tr style={{ background: '#f0f4ff' }}>
+                          <td colSpan={11} style={{ padding: '12px 16px' }}>
+                            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', fontSize: 12 }}>
+                              <div><strong>Geography:</strong> {x.geography}</div>
+                              <div><strong>Issuer Type:</strong> {x.issuerType}</div>
+                              <div><strong>EAD:</strong> ${x.ead.toFixed(0)}M</div>
+                              <div><strong>ESG Score:</strong> {x.esgScore.toFixed(1)}</div>
+                              <div><strong>Spread Z-Score:</strong> {x.spreadZ.toFixed(2)}</div>
+                              <div><strong>Clim-Adj CDS:</strong> {x.climateAdjCDS.toFixed(0)} bps</div>
+                              <div><strong>Coupon:</strong> {x.coupon.toFixed(2)}%</div>
+                              <div><strong>Issuance Year:</strong> {x.issuanceYear}</div>
+                              <div><strong>Residual Premium:</strong> {x.residualPremium.toFixed(1)} bps</div>
+                              <div><strong>Climate Adj Spread:</strong> {x.climateAdjSpread.toFixed(1)} bps</div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
@@ -462,69 +877,91 @@ export default function ClimateRiskPremiumPage() {
         </div>
       )}
 
-      {tab === 4 && (
+      {/* ═══════════════════════════════════════════════════════════ TAB 3 */}
+      {tab === 2 && (
         <div>
-          {filterRow}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Avg Spread by Rating (bps)</div>
-              <ResponsiveContainer width="100%" height={260}>
-                <ComposedChart data={ratingData}>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Sel value={t3SectorFilter} onChange={setT3SectorFilter} options={['All', ...SECTORS]} />
+            <label style={{ fontSize: 12, color: T.text }}>From year:
+              <input type="range" min={2015} max={2024} value={t3YearMin} onChange={e => setT3YearMin(+e.target.value)} style={{ marginLeft: 8, width: 100 }} />
+              <span style={{ marginLeft: 6, fontWeight: 700 }}>{t3YearMin}</span>
+            </label>
+            <label style={{ fontSize: 12, color: T.text, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={t3ShowRegression} onChange={e => setT3ShowRegression(e.target.checked)} /> Show regression line
+            </label>
+          </div>
+          {/* Greenium by sector */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Green vs Conventional Spread by Sector (bps)</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={greeniumBySector} margin={{ top: 4, right: 20, left: 0, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="greenSpread" fill={T.green} name="Green Bond Spread" />
+                <Bar dataKey="convSpread" fill={T.blue} name="Conventional Spread" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            {/* Greenium time series */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 2, minWidth: 320 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Greenium Time Series 2015–2024 (bps)</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <ComposedChart data={greeniumByYearFiltered}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="rating" tick={{ fontSize: 11 }} />
-                  <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={v => `${v}%`} />
+                  <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                  <YAxis yAxisId="left" tick={{ fontSize: 11 }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
                   <Tooltip />
                   <Legend />
-                  <Bar yAxisId="left" dataKey="avgSpread" fill={T.indigo} name="Avg Spread (bps)" radius={[2,2,0,0]} />
-                  <Bar yAxisId="left" dataKey="avgClimAdj" fill={T.blue} name="Climate-Adj Spread" radius={[2,2,0,0]} />
-                  <Line yAxisId="right" type="monotone" dataKey="avgPD" stroke={T.red} strokeWidth={2} dot={{ r: 4 }} name="Avg Climate PD%" />
+                  <Bar yAxisId="right" dataKey="volume" fill={T.border} name="Volume $Bn" opacity={0.4} />
+                  <Line yAxisId="left" type="monotone" dataKey="greenium" stroke={T.green} strokeWidth={2} name="Greenium (bps)" dot={{ r: 4 }} />
+                  {t3ShowRegression && <ReferenceLine yAxisId="left" y={-7} stroke={T.orange} strokeDasharray="6 3" label={{ value: 'Trend', fontSize: 10 }} />}
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Credit Spread Term Structure by Rating</div>
-              {(() => {
-                const termData = [2,5,7,10,15,20,30].map(t => {
-                  const row = { term: `${t}yr` };
-                  RATINGS.forEach((r, ri) => { row[r] = +(30 + ri * 60 + t * 3 + sr(ri * 7 + t) * 20).toFixed(0); });
-                  return row;
-                });
-                return (
-                  <ResponsiveContainer width="100%" height={240}>
-                    <LineChart data={termData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="term" tick={{ fontSize: 10 }} />
-                      <YAxis tick={{ fontSize: 10 }} />
-                      <Tooltip />
-                      <Legend />
-                      {RATINGS.slice(0, 5).map((r, ri) => <Line key={r} type="monotone" dataKey={r} stroke={[T.green, T.teal, T.blue, T.amber, T.red][ri]} strokeWidth={1.5} dot={false} />)}
-                    </LineChart>
-                  </ResponsiveContainer>
-                );
-              })()}
+            {/* Greenium vs ESG scatter */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 260 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Greenium vs ESG Score</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="esgScore" name="ESG Score" tick={{ fontSize: 10 }} label={{ value: 'ESG Score', position: 'insideBottom', fontSize: 10, dy: 10 }} />
+                  <YAxis dataKey="greenium" name="Greenium" tick={{ fontSize: 10 }} />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                  <Scatter data={greeniumScatter} fill={T.green} opacity={0.7} />
+                  {t3ShowRegression && <ReferenceLine y={-6} stroke={T.orange} strokeDasharray="4 4" />}
+                </ScatterChart>
+              </ResponsiveContainer>
             </div>
           </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Rating Analysis Summary Table</div>
+          {/* Greenium significance table */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Greenium Significance by Rating</div>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
               <thead>
-                <tr style={{ background: T.sub }}>{['Rating','Count','Avg Spread','Avg Clim-Adj Spread','Avg PD%','Spread Premium vs AAA','PD Premium vs AAA'].map(h => <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>)}</tr>
+                <tr style={{ background: T.sub }}>
+                  {['Rating','Avg Greenium (bps)','t-stat','p-value','Significant?'].map(h => (
+                    <th key={h} style={{ padding: '7px 12px', textAlign: 'left', color: T.muted, fontWeight: 600, fontSize: 11, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
               </thead>
               <tbody>
-                {ratingData.map((r, i) => {
-                  const aaaRow = ratingData.find(x => x.rating === 'AAA');
-                  const spreadPrem = aaaRow ? r.avgSpread - aaaRow.avgSpread : 0;
-                  const pdPrem = aaaRow ? r.avgPD - aaaRow.avgPD : 0;
+                {RATINGS.map((r, ri) => {
+                  const greenium = -(2 + sr(ri * 19) * 10);
+                  const tstat = 1.5 + sr(ri * 23) * 3;
+                  const pval = Math.max(0.001, 0.15 - sr(ri * 29) * 0.14);
+                  const sig = pval < 0.05;
                   return (
-                    <tr key={i} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                      <td style={{ padding: '7px 10px', fontWeight: 700 }}>{r.rating}</td>
-                      <td style={{ padding: '7px 10px' }}>{r.count}</td>
-                      <td style={{ padding: '7px 10px', fontWeight: 600 }}>{r.avgSpread} bps</td>
-                      <td style={{ padding: '7px 10px' }}>{r.avgClimAdj} bps</td>
-                      <td style={{ padding: '7px 10px', color: T.red }}>{r.avgPD.toFixed(3)}%</td>
-                      <td style={{ padding: '7px 10px', color: spreadPrem > 0 ? T.red : T.green }}>+{spreadPrem.toFixed(0)} bps</td>
-                      <td style={{ padding: '7px 10px', color: pdPrem > 0 ? T.red : T.green }}>+{pdPrem.toFixed(3)}%</td>
+                    <tr key={r} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '6px 12px' }}><span style={{ background: RATING_COLORS[r] + '22', color: RATING_COLORS[r], padding: '1px 7px', borderRadius: 4, fontWeight: 700 }}>{r}</span></td>
+                      <td style={{ padding: '6px 12px', color: T.green, fontWeight: 600 }}>{greenium.toFixed(1)}</td>
+                      <td style={{ padding: '6px 12px' }}>{tstat.toFixed(2)}</td>
+                      <td style={{ padding: '6px 12px' }}>{pval.toFixed(3)}</td>
+                      <td style={{ padding: '6px 12px' }}><span style={{ color: sig ? T.green : T.red, fontWeight: 700 }}>{sig ? 'Yes ***' : 'No'}</span></td>
                     </tr>
                   );
                 })}
@@ -534,350 +971,331 @@ export default function ClimateRiskPremiumPage() {
         </div>
       )}
 
-      {tab === 5 && (
+      {/* ═══════════════════════════════════════════════════════════ TAB 4 */}
+      {tab === 3 && (
         <div>
-          <div style={{ marginBottom: 12, padding: '10px 16px', background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, fontSize: 13 }}>
-            Portfolio: <strong>{portfolioIds.size}</strong> issuers selected · Avg Climate Premium: <strong style={{ color: T.red }}>{portfolioWeightedPremium.toFixed(1)} bps</strong> · Add issuers from the Issuer Database tab.
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Sel value={t4Scenario} onChange={setT4Scenario} options={['Baseline','Adverse','Severe']} />
+            <label style={{ fontSize: 12, color: T.text, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={t4Normalized} onChange={e => setT4Normalized(e.target.checked)} /> Normalize (% of total)
+            </label>
+            {t4DrillSector && (
+              <button onClick={() => setT4DrillSector(null)} style={{ padding: '4px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, cursor: 'pointer', fontSize: 12 }}>
+                ✕ Clear drill: {t4DrillSector}
+              </button>
+            )}
           </div>
-          {portfolioItems.length > 0 ? (
-            <div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
-                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>Portfolio Climate Premium Composition</div>
-                  <ResponsiveContainer width="100%" height={260}>
-                    <BarChart data={portfolioItems.slice(0, 20).map(x => ({ name: x.name.split(' ')[0], physPremium: +x.physPremium.toFixed(1), transPremium: +x.transPremium.toFixed(1), residual: +x.residualPremium.toFixed(1) }))}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={45} />
-                      <YAxis tick={{ fontSize: 10 }} />
-                      <Tooltip formatter={v => `${Number(v).toFixed(1)} bps`} />
-                      <Legend />
-                      <Bar dataKey="physPremium" stackId="a" fill={T.orange} name="Physical" />
-                      <Bar dataKey="transPremium" stackId="a" fill={T.indigo} name="Transition" />
-                      <Bar dataKey="residual" stackId="a" fill={T.muted} name="Residual" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>Portfolio Risk Profile — RadarChart</div>
-                  <ResponsiveContainer width="100%" height={260}>
-                    <RadarChart data={SECTORS.map(s => {
-                      const portSub = portfolioItems.filter(x => x.sector === s);
-                      const benchSub = ISSUERS.filter(x => x.sector === s);
-                      const portAvg = portSub.length ? portSub.reduce((a, x) => a + x.physRiskScore, 0) / portSub.length : 0;
-                      const benchAvg = benchSub.length ? benchSub.reduce((a, x) => a + x.physRiskScore, 0) / benchSub.length : 0;
-                      return { sector: s.split(' ')[0], portfolio: +portAvg.toFixed(1), benchmark: +benchAvg.toFixed(1) };
-                    })}>
-                      <PolarGrid />
-                      <PolarAngleAxis dataKey="sector" tick={{ fontSize: 10 }} />
-                      <PolarRadiusAxis tick={{ fontSize: 9 }} />
-                      <Radar name="Portfolio" dataKey="portfolio" stroke={T.indigo} fill={T.indigo} fillOpacity={0.3} />
-                      <Radar name="Benchmark" dataKey="benchmark" stroke={T.amber} fill={T.amber} fillOpacity={0.15} />
-                      <Legend />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-                <div style={{ fontWeight: 600, marginBottom: 12 }}>Portfolio Composition Table ({portfolioItems.length} issuers)</div>
-                <div style={{ overflowX: 'auto', maxHeight: 320 }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          {/* Stacked attribution bar */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Climate Spread Attribution by Sector</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>Click a bar to drill into top-5 issuers</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={sectorAttrib} margin={{ top: 4, right: 20, left: 0, bottom: 40 }}
+                onClick={(d) => { if (d && d.activePayload) setT4DrillSector(d.activePayload[0]?.payload?.sector); }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={t4Normalized ? 'physNorm' : 'avgPhys'} stackId="a" fill={T.orange} name="Physical" />
+                <Bar dataKey={t4Normalized ? 'transNorm' : 'avgTrans'} stackId="a" fill={T.indigo} name="Transition" />
+                <Bar dataKey={t4Normalized ? 'resNorm' : 'avgRes'} stackId="a" fill={T.muted} name="Residual" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            {/* Sector Radar */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 300 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Sector Climate Risk Radar</div>
+              <ResponsiveContainer width="100%" height={260}>
+                <RadarChart data={sectorRadarData}>
+                  <PolarGrid stroke={T.border} />
+                  <PolarAngleAxis dataKey="sector" tick={{ fontSize: 9 }} />
+                  <PolarRadiusAxis tick={{ fontSize: 8 }} />
+                  <Radar name="Phys Acute" dataKey="Physical Acute" stroke={T.orange} fill={T.orange} fillOpacity={0.15} />
+                  <Radar name="Trans Policy" dataKey="Trans Policy" stroke={T.indigo} fill={T.indigo} fillOpacity={0.15} />
+                  <Legend />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Drill or Attribution Table */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 300 }}>
+              {t4DrillSector ? (
+                <>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Top-5 Issuers — {t4DrillSector}</div>
+                  {drillTop5.map(x => (
+                    <div key={x.id} style={{ padding: '8px 0', borderBottom: `1px solid ${T.border}`, fontSize: 12 }}>
+                      <div style={{ fontWeight: 700 }}>{x.name} <span style={{ color: RATING_COLORS[x.rating], fontSize: 11 }}>{x.rating}</span></div>
+                      <div style={{ color: T.muted, marginTop: 2 }}>Total: <strong>{x.totalSpread.toFixed(0)} bps</strong> · Phys: {x.physPremium.toFixed(1)} · Trans: {x.transPremium.toFixed(1)}</div>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Attribution % Table</div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                     <thead>
-                      <tr style={{ background: T.sub }}>{['Issuer','Sector','Rating','Total Spread','Phys Prem','Trans Prem','Residual','Carbon Beta','Green?'].map(h => <th key={h} style={{ padding: '6px 8px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>)}</tr>
+                      <tr style={{ background: T.sub }}>
+                        <th style={{ padding: '6px 8px', textAlign: 'left', color: T.muted }}>Sector</th>
+                        <th style={{ padding: '6px 8px', color: T.orange }}>Phys%</th>
+                        <th style={{ padding: '6px 8px', color: T.indigo }}>Trans%</th>
+                        <th style={{ padding: '6px 8px', color: T.muted }}>Resid%</th>
+                      </tr>
                     </thead>
                     <tbody>
-                      {portfolioItems.map((x, i) => (
-                        <tr key={x.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                          <td style={{ padding: '5px 8px', fontWeight: 500 }}>{x.name}</td>
-                          <td style={{ padding: '5px 8px', color: T.muted }}>{x.sector}</td>
-                          <td style={{ padding: '5px 8px' }}>{x.rating}</td>
-                          <td style={{ padding: '5px 8px', fontWeight: 600 }}>{x.totalSpread.toFixed(0)} bps</td>
-                          <td style={{ padding: '5px 8px', color: T.orange }}>{x.physPremium.toFixed(1)}</td>
-                          <td style={{ padding: '5px 8px', color: T.indigo }}>{x.transPremium.toFixed(1)}</td>
-                          <td style={{ padding: '5px 8px', color: T.muted }}>{x.residualPremium.toFixed(1)}</td>
-                          <td style={{ padding: '5px 8px' }}>{x.carbonBeta.toFixed(3)}</td>
-                          <td style={{ padding: '5px 8px', color: x.isGreen ? T.green : T.muted }}>{x.isGreen ? `${x.greenBondPremium.toFixed(1)} bps` : '—'}</td>
-                        </tr>
-                      ))}
+                      {sectorAttrib.map(row => {
+                        const tot = row.avgPhys + row.avgTrans + row.avgRes || 1;
+                        return (
+                          <tr key={row.sector} style={{ borderBottom: `1px solid ${T.border}` }}>
+                            <td style={{ padding: '5px 8px', fontWeight: 600 }}>{row.sector}</td>
+                            <td style={{ padding: '5px 8px', textAlign: 'center', color: T.orange }}>{(row.avgPhys / tot * 100).toFixed(0)}%</td>
+                            <td style={{ padding: '5px 8px', textAlign: 'center', color: T.indigo }}>{(row.avgTrans / tot * 100).toFixed(0)}%</td>
+                            <td style={{ padding: '5px 8px', textAlign: 'center', color: T.muted }}>{(row.avgRes / tot * 100).toFixed(0)}%</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
-                </div>
-              </div>
+                </>
+              )}
             </div>
-          ) : <div style={{ padding: 60, textAlign: 'center', color: T.muted }}>Add issuers to your portfolio from the Issuer Database tab using the "+ Add" button.</div>}
+          </div>
+
+          {/* 3-year forward scenario spreads */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>3-Year Forward Sector Spreads — 4 NGFS Scenarios (bps)</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={SCENARIO_SECTOR_3YR} margin={{ top: 4, right: 20, left: 0, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="netzero" fill={T.green} name="Net Zero 2050" />
+                <Bar dataKey="delayed" fill={T.amber} name="Delayed Transition" />
+                <Bar dataKey="fragmented" fill={T.orange} name="Fragmented World" />
+                <Bar dataKey="hot" fill={T.red} name="Hot House World" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Expected Loss table */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Expected Loss (EL) by Sector — Baseline / Adverse / Severe ($M avg per issuer)</div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Sector','Count','Avg PD (%)','Avg LGD (%)','Avg EAD ($M)','EL Baseline','EL Adverse','EL Severe','EL Δ Severe'].map(h => (
+                    <th key={h} style={{ padding: '6px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, fontSize: 10, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {EL_TABLE.map(row => (
+                  <tr key={row.sector} style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <td style={{ padding: '6px 10px', fontWeight: 700 }}>{row.sector}</td>
+                    <td style={{ padding: '6px 10px' }}>{ISSUERS.filter(x => x.sector === row.sector).length}</td>
+                    <td style={{ padding: '6px 10px', color: T.red }}>{row.avgPD}%</td>
+                    <td style={{ padding: '6px 10px' }}>{row.avgLGD}%</td>
+                    <td style={{ padding: '6px 10px' }}>{row.avgEAD}</td>
+                    <td style={{ padding: '6px 10px', color: T.navy, fontWeight: 700 }}>${row.elBase}</td>
+                    <td style={{ padding: '6px 10px', color: T.amber }}>${row.elAdverse}</td>
+                    <td style={{ padding: '6px 10px', color: T.red }}>${row.elSevere}</td>
+                    <td style={{ padding: '6px 10px', color: T.orange }}>+{((row.elSevere - row.elBase) / (row.elBase || 0.01) * 100).toFixed(0)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      {tab === 6 && (
+      {/* ═══════════════════════════════════════════════════════════ TAB 5 */}
+      {tab === 4 && (
         <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 20 }}>
-            <KpiCard label="Avg Total Spread" value={`${avgTotalSpread.toFixed(0)} bps`} color={T.indigo} sub={`${filtered.length} issuers`} />
-            <KpiCard label="Avg Physical Premium" value={`${avgPhysPremium.toFixed(0)} bps`} color={T.orange} />
-            <KpiCard label="Avg Transition Premium" value={`${avgTransPremium.toFixed(0)} bps`} color={T.blue} />
-            <KpiCard label="Climate Share" value={`${climateSharePct.toFixed(1)}%`} color={T.red} sub="of total spread" />
-            <KpiCard label="Green Issuers" value={`${filtered.filter(x => x.isGreen).length}`} color={T.green} />
-            <KpiCard label="Portfolio Size" value={`${portfolioIds.size}`} color={T.teal} sub="issuers selected" />
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Sel value={t5Factor} onChange={setT5Factor} options={CLIMATE_FACTORS.map(f => f.name)} />
+            <Sel value={t5SectorFilter} onChange={setT5SectorFilter} options={['All', ...SECTORS]} />
+            <label style={{ fontSize: 12, color: T.text }}>Min R²:
+              <input type="range" min={0} max={90} value={t5MinR2} onChange={e => setT5MinR2(+e.target.value)} style={{ marginLeft: 8, width: 100 }} />
+              <span style={{ marginLeft: 6, fontWeight: 700 }}>{t5MinR2}%</span>
+            </label>
           </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Full Issuer KPI Export — {filtered.length} issuers</div>
-            <div style={{ overflowX: 'auto', maxHeight: 500 }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
-                <thead style={{ position: 'sticky', top: 0 }}>
+          {/* Heatmap */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Factor Loading Heatmap — 10 Sectors × 4 Climate Factors</div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ borderCollapse: 'collapse', fontSize: 12, width: '100%' }}>
+                <thead>
                   <tr style={{ background: T.sub }}>
-                    {['Issuer','Sector','Rating','Geo','Type','Mat(yr)','Total(bps)','Phys(bps)','Trans(bps)','Resid(bps)','Clim%','PD%','CarbonBeta','GreenAdj(bps)','Covenant'].map(h => (
-                      <th key={h} style={{ padding: '5px 7px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
+                    <th style={{ padding: '8px 12px', textAlign: 'left', color: T.muted, fontWeight: 600 }}>Sector</th>
+                    {CLIMATE_FACTORS.map(f => (
+                      <th key={f.name} style={{ padding: '8px 12px', color: f.color, fontWeight: 700 }}>{f.name}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((x, i) => (
-                    <tr key={x.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                      <td style={{ padding: '4px 7px', fontWeight: 500 }}>{x.name}</td>
-                      <td style={{ padding: '4px 7px', color: T.muted }}>{x.sector}</td>
-                      <td style={{ padding: '4px 7px' }}>{x.rating}</td>
-                      <td style={{ padding: '4px 7px' }}>{x.geography}</td>
-                      <td style={{ padding: '4px 7px', color: T.muted }}>{x.issuerType.split(' ')[0]}</td>
-                      <td style={{ padding: '4px 7px' }}>{x.maturity}</td>
-                      <td style={{ padding: '4px 7px', fontWeight: 600 }}>{x.totalSpread.toFixed(0)}</td>
-                      <td style={{ padding: '4px 7px', color: T.orange }}>{x.physPremium.toFixed(1)}</td>
-                      <td style={{ padding: '4px 7px', color: T.indigo }}>{x.transPremium.toFixed(1)}</td>
-                      <td style={{ padding: '4px 7px', color: T.muted }}>{x.residualPremium.toFixed(1)}</td>
-                      <td style={{ padding: '4px 7px', color: T.red }}>{x.totalSpread > 0 ? ((x.physPremium + x.transPremium) / x.totalSpread * 100).toFixed(1) : 0}%</td>
-                      <td style={{ padding: '4px 7px' }}>{(x.climatePD * 100).toFixed(3)}%</td>
-                      <td style={{ padding: '4px 7px' }}>{x.carbonBeta.toFixed(3)}</td>
-                      <td style={{ padding: '4px 7px', color: x.isGreen ? T.green : T.muted }}>{x.isGreen ? x.greenBondPremium.toFixed(1) : '0'}</td>
-                      <td style={{ padding: '4px 7px', color: x.covenantStrength === 'Strong' ? T.green : x.covenantStrength === 'Weak' ? T.red : T.amber }}>{x.covenantStrength}</td>
+                  {factorHeatmap.map(row => (
+                    <tr key={row.sector} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '8px 12px', fontWeight: 600 }}>{row.sector}</td>
+                      {CLIMATE_FACTORS.map(f => {
+                        const val = row[f.name];
+                        const intensity = Math.abs(val) / 0.9;
+                        const bg = val > 0 ? `rgba(220,38,38,${intensity * 0.35})` : `rgba(3,105,161,${intensity * 0.35})`;
+                        return (
+                          <td key={f.name} style={{ padding: '8px 12px', textAlign: 'center', background: bg, fontWeight: 700, fontFamily: 'monospace' }}>
+                            {val > 0 ? '+' : ''}{val}
+                          </td>
+                        );
+                      })}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-          <div style={{ marginTop: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Climate Premium Analytics — Portfolio & Benchmark Comparison</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
-              {[
-                ['Total Issuers', `${ISSUERS.length}`, T.navy, 'full universe'],
-                ['Green Issuers', `${ISSUERS.filter(x=>x.isGreen).length}`, T.green, 'negative greenium'],
-                ['Avg Greenium', `${(ISSUERS.filter(x=>x.isGreen).reduce((s,x)=>s+x.greenBondPremium,0)/(ISSUERS.filter(x=>x.isGreen).length||1)).toFixed(1)} bps`, T.teal, 'for green issuers'],
-                ['Avg Carbon Beta', `${(ISSUERS.reduce((s,x)=>s+x.carbonBeta,0)/ISSUERS.length).toFixed(3)}`, T.amber, 'universe average'],
-              ].map(([l,v,c,s])=>(
-                <div key={l} style={{ padding:'10px 14px',background:T.sub,borderRadius:8 }}>
-                  <div style={{ fontSize:10,color:T.muted }}>{l}</div>
-                  <div style={{ fontSize:18,fontWeight:700,color:c }}>{v}</div>
-                  <div style={{ fontSize:10,color:T.muted }}>{s}</div>
-                </div>
-              ))}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            {/* Factor returns time series */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 2, minWidth: 340 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Factor Return Time Series — 48 Months</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={FACTOR_RETURNS_MONTHLY} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="month" tick={{ fontSize: 10 }} label={{ value: 'Month', position: 'insideBottom', fontSize: 10, dy: 8 }} />
+                  <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `${(v * 100).toFixed(1)}%`} />
+                  <Tooltip formatter={(v) => `${(v * 100).toFixed(2)}%`} />
+                  <Legend />
+                  <Line type="monotone" dataKey="Physical Acute" stroke={T.orange} dot={false} strokeWidth={1.5} />
+                  <Line type="monotone" dataKey="Physical Chronic" stroke={T.amber} dot={false} strokeWidth={1.5} />
+                  <Line type="monotone" dataKey="Trans Policy" stroke={T.indigo} dot={false} strokeWidth={1.5} />
+                  <Line type="monotone" dataKey="Trans Tech" stroke={T.blue} dot={false} strokeWidth={1.5} />
+                  <ReferenceLine y={0} stroke={T.border} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div>
-                <div style={{ fontWeight:600,fontSize:13,marginBottom:8 }}>Climate Premium by Geography</div>
-                <table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
-                  <thead><tr style={{ background:T.sub }}>{['Geography','Issuers','Avg Spread','Avg Phys Prem','Avg Trans Prem','Climate Share%'].map(h=><th key={h} style={{ padding:'5px 8px',textAlign:'left',color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}` }}>{h}</th>)}</tr></thead>
-                  <tbody>
-                    {GEOGRAPHIES.map((geo,gi)=>{
-                      const sub=filtered.filter(x=>x.geography===geo);
-                      if(!sub.length) return null;
-                      const avgSprd=sub.reduce((s,x)=>s+x.totalSpread,0)/sub.length;
-                      const avgPhys=sub.reduce((s,x)=>s+x.physPremium,0)/sub.length;
-                      const avgTrans=sub.reduce((s,x)=>s+x.transPremium,0)/sub.length;
-                      const share=avgSprd>0?(avgPhys+avgTrans)/avgSprd*100:0;
-                      return (
-                        <tr key={gi} style={{ background:gi%2===0?T.card:T.sub }}>
-                          <td style={{ padding:'5px 8px',fontWeight:500 }}>{geo}</td>
-                          <td style={{ padding:'5px 8px' }}>{sub.length}</td>
-                          <td style={{ padding:'5px 8px',fontWeight:600 }}>{avgSprd.toFixed(0)} bps</td>
-                          <td style={{ padding:'5px 8px',color:T.orange }}>{avgPhys.toFixed(1)}</td>
-                          <td style={{ padding:'5px 8px',color:T.indigo }}>{avgTrans.toFixed(1)}</td>
-                          <td style={{ padding:'5px 8px',color:share>40?T.red:T.muted }}>{share.toFixed(1)}%</td>
-                        </tr>
-                      );
-                    }).filter(Boolean)}
-                  </tbody>
-                </table>
-              </div>
-              <div>
-                <div style={{ fontWeight:600,fontSize:13,marginBottom:8 }}>Climate Premium by Issuer Type</div>
-                <table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
-                  <thead><tr style={{ background:T.sub }}>{['Issuer Type','Count','Avg Spread','Avg Climate Prem','Carbon Beta','Green%'].map(h=><th key={h} style={{ padding:'5px 8px',textAlign:'left',color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}` }}>{h}</th>)}</tr></thead>
-                  <tbody>
-                    {ISSUER_TYPES.map((type,ti)=>{
-                      const sub=filtered.filter(x=>x.issuerType===type);
-                      if(!sub.length) return null;
-                      const avgSprd=sub.reduce((s,x)=>s+x.totalSpread,0)/sub.length;
-                      const avgClim=sub.reduce((s,x)=>s+x.physPremium+x.transPremium,0)/sub.length;
-                      const avgBeta=sub.reduce((s,x)=>s+x.carbonBeta,0)/sub.length;
-                      const greenPct=sub.filter(x=>x.isGreen).length/sub.length*100;
-                      return (
-                        <tr key={ti} style={{ background:ti%2===0?T.card:T.sub }}>
-                          <td style={{ padding:'5px 8px',fontWeight:500 }}>{type}</td>
-                          <td style={{ padding:'5px 8px' }}>{sub.length}</td>
-                          <td style={{ padding:'5px 8px',fontWeight:600 }}>{avgSprd.toFixed(0)} bps</td>
-                          <td style={{ padding:'5px 8px',color:T.red }}>{avgClim.toFixed(1)} bps</td>
-                          <td style={{ padding:'5px 8px' }}>{avgBeta.toFixed(3)}</td>
-                          <td style={{ padding:'5px 8px',color:greenPct>20?T.green:T.muted }}>{greenPct.toFixed(0)}%</td>
-                        </tr>
-                      );
-                    }).filter(Boolean)}
-                  </tbody>
-                </table>
-              </div>
+            {/* Factor shock impact */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 260 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>1-Unit Shock: {t5Factor} → Spread Impact (bps)</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={factorShockImpact} layout="vertical" margin={{ top: 4, right: 20, left: 40, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis type="number" tick={{ fontSize: 10 }} />
+                  <YAxis dataKey="sector" type="category" tick={{ fontSize: 10 }} width={60} />
+                  <Tooltip />
+                  <Bar dataKey="spreadImpact" name="Spread Impact (bps)">
+                    {factorShockImpact.map((entry, i) => (
+                      <Cell key={i} fill={entry.spreadImpact >= 0 ? T.red : T.blue} />
+                    ))}
+                  </Bar>
+                  <ReferenceLine x={0} stroke={T.border} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-          <div style={{ marginTop: 16, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Maturity Bucket Analysis — Climate Premium Term Structure</div>
-            {(() => {
-              const buckets = [
-                { label:'1-3yr', min:1, max:3 }, { label:'3-5yr', min:3, max:5 },
-                { label:'5-7yr', min:5, max:7 }, { label:'7-10yr', min:7, max:10 },
-                { label:'10-15yr', min:10, max:15 }, { label:'15yr+', min:15, max:31 },
-              ];
-              const data = buckets.map(b => {
-                const sub = filtered.filter(x=>x.maturity>=b.min&&x.maturity<b.max);
-                if (!sub.length) return { bucket:b.label, physPremium:0, transPremium:0, residual:0, total:0 };
-                return {
-                  bucket:b.label,
-                  physPremium:+(sub.reduce((s,x)=>s+x.physPremium,0)/sub.length).toFixed(1),
-                  transPremium:+(sub.reduce((s,x)=>s+x.transPremium,0)/sub.length).toFixed(1),
-                  residual:+(sub.reduce((s,x)=>s+x.residualPremium,0)/sub.length).toFixed(1),
-                  total:+(sub.reduce((s,x)=>s+x.totalSpread,0)/sub.length).toFixed(0),
-                  count:sub.length,
-                };
-              });
-              return (
-                <ResponsiveContainer width="100%" height={200}>
-                  <ComposedChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="bucket" tick={{ fontSize:11 }} />
-                    <YAxis tick={{ fontSize:10 }} />
-                    <Tooltip formatter={v=>`${Number(v).toFixed(1)} bps`} />
-                    <Legend />
-                    <Bar dataKey="physPremium" stackId="a" fill={T.orange} name="Physical" />
-                    <Bar dataKey="transPremium" stackId="a" fill={T.indigo} name="Transition" />
-                    <Bar dataKey="residual" stackId="a" fill={T.muted} name="Residual" />
-                    <Line type="monotone" dataKey="total" stroke={T.red} strokeWidth={2} dot={{ r:4 }} name="Total Spread" />
-                  </ComposedChart>
-                </ResponsiveContainer>
-              );
-            })()}
-          </div>
-        </div>
-      )}
-
-      {/* ── Additional: Spread Decomposition Deep-Dive ── */}
-      {activeTab === 'rating' && (
-        <div style={{ display:'flex',flexDirection:'column',gap:16,marginTop:16 }}>
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:12 }}>Physical vs Transition Spread Split — By Rating Cohort</div>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
-                <thead>
-                  <tr style={{ background:T.sub }}>
-                    <th style={{ padding:'6px 10px',textAlign:'left',color:T.muted }}>Rating</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Count</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Avg Physical (bps)</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Avg Transition (bps)</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Avg Residual (bps)</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Total Spread (bps)</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Phys/Trans Ratio</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {RATINGS.map((rating,ri)=>{
-                    const sub=filtered.filter(x=>x.rating===rating);
-                    if(!sub.length) return null;
-                    const avgPhys=sub.length?sub.reduce((s,x)=>s+x.physPremium,0)/sub.length:0;
-                    const avgTrans=sub.length?sub.reduce((s,x)=>s+x.transPremium,0)/sub.length:0;
-                    const avgResid=sub.length?sub.reduce((s,x)=>s+x.residualPremium,0)/sub.length:0;
-                    const avgTotal=avgPhys+avgTrans+avgResid;
-                    const ratio=avgTrans>0?avgPhys/avgTrans:0;
-                    return (
-                      <tr key={rating} style={{ background:ri%2===0?T.card:T.sub }}>
-                        <td style={{ padding:'5px 10px',fontWeight:700,color:['AAA','AA','A'].includes(rating)?T.green:['BB','B','CCC'].includes(rating)?T.red:T.amber }}>{rating}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right' }}>{sub.length}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.orange }}>{avgPhys.toFixed(1)}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.indigo }}>{avgTrans.toFixed(1)}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.muted }}>{avgResid.toFixed(1)}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',fontWeight:700,color:avgTotal>200?T.red:T.text }}>{avgTotal.toFixed(1)}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right' }}>{ratio.toFixed(2)}×</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:12 }}>Carbon Beta vs Climate PD — Scatter Analysis</div>
+          {/* R² scatter */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>R² by Issuer — Factor Explanatory Power ({issuerR2.length} issuers)</div>
             <ResponsiveContainer width="100%" height={200}>
-              <ScatterChart margin={{ top:5,right:20,bottom:20,left:10 }}>
+              <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="carbonBeta" name="Carbon β" tick={{ fontSize:10 }} label={{ value:'Carbon Beta',position:'insideBottom',offset:-10,fontSize:10 }} />
-                <YAxis dataKey="climatePD" name="Climate PD (%)" tick={{ fontSize:10 }} tickFormatter={v=>`${(v*100).toFixed(1)}%`} />
-                <Tooltip formatter={(v,n)=>[typeof v==='number'?v.toFixed(4):v,n]} />
-                <Scatter data={filtered.slice(0,60).map(x=>({ carbonBeta:x.carbonBeta, climatePD:x.climatePD }))} fill={T.indigo} opacity={0.6} r={3} />
+                <XAxis dataKey="loading" name="Factor Loading" tick={{ fontSize: 10 }} label={{ value: 'Loading', position: 'insideBottom', fontSize: 10, dy: 10 }} />
+                <YAxis dataKey="r2" name="R²" tick={{ fontSize: 10 }} label={{ value: 'R²', angle: -90, position: 'insideLeft', fontSize: 10 }} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={issuerR2} fill={T.indigo} opacity={0.6} />
+                <ReferenceLine y={0.5} stroke={T.gold} strokeDasharray="4 4" />
               </ScatterChart>
             </ResponsiveContainer>
           </div>
 
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:12 }}>Green Bond Premium Analysis — Sector Distribution of Greenium</div>
-            <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
-              {SECTORS.map((sector,si)=>{
-                const sub=filtered.filter(x=>x.sector===sector&&x.greenBondPremium!==undefined);
-                const gbIssuers=sub.filter(x=>x.isGreenBond);
-                const avgGreenium=gbIssuers.length?gbIssuers.reduce((s,x)=>s+x.greenBondPremium,0)/gbIssuers.length:0;
-                const barW=Math.max(0,Math.min(100,-avgGreenium*2));
-                return (
-                  <div key={sector} style={{ display:'flex',alignItems:'center',gap:8 }}>
-                    <div style={{ width:130,fontSize:10,color:T.muted,textAlign:'right' }}>{sector}</div>
-                    <div style={{ flex:1,background:T.sub,borderRadius:4,height:14,position:'relative',overflow:'hidden' }}>
-                      <div style={{ width:`${barW}%`,height:'100%',background:T.teal,borderRadius:4 }} />
-                    </div>
-                    <div style={{ width:70,fontSize:10,fontWeight:600,color:avgGreenium<0?T.teal:T.muted }}>{gbIssuers.length?`${avgGreenium.toFixed(1)} bps`:'—'}</div>
-                    <div style={{ width:40,fontSize:10,color:T.muted }}>{gbIssuers.length} GBs</div>
-                  </div>
-                );
-              })}
-            </div>
+          {/* Factor contribution bar chart (sector-level) */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Factor Contribution to Sector Spreads — Stacked (bps)</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>Loading × Factor Volatility × Base Spread — sector average</div>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={SECTORS.map((s, si) => {
+                const row = { sector: s.split(' ')[0] };
+                CLIMATE_FACTORS.forEach((f, fi) => {
+                  const loading = sr(si * 10 + fi * 3) * 1.2 - 0.3;
+                  const vol = 0.03 + sr(si * 10 + fi * 3 + 7) * 0.05;
+                  const base = 80 + sr(si * 17) * 120;
+                  row[f.name] = +(Math.abs(loading * vol * base)).toFixed(1);
+                });
+                return row;
+              })} margin={{ top: 4, right: 20, left: 0, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                {CLIMATE_FACTORS.map(f => (
+                  <Bar key={f.name} dataKey={f.name} stackId="a" fill={f.color} />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:12 }}>Factor Attribution Summary — R² and Factor IC by Sector</div>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
+          {/* Greenium by rating */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Average Greenium by Rating Category (bps)</div>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={GREENIUM_BY_RATING} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="rating" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Bar dataKey="greenium" name="Greenium (bps)">
+                  {GREENIUM_BY_RATING.map((entry, i) => <Cell key={i} fill={entry.greenium < 0 ? T.green : T.muted} />)}
+                </Bar>
+                <ReferenceLine y={0} stroke={T.border} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ TAB 6 */}
+      {tab === 5 && (
+        <div>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Sel value={t6Scenario} onChange={setT6Scenario} options={['baseline','adverse','severe']} />
+            <Sel value={t6Horizon} onChange={setT6Horizon} options={['1yr','3yr','5yr']} />
+            <Sel value={t6FromRating} onChange={setT6FromRating} options={['All', ...RATINGS]} />
+          </div>
+          {/* Migration Matrix */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Migration Matrix — {t6Scenario.charAt(0).toUpperCase() + t6Scenario.slice(1)} Scenario · {t6Horizon} Horizon</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>Rows = from-rating, Columns = to-rating. Diagonal = stay probability.</div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ borderCollapse: 'collapse', fontSize: 12 }}>
                 <thead>
-                  <tr style={{ background:T.sub }}>
-                    <th style={{ padding:'6px 10px',textAlign:'left',color:T.muted }}>Sector</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Count</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Avg Carbon β</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Avg Climate PD</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Phys Premium</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Trans Premium</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>GB Issuers</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Avg Greenium</th>
+                  <tr style={{ background: T.sub }}>
+                    <th style={{ padding: '8px 12px', color: T.muted }}>From \\ To</th>
+                    {RATINGS.map(r => (
+                      <th key={r} style={{ padding: '8px 12px', color: RATING_COLORS[r], fontWeight: 700 }}>{r}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {SECTORS.map((sector,si)=>{
-                    const sub=filtered.filter(x=>x.sector===sector);
-                    if(!sub.length) return null;
-                    const avgCB=sub.length?sub.reduce((s,x)=>s+x.carbonBeta,0)/sub.length:0;
-                    const avgPD=sub.length?sub.reduce((s,x)=>s+x.climatePD,0)/sub.length:0;
-                    const avgPhys=sub.length?sub.reduce((s,x)=>s+x.physPremium,0)/sub.length:0;
-                    const avgTrans=sub.length?sub.reduce((s,x)=>s+x.transPremium,0)/sub.length:0;
-                    const gbSub=sub.filter(x=>x.isGreenBond);
-                    const avgGreenium=gbSub.length?gbSub.reduce((s,x)=>s+x.greenBondPremium,0)/gbSub.length:null;
+                  {RATINGS.map((fromR, ri) => {
+                    if (t6FromRating !== 'All' && t6FromRating !== fromR) return null;
+                    const row = migMatrix[ri];
+                    // Compound for horizon
                     return (
-                      <tr key={sector} style={{ background:si%2===0?T.card:T.sub }}>
-                        <td style={{ padding:'5px 10px',fontWeight:600,fontSize:11 }}>{sector}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right' }}>{sub.length}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:avgCB>0.7?T.red:T.text }}>{avgCB.toFixed(3)}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:avgPD*100>3?T.red:T.text }}>{(avgPD*100).toFixed(2)}%</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.orange }}>{avgPhys.toFixed(1)} bps</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.indigo }}>{avgTrans.toFixed(1)} bps</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.teal }}>{gbSub.length}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:avgGreenium!==null&&avgGreenium<0?T.teal:T.muted }}>{avgGreenium!==null?`${avgGreenium.toFixed(1)} bps`:'—'}</td>
+                      <tr key={fromR} style={{ borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '8px 12px', fontWeight: 700, color: RATING_COLORS[fromR] }}>{fromR}</td>
+                        {RATINGS.map((toR, ci) => {
+                          const val = row[ci];
+                          const isDiag = ri === ci;
+                          const isDowngrade = ci > ri;
+                          const bg = isDiag ? `rgba(22,163,74,${val * 0.5})` : isDowngrade ? `rgba(220,38,38,${val * 3})` : `rgba(3,105,161,${val * 3})`;
+                          return (
+                            <td key={toR} style={{ padding: '8px 12px', textAlign: 'center', background: bg, fontWeight: isDiag ? 800 : 400, fontFamily: 'monospace', fontSize: 11 }}>
+                              {(val * 100).toFixed(2)}%
+                              {isDowngrade && ci - ri > 1 && <span style={{ fontSize: 8, color: T.red, marginLeft: 2 }}>↓↓</span>}
+                              {isDowngrade && ci - ri === 1 && <span style={{ fontSize: 8, color: T.amber, marginLeft: 2 }}>↓</span>}
+                            </td>
+                          );
+                        })}
                       </tr>
                     );
                   }).filter(Boolean)}
@@ -885,40 +1303,664 @@ export default function ClimateRiskPremiumPage() {
               </table>
             </div>
           </div>
+          {/* Default rates */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Default Rate by Rating — {t6Scenario} · {t6Horizon}</div>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={defaultRates} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="rating" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${v.toFixed(2)}%`} />
+                <Tooltip formatter={(v) => `${v.toFixed(3)}%`} />
+                <Bar dataKey="defaultRate" name="Default Rate (%)">
+                  {defaultRates.map((entry, i) => <Cell key={i} fill={RATING_COLORS[entry.rating]} />)}
+                </Bar>
+                <ReferenceLine y={0.5} stroke={T.gold} strokeDasharray="4 4" label={{ value: 'Investment Grade boundary', fontSize: 10 }} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:12 }}>Issuer Type × Geography Premium Cross-Tab</div>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%',borderCollapse:'collapse',fontSize:11 }}>
+          {/* Historical default rates by rating (10yr) */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Historical Default Rates 2014–2023 (%) — Annual by Rating</div>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={DEFAULT_HISTORY} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${v.toFixed(2)}%`} />
+                <Tooltip formatter={(v) => `${(+v).toFixed(3)}%`} />
+                <Legend />
+                {RATINGS.map(r => (
+                  <Line key={r} type="monotone" dataKey={r} stroke={RATING_COLORS[r]} strokeWidth={1.5} dot={{ r: 2 }} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* EDF scatter — spread vs PD */}
+          <div style={{ display: 'flex', gap: 16, marginTop: 16, flexWrap: 'wrap' }}>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 2, minWidth: 320 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Issuer EDF vs Credit Spread (top-60 issuers)</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="edf" name="EDF (%)" tick={{ fontSize: 10 }} label={{ value: 'EDF (%)', position: 'insideBottom', fontSize: 10, dy: 10 }} />
+                  <YAxis dataKey="spread" name="OAS (bps)" tick={{ fontSize: 10 }} />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                  <Scatter data={EDF_DATA} fill={T.purple} opacity={0.7} />
+                  <ReferenceLine x={1} stroke={T.red} strokeDasharray="4 4" label={{ value: 'EDF 1%', fontSize: 10 }} />
+                </ScatterChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 260 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Factor Correlation Matrix</div>
+              <table style={{ borderCollapse: 'collapse', fontSize: 11, width: '100%' }}>
                 <thead>
-                  <tr style={{ background:T.sub }}>
-                    <th style={{ padding:'5px 8px',textAlign:'left',color:T.muted }}>Issuer Type</th>
-                    {GEOGRAPHIES.map(g=>(
-                      <th key={g} style={{ padding:'5px 6px',textAlign:'right',color:T.muted,fontSize:10 }}>{g.substring(0,6)}</th>
+                  <tr style={{ background: T.sub }}>
+                    <th style={{ padding: '6px 8px', color: T.muted }}></th>
+                    {CLIMATE_FACTORS.map(f => <th key={f.name} style={{ padding: '6px 8px', color: f.color, fontSize: 10 }}>{f.name.split(' ')[1] || f.name}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {CLIMATE_FACTORS.map((f, ri) => (
+                    <tr key={f.name} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '6px 8px', color: f.color, fontWeight: 700, fontSize: 10 }}>{f.name.split(' ')[1] || f.name}</td>
+                      {FACTOR_CORR[ri].map((v, ci) => {
+                        const bg = ri === ci ? `rgba(79,70,229,0.15)` : v > 0.5 ? `rgba(220,38,38,${v * 0.4})` : v < 0 ? `rgba(3,105,161,${Math.abs(v) * 0.4})` : 'transparent';
+                        return <td key={ci} style={{ padding: '6px 8px', textAlign: 'center', background: bg, fontFamily: 'monospace', fontWeight: ri === ci ? 800 : 400 }}>{v.toFixed(2)}</td>;
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ TAB 7 */}
+      {tab === 6 && (
+        <div>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {RATINGS.map(r => (
+                <button key={r} onClick={() => toggleT7Rating(r)}
+                  style={{ padding: '4px 10px', borderRadius: 6, border: `2px solid ${RATING_COLORS[r]}`,
+                    background: t7Ratings.has(r) ? RATING_COLORS[r] : T.card,
+                    color: t7Ratings.has(r) ? '#fff' : RATING_COLORS[r], fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                  {r}
+                </button>
+              ))}
+            </div>
+            <Sel value={t7SplitType} onChange={setT7SplitType} options={['combined','physical','transition']} />
+            <label style={{ fontSize: 12, color: T.text }}>
+              Notional ($M): <input type="number" value={t7Notional} onChange={e => setT7Notional(+e.target.value)} min={1} max={1000}
+                style={{ width: 80, padding: '3px 6px', borderRadius: 6, border: `1px solid ${T.border}`, marginLeft: 6, fontSize: 12 }} />
+            </label>
+          </div>
+          {/* Term structure chart */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Climate Spread Term Curves — {t7SplitType === 'combined' ? 'Total OAS' : t7SplitType === 'physical' ? 'Physical Premium' : 'Transition Premium'} (bps)</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>Select ratings to display; 1–30yr maturity</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={termData} margin={{ top: 4, right: 30, left: 0, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="maturity" tick={{ fontSize: 10 }} label={{ value: 'Maturity (yr)', position: 'insideBottom', fontSize: 10, dy: 10 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                {RATINGS.filter(r => t7Ratings.has(r)).map(r => (
+                  <Line key={r} type="monotone" dataKey={r} stroke={RATING_COLORS[r]} strokeWidth={2} dot={false} />
+                ))}
+                <ReferenceLine x={10} stroke={T.border} strokeDasharray="4 4" label={{ value: '10yr', fontSize: 10 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          {/* CS01 table */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>CS01 Calculator — Climate DV01 at 15yr Midpoint (${t7Notional}M Notional)</div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  {['Rating','Mid Spread (bps)','CS01 ($)','Annual Climate Cost ($M)','Duration-Adj Spread'].map(h => (
+                    <th key={h} style={{ padding: '7px 12px', textAlign: 'left', color: T.muted, fontWeight: 600, fontSize: 11, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {cs01Data.map(row => (
+                  <tr key={row.rating} style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <td style={{ padding: '6px 12px' }}><span style={{ background: RATING_COLORS[row.rating] + '22', color: RATING_COLORS[row.rating], padding: '1px 7px', borderRadius: 4, fontWeight: 700 }}>{row.rating}</span></td>
+                    <td style={{ padding: '6px 12px', fontWeight: 700 }}>{row.midSpread}</td>
+                    <td style={{ padding: '6px 12px', color: T.indigo, fontWeight: 700 }}>${row.cs01}</td>
+                    <td style={{ padding: '6px 12px', color: T.orange }}>${(t7Notional * (+row.midSpread) * 0.0001).toFixed(3)}M</td>
+                    <td style={{ padding: '6px 12px', color: T.muted }}>{(+row.midSpread * 0.87).toFixed(1)} bps</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Physical vs transition area chart — 5yr, 10yr, 20yr, 30yr for selected ratings */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Physical vs Transition Component Area — Selected Ratings (bps)</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>Stacked area shows climate component build-up along the curve</div>
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={termData.filter((_, i) => i < 20)} margin={{ top: 4, right: 20, left: 0, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="maturity" tick={{ fontSize: 10 }} label={{ value: 'Maturity (yr)', position: 'insideBottom', fontSize: 10, dy: 10 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                {RATINGS.filter(r => t7Ratings.has(r)).slice(0, 3).map((r, ri) => (
+                  <Area key={r} type="monotone" dataKey={r} stroke={RATING_COLORS[r]} fill={RATING_COLORS[r]} fillOpacity={0.15} strokeWidth={2} />
+                ))}
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Spread at key maturities — summary table */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Spread at Key Maturities — {t7SplitType === 'combined' ? 'Total OAS' : t7SplitType === 'physical' ? 'Physical Premium' : 'Transition Premium'} (bps)</div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: T.sub }}>
+                  <th style={{ padding: '7px 12px', textAlign: 'left', color: T.muted, fontWeight: 600 }}>Rating</th>
+                  {[1,2,3,5,7,10,15,20,30].map(m => (
+                    <th key={m} style={{ padding: '7px 12px', textAlign: 'center', color: T.muted, fontWeight: 600 }}>{m}yr</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {RATINGS.filter(r => t7Ratings.has(r)).map(r => {
+                  const riIdx = RATINGS.indexOf(r);
+                  return (
+                    <tr key={r} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '6px 12px' }}><span style={{ background: RATING_COLORS[r] + '22', color: RATING_COLORS[r], padding: '1px 7px', borderRadius: 4, fontWeight: 700 }}>{r}</span></td>
+                      {[1,2,3,5,7,10,15,20,30].map(m => {
+                        const ts = TERM_STRUCTURE[riIdx][m - 1];
+                        const v = t7SplitType === 'physical' ? ts.physPremium : t7SplitType === 'transition' ? ts.transPremium : ts.totalSpread;
+                        return (
+                          <td key={m} style={{ padding: '6px 12px', textAlign: 'center', fontFamily: 'monospace', fontWeight: m === 10 ? 800 : 400, color: m === 10 ? T.navy : T.text }}>
+                            {v.toFixed(0)}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ TAB 8 */}
+      {tab === 7 && (
+        <div>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <input value={t8Search} onChange={e => setT8Search(e.target.value)} placeholder="Search to add issuers..."
+              style={{ padding: '5px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, width: 200 }} />
+            <label style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="checkbox" checked={t8GreenOnly} onChange={e => setT8GreenOnly(e.target.checked)} /> Green only
+            </label>
+            <label style={{ fontSize: 12 }}>
+              Benchmark OAS:
+              <input type="range" min={50} max={400} value={t8BenchOAS} onChange={e => setT8BenchOAS(+e.target.value)} style={{ marginLeft: 6, width: 100 }} />
+              <strong style={{ marginLeft: 6 }}>{t8BenchOAS} bps</strong>
+            </label>
+            <button onClick={() => setPortfolioIds(new Set())} style={{ padding: '4px 12px', borderRadius: 6, border: `1px solid ${T.red}`, color: T.red, background: T.card, cursor: 'pointer', fontSize: 12 }}>
+              Clear Portfolio
+            </button>
+          </div>
+          {/* KPIs */}
+          <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+            <KpiCard label="Portfolio OAS" value={`${portfolioOAS.toFixed(0)} bps`} color={portfolioOAS > t8BenchOAS ? T.green : T.red} sub={`vs ${t8BenchOAS} bps benchmark`} />
+            <KpiCard label="Issuers" value={portfolioItems.length} color={T.navy} sub="in portfolio" />
+            <KpiCard label="Green %" value={`${portfolioGreenPct.toFixed(1)}%`} color={T.green} sub="green bonds" />
+            <KpiCard label="Climate CVaR" value={`$${portfolioCVaR.toFixed(1)}M`} color={T.red} sub="PD×LGD×EAD" />
+            <KpiCard label="Risk-Adj Return" value={portfolioSharpe} color={T.indigo} sub="OAS / Climate CVaR" />
+          </div>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            {/* Candidates table */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 16, flex: 2, minWidth: 320 }}>
+              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 10 }}>Add Issuers (checkbox to include)</div>
+              <div style={{ maxHeight: 320, overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead style={{ position: 'sticky', top: 0, background: T.sub, zIndex: 1 }}>
+                    <tr>
+                      <th style={{ padding: '6px 8px' }}></th>
+                      <th style={{ padding: '6px 8px', textAlign: 'left', color: T.muted, fontSize: 10 }}>Name</th>
+                      <th style={{ padding: '6px 8px', color: T.muted, fontSize: 10 }}>Rating</th>
+                      <th style={{ padding: '6px 8px', color: T.muted, fontSize: 10 }}>OAS</th>
+                      <th style={{ padding: '6px 8px', color: T.muted, fontSize: 10 }}>Green</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {t8Candidates.map(x => (
+                      <tr key={x.id} style={{ borderBottom: `1px solid ${T.border}`, background: portfolioIds.has(x.id) ? '#eef2ff' : T.card }}>
+                        <td style={{ padding: '5px 8px', textAlign: 'center' }}>
+                          <input type="checkbox" checked={portfolioIds.has(x.id)} onChange={() => togglePortfolio(x.id)} />
+                        </td>
+                        <td style={{ padding: '5px 8px', fontWeight: 600 }}>{x.name}</td>
+                        <td style={{ padding: '5px 8px', textAlign: 'center' }}>
+                          <span style={{ color: RATING_COLORS[x.rating], fontWeight: 700 }}>{x.rating}</span>
+                        </td>
+                        <td style={{ padding: '5px 8px', textAlign: 'center' }}>{x.totalSpread.toFixed(0)}</td>
+                        <td style={{ padding: '5px 8px', textAlign: 'center' }}>{x.isGreen ? <span style={{ color: T.green }}>✓</span> : '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {/* Charts */}
+            <div style={{ flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>Risk Budget</div>
+                {portfolioItems.length ? (
+                  <ResponsiveContainer width="100%" height={140}>
+                    <PieChart>
+                      <Pie data={riskBudgetPie} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={55} label={({ name }) => name}>
+                        {riskBudgetPie.map((entry, i) => <Cell key={i} fill={[T.orange, T.indigo, T.muted][i]} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : <div style={{ color: T.muted, fontSize: 12, textAlign: 'center', padding: 30 }}>Add issuers to build portfolio</div>}
+              </div>
+              <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>Sector Concentration</div>
+                {portfolioSectorPie.length ? (
+                  <ResponsiveContainer width="100%" height={140}>
+                    <BarChart data={portfolioSectorPie} margin={{ top: 4, right: 8, left: 0, bottom: 30 }}>
+                      <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-40} textAnchor="end" />
+                      <YAxis tick={{ fontSize: 10 }} />
+                      <Tooltip />
+                      <Bar dataKey="value" fill={T.indigo} name="Issuers" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : <div style={{ color: T.muted, fontSize: 12, textAlign: 'center', padding: 30 }}>No portfolio data</div>}
+              </div>
+            </div>
+          </div>
+
+          {/* Portfolio issuer detail table */}
+          {portfolioItems.length > 0 && (
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Portfolio Issuer Detail ({portfolioItems.length} issuers)</div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                  <thead>
+                    <tr style={{ background: T.sub }}>
+                      {['Issuer','Rating','Sector','OAS (bps)','Phys Prem','Trans Prem','Carbon β','PD','EAD ($M)','EL ($M)','Green?'].map(h => (
+                        <th key={h} style={{ padding: '6px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, fontSize: 10, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {portfolioItems.map(x => (
+                      <tr key={x.id} style={{ borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '5px 10px', fontWeight: 700 }}>{x.name}</td>
+                        <td style={{ padding: '5px 10px' }}><span style={{ color: RATING_COLORS[x.rating], fontWeight: 700 }}>{x.rating}</span></td>
+                        <td style={{ padding: '5px 10px', color: T.muted, fontSize: 10 }}>{x.sector}</td>
+                        <td style={{ padding: '5px 10px', fontWeight: 700, color: T.navy }}>{x.totalSpread.toFixed(0)}</td>
+                        <td style={{ padding: '5px 10px', color: T.orange }}>{x.physPremium.toFixed(1)}</td>
+                        <td style={{ padding: '5px 10px', color: T.indigo }}>{x.transPremium.toFixed(1)}</td>
+                        <td style={{ padding: '5px 10px', fontFamily: 'monospace' }}>{x.carbonBeta.toFixed(3)}</td>
+                        <td style={{ padding: '5px 10px', color: T.red }}>{(x.climatePD * 100).toFixed(2)}%</td>
+                        <td style={{ padding: '5px 10px' }}>{x.ead.toFixed(0)}</td>
+                        <td style={{ padding: '5px 10px', color: T.amber }}>{(x.climatePD * x.lgd * x.ead).toFixed(2)}</td>
+                        <td style={{ padding: '5px 10px' }}>{x.isGreen ? <span style={{ color: T.green, fontWeight: 700 }}>✓</span> : '—'}</td>
+                      </tr>
+                    ))}
+                    <tr style={{ background: T.sub, fontWeight: 700 }}>
+                      <td style={{ padding: '6px 10px' }} colSpan={3}>Portfolio Average / Total</td>
+                      <td style={{ padding: '6px 10px', color: T.navy }}>{portfolioOAS.toFixed(0)}</td>
+                      <td style={{ padding: '6px 10px', color: T.orange }}>{portfolioItems.length ? (portfolioItems.reduce((s, x) => s + x.physPremium, 0) / portfolioItems.length).toFixed(1) : '—'}</td>
+                      <td style={{ padding: '6px 10px', color: T.indigo }}>{portfolioItems.length ? (portfolioItems.reduce((s, x) => s + x.transPremium, 0) / portfolioItems.length).toFixed(1) : '—'}</td>
+                      <td style={{ padding: '6px 10px' }}>{portfolioItems.length ? (portfolioItems.reduce((s, x) => s + x.carbonBeta, 0) / portfolioItems.length).toFixed(3) : '—'}</td>
+                      <td style={{ padding: '6px 10px', color: T.red }}>{portfolioItems.length ? ((portfolioItems.reduce((s, x) => s + x.climatePD, 0) / portfolioItems.length) * 100).toFixed(2) + '%' : '—'}</td>
+                      <td style={{ padding: '6px 10px' }}>{portfolioItems.reduce((s, x) => s + x.ead, 0).toFixed(0)}</td>
+                      <td style={{ padding: '6px 10px', color: T.amber }}>${portfolioCVaR.toFixed(2)}M</td>
+                      <td style={{ padding: '6px 10px' }}></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* OAS spread vs benchmark area chart */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Portfolio OAS vs Benchmark — 36-Month Trajectory</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>
+              Benchmark: {t8BenchOAS} bps (adjustable above) · Shaded area = excess spread over benchmark
+            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={OAS_TIME_SERIES} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="month" tick={{ fontSize: 9 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                <Area type="monotone" dataKey="benchmarkOAS" stroke={T.gold} fill={T.gold} fillOpacity={0.1} strokeWidth={2} name="Benchmark OAS" strokeDasharray="5 5" />
+                <Area type="monotone" dataKey="portfolioOAS" stroke={T.indigo} fill={T.indigo} fillOpacity={0.15} strokeWidth={2} name="Portfolio OAS" />
+                <ReferenceLine y={t8BenchOAS} stroke={T.gold} strokeDasharray="6 3" label={{ value: `Benchmark ${t8BenchOAS}bps`, fontSize: 10 }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ TAB 9 */}
+      {tab === 8 && (
+        <div>
+          <div style={{ display: 'flex', gap: 14, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            <label style={{ fontSize: 12 }}>
+              Carbon Price ($/tonne):
+              <input type="range" min={0} max={300} value={t9CarbonPrice} onChange={e => setT9CarbonPrice(+e.target.value)} style={{ marginLeft: 8, width: 120 }} />
+              <strong style={{ marginLeft: 6 }}>${t9CarbonPrice}</strong>
+            </label>
+            <label style={{ fontSize: 12 }}>
+              Hedge Ratio:
+              <input type="range" min={0} max={100} value={t9HedgeRatio} onChange={e => setT9HedgeRatio(+e.target.value)} style={{ marginLeft: 8, width: 100 }} />
+              <strong style={{ marginLeft: 6 }}>{t9HedgeRatio}%</strong>
+            </label>
+            <Sel value={t9SectorFocus} onChange={setT9SectorFocus} options={['All', ...SECTORS]} />
+          </div>
+          {/* Carbon Beta by sector */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Carbon Beta × Carbon Price → Spread Widening (bps)</div>
+            <div style={{ fontSize: 11, color: T.muted, marginBottom: 12 }}>Carbon price: ${t9CarbonPrice}/tonne · Hedge ratio: {t9HedgeRatio}%</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={carbonBetaBySector} margin={{ top: 4, right: 20, left: 0, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="spreadWidening" fill={T.red} name="Gross Spread Widening" />
+                <Bar dataKey="hedgeCost" fill={T.orange} name="Hedge Cost" />
+                <Bar dataKey="netSpread" fill={T.green} name="Net Spread Impact" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            {/* Beta vs ESG scatter */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 2, minWidth: 320 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Carbon Beta vs ESG Score</div>
+              <ResponsiveContainer width="100%" height={200}>
+                <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis dataKey="esgScore" name="ESG Score" tick={{ fontSize: 10 }} label={{ value: 'ESG Score', position: 'insideBottom', fontSize: 10, dy: 10 }} />
+                  <YAxis dataKey="carbonBeta" name="Carbon Beta" tick={{ fontSize: 10 }} />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                  <Scatter data={betaEsgScatter} fill={T.orange} opacity={0.7} />
+                  <ReferenceLine y={0.5} stroke={T.red} strokeDasharray="4 4" label={{ value: 'High beta', fontSize: 10 }} />
+                </ScatterChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Hedging cost table */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, flex: 1, minWidth: 260 }}>
+              <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 10 }}>Hedging Cost Estimator</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    <th style={{ padding: '6px 8px', textAlign: 'left', color: T.muted }}>Sector</th>
+                    <th style={{ padding: '6px 8px', color: T.muted }}>Avg β</th>
+                    <th style={{ padding: '6px 8px', color: T.red }}>Gross</th>
+                    <th style={{ padding: '6px 8px', color: T.green }}>Net</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {carbonBetaBySector.slice(0, 10).map(row => (
+                    <tr key={row.sector} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '5px 8px', fontWeight: 600 }}>{row.sector}</td>
+                      <td style={{ padding: '5px 8px', textAlign: 'center', fontFamily: 'monospace' }}>{row.avgBeta}</td>
+                      <td style={{ padding: '5px 8px', textAlign: 'center', color: T.red }}>{row.spreadWidening}</td>
+                      <td style={{ padding: '5px 8px', textAlign: 'center', color: T.green }}>{row.netSpread}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Spread volatility series */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Daily Spread Change & Rolling 10-Day Volatility (bps)</div>
+            <ResponsiveContainer width="100%" height={200}>
+              <ComposedChart data={SPREAD_VOL_SERIES} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="day" tick={{ fontSize: 9 }} />
+                <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} />
+                <Tooltip />
+                <Legend />
+                <Bar yAxisId="left" dataKey="change" name="Daily Δ OAS">
+                  {SPREAD_VOL_SERIES.map((e, i) => <Cell key={i} fill={e.change >= 0 ? T.red : T.green} />)}
+                </Bar>
+                <Line yAxisId="right" type="monotone" dataKey="rollingVol" stroke={T.orange} strokeWidth={2} dot={false} name="Rolling Vol (bps)" />
+                <ReferenceLine yAxisId="left" y={0} stroke={T.border} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* CDS Basis Table */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Climate-Adjusted CDS Basis — Cash Bond OAS vs CDS Premium (top-40 issuers)</div>
+            <div style={{ overflowX: 'auto', maxHeight: 260, overflowY: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead style={{ position: 'sticky', top: 0, background: T.sub, zIndex: 1 }}>
+                  <tr>
+                    {['Issuer','Sector','5yr CDS (bps)','Clim-Adj CDS (bps)','Cash OAS approx','Basis (CDS-OAS)','Signal'].map(h => (
+                      <th key={h} style={{ padding: '6px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, fontSize: 10, borderBottom: `1px solid ${T.border}` }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {ISSUER_TYPES.map((itype,ti)=>{
-                    const typeSub=filtered.filter(x=>x.issuerType===itype);
+                  {CDS_DATA.map(row => (
+                    <tr key={row.name} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '5px 10px', fontWeight: 700 }}>{row.name}</td>
+                      <td style={{ padding: '5px 10px', color: T.muted }}>{row.sector}</td>
+                      <td style={{ padding: '5px 10px' }}>{row.cds5yr}</td>
+                      <td style={{ padding: '5px 10px', color: T.amber }}>{row.climAdjCDS}</td>
+                      <td style={{ padding: '5px 10px' }}>{(+row.cds5yr * 0.92).toFixed(0)}</td>
+                      <td style={{ padding: '5px 10px', color: row.basis > 0 ? T.red : T.green, fontWeight: 700 }}>{row.basis > 0 ? '+' : ''}{row.basis}</td>
+                      <td style={{ padding: '5px 10px' }}>
+                        <span style={{ color: row.basis > 5 ? T.red : row.basis < -5 ? T.green : T.muted, fontWeight: 600 }}>
+                          {row.basis > 5 ? 'CDS Rich' : row.basis < -5 ? 'Bond Rich' : 'Fair'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Carbon intensity vs spread */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginTop: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Carbon Intensity vs Credit Spread (tCO2e/$M revenue × OAS)</div>
+            <ResponsiveContainer width="100%" height={200}>
+              <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="carbonIntensity" name="Carbon Intensity" tick={{ fontSize: 10 }} label={{ value: 'Carbon Intensity (tCO2e/$M rev)', position: 'insideBottom', fontSize: 10, dy: 10 }} />
+                <YAxis dataKey="spread" name="OAS (bps)" tick={{ fontSize: 10 }} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={CARBON_INTENSITY_SCATTER} fill={T.teal} opacity={0.65} />
+                <ReferenceLine x={400} stroke={T.red} strokeDasharray="4 4" label={{ value: 'High intensity', fontSize: 10 }} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════ TAB 10 */}
+      {tab === 9 && (
+        <div>
+          <div style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            {Object.keys(t10Sections).map(k => (
+              <label key={k} style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <input type="checkbox" checked={t10Sections[k]} onChange={e => setT10Sections(p => ({ ...p, [k]: e.target.checked }))} />
+                {k.charAt(0).toUpperCase() + k.slice(1)}
+              </label>
+            ))}
+            <Sel value={t10Format} onChange={setT10Format} options={['Summary','Detail']} />
+          </div>
+
+          {/* Decomposition Table */}
+          {t10Sections.decomp && (
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Full Portfolio Spread Decomposition</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ background: T.sub }}>
+                    {['Sector','Avg OAS','Phys Premium','Trans Premium','Residual','Climate %','Green Bond %','Avg Carbon β'].map(h => (
+                      <th key={h} style={{ padding: '7px 12px', textAlign: 'left', color: T.muted, fontWeight: 600, fontSize: 11, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {SECTORS.map((s, si) => {
+                    const sub = ISSUERS.filter(x => x.sector === s);
+                    if (!sub.length) return null;
+                    const n = sub.length;
+                    const avgOASRow = sub.reduce((a, x) => a + x.totalSpread, 0) / n;
+                    const avgPhysRow = sub.reduce((a, x) => a + x.physPremium, 0) / n;
+                    const avgTransRow = sub.reduce((a, x) => a + x.transPremium, 0) / n;
+                    const avgResRow = sub.reduce((a, x) => a + x.residualPremium, 0) / n;
+                    const climPct = avgOASRow > 0 ? (avgPhysRow + avgTransRow) / avgOASRow * 100 : 0;
+                    const greenPctRow = sub.filter(x => x.isGreen).length / n * 100;
+                    const avgBetaRow = sub.reduce((a, x) => a + x.carbonBeta, 0) / n;
                     return (
-                      <tr key={itype} style={{ background:ti%2===0?T.card:T.sub }}>
-                        <td style={{ padding:'4px 8px',fontWeight:600,fontSize:10 }}>{itype}</td>
-                        {GEOGRAPHIES.map(g=>{
-                          const sub=typeSub.filter(x=>x.geography===g);
-                          const avg=sub.length?sub.reduce((s,x)=>s+x.physPremium+x.transPremium+x.residualPremium,0)/sub.length:null;
-                          return (
-                            <td key={g} style={{ padding:'4px 6px',textAlign:'right',color:avg===null?T.muted:avg>150?T.red:avg>80?T.amber:T.text,fontSize:10 }}>
-                              {avg===null?'—':`${avg.toFixed(0)}`}
-                            </td>
-                          );
-                        })}
+                      <tr key={s} style={{ borderBottom: `1px solid ${T.border}` }}>
+                        <td style={{ padding: '7px 12px', fontWeight: 700 }}>{s}</td>
+                        <td style={{ padding: '7px 12px', fontWeight: 700, color: T.navy }}>{avgOASRow.toFixed(0)}</td>
+                        <td style={{ padding: '7px 12px', color: T.orange }}>{avgPhysRow.toFixed(1)}</td>
+                        <td style={{ padding: '7px 12px', color: T.indigo }}>{avgTransRow.toFixed(1)}</td>
+                        <td style={{ padding: '7px 12px', color: T.muted }}>{avgResRow.toFixed(1)}</td>
+                        <td style={{ padding: '7px 12px', color: climPct > 30 ? T.red : T.green, fontWeight: 700 }}>{climPct.toFixed(1)}%</td>
+                        <td style={{ padding: '7px 12px', color: T.green }}>{greenPctRow.toFixed(0)}%</td>
+                        <td style={{ padding: '7px 12px', fontFamily: 'monospace' }}>{avgBetaRow.toFixed(3)}</td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
+          )}
+
+          {/* Basel SA-CR Climate RWA */}
+          {t10Sections.rwa && (
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Basel SA-CR Climate RWA Impact</div>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                {RATINGS.map((r, ri) => {
+                  const baseRW = [0.20, 0.20, 0.50, 1.00, 1.50, 1.50, 1.50][ri];
+                  const climateAdj = baseRW * (1 + sr(ri * 41) * 0.3);
+                  const sub = ISSUERS.filter(x => x.rating === r);
+                  const totalEAD = sub.reduce((a, x) => a + x.ead, 0);
+                  const rwa = totalEAD * climateAdj;
+                  return (
+                    <div key={r} style={{ background: T.sub, borderRadius: 8, padding: '12px 16px', flex: 1, minWidth: 110, border: `1px solid ${T.border}` }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: RATING_COLORS[r] }}>{r}</div>
+                      <div style={{ fontSize: 11, color: T.muted, marginTop: 4 }}>Base RW: {(baseRW * 100).toFixed(0)}%</div>
+                      <div style={{ fontSize: 11, color: T.amber, marginTop: 2 }}>Clim-Adj: {(climateAdj * 100).toFixed(0)}%</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: T.navy, marginTop: 4 }}>RWA: ${(rwa / 1000).toFixed(1)}Bn</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* SFDR PAI #18 */}
+          {t10Sections.sfdr && (
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>SFDR PAI #18 — Climate Spread Indicator</div>
+              <div style={{ fontSize: 12, color: T.muted, marginBottom: 10 }}>Portfolio-weighted climate risk premium as PAI mandatory disclosure metric per SFDR Annex I Table 2, row 18.</div>
+              {t10Format === 'Detail' && (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ borderCollapse: 'collapse', fontSize: 11, width: '100%' }}>
+                    <thead>
+                      <tr style={{ background: T.sub }}>
+                        {['PAI Indicator','Metric','2022','2023','2024 (est.)','Unit','Threshold','Status'].map(h => (
+                          <th key={h} style={{ padding: '6px 10px', textAlign: 'left', color: T.muted, fontSize: 10, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { ind: 'PAI #18', metric: 'Climate-adj credit spread avg', v22: '42.3', v23: '47.1', v24: '51.8', unit: 'bps', threshold: '<50', ok: true },
+                        { ind: 'PAI #18a', metric: 'Physical risk premium share', v22: '18.2%', v23: '19.4%', v24: '21.0%', unit: '%', threshold: '<25%', ok: true },
+                        { ind: 'PAI #18b', metric: 'Transition risk premium share', v22: '14.6%', v23: '16.2%', v24: '17.5%', unit: '%', threshold: '<20%', ok: true },
+                      ].map(row => (
+                        <tr key={row.ind} style={{ borderBottom: `1px solid ${T.border}` }}>
+                          <td style={{ padding: '6px 10px', fontWeight: 700, color: T.indigo }}>{row.ind}</td>
+                          <td style={{ padding: '6px 10px' }}>{row.metric}</td>
+                          <td style={{ padding: '6px 10px' }}>{row.v22}</td>
+                          <td style={{ padding: '6px 10px' }}>{row.v23}</td>
+                          <td style={{ padding: '6px 10px', fontWeight: 700 }}>{row.v24}</td>
+                          <td style={{ padding: '6px 10px', color: T.muted }}>{row.unit}</td>
+                          <td style={{ padding: '6px 10px', color: T.muted }}>{row.threshold}</td>
+                          <td style={{ padding: '6px 10px' }}><span style={{ color: row.ok ? T.green : T.red, fontWeight: 700 }}>{row.ok ? '✓ Pass' : '✗ Breach'}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Methodology */}
+          {t10Sections.methodology && (
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Methodology Notes</div>
+              <div style={{ fontSize: 12, color: T.text, lineHeight: 1.7 }}>
+                <p><strong>OAS Decomposition:</strong> Total OAS = Physical Premium + Transition Premium + Residual. Physical and transition premiums are derived via factor regression against 4 climate factors (Physical Acute, Physical Chronic, Transition Policy, Transition Technology). Factor loadings are sector-specific.</p>
+                <p><strong>Carbon Beta:</strong> Sensitivity of credit spreads to a $1/tonne increase in carbon price. Estimated via cross-sectional regression of spread changes on sector-weighted emissions intensity. Formula: β = 0.4×PhysRisk + 0.6×TransRisk / 100.</p>
+                <p><strong>Greenium:</strong> Spread differential between green-labelled bonds and conventional comparables from the same issuer or matched peers. Negative values indicate a greenium (green bonds trade tighter). Significance tested at 95% confidence.</p>
+                <p><strong>Migration Matrix:</strong> Annual 1-year transition probabilities calibrated to Moody's/S&P historical data with climate adjustment overlays. Adverse and Severe scenarios apply progressive shocks to diagonal (stay) probabilities.</p>
+                <p><strong>CS01:</strong> Climate DV01 — dollar sensitivity of portfolio value to a 1bp widening in climate-adjusted credit spread. CS01 = Notional × Spread × 0.0001 × Modified Duration proxy.</p>
+              </div>
+            </div>
+          )}
+
+          {/* Export */}
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Export</div>
+            <button onClick={() => {
+              const exportData = {
+                generatedAt: new Date().toISOString(),
+                format: t10Format,
+                sections: t10Sections,
+                summary: {
+                  totalIssuers: ISSUERS.length,
+                  avgOAS: ISSUERS.reduce((s, x) => s + x.totalSpread, 0) / ISSUERS.length,
+                  avgClimatePremium: ISSUERS.reduce((s, x) => s + x.physPremium + x.transPremium, 0) / ISSUERS.length,
+                  greenBondCount: ISSUERS.filter(x => x.isGreen).length,
+                  sectors: SECTORS.length,
+                },
+                sectors: SECTORS.map(s => {
+                  const sub = ISSUERS.filter(x => x.sector === s);
+                  return {
+                    sector: s,
+                    count: sub.length,
+                    avgOAS: sub.length ? (sub.reduce((a, x) => a + x.totalSpread, 0) / sub.length).toFixed(1) : 0,
+                  };
+                }),
+              };
+              const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url; a.download = 'climate_risk_premium_export.json'; a.click();
+              URL.revokeObjectURL(url);
+            }} style={{ padding: '8px 20px', borderRadius: 8, background: T.indigo, color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+              Download JSON Export
+            </button>
           </div>
         </div>
       )}

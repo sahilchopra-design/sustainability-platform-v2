@@ -456,7 +456,7 @@ const Pillar3Tab=()=>{
                 </tr>
               </thead>
               <tbody>
-                {t1WithPct.sort((a,b)=>b.total-a.total).map((r,i)=>(
+                {[...t1WithPct].sort((a,b)=>b.total-a.total).map((r,i)=>(
                   <tr key={i}>
                     <td style={{...S.td,fontWeight:600}}>{r.sector}</td>
                     <td style={{...S.td,fontFamily:T.mono}}>{(r.exposure/1e6).toFixed(0)}</td>
@@ -526,7 +526,7 @@ const Pillar3Tab=()=>{
                 </tr>
               </thead>
               <tbody>
-                {TEMPLATE3_DATA.sort((a,b)=>b.avgScore-a.avgScore).map((r,i)=>(
+                {[...TEMPLATE3_DATA].sort((a,b)=>b.avgScore-a.avgScore).map((r,i)=>(
                   <tr key={i}>
                     <td style={{...S.td,fontWeight:600}}>{r.region}</td>
                     <td style={{...S.td,fontFamily:T.mono}}>{(r.exposure/1e6).toFixed(0)}</td>

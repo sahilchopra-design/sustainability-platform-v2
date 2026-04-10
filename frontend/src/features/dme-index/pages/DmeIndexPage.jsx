@@ -115,7 +115,7 @@ const DmiScorecard = () => {
           </ResponsiveContainer></>)}
         {card(<><SH title="DMI Component Breakdown — Avg" sub="Impact (40%) · Risk (40%) · Opportunity (20%)"/>
           <ResponsiveContainer width="100%" height={210}>
-            <RadarChart data={[{axis:"Impact",val:+(ENTITIES.reduce((s,e)=>s+e.impact,0)/ENTITIES.length).toFixed(1)},{axis:"Risk",val:+(ENTITIES.reduce((s,e)=>s+e.risk,0)/ENTITIES.length).toFixed(1)},{axis:"Opportunity",val:+(ENTITIES.reduce((s,e)=>s+e.opp,0)/ENTITIES.length).toFixed(1)},{axis:"DMI",val:+(ENTITIES.reduce((s,e)=>s+e.dmi,0)/ENTITIES.length).toFixed(1)},{axis:"EMA DMI",val:+(ENTITIES.reduce((s,e)=>s+e.emaVal,0)/ENTITIES.length).toFixed(1)}]} cx="50%" cy="50%" outerRadius={80}>
+            <RadarChart data={[{axis:"Impact",val:+(ENTITIES.reduce((s,e)=>s+e.impact,0)/ Math.max(1, ENTITIES.length)).toFixed(1)},{axis:"Risk",val:+(ENTITIES.reduce((s,e)=>s+e.risk,0)/ Math.max(1, ENTITIES.length)).toFixed(1)},{axis:"Opportunity",val:+(ENTITIES.reduce((s,e)=>s+e.opp,0)/ Math.max(1, ENTITIES.length)).toFixed(1)},{axis:"DMI",val:+(ENTITIES.reduce((s,e)=>s+e.dmi,0)/ Math.max(1, ENTITIES.length)).toFixed(1)},{axis:"EMA DMI",val:+(ENTITIES.reduce((s,e)=>s+e.emaVal,0)/ Math.max(1, ENTITIES.length)).toFixed(1)}]} cx="50%" cy="50%" outerRadius={80}>
               <PolarGrid stroke="#e2e8f0"/><PolarAngleAxis dataKey="axis" tick={{fontSize:10,fontFamily:T.mono}}/>
               <Radar name="Avg" dataKey="val" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/>
             </RadarChart>

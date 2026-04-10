@@ -55,8 +55,10 @@ const REG_STATUS = [
   { framework: 'UK TPT', pillars: ['Strategy','Governance','Implementation','Engagement'], complete: [3,3,4,3], color: T.purple },
 ];
 
-// ─── Top-10 holdings transition snapshot ────────────────────────────────────
-const HOLDINGS = [
+import { isIndiaMode, adaptForTransitionRisk } from '../../../data/IndiaDataAdapter';
+
+// ─── Top-10 holdings transition snapshot ────────────────────────���───────────
+const _DEFAULT_HOLDINGS = [
   { name: 'Shell PLC', sector: 'Energy', weight: 4.2, score: 38, itr: 3.8, flag: 'CRITICAL' },
   { name: 'BP PLC', sector: 'Energy', weight: 3.1, score: 42, itr: 3.4, flag: 'HIGH' },
   { name: 'BASF SE', sector: 'Materials', weight: 2.8, score: 47, itr: 2.8, flag: 'HIGH' },
@@ -68,6 +70,11 @@ const HOLDINGS = [
   { name: 'Deutsche Bank', sector: 'Financials', weight: 1.9, score: 57, itr: 2.3, flag: 'MEDIUM' },
   { name: 'Lufthansa', sector: 'Industrials', weight: 1.4, score: 34, itr: 3.9, flag: 'CRITICAL' },
 ];
+// ── India Dataset Integration ─���
+const HOLDINGS = isIndiaMode() ? adaptForTransitionRisk().slice(0, 10).map(c => ({
+  name: c.name, sector: c.sector, weight: +(100 / 10).toFixed(1), score: Math.round(c.transitionScore),
+  itr: +c.temperatureAlignment_c, flag: c.flag,
+})) : _DEFAULT_HOLDINGS;
 
 const flagColor = f => ({ CRITICAL: T.red, HIGH: T.orange, MEDIUM: T.amber, LOW: T.green, LEADER: T.teal }[f] || T.textMut);
 

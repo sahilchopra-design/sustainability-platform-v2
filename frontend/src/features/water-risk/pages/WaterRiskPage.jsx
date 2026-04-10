@@ -268,7 +268,7 @@ export default function WaterRiskPage(){
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
           <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Basin Stress Levels</div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={BASIN_DATA.sort((a,b)=>parseFloat(b.stressLevel)-parseFloat(a.stressLevel))} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><YAxis dataKey="name" type="category" width={110} tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="stressLevel" fill={T.red} radius={[0,6,6,0]} name="Stress Level"/></BarChart>
+            <BarChart data={[...BASIN_DATA].sort((a,b)=>parseFloat(b.stressLevel)-parseFloat(a.stressLevel))} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><YAxis dataKey="name" type="category" width={110} tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="stressLevel" fill={T.red} radius={[0,6,6,0]} name="Stress Level"/></BarChart>
           </ResponsiveContainer>
         </div>
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>

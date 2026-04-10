@@ -91,8 +91,8 @@ export default function FiInstrumentExposurePage() {
     const brown = INSTRUMENTS.filter(i => !i.green);
     return {
       summary: [
-        { label: 'Green', count: green.length, notional: green.reduce((s, i) => s + i.notional, 0), avgAlign: Math.round(green.reduce((s, i) => s + i.taxonomyAlignment, 0) / green.length) },
-        { label: 'Brown', count: brown.length, notional: brown.reduce((s, i) => s + i.notional, 0), avgAlign: Math.round(brown.reduce((s, i) => s + i.taxonomyAlignment, 0) / brown.length) },
+        { label: 'Green', count: green.length, notional: green.reduce((s, i) => s + i.notional, 0), avgAlign: Math.round(green.reduce((s, i) => s + i.taxonomyAlignment, 0) / Math.max(1, green.length)) },
+        { label: 'Brown', count: brown.length, notional: brown.reduce((s, i) => s + i.notional, 0), avgAlign: Math.round(brown.reduce((s, i) => s + i.taxonomyAlignment, 0) / Math.max(1, brown.length)) },
       ],
       pie: [
         { name: 'Green', value: green.reduce((s, i) => s + i.notional, 0), fill: T.green },
@@ -128,7 +128,7 @@ export default function FiInstrumentExposurePage() {
             { label: 'Total Notional', value: `$${(totalNotional / 1000).toFixed(1)}B` },
             { label: 'Instruments', value: INSTRUMENTS.length },
             { label: 'Climate VaR', value: `$${totalVaR}M`, color: T.red },
-            { label: 'Green Ratio', value: `${((greenCount / INSTRUMENTS.length) * 100).toFixed(0)}%`, color: T.green },
+            { label: 'Green Ratio', value: `${((greenCount / Math.max(1, INSTRUMENTS.length)) * 100).toFixed(0)}%`, color: T.green },
             { label: 'Asset Classes', value: 8 },
           ].map((k, i) => (
             <Card key={i} style={{ textAlign: 'center', padding: 14 }}>

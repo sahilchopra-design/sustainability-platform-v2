@@ -6148,4 +6148,222 @@ export const MODULE_GUIDES = {
     'The climate risk premium is foundational for climate-adjusted asset valuation and portfolio construction. Understanding whether climate risk is priced by markets determines whether climate-aware portfolios earn alpha or simply reflect rational risk compensation, with direct implications for TCFD risk and opportunity disclosure.'
   ),
 
+  // ═══════════════════════════════════════════════════════════════════════
+  // UNDP BLENDED FINANCE FRAMEWORK
+  // ═══════════════════════════════════════════════════════════════════════
+  '/undp-blended-finance': g(
+    'UNDP Blended Finance Framework',
+    'EP-X4B',
+    'X',
+    'Comprehensive UNDP Blended Finance Framework implementation covering all 6 strategic pillars for mobilizing private capital toward SDGs and climate goals in developing countries. Includes leverage calculators, instrument design tools, market intelligence across 8 regions, vehicle structuring (SPV/fund/facility), IRIS+ impact measurement, deal pipeline management, risk matrices, and DFI benchmark analytics. Covers the full blended finance lifecycle from national strategy alignment through deal structuring to impact reporting.',
+
+    ce(
+      'UNDP 6-Pillar Blended Finance + OECD-DAC Leverage Ratio',
+      'LeverageRatio = TotalMobilized / ConcessionalDeployed; CatalyticRatio = PrivateCapital / PublicCapital; IRR_Blended = Σ(CFt / (1+r)^t) where CFt includes concessional terms',
+      ['UNDP Blended Finance Framework', 'OECD-DAC Total Official Support', 'Convergence Database', 'GCF Investment Framework', 'IRIS+ by GIIN', 'IFC Operating Principles for Impact Management'],
+      'The module implements UNDP\'s 6-pillar approach: (1) Public Sector Coordination — maps NDC/SDG financing gaps and inter-agency roles; (2) Policy & Regulatory Environment — legal frameworks for PPPs, SPVs, green taxonomy, carbon pricing; (3) Supply & Deployment of Concessional Capital — DFI commitments, minimum concessionality principle, transparent pipeline mapping; (4) Market Development — domestic institutional capital mobilization, blended finance ecosystem building; (5) Innovation & Impact Instruments — guarantees, first-loss tranches, results-based finance, outcome bonds; (6) Knowledge & Capacity Building — south-south learning, practitioner training, evidence base. The calculator engine computes leverage ratios (typically 3-8x for climate, 1-3x for adaptation), blended IRR under different tranche structures, first-loss absorption capacity, and IRIS+ impact metrics (lives improved, tCO2e avoided, MW installed).'
+    ),
+
+    [
+      dp('6 Strategic Pillars', '6', null, 'UNDP Blended Finance Framework', 'Public coordination, policy/regulatory, concessional supply, market development, innovation instruments, knowledge & capacity — each with subsections, indicators, and maturity levels'),
+      dp('Maturity Assessment', '5 levels', null, 'UNDP Framework', 'Each pillar scored from No Strategy/Ad Hoc → Awareness → Planning → Implementation → Scaling/Market-Standard'),
+      dp('Leverage Ratio', '3-8x typical', 'TotalMobilized / ConcessionalDeployed', 'Convergence Database', 'Climate infrastructure averages 5-8x; adaptation 1-3x; social sectors 2-4x. Higher ratios indicate more efficient use of scarce concessional resources'),
+      dp('Catalytic Ratio', 'varies', 'PrivateCapital / PublicCapital', 'OECD-DAC', 'Measures how much private capital each dollar of public/concessional capital mobilizes. DFI target: minimum $3 private per $1 concessional'),
+      dp('Market Intelligence', '8 regions', null, 'Convergence/OECD', 'Sub-Saharan Africa, South Asia, East Asia & Pacific, Latin America & Caribbean, MENA, Eastern Europe & Central Asia, Pacific SIDS, Global — each with transaction count, financing volume, top sectors, avg deal size'),
+      dp('Blended Instruments', '6 types', null, 'Convergence Taxonomy', 'First-Loss Guarantee, Subordinated Debt/Equity, Technical Assistance, Results-Based Finance, Concessional Loans, Design-Stage Grants — each with risk-sharing mechanism and investor profile'),
+      dp('Vehicle Types', '4', null, 'UNDP/IFC', 'SPV (Special Purpose Vehicle), Pooled Fund, DFI Facility, Syndication Platform — each with governance structure, investor waterfall, fee model'),
+      dp('IRIS+ Impact Metrics', 'multi', null, 'GIIN IRIS+', 'Lives improved, tCO2e avoided, MW installed, hectares protected, jobs created, SMEs financed — aligned with SDG indicator framework'),
+      dp('Deal Pipeline', '12+ stages', null, 'Internal tracking', 'Origination → Screening → Due Diligence → Structuring → IC Approval → Closing → Disbursement → Monitoring → Exit — with conversion rates and avg timeline'),
+      dp('Risk Matrix', '5 categories', null, 'UNDP Risk Framework', 'Market Risk, Credit/Counterparty Risk, Political/Regulatory Risk, Currency/FX Risk, Climate/Environmental Risk — each scored L/M/H with mitigation instruments'),
+      dp('DFI Benchmarks', '10+ DFIs', null, 'DFI annual reports', 'IFC, AfDB, ADB, EBRD, EIB, KfW, FMO, CDC, Proparco, JICA — leverage ratios, portfolio size, climate allocation %, blended finance share'),
+      dp('Concessionality Calculator', 'interactive', 'GrantElement = (FaceValue - PV_Repayments) / FaceValue', 'OECD-DAC', 'Calculates the grant element (concessionality level) of a loan facility based on interest rate, grace period, maturity, and discount rate — ensuring minimum concessionality compliance'),
+    ],
+
+    [
+      'Start at the 6-Pillar Framework tab to understand the UNDP strategic structure — click each pillar card to expand subsections, indicators, and maturity levels',
+      'Use the Calculators tab to model leverage ratios and IRR: adjust concessional %, first-loss size, and instrument type to see how blended structures affect returns',
+      'Explore Market Intelligence to compare blended finance activity across 8 developing regions — filter by sector, instrument type, and deal size',
+      'In the Instruments tab, review the 6 core blended finance instrument types with their risk-sharing mechanisms and typical investor profiles',
+      'Use Vehicle Structuring to compare SPV, pooled fund, DFI facility, and syndication architectures with their governance and waterfall structures',
+      'The Impact (IMM) tab provides IRIS+ aligned metrics — connect deal pipeline outcomes to SDG indicators and track lives improved, tCO2e avoided',
+      'Pipeline tab shows active deal flow from origination through exit — use stage filters to identify bottlenecks and conversion rates',
+      'Risk Matrix provides a comprehensive L/M/H risk assessment framework covering market, credit, political, currency, and climate risks with mitigation instruments per category',
+      'DFI Benchmarks compares performance across 10+ development finance institutions including leverage ratios, climate allocation, and blended finance portfolio share',
+    ],
+
+    [
+      'UNDP (2018) "A Framework to Unleash the Power of Blended Financing for the SDGs"',
+      'UNDP (2022) "Blended Finance in the Least Developed Countries"',
+      'Convergence (2023) "State of Blended Finance Report"',
+      'OECD-DAC (2024) "Blended Finance Principles for Unlocking Commercial Finance for SDGs"',
+      'IFC (2020) "Operating Principles for Impact Management"',
+      'GCF (2023) "Investment Framework: Private Sector Facility"',
+      'GIIN (2024) "IRIS+ System: Metrics for Impact Investors"',
+      'Climate Policy Initiative (2023) "Global Landscape of Climate Finance"',
+      'Brookings (2022) "Billions to Trillions: Transforming Development Finance"',
+      'UNCTAD (2023) "World Investment Report: SDG Investment Trends"',
+    ],
+
+    [
+      acr('BF', 'Blended Finance', 'Strategic use of development finance to mobilize additional private capital toward SDGs'),
+      acr('DFI', 'Development Finance Institution', 'Government-backed financial institution providing long-term finance to developing countries (e.g., IFC, AfDB, EBRD)'),
+      acr('INFF', 'Integrated National Financing Framework', 'UNDP tool helping countries align public/private financing with national sustainable development priorities'),
+      acr('NDC', 'Nationally Determined Contribution', 'Country climate targets under the Paris Agreement; blended finance helps close NDC financing gaps'),
+      acr('SPV', 'Special Purpose Vehicle', 'Ring-fenced legal entity created to isolate financial risk and structure blended capital waterfalls'),
+      acr('VGF', 'Viability Gap Funding', 'Public subsidy bridging the gap between project costs and commercial viability to attract private investment'),
+      acr('MDB', 'Multilateral Development Bank', 'International financial institution providing development loans and grants (e.g., World Bank, ADB, AfDB)'),
+      acr('GCF', 'Green Climate Fund', 'UNFCCC financial mechanism supporting climate mitigation/adaptation in developing countries; key concessional capital source'),
+      acr('IMM', 'Impact Measurement & Management', 'Systematic approach to assessing social and environmental effects using frameworks like IRIS+, IMP, SDG indicators'),
+      acr('IRIS+', 'Impact Reporting and Investment Standards', 'GIIN system providing standardized metrics for measuring ESG/SDG impact of investments'),
+      acr('ODA', 'Official Development Assistance', 'Government aid promoting economic development and welfare; basis for concessional capital in blended structures'),
+      acr('PPP', 'Public-Private Partnership', 'Contractual arrangement between government and private sector for infrastructure/service delivery'),
+      acr('TOSSD', 'Total Official Support to Sustainable Development', 'OECD statistical framework measuring all official resources flowing to developing countries for SDGs'),
+      acr('SIDS', 'Small Island Developing States', 'Group of small island countries facing unique sustainable development challenges from climate vulnerability'),
+      acr('FLG', 'First-Loss Guarantee', 'Concessional instrument absorbing initial losses in a blended structure to protect senior/commercial investors'),
+      acr('RBF', 'Results-Based Finance', 'Instrument linking disbursement to achievement of pre-agreed development outcomes or impact targets'),
+    ],
+
+    [
+      dl('NDC/SDG financing gap assessment', 'UNDP 6-Pillar strategic alignment', 'Priority sectors and intervention points for blended finance'),
+      dl('DFI capital commitments & ODA flows', 'Minimum concessionality analysis', 'Optimal concessional allocation per deal tranche'),
+      dl('Convergence deal database & OECD-DAC', 'Market intelligence aggregation', 'Regional blended finance landscape with transaction benchmarks'),
+      dl('Instrument design parameters (FLG %, tenor, rate)', 'Leverage ratio calculator', 'Modeled private capital mobilization and blended IRR'),
+      dl('Vehicle structure templates (SPV/Fund/Facility)', 'Waterfall cash flow modeling', 'Investor-class returns and first-loss absorption capacity'),
+      dl('IRIS+ metric selection & deal outcomes', 'Impact attribution methodology', 'SDG-aligned impact reporting: lives, tCO2e, MW, ha, jobs'),
+      dl('Pipeline deal flow (origination → exit)', 'Stage-gate conversion analysis', 'Bottleneck identification and portfolio-level KPIs'),
+      dl('Risk assessment (market/credit/political/FX/climate)', 'Mitigation instrument mapping', 'Residual risk profile and instrument recommendation per deal'),
+    ],
+
+    'This module is the definitive tool for structuring, analyzing, and monitoring blended finance transactions aligned with UNDP\'s framework for mobilizing private capital toward SDGs. It enables practitioners to (1) assess national readiness across 6 strategic pillars, (2) design deal structures with appropriate concessionality and leverage, (3) benchmark against DFI performance, (4) measure impact using IRIS+ standards, and (5) manage deal pipeline from origination to exit. Critical for development finance professionals, DFI investment officers, impact investors, and government officials designing blended finance strategies to close the $4.2T annual SDG financing gap.'
+  ),
+
+  '/india-ccts': g(
+    'India Carbon Credit Trading Scheme (CCTS)',
+    'EP-IN2', 'IN',
+    'Ultra-detailed India CCTS compliance, trading, and financial impact module covering all 9 BEE-approved offset methodologies (BM-EN01 through BM-FR05), 18 approved calculation tools (BM-T-001 through BM-T-AR-0006), 740 designated entities across 9 sectors, carbon pricing scenarios, CBAM linkage analysis, PAT scheme transition, and full calculation engine with assurance-ready audit trails per ISO 14064/14065.',
+    ce(
+      'BEE CCTS Methodology Engine (9 methodologies \u00d7 18 tools)',
+      'ER_y = Baseline_y - Project_y - Leakage_y; CCC = floor(ER_y); Value = CCC \u00d7 Price_INR',
+      ['Energy Conservation (Amendment) Act 2022', 'CCTS Rules 2023 (S.O. 2825(E))', 'BEE Offset Mechanism Procedure 2025', 'ISO 14064-2:2019', 'ISO 14065:2020', 'CEA CO2 Baseline Database v19', 'IPCC Guidelines 2006'],
+      'The engine implements all 9 BEE-approved methodologies end-to-end: (1) BM-EN01.001/002 for grid-connected and captive renewable energy using CEA grid emission factors; (2) BM-IN02.001/002 for industrial fuel switching and process emissions reduction with sector-specific benchmarks (cement clinker ratio, steel scrap ratio); (3) BM-WA03.001/002 for landfill methane recovery and waste-to-energy using IPCC Tier 2 FOD model; (4) BM-AG04.001 for agricultural residue methane avoidance; (5) BM-FR05.001/002 for mangrove and terrestrial afforestation/reforestation with 30-year crediting and buffer pools. Each methodology pipeline: Data Capture \u2192 Validation \u2192 Baseline Calc \u2192 Project Calc \u2192 Leakage Calc \u2192 Net Reduction \u2192 CCC Issuance \u2192 Audit Trail \u2192 Assurance Checklist.'
+    ),
+    [
+      dp('Designated Entities', '740', null, 'BEE/MoP Gazette', '9 sectors: Iron & Steel (253), Textiles (90), Cement (50+), Petrochemicals (39), Pulp & Paper (30+), Chlor-Alkali (30+), Fertiliser (29), Petroleum Refining (21), Aluminium (13)'),
+      dp('Covered Emissions', '~700 MtCO2e', null, 'BEE', '~16% of India national emissions; Iron & Steel + Cement = 76% of CCTS-covered emissions'),
+      dp('Approved Methodologies', '9', null, 'BEE CCTS', 'BM-EN01.001/002 (Energy), BM-IN02.001/002 (Industry), BM-WA03.001/002 (Waste), BM-AG04.001 (Agriculture), BM-FR05.001/002 (Forestry)'),
+      dp('Approved Tools', '18', null, 'BEE CCTS', '13 general (BM-T-001 to BM-T-015) + 5 forestry (BM-T-AR-0002 to BM-T-AR-0006)'),
+      dp('CCC Price Estimate', '\u20b9600-1,200', null, 'S&P Global/Industry', '~USD 7-15/tCO2e at initial trading; 2x penalty for non-compliance'),
+      dp('Market Size 2030', 'USD 10B', null, 'Industry estimates', 'India total carbon market including compliance + voluntary'),
+      dp('CBAM Overlap', '5 of 9 sectors', null, 'EU CBAM Regulation', 'Steel, Aluminium, Cement, Fertiliser, Hydrogen \u2014 domestic CCC payment offsets CBAM liability'),
+      dp('Compliance Cycle', 'Annual', null, 'CCTS Rules 2023', 'Baseline FY 2023-24, first compliance FY 2025-26, CCC trading expected Oct-Nov 2026'),
+      dp('Exchanges', '3', null, 'CERC', 'IEX, PXIL, HPOWERT \u2014 regulated by CERC under March 2026 regulations'),
+      dp('MRV Standard', 'ISO 14064 + ISO 14065', null, 'BEE', 'Mandatory third-party verification by BEE-accredited ACVAs'),
+      dp('PAT Legacy', '7 completed cycles', null, 'BEE PAT', '9 of 13 PAT sectors transition to CCTS; 4 remain PAT-only (thermal power, railways, DISCOMs, ports)'),
+      dp('Article 6.2 Bilateral', 'India-Japan JCM', null, 'PIB Aug 2025', 'Signed 29 Aug 2025; Singapore/Sweden/Korea in negotiation'),
+    ],
+    [
+      'Start at CCTS Overview tab to see the 8 KPI cards covering 740 entities, 9 sectors, pricing, and market size',
+      'Use Compliance Framework tab to understand the 7-body institutional architecture (NSCICM \u2192 BEE \u2192 CERC \u2192 GCI) and annual compliance cycle',
+      'Sector Deep-Dive tab lets you select any of 9 CCTS sectors to see entity counts, emission intensity benchmarks, top companies, and reduction targets',
+      'Approved Methodologies tab shows all 9 BM codes with applicability, baseline approach, and crediting periods \u2014 filter by sector or category',
+      'Approved Tools tab lists all 18 BM-T tools with dependency matrix showing which tools are required for which methodologies',
+      'Carbon Pricing tab has an interactive INR 500-5,000 slider showing revenue by sector and comparison with EU ETS, UK ETS, California, Korea',
+      'Financial Impact Simulator lets you select a NIFTY 50 industrial company and model compliance cost, margin impact, and NPV of technology investment vs penalty',
+      'CBAM Linkage tab shows dual sliders (India CCC price vs EU CBAM price) with offset calculation and export competitiveness analysis',
+      'Navigate to "\ud83d\udd22 Calculate & Validate" tab to run the full CCTS engine \u2014 select a methodology, enter project data, get CCC count + audit trail + assurance checklist',
+      'The "\ud83d\udccb Assurance Report" tab generates an ISO 14064/14065 compliant report from your calculation that can be exported for verification',
+    ],
+    [
+      'Energy Conservation (Amendment) Act, 2022 (No. 19 of 2022)',
+      'Carbon Credit Trading Scheme, 2023 \u2014 S.O. 2825(E), 28 June 2023',
+      'BEE Detailed Procedure for Offset Mechanism under CCTS (March 2025)',
+      'CERC Terms and Conditions for Purchase and Sale of CCCs Regulations, 2026',
+      'CEA CO2 Baseline Database for Indian Power Sector v19 (2024)',
+      'ICAP ETS Map \u2014 Indian Carbon Credit Trading Scheme Profile',
+      'CEEW Analysis: How India\'s Final Emission Reduction Targets Shape Carbon Market Dynamics (2025)',
+      'S&P Global: Industry Sees Initial Carbon Credits Priced Around $10/mtCO2e in India (2024)',
+      'India-Japan Joint Crediting Mechanism Bilateral Agreement (29 August 2025)',
+      'CSEP Working Paper: India\'s CBAM Challenge \u2014 Strategic Response and Policy Options (2025)',
+    ],
+    [
+      acr('CCTS', 'Carbon Credit Trading Scheme', 'India\'s compliance carbon market under the Energy Conservation (Amendment) Act, 2022'),
+      acr('CCC', 'Carbon Credit Certificate', 'Tradeable unit representing 1 tCO2e of verified emission reduction under CCTS'),
+      acr('BEE', 'Bureau of Energy Efficiency', 'Administrator of India\'s CCTS \u2014 operates portal, accredits ACVAs, develops methodologies'),
+      acr('ACVA', 'Accredited Carbon Verification Agency', 'Third-party verifier accredited by BEE under ISO 14065 to verify CCC claims'),
+      acr('ICM', 'Indian Carbon Market', 'Umbrella term for India\'s compliance + offset carbon market ecosystem'),
+      acr('PAT', 'Perform Achieve Trade', 'Predecessor energy efficiency trading scheme (7 cycles); 9 of 13 sectors transition to CCTS'),
+      acr('ESCert', 'Energy Saving Certificate', 'Tradeable certificate under PAT scheme \u2014 predecessor to CCC'),
+      acr('NSCICM', 'National Steering Committee for ICM', 'Apex oversight body for the Indian Carbon Market framework'),
+      acr('GCI', 'Grid Controller of India', 'Registry operator for CCC issuance, transfer, and retirement tracking'),
+      acr('CERC', 'Central Electricity Regulatory Commission', 'Trading regulator for CCC transactions on power exchanges'),
+      acr('EIVA', 'Emission Intensity Value Addition', 'Metric for sector-specific emission intensity reduction targets under CCTS'),
+      acr('MRV', 'Monitoring Reporting Verification', 'ISO 14064 compliant framework for tracking and verifying emission reductions'),
+    ],
+    [
+      dl('Project activity data (generation MWh, fuel consumption, production tonnes)', 'Methodology engine (BM-EN/IN/WA/AG/FR)', 'Baseline, project, and leakage emissions quantified per BEE methodology'),
+      dl('CEA grid emission factor + IPCC Tier 2 factors', 'Tool calculations (BM-T-001 through BM-T-015)', 'Emission factors applied to baseline and project scenarios'),
+      dl('Verified emission reduction (tCO2e)', 'CCC issuance calculation', 'Carbon Credit Certificates issued (1 CCC = 1 tCO2e, rounded down)'),
+      dl('CCC issuance + market price', 'Financial impact model', 'Compliance cost, surplus revenue, CBAM offset value, NPV of investment'),
+      dl('Assurance checklist + MRV compliance flags', 'Audit trail generator', 'ISO 14064/14065 compliant assurance report with step-by-step calculation chain'),
+      dl('CCTS sector targets + CBAM commodity data', 'Cross-module linkage', 'Financial exposure flowing to PCAF, Capital Adequacy, Transition Risk, RBI Climate modules'),
+    ],
+    'This module is the definitive tool for navigating India\'s Carbon Credit Trading Scheme \u2014 from compliance obligation assessment through methodology selection, emission reduction calculation, CCC issuance, and market trading strategy. Critical for: (1) Obligated entities in 9 CCTS sectors needing to calculate compliance costs and identify abatement opportunities; (2) Financial institutions assessing credit risk exposure to CCTS-obligated borrowers; (3) Carbon market participants evaluating trading strategies across IEX/PXIL/HPOWERT; (4) Exporters needing to offset CBAM liability with domestic CCC purchases; (5) Offset project developers registering under BEE\'s 9 approved methodologies.'
+  ),
+
+  '/rbi-climate-risk': g(
+    'RBI Climate Risk Directions 2025',
+    'EP-IN1', 'IN',
+    'India-specific climate risk compliance module implementing RBI\'s Climate Risk and Sustainable Finance Directions 2025 for all Scheduled Commercial Banks, Small Finance Banks, AIFIs, and Top/Upper Layer NBFCs. Covers CRAR capital adequacy (9% CET1 vs Basel 8%), D-SIB buffers, NGFS scenario analysis with India-specific GDP/carbon price paths, financed emissions attribution using CEA grid factors, physical risk exposure across 15 Indian states, and BRSR Core alignment with ESRS crosswalk.',
+    ce(
+      'RBI CRAR Capital Framework + NGFS India Scenario Engine',
+      'CRAR = (CET1 + AT1 + Tier2) / RWA_climate_adjusted; Climate_Addon = \u03a3(sector_exposure \u00d7 climate_multiplier)',
+      ['RBI Climate Risk Directions 2025', 'RBI Master Circular on Basel III Capital (CRAR)', 'NGFS Phase IV Scenarios', 'CEA CO2 Baseline Database v19', 'SEBI BRSR Core Framework'],
+      'The module implements RBI\'s four-pillar climate risk framework (Governance, Strategy, Risk Management, Metrics & Targets) with India-specific capital calculations. CRAR uses RBI\'s 9% CET1 minimum (vs Basel 8%) with D-SIB surcharges for SBI (0.6%), HDFC Bank (0.4%), ICICI Bank (0.4%). Climate risk add-on computed from sector-level exposure weighted by emission intensity and transition risk multiplier. Physical risk modeled across 15 Indian states for flood, cyclone, heatwave, and drought using state-level vulnerability indices.'
+    ),
+    [
+      dp('Banks in Scope', '34 SCBs + 12 SFBs + 50+ NBFCs', null, 'RBI Directions 2025', 'All Scheduled Commercial Banks, Small Finance Banks (separate directions), All India Financial Institutions, Top/Upper Layer NBFCs'),
+      dp('CRAR Minimum', '9% CET1', null, 'RBI Master Circular', 'India: 9% CET1 vs Basel: 8% \u2014 100bps higher minimum for Indian banks'),
+      dp('D-SIB Banks', 'SBI, HDFC, ICICI', null, 'RBI D-SIB Framework', 'SBI: 0.6% surcharge, HDFC Bank: 0.4%, ICICI Bank: 0.4%'),
+      dp('Compliance Deadline', 'FY 2025-26', null, 'RBI', 'Climate risk integration into existing risk management frameworks mandatory from FY 2025-26'),
+      dp('CEA Grid Factor', '0.67 tCO2/MWh (2024)', null, 'CEA v19', '22 state-level grid factors from 0.10 (Sikkim/hydro) to 0.90 (Jharkhand/coal)'),
+      dp('BRSR Core KPIs', '15 mandatory', null, 'SEBI', 'Assurance required for top 500 companies FY 2025-26; mapped to ESRS E1-E5, S1, G1'),
+    ],
+    [
+      'Start at Compliance Dashboard to see which banks are in scope and their current readiness status',
+      'Climate Risk Framework tab shows the 25 sub-requirements across 4 RBI pillars \u2014 use as a compliance checklist',
+      'CRAR & Capital tab models Indian bank capital with RBI 9% CET1 minimum and D-SIB buffers \u2014 use the carbon price slider to stress-test',
+      'NGFS Scenarios tab runs 6 scenarios with India-specific GDP, carbon price, and temperature paths',
+      'Financed Emissions tab computes bank lending book emissions by sector using CEA grid factors',
+      'Physical Risk tab maps bank exposure across 15 Indian states with flood, cyclone, heatwave, drought hazards',
+      'BRSR Core Alignment tab maps 15 mandatory BRSR KPIs to ESRS with assurance readiness percentage',
+      'Disclosure Timeline tab tracks phased requirements from FY 2025-26 through FY 2028-29',
+    ],
+    [
+      'RBI Directions on Climate Risk and Sustainable Finance, 2025',
+      'RBI Master Circular on Basel III Capital Regulations (CRAR)',
+      'RBI Framework for D-SIBs (Domestic Systemically Important Banks)',
+      'RBI Directions on Climate Risk for Small Finance Banks, 2025',
+      'SEBI BRSR Core Framework \u2014 Circular SEBI/HO/CFD/CFD-SEC-2/P/CIR/2023/122',
+      'CEA CO2 Baseline Database for Indian Power Sector v19 (2024)',
+      'NGFS Climate Scenarios Phase IV (January 2025)',
+    ],
+    [
+      acr('CRAR', 'Capital to Risk-weighted Assets Ratio', 'RBI\'s capital adequacy measure \u2014 9% CET1 minimum (higher than Basel III\'s 8%)'),
+      acr('D-SIB', 'Domestic Systemically Important Bank', 'Banks identified by RBI as systemically important \u2014 SBI, HDFC Bank, ICICI Bank; subject to additional capital surcharges'),
+      acr('SCB', 'Scheduled Commercial Bank', 'Banks listed in the Second Schedule of the RBI Act \u2014 34 in India including public sector, private, and foreign banks'),
+      acr('SFB', 'Small Finance Bank', 'Banks licensed to serve unserved/underserved sections \u2014 12 in India, now under separate RBI climate directions'),
+      acr('NBFC', 'Non-Banking Financial Company', 'Financial institutions not holding a banking license \u2014 Top/Upper Layer NBFCs under RBI climate risk scope'),
+      acr('NPA', 'Non-Performing Asset', 'Loans where principal/interest overdue > 90 days \u2014 climate risks can accelerate NPA formation'),
+      acr('PSL', 'Priority Sector Lending', 'RBI mandate for 40% of lending to priority sectors including renewable energy'),
+      acr('SDA', 'State Designated Agency', 'State-level body that receives verified GHG emission reports under CCTS compliance'),
+    ],
+    [
+      dl('Bank lending book by sector + CEA grid factors', 'PCAF financed emissions calculation', 'Attributed Scope 1+2 emissions for the lending portfolio'),
+      dl('NGFS scenario parameters (India-specific)', 'Climate stress test engine', 'Portfolio loss, VaR, capital impact under 6 scenarios'),
+      dl('State-level physical hazard data', 'Physical risk aggregation', 'Bank branch and borrower exposure by flood/cyclone/heatwave/drought'),
+      dl('BRSR Core 15 KPIs + ESRS crosswalk', 'Compliance gap analysis', 'Assurance readiness % and disclosure completeness'),
+    ],
+    'This module is essential for every Indian bank, NBFC, and financial institution navigating RBI\'s mandatory climate risk integration requirements. It provides: (1) A compliance checklist mapped to RBI\'s 4-pillar framework with 25 sub-requirements; (2) India-specific capital adequacy modeling using CRAR 9% CET1 with D-SIB surcharges; (3) NGFS scenario analysis calibrated for India\'s GDP, carbon price, and energy transition trajectory; (4) Lending book emissions attribution using official CEA grid emission factors; (5) Physical risk exposure mapping across Indian states; (6) BRSR Core alignment tracking for the 15 mandatory assurance KPIs.'
+  ),
+
 };

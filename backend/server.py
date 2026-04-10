@@ -293,6 +293,7 @@ from api.v1.routes.comprehensive_reporting import router as comprehensive_report
 
 # RBAC Admin
 from api.v1.routes.rbac_admin import router as rbac_admin_router
+from api.admin_rbac import router as admin_rbac_router
 
 # Market Data Stack (added 2026-03-23)
 # yfinance India service + Finnhub ESG are service-layer only (no dedicated router needed)
@@ -648,6 +649,7 @@ app.include_router(comprehensive_reporting_router)    # E119 Comprehensive Repor
 
 # RBAC Admin
 app.include_router(rbac_admin_router)
+app.include_router(admin_rbac_router)
 
 # ── Global error handlers ─────────────────────────────────────────────────────
 from middleware.error_handler import register_error_handlers

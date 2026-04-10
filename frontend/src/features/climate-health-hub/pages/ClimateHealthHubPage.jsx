@@ -225,7 +225,7 @@ export default function ClimateHealthHubPage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Countries Tracked',COUNTRY_RISK.length,'Cross-module overlay',T.navy)}
         {kpiBox('Critical Countries',COUNTRY_RISK.filter(c=>c.tier==='Critical').length,'Composite >70',T.red)}
-        {kpiBox('Avg Composite Risk',Math.floor(COUNTRY_RISK.reduce((s,c)=>s+c.composite,0)/COUNTRY_RISK.length)+'/100','Mean across modules',T.amber)}
+        {kpiBox('Avg Composite Risk',Math.floor(COUNTRY_RISK.reduce((s,c)=>s+c.composite,0)/ Math.max(1, COUNTRY_RISK.length))+'/100','Mean across modules',T.amber)}
         {kpiBox('High Heat Risk',COUNTRY_RISK.filter(c=>c.heatRisk>70).length,'Heat mortality >70',T.red)}
       </div>
       <div style={{display:'flex',gap:12,marginBottom:16}}>
@@ -260,7 +260,7 @@ export default function ClimateHealthHubPage(){
       <div style={card({marginBottom:20})}>
         <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Composite Risk Trend (Global Average, 12Q)</div>
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={QUARTERS.map((q,qi)=>({q,avg:Math.floor(COUNTRY_RISK.reduce((s,c)=>s+c.qTrend[qi].composite,0)/COUNTRY_RISK.length)}))} margin={{top:5,right:20,bottom:5,left:10}}>
+          <AreaChart data={QUARTERS.map((q,qi)=>({q,avg:Math.floor(COUNTRY_RISK.reduce((s,c)=>s+c.qTrend[qi].composite,0)/ Math.max(1, COUNTRY_RISK.length))}))} margin={{top:5,right:20,bottom:5,left:10}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}} domain={[0,100]}/>
             <Tooltip contentStyle={{fontSize:12,borderRadius:8}}/><Area type="monotone" dataKey="avg" stroke={T.red} fill={T.red+'20'} strokeWidth={2} name="Avg Composite Risk"/>
           </AreaChart>
@@ -306,7 +306,7 @@ export default function ClimateHealthHubPage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Active Engagements',ENGAGEMENTS.filter(e=>e.status!=='Resolved').length,'In pipeline',T.navy)}
         {kpiBox('Critical Priority',ENGAGEMENTS.filter(e=>e.priority==='Critical').length,'Immediate action',T.red)}
-        {kpiBox('Avg Days Open',Math.floor(ENGAGEMENTS.reduce((s,e)=>s+e.daysOpen,0)/ENGAGEMENTS.length),'Mean engagement age',T.amber)}
+        {kpiBox('Avg Days Open',Math.floor(ENGAGEMENTS.reduce((s,e)=>s+e.daysOpen,0)/ Math.max(1, ENGAGEMENTS.length)),'Mean engagement age',T.amber)}
         {kpiBox('Resolved',ENGAGEMENTS.filter(e=>e.status==='Resolved').length,'Completed engagements',T.green)}
       </div>
       <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>

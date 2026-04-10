@@ -407,7 +407,7 @@ const LifecycleDeepDive=()=>{
   const benchmarks=STAGES.map((st,i)=>{
     const catProds=PRODUCTS.filter(p=>p.category===prod.category);
     const vals=catProds.map(p=>Math.abs(p.stages[i]));
-    return {name:st,Product:Math.abs(stages[i]),CatAvg:+(vals.reduce((a,v)=>a+v,0)/vals.length).toFixed(1),BestInClass:+Math.min(...vals).toFixed(1)};
+    return {name:st,Product:Math.abs(stages[i]),CatAvg:+(vals.reduce((a,v)=>a+v,0)/ Math.max(1, vals.length)).toFixed(1),BestInClass:+Math.min(...vals).toFixed(1)};
   });
 
   const improveSim=STAGES.map((st,i)=>({
@@ -650,13 +650,13 @@ const CategoryBenchmarks=()=>{
   const catStats=useMemo(()=>CATEGORIES.map((cat,ci)=>{
     const prods=PRODUCTS.filter(p=>p.category===cat);
     const hps=prods.map(p=>p.handprint);
-    const avg=+(hps.reduce((a,v)=>a+v,0)/hps.length).toFixed(1);
+    const avg=+(hps.reduce((a,v)=>a+v,0)/ Math.max(1, hps.length)).toFixed(1);
     const best=+Math.max(...hps).toFixed(1);
     const worst=+Math.min(...hps).toFixed(1);
     const median=+hps.sort((a,b)=>a-b)[Math.floor(hps.length/2)].toFixed(1);
     const totalAvoided=+(hps.reduce((a,v)=>a+(v>0?v:0),0)).toFixed(1);
-    const avgRD=+(prods.reduce((a,p)=>a+p.rdInvestM,0)/prods.length).toFixed(1);
-    const avgFP=+(prods.reduce((a,p)=>a+p.totalFootprint,0)/prods.length).toFixed(1);
+    const avgRD=+(prods.reduce((a,p)=>a+p.rdInvestM,0)/ Math.max(1, prods.length)).toFixed(1);
+    const avgFP=+(prods.reduce((a,p)=>a+p.totalFootprint,0)/ Math.max(1, prods.length)).toFixed(1);
     return {name:cat,avg,best,worst,median,totalAvoided,avgRD,avgFP,count:prods.length,idx:ci};
   }),[]);
 
@@ -668,7 +668,7 @@ const CategoryBenchmarks=()=>{
       const row={year:y};
       CATEGORIES.forEach(cat=>{
         const prods=PRODUCTS.filter(p=>p.category===cat&&p.year<=y);
-        if(prods.length)row[cat.slice(0,10)]=+(prods.reduce((a,p)=>a+p.handprint,0)/prods.length).toFixed(1);
+        if(prods.length)row[cat.slice(0,10)]=+(prods.reduce((a,p)=>a+p.handprint,0)/ Math.max(1, prods.length)).toFixed(1);
       });
       return row;
     });
@@ -839,11 +839,11 @@ const CategoryBenchmarks=()=>{
         <tbody>{COMPANIES.map(co=>{
           const prods=PRODUCTS.filter(p=>p.company===co);
           if(!prods.length)return null;
-          const avgHP=+(prods.reduce((a,p)=>a+p.handprint,0)/prods.length).toFixed(1);
+          const avgHP=+(prods.reduce((a,p)=>a+p.handprint,0)/ Math.max(1, prods.length)).toFixed(1);
           const totalAv=+(prods.reduce((a,p)=>a+(p.handprint>0?p.handprint:0),0)).toFixed(1);
-          const avgFP=+(prods.reduce((a,p)=>a+p.totalFootprint,0)/prods.length).toFixed(1);
+          const avgFP=+(prods.reduce((a,p)=>a+p.totalFootprint,0)/ Math.max(1, prods.length)).toFixed(1);
           const best=prods.reduce((a,p)=>p.handprint>a.handprint?p:a,prods[0]);
-          const avgRD=+(prods.reduce((a,p)=>a+p.rdInvestM,0)/prods.length).toFixed(1);
+          const avgRD=+(prods.reduce((a,p)=>a+p.rdInvestM,0)/ Math.max(1, prods.length)).toFixed(1);
           return {co,count:prods.length,avgHP,totalAv,avgFP,best:best.name,avgRD};
         }).filter(Boolean).sort((a,b)=>b.avgHP-a.avgHP).slice(0,15).map((c,i)=>(
           <tr key={i} style={{borderBottom:`1px solid ${T.border}08`,background:i<3?T.green+'06':'transparent'}}>
@@ -1016,7 +1016,7 @@ const ReportingClaims=()=>{
             <span>{greenClaimsItems.filter(i=>i.compliant).length}/{greenClaimsItems.length}</span>
           </div>
           <div style={{width:'100%',height:6,background:T.border,borderRadius:3}}>
-            <div style={{width:`${(greenClaimsItems.filter(i=>i.compliant).length/greenClaimsItems.length*100)}%`,height:6,background:T.green,borderRadius:3}}/>
+            <div style={{width:`${(greenClaimsItems.filter(i=>i.compliant).length/ Math.max(1, greenClaimsItems.length)*100)}%`,height:6,background:T.green,borderRadius:3}}/>
           </div>
         </div>
         <table style={{width:'100%',fontSize:12,borderCollapse:'collapse'}}>

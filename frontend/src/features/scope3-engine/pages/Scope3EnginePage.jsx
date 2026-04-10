@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 import { useNavigate } from 'react-router-dom';
+import { isIndiaMode, adaptForScope3 } from '../../../data/IndiaDataAdapter';
 
 // ─── Theme ───────────────────────────────────────────────────────────────────
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -120,6 +121,15 @@ function readPortfolio() {
 }
 
 function demoHoldings() {
+  // ── India Dataset Integration ──
+  if (isIndiaMode()) {
+    const indiaScope3 = adaptForScope3();
+    return indiaScope3.slice(0, 20).map((c, i) => ({
+      isin: `INE${String(i).padStart(6, '0')}01`, name: c.name,
+      company: { company_name: c.name, sector: c.sector, revenue_usd_mn: 500 + i * 50, scope1_mt: c.totalScope3 * 0.1, scope2_mt: c.totalScope3 * 0.05, market_cap_usd_mn: 1000 + i * 200 },
+      weight: 5, exposure_usd_mn: 50 + i * 10,
+    }));
+  }
   const sample = GLOBAL_COMPANY_MASTER.filter(c => c.scope1_mt > 0 && c.revenue_usd_mn > 0).slice(0, 20);
   const w = sample.length ? 100 / sample.length : 0;
   return sample.map(c => ({ isin: c.isin, name: c.company_name, company: c, weight: w, exposure_usd_mn: c.market_cap_usd_mn ? c.market_cap_usd_mn * 0.01 : 50 }));

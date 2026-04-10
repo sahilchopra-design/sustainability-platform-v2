@@ -2,7 +2,9 @@ import React, { useState, useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ComposedChart, ReferenceLine,
+  ScatterChart, Scatter, AreaChart, Area, Cell,
 } from 'recharts';
+import CurrencyToggle from '../../../components/CurrencyToggle';
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
@@ -12,22 +14,89 @@ const T = {
 };
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
+/* ── static lookup tables ─────────────────────────────────────────── */
 const INSTITUTION_TYPES = ['Commercial Bank','Investment Bank','Universal Bank','Regional Bank','Insurance Group','Asset Manager','Cooperative Bank','Development Bank'];
 const JURISDICTIONS = ['EU','UK','US','Canada','Australia','Japan','Singapore','Switzerland','UAE','Brazil'];
-const FRAMEWORKS_BY_JURIS = { EU:'CRR2', UK:'CRR2', US:'NAIC', Canada:'OSFI B-15', Australia:'APRA', Japan:'Basel IV', Singapore:'Basel IV', Switzerland:'Basel IV', UAE:'Basel IV', Brazil:'Basel IV' };
-const CET1_THRESHOLDS = { EU:10.5, UK:11.0, US:9.5, Canada:10.0, Australia:10.25, Japan:9.0, Singapore:10.0, Switzerland:12.0, UAE:9.5, Brazil:8.5 };
+const FRAMEWORKS_BY_JURIS = { EU:'CRR2/Basel IV', UK:'PRA SS3/19', US:'FRB Pilot', Canada:'OSFI B-15', Australia:'APRA CPG 229', Japan:'FSA Climate', Singapore:'MAS Guidelines', Switzerland:'FINMA Circ', UAE:'CBUAE', Brazil:'BCB Res 4' };
+const CET1_MIN = { EU:10.5, UK:11.0, US:9.5, Canada:10.0, Australia:10.25, Japan:9.0, Singapore:10.0, Switzerland:12.0, UAE:9.5, Brazil:8.5 };
 const JURIS_RULES = {
-  EU:          { label:'CRR2 + EBA GL',    minCET1: 10.5, pillarMult: 1.20, greenBonus: 0.12 },
-  UK:          { label:'PRA SS3/19',        minCET1: 11.0, pillarMult: 1.15, greenBonus: 0.10 },
-  US:          { label:'FRB Climate Pilot', minCET1: 9.5,  pillarMult: 1.00, greenBonus: 0.05 },
-  Canada:      { label:'OSFI B-15',         minCET1: 10.0, pillarMult: 1.10, greenBonus: 0.08 },
-  Australia:   { label:'APRA CPG 229',      minCET1: 10.25,pillarMult: 1.08, greenBonus: 0.07 },
-  Japan:       { label:'FSA Climate',       minCET1: 9.0,  pillarMult: 1.00, greenBonus: 0.05 },
-  Singapore:   { label:'MAS Guidelines',    minCET1: 10.0, pillarMult: 1.05, greenBonus: 0.06 },
-  Switzerland: { label:'FINMA',             minCET1: 12.0, pillarMult: 1.25, greenBonus: 0.10 },
-  UAE:         { label:'CBUAE Framework',   minCET1: 9.5,  pillarMult: 0.95, greenBonus: 0.04 },
-  Brazil:      { label:'BCB Resolution 4',  minCET1: 8.5,  pillarMult: 1.02, greenBonus: 0.04 },
+  EU:          { label:'CRR2 + EBA GL',      minCET1:10.5,  pillarMult:1.20, greenBonus:0.12, gsibSurcharge:1.5, ccyb:0.5, p2rAvg:2.0, climateCapBuf:0.25 },
+  UK:          { label:'PRA SS3/19',          minCET1:11.0,  pillarMult:1.15, greenBonus:0.10, gsibSurcharge:1.0, ccyb:1.0, p2rAvg:2.5, climateCapBuf:0.30 },
+  US:          { label:'FRB Climate Pilot',   minCET1:9.5,   pillarMult:1.00, greenBonus:0.05, gsibSurcharge:2.0, ccyb:0.0, p2rAvg:1.5, climateCapBuf:0.10 },
+  Canada:      { label:'OSFI B-15',           minCET1:10.0,  pillarMult:1.10, greenBonus:0.08, gsibSurcharge:0.5, ccyb:0.25,p2rAvg:2.0, climateCapBuf:0.20 },
+  Australia:   { label:'APRA CPG 229',        minCET1:10.25, pillarMult:1.08, greenBonus:0.07, gsibSurcharge:0.0, ccyb:0.0, p2rAvg:1.8, climateCapBuf:0.15 },
+  Japan:       { label:'FSA Climate',         minCET1:9.0,   pillarMult:1.00, greenBonus:0.05, gsibSurcharge:0.5, ccyb:0.0, p2rAvg:1.5, climateCapBuf:0.10 },
+  Singapore:   { label:'MAS Guidelines',      minCET1:10.0,  pillarMult:1.05, greenBonus:0.06, gsibSurcharge:0.0, ccyb:0.0, p2rAvg:1.8, climateCapBuf:0.15 },
+  Switzerland: { label:'FINMA Circ 2017/7',   minCET1:12.0,  pillarMult:1.25, greenBonus:0.10, gsibSurcharge:2.5, ccyb:0.5, p2rAvg:3.0, climateCapBuf:0.35 },
+  UAE:         { label:'CBUAE Framework',     minCET1:9.5,   pillarMult:0.95, greenBonus:0.04, gsibSurcharge:0.0, ccyb:0.0, p2rAvg:1.2, climateCapBuf:0.08 },
+  Brazil:      { label:'BCB Resolution 4',    minCET1:8.5,   pillarMult:1.02, greenBonus:0.04, gsibSurcharge:0.0, ccyb:0.25,p2rAvg:1.5, climateCapBuf:0.12 },
 };
+
+const CAPITAL_COMPONENTS = [
+  { key:'cet1Min',   label:'CET1 Minimum (4.5%)',        color:T.indigo },
+  { key:'ccb',       label:'Capital Conservation Buffer', color:'#6366f1' },
+  { key:'gsib',      label:'G-SIB Surcharge',             color:T.blue },
+  { key:'ccyb',      label:'Countercyclical Buffer',      color:T.teal },
+  { key:'p2r',       label:'Pillar 2 Requirement',        color:T.amber },
+  { key:'p2g',       label:'Pillar 2 Guidance',           color:T.orange },
+  { key:'climateBuf',label:'Climate Buffer Add-On',       color:T.red },
+  { key:'at1',       label:'Additional Tier 1',           color:T.purple },
+  { key:'tier2',     label:'Tier 2',                      color:T.gold },
+];
+
+const ASSET_CLASSES_RWA = [
+  { name:'Corporate Loans',        saWeight:1.00, irbWeight:0.72, climateMult:1.18, strandedHaircut:0.12, carbonIntensity:'High' },
+  { name:'SME Loans',              saWeight:0.85, irbWeight:0.60, climateMult:1.10, strandedHaircut:0.08, carbonIntensity:'Med'  },
+  { name:'Residential Mortgages',  saWeight:0.35, irbWeight:0.22, climateMult:1.25, strandedHaircut:0.18, carbonIntensity:'High' },
+  { name:'Commercial RE',          saWeight:1.00, irbWeight:0.68, climateMult:1.30, strandedHaircut:0.22, carbonIntensity:'High' },
+  { name:'Project Finance',        saWeight:1.30, irbWeight:0.90, climateMult:1.40, strandedHaircut:0.30, carbonIntensity:'High' },
+  { name:'Fossil Fuel Exposure',   saWeight:1.50, irbWeight:1.10, climateMult:1.65, strandedHaircut:0.45, carbonIntensity:'Very High' },
+  { name:'Green Bonds',            saWeight:0.20, irbWeight:0.14, climateMult:0.85, strandedHaircut:0.02, carbonIntensity:'Low' },
+  { name:'Infrastructure',         saWeight:0.75, irbWeight:0.55, climateMult:1.15, strandedHaircut:0.10, carbonIntensity:'Med' },
+  { name:'Sovereign Bonds',        saWeight:0.00, irbWeight:0.00, climateMult:1.05, strandedHaircut:0.05, carbonIntensity:'Low' },
+  { name:'Financial Institutions', saWeight:0.40, irbWeight:0.28, climateMult:1.08, strandedHaircut:0.06, carbonIntensity:'Med' },
+  { name:'Equity (Unlisted)',      saWeight:1.50, irbWeight:1.20, climateMult:1.20, strandedHaircut:0.15, carbonIntensity:'Med' },
+  { name:'Trade Finance',          saWeight:0.50, irbWeight:0.35, climateMult:1.05, strandedHaircut:0.04, carbonIntensity:'Low' },
+];
+
+const SCENARIOS = [
+  { id:0, name:'Baseline',        shortName:'BASE', pillar2AddPct:0,   haircut:0,    natcatMult:1.0, greenBonus:0,    color:'#6b7280' },
+  { id:1, name:'Orderly 1.5°C',   shortName:'ORD',  pillar2AddPct:0.8, haircut:0.03, natcatMult:1.2, greenBonus:0.10, color:T.green   },
+  { id:2, name:'Disorderly 2°C',  shortName:'DIS',  pillar2AddPct:1.5, haircut:0.06, natcatMult:1.5, greenBonus:0.05, color:T.amber   },
+  { id:3, name:'Hot House 3°C',   shortName:'HOT',  pillar2AddPct:2.8, haircut:0.12, natcatMult:2.2, greenBonus:0,    color:T.orange  },
+  { id:4, name:'Tail Risk 4°C+',  shortName:'TAIL', pillar2AddPct:4.5, haircut:0.20, natcatMult:3.5, greenBonus:0,    color:T.red     },
+  { id:5, name:'Bifurcated',      shortName:'BIF',  pillar2AddPct:2.0, haircut:0.08, natcatMult:1.8, greenBonus:0.03, color:T.purple  },
+  { id:6, name:'Policy Shock',    shortName:'POL',  pillar2AddPct:3.2, haircut:0.15, natcatMult:1.6, greenBonus:0.08, color:T.indigo  },
+  { id:7, name:'Tech Revolution', shortName:'TECH', pillar2AddPct:0.5, haircut:0.02, natcatMult:1.1, greenBonus:0.15, color:T.teal   },
+];
+
+const STRESS_QUARTERLY = Array.from({ length:9 }, (_, q) => ({
+  quarter: `Q${(q % 4) + 1}-${2024 + Math.floor(q / 4)}`,
+  baseline:    +(12.5 - q * 0.05 + sr(q * 7) * 0.3).toFixed(2),
+  orderly:     +(12.5 - q * 0.12 - sr(q * 11) * 0.4).toFixed(2),
+  disorderly:  +(12.5 - q * 0.22 - sr(q * 13) * 0.6).toFixed(2),
+  hotHouse:    +(12.5 - q * 0.38 - sr(q * 17) * 0.8).toFixed(2),
+  tailRisk:    +(12.5 - q * 0.55 - sr(q * 19) * 1.1).toFixed(2),
+  ppnrImpact:  -(q * 0.08 + sr(q * 23) * 0.5),
+  llp:         +(q * 0.12 + sr(q * 29) * 0.4).toFixed(2),
+}));
+
+const SENSITIVITY_DRIVERS = [
+  { name:'Physical Risk Score +10pts', impact:-0.062, category:'Physical' },
+  { name:'Fossil Fuel Exp +5%',        impact:-0.048, category:'Transition' },
+  { name:'Climate RWA Mult +0.1',      impact:-0.041, category:'Regulatory' },
+  { name:'Carbon Price +$50/t',        impact:-0.035, category:'Transition' },
+  { name:'P2G Add-On +50bps',          impact:-0.032, category:'Regulatory' },
+  { name:'NatCat Event (1-in-50)',      impact:-0.028, category:'Physical' },
+  { name:'Green Loan Pct +10%',        impact:+0.022, category:'Mitigation' },
+  { name:'GAR Bonus Eligibility',      impact:+0.018, category:'Mitigation' },
+  { name:'CET1 Threshold +0.5%',       impact:-0.015, category:'Regulatory' },
+  { name:'Leverage Ratio Bind',        impact:-0.012, category:'Regulatory' },
+  { name:'Transition Plan Discount',   impact:+0.010, category:'Mitigation' },
+  { name:'Scope 1 Intensity -20%',     impact:+0.008, category:'Mitigation' },
+];
+
+import { isIndiaMode, adaptForCapitalAdequacy } from '../../../data/IndiaDataAdapter';
 
 const INST_NAMES = [
   'Barclays Global','JPMorgan Chase','Deutsche Bank','HSBC Holdings','BNP Paribas','Société Générale',
@@ -48,896 +117,1256 @@ const INST_NAMES = [
   'UOB Limited','Standard Chart',
 ];
 
-const INSTITUTIONS = INST_NAMES.map((name, i) => {
+const _DEFAULT_INSTITUTIONS = INST_NAMES.map((name, i) => {
   const juris = JURISDICTIONS[Math.floor(sr(i * 7) * JURISDICTIONS.length)];
-  const type = INSTITUTION_TYPES[Math.floor(sr(i * 11) * INSTITUTION_TYPES.length)];
-  const totalRWA = 50 + sr(i * 13) * 950;
-  const tier1 = 0.08 + sr(i * 17) * 0.10;
-  const cet1 = tier1 - sr(i * 19) * 0.015;
-  const climatRWAPct = 0.05 + sr(i * 23) * 0.30;
-  const physicalRiskScore = 10 + sr(i * 29) * 80;
-  const transitionRiskScore = 10 + sr(i * 31) * 80;
-  const natcatRWA = totalRWA * climatRWAPct * sr(i * 37) * 0.4;
-  const greenLoanPct = sr(i * 41) * 0.45;
+  const type  = INSTITUTION_TYPES[Math.floor(sr(i * 11) * INSTITUTION_TYPES.length)];
+  const rule  = JURIS_RULES[juris];
+  const totalRWA           = 50 + sr(i * 13) * 950;
+  const tier1Capital       = 0.08 + sr(i * 17) * 0.10;
+  const at1Ratio           = 0.01 + sr(i * 83) * 0.025;
+  const tier2Ratio         = 0.02 + sr(i * 89) * 0.04;
+  const cet1Capital        = tier1Capital - at1Ratio - sr(i * 19) * 0.005;
+  const cet1Excess         = Math.max(0, cet1Capital * 100 - rule.minCET1);
+  const tlacRatio          = 0.18 + sr(i * 97) * 0.08;
+  const mrelBuffer         = 0.02 + sr(i * 101) * 0.06;
+  const bailInBuffer       = tlacRatio - tier1Capital - tier2Ratio;
+  const climatRWAPct       = 0.05 + sr(i * 23) * 0.30;
+  const physicalRiskScore  = 10 + sr(i * 29) * 80;
+  const transitionRiskScore= 10 + sr(i * 31) * 80;
+  const greenLoanPct       = sr(i * 41) * 0.45;
   const fossilFuelExposure = sr(i * 43) * 0.35;
-  const ESGrating = ['AAA','AA','A','BBB','BB','B'][Math.floor(sr(i * 47) * 6)];
-  const carbonIntensive = sr(i * 53) > 0.65;
-  const lcrRatio = 1.0 + sr(i * 59) * 0.8;
-  const nsfr = 1.0 + sr(i * 61) * 0.4;
-  const leverageRatio = 0.03 + sr(i * 67) * 0.05;
-  const pillar2Guidance = 0.005 + sr(i * 71) * 0.030;
-  const climateStressBuffer = physicalRiskScore * 0.001 * totalRWA;
+  const ESGrating          = ['AAA','AA','A','BBB','BB','B'][Math.floor(sr(i * 47) * 6)];
+  const carbonIntensive    = sr(i * 53) > 0.65;
+  const lcrRatio           = 1.0 + sr(i * 59) * 0.8;
+  const nsfr               = 1.0 + sr(i * 61) * 0.4;
+  const leverageRatio      = 0.03 + sr(i * 67) * 0.05;
+  const pillar2Guidance    = 0.005 + sr(i * 71) * 0.030;
+  const natcatRWA          = totalRWA * climatRWAPct * sr(i * 37) * 0.4;
+  const climateStressBuffer= physicalRiskScore * 0.001 * totalRWA;
+  const carboPriceRWASens  = totalRWA * fossilFuelExposure * 0.008;
+  const scope1Emissions    = 50 + sr(i * 107) * 4950;
+  const netZeroTarget      = [2035,2040,2045,2050,2060,null][Math.floor(sr(i * 109) * 6)];
+  const climateGovScore    = Math.round(20 + sr(i * 113) * 80);
   return {
-    id: i, name, type, jurisdiction: juris, totalRWA, tier1Capital: tier1,
-    cet1Capital: cet1, climatRWAPct, physicalRiskScore, transitionRiskScore,
+    id:i, name, type, jurisdiction:juris, totalRWA,
+    tier1Capital, at1Ratio, tier2Ratio, cet1Capital, cet1Excess,
+    tlacRatio, mrelBuffer, bailInBuffer,
+    climatRWAPct, physicalRiskScore, transitionRiskScore,
     natcatRWA, greenLoanPct, fossilFuelExposure, ESGrating, carbonIntensive,
     lcrRatio, nsfr, leverageRatio, pillar2Guidance, climateStressBuffer,
+    carboPriceRWASens, scope1Emissions, netZeroTarget, climateGovScore,
     regulatoryFramework: FRAMEWORKS_BY_JURIS[juris],
   };
 });
+// ── India Dataset Integration ──
+const INSTITUTIONS = isIndiaMode() ? adaptForCapitalAdequacy() : _DEFAULT_INSTITUTIONS;
 
-const SCENARIOS = [
-  { id: 0, name: 'Baseline',         pillar2AddPct: 0,   haircut: 0,    natcatMultiplier: 1.0, greenAssetRatioBonus: 0    },
-  { id: 1, name: 'Orderly 1.5°C',    pillar2AddPct: 0.8, haircut: 0.03, natcatMultiplier: 1.2, greenAssetRatioBonus: 0.10 },
-  { id: 2, name: 'Disorderly 2°C',   pillar2AddPct: 1.5, haircut: 0.06, natcatMultiplier: 1.5, greenAssetRatioBonus: 0.05 },
-  { id: 3, name: 'Hot House 3°C',    pillar2AddPct: 2.8, haircut: 0.12, natcatMultiplier: 2.2, greenAssetRatioBonus: 0    },
-  { id: 4, name: 'Tail Risk 4°C+',   pillar2AddPct: 4.5, haircut: 0.20, natcatMultiplier: 3.5, greenAssetRatioBonus: 0    },
-  { id: 5, name: 'Bifurcated',        pillar2AddPct: 2.0, haircut: 0.08, natcatMultiplier: 1.8, greenAssetRatioBonus: 0.03 },
-  { id: 6, name: 'Policy Shock',      pillar2AddPct: 3.2, haircut: 0.15, natcatMultiplier: 1.6, greenAssetRatioBonus: 0.08 },
-  { id: 7, name: 'Tech Revolution',   pillar2AddPct: 0.5, haircut: 0.02, natcatMultiplier: 1.1, greenAssetRatioBonus: 0.15 },
-];
-
+/* ── capital computation ─────────────────────────────────────────── */
 function computeCapital(inst, scenario) {
-  const rule = JURIS_RULES[inst.jurisdiction];
-  const pillar2AddOn = inst.climatRWAPct * inst.totalRWA * (scenario.pillar2AddPct / 100) * rule.pillarMult;
-  const garBonus = inst.greenLoanPct > 0.30 ? pillar2AddOn * scenario.greenAssetRatioBonus : 0;
-  const netPillar2 = Math.max(0, pillar2AddOn - garBonus);
+  const rule        = JURIS_RULES[inst.jurisdiction];
+  const pillar2AddOn= inst.climatRWAPct * inst.totalRWA * (scenario.pillar2AddPct / 100) * rule.pillarMult;
+  const garBonus    = inst.greenLoanPct > 0.30 ? pillar2AddOn * scenario.greenBonus : 0;
+  const netPillar2  = Math.max(0, pillar2AddOn - garBonus);
   const baseCapital = inst.tier1Capital * inst.totalRWA;
-  const adjustedCapital = baseCapital - netPillar2;
-  const cet1Impact = inst.totalRWA > 0 ? adjustedCapital / inst.totalRWA : 0;
-  const shortfall = Math.max(0, rule.minCET1 / 100 - cet1Impact);
-  const stressBuffer = inst.physicalRiskScore * 0.001 * inst.totalRWA * scenario.natcatMultiplier;
-  const lvgImpact = inst.leverageRatio - netPillar2 / Math.max(inst.totalRWA * 12.5, 1) * 0.01;
-  return { pillar2AddOn, garBonus, netPillar2, cet1Impact, shortfall, stressBuffer, lvgImpact, threshold: rule.minCET1 / 100 };
+  const adjCapital  = baseCapital - netPillar2;
+  const cet1Impact  = inst.totalRWA > 0 ? adjCapital / inst.totalRWA : 0;
+  const threshold   = rule.minCET1 / 100;
+  const shortfall   = Math.max(0, threshold - cet1Impact);
+  const stressBuffer= inst.physicalRiskScore * 0.001 * inst.totalRWA * scenario.natcatMult;
+  const lvgImpact   = inst.leverageRatio - netPillar2 / Math.max(inst.totalRWA * 12.5, 1) * 0.01;
+  const at1Trigger  = Math.max(0, inst.cet1Capital * 100 - 5.125);
+  return { pillar2AddOn, garBonus, netPillar2, cet1Impact, shortfall, stressBuffer, lvgImpact, threshold, at1Trigger };
 }
 
-const KpiCard = ({ label, value, color = T.text, sub = '' }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', flex: 1, minWidth: 160 }}>
-    <div style={{ fontSize: 11, color: T.muted, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
-    <div style={{ fontSize: 24, fontWeight: 700, color }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>{sub}</div>}
+/* ── shared UI components ────────────────────────────────────────── */
+const KpiCard = ({ label, value, color=T.text, sub='', rag=null }) => {
+  const ragColors = { green:T.green, amber:T.amber, red:T.red };
+  return (
+    <div style={{ background:T.card, border:`1px solid ${rag ? ragColors[rag] : T.border}`, borderLeft:`4px solid ${rag ? ragColors[rag] : T.indigo}`, borderRadius:8, padding:'14px 18px', flex:1, minWidth:148 }}>
+      <div style={{ fontSize:10, color:T.muted, marginBottom:4, textTransform:'uppercase', letterSpacing:'0.06em' }}>{label}</div>
+      <div style={{ fontSize:22, fontWeight:700, color: rag ? ragColors[rag] : color }}>{value}</div>
+      {sub && <div style={{ fontSize:11, color:T.muted, marginTop:2 }}>{sub}</div>}
+      {rag && <div style={{ fontSize:10, fontWeight:600, color:ragColors[rag], marginTop:4, textTransform:'uppercase' }}>{rag === 'green' ? 'PASS' : rag === 'amber' ? 'WATCH' : 'BREACH'}</div>}
+    </div>
+  );
+};
+
+const SectionHeader = ({ title, sub }) => (
+  <div style={{ marginBottom:16 }}>
+    <div style={{ fontSize:14, fontWeight:700, color:T.navy, letterSpacing:'0.03em' }}>{title}</div>
+    {sub && <div style={{ fontSize:11, color:T.muted, marginTop:2 }}>{sub}</div>}
   </div>
 );
 
-const TABS = ['Capital Overview','Institution Database','Scenario Stress Matrix','RWA Decomposition','Jurisdiction Comparison','Sensitivity Analysis','Summary & Export'];
+const SliderRow = ({ label, value, min, max, step=1, onChange, fmt=v=>v, color=T.indigo }) => (
+  <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:10 }}>
+    <div style={{ fontSize:12, color:T.muted, width:200 }}>{label}</div>
+    <input type="range" min={min} max={max} step={step} value={value} onChange={e=>onChange(+e.target.value)}
+      style={{ flex:1, accentColor:color }} />
+    <div style={{ fontSize:13, fontWeight:700, color, width:60, textAlign:'right' }}>{fmt(value)}</div>
+  </div>
+);
 
+const TABS = [
+  'Capital Overview','Basel IV Stack','Institution Database','Climate RWA Engine',
+  'Stress Test Matrix','Capital Optimizer','DFAST/CCAR Overlay','Jurisdiction Comparison',
+  'Sensitivity Analysis','Summary & Export',
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+══════════════════════════════════════════════════════════════════════ */
 export default function ClimateCapitalAdequacyPage() {
-  const [tab, setTab] = useState(0);
-  const [scenarioIdx, setScenarioIdx] = useState(0);
-  const [typeFilter, setTypeFilter] = useState('All');
-  const [jurisFilter, setJurisFilter] = useState('All');
+  /* global state */
+  const [tab,          setTab]          = useState(0);
+  const [scenarioIdx,  setScenarioIdx]  = useState(0);
+  const [typeFilter,   setTypeFilter]   = useState('All');
+  const [jurisFilter,  setJurisFilter]  = useState('All');
   const [carbonFilter, setCarbonFilter] = useState(false);
-  const [garFilter, setGarFilter] = useState(0);
-  const [cet1Min, setCet1Min] = useState(0);
-  const [fossilMax, setFossilMax] = useState(100);
-  const [search, setSearch] = useState('');
-  const [sortCol, setSortCol] = useState('totalRWA');
-  const [sortDir, setSortDir] = useState(-1);
-  const [selectedId, setSelectedId] = useState(null);
-  const [compareId, setCompareId] = useState(null);
-  const [compareMode, setCompareMode] = useState(false);
+  const [search,       setSearch]       = useState('');
+  const [sortCol,      setSortCol]      = useState('totalRWA');
+  const [sortDir,      setSortDir]      = useState(-1);
+  const [selectedId,   setSelectedId]   = useState(null);
+  const [expandedId,   setExpandedId]   = useState(null);
+
+  /* tab-specific state */
+  const [t1ShowAT1,    setT1ShowAT1]    = useState(true);
+  const [t1ShowT2,     setT1ShowT2]     = useState(true);
+  const [t2InstIdx,    setT2InstIdx]    = useState(0);
+  const [t4AssetIdx,   setT4AssetIdx]   = useState(0);
+  const [t4IrbMode,    setT4IrbMode]    = useState(false);
+  const [t4CarbonPrice,setT4CarbonPrice]= useState(50);
+  const [t5ScenA,     setT5ScenA]      = useState(1);
+  const [t5ScenB,     setT5ScenB]      = useState(3);
+  const [t5InstCount,  setT5InstCount]  = useState(10);
+  const [t5ShowThresh, setT5ShowThresh] = useState(true);
+  const [t6GreenLoan,  setT6GreenLoan]  = useState(25);
+  const [t6FossilExp,  setT6FossilExp]  = useState(15);
+  const [t6P2G,        setT6P2G]        = useState(1.0);
+  const [t6CarbonPrice,setT6CarbonPrice]= useState(80);
+  const [t7Regulator,  setT7Regulator]  = useState('Fed');
+  const [t7Horizon,    setT7Horizon]    = useState(9);
+  const [t7Adverse,    setT7Adverse]    = useState(true);
+  const [t8Framework,  setT8Framework]  = useState('EU');
+  const [t9Driver,     setT9Driver]     = useState(0);
+  const [t9Range,      setT9Range]      = useState(20);
+  const [exportText,   setExportText]   = useState('');
 
   const scenario = SCENARIOS[scenarioIdx];
 
-  const enriched = useMemo(() => INSTITUTIONS.map(inst => ({ ...inst, ...computeCapital(inst, scenario) })), [scenarioIdx]);
+  /* enriched institutions */
+  const enriched = useMemo(() =>
+    INSTITUTIONS.map(inst => ({ ...inst, ...computeCapital(inst, scenario) })),
+    [scenarioIdx]);
 
   const filtered = useMemo(() => {
     let d = enriched;
     if (typeFilter !== 'All') d = d.filter(x => x.type === typeFilter);
     if (jurisFilter !== 'All') d = d.filter(x => x.jurisdiction === jurisFilter);
     if (carbonFilter) d = d.filter(x => x.carbonIntensive);
-    if (garFilter > 0) d = d.filter(x => x.greenLoanPct * 100 >= garFilter);
-    d = d.filter(x => x.cet1Impact * 100 >= cet1Min);
-    d = d.filter(x => x.fossilFuelExposure * 100 <= fossilMax);
     if (search) d = d.filter(x => x.name.toLowerCase().includes(search.toLowerCase()) || x.jurisdiction.toLowerCase().includes(search.toLowerCase()));
     return [...d].sort((a, b) => sortDir * ((a[sortCol] || 0) - (b[sortCol] || 0)));
-  }, [enriched, typeFilter, jurisFilter, carbonFilter, garFilter, cet1Min, fossilMax, search, sortCol, sortDir]);
+  }, [enriched, typeFilter, jurisFilter, carbonFilter, search, sortCol, sortDir]);
 
-  const portfolioAvgCET1 = useMemo(() => filtered.length ? filtered.reduce((s, x) => s + x.cet1Impact, 0) / filtered.length : 0, [filtered]);
-  const totalShortfall = useMemo(() => filtered.reduce((s, x) => s + x.shortfall * x.totalRWA, 0), [filtered]);
-  const avgPillar2 = useMemo(() => filtered.length ? filtered.reduce((s, x) => s + x.pillar2AddOn, 0) / filtered.length : 0, [filtered]);
-  const breachCount = useMemo(() => filtered.filter(x => x.shortfall > 0).length, [filtered]);
-
-  const top25Pillar2 = useMemo(() => [...filtered].sort((a, b) => b.pillar2AddOn - a.pillar2AddOn).slice(0, 25), [filtered]);
-
-  const jurisBreakdown = useMemo(() => JURISDICTIONS.map(j => {
-    const sub = filtered.filter(x => x.jurisdiction === j);
-    const avgCET1 = sub.length ? sub.reduce((s, x) => s + x.cet1Impact * 100, 0) / sub.length : 0;
-    const breaches = sub.filter(x => x.shortfall > 0).length;
-    return { jurisdiction: j, avgCET1: +avgCET1.toFixed(2), institutions: sub.length, breaches, threshold: JURIS_RULES[j].minCET1 };
-  }), [filtered]);
-
-  const selectedInst = useMemo(() => selectedId != null ? enriched.find(x => x.id === selectedId) : null, [enriched, selectedId]);
-  const compareInst = useMemo(() => compareId != null ? enriched.find(x => x.id === compareId) : null, [enriched, compareId]);
-
-  const scenarioMatrix = useMemo(() => {
-    if (!selectedInst) return [];
-    return SCENARIOS.map(sc => {
-      const c = computeCapital(selectedInst, sc);
-      return { scenario: sc.name, cet1: +(c.cet1Impact * 100).toFixed(2), pillar2: +c.pillar2AddOn.toFixed(1), shortfall: +(c.shortfall * 100).toFixed(3), buffer: +c.stressBuffer.toFixed(1) };
-    });
-  }, [selectedInst]);
-
-  const rwaDeco = useMemo(() => filtered.slice(0, 30).map(x => ({
-    name: x.name.split(' ')[0],
-    climateRWA: +(x.totalRWA * x.climatRWAPct).toFixed(1),
-    nonClimateRWA: +(x.totalRWA * (1 - x.climatRWAPct)).toFixed(1),
-    greenLoanPct: +(x.greenLoanPct * 100).toFixed(1),
-  })), [filtered]);
-
-  const sensitivityData = useMemo(() => [
-    { name: 'Physical Risk +1σ',    impact: -(filtered.length ? filtered.reduce((s, x) => s + x.physicalRiskScore * 0.0001, 0) / filtered.length : 0) },
-    { name: 'Fossil Exposure +10%', impact: -0.018 },
-    { name: 'Climate RWA +5%',      impact: -(scenario.pillar2AddPct / 100 * 0.05) * 100 },
-    { name: 'GAR Bonus +10%',       impact: +(scenario.greenAssetRatioBonus * 0.1) * 100 },
-    { name: 'Scenario Escalation',  impact: -(scenario.pillar2AddPct * 0.003) * 10 },
-    { name: 'Pillar 2 Mult +0.1',   impact: -0.030 },
-    { name: 'CET1 Threshold +0.5%', impact: -0.050 },
-    { name: 'Leverage Ratio -1%',   impact: -0.020 },
-  ].map(v => ({ ...v, impact: +v.impact.toFixed(4) })), [filtered, scenario]);
+  const portfolioAvgCET1 = useMemo(() => filtered.length ? filtered.reduce((s,x)=>s+x.cet1Impact,0)/filtered.length : 0, [filtered]);
+  const totalShortfallBn = useMemo(() => filtered.reduce((s,x)=>s+x.shortfall*x.totalRWA,0), [filtered]);
+  const breachCount      = useMemo(() => filtered.filter(x=>x.shortfall>0).length, [filtered]);
+  const avgLeverage      = useMemo(() => filtered.length ? filtered.reduce((s,x)=>s+x.leverageRatio,0)/filtered.length : 0, [filtered]);
+  const avgTLAC          = useMemo(() => filtered.length ? filtered.reduce((s,x)=>s+x.tlacRatio,0)/filtered.length : 0, [filtered]);
 
   const handleSort = useCallback((col) => {
-    if (sortCol === col) setSortDir(d => -d);
-    else { setSortCol(col); setSortDir(-1); }
+    if (sortCol === col) setSortDir(d => -d); else { setSortCol(col); setSortDir(-1); }
   }, [sortCol]);
 
-  const filterRow = (
-    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16, alignItems: 'center', padding: '12px 16px', background: T.card, border: `1px solid ${T.border}`, borderRadius: 8 }}>
-      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search institutions..." style={{ padding: '6px 10px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12, width: 160 }} />
-      <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} style={{ padding: '6px 8px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}>
-        <option>All</option>{INSTITUTION_TYPES.map(t => <option key={t}>{t}</option>)}
+  /* ── waterfall data for tab 1 ── */
+  const waterfallData = useMemo(() => {
+    const rule = JURIS_RULES[jurisFilter !== 'All' ? jurisFilter : 'EU'];
+    return [
+      { name:'CET1 Min',    value:4.5,              color:T.indigo  },
+      { name:'CCB',         value:2.5,              color:'#818cf8' },
+      { name:'G-SIB',       value:rule.gsibSurcharge,color:T.blue  },
+      { name:'CCyB',        value:rule.ccyb,        color:T.teal   },
+      { name:'P2R',         value:rule.p2rAvg,      color:T.amber  },
+      { name:'P2G',         value:t6P2G,            color:T.orange },
+      { name:'Climate Buf', value:rule.climateCapBuf+scenario.pillar2AddPct*0.1, color:T.red },
+    ];
+  }, [jurisFilter, t6P2G, scenarioIdx]);
+
+  /* ── jurisdiction breakdown ── */
+  const jurisBreakdown = useMemo(() => JURISDICTIONS.map(j => {
+    const sub = filtered.filter(x => x.jurisdiction === j);
+    const avgCET1 = sub.length ? sub.reduce((s,x)=>s+x.cet1Impact*100,0)/sub.length : 0;
+    const rule = JURIS_RULES[j];
+    return {
+      jurisdiction:j, avgCET1:+avgCET1.toFixed(2),
+      institutions:sub.length, breaches:sub.filter(x=>x.shortfall>0).length,
+      threshold:rule.minCET1, minCET1:rule.minCET1, label:rule.label,
+      gsib:rule.gsibSurcharge, ccyb:rule.ccyb, p2r:rule.p2rAvg,
+      greenBonus:rule.greenBonus, climateBuf:rule.climateCapBuf,
+    };
+  }), [filtered]);
+
+  /* ── t5 stress matrix (top N institutions × 2 scenarios) ── */
+  const stressMatrix = useMemo(() => {
+    const top = enriched.slice(0, t5InstCount);
+    const scA = SCENARIOS[t5ScenA], scB = SCENARIOS[t5ScenB];
+    return top.map(inst => {
+      const cA = computeCapital(inst, scA);
+      const cB = computeCapital(inst, scB);
+      const rule = JURIS_RULES[inst.jurisdiction];
+      return {
+        name: inst.name.split(' ')[0],
+        fullName: inst.name,
+        juris: inst.jurisdiction,
+        cet1A: +(cA.cet1Impact*100).toFixed(2),
+        cet1B: +(cB.cet1Impact*100).toFixed(2),
+        shortfallA: +(cA.shortfall*100).toFixed(3),
+        shortfallB: +(cB.shortfall*100).toFixed(3),
+        threshold: rule.minCET1,
+        passA: cA.shortfall === 0,
+        passB: cB.shortfall === 0,
+      };
+    });
+  }, [enriched, t5ScenA, t5ScenB, t5InstCount]);
+
+  /* ── t6 optimizer live CET1 ── */
+  const optimizerResult = useMemo(() => {
+    const rule = JURIS_RULES[jurisFilter !== 'All' ? jurisFilter : 'EU'];
+    const baseRWA = 500;
+    const greenLoanFactor = t6GreenLoan / 100;
+    const fossilFactor    = t6FossilExp / 100;
+    const carbonAdj       = (t6CarbonPrice / 100) * fossilFactor * 0.015;
+    const garBonus        = greenLoanFactor > 0.30 ? scenario.greenBonus * 0.5 : 0;
+    const p2gAdj          = t6P2G / 100;
+    const baseCapPct      = 0.12;
+    const adjCET1         = baseCapPct - carbonAdj - p2gAdj + garBonus - scenario.pillar2AddPct * 0.003;
+    const minReq          = rule.minCET1 / 100;
+    const shortfall       = Math.max(0, minReq - adjCET1) * baseRWA;
+    const capitalAction   = shortfall > 0 ? shortfall / 0.08 : 0;
+    return { adjCET1:+(adjCET1*100).toFixed(2), minReq:+(minReq*100).toFixed(1), shortfall:+shortfall.toFixed(1), capitalAction:+capitalAction.toFixed(0), pass:adjCET1 >= minReq };
+  }, [t6GreenLoan, t6FossilExp, t6P2G, t6CarbonPrice, jurisFilter, scenarioIdx]);
+
+  /* ── t7 DFAST quarterly path ── */
+  const dfastPath = useMemo(() => {
+    const quarters = STRESS_QUARTERLY.slice(0, t7Horizon);
+    return quarters.map((q, qi) => {
+      const stressShock = t7Adverse ? q.llp * 1.5 : q.llp * 0.8;
+      const regMin = t7Regulator === 'Fed' ? 9.5 : t7Regulator === 'PRA' ? 11.0 : t7Regulator === 'ECB' ? 10.5 : 10.0;
+      return {
+        quarter:q.quarter,
+        baseline: +(q.baseline).toFixed(2),
+        stressed: +(q.baseline - stressShock - (t7Adverse?0.2:0.05)).toFixed(2),
+        regulatory: regMin,
+        ppnrImpact: +(q.ppnrImpact * (t7Adverse?1.4:0.8)).toFixed(3),
+      };
+    });
+  }, [t7Horizon, t7Regulator, t7Adverse]);
+
+  /* ── t9 sensitivity partial derivatives ── */
+  const sensitivityScatter = useMemo(() => {
+    const drv = SENSITIVITY_DRIVERS[t9Driver];
+    const range = t9Range;
+    return Array.from({length:21}, (_,i) => {
+      const x = -range + i * (range/10);
+      const cet1 = +(12.0 + drv.impact * x * 0.5 + sr(i*7)*0.1 - sr(i*11)*0.1).toFixed(3);
+      return { x:+x.toFixed(1), cet1, fill: cet1 < 10 ? T.red : cet1 < 11 ? T.amber : T.green };
+    });
+  }, [t9Driver, t9Range]);
+
+  /* ── filter bar ── */
+  const filterBar = (
+    <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:16, alignItems:'center', padding:'10px 14px', background:T.card, border:`1px solid ${T.border}`, borderRadius:8 }}>
+      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search institutions…"
+        style={{ padding:'5px 9px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12, width:152 }} />
+      <select value={typeFilter} onChange={e=>setTypeFilter(e.target.value)}
+        style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12 }}>
+        <option>All</option>{INSTITUTION_TYPES.map(t=><option key={t}>{t}</option>)}
       </select>
-      <select value={jurisFilter} onChange={e => setJurisFilter(e.target.value)} style={{ padding: '6px 8px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}>
-        <option>All</option>{JURISDICTIONS.map(j => <option key={j}>{j}</option>)}
+      <select value={jurisFilter} onChange={e=>setJurisFilter(e.target.value)}
+        style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12 }}>
+        <option>All</option>{JURISDICTIONS.map(j=><option key={j}>{j}</option>)}
       </select>
-      <select value={scenarioIdx} onChange={e => setScenarioIdx(+e.target.value)} style={{ padding: '6px 8px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12 }}>
-        {SCENARIOS.map((s, i) => <option key={i} value={i}>{s.name}</option>)}
+      <label style={{ fontSize:12, color:T.muted, display:'flex', alignItems:'center', gap:4, cursor:'pointer' }}>
+        <input type="checkbox" checked={carbonFilter} onChange={e=>setCarbonFilter(e.target.checked)} />
+        Carbon Intensive Only
+      </label>
+      <select value={scenarioIdx} onChange={e=>setScenarioIdx(+e.target.value)}
+        style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12, background:SCENARIOS[scenarioIdx].color, color:'#fff' }}>
+        {SCENARIOS.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
       </select>
-      <label style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-        <input type="checkbox" checked={carbonFilter} onChange={e => setCarbonFilter(e.target.checked)} /> Carbon Intensive
-      </label>
-      <label style={{ fontSize: 12 }}>GAR ≥{garFilter}%
-        <input type="range" min={0} max={40} value={garFilter} onChange={e => setGarFilter(+e.target.value)} style={{ marginLeft: 6, width: 70 }} />
-      </label>
-      <label style={{ fontSize: 12 }}>Fossil ≤{fossilMax}%
-        <input type="range" min={0} max={100} value={fossilMax} onChange={e => setFossilMax(+e.target.value)} style={{ marginLeft: 6, width: 70 }} />
-      </label>
-      <label style={{ fontSize: 12 }}>CET1 ≥{cet1Min}%
-        <input type="range" min={0} max={20} value={cet1Min} onChange={e => setCet1Min(+e.target.value)} style={{ marginLeft: 6, width: 70 }} />
-      </label>
+      <div style={{ marginLeft:'auto', fontSize:11, color:T.muted }}>
+        {filtered.length} institutions · {breachCount} breaches
+      </div>
     </div>
   );
 
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 0 — CAPITAL OVERVIEW
+  ══════════════════════════════════════════════════════════════════ */
+  const tab0 = (
+    <div>
+      {filterBar}
+      <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:20 }}>
+        <KpiCard label="Portfolio Avg CET1" value={`${(portfolioAvgCET1*100).toFixed(2)}%`}
+          rag={portfolioAvgCET1*100 >= 11 ? 'green' : portfolioAvgCET1*100 >= 9.5 ? 'amber' : 'red'}
+          sub="Scenario-adjusted" />
+        <KpiCard label="CET1 Breaches" value={breachCount}
+          rag={breachCount === 0 ? 'green' : breachCount <= 3 ? 'amber' : 'red'}
+          sub={`of ${filtered.length} institutions`} />
+        <div style={{ flex:'1 0 auto', background:T.card, borderRadius:8, padding:'10px 14px', border:`1px solid ${T.border}`, minWidth:130 }}>
+          <div style={{ fontSize:10, color:T.muted, letterSpacing:0.3, marginBottom:4 }}>CAPITAL SHORTFALL</div>
+          <CurrencyToggle usdValue={totalShortfallBn * 1e9} size="lg" />
+          <div style={{ fontSize:10, color:T.muted, marginTop:2 }}>Total regulatory gap</div>
+        </div>
+        <KpiCard label="Avg Leverage Ratio" value={`${(avgLeverage*100).toFixed(2)}%`}
+          rag={avgLeverage*100 >= 4 ? 'green' : 'amber'}
+          sub="Basel III min 3%" />
+        <KpiCard label="Avg TLAC Ratio" value={`${(avgTLAC*100).toFixed(1)}%`}
+          rag={avgTLAC*100 >= 18 ? 'green' : 'amber'}
+          sub="FSB TLAC standard" />
+        <KpiCard label="Active Scenario" value={scenario.shortName}
+          color={scenario.color}
+          sub={scenario.name} />
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:20 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Capital Waterfall — Stacked Requirements" sub={`Jurisdiction: ${jurisFilter === 'All' ? 'EU (default)' : jurisFilter} · Scenario: ${scenario.name}`} />
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={waterfallData} margin={{top:4,right:8,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{fontSize:10}} />
+              <YAxis unit="%" tick={{fontSize:10}} />
+              <Tooltip formatter={v=>`${v.toFixed(2)}%`} />
+              <Bar dataKey="value" radius={[3,3,0,0]}>
+                {waterfallData.map((d,i)=><Cell key={i} fill={d.color} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="CET1 Distribution — All Institutions" sub="Histogram by CET1 bucket" />
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={(() => {
+              const buckets = [8,9,10,11,12,13,14,15,16].map(b=>({ range:`${b}-${b+1}%`, count:0 }));
+              filtered.forEach(x => {
+                const v = x.cet1Impact*100;
+                const idx = Math.min(Math.floor(Math.max(0,v-8)), buckets.length-1);
+                if(idx>=0) buckets[idx].count++;
+              });
+              return buckets;
+            })()} margin={{top:4,right:8,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="range" tick={{fontSize:10}} />
+              <YAxis tick={{fontSize:10}} />
+              <Tooltip />
+              <Bar dataKey="count" fill={T.indigo} radius={[3,3,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Scenario Impact on Avg CET1" sub="All 8 NGFS scenarios vs baseline" />
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={SCENARIOS.map(sc=>{
+              const inst = filtered.slice(0,20);
+              const avg = inst.length ? inst.reduce((s,x)=>{
+                const c = computeCapital(x,sc); return s+c.cet1Impact*100;
+              },0)/inst.length : 0;
+              return { name:sc.shortName, avgCET1:+avg.toFixed(2), color:sc.color };
+            })} margin={{top:4,right:8,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{fontSize:10}} />
+              <YAxis unit="%" domain={[8,14]} tick={{fontSize:10}} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Bar dataKey="avgCET1" radius={[3,3,0,0]}>
+                {SCENARIOS.map((sc,i)=><Cell key={i} fill={sc.color} />)}
+              </Bar>
+              <ReferenceLine y={10.5} stroke={T.red} strokeDasharray="4 2" label={{value:'EU min',fontSize:9}} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Breach Count by Jurisdiction" sub={`Scenario: ${scenario.name}`} />
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={jurisBreakdown.filter(j=>j.institutions>0)} margin={{top:4,right:8,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="jurisdiction" tick={{fontSize:10}} />
+              <YAxis tick={{fontSize:10}} />
+              <Tooltip />
+              <Bar dataKey="breaches" fill={T.red} radius={[3,3,0,0]} name="Breaches" />
+              <Bar dataKey="institutions" fill={T.indigo} radius={[3,3,0,0]} fillOpacity={0.3} name="Total" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 1 — BASEL IV STACK
+  ══════════════════════════════════════════════════════════════════ */
+  const selectedInst2 = enriched[t2InstIdx];
+  const rule2 = JURIS_RULES[selectedInst2.jurisdiction];
+
+  const stackData = useMemo(() => {
+    const inst = enriched[t2InstIdx];
+    const rule  = JURIS_RULES[inst.jurisdiction];
+    const sc    = scenario;
+    return [
+      { name:'CET1 Min',    pct:4.5,                    color:T.indigo  },
+      { name:'CCB',         pct:2.5,                    color:'#818cf8' },
+      { name:'G-SIB',       pct:rule.gsibSurcharge,     color:T.blue    },
+      { name:'CCyB',        pct:rule.ccyb,              color:T.teal    },
+      { name:'P2R',         pct:rule.p2rAvg,            color:T.amber   },
+      { name:'P2G',         pct:inst.pillar2Guidance*100,color:T.orange },
+      { name:'Climate Buf', pct:rule.climateCapBuf + sc.pillar2AddPct*0.08, color:T.red },
+      { name:'AT1',         pct:inst.at1Ratio*100,      color:T.purple  },
+      { name:'Tier 2',      pct:inst.tier2Ratio*100,    color:T.gold    },
+    ];
+  }, [t2InstIdx, scenarioIdx, enriched]);
+
+  const tab1 = (
+    <div>
+      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:16 }}>
+        <div style={{ fontSize:13, fontWeight:600, color:T.navy }}>Institution:</div>
+        <select value={t2InstIdx} onChange={e=>setT2InstIdx(+e.target.value)}
+          style={{ padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12, flex:1, maxWidth:300 }}>
+          {INSTITUTIONS.map((inst,i)=><option key={i} value={i}>{inst.name} ({inst.jurisdiction})</option>)}
+        </select>
+        <div style={{ display:'flex', gap:8 }}>
+          <label style={{ fontSize:12, display:'flex', alignItems:'center', gap:4, cursor:'pointer' }}>
+            <input type="checkbox" checked={t1ShowAT1} onChange={e=>setT1ShowAT1(e.target.checked)} /> Show AT1
+          </label>
+          <label style={{ fontSize:12, display:'flex', alignItems:'center', gap:4, cursor:'pointer' }}>
+            <input type="checkbox" checked={t1ShowT2} onChange={e=>setT1ShowT2(e.target.checked)} /> Show T2
+          </label>
+        </div>
+      </div>
+
+      <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:20 }}>
+        <KpiCard label="CET1 Ratio" value={`${(selectedInst2.cet1Capital*100).toFixed(2)}%`}
+          rag={selectedInst2.cet1Capital*100 >= rule2.minCET1 ? 'green' : 'red'} sub={`Min: ${rule2.minCET1}%`} />
+        <KpiCard label="AT1 Ratio" value={`${(selectedInst2.at1Ratio*100).toFixed(2)}%`} color={T.purple} sub="Trigger @ 5.125%" />
+        <KpiCard label="Tier 2 Ratio" value={`${(selectedInst2.tier2Ratio*100).toFixed(2)}%`} color={T.gold} sub="Total Capital =" />
+        <KpiCard label="TLAC Ratio" value={`${(selectedInst2.tlacRatio*100).toFixed(1)}%`}
+          rag={selectedInst2.tlacRatio*100 >= 18 ? 'green' : 'amber'} sub="FSB min 18%" />
+        <KpiCard label="MREL Buffer" value={`${(selectedInst2.mrelBuffer*100).toFixed(2)}%`} color={T.teal} sub="Above MREL req" />
+        <KpiCard label="AT1 Trigger Dist" value={`${(selectedInst2.cet1Capital*100 - 5.125).toFixed(2)}%`}
+          rag={selectedInst2.cet1Capital*100 - 5.125 >= 2 ? 'green' : selectedInst2.cet1Capital*100 - 5.125 >= 1 ? 'amber' : 'red'}
+          sub="CET1 above AT1 trigger" />
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Full Capital Stack Decomposition" sub={`${selectedInst2.name} · ${selectedInst2.regulatoryFramework}`} />
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={stackData.filter(d=>d.name!=='AT1'||t1ShowAT1).filter(d=>d.name!=='Tier 2'||t1ShowT2)}
+              layout="vertical" margin={{top:4,right:40,bottom:4,left:60}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis type="number" unit="%" tick={{fontSize:10}} />
+              <YAxis dataKey="name" type="category" tick={{fontSize:10}} width={70} />
+              <Tooltip formatter={v=>`${v.toFixed(2)}%`} />
+              <Bar dataKey="pct" radius={[0,4,4,0]}>
+                {stackData.map((d,i)=><Cell key={i} fill={d.color} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Cross-Institution Capital Stack" sub="Top 12 institutions — CET1 + buffers" />
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={enriched.slice(0,12).map(x=>({
+              name:x.name.split(' ')[0],
+              cet1: +(x.cet1Capital*100).toFixed(2),
+              at1:  t1ShowAT1 ? +(x.at1Ratio*100).toFixed(2) : 0,
+              t2:   t1ShowT2  ? +(x.tier2Ratio*100).toFixed(2) : 0,
+            }))} margin={{top:4,right:8,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{fontSize:9}} />
+              <YAxis unit="%" tick={{fontSize:10}} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Legend iconSize={10} wrapperStyle={{fontSize:11}} />
+              <Bar dataKey="cet1" stackId="a" fill={T.indigo} name="CET1" />
+              {t1ShowAT1 && <Bar dataKey="at1" stackId="a" fill={T.purple} name="AT1" />}
+              {t1ShowT2  && <Bar dataKey="t2"  stackId="a" fill={T.gold}   name="Tier 2" />}
+              <ReferenceLine y={rule2.minCET1} stroke={T.red} strokeDasharray="4 2" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+        <SectionHeader title="Pillar Breakdown Detail" sub="Computed capital components for selected institution" />
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))', gap:10 }}>
+          {CAPITAL_COMPONENTS.map(comp => {
+            const values = { cet1Min:4.5, ccb:2.5, gsib:rule2.gsibSurcharge, ccyb:rule2.ccyb, p2r:rule2.p2rAvg, p2g:+(selectedInst2.pillar2Guidance*100).toFixed(2), climateBuf:+(rule2.climateCapBuf+scenario.pillar2AddPct*0.08).toFixed(2), at1:+(selectedInst2.at1Ratio*100).toFixed(2), tier2:+(selectedInst2.tier2Ratio*100).toFixed(2) };
+            return (
+              <div key={comp.key} style={{ background:T.sub, border:`1px solid ${T.border}`, borderLeft:`3px solid ${comp.color}`, borderRadius:6, padding:'10px 12px' }}>
+                <div style={{ fontSize:10, color:T.muted, marginBottom:2 }}>{comp.label}</div>
+                <div style={{ fontSize:18, fontWeight:700, color:comp.color }}>{values[comp.key]}%</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 2 — INSTITUTION DATABASE
+  ══════════════════════════════════════════════════════════════════ */
+  const colDefs = [
+    { key:'name',              label:'Institution',  fmt:v=>v },
+    { key:'jurisdiction',     label:'Juris',        fmt:v=>v },
+    { key:'type',             label:'Type',         fmt:v=>v.slice(0,12) },
+    { key:'totalRWA',         label:'RWA ($Bn)',    fmt:v=>v.toFixed(0) },
+    { key:'cet1Capital',      label:'CET1 %',       fmt:v=>(v*100).toFixed(2) },
+    { key:'at1Ratio',         label:'AT1 %',        fmt:v=>(v*100).toFixed(2) },
+    { key:'tier2Ratio',       label:'T2 %',         fmt:v=>(v*100).toFixed(2) },
+    { key:'tlacRatio',        label:'TLAC %',       fmt:v=>(v*100).toFixed(1) },
+    { key:'leverageRatio',    label:'Lev %',        fmt:v=>(v*100).toFixed(2) },
+    { key:'greenLoanPct',     label:'GAR %',        fmt:v=>(v*100).toFixed(1) },
+    { key:'fossilFuelExposure',label:'FF Exp %',    fmt:v=>(v*100).toFixed(1) },
+    { key:'physicalRiskScore',label:'Phys Risk',    fmt:v=>v.toFixed(0) },
+    { key:'ESGrating',        label:'ESG',          fmt:v=>v },
+    { key:'climateGovScore',  label:'Gov Score',    fmt:v=>v },
+    { key:'scope1Emissions',  label:'Scope1 (ktCO2)',fmt:v=>v.toFixed(0) },
+  ];
+
+  const tab2 = (
+    <div>
+      {filterBar}
+      <div style={{ overflowX:'auto' }}>
+        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:11 }}>
+          <thead>
+            <tr style={{ background:T.sub }}>
+              {colDefs.map(c=>(
+                <th key={c.key} onClick={()=>handleSort(c.key)}
+                  style={{ padding:'8px 10px', textAlign:'left', cursor:'pointer', borderBottom:`2px solid ${T.border}`, color:T.navy, fontWeight:700, whiteSpace:'nowrap', fontSize:10 }}>
+                  {c.label} {sortCol===c.key ? (sortDir===-1?'↓':'↑') : ''}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(inst => {
+              const isExpanded = expandedId === inst.id;
+              const rule = JURIS_RULES[inst.jurisdiction];
+              const breach = inst.cet1Capital*100 < rule.minCET1;
+              return (
+                <React.Fragment key={inst.id}>
+                  <tr onClick={()=>setExpandedId(isExpanded?null:inst.id)}
+                    style={{ background: breach ? '#fef2f2' : inst.carbonIntensive ? '#fffbeb' : T.card, borderBottom:`1px solid ${T.border}`, cursor:'pointer' }}
+                    onMouseEnter={e=>e.currentTarget.style.background=breach?'#fee2e2':'#f0f4ff'}
+                    onMouseLeave={e=>e.currentTarget.style.background=breach?'#fef2f2':inst.carbonIntensive?'#fffbeb':T.card}>
+                    {colDefs.map(c=>(
+                      <td key={c.key} style={{ padding:'7px 10px', color: c.key==='cet1Capital' ? (breach?T.red:T.green) : T.text, fontWeight: c.key==='name'?600:400, whiteSpace:'nowrap' }}>
+                        {c.key==='carbonIntensive' ? (inst.carbonIntensive?'🔥':'') : c.fmt(inst[c.key])}
+                        {c.key==='cet1Capital' && breach && <span style={{ marginLeft:4, fontSize:9, color:T.red, fontWeight:700 }}>BREACH</span>}
+                      </td>
+                    ))}
+                  </tr>
+                  {isExpanded && (
+                    <tr style={{ background:T.sub }}>
+                      <td colSpan={colDefs.length} style={{ padding:'12px 16px' }}>
+                        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10 }}>
+                          <div><div style={{ fontSize:10, color:T.muted }}>Regulatory Framework</div><div style={{ fontWeight:600, fontSize:12 }}>{inst.regulatoryFramework}</div></div>
+                          <div><div style={{ fontSize:10, color:T.muted }}>MREL Buffer</div><div style={{ fontWeight:600, fontSize:12 }}>{(inst.mrelBuffer*100).toFixed(2)}%</div></div>
+                          <div><div style={{ fontSize:10, color:T.muted }}>LCR Ratio</div><div style={{ fontWeight:600, fontSize:12 }}>{(inst.lcrRatio*100).toFixed(1)}%</div></div>
+                          <div><div style={{ fontSize:10, color:T.muted }}>NSFR</div><div style={{ fontWeight:600, fontSize:12 }}>{(inst.nsfr*100).toFixed(1)}%</div></div>
+                          <div><div style={{ fontSize:10, color:T.muted }}>Net Zero Target</div><div style={{ fontWeight:600, fontSize:12 }}>{inst.netZeroTarget || 'Not committed'}</div></div>
+                          <div><div style={{ fontSize:10, color:T.muted }}>Carbon Price RWA Sens.</div><div style={{ fontWeight:600, fontSize:12 }}>${inst.carboPriceRWASens.toFixed(1)}Bn</div></div>
+                          <div><div style={{ fontSize:10, color:T.muted }}>Climate Gov Score</div><div style={{ fontWeight:600, fontSize:12 }}>{inst.climateGovScore}/100</div></div>
+                          <div><div style={{ fontSize:10, color:T.muted }}>Carbon Intensive</div><div style={{ fontWeight:600, fontSize:12, color:inst.carbonIntensive?T.red:T.green }}>{inst.carbonIntensive?'Yes':'No'}</div></div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {filtered.length === 0 && <div style={{ textAlign:'center', padding:40, color:T.muted }}>No institutions match current filters.</div>}
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 3 — CLIMATE RWA ENGINE
+  ══════════════════════════════════════════════════════════════════ */
+  const selectedAsset = ASSET_CLASSES_RWA[t4AssetIdx];
+  const rwaWithCarbon = useMemo(() => ASSET_CLASSES_RWA.map(ac => {
+    const baseWeight = t4IrbMode ? ac.irbWeight : ac.saWeight;
+    const carbonAdj  = ac.strandedHaircut * (t4CarbonPrice / 200);
+    const climateMult = 1 + (ac.climateMult - 1) * (t4CarbonPrice / 100);
+    const adjustedWeight = Math.min(2.5, baseWeight * climateMult + carbonAdj);
+    return {
+      name: ac.name,
+      baseRWA: +(baseWeight * 100).toFixed(1),
+      adjustedRWA: +(adjustedWeight * 100).toFixed(1),
+      delta: +((adjustedWeight - baseWeight) * 100).toFixed(2),
+      strandedHaircut: +(ac.strandedHaircut * 100).toFixed(1),
+      carbonIntensity: ac.carbonIntensity,
+    };
+  }), [t4IrbMode, t4CarbonPrice]);
+
+  const tab3 = (
+    <div>
+      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+          <span style={{ fontSize:12, color:T.muted }}>Asset Class:</span>
+          <select value={t4AssetIdx} onChange={e=>setT4AssetIdx(+e.target.value)}
+            style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12 }}>
+            {ASSET_CLASSES_RWA.map((ac,i)=><option key={i} value={i}>{ac.name}</option>)}
+          </select>
+        </div>
+        <label style={{ fontSize:12, display:'flex', alignItems:'center', gap:6, cursor:'pointer' }}>
+          <input type="checkbox" checked={t4IrbMode} onChange={e=>setT4IrbMode(e.target.checked)} />
+          IRB Mode (vs Standardised)
+        </label>
+        <div style={{ flex:1 }} />
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, padding:'6px 14px', fontSize:12, color:T.navy, fontWeight:600 }}>
+          Mode: {t4IrbMode ? 'IRB Advanced' : 'Standardised Approach (SA-CR)'}
+        </div>
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginBottom:16 }}>
+        <SectionHeader title={`Carbon Price Sensitivity: ${selectedAsset.name}`} sub={`Slide carbon price · ${t4IrbMode?'IRB':'SA'} weights`} />
+        <SliderRow label={`Carbon Price ($/tonne CO₂)`} value={t4CarbonPrice} min={0} max={200} step={5}
+          onChange={setT4CarbonPrice} fmt={v=>`$${v}`} color={T.orange} />
+        <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginTop:12 }}>
+          <KpiCard label="Base RWA Weight" value={`${(t4IrbMode?selectedAsset.irbWeight:selectedAsset.saWeight)*100}%`} color={T.blue} sub={t4IrbMode?'IRB':'SA'} />
+          <KpiCard label="Climate Multiplier" value={`${selectedAsset.climateMult.toFixed(2)}×`} color={T.orange} sub="At max carbon price" />
+          <KpiCard label="Stranded Haircut" value={`${(selectedAsset.strandedHaircut*100).toFixed(1)}%`} color={T.red} sub="Asset value write-down" />
+          <KpiCard label="Adjusted RWA Weight" value={`${rwaWithCarbon[t4AssetIdx].adjustedRWA}%`} color={T.indigo}
+            sub={`+${rwaWithCarbon[t4AssetIdx].delta}% vs base`} />
+          <KpiCard label="Carbon Intensity" value={selectedAsset.carbonIntensity} color={T.amber} sub="Relative classification" />
+        </div>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="RWA Density by Asset Class" sub={`${t4IrbMode?'IRB':'SA'} base vs climate-adjusted · Carbon $${t4CarbonPrice}/t`} />
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={rwaWithCarbon} layout="vertical" margin={{top:4,right:40,bottom:4,left:100}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis type="number" unit="%" tick={{fontSize:9}} />
+              <YAxis dataKey="name" type="category" tick={{fontSize:9}} width={110} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Legend iconSize={10} wrapperStyle={{fontSize:11}} />
+              <Bar dataKey="baseRWA"     fill={T.blue}   name="Base RWA%" fillOpacity={0.7} />
+              <Bar dataKey="adjustedRWA" fill={T.indigo} name="Climate-Adj RWA%" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Carbon Price → RWA Impact" sub="Marginal RWA increase per $10/tonne step" />
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={Array.from({length:21},(_,i)=>{
+              const cp = i*10;
+              const carbonAdj = selectedAsset.strandedHaircut*(cp/200);
+              const climateMult = 1+(selectedAsset.climateMult-1)*(cp/100);
+              const base = t4IrbMode?selectedAsset.irbWeight:selectedAsset.saWeight;
+              const adj = Math.min(2.5, base*climateMult+carbonAdj);
+              return { carbonPrice:`$${cp}`, rwaWeight:+(adj*100).toFixed(1) };
+            })} margin={{top:4,right:16,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="carbonPrice" tick={{fontSize:9}} />
+              <YAxis unit="%" tick={{fontSize:10}} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Line dataKey="rwaWeight" stroke={T.orange} strokeWidth={2} dot={false} name="RWA Weight%" />
+              <ReferenceLine y={(t4IrbMode?selectedAsset.irbWeight:selectedAsset.saWeight)*100}
+                stroke={T.blue} strokeDasharray="4 2" label={{value:'Base',fontSize:9}} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginTop:16 }}>
+        <SectionHeader title="Stranded Asset RWA Haircut Table" sub="Full asset class matrix — stranded value write-down at $${t4CarbonPrice}/t" />
+        <div style={{ overflowX:'auto' }}>
+          <table style={{ width:'100%', borderCollapse:'collapse', fontSize:11 }}>
+            <thead>
+              <tr style={{ background:T.sub }}>
+                {['Asset Class','Carbon Intensity','SA Weight','IRB Weight','Climate Mult','Stranded Haircut %','Delta RWA%'].map(h=>(
+                  <th key={h} style={{ padding:'7px 10px', textAlign:'left', borderBottom:`1px solid ${T.border}`, fontSize:10, color:T.navy, fontWeight:700 }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rwaWithCarbon.map((row,i)=>(
+                <tr key={i} style={{ background:i%2===0?T.card:T.sub, borderBottom:`1px solid ${T.border}` }}>
+                  <td style={{ padding:'6px 10px', fontWeight:600 }}>{row.name}</td>
+                  <td style={{ padding:'6px 10px', color: row.carbonIntensity==='Very High'?T.red:row.carbonIntensity==='High'?T.orange:row.carbonIntensity==='Low'?T.green:T.amber }}>{row.carbonIntensity}</td>
+                  <td style={{ padding:'6px 10px' }}>{(ASSET_CLASSES_RWA[i].saWeight*100).toFixed(0)}%</td>
+                  <td style={{ padding:'6px 10px' }}>{(ASSET_CLASSES_RWA[i].irbWeight*100).toFixed(0)}%</td>
+                  <td style={{ padding:'6px 10px' }}>{ASSET_CLASSES_RWA[i].climateMult.toFixed(2)}×</td>
+                  <td style={{ padding:'6px 10px', color:T.red }}>{row.strandedHaircut}%</td>
+                  <td style={{ padding:'6px 10px', color:row.delta>0?T.red:T.green, fontWeight:600 }}>{row.delta>0?'+':''}{row.delta}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 4 — STRESS TEST MATRIX
+  ══════════════════════════════════════════════════════════════════ */
+  const tab4 = (
+    <div>
+      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+          <span style={{ fontSize:12, color:T.muted }}>Scenario A:</span>
+          <select value={t5ScenA} onChange={e=>setT5ScenA(+e.target.value)}
+            style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12, background:SCENARIOS[t5ScenA].color, color:'#fff' }}>
+            {SCENARIOS.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        </div>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+          <span style={{ fontSize:12, color:T.muted }}>Scenario B:</span>
+          <select value={t5ScenB} onChange={e=>setT5ScenB(+e.target.value)}
+            style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12, background:SCENARIOS[t5ScenB].color, color:'#fff' }}>
+            {SCENARIOS.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        </div>
+        <SliderRow label="Institutions:" value={t5InstCount} min={5} max={20} step={1}
+          onChange={setT5InstCount} fmt={v=>`${v}`} color={T.indigo} />
+        <label style={{ fontSize:12, display:'flex', alignItems:'center', gap:4, cursor:'pointer' }}>
+          <input type="checkbox" checked={t5ShowThresh} onChange={e=>setT5ShowThresh(e.target.checked)} /> Show Thresholds
+        </label>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title={`CET1 — ${SCENARIOS[t5ScenA].name}`} sub="Top institutions · bar = CET1 ratio" />
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={stressMatrix} margin={{top:4,right:8,bottom:30,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{fontSize:9}} angle={-35} textAnchor="end" />
+              <YAxis unit="%" domain={[6,16]} tick={{fontSize:10}} />
+              <Tooltip formatter={(v,n,p)=>[`${v}% (${p.payload.passA?'PASS':'BREACH'})`, 'CET1']} />
+              <Bar dataKey="cet1A" radius={[3,3,0,0]} name="CET1 (Scen A)">
+                {stressMatrix.map((d,i)=><Cell key={i} fill={d.passA?T.green:T.red} />)}
+              </Bar>
+              {t5ShowThresh && stressMatrix.slice(0,1).map(d=>(
+                <ReferenceLine key="ref" y={d.threshold} stroke={T.red} strokeDasharray="4 2" label={{value:`Min ${d.threshold}%`,fontSize:9}} />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title={`CET1 — ${SCENARIOS[t5ScenB].name}`} sub="Same institutions · scenario B" />
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={stressMatrix} margin={{top:4,right:8,bottom:30,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{fontSize:9}} angle={-35} textAnchor="end" />
+              <YAxis unit="%" domain={[6,16]} tick={{fontSize:10}} />
+              <Tooltip formatter={(v,n,p)=>[`${v}% (${p.payload.passB?'PASS':'BREACH'})`, 'CET1']} />
+              <Bar dataKey="cet1B" radius={[3,3,0,0]} name="CET1 (Scen B)">
+                {stressMatrix.map((d,i)=><Cell key={i} fill={d.passB?T.green:T.red} />)}
+              </Bar>
+              {t5ShowThresh && stressMatrix.slice(0,1).map(d=>(
+                <ReferenceLine key="ref" y={d.threshold} stroke={T.red} strokeDasharray="4 2" label={{value:`Min ${d.threshold}%`,fontSize:9}} />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+        <SectionHeader title="Shortfall Summary Table" sub="Capital gap under each scenario" />
+        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:11 }}>
+          <thead>
+            <tr style={{ background:T.sub }}>
+              {['Institution','Jurisdiction','CET1 (Scen A)','CET1 (Scen B)','Delta','Shortfall A (bps)','Shortfall B (bps)','Pass A','Pass B'].map(h=>(
+                <th key={h} style={{ padding:'7px 10px', textAlign:'left', borderBottom:`1px solid ${T.border}`, fontSize:10, color:T.navy, fontWeight:700 }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {stressMatrix.map((row,i)=>(
+              <tr key={i} style={{ background:(!row.passA||!row.passB)?'#fef2f2':i%2===0?T.card:T.sub, borderBottom:`1px solid ${T.border}` }}>
+                <td style={{ padding:'6px 10px', fontWeight:600 }}>{row.fullName}</td>
+                <td style={{ padding:'6px 10px' }}>{row.juris}</td>
+                <td style={{ padding:'6px 10px', color:row.passA?T.green:T.red, fontWeight:600 }}>{row.cet1A}%</td>
+                <td style={{ padding:'6px 10px', color:row.passB?T.green:T.red, fontWeight:600 }}>{row.cet1B}%</td>
+                <td style={{ padding:'6px 10px', color:(row.cet1B-row.cet1A)<0?T.red:T.green }}>
+                  {row.cet1B-row.cet1A > 0 ? '+' : ''}{(row.cet1B-row.cet1A).toFixed(2)}%
+                </td>
+                <td style={{ padding:'6px 10px', color:row.shortfallA>0?T.red:T.green }}>{(row.shortfallA*100).toFixed(0)}</td>
+                <td style={{ padding:'6px 10px', color:row.shortfallB>0?T.red:T.green }}>{(row.shortfallB*100).toFixed(0)}</td>
+                <td style={{ padding:'6px 10px' }}><span style={{ background:row.passA?'#dcfce7':'#fee2e2', color:row.passA?T.green:T.red, borderRadius:4, padding:'2px 6px', fontSize:10, fontWeight:700 }}>{row.passA?'PASS':'FAIL'}</span></td>
+                <td style={{ padding:'6px 10px' }}><span style={{ background:row.passB?'#dcfce7':'#fee2e2', color:row.passB?T.green:T.red, borderRadius:4, padding:'2px 6px', fontSize:10, fontWeight:700 }}>{row.passB?'PASS':'FAIL'}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 5 — CAPITAL OPTIMIZER
+  ══════════════════════════════════════════════════════════════════ */
+  const tab5 = (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:20 }}>
+          <SectionHeader title="What-If Capital Optimizer" sub="Adjust levers — live CET1 recomputed" />
+          <SliderRow label="Green Loan % (GAR)" value={t6GreenLoan} min={0} max={60} step={1}
+            onChange={setT6GreenLoan} fmt={v=>`${v}%`} color={T.green} />
+          <SliderRow label="Fossil Fuel Exposure %" value={t6FossilExp} min={0} max={40} step={1}
+            onChange={setT6FossilExp} fmt={v=>`${v}%`} color={T.orange} />
+          <SliderRow label="P2G Add-On %" value={t6P2G} min={0} max={3} step={0.1}
+            onChange={setT6P2G} fmt={v=>`${v.toFixed(1)}%`} color={T.amber} />
+          <SliderRow label="Carbon Price ($/tonne)" value={t6CarbonPrice} min={0} max={200} step={5}
+            onChange={setT6CarbonPrice} fmt={v=>`$${v}`} color={T.red} />
+
+          <div style={{ marginTop:16, padding:16, background:T.sub, borderRadius:8, border:`1px solid ${T.border}` }}>
+            <div style={{ fontSize:12, color:T.muted, marginBottom:8 }}>Regulatory minimum ({jurisFilter !== 'All' ? jurisFilter : 'EU'}):</div>
+            <div style={{ fontSize:28, fontWeight:700, color:optimizerResult.pass?T.green:T.red, marginBottom:4 }}>
+              {optimizerResult.adjCET1}%
+            </div>
+            <div style={{ fontSize:12, color:T.muted }}>vs minimum {optimizerResult.minReq}%</div>
+            <div style={{ marginTop:8, padding:'6px 12px', borderRadius:6, background:optimizerResult.pass?'#dcfce7':'#fee2e2', display:'inline-block' }}>
+              <span style={{ fontWeight:700, fontSize:12, color:optimizerResult.pass?T.green:T.red }}>
+                {optimizerResult.pass ? 'PASS — Adequately Capitalised' : `FAIL — Shortfall $${optimizerResult.shortfall}Bn`}
+              </span>
+            </div>
+            {!optimizerResult.pass && (
+              <div style={{ marginTop:8, fontSize:12, color:T.muted }}>
+                Capital action required: <span style={{ color:T.red, fontWeight:700 }}>${optimizerResult.capitalAction.toLocaleString()}M new equity</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:20 }}>
+          <SectionHeader title="CET1 vs Green Loan % — Frontier" sub="Holding all other levers constant" />
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={Array.from({length:25},(_,i)=>{
+              const gl = i*2.5;
+              const rule = JURIS_RULES[jurisFilter!=='All'?jurisFilter:'EU'];
+              const fossil = t6FossilExp/100;
+              const carbonAdj = (t6CarbonPrice/100)*fossil*0.015;
+              const garBonus = gl/100>0.30 ? scenario.greenBonus*0.5 : 0;
+              const adj = 0.12 - carbonAdj - t6P2G/100 + garBonus - scenario.pillar2AddPct*0.003;
+              return { greenLoan:`${gl.toFixed(0)}%`, cet1:+(adj*100).toFixed(2), min:rule.minCET1 };
+            })} margin={{top:4,right:16,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="greenLoan" tick={{fontSize:9}} />
+              <YAxis unit="%" tick={{fontSize:10}} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Line dataKey="cet1" stroke={T.green} strokeWidth={2} dot={false} name="Adjusted CET1" />
+              <Line dataKey="min" stroke={T.red} strokeWidth={1} strokeDasharray="4 2" dot={false} name="Minimum" />
+              <ReferenceLine x={`${t6GreenLoan}%`} stroke={T.gold} strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+
+          <SectionHeader title="Fossil Fuel → CET1 Impact" sub="CET1 erosion as fossil exposure rises" />
+          <ResponsiveContainer width="100%" height={160}>
+            <AreaChart data={Array.from({length:21},(_,i)=>{
+              const ff = i*2;
+              const fossil = ff/100;
+              const carbonAdj = (t6CarbonPrice/100)*fossil*0.015;
+              const garBonus = t6GreenLoan/100>0.30 ? scenario.greenBonus*0.5 : 0;
+              const adj = 0.12 - carbonAdj - t6P2G/100 + garBonus - scenario.pillar2AddPct*0.003;
+              const rule = JURIS_RULES[jurisFilter!=='All'?jurisFilter:'EU'];
+              return { ff:`${ff}%`, cet1:+(adj*100).toFixed(2), min:rule.minCET1 };
+            })} margin={{top:4,right:16,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="ff" tick={{fontSize:9}} />
+              <YAxis unit="%" tick={{fontSize:10}} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Area dataKey="cet1" stroke={T.orange} fill={T.orange} fillOpacity={0.15} dot={false} name="CET1" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 6 — DFAST / CCAR OVERLAY
+  ══════════════════════════════════════════════════════════════════ */
+  const tab6 = (
+    <div>
+      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+          <span style={{ fontSize:12, color:T.muted }}>Regulator:</span>
+          {['Fed','PRA','ECB','OSFI'].map(r=>(
+            <button key={r} onClick={()=>setT7Regulator(r)}
+              style={{ padding:'5px 12px', borderRadius:6, border:`1px solid ${T.border}`, cursor:'pointer', fontSize:12, fontWeight:t7Regulator===r?700:400, background:t7Regulator===r?T.indigo:T.card, color:t7Regulator===r?'#fff':T.text }}>
+              {r}
+            </button>
+          ))}
+        </div>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+          <span style={{ fontSize:12, color:T.muted }}>Horizon:</span>
+          {[4,8,9].map(h=>(
+            <button key={h} onClick={()=>setT7Horizon(h)}
+              style={{ padding:'5px 10px', borderRadius:6, border:`1px solid ${T.border}`, cursor:'pointer', fontSize:12, fontWeight:t7Horizon===h?700:400, background:t7Horizon===h?T.navy:T.card, color:t7Horizon===h?'#fff':T.text }}>
+              {h}Q
+            </button>
+          ))}
+        </div>
+        <label style={{ fontSize:12, display:'flex', alignItems:'center', gap:4, cursor:'pointer' }}>
+          <input type="checkbox" checked={t7Adverse} onChange={e=>setT7Adverse(e.target.checked)} />
+          Adverse Scenario
+        </label>
+      </div>
+
+      <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:16 }}>
+        <KpiCard label="Starting CET1" value={`${dfastPath.length?dfastPath[0].baseline:0}%`} color={T.indigo} sub="Q1 2024 actual" />
+        <KpiCard label="Trough CET1" value={`${dfastPath.length?Math.min(...dfastPath.map(d=>d.stressed)).toFixed(2):0}%`}
+          rag={(dfastPath.length&&Math.min(...dfastPath.map(d=>d.stressed))) >= (t7Regulator==='Fed'?9.5:t7Regulator==='PRA'?11.0:t7Regulator==='ECB'?10.5:10.0) ? 'green' : 'red'}
+          sub="Worst quarter stressed" />
+        <KpiCard label="Regulatory Min" value={`${t7Regulator==='Fed'?9.5:t7Regulator==='PRA'?11.0:t7Regulator==='ECB'?10.5:10.0}%`} color={T.red} sub={`${t7Regulator} minimum`} />
+        <KpiCard label="Cumulative LLP" value={`${dfastPath.reduce((s,d)=>s+d.llp,0).toFixed(2)}%`} color={T.orange} sub="Loan loss provisions" />
+        <KpiCard label="PPNR Impact" value={`${dfastPath.reduce((s,d)=>s+d.ppnrImpact,0).toFixed(2)}%`} color={T.amber} sub="Pre-provision net revenue" />
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginBottom:16 }}>
+        <SectionHeader title={`${t7Regulator} ${t7Adverse?'Adverse':'Baseline'} Capital Path — ${t7Horizon}Q Horizon`} sub="9-quarter DFAST/CCAR capital projection" />
+        <ResponsiveContainer width="100%" height={280}>
+          <AreaChart data={dfastPath} margin={{top:4,right:16,bottom:4,left:0}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="quarter" tick={{fontSize:10}} />
+            <YAxis unit="%" domain={[6,15]} tick={{fontSize:10}} />
+            <Tooltip formatter={v=>`${v}%`} />
+            <Legend iconSize={10} wrapperStyle={{fontSize:11}} />
+            <Area dataKey="baseline" stroke={T.green} fill={T.green} fillOpacity={0.12} strokeWidth={2} dot={false} name="Baseline CET1" />
+            <Area dataKey="stressed" stroke={T.red} fill={T.red} fillOpacity={0.12} strokeWidth={2} dot={false} name="Stressed CET1" />
+            <ReferenceLine y={t7Regulator==='Fed'?9.5:t7Regulator==='PRA'?11.0:t7Regulator==='ECB'?10.5:10.0}
+              stroke={T.red} strokeDasharray="4 2" label={{value:`${t7Regulator} Min`,fontSize:9}} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Loan Loss Provisions (LLP) by Quarter" sub="Climate-stressed provisioning path" />
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={dfastPath} margin={{top:4,right:8,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="quarter" tick={{fontSize:9}} />
+              <YAxis unit="%" tick={{fontSize:10}} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Bar dataKey="llp" fill={T.orange} radius={[3,3,0,0]} name="LLP %" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="PPNR Climate Impact by Quarter" sub="Revenue headwind from climate transition" />
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={dfastPath} margin={{top:4,right:8,bottom:4,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="quarter" tick={{fontSize:9}} />
+              <YAxis tick={{fontSize:10}} />
+              <Tooltip />
+              <Bar dataKey="ppnrImpact" fill={T.amber} radius={[3,3,0,0]} name="PPNR Impact" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 7 — JURISDICTION COMPARISON
+  ══════════════════════════════════════════════════════════════════ */
+  const tab7 = (
+    <div>
+      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:16 }}>
+        <span style={{ fontSize:12, color:T.muted }}>Compare framework:</span>
+        <select value={t8Framework} onChange={e=>setT8Framework(e.target.value)}
+          style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12 }}>
+          {JURISDICTIONS.map(j=><option key={j}>{j}</option>)}
+        </select>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, padding:'5px 12px', fontSize:12, color:T.navy, fontWeight:600 }}>
+          {JURIS_RULES[t8Framework].label}
+        </div>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Minimum CET1 by Jurisdiction" sub="Regulatory floor including all buffers" />
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={jurisBreakdown} layout="vertical" margin={{top:4,right:40,bottom:4,left:50}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis type="number" unit="%" tick={{fontSize:9}} domain={[0,14]} />
+              <YAxis dataKey="jurisdiction" type="category" tick={{fontSize:10}} width={55} />
+              <Tooltip formatter={v=>`${v}%`} />
+              <Bar dataKey="threshold" radius={[0,4,4,0]} name="Min CET1 %">
+                {jurisBreakdown.map((d,i)=><Cell key={i} fill={d.jurisdiction===t8Framework?T.gold:T.indigo} />)}
+              </Bar>
+              <Bar dataKey="avgCET1" radius={[0,4,4,0]} fill={T.green} fillOpacity={0.4} name="Portfolio Avg CET1" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Green Supporting Factor by Regime" sub="Climate incentive rebate on RWA" />
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={jurisBreakdown.map(j=>({ ...j, greenPct:+(JURIS_RULES[j.jurisdiction].greenBonus*100).toFixed(1), climateBuf:+(JURIS_RULES[j.jurisdiction].climateCapBuf).toFixed(2) }))} layout="vertical" margin={{top:4,right:40,bottom:4,left:50}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis type="number" tick={{fontSize:9}} />
+              <YAxis dataKey="jurisdiction" type="category" tick={{fontSize:10}} width={55} />
+              <Tooltip />
+              <Legend iconSize={10} wrapperStyle={{fontSize:11}} />
+              <Bar dataKey="greenPct" radius={[0,4,4,0]} fill={T.green} name="Green Factor %" />
+              <Bar dataKey="climateBuf" radius={[0,4,4,0]} fill={T.red} fillOpacity={0.5} name="Climate Buffer %" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+        <SectionHeader title="Regulatory Framework Matrix" sub="10 jurisdictions · full parameter comparison" />
+        <div style={{ overflowX:'auto' }}>
+          <table style={{ width:'100%', borderCollapse:'collapse', fontSize:11 }}>
+            <thead>
+              <tr style={{ background:T.sub }}>
+                {['Jurisdiction','Framework','Min CET1','Pillar Mult','G-SIB Sur.','CCyB','P2R Avg','Green Factor','Climate Buffer','Institutions'].map(h=>(
+                  <th key={h} style={{ padding:'7px 10px', textAlign:'left', borderBottom:`1px solid ${T.border}`, fontSize:10, color:T.navy, fontWeight:700, whiteSpace:'nowrap' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {JURISDICTIONS.map((j,i) => {
+                const rule = JURIS_RULES[j];
+                const jd = jurisBreakdown.find(x=>x.jurisdiction===j) || {};
+                const isSelected = j === t8Framework;
+                return (
+                  <tr key={j} style={{ background:isSelected?'#eff6ff':i%2===0?T.card:T.sub, borderBottom:`1px solid ${T.border}`, fontWeight:isSelected?600:400 }}>
+                    <td style={{ padding:'7px 10px', color:isSelected?T.indigo:T.text, fontWeight:700 }}>{j}</td>
+                    <td style={{ padding:'7px 10px', color:T.muted, fontSize:10 }}>{rule.label}</td>
+                    <td style={{ padding:'7px 10px', color:T.navy, fontWeight:600 }}>{rule.minCET1}%</td>
+                    <td style={{ padding:'7px 10px' }}>{rule.pillarMult.toFixed(2)}×</td>
+                    <td style={{ padding:'7px 10px' }}>{rule.gsibSurcharge}%</td>
+                    <td style={{ padding:'7px 10px' }}>{rule.ccyb}%</td>
+                    <td style={{ padding:'7px 10px' }}>{rule.p2rAvg}%</td>
+                    <td style={{ padding:'7px 10px', color:T.green }}>{(rule.greenBonus*100).toFixed(0)}%</td>
+                    <td style={{ padding:'7px 10px', color:T.red }}>{rule.climateCapBuf}%</td>
+                    <td style={{ padding:'7px 10px' }}>{jd.institutions || 0}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 8 — SENSITIVITY ANALYSIS
+  ══════════════════════════════════════════════════════════════════ */
+  const tab8 = (
+    <div>
+      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:16, flexWrap:'wrap' }}>
+        <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+          <span style={{ fontSize:12, color:T.muted }}>Driver:</span>
+          <select value={t9Driver} onChange={e=>setT9Driver(+e.target.value)}
+            style={{ padding:'5px 8px', border:`1px solid ${T.border}`, borderRadius:6, fontSize:12 }}>
+            {SENSITIVITY_DRIVERS.map((d,i)=><option key={i} value={i}>{d.name}</option>)}
+          </select>
+        </div>
+        <SliderRow label="Sensitivity Range:" value={t9Range} min={5} max={50} step={5}
+          onChange={setT9Range} fmt={v=>`±${v}`} color={T.indigo} />
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Tornado Chart — CET1 Sensitivity" sub="Partial derivatives · all key drivers" />
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={[...SENSITIVITY_DRIVERS].sort((a,b)=>Math.abs(b.impact)-Math.abs(a.impact))}
+              layout="vertical" margin={{top:4,right:40,bottom:4,left:140}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis type="number" tickFormatter={v=>`${v>0?'+':''}${(v*100).toFixed(1)}bps`} tick={{fontSize:9}} />
+              <YAxis dataKey="name" type="category" tick={{fontSize:9}} width={150} />
+              <Tooltip formatter={v=>`${(v*100).toFixed(1)} bps CET1 impact`} />
+              <Bar dataKey="impact" radius={[0,4,4,0]} name="CET1 Impact">
+                {[...SENSITIVITY_DRIVERS].sort((a,b)=>Math.abs(b.impact)-Math.abs(a.impact)).map((d,i)=>(
+                  <Cell key={i} fill={d.impact<0?T.red:T.green} />
+                ))}
+              </Bar>
+              <ReferenceLine x={0} stroke={T.border} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title={`CET1 vs ${SENSITIVITY_DRIVERS[t9Driver].name}`} sub="Scatter — sensitivity path" />
+          <ResponsiveContainer width="100%" height={320}>
+            <ScatterChart margin={{top:4,right:16,bottom:16,left:0}}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="x" name="Driver Change" tick={{fontSize:10}} label={{value:'Driver Δ',position:'insideBottom',offset:-8,fontSize:10}} />
+              <YAxis dataKey="cet1" name="CET1" unit="%" domain={[8,16]} tick={{fontSize:10}} />
+              <Tooltip formatter={(v,n)=>[`${v}${n==='cet1'?'%':''}`, n]} />
+              <Scatter data={sensitivityScatter} name="CET1 path">
+                {sensitivityScatter.map((d,i)=><Cell key={i} fill={d.fill} />)}
+              </Scatter>
+              <ReferenceLine y={10.5} stroke={T.red} strokeDasharray="4 2" label={{value:'EU Min',fontSize:9}} />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+        <SectionHeader title="Driver Correlation Matrix" sub="Cross-driver CET1 sensitivity interactions" />
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:4 }}>
+          {SENSITIVITY_DRIVERS.slice(0,6).map((dA,i)=>
+            SENSITIVITY_DRIVERS.slice(0,6).map((dB,j)=>{
+              const corr = i===j ? 1.0 : +(dA.impact * dB.impact * 80 + sr(i*6+j)*0.2 - 0.1).toFixed(2);
+              const bounded = Math.max(-1, Math.min(1, corr));
+              const bg = bounded > 0.5 ? '#dcfce7' : bounded > 0 ? '#f0fdf4' : bounded > -0.5 ? '#fef9c3' : '#fee2e2';
+              return (
+                <div key={`${i}-${j}`} style={{ background:bg, borderRadius:4, padding:'6px 4px', textAlign:'center', fontSize:9 }}>
+                  <div style={{ color:T.muted, fontSize:8, marginBottom:2 }}>{dA.name.slice(0,6)}×{dB.name.slice(0,6)}</div>
+                  <div style={{ fontWeight:700, color:bounded>0?T.green:T.red }}>{bounded.toFixed(2)}</div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     TAB 9 — SUMMARY & EXPORT
+  ══════════════════════════════════════════════════════════════════ */
+  const complianceChecks = [
+    { item:'CET1 ratio above minimum', pass: portfolioAvgCET1*100 >= 9.5 },
+    { item:'Zero capital shortfall institutions', pass: breachCount === 0 },
+    { item:'Leverage ratio above 3%', pass: avgLeverage*100 >= 3.0 },
+    { item:'TLAC ratio above 18%', pass: avgTLAC*100 >= 18 },
+    { item:'Scenario stress test passing', pass: optimizerResult.pass },
+    { item:'Climate buffer allocated', pass: scenario.pillar2AddPct > 0 },
+    { item:'Green loan incentives active', pass: t6GreenLoan >= 20 },
+    { item:'Carbon price RWA sensitivity monitored', pass: true },
+    { item:'P2G add-on within limit', pass: t6P2G <= 2.5 },
+    { item:'DFAST adverse scenario baseline passed', pass: dfastPath.length && Math.min(...dfastPath.map(d=>d.stressed)) >= 9.5 },
+  ];
+
+  const handleExport = () => {
+    const summary = {
+      timestamp: new Date().toISOString(),
+      scenario: scenario.name,
+      portfolioAvgCET1: (portfolioAvgCET1*100).toFixed(2) + '%',
+      institutionCount: filtered.length,
+      breachCount,
+      totalShortfallBn: totalShortfallBn.toFixed(1) + 'Bn',
+      avgLeverageRatio: (avgLeverage*100).toFixed(2) + '%',
+      avgTLAC: (avgTLAC*100).toFixed(1) + '%',
+      optimizerCET1: optimizerResult.adjCET1 + '%',
+      optimizerPass: optimizerResult.pass,
+      complianceScore: complianceChecks.filter(c=>c.pass).length + '/' + complianceChecks.length,
+      jurisdictionBreakdown: jurisBreakdown.filter(j=>j.institutions>0).map(j=>({ jurisdiction:j.jurisdiction, avgCET1:j.avgCET1+'%', institutions:j.institutions, breaches:j.breaches })),
+    };
+    setExportText(JSON.stringify(summary, null, 2));
+  };
+
+  const tab9 = (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Capital Summary" sub={`Scenario: ${scenario.name} · ${filtered.length} institutions`} />
+          <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+            <tbody>
+              {[
+                ['Portfolio Avg CET1', `${(portfolioAvgCET1*100).toFixed(2)}%`, portfolioAvgCET1*100 >= 10 ? T.green : T.red],
+                ['CET1 Breaches', breachCount, breachCount === 0 ? T.green : T.red],
+                ['Total Shortfall', `$${totalShortfallBn.toFixed(1)}Bn`, totalShortfallBn === 0 ? T.green : T.red],
+                ['Avg Leverage Ratio', `${(avgLeverage*100).toFixed(2)}%`, avgLeverage*100 >= 3 ? T.green : T.red],
+                ['Avg TLAC', `${(avgTLAC*100).toFixed(1)}%`, avgTLAC*100 >= 18 ? T.green : T.amber],
+                ['Optimizer CET1', `${optimizerResult.adjCET1}%`, optimizerResult.pass ? T.green : T.red],
+                ['Capital Action Req.', `$${optimizerResult.capitalAction.toLocaleString()}M`, optimizerResult.capitalAction === 0 ? T.green : T.red],
+                ['Compliance Score', `${complianceChecks.filter(c=>c.pass).length}/${complianceChecks.length}`, T.indigo],
+              ].map(([label, val, color]) => (
+                <tr key={label} style={{ borderBottom:`1px solid ${T.border}` }}>
+                  <td style={{ padding:'8px 0', color:T.muted }}>{label}</td>
+                  <td style={{ padding:'8px 0', fontWeight:700, color, textAlign:'right' }}>{val}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <SectionHeader title="Regulatory Compliance Checklist" sub="10-item framework compliance" />
+          {complianceChecks.map((c,i)=>(
+            <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'7px 0', borderBottom:`1px solid ${T.border}` }}>
+              <div style={{ width:18, height:18, borderRadius:'50%', background:c.pass?T.green:T.red, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <span style={{ color:'#fff', fontSize:10, fontWeight:700 }}>{c.pass?'✓':'✗'}</span>
+              </div>
+              <div style={{ fontSize:12, color:c.pass?T.text:T.red }}>{c.item}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+        <SectionHeader title="Export Capital Report" sub="JSON summary for downstream systems" />
+        <button onClick={handleExport}
+          style={{ padding:'8px 20px', background:T.indigo, color:'#fff', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600, marginBottom:12 }}>
+          Generate Export JSON
+        </button>
+        {exportText && (
+          <textarea value={exportText} readOnly
+            style={{ width:'100%', height:320, fontFamily:'JetBrains Mono, monospace', fontSize:11, padding:12, border:`1px solid ${T.border}`, borderRadius:6, background:T.sub, resize:'vertical', boxSizing:'border-box' }} />
+        )}
+      </div>
+    </div>
+  );
+
+  /* ══════════════════════════════════════════════════════════════════
+     RENDER
+  ══════════════════════════════════════════════════════════════════ */
+  const panels = [tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9];
+
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: 'DM Sans, sans-serif', color: T.text }}>
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 11, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>EP-DB1 · Sprint DB · Enterprise Climate Risk Capital</div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, margin: '4px 0 2px', color: T.navy }}>Climate Capital Adequacy Engine</h1>
-        <div style={{ fontSize: 13, color: T.muted }}>100 institutions · 8 Basel scenarios · 10 jurisdictions · Multi-scenario Pillar 2 stress engine</div>
+    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:'DM Sans, sans-serif', color:T.text }}>
+      {/* header */}
+      <div style={{ background:T.navy, borderBottom:`3px solid ${T.gold}`, padding:'16px 28px' }}>
+        <div style={{ fontSize:11, color:T.gold, fontFamily:'JetBrains Mono, monospace', letterSpacing:'0.1em', marginBottom:4 }}>
+          EP-CCA · CLIMATE CAPITAL ADEQUACY ENGINE
+        </div>
+        <div style={{ fontSize:20, fontWeight:700, color:'#fff', letterSpacing:'0.02em' }}>
+          Climate Risk Capital Analytics — Basel IV / DFAST / CCAR
+        </div>
+        <div style={{ fontSize:11, color:'#94a3b8', marginTop:4 }}>
+          100 G-SIB institutions · 10 jurisdictions · 8 NGFS scenarios · JP Morgan / Goldman Sachs grade analytics
+        </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
-        <KpiCard label="Portfolio Avg CET1" value={`${(portfolioAvgCET1 * 100).toFixed(2)}%`} color={T.indigo} sub={`Scenario: ${scenario.name}`} />
-        <KpiCard label="Capital Shortfall" value={`$${(totalShortfall / 1000).toFixed(1)}T`} color={totalShortfall > 0 ? T.red : T.green} sub={`${breachCount} breaches`} />
-        <KpiCard label="Avg Pillar 2 Add-On" value={`$${avgPillar2.toFixed(1)}B`} color={T.amber} sub={`${scenario.pillar2AddPct}% param`} />
-        <KpiCard label="Filtered Institutions" value={`${filtered.length}/100`} color={T.navy} sub={typeFilter !== 'All' ? typeFilter : 'All types'} />
-      </div>
-
-      <div style={{ display: 'flex', gap: 0, borderBottom: `2px solid ${T.border}`, marginBottom: 24 }}>
-        {TABS.map((t, i) => (
-          <button key={i} onClick={() => setTab(i)} style={{ padding: '10px 18px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 700 : 400, color: tab === i ? T.indigo : T.muted, borderBottom: tab === i ? `2px solid ${T.indigo}` : '2px solid transparent', marginBottom: -2, whiteSpace: 'nowrap' }}>{t}</button>
+      {/* tab bar */}
+      <div style={{ background:T.card, borderBottom:`1px solid ${T.border}`, padding:'0 28px', display:'flex', gap:0, overflowX:'auto' }}>
+        {TABS.map((t,i)=>(
+          <button key={i} onClick={()=>setTab(i)}
+            style={{ padding:'12px 16px', border:'none', background:'none', cursor:'pointer', fontSize:12, fontWeight:tab===i?700:400, color:tab===i?T.indigo:T.muted, borderBottom:tab===i?`2px solid ${T.indigo}`:'2px solid transparent', whiteSpace:'nowrap', transition:'color 0.15s' }}>
+            {t}
+          </button>
         ))}
       </div>
 
-      {tab === 0 && (
-        <div>
-          {filterRow}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Top 25 Institutions by Pillar 2 Add-On ($B)</div>
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={top25Pillar2} margin={{ left: 0, right: 8, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-45} textAnchor="end" interval={0} />
-                  <YAxis tick={{ fontSize: 10 }} />
-                  <Tooltip formatter={v => [`$${Number(v).toFixed(1)}B`]} />
-                  <Legend />
-                  <Bar dataKey="pillar2AddOn" fill={T.indigo} name="Pillar 2 Add-On" radius={[2,2,0,0]} />
-                  <Bar dataKey="garBonus" fill={T.green} name="GAR Bonus" radius={[2,2,0,0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Jurisdiction: Avg CET1 vs Regulatory Threshold</div>
-              <ResponsiveContainer width="100%" height={320}>
-                <ComposedChart data={jurisBreakdown} margin={{ left: 0, right: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="jurisdiction" tick={{ fontSize: 10 }} />
-                  <YAxis tick={{ fontSize: 10 }} domain={[7, 14]} tickFormatter={v => `${v}%`} />
-                  <Tooltip formatter={v => `${Number(v).toFixed(2)}%`} />
-                  <Legend />
-                  <Bar dataKey="avgCET1" fill={T.blue} name="Avg CET1%" radius={[2,2,0,0]} />
-                  <Line type="monotone" dataKey="threshold" stroke={T.red} dot={false} name="Min Threshold%" strokeWidth={2} strokeDasharray="4 2" />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div style={{ marginTop: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Scenario Parameter Matrix — Click to Select Active Scenario</div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              {SCENARIOS.map((s, i) => (
-                <div key={i} onClick={() => setScenarioIdx(i)} style={{ cursor: 'pointer', padding: '10px 16px', borderRadius: 8, border: `2px solid ${i === scenarioIdx ? T.indigo : T.border}`, background: i === scenarioIdx ? '#eef2ff' : T.sub, minWidth: 140, transition: 'all 0.15s' }}>
-                  <div style={{ fontWeight: 600, fontSize: 13, color: i === scenarioIdx ? T.indigo : T.text }}>{s.name}</div>
-                  <div style={{ fontSize: 11, color: T.muted, marginTop: 4 }}>P2 Add: {s.pillar2AddPct}% | Haircut: {(s.haircut*100).toFixed(0)}%</div>
-                  <div style={{ fontSize: 11, color: T.muted }}>NatCat: {s.natcatMultiplier}× | GAR: {(s.greenAssetRatioBonus*100).toFixed(0)}%</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {tab === 1 && (
-        <div>
-          {filterRow}
-          <div style={{ marginBottom: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
-            <label style={{ fontSize: 12 }}><input type="checkbox" checked={compareMode} onChange={e => setCompareMode(e.target.checked)} style={{ marginRight: 4 }} />Compare Mode</label>
-            {compareMode && <span style={{ fontSize: 12, color: T.indigo }}>Click first row = primary, second row = compare</span>}
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, overflow: 'auto', maxHeight: 600 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead style={{ position: 'sticky', top: 0 }}>
-                <tr style={{ background: T.sub }}>
-                  {[['Name','name'],['Type','type'],['Juris','jurisdiction'],['RWA($B)','totalRWA'],['CET1%','cet1Impact'],['GAR%','greenLoanPct'],['Fossil%','fossilFuelExposure'],['ESG','ESGrating'],['P2($B)','pillar2AddOn'],['Shortfall','shortfall'],['Framework','regulatoryFramework']].map(([h,k]) => (
-                    <th key={k} onClick={() => handleSort(k)} style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: sortCol === k ? T.indigo : T.muted, borderBottom: `1px solid ${T.border}`, cursor: 'pointer', whiteSpace: 'nowrap' }}>{h}{sortCol === k ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((x, i) => (
-                  <tr key={x.id} onClick={() => {
-                    if (!compareMode) { setSelectedId(x.id); }
-                    else if (!selectedId) { setSelectedId(x.id); }
-                    else if (selectedId === x.id) { setSelectedId(null); }
-                    else { setCompareId(x.id); }
-                  }} style={{ background: x.id === selectedId ? '#eef2ff' : x.id === compareId ? '#fdf4ff' : i % 2 === 0 ? T.card : T.sub, cursor: 'pointer', borderBottom: `1px solid ${T.border}` }}>
-                    <td style={{ padding: '6px 10px', fontWeight: 500 }}>{x.name}</td>
-                    <td style={{ padding: '6px 10px', color: T.muted, fontSize: 11 }}>{x.type}</td>
-                    <td style={{ padding: '6px 10px' }}>{x.jurisdiction}</td>
-                    <td style={{ padding: '6px 10px' }}>{x.totalRWA.toFixed(0)}</td>
-                    <td style={{ padding: '6px 10px', color: x.cet1Impact * 100 < CET1_THRESHOLDS[x.jurisdiction] ? T.red : T.green, fontWeight: 600 }}>{(x.cet1Impact * 100).toFixed(2)}%</td>
-                    <td style={{ padding: '6px 10px', color: x.greenLoanPct > 0.30 ? T.green : T.muted }}>{(x.greenLoanPct * 100).toFixed(1)}%</td>
-                    <td style={{ padding: '6px 10px', color: x.fossilFuelExposure > 0.20 ? T.red : T.text }}>{(x.fossilFuelExposure * 100).toFixed(1)}%</td>
-                    <td style={{ padding: '6px 10px' }}>{x.ESGrating}</td>
-                    <td style={{ padding: '6px 10px' }}>{x.pillar2AddOn.toFixed(2)}</td>
-                    <td style={{ padding: '6px 10px', color: x.shortfall > 0 ? T.red : T.green }}>{x.shortfall > 0 ? `${(x.shortfall * 100).toFixed(3)}%` : '—'}</td>
-                    <td style={{ padding: '6px 10px', color: T.muted, fontSize: 11 }}>{x.regulatoryFramework}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ marginTop: 8, fontSize: 12, color: T.muted }}>{filtered.length} institutions · Click to select for Scenario Matrix</div>
-          {compareMode && selectedInst && compareInst && (
-            <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              {[selectedInst, compareInst].map((inst, ci) => (
-                <div key={ci} style={{ background: T.card, border: `2px solid ${ci === 0 ? T.indigo : T.purple}`, borderRadius: 8, padding: 16 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 8, color: ci === 0 ? T.indigo : T.purple }}>{inst.name}</div>
-                  {[['CET1 Impact',`${(inst.cet1Impact*100).toFixed(2)}%`],['Pillar 2 Add-On',`$${inst.pillar2AddOn.toFixed(1)}B`],['Shortfall',inst.shortfall > 0 ? `${(inst.shortfall*100).toFixed(3)}%` : 'None'],['Climate Stress Buffer',`$${inst.stressBuffer.toFixed(1)}B`],['Green Loan %',`${(inst.greenLoanPct*100).toFixed(1)}%`],['Fossil Exposure',`${(inst.fossilFuelExposure*100).toFixed(1)}%`]].map(([l, v]) => (
-                    <div key={l} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: `1px solid ${T.border}`, padding: '5px 0', fontSize: 13 }}>
-                      <span style={{ color: T.muted }}>{l}</span><span style={{ fontWeight: 600 }}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {tab === 2 && (
-        <div>
-          {filterRow}
-          <div style={{ marginBottom: 12, padding: '10px 16px', background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, fontSize: 13 }}>
-            {selectedInst ? <span>Analyzing: <strong>{selectedInst.name}</strong> ({selectedInst.jurisdiction} · {selectedInst.type})</span> : <span style={{ color: T.muted }}>No institution selected — go to Institution Database and click a row.</span>}
-          </div>
-          {selectedInst ? (
-            <div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>CET1 Across 8 Scenarios — {selectedInst.name}</div>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <ComposedChart data={scenarioMatrix}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="scenario" tick={{ fontSize: 9 }} angle={-25} textAnchor="end" height={50} />
-                      <YAxis tick={{ fontSize: 10 }} domain={[0, 20]} tickFormatter={v => `${v}%`} />
-                      <Tooltip formatter={v => `${Number(v).toFixed(2)}%`} />
-                      <Bar dataKey="cet1" fill={T.blue} name="CET1%" radius={[2,2,0,0]} />
-                      <ReferenceLine y={JURIS_RULES[selectedInst.jurisdiction].minCET1} stroke={T.red} strokeDasharray="4 2" label={{ value: 'Min', fontSize: 10, fill: T.red }} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 12 }}>Stress Buffer by Scenario ($B)</div>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={scenarioMatrix}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="scenario" tick={{ fontSize: 9 }} angle={-25} textAnchor="end" height={50} />
-                      <YAxis tick={{ fontSize: 10 }} />
-                      <Tooltip formatter={v => `$${Number(v).toFixed(1)}B`} />
-                      <Bar dataKey="buffer" fill={T.amber} name="Stress Buffer ($B)" radius={[2,2,0,0]} />
-                      <Bar dataKey="pillar2" fill={T.red} name="Pillar 2 ($B)" radius={[2,2,0,0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div style={{ marginTop: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-                <div style={{ fontWeight: 600, marginBottom: 12 }}>Scenario Stress Matrix — Full Detail</div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                  <thead>
-                    <tr style={{ background: T.sub }}>{['Scenario','CET1%','vs Min','Pillar2($B)','Shortfall','Stress Buffer($B)','Status'].map(h => <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>)}</tr>
-                  </thead>
-                  <tbody>
-                    {scenarioMatrix.map((r, i) => {
-                      const minCet1 = JURIS_RULES[selectedInst.jurisdiction].minCET1;
-                      return (
-                        <tr key={i} style={{ background: i === scenarioIdx ? '#eef2ff' : i % 2 === 0 ? T.card : T.sub }}>
-                          <td style={{ padding: '7px 10px', fontWeight: i === scenarioIdx ? 700 : 400 }}>{r.scenario}</td>
-                          <td style={{ padding: '7px 10px', color: r.cet1 < minCet1 ? T.red : T.green, fontWeight: 600 }}>{r.cet1}%</td>
-                          <td style={{ padding: '7px 10px', color: r.cet1 - minCet1 < 0 ? T.red : T.muted }}>{r.cet1 - minCet1 > 0 ? '+' : ''}{(r.cet1 - minCet1).toFixed(2)}%</td>
-                          <td style={{ padding: '7px 10px' }}>${r.pillar2}</td>
-                          <td style={{ padding: '7px 10px', color: r.shortfall > 0 ? T.red : T.green }}>{r.shortfall > 0 ? `${r.shortfall.toFixed(3)}%` : '—'}</td>
-                          <td style={{ padding: '7px 10px' }}>${r.buffer}</td>
-                          <td style={{ padding: '7px 10px' }}><span style={{ background: r.cet1 >= minCet1 ? '#f0fdf4' : '#fef2f2', color: r.cet1 >= minCet1 ? T.green : T.red, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600 }}>{r.cet1 >= minCet1 ? 'PASS' : 'BREACH'}</span></td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : <div style={{ padding: 60, textAlign: 'center', color: T.muted }}>Select an institution from the Institution Database tab to view scenario stress analysis.</div>}
-        </div>
-      )}
-
-      {tab === 3 && (
-        <div>
-          {filterRow}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Climate vs Non-Climate RWA — Top 30 ($B)</div>
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={rwaDeco} margin={{ left: 0, right: 8, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-45} textAnchor="end" interval={0} />
-                  <YAxis tick={{ fontSize: 10 }} />
-                  <Tooltip formatter={v => `$${Number(v).toFixed(1)}B`} />
-                  <Legend />
-                  <Bar dataKey="climateRWA" stackId="a" fill={T.red} name="Climate RWA" />
-                  <Bar dataKey="nonClimateRWA" stackId="a" fill={T.blue} name="Non-Climate RWA" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 12 }}>Green Asset Ratio — Top 30 Institutions</div>
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={rwaDeco} margin={{ left: 0, right: 8, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-45} textAnchor="end" interval={0} />
-                  <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `${v}%`} />
-                  <Tooltip formatter={v => `${Number(v).toFixed(1)}%`} />
-                  <Bar dataKey="greenLoanPct" fill={T.green} name="Green Loan %" radius={[2,2,0,0]} />
-                  <ReferenceLine y={30} stroke={T.amber} strokeDasharray="4 2" label={{ value: 'GAR Bonus Threshold (30%)', fontSize: 10, fill: T.amber }} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <div style={{ marginTop: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>RWA Decomposition Summary by Institution Type</div>
-            {(() => {
-              const typeData = INSTITUTION_TYPES.map(t => {
-                const sub = filtered.filter(x => x.type === t);
-                if (!sub.length) return null;
-                const avgClimateRWA = sub.reduce((s, x) => s + x.totalRWA * x.climatRWAPct, 0) / sub.length;
-                const avgTotalRWA = sub.reduce((s, x) => s + x.totalRWA, 0) / sub.length;
-                const avgGAR = sub.reduce((s, x) => s + x.greenLoanPct * 100, 0) / sub.length;
-                return { type: t.split(' ')[0], avgClimateRWA: +avgClimateRWA.toFixed(1), avgNonClimate: +(avgTotalRWA - avgClimateRWA).toFixed(1), avgGAR: +avgGAR.toFixed(1) };
-              }).filter(Boolean);
-              return (
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart data={typeData} margin={{ left: 0, right: 8 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="type" tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 10 }} />
-                    <Tooltip formatter={v => `$${Number(v).toFixed(1)}B avg`} />
-                    <Legend />
-                    <Bar dataKey="avgClimateRWA" stackId="a" fill={T.red} name="Avg Climate RWA" />
-                    <Bar dataKey="avgNonClimate" stackId="a" fill={T.blue} name="Avg Non-Climate RWA" />
-                  </BarChart>
-                </ResponsiveContainer>
-              );
-            })()}
-          </div>
-        </div>
-      )}
-
-      {tab === 4 && (
-        <div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Jurisdiction Avg CET1 vs Threshold — Active Scenario: {scenario.name}</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <ComposedChart data={jurisBreakdown}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="jurisdiction" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 10 }} domain={[7, 14]} tickFormatter={v => `${v}%`} />
-                <Tooltip formatter={v => `${Number(v).toFixed(2)}%`} />
-                <Legend />
-                <Bar dataKey="avgCET1" fill={T.indigo} name="Avg CET1%" radius={[2,2,0,0]} />
-                <Line type="monotone" dataKey="threshold" stroke={T.red} dot={false} name="Min Threshold%" strokeWidth={2} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Jurisdiction Regulatory Rules & Capital Adequacy Summary</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: T.sub }}>
-                  {['Jurisdiction','Framework','Min CET1%','Pillar Mult','GAR Bonus','Institutions','Breaches','Avg CET1%','Status'].map(h => <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {jurisBreakdown.map((j, i) => {
-                  const rule = JURIS_RULES[j.jurisdiction];
-                  const pass = j.avgCET1 >= rule.minCET1;
-                  return (
-                    <tr key={i} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                      <td style={{ padding: '7px 10px', fontWeight: 500 }}>{j.jurisdiction}</td>
-                      <td style={{ padding: '7px 10px', color: T.muted }}>{rule.label}</td>
-                      <td style={{ padding: '7px 10px' }}>{rule.minCET1}%</td>
-                      <td style={{ padding: '7px 10px' }}>{rule.pillarMult}×</td>
-                      <td style={{ padding: '7px 10px', color: T.green }}>{(rule.greenBonus * 100).toFixed(0)}%</td>
-                      <td style={{ padding: '7px 10px' }}>{j.institutions}</td>
-                      <td style={{ padding: '7px 10px', color: j.breaches > 0 ? T.red : T.green, fontWeight: j.breaches > 0 ? 600 : 400 }}>{j.breaches}</td>
-                      <td style={{ padding: '7px 10px', color: pass ? T.green : T.red, fontWeight: 600 }}>{j.avgCET1}%</td>
-                      <td style={{ padding: '7px 10px' }}><span style={{ background: pass ? '#f0fdf4' : '#fef2f2', color: pass ? T.green : T.red, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600 }}>{j.institutions > 0 ? (pass ? 'ADEQUATE' : 'STRESSED') : 'N/A'}</span></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {tab === 5 && (
-        <div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20 }}>
-            <div style={{ fontWeight: 600, marginBottom: 4 }}>Sensitivity Tornado — Impact on Portfolio Avg CET1</div>
-            <div style={{ fontSize: 12, color: T.muted, marginBottom: 12 }}>Base CET1: {(portfolioAvgCET1 * 100).toFixed(2)}% | Scenario: {scenario.name} | {filtered.length} institutions</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={[...sensitivityData].sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact))} layout="vertical" margin={{ left: 170, right: 30 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={v => `${v > 0 ? '+' : ''}${Number(v).toFixed(3)}%`} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={170} />
-                <Tooltip formatter={v => [`${v > 0 ? '+' : ''}${Number(v).toFixed(4)}% CET1`, 'Impact']} />
-                <ReferenceLine x={0} stroke={T.border} strokeWidth={2} />
-                <Bar dataKey="impact" radius={[0,2,2,0]} name="CET1 Change (%)"
-                  fill={T.indigo}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Sensitivity Analysis — Detail Table</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: T.sub }}>{['Variable','CET1 Impact (%)','Direction','Significance','Action'].map(h => <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}` }}>{h}</th>)}</tr>
-              </thead>
-              <tbody>
-                {[...sensitivityData].sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact)).map((v, i) => (
-                  <tr key={i} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                    <td style={{ padding: '7px 10px', fontWeight: 500 }}>{v.name}</td>
-                    <td style={{ padding: '7px 10px', color: v.impact < 0 ? T.red : T.green, fontWeight: 600 }}>{v.impact > 0 ? '+' : ''}{v.impact.toFixed(4)}%</td>
-                    <td style={{ padding: '7px 10px' }}>{v.impact < 0 ? 'Adverse' : 'Beneficial'}</td>
-                    <td style={{ padding: '7px 10px', color: Math.abs(v.impact) > 0.01 ? T.red : Math.abs(v.impact) > 0.005 ? T.amber : T.muted }}>{Math.abs(v.impact) > 0.01 ? 'High' : Math.abs(v.impact) > 0.005 ? 'Medium' : 'Low'}</td>
-                    <td style={{ padding: '7px 10px', color: T.muted, fontSize: 11 }}>{v.impact < 0 ? 'Monitor & mitigate' : 'Leverage & expand'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {tab === 6 && (
-        <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 20 }}>
-            <KpiCard label="Portfolio Avg CET1" value={`${(portfolioAvgCET1 * 100).toFixed(2)}%`} color={T.indigo} sub={`Scenario: ${scenario.name}`} />
-            <KpiCard label="Total Institutions" value={`${filtered.length}`} color={T.navy} sub="filtered" />
-            <KpiCard label="CET1 Breaches" value={`${breachCount}`} color={breachCount > 0 ? T.red : T.green} sub="vs jurisdiction thresholds" />
-            <KpiCard label="Avg Pillar 2 Add-On" value={`$${avgPillar2.toFixed(1)}B`} color={T.amber} sub="portfolio average" />
-            <KpiCard label="Total Capital Shortfall" value={`$${(totalShortfall/1000).toFixed(2)}T RWA`} color={T.red} sub="sum of shortfalls" />
-            <KpiCard label="Active Scenario" value={scenario.name} color={T.teal} sub={`P2 add: ${scenario.pillar2AddPct}%`} />
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Full Institution KPI Export — {filtered.length} institutions</div>
-            <div style={{ overflowX: 'auto', maxHeight: 500 }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
-                <thead style={{ position: 'sticky', top: 0 }}>
-                  <tr style={{ background: T.sub }}>
-                    {['Institution','Jurisdiction','Type','RWA($B)','CET1%','Tier1%','ClimRWA%','GAR%','Fossil%','ESG','P2($B)','Shortfall%','Stress Buf($B)','Framework','Result'].map(h => (
-                      <th key={h} style={{ padding: '6px 8px', textAlign: 'left', color: T.muted, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((x, i) => (
-                    <tr key={x.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                      <td style={{ padding: '5px 8px', fontWeight: 500 }}>{x.name}</td>
-                      <td style={{ padding: '5px 8px' }}>{x.jurisdiction}</td>
-                      <td style={{ padding: '5px 8px', color: T.muted, fontSize: 10 }}>{x.type.split(' ')[0]}</td>
-                      <td style={{ padding: '5px 8px' }}>{x.totalRWA.toFixed(0)}</td>
-                      <td style={{ padding: '5px 8px', color: x.cet1Impact * 100 < CET1_THRESHOLDS[x.jurisdiction] ? T.red : T.green, fontWeight: 600 }}>{(x.cet1Impact * 100).toFixed(2)}%</td>
-                      <td style={{ padding: '5px 8px' }}>{(x.tier1Capital * 100).toFixed(2)}%</td>
-                      <td style={{ padding: '5px 8px' }}>{(x.climatRWAPct * 100).toFixed(1)}%</td>
-                      <td style={{ padding: '5px 8px', color: x.greenLoanPct > 0.30 ? T.green : T.text }}>{(x.greenLoanPct * 100).toFixed(1)}%</td>
-                      <td style={{ padding: '5px 8px', color: x.fossilFuelExposure > 0.20 ? T.red : T.text }}>{(x.fossilFuelExposure * 100).toFixed(1)}%</td>
-                      <td style={{ padding: '5px 8px' }}>{x.ESGrating}</td>
-                      <td style={{ padding: '5px 8px' }}>{x.pillar2AddOn.toFixed(2)}</td>
-                      <td style={{ padding: '5px 8px', color: x.shortfall > 0 ? T.red : T.green }}>{x.shortfall > 0 ? `${(x.shortfall*100).toFixed(3)}%` : '—'}</td>
-                      <td style={{ padding: '5px 8px' }}>{x.stressBuffer.toFixed(1)}</td>
-                      <td style={{ padding: '5px 8px', color: T.muted, fontSize: 10 }}>{x.regulatoryFramework}</td>
-                      <td style={{ padding: '5px 8px' }}><span style={{ background: x.shortfall > 0 ? '#fef2f2' : '#f0fdf4', color: x.shortfall > 0 ? T.red : T.green, padding: '2px 6px', borderRadius: 4, fontSize: 10, fontWeight: 700 }}>{x.shortfall > 0 ? 'BREACH' : 'PASS'}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div style={{ marginTop: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Portfolio-Level Capital Adequacy Analytics</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>
-              {[
-                ['Total RWA', `$${(filtered.reduce((s,x)=>s+x.totalRWA,0)/1000).toFixed(1)}T`, T.navy],
-                ['Avg Fossil Exposure', `${filtered.length ? (filtered.reduce((s,x)=>s+x.fossilFuelExposure,0)/filtered.length*100).toFixed(1) : 0}%`, T.red],
-                ['GAR > 30% Count', `${filtered.filter(x=>x.greenLoanPct>0.30).length}`, T.green],
-                ['Carbon Intensive', `${filtered.filter(x=>x.carbonIntensive).length}`, T.amber],
-              ].map(([l,v,c]) => (
-                <div key={l} style={{ padding: '10px 14px', background: T.sub, borderRadius: 8 }}>
-                  <div style={{ fontSize: 10, color: T.muted }}>{l}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: c }}>{v}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div>
-                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>Institution Type Breakdown</div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                  <thead><tr style={{ background: T.sub }}>{['Type','Count','Avg CET1%','Breaches'].map(h=><th key={h} style={{ padding:'5px 8px',textAlign:'left',color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}` }}>{h}</th>)}</tr></thead>
-                  <tbody>
-                    {INSTITUTION_TYPES.map((type, ti) => {
-                      const sub = filtered.filter(x=>x.type===type);
-                      if (!sub.length) return null;
-                      const avgCET1 = sub.reduce((s,x)=>s+x.cet1Impact*100,0)/sub.length;
-                      const breaches = sub.filter(x=>x.shortfall>0).length;
-                      return (
-                        <tr key={ti} style={{ background: ti%2===0?T.card:T.sub }}>
-                          <td style={{ padding:'5px 8px',fontWeight:500 }}>{type}</td>
-                          <td style={{ padding:'5px 8px' }}>{sub.length}</td>
-                          <td style={{ padding:'5px 8px',color:T.indigo,fontWeight:600 }}>{avgCET1.toFixed(2)}%</td>
-                          <td style={{ padding:'5px 8px',color:breaches>0?T.red:T.green }}>{breaches}</td>
-                        </tr>
-                      );
-                    }).filter(Boolean)}
-                  </tbody>
-                </table>
-              </div>
-              <div>
-                <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8 }}>ESG Rating Breakdown</div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                  <thead><tr style={{ background: T.sub }}>{['ESG','Count','Avg Fossil%','Avg GAR%','Avg CET1%'].map(h=><th key={h} style={{ padding:'5px 8px',textAlign:'left',color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}` }}>{h}</th>)}</tr></thead>
-                  <tbody>
-                    {['AAA','AA','A','BBB','BB','B'].map((esg, ei) => {
-                      const sub = filtered.filter(x=>x.ESGrating===esg);
-                      if (!sub.length) return null;
-                      const avgFossil = sub.reduce((s,x)=>s+x.fossilFuelExposure*100,0)/sub.length;
-                      const avgGar = sub.reduce((s,x)=>s+x.greenLoanPct*100,0)/sub.length;
-                      const avgCET1 = sub.reduce((s,x)=>s+x.cet1Impact*100,0)/sub.length;
-                      return (
-                        <tr key={ei} style={{ background: ei%2===0?T.card:T.sub }}>
-                          <td style={{ padding:'5px 8px',fontWeight:700 }}>{esg}</td>
-                          <td style={{ padding:'5px 8px' }}>{sub.length}</td>
-                          <td style={{ padding:'5px 8px',color:avgFossil>20?T.red:T.text }}>{avgFossil.toFixed(1)}%</td>
-                          <td style={{ padding:'5px 8px',color:avgGar>30?T.green:T.muted }}>{avgGar.toFixed(1)}%</td>
-                          <td style={{ padding:'5px 8px',color:T.indigo,fontWeight:600 }}>{avgCET1.toFixed(2)}%</td>
-                        </tr>
-                      );
-                    }).filter(Boolean)}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div style={{ marginTop: 16, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Multi-Scenario Capital Summary — All 8 Scenarios vs Jurisdiction Thresholds</div>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
-                <thead>
-                  <tr style={{ background: T.sub }}>
-                    <th style={{ padding:'6px 8px',textAlign:'left',color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}` }}>Jurisdiction</th>
-                    {SCENARIOS.map(s=><th key={s.id} style={{ padding:'6px 8px',textAlign:'center',color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap' }}>{s.name}</th>)}
-                  </tr>
-                </thead>
-                <tbody>
-                  {JURISDICTIONS.map((j, ji) => {
-                    const sub = filtered.filter(x=>x.jurisdiction===j);
-                    if (!sub.length) return null;
-                    const thresh = JURIS_RULES[j].minCET1;
-                    return (
-                      <tr key={ji} style={{ background: ji%2===0?T.card:T.sub }}>
-                        <td style={{ padding:'5px 8px',fontWeight:500 }}>{j}</td>
-                        {SCENARIOS.map(sc => {
-                          const avgCET1 = sub.length ? sub.reduce((s,inst) => {
-                            const c = computeCapital(inst, sc);
-                            return s + c.cet1Impact * 100;
-                          }, 0) / sub.length : 0;
-                          const pass = avgCET1 >= thresh;
-                          return (
-                            <td key={sc.id} style={{ padding:'5px 8px',textAlign:'center',fontWeight:600,color:pass?T.green:T.red,background:pass?'transparent':'#fef2f2' }}>
-                              {avgCET1.toFixed(2)}%
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  }).filter(Boolean)}
-                </tbody>
-              </table>
-            </div>
-            <div style={{ marginTop: 10, fontSize: 12, color: T.muted }}>Values are avg CET1% per jurisdiction under each scenario. Red = below minimum threshold. Green = adequate.</div>
-          </div>
-          <div style={{ marginTop: 16, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Capital Adequacy Trend Analysis — Stress Buffer vs Pillar 2 by RWA Band</div>
-            {(() => {
-              const bands = [
-                { label:'<100B', min:0, max:100 }, { label:'100-250B', min:100, max:250 },
-                { label:'250-500B', min:250, max:500 }, { label:'500B+', min:500, max:9999 },
-              ];
-              const bandData = bands.map(b => {
-                const sub = filtered.filter(x=>x.totalRWA>=b.min&&x.totalRWA<b.max);
-                if (!sub.length) return { label:b.label, avgCET1:0, avgP2:0, avgBuffer:0, count:0 };
-                return {
-                  label:b.label,
-                  avgCET1:+(sub.reduce((s,x)=>s+x.cet1Impact*100,0)/sub.length).toFixed(2),
-                  avgP2:+(sub.reduce((s,x)=>s+x.pillar2AddOn,0)/sub.length).toFixed(1),
-                  avgBuffer:+(sub.reduce((s,x)=>s+x.stressBuffer,0)/sub.length).toFixed(1),
-                  count:sub.length,
-                };
-              });
-              return (
-                <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16 }}>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <ComposedChart data={bandData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="label" tick={{ fontSize:10 }} />
-                      <YAxis yAxisId="left" tick={{ fontSize:10 }} tickFormatter={v=>`${v}%`} />
-                      <YAxis yAxisId="right" orientation="right" tick={{ fontSize:10 }} />
-                      <Tooltip />
-                      <Legend />
-                      <Bar yAxisId="left" dataKey="avgCET1" fill={T.indigo} name="Avg CET1%" radius={[2,2,0,0]} />
-                      <Line yAxisId="right" type="monotone" dataKey="avgP2" stroke={T.red} strokeWidth={2} dot={{ r:4 }} name="Avg Pillar2($B)" />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                  <div>
-                    <table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
-                      <thead><tr style={{ background:T.sub }}>{['RWA Band','Count','Avg CET1%','Avg P2($B)','Avg Stress Buf($B)','Pass Rate%'].map(h=><th key={h} style={{ padding:'5px 8px',textAlign:'left',color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}` }}>{h}</th>)}</tr></thead>
-                      <tbody>
-                        {bandData.map((b,i)=>{
-                          const sub=filtered.filter(x=>{
-                            const bands2=[{min:0,max:100},{min:100,max:250},{min:250,max:500},{min:500,max:9999}];
-                            return x.totalRWA>=bands2[i].min&&x.totalRWA<bands2[i].max;
-                          });
-                          const passRate=sub.length?sub.filter(x=>x.shortfall===0).length/sub.length*100:0;
-                          return (
-                            <tr key={i} style={{ background:i%2===0?T.card:T.sub }}>
-                              <td style={{ padding:'5px 8px',fontWeight:500 }}>{b.label}</td>
-                              <td style={{ padding:'5px 8px' }}>{b.count}</td>
-                              <td style={{ padding:'5px 8px',fontWeight:600,color:T.indigo }}>{b.avgCET1}%</td>
-                              <td style={{ padding:'5px 8px',color:T.amber }}>{b.avgP2}</td>
-                              <td style={{ padding:'5px 8px',color:T.blue }}>{b.avgBuffer}</td>
-                              <td style={{ padding:'5px 8px',color:passRate>80?T.green:T.red,fontWeight:600 }}>{passRate.toFixed(0)}%</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-          <div style={{ marginTop: 16, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>Liquidity Stress Indicators — LCR & NSFR Under Climate Scenarios</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div>
-                <div style={{ fontWeight:600,fontSize:13,marginBottom:8 }}>LCR Distribution by Institution Type</div>
-                {(() => {
-                  const typeData=INSTITUTION_TYPES.map((t,ti)=>{
-                    const sub=filtered.filter(x=>x.type===t);
-                    if(!sub.length) return null;
-                    return { type:t.split(' ')[0], avgLCR:+(sub.reduce((s,x)=>s+x.lcrRatio,0)/sub.length).toFixed(3), avgNSFR:+(sub.reduce((s,x)=>s+x.nsfr,0)/sub.length).toFixed(3), below1:sub.filter(x=>x.lcrRatio<1.0).length };
-                  }).filter(Boolean);
-                  return (
-                    <ResponsiveContainer width="100%" height={200}>
-                      <BarChart data={typeData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                        <XAxis dataKey="type" tick={{ fontSize:9 }} />
-                        <YAxis tick={{ fontSize:10 }} domain={[0.8,2.0]} />
-                        <Tooltip formatter={v=>Number(v).toFixed(3)} />
-                        <Legend />
-                        <Bar dataKey="avgLCR" fill={T.blue} name="Avg LCR" radius={[2,2,0,0]} />
-                        <Bar dataKey="avgNSFR" fill={T.teal} name="Avg NSFR" radius={[2,2,0,0]} />
-                        <ReferenceLine y={1.0} stroke={T.red} strokeDasharray="4 2" label={{ value:'Min 1.0', fontSize:9, fill:T.red }} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  );
-                })()}
-              </div>
-              <div>
-                <div style={{ fontWeight:600,fontSize:13,marginBottom:8 }}>Leverage Ratio by Jurisdiction</div>
-                {(() => {
-                  const jurisData=JURISDICTIONS.map(j=>{
-                    const sub=filtered.filter(x=>x.jurisdiction===j);
-                    if(!sub.length) return null;
-                    return { jurisdiction:j, avgLev:+(sub.reduce((s,x)=>s+x.leverageRatio*100,0)/sub.length).toFixed(2), avgLCR:+(sub.reduce((s,x)=>s+x.lcrRatio,0)/sub.length).toFixed(3) };
-                  }).filter(Boolean);
-                  return (
-                    <ResponsiveContainer width="100%" height={200}>
-                      <ComposedChart data={jurisData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                        <XAxis dataKey="jurisdiction" tick={{ fontSize:10 }} />
-                        <YAxis yAxisId="left" tick={{ fontSize:10 }} tickFormatter={v=>`${v}%`} />
-                        <YAxis yAxisId="right" orientation="right" tick={{ fontSize:10 }} />
-                        <Tooltip />
-                        <Legend />
-                        <Bar yAxisId="left" dataKey="avgLev" fill={T.purple} name="Avg Leverage%" radius={[2,2,0,0]} />
-                        <Line yAxisId="right" type="monotone" dataKey="avgLCR" stroke={T.blue} strokeWidth={2} dot={{ r:3 }} name="Avg LCR" />
-                      </ComposedChart>
-                    </ResponsiveContainer>
-                  );
-                })()}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Tab 8 hidden: Advanced Scenario Deep-Dive ── */}
-      {activeTab === 'deep' && (
-        <div style={{ display:'flex',flexDirection:'column',gap:16 }}>
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:12,color:T.text }}>Tail-Risk Capital Waterfall — Scenario × Institution Type</div>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
-                <thead>
-                  <tr style={{ background:T.sub }}>
-                    <th style={{ padding:'6px 10px',textAlign:'left',color:T.muted }}>Institution Type</th>
-                    {SCENARIOS.map(s=>(
-                      <th key={s.name} style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>{s.name.split(' ')[0]}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {INST_TYPES.map((type,ti)=>{
-                    const sub=INSTITUTIONS.filter(x=>x.type===type);
-                    if(!sub.length) return null;
-                    return (
-                      <tr key={type} style={{ background:ti%2===0?T.card:T.sub }}>
-                        <td style={{ padding:'5px 10px',fontWeight:600,fontSize:11 }}>{type.split(' ').slice(0,2).join(' ')}</td>
-                        {SCENARIOS.map(sc=>{
-                          const avgShortfall=sub.length?sub.reduce((s,inst)=>s+computeCapital(inst,sc).shortfall,0)/sub.length:0;
-                          const pct=(avgShortfall*100).toFixed(2);
-                          const clr=avgShortfall>0.02?T.red:avgShortfall>0.005?T.amber:T.green;
-                          return <td key={sc.name} style={{ padding:'5px 8px',textAlign:'right',fontWeight:600,color:clr }}>{pct}%</td>;
-                        })}
-                      </tr>
-                    );
-                  }).filter(Boolean)}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:12 }}>Jurisdiction Capital Adequacy Summary — All Scenarios</div>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
-                <thead>
-                  <tr style={{ background:T.sub }}>
-                    <th style={{ padding:'6px 10px',textAlign:'left',color:T.muted }}>Jurisdiction</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Count</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Avg Tier1</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Baseline CET1</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>HotHouse CET1</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Capital Erosion</th>
-                    <th style={{ padding:'6px 8px',textAlign:'right',color:T.muted }}>Institutions at Risk</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {JURISDICTIONS.map((j,ji)=>{
-                    const sub=INSTITUTIONS.filter(x=>x.jurisdiction===j);
-                    if(!sub.length) return null;
-                    const baseline=SCENARIOS[0];
-                    const hotHouse=SCENARIOS[3];
-                    const avgT1=sub.length?sub.reduce((s,x)=>s+x.tier1Capital,0)/sub.length:0;
-                    const avgBaseCET1=sub.length?sub.reduce((s,x)=>s+computeCapital(x,baseline).cet1Impact,0)/sub.length:0;
-                    const avgHHCET1=sub.length?sub.reduce((s,x)=>s+computeCapital(x,hotHouse).cet1Impact,0)/sub.length:0;
-                    const erosion=avgBaseCET1-avgHHCET1;
-                    const atRisk=sub.filter(x=>computeCapital(x,hotHouse).shortfall>0).length;
-                    return (
-                      <tr key={j} style={{ background:ji%2===0?T.card:T.sub }}>
-                        <td style={{ padding:'5px 10px',fontWeight:600 }}>{j}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right' }}>{sub.length}</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right' }}>{(avgT1*100).toFixed(2)}%</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.green }}>{(avgBaseCET1*100).toFixed(2)}%</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:T.red }}>{(avgHHCET1*100).toFixed(2)}%</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',color:erosion>0.01?T.red:T.amber }}>{(erosion*100).toFixed(2)}pp</td>
-                        <td style={{ padding:'5px 8px',textAlign:'right',fontWeight:600,color:atRisk>0?T.red:T.green }}>{atRisk}/{sub.length}</td>
-                      </tr>
-                    );
-                  }).filter(Boolean)}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:10 }}>Green Asset Ratio Impact Analysis</div>
-            <div style={{ display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:8 }}>
-              {['0–10%','10–20%','20–30%','30–40%','40%+'].map((band,bi)=>{
-                const [lo,hi]=[bi*0.1,(bi+1)*0.1];
-                const sub=INSTITUTIONS.filter(x=>x.greenLoanPct>=lo&&x.greenLoanPct<(bi===4?2:hi));
-                const avgGarBonus=sub.length?sub.reduce((s,x)=>s+computeCapital(x,SCENARIOS[1]).garBonus,0)/sub.length:0;
-                const avgShortfall=sub.length?sub.reduce((s,x)=>s+computeCapital(x,SCENARIOS[1]).shortfall,0)/sub.length:0;
-                return (
-                  <div key={band} style={{ background:T.sub,borderRadius:6,padding:10,textAlign:'center' }}>
-                    <div style={{ fontSize:10,color:T.muted,marginBottom:4 }}>GAR Band: {band}</div>
-                    <div style={{ fontSize:12,fontWeight:700,color:T.text }}>{sub.length} insts</div>
-                    <div style={{ fontSize:11,color:T.teal,marginTop:4 }}>Bonus: {(avgGarBonus/1e9).toFixed(2)}B</div>
-                    <div style={{ fontSize:11,color:avgShortfall>0?T.red:T.green }}>Shortfall: {(avgShortfall*100).toFixed(2)}%</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div style={{ background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:16 }}>
-            <div style={{ fontWeight:700,fontSize:14,marginBottom:10 }}>Stress Buffer Adequacy vs Physical Risk Score</div>
-            <ResponsiveContainer width="100%" height={180}>
-              <ScatterChart margin={{ top:5,right:20,bottom:5,left:10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="physScore" name="Physical Risk Score" tick={{ fontSize:10 }} label={{ value:'Physical Risk Score',position:'insideBottom',offset:-2,fontSize:10 }} />
-                <YAxis dataKey="buffer" name="Stress Buffer ($B)" tick={{ fontSize:10 }} tickFormatter={v=>`${v.toFixed(1)}B`} />
-                <Tooltip formatter={(v,n)=>[typeof v==='number'?v.toFixed(2):v,n]} />
-                <Scatter data={INSTITUTIONS.slice(0,40).map(inst=>({
-                  physScore:inst.physicalRiskScore,
-                  buffer:computeCapital(inst,SCENARIOS[1]).stressBuffer/1e9,
-                }))} fill={T.indigo} opacity={0.7} />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
+      {/* content */}
+      <div style={{ padding:'24px 28px' }}>
+        {panels[tab]}
+      </div>
     </div>
   );
 }

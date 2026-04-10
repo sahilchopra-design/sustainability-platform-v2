@@ -8,6 +8,7 @@ import {REGULATORY_THRESHOLDS,TAXONOMY_THRESHOLDS} from '../../../data/reference
 import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
 import {buildEvidencePackage,downloadEvidencePackage,downloadOpinionText,EVIDENCE_CATEGORIES,evidenceStatusColor,opinionColor,getPortfolioAssuranceReadiness} from '../../../data/isae3000EvidenceExport';
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
+import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME + CORE HELPERS
@@ -117,6 +118,26 @@ const CSRD_COMPANIES=(()=>{
     };
   });
 })();
+// ── India Dataset Integration ──
+if (isIndiaMode()) {
+  const _india = adaptForPCAF().slice(0, 80).map((c, i) => {
+    const base = i * 137;
+    const overallReadiness = Math.round(10 + sr(base) * 85);
+    const scores = {}; ESRS_STANDARDS.forEach((std, j) => { scores[std.id] = Math.round(8 + sr(base + j * 17) * 87); });
+    const status = overallReadiness >= 80 ? 'Compliant' : overallReadiness >= 65 ? 'Advanced' : overallReadiness >= 45 ? 'In Progress' : overallReadiness >= 25 ? 'Early Stage' : 'Not Started';
+    return { id: c.id, name: c.name, ticker: c.ticker, sector: c.sector, country: 'IN', overallReadiness, scores,
+      gapCount: Math.round(sr(base + 97) * 45), dataPointsCovered: Math.round(TOTAL_DATAPOINTS * (overallReadiness / 100) * 0.95),
+      totalDataPoints: TOTAL_DATAPOINTS, automationRate: Math.round(10 + sr(base + 103) * 80),
+      assuranceReady: Math.round(5 + sr(base + 107) * 90), taxonomyAlignment: Math.round(sr(base + 109) * 65),
+      doubleMateriality: Math.round(10 + sr(base + 113) * 85), status, reportingWave: 'Wave 2 (FY2025)',
+      dmaScores: DMA_TOPICS.map((t, ti) => ({ topicId: t.id, impactScore: +(1 + sr(base + ti * 31) * 4).toFixed(1), financialScore: +(1 + sr(base + ti * 37) * 4).toFixed(1), material: true })),
+      employees: Math.round(5000 + sr(base + 127) * 95000), revenue: Math.round(c.revenue / 1e6),
+      xbrlReadiness: Math.round(sr(base + 139) * 100), assuranceLevel: 'Limited',
+      auditor: ['Deloitte', 'PwC', 'EY', 'KPMG', 'BDO'][Math.floor(sr(base + 143) * 5)],
+    };
+  });
+  CSRD_COMPANIES.splice(0, CSRD_COMPANIES.length, ..._india);
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    381 DATAPOINTS — Full ESRS Datapoint Inventory

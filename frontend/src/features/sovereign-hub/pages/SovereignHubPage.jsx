@@ -212,7 +212,7 @@ export default function SovereignHubPage() {
 
   /* Aggregates */
   const agg = useMemo(() => {
-    const n = COUNTRY_DATA.length;
+    const n = Math.max(1, COUNTRY_DATA.length);
     const wtdESG = countryExposure.reduce((s, c) => s + (c.esg || 50) * (c.weight || 0) / 100, 0) || COUNTRY_DATA.reduce((s, c) => s + c.esg, 0) / n;
     const avgNDGain = COUNTRY_DATA.reduce((s, c) => s + c.ndgain, 0) / n;
     const parisAligned = COUNTRY_DATA.filter(c => c.paris_aligned).length / n * 100;
@@ -772,10 +772,11 @@ export default function SovereignHubPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14 }}>
               {regionData.map((r, i) => {
                 const regionCountries = COUNTRY_DATA.filter(c => c.region === r.region);
-                const avgCarbon = regionCountries.reduce((s, c) => s + c.carbon_price, 0) / regionCountries.length;
-                const avgRenew = regionCountries.reduce((s, c) => s + c.renewable_pct, 0) / regionCountries.length;
+                const rcLen = regionCountries.length || 1;
+                const avgCarbon = regionCountries.reduce((s, c) => s + c.carbon_price, 0) / rcLen;
+                const avgRenew = regionCountries.reduce((s, c) => s + c.renewable_pct, 0) / rcLen;
                 const parisCount = regionCountries.filter(c => c.paris_aligned).length;
-                const avgJT = regionCountries.reduce((s, c) => s + c.jt_score, 0) / regionCountries.length;
+                const avgJT = regionCountries.reduce((s, c) => s + c.jt_score, 0) / rcLen;
                 return (
                   <Card key={i} style={{ borderTop: `3px solid ${PIE_COLORS[i % PIE_COLORS.length]}` }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 10 }}>{r.region}</div>

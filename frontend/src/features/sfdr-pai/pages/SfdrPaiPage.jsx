@@ -45,14 +45,18 @@ const PAI_CATEGORIES = [
 
 const ALL_INDICATORS = PAI_CATEGORIES.flatMap(c => c.indicators.map(i => ({ ...i, category: c.key, catColor: c.color })));
 
+import { isIndiaMode, adaptForSFDRPAI } from '../../../data/IndiaDataAdapter';
+
 // ── Default portfolio ──────────────────────────────────────────────────────
-const DEFAULT_HOLDINGS = [
+const _DEFAULT_HOLDINGS = [
   { name:'Tata Consultancy Services', sector:'IT', marketValue:4200000, weight:28.0, scope1:18500, scope2:92000, scope3:310000, revenue:2200000, fossilExposure:0, nonRenewable:32, energyIntensity:0.12, biodiversity:0, waterEmissions:45, hazWaste:12, ungcViolation:0, complianceLack:0, genderPayGap:8.2, boardDiversity:33.3, controversialWeapons:0 },
   { name:'Reliance Industries', sector:'Energy', marketValue:3800000, weight:25.3, scope1:42000, scope2:18000, scope3:520000, revenue:7500000, fossilExposure:42, nonRenewable:68, energyIntensity:0.85, biodiversity:0.02, waterEmissions:890, hazWaste:4500, ungcViolation:0, complianceLack:0, genderPayGap:12.5, boardDiversity:16.7, controversialWeapons:0 },
   { name:'Tata Steel', sector:'Materials', marketValue:2800000, weight:18.7, scope1:68000, scope2:12000, scope3:180000, revenue:2400000, fossilExposure:15, nonRenewable:78, energyIntensity:1.42, biodiversity:0.05, waterEmissions:2200, hazWaste:8900, ungcViolation:0, complianceLack:5, genderPayGap:15.1, boardDiversity:25.0, controversialWeapons:0 },
   { name:'HDFC Bank', sector:'Financials', marketValue:2500000, weight:16.7, scope1:2400, scope2:45000, scope3:85000, revenue:1800000, fossilExposure:8, nonRenewable:22, energyIntensity:0.04, biodiversity:0, waterEmissions:8, hazWaste:3, ungcViolation:0, complianceLack:0, genderPayGap:18.3, boardDiversity:30.0, controversialWeapons:0 },
   { name:'Adani Green Energy', sector:'Utilities', marketValue:1700000, weight:11.3, scope1:850, scope2:3200, scope3:42000, revenue:950000, fossilExposure:0, nonRenewable:5, energyIntensity:0.02, biodiversity:0.08, waterEmissions:15, hazWaste:22, ungcViolation:0, complianceLack:0, genderPayGap:10.0, boardDiversity:20.0, controversialWeapons:0 },
 ];
+// ── India Dataset Integration ──
+const DEFAULT_HOLDINGS = isIndiaMode() ? adaptForSFDRPAI() : _DEFAULT_HOLDINGS;
 
 // ── DNSH Objectives ────────────────────────────────────────────────────────
 const DNSH_OBJECTIVES = [

@@ -56,13 +56,13 @@ export default function QuantEsgHubPage(){
   const sortArrow=(c)=>sortCol===c?(sortDir==='asc'?' \u25B2':' \u25BC'):'';
 
   const kpis=useMemo(()=>{const d=filtered;if(!d.length)return{count:0,avgSharpe:0,avgAlpha:0,avgVol:0,totalAum:0,avgEsg:0};
-    return{count:d.length,avgSharpe:d.reduce((a,r)=>a+r.sharpe,0)/d.length,avgAlpha:d.reduce((a,r)=>a+r.alpha,0)/d.length,avgVol:d.reduce((a,r)=>a+r.vol,0)/d.length,totalAum:d.reduce((a,r)=>a+r.aum,0),avgEsg:d.reduce((a,r)=>a+r.esgScore,0)/d.length};},[filtered]);
+    return{count:d.length,avgSharpe:d.reduce((a,r)=>a+r.sharpe,0)/ Math.max(1, d.length),avgAlpha:d.reduce((a,r)=>a+r.alpha,0)/ Math.max(1, d.length),avgVol:d.reduce((a,r)=>a+r.vol,0)/ Math.max(1, d.length),totalAum:d.reduce((a,r)=>a+r.aum,0),avgEsg:d.reduce((a,r)=>a+r.esgScore,0)/ Math.max(1, d.length)};},[filtered]);
 
   const catDist=useMemo(()=>{const m={};filtered.forEach(r=>{m[r.category]=(m[r.category]||0)+1;});return Object.entries(m).map(([name,value])=>({name:name.length>14?name.slice(0,14)+'..':name,value})).sort((a,b)=>b.value-a.value);},[filtered]);
   const riskDist=useMemo(()=>RISK_LEVELS.map(l=>({name:l,value:filtered.filter(r=>r.risk===l).length})),[filtered]);
-  const radarData=useMemo(()=>{if(!filtered.length)return[];const avg=k=>filtered.reduce((a,r)=>a+r[k],0)/filtered.length;
+  const radarData=useMemo(()=>{if(!filtered.length)return[];const avg=k=>filtered.reduce((a,r)=>a+r[k],0)/ Math.max(1, filtered.length);
     return[{axis:'Sharpe',value:avg('sharpe')*40},{axis:'Alpha',value:Math.max(0,avg('alpha')*10+20)},{axis:'Info Ratio',value:Math.max(0,avg('infoRatio')*30+20)},{axis:'ESG',value:avg('esgScore')},{axis:'Sortino',value:avg('sortinoRatio')*25},{axis:'Calmar',value:avg('calmarRatio')*30}];},[filtered]);
-  const catPerf=useMemo(()=>CATEGORIES.map(c=>{const items=filtered.filter(r=>r.category===c);if(!items.length)return null;return{name:c.length>14?c.slice(0,14)+'..':c,sharpe:items.reduce((a,r)=>a+r.sharpe,0)/items.length,alpha:items.reduce((a,r)=>a+r.alpha,0)/items.length};}).filter(Boolean),[filtered]);
+  const catPerf=useMemo(()=>CATEGORIES.map(c=>{const items=filtered.filter(r=>r.category===c);if(!items.length)return null;return{name:c.length>14?c.slice(0,14)+'..':c,sharpe:items.reduce((a,r)=>a+r.sharpe,0)/ Math.max(1, items.length),alpha:items.reduce((a,r)=>a+r.alpha,0)/ Math.max(1, items.length)};}).filter(Boolean),[filtered]);
   const trendData=useMemo(()=>['Q1','Q2','Q3','Q4'].map((q,i)=>({quarter:q,sharpe:filtered.reduce((a,r)=>a+[r.q1,r.q2,r.q3,r.q4][i],0)/(filtered.length||1)})),[filtered]);
 
   const renderKPIs=()=>(<div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
@@ -158,7 +158,7 @@ export default function QuantEsgHubPage(){
           <Bar dataKey="count" name="Strategies" radius={[4,4,0,0]}>{['<-1%','-1-0%','0-1%','1-3%','>3%'].map((_,i)=><Cell key={i} fill={[T.red,T.amber,T.gold,T.sage,T.green][i]}/>)}</Bar></BarChart></ResponsiveContainer></div>
     </div>
     <div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>E/S/G BY CATEGORY</div>
-      <ResponsiveContainer width="100%" height={260}><BarChart data={CATEGORIES.map(c=>{const items=filtered.filter(r=>r.category===c);if(!items.length)return null;return{name:c.length>14?c.slice(0,14)+'..':c,env:items.reduce((a,r)=>a+r.envScore,0)/items.length,soc:items.reduce((a,r)=>a+r.socScore,0)/items.length,gov:items.reduce((a,r)=>a+r.govScore,0)/items.length};}).filter(Boolean)}>
+      <ResponsiveContainer width="100%" height={260}><BarChart data={CATEGORIES.map(c=>{const items=filtered.filter(r=>r.category===c);if(!items.length)return null;return{name:c.length>14?c.slice(0,14)+'..':c,env:items.reduce((a,r)=>a+r.envScore,0)/ Math.max(1, items.length),soc:items.reduce((a,r)=>a+r.socScore,0)/ Math.max(1, items.length),gov:items.reduce((a,r)=>a+r.govScore,0)/ Math.max(1, items.length)};}).filter(Boolean)}>
         <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Legend/>
         <Bar dataKey="env" name="Env" fill={T.sage} radius={[2,2,0,0]}/><Bar dataKey="soc" name="Soc" fill={T.gold} radius={[2,2,0,0]}/><Bar dataKey="gov" name="Gov" fill={T.navy} radius={[2,2,0,0]}/></BarChart></ResponsiveContainer></div>
     {renderTable([['name','Strategy'],['ytdReturn','YTD%'],['alpha','Alpha'],['sharpe','Sharpe'],['envScore','Env'],['socScore','Soc'],['govScore','Gov'],['turnover','Turn%']])}
@@ -176,7 +176,7 @@ export default function QuantEsgHubPage(){
           <Area type="monotone" dataKey="aum" stroke={T.gold} fill={T.gold} fillOpacity={0.15} name="AUM $M"/></AreaChart></ResponsiveContainer></div>
     </div>
     <div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>CARBON INTENSITY BY SECTOR</div>
-      <ResponsiveContainer width="100%" height={260}><BarChart data={SECTORS.map(s=>{const items=filtered.filter(r=>r.sector===s);if(!items.length)return null;return{name:s.length>10?s.slice(0,10)+'..':s,carbon:items.reduce((a,r)=>a+r.carbonInt,0)/items.length};}).filter(Boolean)} layout="vertical">
+      <ResponsiveContainer width="100%" height={260}><BarChart data={SECTORS.map(s=>{const items=filtered.filter(r=>r.sector===s);if(!items.length)return null;return{name:s.length>10?s.slice(0,10)+'..':s,carbon:items.reduce((a,r)=>a+r.carbonInt,0)/ Math.max(1, items.length)};}).filter(Boolean)} layout="vertical">
         <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis type="number" tick={{fontSize:11}}/><YAxis dataKey="name" type="category" width={90} tick={{fontSize:10}}/><Tooltip content={<CT/>}/>
         <Bar dataKey="carbon" name="Avg Carbon Int" fill={T.red} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
     {renderTable([['name','Strategy'],['vol','Vol%'],['maxDD','Max DD'],['sortinoRatio','Sortino'],['calmarRatio','Calmar'],['carbonInt','Carbon'],['corrSP500','Corr'],['risk','Risk']])}

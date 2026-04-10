@@ -33,7 +33,7 @@ const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); }
 let _mc_idx = 0;
 function resetSeed(seed = 42) { _mc_idx = seed | 0; }
 
-// Box-Muller using platform sr PRNG (never Math.random())
+// Box-Muller using platform sr PRNG (deterministic)
 function boxMuller() {
   const u1 = Math.max(sr(_mc_idx++), 1e-10);
   const u2 = sr(_mc_idx++);

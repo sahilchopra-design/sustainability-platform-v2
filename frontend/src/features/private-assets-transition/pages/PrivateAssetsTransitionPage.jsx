@@ -94,7 +94,7 @@ export default function PrivateAssetsTransitionPage() {
 
   const fundSummary = PE_FUNDS.map(f => {
     const cos = PORTFOLIO_COS.filter(c => c.fund === f.id);
-    return { ...f, avgCO2: Math.round(cos.reduce((s, c) => s + c.co2Intensity, 0) / cos.length), flagged: cos.filter(c => c.transFlag || c.physFlag).length };
+    return { ...f, avgCO2: Math.round(cos.reduce((s, c) => s + c.co2Intensity, 0) / Math.max(1, cos.length)), flagged: cos.filter(c => c.transFlag || c.physFlag).length };
   });
 
   const haircutFactor = { conservative: 0.03, moderate: 0.08, aggressive: 0.15 };
@@ -107,7 +107,7 @@ export default function PrivateAssetsTransitionPage() {
 
   const vintageData = [2018, 2019, 2020, 2021, 2022, 2023].map(v => {
     const funds = PE_FUNDS.filter(f => f.vintage === v);
-    return { vintage: v, funds: funds.length, avgClimate: funds.length ? Math.round(funds.reduce((s, f) => s + f.avgClimate, 0) / funds.length) : 0, totalAUM: funds.reduce((s, f) => s + f.aum, 0) };
+    return { vintage: v, funds: funds.length, avgClimate: funds.length ? Math.round(funds.reduce((s, f) => s + f.avgClimate, 0) / Math.max(1, funds.length)) : 0, totalAUM: funds.reduce((s, f) => s + f.aum, 0) };
   });
 
   const lpExposure = useMemo(() => {
@@ -153,7 +153,7 @@ export default function PrivateAssetsTransitionPage() {
         <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
           {kpi('Total AUM', `$${(PE_FUNDS.reduce((s, f) => s + f.aum, 0) / 1000).toFixed(1)}B`, '10 funds')}
           {kpi('Portfolio Cos', PORTFOLIO_COS.length.toString(), 'across all funds')}
-          {kpi('Avg Climate Score', Math.round(PORTFOLIO_COS.reduce((s, c) => s + c.climateScore, 0) / PORTFOLIO_COS.length).toString(), '/100', T.blue)}
+          {kpi('Avg Climate Score', Math.round(PORTFOLIO_COS.reduce((s, c) => s + c.climateScore, 0) / Math.max(1, PORTFOLIO_COS.length)).toString(), '/100', T.blue)}
           {kpi('Transition Flagged', PORTFOLIO_COS.filter(c => c.transFlag).length.toString(), 'companies', T.red)}
           {kpi('Physical Flagged', PORTFOLIO_COS.filter(c => c.physFlag).length.toString(), 'companies', T.orange)}
         </div>
@@ -221,9 +221,9 @@ export default function PrivateAssetsTransitionPage() {
           <div>
             <div style={card}>
               <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Pre-Acquisition Climate DD Checklist</h3>
-              <p style={{ fontSize: 12, color: T.textSec, marginBottom: 12 }}>Progress: {ddComplete}/{DD_CHECKLIST.length} items ({(ddComplete / DD_CHECKLIST.length * 100).toFixed(0)}%)</p>
+              <p style={{ fontSize: 12, color: T.textSec, marginBottom: 12 }}>Progress: {ddComplete}/{DD_CHECKLIST.length} items ({(ddComplete / Math.max(1, DD_CHECKLIST.length) * 100).toFixed(0)}%)</p>
               <div style={{ width: '100%', height: 8, background: T.border, borderRadius: 4, marginBottom: 16 }}>
-                <div style={{ width: `${(ddComplete / DD_CHECKLIST.length) * 100}%`, height: 8, background: ddComplete === DD_CHECKLIST.length ? T.green : T.blue, borderRadius: 4, transition: 'width 0.3s' }} />
+                <div style={{ width: `${(ddComplete / Math.max(1, DD_CHECKLIST.length)) * 100}%`, height: 8, background: ddComplete === DD_CHECKLIST.length ? T.green : T.blue, borderRadius: 4, transition: 'width 0.3s' }} />
               </div>
               {ddCats.map(cat => (
                 <div key={cat} style={{ marginBottom: 16 }}>
@@ -306,7 +306,7 @@ export default function PrivateAssetsTransitionPage() {
                   ))}
                   <div style={{ marginTop: 16, padding: 12, background: '#f0f9ff', borderRadius: 8 }}>
                     <div style={{ fontSize: 12, fontWeight: 600, color: T.navy }}>Overall GP Score</div>
-                    <div style={{ fontSize: 28, fontWeight: 700, color: T.blue }}>{Math.round(gpDims.reduce((s, d) => s + (gpScores[d] || 50), 0) / gpDims.length)}/100</div>
+                    <div style={{ fontSize: 28, fontWeight: 700, color: T.blue }}>{Math.round(gpDims.reduce((s, d) => s + (gpScores[d] || 50), 0) / Math.max(1, gpDims.length))}/100</div>
                   </div>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>

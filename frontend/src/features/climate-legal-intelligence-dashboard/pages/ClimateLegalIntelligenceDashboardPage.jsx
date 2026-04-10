@@ -26,7 +26,7 @@ const SCENARIO_CAGR = [0.08, 0.18, 0.14]; // sr seeded per entity
 const ENTITY_NAMES_100 = Array.from({ length: 100 }, (_, i) => {
   const n = ['Apex', 'Global', 'Terra', 'Capital', 'Asset', 'Trust', 'Power', 'Energy', 'Green', 'Climate', 'Prime', 'Core', 'Peak', 'Clear', 'Net', 'First', 'Eco', 'Carbon', 'Risk', 'Intel'];
   const s = ['Corp', 'AG', 'SE', 'PLC', 'Ltd', 'Inc', 'Holdings', 'Group', 'Partners', 'Fund'];
-  return `${n[i % n.length]} ${s[i % s.length]} ${Math.floor(i / n.length) > 0 ? String.fromCharCode(64 + Math.floor(i / n.length)) : ''}`.trim();
+  return `${n[i % n.length]} ${s[i % s.length]} ${Math.floor(i / Math.max(1, n.length)) > 0 ? String.fromCharCode(64 + Math.floor(i / Math.max(1, n.length))) : ''}`.trim();
 });
 
 const ENTITIES = Array.from({ length: 100 }, (_, i) => {
@@ -219,7 +219,7 @@ export default function ClimateLegalIntelligenceDashboardPage() {
     const ents = ENTITIES.filter(e => e.sector === s);
     if (!ents.length) return null;
     const obj = { sector: s };
-    RISK_DIMENSIONS.forEach(d => { obj[d] = Math.round(ents.reduce((sum, e) => sum + e[d], 0) / ents.length); });
+    RISK_DIMENSIONS.forEach(d => { obj[d] = Math.round(ents.reduce((sum, e) => sum + e[d], 0) / Math.max(1, ents.length)); });
     return obj;
   }).filter(Boolean), []);
 
@@ -246,7 +246,7 @@ export default function ClimateLegalIntelligenceDashboardPage() {
     else { setSortCol(col); setSortDir('desc'); }
   }, [sortCol]);
 
-  const avgComposite = filtered.length ? (filtered.reduce((s, e) => s + e.compositeLegalRisk, 0) / filtered.length).toFixed(1) : '0';
+  const avgComposite = filtered.length ? (filtered.reduce((s, e) => s + e.compositeLegalRisk, 0) / Math.max(1, filtered.length)).toFixed(1) : '0';
   const totalNetVaR = filtered.reduce((s, e) => s + e.netLegalVaR, 0);
 
   return (
@@ -391,7 +391,7 @@ export default function ClimateLegalIntelligenceDashboardPage() {
               <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
                 <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13 }}>Avg Risk by Sector</div>
                 <ResponsiveContainer width="100%" height={180}>
-                  <BarChart data={SECTORS.map(s => { const ents = filtered.filter(e => e.sector === s); return { sector: s, avg: ents.length ? Math.round(ents.reduce((a, e) => a + e.compositeLegalRisk, 0) / ents.length) : 0 }; }).filter(d => d.avg > 0)}>
+                  <BarChart data={SECTORS.map(s => { const ents = filtered.filter(e => e.sector === s); return { sector: s, avg: ents.length ? Math.round(ents.reduce((a, e) => a + e.compositeLegalRisk, 0) / Math.max(1, ents.length)) : 0 }; }).filter(d => d.avg > 0)}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                     <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-25} textAnchor="end" height={45} />
                     <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
@@ -527,7 +527,7 @@ export default function ClimateLegalIntelligenceDashboardPage() {
           <div>
             <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
               <KpiCard label="Key Precedents" value={KEY_PRECEDENTS.length} />
-              <KpiCard label="Avg Impact Score" value={Math.round(KEY_PRECEDENTS.reduce((s, p) => s + p.impactScore, 0) / KEY_PRECEDENTS.length)} color={T.amber} />
+              <KpiCard label="Avg Impact Score" value={Math.round(KEY_PRECEDENTS.reduce((s, p) => s + p.impactScore, 0) / Math.max(1, KEY_PRECEDENTS.length))} color={T.amber} />
               <KpiCard label="Total Damages" value={fmtUSD(KEY_PRECEDENTS.reduce((s, p) => s + p.damagesM, 0) * 1e6)} color={T.red} />
               <KpiCard label="Plaintiff Wins" value={KEY_PRECEDENTS.filter(p => p.outcome === 'Plaintiff Win').length} color={T.red} />
             </div>
@@ -722,7 +722,7 @@ export default function ClimateLegalIntelligenceDashboardPage() {
               <KpiCard label="Big Law Coverage" value={ENTITIES.filter(e => e.externalCounsel === 'Big Law').length} color={T.green} />
               <KpiCard label="High Risk (>70)" value={ENTITIES.filter(e => e.compositeLegalRisk >= 70).length} color={T.red} />
               <KpiCard label="Climate Const. Jurs" value={JUR_INTELLIGENCE.filter(j => j.climateConstitutionalization).length} color={T.teal} />
-              <KpiCard label="Avg Readiness" value={Math.round(ENTITIES.reduce((s, e) => s + e.legalReadinessScore, 0) / ENTITIES.length)} color={T.amber} />
+              <KpiCard label="Avg Readiness" value={Math.round(ENTITIES.reduce((s, e) => s + e.legalReadinessScore, 0) / Math.max(1, ENTITIES.length))} color={T.amber} />
               <KpiCard label="Plaintiff Wins" value={KEY_PRECEDENTS.filter(p => p.outcome === 'Plaintiff Win').length} color={T.red} />
             </div>
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>

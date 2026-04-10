@@ -225,8 +225,8 @@ const NatureDependencyTab=()=>{
   },[sortCol,sortDir,search,regionFilter]);
 
   const topDep=filtered.slice(0,15);
-  const avgBII=(COUNTRIES.reduce((s,c)=>s+c.bii,0)/COUNTRIES.length).toFixed(1);
-  const avgNatGdp=(COUNTRIES.reduce((s,c)=>s+c.natGdp,0)/COUNTRIES.length).toFixed(1);
+  const avgBII=(COUNTRIES.length?COUNTRIES.reduce((s,c)=>s+c.bii,0)/COUNTRIES.length:0).toFixed(1);
+  const avgNatGdp=(COUNTRIES.length?COUNTRIES.reduce((s,c)=>s+c.natGdp,0)/COUNTRIES.length:0).toFixed(1);
   const above30=COUNTRIES.filter(c=>c.protArea>=30).length;
   const totalSpecies=COUNTRIES.reduce((s,c)=>s+c.speciesRich,0);
   const totalThreatened=COUNTRIES.reduce((s,c)=>s+c.threatSpecies.cr+c.threatSpecies.en+c.threatSpecies.vu,0);
@@ -712,9 +712,9 @@ const GbfPolicyTab=()=>{
     return Object.entries(cnt).map(([k,v])=>({status:k,count:v}));
   },[]);
 
-  const avgPolicy=(COUNTRIES.reduce((s,c)=>s+c.policyStringency,0)/60).toFixed(1);
+  const avgPolicy=(COUNTRIES.length?COUNTRIES.reduce((s,c)=>s+c.policyStringency,0)/ Math.max(1, COUNTRIES.length):0).toFixed(1);
   const totalInvest=COUNTRIES.reduce((s,c)=>s+c.natureInvest,0).toFixed(1);
-  const submittedPct=((COUNTRIES.filter(c=>c.nbsapStatus==='Submitted').length/60)*100).toFixed(0);
+  const submittedPct=(COUNTRIES.length?(COUNTRIES.filter(c=>c.nbsapStatus==='Submitted').length/ Math.max(1, COUNTRIES.length))*100:0).toFixed(0);
 
   const protAreaTimeline=useMemo(()=>{
     return [2020,2022,2024,2025,2026,2028,2030].map((yr,i)=>{
@@ -897,8 +897,8 @@ const GbfPolicyTab=()=>{
         {['High','Upper-Middle','Lower-Middle','Low'].map(inc=>{
           const group=COUNTRIES.filter(c=>c.incomeClass===inc);
           if(!group.length)return null;
-          const avgPol=(group.reduce((s,c)=>s+c.policyStringency,0)/group.length).toFixed(0);
-          const avgInv=(group.reduce((s,c)=>s+c.natureInvest,0)/group.length).toFixed(2);
+          const avgPol=(group.reduce((s,c)=>s+c.policyStringency,0)/ Math.max(1, group.length)).toFixed(0);
+          const avgInv=(group.reduce((s,c)=>s+c.natureInvest,0)/ Math.max(1, group.length)).toFixed(2);
           const submitted=group.filter(c=>c.nbsapStatus==='Submitted').length;
           return(
             <div key={inc} style={{padding:10,marginBottom:8,background:T.surfaceH,borderRadius:6,border:`1px solid ${T.border}`}}>

@@ -84,14 +84,14 @@ const PdComparison = () => {
   const [sort,setSort]=useState("pdBlended");
   const sorted=[...ENTITIES].sort((a,b)=>b[sort]-a[sort]);
 
-  const branchAvg={A:+(ENTITIES.reduce((s,e)=>s+e.pdA,0)/ENTITIES.length).toFixed(5),B:+(ENTITIES.reduce((s,e)=>s+e.pdB,0)/ENTITIES.length).toFixed(5),C:+(ENTITIES.reduce((s,e)=>s+e.pdC,0)/ENTITIES.length).toFixed(5),D:+(ENTITIES.reduce((s,e)=>s+e.pdD,0)/ENTITIES.length).toFixed(5)};
+  const branchAvg={A:+(ENTITIES.reduce((s,e)=>s+e.pdA,0)/ Math.max(1, ENTITIES.length)).toFixed(5),B:+(ENTITIES.reduce((s,e)=>s+e.pdB,0)/ Math.max(1, ENTITIES.length)).toFixed(5),C:+(ENTITIES.reduce((s,e)=>s+e.pdC,0)/ Math.max(1, ENTITIES.length)).toFixed(5),D:+(ENTITIES.reduce((s,e)=>s+e.pdD,0)/ Math.max(1, ENTITIES.length)).toFixed(5)};
 
   const branchComp=[{branch:"A Exponential",pd:branchAvg.A,desc:"Realtime"},{branch:"B Merton DD",pd:branchAvg.B,desc:"IFRS 9"},{branch:"C Tabular",pd:branchAvg.C,desc:"ESG band"},{branch:"D Multi-factor",pd:branchAvg.D,desc:"Portfolio"}];
 
   return (
     <div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:20}}>
-        {[{label:"Avg Blended PD",value:`${(ENTITIES.reduce((s,e)=>s+e.pdBlended,0)/ENTITIES.length*100).toFixed(2)}%`,color:T.red},{label:"High Risk (>5%)",value:ENTITIES.filter(e=>e.pdBlended>0.05).length,color:T.amber},{label:"Avg Branch A (exp)",value:`${(branchAvg.A*100).toFixed(2)}%`,color:T.blue},{label:"Avg Branch D (multi-factor)",value:`${(branchAvg.D*100).toFixed(2)}%`,color:T.purple}]
+        {[{label:"Avg Blended PD",value:`${(ENTITIES.reduce((s,e)=>s+e.pdBlended,0)/ Math.max(1, ENTITIES.length)*100).toFixed(2)}%`,color:T.red},{label:"High Risk (>5%)",value:ENTITIES.filter(e=>e.pdBlended>0.05).length,color:T.amber},{label:"Avg Branch A (exp)",value:`${(branchAvg.A*100).toFixed(2)}%`,color:T.blue},{label:"Avg Branch D (multi-factor)",value:`${(branchAvg.D*100).toFixed(2)}%`,color:T.purple}]
           .map(m=>card(<><div style={{fontSize:11,color:T.slate,marginBottom:6}}>{m.label}</div><div style={{fontSize:22,fontWeight:700,color:m.color,fontFamily:T.mono}}>{m.value}</div></>))}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:20}}>

@@ -8,7 +8,12 @@ import { ClimateRiskProvider } from './context/ClimateRiskContext';
 import { GuidedModeProvider } from './context/GuidedModeContext';
 import GuidedModeOverlay from './components/GuidedModeOverlay';
 import GuidedModeToggle from './components/GuidedModeToggle';
+import CountryDatasetSelector from './components/CountryDatasetSelector';
 import { DataDepthProvider } from './context/DataDepthContext';
+import { CedaProvider } from './contexts/CedaContext';
+import { BigClimateDbProvider } from './contexts/BigClimateDbContext';
+import { DataCaptureProvider } from './contexts/DataCaptureContext';
+import { ReferenceDataProvider } from './contexts/ReferenceDataContext';
 import DataDepthOverlay from './components/DataDepthOverlay';
 import DataDepthToggle from './components/DataDepthToggle';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
@@ -87,6 +92,9 @@ const SovereignSWFPage = React.lazy(() => import("./features/sovereign-swf/pages
 const SentimentAnalysisPage = React.lazy(() => import("./features/sentiment-analysis/pages/SentimentAnalysisPage"));
 // E138 PCAF India BRSR
 const PCafIndiaBrsrPage = React.lazy(() => import("./features/pcaf-india-brsr/pages/PCafIndiaBrsrPage"));
+// India Regulatory Intelligence
+const RbiClimateRiskPage = React.lazy(() => import("./features/rbi-climate-risk/pages/RbiClimateRiskPage"));
+const IndiaCctsPage = React.lazy(() => import("./features/india-ccts/pages/IndiaCctsPage"));
 // E147 Equator Principles
 const EquatorPrinciplesPage = React.lazy(() => import("./features/equator-principles/pages/EquatorPrinciplesPage"));
 // E148 ESMS
@@ -445,6 +453,7 @@ const EsgIntegrationDashboardPage   = React.lazy(() => import("./features/esg-in
 const GreenBondPortfolioOptimizerPage = React.lazy(() => import("./features/green-bond-portfolio-optimizer/pages/GreenBondPortfolioOptimizerPage"));
 const TransitionBondCredibilityPage = React.lazy(() => import("./features/transition-bond-credibility/pages/TransitionBondCredibilityPage"));
 const BlendedFinanceStructurerPage  = React.lazy(() => import("./features/blended-finance-structurer/pages/BlendedFinanceStructurerPage"));
+const UndpBlendedFinancePage        = React.lazy(() => import("./features/undp-blended-finance/pages/UndpBlendedFinancePage"));
 const ClimateBondIndexTrackerPage   = React.lazy(() => import("./features/climate-bond-index-tracker/pages/ClimateBondIndexTrackerPage"));
 const GreenLoanFrameworkPage        = React.lazy(() => import("./features/green-loan-framework/pages/GreenLoanFrameworkPage"));
 const ImpactBondAnalyticsPage       = React.lazy(() => import("./features/impact-bond-analytics/pages/ImpactBondAnalyticsPage"));
@@ -497,6 +506,13 @@ const AnomalyDetectionEnginePage     = React.lazy(() => import("./features/anoma
 const PeerClusteringSegmentationPage = React.lazy(() => import("./features/peer-clustering-segmentation/pages/PeerClusteringSegmentationPage"));
 const ScenarioConditionalPredictionPage = React.lazy(() => import("./features/scenario-conditional-prediction/pages/ScenarioConditionalPredictionPage"));
 const MlGovernanceDashboardPage      = React.lazy(() => import("./features/ml-governance-dashboard/pages/MlGovernanceDashboardPage"));
+// Sustainability Reporting Intelligence
+const SustainabilityReportBuilderPage = React.lazy(() => import("./features/sustainability-report-builder/pages/SustainabilityReportBuilderPage"));
+const EsrsDatapointNavigatorPage = React.lazy(() => import("./features/esrs-datapoint-navigator/pages/EsrsDatapointNavigatorPage"));
+const SectorSustainabilityBenchmarkPage = React.lazy(() => import("./features/sector-sustainability-benchmark/pages/SectorSustainabilityBenchmarkPage"));
+const ReportQualityEnginePage = React.lazy(() => import("./features/report-quality-engine/pages/ReportQualityEnginePage"));
+const MetricsDataArchitecturePage = React.lazy(() => import("./features/metrics-data-architecture/pages/MetricsDataArchitecturePage"));
+const NarrativeIntelligencePage = React.lazy(() => import("./features/narrative-intelligence/pages/NarrativeIntelligencePage"));
 // Sprint DC — Climate-Integrated Actuarial Intelligence
 const ClimateMortalityLongevityPage      = React.lazy(() => import("./features/climate-mortality-longevity/pages/ClimateMortalityLongevityPage"));
 const PCClimatePricingPage               = React.lazy(() => import("./features/pc-climate-pricing/pages/PCClimatePricingPage"));
@@ -707,6 +723,11 @@ const MultiFactorIntegrationPage = React.lazy(() => import("./features/multi-fac
 const CommodityHubPage = React.lazy(() => import("./features/commodity-hub/pages/CommodityHubPage"));
 const ProductAnatomyPage = React.lazy(() => import("./features/product-anatomy/pages/ProductAnatomyPage"));
 const EpdLcaDatabasePage = React.lazy(() => import("./features/epd-lca-database/pages/EpdLcaDatabasePage"));
+const CedaEmissionFactorsPage = React.lazy(() => import("./features/ceda-emission-factors/pages/CedaEmissionFactorsPage"));
+const BigClimateDatabasePage = React.lazy(() => import("./features/big-climate-database/pages/BigClimateDatabasePage"));
+const DataCaptureHubPage = React.lazy(() => import("./features/data-capture-hub/pages/DataCaptureHubPage"));
+const ClientPitchPage = React.lazy(() => import("./features/client-pitch/pages/ClientPitchPage"));
+const ReferenceDataExplorerPage = React.lazy(() => import("./features/reference-data-explorer/pages/ReferenceDataExplorerPage"));
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Institutional Light · Navy / Gold / Sage (AA Impact brand)
@@ -859,6 +880,7 @@ const NAV_GROUPS = [
     { path: '/iris-metrics',              label: 'IRIS+ Metrics',            badge: 'GIIN · 40 Metrics · 5 Dimensions',       code: 'EP-X2' },
     { path: '/sdg-bond-impact',           label: 'SDG Bond Impact',          badge: '7 Categories · 25 Metrics · ICMA',       code: 'EP-X3' },
     { path: '/blended-finance',           label: 'Blended Finance',          badge: '6 Instruments · Capital Stack · Leverage', code: 'EP-X4' },
+    { path: '/undp-blended-finance',      label: 'UNDP Blended Finance Framework', badge: '6 Pillars · Leverage Calc · IRIS+ · Market Intel · Pipeline', code: 'EP-X4B' },
     { path: '/impact-verification',       label: 'Impact Verification',      badge: 'IMP · Evidence Tiers · Impact Washing',  code: 'EP-X5' },
   ]},
   { label: 'Advanced Predictive Analytics', icon: '📈', color: '#6d28d9', items: [
@@ -888,6 +910,15 @@ const NAV_GROUPS = [
     { path: '/multi-factor-integration',   label: 'Multi-Factor Integration',   badge: '25 Commodities · ML Ensemble · PCA · K-Means · Regulatory', code: 'EP-Y7' },
     { path: '/product-anatomy',            label: 'Product Anatomy',            badge: '30 Products · ESG Score · Sustainable Alts',  code: 'EP-Y9' },
     { path: '/epd-lca-database',           label: 'EPD & LCA Database',         badge: '6 Sources · 50+ EPDs · ISO 14025',           code: 'EP-Y10' },
+    { path: '/ceda-emission-factors',      label: 'CEDA Emission Factors',      badge: 'CEDA 2025 · 400 Sectors · 149 Countries · Spend-Based Calculator',  code: 'EP-CEDA' },
+    { path: '/big-climate-database',       label: 'Big Climate Database',        badge: 'CONCITO v1.2 · 540 Foods · 5 Countries · LCA · CC-BY',              code: 'EP-BCDB' },
+  ]},
+  { label: 'Client Intelligence', icon: '🎯', color: '#7c3aed', items: [
+    { path: '/pitch', label: 'Client Pitch & Demo', badge: '4 Personas · India Live · 12 Engines · Pricing · Competitive', code: 'PITCH' },
+  ]},
+  { label: 'Data Capture & Pipeline Hub', icon: '🗄️', color: '#7c3aed', items: [
+    { path: '/data-capture-hub',           label: 'Data Capture Hub',            badge: '15 Entities · 87 Modules · 42 Pipelines · Normalized Schema · Docs',  code: 'EP-DCH' },
+    { path: '/reference-data-explorer',  label: 'Reference Data Explorer',     badge: '6 Sources · OWID · CEDA · SBTi · CBAM · LCA · 230+ Countries',       code: 'EP-RDE' },
   ]},
   { label: 'Consumer Carbon Intelligence', icon: '🌱', color: '#065f46', items: [
     { path: '/consumer-carbon-hub',        label: 'Carbon Hub',               badge: 'Hub · Calculator · Wallet · Economy',     code: 'EP-Z6' },
@@ -1524,6 +1555,18 @@ const NAV_GROUPS = [
     { path: '/exchange-intelligence', label: 'Exchange Intelligence',    badge: '13 Exchanges · 500+ Co.', code: 'EP-E1' },
     { path: '/sector-benchmarking',   label: 'Sector Benchmarking',     badge: 'Cross-Exchange · Paris', code: 'EP-E2' },
   ]},
+  { label: 'India Regulatory Intelligence', icon: '🇮🇳', color: '#b45309', items: [
+    { path: '/rbi-climate-risk', label: 'RBI Climate Risk Directions 2025', badge: 'RBI · 20 Banks · CRAR · NGFS · BRSR Core · 8 Tabs', code: 'EP-IN1' },
+    { path: '/india-ccts', label: 'India CCTS Readiness', badge: 'CCTS · 740 Entities · 9 Sectors · PAT · CBAM Linkage · 8 Tabs', code: 'EP-IN2' },
+  ]},
+  { label: 'Sustainability Reporting Intelligence', icon: '📊', color: '#059669', items: [
+    { path: '/sustainability-report-builder', label: 'Sustainability Report Builder', badge: '30+ Types · 9 Sections · 5W Framework · 5 Stakeholder Packages', code: 'EP-SRI1' },
+    { path: '/esrs-datapoint-navigator', label: 'ESRS Datapoint Navigator', badge: '430+ Datapoints · 12 Standards · Crosswalk · Omnibus · Assurance', code: 'EP-SRI2' },
+    { path: '/sector-sustainability-benchmark', label: 'Sector Sustainability Benchmark', badge: '14 Sectors · 50+ Companies · Top-Quartile · 5 Regions', code: 'EP-SRI3' },
+    { path: '/report-quality-engine', label: 'Report Quality & Anti-Greenwashing', badge: '100+ QA Items · 7 Greenwashing Types · Enforcement Cases', code: 'EP-SRI4' },
+    { path: '/metrics-data-architecture', label: 'Metrics & Data Architecture', badge: '1000+ Metrics · 4-Level Hierarchy · Interoperability Matrix', code: 'EP-SRI5' },
+    { path: '/narrative-intelligence', label: 'Narrative Intelligence Studio', badge: "Hero's Journey · Tone Spectrum · Stakeholder Narratives", code: 'EP-SRI6' },
+  ]},
   { label: 'Sprint D — Platform Intelligence', icon: '🚀', color: '#7c3aed', items: [
     { path: '/company-profiles',      label: 'Company Master Reference', badge: 'BRSR P6 · 30+ Companies', code: 'REF-01' },
     { path: '/stranded-assets',       label: 'Stranded Asset Analyzer', badge: 'IEA WEO · NZE/APS/STEPS', code: 'EP-D1' },
@@ -1901,6 +1944,8 @@ function HeaderBar({ sidebarOpen, setSidebarOpen }) {
           )}
         </div>
 
+        {/* Country Dataset Selector */}
+        <CountryDatasetSelector />
         {/* Guided Mode Toggle */}
         <GuidedModeToggle />
         {/* Data Depth Toggle */}
@@ -2171,6 +2216,7 @@ function AppContent() {
             <Route path="/iris-metrics"              element={<IrisMetricsPage />} />
             <Route path="/sdg-bond-impact"           element={<SdgBondImpactPage />} />
             <Route path="/blended-finance"           element={<BlendedFinancePage />} />
+            <Route path="/undp-blended-finance"     element={<UndpBlendedFinancePage />} />
             <Route path="/impact-verification"       element={<ImpactVerificationPage />} />
             <Route path="/impact-hub"                element={<ImpactHubPage />} />
             {/* Sprint Z — Consumer Carbon Intelligence */}
@@ -2199,6 +2245,10 @@ function AppContent() {
             <Route path="/commodity-hub"              element={<CommodityHubPage />} />
             <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
             <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
+            <Route path="/ceda-emission-factors"      element={<CedaEmissionFactorsPage />} />
+            <Route path="/big-climate-database"       element={<BigClimateDatabasePage />} />
+            <Route path="/data-capture-hub"           element={<DataCaptureHubPage />} />
+            <Route path="/reference-data-explorer"  element={<ReferenceDataExplorerPage />} />
             {/* Sprint AI — Corporate Decarbonisation & SBTi Intelligence */}
             <Route path="/decarbonisation-hub"         element={<DecarbonisationHubPage />} />
             <Route path="/sbti-target-setter"          element={<SbtiTargetSetterPage />} />
@@ -2669,6 +2719,17 @@ function AppContent() {
             <Route path="/pipeline-dashboard"    element={<PipelineDashboardPage />} />
             <Route path="/csrd-ixbrl"            element={<CSRDiXBRLPage />} />
             <Route path="/company-profiles"      element={<CompanyProfilesPage />} />
+            <Route path="/pitch"                  element={<ClientPitchPage />} />
+            {/* India Regulatory Intelligence */}
+            <Route path="/rbi-climate-risk"       element={<RbiClimateRiskPage />} />
+            <Route path="/india-ccts"             element={<IndiaCctsPage />} />
+            {/* Sustainability Reporting Intelligence */}
+            <Route path="/sustainability-report-builder" element={<SustainabilityReportBuilderPage />} />
+            <Route path="/esrs-datapoint-navigator" element={<EsrsDatapointNavigatorPage />} />
+            <Route path="/sector-sustainability-benchmark" element={<SectorSustainabilityBenchmarkPage />} />
+            <Route path="/report-quality-engine" element={<ReportQualityEnginePage />} />
+            <Route path="/metrics-data-architecture" element={<MetricsDataArchitecturePage />} />
+            <Route path="/narrative-intelligence" element={<NarrativeIntelligencePage />} />
             <Route path="*" element={<Dashboard />} />
           </Routes>
             </Suspense>
@@ -2688,6 +2749,10 @@ export default function App() {
         <PortfolioProvider>
           <CarbonCreditProvider>
           <ClimateRiskProvider>
+          <CedaProvider>
+          <BigClimateDbProvider>
+          <DataCaptureProvider>
+          <ReferenceDataProvider>
           <BrowserRouter>
             <AuthProvider>
               <GuidedModeProvider>
@@ -2697,6 +2762,10 @@ export default function App() {
               </GuidedModeProvider>
             </AuthProvider>
           </BrowserRouter>
+          </ReferenceDataProvider>
+          </DataCaptureProvider>
+          </BigClimateDbProvider>
+          </CedaProvider>
           </ClimateRiskProvider>
           </CarbonCreditProvider>
         </PortfolioProvider>

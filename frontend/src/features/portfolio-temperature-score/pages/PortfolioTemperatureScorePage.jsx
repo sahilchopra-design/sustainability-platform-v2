@@ -5,6 +5,8 @@ import {
   LineChart, Line, CartesianGrid,
 } from 'recharts';
 import { TEMPERATURE_PATHWAYS } from '../../../data/referenceData';
+import { isIndiaMode, adaptForTransitionRisk } from '../../../data/IndiaDataAdapter';
+import PortfolioUploader from '../../../components/PortfolioUploader';
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',blue:'#2563eb',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -34,7 +36,7 @@ const SBTI_STATUSES = ['Approved','Committed','No target'];
 const ENG_STATUSES  = ['Active','Pending','Not started'];
 
 // 60 holdings
-const ALL_HOLDINGS = Array.from({length:60}, (_,i) => {
+const _DEFAULT_ALL_HOLDINGS = Array.from({length:60}, (_,i) => {
   const companies = [
     'Shell plc','BP plc','TotalEnergies','Chevron Corp','ExxonMobil',
     'NextEra Energy','Orsted A/S','Iberdrola','Enel SpA','RWE AG',
@@ -92,6 +94,15 @@ const ALL_HOLDINGS = Array.from({length:60}, (_,i) => {
     sbtiDelta: +(sr(s*59) * 0.4).toFixed(2),
   };
 });
+// ── India Dataset Integration ──
+const ALL_HOLDINGS = isIndiaMode() ? adaptForTransitionRisk().slice(0, 60).map((c, i) => ({
+  id: i, company: c.name, sector: c.sector, country: 'IND', weight: +(100 / 60).toFixed(2),
+  temp: +c.temperatureAlignment_c, sbti: c.sbtiStatus === '1.5°C' ? 'Approved' : c.sbtiStatus === '2°C' ? 'Committed' : 'No target',
+  nearYear: 2028, nzYear: 2050, engagement: c.engagementStatus === 'Active' ? 'Active' : c.engagementStatus === 'Monitoring' ? 'Pending' : 'Not started',
+  lastEng: '2025-12-01', emissions: [c.carbonIntensity * 1.2, c.carbonIntensity, c.carbonIntensity * 0.85],
+  sectorPath: [c.carbonIntensity * 0.9, c.carbonIntensity * 0.7, c.carbonIntensity * 0.5],
+  notes: ['India BRSR disclosure reviewed.'], sbtiDelta: +(sr(i * 59) * 0.4).toFixed(2),
+})) : _DEFAULT_ALL_HOLDINGS;
 
 // PACTA sectors
 const PACTA_SECTORS = [
@@ -743,8 +754,11 @@ function EngagementTab() {
     return diff >= 0 && diff <= calDays;
   }).sort((a,b) => a.nextAction.localeCompare(b.nextAction));
 
-  const divestTemp = divestSel.length === 0 ? 2.7 :
-    +(2.7 - divestSel.reduce((s,id) => {
+  // Use live portfolio temperature instead of hardcoded 2.7
+  const livePortfolioTemp = engagements.length > 0 ? engagements.reduce((s,e) => s + e.itr * e.weight / 100, 0) : 2.7;
+  const baseTemp = isNaN(livePortfolioTemp) || livePortfolioTemp <= 0 ? 2.7 : livePortfolioTemp;
+  const divestTemp = divestSel.length === 0 ? baseTemp :
+    +(baseTemp - divestSel.reduce((s,id) => {
       const e = engagements.find(x=>x.id===id);
       return s + (e ? e.tempGap * e.weight / 100 * 0.12 : 0);
     }, 0)).toFixed(2);
@@ -989,6 +1003,8 @@ export default function PortfolioTemperatureScorePage() {
   const [attribution,  setAttribution]  = useState('EVIC-weighted');
   const [scope3,       setScope3]       = useState(true);
   const [yearFilter,   setYearFilter]   = useState('Q4 2024');
+  const [showUploader, setShowUploader] = useState(false);
+  const [uploadedHoldings, setUploadedHoldings] = useState(null);
 
   const portfolioTemp = useMemo(() => {
     const base = METHODOLOGIES.find(m => m.id===methodology)?.temp ?? 2.7;
@@ -1008,6 +1024,18 @@ export default function PortfolioTemperatureScorePage() {
           PACTA · SBTi · TPI multi-methodology temperature assessment across 60 holdings
         </p>
       </div>
+
+      <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
+        <button onClick={()=>setShowUploader(s=>!s)} style={{background:showUploader?T.red:T.navy,color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>
+          {showUploader?'\u2715 Close':'Upload Portfolio'}
+        </button>
+      </div>
+      {showUploader&&<div style={{marginBottom:16}}><PortfolioUploader
+        requiredFields={['name','sector','marketValue','scope1','scope2','temperature']}
+        optionalFields={['ticker','isin','country','scope3','esgScore']}
+        entityType="mixed"
+        onUpload={(rows)=>{setUploadedHoldings(rows.map((h,i)=>({id:i,company:h.name||`Company ${i+1}`,sector:SECTORS.includes(h.sector)?h.sector:'Energy',country:COUNTRIES.includes(h.country)?h.country:'USA',temp:Number(h.temperature)||2.5,weight:Number(h.weight)||+(100/Math.max(1,rows.length)).toFixed(2),scope1:Number(h.scope1)||0,scope2:Number(h.scope2)||0,scope3:Number(h.scope3)||0,sbtiStatus:SBTI_STATUSES[0],engStatus:ENG_STATUSES[2],nearTarget:2030,nzTarget:2050,lastEngagement:'2026-01-01',emissions:[Number(h.scope1)||200,Number(h.scope1)*0.85||170,Number(h.scope1)*0.7||140],sectorPath:[150,130,100],notes:['Uploaded holding.','',''],sbtiDelta:-0.2})));setShowUploader(false);}}
+      /></div>}
 
       {/* Tab bar */}
       <div style={{ display:'flex', gap:4, marginBottom:24, borderBottom:`2px solid ${T.border}`, paddingBottom:0 }}>

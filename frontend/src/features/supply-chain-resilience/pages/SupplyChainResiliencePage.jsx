@@ -30,7 +30,7 @@ const NODES=Array.from({length:100},(_,i)=>{const country=COUNTRIES[i%30];
 const QUARTERS=['Q1 2023','Q2 2023','Q3 2023','Q4 2023','Q1 2024','Q2 2024','Q3 2024','Q4 2024','Q1 2025','Q2 2025','Q3 2025','Q4 2025'];
 const DISRUPTION_HISTORY=QUARTERS.map((q,qi)=>({quarter:q,events:Math.floor(2+sr(qi*77)*12),costM:Math.round(10+sr(qi*33)*200),avgRecoveryDays:Math.round(5+sr(qi*55)*45),affectedNodes:Math.floor(3+sr(qi*99)*25)}));
 
-const COUNTRY_HAZARD_MAP=COUNTRIES.map((c,ci)=>{const row={country:c};HAZARDS.forEach((h,hi)=>{row[h]=Math.round(5+sr(ci*100+hi*17)*90);});row.composite=Math.round(HAZARDS.reduce((s,h)=>s+row[h],0)/HAZARDS.length);return row;});
+const COUNTRY_HAZARD_MAP=COUNTRIES.map((c,ci)=>{const row={country:c};HAZARDS.forEach((h,hi)=>{row[h]=Math.round(5+sr(ci*100+hi*17)*90);});row.composite=Math.round(HAZARDS.reduce((s,h)=>s+row[h],0)/ Math.max(1, HAZARDS.length));return row;});
 
 const SECTOR_VULN=SECTORS.map((s,si)=>({sector:s,vulnerability:Math.round(20+sr(si*61)*75),exposure:Math.round(15+sr(si*43)*80),adaptationGap:Math.round(10+sr(si*89)*60)}));
 
@@ -51,7 +51,7 @@ function Tab1({nodes,onSelect,selected}){
   const sorted=useMemo(()=>{let f=[...nodes];if(filterCountry!=='All')f=f.filter(n=>n.country===filterCountry);if(filterType!=='All')f=f.filter(n=>n.type===filterType);f.sort((a,b)=>sortBy==='resilience'?a.resilience-b.resilience:b.criticality-a.criticality);return f;},[nodes,sortBy,filterCountry,filterType]);
   const distData=useMemo(()=>{const bins=Array.from({length:10},(_,i)=>({range:`${i*10}-${i*10+10}`,count:0}));nodes.forEach(n=>{const bi=Math.min(Math.floor(n.resilience/10),9);bins[bi].count++;});return bins;},[nodes]);
   const top10=useMemo(()=>[...nodes].sort((a,b)=>a.resilience-b.resilience).slice(0,10),[nodes]);
-  const avgResilience=Math.round(nodes.reduce((s,n)=>s+n.resilience,0)/nodes.length);
+  const avgResilience=Math.round(nodes.reduce((s,n)=>s+n.resilience,0)/ Math.max(1, nodes.length));
   const criticalCount=nodes.filter(n=>n.resilience<30).length;
   return(<div>
     <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
@@ -143,7 +143,7 @@ function Tab2({nodes}){
       const affectedCompanies=[...companySet].map(ci=>{const co=COMPANIES[ci];const revImpact=Math.round(co.revenue*severity*0.03*(duration/30));return{...co,revImpact,recoveryDays:Math.round(10+sr(ci*severity)*60)};}).sort((a,b)=>b.revImpact-a.revImpact);
       const totalRevAtRisk=affectedCompanies.reduce((s,c)=>s+c.revImpact,0);
       const eal=Math.round(totalRevAtRisk*0.15);
-      setResults({affected,affectedCompanies,totalRevAtRisk,eal,avgRecovery:affectedCompanies.length?Math.round(affectedCompanies.reduce((s,c)=>s+c.recoveryDays,0)/affectedCompanies.length):0});
+      setResults({affected,affectedCompanies,totalRevAtRisk,eal,avgRecovery:affectedCompanies.length?Math.round(affectedCompanies.reduce((s,c)=>s+c.recoveryDays,0)/ Math.max(1, affectedCompanies.length)):0});
       setRunning(false);
     },3000);
   },[nodes,hazard,severity,duration,location]);
@@ -234,9 +234,9 @@ function Tab3(){
   const [selHazard,setSelHazard]=useState(null);
   const multiplier=scenario==='RCP 8.5'?1.35:1.0;
   const horizonMult=horizon===2040?1.15:horizon===2050?1.35:1.0;
-  const adjustedCountryData=useMemo(()=>COUNTRY_HAZARD_MAP.map(row=>{const adj={country:row.country};HAZARDS.forEach(h=>{adj[h]=Math.min(100,Math.round(row[h]*multiplier*horizonMult));});adj.composite=Math.round(HAZARDS.reduce((s,h)=>s+adj[h],0)/HAZARDS.length);return adj;}),[multiplier,horizonMult]);
-  const companyPhysicalRisk=useMemo(()=>COMPANIES.map(c=>{const cNodes=NODES.filter(n=>n.companyLinks.includes(c.id));const avgExposure=cNodes.length?Math.round(cNodes.reduce((s,n)=>s+n.hazards.reduce((hs,h)=>hs+h.score,0)/8,0)/cNodes.length):0;return{...c,physicalRisk:Math.round(avgExposure*multiplier*horizonMult),nodeCount:cNodes.length};}).sort((a,b)=>b.physicalRisk-a.physicalRisk),[multiplier,horizonMult]);
-  const compoundData=useMemo(()=>{const pairs=[['Drought','Heatwave'],['Flood','Cyclone'],['Sea-Level Rise','Cyclone'],['Wildfire','Drought'],['Water Stress','Heatwave'],['Flood','Water Stress']];return pairs.map(([h1,h2],i)=>{const countries=COUNTRY_HAZARD_MAP.filter(r=>r[h1]>50&&r[h2]>50);return{pair:`${h1} + ${h2}`,countriesExposed:countries.length,avgCompound:countries.length?Math.round(countries.reduce((s,r)=>s+(r[h1]+r[h2])/2,0)/countries.length):0};});},[]);
+  const adjustedCountryData=useMemo(()=>COUNTRY_HAZARD_MAP.map(row=>{const adj={country:row.country};HAZARDS.forEach(h=>{adj[h]=Math.min(100,Math.round(row[h]*multiplier*horizonMult));});adj.composite=Math.round(HAZARDS.reduce((s,h)=>s+adj[h],0)/ Math.max(1, HAZARDS.length));return adj;}),[multiplier,horizonMult]);
+  const companyPhysicalRisk=useMemo(()=>COMPANIES.map(c=>{const cNodes=NODES.filter(n=>n.companyLinks.includes(c.id));const avgExposure=cNodes.length?Math.round(cNodes.reduce((s,n)=>s+n.hazards.reduce((hs,h)=>hs+h.score,0)/8,0)/ Math.max(1, cNodes.length)):0;return{...c,physicalRisk:Math.round(avgExposure*multiplier*horizonMult),nodeCount:cNodes.length};}).sort((a,b)=>b.physicalRisk-a.physicalRisk),[multiplier,horizonMult]);
+  const compoundData=useMemo(()=>{const pairs=[['Drought','Heatwave'],['Flood','Cyclone'],['Sea-Level Rise','Cyclone'],['Wildfire','Drought'],['Water Stress','Heatwave'],['Flood','Water Stress']];return pairs.map(([h1,h2],i)=>{const countries=COUNTRY_HAZARD_MAP.filter(r=>r[h1]>50&&r[h2]>50);return{pair:`${h1} + ${h2}`,countriesExposed:countries.length,avgCompound:countries.length?Math.round(countries.reduce((s,r)=>s+(r[h1]+r[h2])/2,0)/ Math.max(1, countries.length)):0};});},[]);
   const adaptRecs=useMemo(()=>HAZARDS.map((h,i)=>{const recs=['Flood barriers & drainage infrastructure','Storm-resistant construction & early warning','Water recycling & drought-resistant crops','Cooling systems & heat action plans','Firebreaks & vegetation management','Coastal defenses & relocation planning','Foundation reinforcement & thermal monitoring','Water efficiency & alternative sourcing'];return{hazard:h,recommendation:recs[i],investmentM:Math.round(10+sr(i*44)*90),roi:Math.round(120+sr(i*66)*280)};}),[]);
 
   return(<div>
@@ -356,7 +356,7 @@ function Tab4({nodes}){
   return(<div>
     <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
       <KPI label="Nodes Needing Adaptation" value={nodes.filter(n=>n.resilience<50).length} color={T.amber}/>
-      <KPI label="Avg Insurance Gap" value={`$${insuranceGaps.length?Math.round(insuranceGaps.reduce((s,g)=>s+g.gap,0)/insuranceGaps.length):0}M`} color={T.red}/>
+      <KPI label="Avg Insurance Gap" value={`$${insuranceGaps.length?Math.round(insuranceGaps.reduce((s,g)=>s+g.gap,0)/ Math.max(1, insuranceGaps.length)):0}M`} color={T.red}/>
       <KPI label="Adaptation Budget" value={`$${totalCost}M`} sub="current config"/>
       <KPI label="Projected ROI" value={`${roi}%`} color={roi>100?T.green:T.amber}/>
     </div>

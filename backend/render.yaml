@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: a2-risk-analytics-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "https://risk-analysis-7.emergent.host,http://localhost:3000"
+      - key: REQUIRE_AUTH
+        value: "true"
+    healthCheckPath: /health
+    plan: free

@@ -100,8 +100,8 @@ const stageColor = s=>s===1?T.green:s===2?T.amber:T.red;
 
 /* ── Tab 1: VaR Dashboard ───────────────────────────────────────────────── */
 const VarDashboard = () => {
-  const avgBase = +(ENTITIES.reduce((s,e)=>s+e.varBase,0)/ENTITIES.length).toFixed(4);
-  const avgAdj  = +(ENTITIES.reduce((s,e)=>s+e.varAdj,0)/ENTITIES.length).toFixed(4);
+  const avgBase = +(ENTITIES.reduce((s,e)=>s+e.varBase,0)/ Math.max(1, ENTITIES.length)).toFixed(4);
+  const avgAdj  = +(ENTITIES.reduce((s,e)=>s+e.varAdj,0)/ Math.max(1, ENTITIES.length)).toFixed(4);
   const maxDelta= Math.max(...ENTITIES.map(e=>e.varDelta));
 
   const sectorVar = SECTORS.map(s=>{
@@ -112,7 +112,7 @@ const VarDashboard = () => {
   return (
     <div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:20}}>
-        {[{label:"Avg Baseline VaR",value:(avgBase*100).toFixed(2)+"%",color:T.navy},{label:"Avg Adjusted VaR",value:(avgAdj*100).toFixed(2)+"%",color:T.red},{label:"Max VaR Uplift",value:(maxDelta*100).toFixed(2)+"%",color:T.amber},{label:"Avg CRP (bps)",value:Math.round(ENTITIES.reduce((s,e)=>s+e.crp,0)/ENTITIES.length*10000),color:T.purple}]
+        {[{label:"Avg Baseline VaR",value:(avgBase*100).toFixed(2)+"%",color:T.navy},{label:"Avg Adjusted VaR",value:(avgAdj*100).toFixed(2)+"%",color:T.red},{label:"Max VaR Uplift",value:(maxDelta*100).toFixed(2)+"%",color:T.amber},{label:"Avg CRP (bps)",value:Math.round(ENTITIES.reduce((s,e)=>s+e.crp,0)/ Math.max(1, ENTITIES.length)*10000),color:T.purple}]
           .map(m=>card(<><div style={{fontSize:11,color:T.slate,marginBottom:6}}>{m.label}</div><div style={{fontSize:22,fontWeight:700,color:m.color,fontFamily:T.mono}}>{m.value}</div></>))}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:20}}>
@@ -163,7 +163,7 @@ const VarDashboard = () => {
 
 /* ── Tab 2: WACC & LCR ──────────────────────────────────────────────────── */
 const WaccLcr = () => {
-  const avgBps = Math.round(ENTITIES.reduce((s,e)=>s+e.waccBps,0)/ENTITIES.length);
+  const avgBps = Math.round(ENTITIES.reduce((s,e)=>s+e.waccBps,0)/ Math.max(1, ENTITIES.length));
   const lcrBreached = ENTITIES.filter(e=>e.lcr<100).length;
 
   const waccData = [...ENTITIES].sort((a,b)=>b.waccBps-a.waccBps).slice(0,15).map(e=>({name:e.name.slice(-5),baseline:(e.waccBaseline*100).toFixed(2),adjusted:(e.waccAdj*100).toFixed(2),bps:e.waccBps}));
@@ -172,7 +172,7 @@ const WaccLcr = () => {
   return (
     <div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:20}}>
-        {[{label:"Avg WACC Uplift (bps)",value:avgBps,color:T.purple},{label:"Max WACC Uplift (bps)",value:Math.max(...ENTITIES.map(e=>e.waccBps)),color:T.red},{label:"LCR < 100% (breached)",value:lcrBreached,color:T.amber},{label:"Avg LCR",value:`${+(ENTITIES.reduce((s,e)=>s+e.lcr,0)/ENTITIES.length).toFixed(1)}%`,color:T.green}]
+        {[{label:"Avg WACC Uplift (bps)",value:avgBps,color:T.purple},{label:"Max WACC Uplift (bps)",value:Math.max(...ENTITIES.map(e=>e.waccBps)),color:T.red},{label:"LCR < 100% (breached)",value:lcrBreached,color:T.amber},{label:"Avg LCR",value:`${+(ENTITIES.reduce((s,e)=>s+e.lcr,0)/ Math.max(1, ENTITIES.length)).toFixed(1)}%`,color:T.green}]
           .map(m=>card(<><div style={{fontSize:11,color:T.slate,marginBottom:6}}>{m.label}</div><div style={{fontSize:22,fontWeight:700,color:m.color,fontFamily:T.mono}}>{m.value}</div></>))}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:20}}>

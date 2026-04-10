@@ -152,7 +152,7 @@ function computePortfolioMetrics(holdings) {
     const sector = SECTOR_MAP[h.gics_sector || h.sector || 'Financials'] || 'Industry';
     return esg > 55 && ['Energy', 'ICT', 'Buildings'].includes(sector);
   }).reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
-  const avgEsg = holdings.reduce((s, h) => s + (h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '') % 997) * 50)), 0) / holdings.length;
+  const avgEsg = holdings.length ? holdings.reduce((s, h) => s + (h.esg_score || (30 + seed(hashStr(h.isin || h.company_name || '') % 997) * 50)), 0) / holdings.length : 0;
   const fossilHoldings = holdings.filter(h => {
     const sector = h.gics_sector || h.sector || '';
     return ['Energy', 'Oil & Gas', 'Coal'].some(s => sector.includes(s)) && seed(hashStr(h.isin || '') % 997 + 3) > 0.4;
@@ -160,8 +160,8 @@ function computePortfolioMetrics(holdings) {
   const fossilPct = fossilHoldings.reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
   const weaponsPct = holdings.filter(h => seed(hashStr(h.isin || '') % 997 + 17) > 0.97).reduce((s, h) => s + normalise(h.weight || (100 / holdings.length)), 0);
   const dnshCompany = holdings.filter(h => (h.esg_score || 50) > 48);
-  const dnshPct = (dnshCompany.length / holdings.length) * 100;
-  const govPct = holdings.filter(h => (h.esg_score || 50) > 42).length / holdings.length * 100;
+  const dnshPct = holdings.length ? (dnshCompany.length / holdings.length) * 100 : 0;
+  const govPct = holdings.length ? holdings.filter(h => (h.esg_score || 50) > 42).length / holdings.length * 100 : 0;
   const paiCovered = Math.min(14, Math.round(avgEsg / 7));
   const exclusionScreens = fossilPct < 20 && weaponsPct < 1;
   const esgIntegration = avgEsg > 40;
@@ -275,7 +275,7 @@ const SfdrClassificationPage = () => {
       const h = hashStr(c.isin || c.company_name || 'X') % 997;
       const s = seed(h);
       const esg = c.esg_score != null ? c.esg_score : 30 + s * 50;
-      const weight = c.weight || (100 / portfolio.length);
+      const weight = c.weight || (100 / Math.max(1, portfolio.length));
       const revenue = c.revenue_usd_mn || (c.revenue_inr_cr ? c.revenue_inr_cr * 0.12 : 500);
       const ghg = c.ghg_intensity_tco2e_per_mn || (50 + s * 400);
       const sbti = c.sbti_committed || s > 0.55;
@@ -348,10 +348,10 @@ const SfdrClassificationPage = () => {
         case 'PAI-7': value = holdings.filter(h => seed(hashStr(h.isin || '') % 997 + 11) > 0.85).length.toString(); yoy = 0; break;
         case 'PAI-8': value = (12 + s2 * 80).toFixed(0); yoy = -6.3; break;
         case 'PAI-9': value = (5 + s2 * 40).toFixed(0); yoy = -3.7; break;
-        case 'PAI-10': value = holdings.filter(h => h.ungcViolation).length / holdings.length * 100; value = (+value).toFixed(1); yoy = -0.8; break;
-        case 'PAI-11': value = (holdings.filter(h => seed(hashStr(h.isin || '') % 997 + 21) > 0.75).length / holdings.length * 100).toFixed(1); yoy = -2.0; break;
-        case 'PAI-12': value = (holdings.reduce((s, h) => s + h.genderPayGap, 0) / holdings.length).toFixed(1); yoy = -0.5; break;
-        case 'PAI-13': value = (holdings.reduce((s, h) => s + h.boardDiversity, 0) / holdings.length).toFixed(1); yoy = +1.8; break;
+        case 'PAI-10': value = holdings.length ? holdings.filter(h => h.ungcViolation).length / holdings.length * 100 : 0; value = (+value).toFixed(1); yoy = -0.8; break;
+        case 'PAI-11': value = (holdings.length ? holdings.filter(h => seed(hashStr(h.isin || '') % 997 + 21) > 0.75).length / holdings.length * 100 : 0).toFixed(1); yoy = -2.0; break;
+        case 'PAI-12': value = (holdings.length ? holdings.reduce((s, h) => s + h.genderPayGap, 0) / holdings.length : 0).toFixed(1); yoy = -0.5; break;
+        case 'PAI-13': value = (holdings.length ? holdings.reduce((s, h) => s + h.boardDiversity, 0) / holdings.length : 0).toFixed(1); yoy = +1.8; break;
         case 'PAI-14': value = metrics.weaponsPct.toFixed(2); yoy = 0; break;
         default: value = (10 + s2 * 50).toFixed(1); yoy = -1.0;
       }

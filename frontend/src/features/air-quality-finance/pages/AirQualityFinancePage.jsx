@@ -119,7 +119,7 @@ export default function AirQualityFinancePage(){
     const totalMort=CITIES.reduce((s,c)=>s+c.mortalityCostM,0);
     const totalMorb=CITIES.reduce((s,c)=>s+c.morbidityCostM,0);
     const totalDALYs=CITIES.reduce((s,c)=>s+c.dalys,0);
-    const avgProdLoss=+(CITIES.reduce((s,c)=>s+c.prodLossPct,0)/CITIES.length).toFixed(1);
+    const avgProdLoss=+(CITIES.length?CITIES.reduce((s,c)=>s+c.prodLossPct,0)/CITIES.length:0).toFixed(1);
     return{totalMort,totalMorb,totalDALYs,avgProdLoss};
   },[]);
 
@@ -132,9 +132,9 @@ export default function AirQualityFinancePage(){
   const renderTab0=()=>(
     <div>
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-        {kpiBox('WHO Compliant',`${whoCompliant}/${CITIES.length}`,`${Math.floor(whoCompliant/CITIES.length*100)}% of cities`,T.green)}
-        {kpiBox('Avg PM2.5',Math.floor(CITIES.reduce((s,c)=>s+c.pm25,0)/CITIES.length)+'ug/m3','Global mean (WHO limit: 15)',T.red)}
-        {kpiBox('Avg NO2',Math.floor(CITIES.reduce((s,c)=>s+c.no2,0)/CITIES.length)+'ug/m3','WHO limit: 25',T.amber)}
+        {kpiBox('WHO Compliant',`${whoCompliant}/${CITIES.length}`,`${CITIES.length?Math.floor(whoCompliant/CITIES.length*100):0}% of cities`,T.green)}
+        {kpiBox('Avg PM2.5',(CITIES.length?Math.floor(CITIES.reduce((s,c)=>s+c.pm25,0)/CITIES.length):0)+'ug/m3','Global mean (WHO limit: 15)',T.red)}
+        {kpiBox('Avg NO2',(CITIES.length?Math.floor(CITIES.reduce((s,c)=>s+c.no2,0)/CITIES.length):0)+'ug/m3','WHO limit: 25',T.amber)}
         {kpiBox('Severe Cities',CITIES.filter(c=>c.tier==='Severe').length,'>100 ug/m3 PM2.5',T.red)}
       </div>
       <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}>
@@ -183,7 +183,7 @@ export default function AirQualityFinancePage(){
       <div style={card({marginBottom:20})}>
         <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Air Quality Trend (12 Quarters)</div>
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={QUARTERS.map((q,qi)=>({q,avgPM25:Math.floor(CITIES.reduce((s,c)=>s+c.qTrend[qi].pm25,0)/CITIES.length),avgNO2:Math.floor(CITIES.reduce((s,c)=>s+c.qTrend[qi].no2,0)/CITIES.length)}))} margin={{top:5,right:20,bottom:5,left:10}}>
+          <AreaChart data={QUARTERS.map((q,qi)=>({q,avgPM25:CITIES.length?Math.floor(CITIES.reduce((s,c)=>s+c.qTrend[qi].pm25,0)/CITIES.length):0,avgNO2:CITIES.length?Math.floor(CITIES.reduce((s,c)=>s+c.qTrend[qi].no2,0)/CITIES.length):0}))} margin={{top:5,right:20,bottom:5,left:10}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
             <XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/>
             <YAxis tick={{fontSize:10,fill:T.textSec}}/>
@@ -245,9 +245,9 @@ export default function AirQualityFinancePage(){
     <div>
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Companies Tracked',COMPANIES.length,'Air quality exposure',T.navy)}
-        {kpiBox('Non-Compliant',COMPANIES.filter(c=>c.complianceStatus==='Non-Compliant').length,`${Math.floor(COMPANIES.filter(c=>c.complianceStatus==='Non-Compliant').length/COMPANIES.length*100)}%`,T.red)}
+        {kpiBox('Non-Compliant',COMPANIES.filter(c=>c.complianceStatus==='Non-Compliant').length,`${COMPANIES.length?Math.floor(COMPANIES.filter(c=>c.complianceStatus==='Non-Compliant').length/COMPANIES.length*100):0}%`,T.red)}
         {kpiBox('Total Abatement',`$${fmt(COMPANIES.reduce((s,c)=>s+c.abatementCostM,0)*1e6)}`,'Estimated cost',T.amber)}
-        {kpiBox('Avg Reg Risk',Math.floor(COMPANIES.reduce((s,c)=>s+c.regRisk,0)/COMPANIES.length)+'/100','Regulatory risk score',T.gold)}
+        {kpiBox('Avg Reg Risk',(COMPANIES.length?Math.floor(COMPANIES.reduce((s,c)=>s+c.regRisk,0)/COMPANIES.length):0)+'/100','Regulatory risk score',T.gold)}
       </div>
       <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
         <button onClick={()=>setSectorFilter('All')} style={{padding:'5px 14px',borderRadius:6,border:`1px solid ${sectorFilter==='All'?T.navy:T.border}`,background:sectorFilter==='All'?T.navy:'transparent',color:sectorFilter==='All'?'#fff':T.text,fontSize:12,fontWeight:600,cursor:'pointer'}}>All</button>
@@ -378,8 +378,8 @@ export default function AirQualityFinancePage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Abatement Options',ABATEMENTS.length,'Technologies assessed',T.navy)}
         {kpiBox('Green Bond Eligible',ABATEMENTS.filter(a=>a.greenBondEligible).length,'Of total technologies',T.green)}
-        {kpiBox('Avg Effectiveness',Math.floor(ABATEMENTS.reduce((s,a)=>s+a.effectivenessPct,0)/ABATEMENTS.length)+'%','Mean pollution reduction',T.sage)}
-        {kpiBox('Avg Payback',+(ABATEMENTS.reduce((s,a)=>s+a.paybackYrs,0)/ABATEMENTS.length).toFixed(1)+' yrs','Investment return period',T.gold)}
+        {kpiBox('Avg Effectiveness',(ABATEMENTS.length?Math.floor(ABATEMENTS.reduce((s,a)=>s+a.effectivenessPct,0)/ABATEMENTS.length):0)+'%','Mean pollution reduction',T.sage)}
+        {kpiBox('Avg Payback',+(ABATEMENTS.length?ABATEMENTS.reduce((s,a)=>s+a.paybackYrs,0)/ABATEMENTS.length:0).toFixed(1)+' yrs','Investment return period',T.gold)}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
         <div style={card()}>

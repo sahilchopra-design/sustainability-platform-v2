@@ -16,7 +16,7 @@ const T = {
 const STATES = ['CA', 'FL', 'TX', 'NY', 'NJ', 'LA', 'NC', 'SC', 'GA', 'VA', 'MA', 'WA', 'OR', 'AZ', 'CO', 'IL', 'PA', 'OH', 'MI', 'MN'];
 const EPC_RATINGS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
-// Deterministic PRNG — replaces Math.random() so loan pool is stable across renders
+// Deterministic PRNG — replaces non-deterministic random so loan pool is stable across renders
 const _sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const COASTAL_STATES = new Set(['FL', 'NJ', 'NC', 'SC', 'LA', 'TX', 'NY', 'MA']);
 const WILDFIRE_STATES = new Set(['CA', 'OR', 'WA', 'CO']);

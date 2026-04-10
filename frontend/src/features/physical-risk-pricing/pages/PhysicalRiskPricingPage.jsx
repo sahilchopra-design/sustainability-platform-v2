@@ -9,8 +9,10 @@ import {
 
 const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+// Platform-standard PRNG (deterministic, no Math.random)
+const sr = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; } return Math.abs(h); };
-const seededRandom = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
+const seededRandom = sr; // alias for backward compat
 
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ border: `1px solid ${accent ? '#059669' : '#e5e7eb'}`, borderRadius: 8, padding: '16px 20px', background: 'white' }}>

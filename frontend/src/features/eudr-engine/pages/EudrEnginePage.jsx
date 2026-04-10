@@ -85,10 +85,10 @@ function DueDiligenceAssessment(){
   }),[search,filterTier,filterCommodity]);
 
   const totals={high:SUPPLIERS.filter(s=>s.tier==='High Risk').length,std:SUPPLIERS.filter(s=>s.tier==='Standard Risk').length,low:SUPPLIERS.filter(s=>s.tier==='Low Risk').length};
-  const avgScore=Math.round(SUPPLIERS.reduce((a,s)=>a+s.score,0)/SUPPLIERS.length);
+  const avgScore=Math.round(SUPPLIERS.reduce((a,s)=>a+s.score,0)/ Math.max(1, SUPPLIERS.length));
   const compliant=SUPPLIERS.filter(s=>s.score>=70).length;
 
-  const articleCoverage=ARTICLES.map((art,ai)=>({name:art.split(':')[0],covered:SUPPLIERS.filter(s=>s.articles.includes(art)).length,pct:Math.round(SUPPLIERS.filter(s=>s.articles.includes(art)).length/SUPPLIERS.length*100)}));
+  const articleCoverage=ARTICLES.map((art,ai)=>({name:art.split(':')[0],covered:SUPPLIERS.filter(s=>s.articles.includes(art)).length,pct:Math.round(SUPPLIERS.filter(s=>s.articles.includes(art)).length/ Math.max(1, SUPPLIERS.length)*100)}));
 
   return(
     <div>

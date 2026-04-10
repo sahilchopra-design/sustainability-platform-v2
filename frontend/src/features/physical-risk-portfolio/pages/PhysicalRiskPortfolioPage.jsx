@@ -22,7 +22,9 @@ const REGIONS = ['North America', 'Europe', 'Asia-Pacific', 'LatAm', 'MENA'];
 const ASSET_CLASSES = ['Residential RE', 'Commercial RE', 'Infrastructure', 'Agriculture', 'Energy'];
 const SCENARIOS_MAP = { current: 1.0, ssp1_26: 1.15, ssp2_45: 1.35, ssp5_85: 1.68, ssp5_2100: 2.42 };
 
-const PORTFOLIO = Array.from({ length: 30 }, (_, i) => {
+import { isIndiaMode, adaptForPhysicalRisk } from '../../../data/IndiaDataAdapter';
+
+const _DEFAULT_PORTFOLIO = Array.from({ length: 30 }, (_, i) => {
   const region = REGIONS[i % REGIONS.length];
   const assetClass = ASSET_CLASSES[i % ASSET_CLASSES.length];
   const value = Math.round((sr(i * 17) * 400 + 100) * 1e6);
@@ -33,6 +35,14 @@ const PORTFOLIO = Array.from({ length: 30 }, (_, i) => {
   const insured = sr(i * 7) > 0.35;
   return { id: i + 1, name: `${assetClass} ${String.fromCharCode(65 + i)}`, region, assetClass, value, ...perilScores, compositeHazard, aal, pml100, insured };
 });
+// ── India Dataset Integration ──
+const PORTFOLIO = isIndiaMode() ? adaptForPhysicalRisk().slice(0, 30).map((c, i) => ({
+  id: i + 1, name: c.name, region: c.region || 'India', assetClass: ASSET_CLASSES[i % ASSET_CLASSES.length],
+  value: c.exposureUsd || Math.round((sr(i * 17) * 400 + 100) * 1e6),
+  ...Object.fromEntries(PERILS.map((p, j) => [p, Math.round(c.hazards?.[p.toLowerCase()] || sr(i * 9 + j) * 80 + 15)])),
+  compositeHazard: Math.round(c.physicalRiskScore || 50), aal: Math.round((c.exposureUsd || 1e8) * 0.002),
+  pml100: Math.round((c.exposureUsd || 1e8) * 0.06), insured: c.insuredPct > 20,
+})) : _DEFAULT_PORTFOLIO;
 
 const REGULATORY_THRESHOLDS = [
   { name: 'ECB CST 2022', metric: 'PML 100yr / Tier 1', threshold: 0.05, description: 'Add-on required if > 5% of Tier 1 Capital' },

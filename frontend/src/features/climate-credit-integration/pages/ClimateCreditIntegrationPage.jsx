@@ -165,7 +165,7 @@ export default function ClimateCreditIntegrationPage() {
     if (sector) return HAZARDS.map(h => ({ subject: h, score: sector[h], fullMark: 100 }));
     return HAZARDS.map(h => ({
       subject: h,
-      score: Math.round(HAZARD_MATRIX.reduce((s, r) => s + r[h], 0) / HAZARD_MATRIX.length),
+      score: Math.round(HAZARD_MATRIX.reduce((s, r) => s + r[h], 0) / Math.max(1, HAZARD_MATRIX.length)),
       fullMark: 100,
     }));
   }, [sectorFilter]);
@@ -331,7 +331,7 @@ export default function ClimateCreditIntegrationPage() {
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={HAZARD_MATRIX.map(r => ({
                   sector: r.sector.replace(' & ',' /'),
-                  avg: Math.round(HAZARDS.reduce((s,h)=>s+r[h],0)/HAZARDS.length),
+                  avg: Math.round(HAZARDS.reduce((s,h)=>s+r[h],0)/ Math.max(1, HAZARDS.length)),
                 }))}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="sector" tick={{ fontSize: 9 }} />
@@ -339,7 +339,7 @@ export default function ClimateCreditIntegrationPage() {
                   <Tooltip formatter={v=>[v,'Avg Hazard']} />
                   <Bar dataKey="avg" radius={[3,3,0,0]}>
                     {HAZARD_MATRIX.map((r,i) => {
-                      const avg = Math.round(HAZARDS.reduce((s,h)=>s+r[h],0)/HAZARDS.length);
+                      const avg = Math.round(HAZARDS.reduce((s,h)=>s+r[h],0)/ Math.max(1, HAZARDS.length));
                       return <Cell key={i} fill={avg>65?T.red:avg>45?T.amber:T.teal} />;
                     })}
                   </Bar>
@@ -362,7 +362,7 @@ export default function ClimateCreditIntegrationPage() {
               </thead>
               <tbody>
                 {HAZARD_MATRIX.map((row, i) => {
-                  const avg = Math.round(HAZARDS.reduce((s,h)=>s+row[h],0)/HAZARDS.length);
+                  const avg = Math.round(HAZARDS.reduce((s,h)=>s+row[h],0)/ Math.max(1, HAZARDS.length));
                   return (
                     <tr key={row.sector} style={{ background: i%2===0?'#fff':T.cream+'80', borderBottom:`1px solid ${T.navy}11` }}>
                       <td style={{ padding:'9px 12px', fontWeight:600, color:T.navy }}>{row.sector}</td>

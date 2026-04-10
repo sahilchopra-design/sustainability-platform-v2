@@ -56,11 +56,11 @@ export default function CrossEntityIntelligenceDashboardPage() {
 
   const avgByType = useMemo(() => ENTITY_TYPES.map(type => {
     const ents = ENTITIES.filter(e=>e.type===type);
-    const avgScores = L1_TOPICS.map((_,ti) => Math.round(ents.reduce((a,e)=>a+e.scores[ti],0)/ents.length));
-    return { type, avg: Math.round(avgScores.reduce((a,b)=>a+b,0)/avgScores.length), scores: avgScores, count: ents.length };
+    const avgScores = L1_TOPICS.map((_,ti) => Math.round(ents.reduce((a,e)=>a+e.scores[ti],0)/ Math.max(1, ents.length)));
+    return { type, avg: Math.round(avgScores.reduce((a,b)=>a+b,0)/ Math.max(1, avgScores.length)), scores: avgScores, count: ents.length };
   }), []);
 
-  const platformAvg = useMemo(() => Math.round(ENTITIES.reduce((a,e)=>a+e.scores.reduce((b,c)=>b+c,0)/8,0)/ENTITIES.length), []);
+  const platformAvg = useMemo(() => Math.round(ENTITIES.reduce((a,e)=>a+e.scores.reduce((b,c)=>b+c,0)/8,0)/ Math.max(1, ENTITIES.length)), []);
 
   const heatMapData = useMemo(() => ENTITIES.map(e => ({ name:e.name, type:e.type, scores: Object.fromEntries(L1_TOPICS.map((t,i)=>[t,e.scores[i]])) })), []);
 

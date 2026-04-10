@@ -77,18 +77,18 @@ export default function WorkerHeatStressPage(){
   const topKPIs=useMemo(()=>({
     totalOutdoor:COMPANIES.reduce((s,c)=>s+c.outdoorWorkers,0),
     criticalCount:COMPANIES.filter(c=>c.riskTier==='Critical').length,
-    avgWBGT:+(COMPANIES.reduce((s,c)=>s+c.wbgtExposureHrs,0)/COMPANIES.length).toFixed(0),
-    avgProdLoss:+(COMPANIES.reduce((s,c)=>s+c.prodLossPct,0)/COMPANIES.length).toFixed(1)
+    avgWBGT:+(COMPANIES.reduce((s,c)=>s+c.wbgtExposureHrs,0)/ Math.max(1, COMPANIES.length)).toFixed(0),
+    avgProdLoss:+(COMPANIES.reduce((s,c)=>s+c.prodLossPct,0)/ Math.max(1, COMPANIES.length)).toFixed(1)
   }),[]);
 
   const sectorBenchmarks=useMemo(()=>SECTORS.map(sec=>{
     const sc=COMPANIES.filter(c=>c.sector===sec);
     if(!sc.length) return null;
-    return{sector:sec,count:sc.length,avgOutdoorPct:Math.floor(sc.reduce((s,c)=>s+c.outdoorPct,0)/sc.length),
-      avgWBGT:Math.floor(sc.reduce((s,c)=>s+c.wbgtExposureHrs,0)/sc.length),
-      avgLitRisk:Math.floor(sc.reduce((s,c)=>s+c.litigationRisk,0)/sc.length),
+    return{sector:sec,count:sc.length,avgOutdoorPct:Math.floor(sc.reduce((s,c)=>s+c.outdoorPct,0)/ Math.max(1, sc.length)),
+      avgWBGT:Math.floor(sc.reduce((s,c)=>s+c.wbgtExposureHrs,0)/ Math.max(1, sc.length)),
+      avgLitRisk:Math.floor(sc.reduce((s,c)=>s+c.litigationRisk,0)/ Math.max(1, sc.length)),
       totalCostM:sc.reduce((s,c)=>s+c.annualCostM,0),
-      avgCompScore:Math.floor(sc.reduce((s,c)=>s+c.overallCompScore,0)/sc.length)};
+      avgCompScore:Math.floor(sc.reduce((s,c)=>s+c.overallCompScore,0)/ Math.max(1, sc.length))};
   }).filter(Boolean),[]);
 
   const gdpLossBySector=useMemo(()=>sectorBenchmarks.map(sb=>({sector:sb.sector,totalCostM:sb.totalCostM,avgLoss:+(COMPANIES.filter(c=>c.sector===sb.sector).reduce((s,c)=>s+c.prodLossPct,0)/sb.count).toFixed(1)})),[sectorBenchmarks]);
@@ -99,9 +99,9 @@ export default function WorkerHeatStressPage(){
 
   const regAgg=useMemo(()=>REGULATIONS.map(reg=>{
     const scores=COMPANIES.map(c=>c.regScores.find(r=>r.reg===reg)?.score||0);
-    const avg=Math.floor(scores.reduce((s,v)=>s+v,0)/scores.length);
+    const avg=Math.floor(scores.reduce((s,v)=>s+v,0)/ Math.max(1, scores.length));
     const compliant=scores.filter(s=>s>=70).length;
-    return{reg,avgScore:avg,compliantPct:Math.floor(compliant/scores.length*100),nonCompliant:scores.filter(s=>s<40).length};
+    return{reg,avgScore:avg,compliantPct:Math.floor(compliant/ Math.max(1, scores.length)*100),nonCompliant:scores.filter(s=>s<40).length};
   }),[]);
 
   const portfolioData=useMemo(()=>[...COMPANIES].sort((a,b)=>b.litigationRisk-a.litigationRisk).slice(0,30).map(c=>({
@@ -214,14 +214,14 @@ export default function WorkerHeatStressPage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Total Annual Cost',`$${fmt(COMPANIES.reduce((s,c)=>s+c.annualCostM,0)*1e6)}`,'Heat stress economic impact',T.red)}
         {kpiBox('Avg Prod Loss',topKPIs.avgProdLoss+'%','Across all companies',T.amber)}
-        {kpiBox('Highest Loss Sector',gdpLossBySector.sort((a,b)=>b.avgLoss-a.avgLoss)[0]?.sector||'-',`${gdpLossBySector.sort((a,b)=>b.avgLoss-a.avgLoss)[0]?.avgLoss}% avg`,T.red)}
-        {kpiBox('Shift Opt. Potential',`${(COMPANIES.reduce((s,c)=>s+c.shiftOpt.potentialSaving,0)/COMPANIES.length).toFixed(1)}%`,'Avg productivity gain',T.green)}
+        {kpiBox('Highest Loss Sector',[...gdpLossBySector].sort((a,b)=>b.avgLoss-a.avgLoss)[0]?.sector||'-',`${[...gdpLossBySector].sort((a,b)=>b.avgLoss-a.avgLoss)[0]?.avgLoss}% avg`,T.red)}
+        {kpiBox('Shift Opt. Potential',`${(COMPANIES.reduce((s,c)=>s+c.shiftOpt.potentialSaving,0)/ Math.max(1, COMPANIES.length)).toFixed(1)}%`,'Avg productivity gain',T.green)}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>GDP Loss by Sector ($M)</div>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={gdpLossBySector.sort((a,b)=>b.totalCostM-a.totalCostM)} layout="vertical" margin={{left:100,right:20,top:5,bottom:5}}>
+            <BarChart data={[...gdpLossBySector].sort((a,b)=>b.totalCostM-a.totalCostM)} layout="vertical" margin={{left:100,right:20,top:5,bottom:5}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="sector" type="category" tick={{fontSize:10,fill:T.textSec}} width={95}/>
@@ -246,10 +246,10 @@ export default function WorkerHeatStressPage(){
       <div style={card({marginBottom:20})}>
         <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Quarterly Productivity Trend (Top 10 Companies by Loss)</div>
         <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={QUARTERS.map((q,qi)=>({q,...Object.fromEntries(COMPANIES.sort((a,b)=>b.prodLossPct-a.prodLossPct).slice(0,10).map(c=>[c.name.split(' ')[0],c.qTrend[qi].prodLoss]))}))} margin={{top:5,right:20,bottom:5,left:10}}>
+          <LineChart data={QUARTERS.map((q,qi)=>({q,...Object.fromEntries([...COMPANIES].sort((a,b)=>b.prodLossPct-a.prodLossPct).slice(0,10).map(c=>[c.name.split(' ')[0],c.qTrend[qi].prodLoss]))}))} margin={{top:5,right:20,bottom:5,left:10}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/>
             <Tooltip contentStyle={{fontSize:12,borderRadius:8}}/><Legend wrapperStyle={{fontSize:10}}/>
-            {COMPANIES.sort((a,b)=>b.prodLossPct-a.prodLossPct).slice(0,10).map((c,i)=><Line key={i} type="monotone" dataKey={c.name.split(' ')[0]} stroke={[T.red,T.amber,T.gold,T.sage,T.navy,T.navyL,T.teal,'#9333ea','#0891b2','#be185d'][i]} strokeWidth={1.5} dot={false}/>)}
+            {[...COMPANIES].sort((a,b)=>b.prodLossPct-a.prodLossPct).slice(0,10).map((c,i)=><Line key={i} type="monotone" dataKey={c.name.split(' ')[0]} stroke={[T.red,T.amber,T.gold,T.sage,T.navy,T.navyL,T.teal,'#9333ea','#0891b2','#be185d'][i]} strokeWidth={1.5} dot={false}/>)}
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -260,7 +260,7 @@ export default function WorkerHeatStressPage(){
             <thead style={{position:'sticky',top:0,background:T.surface}}><tr>
               <th style={thStyle}>Company</th><th style={thStyle}>Sector</th><th style={thStyle}>Current Shift</th><th style={thStyle}>Optimal Shift</th><th style={thStyle}>Saving %</th><th style={thStyle}>Annual Cost ($M)</th>
             </tr></thead>
-            <tbody>{COMPANIES.sort((a,b)=>b.shiftOpt.potentialSaving-a.shiftOpt.potentialSaving).slice(0,20).map(c=>(<tr key={c.id}>
+            <tbody>{[...COMPANIES].sort((a,b)=>b.shiftOpt.potentialSaving-a.shiftOpt.potentialSaving).slice(0,20).map(c=>(<tr key={c.id}>
               <td style={{...tdStyle,fontWeight:600,fontSize:12}}>{c.name}</td><td style={tdStyle}>{c.sector}</td>
               <td style={{...tdStyle,fontFamily:T.mono,fontSize:11}}>{c.shiftOpt.currentShift}</td>
               <td style={{...tdStyle,fontFamily:T.mono,fontSize:11,color:T.green}}>{c.shiftOpt.optimalShift}</td>
@@ -277,7 +277,7 @@ export default function WorkerHeatStressPage(){
     <div>
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Standards Tracked',REGULATIONS.length,'Regulatory frameworks',T.navy)}
-        {kpiBox('Avg Compliance',Math.floor(regAgg.reduce((s,r)=>s+r.avgScore,0)/regAgg.length)+'/100','Across all standards',T.gold)}
+        {kpiBox('Avg Compliance',Math.floor(regAgg.reduce((s,r)=>s+r.avgScore,0)/ Math.max(1, regAgg.length))+'/100','Across all standards',T.gold)}
         {kpiBox('Non-Compliant Cos',COMPANIES.filter(c=>c.overallCompScore<40).length,'Score <40',T.red)}
         {kpiBox('Best Standard','ISO 7243',`${regAgg.find(r=>r.reg.includes('ISO'))?.compliantPct||0}% compliant`,T.green)}
       </div>
@@ -315,7 +315,7 @@ export default function WorkerHeatStressPage(){
             <thead style={{position:'sticky',top:0,background:T.surface}}><tr>
               <th style={thStyle}>Company</th><th style={thStyle}>Sector</th><th style={thStyle}>ILO</th><th style={thStyle}>OSHA</th><th style={thStyle}>EU Dir.</th><th style={thStyle}>Overall</th><th style={thStyle}>Lit Risk</th><th style={thStyle}>Status</th>
             </tr></thead>
-            <tbody>{COMPANIES.sort((a,b)=>a.overallCompScore-b.overallCompScore).slice(0,40).map(c=>(<tr key={c.id}>
+            <tbody>{[...COMPANIES].sort((a,b)=>a.overallCompScore-b.overallCompScore).slice(0,40).map(c=>(<tr key={c.id}>
               <td style={{...tdStyle,fontWeight:600,fontSize:12}}>{c.name}</td><td style={tdStyle}>{c.sector}</td>
               <td style={{...tdStyle,color:c.iloComplianceScore<40?T.red:T.text}}>{c.iloComplianceScore}</td>
               <td style={{...tdStyle,color:c.oshaComplianceScore<40?T.red:T.text}}>{c.oshaComplianceScore}</td>
@@ -335,7 +335,7 @@ export default function WorkerHeatStressPage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Portfolio Companies',COMPANIES.length,'Worker heat exposure tracked',T.navy)}
         {kpiBox('Critical Exposure',COMPANIES.filter(c=>c.engagementPriority==='Critical').length,'Engagement needed',T.red)}
-        {kpiBox('Avg ESG Integration',Math.floor(COMPANIES.reduce((s,c)=>s+c.esgIntegration,0)/COMPANIES.length)+'/100','Heat stress in ESG',T.gold)}
+        {kpiBox('Avg ESG Integration',Math.floor(COMPANIES.reduce((s,c)=>s+c.esgIntegration,0)/ Math.max(1, COMPANIES.length))+'/100','Heat stress in ESG',T.gold)}
         {kpiBox('Total At-Risk Workers',fmt(COMPANIES.reduce((s,c)=>s+c.outdoorWorkers,0)),'Outdoor/industrial',T.amber)}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
@@ -376,7 +376,7 @@ export default function WorkerHeatStressPage(){
               <th style={thStyle}>#</th><th style={thStyle}>Company</th><th style={thStyle}>Sector</th><th style={thStyle}>Country</th>
               <th style={thStyle}>Outdoor %</th><th style={thStyle}>Lit Risk</th><th style={thStyle}>ESG Score</th><th style={thStyle}>Compliance</th><th style={thStyle}>Priority</th>
             </tr></thead>
-            <tbody>{COMPANIES.sort((a,b)=>b.litigationRisk-a.litigationRisk).slice(0,50).map((c,i)=>(<tr key={c.id}>
+            <tbody>{[...COMPANIES].sort((a,b)=>b.litigationRisk-a.litigationRisk).slice(0,50).map((c,i)=>(<tr key={c.id}>
               <td style={tdStyle}>{i+1}</td><td style={{...tdStyle,fontWeight:600,fontSize:12}}>{c.name}</td>
               <td style={tdStyle}>{c.sector}</td><td style={{...tdStyle,fontFamily:T.mono,fontSize:11}}>{c.country}</td>
               <td style={tdStyle}>{c.outdoorPct}%</td>

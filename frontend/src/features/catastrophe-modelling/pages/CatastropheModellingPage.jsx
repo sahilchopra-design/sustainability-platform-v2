@@ -1,555 +1,1618 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,LineChart,Line,AreaChart,Area,Cell,Legend,ScatterChart,Scatter} from 'recharts';
+import React, { useState, useMemo, useCallback } from 'react';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  LineChart, Line, AreaChart, Area, Cell, Legend, ScatterChart, Scatter,
+  PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  ComposedChart, ReferenceLine
+} from 'recharts';
 
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-
-/* ── Constants ─────────────────────────────────────────── */
-const TABS=['Peril Dashboard','Portfolio Loss Analysis','Event Scenario Builder','Reinsurance Structure'];
-const PERILS=['Hurricane','Earthquake','Flood','Wildfire','Tornado','Hail','Winter Storm','Tsunami'];
-const PERIL_COLORS=[T.navy,T.red,T.sage,'#e97706',T.navyL,T.gold,'#6366f1','#0891b2'];
-const COUNTRIES=['United States','Japan','China','United Kingdom','Germany','Australia','Canada','Mexico','India','Brazil','France','Italy','Spain','Philippines','Indonesia','Thailand','Chile','New Zealand','Turkey','South Korea','Netherlands','Switzerland','Norway','Colombia','Peru','South Africa','Nigeria','Kenya','Vietnam','Bangladesh'];
-const REGIONS=['North America','Europe','Asia Pacific','Latin America','Africa','Middle East'];
-const ASSET_TYPES=['Commercial Property','Residential Property','Industrial','Infrastructure','Agriculture','Marine','Energy','Aviation'];
-const OCCUPANCY=['Office','Retail','Warehouse','Manufacturing','Hospital','School','Hotel','Mixed Use'];
-const CONSTRUCTION=['Steel Frame','Reinforced Concrete','Wood Frame','Masonry','Light Metal','Pre-Engineered'];
-
-/* ── Seeded Data Generation ────────────────────────────── */
-const ASSETS=Array.from({length:100},(_,i)=>{
-  const s=sr(i*7+1);const s2=sr(i*7+2);const s3=sr(i*7+3);const s4=sr(i*7+4);const s5=sr(i*7+5);const s6=sr(i*7+6);const s7=sr(i*7+7);
-  const country=COUNTRIES[Math.floor(s*COUNTRIES.length)];
-  const region=country==='United States'||country==='Canada'||country==='Mexico'?'North America':country==='United Kingdom'||country==='Germany'||country==='France'||country==='Italy'||country==='Spain'||country==='Netherlands'||country==='Switzerland'||country==='Norway'?'Europe':country==='Japan'||country==='China'||country==='India'||country==='Philippines'||country==='Indonesia'||country==='Thailand'||country==='South Korea'||country==='Australia'||country==='New Zealand'||country==='Vietnam'||country==='Bangladesh'?'Asia Pacific':country==='Brazil'||country==='Mexico'||country==='Chile'||country==='Colombia'||country==='Peru'?'Latin America':country==='South Africa'||country==='Nigeria'||country==='Kenya'?'Africa':'Middle East';
-  const tiv=Math.round(10+s2*490);
-  const primaryPeril=PERILS[Math.floor(s3*PERILS.length)];
-  const secondaryPeril=PERILS[Math.floor(s4*PERILS.length)];
-  const assetType=ASSET_TYPES[Math.floor(s5*ASSET_TYPES.length)];
-  const construction=CONSTRUCTION[Math.floor(s6*CONSTRUCTION.length)];
-  const occupancy=OCCUPANCY[Math.floor(s7*OCCUPANCY.length)];
-  const aal=+(tiv*0.002+s*tiv*0.008).toFixed(2);
-  const pml100=+(tiv*0.15+s2*tiv*0.35).toFixed(1);
-  const pml250=+(tiv*0.25+s3*tiv*0.45).toFixed(1);
-  const pml500=+(tiv*0.35+s4*tiv*0.55).toFixed(1);
-  const lat=+(s5*120-60).toFixed(2);const lon=+(s6*360-180).toFixed(2);
-  const vulnerability=Math.round(30+s7*70);
-  return {id:i+1,name:`Asset-${String(i+1).padStart(3,'0')}`,country,region,tiv,primaryPeril,secondaryPeril,assetType,construction,occupancy,aal,pml100,pml250,pml500,lat,lon,vulnerability};
-});
-
-const PERIL_STATS=PERILS.map((p,i)=>{
-  const assets=ASSETS.filter(a=>a.primaryPeril===p);
-  const totalTIV=assets.reduce((a,b)=>a+b.tiv,0);
-  const totalAAL=assets.reduce((a,b)=>a+b.aal,0);
-  const avgPML100=assets.length?assets.reduce((a,b)=>a+b.pml100,0)/assets.length:0;
-  const avgPML250=assets.length?assets.reduce((a,b)=>a+b.pml250,0)/assets.length:0;
-  const avgPML500=assets.length?assets.reduce((a,b)=>a+b.pml500,0)/assets.length:0;
-  const eventCount=Math.round(5+sr(i*13)*25);
-  const climateUplift=+(1.05+sr(i*17)*0.45).toFixed(2);
-  return {peril:p,color:PERIL_COLORS[i],assetCount:assets.length,totalTIV:Math.round(totalTIV),totalAAL:+totalAAL.toFixed(1),avgPML100:+avgPML100.toFixed(1),avgPML250:+avgPML250.toFixed(1),avgPML500:+avgPML500.toFixed(1),eventCount,climateUplift,lossRatio:+(0.3+sr(i*19)*0.5).toFixed(2)};
-});
-
-const OEP_CURVES=PERILS.map((p,pi)=>{
-  return [10,25,50,100,200,250,500,1000].map(rp=>{
-    const base=PERIL_STATS[pi].totalTIV;
-    const factor=0.02+Math.log10(rp)*0.08+sr(pi*31+rp)*0.03;
-    return {rp,loss:Math.round(base*factor),peril:p};
-  });
-});
-
-const AEP_CURVES=PERILS.map((p,pi)=>{
-  return [10,25,50,100,200,250,500,1000].map(rp=>{
-    const base=PERIL_STATS[pi].totalTIV;
-    const factor=0.015+Math.log10(rp)*0.06+sr(pi*37+rp)*0.02;
-    return {rp,loss:Math.round(base*factor),peril:p};
-  });
-});
-
-const HISTORICAL_LOSSES=Array.from({length:20},(_,i)=>{
-  const year=2005+i;
-  return {year:String(year),actual:Math.round(50+sr(i*41)*400),modelled:Math.round(60+sr(i*43)*380),insured:Math.round(30+sr(i*47)*250)};
-});
-
-/* ── Scenario data ────────────────────────────────────── */
-const SEVERITY_LEVELS=['Minor (Cat 1-2)','Moderate (Cat 3)','Severe (Cat 4)','Extreme (Cat 5)','Mega Event'];
-const SCENARIO_LOCATIONS=['Florida, US','California, US','Tokyo, Japan','London, UK','Sydney, AU','Mumbai, India','Houston, US','Manila, PH','Shanghai, CN','Mexico City, MX'];
-const CLIMATE_SSP=['SSP1-2.6 (Low)','SSP2-4.5 (Medium)','SSP3-7.0 (High)','SSP5-8.5 (Very High)'];
-
-/* ── Reinsurance data ─────────────────────────────────── */
-const TREATY_TYPES=['Quota Share','Surplus','Excess of Loss','Cat XL','Stop Loss','Aggregate XL'];
-const REINSURERS=['Munich Re','Swiss Re','Hannover Re','SCOR','Berkshire','Lloyd\'s','RenaissanceRe','Everest Re','PartnerRe','Arch Capital','Transatlantic','Odyssey Re','Fairfax','Markel','Axis Capital','RGA','Korean Re','China Re','General Re','Tokio Millennium'];
-const TREATIES=Array.from({length:40},(_,i)=>{
-  const s1=sr(i*53+1);const s2=sr(i*53+2);const s3=sr(i*53+3);const s4=sr(i*53+4);const s5=sr(i*53+5);
-  const type=TREATY_TYPES[Math.floor(s1*TREATY_TYPES.length)];
-  const reinsurer=REINSURERS[Math.floor(s2*REINSURERS.length)];
-  const peril=PERILS[Math.floor(s3*PERILS.length)];
-  const limit=Math.round(50+s4*450);
-  const retention=Math.round(5+s1*limit*0.3);
-  const premium=+(limit*0.02+s5*limit*0.06).toFixed(1);
-  const lossRatio=+(0.25+s2*0.55).toFixed(2);
-  const ceded=+(premium*0.6+s3*premium*0.3).toFixed(1);
-  const recovery=+(premium*lossRatio*0.8).toFixed(1);
-  const rateOnLine=+(premium/limit*100).toFixed(2);
-  const inception=`${2024-(Math.floor(s4*3))}-${String(1+Math.floor(s5*12)).padStart(2,'0')}-01`;
-  const expiry=`${2025+Math.floor(s1*2)}-${String(1+Math.floor(s2*12)).padStart(2,'0')}-01`;
-  return {id:i+1,name:`Treaty-${String(i+1).padStart(2,'0')}`,type,reinsurer,peril,limit,retention,premium,lossRatio,ceded,recovery,rateOnLine,inception,expiry,status:s3>0.3?'Active':'Expired',climateAdjFactor:+(1.0+s4*0.35).toFixed(2)};
-});
-
-const LAYER_STRUCTURE=[
-  {layer:'Layer 1 (Working)',attachment:0,limit:50,premium:12.5,expectedLoss:8.2,rateOnLine:25.0,reinstatements:2},
-  {layer:'Layer 2',attachment:50,limit:100,premium:8.4,expectedLoss:4.1,rateOnLine:8.4,reinstatements:2},
-  {layer:'Layer 3',attachment:150,limit:150,premium:5.2,expectedLoss:2.0,rateOnLine:3.5,reinstatements:1},
-  {layer:'Layer 4',attachment:300,limit:200,premium:3.1,expectedLoss:0.8,rateOnLine:1.55,reinstatements:1},
-  {layer:'Layer 5 (Remote)',attachment:500,limit:500,premium:2.8,expectedLoss:0.3,rateOnLine:0.56,reinstatements:0},
-  {layer:'Industry Loss Warranty',attachment:0,limit:100,premium:4.2,expectedLoss:1.5,rateOnLine:4.2,reinstatements:1},
-];
-
-/* ── Styles ────────────────────────────────────────────── */
-const S={
-  page:{fontFamily:T.font,background:T.bg,color:T.text,minHeight:'100vh',padding:'24px'},
-  header:{marginBottom:20},
-  h1:{fontSize:22,fontWeight:700,margin:0,color:T.navy},
-  sub:{fontSize:13,color:T.textSec,marginTop:4,fontFamily:T.mono},
-  tabs:{display:'flex',gap:0,borderBottom:`2px solid ${T.border}`,marginBottom:20},
-  tab:(a)=>({padding:'10px 20px',fontSize:13,fontWeight:a?700:500,color:a?T.gold:T.textSec,borderBottom:a?`2px solid ${T.gold}`:'2px solid transparent',cursor:'pointer',background:'none',border:'none',fontFamily:T.font,marginBottom:-2}),
-  card:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:16,marginBottom:16},
-  cardTitle:{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12,display:'flex',alignItems:'center',gap:8},
-  grid2:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16},
-  grid3:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16},
-  grid4:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12},
-  kpi:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:14,textAlign:'center'},
-  kpiVal:{fontSize:22,fontWeight:700,color:T.navy,fontFamily:T.mono},
-  kpiLbl:{fontSize:11,color:T.textSec,marginTop:4},
-  table:{width:'100%',borderCollapse:'collapse',fontSize:12,fontFamily:T.mono},
-  th:{textAlign:'left',padding:'8px 10px',borderBottom:`2px solid ${T.border}`,color:T.textSec,fontWeight:600,fontSize:11,position:'sticky',top:0,background:T.surface},
-  td:{padding:'7px 10px',borderBottom:`1px solid ${T.border}`,whiteSpace:'nowrap'},
-  badge:(c)=>({display:'inline-block',padding:'2px 8px',borderRadius:4,fontSize:10,fontWeight:600,background:c===T.red?'#fef2f2':c===T.amber?'#fffbeb':c===T.green?'#f0fdf4':c===T.navy?'#eff6ff':'#f5f3ff',color:c}),
-  btn:(a)=>({padding:'6px 14px',fontSize:12,fontWeight:600,borderRadius:6,border:a?'none':`1px solid ${T.border}`,background:a?T.navy:T.surface,color:a?'#fff':T.text,cursor:'pointer',fontFamily:T.font}),
-  slider:{width:'100%',accentColor:T.gold},
-  select:{padding:'6px 10px',fontSize:12,borderRadius:6,border:`1px solid ${T.border}`,background:T.surface,color:T.text,fontFamily:T.font},
-  scroll:{maxHeight:420,overflowY:'auto'},
-  dot:(c)=>({width:8,height:8,borderRadius:'50%',background:c,display:'inline-block'}),
-  perilBar:{height:6,borderRadius:3,background:T.border,marginTop:4},
-  perilFill:(w,c)=>({height:6,borderRadius:3,background:c,width:`${w}%`,transition:'width 0.3s'}),
-  chip:(a)=>({display:'inline-block',padding:'3px 10px',borderRadius:12,fontSize:11,fontWeight:600,background:a?T.navy:'transparent',color:a?'#fff':T.textSec,border:a?'none':`1px solid ${T.border}`,cursor:'pointer',marginRight:4}),
+/* ══════════════════════════════════════════════════════════════
+   Theme & PRNG
+   ══════════════════════════════════════════════════════════════ */
+const T = {
+  surface: '#fafaf7', border: '#e2e0d8', navy: '#1b2a4a', gold: '#b8962e',
+  text: '#1a1a2e', sub: '#64748b', card: '#ffffff', indigo: '#4f46e5',
+  green: '#065f46', red: '#991b1b', amber: '#92400e'
 };
 
-/* ── Component ─────────────────────────────────────────── */
-export default function CatastropheModellingPage(){
-  const [tab,setTab]=useState(0);
-  const [selectedPeril,setSelectedPeril]=useState('All');
-  const [selectedRegion,setSelectedRegion]=useState('All');
-  const [sortCol,setSortCol]=useState('tiv');
-  const [sortDir,setSortDir]=useState('desc');
-  const [assetPage,setAssetPage]=useState(0);
-  const [curvePeril,setCurvePeril]=useState(0);
-  const [curveType,setCurveType]=useState('OEP');
-  const [scenarioPeril,setScenarioPeril]=useState(0);
-  const [scenarioSeverity,setScenarioSeverity]=useState(3);
-  const [scenarioLocation,setScenarioLocation]=useState(0);
-  const [climateUplift,setClimateUplift]=useState(20);
-  const [ssp,setSsp]=useState(1);
-  const [varConfidence,setVarConfidence]=useState(99);
-  const [treatyFilter,setTreatyFilter]=useState('All');
-  const [treatySort,setTreatySort]=useState('premium');
-  const [reinPage,setReinPage]=useState(0);
-  const [expandedLayer,setExpandedLayer]=useState(null);
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-  /* ── Derived ──────────────────────────────────────── */
-  const filteredAssets=useMemo(()=>{
-    let f=[...ASSETS];
-    if(selectedPeril!=='All')f=f.filter(a=>a.primaryPeril===selectedPeril);
-    if(selectedRegion!=='All')f=f.filter(a=>a.region===selectedRegion);
-    f.sort((a,b)=>sortDir==='asc'?a[sortCol]-b[sortCol]:b[sortCol]-a[sortCol]);
-    return f;
-  },[selectedPeril,selectedRegion,sortCol,sortDir]);
+const fmt = n =>
+  n >= 1e9 ? (n / 1e9).toFixed(1) + 'B' :
+  n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' :
+  n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' :
+  typeof n === 'number' ? n.toFixed(1) : n;
 
-  const portfolioStats=useMemo(()=>{
-    const totalTIV=ASSETS.reduce((a,b)=>a+b.tiv,0);
-    const totalAAL=ASSETS.reduce((a,b)=>a+b.aal,0);
-    const avgPML100=ASSETS.reduce((a,b)=>a+b.pml100,0)/Math.max(1,ASSETS.length);
-    const avgVulnerability=ASSETS.reduce((a,b)=>a+b.vulnerability,0)/Math.max(1,ASSETS.length);
-    const sorted=[...ASSETS].sort((a,b)=>b.pml500-a.pml500);
-    const var99=sorted[Math.floor(ASSETS.length*0.01)]?.pml500||0;
-    const tvar99=sorted.slice(0,Math.floor(ASSETS.length*0.01)+1).reduce((a,b)=>a+b.pml500,0)/(Math.floor(ASSETS.length*0.01)+1);
-    return {totalTIV,totalAAL:+totalAAL.toFixed(1),avgPML100:+avgPML100.toFixed(1),avgVulnerability:Math.round(avgVulnerability),var99:+var99.toFixed(1),tvar99:+tvar99.toFixed(1),assetCount:ASSETS.length,countryCount:new Set(ASSETS.map(a=>a.country)).size};
-  },[]);
+const pct = n => typeof n === 'number' ? n.toFixed(1) + '%' : '--';
 
-  const scenarioLoss=useMemo(()=>{
-    const baseLoss=portfolioStats.totalTIV*(0.02+scenarioSeverity*0.06);
-    const locationMultiplier=0.6+sr(scenarioLocation*71)*0.8;
-    const perilMultiplier=0.7+sr(scenarioPeril*67)*0.6;
-    const climateMultiplier=1+climateUplift/100;
-    const sspMultiplier=[1.0,1.15,1.35,1.6][ssp];
-    const gross=Math.round(baseLoss*locationMultiplier*perilMultiplier*climateMultiplier*sspMultiplier);
-    const ceded=Math.round(gross*0.45);
-    const net=gross-ceded;
-    return {gross,ceded,net,affectedAssets:Math.round(10+scenarioSeverity*18),claimsEstimate:Math.round(gross*0.7),biLoss:Math.round(gross*0.15)};
-  },[scenarioPeril,scenarioSeverity,scenarioLocation,climateUplift,ssp,portfolioStats.totalTIV]);
+const TABS = [
+  'Cat Model Dashboard', 'Peril Analysis', 'Event Set Explorer',
+  'EP Curve Builder', 'Regional Exposure', "Lloyd's RDS",
+  'Climate Scenarios', 'Portfolio Analytics', 'Loss Development',
+  'Climate Stress Test'
+];
 
-  const lossDistribution=useMemo(()=>{
-    const buckets=[0,50,100,150,200,250,300,350,400,450,500];
-    return buckets.map((b,i)=>{
-      const count=ASSETS.filter(a=>a.pml100>=b&&a.pml100<(buckets[i+1]||999)).length;
-      return {range:`${b}-${buckets[i+1]||'500+'}`,count,cumulative:ASSETS.filter(a=>a.pml100<=b).length};
+const COLORS = [
+  T.navy, T.indigo, T.green, T.red, T.amber, T.gold,
+  '#7c3aed', '#0891b2', '#be185d', '#4338ca',
+  '#059669', '#b45309', '#6d28d9', '#0d9488', '#dc2626'
+];
+
+/* ══════════════════════════════════════════════════════════════
+   PERILS — 15 climate perils (RMS/AIR/CoreLogic taxonomy)
+   ══════════════════════════════════════════════════════════════ */
+const PERILS = [
+  { name: 'Hurricane/Typhoon', category: 'atmospheric',
+    avgAnnualLoss_mn: 42000, volatility: 0.85, trend_pct_decade: 8.2,
+    modelConfidence: 'High', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 180000, returnPeriod250yr_mn: 310000, returnPeriod500yr_mn: 420000 },
+  { name: 'Earthquake', category: 'geological',
+    avgAnnualLoss_mn: 28000, volatility: 0.92, trend_pct_decade: 0.5,
+    modelConfidence: 'Medium', climateInfluence: 'Limited',
+    returnPeriod100yr_mn: 250000, returnPeriod250yr_mn: 480000, returnPeriod500yr_mn: 680000 },
+  { name: 'Flood (Riverine)', category: 'hydrological',
+    avgAnnualLoss_mn: 35000, volatility: 0.65, trend_pct_decade: 12.1,
+    modelConfidence: 'Medium', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 120000, returnPeriod250yr_mn: 200000, returnPeriod500yr_mn: 290000 },
+  { name: 'Flood (Pluvial)', category: 'hydrological',
+    avgAnnualLoss_mn: 18000, volatility: 0.70, trend_pct_decade: 14.5,
+    modelConfidence: 'Low', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 65000, returnPeriod250yr_mn: 110000, returnPeriod500yr_mn: 160000 },
+  { name: 'Wildfire', category: 'atmospheric',
+    avgAnnualLoss_mn: 22000, volatility: 0.88, trend_pct_decade: 18.7,
+    modelConfidence: 'Low', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 95000, returnPeriod250yr_mn: 170000, returnPeriod500yr_mn: 250000 },
+  { name: 'Severe Convective Storm', category: 'atmospheric',
+    avgAnnualLoss_mn: 38000, volatility: 0.55, trend_pct_decade: 5.8,
+    modelConfidence: 'High', climateInfluence: 'Significant',
+    returnPeriod100yr_mn: 85000, returnPeriod250yr_mn: 130000, returnPeriod500yr_mn: 175000 },
+  { name: 'Winter Storm / Freeze', category: 'atmospheric',
+    avgAnnualLoss_mn: 15000, volatility: 0.60, trend_pct_decade: -2.1,
+    modelConfidence: 'High', climateInfluence: 'Moderate',
+    returnPeriod100yr_mn: 55000, returnPeriod250yr_mn: 90000, returnPeriod500yr_mn: 130000 },
+  { name: 'Tsunami', category: 'geological',
+    avgAnnualLoss_mn: 3500, volatility: 0.95, trend_pct_decade: 0.2,
+    modelConfidence: 'Medium', climateInfluence: 'Limited',
+    returnPeriod100yr_mn: 85000, returnPeriod250yr_mn: 200000, returnPeriod500yr_mn: 350000 },
+  { name: 'Storm Surge', category: 'hydrological',
+    avgAnnualLoss_mn: 12000, volatility: 0.80, trend_pct_decade: 9.4,
+    modelConfidence: 'Medium', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 75000, returnPeriod250yr_mn: 140000, returnPeriod500yr_mn: 210000 },
+  { name: 'Drought', category: 'climate-compound',
+    avgAnnualLoss_mn: 8000, volatility: 0.72, trend_pct_decade: 11.3,
+    modelConfidence: 'Low', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 40000, returnPeriod250yr_mn: 70000, returnPeriod500yr_mn: 95000 },
+  { name: 'Volcanic Eruption', category: 'geological',
+    avgAnnualLoss_mn: 2000, volatility: 0.98, trend_pct_decade: 0.0,
+    modelConfidence: 'Low', climateInfluence: 'Limited',
+    returnPeriod100yr_mn: 45000, returnPeriod250yr_mn: 120000, returnPeriod500yr_mn: 250000 },
+  { name: 'Tornado', category: 'atmospheric',
+    avgAnnualLoss_mn: 16000, volatility: 0.75, trend_pct_decade: 3.2,
+    modelConfidence: 'Medium', climateInfluence: 'Moderate',
+    returnPeriod100yr_mn: 45000, returnPeriod250yr_mn: 72000, returnPeriod500yr_mn: 100000 },
+  { name: 'Hail', category: 'atmospheric',
+    avgAnnualLoss_mn: 14000, volatility: 0.58, trend_pct_decade: 6.5,
+    modelConfidence: 'Medium', climateInfluence: 'Significant',
+    returnPeriod100yr_mn: 38000, returnPeriod250yr_mn: 60000, returnPeriod500yr_mn: 82000 },
+  { name: 'Coastal Flood / SLR', category: 'climate-compound',
+    avgAnnualLoss_mn: 9000, volatility: 0.68, trend_pct_decade: 22.0,
+    modelConfidence: 'Medium', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 50000, returnPeriod250yr_mn: 95000, returnPeriod500yr_mn: 150000 },
+  { name: 'Compound Heat-Drought', category: 'climate-compound',
+    avgAnnualLoss_mn: 6000, volatility: 0.78, trend_pct_decade: 25.0,
+    modelConfidence: 'Low', climateInfluence: 'Dominant',
+    returnPeriod100yr_mn: 30000, returnPeriod250yr_mn: 55000, returnPeriod500yr_mn: 80000 },
+];
+
+/* ══════════════════════════════════════════════════════════════
+   REGIONS — 20 global regions
+   ══════════════════════════════════════════════════════════════ */
+const REGIONS = [
+  { name: 'US Southeast', exposedValue_bn: 4200,
+    topPerils: ['Hurricane/Typhoon', 'Flood (Riverine)', 'Storm Surge'],
+    trendMultiplier: 1.15,
+    climateScenarioImpact: { rcp26: 1.08, rcp45: 1.18, rcp85: 1.42 },
+    insurancePenetration_pct: 72, protectionGap_pct: 28 },
+  { name: 'US Northeast', exposedValue_bn: 3800,
+    topPerils: ['Winter Storm / Freeze', 'Flood (Pluvial)', 'Severe Convective Storm'],
+    trendMultiplier: 1.08,
+    climateScenarioImpact: { rcp26: 1.05, rcp45: 1.12, rcp85: 1.28 },
+    insurancePenetration_pct: 78, protectionGap_pct: 22 },
+  { name: 'US West Coast', exposedValue_bn: 5100,
+    topPerils: ['Earthquake', 'Wildfire', 'Drought'],
+    trendMultiplier: 1.22,
+    climateScenarioImpact: { rcp26: 1.10, rcp45: 1.22, rcp85: 1.55 },
+    insurancePenetration_pct: 58, protectionGap_pct: 42 },
+  { name: 'US Midwest', exposedValue_bn: 2900,
+    topPerils: ['Tornado', 'Severe Convective Storm', 'Hail'],
+    trendMultiplier: 1.06,
+    climateScenarioImpact: { rcp26: 1.04, rcp45: 1.10, rcp85: 1.22 },
+    insurancePenetration_pct: 82, protectionGap_pct: 18 },
+  { name: 'Caribbean', exposedValue_bn: 800,
+    topPerils: ['Hurricane/Typhoon', 'Storm Surge', 'Earthquake'],
+    trendMultiplier: 1.25,
+    climateScenarioImpact: { rcp26: 1.12, rcp45: 1.28, rcp85: 1.60 },
+    insurancePenetration_pct: 32, protectionGap_pct: 68 },
+  { name: 'Western Europe', exposedValue_bn: 4500,
+    topPerils: ['Flood (Riverine)', 'Winter Storm / Freeze', 'Hail'],
+    trendMultiplier: 1.10,
+    climateScenarioImpact: { rcp26: 1.06, rcp45: 1.15, rcp85: 1.35 },
+    insurancePenetration_pct: 75, protectionGap_pct: 25 },
+  { name: 'Southern Europe', exposedValue_bn: 2200,
+    topPerils: ['Earthquake', 'Wildfire', 'Drought'],
+    trendMultiplier: 1.18,
+    climateScenarioImpact: { rcp26: 1.08, rcp45: 1.20, rcp85: 1.48 },
+    insurancePenetration_pct: 45, protectionGap_pct: 55 },
+  { name: 'Northern Europe', exposedValue_bn: 1800,
+    topPerils: ['Winter Storm / Freeze', 'Flood (Pluvial)', 'Coastal Flood / SLR'],
+    trendMultiplier: 1.05,
+    climateScenarioImpact: { rcp26: 1.03, rcp45: 1.08, rcp85: 1.20 },
+    insurancePenetration_pct: 85, protectionGap_pct: 15 },
+  { name: 'Japan', exposedValue_bn: 3200,
+    topPerils: ['Earthquake', 'Tsunami', 'Hurricane/Typhoon'],
+    trendMultiplier: 1.12,
+    climateScenarioImpact: { rcp26: 1.06, rcp45: 1.14, rcp85: 1.32 },
+    insurancePenetration_pct: 52, protectionGap_pct: 48 },
+  { name: 'China East Coast', exposedValue_bn: 4800,
+    topPerils: ['Hurricane/Typhoon', 'Flood (Riverine)', 'Earthquake'],
+    trendMultiplier: 1.20,
+    climateScenarioImpact: { rcp26: 1.10, rcp45: 1.22, rcp85: 1.50 },
+    insurancePenetration_pct: 18, protectionGap_pct: 82 },
+  { name: 'South Asia', exposedValue_bn: 2100,
+    topPerils: ['Flood (Riverine)', 'Hurricane/Typhoon', 'Compound Heat-Drought'],
+    trendMultiplier: 1.28,
+    climateScenarioImpact: { rcp26: 1.14, rcp45: 1.30, rcp85: 1.65 },
+    insurancePenetration_pct: 12, protectionGap_pct: 88 },
+  { name: 'Southeast Asia', exposedValue_bn: 1900,
+    topPerils: ['Hurricane/Typhoon', 'Flood (Riverine)', 'Earthquake'],
+    trendMultiplier: 1.22,
+    climateScenarioImpact: { rcp26: 1.10, rcp45: 1.24, rcp85: 1.52 },
+    insurancePenetration_pct: 15, protectionGap_pct: 85 },
+  { name: 'Australia / NZ', exposedValue_bn: 2400,
+    topPerils: ['Wildfire', 'Severe Convective Storm', 'Flood (Riverine)'],
+    trendMultiplier: 1.20,
+    climateScenarioImpact: { rcp26: 1.08, rcp45: 1.20, rcp85: 1.45 },
+    insurancePenetration_pct: 65, protectionGap_pct: 35 },
+  { name: 'Latin America North', exposedValue_bn: 1400,
+    topPerils: ['Earthquake', 'Hurricane/Typhoon', 'Volcanic Eruption'],
+    trendMultiplier: 1.14,
+    climateScenarioImpact: { rcp26: 1.06, rcp45: 1.16, rcp85: 1.38 },
+    insurancePenetration_pct: 22, protectionGap_pct: 78 },
+  { name: 'Latin America South', exposedValue_bn: 1200,
+    topPerils: ['Earthquake', 'Flood (Riverine)', 'Drought'],
+    trendMultiplier: 1.10,
+    climateScenarioImpact: { rcp26: 1.05, rcp45: 1.12, rcp85: 1.30 },
+    insurancePenetration_pct: 28, protectionGap_pct: 72 },
+  { name: 'Middle East / N Africa', exposedValue_bn: 1600,
+    topPerils: ['Earthquake', 'Compound Heat-Drought', 'Flood (Pluvial)'],
+    trendMultiplier: 1.16,
+    climateScenarioImpact: { rcp26: 1.08, rcp45: 1.18, rcp85: 1.45 },
+    insurancePenetration_pct: 20, protectionGap_pct: 80 },
+  { name: 'Sub-Saharan Africa', exposedValue_bn: 600,
+    topPerils: ['Drought', 'Flood (Riverine)', 'Compound Heat-Drought'],
+    trendMultiplier: 1.30,
+    climateScenarioImpact: { rcp26: 1.15, rcp45: 1.32, rcp85: 1.70 },
+    insurancePenetration_pct: 5, protectionGap_pct: 95 },
+  { name: 'Central Asia', exposedValue_bn: 500,
+    topPerils: ['Earthquake', 'Drought', 'Flood (Riverine)'],
+    trendMultiplier: 1.12,
+    climateScenarioImpact: { rcp26: 1.06, rcp45: 1.14, rcp85: 1.35 },
+    insurancePenetration_pct: 10, protectionGap_pct: 90 },
+  { name: 'Pacific Islands', exposedValue_bn: 200,
+    topPerils: ['Hurricane/Typhoon', 'Coastal Flood / SLR', 'Volcanic Eruption'],
+    trendMultiplier: 1.35,
+    climateScenarioImpact: { rcp26: 1.18, rcp45: 1.38, rcp85: 1.80 },
+    insurancePenetration_pct: 8, protectionGap_pct: 92 },
+  { name: 'UK / Ireland', exposedValue_bn: 2800,
+    topPerils: ['Flood (Riverine)', 'Winter Storm / Freeze', 'Coastal Flood / SLR'],
+    trendMultiplier: 1.09,
+    climateScenarioImpact: { rcp26: 1.05, rcp45: 1.12, rcp85: 1.28 },
+    insurancePenetration_pct: 80, protectionGap_pct: 20 },
+];
+
+/* ══════════════════════════════════════════════════════════════
+   EVENT SET — 50 modeled events
+   ══════════════════════════════════════════════════════════════ */
+const EVENT_NAMES = [
+  'Cat Event', 'Major Loss', 'Storm System', 'Seismic Event', 'Climate Event',
+  'Weather System', 'Extreme Event', 'Natural Disaster', 'Climate Shock', 'Hazard Event'
+];
+
+const EVENT_SET = Array.from({ length: 50 }, (_, i) => {
+  const s1 = sr(i * 11 + 1);
+  const s2 = sr(i * 11 + 2);
+  const s3 = sr(i * 11 + 3);
+  const s4 = sr(i * 11 + 4);
+  const s5 = sr(i * 11 + 5);
+  const s6 = sr(i * 11 + 6);
+  const perilIdx = Math.floor(s1 * PERILS.length);
+  const regionIdx = Math.floor(s2 * REGIONS.length);
+  const peril = PERILS[perilIdx].name;
+  const region = REGIONS[regionIdx].name;
+  const year = 1990 + Math.floor(s3 * 35);
+  const grossLoss_mn = Math.round(500 + s4 * 120000);
+  const insuredRatio = 0.15 + s5 * 0.65;
+  const insuredLoss_mn = Math.round(grossLoss_mn * insuredRatio);
+  const fatalities = Math.round(s6 * s6 * 15000);
+  const influence = PERILS[perilIdx].climateInfluence;
+  const climateAttribution_pct = Math.round(
+    influence === 'Dominant' ? 30 + s5 * 50 :
+    influence === 'Significant' ? 15 + s5 * 35 :
+    influence === 'Moderate' ? 5 + s5 * 20 :
+    s5 * 10
+  );
+  const returnPeriod_est = Math.round(10 + s4 * s4 * 500);
+  const isHistorical = s6 > 0.35;
+
+  return {
+    id: i + 1,
+    name: `${EVENT_NAMES[i % EVENT_NAMES.length]} ${String(year).slice(2)}-${String(i + 1).padStart(2, '0')}`,
+    peril, region, year, grossLoss_mn, insuredLoss_mn,
+    fatalities, climateAttribution_pct, returnPeriod_est, isHistorical
+  };
+});
+
+/* ══════════════════════════════════════════════════════════════
+   PORTFOLIOS — 3 sample insurance portfolios
+   ══════════════════════════════════════════════════════════════ */
+const PORTFOLIOS = [
+  {
+    name: 'Primary Insurance', type: 'primary',
+    totalExposure_bn: 85, aalRatio_bps: 145,
+    limits_bn: 5.0, deductible_mn: 50, reinstatements: 2,
+    regionExposure: REGIONS.slice(0, 10).map((r, i) => ({
+      region: r.name,
+      exposure_bn: +(r.exposedValue_bn * 0.012 * (1 + sr(i * 31) * 0.5)).toFixed(1)
+    })),
+    perilExposure: PERILS.map((p, i) => ({
+      peril: p.name,
+      exposure_pct: +(4 + sr(i * 37) * 10).toFixed(1)
+    }))
+  },
+  {
+    name: 'Reinsurance Treaty', type: 'reinsurance',
+    totalExposure_bn: 220, aalRatio_bps: 85,
+    limits_bn: 15.0, deductible_mn: 250, reinstatements: 1,
+    regionExposure: REGIONS.slice(0, 10).map((r, i) => ({
+      region: r.name,
+      exposure_bn: +(r.exposedValue_bn * 0.035 * (1 + sr(i * 41) * 0.4)).toFixed(1)
+    })),
+    perilExposure: PERILS.map((p, i) => ({
+      peril: p.name,
+      exposure_pct: +(3 + sr(i * 43) * 12).toFixed(1)
+    }))
+  },
+  {
+    name: 'ILS Cat Bond Fund', type: 'ils',
+    totalExposure_bn: 12, aalRatio_bps: 250,
+    limits_bn: 2.0, deductible_mn: 500, reinstatements: 0,
+    regionExposure: REGIONS.slice(0, 10).map((r, i) => ({
+      region: r.name,
+      exposure_bn: +(r.exposedValue_bn * 0.002 * (1 + sr(i * 47) * 0.6)).toFixed(1)
+    })),
+    perilExposure: PERILS.map((p, i) => ({
+      peril: p.name,
+      exposure_pct: +(2 + sr(i * 53) * 14).toFixed(1)
+    }))
+  },
+];
+
+/* ══════════════════════════════════════════════════════════════
+   EP CURVE DATA — 100 points per portfolio
+   ══════════════════════════════════════════════════════════════ */
+const EP_CURVE_DATA = PORTFOLIOS.map((port, pi) => {
+  const base = port.totalExposure_bn * 1000;
+  return Array.from({ length: 100 }, (_, j) => {
+    const ep = (100 - j) / 100;
+    const rp = 1 / Math.max(ep, 0.001);
+    const oepLoss = base * (0.001 + Math.pow(1 - ep, 2.5) * (0.15 + sr(pi * 100 + j) * 0.08));
+    const aepLoss = oepLoss * (0.7 + sr(pi * 100 + j + 50) * 0.2);
+    const climateAdj15 = oepLoss * (1.08 + sr(pi * 100 + j + 200) * 0.04);
+    const climateAdj20 = oepLoss * (1.18 + sr(pi * 100 + j + 300) * 0.06);
+    const climateAdj30 = oepLoss * (1.35 + sr(pi * 100 + j + 400) * 0.10);
+    const climateAdj40 = oepLoss * (1.55 + sr(pi * 100 + j + 500) * 0.15);
+    return {
+      ep: +(ep * 100).toFixed(1),
+      rp: Math.round(rp),
+      oepLoss_mn: Math.round(oepLoss),
+      aepLoss_mn: Math.round(aepLoss),
+      climateAdj15_mn: Math.round(climateAdj15),
+      climateAdj20_mn: Math.round(climateAdj20),
+      climateAdj30_mn: Math.round(climateAdj30),
+      climateAdj40_mn: Math.round(climateAdj40)
+    };
+  });
+});
+
+/* ══════════════════════════════════════════════════════════════
+   RDS SCENARIOS — 8 Lloyd's Realistic Disaster Scenarios
+   ══════════════════════════════════════════════════════════════ */
+const RDS_SCENARIOS = [
+  { name: 'US Windstorm (Miami Landfall Cat 5)',
+    description: 'Major hurricane making landfall in Miami-Dade as Category 5 with $250bn+ industry loss',
+    industry_loss_bn: 280, modeled_loss_mn: 4200, return_period: 120, climate_factor: 1.22 },
+  { name: 'US Earthquake (SF Bay M7.9)',
+    description: 'Magnitude 7.9 earthquake on San Andreas fault affecting San Francisco Bay Area',
+    industry_loss_bn: 320, modeled_loss_mn: 3800, return_period: 200, climate_factor: 1.00 },
+  { name: 'European Windstorm (Lothar-class)',
+    description: 'Extratropical cyclone tracking across France, Germany, Switzerland with widespread damage',
+    industry_loss_bn: 45, modeled_loss_mn: 1200, return_period: 80, climate_factor: 1.12 },
+  { name: 'Japan Earthquake & Tsunami (Tokai)',
+    description: 'M8.5+ subduction earthquake triggering Pacific-wide tsunami affecting Tokai industrial belt',
+    industry_loss_bn: 180, modeled_loss_mn: 2800, return_period: 150, climate_factor: 1.00 },
+  { name: 'US Severe Convective Outbreak',
+    description: 'Multi-day severe convective storm outbreak across US Midwest and Southeast',
+    industry_loss_bn: 55, modeled_loss_mn: 1800, return_period: 50, climate_factor: 1.15 },
+  { name: 'Global Pandemic + Climate',
+    description: 'Compound pandemic event with concurrent climate extremes disrupting supply chains globally',
+    industry_loss_bn: 120, modeled_loss_mn: 2200, return_period: 100, climate_factor: 1.30 },
+  { name: 'Caribbean Hurricane Cluster',
+    description: 'Three major hurricanes in single season affecting Caribbean, Gulf Coast, and Eastern Seaboard',
+    industry_loss_bn: 150, modeled_loss_mn: 3500, return_period: 75, climate_factor: 1.28 },
+  { name: 'Australian Bushfire Mega-Season',
+    description: 'Extended bushfire season across southeast Australia with urban interface destruction',
+    industry_loss_bn: 35, modeled_loss_mn: 900, return_period: 60, climate_factor: 1.45 },
+];
+
+/* ══════════════════════════════════════════════════════════════
+   CLIMATE FACTORS — peril x warming level adjustment matrix
+   ══════════════════════════════════════════════════════════════ */
+const WARMING_LEVELS = ['Current', '+1.5C', '+2.0C', '+3.0C', '+4.0C'];
+
+const CLIMATE_FACTORS = PERILS.map((p, i) => {
+  const base =
+    p.climateInfluence === 'Dominant'    ? [1.0, 1.15, 1.30, 1.55, 1.85] :
+    p.climateInfluence === 'Significant' ? [1.0, 1.08, 1.18, 1.32, 1.50] :
+    p.climateInfluence === 'Moderate'    ? [1.0, 1.04, 1.10, 1.18, 1.28] :
+                                           [1.0, 1.01, 1.02, 1.04, 1.06];
+  return {
+    peril: p.name,
+    category: p.category,
+    ...WARMING_LEVELS.reduce((acc, w, wi) => ({
+      ...acc,
+      [w]: +(base[wi] + sr(i * 7 + wi) * 0.05).toFixed(2)
+    }), {})
+  };
+});
+
+/* ══════════════════════════════════════════════════════════════
+   LOSS DEVELOPMENT — 30-year historical triangle
+   ══════════════════════════════════════════════════════════════ */
+const LOSS_DEVELOPMENT = Array.from({ length: 30 }, (_, yr) => {
+  const accYr = 1995 + yr;
+  const ultimate = Math.round(8000 + sr(yr * 19) * 22000);
+  const factors = [0.35, 0.55, 0.68, 0.78, 0.85, 0.90, 0.94, 0.97, 0.99, 1.00];
+  const devYears = factors.map((f, di) => {
+    if (yr + di >= 30) return null;
+    return Math.round(ultimate * (f + sr(yr * 10 + di) * 0.05));
+  });
+  const latestIdx = Math.min(29 - yr, 9);
+  return {
+    accidentYear: accYr,
+    ultimate,
+    paid: devYears,
+    ibnr: Math.round(ultimate * (1 - factors[latestIdx]) * (1 + sr(yr * 23) * 0.1))
+  };
+});
+
+/* ══════════════════════════════════════════════════════════════
+   Derived aggregates (division-guarded)
+   ══════════════════════════════════════════════════════════════ */
+const totalExposure = REGIONS.reduce((a, r) => a + r.exposedValue_bn, 0);
+const totalAAL = PERILS.reduce((a, p) => a + p.avgAnnualLoss_mn, 0);
+const avgTrend = PERILS.length
+  ? PERILS.reduce((a, p) => a + p.trend_pct_decade, 0) / PERILS.length
+  : 0;
+const avgProtGap = REGIONS.length
+  ? REGIONS.reduce((a, r) => a + r.protectionGap_pct, 0) / REGIONS.length
+  : 0;
+const pml100 = PERILS.reduce((a, p) => a + p.returnPeriod100yr_mn, 0);
+const pml250 = PERILS.reduce((a, p) => a + p.returnPeriod250yr_mn, 0);
+
+/* ══════════════════════════════════════════════════════════════
+   Styles
+   ══════════════════════════════════════════════════════════════ */
+const sCard = {
+  background: T.card, borderRadius: 10,
+  border: `1px solid ${T.border}`, padding: 16
+};
+const sKpi = { ...sCard, textAlign: 'center', flex: 1, minWidth: 140 };
+const sLabel = {
+  fontSize: 11, color: T.sub, fontWeight: 600,
+  textTransform: 'uppercase', letterSpacing: 0.5
+};
+const sVal = { fontSize: 22, fontWeight: 700, color: T.navy, marginTop: 2 };
+const sTab = (a) => ({
+  padding: '8px 18px', fontSize: 12, fontWeight: a ? 700 : 500,
+  color: a ? T.card : T.navy, background: a ? T.navy : 'transparent',
+  border: `1px solid ${a ? T.navy : T.border}`,
+  borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap'
+});
+const sBadge = (c) => ({
+  display: 'inline-block', padding: '2px 8px', borderRadius: 4,
+  fontSize: 10, fontWeight: 700, color: T.card, background: c
+});
+const sSelect = {
+  padding: '6px 10px', borderRadius: 6,
+  border: `1px solid ${T.border}`, fontSize: 12,
+  background: T.card, color: T.text
+};
+
+/* ══════════════════════════════════════════════════════════════
+   Shared sub-components
+   ══════════════════════════════════════════════════════════════ */
+const KPI = ({ label, value, sub: s2, color }) => (
+  <div style={sKpi}>
+    <div style={sLabel}>{label}</div>
+    <div style={{ ...sVal, color: color || T.navy }}>{value}</div>
+    {s2 && <div style={{ fontSize: 11, color: T.sub, marginTop: 2 }}>{s2}</div>}
+  </div>
+);
+
+const Badge = ({ text, color }) => (
+  <span style={sBadge(color || T.indigo)}>{text}</span>
+);
+
+const ConfBadge = ({ level }) => {
+  const c = level === 'High' ? T.green : level === 'Medium' ? T.amber : T.red;
+  return <Badge text={level} color={c} />;
+};
+
+const TrendArrow = ({ val }) => {
+  const c = val > 0 ? T.red : val < 0 ? T.green : T.sub;
+  const arr = val > 0 ? '\u2191' : val < 0 ? '\u2193' : '\u2192';
+  return <span style={{ color: c, fontWeight: 700, fontSize: 13 }}>{arr}{Math.abs(val).toFixed(1)}%</span>;
+};
+
+const catColor = (cat) =>
+  cat === 'atmospheric' ? T.indigo :
+  cat === 'hydrological' ? '#0891b2' :
+  cat === 'geological' ? T.amber : T.green;
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════════════════════ */
+export default function CatastropheModellingPage() {
+  /* ── All hooks at top ──────────────────────────────────── */
+  const [tab, setTab] = useState(0);
+  const [selPerils, setSelPerils] = useState([]);
+  const [selRegion, setSelRegion] = useState('All');
+  const [selPortfolio, setSelPortfolio] = useState(0);
+  const [warmingLevel, setWarmingLevel] = useState(2);
+  const [epType, setEpType] = useState('OEP');
+  const [showCI, setShowCI] = useState(false);
+  const [eventSort, setEventSort] = useState('grossLoss_mn');
+  const [eventFilter, setEventFilter] = useState('all');
+  const [rdsClimateAdj, setRdsClimateAdj] = useState(true);
+
+  const togglePeril = useCallback((p) => {
+    setSelPerils(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
+  }, []);
+
+  /* Filtered events */
+  const filteredEvents = useMemo(() => {
+    let evts = [...EVENT_SET];
+    if (eventFilter === 'historical') evts = evts.filter(e => e.isHistorical);
+    if (eventFilter === 'modeled') evts = evts.filter(e => !e.isHistorical);
+    if (selPerils.length) evts = evts.filter(e => selPerils.includes(e.peril));
+    if (selRegion !== 'All') evts = evts.filter(e => e.region === selRegion);
+    return [...evts].sort((a, b) => (b[eventSort] || 0) - (a[eventSort] || 0));
+  }, [eventFilter, selPerils, selRegion, eventSort]);
+
+  /* EP curve for selected portfolio */
+  const epData = useMemo(() => {
+    const raw = EP_CURVE_DATA[selPortfolio] || [];
+    return raw.filter(d => d.ep >= 0.1 && d.ep <= 99);
+  }, [selPortfolio]);
+
+  /* Climate-adjusted AAL */
+  const warmingKeys = ['Current', '+1.5C', '+2.0C', '+3.0C', '+4.0C'];
+  const warmingKey = warmingKeys[warmingLevel] || 'Current';
+
+  const climateAdjAAL = useMemo(() => {
+    return PERILS.map((p, i) => {
+      const cf = CLIMATE_FACTORS[i] ? CLIMATE_FACTORS[i][warmingKey] : 1;
+      return { ...p, adjustedAAL_mn: Math.round(p.avgAnnualLoss_mn * (cf || 1)) };
     });
-  },[]);
+  }, [warmingKey]);
 
-  const regionExposure=useMemo(()=>{
-    return REGIONS.map(r=>{
-      const assets=ASSETS.filter(a=>a.region===r);
-      return {region:r,tiv:assets.reduce((a,b)=>a+b.tiv,0),aal:+assets.reduce((a,b)=>a+b.aal,0).toFixed(1),count:assets.length};
-    }).sort((a,b)=>b.tiv-a.tiv);
-  },[]);
+  const totalClimAAL = climateAdjAAL.reduce((a, p) => a + p.adjustedAAL_mn, 0);
 
-  const filteredTreaties=useMemo(()=>{
-    let f=[...TREATIES];
-    if(treatyFilter!=='All')f=f.filter(t=>t.type===treatyFilter);
-    f.sort((a,b)=>b[treatySort]-a[treatySort]);
-    return f;
-  },[treatyFilter,treatySort]);
-
-  const scenarioCascade=useMemo(()=>{
-    return Array.from({length:8},(_,i)=>{
-      const day=i*3+1;
-      const factor=Math.min(1,i/7);
-      return {day:`Day ${day}`,grossLoss:Math.round(scenarioLoss.gross*factor),insuredLoss:Math.round(scenarioLoss.gross*factor*0.7),biLoss:Math.round(scenarioLoss.biLoss*factor),ceded:Math.round(scenarioLoss.ceded*factor)};
+  /* Dev factors for loss triangle */
+  const devFactors = useMemo(() => {
+    return Array.from({ length: 9 }, (_, i) => {
+      const pairs = LOSS_DEVELOPMENT.filter(r => r.paid[i] != null && r.paid[i + 1] != null);
+      if (!pairs.length) return { devYear: i + 1, factor: 1.0, selected: 1.0 };
+      const avg = pairs.reduce((a, r) =>
+        a + (r.paid[i + 1] || 1) / Math.max(r.paid[i], 1), 0
+      ) / pairs.length;
+      return { devYear: i + 1, factor: +avg.toFixed(4), selected: +avg.toFixed(4) };
     });
-  },[scenarioLoss]);
+  }, []);
 
-  const PAGE_SIZE=15;
-  const assetPages=Math.ceil(filteredAssets.length/PAGE_SIZE);
-  const pagedAssets=filteredAssets.slice(assetPage*PAGE_SIZE,(assetPage+1)*PAGE_SIZE);
-  const treatyPages=Math.ceil(filteredTreaties.length/PAGE_SIZE);
-  const pagedTreaties=filteredTreaties.slice(reinPage*PAGE_SIZE,(reinPage+1)*PAGE_SIZE);
+  /* ══════════════════════════════════════════════════════════
+     TAB 0: Cat Model Dashboard
+     ══════════════════════════════════════════════════════════ */
+  const renderDashboard = () => {
+    const perilPie = PERILS.map((p, i) => ({
+      name: p.name, value: p.avgAnnualLoss_mn, fill: COLORS[i % COLORS.length]
+    }));
 
-  const handleSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}};
+    const regionBar = [...REGIONS]
+      .sort((a, b) => b.exposedValue_bn - a.exposedValue_bn)
+      .slice(0, 12)
+      .map(r => ({
+        name: r.name.length > 14 ? r.name.slice(0, 14) + '...' : r.name,
+        exposure: r.exposedValue_bn,
+        aal: Math.round(r.exposedValue_bn * 0.008 * (1 + r.trendMultiplier))
+      }));
 
-  /* ── Tab 1: Peril Dashboard ──────────────────────── */
-  const renderPerilDashboard=()=>(
-    <div>
-      <div style={S.grid4}>
-        {[{l:'Total TIV',v:`$${(portfolioStats.totalTIV/1000).toFixed(1)}B`},{l:'Portfolio AAL',v:`$${portfolioStats.totalAAL}M`},{l:'Assets',v:portfolioStats.assetCount},{l:'Countries',v:portfolioStats.countryCount},{l:'Avg PML 1-in-100',v:`$${portfolioStats.avgPML100}M`},{l:'Avg Vulnerability',v:`${portfolioStats.avgVulnerability}/100`},{l:'VaR 99%',v:`$${portfolioStats.var99}M`},{l:'TVaR 99%',v:`$${portfolioStats.tvar99}M`}].map((k,i)=>(
-          <div key={i} style={S.kpi}><div style={S.kpiVal}>{k.v}</div><div style={S.kpiLbl}>{k.l}</div></div>
-        ))}
+    const epPreview = (EP_CURVE_DATA[0] || []).filter(d => d.ep >= 1 && d.ep <= 50);
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* KPI Row */}
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <KPI label="Total Exposed Value" value={'$' + fmt(totalExposure * 1e9)} sub="20 regions" />
+          <KPI label="Industry AAL" value={'$' + fmt(totalAAL * 1e6)} sub="15 perils" />
+          <KPI label="1-in-100yr PML" value={'$' + fmt(pml100 * 1e6)} color={T.red} />
+          <KPI label="1-in-250yr PML" value={'$' + fmt(pml250 * 1e6)} color={T.red} />
+          <KPI label="Avg Climate Trend" value={pct(avgTrend) + ' /decade'} color={T.amber} sub="cross-peril" />
+          <KPI label="Avg Protection Gap" value={pct(avgProtGap)} color={T.indigo} sub="insured vs economic" />
+        </div>
+
+        {/* EP Curve + Peril Pie */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Exceedance Probability (OEP) - Primary Portfolio
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={epPreview}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="ep" tick={{ fontSize: 10 }}
+                  label={{ value: 'Exceedance Probability %', position: 'insideBottom', offset: -2, fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+                <Tooltip formatter={v => fmt(v) + ' mn'} />
+                <Area type="monotone" dataKey="oepLoss_mn" stroke={T.navy}
+                  fill={T.navy} fillOpacity={0.15} name="OEP Loss" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>AAL by Peril</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart>
+                <Pie data={perilPie} cx="50%" cy="50%" outerRadius={90} innerRadius={40}
+                  dataKey="value"
+                  label={({ name, percent }) => `${name.split(' ')[0]} ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false} fontSize={9}>
+                  {perilPie.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                </Pie>
+                <Tooltip formatter={v => '$' + fmt(v * 1e6)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Regional Exposure */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            Regional Exposure vs AAL (Top 12)
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <ComposedChart data={regionBar}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-25} textAnchor="end" height={60} />
+              <YAxis yAxisId="l" tick={{ fontSize: 10 }} tickFormatter={v => fmt(v) + 'B'} />
+              <YAxis yAxisId="r" orientation="right" tick={{ fontSize: 10 }} tickFormatter={v => fmt(v) + 'M'} />
+              <Tooltip />
+              <Bar yAxisId="l" dataKey="exposure" fill={T.navy} name="Exposure ($bn)" radius={[4, 4, 0, 0]} />
+              <Line yAxisId="r" type="monotone" dataKey="aal" stroke={T.red}
+                strokeWidth={2} name="Est. AAL ($mn)" dot={{ r: 3 }} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
       </div>
-      <div style={{...S.grid2,marginTop:16}}>
-        <div style={S.card}>
-          <div style={S.cardTitle}>AAL by Peril</div>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 1: Peril Analysis
+     ══════════════════════════════════════════════════════════ */
+  const renderPerilAnalysis = () => {
+    const aalBar = PERILS.map((p, i) => ({
+      name: p.name.length > 18 ? p.name.slice(0, 18) + '...' : p.name,
+      aal: p.avgAnnualLoss_mn, trend: p.trend_pct_decade,
+      fill: COLORS[i % COLORS.length]
+    }));
+
+    const rpCompare = PERILS.map((p, i) => ({
+      name: p.name.length > 12 ? p.name.slice(0, 12) + '..' : p.name,
+      rp100: p.returnPeriod100yr_mn,
+      rp250: p.returnPeriod250yr_mn,
+      rp500: p.returnPeriod500yr_mn
+    }));
+
+    const radarData = PERILS
+      .filter(p => p.category === 'atmospheric' || p.category === 'climate-compound')
+      .map(p => ({
+        peril: p.name.split(' ')[0],
+        volatility: Math.round(p.volatility * 100),
+        trend: Math.round(Math.abs(p.trend_pct_decade) * 5),
+        confidence: p.modelConfidence === 'High' ? 90 : p.modelConfidence === 'Medium' ? 60 : 30,
+        climate: p.climateInfluence === 'Dominant' ? 95 :
+          p.climateInfluence === 'Significant' ? 70 :
+          p.climateInfluence === 'Moderate' ? 45 : 20
+      }));
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            Average Annual Loss by Peril ($mn)
+          </div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={PERIL_STATS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="peril" tick={{fontSize:10}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Bar dataKey="totalAAL" name="AAL ($M)">{PERIL_STATS.map((e,i)=><Cell key={i} fill={e.color}/>)}</Bar></BarChart>
+            <BarChart data={aalBar} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+              <YAxis dataKey="name" type="category" width={130} tick={{ fontSize: 10 }} />
+              <Tooltip formatter={v => '$' + fmt(v * 1e6)} />
+              <Bar dataKey="aal" radius={[0, 4, 4, 0]}>
+                {aalBar.map((e, i) => <Cell key={i} fill={e.fill} />)}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </div>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Exceedance Probability Curve — {PERILS[curvePeril]}</div>
-          <div style={{display:'flex',gap:4,marginBottom:10,flexWrap:'wrap'}}>
-            {PERILS.map((p,i)=><button key={p} style={S.chip(i===curvePeril)} onClick={()=>setCurvePeril(i)}>{p}</button>)}
-          </div>
-          <div style={{display:'flex',gap:8,marginBottom:8}}>
-            {['OEP','AEP'].map(t=><button key={t} style={S.btn(curveType===t)} onClick={()=>setCurveType(t)}>{t}</button>)}
-          </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={curveType==='OEP'?OEP_CURVES[curvePeril]:AEP_CURVES[curvePeril]}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="rp" tick={{fontSize:10}} label={{value:'Return Period (years)',position:'insideBottom',offset:-5,fontSize:10}}/><YAxis tick={{fontSize:10}} label={{value:'Loss ($M)',angle:-90,position:'insideLeft',fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Line type="monotone" dataKey="loss" stroke={PERIL_COLORS[curvePeril]} strokeWidth={2} dot={{r:4}}/></LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Peril Summary Table</div>
-        <div style={S.scroll}>
-          <table style={S.table}>
-            <thead><tr>{['Peril','Assets','TIV ($M)','AAL ($M)','PML 100yr','PML 250yr','PML 500yr','Events','Climate Uplift','Loss Ratio'].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead>
-            <tbody>{PERIL_STATS.map((p,i)=>(
-              <tr key={i} style={{background:i%2?T.surfaceH:'transparent'}}>
-                <td style={S.td}><span style={{...S.dot(p.color),marginRight:6}}/>{p.peril}</td>
-                <td style={S.td}>{p.assetCount}</td>
-                <td style={S.td}>{p.totalTIV.toLocaleString()}</td>
-                <td style={S.td}>{p.totalAAL}</td>
-                <td style={S.td}>{p.avgPML100}</td>
-                <td style={S.td}>{p.avgPML250}</td>
-                <td style={S.td}>{p.avgPML500}</td>
-                <td style={S.td}>{p.eventCount}</td>
-                <td style={S.td}><span style={S.badge(p.climateUplift>1.3?T.red:p.climateUplift>1.15?T.amber:T.green)}>{(p.climateUplift*100-100).toFixed(0)}%</span></td>
-                <td style={S.td}><span style={S.badge(p.lossRatio>0.6?T.red:p.lossRatio>0.4?T.amber:T.green)}>{(p.lossRatio*100).toFixed(0)}%</span></td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-      </div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Historical vs Modelled Losses (2005-2024)</div>
-        <ResponsiveContainer width="100%" height={280}>
-          <AreaChart data={HISTORICAL_LOSSES}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:10}}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Legend wrapperStyle={{fontSize:11}}/><Area type="monotone" dataKey="actual" name="Actual Loss" stroke={T.red} fill={T.red} fillOpacity={0.15}/><Area type="monotone" dataKey="modelled" name="Modelled Loss" stroke={T.navy} fill={T.navy} fillOpacity={0.15}/><Area type="monotone" dataKey="insured" name="Insured Loss" stroke={T.gold} fill={T.gold} fillOpacity={0.15}/></AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Regional Exposure Distribution</div>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={regionExposure} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10}}/><YAxis dataKey="region" type="category" tick={{fontSize:10}} width={100}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Legend wrapperStyle={{fontSize:11}}/><Bar dataKey="tiv" name="TIV ($M)" fill={T.navy}/><Bar dataKey="aal" name="AAL ($M)" fill={T.gold}/></BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
 
-  /* ── Tab 2: Portfolio Loss Analysis ──────────────── */
-  const renderPortfolioLoss=()=>(
-    <div>
-      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <select style={S.select} value={selectedPeril} onChange={e=>{setSelectedPeril(e.target.value);setAssetPage(0);}}>
-          <option value="All">All Perils</option>{PERILS.map(p=><option key={p} value={p}>{p}</option>)}
-        </select>
-        <select style={S.select} value={selectedRegion} onChange={e=>{setSelectedRegion(e.target.value);setAssetPage(0);}}>
-          <option value="All">All Regions</option>{REGIONS.map(r=><option key={r} value={r}>{r}</option>)}
-        </select>
-        <span style={{fontSize:12,color:T.textSec}}>{filteredAssets.length} assets | TIV ${filteredAssets.reduce((a,b)=>a+b.tiv,0).toLocaleString()}M</span>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Return Period Comparison ($mn)
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={rpCompare}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-30} textAnchor="end" height={60} />
+                <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+                <Tooltip formatter={v => '$' + fmt(v * 1e6)} />
+                <Legend />
+                <Bar dataKey="rp100" fill={T.navy} name="1-in-100yr" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="rp250" fill={T.indigo} name="1-in-250yr" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="rp500" fill={T.red} name="1-in-500yr" radius={[2, 2, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Climate Influence Radar
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadarChart data={radarData}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="peril" tick={{ fontSize: 9 }} />
+                <PolarRadiusAxis tick={{ fontSize: 8 }} domain={[0, 100]} />
+                <Radar name="Volatility" dataKey="volatility" stroke={T.red} fill={T.red} fillOpacity={0.1} />
+                <Radar name="Climate" dataKey="climate" stroke={T.green} fill={T.green} fillOpacity={0.1} />
+                <Radar name="Confidence" dataKey="confidence" stroke={T.indigo} fill={T.indigo} fillOpacity={0.1} />
+                <Legend />
+                <Tooltip />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Detail Grid */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>Peril Detail Grid</div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                  {['Peril', 'Category', 'AAL ($mn)', 'Volatility', 'Trend/Decade', '100yr PML', '250yr PML', 'Confidence', 'Climate'].map(h =>
+                    <th key={h} style={{ padding: '6px 8px', textAlign: 'left', color: T.sub, fontWeight: 600 }}>{h}</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {PERILS.map((p, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <td style={{ padding: '6px 8px', fontWeight: 600, color: T.navy }}>{p.name}</td>
+                    <td style={{ padding: '6px 8px' }}>
+                      <Badge text={p.category} color={catColor(p.category)} />
+                    </td>
+                    <td style={{ padding: '6px 8px' }}>{fmt(p.avgAnnualLoss_mn)}</td>
+                    <td style={{ padding: '6px 8px' }}>{(p.volatility * 100).toFixed(0)}%</td>
+                    <td style={{ padding: '6px 8px' }}><TrendArrow val={p.trend_pct_decade} /></td>
+                    <td style={{ padding: '6px 8px' }}>${fmt(p.returnPeriod100yr_mn * 1e6)}</td>
+                    <td style={{ padding: '6px 8px' }}>${fmt(p.returnPeriod250yr_mn * 1e6)}</td>
+                    <td style={{ padding: '6px 8px' }}><ConfBadge level={p.modelConfidence} /></td>
+                    <td style={{ padding: '6px 8px' }}>
+                      <Badge text={p.climateInfluence}
+                        color={p.climateInfluence === 'Dominant' ? T.red : p.climateInfluence === 'Significant' ? T.amber : T.sub} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div style={S.grid2}>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Loss Distribution (PML 1-in-100)</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={lossDistribution}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="range" tick={{fontSize:9}}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Bar dataKey="count" name="Asset Count" fill={T.navy}>{lossDistribution.map((e,i)=><Cell key={i} fill={i>6?T.red:i>4?T.amber:T.sage}/>)}</Bar></BarChart>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 2: Event Set Explorer
+     ══════════════════════════════════════════════════════════ */
+  const renderEventExplorer = () => {
+    const top10 = [...filteredEvents].slice(0, 10);
+    const scatterData = filteredEvents.map(e => ({
+      x: e.returnPeriod_est, y: e.grossLoss_mn, z: e.climateAttribution_pct,
+      name: e.name, peril: e.peril
+    }));
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* Filters */}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: T.sub }}>Filter:</span>
+          {['all', 'historical', 'modeled'].map(f =>
+            <button key={f} onClick={() => setEventFilter(f)} style={sTab(eventFilter === f)}>
+              {f === 'all' ? 'All Events' : f === 'historical' ? 'Historical' : 'Modeled'}
+            </button>
+          )}
+          <select value={selRegion} onChange={e => setSelRegion(e.target.value)} style={sSelect}>
+            <option value="All">All Regions</option>
+            {REGIONS.map(r => <option key={r.name} value={r.name}>{r.name}</option>)}
+          </select>
+          <span style={{ fontSize: 12, color: T.sub }}>Sort:</span>
+          <select value={eventSort} onChange={e => setEventSort(e.target.value)} style={sSelect}>
+            <option value="grossLoss_mn">Gross Loss</option>
+            <option value="insuredLoss_mn">Insured Loss</option>
+            <option value="returnPeriod_est">Return Period</option>
+            <option value="climateAttribution_pct">Climate Attribution</option>
+            <option value="fatalities">Fatalities</option>
+          </select>
+        </div>
+
+        {/* Charts */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Loss vs Return Period (size = climate attribution)
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <ScatterChart>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="x" name="Return Period" tick={{ fontSize: 10 }}
+                  label={{ value: 'Return Period (yr)', position: 'insideBottom', offset: -2, fontSize: 10 }} />
+                <YAxis dataKey="y" name="Gross Loss" tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+                <Tooltip formatter={(v, n) => n === 'Gross Loss' ? '$' + fmt(v * 1e6) : v}
+                  cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={scatterData} fill={T.indigo} fillOpacity={0.6}>
+                  {scatterData.map((e, i) =>
+                    <Cell key={i}
+                      fill={COLORS[PERILS.findIndex(p => p.name === e.peril) % COLORS.length]}
+                      r={3 + e.z * 0.12} />
+                  )}
+                </Scatter>
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Top 10 Costliest Events
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={top10} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+                <YAxis dataKey="name" type="category" width={140} tick={{ fontSize: 9 }} />
+                <Tooltip formatter={v => '$' + fmt(v * 1e6)} />
+                <Bar dataKey="grossLoss_mn" fill={T.red} name="Gross Loss ($mn)" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="insuredLoss_mn" fill={T.navy} name="Insured Loss ($mn)" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            Event Set ({filteredEvents.length} events)
+          </div>
+          <div style={{ overflowX: 'auto', maxHeight: 400, overflowY: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead style={{ position: 'sticky', top: 0, background: T.card }}>
+                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                  {['#', 'Event', 'Peril', 'Region', 'Year', 'Gross Loss ($mn)', 'Insured ($mn)', 'Climate %', 'RP (yr)', 'Type'].map(h =>
+                    <th key={h} style={{ padding: '5px 6px', textAlign: 'left', color: T.sub, fontWeight: 600 }}>{h}</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredEvents.slice(0, 50).map((e, i) => (
+                  <tr key={e.id} style={{ borderBottom: `1px solid ${T.border}`, background: i % 2 === 0 ? T.card : T.surface }}>
+                    <td style={{ padding: '5px 6px', color: T.sub }}>{e.id}</td>
+                    <td style={{ padding: '5px 6px', fontWeight: 600, color: T.navy }}>{e.name}</td>
+                    <td style={{ padding: '5px 6px' }}>{e.peril}</td>
+                    <td style={{ padding: '5px 6px' }}>{e.region}</td>
+                    <td style={{ padding: '5px 6px' }}>{e.year}</td>
+                    <td style={{ padding: '5px 6px', fontWeight: 600 }}>{fmt(e.grossLoss_mn)}</td>
+                    <td style={{ padding: '5px 6px' }}>{fmt(e.insuredLoss_mn)}</td>
+                    <td style={{ padding: '5px 6px' }}>
+                      <span style={{ color: e.climateAttribution_pct > 40 ? T.red : e.climateAttribution_pct > 20 ? T.amber : T.green }}>
+                        {e.climateAttribution_pct}%
+                      </span>
+                    </td>
+                    <td style={{ padding: '5px 6px' }}>{e.returnPeriod_est}</td>
+                    <td style={{ padding: '5px 6px' }}>
+                      <Badge text={e.isHistorical ? 'Historical' : 'Modeled'}
+                        color={e.isHistorical ? T.green : T.indigo} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 3: EP Curve Builder
+     ══════════════════════════════════════════════════════════ */
+  const renderEPCurve = () => {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* Controls */}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: T.sub }}>Portfolio:</span>
+          {PORTFOLIOS.map((p, i) =>
+            <button key={i} onClick={() => setSelPortfolio(i)} style={sTab(selPortfolio === i)}>
+              {p.name}
+            </button>
+          )}
+          <span style={{ fontSize: 12, fontWeight: 600, color: T.sub, marginLeft: 10 }}>Type:</span>
+          {['OEP', 'AEP'].map(t =>
+            <button key={t} onClick={() => setEpType(t)} style={sTab(epType === t)}>{t}</button>
+          )}
+          <label style={{ fontSize: 12, color: T.sub, marginLeft: 10, cursor: 'pointer' }}>
+            <input type="checkbox" checked={showCI} onChange={() => setShowCI(!showCI)} />
+            {' '}Confidence Intervals
+          </label>
+        </div>
+
+        {/* Main EP Chart */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 4 }}>
+            Exceedance Probability Curve - {PORTFOLIOS[selPortfolio].name} ({epType})
+          </div>
+          <div style={{ fontSize: 11, color: T.sub, marginBottom: 8 }}>
+            Climate overlay: warming levels from current to +4.0C
+          </div>
+          <ResponsiveContainer width="100%" height={400}>
+            <AreaChart data={epData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="ep" tick={{ fontSize: 10 }} reversed
+                label={{ value: 'Exceedance Probability (%)', position: 'insideBottom', offset: -2, fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)}
+                label={{ value: 'Loss ($mn)', angle: -90, position: 'insideLeft', fontSize: 10 }} />
+              <Tooltip formatter={v => '$' + fmt(v) + 'mn'} />
+              <Area type="monotone" dataKey={epType === 'OEP' ? 'oepLoss_mn' : 'aepLoss_mn'}
+                stroke={T.navy} fill={T.navy} fillOpacity={0.12} strokeWidth={2}
+                name={epType + ' (Current)'} />
+              <Line type="monotone" dataKey="climateAdj15_mn" stroke={T.gold}
+                strokeWidth={1.5} dot={false} name="+1.5C" strokeDasharray="4 4" />
+              <Line type="monotone" dataKey="climateAdj20_mn" stroke={T.amber}
+                strokeWidth={1.5} dot={false} name="+2.0C" strokeDasharray="4 4" />
+              <Line type="monotone" dataKey="climateAdj30_mn" stroke={T.red}
+                strokeWidth={1.5} dot={false} name="+3.0C" strokeDasharray="6 3" />
+              <Line type="monotone" dataKey="climateAdj40_mn" stroke="#7c3aed"
+                strokeWidth={1.5} dot={false} name="+4.0C" strokeDasharray="6 3" />
+              <Legend />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Tail Risk Metrics</div>
-          <div style={{display:'flex',gap:8,marginBottom:12}}>
-            <span style={{fontSize:11,color:T.textSec}}>Confidence Level:</span>
-            {[95,99,99.5].map(c=><button key={c} style={S.btn(varConfidence===c)} onClick={()=>setVarConfidence(c)}>{c}%</button>)}
+
+        {/* Key EP Points */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          {[{ rp: '1-in-100yr', ep: 1 }, { rp: '1-in-250yr', ep: 0.4 }, { rp: '1-in-500yr', ep: 0.2 }].map(({ rp, ep }) => {
+            const pt = epData.find(d => Math.abs(d.ep - ep) < 0.3) || { oepLoss_mn: 0, aepLoss_mn: 0 };
+            const val = epType === 'OEP' ? pt.oepLoss_mn : pt.aepLoss_mn;
+            return <KPI key={rp} label={`${rp} ${epType}`} value={'$' + fmt(val) + 'mn'} sub={PORTFOLIOS[selPortfolio].name} />;
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 4: Regional Exposure
+     ══════════════════════════════════════════════════════════ */
+  const renderRegional = () => {
+    const sorted = [...REGIONS].sort((a, b) => b.exposedValue_bn - a.exposedValue_bn);
+
+    const gapData = sorted.map(r => ({
+      name: r.name.length > 14 ? r.name.slice(0, 14) + '..' : r.name,
+      insured: Math.round(r.exposedValue_bn * (r.insurancePenetration_pct / 100)),
+      gap: Math.round(r.exposedValue_bn * (r.protectionGap_pct / 100))
+    }));
+
+    const scenarioData = sorted.slice(0, 10).map(r => ({
+      name: r.name.length > 14 ? r.name.slice(0, 14) + '..' : r.name,
+      rcp26: +((r.climateScenarioImpact.rcp26 - 1) * 100).toFixed(1),
+      rcp45: +((r.climateScenarioImpact.rcp45 - 1) * 100).toFixed(1),
+      rcp85: +((r.climateScenarioImpact.rcp85 - 1) * 100).toFixed(1)
+    }));
+
+    const top5 = [...REGIONS].sort((a, b) => b.protectionGap_pct - a.protectionGap_pct).slice(0, 5);
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            Exposed Value: Insured vs Protection Gap ($bn)
           </div>
-          <div style={S.grid2}>
-            {[{l:`VaR ${varConfidence}%`,v:`$${(portfolioStats.var99*(varConfidence/99)).toFixed(1)}M`,d:'Maximum probable loss at confidence level'},{l:`TVaR ${varConfidence}%`,v:`$${(portfolioStats.tvar99*(varConfidence/99)).toFixed(1)}M`,d:'Average loss exceeding VaR'},{l:'Standard Deviation',v:`$${(portfolioStats.totalAAL*0.6).toFixed(1)}M`,d:'Volatility of annual losses'},{l:'Max Single Event',v:`$${(portfolioStats.var99*1.8).toFixed(1)}M`,d:'Worst-case single event loss'}].map((m,i)=>(
-              <div key={i} style={{...S.kpi,textAlign:'left',padding:12}}>
-                <div style={{fontSize:11,color:T.textSec}}>{m.l}</div>
-                <div style={{fontSize:18,fontWeight:700,color:T.navy,fontFamily:T.mono}}>{m.v}</div>
-                <div style={{fontSize:10,color:T.textMut,marginTop:2}}>{m.d}</div>
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={gapData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
+              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+              <Tooltip formatter={v => '$' + fmt(v) + 'bn'} />
+              <Legend />
+              <Bar dataKey="insured" stackId="a" fill={T.green} name="Insured ($bn)" />
+              <Bar dataKey="gap" stackId="a" fill={T.red} name="Protection Gap ($bn)" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Climate Scenario Impact by Region (% increase)
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={scenarioData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={50} />
+                <YAxis tick={{ fontSize: 10 }} unit="%" />
+                <Tooltip formatter={v => v + '%'} />
+                <Legend />
+                <Bar dataKey="rcp26" fill={T.green} name="RCP 2.6" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="rcp45" fill={T.amber} name="RCP 4.5" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="rcp85" fill={T.red} name="RCP 8.5" radius={[2, 2, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>
+              Most Vulnerable Regions
+            </div>
+            {top5.map((r, i) => (
+              <div key={i} style={{ padding: '8px 0', borderBottom: i < 4 ? `1px solid ${T.border}` : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontWeight: 600, color: T.navy, fontSize: 12 }}>{i + 1}. {r.name}</span>
+                  <span style={{ fontWeight: 700, color: T.red, fontSize: 13 }}>{r.protectionGap_pct}% gap</span>
+                </div>
+                <div style={{ fontSize: 11, color: T.sub, marginTop: 2 }}>
+                  Top: {r.topPerils.slice(0, 2).join(', ')}
+                </div>
+                <div style={{ background: T.border, borderRadius: 4, height: 6, marginTop: 4 }}>
+                  <div style={{ background: T.red, borderRadius: 4, height: 6, width: `${r.protectionGap_pct}%` }} />
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Asset Portfolio ({filteredAssets.length} assets)</div>
-        <div style={S.scroll}>
-          <table style={S.table}>
-            <thead><tr>{[['name','Asset'],['country','Country'],['assetType','Type'],['primaryPeril','Primary Peril'],['tiv','TIV ($M)'],['aal','AAL ($M)'],['pml100','PML 100yr'],['pml250','PML 250yr'],['pml500','PML 500yr'],['vulnerability','Vuln.']].map(([k,h])=>(
-              <th key={k} style={{...S.th,cursor:'pointer'}} onClick={()=>handleSort(k)}>{h}{sortCol===k?(sortDir==='asc'?' ↑':' ↓'):''}</th>
-            ))}</tr></thead>
-            <tbody>{pagedAssets.map((a,i)=>(
-              <tr key={a.id} style={{background:i%2?T.surfaceH:'transparent'}}>
-                <td style={S.td}>{a.name}</td><td style={S.td}>{a.country}</td><td style={S.td}>{a.assetType}</td>
-                <td style={S.td}><span style={S.badge(PERIL_COLORS[PERILS.indexOf(a.primaryPeril)])}>{a.primaryPeril}</span></td>
-                <td style={{...S.td,fontWeight:600}}>{a.tiv}</td><td style={S.td}>{a.aal}</td>
-                <td style={S.td}>{a.pml100}</td><td style={S.td}>{a.pml250}</td><td style={S.td}>{a.pml500}</td>
-                <td style={S.td}><span style={S.badge(a.vulnerability>70?T.red:a.vulnerability>40?T.amber:T.green)}>{a.vulnerability}</span></td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-        <div style={{display:'flex',gap:8,marginTop:10,alignItems:'center',justifyContent:'space-between'}}>
-          <span style={{fontSize:11,color:T.textSec}}>Page {assetPage+1} of {assetPages}</span>
-          <div style={{display:'flex',gap:4}}>
-            <button style={S.btn(false)} disabled={assetPage===0} onClick={()=>setAssetPage(p=>p-1)}>← Prev</button>
-            <button style={S.btn(false)} disabled={assetPage>=assetPages-1} onClick={()=>setAssetPage(p=>p+1)}>Next →</button>
-          </div>
-        </div>
-      </div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>TIV vs AAL Scatter (Size = Vulnerability)</div>
-        <ResponsiveContainer width="100%" height={280}>
-          <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="tiv" name="TIV ($M)" tick={{fontSize:10}}/><YAxis dataKey="aal" name="AAL ($M)" tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}} formatter={(v,n)=>[`$${v}M`,n]}/><Scatter data={filteredAssets.slice(0,80)} fill={T.navy} fillOpacity={0.6}/></ScatterChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
+    );
+  };
 
-  /* ── Tab 3: Event Scenario Builder ───────────────── */
-  const renderScenarioBuilder=()=>(
-    <div>
-      <div style={S.grid3}>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Scenario Configuration</div>
-          <div style={{marginBottom:12}}>
-            <label style={{fontSize:11,color:T.textSec,display:'block',marginBottom:4}}>Peril</label>
-            <select style={{...S.select,width:'100%'}} value={scenarioPeril} onChange={e=>setScenarioPeril(+e.target.value)}>
-              {PERILS.map((p,i)=><option key={p} value={i}>{p}</option>)}
-            </select>
-          </div>
-          <div style={{marginBottom:12}}>
-            <label style={{fontSize:11,color:T.textSec,display:'block',marginBottom:4}}>Severity: {SEVERITY_LEVELS[scenarioSeverity]}</label>
-            <input type="range" min={0} max={4} value={scenarioSeverity} onChange={e=>setScenarioSeverity(+e.target.value)} style={S.slider}/>
-          </div>
-          <div style={{marginBottom:12}}>
-            <label style={{fontSize:11,color:T.textSec,display:'block',marginBottom:4}}>Location</label>
-            <select style={{...S.select,width:'100%'}} value={scenarioLocation} onChange={e=>setScenarioLocation(+e.target.value)}>
-              {SCENARIO_LOCATIONS.map((l,i)=><option key={l} value={i}>{l}</option>)}
-            </select>
-          </div>
-          <div style={{marginBottom:12}}>
-            <label style={{fontSize:11,color:T.textSec,display:'block',marginBottom:4}}>Climate Uplift: +{climateUplift}%</label>
-            <input type="range" min={0} max={100} value={climateUplift} onChange={e=>setClimateUplift(+e.target.value)} style={S.slider}/>
-          </div>
-          <div style={{marginBottom:12}}>
-            <label style={{fontSize:11,color:T.textSec,display:'block',marginBottom:4}}>SSP Pathway</label>
-            <select style={{...S.select,width:'100%'}} value={ssp} onChange={e=>setSsp(+e.target.value)}>
-              {CLIMATE_SSP.map((s,i)=><option key={s} value={i}>{s}</option>)}
-            </select>
-          </div>
-        </div>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Scenario Impact Summary</div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            {[{l:'Gross Loss',v:`$${scenarioLoss.gross.toLocaleString()}M`,c:T.red},{l:'Ceded Loss',v:`$${scenarioLoss.ceded.toLocaleString()}M`,c:T.navy},{l:'Net Loss',v:`$${scenarioLoss.net.toLocaleString()}M`,c:T.amber},{l:'Affected Assets',v:scenarioLoss.affectedAssets,c:T.sage},{l:'Claims Estimate',v:`$${scenarioLoss.claimsEstimate.toLocaleString()}M`,c:T.gold},{l:'BI Loss',v:`$${scenarioLoss.biLoss.toLocaleString()}M`,c:T.navyL}].map((m,i)=>(
-              <div key={i} style={{padding:10,background:T.surfaceH,borderRadius:6,borderLeft:`3px solid ${m.c}`}}>
-                <div style={{fontSize:10,color:T.textSec}}>{m.l}</div>
-                <div style={{fontSize:18,fontWeight:700,color:m.c,fontFamily:T.mono}}>{m.v}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{marginTop:12,padding:10,background:'#fef2f2',borderRadius:6,fontSize:11,color:T.red}}>
-            ⚠ Climate change uplift adds +{climateUplift}% to baseline loss under {CLIMATE_SSP[ssp]}. Net retention: ${scenarioLoss.net.toLocaleString()}M ({((scenarioLoss.net/scenarioLoss.gross)*100).toFixed(1)}% of gross).
-          </div>
-        </div>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Severity Distribution</div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={SEVERITY_LEVELS.map((s,i)=>({severity:s.split(' ')[0],gross:Math.round(scenarioLoss.gross*(0.2+i*0.2)),probability:+(100/(2+i*3)).toFixed(1)}))}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="severity" tick={{fontSize:9}}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Bar dataKey="gross" name="Gross Loss ($M)" fill={T.red}/>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Loss Cascade Timeline — {PERILS[scenarioPeril]} at {SCENARIO_LOCATIONS[scenarioLocation]}</div>
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={scenarioCascade}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="day" tick={{fontSize:10}}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Legend wrapperStyle={{fontSize:11}}/><Area type="monotone" dataKey="grossLoss" name="Gross Loss ($M)" stroke={T.red} fill={T.red} fillOpacity={0.2}/><Area type="monotone" dataKey="insuredLoss" name="Insured Loss ($M)" stroke={T.navy} fill={T.navy} fillOpacity={0.15}/><Area type="monotone" dataKey="biLoss" name="BI Loss ($M)" stroke={T.amber} fill={T.amber} fillOpacity={0.15}/><Area type="monotone" dataKey="ceded" name="Ceded ($M)" stroke={T.sage} fill={T.sage} fillOpacity={0.15}/></AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div style={S.grid2}>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Climate Change Factor by Peril</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={PERIL_STATS.map(p=>({peril:p.peril,current:100,uplift:Math.round((p.climateUplift-1)*100*(1+climateUplift/100))}))}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="peril" tick={{fontSize:9}} angle={-25} textAnchor="end" height={60}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Legend wrapperStyle={{fontSize:11}}/><Bar dataKey="current" name="Baseline" stackId="a" fill={T.navy}/><Bar dataKey="uplift" name="Climate Uplift" stackId="a" fill={T.red}/>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Multi-Year Projection ({CLIMATE_SSP[ssp]})</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={[2025,2030,2035,2040,2045,2050].map(y=>{
-              const factor=1+(y-2025)*([0.005,0.01,0.018,0.025][ssp]);
-              return {year:y,aal:Math.round(portfolioStats.totalAAL*factor),pml:Math.round(portfolioStats.var99*factor)};
-            })}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="year" tick={{fontSize:10}}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Legend wrapperStyle={{fontSize:11}}/><Line type="monotone" dataKey="aal" name="Projected AAL ($M)" stroke={T.navy} strokeWidth={2}/><Line type="monotone" dataKey="pml" name="Projected PML ($M)" stroke={T.red} strokeWidth={2} strokeDasharray="5 5"/>
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  );
+  /* ══════════════════════════════════════════════════════════
+     TAB 5: Lloyd's RDS
+     ══════════════════════════════════════════════════════════ */
+  const renderRDS = () => {
+    const waterfall = RDS_SCENARIOS.map(r => ({
+      name: r.name.length > 20 ? r.name.slice(0, 20) + '..' : r.name,
+      loss: rdsClimateAdj ? Math.round(r.modeled_loss_mn * r.climate_factor) : r.modeled_loss_mn,
+      industry: r.industry_loss_bn * 1000,
+      rp: r.return_period
+    }));
 
-  /* ── Tab 4: Reinsurance Structure ────────────────── */
-  const renderReinsurance=()=>(
-    <div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Reinsurance Layer Structure</div>
-        <div style={{display:'flex',flexDirection:'column',gap:2,marginBottom:16}}>
-          {LAYER_STRUCTURE.map((l,i)=>{
-            const width=Math.min(100,l.limit/5);
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>
+            Lloyd's Realistic Disaster Scenarios
+          </span>
+          <label style={{ fontSize: 12, color: T.sub, marginLeft: 'auto', cursor: 'pointer' }}>
+            <input type="checkbox" checked={rdsClimateAdj} onChange={() => setRdsClimateAdj(!rdsClimateAdj)} />
+            {' '}Climate-Adjusted
+          </label>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          {RDS_SCENARIOS.map((r, i) => {
+            const adjLoss = rdsClimateAdj
+              ? Math.round(r.modeled_loss_mn * r.climate_factor)
+              : r.modeled_loss_mn;
             return (
-              <div key={i} style={{cursor:'pointer'}} onClick={()=>setExpandedLayer(expandedLayer===i?null:i)}>
-                <div style={{display:'flex',alignItems:'center',gap:12,padding:8,background:expandedLayer===i?T.surfaceH:T.surface,borderRadius:6,border:`1px solid ${T.border}`}}>
-                  <div style={{width:140,fontSize:11,fontWeight:600}}>{l.layer}</div>
-                  <div style={{flex:1}}>
-                    <div style={{height:20,borderRadius:4,background:T.border,position:'relative'}}>
-                      <div style={{height:20,borderRadius:4,background:`linear-gradient(90deg,${T.navy},${T.navyL})`,width:`${width}%`,display:'flex',alignItems:'center',paddingLeft:6}}>
-                        <span style={{fontSize:9,color:'#fff',fontFamily:T.mono}}>${l.limit}M xs ${l.attachment}M</span>
-                      </div>
+              <div key={i} style={{ ...sCard, borderLeft: `4px solid ${COLORS[i % COLORS.length]}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, color: T.navy, fontSize: 13 }}>{r.name}</div>
+                    <div style={{ fontSize: 11, color: T.sub, marginTop: 4, lineHeight: 1.4 }}>
+                      {r.description}
                     </div>
                   </div>
-                  <div style={{width:80,fontSize:11,fontFamily:T.mono,textAlign:'right'}}>${l.premium}M</div>
-                  <div style={{width:80,fontSize:11,textAlign:'right'}}><span style={S.badge(l.rateOnLine>10?T.red:l.rateOnLine>3?T.amber:T.green)}>{l.rateOnLine}% ROL</span></div>
+                  <Badge text={`RP ${r.return_period}yr`}
+                    color={r.return_period >= 150 ? T.red : r.return_period >= 100 ? T.amber : T.indigo} />
                 </div>
-                {expandedLayer===i&&(
-                  <div style={{padding:12,background:T.surfaceH,borderRadius:'0 0 6px 6px',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,fontSize:11}}>
-                    <div><span style={{color:T.textSec}}>Expected Loss:</span> <strong>${l.expectedLoss}M</strong></div>
-                    <div><span style={{color:T.textSec}}>Rate on Line:</span> <strong>{l.rateOnLine}%</strong></div>
-                    <div><span style={{color:T.textSec}}>Reinstatements:</span> <strong>{l.reinstatements}</strong></div>
-                    <div><span style={{color:T.textSec}}>Loss Ratio:</span> <strong>{((l.expectedLoss/l.premium)*100).toFixed(1)}%</strong></div>
+                <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
+                  <div>
+                    <div style={sLabel}>Modeled Loss</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: T.navy }}>${fmt(adjLoss)}mn</div>
                   </div>
-                )}
+                  <div>
+                    <div style={sLabel}>Industry Loss</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: T.sub }}>${r.industry_loss_bn}bn</div>
+                  </div>
+                  <div>
+                    <div style={sLabel}>Climate Factor</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: r.climate_factor > 1.1 ? T.red : T.green }}>
+                      {r.climate_factor.toFixed(2)}x
+                    </div>
+                  </div>
+                  <div>
+                    <div style={sLabel}>Share of Industry</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: T.indigo }}>
+                      {r.industry_loss_bn > 0 ? (adjLoss / (r.industry_loss_bn * 10)).toFixed(2) : 0}%
+                    </div>
+                  </div>
+                </div>
               </div>
             );
           })}
         </div>
-      </div>
-      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <select style={S.select} value={treatyFilter} onChange={e=>{setTreatyFilter(e.target.value);setReinPage(0);}}>
-          <option value="All">All Types</option>{TREATY_TYPES.map(t=><option key={t} value={t}>{t}</option>)}
-        </select>
-        <span style={{fontSize:12,color:T.textSec}}>Sort:</span>
-        {['premium','limit','lossRatio','rateOnLine'].map(s=><button key={s} style={S.btn(treatySort===s)} onClick={()=>setTreatySort(s)}>{s==='rateOnLine'?'ROL':s.charAt(0).toUpperCase()+s.slice(1)}</button>)}
-      </div>
-      <div style={S.card}>
-        <div style={S.cardTitle}>Treaty Portfolio ({filteredTreaties.length} treaties)</div>
-        <div style={S.scroll}>
-          <table style={S.table}>
-            <thead><tr>{['Treaty','Type','Reinsurer','Peril','Limit ($M)','Retention ($M)','Premium ($M)','ROL','Loss Ratio','Climate Adj','Status'].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead>
-            <tbody>{pagedTreaties.map((t,i)=>(
-              <tr key={t.id} style={{background:i%2?T.surfaceH:'transparent'}}>
-                <td style={S.td}>{t.name}</td><td style={S.td}>{t.type}</td><td style={S.td}>{t.reinsurer}</td>
-                <td style={S.td}><span style={S.badge(PERIL_COLORS[PERILS.indexOf(t.peril)]||T.navy)}>{t.peril}</span></td>
-                <td style={{...S.td,fontWeight:600}}>{t.limit}</td><td style={S.td}>{t.retention}</td><td style={S.td}>{t.premium}</td>
-                <td style={S.td}>{t.rateOnLine}%</td>
-                <td style={S.td}><span style={S.badge(t.lossRatio>0.6?T.red:t.lossRatio>0.4?T.amber:T.green)}>{(t.lossRatio*100).toFixed(0)}%</span></td>
-                <td style={S.td}><span style={S.badge(t.climateAdjFactor>1.25?T.red:t.climateAdjFactor>1.1?T.amber:T.green)}>x{t.climateAdjFactor}</span></td>
-                <td style={S.td}><span style={S.badge(t.status==='Active'?T.green:T.textMut)}>{t.status}</span></td>
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-        <div style={{display:'flex',gap:8,marginTop:10,alignItems:'center',justifyContent:'space-between'}}>
-          <span style={{fontSize:11,color:T.textSec}}>Page {reinPage+1} of {treatyPages}</span>
-          <div style={{display:'flex',gap:4}}>
-            <button style={S.btn(false)} disabled={reinPage===0} onClick={()=>setReinPage(p=>p-1)}>← Prev</button>
-            <button style={S.btn(false)} disabled={reinPage>=treatyPages-1} onClick={()=>setReinPage(p=>p+1)}>Next →</button>
+
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            RDS Portfolio Impact Comparison
           </div>
-        </div>
-      </div>
-      <div style={S.grid2}>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Ceded Premium by Type</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={TREATY_TYPES.map(t=>{
-              const treaties=TREATIES.filter(tr=>tr.type===t);
-              return {type:t,premium:+treaties.reduce((a,b)=>a+b.premium,0).toFixed(1),recovery:+treaties.reduce((a,b)=>a+b.recovery,0).toFixed(1)};
-            })}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="type" tick={{fontSize:9}} angle={-15} textAnchor="end" height={50}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Legend wrapperStyle={{fontSize:11}}/><Bar dataKey="premium" name="Premium ($M)" fill={T.navy}/><Bar dataKey="recovery" name="Recovery ($M)" fill={T.sage}/></BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={S.card}>
-          <div style={S.cardTitle}>Reinsurer Concentration</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={REINSURERS.slice(0,10).map(r=>{
-              const treaties=TREATIES.filter(t=>t.reinsurer===r);
-              return {reinsurer:r.split(' ')[0],limit:treaties.reduce((a,b)=>a+b.limit,0),count:treaties.length};
-            }).sort((a,b)=>b.limit-a.limit)} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10}}/><YAxis dataKey="reinsurer" type="category" tick={{fontSize:10}} width={80}/><Tooltip contentStyle={{fontSize:11,fontFamily:T.mono}}/><Bar dataKey="limit" name="Total Limit ($M)" fill={T.gold}/>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={waterfall}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-15} textAnchor="end" height={50} />
+              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+              <Tooltip formatter={v => '$' + fmt(v) + 'mn'} />
+              <Legend />
+              <Bar dataKey="loss" fill={T.red} name="Portfolio Loss ($mn)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 6: Climate Scenarios
+     ══════════════════════════════════════════════════════════ */
+  const renderClimateScenarios = () => {
+    const projBar = climateAdjAAL.map((p, i) => ({
+      name: p.name.length > 14 ? p.name.slice(0, 14) + '..' : p.name,
+      current: p.avgAnnualLoss_mn,
+      adjusted: p.adjustedAAL_mn,
+      delta: p.adjustedAAL_mn - p.avgAnnualLoss_mn
+    }));
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* Warming Slider + KPIs */}
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>Warming Level:</span>
+          <input type="range" min={0} max={4} step={1} value={warmingLevel}
+            onChange={e => setWarmingLevel(+e.target.value)} style={{ width: 200 }} />
+          <span style={{
+            fontSize: 14, fontWeight: 700,
+            color: warmingLevel >= 3 ? T.red : warmingLevel >= 2 ? T.amber : T.green
+          }}>
+            {warmingKeys[warmingLevel]}
+          </span>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 12 }}>
+            <KPI label="Current AAL" value={'$' + fmt(totalAAL) + 'mn'} />
+            <KPI label="Adjusted AAL" value={'$' + fmt(totalClimAAL) + 'mn'}
+              color={totalClimAAL > totalAAL ? T.red : T.green} />
+            <KPI label="Change"
+              value={totalAAL > 0 ? ((totalClimAAL / totalAAL - 1) * 100).toFixed(1) + '%' : '0%'}
+              color={T.red} />
+          </div>
+        </div>
+
+        {/* Climate Factor Heatmap */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            Climate Factor Heatmap (15 perils x 5 warming levels)
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr>
+                  <th style={{ padding: 6, textAlign: 'left', color: T.sub }}>Peril</th>
+                  <th style={{ padding: 6, color: T.sub }}>Category</th>
+                  {WARMING_LEVELS.map(w =>
+                    <th key={w} style={{ padding: 6, textAlign: 'center', color: T.sub }}>{w}</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {CLIMATE_FACTORS.map((cf, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <td style={{ padding: 6, fontWeight: 600, color: T.navy }}>{cf.peril}</td>
+                    <td style={{ padding: 6 }}>
+                      <Badge text={cf.category} color={catColor(cf.category)} />
+                    </td>
+                    {WARMING_LEVELS.map(w => {
+                      const v = cf[w];
+                      const intensity = Math.min(1, (v - 1) * 3);
+                      const rgb = v > 1.2 ? '153,27,27' : v > 1.1 ? '146,64,14' : '6,95,70';
+                      return (
+                        <td key={w} style={{
+                          padding: 6, textAlign: 'center', fontWeight: 600, color: T.card,
+                          background: `rgba(${rgb},${(0.3 + intensity * 0.6).toFixed(2)})`,
+                          borderRadius: 2
+                        }}>
+                          {v.toFixed(2)}x
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* AAL Comparison Bar */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            AAL: Current vs Climate-Adjusted ({warmingKeys[warmingLevel]})
+          </div>
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={projBar}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-30} textAnchor="end" height={60} />
+              <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+              <Tooltip formatter={v => '$' + fmt(v * 1e6)} />
+              <Legend />
+              <Bar dataKey="current" fill={T.navy} name="Current AAL ($mn)" radius={[2, 2, 0, 0]} />
+              <Bar dataKey="adjusted" fill={T.red} name="Adjusted AAL ($mn)" radius={[2, 2, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 7: Portfolio Analytics
+     ══════════════════════════════════════════════════════════ */
+  const renderPortfolioAnalytics = () => {
+    const compMetrics = PORTFOLIOS.map((p, i) => {
+      const aal = p.totalExposure_bn * p.aalRatio_bps / 10000;
+      const roe = 12 + sr(i * 71) * 15;
+      const combinedRatio = 85 + sr(i * 73) * 25;
+      const reinEff = 60 + sr(i * 77) * 30;
+      return {
+        name: p.name, exposure: p.totalExposure_bn, aal: +aal.toFixed(1),
+        aalRatio: p.aalRatio_bps, limits: p.limits_bn, deductible: p.deductible_mn,
+        reinstatements: p.reinstatements, roe: +roe.toFixed(1),
+        combinedRatio: +combinedRatio.toFixed(1), reinEff: +reinEff.toFixed(1)
+      };
+    });
+
+    const epOverlay = EP_CURVE_DATA.map((curve, ci) =>
+      curve.filter(d => d.ep >= 0.5 && d.ep <= 30)
+        .map(d => ({ ep: d.ep, [`oep_${ci}`]: d.oepLoss_mn }))
+    ).reduce((merged, curve) => {
+      curve.forEach((pt, j) => {
+        if (!merged[j]) merged[j] = { ep: pt.ep };
+        Object.assign(merged[j], pt);
+      });
+      return merged;
+    }, []);
+
+    const perilAlloc = PERILS.slice(0, 8).map((p, i) => ({
+      name: p.name.split(' ')[0],
+      primary: PORTFOLIOS[0].perilExposure[i]?.exposure_pct || 0,
+      reinsurance: PORTFOLIOS[1].perilExposure[i]?.exposure_pct || 0,
+      ils: PORTFOLIOS[2].perilExposure[i]?.exposure_pct || 0
+    }));
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>
+            Portfolio Comparison
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                  {['Portfolio', 'Type', 'Exposure ($bn)', 'AAL ($bn)', 'AAL (bps)',
+                    'Limit ($bn)', 'Deductible ($mn)', 'Reinst.', 'ROE %',
+                    'Combined Ratio', 'Reins. Eff.'].map(h =>
+                    <th key={h} style={{ padding: '6px 8px', textAlign: 'left', color: T.sub, fontWeight: 600 }}>{h}</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {compMetrics.map((m, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <td style={{ padding: '6px 8px', fontWeight: 700, color: T.navy }}>{m.name}</td>
+                    <td style={{ padding: '6px 8px' }}><Badge text={PORTFOLIOS[i].type} /></td>
+                    <td style={{ padding: '6px 8px' }}>${m.exposure}</td>
+                    <td style={{ padding: '6px 8px' }}>${m.aal}</td>
+                    <td style={{ padding: '6px 8px' }}>{m.aalRatio}</td>
+                    <td style={{ padding: '6px 8px' }}>${m.limits}</td>
+                    <td style={{ padding: '6px 8px' }}>${m.deductible}</td>
+                    <td style={{ padding: '6px 8px' }}>{m.reinstatements}</td>
+                    <td style={{ padding: '6px 8px', color: m.roe > 15 ? T.green : T.amber }}>{m.roe}%</td>
+                    <td style={{ padding: '6px 8px', color: m.combinedRatio > 100 ? T.red : T.green }}>
+                      {m.combinedRatio}%
+                    </td>
+                    <td style={{ padding: '6px 8px' }}>{m.reinEff}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              EP Curves Overlaid (OEP)
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={epOverlay}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="ep" tick={{ fontSize: 10 }} reversed />
+                <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+                <Tooltip formatter={v => '$' + fmt(v) + 'mn'} />
+                <Legend />
+                <Line type="monotone" dataKey="oep_0" stroke={T.navy} strokeWidth={2} dot={false} name="Primary" />
+                <Line type="monotone" dataKey="oep_1" stroke={T.indigo} strokeWidth={2} dot={false} name="Reinsurance" />
+                <Line type="monotone" dataKey="oep_2" stroke={T.gold} strokeWidth={2} dot={false} name="ILS Fund" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Capital Allocation by Peril
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={perilAlloc}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} unit="%" />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="primary" fill={T.navy} name="Primary" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="reinsurance" fill={T.indigo} name="Reinsurance" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="ils" fill={T.gold} name="ILS" radius={[2, 2, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 8: Loss Development
+     ══════════════════════════════════════════════════════════ */
+  const renderLossDev = () => {
+    const triangle = LOSS_DEVELOPMENT.slice(-15);
+
+    const paidVsIncurred = LOSS_DEVELOPMENT.slice(-20).map(r => ({
+      year: r.accidentYear,
+      paid: r.paid[Math.min(29 - (r.accidentYear - 1995), 9)] || 0,
+      ultimate: r.ultimate,
+      ibnr: r.ibnr
+    }));
+
+    const avgUltimate = LOSS_DEVELOPMENT.length
+      ? LOSS_DEVELOPMENT.reduce((a, r) => a + r.ultimate, 0) / LOSS_DEVELOPMENT.length
+      : 0;
+
+    const totalIBNR = LOSS_DEVELOPMENT.reduce((a, r) => a + r.ibnr, 0);
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <KPI label="Avg Ultimate Loss" value={'$' + fmt(avgUltimate) + 'mn'} sub="30-year average" />
+          <KPI label="Total IBNR Reserve" value={'$' + fmt(totalIBNR) + 'mn'} color={T.amber} />
+          <KPI label="Avg Dev Factor (12-24m)" value={devFactors[0] ? devFactors[0].factor.toFixed(3) : '--'} />
+          <KPI label="Avg Dev Factor (24-36m)" value={devFactors[1] ? devFactors[1].factor.toFixed(3) : '--'} />
+        </div>
+
+        {/* Triangle Table */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+            Loss Development Triangle (Last 15 Accident Years)
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                  <th style={{ padding: 4, textAlign: 'left', color: T.sub }}>Acc. Year</th>
+                  {Array.from({ length: 10 }, (_, d) =>
+                    <th key={d} style={{ padding: 4, textAlign: 'right', color: T.sub }}>Dev {d + 1}</th>
+                  )}
+                  <th style={{ padding: 4, textAlign: 'right', color: T.sub }}>Ultimate</th>
+                  <th style={{ padding: 4, textAlign: 'right', color: T.sub }}>IBNR</th>
+                </tr>
+              </thead>
+              <tbody>
+                {triangle.map((r, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <td style={{ padding: 4, fontWeight: 600, color: T.navy }}>{r.accidentYear}</td>
+                    {r.paid.map((v, d) => (
+                      <td key={d} style={{
+                        padding: 4, textAlign: 'right',
+                        color: v == null ? T.border : T.text, fontSize: 10
+                      }}>
+                        {v != null ? fmt(v) : '-'}
+                      </td>
+                    ))}
+                    <td style={{ padding: 4, textAlign: 'right', fontWeight: 700, color: T.navy }}>
+                      {fmt(r.ultimate)}
+                    </td>
+                    <td style={{ padding: 4, textAlign: 'right', fontWeight: 600, color: T.amber }}>
+                      {fmt(r.ibnr)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Charts */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Paid vs Ultimate vs IBNR
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={paidVsIncurred}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} tickFormatter={v => fmt(v)} />
+                <Tooltip formatter={v => '$' + fmt(v) + 'mn'} />
+                <Legend />
+                <Bar dataKey="paid" fill={T.navy} name="Paid ($mn)" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="ibnr" fill={T.amber} name="IBNR ($mn)" radius={[2, 2, 0, 0]} />
+                <Bar dataKey="ultimate" fill={T.sub} name="Ultimate ($mn)" radius={[2, 2, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Development Factors
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={devFactors}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="devYear" tick={{ fontSize: 10 }}
+                  label={{ value: 'Dev Year', position: 'insideBottom', offset: -2, fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} domain={[1, 2]} />
+                <Tooltip />
+                <ReferenceLine y={1} stroke={T.sub} strokeDasharray="3 3" />
+                <Line type="monotone" dataKey="factor" stroke={T.indigo}
+                  strokeWidth={2} name="Avg Factor" dot={{ r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     TAB 9: Climate Stress Test
+     ══════════════════════════════════════════════════════════ */
+  const renderClimateStress = () => {
+    const stressScenarios = [
+      { name: 'IAIS GIMAR - Acute Physical', type: 'IAIS',
+        freqAdj: 1.35, sevAdj: 1.28, capitalImpact_pct: 8.5, reserveAdequacy_pct: 88 },
+      { name: 'IAIS GIMAR - Chronic Physical', type: 'IAIS',
+        freqAdj: 1.15, sevAdj: 1.45, capitalImpact_pct: 12.2, reserveAdequacy_pct: 82 },
+      { name: 'IAIS GIMAR - Transition (Orderly)', type: 'IAIS',
+        freqAdj: 1.05, sevAdj: 1.08, capitalImpact_pct: 3.8, reserveAdequacy_pct: 96 },
+      { name: 'IAIS GIMAR - Transition (Disorderly)', type: 'IAIS',
+        freqAdj: 1.12, sevAdj: 1.22, capitalImpact_pct: 6.5, reserveAdequacy_pct: 91 },
+      { name: 'PRA SS3/19 - Physical', type: 'PRA',
+        freqAdj: 1.40, sevAdj: 1.35, capitalImpact_pct: 10.8, reserveAdequacy_pct: 85 },
+      { name: 'PRA SS3/19 - Transition', type: 'PRA',
+        freqAdj: 1.08, sevAdj: 1.15, capitalImpact_pct: 5.2, reserveAdequacy_pct: 93 },
+      { name: 'NGFS Hot House World', type: 'NGFS',
+        freqAdj: 1.55, sevAdj: 1.60, capitalImpact_pct: 18.5, reserveAdequacy_pct: 72 },
+      { name: 'NGFS Below 2C (Orderly)', type: 'NGFS',
+        freqAdj: 1.10, sevAdj: 1.12, capitalImpact_pct: 4.0, reserveAdequacy_pct: 95 },
+    ];
+
+    const waterfallData = stressScenarios.map(s => ({
+      name: s.name.length > 22 ? s.name.slice(0, 22) + '..' : s.name,
+      impact: s.capitalImpact_pct
+    }));
+
+    const reserveBar = stressScenarios.map(s => ({
+      name: s.name.length > 22 ? s.name.slice(0, 22) + '..' : s.name,
+      adequacy: s.reserveAdequacy_pct,
+      shortfall: 100 - s.reserveAdequacy_pct
+    }));
+
+    const port = PORTFOLIOS[selPortfolio];
+    const baseAAL = port.totalExposure_bn * port.aalRatio_bps / 10000;
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>
+            Climate Stress Test - IAIS GIMAR / PRA SS3/19 / NGFS
+          </span>
+          <select value={selPortfolio} onChange={e => setSelPortfolio(+e.target.value)}
+            style={{ ...sSelect, marginLeft: 'auto' }}>
+            {PORTFOLIOS.map((p, i) => <option key={i} value={i}>{p.name}</option>)}
+          </select>
+        </div>
+
+        {/* Stress Scenario Table */}
+        <div style={sCard}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>
+            Stress Scenario Detail
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${T.border}` }}>
+                  {['Scenario', 'Framework', 'Freq Adj', 'Severity Adj', 'Stressed AAL ($bn)',
+                    'Capital Impact', 'Reserve Adequacy'].map(h =>
+                    <th key={h} style={{ padding: '6px 8px', textAlign: 'left', color: T.sub, fontWeight: 600 }}>{h}</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {stressScenarios.map((s, i) => {
+                  const stressedAAL = +(baseAAL * s.freqAdj * s.sevAdj).toFixed(2);
+                  return (
+                    <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
+                      <td style={{ padding: '6px 8px', fontWeight: 600, color: T.navy }}>{s.name}</td>
+                      <td style={{ padding: '6px 8px' }}>
+                        <Badge text={s.type}
+                          color={s.type === 'IAIS' ? T.indigo : s.type === 'PRA' ? T.green : T.amber} />
+                      </td>
+                      <td style={{ padding: '6px 8px' }}>{s.freqAdj.toFixed(2)}x</td>
+                      <td style={{ padding: '6px 8px' }}>{s.sevAdj.toFixed(2)}x</td>
+                      <td style={{ padding: '6px 8px', fontWeight: 700 }}>${stressedAAL}bn</td>
+                      <td style={{ padding: '6px 8px' }}>
+                        <span style={{
+                          color: s.capitalImpact_pct > 10 ? T.red : s.capitalImpact_pct > 5 ? T.amber : T.green,
+                          fontWeight: 700
+                        }}>
+                          -{s.capitalImpact_pct}%
+                        </span>
+                      </td>
+                      <td style={{ padding: '6px 8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <div style={{ background: T.border, borderRadius: 4, height: 8, width: 80, flex: 'none' }}>
+                            <div style={{
+                              background: s.reserveAdequacy_pct > 90 ? T.green :
+                                s.reserveAdequacy_pct > 80 ? T.amber : T.red,
+                              borderRadius: 4, height: 8,
+                              width: `${s.reserveAdequacy_pct}%`
+                            }} />
+                          </div>
+                          <span style={{
+                            fontSize: 11, fontWeight: 600,
+                            color: s.reserveAdequacy_pct > 90 ? T.green :
+                              s.reserveAdequacy_pct > 80 ? T.amber : T.red
+                          }}>
+                            {s.reserveAdequacy_pct}%
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Charts */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Capital Impact Waterfall (%)
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={waterfallData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-25} textAnchor="end" height={60} />
+                <YAxis tick={{ fontSize: 10 }} unit="%" />
+                <Tooltip formatter={v => v + '%'} />
+                <Bar dataKey="impact" name="Capital Impact %" radius={[4, 4, 0, 0]}>
+                  {waterfallData.map((e, i) =>
+                    <Cell key={i} fill={e.impact > 10 ? T.red : e.impact > 5 ? T.amber : T.green} />
+                  )}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div style={sCard}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>
+              Reserve Adequacy Under Stress
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={reserveBar}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fontSize: 8 }} angle={-25} textAnchor="end" height={60} />
+                <YAxis tick={{ fontSize: 10 }} unit="%" domain={[0, 100]} />
+                <Tooltip formatter={v => v + '%'} />
+                <Legend />
+                <Bar dataKey="adequacy" stackId="a" fill={T.green} name="Adequate" />
+                <Bar dataKey="shortfall" stackId="a" fill={T.red} name="Shortfall" />
+                <ReferenceLine y={90} stroke={T.navy} strokeDasharray="3 3"
+                  label={{ value: 'Target 90%', position: 'top', fontSize: 10 }} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     RENDER
+     ══════════════════════════════════════════════════════════ */
+  const panels = [
+    renderDashboard, renderPerilAnalysis, renderEventExplorer, renderEPCurve,
+    renderRegional, renderRDS, renderClimateScenarios, renderPortfolioAnalytics,
+    renderLossDev, renderClimateStress
+  ];
 
   return (
-    <div style={S.page}>
-      <div style={S.header}>
-        <h1 style={S.h1}>Catastrophe Modelling & Peril Analytics</h1>
-        <div style={S.sub}>EP-AR1 · {ASSETS.length} insured assets · {PERILS.length} perils · {COUNTRIES.length} countries · AAL/PML/OEP/AEP analytics</div>
+    <div style={{ padding: 24, maxWidth: 1440, margin: '0 auto', fontFamily: "'DM Sans',system-ui,sans-serif" }}>
+      <div style={{ marginBottom: 20 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: T.navy, margin: 0 }}>
+          Catastrophe Modelling & Climate Risk
+        </h1>
+        <p style={{ fontSize: 13, color: T.sub, margin: '4px 0 0' }}>
+          RMS/AIR/CoreLogic standards | IAIS GIMAR | Lloyd's RDS | PRA SS3/19
+        </p>
       </div>
-      <div style={S.tabs}>
-        {TABS.map((t,i)=><button key={t} style={S.tab(tab===i)} onClick={()=>setTab(i)}>{t}</button>)}
+
+      <div style={{
+        display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20,
+        borderBottom: `1px solid ${T.border}`, paddingBottom: 12
+      }}>
+        {TABS.map((t, i) =>
+          <button key={i} onClick={() => setTab(i)} style={sTab(tab === i)}>{t}</button>
+        )}
       </div>
-      {tab===0&&renderPerilDashboard()}
-      {tab===1&&renderPortfolioLoss()}
-      {tab===2&&renderScenarioBuilder()}
-      {tab===3&&renderReinsurance()}
+
+      {panels[tab]()}
     </div>
   );
 }

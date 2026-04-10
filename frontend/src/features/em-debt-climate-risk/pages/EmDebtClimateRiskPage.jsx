@@ -204,7 +204,7 @@ export default function EmDebtClimateRiskPage() {
 
   const totalGreenBonds     = EM_COUNTRIES.reduce((s,c) => s+c.greenBondIssuedBnUSD, 0);
   const totalDNSMn          = DNS_DEALS.reduce((s,d) => s+d.debtRelievedMnUSD, 0);
-  const avgClimateRisk      = (EM_COUNTRIES.reduce((s,c) => s+c.climateDebtRiskScore, 0)/EM_COUNTRIES.length).toFixed(1);
+  const avgClimateRisk      = (EM_COUNTRIES.reduce((s,c) => s+c.climateDebtRiskScore, 0)/ Math.max(1, EM_COUNTRIES.length)).toFixed(1);
   const totalNdcGap         = EM_COUNTRIES.reduce((s,c) => s+c.ndcFinancingGapBnUSD, 0).toFixed(0);
   const totalCarbon         = EM_COUNTRIES.reduce((s,c) => s+c.carbonRevenuePotentialBnUSD, 0).toFixed(0);
   const allSpreadKeys       = ["Brazil","Colombia","Indonesia","Pakistan","Egypt","SriLanka","Ghana","Turkey","India","Philippines"];
@@ -338,9 +338,9 @@ export default function EmDebtClimateRiskPage() {
           <>
             <div style={S.kpiRow}>
               <KpiCard label="Countries >80% Debt/GDP"  value={EM_COUNTRIES.filter(c=>c.debtToGdpPct>80).length}  sub="Elevated burden" color={T.red} />
-              <KpiCard label="Avg FX Debt Share"         value={`${(EM_COUNTRIES.reduce((s,c)=>s+c.foreignCurrencyDebtPct,0)/EM_COUNTRIES.length).toFixed(0)}%`} sub="Currency risk" color={T.amber} />
+              <KpiCard label="Avg FX Debt Share"         value={`${(EM_COUNTRIES.reduce((s,c)=>s+c.foreignCurrencyDebtPct,0)/ Math.max(1, EM_COUNTRIES.length)).toFixed(0)}%`} sub="Currency risk" color={T.amber} />
               <KpiCard label="Distressed Ratings"        value={EM_COUNTRIES.filter(c=>["SD","D","CCC+","CCC","CCC-"].includes(c.creditRating)).length} sub="SD / D / CCC" color={T.red} />
-              <KpiCard label="Avg Fiscal Balance"        value={`${(EM_COUNTRIES.reduce((s,c)=>s+c.fiscalBalancePct,0)/EM_COUNTRIES.length).toFixed(1)}%`} sub="% of GDP" color={T.amber} />
+              <KpiCard label="Avg Fiscal Balance"        value={`${(EM_COUNTRIES.reduce((s,c)=>s+c.fiscalBalancePct,0)/ Math.max(1, EM_COUNTRIES.length)).toFixed(1)}%`} sub="% of GDP" color={T.amber} />
             </div>
             <div style={S.card}>
               <SectionHeader title="Debt/GDP vs Fiscal Balance — All 50 EM Sovereigns" />
@@ -416,7 +416,7 @@ export default function EmDebtClimateRiskPage() {
             <div style={S.kpiRow}>
               <KpiCard label="Total Sovereign Green Bonds" value={`$${totalGreenBonds.toFixed(1)}bn`} sub="50 EM sovereigns" color={T.green} />
               <KpiCard label="Issuances Tracked"      value={GREEN_BOND_ISSUANCES.length} sub="2016–2023" />
-              <KpiCard label="Avg Oversubscription"   value={`${(GREEN_BOND_ISSUANCES.reduce((s,g)=>s+g.oversubscription,0)/GREEN_BOND_ISSUANCES.length).toFixed(1)}x`} sub="Investor demand" color={T.teal} />
+              <KpiCard label="Avg Oversubscription"   value={`${(GREEN_BOND_ISSUANCES.reduce((s,g)=>s+g.oversubscription,0)/ Math.max(1, GREEN_BOND_ISSUANCES.length)).toFixed(1)}x`} sub="Investor demand" color={T.teal} />
               <KpiCard label="Largest Deal"           value="$3.0bn" sub="Indonesia 2018" color={T.gold} />
             </div>
             <div style={S.card}>

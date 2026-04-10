@@ -28,7 +28,9 @@ const OWNER_NAMES = [
   'CarbonFirst Ltd', 'OilStream PLC', 'FossilFuel AG', 'MiningCo Global', 'FuelGroup SE',
 ];
 
-const ASSETS = Array.from({ length: 120 }, (_, i) => {
+import { isIndiaMode, adaptForPhysicalRisk } from '../../../data/IndiaDataAdapter';
+
+const _DEFAULT_ASSETS = Array.from({ length: 120 }, (_, i) => {
   const typeIdx = Math.floor(sr(i * 7) * 8);
   const countryIdx = Math.floor(sr(i * 11) * 20);
   const ownerIdx = Math.floor(sr(i * 13) * 20);
@@ -73,6 +75,8 @@ const ASSETS = Array.from({ length: 120 }, (_, i) => {
     remainingEconValue: Math.max(0, remEconValue),
   };
 });
+// ── India Dataset Integration ──
+const ASSETS = isIndiaMode() ? adaptForPhysicalRisk() : _DEFAULT_ASSETS;
 
 const CREDITORS = Array.from({ length: 80 }, (_, k) => {
   const creditorTypeIdx = Math.floor(sr(k * 73 + 3000) * 5);
@@ -198,7 +202,7 @@ export default function StrandedAssetLitigationTrackerPage() {
     return {
       type: type.replace(' ', '\n'),
       ...NGFS_SCENARIOS.reduce((obj, sc, si) => {
-        obj[sc] = Math.round(ents.reduce((s, a) => s + a.ngfsWriteDown[si], 0) / ents.length);
+        obj[sc] = Math.round(ents.reduce((s, a) => s + a.ngfsWriteDown[si], 0) / Math.max(1, ents.length));
         return obj;
       }, {}),
     };
@@ -354,7 +358,7 @@ export default function StrandedAssetLitigationTrackerPage() {
               <KpiCard label="Assets Tracked" value={filtered.length} />
               <KpiCard label={`VaR (${NGFS_SCENARIOS[scenarioIdx]})`} value={fmtUSD(strandingVaR.total * 1e6)} color={T.red} />
               <KpiCard label="Total Book Value" value={fmtUSD(filtered.reduce((s, a) => s + a.bookValue, 0) * 1e6)} />
-              <KpiCard label="Avg Stranding Risk" value={filtered.length ? Math.round(filtered.reduce((s, a) => s + a.strandingRisk, 0) / filtered.length) : 0} color={T.amber} />
+              <KpiCard label="Avg Stranding Risk" value={filtered.length ? Math.round(filtered.reduce((s, a) => s + a.strandingRisk, 0) / Math.max(1, filtered.length)) : 0} color={T.amber} />
               <KpiCard label="Total Carbon Lock-In" value={`${carbonLockInData.totalLockIn} MtCO2`} color={T.orange} />
               <KpiCard label="Permit Challenged/Revoked" value={filtered.filter(a => ['Challenged', 'Revoked'].includes(a.permitStatus)).length} color={T.red} />
             </div>
@@ -487,8 +491,8 @@ export default function StrandedAssetLitigationTrackerPage() {
             <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
               <KpiCard label="Total Creditors" value={CREDITORS.length} />
               <KpiCard label="Total Exposure" value={fmtUSD(CREDITORS.reduce((s, c) => s + c.exposureUSD, 0))} color={T.red} />
-              <KpiCard label="Avg LTV" value={`${(CREDITORS.reduce((s, c) => s + c.loanToValue, 0) / CREDITORS.length * 100).toFixed(0)}%`} />
-              <KpiCard label="Avg Provisioning" value={`${(CREDITORS.reduce((s, c) => s + c.provisioning, 0) / CREDITORS.length * 100).toFixed(0)}%`} color={T.amber} />
+              <KpiCard label="Avg LTV" value={`${(CREDITORS.reduce((s, c) => s + c.loanToValue, 0) / Math.max(1, CREDITORS.length) * 100).toFixed(0)}%`} />
+              <KpiCard label="Avg Provisioning" value={`${(CREDITORS.reduce((s, c) => s + c.provisioning, 0) / Math.max(1, CREDITORS.length) * 100).toFixed(0)}%`} color={T.amber} />
             </div>
             <div style={{ marginBottom: 14, display: 'flex', gap: 10 }}>
               <div>
@@ -550,7 +554,7 @@ export default function StrandedAssetLitigationTrackerPage() {
             <div style={{ display: 'flex', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
               <KpiCard label="Regulatory Triggers" value={REG_TRIGGERS.length} />
               <KpiCard label="High Probability (>50%)" value={REG_TRIGGERS.filter(t => t.probability > 0.5).length} color={T.red} />
-              <KpiCard label="Avg Probability" value={`${(REG_TRIGGERS.reduce((s, t) => s + t.probability, 0) / REG_TRIGGERS.length * 100).toFixed(0)}%`} color={T.amber} />
+              <KpiCard label="Avg Probability" value={`${(REG_TRIGGERS.reduce((s, t) => s + t.probability, 0) / Math.max(1, REG_TRIGGERS.length) * 100).toFixed(0)}%`} color={T.amber} />
               <KpiCard label="Write-Down Triggers" value={REG_TRIGGERS.filter(t => t.expectedImpact === 'Write-Down').length} />
             </div>
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14, marginBottom: 18 }}>
@@ -669,7 +673,7 @@ export default function StrandedAssetLitigationTrackerPage() {
               <KpiCard label={`VaR (${NGFS_SCENARIOS[scenarioIdx]})`} value={fmtUSD(strandingVaR.total * 1e6)} color={T.red} />
               <KpiCard label="Total Book Value" value={fmtUSD(ASSETS.reduce((s, a) => s + a.bookValue, 0) * 1e6)} />
               <KpiCard label="Total CO2 Lock-In" value={`${ASSETS.reduce((s, a) => s + a.carbonLockIn, 0).toFixed(0)} Mt`} color={T.orange} />
-              <KpiCard label="Avg Stranding Risk" value={Math.round(ASSETS.reduce((s, a) => s + a.strandingRisk, 0) / ASSETS.length)} color={T.amber} />
+              <KpiCard label="Avg Stranding Risk" value={Math.round(ASSETS.reduce((s, a) => s + a.strandingRisk, 0) / Math.max(1, ASSETS.length))} color={T.amber} />
               <KpiCard label="Challenged/Revoked" value={ASSETS.filter(a => ['Challenged', 'Revoked'].includes(a.permitStatus)).length} color={T.red} />
               <KpiCard label="Total Creditor Exp" value={fmtUSD(CREDITORS.reduce((s, c) => s + c.exposureUSD, 0))} color={T.navy} />
               <KpiCard label="High Prob. Triggers" value={REG_TRIGGERS.filter(t => t.probability > 0.5).length} color={T.orange} />
@@ -717,9 +721,9 @@ export default function StrandedAssetLitigationTrackerPage() {
                     {ASSET_TYPES.map((t, i) => {
                       const ents = ASSETS.filter(a => a.type === t);
                       if (!ents.length) return null;
-                      const avgRisk = Math.round(ents.reduce((s, a) => s + a.strandingRisk, 0) / ents.length);
+                      const avgRisk = Math.round(ents.reduce((s, a) => s + a.strandingRisk, 0) / Math.max(1, ents.length));
                       const totalBook = ents.reduce((s, a) => s + a.bookValue, 0);
-                      const avgLife = Math.round(ents.reduce((s, a) => s + a.remainingLife, 0) / ents.length);
+                      const avgLife = Math.round(ents.reduce((s, a) => s + a.remainingLife, 0) / Math.max(1, ents.length));
                       const totalCO2 = +(ents.reduce((s, a) => s + a.carbonLockIn, 0)).toFixed(0);
                       return (
                         <tr key={t} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
@@ -748,9 +752,9 @@ export default function StrandedAssetLitigationTrackerPage() {
                       const creds = CREDITORS.filter(c => c.creditorType === ct);
                       if (!creds.length) return null;
                       const totalExp = +(creds.reduce((s, c) => s + c.exposureUSD, 0) / 1e9).toFixed(1);
-                      const avgLTV = (creds.reduce((s, c) => s + c.loanToValue, 0) / creds.length * 100).toFixed(0);
-                      const avgProv = (creds.reduce((s, c) => s + c.provisioning, 0) / creds.length * 100).toFixed(0);
-                      const avgLitRisk = Math.round(creds.reduce((s, c) => s + c.litigationRisk, 0) / creds.length);
+                      const avgLTV = (creds.reduce((s, c) => s + c.loanToValue, 0) / Math.max(1, creds.length) * 100).toFixed(0);
+                      const avgProv = (creds.reduce((s, c) => s + c.provisioning, 0) / Math.max(1, creds.length) * 100).toFixed(0);
+                      const avgLitRisk = Math.round(creds.reduce((s, c) => s + c.litigationRisk, 0) / Math.max(1, creds.length));
                       return (
                         <tr key={ct} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
                           <td style={{ padding: '4px 7px', fontWeight: 600 }}>{ct}</td>
@@ -792,7 +796,7 @@ export default function StrandedAssetLitigationTrackerPage() {
               <ResponsiveContainer width="100%" height={180}>
                 <ComposedChart data={COUNTRIES.map(c => {
                   const ents = ASSETS.filter(a => a.country === c);
-                  return { country: c, bookValM: ents.reduce((s, a) => s + a.bookValue, 0), avgRisk: ents.length ? Math.round(ents.reduce((s, a) => s + a.strandingRisk, 0) / ents.length) : 0, count: ents.length };
+                  return { country: c, bookValM: ents.reduce((s, a) => s + a.bookValue, 0), avgRisk: ents.length ? Math.round(ents.reduce((s, a) => s + a.strandingRisk, 0) / Math.max(1, ents.length)) : 0, count: ents.length };
                 }).filter(d => d.count > 0).sort((a, b) => b.bookValM - a.bookValM).slice(0, 10)}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="country" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={40} />

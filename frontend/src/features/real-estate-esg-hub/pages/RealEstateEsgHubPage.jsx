@@ -63,15 +63,15 @@ const SEVERITY_COLORS={critical:T.red,high:T.amber,medium:T.gold,low:T.textMut};
 
 const kpis=[
   {label:'Portfolio Value',value:`£${(buildings.reduce((s,b)=>s+b.value,0)/1e9).toFixed(1)}B`,trend:'+2.1%'},
-  {label:'Avg EPC',value:EPC_RATINGS[Math.floor(buildings.reduce((s,b)=>s+b.epcIdx,0)/buildings.length)],trend:'Improving'},
+  {label:'Avg EPC',value:EPC_RATINGS[Math.floor(buildings.reduce((s,b)=>s+b.epcIdx,0)/Math.max(1,buildings.length))],trend:'Improving'},
   {label:'CRREM Aligned',value:`${Math.floor(buildings.filter(b=>b.crremAligned).length/buildings.length*100)}%`,trend:'+5% YoY'},
   {label:'Certification Rate',value:`${Math.floor(buildings.filter(b=>b.certified).length/buildings.length*100)}%`,trend:'+8% YoY'},
-  {label:'Avg Resilience',value:`${Math.floor(buildings.reduce((s,b)=>s+b.resilience,0)/buildings.length)}/100`,trend:'+3 pts'},
+  {label:'Avg Resilience',value:`${Math.floor(buildings.reduce((s,b)=>s+b.resilience,0)/Math.max(1,buildings.length))}/100`,trend:'+3 pts'},
   {label:'Green Lease Rate',value:`${Math.floor(buildings.filter(b=>b.greenLease).length/buildings.length*100)}%`,trend:'+12% YoY'},
   {label:'Total CO₂',value:`${Math.floor(buildings.reduce((s,b)=>s+b.co2,0)/1000)}k tCO₂`,trend:'-7% YoY'},
-  {label:'GRESB Score',value:`${Math.floor(buildings.reduce((s,b)=>s+b.gresbScore,0)/buildings.length)}/100`,trend:'+4 pts'},
-  {label:'Avg Intensity',value:`${Math.floor(buildings.reduce((s,b)=>s+b.intensity,0)/buildings.length)} kWh/m²`,trend:'-5% YoY'},
-  {label:'Embodied Carbon',value:`${Math.floor(buildings.reduce((s,b)=>s+b.embodiedCarbon,0)/buildings.length)} kgCO₂e/m²`,trend:'-3% YoY'},
+  {label:'GRESB Score',value:`${Math.floor(buildings.reduce((s,b)=>s+b.gresbScore,0)/Math.max(1,buildings.length))}/100`,trend:'+4 pts'},
+  {label:'Avg Intensity',value:`${Math.floor(buildings.reduce((s,b)=>s+b.intensity,0)/Math.max(1,buildings.length))} kWh/m²`,trend:'-5% YoY'},
+  {label:'Embodied Carbon',value:`${Math.floor(buildings.reduce((s,b)=>s+b.embodiedCarbon,0)/Math.max(1,buildings.length))} kgCO₂e/m²`,trend:'-3% YoY'},
   {label:'Retrofit Pipeline',value:`£${Math.floor(buildings.filter(b=>b.retrofitStatus!=='Completed').reduce((s,b)=>s+b.retrofitCost,0)/1e6)}M`,trend:'Active'},
   {label:'Buildings',value:buildings.length,trend:'Stable'},
 ];
@@ -147,21 +147,21 @@ export default function RealEstateEsgHubPage(){
   const portfolioRadar=useMemo(()=>[
     {metric:'Energy',score:Math.floor(100-buildings.reduce((s,b)=>s+b.intensity,0)/buildings.length/3)},
     {metric:'Certification',score:Math.floor(buildings.filter(b=>b.certified).length/buildings.length*100)},
-    {metric:'Resilience',score:Math.floor(buildings.reduce((s,b)=>s+b.resilience,0)/buildings.length)},
+    {metric:'Resilience',score:Math.floor(buildings.reduce((s,b)=>s+b.resilience,0)/Math.max(1,buildings.length))},
     {metric:'Green Lease',score:Math.floor(buildings.filter(b=>b.greenLease).length/buildings.length*100)},
-    {metric:'GRESB',score:Math.floor(buildings.reduce((s,b)=>s+b.gresbScore,0)/buildings.length)},
+    {metric:'GRESB',score:Math.floor(buildings.reduce((s,b)=>s+b.gresbScore,0)/Math.max(1,buildings.length))},
     {metric:'Carbon',score:Math.floor(100-buildings.reduce((s,b)=>s+b.embodiedCarbon,0)/buildings.length/4)},
   ],[]);
 
   const boardSections=useMemo(()=>[
     {title:'Portfolio Summary',content:`${buildings.length} buildings, £${(buildings.reduce((s,b)=>s+b.value,0)/1e9).toFixed(1)}B value, ${CITIES.filter(c=>buildings.some(b=>b.city===c)).length} cities`},
-    {title:'Energy & Carbon',content:`Avg intensity ${Math.floor(buildings.reduce((s,b)=>s+b.intensity,0)/buildings.length)} kWh/m², ${Math.floor(buildings.reduce((s,b)=>s+b.co2,0)/1000)}k tCO₂ total, ${Math.floor(buildings.filter(b=>b.crremAligned).length/buildings.length*100)}% CRREM aligned`},
+    {title:'Energy & Carbon',content:`Avg intensity ${Math.floor(buildings.reduce((s,b)=>s+b.intensity,0)/Math.max(1,buildings.length))} kWh/m², ${Math.floor(buildings.reduce((s,b)=>s+b.co2,0)/1000)}k tCO₂ total, ${Math.floor(buildings.filter(b=>b.crremAligned).length/buildings.length*100)}% CRREM aligned`},
     {title:'Certification',content:`${Math.floor(buildings.filter(b=>b.certified).length/buildings.length*100)}% certified, green premium +8-12%, ${buildings.filter(b=>b.certScheme==='LEED').length} LEED + ${buildings.filter(b=>b.certScheme==='BREEAM').length} BREEAM`},
-    {title:'Climate Resilience',content:`Avg resilience ${Math.floor(buildings.reduce((s,b)=>s+b.resilience,0)/buildings.length)}/100, ${buildings.filter(b=>b.riskScore>70).length} critical risk, £${Math.floor(buildings.reduce((s,b)=>s+b.insurancePrem,0)/1e6)}M insurance`},
+    {title:'Climate Resilience',content:`Avg resilience ${Math.floor(buildings.reduce((s,b)=>s+b.resilience,0)/Math.max(1,buildings.length))}/100, ${buildings.filter(b=>b.riskScore>70).length} critical risk, £${Math.floor(buildings.reduce((s,b)=>s+b.insurancePrem,0)/1e6)}M insurance`},
     {title:'Tenant Engagement',content:`${Math.floor(buildings.filter(b=>b.greenLease).length/buildings.length*100)}% green leases, ${buildings.reduce((s,b)=>s+b.tenantCount,0)} tenants across portfolio`},
     {title:'Regulatory Compliance',content:`MEES 2027: ${buildings.filter(b=>b.epcIdx>=2).length} buildings need upgrade, EPBD recast readiness ongoing`},
     {title:'Capex Pipeline',content:`£${Math.floor(buildings.filter(b=>b.retrofitStatus!=='Completed').reduce((s,b)=>s+b.retrofitCost,0)/1e6)}M total pipeline, ${retrofitPipeline.find(r=>r.status==='In Progress')?.count||0} in progress`},
-    {title:'GRESB Performance',content:`Score ${Math.floor(buildings.reduce((s,b)=>s+b.gresbScore,0)/buildings.length)}/100, top quartile target, +4 pts YoY improvement`},
+    {title:'GRESB Performance',content:`Score ${Math.floor(buildings.reduce((s,b)=>s+b.gresbScore,0)/Math.max(1,buildings.length))}/100, top quartile target, +4 pts YoY improvement`},
   ],[retrofitPipeline]);
 
   const handleSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}};

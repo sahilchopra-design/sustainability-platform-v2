@@ -110,7 +110,7 @@ export default function CcBicrsHubPage(){
     const totalCap=beccsProjects.reduce((a,p)=>a+p.co2_captured,0);
     const totalEnergy=beccsProjects.reduce((a,p)=>a+p.energy_output_mwh,0);
     const totalNet=beccsProjects.reduce((a,p)=>a+p.net_removal,0);
-    return{totalCap,totalEnergy,totalNet,avgCost:(beccsProjects.reduce((a,p)=>a+p.cost,0)/beccsProjects.length).toFixed(0)};
+    return{totalCap,totalEnergy,totalNet,avgCost:(beccsProjects.reduce((a,p)=>a+p.cost,0)/ Math.max(1, beccsProjects.length)).toFixed(0)};
   },[beccsProjects]);
 
   /* CDR comparison radar */
@@ -173,7 +173,7 @@ export default function CcBicrsHubPage(){
   const hubStats=useMemo(()=>{
     const totalBicrs=bicrsProjects.reduce((a,p)=>a+p.verified_tCO2,0);
     const totalBeccs=beccsProjects.reduce((a,p)=>a+p.net_removal,0);
-    const avgBicrsCost=(bicrsProjects.reduce((a,p)=>a+p.cost_per_tCO2,0)/bicrsProjects.length).toFixed(0);
+    const avgBicrsCost=(bicrsProjects.reduce((a,p)=>a+p.cost_per_tCO2,0)/ Math.max(1, bicrsProjects.length)).toFixed(0);
     const opBicrs=bicrsProjects.filter(p=>p.status==='Operational').length;
     const opBeccs=beccsProjects.filter(p=>p.status==='Operational').length;
     return{totalBicrs,totalBeccs,avgBicrsCost,opBicrs,opBeccs,totalCDR:totalBicrs+totalBeccs};

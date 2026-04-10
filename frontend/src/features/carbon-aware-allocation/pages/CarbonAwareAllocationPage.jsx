@@ -82,12 +82,12 @@ export default function CarbonAwareAllocationPage(){
 
   const kpis=useMemo(()=>{const d=filtered;if(!d.length)return{count:0,waci:0,optWaci:0,reduction:0,avgTE:0,avgTemp:0};
     const waci=d.reduce((a,r)=>a+r.waci,0);const optWaci=d.reduce((a,r)=>a+r.optWaci,0);
-    return{count:d.length,waci,optWaci,reduction:waci?((waci-optWaci)/waci*100):0,avgTE:d.reduce((a,r)=>a+r.trackingError,0)/d.length,avgTemp:d.reduce((a,r)=>a+r.tempAlignment,0)/d.length};},[filtered]);
+    return{count:d.length,waci,optWaci,reduction:waci?((waci-optWaci)/waci*100):0,avgTE:d.reduce((a,r)=>a+r.trackingError,0)/ Math.max(1, d.length),avgTemp:d.reduce((a,r)=>a+r.tempAlignment,0)/ Math.max(1, d.length)};},[filtered]);
 
   const sectorCarbon=useMemo(()=>SECTORS.map(s=>{const items=filtered.filter(r=>r.sector===s);return{name:s.length>10?s.slice(0,10)+'..':s,current:items.reduce((a,r)=>a+r.waci,0),optimized:items.reduce((a,r)=>a+r.optWaci,0)};}).filter(d=>d.current>0),[filtered]);
   const assetDist=useMemo(()=>ASSET_CLASSES.map(a=>({name:a,value:filtered.filter(r=>r.assetClass===a).reduce((acc,r)=>acc+r.weight,0)})).filter(d=>d.value>0),[filtered]);
-  const radarData=useMemo(()=>{if(!filtered.length)return[];const avg=k=>filtered.reduce((a,r)=>a+r[k],0)/filtered.length;
-    return[{axis:'ESG',value:avg('esgScore')},{axis:'Climate',value:avg('climateScore')},{axis:'Green Rev',value:avg('greenRevenue')},{axis:'Temp Align',value:100-avg('tempAlignment')*30},{axis:'Carbon Eff',value:100-avg('carbonInt')/5},{axis:'SBTi',value:filtered.filter(r=>r.sbtiAligned==='Yes').length/filtered.length*100}];},[filtered]);
+  const radarData=useMemo(()=>{if(!filtered.length)return[];const avg=k=>filtered.reduce((a,r)=>a+r[k],0)/ Math.max(1, filtered.length);
+    return[{axis:'ESG',value:avg('esgScore')},{axis:'Climate',value:avg('climateScore')},{axis:'Green Rev',value:avg('greenRevenue')},{axis:'Temp Align',value:100-avg('tempAlignment')*30},{axis:'Carbon Eff',value:100-avg('carbonInt')/5},{axis:'SBTi',value:filtered.filter(r=>r.sbtiAligned==='Yes').length/ Math.max(1, filtered.length)*100}];},[filtered]);
   const scopeData=useMemo(()=>{if(!filtered.length)return[];return[{name:'Scope 1',value:filtered.reduce((a,r)=>a+r.scope1,0)},{name:'Scope 2',value:filtered.reduce((a,r)=>a+r.scope2,0)},{name:'Scope 3',value:filtered.reduce((a,r)=>a+r.scope3,0)}];},[filtered]);
   const trendData=useMemo(()=>['Q1','Q2','Q3','Q4'].map((q,i)=>({quarter:q,carbon:filtered.reduce((a,r)=>a+[r.q1Carbon,r.q2Carbon,r.q3Carbon,r.q4Carbon][i],0)/(filtered.length||1)})),[filtered]);
 
@@ -178,7 +178,7 @@ export default function CarbonAwareAllocationPage(){
         <ResponsiveContainer width="100%" height={280}><PieChart><Pie data={scopeData} cx="50%" cy="50%" outerRadius={90} innerRadius={45} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`}>
           <Cell fill={T.sage}/><Cell fill={T.gold}/><Cell fill={T.red}/></Pie><Tooltip/><Legend/></PieChart></ResponsiveContainer></div>
       <div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SCOPE BY SECTOR</div>
-        <ResponsiveContainer width="100%" height={280}><BarChart data={SECTORS.slice(0,8).map(s=>{const items=filtered.filter(r=>r.sector===s);if(!items.length)return null;return{name:s.length>10?s.slice(0,10)+'..':s,s1:items.reduce((a,r)=>a+r.scope1,0)/items.length,s2:items.reduce((a,r)=>a+r.scope2,0)/items.length,s3:items.reduce((a,r)=>a+r.scope3,0)/items.length};}).filter(Boolean)}>
+        <ResponsiveContainer width="100%" height={280}><BarChart data={SECTORS.slice(0,8).map(s=>{const items=filtered.filter(r=>r.sector===s);if(!items.length)return null;return{name:s.length>10?s.slice(0,10)+'..':s,s1:items.reduce((a,r)=>a+r.scope1,0)/ Math.max(1, items.length),s2:items.reduce((a,r)=>a+r.scope2,0)/ Math.max(1, items.length),s3:items.reduce((a,r)=>a+r.scope3,0)/ Math.max(1, items.length)};}).filter(Boolean)}>
           <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Legend/>
           <Bar dataKey="s1" name="Scope 1" stackId="a" fill={T.sage}/><Bar dataKey="s2" name="Scope 2" stackId="a" fill={T.gold}/><Bar dataKey="s3" name="Scope 3" stackId="a" fill={T.red}/></BarChart></ResponsiveContainer></div>
     </div>

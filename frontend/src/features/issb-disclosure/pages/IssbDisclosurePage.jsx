@@ -364,7 +364,7 @@ export default function IssbDisclosurePage(){
 
   // ─── TAB 1: IFRS S2 Climate ───
   const renderS2=()=>{
-    const avgScore=Math.round(S2_REQUIREMENTS.reduce((s,r)=>s+r.score,0)/S2_REQUIREMENTS.length);
+    const avgScore=Math.round(S2_REQUIREMENTS.reduce((s,r)=>s+r.score,0)/ Math.max(1, S2_REQUIREMENTS.length));
     return(<>
       <SectionHead cite="IFRS S2 — Climate-related Disclosures">IFRS S2 Climate Requirements</SectionHead>
       <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
@@ -472,8 +472,8 @@ export default function IssbDisclosurePage(){
       <SectionHead cite="IFRS S2 §32, Appendix B — SASB Industry Standards">Industry-Specific Metrics (SASB)</SectionHead>
       <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
         <KPI label="Industries" value={SASB_INDUSTRIES.length} sub="SASB Standards Board" color={ACCENT}/>
-        <KPI label="Avg Score" value={Math.round(SASB_INDUSTRIES.reduce((s,i)=>s+i.avgScore,0)/SASB_INDUSTRIES.length)+'%'} color={T.gold}/>
-        <KPI label="Avg Metrics" value={Math.round(SASB_INDUSTRIES.reduce((s,i)=>s+i.metrics,0)/SASB_INDUSTRIES.length)} sub="per industry" color={T.navy}/>
+        <KPI label="Avg Score" value={Math.round(SASB_INDUSTRIES.reduce((s,i)=>s+i.avgScore,0)/ Math.max(1, SASB_INDUSTRIES.length))+'%'} color={T.gold}/>
+        <KPI label="Avg Metrics" value={Math.round(SASB_INDUSTRIES.reduce((s,i)=>s+i.metrics,0)/ Math.max(1, SASB_INDUSTRIES.length))} sub="per industry" color={T.navy}/>
       </div>
       <div style={ss.flex}>
         <input style={ss.input} placeholder="Search industries..." value={sasbSearch} onChange={e=>setSasbSearch(e.target.value)}/>
@@ -505,15 +505,15 @@ export default function IssbDisclosurePage(){
     const filt=gapFilter==='All'?GAP_ITEMS:gapFilter==='Gaps'?GAP_ITEMS.filter(g=>g.gap):gapFilter==='Critical'?GAP_ITEMS.filter(g=>g.priority==='Critical'):GAP_ITEMS.filter(g=>!g.gap);
     const gapCount=GAP_ITEMS.filter(g=>g.gap).length;
     const critCount=GAP_ITEMS.filter(g=>g.priority==='Critical').length;
-    const avgQuality=Math.round(GAP_ITEMS.reduce((s,g)=>s+g.quality,0)/GAP_ITEMS.length);
+    const avgQuality=Math.round(GAP_ITEMS.reduce((s,g)=>s+g.quality,0)/ Math.max(1, GAP_ITEMS.length));
     return(<>
       <SectionHead cite="IFRS S1/S2 — Gap Analysis & Readiness Assessment">Gap Analysis</SectionHead>
       <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
         <KPI label="Total Requirements" value={GAP_ITEMS.length} color={ACCENT}/>
-        <KPI label="Gaps" value={gapCount} sub={`${Math.round(gapCount/GAP_ITEMS.length*100)}%`} color={T.red}/>
+        <KPI label="Gaps" value={gapCount} sub={`${Math.round(gapCount/ Math.max(1, GAP_ITEMS.length)*100)}%`} color={T.red}/>
         <KPI label="Critical" value={critCount} color={T.red}/>
         <KPI label="Avg Quality" value={avgQuality+'%'} color={avgQuality>=60?T.green:T.amber}/>
-        <KPI label="Readiness" value={Math.round((1-gapCount/GAP_ITEMS.length)*100)+'%'} color={T.sage}/>
+        <KPI label="Readiness" value={Math.round((1-gapCount/ Math.max(1, GAP_ITEMS.length))*100)+'%'} color={T.sage}/>
       </div>
       <div style={ss.flex}>
         {['All','Gaps','Critical','Complete'].map(f=><button key={f} style={gapFilter===f?ss.btn:ss.btnSec} onClick={()=>setGapFilter(f)}>{f}</button>)}
@@ -546,7 +546,7 @@ export default function IssbDisclosurePage(){
       <SectionHead cite="ISSB-CSRD Interoperability Guidance (EFRAG-ISSB, July 2024)">Interoperability Mapping</SectionHead>
       <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
         <KPI label="Mappings" value={CONNECTIVITY.length} color={ACCENT}/>
-        <KPI label="Avg Alignment" value={Math.round(CONNECTIVITY.reduce((s,c)=>s+c.alignment,0)/CONNECTIVITY.length)+'%'} color={T.sage}/>
+        <KPI label="Avg Alignment" value={Math.round(CONNECTIVITY.reduce((s,c)=>s+c.alignment,0)/ Math.max(1, CONNECTIVITY.length))+'%'} color={T.sage}/>
         <KPI label="Frameworks" value={5} sub="ISSB, CSRD, SFDR, TCFD, CDP" color={T.navy}/>
       </div>
       <div style={ss.card}>

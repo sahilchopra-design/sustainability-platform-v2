@@ -145,9 +145,9 @@ export default function AuditTrailViewerPage(){
   const eventTimeline=useMemo(()=>Array.from({length:24},(_,i)=>({hour:`${String(i).padStart(2,'0')}:00`,events:AUDIT_EVENTS.filter(e=>+e.timestamp.slice(11,13)===i).length})),[]);
   const severityDist=useMemo(()=>['info','warning','critical'].map(s=>({name:s,count:AUDIT_EVENTS.filter(e=>e.severity===s).length})),[]);
 
-  const calcSuccessRate=useMemo(()=>Math.round(CALC_AUDITS.filter(c=>c.status==='Success').length/CALC_AUDITS.length*100),[]);
-  const avgExecTime=useMemo(()=>Math.round(CALC_AUDITS.reduce((a,c)=>a+parseInt(c.executionTime),0)/CALC_AUDITS.length),[]);
-  const avgDataQuality=useMemo(()=>Math.round(CALC_AUDITS.reduce((a,c)=>a+c.dataQualityScore,0)/CALC_AUDITS.length),[]);
+  const calcSuccessRate=useMemo(()=>Math.round(CALC_AUDITS.filter(c=>c.status==='Success').length/ Math.max(1, CALC_AUDITS.length)*100),[]);
+  const avgExecTime=useMemo(()=>Math.round(CALC_AUDITS.reduce((a,c)=>a+parseInt(c.executionTime),0)/ Math.max(1, CALC_AUDITS.length)),[]);
+  const avgDataQuality=useMemo(()=>Math.round(CALC_AUDITS.reduce((a,c)=>a+c.dataQualityScore,0)/ Math.max(1, CALC_AUDITS.length)),[]);
 
   const handleSort=(col)=>{if(sortCol===col)setSortDir(d=>-d);else{setSortCol(col);setSortDir(-1);}};
   const handleChangeSort=(col)=>{if(changeSort===col)setChangeSortDir(d=>-d);else{setChangeSort(col);setChangeSortDir(-1);}};
@@ -192,7 +192,7 @@ export default function AuditTrailViewerPage(){
       </div>
 
       <div style={{...ss.grid,gridTemplateColumns:'repeat(4,1fr)',marginBottom:24}}>
-        {[{label:'Total Events',value:AUDIT_EVENTS.length,color:T.navy},{label:'Critical',value:AUDIT_EVENTS.filter(e=>e.severity==='critical').length,color:T.red},{label:'Unique Users',value:new Set(AUDIT_EVENTS.map(e=>e.user)).size,color:T.gold},{label:'Avg Data Quality',value:`${Math.round(AUDIT_EVENTS.reduce((a,e)=>a+e.dataQuality,0)/AUDIT_EVENTS.length)}%`,color:T.sage}].map((m,i)=>(
+        {[{label:'Total Events',value:AUDIT_EVENTS.length,color:T.navy},{label:'Critical',value:AUDIT_EVENTS.filter(e=>e.severity==='critical').length,color:T.red},{label:'Unique Users',value:new Set(AUDIT_EVENTS.map(e=>e.user)).size,color:T.gold},{label:'Avg Data Quality',value:`${Math.round(AUDIT_EVENTS.reduce((a,e)=>a+e.dataQuality,0)/ Math.max(1, AUDIT_EVENTS.length))}%`,color:T.sage}].map((m,i)=>(
           <div key={i} style={ss.card}><div style={ss.metric}><div style={{...ss.metricVal,color:m.color}}>{m.value}</div><div style={ss.metricLbl}>{m.label}</div></div></div>
         ))}
       </div>

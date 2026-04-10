@@ -68,7 +68,7 @@ export default function EnergySupplierNetworkPage() {
 
   const filtered = useMemo(() => tierFilter === 'All' ? SUPPLIERS : SUPPLIERS.filter(s => s.tier === +tierFilter), [tierFilter]);
   const totalSpend = SUPPLIERS.reduce((s, x) => s + x.spend, 0);
-  const avgScore = Math.round(SUPPLIERS.reduce((s, x) => s + x.score, 0) / SUPPLIERS.length);
+  const avgScore = Math.round(SUPPLIERS.reduce((s, x) => s + x.score, 0) / Math.max(1, SUPPLIERS.length));
   const criticals = SUPPLIERS.filter(s => s.critical);
 
   const catConc = useMemo(() => {
@@ -276,7 +276,7 @@ export default function EnergySupplierNetworkPage() {
             </PieChart>
           </ResponsiveContainer>
           <div style={{ marginTop: 14, padding: 12, background: T.bg, borderRadius: 8, fontSize: 12, color: T.textSec }}>
-            <strong>Engagement Progress:</strong> {Math.round((SUPPLIERS.filter(s => s.plan !== 'Not Requested').length / SUPPLIERS.length) * 100)}% of suppliers have been engaged. Target: 80% by Q4 2026.
+            <strong>Engagement Progress:</strong> {Math.round((SUPPLIERS.filter(s => s.plan !== 'Not Requested').length / Math.max(1, SUPPLIERS.length)) * 100)}% of suppliers have been engaged. Target: 80% by Q4 2026.
           </div>
         </div>
       )}

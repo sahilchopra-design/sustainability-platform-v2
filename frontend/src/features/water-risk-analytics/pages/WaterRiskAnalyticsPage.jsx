@@ -5,7 +5,8 @@ const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 const ACCENT='#0284c7';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6'];
 const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
 const TABS=['Water Risk Dashboard','Regional Analysis','Corporate Exposure','Projections'];const RISKF=['All','Extremely High','High','Medium-High','Medium','Low'];const PAGE=12;
-const REGIONS=Array.from({length:40},(_,i)=>{
+import { isIndiaMode, adaptForWaterRisk } from '../../../data/IndiaDataAdapter';
+const _DEFAULT_REGIONS=Array.from({length:40},(_,i)=>{
   const names=['Ganges Basin','Indus Basin','Yellow River','Yangtze Delta','Mekong Delta','Nile Valley','Murray-Darling','Colorado Basin','California Central','Sao Francisco','Tigris-Euphrates','Lake Chad','Aral Sea','Jordan River','Orange-Senqu','Volta Basin','Zambezi','Congo Basin','Amazon Basin','Mississippi Delta','Rhine-Meuse','Danube Basin','Po Valley','Tagus Basin','Guadalquivir','North China Plain','Deccan Plateau','Rajasthan Desert','Middle East Gulf','Sahel Region','Horn of Africa','Central Asian Steppe','Australian Outback','Atacama Region','Western US','Great Plains','SE Australia','Southern Africa','NW India','Pakistan Punjab'];
   const basins=['Ganges','Indus','Yellow','Yangtze','Mekong','Nile','Murray','Colorado','Sacramento','Sao Francisco','Tigris','Lake Chad','Aral','Jordan','Orange','Volta','Zambezi','Congo','Amazon','Mississippi','Rhine','Danube','Po','Tagus','Guadalquivir','Hai','Godavari','Thar','Gulf','Niger','Juba','Amu Darya','Cooper','Loa','Columbia','Missouri','Yarra','Limpopo','Sabarmati','Chenab'];
   const stressLevel=+(sr(i*7)*4+1).toFixed(1);const riskCat=stressLevel>4?'Extremely High':stressLevel>3?'High':stressLevel>2.5?'Medium-High':stressLevel>1.5?'Medium':'Low';
@@ -14,6 +15,20 @@ const REGIONS=Array.from({length:40},(_,i)=>{
   const yearly=Array.from({length:6},(_,y)=>({year:2020+y,stress:+(stressLevel+y*0.08+sr(i*100+y)*0.3).toFixed(1),supply:Math.round(supply-y*5+sr(i*100+y*3)*10),demand:Math.round(demand+y*8+sr(i*100+y*7)*5)}));
   return{id:i+1,name:names[i],basin:basins[i],waterStress:stressLevel,riskCategory:riskCat,supplyBCM:supply,demandBCM:demand,deficitBCM:deficit,aqueductScore:+Math.min(5,stressLevel*0.9+sr(i*31)*0.5).toFixed(1),floodRisk,droughtRisk,pollutionIndex:pollutionIdx,groundwaterDepletion:groundwater,popAffectedM:+(sr(i*37)*50+1).toFixed(1),agWaterPct:Math.round(sr(i*41)*70+10),industrialPct:Math.round(sr(i*43)*30+5),domesticPct:Math.round(100-Math.round(sr(i*41)*70+10)-Math.round(sr(i*43)*30+5)),waterPrice:+(sr(i*47)*3+0.2).toFixed(2),infraInvestBn:+(sr(i*49)*10+0.5).toFixed(1),desalCapacity:Math.round(sr(i*51)*500),recycleRate:Math.round(sr(i*53)*60+10),yearly};
 });
+// ── India Dataset Integration ──
+const REGIONS = isIndiaMode() ? adaptForWaterRisk().map((c, i) => ({
+  id: i + 1, name: c.name + ' (' + c.basin + ')', basin: c.basin, waterStress: +(c.stressScore / 20).toFixed(1),
+  riskCategory: c.stressScore > 80 ? 'Extremely High' : c.stressScore > 60 ? 'High' : c.stressScore > 40 ? 'Medium-High' : c.stressScore > 20 ? 'Medium' : 'Low',
+  supplyBCM: Math.round(sr(i * 11) * 500 + 10), demandBCM: Math.round(sr(i * 13) * 400 + 20),
+  deficitBCM: Math.max(0, Math.round(c.waterWithdrawal_m3 / 1e6)), aqueductScore: +(c.stressScore / 20).toFixed(1),
+  floodRisk: Math.round(sr(i * 17) * 100), droughtRisk: Math.round(sr(i * 19) * 100),
+  pollutionIndex: Math.round(sr(i * 23) * 100), groundwaterDepletion: Math.round(sr(i * 29) * 80 + 10),
+  popAffectedM: +(sr(i * 37) * 50 + 1).toFixed(1), agWaterPct: Math.round(sr(i * 41) * 70 + 10),
+  industrialPct: Math.round(sr(i * 43) * 30 + 5), domesticPct: Math.round(100 - Math.round(sr(i * 41) * 70 + 10) - Math.round(sr(i * 43) * 30 + 5)),
+  waterPrice: +(sr(i * 47) * 3 + 0.2).toFixed(2), infraInvestBn: +(sr(i * 49) * 10 + 0.5).toFixed(1),
+  desalCapacity: Math.round(sr(i * 51) * 500), recycleRate: Math.round(sr(i * 53) * 60 + 10),
+  yearly: Array.from({ length: 6 }, (_, y) => ({ year: 2020 + y, stress: +(c.stressScore / 20 + y * 0.08).toFixed(1), supply: Math.round(sr(i * 100 + y) * 300 + 50), demand: Math.round(sr(i * 100 + y * 3) * 350 + 60) })),
+})) : _DEFAULT_REGIONS;
 export default function WaterRiskAnalyticsPage(){
   const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[riskF,setRiskF]=useState('All');const[sortCol,setSortCol]=useState('waterStress');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
   const filtered=useMemo(()=>{let d=[...REGIONS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase())||r.basin.toLowerCase().includes(search.toLowerCase()));if(riskF!=='All')d=d.filter(r=>r.riskCategory===riskF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,riskF,sortCol,sortDir]);

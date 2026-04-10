@@ -28,7 +28,7 @@ const ENTITIES = Array.from({ length: 10 }, (_, i) => {
   const sectors = ['Energy', 'Energy', 'Energy', 'Utilities', 'Utilities', 'Mining', 'Steel', 'Cement', 'Transport', 'Finance'];
   const scores = {};
   TAXONOMY_TREE.forEach((t, j) => { scores[t.code] = Math.round(25 + sr(i * 8 + j * 3) * 65); });
-  const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / TAXONOMY_TREE.length);
+  const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / Math.max(1, TAXONOMY_TREE.length));
   const rt = scoreToRating(overall);
   return { id: i + 1, name: names[i], sector: sectors[i], scores, overall, rating: rt.label, ratingColor: rt.color };
 });
@@ -65,7 +65,7 @@ export default function AssessmentEngineDashboardPage() {
   const [selectedEntity, setSelectedEntity] = useState(ENTITIES[0]);
   const [selectedScenario, setSelectedScenario] = useState(SCENARIOS[0]);
 
-  const portfolioAvg = useMemo(() => Math.round(ENTITIES.reduce((s, e) => s + e.overall, 0) / ENTITIES.length), []);
+  const portfolioAvg = useMemo(() => Math.round(ENTITIES.reduce((s, e) => s + e.overall, 0) / Math.max(1, ENTITIES.length)), []);
   const portfolioRating = useMemo(() => { const r = scoreToRating(portfolioAvg); return r.label; }, [portfolioAvg]);
 
   const sunburstData = useMemo(() => TAXONOMY_TREE.map((l1, i) => ({
@@ -80,7 +80,7 @@ export default function AssessmentEngineDashboardPage() {
   const radarData = useMemo(() => TAXONOMY_TREE.map(t => ({
     topic: t.code, fullName: t.name,
     [selectedEntity.name]: selectedEntity.scores[t.code],
-    'Portfolio Avg': Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / ENTITIES.length),
+    'Portfolio Avg': Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / Math.max(1, ENTITIES.length)),
   })), [selectedEntity]);
 
   const distributionData = useMemo(() => {

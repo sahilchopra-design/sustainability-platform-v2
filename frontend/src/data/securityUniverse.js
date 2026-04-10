@@ -71,7 +71,50 @@ const CURRENCIES = {
 const MSCI_RATINGS = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC'];
 const CDP_SCORES = ['A', 'A-', 'B', 'B-', 'C', 'C-', 'D', 'D-'];
 const SBTI_STATUSES = ['Committed', 'Target Set — 1.5°C', 'Target Set — WB2C', 'Target Set — 2°C', 'None'];
+const SBTI_CLASSIFICATIONS = ['1.5°C', 'WB2°C', '2°C', null];
 const BOND_RATINGS = ['AAA', 'AA+', 'AA', 'AA-', 'A+', 'A', 'A-', 'BBB+', 'BBB', 'BBB-', 'BB+', 'BB', 'BB-', 'B+', 'B', 'B-', 'CCC+', 'CCC'];
+
+// Sector-specific ranges for new ESG/climate fields
+const TAXONOMY_RANGES = {
+  'Energy': [2, 25], 'Materials': [5, 35], 'Industrials': [8, 45],
+  'Consumer Discretionary': [5, 40], 'Consumer Staples': [8, 50],
+  'Health Care': [10, 55], 'Financials': [5, 35], 'Information Technology': [15, 65],
+  'Communication Services': [10, 50], 'Utilities': [20, 80], 'Real Estate': [10, 55],
+};
+const PHYS_RISK_RANGES = {
+  'Energy': [40, 90], 'Materials': [30, 75], 'Utilities': [35, 85],
+  'Real Estate': [25, 80], 'Industrials': [20, 65], 'Consumer Staples': [15, 55],
+};
+const TRANS_RISK_RANGES = {
+  'Energy': [50, 95], 'Materials': [40, 80], 'Utilities': [45, 85],
+  'Industrials': [30, 70], 'Consumer Discretionary': [25, 65],
+};
+const WATER_STRESS_RANGES = {
+  'Materials': [30, 90], 'Utilities': [25, 85], 'Energy': [20, 75],
+  'Consumer Staples': [20, 70], 'Real Estate': [10, 50],
+};
+
+/** Generate the 7 new ESG/climate fields for an equity security */
+function enrichESGClimate(sector, seed) {
+  const taxR = TAXONOMY_RANGES[sector] || [5, 40];
+  const physR = PHYS_RISK_RANGES[sector] || [10, 60];
+  const transR = TRANS_RISK_RANGES[sector] || [10, 55];
+  const waterR = WATER_STRESS_RANGES[sector] || [5, 50];
+  const sbtiStat = pick(SBTI_STATUSES, seed);
+  const sbtiClass = sbtiStat !== 'None' ? pick(SBTI_CLASSIFICATIONS.filter(Boolean), seed + 1) : null;
+  // Climate VaR: energy/utilities/materials higher
+  const cvarBase = { 'Energy': [4, 18], 'Utilities': [3, 15], 'Materials': [3, 14] };
+  const cvarR = cvarBase[sector] || [1, 10];
+  return {
+    sbtiClassification: sbtiClass,
+    taxonomyAlignmentPct: range(taxR[0], taxR[1], seed + 2),
+    physicalRiskScore: rangeInt(physR[0], physR[1], seed + 3),
+    transitionRiskScore: rangeInt(transR[0], transR[1], seed + 4),
+    waterStressScore: rangeInt(waterR[0], waterR[1], seed + 5),
+    climateVarPct: range(cvarR[0], cvarR[1], seed + 6),
+    roePct: range(-5, 40, seed + 7),
+  };
+}
 
 // ─── Sector-specific emission ranges (tCO2e) ────────────────────────────────
 const EMISSION_RANGES = {
@@ -1113,6 +1156,7 @@ function buildNamedEquities() {
     const s1 = Math.round(range(er.s1[0], er.s1[1], seed));
     const s2 = Math.round(range(er.s2[0], er.s2[1], seed + 1));
     const s3 = Math.round(range(er.s3[0], er.s3[1], seed + 2));
+    const esgClimate = enrichESGClimate(sector, seed + 21);
     equities.push({
       id: `EQ-${String(idx + 1).padStart(5, '0')}`, assetType: 'Equity',
       isin: `US${isinCheck('', seed + 3)}`,
@@ -1129,6 +1173,7 @@ function buildNamedEquities() {
       ytdReturn: range(-30, 60, seed + 16), esgComposite: rangeInt(15, 95, seed + 17),
       controversyScore: rangeInt(0, 10, seed + 18), boardIndependencePct: range(50, 100, seed + 19),
       femaleBoardPct: range(10, 55, seed + 20),
+      ...esgClimate,
     });
     idx++;
   }
@@ -1142,6 +1187,7 @@ function buildNamedEquities() {
     const s1 = Math.round(range(er.s1[0], er.s1[1], seed));
     const s2 = Math.round(range(er.s2[0], er.s2[1], seed + 1));
     const s3 = Math.round(range(er.s3[0], er.s3[1], seed + 2));
+    const esgClimate = enrichESGClimate(sector, seed + 21);
     equities.push({
       id: `EQ-${String(idx + 1).padStart(5, '0')}`, assetType: 'Equity',
       isin: `${country}${isinCheck('', seed + 3)}`,
@@ -1159,6 +1205,7 @@ function buildNamedEquities() {
       ytdReturn: range(-35, 55, seed + 16), esgComposite: rangeInt(10, 90, seed + 17),
       controversyScore: rangeInt(0, 10, seed + 18), boardIndependencePct: range(25, 95, seed + 19),
       femaleBoardPct: range(5, 50, seed + 20),
+      ...esgClimate,
     });
     idx++;
   }
@@ -1171,6 +1218,7 @@ function buildNamedEquities() {
     const s1 = Math.round(range(er.s1[0], er.s1[1], seed));
     const s2 = Math.round(range(er.s2[0], er.s2[1], seed + 1));
     const s3 = Math.round(range(er.s3[0], er.s3[1], seed + 2));
+    const esgClimate = enrichESGClimate(sector, seed + 21);
     equities.push({
       id: `EQ-${String(idx + 1).padStart(5, '0')}`, assetType: 'Equity',
       isin: `JP${isinCheck('', seed + 3)}`,
@@ -1187,6 +1235,7 @@ function buildNamedEquities() {
       ytdReturn: range(-25, 45, seed + 16), esgComposite: rangeInt(15, 90, seed + 17),
       controversyScore: rangeInt(0, 10, seed + 18), boardIndependencePct: range(30, 85, seed + 19),
       femaleBoardPct: range(5, 40, seed + 20),
+      ...esgClimate,
     });
     idx++;
   }
@@ -1245,6 +1294,7 @@ function generateSmidCapEquities(startIdx, count) {
     const suffix = pick(SMID_SUFFIXES, seed + 9);
     const name = `${prefix} ${suffix}`;
     const tkr = (prefix.slice(0, 3) + suffix.slice(0, 1)).toUpperCase() + rangeInt(1, 99, seed + 10);
+    const esgClimate = enrichESGClimate(sector, seed + 29);
     equities.push({
       id: `EQ-${String(startIdx + i + 1).padStart(5, '0')}`, assetType: 'Equity',
       isin: `${country}${isinCheck('', seed + 11)}`,
@@ -1262,6 +1312,7 @@ function generateSmidCapEquities(startIdx, count) {
       ytdReturn: range(-40, 70, seed + 24), esgComposite: rangeInt(10, 85, seed + 25),
       controversyScore: rangeInt(0, 10, seed + 26), boardIndependencePct: range(30, 95, seed + 27),
       femaleBoardPct: range(5, 50, seed + 28),
+      ...esgClimate,
     });
   }
   return equities;
@@ -1814,5 +1865,133 @@ export const getWeightedPCAF = () => 2.8;
 export const getAssetClassBreakdown = () => { const m={}; PORTFOLIO_HOLDINGS.forEach(h => { const k=h.assetClass||h.assetType||'Other'; m[k]=(m[k]||0)+1; }); return m; };
 export const getEngagementSummary = () => ({engaged:0,monitoring:0,none:PORTFOLIO_HOLDINGS.length});
 export const getPCAFBreakdown = () => ({class1:0,class2:0,class3:0,class4:0,class5:0});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NEW HELPER EXPORTS — ESG/Climate Analytics
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/** % of equities with SBTi targets (not 'None') */
+export const getSBTiCoverage = () => {
+  const withTargets = EQUITIES.filter(e => e.sbtiStatus && e.sbtiStatus !== 'None').length;
+  return EQUITIES.length > 0 ? +((withTargets / EQUITIES.length) * 100).toFixed(1) : 0;
+};
+
+/** Portfolio-weighted Implied Temperature Rating (uses MOCK_PORTFOLIO equity holdings) */
+export const getAvgTemperature = () => {
+  const eqHoldings = MOCK_PORTFOLIO.holdings.filter(h => h.assetType === 'Equity');
+  if (!eqHoldings.length) return 2.5;
+  let sumWT = 0, sumW = 0;
+  eqHoldings.forEach(h => {
+    const sec = SECURITY_UNIVERSE.find(s => s.id === h.securityId);
+    if (sec && sec.temperatureScore) {
+      sumWT += h.weightPct * sec.temperatureScore;
+      sumW += h.weightPct;
+    }
+  });
+  return sumW > 0 ? +(sumWT / sumW).toFixed(2) : 2.5;
+};
+
+/** Top N contributors by financed emissions (scope1+scope2 * weight) */
+export const getTopCarbonContributors = (n = 20) => {
+  const eqHoldings = MOCK_PORTFOLIO.holdings.filter(h => h.assetType === 'Equity');
+  return eqHoldings
+    .map(h => {
+      const sec = SECURITY_UNIVERSE.find(s => s.id === h.securityId);
+      const emissions = sec ? (sec.scope1 || 0) + (sec.scope2 || 0) : 0;
+      return { ...h, totalEmissions: emissions, financedEmissions: +(emissions * h.weightPct / 100).toFixed(0), sector: sec?.sector };
+    })
+    .sort((a, b) => b.financedEmissions - a.financedEmissions)
+    .slice(0, n);
+};
+
+/** MSCI ESG Rating distribution for all equities: { AAA: n, AA: n, ... } */
+export const getESGDistribution = () => {
+  const dist = {};
+  MSCI_RATINGS.forEach(r => { dist[r] = 0; });
+  dist['NR'] = 0;
+  EQUITIES.forEach(e => {
+    const r = e.msciRating || 'NR';
+    dist[r] = (dist[r] || 0) + 1;
+  });
+  return dist;
+};
+
+/** Physical risk breakdown: low/medium/high/veryHigh counts */
+export const getPhysicalRiskBreakdown = () => {
+  const b = { low: 0, medium: 0, high: 0, veryHigh: 0 };
+  EQUITIES.forEach(e => {
+    const s = e.physicalRiskScore || 0;
+    if (s < 25) b.low++;
+    else if (s < 50) b.medium++;
+    else if (s < 75) b.high++;
+    else b.veryHigh++;
+  });
+  return b;
+};
+
+/** Transition risk breakdown: low/medium/high/veryHigh counts */
+export const getTransitionRiskBreakdown = () => {
+  const b = { low: 0, medium: 0, high: 0, veryHigh: 0 };
+  EQUITIES.forEach(e => {
+    const s = e.transitionRiskScore || 0;
+    if (s < 25) b.low++;
+    else if (s < 50) b.medium++;
+    else if (s < 75) b.high++;
+    else b.veryHigh++;
+  });
+  return b;
+};
+
+/** Water stress severity distribution */
+export const getWaterStressBreakdown = () => {
+  const b = { low: 0, mediumHigh: 0, high: 0, extremelyHigh: 0 };
+  EQUITIES.forEach(e => {
+    const s = e.waterStressScore || 0;
+    if (s < 25) b.low++;
+    else if (s < 50) b.mediumHigh++;
+    else if (s < 75) b.high++;
+    else b.extremelyHigh++;
+  });
+  return b;
+};
+
+/** Climate VaR distribution: % of equities by severity band */
+export const getClimateVaRDistribution = () => {
+  const b = { 'Below 5%': 0, '5-10%': 0, '10-15%': 0, 'Above 15%': 0 };
+  EQUITIES.forEach(e => {
+    const v = e.climateVarPct || 0;
+    if (v < 5) b['Below 5%']++;
+    else if (v < 10) b['5-10%']++;
+    else if (v < 15) b['10-15%']++;
+    else b['Above 15%']++;
+  });
+  return b;
+};
+
+/** SBTi classification breakdown: 1.5C / WB2C / 2C / None */
+export const getSBTiClassificationBreakdown = () => {
+  const b = { '1.5\u00b0C': 0, 'WB2\u00b0C': 0, '2\u00b0C': 0, 'None': 0 };
+  EQUITIES.forEach(e => {
+    const c = e.sbtiClassification;
+    if (c === '1.5\u00b0C') b['1.5\u00b0C']++;
+    else if (c === 'WB2\u00b0C') b['WB2\u00b0C']++;
+    else if (c === '2\u00b0C') b['2\u00b0C']++;
+    else b['None']++;
+  });
+  return b;
+};
+
+/** Average ROE by sector */
+export const getROEBySector = () => {
+  const m = {};
+  EQUITIES.forEach(e => {
+    const s = e.sector || 'Other';
+    if (!m[s]) m[s] = { sector: s, count: 0, sumRoe: 0 };
+    m[s].count++;
+    m[s].sumRoe += (e.roePct || 0);
+  });
+  Object.values(m).forEach(v => { v.avgRoe = +(v.sumRoe / v.count).toFixed(1); });
+  return m;
+};
 
 export default SECURITY_UNIVERSE;

@@ -72,15 +72,15 @@ export default function HealthAdaptationFinancePage(){
 
   const infraAgg=useMemo(()=>INFRA_CATEGORIES.map(cat=>{
     const scores=COUNTRIES.map(c=>c.infraScores.find(x=>x.category===cat));
-    const avgScore=Math.floor(scores.reduce((s,x)=>s+(x?.score||0),0)/scores.length);
+    const avgScore=Math.floor(scores.reduce((s,x)=>s+(x?.score||0),0)/ Math.max(1, scores.length));
     const totalNeed=scores.reduce((s,x)=>s+(x?.investNeedM||0),0);
     return{category:cat,avgScore,totalNeedM:totalNeed};
   }),[]);
 
   const ewsAgg=useMemo(()=>EARLY_WARNING_TYPES.map(ew=>{
     const items=COUNTRIES.map(c=>c.earlyWarning.find(x=>x.type===ew));
-    const avgCov=Math.floor(items.reduce((s,x)=>s+(x?.coveragePct||0),0)/items.length);
-    const avgEff=Math.floor(items.reduce((s,x)=>s+(x?.effectivenessPct||0),0)/items.length);
+    const avgCov=Math.floor(items.reduce((s,x)=>s+(x?.coveragePct||0),0)/ Math.max(1, items.length));
+    const avgEff=Math.floor(items.reduce((s,x)=>s+(x?.effectivenessPct||0),0)/ Math.max(1, items.length));
     const totalInvest=items.reduce((s,x)=>s+(x?.investNeedM||0),0);
     return{type:ew,avgCoverage:avgCov,avgEffectiveness:avgEff,totalInvestM:totalInvest};
   }),[]);
@@ -151,7 +151,7 @@ export default function HealthAdaptationFinancePage(){
       <div style={card({marginBottom:20})}>
         <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Quarterly Adaptation Spend Trend (Global Aggregate)</div>
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={QUARTERS.map((q,qi)=>({q,totalAdapt:COUNTRIES.reduce((s,c)=>s+c.qTrend[qi].adaptSpend,0),gapClosure:Math.floor(COUNTRIES.reduce((s,c)=>s+c.qTrend[qi].gapClosure,0)/COUNTRIES.length)}))} margin={{top:5,right:20,bottom:5,left:10}}>
+          <AreaChart data={QUARTERS.map((q,qi)=>({q,totalAdapt:COUNTRIES.reduce((s,c)=>s+c.qTrend[qi].adaptSpend,0),gapClosure:Math.floor(COUNTRIES.reduce((s,c)=>s+c.qTrend[qi].gapClosure,0)/ Math.max(1, COUNTRIES.length))}))} margin={{top:5,right:20,bottom:5,left:10}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="q" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/>
             <Tooltip contentStyle={{fontSize:12,borderRadius:8}}/><Legend wrapperStyle={{fontSize:11}}/>
             <Area type="monotone" dataKey="totalAdapt" stroke={T.sage} fill={T.sage+'20'} strokeWidth={2} name="Total Adaptation ($M)"/>
@@ -238,8 +238,8 @@ export default function HealthAdaptationFinancePage(){
   const renderTab2=()=>(
     <div>
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
-        {kpiBox('Avg Coverage',Math.floor(ewsAgg.reduce((s,e)=>s+e.avgCoverage,0)/ewsAgg.length)+'%','Early warning systems',T.gold)}
-        {kpiBox('Avg Effectiveness',Math.floor(ewsAgg.reduce((s,e)=>s+e.avgEffectiveness,0)/ewsAgg.length)+'%','System performance',T.sage)}
+        {kpiBox('Avg Coverage',Math.floor(ewsAgg.reduce((s,e)=>s+e.avgCoverage,0)/ Math.max(1, ewsAgg.length))+'%','Early warning systems',T.gold)}
+        {kpiBox('Avg Effectiveness',Math.floor(ewsAgg.reduce((s,e)=>s+e.avgEffectiveness,0)/ Math.max(1, ewsAgg.length))+'%','System performance',T.sage)}
         {kpiBox('Total Investment Need',`$${fmt(ewsAgg.reduce((s,e)=>s+e.totalInvestM,0)*1e6)}`,'EWS gap',T.amber)}
         {kpiBox('EWS Types',EARLY_WARNING_TYPES.length,'Alert categories',T.navy)}
       </div>
@@ -297,8 +297,8 @@ export default function HealthAdaptationFinancePage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Total Issuance',`$${fmt(finInstrumentAgg.reduce((s,f)=>s+f.totalM,0)*1e6)}`,'All health-climate bonds',T.green)}
         {kpiBox('Instruments',finInstrumentAgg.length,'Financing types',T.navy)}
-        {kpiBox('Avg Tenor',+(finInstrumentAgg.reduce((s,f)=>s+f.avgTenor,0)/finInstrumentAgg.length).toFixed(1)+' yrs','Bond maturity',T.gold)}
-        {kpiBox('Avg Spread',+(finInstrumentAgg.reduce((s,f)=>s+f.avgSpread,0)/finInstrumentAgg.length).toFixed(2)+'%','Over benchmark',T.amber)}
+        {kpiBox('Avg Tenor',+(finInstrumentAgg.reduce((s,f)=>s+f.avgTenor,0)/ Math.max(1, finInstrumentAgg.length)).toFixed(1)+' yrs','Bond maturity',T.gold)}
+        {kpiBox('Avg Spread',+(finInstrumentAgg.reduce((s,f)=>s+f.avgSpread,0)/ Math.max(1, finInstrumentAgg.length)).toFixed(2)+'%','Over benchmark',T.amber)}
       </div>
       <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
         <button onClick={()=>setInstrumentFilter('All')} style={{padding:'5px 14px',borderRadius:6,border:`1px solid ${instrumentFilter==='All'?T.navy:T.border}`,background:instrumentFilter==='All'?T.navy:'transparent',color:instrumentFilter==='All'?'#fff':T.text,fontSize:12,fontWeight:600,cursor:'pointer'}}>All</button>

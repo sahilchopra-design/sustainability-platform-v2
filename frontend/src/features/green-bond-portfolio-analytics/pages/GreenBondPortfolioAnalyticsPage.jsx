@@ -19,7 +19,9 @@ const REPORTING_STATUSES = ['Reported','Pending','Missing'];
 const GB_SECTORS = ['Government','Financials','Utilities','Industrials','Real Estate','Transport','Technology','Healthcare'];
 const COUNTRIES_GB = ['US','UK','DE','FR','JP','CN','CA','AU','NL','SE','BR','SG'];
 
-const BONDS = Array.from({ length: 100 }, (_, i) => {
+import { isIndiaMode, getIndiaGreenBonds } from '../../../data/IndiaDataAdapter';
+
+const _DEFAULT_BONDS = Array.from({ length: 100 }, (_, i) => {
   const type = BOND_TYPES[Math.floor(sr(i * 7 + 1) * BOND_TYPES.length)];
   const nominal = sr(i * 11 + 2) * 500 + 50;
   const coupon = sr(i * 13 + 3) * 0.06 + 0.005;
@@ -55,6 +57,8 @@ const BONDS = Array.from({ length: 100 }, (_, i) => {
     blendedImpact: sr(i * 103 + 24) * 80 + 20,
   };
 });
+// ── India Dataset Integration ──
+const BONDS = isIndiaMode() ? (getIndiaGreenBonds() || _DEFAULT_BONDS) : _DEFAULT_BONDS;
 
 const totalNominal = BONDS.reduce((s, b) => s + b.nominal, 0);
 const BONDS_N = BONDS.map(b => ({ ...b, aumWeight: b.nominal / totalNominal }));

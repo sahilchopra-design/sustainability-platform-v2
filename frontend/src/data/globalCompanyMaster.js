@@ -237,21 +237,110 @@ function normalise(c, exchangeMeta) {
   return base;
 }
 
+// ── Deterministic PRNG (matches securityUniverse.js) ──────────────────────────
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const pick = (arr, seed) => arr[Math.floor(sr(seed) * arr.length)];
+const rng = (min, max, seed) => +(min + sr(seed) * (max - min)).toFixed(2);
+const rngInt = (min, max, seed) => Math.floor(min + sr(seed) * (max - min + 1));
+
+// ── Reference arrays for PRNG-generated ESG/climate fields ────────────────────
+const MSCI_RATINGS_GCM  = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC'];
+const CDP_SCORES_GCM    = ['A', 'A-', 'B', 'B-', 'C', 'C-', 'D', 'D-'];
+const SBTI_STATUSES_GCM = ['Targets set', 'Committed', 'None'];
+const SBTI_CLASS_GCM    = ['1.5\u00b0C', 'WB2\u00b0C', null];
+const NZ_YEARS_GCM      = [2030, 2035, 2040, 2045, 2050, null];
+
+// Sector-specific emission intensity multipliers (tCO2e/$M revenue)
+const SECTOR_CARBON_INTENSITY = {
+  'Energy': [200, 800], 'Materials': [150, 600], 'Industrials': [50, 250],
+  'Consumer Discretionary': [20, 120], 'Consumer Staples': [30, 150],
+  'Health Care': [8, 50], 'Financials': [3, 20], 'Information Technology': [5, 40],
+  'Communication Services': [10, 60], 'Utilities': [300, 900], 'Real Estate': [20, 100],
+};
+
 /**
  * Post-normalise: add computed fields that downstream modules depend on.
- * scope1_mt / scope2_mt = megatonnes (scope1_co2e in tonnes ÷ 1e6)
- * Also ensures esg_score, transition_risk_score, sbti_committed always exist.
+ * scope1_mt / scope2_mt = megatonnes (scope1_co2e in tonnes / 1e6)
+ * Also generates 15 ESG/climate fields deterministically from company index.
  */
+let _enrichIdx = 0;
 function enrich(c) {
+  const idx = _enrichIdx++;
+  const seed = idx * 17 + 7777;
+
+  // Sector-aware emission generation
+  const ciRange = SECTOR_CARBON_INTENSITY[c.sector] || [20, 200];
+  const revUsd = c.revenue_usd_mn || c.revenue_inr_cr || c.revenue_gbp_mn || 1000;
+
+  // Only generate scope3_mt / carbon_intensity if not already present
+  const s1 = c.scope1_mt != null ? c.scope1_mt : (c.scope1_co2e != null ? c.scope1_co2e / 1e6 : +rng(0.001, revUsd * 0.0004, seed).toFixed(4));
+  const s2 = c.scope2_mt != null ? c.scope2_mt : (c.scope2_co2e != null ? c.scope2_co2e / 1e6 : +rng(0.0005, revUsd * 0.0002, seed + 1).toFixed(4));
+  const s3 = c.scope3_mt != null ? c.scope3_mt : +rng(s1 * 1.5, s1 * 8, seed + 2).toFixed(4);
+  const carbonIntensity = c.carbon_intensity != null ? c.carbon_intensity : rng(ciRange[0], ciRange[1], seed + 3);
+
+  // SBTi
+  const sbtiStatusRaw = c.sbti_status || pick(SBTI_STATUSES_GCM, seed + 4);
+  const sbtiClass = c.sbti_classification || (sbtiStatusRaw !== 'None' ? pick(SBTI_CLASS_GCM.filter(Boolean), seed + 5) : null);
+
+  // Temperature alignment: SBTi-aligned companies skew lower
+  const tempBase = sbtiStatusRaw === 'Targets set' ? rng(1.3, 2.2, seed + 6)
+    : sbtiStatusRaw === 'Committed' ? rng(1.5, 2.5, seed + 6)
+    : rng(2.0, 3.8, seed + 6);
+
+  // ESG/MSCI/CDP
+  const esgScore = c.esg_score ?? c.esg_combined_score ?? rngInt(25, 95, seed + 7);
+  const msciRating = c.msci_rating || pick(MSCI_RATINGS_GCM, seed + 8);
+  const cdpScore = c.cdp_score || pick(CDP_SCORES_GCM, seed + 9);
+
+  // EU Taxonomy alignment (tech/renewables/healthcare higher)
+  const taxBase = { 'Information Technology': [15, 65], 'Utilities': [20, 80], 'Health Care': [10, 50],
+    'Financials': [5, 35], 'Energy': [2, 25] };
+  const taxRange = taxBase[c.sector] || [3, 40];
+  const taxonomyPct = c.taxonomy_alignment_pct != null ? c.taxonomy_alignment_pct : rng(taxRange[0], taxRange[1], seed + 10);
+
+  // Physical & transition risk (sector-aware)
+  const physBase = { 'Energy': [40, 90], 'Utilities': [35, 85], 'Materials': [30, 75], 'Real Estate': [25, 80] };
+  const transBase = { 'Energy': [50, 95], 'Materials': [40, 80], 'Utilities': [45, 85], 'Industrials': [30, 70] };
+  const physRange = physBase[c.sector] || [10, 60];
+  const transRange = transBase[c.sector] || [10, 55];
+
+  const physicalRisk = c.physical_risk_score != null ? c.physical_risk_score : rngInt(physRange[0], physRange[1], seed + 11);
+  const transitionRisk = c.transition_risk_score ?? c.risk_score ?? rngInt(transRange[0], transRange[1], seed + 12);
+
+  // Water stress (sector-aware)
+  const waterBase = { 'Materials': [30, 90], 'Utilities': [25, 85], 'Energy': [20, 75], 'Consumer Staples': [20, 70] };
+  const waterRange = waterBase[c.sector] || [5, 50];
+  const waterStress = c.water_stress != null ? c.water_stress : rngInt(waterRange[0], waterRange[1], seed + 13);
+
+  // CBAM exposure (energy, materials, industrials more exposed)
+  const cbamSectors = ['Energy', 'Materials', 'Industrials', 'Utilities'];
+  const cbamExposed = c.cbam_exposed != null ? c.cbam_exposed : (cbamSectors.includes(c.sector) && sr(seed + 14) > 0.35);
+
+  // Net zero year
+  const nzYear = c.net_zero_year ?? c.carbon_neutral_target_year ?? pick(NZ_YEARS_GCM, seed + 15);
+
   return {
     ...c,
-    scope1_mt: c.scope1_mt != null ? c.scope1_mt : (c.scope1_co2e != null ? c.scope1_co2e / 1e6 : 0),
-    scope2_mt: c.scope2_mt != null ? c.scope2_mt : (c.scope2_co2e != null ? c.scope2_co2e / 1e6 : 0),
-    esg_score: c.esg_score ?? c.esg_combined_score ?? 50,
-    transition_risk_score: c.transition_risk_score ?? c.risk_score ?? 50,
-    sbti_committed: c.sbti_committed ?? false,
-    carbon_neutral_target_year: c.carbon_neutral_target_year ?? null,
-    data_quality_score: c.data_quality_score ?? c.dqs ?? 50,
+    // Original fields (preserved)
+    scope1_mt: s1,
+    scope2_mt: s2,
+    scope3_mt: s3,
+    carbon_intensity: carbonIntensity,
+    sbti_status: sbtiStatusRaw,
+    sbti_classification: sbtiClass,
+    sbti_committed: c.sbti_committed ?? (sbtiStatusRaw !== 'None'),
+    temperature_alignment_c: c.temperature_alignment_c ?? tempBase,
+    esg_score: esgScore,
+    msci_rating: msciRating,
+    cdp_score: cdpScore,
+    taxonomy_alignment_pct: taxonomyPct,
+    physical_risk_score: physicalRisk,
+    transition_risk_score: transitionRisk,
+    water_stress: waterStress,
+    cbam_exposed: cbamExposed,
+    net_zero_year: nzYear,
+    carbon_neutral_target_year: nzYear,
+    data_quality_score: c.data_quality_score ?? c.dqs ?? rngInt(30, 90, seed + 16),
   };
 }
 
@@ -451,10 +540,14 @@ export const GLOBAL_REGIONS = [...new Set(EXCHANGES.map(e => e.region))];
 /** Summary stats for the global registry */
 export const getGlobalStats = () => {
   const all = GLOBAL_COMPANY_MASTER;
-  const withScope1 = all.filter(c => c.scope1_co2e > 0);
+  const withScope1 = all.filter(c => c.scope1_mt > 0);
   const sbtiCount  = all.filter(c => c.sbti_committed).length;
   const totalMarketCap = all.reduce((s, c) => s + (c.market_cap_usd_mn || 0), 0);
-  const totalScope1    = all.reduce((s, c) => s + (c.scope1_co2e || 0), 0);
+  const totalScope1    = all.reduce((s, c) => s + (c.scope1_co2e || c.scope1_mt * 1e6 || 0), 0);
+  const avgEsg = all.length > 0 ? +(all.reduce((s, c) => s + (c.esg_score || 0), 0) / all.length).toFixed(1) : 0;
+  const avgTemp = all.length > 0 ? +(all.reduce((s, c) => s + (c.temperature_alignment_c || 2.5), 0) / all.length).toFixed(2) : 0;
+  const cbamCount = all.filter(c => c.cbam_exposed).length;
+  const nzCount = all.filter(c => c.net_zero_year != null).length;
   return {
     total_companies: all.length,
     exchanges: EXCHANGES.length,
@@ -464,6 +557,10 @@ export const getGlobalStats = () => {
     with_ghg_data: withScope1.length,
     total_market_cap_usd_bn: Math.round(totalMarketCap / 1000),
     total_scope1_mt_co2e: Math.round(totalScope1 / 1e6),
+    avg_esg_score: avgEsg,
+    avg_temperature_c: avgTemp,
+    cbam_exposed_count: cbamCount,
+    net_zero_committed: nzCount,
   };
 };
 
@@ -486,3 +583,98 @@ export const FX_RATES = FX;
 
 /** Exchange colour map for charts */
 export const EXCHANGE_COLORS = Object.fromEntries(EXCHANGES.map(e => [e.id, e.color]));
+
+// ── NEW HELPER EXPORTS — ESG/Climate query functions ─────────────────────────
+
+/** Companies with SBTi targets set or committed (excludes 'None') */
+export const getGlobalSBTiCompanies = () =>
+  GLOBAL_COMPANY_MASTER.filter(c => c.sbti_status && c.sbti_status !== 'None');
+
+/** Companies sorted by carbon intensity (highest first) */
+export const getGlobalByCarbonIntensity = (limit = 50) =>
+  [...GLOBAL_COMPANY_MASTER]
+    .filter(c => c.carbon_intensity > 0)
+    .sort((a, b) => (b.carbon_intensity || 0) - (a.carbon_intensity || 0))
+    .slice(0, limit);
+
+/** Companies grouped by MSCI ESG rating */
+export const getGlobalByMSCIRating = (rating = null) => {
+  if (rating) return GLOBAL_COMPANY_MASTER.filter(c => c.msci_rating === rating);
+  const map = {};
+  GLOBAL_COMPANY_MASTER.forEach(c => {
+    const r = c.msci_rating || 'NR';
+    if (!map[r]) map[r] = [];
+    map[r].push(c);
+  });
+  return map;
+};
+
+/** Companies with net-zero targets by year bucket */
+export const getGlobalNetZeroCommitments = () => {
+  const buckets = { '2030': 0, '2035': 0, '2040': 0, '2045': 0, '2050': 0, 'No Target': 0 };
+  GLOBAL_COMPANY_MASTER.forEach(c => {
+    const y = c.net_zero_year;
+    if (!y) buckets['No Target']++;
+    else if (y <= 2030) buckets['2030']++;
+    else if (y <= 2035) buckets['2035']++;
+    else if (y <= 2040) buckets['2040']++;
+    else if (y <= 2045) buckets['2045']++;
+    else buckets['2050']++;
+  });
+  return buckets;
+};
+
+/** Companies with high CBAM exposure */
+export const getGlobalCBAMExposed = () =>
+  GLOBAL_COMPANY_MASTER.filter(c => c.cbam_exposed === true);
+
+/** Temperature alignment distribution across all exchanges */
+export const getGlobalTemperatureDistribution = () => {
+  const b = { 'Below 1.5\u00b0C': 0, '1.5-2\u00b0C': 0, '2-3\u00b0C': 0, 'Above 3\u00b0C': 0 };
+  GLOBAL_COMPANY_MASTER.forEach(c => {
+    const t = c.temperature_alignment_c || 2.5;
+    if (t < 1.5) b['Below 1.5\u00b0C']++;
+    else if (t < 2) b['1.5-2\u00b0C']++;
+    else if (t < 3) b['2-3\u00b0C']++;
+    else b['Above 3\u00b0C']++;
+  });
+  return b;
+};
+
+/** Physical risk breakdown: low/medium/high/very-high */
+export const getGlobalPhysicalRiskBreakdown = () => {
+  const b = { low: 0, medium: 0, high: 0, veryHigh: 0 };
+  GLOBAL_COMPANY_MASTER.forEach(c => {
+    const s = c.physical_risk_score || 0;
+    if (s < 25) b.low++;
+    else if (s < 50) b.medium++;
+    else if (s < 75) b.high++;
+    else b.veryHigh++;
+  });
+  return b;
+};
+
+/** EU Taxonomy alignment summary across all exchanges */
+export const getGlobalTaxonomyAlignment = () => {
+  const all = GLOBAL_COMPANY_MASTER.filter(c => c.taxonomy_alignment_pct != null);
+  if (!all.length) return { avg: 0, median: 0, count: 0 };
+  const sorted = [...all].sort((a, b) => a.taxonomy_alignment_pct - b.taxonomy_alignment_pct);
+  return {
+    avg: +(all.reduce((s, c) => s + c.taxonomy_alignment_pct, 0) / all.length).toFixed(1),
+    median: sorted[Math.floor(sorted.length / 2)].taxonomy_alignment_pct,
+    count: all.length,
+  };
+};
+
+/** Water stress breakdown by severity */
+export const getGlobalWaterStressBreakdown = () => {
+  const b = { low: 0, medium: 0, high: 0, extremelyHigh: 0 };
+  GLOBAL_COMPANY_MASTER.forEach(c => {
+    const s = c.water_stress || 0;
+    if (s < 25) b.low++;
+    else if (s < 50) b.medium++;
+    else if (s < 75) b.high++;
+    else b.extremelyHigh++;
+  });
+  return b;
+};

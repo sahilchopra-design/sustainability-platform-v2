@@ -207,18 +207,18 @@ export default function SovereignEsgScorerPage(){
   const renderOverview=()=>{
     const byRegion=REGIONS.map(r=>{
       const rc=COUNTRIES.filter(c=>c.region===r);
-      return {name:r.length>14?r.slice(0,14)+'..':r,avgEsg:+(rc.reduce((s,c)=>s+c.totalEsg,0)/rc.length).toFixed(1),avgE:+(rc.reduce((s,c)=>s+c.eScore,0)/rc.length).toFixed(1),avgS:+(rc.reduce((s,c)=>s+c.sScore,0)/rc.length).toFixed(1),avgG:+(rc.reduce((s,c)=>s+c.gScore,0)/rc.length).toFixed(1),count:rc.length};
+      return {name:r.length>14?r.slice(0,14)+'..':r,avgEsg:+(rc.reduce((s,c)=>s+c.totalEsg,0)/ Math.max(1, rc.length)).toFixed(1),avgE:+(rc.reduce((s,c)=>s+c.eScore,0)/ Math.max(1, rc.length)).toFixed(1),avgS:+(rc.reduce((s,c)=>s+c.sScore,0)/ Math.max(1, rc.length)).toFixed(1),avgG:+(rc.reduce((s,c)=>s+c.gScore,0)/ Math.max(1, rc.length)).toFixed(1),count:rc.length};
     });
     const ratingDist=RATING_TIERS.map(r=>({name:r,count:COUNTRIES.filter(c=>c.esgRating===r).length,color:ratingColor(r)}));
     const kpis=[
       {label:'Universe',value:'60',unit:'countries',delta:'+4 QoQ',good:true},
-      {label:'Avg ESG Score',value:(COUNTRIES.reduce((s,c)=>s+c.totalEsg,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'+1.2',good:true},
+      {label:'Avg ESG Score',value:(COUNTRIES.reduce((s,c)=>s+c.totalEsg,0)/ Math.max(1, COUNTRIES.length)).toFixed(1),unit:'/100',delta:'+1.2',good:true},
       {label:'AAA/AA Rated',value:COUNTRIES.filter(c=>c.esgRating==='AAA'||c.esgRating==='AA').length,unit:'ctys',delta:'+2',good:true},
       {label:'Deteriorating',value:COUNTRIES.filter(c=>c.trend==='deteriorating').length,unit:'ctys',delta:'+3',good:false},
-      {label:'Avg E-Score',value:(COUNTRIES.reduce((s,c)=>s+c.eScore,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'+0.8',good:true},
-      {label:'Avg S-Score',value:(COUNTRIES.reduce((s,c)=>s+c.sScore,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'+1.4',good:true},
-      {label:'Avg G-Score',value:(COUNTRIES.reduce((s,c)=>s+c.gScore,0)/COUNTRIES.length).toFixed(1),unit:'/100',delta:'-0.3',good:false},
-      {label:'Avg Renewables',value:(COUNTRIES.reduce((s,c)=>s+c.renewableSharePct,0)/COUNTRIES.length).toFixed(1),unit:'%',delta:'+2.1',good:true},
+      {label:'Avg E-Score',value:(COUNTRIES.reduce((s,c)=>s+c.eScore,0)/ Math.max(1, COUNTRIES.length)).toFixed(1),unit:'/100',delta:'+0.8',good:true},
+      {label:'Avg S-Score',value:(COUNTRIES.reduce((s,c)=>s+c.sScore,0)/ Math.max(1, COUNTRIES.length)).toFixed(1),unit:'/100',delta:'+1.4',good:true},
+      {label:'Avg G-Score',value:(COUNTRIES.reduce((s,c)=>s+c.gScore,0)/ Math.max(1, COUNTRIES.length)).toFixed(1),unit:'/100',delta:'-0.3',good:false},
+      {label:'Avg Renewables',value:(COUNTRIES.reduce((s,c)=>s+c.renewableSharePct,0)/ Math.max(1, COUNTRIES.length)).toFixed(1),unit:'%',delta:'+2.1',good:true},
     ];
     return (<>
       <div style={S.grid(4)}>
@@ -252,7 +252,7 @@ export default function SovereignEsgScorerPage(){
               <span style={{...S.pill(ratingColor(r.name)),fontSize:11}}>{r.name}</span>
               <span style={{fontFamily:T.mono,fontSize:12,fontWeight:700,color:T.navy}}>{r.count}</span>
             </div>
-            {S.bar(r.count/COUNTRIES.length*100,ratingColor(r.name))}
+            {S.bar(r.count/ Math.max(1, COUNTRIES.length)*100,ratingColor(r.name))}
           </div>))}
         </div>
       </div>
@@ -309,7 +309,7 @@ export default function SovereignEsgScorerPage(){
   const renderEScore=()=>{
     const eTop=([...COUNTRIES].sort((a,b)=>b.eScore-a.eScore).slice(0,15)).map(c=>({name:c.name.length>10?c.name.slice(0,10)+'..':c.name,e:c.eScore,re:c.renewableSharePct,co2:c.co2PerCapita}));
     const co2Scatter=COUNTRIES.map(c=>({x:c.co2PerCapita,y:c.eScore,name:c.name,rating:c.esgRating}));
-    const renews=REGIONS.map(r=>{const rc=COUNTRIES.filter(c=>c.region===r);return {name:r.length>12?r.slice(0,12)+'..':r,renewable:+(rc.reduce((s,c)=>s+c.renewableSharePct,0)/rc.length).toFixed(1),co2:+(rc.reduce((s,c)=>s+c.co2PerCapita,0)/rc.length).toFixed(2)};});
+    const renews=REGIONS.map(r=>{const rc=COUNTRIES.filter(c=>c.region===r);return {name:r.length>12?r.slice(0,12)+'..':r,renewable:+(rc.reduce((s,c)=>s+c.renewableSharePct,0)/ Math.max(1, rc.length)).toFixed(1),co2:+(rc.reduce((s,c)=>s+c.co2PerCapita,0)/ Math.max(1, rc.length)).toFixed(2)};});
     return (<>
       <div style={S.row}>
         <div style={{...S.card,flex:2}}>
@@ -356,7 +356,7 @@ export default function SovereignEsgScorerPage(){
   /* ── Tab 2: S-Score ──────────────────────────────────────────────────────── */
   const renderSScore=()=>{
     const sTop=([...COUNTRIES].sort((a,b)=>b.sScore-a.sScore).slice(0,15)).map(c=>({name:c.name.length>10?c.name.slice(0,10)+'..':c.name,s:c.sScore,health:c.healthcareIndex,edu:c.educationIndex}));
-    const giniData=REGIONS.map(r=>{const rc=COUNTRIES.filter(c=>c.region===r);return {name:r.length>12?r.slice(0,12)+'..':r,gini:+(rc.reduce((s,c)=>s+c.giniCoefficient,0)/rc.length).toFixed(3),press:+(rc.reduce((s,c)=>s+c.pressureFreedomIndex,0)/rc.length).toFixed(1),health:+(rc.reduce((s,c)=>s+c.healthcareIndex,0)/rc.length).toFixed(1)};});
+    const giniData=REGIONS.map(r=>{const rc=COUNTRIES.filter(c=>c.region===r);return {name:r.length>12?r.slice(0,12)+'..':r,gini:+(rc.reduce((s,c)=>s+c.giniCoefficient,0)/ Math.max(1, rc.length)).toFixed(3),press:+(rc.reduce((s,c)=>s+c.pressureFreedomIndex,0)/ Math.max(1, rc.length)).toFixed(1),health:+(rc.reduce((s,c)=>s+c.healthcareIndex,0)/ Math.max(1, rc.length)).toFixed(1)};});
     return (<>
       <div style={S.row}>
         <div style={{...S.card,flex:2}}>
@@ -458,7 +458,7 @@ export default function SovereignEsgScorerPage(){
         {[{label:'Improving',val:improving,color:T.green},{label:'Stable',val:stable,color:T.amber},{label:'Deteriorating',val:deteriorating,color:T.red}].map(m=>(<div key={m.label} style={{...S.kpi,borderLeft:`4px solid ${m.color}`}}>
           <div style={S.kpiLabel}>{m.label}</div>
           <div style={{...S.kpiVal,color:m.color}}>{m.val}</div>
-          <div style={{fontSize:11,color:T.textMut}}>{(m.val/COUNTRIES.length*100).toFixed(0)}% of universe</div>
+          <div style={{fontSize:11,color:T.textMut}}>{(m.val/ Math.max(1, COUNTRIES.length)*100).toFixed(0)}% of universe</div>
         </div>))}
       </div>
       <div style={{...S.card,marginTop:14}}>

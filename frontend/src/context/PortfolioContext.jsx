@@ -98,6 +98,32 @@ import {
   adaptCompanyList,
 } from '../data/adapters';
 
+// ── 5K Master Universe & Seeded Portfolios ──────────────────────────────────
+import {
+  MASTER_UNIVERSE,
+  UNIVERSE_STATS as SEEDED_STATS,
+  PORTFOLIOS as SEEDED_PORTFOLIOS,
+  calcPortfolioWACI,
+  calcFinancedEmissions,
+  calcPortfolioTemperature,
+  calcClimateVaR,
+  calcSFDRPAI,
+  calcTaxonomyAlignment,
+  calcTransitionScore,
+  calcPhysicalRisk,
+  calcWaterFootprint,
+  calcBiodiversityImpact,
+  calcSBTiCoverage,
+  calcCBAMExposure,
+  calcInsuranceClimateRisk,
+  calcClimateStressTest,
+  calcCatModel,
+  calcSolvencyCapital,
+  calcReverseStress,
+  calcClimateVaRDecomposition,
+  calcMacroClimateImpact,
+  calcTransitionPathwayAlignment,
+} from '../data/portfolioSeeder';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -349,6 +375,36 @@ export function PortfolioProvider({ children }) {
     adaptForStressTest,
     adaptForTable,
     adaptCompanyList,
+
+    // ── 5K Seeded Master Universe & Portfolios ──
+    masterUniverse: MASTER_UNIVERSE,
+    seededStats: SEEDED_STATS,
+    seededPortfolios: SEEDED_PORTFOLIOS,
+
+    // ── Calculation Engines ──
+    engines: {
+      calcPortfolioWACI,
+      calcFinancedEmissions,
+      calcPortfolioTemperature,
+      calcClimateVaR,
+      calcSFDRPAI,
+      calcTaxonomyAlignment,
+      calcTransitionScore,
+      calcPhysicalRisk,
+      calcWaterFootprint,
+      calcBiodiversityImpact,
+      calcSBTiCoverage,
+      calcCBAMExposure,
+      // Climate Risk Suite (8 new engines)
+      calcInsuranceClimateRisk,
+      calcClimateStressTest,
+      calcCatModel,
+      calcSolvencyCapital,
+      calcReverseStress,
+      calcClimateVaRDecomposition,
+      calcMacroClimateImpact,
+      calcTransitionPathwayAlignment,
+    },
   }), [portfolioMetrics, searchSecurities, filterByRegion, filterBySector,
        filterByAssetType, getTopHoldings, getPortfolioByPCAFClass]);
 

@@ -51,14 +51,14 @@ export default function TransitionRiskHeatmapPage() {
 
   const matrix = riskMatrix(SCENARIOS[scenario], scenario);
 
-  const sectorAvg = SECTORS.map(s => ({ name: s, avg: Math.round(matrix[s].reduce((a, b) => a + b, 0) / GEOS.length) }));
-  const geoAvg = GEOS.map((g, gi) => ({ name: g, avg: Math.round(SECTORS.reduce((s, sec) => s + matrix[sec][gi], 0) / SECTORS.length) }));
+  const sectorAvg = SECTORS.map(s => ({ name: s, avg: Math.round(matrix[s].reduce((a, b) => a + b, 0) / Math.max(1, GEOS.length)) }));
+  const geoAvg = GEOS.map((g, gi) => ({ name: g, avg: Math.round(SECTORS.reduce((s, sec) => s + matrix[sec][gi], 0) / Math.max(1, SECTORS.length)) }));
 
   const scenarioSensitivity = SECTORS.map(s => ({
     name: s,
-    cp:  Math.round(riskMatrix(SCENARIOS[0], 0)[s].reduce((a, b) => a + b, 0) / GEOS.length),
-    b2c: Math.round(riskMatrix(SCENARIOS[1], 1)[s].reduce((a, b) => a + b, 0) / GEOS.length),
-    nz:  Math.round(riskMatrix(SCENARIOS[2], 2)[s].reduce((a, b) => a + b, 0) / GEOS.length),
+    cp:  Math.round(riskMatrix(SCENARIOS[0], 0)[s].reduce((a, b) => a + b, 0) / Math.max(1, GEOS.length)),
+    b2c: Math.round(riskMatrix(SCENARIOS[1], 1)[s].reduce((a, b) => a + b, 0) / Math.max(1, GEOS.length)),
+    nz:  Math.round(riskMatrix(SCENARIOS[2], 2)[s].reduce((a, b) => a + b, 0) / Math.max(1, GEOS.length)),
   }));
 
   return (
@@ -124,7 +124,7 @@ export default function TransitionRiskHeatmapPage() {
                   </thead>
                   <tbody>
                     {SECTORS.map(sector => {
-                      const avg = Math.round(matrix[sector].reduce((a, b) => a + b) / GEOS.length);
+                      const avg = Math.round(matrix[sector].reduce((a, b) => a + b) / Math.max(1, GEOS.length));
                       const avgStyle = riskColor(avg);
                       return (
                         <tr key={sector}>
@@ -147,7 +147,7 @@ export default function TransitionRiskHeatmapPage() {
                     <tr style={{ background: '#f0ede7' }}>
                       <td style={{ padding: '10px 16px', fontWeight: 700, color: T.navy, fontSize: 12, background: '#0f2a45', color: T.gold }}>Geo Avg</td>
                       {GEOS.map((_, gi) => {
-                        const avg = Math.round(SECTORS.reduce((s, sec) => s + matrix[sec][gi], 0) / SECTORS.length);
+                        const avg = Math.round(SECTORS.reduce((s, sec) => s + matrix[sec][gi], 0) / Math.max(1, SECTORS.length));
                         const style = riskColor(avg);
                         return (
                           <td key={gi} style={{ padding: '8px 12px', textAlign: 'center', background: style.bg, borderTop: '2px solid ' + T.border }}>
@@ -169,13 +169,13 @@ export default function TransitionRiskHeatmapPage() {
             <div style={{ background: T.surface, borderRadius: 10, border: `1px solid ${T.border}`, padding: 24, marginBottom: 20 }}>
               <h3 style={{ color: T.navy, margin: '0 0 16px', fontSize: 15 }}>Sector Average Risk — {SCENARIOS[scenario]}</h3>
               <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={sectorAvg.sort((a, b) => b.avg - a.avg)}>
+                <BarChart data={[...sectorAvg].sort((a, b) => b.avg - a.avg)}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
                   <Tooltip formatter={v => [`${v}`, 'Risk Score']} />
                   <Bar dataKey="avg" name="Avg Risk" radius={[6,6,0,0]}>
-                    {sectorAvg.sort((a, b) => b.avg - a.avg).map((e, i) => <Cell key={i} fill={riskColor(e.avg).text} />)}
+                    {[...sectorAvg].sort((a, b) => b.avg - a.avg).map((e, i) => <Cell key={i} fill={riskColor(e.avg).text} />)}
                   </Bar>
                   <ReferenceLine y={55} stroke={T.orange} strokeDasharray="4 4" label={{ value: 'High threshold', fill: T.orange, fontSize: 10 }} />
                 </BarChart>

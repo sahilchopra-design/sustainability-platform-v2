@@ -165,7 +165,7 @@ export default function ReportingHubPage() {
 
   const totalAUM = useMemo(() => CLIENTS.reduce((a, c) => a + c.aum, 0), []);
   const totalReportsYTD = useMemo(() => MONTHLY_STATS.reduce((a, m) => a + m.reports, 0), []);
-  const avgSatisfaction = useMemo(() => (CLIENTS.reduce((a, c) => a + c.satisfaction, 0) / CLIENTS.length).toFixed(1), []);
+  const avgSatisfaction = useMemo(() => (CLIENTS.reduce((a, c) => a + c.satisfaction, 0) / Math.max(1, CLIENTS.length)).toFixed(1), []);
   const schedulesActive = useMemo(() => CLIENTS.length, []);
   const submissionsDue = useMemo(() => REG_SUBMISSIONS.filter(s => s.status !== 'submitted').length, []);
   const filingsOnTrack = useMemo(() => {
@@ -173,14 +173,14 @@ export default function ReportingHubPage() {
     const onTrack = relevant.filter(s => s.completion > 0 || Math.ceil((new Date(s.deadline) - today) / 86400000) > 90).length;
     return relevant.length ? ((onTrack / relevant.length) * 100).toFixed(0) : 0;
   }, []);
-  const avgGenTime = useMemo(() => (REPORT_TYPES.reduce((a, r) => a + r.avgGenTime, 0) / REPORT_TYPES.length).toFixed(0), []);
-  const avgDataCov = useMemo(() => (REPORT_TYPES.reduce((a, r) => a + r.dataCoverage, 0) / REPORT_TYPES.length).toFixed(0), []);
+  const avgGenTime = useMemo(() => (REPORT_TYPES.reduce((a, r) => a + r.avgGenTime, 0) / Math.max(1, REPORT_TYPES.length)).toFixed(0), []);
+  const avgDataCov = useMemo(() => (REPORT_TYPES.reduce((a, r) => a + r.dataCoverage, 0) / Math.max(1, REPORT_TYPES.length)).toFixed(0), []);
   const errorRate = useMemo(() => {
     const total = MONTHLY_STATS.reduce((a, m) => a + m.reports, 0);
     const errors = MONTHLY_STATS.reduce((a, m) => a + m.errors, 0);
     return total ? ((errors / total) * 100).toFixed(1) : 0;
   }, []);
-  const reportsPerMonth = useMemo(() => (totalReportsYTD / MONTHLY_STATS.length).toFixed(0), [totalReportsYTD]);
+  const reportsPerMonth = useMemo(() => (totalReportsYTD / Math.max(1, MONTHLY_STATS.length)).toFixed(0), [totalReportsYTD]);
   const fwCovered = useMemo(() => new Set(REPORT_TYPES.map(r => r.framework)).size, []);
   const formatsSupported = useMemo(() => new Set(REPORT_TYPES.map(r => r.format)).size, []);
   const revenueEst = useMemo(() => fmtM(totalAUM * 0.0002), [totalAUM]); // 2bps

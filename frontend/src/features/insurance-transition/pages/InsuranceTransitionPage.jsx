@@ -112,12 +112,12 @@ export default function InsuranceTransitionPage(){
   },[regionFilter,typeFilter,sortCol,sortDir]);
 
   const stats=useMemo(()=>{
-    const avgScore=Math.round(INSURERS.reduce((a,b)=>a+b.overallScore,0)/INSURERS.length);
+    const avgScore=Math.round(INSURERS.reduce((a,b)=>a+b.overallScore,0)/ Math.max(1, INSURERS.length));
     const nziaCount=INSURERS.filter(i=>i.nzia).length;
     const psiCount=INSURERS.filter(i=>i.psi).length;
     const sbtiCount=INSURERS.filter(i=>i.sbti).length;
-    const avgFossil=+(INSURERS.reduce((a,b)=>a+b.fossilExposure,0)/INSURERS.length).toFixed(1);
-    const avgGreenRatio=+(INSURERS.reduce((a,b)=>a+b.greenRatio,0)/INSURERS.length).toFixed(1);
+    const avgFossil=+(INSURERS.reduce((a,b)=>a+b.fossilExposure,0)/ Math.max(1, INSURERS.length)).toFixed(1);
+    const avgGreenRatio=+(INSURERS.reduce((a,b)=>a+b.greenRatio,0)/ Math.max(1, INSURERS.length)).toFixed(1);
     const withTarget=INSURERS.filter(i=>i.nzTarget!=='No target').length;
     const coalPhaseOut=INSURERS.filter(i=>i.coalPhaseOut!=='None').length;
     return {avgScore,nziaCount,psiCount,sbtiCount,avgFossil,avgGreenRatio,withTarget,coalPhaseOut};
@@ -144,7 +144,7 @@ export default function InsuranceTransitionPage(){
   const renderScorecard=()=>(
     <div>
       <div style={S.grid4}>
-        {[{l:'Avg Transition Score',v:`${stats.avgScore}/100`},{l:'NZIA Members',v:stats.nziaCount},{l:'PSI Signatories',v:stats.psiCount},{l:'SBTi Committed',v:stats.sbtiCount},{l:'Avg Fossil Exposure',v:`${stats.avgFossil}%`,c:stats.avgFossil>15?T.red:T.amber},{l:'Avg Green Ratio',v:`${stats.avgGreenRatio}%`},{l:'With NZ Target',v:`${((stats.withTarget/INSURERS.length)*100).toFixed(0)}%`},{l:'Coal Phase-Out Set',v:stats.coalPhaseOut}].map((k,i)=>(
+        {[{l:'Avg Transition Score',v:`${stats.avgScore}/100`},{l:'NZIA Members',v:stats.nziaCount},{l:'PSI Signatories',v:stats.psiCount},{l:'SBTi Committed',v:stats.sbtiCount},{l:'Avg Fossil Exposure',v:`${stats.avgFossil}%`,c:stats.avgFossil>15?T.red:T.amber},{l:'Avg Green Ratio',v:`${stats.avgGreenRatio}%`},{l:'With NZ Target',v:`${((stats.withTarget/ Math.max(1, INSURERS.length))*100).toFixed(0)}%`},{l:'Coal Phase-Out Set',v:stats.coalPhaseOut}].map((k,i)=>(
           <div key={i} style={S.kpi}><div style={{...S.kpiVal,color:k.c||T.navy}}>{k.v}</div><div style={S.kpiLbl}>{k.l}</div></div>
         ))}
       </div>
@@ -230,7 +230,7 @@ export default function InsuranceTransitionPage(){
           <div style={S.card}>
             <div style={S.cardTitle}>Fossil Fuel Exposure by Region</div>
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={REGIONS.map(r=>{const ins=INSURERS.filter(i=>i.region===r);return {region:r,coal:+(ins.reduce((a,b)=>a+b.coalExposure,0)/ins.length).toFixed(1),oilGas:+(ins.reduce((a,b)=>a+b.oilGasExposure,0)/ins.length).toFixed(1)};})}>
+              <BarChart data={REGIONS.map(r=>{const ins=INSURERS.filter(i=>i.region===r);return {region:r,coal:+(ins.reduce((a,b)=>a+b.coalExposure,0)/ Math.max(1, ins.length)).toFixed(1),oilGas:+(ins.reduce((a,b)=>a+b.oilGasExposure,0)/ Math.max(1, ins.length)).toFixed(1)};})}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="region" tick={{fontSize:10}}/><YAxis tick={{fontSize:10}}/><Tooltip contentStyle={{fontSize:11}}/><Legend wrapperStyle={{fontSize:11}}/><Bar dataKey="coal" name="Coal Exposure %" stackId="a" fill={T.red}/><Bar dataKey="oilGas" name="Oil & Gas %" stackId="a" fill={T.amber}/>
               </BarChart>
             </ResponsiveContainer>
@@ -280,7 +280,7 @@ export default function InsuranceTransitionPage(){
   const renderGreenProducts=()=>(
     <div>
       <div style={S.grid4}>
-        {[{l:'Green Products',v:GREEN_PRODUCTS.length},{l:'Total Green Premium',v:`$${GREEN_PRODUCTS.reduce((a,b)=>a+b.premium,0).toFixed(0)}M`},{l:'Avg Growth Rate',v:`${(GREEN_PRODUCTS.reduce((a,b)=>a+b.growth,0)/GREEN_PRODUCTS.length).toFixed(0)}%`},{l:'Categories',v:GREEN_CATEGORIES.length}].map((k,i)=>(
+        {[{l:'Green Products',v:GREEN_PRODUCTS.length},{l:'Total Green Premium',v:`$${GREEN_PRODUCTS.reduce((a,b)=>a+b.premium,0).toFixed(0)}M`},{l:'Avg Growth Rate',v:`${(GREEN_PRODUCTS.reduce((a,b)=>a+b.growth,0)/ Math.max(1, GREEN_PRODUCTS.length)).toFixed(0)}%`},{l:'Categories',v:GREEN_CATEGORIES.length}].map((k,i)=>(
           <div key={i} style={S.kpi}><div style={S.kpiVal}>{k.v}</div><div style={S.kpiLbl}>{k.l}</div></div>
         ))}
       </div>
@@ -328,7 +328,7 @@ export default function InsuranceTransitionPage(){
   const renderRegulatory=()=>(
     <div>
       <div style={S.grid4}>
-        {[{l:'Avg Compliance',v:`${Math.round(REGULATORY_FRAMEWORKS.reduce((a,b)=>a+b.compliance,0)/REGULATORY_FRAMEWORKS.length)}%`},{l:'Mandatory Regs',v:REGULATORY_FRAMEWORKS.filter(r=>r.status.includes('Mandatory')).length},{l:'Critical Gaps',v:REGULATORY_FRAMEWORKS.filter(r=>r.compliance<65).length,c:T.red},{l:'Frameworks',v:REGULATORY_FRAMEWORKS.length}].map((k,i)=>(
+        {[{l:'Avg Compliance',v:`${Math.round(REGULATORY_FRAMEWORKS.reduce((a,b)=>a+b.compliance,0)/ Math.max(1, REGULATORY_FRAMEWORKS.length))}%`},{l:'Mandatory Regs',v:REGULATORY_FRAMEWORKS.filter(r=>r.status.includes('Mandatory')).length},{l:'Critical Gaps',v:REGULATORY_FRAMEWORKS.filter(r=>r.compliance<65).length,c:T.red},{l:'Frameworks',v:REGULATORY_FRAMEWORKS.length}].map((k,i)=>(
           <div key={i} style={S.kpi}><div style={{...S.kpiVal,color:k.c||T.navy}}>{k.v}</div><div style={S.kpiLbl}>{k.l}</div></div>
         ))}
       </div>

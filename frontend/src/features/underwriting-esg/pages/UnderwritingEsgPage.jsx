@@ -117,15 +117,15 @@ export default function UnderwritingEsgPage(){
   },[sectorFilter,ratingFilter,recFilter,sortCol,sortDir]);
 
   const portfolioStats=useMemo(()=>{
-    const avgESG=Math.round(POLICIES.reduce((a,b)=>a+b.esgScore,0)/POLICIES.length);
-    const avgEnv=Math.round(POLICIES.reduce((a,b)=>a+b.envScore,0)/POLICIES.length);
-    const avgSoc=Math.round(POLICIES.reduce((a,b)=>a+b.socScore,0)/POLICIES.length);
-    const avgGov=Math.round(POLICIES.reduce((a,b)=>a+b.govScore,0)/POLICIES.length);
+    const avgESG=POLICIES.length?Math.round(POLICIES.reduce((a,b)=>a+b.esgScore,0)/POLICIES.length):0;
+    const avgEnv=POLICIES.length?Math.round(POLICIES.reduce((a,b)=>a+b.envScore,0)/POLICIES.length):0;
+    const avgSoc=POLICIES.length?Math.round(POLICIES.reduce((a,b)=>a+b.socScore,0)/POLICIES.length):0;
+    const avgGov=POLICIES.length?Math.round(POLICIES.reduce((a,b)=>a+b.govScore,0)/POLICIES.length):0;
     const totalPremium=POLICIES.reduce((a,b)=>a+b.premium,0);
     const totalLimit=POLICIES.reduce((a,b)=>a+b.limit,0);
     const declines=POLICIES.filter(p=>p.recommendation==='Decline').length;
     const refers=POLICIES.filter(p=>p.recommendation==='Refer').length;
-    const avgFossil=+(POLICIES.reduce((a,b)=>a+b.fossilFuelExposure,0)/POLICIES.length).toFixed(1);
+    const avgFossil=+(POLICIES.length?POLICIES.reduce((a,b)=>a+b.fossilFuelExposure,0)/POLICIES.length:0).toFixed(1);
     return {avgESG,avgEnv,avgSoc,avgGov,totalPremium,totalLimit,declines,refers,avgFossil,policyCount:POLICIES.length};
   },[]);
 
@@ -143,7 +143,7 @@ export default function UnderwritingEsgPage(){
   },[]);
 
   const radarData=useMemo(()=>{
-    return ESG_CRITERIA.map((c,i)=>({criteria:c.length>12?c.substring(0,12)+'..':c,portfolio:Math.round(POLICIES.reduce((a,b)=>a+b.eScores[i],0)/POLICIES.length),benchmark:50+Math.round(sr(i*31)*30)}));
+    return ESG_CRITERIA.map((c,i)=>({criteria:c.length>12?c.substring(0,12)+'..':c,portfolio:POLICIES.length?Math.round(POLICIES.reduce((a,b)=>a+b.eScores[i],0)/POLICIES.length):0,benchmark:50+Math.round(sr(i*31)*30)}));
   },[]);
 
   const PAGE_SIZE=12;
@@ -276,7 +276,7 @@ export default function UnderwritingEsgPage(){
               <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:8,background:T.surfaceH,borderRadius:6,borderLeft:`3px solid ${m.c}`}}>
                 <div style={{fontSize:20,fontWeight:700,color:m.c,fontFamily:T.mono,width:40}}>{m.v}</div>
                 <div style={{fontSize:12}}>{m.l}</div>
-                <div style={{marginLeft:'auto',fontSize:11,color:T.textSec}}>{((m.v/POLICIES.length)*100).toFixed(0)}%</div>
+                <div style={{marginLeft:'auto',fontSize:11,color:T.textSec}}>{(POLICIES.length?(m.v/POLICIES.length)*100:0).toFixed(0)}%</div>
               </div>
             ))}
           </div>
@@ -355,7 +355,7 @@ export default function UnderwritingEsgPage(){
         <div style={S.card}>
           <div style={S.cardTitle}>E/S/G Pillar Breakdown</div>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={sectorESG.slice(0,8).map(s=>{const ps=POLICIES.filter(p=>p.sector===s.sector);return {sector:s.sector,env:Math.round(ps.reduce((a,b)=>a+b.envScore,0)/ps.length),soc:Math.round(ps.reduce((a,b)=>a+b.socScore,0)/ps.length),gov:Math.round(ps.reduce((a,b)=>a+b.govScore,0)/ps.length)};})}>
+            <BarChart data={sectorESG.slice(0,8).map(s=>{const ps=POLICIES.filter(p=>p.sector===s.sector);const pn=ps.length||1;return {sector:s.sector,env:Math.round(ps.reduce((a,b)=>a+b.envScore,0)/pn),soc:Math.round(ps.reduce((a,b)=>a+b.socScore,0)/pn),gov:Math.round(ps.reduce((a,b)=>a+b.govScore,0)/pn)};})}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="sector" tick={{fontSize:9}} angle={-20} textAnchor="end" height={55}/><YAxis tick={{fontSize:10}} domain={[0,100]}/><Tooltip contentStyle={{fontSize:11}}/><Legend wrapperStyle={{fontSize:11}}/><Bar dataKey="env" name="Environmental" fill={T.sage}/><Bar dataKey="soc" name="Social" fill={T.gold}/><Bar dataKey="gov" name="Governance" fill={T.navy}/>
             </BarChart>
           </ResponsiveContainer>
@@ -383,7 +383,7 @@ export default function UnderwritingEsgPage(){
   const renderRegulatory=()=>(
     <div>
       <div style={S.grid4}>
-        {[{l:'Avg Compliance',v:`${Math.round(REGULATIONS.reduce((a,b)=>a+b.compliance,0)/REGULATIONS.length)}%`},{l:'Mandatory Regs',v:REGULATIONS.filter(r=>r.status.includes('Mandatory')).length},{l:'Critical Gaps',v:REGULATIONS.filter(r=>r.compliance<70).length,c:T.red},{l:'Jurisdictions',v:new Set(REGULATIONS.map(r=>r.jurisdiction)).size}].map((k,i)=>(
+        {[{l:'Avg Compliance',v:`${REGULATIONS.length?Math.round(REGULATIONS.reduce((a,b)=>a+b.compliance,0)/REGULATIONS.length):0}%`},{l:'Mandatory Regs',v:REGULATIONS.filter(r=>r.status.includes('Mandatory')).length},{l:'Critical Gaps',v:REGULATIONS.filter(r=>r.compliance<70).length,c:T.red},{l:'Jurisdictions',v:new Set(REGULATIONS.map(r=>r.jurisdiction)).size}].map((k,i)=>(
           <div key={i} style={S.kpi}><div style={{...S.kpiVal,color:k.c||T.navy}}>{k.v}</div><div style={S.kpiLbl}>{k.l}</div></div>
         ))}
       </div>

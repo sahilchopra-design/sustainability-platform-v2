@@ -3,6 +3,25 @@ import axios from 'axios';
 
 const AuthContext = createContext(null);
 
+const SESSION_KEY = 'a2_session_token';
+
+// Set or clear the default Bearer token for all axios requests
+function _setAxiosToken(token) {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try { sessionStorage.setItem(SESSION_KEY, token); } catch {}
+  } else {
+    delete axios.defaults.headers.common['Authorization'];
+    try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+  }
+}
+
+// On module load, restore any saved token so API calls work on page reload
+try {
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved) axios.defaults.headers.common['Authorization'] = `Bearer ${saved}`;
+} catch {}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +41,10 @@ export function AuthProvider({ children }) {
     if (data.days_remaining !== undefined && data.days_remaining !== null) {
       setDaysRemaining(data.days_remaining);
     }
+    // If the response includes a session token (login response), persist it
+    if (data.session_token) {
+      _setAxiosToken(data.session_token);
+    }
   }, []);
 
   const fetchMe = useCallback(async () => {
@@ -29,8 +52,21 @@ export function AuthProvider({ children }) {
       const res = await axios.get('/api/auth/me', { withCredentials: true });
       processUser(res.data);
     } catch {
-      setUser(null);
-      setAllowedPaths(null);
+      // Dev mode ONLY: auto-login when REACT_APP_DEV_AUTH=true or localhost
+      const isDev = process.env.REACT_APP_DEV_AUTH === 'true' ||
+        (typeof window !== 'undefined' && window.location.hostname === 'localhost');
+      if (isDev) {
+        const DEV_FALLBACK = {
+          id: 'dev-user', email: 'demo@a2intelligence.com', name: 'Demo User (Dev)',
+          role: 'super_admin', allowed_module_paths: null, is_read_only: false,
+          days_remaining: 365, session_token: 'dev-token',
+        };
+        processUser(DEV_FALLBACK);
+      } else {
+        // Production: no backend = no access
+        setUser(null);
+        setAllowedPaths(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -46,6 +82,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     await axios.post('/api/auth/logout', {}, { withCredentials: true }).catch(() => {});
+    _setAxiosToken(null);
     setUser(null);
     setAllowedPaths(null);
     setIsReadOnly(false);
@@ -68,6 +105,7 @@ export function AuthProvider({ children }) {
       login,
       logout,
       canAccess,
+      processUser,
       refreshUser: fetchMe,
     }}>
       {children}

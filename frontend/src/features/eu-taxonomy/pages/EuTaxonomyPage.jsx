@@ -144,12 +144,12 @@ const genEntityData = (activities) => {
   const alignedOpex = activities.filter(a => a.aligned).reduce((s, a) => s + a.opex, 0);
   const eligibleOpex = activities.filter(a => a.eligible).reduce((s, a) => s + a.opex, 0);
   return {
-    turnoverAligned: ((alignedRev / totalRev) * 100).toFixed(1),
-    turnoverEligible: ((eligibleRev / totalRev) * 100).toFixed(1),
-    capexAligned: ((alignedCapex / totalCapex) * 100).toFixed(1),
-    capexEligible: ((eligibleCapex / totalCapex) * 100).toFixed(1),
-    opexAligned: ((alignedOpex / totalOpex) * 100).toFixed(1),
-    opexEligible: ((eligibleOpex / totalOpex) * 100).toFixed(1),
+    turnoverAligned: ((alignedRev / Math.max(1, totalRev)) * 100).toFixed(1),
+    turnoverEligible: ((eligibleRev / Math.max(1, totalRev)) * 100).toFixed(1),
+    capexAligned: ((alignedCapex / Math.max(1, totalCapex)) * 100).toFixed(1),
+    capexEligible: ((eligibleCapex / Math.max(1, totalCapex)) * 100).toFixed(1),
+    opexAligned: ((alignedOpex / Math.max(1, totalOpex)) * 100).toFixed(1),
+    opexEligible: ((eligibleOpex / Math.max(1, totalOpex)) * 100).toFixed(1),
   };
 };
 
@@ -491,9 +491,9 @@ const PortfolioTab = () => {
       return { ...h, aligned: act.aligned, eligible: act.eligible, alignedPct: act.aligned ? act.substantialContrib : 0 };
     });
     const totalWeight = entities.reduce((s, e) => s + e.weight, 0) || 1;
-    const gar = entities.reduce((s, e) => s + (e.aligned ? e.weight * e.alignedPct / 100 : 0), 0) / totalWeight;
-    const btar = entities.reduce((s, e) => s + (e.eligible ? e.weight * 0.6 : 0), 0) / totalWeight;
-    const weightedAlignment = entities.reduce((s, e) => s + e.weight * e.alignedPct / 100, 0) / totalWeight;
+    const gar = entities.reduce((s, e) => s + (e.aligned ? e.weight * e.alignedPct / 100 : 0), 0) / Math.max(1, totalWeight);
+    const btar = entities.reduce((s, e) => s + (e.eligible ? e.weight * 0.6 : 0), 0) / Math.max(1, totalWeight);
+    const weightedAlignment = entities.reduce((s, e) => s + e.weight * e.alignedPct / 100, 0) / Math.max(1, totalWeight);
     setResult({ entities, gar: gar.toFixed(1), btar: btar.toFixed(1), weightedAlignment: (weightedAlignment * 100).toFixed(1) });
   };
 

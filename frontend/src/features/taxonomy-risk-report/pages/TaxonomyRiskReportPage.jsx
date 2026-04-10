@@ -24,7 +24,7 @@ const RATING_COLORS = { A: T.green, B: '#22c55e', C: T.amber, D: T.orange, E: T.
 const ENTITIES = ['Shell plc', 'BP plc', 'TotalEnergies', 'Enel SpA', 'NextEra Energy', 'Rio Tinto', 'ArcelorMittal', 'HeidelbergCement', 'Maersk', 'Deutsche Bank'].map((name, i) => {
   const scores = {};
   TAXONOMY_TREE.forEach((t, j) => { scores[t.code] = Math.round(25 + sr(i * 8 + j * 3) * 65); });
-  const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / TAXONOMY_TREE.length);
+  const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / Math.max(1, TAXONOMY_TREE.length));
   const rt = scoreToRating(overall);
   return { id: i + 1, name, scores, overall, rating: rt.label, ratingColor: rt.color };
 });
@@ -60,12 +60,12 @@ export default function TaxonomyRiskReportPage() {
   const [exportFormat, setExportFormat] = useState('PDF');
   const [scheduleFreq, setScheduleFreq] = useState('Quarterly');
 
-  const portfolioAvg = useMemo(() => Math.round(ENTITIES.reduce((s, e) => s + e.overall, 0) / ENTITIES.length), []);
+  const portfolioAvg = useMemo(() => Math.round(ENTITIES.reduce((s, e) => s + e.overall, 0) / Math.max(1, ENTITIES.length)), []);
 
   const l1PortfolioScores = useMemo(() => TAXONOMY_TREE.map(t => ({
     topic: t.code, name: t.name,
-    score: Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / ENTITIES.length),
-    rating: scoreToRating(Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / ENTITIES.length)).label,
+    score: Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / Math.max(1, ENTITIES.length)),
+    rating: scoreToRating(Math.round(ENTITIES.reduce((s, e) => s + e.scores[t.code], 0) / Math.max(1, ENTITIES.length))).label,
   })), []);
 
   const radarData = useMemo(() => TAXONOMY_TREE.map(t => {

@@ -179,7 +179,7 @@ export default function SbtiTargetSetterPage(){
   const nzValidated=COMPANIES.filter(c=>c.status==='Net-Zero Validated');
   const committed=COMPANIES.filter(c=>c.status==='Committed');
   const onTrackCount=COMPANIES.filter(c=>c.onTrack).length;
-  const avgTemp=+(COMPANIES.reduce((s,c)=>s+c.tempScore,0)/COMPANIES.length).toFixed(1);
+  const avgTemp=+(COMPANIES.reduce((s,c)=>s+c.tempScore,0)/ Math.max(1, COMPANIES.length)).toFixed(1);
 
   const ss={
     wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},
@@ -221,7 +221,7 @@ export default function SbtiTargetSetterPage(){
       <SectionHead cite="SBTi Criteria v5.1 — Target Setting Approaches">Target Setting Engine</SectionHead>
       <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
         <KPI label="Companies" value={COMPANIES.length} color={T.navy}/>
-        <KPI label="Validated" value={validated.length} sub={`${Math.round(validated.length/COMPANIES.length*100)}%`} color={ACCENT}/>
+        <KPI label="Validated" value={validated.length} sub={`${Math.round(validated.length/ Math.max(1, COMPANIES.length)*100)}%`} color={ACCENT}/>
         <KPI label="Net-Zero" value={nzValidated.length} color={T.green}/>
         <KPI label="Avg Temp" value={avgTemp+'°C'} color={avgTemp<=1.8?T.green:avgTemp<=2.2?T.amber:T.red} cite="SBTi Temp Rating"/>
         <KPI label="On Track" value={`${onTrackCount}/${COMPANIES.length}`} color={T.sage}/>
@@ -363,7 +363,7 @@ export default function SbtiTargetSetterPage(){
       <div style={{display:'flex',gap:16,flexWrap:'wrap',marginBottom:20}}>
         <KPI label="Commodities" value={FLAG_COMMODITIES.length} color={ACCENT}/>
         <KPI label="FLAG Companies" value={COMPANIES.filter(c=>c.flagExposure).length} sub="in portfolio" color={T.navy}/>
-        <KPI label="Avg FLAG Rate" value={+(FLAG_COMMODITIES.reduce((s,c)=>s+c.flagRate,0)/FLAG_COMMODITIES.length).toFixed(1)+'%'} sub="p.a. reduction" color={T.sage}/>
+        <KPI label="Avg FLAG Rate" value={+(FLAG_COMMODITIES.reduce((s,c)=>s+c.flagRate,0)/ Math.max(1, FLAG_COMMODITIES.length)).toFixed(1)+'%'} sub="p.a. reduction" color={T.sage}/>
       </div>
       <div style={ss.card}>
         <SectionHead>FLAG Commodity Pathways</SectionHead>
@@ -405,8 +405,8 @@ export default function SbtiTargetSetterPage(){
      TAB 3: PORTFOLIO ALIGNMENT — SBTi for Financial Institutions
      ═══════════════════════════════════════════════════════════════════════════════ */
   const renderPortfolio=()=>{
-    const validatedPct=Math.round(validated.length/COMPANIES.length*100);
-    const nzPct=Math.round(nzValidated.length/COMPANIES.length*100);
+    const validatedPct=Math.round(validated.length/ Math.max(1, COMPANIES.length)*100);
+    const nzPct=Math.round(nzValidated.length/ Math.max(1, COMPANIES.length)*100);
     const statusDist={};COMPANIES.forEach(c=>{statusDist[c.status]=(statusDist[c.status]||0)+1;});
     const tempBuckets={'<1.5°C':0,'1.5-2°C':0,'2-3°C':0,'>3°C':0};
     COMPANIES.forEach(c=>{if(c.tempScore<1.5)tempBuckets['<1.5°C']++;else if(c.tempScore<2)tempBuckets['1.5-2°C']++;else if(c.tempScore<3)tempBuckets['2-3°C']++;else tempBuckets['>3°C']++;});

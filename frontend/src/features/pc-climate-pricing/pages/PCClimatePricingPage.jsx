@@ -79,7 +79,7 @@ const TabBtn = ({ label, active, onClick }) => (
 const Sparkline = ({ data }) => {
   const min = Math.min(...data), max = Math.max(...data), range = max - min || 1;
   const w = 60, h = 22;
-  const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / range) * h}`).join(' ');
+  const pts = data.map((v, i) => `${(i / Math.max(1, data.length - 1)) * w},${h - ((v - min) / range) * h}`).join(' ');
   return <svg width={w} height={h}><polyline points={pts} fill="none" stroke={T.indigo} strokeWidth={1.5} /></svg>;
 };
 
@@ -127,11 +127,11 @@ export default function PCClimatePricingPage() {
 
   const globalKpis = useMemo(() => {
     if (!filtered.length) return { avgAdequacy: 0, avgCombined: 0, avgROE: 0, totalExposure: 0, avgLoss: 0 };
-    const avgAdequacy = filtered.reduce((s, z) => s + z.adequacyRatio, 0) / filtered.length;
-    const avgCombined = filtered.reduce((s, z) => s + z.combinedRatio, 0) / filtered.length;
-    const avgROE = filtered.reduce((s, z) => s + z.returnOnEquity, 0) / filtered.length;
+    const avgAdequacy = filtered.reduce((s, z) => s + z.adequacyRatio, 0) / Math.max(1, filtered.length);
+    const avgCombined = filtered.reduce((s, z) => s + z.combinedRatio, 0) / Math.max(1, filtered.length);
+    const avgROE = filtered.reduce((s, z) => s + z.returnOnEquity, 0) / Math.max(1, filtered.length);
     const totalExposure = filtered.reduce((s, z) => s + z.exposureUSD, 0);
-    const avgLoss = filtered.reduce((s, z) => s + z.lossRatio, 0) / filtered.length;
+    const avgLoss = filtered.reduce((s, z) => s + z.lossRatio, 0) / Math.max(1, filtered.length);
     return { avgAdequacy: +avgAdequacy.toFixed(1), avgCombined: +avgCombined.toFixed(1), avgROE: +avgROE.toFixed(2), totalExposure: +totalExposure.toFixed(0), avgLoss: +avgLoss.toFixed(1) };
   }, [filtered]);
 
@@ -186,10 +186,10 @@ export default function PCClimatePricingPage() {
 
   const profitBridgeData = useMemo(() => {
     if (!filtered.length) return [];
-    const avgPremium = filtered.reduce((s,z) => s + z.premiumRate, 0) / filtered.length;
-    const avgLoss = filtered.reduce((s,z) => s + z.lossRatio / 100 * z.premiumRate, 0) / filtered.length;
-    const avgExpense = filtered.reduce((s,z) => s + z.expenseRatio * z.premiumRate, 0) / filtered.length;
-    const avgCat = filtered.reduce((s,z) => s + z.catLoadingPct * z.premiumRate, 0) / filtered.length;
+    const avgPremium = filtered.reduce((s,z) => s + z.premiumRate, 0) / Math.max(1, filtered.length);
+    const avgLoss = filtered.reduce((s,z) => s + z.lossRatio / 100 * z.premiumRate, 0) / Math.max(1, filtered.length);
+    const avgExpense = filtered.reduce((s,z) => s + z.expenseRatio * z.premiumRate, 0) / Math.max(1, filtered.length);
+    const avgCat = filtered.reduce((s,z) => s + z.catLoadingPct * z.premiumRate, 0) / Math.max(1, filtered.length);
     const profit = avgPremium - avgLoss - avgExpense - avgCat;
     return [
       { name: 'Premium', value: +avgPremium.toFixed(5) },
@@ -595,7 +595,7 @@ export default function PCClimatePricingPage() {
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={SCENARIOS.map((sc, si) => ({
                 scenario: sc.split(' ')[0],
-                avgCombined: filtered.length ? +(filtered.reduce((s, z) => s + z.lossRatio + z.expenseRatio * 100 + z.catLoadingPct * 100 * SCEN_MULTS[si], 0) / filtered.length).toFixed(1) : 0,
+                avgCombined: filtered.length ? +(filtered.reduce((s, z) => s + z.lossRatio + z.expenseRatio * 100 + z.catLoadingPct * 100 * SCEN_MULTS[si], 0) / Math.max(1, filtered.length)).toFixed(1) : 0,
                 adequateZones: filtered.filter(z => z.premiumRate >= z.technicalRate * SCEN_MULTS[si]).length,
               }))}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
@@ -616,7 +616,7 @@ export default function PCClimatePricingPage() {
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={REGIONS.map(r => {
                   const rZones = filtered.filter(z => z.region === r);
-                  return { region: r.slice(0,10), avgROE: rZones.length ? +(rZones.reduce((s, z) => s + z.returnOnEquity, 0) / rZones.length).toFixed(1) : 0, count: rZones.length };
+                  return { region: r.slice(0,10), avgROE: rZones.length ? +(rZones.reduce((s, z) => s + z.returnOnEquity, 0) / Math.max(1, rZones.length)).toFixed(1) : 0, count: rZones.length };
                 }).filter(d => d.count > 0)}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="region" tick={{ fontSize: 9 }} />
@@ -656,11 +656,11 @@ export default function PCClimatePricingPage() {
               <tbody>{PERILS.map((peril, pi) => {
                 const pZones = filtered.filter(z => z.predominantPeril === peril);
                 if (!pZones.length) return null;
-                const avgAdq = +(pZones.reduce((s, z) => s + z.adequacyRatio, 0) / pZones.length).toFixed(1);
-                const avgLR = +(pZones.reduce((s, z) => s + z.lossRatio, 0) / pZones.length).toFixed(1);
-                const avgCR = +(pZones.reduce((s, z) => s + z.combinedRatio, 0) / pZones.length).toFixed(1);
-                const avgROE = +(pZones.reduce((s, z) => s + z.returnOnEquity, 0) / pZones.length).toFixed(1);
-                const avgRisk = +(pZones.reduce((s, z) => s + z.riskScore, 0) / pZones.length).toFixed(1);
+                const avgAdq = +(pZones.reduce((s, z) => s + z.adequacyRatio, 0) / Math.max(1, pZones.length)).toFixed(1);
+                const avgLR = +(pZones.reduce((s, z) => s + z.lossRatio, 0) / Math.max(1, pZones.length)).toFixed(1);
+                const avgCR = +(pZones.reduce((s, z) => s + z.combinedRatio, 0) / Math.max(1, pZones.length)).toFixed(1);
+                const avgROE = +(pZones.reduce((s, z) => s + z.returnOnEquity, 0) / Math.max(1, pZones.length)).toFixed(1);
+                const avgRisk = +(pZones.reduce((s, z) => s + z.riskScore, 0) / Math.max(1, pZones.length)).toFixed(1);
                 return (
                   <tr key={peril} style={{ background: pi % 2 === 0 ? T.bg : T.card }}>
                     <td style={{ padding: '5px 8px', fontSize: 11, fontWeight: 600, color: PERIL_COLORS[pi] }}>{peril.split('/')[0]}</td>
@@ -683,7 +683,7 @@ export default function PCClimatePricingPage() {
               {[
                 { label: 'Zones Below Break-even', value: filtered.filter(z => z.combinedRatio > 100).length, color: T.red },
                 { label: 'Zones with Restricted Reins', value: filtered.filter(z => PERIL_DATA[z.perilIdx].reinsuranceAvailability === 'Restricted').length, color: T.orange },
-                { label: 'Avg Market Penetration', value: filtered.length ? (filtered.reduce((s,z) => s + z.marketPenetrationPct, 0) / filtered.length).toFixed(1) + '%' : '0%', color: T.blue },
+                { label: 'Avg Market Penetration', value: filtered.length ? (filtered.reduce((s,z) => s + z.marketPenetrationPct, 0) / Math.max(1, filtered.length)).toFixed(1) + '%' : '0%', color: T.blue },
                 { label: 'High Risk Score (>70)', value: filtered.filter(z => z.riskScore > 70).length, color: T.amber },
                 { label: 'Positive ROE Zones', value: filtered.filter(z => z.returnOnEquity > 0).length, color: T.green },
                 { label: 'Renewal Retention >85%', value: filtered.filter(z => z.renewalRetentionPct > 85).length, color: T.teal },
@@ -777,13 +777,13 @@ export default function PCClimatePricingPage() {
               <tbody>{REGIONS.map((region, ri) => {
                 const rzs = filtered.filter(z => z.region === region);
                 if (!rzs.length) return null;
-                const avgAdq = +(rzs.reduce((s,z) => s + z.adequacyRatio, 0) / rzs.length).toFixed(1);
-                const avgCR = +(rzs.reduce((s,z) => s + z.combinedRatio, 0) / rzs.length).toFixed(1);
-                const avgROE = +(rzs.reduce((s,z) => s + z.returnOnEquity, 0) / rzs.length).toFixed(1);
+                const avgAdq = +(rzs.reduce((s,z) => s + z.adequacyRatio, 0) / Math.max(1, rzs.length)).toFixed(1);
+                const avgCR = +(rzs.reduce((s,z) => s + z.combinedRatio, 0) / Math.max(1, rzs.length)).toFixed(1);
+                const avgROE = +(rzs.reduce((s,z) => s + z.returnOnEquity, 0) / Math.max(1, rzs.length)).toFixed(1);
                 const totalExp = +(rzs.reduce((s,z) => s + z.exposureUSD, 0)).toFixed(0);
                 const underP = rzs.filter(z => z.adequacyRatio < 95).length;
                 const overP = rzs.filter(z => z.adequacyRatio > 110).length;
-                const avgRisk = +(rzs.reduce((s,z) => s + z.riskScore, 0) / rzs.length).toFixed(1);
+                const avgRisk = +(rzs.reduce((s,z) => s + z.riskScore, 0) / Math.max(1, rzs.length)).toFixed(1);
                 return (
                   <tr key={region} style={{ background: ri % 2 === 0 ? T.bg : T.card }}>
                     <td style={{ padding: '5px 8px', fontWeight: 600 }}>{region}</td>
@@ -841,16 +841,16 @@ export default function PCClimatePricingPage() {
               {[
                 { label: 'Total Zones', value: ZONES.length, color: T.indigo },
                 { label: 'Perils Modelled', value: PERIL_DATA.length, color: T.blue },
-                { label: 'Avg Technical Rate', value: '$' + (ZONES.reduce((s, z) => s + z.technicalRate, 0) / ZONES.length).toFixed(1), color: T.green },
-                { label: 'Avg PTR', value: (ZONES.reduce((s, z) => s + z.pricingToTechnicalRatio, 0) / ZONES.length).toFixed(0) + '%', color: T.orange },
+                { label: 'Avg Technical Rate', value: '$' + (ZONES.length ? ZONES.reduce((s, z) => s + z.technicalRate, 0) / Math.max(1, ZONES.length) : 0).toFixed(1), color: T.green },
+                { label: 'Avg PTR', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.pricingToTechnicalRatio, 0) / Math.max(1, ZONES.length) : 0).toFixed(0) + '%', color: T.orange },
                 { label: 'Zones Underpriced', value: ZONES.filter(z => z.pricingToTechnicalRatio < 95).length, color: T.red },
-                { label: 'Avg Combined Ratio', value: (ZONES.reduce((s, z) => s + z.combinedRatio, 0) / ZONES.length).toFixed(0) + '%', color: T.amber },
-                { label: 'Avg Cat Loading', value: '$' + (ZONES.reduce((s, z) => s + z.catLoad, 0) / ZONES.length).toFixed(1), color: T.purple },
-                { label: 'Avg ROE', value: (ZONES.reduce((s, z) => s + z.roe, 0) / ZONES.length).toFixed(1) + '%', color: T.teal },
+                { label: 'Avg Combined Ratio', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.combinedRatio, 0) / Math.max(1, ZONES.length) : 0).toFixed(0) + '%', color: T.amber },
+                { label: 'Avg Cat Loading', value: '$' + (ZONES.length ? ZONES.reduce((s, z) => s + z.catLoad, 0) / ZONES.length : 0).toFixed(1), color: T.purple },
+                { label: 'Avg ROE', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.roe, 0) / ZONES.length : 0).toFixed(1) + '%', color: T.teal },
                 { label: 'High Climate Hazard', value: ZONES.filter(z => z.climateHazardScore > 70).length + ' zones', color: T.red },
-                { label: 'Avg Loss Ratio', value: (ZONES.reduce((s, z) => s + z.lossRatio, 0) / ZONES.length * 100).toFixed(0) + '%', color: T.orange },
+                { label: 'Avg Loss Ratio', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.lossRatio, 0) / ZONES.length * 100 : 0).toFixed(0) + '%', color: T.orange },
                 { label: 'Active Scenario', value: CLIMATE_SCENARIOS[climateScenIdx]?.name?.slice(0, 14) || 'Base', color: T.indigo },
-                { label: 'Avg Expense Ratio', value: (ZONES.reduce((s, z) => s + z.expenseRatio, 0) / ZONES.length * 100).toFixed(0) + '%', color: T.navy },
+                { label: 'Avg Expense Ratio', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.expenseRatio, 0) / Math.max(1, ZONES.length) * 100 : 0).toFixed(0) + '%', color: T.navy },
               ].map(m => (
                 <div key={m.label} style={{ background: T.sub, borderRadius: 6, padding: '8px 10px', borderLeft: `3px solid ${m.color}` }}>
                   <div style={{ fontSize: 10, color: T.muted, marginBottom: 2 }}>{m.label}</div>

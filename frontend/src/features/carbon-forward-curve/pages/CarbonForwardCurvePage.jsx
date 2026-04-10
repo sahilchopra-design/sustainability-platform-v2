@@ -10,7 +10,9 @@ const T = { navy: '#1b3a5c', gold: '#c5a96a', cream: '#f7f4ef', red: '#991b1b', 
 const eur = (n, d = 2) => `€${parseFloat(n).toFixed(d)}`; // renamed from 'usd' — this module is EU ETS only, always formats in EUR
 const fmt = (n) => n >= 1e9 ? `${(n / 1e9).toFixed(1)}B` : n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : `${n}`;
 
-const ETS_MARKETS = [
+import { isIndiaMode } from '../../../data/IndiaDataAdapter';
+
+const _BASE_ETS_MARKETS = [
   { name: 'EU ETS',       region: 'Europe',        price: 62.4,  ytd: +18.2, cap: 1360, mechanism: 'Cap-and-Trade', currency: '€', color: '#1d4ed8' },
   { name: 'UK ETS',       region: 'UK',            price: 44.8,  ytd: -8.4,  cap: 145,  mechanism: 'Cap-and-Trade', currency: '£', color: '#7c3aed' },
   { name: 'California',   region: 'USA/Canada',    price: 38.2,  ytd: +6.1,  cap: 310,  mechanism: 'Cap-and-Trade', currency: '$', color: '#0f766e' },
@@ -20,6 +22,11 @@ const ETS_MARKETS = [
   { name: 'NZ ETS',       region: 'New Zealand',   price: 52.6,  ytd: +12.0, cap: 55,   mechanism: 'Cap-and-Trade', currency: 'NZD',color: '#0369a1' },
   { name: 'Canada OBPS',  region: 'Canada',        price: 65.0,  ytd: +15.0, cap: 180,  mechanism: 'Output-Based',  currency: 'C$', color: '#374151' },
 ];
+// ── India Dataset Integration ──
+const ETS_MARKETS = isIndiaMode() ? [
+  { name: 'India CCTS', region: 'India', price: 3.2, ytd: +1.8, cap: 2800, mechanism: 'PAT Scheme + CCTS Pilot', currency: '₹', color: '#f97316' },
+  ..._BASE_ETS_MARKETS,
+] : _BASE_ETS_MARKETS;
 
 // EU ETS historical + forward
 const EU_PRICE_HISTORY = [

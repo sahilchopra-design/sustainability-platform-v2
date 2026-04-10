@@ -18,6 +18,10 @@ import { SECURITY_UNIVERSE, MOCK_PORTFOLIO } from '../../../data/securityUnivers
 import { getEVIC } from '../../../data/evicService';
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
+import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
+import PortfolioUploader from '../../../components/PortfolioUploader';
+import ReportExporter from '../../../components/ReportExporter';
+import CurrencyToggle from '../../../components/CurrencyToggle';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME, PRNG, UTILITIES
@@ -271,6 +275,14 @@ const BASE_POSITIONS=[
   // ── Undrawn Commitments (1 position) ── PCAF Ch.4.13 ──
   {id:60,name:'Revolving Credit Facility \u2014 Diversified Ind.',ticker:null,country:'US',geo:'Americas',assetClass:'Undrawn Commitments',sector:'Industrials',evic:65,outstanding:200,scope1:1420000,scope2:680000,scope3:12000000,dqs:4,source:'Sector-avg EF; CCF=75%',currency:'USD',ccf:0.75,committedAmount:800},
 ];
+// ── India Dataset Integration ──
+const _INDIA_PCAF = isIndiaMode() ? adaptForPCAF().slice(0, 30).map((c, i) => ({
+  id: i + 1, name: c.name, ticker: c.ticker, country: 'IN', geo: 'APAC',
+  assetClass: 'Listed Equity', sector: c.sector, evic: c.evic / 1e9,
+  outstanding: c.marketCap / 1e6 * 0.02, scope1: c.scope1, scope2: c.scope2, scope3: c.scope3,
+  dqs: c.dqs, source: c.dataSource, currency: 'INR',
+})) : null;
+if (_INDIA_PCAF) BASE_POSITIONS.splice(0, 20, ..._INDIA_PCAF);
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    INSURANCE PORTFOLIO — Part B (Chapter 5)
@@ -521,7 +533,10 @@ function computeRow(p){
   const financedScope3=+(attrFactor*(p.scope3||0)).toFixed(0);
   const evicWarning=(!p.evic&&['Listed Equity','Corporate Bonds','Business Loans'].includes(p.assetClass))?'NULL_EVIC \u2014 sector proxy used':null;
   const adjustedDqs=evicWarning?Math.max(p.dqs,4):p.dqs;
-  const revenueM=p.evic?p.evic*350:(SECTOR_MEDIAN_EVIC[p.sector]||50)*350;
+  // Revenue proxy: sector-specific Revenue/EVIC ratios (PCAF data quality hierarchy)
+  const SECTOR_REV_EVIC = { 'Technology': 8, 'Software': 10, 'Financials': 3, 'Energy': 0.8, 'Mining': 1.2, 'Utilities': 1.5, 'Real Estate': 0.6, 'Healthcare': 5, 'Consumer': 4, 'Industrials': 2.5, 'Materials': 1.8, 'Telecom': 3.5 };
+  const revMultiple = SECTOR_REV_EVIC[p.sector] || 2.5;
+  const revenueM = p.evic ? p.evic * revMultiple : (SECTOR_MEDIAN_EVIC[p.sector] || 50) * revMultiple;
   const waci=revenueM>0?(totalEmissions/revenueM):0;
   const carbonIntensity=p.outstanding>0?financedEmissions/p.outstanding:0;
   const scope1Pct=totalEmissions>0?(p.scope1||0)/totalEmissions:0;
@@ -649,6 +664,7 @@ function AddPositionModal({onAdd,onClose}){
    attribution factor, DQS. Add/edit/remove functionality.
    ═══════════════════════════════════════════════════════════════════════════════ */
 function PartATab({positions,setPositions}){
+  const _ccData = useCarbonCredit(); const ccPcaf = _ccData?.adaptForPcaf?.() || {};
   const[search,setSearch]=useState('');
   const[acFilter,setAcFilter]=useState('All');
   const[sortKey,setSortKey]=useState('financedEmissions');
@@ -713,8 +729,12 @@ function PartATab({positions,setPositions}){
       <KPICard label="Carbon Footprint" value={carbonFootprint.toFixed(0)+' tCO2e/$Bn'} sub="Total FE / AUM" color={T.gold}/>
       <KPICard label="WACI" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="Portfolio average" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
-      <KPICard label="Carbon Cost" value={'$'+carbonCostM+'M'} sub={`@ $${carbonPrice}/tCO2e`} color={T.red}/>
-      <KPICard label="CC Credits Financed" value={ccPcaf.totalFinancedCredits?.toLocaleString() || '0'} sub="Carbon Credit Engine" color={'#059669'}/>
+      <div style={{flex:'1 0 auto',background:T.surface,borderRadius:8,padding:'8px 12px',border:`1px solid ${T.border}`,minWidth:120}}>
+        <div style={{fontSize:10,color:T.textSec,letterSpacing:0.3,marginBottom:4}}>CARBON COST</div>
+        <CurrencyToggle usdValue={totalFE*carbonPrice/1e6} size="md" />
+        <div style={{fontSize:9,color:T.textSec,marginTop:2}}>@ ${carbonPrice}/tCO2e</div>
+      </div>
+      <KPICard label="CC Credits Financed" value={ccPcaf?.totalFinancedCredits?.toLocaleString() || '0'} sub="Carbon Credit Engine" color={'#059669'}/>
     </div>
 
     {/* Charts */}
@@ -1341,14 +1361,29 @@ const TABS=['Part A: Financed','Part B: Insurance','Part C: Facilitated','Data Q
 export default function PcafFinancedEmissionsPage(){
   const[activeTab,setActiveTab]=useState(TABS[0]);
   const[positions,setPositions]=useState(INITIAL_POSITIONS);
-  const ccData = useCarbonCredit(); const ccPcaf = ccData.adaptForPcaf();
+  const[showUploader,setShowUploader]=useState(false);
+  const ccData = useCarbonCredit(); const ccPcaf = ccData?.adaptForPcaf?.() || {};
 
   return(
     <div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
-      <div style={{marginBottom:20}}>
-        <h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>PCAF Financed Emissions</h1>
-        <p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>PCAF Standard v2 (3rd Edition) \u2014 Parts A, B, C | {positions.length} holdings | 12 asset classes | 10 formulas with \u00a7 citations</p>
+      <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+        <div>
+          <h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>PCAF Financed Emissions</h1>
+          <p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>PCAF Standard v2 (3rd Edition) \u2014 Parts A, B, C | {positions.length} holdings | 12 asset classes | 10 formulas with \u00a7 citations</p>
+        </div>
+        <ReportExporter title="PCAF Financed Emissions" subtitle={`${positions.length} holdings | 12 asset classes`} framework="PCAF v2" sections={[{type:'kpis',title:'Portfolio Summary',data:[{label:'Holdings',value:positions.length},{label:'Total Market Value',value:'$'+fmt(positions.reduce((s,p)=>s+p.mv,0))},{label:'Asset Classes',value:[...new Set(positions.map(p=>p.ac))].length}]}]} />
       </div>
+      <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
+        <button onClick={()=>setShowUploader(s=>!s)} style={{background:showUploader?T.red:T.navy,color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>
+          {showUploader?'\u2715 Close':'Upload Portfolio'}
+        </button>
+      </div>
+      {showUploader&&<div style={{marginBottom:16}}><PortfolioUploader
+        requiredFields={['name','sector','marketValue','scope1','scope2']}
+        optionalFields={['ticker','isin','country','scope3','esgScore','dqs']}
+        entityType="mixed"
+        onUpload={(rows)=>{setPositions(rows.map((h,i)=>({id:i,name:h.name||`Holding ${i+1}`,sector:h.sector||'Other',ac:h.assetClass||'Listed Equity',mv:Number(h.marketValue)||0,s1:Number(h.scope1)||0,s2:Number(h.scope2)||0,s3:Number(h.scope3)||0,dqs:Number(h.dqs)||3,ticker:h.ticker||'',isin:h.isin||'',country:h.country||'US',esg:Number(h.esgScore)||50,evic:Number(h.marketValue)*1.4||0,revenue:Number(h.revenue)||Number(h.marketValue)*0.6||0,outstanding:Number(h.marketValue)||0,included:true})));setShowUploader(false);}}
+      /></div>}
       <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab}/>
       {activeTab===TABS[0]&&<PartATab positions={positions} setPositions={setPositions}/>}
       {activeTab===TABS[1]&&<PartBTab/>}

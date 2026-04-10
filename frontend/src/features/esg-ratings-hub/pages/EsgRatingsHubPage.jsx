@@ -51,7 +51,10 @@ const TICKERS=[
 ];
 
 // ── Generate 150 companies ────────────────────────────────────────────────────
-const COMPANIES = Array.from({length:150},(_,i)=>{
+import { isIndiaMode, adaptForESG } from '../../../data/IndiaDataAdapter';
+import PortfolioUploader from '../../../components/PortfolioUploader';
+
+const _DEFAULT_COMPANIES = Array.from({length:150},(_,i)=>{
   const sect=SECTORS[Math.floor(sr(i*7)*SECTORS.length)];
   const ratings={};
   let covCount=0;
@@ -79,6 +82,8 @@ const COMPANIES = Array.from({length:150},(_,i)=>{
     included:true,
   };
 });
+// ── India Dataset Integration ──
+const COMPANIES = isIndiaMode() ? adaptForESG() : _DEFAULT_COMPANIES;
 
 // ── Controversies list ───────────────────────────────────────────────────────
 const CONTROVERSIES=Array.from({length:90},(_,i)=>{
@@ -157,6 +162,7 @@ const Toggle=({on,onClick})=><button style={s.toggle(on)} onClick={onClick}><div
 // ══════════════════════════════════════════════════════════════════════════════
 export default function EsgRatingsHubPage(){
   const [tab,setTab]=useState(0);
+  const [showUploader,setShowUploader]=useState(false);
   const TABS=['Executive Dashboard','Portfolio Coverage','Consensus & Alerts','Board Report'];
 
   return(
@@ -169,9 +175,19 @@ export default function EsgRatingsHubPage(){
         </div>
         <div style={{display:'flex',gap:8,alignItems:'center'}}>
           <span style={{fontSize:11,color:T.textMut}}>Last sync: 28 Mar 2026 09:15 UTC</span>
+          <button onClick={()=>setShowUploader(u=>!u)} style={{background:showUploader?T.red:T.navy,color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>
+            {showUploader?'\u2715 Close':'Upload Portfolio'}
+          </button>
           <button style={s.btn(T.sage,'#fff')}>Refresh Data</button>
         </div>
       </div>
+
+      {showUploader&&<div style={{marginBottom:16}}><PortfolioUploader
+        requiredFields={['name','sector','esgScore']}
+        optionalFields={['ticker','country','msciRating','cdpScore','envScore','socScore','govScore']}
+        entityType="mixed"
+        onUpload={(rows)=>{/* uploaded data available for downstream use */setShowUploader(false);}}
+      /></div>}
 
       {/* Tabs */}
       <div style={s.tabs}>

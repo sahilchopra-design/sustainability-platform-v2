@@ -77,7 +77,7 @@ export default function DiversityEquityInclusionPage(){
   const avgFemaleBoard=Math.round(companies.reduce((s,c)=>s+c.femaleBoard,0)/80);
   const avgDeiScore=Math.round(companies.reduce((s,c)=>s+c.deiScore,0)/80);
 
-  const sectorDei=useMemo(()=>SECTORS.map(s=>{const cs=companies.filter(c=>c.sector===s);return {sector:s,avgDei:Math.round(cs.reduce((a,c)=>a+c.deiScore,0)/cs.length),avgFemale:Math.round(cs.reduce((a,c)=>a+c.femaleTotal,0)/cs.length),avgPayGap:+(cs.reduce((a,c)=>a+parseFloat(c.genderPayGap),0)/cs.length).toFixed(1)};}),[]);
+  const sectorDei=useMemo(()=>SECTORS.map(s=>{const cs=companies.filter(c=>c.sector===s);return {sector:s,avgDei:Math.round(cs.reduce((a,c)=>a+c.deiScore,0)/ Math.max(1, cs.length)),avgFemale:Math.round(cs.reduce((a,c)=>a+c.femaleTotal,0)/ Math.max(1, cs.length)),avgPayGap:+(cs.reduce((a,c)=>a+parseFloat(c.genderPayGap),0)/ Math.max(1, cs.length)).toFixed(1)};}),[]);
 
   const radarDims=['Female %','Ethnic Min %','Board Diversity','Pay Equity','DEI Score','Reporting'];
 
