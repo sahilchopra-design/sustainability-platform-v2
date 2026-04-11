@@ -541,6 +541,13 @@ const LandUseChangeFinancePage           = React.lazy(() => import("./features/l
 const SustainableAgricultureInvestmentPage = React.lazy(() => import("./features/sustainable-agriculture-investment/pages/SustainableAgricultureInvestmentPage"));
 const WaterFoodEnergyNexusPage           = React.lazy(() => import("./features/water-food-energy-nexus/pages/WaterFoodEnergyNexusPage"));
 const ClimateCommodityAnalyticsPage      = React.lazy(() => import("./features/climate-commodity-analytics/pages/ClimateCommodityAnalyticsPage"));
+// Sprint DJ — Ocean, Shipping & Blue Economy
+const ShippingDecarbonisationPage        = React.lazy(() => import("./features/shipping-decarbonisation/pages/ShippingDecarbonisationPage"));
+const BlueCarbonFinancePage              = React.lazy(() => import("./features/blue-carbon-finance/pages/BlueCarbonFinancePage"));
+const CoastalFloodRiskFinancePage        = React.lazy(() => import("./features/coastal-flood-risk-finance/pages/CoastalFloodRiskFinancePage"));
+const OceanHealthFinancePage             = React.lazy(() => import("./features/ocean-health-finance/pages/OceanHealthFinancePage"));
+const PortClimateRiskPage                = React.lazy(() => import("./features/port-climate-risk/pages/PortClimateRiskPage"));
+const FisheriesClimateRiskPage           = React.lazy(() => import("./features/fisheries-climate-risk/pages/FisheriesClimateRiskPage"));
 // Sprint DH — Emerging Markets & Development Finance
 const EMSovereignClimateDebtPage         = React.lazy(() => import("./features/em-sovereign-climate-debt/pages/EMSovereignClimateDebtPage"));
 const MDBClimateFinanceDHPage            = React.lazy(() => import("./features/mdb-climate-finance-dh/pages/MDBClimateFinancePage"));
@@ -1498,6 +1505,14 @@ const NAV_GROUPS = [
     { label: 'Climate Displacement Risk',            path: '/climate-displacement-risk',            code: 'EP-DI4' },
     { label: 'Supply Chain Labor & Climate Risk',    path: '/supply-chain-labor-climate',           code: 'EP-DI5' },
     { label: 'Community Climate Resilience',         path: '/community-climate-resilience',         code: 'EP-DI6' },
+  ]},
+  { label: 'Ocean, Shipping & Blue Economy', icon: '🌊', color: '#0c4a6e', items: [
+    { label: 'Shipping Decarbonisation',    path: '/shipping-decarbonisation',    code: 'EP-DJ1' },
+    { label: 'Blue Carbon Finance',         path: '/blue-carbon-finance',         code: 'EP-DJ2' },
+    { label: 'Coastal Flood Risk Finance',  path: '/coastal-flood-risk-finance',  code: 'EP-DJ3' },
+    { label: 'Ocean Health Finance',        path: '/ocean-health-finance',        code: 'EP-DJ4' },
+    { label: 'Port Climate Risk',           path: '/port-climate-risk',           code: 'EP-DJ5' },
+    { label: 'Fisheries Climate Risk',      path: '/fisheries-climate-risk',      code: 'EP-DJ6' },
   ]},
   { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
     { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
@@ -2635,6 +2650,13 @@ function AppContent() {
             <Route path="/climate-displacement-risk"          element={<ClimateDisplacementRiskPage />} />
             <Route path="/supply-chain-labor-climate"         element={<SupplyChainLaborClimateRiskPage />} />
             <Route path="/community-climate-resilience"       element={<CommunityClimateResiliencePage />} />
+            {/* Sprint DJ — Ocean, Shipping & Blue Economy */}
+            <Route path="/shipping-decarbonisation"   element={<ShippingDecarbonisationPage />} />
+            <Route path="/blue-carbon-finance"        element={<BlueCarbonFinancePage />} />
+            <Route path="/coastal-flood-risk-finance" element={<CoastalFloodRiskFinancePage />} />
+            <Route path="/ocean-health-finance"       element={<OceanHealthFinancePage />} />
+            <Route path="/port-climate-risk"          element={<PortClimateRiskPage />} />
+            <Route path="/fisheries-climate-risk"     element={<FisheriesClimateRiskPage />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
             <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
             <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
