@@ -430,10 +430,11 @@ export default function SupervisoryStressOrchestratorPage() {
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={REGULATORS.map(r => {
                     const col = stressMatrix.map(row => row.byReg[r.id]);
+                    const colLen = Math.max(1, col.length);
                     return {
                       name: r.name,
-                      base: +(col.reduce((s, x) => s + x.baseCET1, 0) / col.length).toFixed(2),
-                      stressed: +(col.reduce((s, x) => s + x.stressedCET1, 0) / col.length).toFixed(2),
+                      base: +(col.reduce((s, x) => s + x.baseCET1, 0) / colLen).toFixed(2),
+                      stressed: +(col.reduce((s, x) => s + x.stressedCET1, 0) / colLen).toFixed(2),
                     };
                   })} barSize={18}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
@@ -1243,8 +1244,8 @@ export default function SupervisoryStressOrchestratorPage() {
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 }}>
               <KpiCard label="Total Institutions" value={INSTITUTIONS.length} sub="across 8 jurisdictions" />
               <KpiCard label="Regulators" value={REGULATORS.length} sub="active frameworks" />
-              <KpiCard label="Avg Pass Rate" value={(passRates.reduce((s, r) => s + parseFloat(r.pct), 0) / passRates.length).toFixed(1) + '%'}
-                color={parseFloat((passRates.reduce((s, r) => s + parseFloat(r.pct), 0) / passRates.length).toFixed(1)) >= 75 ? T.green : T.amber} />
+              <KpiCard label="Avg Pass Rate" value={passRates.length ? (passRates.reduce((s, r) => s + parseFloat(r.pct), 0) / passRates.length).toFixed(1) + '%' : '—'}
+                color={passRates.length && parseFloat((passRates.reduce((s, r) => s + parseFloat(r.pct), 0) / passRates.length).toFixed(1)) >= 75 ? T.green : T.amber} />
               <KpiCard label="Aggregate Shortfall" value={'$' + fleetStats.totalShortfall.toFixed(1) + 'B'} color={T.red} />
               <KpiCard label="Fleet Avg Base CET1" value={fleetStats.avgBase.toFixed(2) + '%'} color={T.navy} />
               <KpiCard label="Fleet Avg Stressed CET1" value={fleetStats.avgStress.toFixed(2) + '%'} color={T.red} />

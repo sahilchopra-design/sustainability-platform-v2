@@ -280,7 +280,7 @@ export default function SystemicClimateRiskPage() {
 
   const ampFactor = useMemo(() => {
     const scores = AMPLIFIER_CHANNELS.map((ch, ci) => ch.baseScore * ampIntensity[ci]);
-    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const avg = scores.reduce((a, b) => a + b, 0) / Math.max(1, scores.length);
     return +(1 + avg / 100).toFixed(3);
   }, [ampIntensity]);
 
@@ -407,11 +407,12 @@ export default function SystemicClimateRiskPage() {
 
   const mcStats = useMemo(() => {
     const sorted = [...MC_SYSTEMIC_LOSSES].sort((a, b) => a - b);
-    const mean = sorted.reduce((s, v) => s + v, 0) / sorted.length;
+    const sortedLen = Math.max(1, sorted.length);
+    const mean = sorted.reduce((s, v) => s + v, 0) / sortedLen;
     const var95 = sorted[Math.floor(sorted.length * 0.95)];
     const es99 = sorted.slice(Math.floor(sorted.length * 0.99)).reduce((s, v) => s + v, 0) /
       Math.max(1, sorted.length - Math.floor(sorted.length * 0.99));
-    const probEvent = sorted.filter(v => v > 40).length / sorted.length;
+    const probEvent = sorted.filter(v => v > 40).length / sortedLen;
     return { mean: +mean.toFixed(2), var95: +var95.toFixed(2), es99: +es99.toFixed(2), probEvent: +(probEvent * 100).toFixed(1) };
   }, []);
 
