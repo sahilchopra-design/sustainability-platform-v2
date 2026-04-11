@@ -541,6 +541,20 @@ const LandUseChangeFinancePage           = React.lazy(() => import("./features/l
 const SustainableAgricultureInvestmentPage = React.lazy(() => import("./features/sustainable-agriculture-investment/pages/SustainableAgricultureInvestmentPage"));
 const WaterFoodEnergyNexusPage           = React.lazy(() => import("./features/water-food-energy-nexus/pages/WaterFoodEnergyNexusPage"));
 const ClimateCommodityAnalyticsPage      = React.lazy(() => import("./features/climate-commodity-analytics/pages/ClimateCommodityAnalyticsPage"));
+// Sprint DM — Urban & City Climate Finance
+const MunicipalGreenBondPage             = React.lazy(() => import("./features/municipal-green-bond/pages/MunicipalGreenBondPage"));
+const SmartCityClimateFinancePage        = React.lazy(() => import("./features/smart-city-climate-finance/pages/SmartCityClimateFinancePage"));
+const CityClimateRiskRatingPage          = React.lazy(() => import("./features/city-climate-risk-rating/pages/CityClimateRiskRatingPage"));
+const UrbanMobilityTransitionPage        = React.lazy(() => import("./features/urban-mobility-transition/pages/UrbanMobilityTransitionPage"));
+const GreenBuildingCodeFinancePage       = React.lazy(() => import("./features/green-building-code-finance/pages/GreenBuildingCodeFinancePage"));
+const CityNetZeroTrackerPage             = React.lazy(() => import("./features/city-net-zero-tracker/pages/CityNetZeroTrackerPage"));
+// Sprint DK — Climate Governance & Board Analytics
+const BoardClimateOversightPage          = React.lazy(() => import("./features/board-climate-oversight/pages/BoardClimateOversightPage"));
+const FiduciaryClimateRiskPage           = React.lazy(() => import("./features/fiduciary-climate-risk/pages/FiduciaryClimateRiskPage"));
+const ESGGovernanceScorerPage            = React.lazy(() => import("./features/esg-governance-scorer/pages/ESGGovernanceScorerPage"));
+const ClimateExecutivePayPage            = React.lazy(() => import("./features/climate-executive-pay/pages/ClimateExecutivePayPage"));
+const ShareholderEngagementPage          = React.lazy(() => import("./features/shareholder-climate-engagement/pages/ShareholderEngagementPage"));
+const ClimateRegPolicyTrackerPage        = React.lazy(() => import("./features/climate-reg-policy-tracker/pages/ClimateRegPolicyTrackerPage"));
 // Sprint DJ — Ocean, Shipping & Blue Economy
 const ShippingDecarbonisationPage        = React.lazy(() => import("./features/shipping-decarbonisation/pages/ShippingDecarbonisationPage"));
 const BlueCarbonFinancePage              = React.lazy(() => import("./features/blue-carbon-finance/pages/BlueCarbonFinancePage"));
@@ -562,6 +576,13 @@ const ClimateMaDueDiligencePage          = React.lazy(() => import("./features/c
 const CarbonAdjustedValuationPage        = React.lazy(() => import("./features/carbon-adjusted-valuation/pages/CarbonAdjustedValuationPage"));
 const TreasuryClimateRiskPage            = React.lazy(() => import("./features/treasury-climate-risk/pages/TreasuryClimateRiskPage"));
 const ClimateCapitalMarketsPage          = React.lazy(() => import("./features/climate-capital-markets/pages/ClimateCapitalMarketsPage"));
+// Sprint DL — Circular Economy & Waste Climate Finance
+const CircularEconomyFinancePage         = React.lazy(() => import("./features/circular-economy-finance/pages/CircularEconomyFinancePage"));
+const WasteToEnergyFinancePage           = React.lazy(() => import("./features/waste-to-energy-finance/pages/WasteToEnergyFinancePage"));
+const PlasticsPollutionFinancePage       = React.lazy(() => import("./features/plastics-pollution-finance/pages/PlasticsPollutionFinancePage"));
+const ResourceEfficiencyAnalyticsPage    = React.lazy(() => import("./features/resource-efficiency-analytics/pages/ResourceEfficiencyAnalyticsPage"));
+const CriticalMineralsClimatePage        = React.lazy(() => import("./features/critical-minerals-climate/pages/CriticalMineralsClimatePage"));
+const GreenChemistryFinancePage          = React.lazy(() => import("./features/green-chemistry-finance/pages/GreenChemistryFinancePage"));
 // Sprint DC — Climate-Integrated Actuarial Intelligence
 const ClimateMortalityLongevityPage      = React.lazy(() => import("./features/climate-mortality-longevity/pages/ClimateMortalityLongevityPage"));
 const PCClimatePricingPage               = React.lazy(() => import("./features/pc-climate-pricing/pages/PCClimatePricingPage"));
@@ -1513,6 +1534,30 @@ const NAV_GROUPS = [
     { label: 'Ocean Health Finance',        path: '/ocean-health-finance',        code: 'EP-DJ4' },
     { label: 'Port Climate Risk',           path: '/port-climate-risk',           code: 'EP-DJ5' },
     { label: 'Fisheries Climate Risk',      path: '/fisheries-climate-risk',      code: 'EP-DJ6' },
+  ]},
+  { label: 'Climate Governance & Board Analytics', icon: '🏛️', color: '#312e81', items: [
+    { label: 'Board Climate Oversight',             path: '/board-climate-oversight',            code: 'EP-DK1' },
+    { label: 'Fiduciary Climate Risk',              path: '/fiduciary-climate-risk',             code: 'EP-DK2' },
+    { label: 'ESG Governance Scorer',               path: '/esg-governance-scorer',              code: 'EP-DK3' },
+    { label: 'Climate Executive Pay',               path: '/climate-executive-pay',              code: 'EP-DK4' },
+    { label: 'Shareholder Climate Engagement',      path: '/shareholder-climate-engagement',     code: 'EP-DK5' },
+    { label: 'Climate Reg & Policy Tracker',        path: '/climate-reg-policy-tracker',         code: 'EP-DK6' },
+  ]},
+  { label: 'Circular Economy & Waste Finance', icon: '♻️', color: '#14532d', items: [
+    { label: 'Circular Economy Finance',     path: '/circular-economy-finance',     code: 'EP-DL1' },
+    { label: 'Waste-to-Energy Finance',      path: '/waste-to-energy-finance',      code: 'EP-DL2' },
+    { label: 'Plastics Pollution Finance',   path: '/plastics-pollution-finance',   code: 'EP-DL3' },
+    { label: 'Resource Efficiency Analytics',path: '/resource-efficiency-analytics',code: 'EP-DL4' },
+    { label: 'Critical Minerals & Climate',  path: '/critical-minerals-climate',    code: 'EP-DL5' },
+    { label: 'Green Chemistry Finance',      path: '/green-chemistry-finance',      code: 'EP-DL6' },
+  ]},
+  { label: 'Urban & City Climate Finance', icon: '🏙️', color: '#1e40af', items: [
+    { label: 'Municipal Green Bond Analytics', path: '/municipal-green-bond',           code: 'EP-DM1' },
+    { label: 'Smart City Climate Finance',     path: '/smart-city-climate-finance',     code: 'EP-DM2' },
+    { label: 'City Climate Risk Rating',       path: '/city-climate-risk-rating',       code: 'EP-DM3' },
+    { label: 'Urban Mobility Transition',      path: '/urban-mobility-transition',      code: 'EP-DM4' },
+    { label: 'Green Building Code Finance',    path: '/green-building-code-finance',    code: 'EP-DM5' },
+    { label: 'City Net Zero Tracker',          path: '/city-net-zero-tracker',          code: 'EP-DM6' },
   ]},
   { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
     { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
@@ -2657,6 +2702,27 @@ function AppContent() {
             <Route path="/ocean-health-finance"       element={<OceanHealthFinancePage />} />
             <Route path="/port-climate-risk"          element={<PortClimateRiskPage />} />
             <Route path="/fisheries-climate-risk"     element={<FisheriesClimateRiskPage />} />
+            {/* Sprint DM — Urban & City Climate Finance */}
+            <Route path="/municipal-green-bond"           element={<MunicipalGreenBondPage />} />
+            <Route path="/smart-city-climate-finance"     element={<SmartCityClimateFinancePage />} />
+            <Route path="/city-climate-risk-rating"       element={<CityClimateRiskRatingPage />} />
+            <Route path="/urban-mobility-transition"      element={<UrbanMobilityTransitionPage />} />
+            <Route path="/green-building-code-finance"    element={<GreenBuildingCodeFinancePage />} />
+            <Route path="/city-net-zero-tracker"          element={<CityNetZeroTrackerPage />} />
+            {/* Sprint DK — Climate Governance & Board Analytics */}
+            <Route path="/board-climate-oversight"          element={<BoardClimateOversightPage />} />
+            <Route path="/fiduciary-climate-risk"           element={<FiduciaryClimateRiskPage />} />
+            <Route path="/esg-governance-scorer"            element={<ESGGovernanceScorerPage />} />
+            <Route path="/climate-executive-pay"            element={<ClimateExecutivePayPage />} />
+            <Route path="/shareholder-climate-engagement"   element={<ShareholderEngagementPage />} />
+            <Route path="/climate-reg-policy-tracker"       element={<ClimateRegPolicyTrackerPage />} />
+            {/* Sprint DL — Circular Economy & Waste Climate Finance */}
+            <Route path="/circular-economy-finance"      element={<CircularEconomyFinancePage />} />
+            <Route path="/waste-to-energy-finance"       element={<WasteToEnergyFinancePage />} />
+            <Route path="/plastics-pollution-finance"    element={<PlasticsPollutionFinancePage />} />
+            <Route path="/resource-efficiency-analytics" element={<ResourceEfficiencyAnalyticsPage />} />
+            <Route path="/critical-minerals-climate"     element={<CriticalMineralsClimatePage />} />
+            <Route path="/green-chemistry-finance"       element={<GreenChemistryFinancePage />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
             <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
             <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
