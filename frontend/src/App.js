@@ -513,6 +513,13 @@ const SectorSustainabilityBenchmarkPage = React.lazy(() => import("./features/se
 const ReportQualityEnginePage = React.lazy(() => import("./features/report-quality-engine/pages/ReportQualityEnginePage"));
 const MetricsDataArchitecturePage = React.lazy(() => import("./features/metrics-data-architecture/pages/MetricsDataArchitecturePage"));
 const NarrativeIntelligencePage = React.lazy(() => import("./features/narrative-intelligence/pages/NarrativeIntelligencePage"));
+// Sprint DE — Green Real Estate & Built Environment
+const GreenBuildingValuationPage         = React.lazy(() => import("./features/green-building-valuation/pages/GreenBuildingValuationPage"));
+const RealEstateClimateRiskPage          = React.lazy(() => import("./features/real-estate-climate-risk/pages/RealEstateClimateRiskPage"));
+const ClimateMortgageAnalyticsPage       = React.lazy(() => import("./features/climate-mortgage-analytics/pages/ClimateMortgageAnalyticsPage"));
+const InfrastructureClimateResiliencePage = React.lazy(() => import("./features/infrastructure-climate-resilience/pages/InfrastructureClimateResiliencePage"));
+const UrbanClimateAdaptationPage         = React.lazy(() => import("./features/urban-climate-adaptation/pages/UrbanClimateAdaptationPage"));
+const RealEstateCarbonAnalyticsPage      = React.lazy(() => import("./features/real-estate-carbon-analytics/pages/RealEstateCarbonAnalyticsPage"));
 // Sprint DD — Corporate Finance & Capital Markets
 const ClimateWaccEnginePage              = React.lazy(() => import("./features/climate-wacc-engine/pages/ClimateWaccEnginePage"));
 const GreenDebtStructuringPage           = React.lazy(() => import("./features/green-debt-structuring/pages/GreenDebtStructuringPage"));
@@ -1423,6 +1430,14 @@ const NAV_GROUPS = [
     { path: '/carbon-adjusted-valuation', label: 'Carbon-Adjusted Valuation',   badge: '60 companies · Full DCF · NGFS paths · SBTi premium · Stranded discount · Sensitivity grid', code: 'EP-DD4' },
     { path: '/treasury-climate-risk',     label: 'Treasury Climate Risk',        badge: '8 FX · 12 commodities · 30 SC nodes · 25 counterparties · Hedging analytics · NGFS scenarios', code: 'EP-DD5' },
     { path: '/climate-capital-markets',   label: 'Climate Capital Markets',      badge: '100 instruments · 20 ESG indices · 30 investors · Flow analytics · Alpha signals · Intelligence Hub', code: 'EP-DD6' },
+  ]},
+  { label: 'Green Real Estate & Built Environment', icon: '🏢', color: '#065f46', items: [
+    { path: '/green-building-valuation',          label: 'Green Building Valuation',          badge: '80 properties · EPC A-G · BREEAM/LEED · Green premium · Stranding risk · Retrofit economics', code: 'EP-DE1' },
+    { path: '/real-estate-climate-risk',          label: 'Real Estate Climate Risk',           badge: '100 properties · 8 cities · Physical hazards · Transition risk · Stranding timeline · LTV', code: 'EP-DE2' },
+    { path: '/climate-mortgage-analytics',        label: 'Climate Mortgage Analytics',         badge: '60 lenders · Climate VaR · Stranded collateral · Capital charges · Regulatory status', code: 'EP-DE3' },
+    { path: '/infrastructure-climate-resilience', label: 'Infrastructure Climate Resilience',  badge: '50 assets · 6 sectors · Adaptation costing · Resilience pathway · Insurance gap', code: 'EP-DE4' },
+    { path: '/urban-climate-adaptation',          label: 'Urban Climate Adaptation',           badge: '40 global cities · Heat/flood/drought · Adaptation finance · Green infra · Resilience rankings', code: 'EP-DE5' },
+    { path: '/real-estate-carbon-analytics',      label: 'Real Estate Carbon Analytics',       badge: '70 buildings · Embodied/operational carbon · Lifecycle analysis · Retrofit pathway · Net zero', code: 'EP-DE6' },
   ]},
   { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
     { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
@@ -2525,6 +2540,13 @@ function AppContent() {
             <Route path="/carbon-adjusted-valuation" element={<CarbonAdjustedValuationPage />} />
             <Route path="/treasury-climate-risk"     element={<TreasuryClimateRiskPage />} />
             <Route path="/climate-capital-markets"   element={<ClimateCapitalMarketsPage />} />
+            {/* Sprint DE — Green Real Estate & Built Environment */}
+            <Route path="/green-building-valuation"          element={<GreenBuildingValuationPage />} />
+            <Route path="/real-estate-climate-risk"          element={<RealEstateClimateRiskPage />} />
+            <Route path="/climate-mortgage-analytics"        element={<ClimateMortgageAnalyticsPage />} />
+            <Route path="/infrastructure-climate-resilience" element={<InfrastructureClimateResiliencePage />} />
+            <Route path="/urban-climate-adaptation"          element={<UrbanClimateAdaptationPage />} />
+            <Route path="/real-estate-carbon-analytics"      element={<RealEstateCarbonAnalyticsPage />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
             <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
             <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
