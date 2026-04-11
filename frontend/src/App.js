@@ -527,6 +527,13 @@ const CarbonCaptureFinancePage           = React.lazy(() => import("./features/c
 const EnergyStorageAnalyticsPage         = React.lazy(() => import("./features/energy-storage-analytics/pages/EnergyStorageAnalyticsPage"));
 const EVTransitionFinancePage            = React.lazy(() => import("./features/ev-transition-finance/pages/EVTransitionFinancePage"));
 const ClimatePatentIntelligencePage      = React.lazy(() => import("./features/climate-patent-intelligence/pages/ClimatePatentIntelligencePage"));
+// Sprint DI — Climate Workforce & Just Transition
+const FossilFuelWorkerTransitionPage     = React.lazy(() => import("./features/fossil-fuel-worker-transition/pages/FossilFuelWorkerTransitionPage"));
+const GreenJobsGrowthPage                = React.lazy(() => import("./features/green-jobs-growth/pages/GreenJobsGrowthPage"));
+const CorporateJustTransitionPage        = React.lazy(() => import("./features/corporate-just-transition/pages/CorporateJustTransitionPage"));
+const ClimateDisplacementRiskPage        = React.lazy(() => import("./features/climate-displacement-risk/pages/ClimateDisplacementRiskPage"));
+const SupplyChainLaborClimateRiskPage    = React.lazy(() => import("./features/supply-chain-labor-climate/pages/SupplyChainLaborClimateRiskPage"));
+const CommunityClimateResiliencePage     = React.lazy(() => import("./features/community-climate-resilience/pages/CommunityClimateResiliencePage"));
 // Sprint DG — Food, Agriculture & Land Use
 const AgriculturalClimateRiskPage        = React.lazy(() => import("./features/agricultural-climate-risk/pages/AgriculturalClimateRiskPage"));
 const FoodSystemTransitionPage           = React.lazy(() => import("./features/food-system-transition/pages/FoodSystemTransitionPage"));
@@ -534,6 +541,13 @@ const LandUseChangeFinancePage           = React.lazy(() => import("./features/l
 const SustainableAgricultureInvestmentPage = React.lazy(() => import("./features/sustainable-agriculture-investment/pages/SustainableAgricultureInvestmentPage"));
 const WaterFoodEnergyNexusPage           = React.lazy(() => import("./features/water-food-energy-nexus/pages/WaterFoodEnergyNexusPage"));
 const ClimateCommodityAnalyticsPage      = React.lazy(() => import("./features/climate-commodity-analytics/pages/ClimateCommodityAnalyticsPage"));
+// Sprint DH — Emerging Markets & Development Finance
+const EMSovereignClimateDebtPage         = React.lazy(() => import("./features/em-sovereign-climate-debt/pages/EMSovereignClimateDebtPage"));
+const MDBClimateFinanceDHPage            = React.lazy(() => import("./features/mdb-climate-finance-dh/pages/MDBClimateFinancePage"));
+const JETPAnalyticsPage                  = React.lazy(() => import("./features/jetp-analytics/pages/JETPAnalyticsPage"));
+const ClimateBlendedFinancePage          = React.lazy(() => import("./features/climate-blended-finance/pages/ClimateBlendedFinancePage"));
+const LossAndDamageFinancePage           = React.lazy(() => import("./features/loss-and-damage-finance/pages/LossAndDamageFinancePage"));
+const SovereignGreenBondAnalyticsPage    = React.lazy(() => import("./features/sovereign-green-bond-analytics/pages/SovereignGreenBondAnalyticsPage"));
 // Sprint DD — Corporate Finance & Capital Markets
 const ClimateWaccEnginePage              = React.lazy(() => import("./features/climate-wacc-engine/pages/ClimateWaccEnginePage"));
 const GreenDebtStructuringPage           = React.lazy(() => import("./features/green-debt-structuring/pages/GreenDebtStructuringPage"));
@@ -1468,6 +1482,22 @@ const NAV_GROUPS = [
     { label: 'Sustainable Agriculture Investment',  path: '/sustainable-agriculture-investment',  code: 'EP-DG4' },
     { label: 'Water-Food-Energy Nexus',             path: '/water-food-energy-nexus',             code: 'EP-DG5' },
     { label: 'Climate Commodity Analytics',         path: '/climate-commodity-analytics',         code: 'EP-DG6' },
+  ]},
+  { label: 'Emerging Markets & Development Finance', icon: '🌍', color: '#7c2d12', items: [
+    { label: 'EM Sovereign Climate Debt',       path: '/em-sovereign-climate-debt',       code: 'EP-DH1' },
+    { label: 'MDB Climate Finance',             path: '/mdb-climate-finance-dh',          code: 'EP-DH2' },
+    { label: 'JETP Analytics',                  path: '/jetp-analytics',                  code: 'EP-DH3' },
+    { label: 'Climate Blended Finance',         path: '/climate-blended-finance',         code: 'EP-DH4' },
+    { label: 'Loss & Damage Finance',           path: '/loss-and-damage-finance',         code: 'EP-DH5' },
+    { label: 'Sovereign Green Bond Analytics',  path: '/sovereign-green-bond-analytics',  code: 'EP-DH6' },
+  ]},
+  { label: 'Climate Workforce & Just Transition', icon: '👷', color: '#713f12', items: [
+    { label: 'Fossil Fuel Worker Transition',        path: '/fossil-fuel-worker-transition',        code: 'EP-DI1' },
+    { label: 'Green Jobs Growth',                    path: '/green-jobs-growth',                    code: 'EP-DI2' },
+    { label: 'Corporate Just Transition',            path: '/corporate-just-transition',            code: 'EP-DI3' },
+    { label: 'Climate Displacement Risk',            path: '/climate-displacement-risk',            code: 'EP-DI4' },
+    { label: 'Supply Chain Labor & Climate Risk',    path: '/supply-chain-labor-climate',           code: 'EP-DI5' },
+    { label: 'Community Climate Resilience',         path: '/community-climate-resilience',         code: 'EP-DI6' },
   ]},
   { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
     { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
@@ -2591,6 +2621,20 @@ function AppContent() {
             <Route path="/sustainable-agriculture-investment" element={<SustainableAgricultureInvestmentPage />} />
             <Route path="/water-food-energy-nexus"            element={<WaterFoodEnergyNexusPage />} />
             <Route path="/climate-commodity-analytics"        element={<ClimateCommodityAnalyticsPage />} />
+            {/* Sprint DH — Emerging Markets & Development Finance */}
+            <Route path="/em-sovereign-climate-debt"          element={<EMSovereignClimateDebtPage />} />
+            <Route path="/mdb-climate-finance-dh"             element={<MDBClimateFinanceDHPage />} />
+            <Route path="/jetp-analytics"                     element={<JETPAnalyticsPage />} />
+            <Route path="/climate-blended-finance"            element={<ClimateBlendedFinancePage />} />
+            <Route path="/loss-and-damage-finance"            element={<LossAndDamageFinancePage />} />
+            <Route path="/sovereign-green-bond-analytics"     element={<SovereignGreenBondAnalyticsPage />} />
+            {/* Sprint DI — Climate Workforce & Just Transition */}
+            <Route path="/fossil-fuel-worker-transition"      element={<FossilFuelWorkerTransitionPage />} />
+            <Route path="/green-jobs-growth"                  element={<GreenJobsGrowthPage />} />
+            <Route path="/corporate-just-transition"          element={<CorporateJustTransitionPage />} />
+            <Route path="/climate-displacement-risk"          element={<ClimateDisplacementRiskPage />} />
+            <Route path="/supply-chain-labor-climate"         element={<SupplyChainLaborClimateRiskPage />} />
+            <Route path="/community-climate-resilience"       element={<CommunityClimateResiliencePage />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
             <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
             <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
