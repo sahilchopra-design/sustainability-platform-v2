@@ -513,6 +513,13 @@ const SectorSustainabilityBenchmarkPage = React.lazy(() => import("./features/se
 const ReportQualityEnginePage = React.lazy(() => import("./features/report-quality-engine/pages/ReportQualityEnginePage"));
 const MetricsDataArchitecturePage = React.lazy(() => import("./features/metrics-data-architecture/pages/MetricsDataArchitecturePage"));
 const NarrativeIntelligencePage = React.lazy(() => import("./features/narrative-intelligence/pages/NarrativeIntelligencePage"));
+// Sprint DD — Corporate Finance & Capital Markets
+const ClimateWaccEnginePage              = React.lazy(() => import("./features/climate-wacc-engine/pages/ClimateWaccEnginePage"));
+const GreenDebtStructuringPage           = React.lazy(() => import("./features/green-debt-structuring/pages/GreenDebtStructuringPage"));
+const ClimateMaDueDiligencePage          = React.lazy(() => import("./features/climate-ma-due-diligence/pages/ClimateMaDueDiligencePage"));
+const CarbonAdjustedValuationPage        = React.lazy(() => import("./features/carbon-adjusted-valuation/pages/CarbonAdjustedValuationPage"));
+const TreasuryClimateRiskPage            = React.lazy(() => import("./features/treasury-climate-risk/pages/TreasuryClimateRiskPage"));
+const ClimateCapitalMarketsPage          = React.lazy(() => import("./features/climate-capital-markets/pages/ClimateCapitalMarketsPage"));
 // Sprint DC — Climate-Integrated Actuarial Intelligence
 const ClimateMortalityLongevityPage      = React.lazy(() => import("./features/climate-mortality-longevity/pages/ClimateMortalityLongevityPage"));
 const PCClimatePricingPage               = React.lazy(() => import("./features/pc-climate-pricing/pages/PCClimatePricingPage"));
@@ -1408,6 +1415,14 @@ const NAV_GROUPS = [
     { path: '/climate-risk-premium',           label: 'Climate Risk Premium Decomposer',      badge: '50 issuers · Spread decomposition · PD/LGD adjustment · Sector attribution · Factors',  code: 'EP-DB4' },
     { path: '/enterprise-climate-risk',        label: 'Enterprise Climate Risk Aggregator',   badge: '30 exposures · 8 entities · Diversification · HHI · TCFD Board Reporting · NGFS',      code: 'EP-DB5' },
     { path: '/systemic-climate-risk',          label: 'Systemic Climate Risk Monitor',        badge: '12 sectors · Network contagion · 15 CB indicators · 4 amplifiers · Macro-prudential',  code: 'EP-DB6' },
+  ]},
+  { label: 'Corporate Finance & Capital Markets', icon: '💼', color: '#1e3a5f', items: [
+    { path: '/climate-wacc-engine',       label: 'Climate WACC Engine',         badge: '80 companies · 8 sectors · Climate-adj CAPM · NGFS scenarios · Capital optimizer · Greenium', code: 'EP-DD1' },
+    { path: '/green-debt-structuring',    label: 'Green Debt Structuring',       badge: '70 instruments · 7 types · Greenium pricing · KPI step-up/down · SPO scoring · Impact reporting', code: 'EP-DD2' },
+    { path: '/climate-ma-due-diligence',  label: 'Climate M&A Due Diligence',   badge: '45 targets · 6 sectors · Stranded asset haircut · Carbon NPV · Regulatory exposure · Deal scorecard', code: 'EP-DD3' },
+    { path: '/carbon-adjusted-valuation', label: 'Carbon-Adjusted Valuation',   badge: '60 companies · Full DCF · NGFS paths · SBTi premium · Stranded discount · Sensitivity grid', code: 'EP-DD4' },
+    { path: '/treasury-climate-risk',     label: 'Treasury Climate Risk',        badge: '8 FX · 12 commodities · 30 SC nodes · 25 counterparties · Hedging analytics · NGFS scenarios', code: 'EP-DD5' },
+    { path: '/climate-capital-markets',   label: 'Climate Capital Markets',      badge: '100 instruments · 20 ESG indices · 30 investors · Flow analytics · Alpha signals · Intelligence Hub', code: 'EP-DD6' },
   ]},
   { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
     { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
@@ -2503,6 +2518,13 @@ function AppContent() {
             <Route path="/peer-clustering-segmentation"     element={<PeerClusteringSegmentationPage />} />
             <Route path="/scenario-conditional-prediction"  element={<ScenarioConditionalPredictionPage />} />
             <Route path="/ml-governance-dashboard"          element={<MlGovernanceDashboardPage />} />
+            {/* Sprint DD — Corporate Finance & Capital Markets */}
+            <Route path="/climate-wacc-engine"       element={<ClimateWaccEnginePage />} />
+            <Route path="/green-debt-structuring"    element={<GreenDebtStructuringPage />} />
+            <Route path="/climate-ma-due-diligence"  element={<ClimateMaDueDiligencePage />} />
+            <Route path="/carbon-adjusted-valuation" element={<CarbonAdjustedValuationPage />} />
+            <Route path="/treasury-climate-risk"     element={<TreasuryClimateRiskPage />} />
+            <Route path="/climate-capital-markets"   element={<ClimateCapitalMarketsPage />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
             <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
             <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
