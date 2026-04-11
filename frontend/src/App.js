@@ -520,6 +520,13 @@ const ClimateMortgageAnalyticsPage       = React.lazy(() => import("./features/c
 const InfrastructureClimateResiliencePage = React.lazy(() => import("./features/infrastructure-climate-resilience/pages/InfrastructureClimateResiliencePage"));
 const UrbanClimateAdaptationPage         = React.lazy(() => import("./features/urban-climate-adaptation/pages/UrbanClimateAdaptationPage"));
 const RealEstateCarbonAnalyticsPage      = React.lazy(() => import("./features/real-estate-carbon-analytics/pages/RealEstateCarbonAnalyticsPage"));
+// Sprint DF — Climate Technology & Innovation Finance
+const CleanTechInvestmentPage            = React.lazy(() => import("./features/cleantech-investment/pages/CleanTechInvestmentPage"));
+const GreenHydrogenEconomicsPage2        = React.lazy(() => import("./features/green-hydrogen-economics/pages/GreenHydrogenEconomicsPage"));
+const CarbonCaptureFinancePage           = React.lazy(() => import("./features/carbon-capture-finance/pages/CarbonCaptureFinancePage"));
+const EnergyStorageAnalyticsPage         = React.lazy(() => import("./features/energy-storage-analytics/pages/EnergyStorageAnalyticsPage"));
+const EVTransitionFinancePage            = React.lazy(() => import("./features/ev-transition-finance/pages/EVTransitionFinancePage"));
+const ClimatePatentIntelligencePage      = React.lazy(() => import("./features/climate-patent-intelligence/pages/ClimatePatentIntelligencePage"));
 // Sprint DD — Corporate Finance & Capital Markets
 const ClimateWaccEnginePage              = React.lazy(() => import("./features/climate-wacc-engine/pages/ClimateWaccEnginePage"));
 const GreenDebtStructuringPage           = React.lazy(() => import("./features/green-debt-structuring/pages/GreenDebtStructuringPage"));
@@ -1438,6 +1445,14 @@ const NAV_GROUPS = [
     { path: '/infrastructure-climate-resilience', label: 'Infrastructure Climate Resilience',  badge: '50 assets · 6 sectors · Adaptation costing · Resilience pathway · Insurance gap', code: 'EP-DE4' },
     { path: '/urban-climate-adaptation',          label: 'Urban Climate Adaptation',           badge: '40 global cities · Heat/flood/drought · Adaptation finance · Green infra · Resilience rankings', code: 'EP-DE5' },
     { path: '/real-estate-carbon-analytics',      label: 'Real Estate Carbon Analytics',       badge: '70 buildings · Embodied/operational carbon · Lifecycle analysis · Retrofit pathway · Net zero', code: 'EP-DE6' },
+  ]},
+  { label: 'Climate Technology & Innovation Finance', icon: '⚡', color: '#1d4ed8', items: [
+    { label: 'CleanTech Investment Analytics',  path: '/cleantech-investment',        code: 'EP-DF1' },
+    { label: 'Green Hydrogen Economics',        path: '/green-hydrogen-economics-df', code: 'EP-DF2' },
+    { label: 'Carbon Capture Finance',          path: '/carbon-capture-finance',      code: 'EP-DF3' },
+    { label: 'Energy Storage Analytics',        path: '/energy-storage-analytics',    code: 'EP-DF4' },
+    { label: 'EV Transition Finance',           path: '/ev-transition-finance',       code: 'EP-DF5' },
+    { label: 'Climate Patent Intelligence',     path: '/climate-patent-intelligence', code: 'EP-DF6' },
   ]},
   { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
     { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
@@ -2547,6 +2562,13 @@ function AppContent() {
             <Route path="/infrastructure-climate-resilience" element={<InfrastructureClimateResiliencePage />} />
             <Route path="/urban-climate-adaptation"          element={<UrbanClimateAdaptationPage />} />
             <Route path="/real-estate-carbon-analytics"      element={<RealEstateCarbonAnalyticsPage />} />
+            {/* Sprint DF — Climate Technology & Innovation Finance */}
+            <Route path="/cleantech-investment"              element={<CleanTechInvestmentPage />} />
+            <Route path="/green-hydrogen-economics-df"       element={<GreenHydrogenEconomicsPage2 />} />
+            <Route path="/carbon-capture-finance"            element={<CarbonCaptureFinancePage />} />
+            <Route path="/energy-storage-analytics"          element={<EnergyStorageAnalyticsPage />} />
+            <Route path="/ev-transition-finance"             element={<EVTransitionFinancePage />} />
+            <Route path="/climate-patent-intelligence"       element={<ClimatePatentIntelligencePage />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
             <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
             <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
