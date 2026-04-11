@@ -345,7 +345,8 @@ def create_invite(
     admin: UserPG = Depends(_require_super_admin),
     db: Session = Depends(get_db),
 ):
-    """Generate a token-based invite link for a new user."""
+    """Generate a token-based invite link for a new user and optionally email it."""
+    import os
     token = secrets.token_urlsafe(32)
     invite_expires_at = datetime.now(timezone.utc) + timedelta(days=7)
 
@@ -363,12 +364,32 @@ def create_invite(
     db.add(invite)
     db.commit()
 
+    # Build the full invite URL
+    base_url = os.getenv("PLATFORM_BASE_URL", "http://localhost:3000").rstrip("/")
+    full_invite_url = f"{base_url}/invite/{token}"
+
+    # Attempt to email the invite (non-blocking — failure never aborts invite creation)
+    email_sent = False
+    try:
+        from services.email_service import send_invite_email
+        email_sent = send_invite_email(
+            to_email=body.email,
+            invite_url=full_invite_url,
+            role=body.rbac_role,
+            org=body.display_org,
+            expires_days=7,
+        )
+    except Exception:
+        pass  # Email is best-effort
+
     return {
         "invite_token": token,
         "invite_url": f"/invite/{token}",
+        "full_invite_url": full_invite_url,
         "email": body.email,
         "rbac_role": body.rbac_role,
         "expires_at": invite_expires_at.isoformat(),
+        "email_sent": email_sent,
     }
 
 

@@ -48,7 +48,7 @@ export default function VintageCohortStrandedPage(){
   const cohortStats = useMemo(()=>COHORTS.map(c=>{
     const group = ASSETS.filter(a=>a.vintage===c);
     if(!group.length) return null;
-    return { cohort:c, count:group.length, avgAge:Math.round(group.reduce((s,a)=>s+a.age,0)/group.length), totalBV:group.reduce((s,a)=>s+a.currentBV,0), avgStrand:Math.round(100*group.reduce((s,a)=>s+a.strandingProb,0)/group.length), avgLambda:(group.reduce((s,a)=>s+a.lambda,0)/group.length).toFixed(3) };
+    return { cohort:c, count:group.length, avgAge:Math.round(group.reduce((s,a)=>s+a.age,0)/ Math.max(1, group.length)), totalBV:group.reduce((s,a)=>s+a.currentBV,0), avgStrand:Math.round(100*group.reduce((s,a)=>s+a.strandingProb,0)/ Math.max(1, group.length)), avgLambda:(group.reduce((s,a)=>s+a.lambda,0)/ Math.max(1, group.length)).toFixed(3) };
   }).filter(Boolean),[]);
 
   const regRisk = useMemo(()=>ASSETS.map(a=>({ name:a.name, age:a.age, sector:a.sector, vintage:a.vintage, closureRisk: a.vintage==='pre-2000'?'Critical':a.vintage==='2000-2010'?'High':a.vintage==='2010-2020'?'Medium':'Low', yearsToRegClosure: a.vintage==='pre-2000'?Math.max(1,5-Math.floor(a.age/10)):a.vintage==='2000-2010'?8:a.vintage==='2010-2020'?15:25, complianceCost:Math.round(a.currentBV*0.15*(a.age/20)) })),[]);
