@@ -207,7 +207,7 @@ export default function ClimateLegalIntelligenceDashboardPage() {
     });
   }, [filtered, dimWeights]);
 
-  const jurStats = useMemo(() => JUR_INTELLIGENCE.sort((a, b) => b.legalMaturityScore - a.legalMaturityScore), []);
+  const jurStats = useMemo(() => [...JUR_INTELLIGENCE].sort((a, b) => b.legalMaturityScore - a.legalMaturityScore), []);
 
   const sortedPrecedents = useMemo(() => [...KEY_PRECEDENTS].sort((a, b) => {
     const av = a[precSortCol], bv = b[precSortCol];

@@ -113,11 +113,11 @@ export default function HeatMortalityRiskPage(){
     return points;
   },[]);
 
-  const uhiData=useMemo(()=>CITIES.sort((a,b)=>b.uhiIntensity-a.uhiIntensity).slice(0,30).map(c=>({
+  const uhiData=useMemo(()=>[...CITIES].sort((a,b)=>b.uhiIntensity-a.uhiIntensity).slice(0,30).map(c=>({
     name:c.name,uhi:c.uhiIntensity,greenGapM:c.greenInfraGapM,cdd2030:c.cddProjection[0],cdd2040:c.cddProjection[1],cdd2050:c.cddProjection[2]
   })),[]);
 
-  const financialData=useMemo(()=>CITIES.sort((a,b)=>b.healthcostM-a.healthcostM).slice(0,30).map(c=>({
+  const financialData=useMemo(()=>[...CITIES].sort((a,b)=>b.healthcostM-a.healthcostM).slice(0,30).map(c=>({
     name:c.name,healthcostM:c.healthcostM,insuranceM:c.insuranceClaimsM,realEstatePct:c.realEstateImpactPct,portfolioPct:c.portfolioExposurePct,tier:c.riskTier
   })),[]);
 

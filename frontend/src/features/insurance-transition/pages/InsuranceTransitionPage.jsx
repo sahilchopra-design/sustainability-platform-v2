@@ -250,7 +250,7 @@ export default function InsuranceTransitionPage(){
           <div style={S.scroll}>
             <table style={S.table}>
               <thead><tr>{['Insurer','Region','Fossil %','Coal %','Oil/Gas %','Coal Phase-Out','Oil Phase-Out','Gas Phase-Out','NZ Target'].map(h=><th key={h} style={S.th}>{h}</th>)}</tr></thead>
-              <tbody>{INSURERS.sort((a,b)=>b.fossilExposure-a.fossilExposure).slice(0,25).map((ins,i)=>(
+              <tbody>{[...INSURERS].sort((a,b)=>b.fossilExposure-a.fossilExposure).slice(0,25).map((ins,i)=>(
                 <tr key={ins.id} style={{background:i%2?T.surfaceH:'transparent'}}>
                   <td style={{...S.td,fontWeight:600}}>{ins.name}</td><td style={S.td}>{ins.region}</td>
                   <td style={S.td}><span style={S.badge(ins.fossilExposure>15?T.red:ins.fossilExposure>8?T.amber:T.green)}>{ins.fossilExposure}%</span></td>
@@ -376,8 +376,8 @@ export default function InsuranceTransitionPage(){
       <div style={S.card}>
         <div style={S.cardTitle}>Insurer TCFD Disclosure Quality</div>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={INSURERS.sort((a,b)=>b.disclosureScore-a.disclosureScore).slice(0,15).map(i=>({name:i.name.length>10?i.name.substring(0,10):i.name,disclosure:i.disclosureScore}))}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9}} angle={-25} textAnchor="end" height={50}/><YAxis tick={{fontSize:10}} domain={[0,100]}/><Tooltip contentStyle={{fontSize:11}}/><Bar dataKey="disclosure" name="Disclosure Score">{INSURERS.sort((a,b)=>b.disclosureScore-a.disclosureScore).slice(0,15).map((ins,i)=><Cell key={i} fill={ins.disclosureScore>=70?T.green:ins.disclosureScore>=50?T.amber:T.red}/>)}</Bar>
+          <BarChart data={[...INSURERS].sort((a,b)=>b.disclosureScore-a.disclosureScore).slice(0,15).map(i=>({name:i.name.length>10?i.name.substring(0,10):i.name,disclosure:i.disclosureScore}))}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9}} angle={-25} textAnchor="end" height={50}/><YAxis tick={{fontSize:10}} domain={[0,100]}/><Tooltip contentStyle={{fontSize:11}}/><Bar dataKey="disclosure" name="Disclosure Score">{[...INSURERS].sort((a,b)=>b.disclosureScore-a.disclosureScore).slice(0,15).map((ins,i)=><Cell key={i} fill={ins.disclosureScore>=70?T.green:ins.disclosureScore>=50?T.amber:T.red}/>)}</Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
