@@ -527,6 +527,13 @@ const CarbonCaptureFinancePage           = React.lazy(() => import("./features/c
 const EnergyStorageAnalyticsPage         = React.lazy(() => import("./features/energy-storage-analytics/pages/EnergyStorageAnalyticsPage"));
 const EVTransitionFinancePage            = React.lazy(() => import("./features/ev-transition-finance/pages/EVTransitionFinancePage"));
 const ClimatePatentIntelligencePage      = React.lazy(() => import("./features/climate-patent-intelligence/pages/ClimatePatentIntelligencePage"));
+// Sprint DG — Food, Agriculture & Land Use
+const AgriculturalClimateRiskPage        = React.lazy(() => import("./features/agricultural-climate-risk/pages/AgriculturalClimateRiskPage"));
+const FoodSystemTransitionPage           = React.lazy(() => import("./features/food-system-transition/pages/FoodSystemTransitionPage"));
+const LandUseChangeFinancePage           = React.lazy(() => import("./features/land-use-change-finance/pages/LandUseChangeFinancePage"));
+const SustainableAgricultureInvestmentPage = React.lazy(() => import("./features/sustainable-agriculture-investment/pages/SustainableAgricultureInvestmentPage"));
+const WaterFoodEnergyNexusPage           = React.lazy(() => import("./features/water-food-energy-nexus/pages/WaterFoodEnergyNexusPage"));
+const ClimateCommodityAnalyticsPage      = React.lazy(() => import("./features/climate-commodity-analytics/pages/ClimateCommodityAnalyticsPage"));
 // Sprint DD — Corporate Finance & Capital Markets
 const ClimateWaccEnginePage              = React.lazy(() => import("./features/climate-wacc-engine/pages/ClimateWaccEnginePage"));
 const GreenDebtStructuringPage           = React.lazy(() => import("./features/green-debt-structuring/pages/GreenDebtStructuringPage"));
@@ -1453,6 +1460,14 @@ const NAV_GROUPS = [
     { label: 'Energy Storage Analytics',        path: '/energy-storage-analytics',    code: 'EP-DF4' },
     { label: 'EV Transition Finance',           path: '/ev-transition-finance',       code: 'EP-DF5' },
     { label: 'Climate Patent Intelligence',     path: '/climate-patent-intelligence', code: 'EP-DF6' },
+  ]},
+  { label: 'Food, Agriculture & Land Use', icon: '🌾', color: '#365314', items: [
+    { label: 'Agricultural Climate Risk',           path: '/agricultural-climate-risk',           code: 'EP-DG1' },
+    { label: 'Food System Transition',              path: '/food-system-transition',              code: 'EP-DG2' },
+    { label: 'Land Use Change Finance',             path: '/land-use-change-finance',             code: 'EP-DG3' },
+    { label: 'Sustainable Agriculture Investment',  path: '/sustainable-agriculture-investment',  code: 'EP-DG4' },
+    { label: 'Water-Food-Energy Nexus',             path: '/water-food-energy-nexus',             code: 'EP-DG5' },
+    { label: 'Climate Commodity Analytics',         path: '/climate-commodity-analytics',         code: 'EP-DG6' },
   ]},
   { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
     { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
@@ -2569,6 +2584,13 @@ function AppContent() {
             <Route path="/energy-storage-analytics"          element={<EnergyStorageAnalyticsPage />} />
             <Route path="/ev-transition-finance"             element={<EVTransitionFinancePage />} />
             <Route path="/climate-patent-intelligence"       element={<ClimatePatentIntelligencePage />} />
+            {/* Sprint DG — Food, Agriculture & Land Use */}
+            <Route path="/agricultural-climate-risk"          element={<AgriculturalClimateRiskPage />} />
+            <Route path="/food-system-transition"             element={<FoodSystemTransitionPage />} />
+            <Route path="/land-use-change-finance"            element={<LandUseChangeFinancePage />} />
+            <Route path="/sustainable-agriculture-investment" element={<SustainableAgricultureInvestmentPage />} />
+            <Route path="/water-food-energy-nexus"            element={<WaterFoodEnergyNexusPage />} />
+            <Route path="/climate-commodity-analytics"        element={<ClimateCommodityAnalyticsPage />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
             <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
             <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
