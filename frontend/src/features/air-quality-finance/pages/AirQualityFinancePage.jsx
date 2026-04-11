@@ -319,7 +319,7 @@ export default function AirQualityFinancePage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Health Cost by City ($M) &mdash; Mortality vs Morbidity</div>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={CITIES.sort((a,b)=>b.mortalityCostM-a.mortalityCostM).slice(0,20).map(c=>({name:c.name,mortality:c.mortalityCostM,morbidity:c.morbidityCostM}))} layout="vertical" margin={{left:80,right:20,top:5,bottom:5}}>
+            <BarChart data={[...CITIES].sort((a,b)=>b.mortalityCostM-a.mortalityCostM).slice(0,20).map(c=>({name:c.name,mortality:c.mortalityCostM,morbidity:c.morbidityCostM}))} layout="vertical" margin={{left:80,right:20,top:5,bottom:5}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:10,fill:T.textSec}} width={75}/>
@@ -333,7 +333,7 @@ export default function AirQualityFinancePage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>DALYs by City (top 20)</div>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={CITIES.sort((a,b)=>b.dalys-a.dalys).slice(0,20).map(c=>({name:c.name,dalys:c.dalys}))} layout="vertical" margin={{left:80,right:20,top:5,bottom:5}}>
+            <BarChart data={[...CITIES].sort((a,b)=>b.dalys-a.dalys).slice(0,20).map(c=>({name:c.name,dalys:c.dalys}))} layout="vertical" margin={{left:80,right:20,top:5,bottom:5}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:10,fill:T.textSec}} width={75}/>
@@ -346,7 +346,7 @@ export default function AirQualityFinancePage(){
       <div style={card({marginBottom:20})}>
         <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Economic Productivity Loss by City</div>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={CITIES.sort((a,b)=>b.prodLossPct-a.prodLossPct).slice(0,25).map(c=>({name:c.name,loss:c.prodLossPct}))} margin={{top:5,right:20,bottom:30,left:10}}>
+          <BarChart data={[...CITIES].sort((a,b)=>b.prodLossPct-a.prodLossPct).slice(0,25).map(c=>({name:c.name,loss:c.prodLossPct}))} margin={{top:5,right:20,bottom:30,left:10}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
             <XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec,angle:-40,textAnchor:'end'}} height={60}/>
             <YAxis tick={{fontSize:10,fill:T.textSec}} label={{value:'GDP Loss %',angle:-90,position:'insideLeft',fontSize:10,fill:T.textMut}}/>
@@ -360,7 +360,7 @@ export default function AirQualityFinancePage(){
         <div style={{overflowX:'auto'}}>
           <table style={{width:'100%',borderCollapse:'collapse'}}>
             <thead><tr><th style={thStyle}>City</th><th style={thStyle}>PM2.5</th><th style={thStyle}>Mortality ($M)</th><th style={thStyle}>Morbidity ($M)</th><th style={thStyle}>DALYs</th><th style={thStyle}>Prod Loss %</th><th style={thStyle}>Social Cost/Capita ($)</th></tr></thead>
-            <tbody>{CITIES.sort((a,b)=>b.mortalityCostM-a.mortalityCostM).slice(0,25).map(c=>(<tr key={c.id}>
+            <tbody>{[...CITIES].sort((a,b)=>b.mortalityCostM-a.mortalityCostM).slice(0,25).map(c=>(<tr key={c.id}>
               <td style={{...tdStyle,fontWeight:600}}>{c.name}</td>
               <td style={{...tdStyle,color:c.pm25>50?T.red:T.text}}>{c.pm25}</td>
               <td style={tdStyle}>${fmt(c.mortalityCostM*1e6)}</td><td style={tdStyle}>${fmt(c.morbidityCostM*1e6)}</td>
@@ -385,7 +385,7 @@ export default function AirQualityFinancePage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Cost vs Effectiveness by Technology</div>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={ABATEMENTS.sort((a,b)=>b.effectivenessPct-a.effectivenessPct)} margin={{top:5,right:20,bottom:30,left:10}}>
+            <BarChart data={[...ABATEMENTS].sort((a,b)=>b.effectivenessPct-a.effectivenessPct)} margin={{top:5,right:20,bottom:30,left:10}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis dataKey="tech" tick={{fontSize:8,fill:T.textSec,angle:-30,textAnchor:'end'}} height={80}/>
               <YAxis tick={{fontSize:10,fill:T.textSec}}/>

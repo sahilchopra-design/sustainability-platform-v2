@@ -401,7 +401,7 @@ export default function ClimateHealthHubPage(){
           {si===1&&(<div>
             <p style={{fontSize:13,color:T.textSec,lineHeight:1.6}}>{COUNTRY_RISK.filter(c=>c.heatRisk>70).length} countries show critical heat mortality risk. Wet-bulb temperature thresholds are being regularly breached in South Asia and Middle East regions.</p>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={COUNTRY_RISK.sort((a,b)=>b.heatRisk-a.heatRisk).slice(0,10).map(c=>({name:c.name,risk:c.heatRisk}))} margin={{top:5,right:20,bottom:5,left:10}}>
+              <BarChart data={[...COUNTRY_RISK].sort((a,b)=>b.heatRisk-a.heatRisk).slice(0,10).map(c=>({name:c.name,risk:c.heatRisk}))} margin={{top:5,right:20,bottom:5,left:10}}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:10,fill:T.textSec}}/>
                 <Tooltip contentStyle={{fontSize:12,borderRadius:8}}/><Bar dataKey="risk" fill={T.red} radius={[4,4,0,0]}/>
               </BarChart>

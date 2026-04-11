@@ -476,7 +476,7 @@ export default function AuditTrailViewerPage(){
         <div style={{overflowX:'auto'}}>
           <table style={{width:'100%',borderCollapse:'collapse'}}>
             <thead><tr>{['Table','Column','Changes','Last Change'].map(h=><th key={h} style={ss.th}>{h}</th>)}</tr></thead>
-            <tbody>{CHANGE_HEATMAP.sort((a,b)=>b.changes-a.changes).slice(0,40).map((h,i)=>{
+            <tbody>{[...CHANGE_HEATMAP].sort((a,b)=>b.changes-a.changes).slice(0,40).map((h,i)=>{
               const intensity=h.changes/200;
               return<tr key={i}>
                 <td style={{...ss.td,fontWeight:600,fontSize:11}}>{h.table}</td>
