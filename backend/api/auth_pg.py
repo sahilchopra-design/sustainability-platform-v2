@@ -12,9 +12,23 @@ import bcrypt as _bcrypt
 from sqlalchemy.orm import Session
 from fastapi import Depends
 
+from sqlalchemy import text as sa_text
+
 from db.base import get_db
 from db.models.portfolio_pg import UserPG, UserSessionPG
 from db.models.rbac import RbacUserProfilePG, RbacModuleAccessPG, RbacRolePresetPG
+
+# ── Module Maturity → Role Access Tier ──────────────────────────────────────
+# Only modules at or above the user's minimum tier are included in allowed paths.
+# super_admin: all modules (no filter);  team_member: review+ (tier≥1)
+# partner/demo: beta+ (tier≥2);  viewer: production only (tier≥3)
+ROLE_MIN_TIER = {
+    "super_admin": 0,
+    "team_member": 1,
+    "partner": 2,
+    "demo": 2,
+    "viewer": 3,
+}
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -241,6 +255,23 @@ def get_me(request: Request, db: Session = Depends(get_db)):
                     if o.access_type == "deny" and (o.expires_at is None or o.expires_at > now)
                 }
                 allowed_module_paths = sorted((set(base_paths) | grants) - denies)
+
+                # ── Maturity-tier filter ───────────────────────────────
+                # Filter out modules whose maturity tier is below the
+                # user's role minimum (e.g., partners only see beta+).
+                min_tier = ROLE_MIN_TIER.get(rbac_role, 3)
+                if min_tier > 0 and allowed_module_paths:
+                    try:
+                        rows = db.execute(
+                            sa_text("SELECT module_path, review_tier FROM module_review_status")
+                        ).fetchall()
+                        status_map = {r[0]: r[1] for r in rows}
+                        allowed_module_paths = sorted(
+                            p for p in allowed_module_paths
+                            if status_map.get(p, 0) >= min_tier
+                        )
+                    except Exception:
+                        pass  # table may not exist yet — degrade gracefully
     except Exception:
         pass  # RBAC tables may not yet be migrated — degrade gracefully
 

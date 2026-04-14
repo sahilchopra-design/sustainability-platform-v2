@@ -1230,6 +1230,15 @@ def generate_sample_data(db: Session = Depends(get_db)):
     }
 
 
+# ── Serve frontend build (production mode) ──────────────────────────────────
+# When frontend/build exists, serve it as static files from the same port.
+# This eliminates the need for a separate dev server when sharing externally.
+from fastapi.staticfiles import StaticFiles as _StaticFiles
+_build_dir = os.path.join(os.path.dirname(__file__), "..", "frontend", "build")
+if os.path.isdir(_build_dir):
+    app.mount("/", _StaticFiles(directory=_build_dir, html=True), name="frontend")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

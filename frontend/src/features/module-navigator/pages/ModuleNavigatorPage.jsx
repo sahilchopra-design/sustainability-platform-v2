@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 
 /* ─── theme ──────────────────────────────────────────────────────── */
 const T = {
@@ -81,12 +82,20 @@ export default function ModuleNavigatorPage({ navGroups = [] }) {
 
   useCtrlK(useCallback(() => searchRef.current?.focus(), []));
 
+  /* filter nav groups by user access permissions */
+  const { canAccess } = useAuth();
+  const accessibleGroups = useMemo(() =>
+    navGroups.map(g => ({ ...g, items: g.items.filter(i => canAccess(i.path)) }))
+             .filter(g => g.items.length > 0),
+    [navGroups, canAccess]
+  );
+
   /* flatten all items */
   const allItems = useMemo(() =>
-    navGroups.flatMap(g => g.items.map(item => ({
+    accessibleGroups.flatMap(g => g.items.map(item => ({
       ...item, group: g.label, gIcon: g.icon, gColor: g.color,
     }))),
-  [navGroups]);
+  [accessibleGroups]);
 
   const total = allItems.length;
 
@@ -115,10 +124,10 @@ export default function ModuleNavigatorPage({ navGroups = [] }) {
       map.get(item.group).push(item);
     });
     return Array.from(map.entries()).map(([g, items]) => {
-      const meta = navGroups.find(ng => ng.label === g);
+      const meta = accessibleGroups.find(ng => ng.label === g);
       return { g, items, icon: meta?.icon||'📦', color: meta?.color||T.navy };
     });
-  }, [filtered, domain, query, sort, navGroups]);
+  }, [filtered, domain, query, sort, accessibleGroups]);
 
   const recentItems = useMemo(() =>
     recent.slice(0,6).map(p => allItems.find(i => i.path === p)).filter(Boolean),

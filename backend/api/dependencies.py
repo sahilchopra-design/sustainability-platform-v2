@@ -207,3 +207,32 @@ def require_super_admin(
             detail="Super admin access required",
         )
     return user
+
+
+def require_write_access(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> UserPG:
+    """
+    Dependency: require the user to NOT be read-only.
+    Blocks demo/viewer roles from export, upload, and save operations.
+
+    Usage:
+        @router.post("/export")
+        def export_data(user: UserPG = Depends(require_write_access)):
+            ...
+    """
+    user = get_current_user(request, db)
+    try:
+        profile = db.query(RbacUserProfilePG).filter(
+            RbacUserProfilePG.user_id == user.user_id
+        ).first()
+    except Exception:
+        profile = None
+
+    if profile and profile.is_read_only:
+        raise HTTPException(
+            status_code=403,
+            detail="Read-only access — write operations are not permitted",
+        )
+    return user

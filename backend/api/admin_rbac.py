@@ -533,3 +533,76 @@ def add_module_feedback(body: FeedbackReq, admin=Depends(require_super_admin), d
 
     db.commit()
     return {"status": "feedback_added", "module_path": body.module_path}
+
+
+# ── Public Maturity Map (no admin required) ─────────────────────────────────
+
+@router.get("/modules/maturity-map")
+def get_maturity_map(db: Session = Depends(get_db)):
+    """
+    Returns maturity_level and review_tier for all modules.
+    No admin required — used by sidebar and module navigator for badge display.
+    """
+    try:
+        rows = db.execute(text(
+            "SELECT module_path, maturity_level, review_tier, updated_at FROM module_review_status"
+        )).fetchall()
+        return {
+            r[0]: {
+                "maturity_level": r[1],
+                "review_tier": r[2],
+                "updated_at": r[3].isoformat() if r[3] else None,
+            }
+            for r in rows
+        }
+    except Exception:
+        return {}  # table may not exist yet
+
+
+# ── Bulk Promote Modules ────────────────────────────────────────────────────
+
+class BulkPromoteBody(BaseModel):
+    module_paths: List[str]
+    action: str  # submit | approve | promote | reject
+
+@router.put("/modules/bulk-review")
+def bulk_review_modules(
+    body: BulkPromoteBody,
+    db: Session = Depends(get_db),
+    user=Depends(_require_super_admin),
+):
+    """Promote/demote multiple modules at once (e.g., entire sprint)."""
+    action_map = {
+        "submit":  ("review", 1),
+        "approve": ("beta", 2),
+        "promote": ("production", 3),
+        "reject":  ("draft", 0),
+    }
+    if body.action not in action_map:
+        raise HTTPException(400, f"Invalid action: {body.action}")
+
+    new_level, new_tier = action_map[body.action]
+    now = datetime.now(timezone.utc)
+    updated = 0
+
+    for mp in body.module_paths:
+        existing = db.execute(
+            text("SELECT id FROM module_review_status WHERE module_path = :mp"),
+            {"mp": mp},
+        ).fetchone()
+
+        if existing:
+            db.execute(text("""
+                UPDATE module_review_status
+                SET maturity_level = :ml, review_tier = :rt, updated_at = :now
+                WHERE module_path = :mp
+            """), {"ml": new_level, "rt": new_tier, "now": now, "mp": mp})
+        else:
+            db.execute(text("""
+                INSERT INTO module_review_status (module_path, maturity_level, review_tier, created_at, updated_at)
+                VALUES (:mp, :ml, :rt, :now, :now)
+            """), {"mp": mp, "ml": new_level, "rt": new_tier, "now": now})
+        updated += 1
+
+    db.commit()
+    return {"status": "bulk_updated", "action": body.action, "count": updated}

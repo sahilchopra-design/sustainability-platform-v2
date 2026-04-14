@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import axios from 'axios';
+import useAdminApi from '../hooks/useAdminApi';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -1715,22 +1716,228 @@ const MAIN_TABS = [
   { id: 'users',     label: 'Users',          icon: '👥' },
   { id: 'roles',     label: 'Role Matrix',    icon: '🔐' },
   { id: 'modules',   label: 'Module Manager', icon: '📦' },
+  { id: 'maturity',  label: 'Module Maturity',icon: '🚀' },
   { id: 'invites',   label: 'Invites',        icon: '✉️' },
   { id: 'presets',   label: 'Presets',        icon: '🎛️' },
   { id: 'audit',     label: 'Audit Log',      icon: '📋' },
   { id: 'settings',  label: 'Settings',       icon: '⚙️' },
 ];
 
+/* ─── Module Maturity Tab ─── */
+const MATURITY_LABELS = { draft: 'Draft', review: 'Review', beta: 'Beta', production: 'Production' };
+const MATURITY_COLORS = { draft: T.muted, review: T.orange, beta: T.blue, production: T.green };
+const MATURITY_ACTIONS = [
+  { action: 'submit',  label: 'Submit for Review', from: 'draft',   to: 'review' },
+  { action: 'approve', label: 'Approve to Beta',   from: 'review',  to: 'beta' },
+  { action: 'promote', label: 'Promote to Prod',   from: 'beta',    to: 'production' },
+  { action: 'reject',  label: 'Reject to Draft',   from: '*',       to: 'draft' },
+];
+
+function MaturityTab({ api }) {
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState(new Set());
+  const [busy, setBusy] = useState(false);
+
+  /* Build a merged list: all known module paths + any that have status rows */
+  const modules = useMemo(() => {
+    const statusMap = {};
+    (api.moduleStatus || []).forEach(row => {
+      statusMap[row.module_path || row.modulePath] = {
+        maturity: row.maturity_level || row.maturityLevel || 'draft',
+        tier: row.review_tier ?? row.reviewTier ?? 0,
+      };
+    });
+    return ALL_MODULE_PATHS.map(p => ({
+      path: p,
+      label: getModuleLabel(p),
+      group: getModuleGroup(p),
+      maturity: statusMap[p]?.maturity || 'draft',
+      tier: statusMap[p]?.tier || 0,
+    }));
+  }, [api.moduleStatus]);
+
+  const filtered = useMemo(() => {
+    let list = modules;
+    if (filter !== 'all') list = list.filter(m => m.maturity === filter);
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(m => m.path.toLowerCase().includes(q) || m.label.toLowerCase().includes(q) || (m.group||'').toLowerCase().includes(q));
+    }
+    return list;
+  }, [modules, filter, search]);
+
+  const counts = useMemo(() => {
+    const c = { draft: 0, review: 0, beta: 0, production: 0 };
+    modules.forEach(m => { c[m.maturity] = (c[m.maturity] || 0) + 1; });
+    return c;
+  }, [modules]);
+
+  const toggleSelect = (path) => setSelected(prev => {
+    const s = new Set(prev);
+    s.has(path) ? s.delete(path) : s.add(path);
+    return s;
+  });
+  const selectAll = () => setSelected(new Set(filtered.map(m => m.path)));
+  const selectNone = () => setSelected(new Set());
+
+  const doBulkAction = async (action) => {
+    if (selected.size === 0) return;
+    setBusy(true);
+    try {
+      await api.bulkReviewModules([...selected], action);
+      setSelected(new Set());
+    } catch (e) { alert('Error: ' + (e.response?.data?.detail || e.message)); }
+    setBusy(false);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* summary strip */}
+      <div style={{ display: 'flex', gap: 12 }}>
+        {Object.entries(counts).map(([level, n]) => (
+          <div key={level} onClick={() => setFilter(filter === level ? 'all' : level)}
+            style={{
+              flex: 1, padding: '12px 16px', borderRadius: 8,
+              background: filter === level ? MATURITY_COLORS[level] + '22' : T.card,
+              border: `1px solid ${filter === level ? MATURITY_COLORS[level] : T.border}`,
+              cursor: 'pointer', transition: 'all 0.15s',
+            }}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: MATURITY_COLORS[level], fontFamily: T.mono }}>{n}</div>
+            <div style={{ fontSize: 11, color: T.muted, textTransform: 'uppercase', letterSpacing: 1 }}>{MATURITY_LABELS[level]}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* controls */}
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+        <input value={search} onChange={e => setSearch(e.target.value)}
+          placeholder="Search modules..." style={{
+            flex: 1, minWidth: 200, padding: '8px 12px', borderRadius: 6,
+            background: T.card, border: `1px solid ${T.border}`, color: T.text,
+            fontSize: 12, fontFamily: T.font, outline: 'none',
+          }} />
+        <button onClick={selectAll} style={{ ...btnStyle, background: T.card, color: T.muted, border: `1px solid ${T.border}` }}>Select All ({filtered.length})</button>
+        <button onClick={selectNone} disabled={selected.size === 0} style={{ ...btnStyle, background: T.card, color: T.muted, border: `1px solid ${T.border}`, opacity: selected.size === 0 ? 0.4 : 1 }}>Clear</button>
+        {selected.size > 0 && (
+          <>
+            <span style={{ fontSize: 11, color: T.accent, fontFamily: T.mono, fontWeight: 600 }}>{selected.size} selected</span>
+            {MATURITY_ACTIONS.map(a => (
+              <button key={a.action} onClick={() => doBulkAction(a.action)} disabled={busy}
+                style={{ ...btnStyle, background: MATURITY_COLORS[a.to] + '22', color: MATURITY_COLORS[a.to], border: `1px solid ${MATURITY_COLORS[a.to]}44` }}>
+                {a.label}
+              </button>
+            ))}
+          </>
+        )}
+      </div>
+
+      {/* module list */}
+      <div style={{ maxHeight: 500, overflowY: 'auto', border: `1px solid ${T.border}`, borderRadius: 8, background: T.card }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <thead>
+            <tr style={{ background: T.surface, position: 'sticky', top: 0, zIndex: 2 }}>
+              <th style={{ ...thStyle, width: 32 }}><input type="checkbox" onChange={e => e.target.checked ? selectAll() : selectNone()} checked={selected.size === filtered.length && filtered.length > 0} /></th>
+              <th style={thStyle}>Module</th>
+              <th style={thStyle}>Group</th>
+              <th style={{ ...thStyle, width: 110 }}>Status</th>
+              <th style={{ ...thStyle, width: 60 }}>Tier</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(m => (
+              <tr key={m.path} onClick={() => toggleSelect(m.path)}
+                style={{ cursor: 'pointer', background: selected.has(m.path) ? T.accent + '11' : 'transparent', borderBottom: `1px solid ${T.border}` }}>
+                <td style={tdStyle}><input type="checkbox" checked={selected.has(m.path)} readOnly /></td>
+                <td style={tdStyle}>
+                  <div style={{ fontWeight: 600, color: T.text }}>{m.label}</div>
+                  <div style={{ fontSize: 10, color: T.muted, fontFamily: T.mono }}>{m.path}</div>
+                </td>
+                <td style={{ ...tdStyle, color: T.muted, fontSize: 11 }}>{m.group}</td>
+                <td style={tdStyle}>
+                  <span style={{
+                    display: 'inline-block', padding: '3px 10px', borderRadius: 12,
+                    background: MATURITY_COLORS[m.maturity] + '22',
+                    color: MATURITY_COLORS[m.maturity],
+                    fontSize: 10, fontWeight: 600, fontFamily: T.mono,
+                    border: `1px solid ${MATURITY_COLORS[m.maturity]}33`,
+                  }}>{MATURITY_LABELS[m.maturity]}</span>
+                </td>
+                <td style={{ ...tdStyle, fontFamily: T.mono, textAlign: 'center', color: T.muted }}>{m.tier}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+const thStyle = { textAlign: 'left', padding: '10px 12px', fontSize: 11, color: T.muted, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', borderBottom: `1px solid ${T.border}` };
+const tdStyle = { padding: '8px 12px', verticalAlign: 'middle' };
+const btnStyle = { padding: '6px 14px', borderRadius: 6, fontSize: 11, fontFamily: T.font, cursor: 'pointer', fontWeight: 600, border: 'none' };
+
 export default function AdminPanelPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const { store, update, addAudit } = useStore();
+  const api = useAdminApi();
+
+  /* Data source indicator — show whether API is connected */
+  const apiConnected = !api.loading && !api.error && api.users.length > 0;
+
+  /* When API has data, overlay it onto the store for tabs that still read store.xxx */
+  const effectiveStore = useMemo(() => {
+    if (!apiConnected) return store;
+    return {
+      ...store,
+      users: api.users.length > 0 ? api.users.map(u => ({
+        id: u.user_id || u.id,
+        name: u.name,
+        email: u.email,
+        role: u.rbac_role || u.role || 'viewer',
+        presetId: u.preset_id || u.presetId,
+        grantedPaths: u.granted_paths || u.grantedPaths || [],
+        deniedPaths: u.denied_paths || u.deniedPaths || [],
+        status: u.is_active !== false ? 'active' : 'inactive',
+        lastLogin: u.last_login || u.lastLogin || Date.now(),
+        createdAt: u.created_at ? new Date(u.created_at).getTime() : Date.now(),
+        department: u.department || '',
+        avatar: (u.name || '??').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
+        isReadOnly: u.is_read_only || false,
+        displayOrg: u.display_org || '',
+        accessExpiresAt: u.access_expires_at || null,
+      })) : store.users,
+      presets: api.presets.length > 0 ? api.presets.map(p => ({
+        id: p.id,
+        name: p.name,
+        role: p.role_type || p.role || 'team_member',
+        description: p.description || '',
+        paths: p.module_paths || p.paths || [],
+        createdAt: p.created_at ? new Date(p.created_at).getTime() : Date.now(),
+        updatedAt: p.updated_at ? new Date(p.updated_at).getTime() : Date.now(),
+      })) : store.presets,
+      invites: api.invites.length > 0 ? api.invites.map(i => ({
+        id: i.id,
+        email: i.email,
+        role: i.rbac_role || i.role || 'demo',
+        presetId: i.preset_id || null,
+        displayOrg: i.display_org || '',
+        durationDays: i.access_duration_days || 0,
+        status: i.status || 'pending',
+        createdAt: i.created_at ? new Date(i.created_at).getTime() : Date.now(),
+        expiresAt: i.invite_expires_at ? new Date(i.invite_expires_at).getTime() : null,
+        token: i.invite_token || '',
+      })) : store.invites,
+    };
+  }, [store, api, apiConnected]);
 
   const tabsWithCounts = MAIN_TABS.map(t => ({
     ...t,
-    count: t.id === 'users'   ? store.users.length
-         : t.id === 'invites' ? store.invites.filter(i => i.status === 'pending').length
-         : t.id === 'presets' ? store.presets.length
-         : t.id === 'audit'   ? store.auditLog.length
+    count: t.id === 'users'    ? effectiveStore.users.length
+         : t.id === 'invites'  ? effectiveStore.invites.filter(i => i.status === 'pending').length
+         : t.id === 'presets'  ? effectiveStore.presets.length
+         : t.id === 'audit'    ? (store.auditLog || []).length
+         : t.id === 'maturity' ? (api.moduleStatus || []).length
          : undefined,
   }));
 
@@ -1745,11 +1952,19 @@ export default function AdminPanelPage() {
               A² RBAC Administration Console
             </h1>
             <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
-              {store.users.length} users · {store.presets.length} presets · {TOTAL_MODULES} modules · localhost mock mode
+              {effectiveStore.users.length} users · {effectiveStore.presets.length} presets · {TOTAL_MODULES} modules
             </div>
           </div>
-          <div style={{ marginLeft: 'auto', background: T.green + '22', border: `1px solid ${T.green}44`, borderRadius: 6, padding: '6px 14px', fontSize: 11, color: T.green, fontFamily: T.mono, fontWeight: 600 }}>
-            ● FULLY FUNCTIONAL
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{
+              background: apiConnected ? T.green + '22' : T.orange + '22',
+              border: `1px solid ${apiConnected ? T.green : T.orange}44`,
+              borderRadius: 6, padding: '6px 14px', fontSize: 11,
+              color: apiConnected ? T.green : T.orange,
+              fontFamily: T.mono, fontWeight: 600,
+            }}>
+              {apiConnected ? '● API CONNECTED' : '● LOCAL MODE'}
+            </div>
           </div>
         </div>
         <div style={{ height: 2, background: `linear-gradient(90deg, ${T.accent}, transparent)`, borderRadius: 1 }} />
@@ -1757,12 +1972,13 @@ export default function AdminPanelPage() {
 
       <Tabs tabs={tabsWithCounts} active={activeTab} onChange={setActiveTab} style={{ marginBottom: 24 }} />
 
-      {activeTab === 'dashboard' && <DashboardTab store={store} />}
-      {activeTab === 'users'     && <UsersTab store={store} update={update} addAudit={addAudit} />}
+      {activeTab === 'dashboard' && <DashboardTab store={effectiveStore} />}
+      {activeTab === 'users'     && <UsersTab store={effectiveStore} update={update} addAudit={addAudit} />}
       {activeTab === 'roles'     && <RoleMatrixTab />}
-      {activeTab === 'modules'   && <ModuleManagerTab store={store} update={update} addAudit={addAudit} />}
-      {activeTab === 'invites'   && <InvitesTab store={store} update={update} addAudit={addAudit} />}
-      {activeTab === 'presets'   && <PresetsTab store={store} update={update} addAudit={addAudit} />}
+      {activeTab === 'modules'   && <ModuleManagerTab store={effectiveStore} update={update} addAudit={addAudit} />}
+      {activeTab === 'maturity'  && <MaturityTab api={api} />}
+      {activeTab === 'invites'   && <InvitesTab store={effectiveStore} update={update} addAudit={addAudit} />}
+      {activeTab === 'presets'   && <PresetsTab store={effectiveStore} update={update} addAudit={addAudit} />}
       {activeTab === 'audit'     && <AuditLogTab store={store} />}
       {activeTab === 'settings'  && <SettingsTab store={store} update={update} addAudit={addAudit} />}
     </div>
