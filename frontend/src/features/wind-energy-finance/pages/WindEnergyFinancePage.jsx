@@ -340,7 +340,7 @@ export default function WindEnergyFinancePage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
               <div style={{ fontWeight: 700, fontSize: 14, color: T.navy, marginBottom: 14 }}>Merchant Risk Exposure</div>
-              {filtered.sort((a,b)=>b.merchantPct-a.merchantPct).slice(0,15).map(p => (
+              {[...filtered].sort((a,b)=>b.merchantPct-a.merchantPct).slice(0,15).map(p => (
                 <div key={p.id} style={{ marginBottom: 8 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
                     <span style={{ fontSize: 11, color: T.textPri }}>{p.name}</span>
