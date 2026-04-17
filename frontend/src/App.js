@@ -725,6 +725,13 @@ const GreeniumSignalPage    = React.lazy(() => import("./features/greenium-signa
 const SentimentPipelinePage = React.lazy(() => import("./features/sentiment-pipeline/pages/SentimentPipelinePage"));
 // EP-SAD1 — Social & Alternative Data Intelligence
 const SocialAlternativeDataPage = React.lazy(() => import("./features/social-alternative-data/pages/SocialAlternativeDataPage"));
+// Sprint DR — Offshore Wind & Marine Energy Intelligence Suite
+const OffshoreWindResourcePage       = React.lazy(() => import("./features/offshore-wind-resource/pages/OffshoreWindResourcePage"));
+const FloatingOffshoreWindPage       = React.lazy(() => import("./features/floating-offshore-wind/pages/FloatingOffshoreWindPage"));
+const OffshoreWindFinancePage        = React.lazy(() => import("./features/offshore-wind-finance/pages/OffshoreWindFinancePage"));
+const OffshoreGridInfrastructurePage = React.lazy(() => import("./features/offshore-grid-infrastructure/pages/OffshoreGridInfrastructurePage"));
+const OffshoreWindOmPage             = React.lazy(() => import("./features/offshore-wind-om/pages/OffshoreWindOmPage"));
+const WindRepoweringIntelligencePage = React.lazy(() => import("./features/wind-repowering-intelligence/pages/WindRepoweringIntelligencePage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1023,6 +1030,14 @@ const NAV_GROUPS = [
     { path: '/ppa-revenue-analytics',          label: 'PPA & Revenue Analytics',            badge: 'PPA Pricing · Merchant VaR · VPPA · Curtailment · Counterparty ECL', code: 'RE-PPA1' },
     { path: '/bess-grid-analytics',            label: 'BESS & Grid Services Analytics',     badge: 'LCOS · Revenue Stacking · Arrhenius Degradation · Dispatch · FERC 841', code: 'RE-BESS1' },
     { path: '/renewable-ml-forecasting',       label: 'ML Forecasting & Risk Engine',       badge: 'Monte Carlo · Bayesian · HMM ENSO · OLS Factor · Portfolio VaR · Stress', code: 'RE-ML1' },
+  ]},
+  { label: 'Offshore Wind & Marine Energy', icon: '🌊', color: '#0369a1', items: [
+    { path: '/offshore-wind-resource',       label: 'Offshore Wind Resource & Wake Analytics',  badge: 'Weibull · Jensen Wake · AEP · P50/P90 · IEC 61400-3 · 18 Tabs', code: 'EP-DR1' },
+    { path: '/floating-offshore-wind',       label: 'Floating Offshore Wind LCOE & Technology', badge: 'Spar · Semi-sub · TLP · Mooring · EPCI · LCOE Learning · 18 Tabs', code: 'EP-DR2' },
+    { path: '/offshore-wind-finance',        label: 'Offshore Wind Project Finance & CfD',      badge: 'CfD · DSCR · Newton-Raphson IRR · Monte Carlo · LP/GP Waterfall · 18 Tabs', code: 'EP-DR3' },
+    { path: '/offshore-grid-infrastructure', label: 'Offshore Grid & Cable Infrastructure',     badge: 'AC vs HVDC · Jensen Wake · Cable Loss · Grid Code · Black Start · 18 Tabs', code: 'EP-DR4' },
+    { path: '/offshore-wind-om',             label: 'Offshore Wind O&M & Asset Management',    badge: 'MTBF · Vessel Dispatch · Predictive Maint · Availability · Blade Erosion · 18 Tabs', code: 'EP-DR5' },
+    { path: '/wind-repowering-intelligence', label: 'Wind Repowering & Life Extension',        badge: 'Incremental IRR · AEP Uplift · Grid Re-use · Brownfield NPV · 18 Tabs', code: 'EP-DR6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -2943,6 +2958,13 @@ function AppContent() {
             <Route path="/greenium-signal"    element={<GreeniumSignalPage />} />
             <Route path="/sentiment-pipeline" element={<SentimentPipelinePage />} />
             <Route path="/social-alternative-data" element={<SocialAlternativeDataPage />} />
+            {/* Sprint DR — Offshore Wind & Marine Energy Intelligence Suite */}
+            <Route path="/offshore-wind-resource"       element={<OffshoreWindResourcePage />} />
+            <Route path="/floating-offshore-wind"       element={<FloatingOffshoreWindPage />} />
+            <Route path="/offshore-wind-finance"        element={<OffshoreWindFinancePage />} />
+            <Route path="/offshore-grid-infrastructure" element={<OffshoreGridInfrastructurePage />} />
+            <Route path="/offshore-wind-om"             element={<OffshoreWindOmPage />} />
+            <Route path="/wind-repowering-intelligence" element={<WindRepoweringIntelligencePage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
