@@ -7337,20 +7337,12 @@ export const MODULE_GUIDES = {
   ),
 
   // ── Sprint DO — Renewable Energy Finance ─────────────────────────────────────
-  '/solar-project-finance': g(
-    'Solar Project Finance Analytics', 'EP-DO1', 'DO',
-    'Provides comprehensive financial modelling for utility-scale and distributed solar PV projects. Calculates LCOE, project IRR, debt sizing, DSCR covenants, and P50/P90 energy yield analysis. Integrates PVGIS irradiation data, degradation curves, and PPA/merchant price scenarios.',
-    ce('Solar Project Economics', 'LCOE_solar = (CapEx × CRF + OpEx_annual) / (AnnualGeneration × PR); DSCR = EBITDA_t / DebtService_t; P90_yield = P50_yield × (1 - σ_energy × 1.282)', ['IEA PVPS Task 1 — Solar PV Market Report 2023', 'IRENA Renewable Power Generation Costs 2023', 'EU PVGIS 5.2 Solar Irradiation Database', 'SolarPower Europe LCOE Tool'], 'LCOE denominator uses P50 annual generation adjusted by performance ratio (PR); DSCR minimum covenant typically 1.20–1.35× for project finance; P90 yield is 90th percentile output used for debt sizing'),
-    [
-      dp('Global Solar LCOE 2023', '$0.044/kWh (utility)', null, 'IRENA Renewable Power Costs 2023', 'Utility-scale solar LCOE fell 89% since 2010 to $0.044/kWh global average — below all fossil fuels'),
-      dp('Solar Module Cost', '$0.16–0.20/Wp', null, 'BloombergNEF Solar Module Price 2024', 'c-Si solar module spot price — down 50% in 2023 from supply surge; bifacial IBC modules premium 15%'),
-      dp('Global Solar Capacity 2023', '1.6 TW installed', null, 'IEA PVPS 2024', 'Cumulative global solar PV capacity reached 1.6 TW in 2023 — adding 440 GW in 2023 alone'),
-    ],
-    ['Input project specifications (capacity, location, technology)', 'Calculate PVGIS-based P50/P90 energy yield', 'Model LCOE, project IRR, and equity returns', 'Size debt and verify DSCR covenant compliance', 'Structure PPA vs merchant revenue scenario analysis'],
-    ['IRENA Renewable Power Generation Costs in 2023', 'IEA Photovoltaic Power Systems Programme (PVPS) Annual Report 2024', 'EU Joint Research Centre PVGIS v5.2', 'SolarPower Europe — EU Market Outlook 2024'],
-    [acr('PVGIS', 'Photovoltaic Geographical Information System', 'JRC online tool providing hourly solar irradiation data for any location in Europe/Africa/Asia'), acr('PR', 'Performance Ratio', 'Ratio of actual to theoretical solar output — accounts for losses from temperature, soiling, wiring; target 78–84%'), acr('DSCR', 'Debt Service Coverage Ratio', 'EBITDA / debt service — lender covenant, minimum typically 1.20×; P90 used for debt sizing'), acr('ILR', 'Inverter Loading Ratio', 'DC capacity / inverter AC capacity — oversizing to 1.2–1.5× improves capacity factor and economics')],
-    [dl('PVGIS or SolarAnywhere irradiation data (TMY)', 'P50/P90 energy yield', 'Annual generation at various confidence intervals'), dl('Module degradation curves + equipment specs', 'Lifetime output modelling', 'Year-by-year generation decline and PR degradation'), dl('PPA contract terms + merchant price curves', 'Revenue modelling', 'Project IRR under contracted + tail merchant scenarios')],
-    'Essential for solar project developers, renewable energy lenders, infrastructure fund managers, and corporate PPA offtakers. Provides bankable LCOE and DSCR analysis consistent with lender requirements and IEA/IRENA cost benchmarks.'
+  // NOTE: /solar-project-finance guide superseded by Sprint RE (RE-PF1) entry below — richer 20-tab version
+  '/wind-energy-finance-do1': g(
+    'Solar Project Finance Analytics (Legacy)', 'EP-DO1', 'DO',
+    'Legacy Sprint DO guide — superseded by RE-PF1 (Sprint RE). See /solar-project-finance for the full 20-tab expanded guide.',
+    ce('Solar Project Economics', 'LCOE_solar = (CapEx × CRF + OpEx_annual) / (AnnualGeneration × PR); DSCR = EBITDA_t / DebtService_t', ['IRENA', 'IEA PVPS', 'PVGIS'], 'Legacy entry — full guide available in RE-PF1 Sprint RE module'),
+    [], [], [], [], [], ''
   ),
 
   '/wind-energy-finance': g(
@@ -7625,6 +7617,308 @@ export const MODULE_GUIDES = {
     [acr('CAR', 'Corrective Action Request', 'VVB finding requiring project proponent to take corrective action before positive opinion issued'), acr('CL', 'Clarification Request', 'VVB finding requiring explanation — does not require corrective action but must be closed'), acr('FAR', 'Forward Action Request', 'VVB finding noting risk for future monitoring periods — not blocking but must be tracked'), acr('PCF', 'Performance Certificate', 'Issued by registry upon successful verification — authorises CER/VCU/GS4GG credit issuance')],
     [dl('Project event log (registrations, monitoring reports, verifications)', 'Hash-linked audit trail', 'Complete tamper-evident event history from project inception'), dl('VVB audit finding database (CAR/CL/FAR) with resolutions', 'Finding tracking', 'Open vs resolved findings with closure evidence'), dl('Registry serial number data (Verra, Gold Standard, ACR)', 'Retirement verification', 'Credit retirement status and serial number traceability')],
     'Required for project developers subject to CDM EB or Verra VCS audit, corporate buyers verifying credit quality for VCMI/SBTi claims, and VVBs managing their portfolio of verification assignments. Provides ISO 14064-3:2019 §6.7-compliant record-keeping with tamper-evident hash chain.'
+  ),
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SPRINT RE — Solar & Renewable Energy Intelligence Suite
+  // ═══════════════════════════════════════════════════════════════════════
+
+  '/solar-project-finance': g(
+    'Solar Project Finance Engine', 'RE-PF1', 'RE',
+    'End-to-end project finance model for utility-scale solar IPP transactions. Computes LCOE, IRR (equity/project), NPV, DSCR, LLCR, and PLCR from user-defined capital structure, ITC/PTC IRA 2022 incentives, MACRS depreciation, and LP/GP 4-tier waterfall. Supports Monte Carlo P10/P50/P90 energy generation and scenario stress-testing across 12 analytical tabs.',
+    ce('Newton-Raphson IRR + DSCR/LLCR/PLCR Project Finance',
+      'IRR: Σ CF_t/(1+IRR)^t = 0 (Newton-Raphson 200 iter); LCOE = (CAPEX + Σ O&M_t/(1+r)^t) / Σ E_t/(1+r)^t; DSCR = CFADS / DebtService; LLCR = NPV(CFADS) / Outstanding Debt',
+      ['IRA 2022 §48E ITC', 'MACRS 5-yr GDS', 'FERC Filing', 'AICPA SSVS'],
+      'Equity IRR computed via Newton-Raphson iteration on post-tax equity cash flows including ITC, MACRS depreciation shield, and LP/GP waterfall distributions. LCOE uses real levelized cost approach over project life. DSCR covers all 25 annual periods; LLCR uses NPV(CFADS) / loan balance. IRA 2022 ITC stack: base 30% + domestic content 10% + energy community 10% + low-income 10%; half-basis MACRS reduction applied. MACRS 5-year GDS: [20%, 32%, 19.2%, 11.52%, 11.52%, 5.76%].'
+    ),
+    [
+      dp('LCOE', '$25–55/MWh', 'LCOE = (ΣCapex+ΣOPV) / ΣE_t×(1+r)^-t', 'Project finance model', 'Levelized Cost of Energy — all-in breakeven price per MWh over project life; competitive solar is $28–42/MWh for utility-scale'),
+      dp('Equity IRR', '8–18%', 'Newton-Raphson on post-tax equity CFs', 'Calculated from inputs', 'After-tax equity internal rate of return; institutional RE funds target 10–14%; merchant projects may reach 16–18%'),
+      dp('DSCR (min)', '1.15–1.45×', 'CFADS / Annual Debt Service', 'Cash flow model', 'Minimum DSCR over loan tenor; lenders typically require ≥1.25× on PPA projects, ≥1.35× on merchant; covenant breach triggers cash trap'),
+      dp('LLCR', '1.30–1.80×', 'NPV(CFADS, loan life) / Outstanding Debt', 'Cash flow model', 'Loan Life Coverage Ratio — forward-looking; if LLCR falls below 1.0 the project cannot service remaining debt from projected cash flows'),
+      dp('ITC Basis', '30–60%', 'IRA 2022 §48E stack: Base + DC + EC + LIC', 'IRS Notice 2023-29', 'Investment Tax Credit percentage; domestic content (+10%) requires ≥40% US-manufactured steel/iron/components; energy community (+10%) requires location in fossil fuel employment zone'),
+      dp('P90 Energy Yield', '−6 to −12% vs P50', 'Monte Carlo Box-Muller, combined σ across 6 uncertainty sources', 'Resource + engineering', 'P90 (1-in-10 exceedance) used by lenders for debt sizing; P50 used for equity returns; gap reflects GHI variability, wake losses, and availability uncertainty'),
+      dp('MOIC (equity)', '1.8–3.5×', 'Total equity distributions / equity invested', 'Waterfall model', 'Multiple on invested capital; typical RE equity fund target 2.0–2.5× over 7-year hold; includes carried interest promote at 80/20 split above preferred return'),
+    ],
+    [
+      'Configure asset parameters in the left panel: capacity (MW), technology, location, and project life',
+      'Set capital structure in Debt section: Debt/CAPEX %, interest rate, tenor, and DSRA months',
+      'Choose ITC vs PTC in Tax & Incentives and toggle domestic content / energy community bonuses',
+      'Run Monte Carlo on the Distribution tab to see P10/P50/P90 generation and revenue bands',
+      'Review DSCR/LLCR/PLCR time series on the Debt Service tab to verify lender covenant compliance',
+      'Inspect the ITC/MACRS Waterfall tab for year-by-year tax equity and depreciation flows',
+      'Use Scenario Comparison to stress-test IRR across ±20% CAPEX, PPA price, and capacity factor shocks',
+      'View LP/GP Waterfall tab for 4-tier distribution: preferred return → catch-up → profit split → promote',
+    ],
+    [
+      'IRS Notice 2023-29 — Energy Community Bonus Credit Eligibility under IRA §48E',
+      'SEIA/Wood Mackenzie U.S. Solar Market Insight — Utility-Scale Benchmarks 2024',
+      'MACRS GDS 5-Year Property Table (Rev. Proc. 87-57)',
+      'NREL System Advisor Model (SAM) — Financial Metrics Technical Reference',
+      'S&P Global — Renewable Energy Project Finance Default and Recovery Study 2023',
+    ],
+    [
+      acr('LCOE', 'Levelized Cost of Energy', 'All-in lifetime cost per MWh including CAPEX, O&M, financing — the breakeven price at which a project neither gains nor loses NPV'),
+      acr('DSCR', 'Debt Service Coverage Ratio', 'CFADS / (principal + interest) — lender covenant; min DSCR <1.0 triggers default; min DSCR covenant typically 1.20–1.35×'),
+      acr('LLCR', 'Loan Life Coverage Ratio', 'NPV(CFADS over remaining loan life) / outstanding balance — forward-looking solvency metric used at financial close'),
+      acr('ITC', 'Investment Tax Credit', 'IRA 2022 §48E credit against federal tax liability; base 30% + stackable bonuses up to 70%; requires prevailing wage for full credit'),
+      acr('MACRS', 'Modified Accelerated Cost Recovery System', '5-year GDS depreciation for solar: [20%, 32%, 19.2%, 11.52%, 11.52%, 5.76%]; half-basis reduction when ITC elected'),
+      acr('PTC', 'Production Tax Credit', 'IRA 2022 §45Y; per-MWh credit ($27.50/MWh base 2024) over 10 years; alternative to ITC — better for high CF projects'),
+      acr('CFADS', 'Cash Flow Available for Debt Service', 'EBITDA − taxes − capex reserve − DSRA funding; primary metric lenders use to assess debt repayment capacity'),
+    ],
+    [
+      dl('User inputs: CAPEX $/Wdc, O&M, PPA price, debt terms, ITC toggles', 'Financial model engine (Newton-Raphson IRR, MACRS, ITC stack)', 'Project IRR, DSCR schedule, LLCR, LCOE, waterfall distributions'),
+      dl('Monte Carlo engine: combined σ across 6 uncertainty sources', 'Box-Muller normal sampling (1,000 runs)', 'P10/P50/P90/P99 annual generation and revenue distributions'),
+      dl('IRA 2022 adder rules: domestic content, energy community, low-income', 'ITC basis calculator', 'Applicable ITC %, half-basis MACRS reduction, net tax equity benefit'),
+    ],
+    'Designed for infrastructure investors, tax equity investors, independent power producers, and project finance lenders evaluating utility-scale solar transactions under IRA 2022. Replaces traditional Excel-based financial models with an interactive, real-time engine covering all ITC/PTC scenarios, DSCR covenants, and LP/GP structures typical of 50–500 MW US solar IPP deals.'
+  ),
+
+  '/renewable-portfolio-intelligence': g(
+    'Renewable Portfolio Intelligence', 'RE-PORT1', 'RE',
+    'Institutional-grade portfolio analytics for 50-asset renewable energy portfolios spanning Solar PV, Wind Onshore, Wind Offshore, Hydro, and Geothermal. Covers portfolio VaR, efficient frontier, correlation matrix, peer benchmarking, vintage/geography diversification, attribution, and ESG/taxonomy alignment across 18 analytical tabs.',
+    ce('Portfolio VaR + Mean-Variance Efficient Frontier',
+      'σ_port = √(wᵀΣw); VaR₉₅ = σ_port × 1.645 × TotalRevenue; EF: min wᵀΣw s.t. w·μ = μ_target, Σw = 1',
+      ['EU Taxonomy Art.10', 'SFDR PAI', 'IFC Performance Standards', 'IRENA Renewable Readiness'],
+      'Portfolio variance computed from 5×5 technology covariance matrix using seeded returns (resource, regulatory, merchant price, counterparty, operational risks). Efficient frontier traces 50 portfolios from minimum-variance to maximum-Sharpe via parametric sweep of target return. DSCR weighted average uses outstanding debt as weights. EU Taxonomy screening uses Art.10 criteria (climate change mitigation) with DNSH assessment for water, biodiversity, waste, and pollution.'
+    ),
+    [
+      dp('Portfolio P50 IRR', '9–16%', 'Asset-weighted average of individual project IRRs', 'Financial model', 'Blended equity IRR across portfolio; higher for offshore wind (13–18%) vs utility solar (9–13%)'),
+      dp('Portfolio VaR (95%)', '$M/yr', 'σ_port × 1.645 × ΣRevenue', 'Variance-covariance model', 'Annual revenue at risk at 95% confidence — combines resource, price, and operational volatility across portfolio'),
+      dp('WACI (Revenue)', 'tCO₂/$M', 'Σ (revenue_i / total_revenue × scope1_i / enterprise_value_i)', 'GHG Protocol / TCFD', 'Weighted Average Carbon Intensity — SFDR PAI 1 metric; near-zero for operating RE portfolio but relevant for construction phase'),
+      dp('EU Taxonomy Alignment', '85–100%', 'Art.10 criteria + DNSH screen', 'EU Taxonomy Regulation 2020/852', 'Share of portfolio revenue classified as taxonomy-aligned; renewable generation qualifies under Art.10; requires DNSH pass on 5 environmental objectives'),
+      dp('Sharpe Ratio', '0.8–2.1', '(μ_port − r_f) / σ_port', 'Portfolio model', 'Risk-adjusted return vs risk-free rate; target Sharpe >1.0 for diversified RE portfolio; offshore-heavy portfolios typically higher'),
+      dp('Correlation (Solar-Wind)', '0.05–0.35', 'Seeded covariance matrix, resource-driven', 'NREL Atlas', 'Low correlation between solar and wind improves diversification; offshore wind-solar correlation even lower (~0.10) due to different weather dependencies'),
+    ],
+    [
+      'Start by building your portfolio in the Portfolio Builder tab — set technology mix, asset counts, and geography filters',
+      'Review the Diversification tab to assess concentration by technology, vintage, geography, and offtaker',
+      'Check the Correlation Matrix tab — aim for low correlations (solar-wind) to maximize diversification benefit',
+      'Open Efficient Frontier to see the optimal risk-return tradeoff; your current portfolio position is marked',
+      'Review DSCR Heatmap for assets approaching lender covenant minimums (highlighted in amber/red)',
+      'Run Scenario Analysis with the stress scenario selector to see portfolio revenue impact under resource shocks',
+      'Check EU Taxonomy Alignment tab for DNSH assessment and Art.10 technical screening criteria',
+      'Use Peer Benchmark to compare portfolio IRR, LCOE, and Sharpe against market comparable indices',
+    ],
+    [
+      'IRENA — Renewable Power Generation Costs 2023',
+      'NREL Annual Technology Baseline 2024 — RE Cost and Performance Data',
+      'EU Taxonomy Regulation 2020/852 — Technical Screening Criteria for Climate Change Mitigation (Art.10)',
+      'SFDR Regulatory Technical Standards — PAI Indicators Annex I (2023)',
+      'Markowitz, H. (1952) — Portfolio Selection, Journal of Finance',
+    ],
+    [
+      acr('VaR', 'Value at Risk', 'Maximum expected loss at a given confidence level (95% or 99%) over a defined horizon — here applied to annual portfolio revenue'),
+      acr('WACI', 'Weighted Average Carbon Intensity', 'SFDR PAI 1 — revenue-weighted Scope 1+2 GHG intensity; central TCFD metric for portfolio carbon risk assessment'),
+      acr('DNSH', 'Do No Significant Harm', 'EU Taxonomy requirement — economic activity must not significantly harm 5 other environmental objectives while contributing to the primary objective'),
+      acr('CF', 'Capacity Factor', 'Actual generation / (installed capacity × 8,760 hrs); solar utility typically 22–28%, wind onshore 30–42%, wind offshore 40–55%'),
+      acr('EF', 'Efficient Frontier', 'Markowitz mean-variance locus of portfolios with maximum return for each level of risk — identifies optimal technology allocation'),
+    ],
+    [
+      dl('50 seeded RE assets (technology, capacity MW, vintage, geography, DSCR)', 'Portfolio aggregation engine', 'Blended IRR, VaR, WACI, taxonomy alignment, DSCR distribution'),
+      dl('5×5 technology return correlation matrix', 'Efficient frontier optimization (parametric sweep)', 'Optimal portfolio weights, Sharpe maximization, risk-return frontier'),
+      dl('EU Taxonomy technical screening criteria (Art.10) + DNSH thresholds', 'Asset-by-asset screening', 'Taxonomy-aligned revenue %, DNSH pass/fail by environmental objective'),
+    ],
+    'Designed for RE-focused infrastructure fund managers, institutional LPs conducting portfolio due diligence, and ESG/taxonomy reporting teams. Provides institutional-grade risk analytics (VaR, efficient frontier, correlation) alongside EU Taxonomy, SFDR, and TCFD disclosure outputs for a 50-asset blended renewable portfolio — replicating the analytical depth of institutional portfolio management systems.'
+  ),
+
+  '/solar-resource-performance': g(
+    'Solar Resource & Performance Analytics', 'RE-RES1', 'RE',
+    'Engineering-grade solar resource assessment and operational performance analytics with NASA POWER live API integration. Covers GHI/DNI/DHI irradiance analysis, PR/CUF/availability metrics, PVsyst-style loss waterfall (13 loss factors), Arrhenius degradation modelling, weather normalization via P-value regression, and soiling analytics across 18 analytical tabs.',
+    ce('OLS Weather Normalization + Arrhenius Degradation + PVsyst Loss Waterfall',
+      'PR_norm = PR_actual × (T_ref − 25) / (T_act − 25) × (GHI_ref/GHI_act); Δη(t) = A·exp(−Ea/RT)·√t + EFC·k_cyc',
+      ['IEC 61724-1', 'IEC 61853-2', 'ASTM E2848', 'PVsyst 7.x methodology'],
+      'Performance Ratio: actual generation / (GHI × nameplate capacity × module efficiency); normalized using temperature coefficient (−0.35%/°C from 25°C STC). OLS regression decomposes actual production into GHI-explained variance (R²) and residual (operational underperformance). Arrhenius calendar aging: Δη_cal = A × exp(−Ea / (R × T_avg)) × √(operating_years); Cycle aging: Δη_cyc = EFC × k_cyc; Combined: √(Δη_cal² + Δη_cyc²). Loss waterfall applies 13 sequential loss factors from GHI_ref to POA to DC to AC output.'
+    ),
+    [
+      dp('Performance Ratio (PR)', '72–86%', 'E_actual / (G_ref × P_rated)', 'IEC 61724-1', 'Core operational KPI; IEC 61724-1 defines PR; >80% is strong; below 75% signals inverter or soiling issue'),
+      dp('Capacity Utilisation Factor (CUF)', '18–28%', 'Annual MWh / (capacity × 8,760)', 'Plant SCADA', 'Equivalent to capacity factor; 20–28% typical for fixed-tilt utility solar in high-irradiance locations'),
+      dp('Temperature Coefficient Loss', '−3 to −8%/yr', 'α_T × (T_module − 25°C) × G/1000', 'IEC 61853-2', 'Modern mono-PERC: −0.35%/°C; TOPCon: −0.28%/°C; higher losses in hot climates (India, MENA, Australia)'),
+      dp('Soiling Loss', '1–8%/yr', 'ΔPR_soiling = PR_clean − PR_actual (periods without rain)', 'Empirical IEC 61724', 'Largest variable loss in arid regions (MENA, India); automated cleaning triggers when soiling loss > cleaning cost breakeven (~3–5%)'),
+      dp('Degradation Rate', '0.35–0.70%/yr', 'Arrhenius calendar aging + EFC cycle aging', 'NREL degradation survey', 'Industry median 0.50%/yr (mono-PERC); Arrhenius component dominates for utility-scale; LID corrected in first-year by P stabilization'),
+      dp('P90 GHI (10-year)', '−4 to −8% vs P50', 'Inter-annual variability from NASA POWER historical data', 'NASA POWER + TMY', 'P90 10-year (P90/√10) used by lenders; single-year P90 is −6 to −12% depending on climate zone'),
+      dp('NASA POWER GHI', 'kWh/m²/day', 'ALLSKY_SFC_SW_DWN parameter, 1/2° resolution', 'NASA POWER v2.0 (MERRA-2)', 'Free NASA satellite-derived irradiance; 1-degree spatial resolution; validated against ground stations at ±8% annual accuracy for most locations'),
+    ],
+    [
+      'Enter site coordinates (lat/lon) in the left panel Site Configuration section',
+      'Click "Fetch NASA GHI Data" in the Live API tab to pull 9 years of satellite irradiance and temperature',
+      'Review the Irradiance Analysis tab for monthly GHI/DNI/DHI breakdown and seasonal patterns',
+      'Open Loss Waterfall to trace generation from GHI_ref through 13 sequential losses to AC output',
+      'Check the PR Dashboard tab for monthly Performance Ratio trends and temperature-normalized PR',
+      'Use Degradation Modeling tab to project 25-year production profile with Arrhenius calendar aging bands',
+      'Run OLS Weather Normalization to separate GHI-driven vs operational underperformance',
+      'Compare P10/P50/P90 energy exceedance curves on the Probabilistic Yield tab for lender submission',
+    ],
+    [
+      'IEC 61724-1:2021 — Photovoltaic System Performance — Part 1: Monitoring',
+      'IEC 61853-2:2016 — PV Module Performance Testing and Energy Rating',
+      'NASA POWER v2.0 — Prediction of Worldwide Energy Resources API Documentation',
+      'NREL — Review and Status of Degradation Rates of Crystalline Silicon PV (Jordan et al., 2022)',
+      'PVsyst 7.x — Technical Reference Manual (Photovoltaic System Software)',
+    ],
+    [
+      acr('GHI', 'Global Horizontal Irradiance', 'Total solar radiation on a horizontal surface = Direct Normal Irradiance (DNI) × cos(zenith) + Diffuse Horizontal Irradiance (DHI)'),
+      acr('PR', 'Performance Ratio', 'IEC 61724-1 key metric: actual AC output / (GHI × system rating); normalises for irradiance — allows fair comparison across sites'),
+      acr('CUF', 'Capacity Utilisation Factor', 'Annual MWh generated / (nameplate MW × 8,760 hours) — equivalent to capacity factor; used in Indian RE financing'),
+      acr('POA', 'Plane of Array Irradiance', 'Irradiance incident on the tilted module surface after transposition from GHI using Perez or Hay-Davies model'),
+      acr('LID', 'Light-Induced Degradation', 'First-year mono-PERC power loss (1–2%) due to boron-oxygen complex activation; modern LeTID resistant cells reduce to <0.5%'),
+      acr('TMY', 'Typical Meteorological Year', 'Synthetic year assembled from best-representative months across long-term dataset; P50 energy yield basis for most project finance models'),
+    ],
+    [
+      dl('NASA POWER API (lat/lon → ALLSKY_SFC_SW_DWN, T2M, 2015–2023)', 'Monthly GHI + temperature parsing', 'Site-specific P50 GHI, inter-annual variability σ, TMY construction'),
+      dl('User-defined system parameters (capacity, tilt, azimuth, losses)', '13-factor loss waterfall calculation', 'DC/AC energy estimate, PR, CUF, soiling-adjusted yield'),
+      dl('Historical production data (user upload or seeded)', 'OLS regression: production ~ GHI × temperature', 'R², normalized PR, weather-adjusted underperformance identification'),
+    ],
+    'Essential for solar asset managers, technical advisors (independent engineers), and lenders conducting resource assessment. Replicates the PVsyst + SolarAnywhere workflow for pre-construction yield studies and operational performance benchmarking — with free NASA POWER irradiance data as a rapid-access alternative to paid satellite data providers (SolarAnywhere, Solargis).'
+  ),
+
+  '/ppa-revenue-analytics': g(
+    'PPA & Revenue Analytics Engine', 'RE-PPA1', 'RE',
+    'Comprehensive power purchase agreement analytics and merchant revenue risk engine for renewable energy projects. Covers PPA pricing (fixed/indexed/proxy revenue swap), merchant price exposure, VPPA/CfD structuring, curtailment risk, counterparty ECL under IFRS 9, and revenue at risk (RaR) Monte Carlo across 18 analytical tabs.',
+    ce('PPA Pricing + Merchant VaR + VPPA Mark-to-Market',
+      'RaR₉₅ = σ_rev × 1.645 × E_gen; VPPA_MTM = (VPPA_strike − P_spot) × E_gen; ECL = PD × LGD × EAD',
+      ['IFRS 9 ECL', 'EFET PPA Master Agreement', 'FERC PURPA', 'RE100 VPPA Standards'],
+      'Revenue variance comes from 3 independent sources: (1) volume risk — generation Monte Carlo (Box-Muller); (2) price risk — merchant price volatility (GBM); (3) curtailment risk — grid congestion model. PPA Revenue = min(contracted_volume, generation) × PPA_price. Merchant Revenue = max(0, generation − PPA_volume) × spot_price. VPPA mark-to-market = (strike − settlement_price) × generated_MWh; negative when spot > strike (VPPA buyer receives settlement). IFRS 9 ECL: PD from S&P transition matrix, LGD from security/guarantee structure, EAD = undiscounted PPA receivables.'
+    ),
+    [
+      dp('PPA Price (fixed)', '$35–85/MWh', 'Negotiated; benchmarked vs LCOE + developer margin', 'LevelTen Energy PPA Index', 'Contracted energy price for PPA tenor (10–20yr); must exceed LCOE for positive equity return; $45–55/MWh typical for new US utility solar PPA (2024)'),
+      dp('Merchant Revenue Share', '0–40% of volume', 'Uncontracted generation × spot price', 'Day-ahead market data', 'Residual revenue after PPA obligation; 100% merchant projects use Price Cap Contract (CfD) as downside protection'),
+      dp('VPPA Settlement', '±$M/yr', '(Strike − Spot) × MWh generated', 'EFET VPPA terms', 'Virtual/financial PPA — no physical delivery; corporate buyer receives/pays settlement when spot diverges from strike; eliminates additionality risk for RE100 buyers'),
+      dp('Curtailment Rate', '1–15%', 'Curtailed MWh / Available MWh', 'ISO/RTO dispatch data', 'Grid-instructed curtailment for congestion management; increases with RE penetration; basis risk if curtailment is concentrated'),
+      dp('Counterparty ECL', '0.1–3.5%', 'PD × LGD × EAD (IFRS 9)', 'S&P transition matrix', 'Expected credit loss on PPA receivables; investment-grade offtaker (BBB+): ~0.2% ECL; sub-IG: 1.5–4% ECL; collateral/LC reduces LGD'),
+      dp('Revenue at Risk (95%)', '$M/yr', 'σ_combined × 1.645 × annual revenue', 'Monte Carlo model', 'Maximum annual revenue shortfall at 95% confidence; sum in quadrature of volume, price, and curtailment variance components'),
+    ],
+    [
+      'Configure PPA deal in the Deal Configurator section: contract type (fixed/indexed/VPPA), tenor, price, and volume obligation',
+      'Set merchant exposure: uncontracted % of generation, price cap level, and merchant volatility assumption',
+      'Open PPA Pricing tab to see how different strike prices impact equity IRR and lender DSCR',
+      'Use Revenue Waterfall tab to decompose annual revenue into: PPA contracted, merchant, REC, ancillary services',
+      'VPPA tab shows mark-to-market sensitivity: P&L profile as spot prices move ±50% from strike',
+      'Check Curtailment tab for curtailment risk by hour-of-day and month — identify congestion exposure windows',
+      'Run Counterparty Risk tab to assess ECL by offtaker credit rating and collateral structure',
+      'Stress Test tab applies combined resource + price + curtailment shocks to see DSCR breach probability',
+    ],
+    [
+      'LevelTen Energy — RE Quarterly PPA Price Index 2024',
+      'EFET — Master Agreement for Power Purchase and/or Transmission of Electricity (2022)',
+      'IFRS 9 Financial Instruments — Expected Credit Loss (IASB 2014)',
+      'FERC Order 888 / PURPA — Must-take provisions and avoided cost rates',
+      'Wood Mackenzie — Corporate PPA Market Monitor (Q3 2024)',
+    ],
+    [
+      acr('PPA', 'Power Purchase Agreement', 'Long-term contract for electricity sale from RE project to offtaker at agreed price; cornerstone of project finance debt sizing'),
+      acr('VPPA', 'Virtual Power Purchase Agreement', 'Financial PPA with no physical delivery — settlement based on (strike − spot) × generation; used by corporates for RE100 claims without physical delivery obligation'),
+      acr('CfD', 'Contract for Difference', 'UK/EU mechanism: generator receives top-up (or repays) difference between strike and reference price; eliminates merchant price risk; used in EU and UK offshore wind'),
+      acr('ECL', 'Expected Credit Loss', 'IFRS 9 forward-looking credit loss = PD × LGD × EAD; applied to PPA receivables for counterparty default risk provisioning'),
+      acr('RaR', 'Revenue at Risk', 'Analogous to VaR — maximum annual revenue loss at given confidence level (95%); captures combined volume × price × curtailment risk'),
+      acr('REC', 'Renewable Energy Certificate', '1 REC = 1 MWh of renewable generation; priced separately from energy ($0.50–8.00/MWh depending on state RPS); significant revenue component in RPS-compliance states'),
+    ],
+    [
+      dl('PPA contract terms (price, tenor, volume, indexation, floor/cap)', 'Revenue model: contracted + merchant + REC + ancillary', 'Annual revenue breakdown, DSCR under PPA + merchant scenarios'),
+      dl('Monte Carlo: generation σ, merchant price GBM, curtailment γ distribution', 'Combined revenue variance model (sum in quadrature)', 'P10/P50/P90 annual revenue, Revenue at Risk at 95% confidence'),
+      dl('Counterparty credit rating + collateral structure (LC, escrow, parent guarantee)', 'IFRS 9 ECL: S&P transition PD × LGD × EAD', 'Expected credit loss provision on PPA receivables, DSCR adjusted for ECL'),
+    ],
+    'Designed for project finance bankers, independent power producers, and corporate renewable energy buyers structuring PPA and VPPA transactions. Covers the full revenue risk spectrum from fully-contracted PPA to fully-merchant exposure, with IFRS 9 ECL provisioning, VPPA mark-to-market, and curtailment analytics that replicate the commercial structuring analysis for 100–500 MW solar and wind deals.'
+  ),
+
+  '/bess-grid-analytics': g(
+    'BESS & Grid Services Analytics', 'RE-BESS1', 'RE',
+    'Comprehensive battery energy storage system (BESS) financial and technical analytics. Covers LCOS optimization, revenue stacking (arbitrage/frequency regulation/capacity/demand charge), Arrhenius + cycle degradation modelling, dispatch optimization (greedy price arbitrage), FERC Order 841 compliance, and co-location solar+BESS ITC analysis across 18 analytical tabs.',
+    ce('LCOS + Arrhenius/Cycle Degradation + Greedy Dispatch Optimization',
+      'LCOS = (CAPEX + ΣOPEX_t/(1+r)^t + ΣReplace_t/(1+r)^t) / ΣE_discharge_t/(1+r)^t; Δη(t) = √(Δη_cal² + Δη_cyc²)',
+      ['FERC Order 841', 'PNNL LCOS Methodology', 'IEC 62619 Safety', 'UL 9540A'],
+      'LCOS (Levelized Cost of Storage) accounts for CAPEX, O&M, capacity augmentation, and replacement over project life, discounted against energy discharged. Arrhenius calendar aging: Δη_cal = A × exp(−Ea/(R×T_avg)) × √t, where Ea = 0.5eV, A = 0.024, R = 8.314e-5 eV/K. Cycle aging: Δη_cyc = EFC × k_cyc, k_cyc = 2.0e-5. Combined: √(Δη_cal² + Δη_cyc²). Dispatch: sort 24h price array; charge lowest 4h (charge rate = C-rate × capacity); discharge highest 4h. Revenue stacking: arbitrage + frequency regulation (CAISO AS or ERCOT SCED) + capacity (ISO capacity market or BTM demand charge reduction).'
+    ),
+    [
+      dp('LCOS', '$80–250/MWh', 'CAPEX + NPV(OPEX) + NPV(Replacement) / NPV(Discharged MWh)', 'PNNL LCOS Framework', '4-hour Li-ion: $110–160/MWh (2024); 2-hour: $140–200/MWh; 8-hour: $80–120/MWh; declining at ~15%/yr with LFP cost trajectory'),
+      dp('Arbitrage Revenue', '$15–80k/MW-yr', 'Σ(P_discharge − P_charge) × E_cycled', 'CAISO/ERCOT price data', 'Highly variable by market; ERCOT 2023: $40–90k/MW-yr; CAISO: $20–50k/MW-yr due to solar cannibalization reducing mid-day prices'),
+      dp('Frequency Regulation Revenue', '$20–60k/MW-yr', 'Regulation capacity price × MW committed × availability', 'FERC Order 755 / CAISO AS', 'Fast-response BESS earns performance-adjusted regulation revenue; CAISO RegUp/RegDn: $5–25/MW-hr depending on season'),
+      dp('Capacity Revenue', '$30–100k/MW-yr', 'Capacity auction clearing price × ICAP MW', 'ISO-NE, PJM, NYISO', 'BESS qualifies as capacity resource under FERC 841; PJM BRA clearing 2023: $34.13/MW-day; ISO-NE FC: $28–55/kW-yr'),
+      dp('Degradation (10-yr)', '15–28%', 'Arrhenius calendar + cycle aging at target EFC/yr', 'Manufacturer specs + NREL', 'LFP chemistry: lower calendar aging than NMC; 1 EFC/day LFP: ~15% at 10 yr; NMC at 1.5 EFC/day: ~25% at 10 yr'),
+      dp('Round-trip Efficiency', '85–93%', 'DC-DC: typically 94–96%; AC-AC: 85–91%', 'IEC 62619 / PNNL test data', 'AC-coupled systems lose efficiency at PCS; DC-coupled co-location avoids PCS losses for solar charging; key LCOS driver'),
+      dp('ITC on BESS (IRA)', '30% base + up to 70%', 'IRA §48E standalone BESS eligible from 2023', 'IRS Notice 2023-29', 'IRA 2022 key change: standalone BESS now ITC eligible (≥3 hr storage); co-location with solar also eligible; same bonus adder stack as solar'),
+    ],
+    [
+      'Configure BESS system in the left panel: chemistry (LFP/NMC/NCA), capacity MWh, power MW, C-rate, and project life',
+      'Set co-location toggle if pairing with solar — model updates ITC basis and clipping capture revenue',
+      'Open Revenue Stacking tab to view annual revenue decomposition: arbitrage, frequency regulation, capacity, demand charge',
+      'Dispatch Optimizer tab shows 24-hour greedy dispatch (charge valley / discharge peak) for typical summer and winter days',
+      'LCOS Waterfall tab decomposes cost per MWh: CAPEX component, OPEX component, augmentation, replacement',
+      'Degradation Modeling tab shows year-by-year capacity fade (Arrhenius + cycle) with LFP vs NMC comparison',
+      'Review FERC 841 Compliance tab to verify market participation eligibility and interconnection requirements',
+      'Stress Test tab shocks arbitrage revenue, degradation rate, and EFC cycles to show project NPV sensitivity',
+    ],
+    [
+      'PNNL — Grid Energy Storage Technology Cost and Performance Assessment 2022 (LCOS Methodology)',
+      'FERC Order 841 — Electric Storage Participation in Markets Operated by Regional Transmission Organizations',
+      'NREL — Optimal Battery Storage Operations for PV Integration (2021)',
+      'BloombergNEF — BESS Outlook 2024 — Cost Trajectory and Revenue Stack',
+      'IEC 62619:2022 — Secondary Cells and Batteries Containing Alkaline or Other Non-Acid Electrolytes — Safety Requirements',
+    ],
+    [
+      acr('LCOS', 'Levelized Cost of Storage', 'PNNL-defined metric: all-in discounted cost per discounted MWh discharged over system life — analogous to LCOE for generation assets'),
+      acr('EFC', 'Equivalent Full Cycles', 'Standardized cycle count: 1 EFC = 1× full discharge from 100% to 0% SOC; used to track battery aging regardless of partial cycling depth'),
+      acr('SOC', 'State of Charge', 'Battery energy level as % of usable capacity; operational range typically 10–90% to limit degradation; wider SOC = more energy but faster aging'),
+      acr('C-rate', 'Charge/Discharge Rate', 'Power relative to energy capacity: 1C = full charge/discharge in 1 hour; BESS typically 0.25C (4-hr) to 1C (1-hr); higher C-rate = more revenue stacking opportunity'),
+      acr('FERC 841', 'FERC Order 841', '2018 FERC order mandating ISO/RTOs to revise tariffs to remove barriers for electric storage resources; created capacity, energy, and AS market access for BESS'),
+      acr('BTM', 'Behind-the-Meter', 'BESS sited on customer side of utility meter; primary value: demand charge reduction, TOU optimization, backup power — different regulatory framework from FTM'),
+    ],
+    [
+      dl('BESS technical inputs: capacity, C-rate, chemistry, cycle target, temperature', 'Arrhenius calendar + cycle degradation model (year 1–25)', 'Annual capacity (MWh effective), EFC remaining, LCOS by year'),
+      dl('Market price data (seeded hourly for CAISO/ERCOT/PJM/MISO/ISO-NE)', 'Greedy dispatch: sort 24h prices → charge 4 lowest → discharge 4 highest', 'Arbitrage revenue, dispatch efficiency, round-trip loss accounting'),
+      dl('Revenue stacking: arbitrage + freq reg + capacity + demand charge', 'Project IRR / NPV / LCOS calculator', 'BESS project economics under combined revenue streams vs LCOS cost'),
+    ],
+    'Designed for BESS developers, utilities evaluating storage procurement, and infrastructure funds assessing standalone or co-located battery projects. Covers the full analytical stack from Arrhenius degradation modelling to ISO-specific revenue stacking and FERC 841 compliance — replacing the combination of PNNL LCOS spreadsheets, manufacturer degradation tools, and ISO revenue calculators typically used in BESS project evaluation.'
+  ),
+
+  '/renewable-ml-forecasting': g(
+    'ML Forecasting & Risk Engine', 'RE-ML1', 'RE',
+    'Quantitative machine learning and probabilistic forecasting engine for renewable energy portfolio risk management. Implements Monte Carlo (Box-Muller), Bayesian Normal-Normal conjugate updating, OLS factor regression with seasonality, 3-state HMM ENSO climate regime detection (La Niña / Neutral / El Niño), portfolio VaR, ensemble forecasting, and long-range stress scenarios across 18 analytical tabs.',
+    ce('Bayesian Conjugate Update + HMM Viterbi + Box-Muller Monte Carlo',
+      'μ₁ = σ₁²(μ₀/σ₀² + Σxᵢ/σ²); σ₁² = 1/(1/σ₀² + n/σ²); VaR₉₅ = σ_port × 1.645 × Revenue',
+      ['IPCC AR5 WG1 Ch.14 — ENSO', 'IEA Solar Resource Forecasting', 'AEMO Probabilistic Forecasting Framework'],
+      'Monte Carlo uses Box-Muller transform: z = √(−2 ln u₁) × cos(2π u₂); combined σ from 6 uncertainty sources (resource, wake, availability, degradation, curtailment, soiling) in quadrature. Bayesian Normal-Normal: posterior mean μ₁ = σ₁²(μ₀/σ₀² + Σxᵢ/σ_obs²); posterior σ₁² = 1/(1/σ₀² + n/σ_obs²). HMM: 3 states (La Niña/Normal/El Niño) with 3×3 calibrated transition matrix; Viterbi decoding finds most likely state path. OLS: β₁ = ΣΔXΔY / ΣΔX², R² from SS decomposition. Ensemble: weighted average of MC + Bayesian + OLS + HMM-adjusted forecasts; weights from information ratio minimisation.'
+    ),
+    [
+      dp('Monte Carlo P90', '−6 to −15% vs P50', 'Box-Muller combined σ across 6 uncertainty sources', 'Engineering assessment', 'P90 10-year exceedance (divide σ by √10 for multi-year); used for lender base case; combines resource, technical, and curtailment uncertainty in quadrature'),
+      dp('Bayesian Posterior Mean', 'Updated P50 GWh', 'μ₁ = σ₁²(μ₀/σ₀² + Σxᵢ/σ²)', 'Bayesian update model', 'Posterior shrinks toward observed data as number of observations grows; prior dominates with few observations; converges to sample mean with many observations'),
+      dp('OLS R² (GHI factor)', '0.70–0.92', 'SSExplained / SSTotal = 1 − SSRes/SSTotal', 'OLS regression', 'How much generation variance is explained by irradiance alone; high R² indicates good resource tracking; low R² signals operational issues or data quality problems'),
+      dp('HMM Regime Probability', '30–70% per state', 'Forward-backward algorithm; Viterbi for state sequence', 'ENSO forecast (IRI, BOM)', 'La Niña → lower solar irradiance in tropical Americas + Australia; El Niño → higher irradiance in same zones; NAO and IOD also modelled via toggles'),
+      dp('Portfolio VaR (95%)', '$M/yr', 'σ_port = √(wᵀΣw); VaR = σ_port × 1.645 × Revenue', 'Variance-covariance', 'Revenue at risk at 95% confidence; benefit of diversification measured by VaR reduction vs sum-of-individual VaRs; solar-wind correlation ~0.20 gives 15–25% VaR reduction'),
+      dp('Ensemble Forecast MAPE', '4–12%', 'Σ|actual − forecast|/|actual| / n × 100', 'Backtesting model', 'Mean absolute percentage error; ensemble typically outperforms any individual model by 10–25% on MAPE; weighted ensemble uses information ratio optimisation'),
+      dp('Degradation Trajectory', '0.35–0.70%/yr', 'Arrhenius calendar aging bands (P10/P50/P90)', 'Manufacturer + NREL', '25-year production forecast with Arrhenius uncertainty bands; P10 degradation (pessimistic) used for lender DCF; replacement scenario NPV quantifies augmentation value'),
+    ],
+    [
+      'Start with the Monte Carlo Distribution tab — set P50 GWh and individual uncertainty σ values in the left panel',
+      'Review P10/P50/P90/P99 percentiles and the exceedance probability curve for lender-submission energy estimates',
+      'Switch to Bayesian Posterior tab — enter prior mean/σ and add 12 months of observations to see posterior update',
+      'Open the OLS Factor Regression tab — view R² of GHI-to-generation relationship and residual analysis',
+      'Select ENSO regime in HMM Climate Regimes section — compare La Niña vs El Niño adjusted P50 vs baseline',
+      'Check the Ensemble Forecasting tab for weighted model combination and backtesting vs actual production',
+      'Review Portfolio VaR tab — set correlation between solar and wind assets to quantify diversification benefit',
+      'Run Stress Testing tab with Severe or Extreme scenarios to see combined resource + market shock impact on DSCR',
+    ],
+    [
+      'IPCC AR5 WG1 Chapter 14 — Climate Phenomena and their Relevance for Future Regional Climate Change (ENSO)',
+      'IEA — Solar PV Forecasting and Uncertainty Estimation (2020)',
+      'Gelman, A. et al. — Bayesian Data Analysis, 3rd Edition (CRC Press, 2013)',
+      'NREL — Probabilistic Energy Forecasting for Solar Power Systems (2022)',
+      'Diebold, F.X. & Mariano, R.S. — Comparing Predictive Accuracy, JBES 1995 (Forecast evaluation)',
+    ],
+    [
+      acr('HMM', 'Hidden Markov Model', '3-state probabilistic model (La Niña/Normal/El Niño) with transition matrix; Viterbi algorithm decodes most-likely state sequence from observed irradiance data'),
+      acr('ENSO', 'El Niño–Southern Oscillation', 'Pacific climate pattern with 3–7 year cycle; La Niña suppresses solar irradiance in tropical Americas; El Niño enhances it; material driver of inter-annual generation variability'),
+      acr('OLS', 'Ordinary Least Squares', 'Linear regression minimising SSRes = Σ(y − ŷ)²; here used to regress generation on GHI and temperature factors; R² measures explanatory power of irradiance'),
+      acr('P50/P90', 'Probabilistic Exceedance Levels', 'P50: 50% probability of exceeding (median); P90: 90% probability of exceeding (pessimistic); P90 = P50 − 1.28 × σ for normal distribution; lenders use P90 for debt sizing'),
+      acr('MAPE', 'Mean Absolute Percentage Error', 'Forecast accuracy metric: Σ|actual − forecast|/|actual| / n × 100; lower is better; <5% MAPE is excellent for day-ahead solar forecasting'),
+      acr('PICP', 'Prediction Interval Coverage Probability', 'Calibration metric: fraction of actual values falling within stated confidence interval; well-calibrated 90% PI should have PICP ≈ 90%'),
+    ],
+    [
+      dl('Portfolio technical specs (P50 GWh, capacity MW, technology mix)', 'Monte Carlo Box-Muller × 1,000 runs with 6 uncertainty σ inputs', 'P10/P50/P90/P99 generation distribution, VaR, exceedance curve'),
+      dl('12 months of observed production data (user input)', 'Bayesian Normal-Normal conjugate update', 'Posterior mean and σ, shrinkage toward data vs prior, updated P50/P90'),
+      dl('ENSO regime probability (IRI/BOM seasonal outlook)', 'HMM 3-state transition matrix + Viterbi decoding', 'Regime-adjusted P50, probability of La Niña/Neutral/El Niño persistence, generation adjustment factor'),
+    ],
+    'Designed for RE portfolio managers, quantitative risk analysts at infrastructure funds, and independent engineers needing probabilistic yield forecasting beyond deterministic P50 models. Provides the full probabilistic toolkit — Monte Carlo, Bayesian updating, OLS factor models, and ENSO regime detection — in a unified engine that replaces fragmented Python scripts and Excel Monte Carlo add-ins used in RE investment risk management.'
   ),
 
 };

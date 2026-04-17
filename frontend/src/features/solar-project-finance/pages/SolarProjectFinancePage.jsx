@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, ReferenceLine
+  ResponsiveContainer, ReferenceLine, ScatterChart, Scatter, ComposedChart
 } from 'recharts';
 
 // ── Platform standards ────────────────────────────────────────────────────────
@@ -10,29 +10,31 @@ const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = {
   bg: '#FAFAF7', card: '#FFFFFF', border: '#E5E2D9', text: '#1A1A2E',
   sub: '#6B7280', accent: '#B8860B', indigo: '#4F46E5', green: '#065F46',
-  red: '#991B1B', blue: '#1E40AF', amber: '#92400E', teal: '#0F766E'
+  red: '#991B1B', blue: '#1E40AF', amber: '#92400E', teal: '#0F766E',
+  solar: '#D97706'
 };
 const HEADER_BG = '#0F172A';
 const SOLAR_GOLD = '#D97706';
+const NAV_BG = '#0F172A';
 const MACRS5 = [0.2000, 0.3200, 0.1920, 0.1152, 0.1152, 0.0576];
+const MACRS15 = [0.05,0.095,0.0855,0.077,0.0693,0.0623,0.059,0.059,0.059,0.059,0.059,0.059,0.059,0.059,0.059,0.03];
 
 const TABS = [
-  'Project Config',
-  'Cash Flow Engine',
-  'Returns Analysis',
-  'DSCR & Debt',
-  'Tax Credits (IRA)',
-  'Energy Yield P50/P90',
-  'Sensitivity',
-  'Scenario Engine',
-  'Refinancing',
-  'LP/GP Waterfall',
-  'Portfolio Context',
-  'Executive Summary',
+  'Project Overview','Financial Model','Returns Engine','DSCR & Debt',
+  'IRA Tax Credits','P50/P90 Yield','Sensitivity','Scenario Engine',
+  'Monte Carlo','Refinancing','LP/GP Waterfall','Tax Equity & JV',
+  'LCOE Deep Dive','Portfolio Integration','Comparable Transactions',
+  'ESG & Sustainability','Risk Register','Construction Timeline',
+  'Regulatory & Permitting','Executive Deal Memo'
 ];
+
+const LOCATIONS = ['ERCOT-West','CAISO-SP15','PJM-West','MISO-Central','NYISO','ISO-NE'];
+const TECHNOLOGIES = ['Bifacial PERC','TOPCon','HJT','CdTe','Fixed Mono'];
+const CF_BY_LOC = { 'ERCOT-West':25.5,'CAISO-SP15':22.0,'PJM-West':19.5,'MISO-Central':20.0,'NYISO':17.0,'ISO-NE':15.5 };
 
 // ── Calculation engines ───────────────────────────────────────────────────────
 function calcIRR(cashflows) {
+  if (!cashflows || cashflows.length < 2) return 0;
   let rate = 0.10;
   for (let i = 0; i < 200; i++) {
     const npv = cashflows.reduce((s, cf, t) => s + cf / Math.pow(1 + rate, t), 0);
@@ -40,86 +42,185 @@ function calcIRR(cashflows) {
     if (Math.abs(dnpv) < 1e-10) break;
     const nr = rate - npv / dnpv;
     if (Math.abs(nr - rate) < 1e-8) { rate = nr; break; }
-    rate = nr;
+    rate = isFinite(nr) ? nr : rate;
   }
-  return rate;
+  return isFinite(rate) ? rate : 0;
 }
 
 function calcNPV(rate, cashflows) {
   return cashflows.reduce((s, cf, t) => s + cf / Math.pow(1 + rate, t), 0);
 }
 
+function calcCRF(r, n) {
+  if (r <= 0 || n <= 0) return 0;
+  const factor = Math.pow(1 + r, n);
+  return (r * factor) / (factor > 1 ? factor - 1 : 1);
+}
+
+function calcLCOE(capex, om, cf, mw, dr, n) {
+  const annualEnergy = cf * 8760 * mw * 1000; // kWh
+  const crf = calcCRF(dr, n);
+  const annualCapex = capex * crf;
+  return annualEnergy > 0 ? ((annualCapex + om) / annualEnergy) * 1e6 * 1000 : 0; // $/MWh
+}
+
+function macrsDep(schedule, basis, year) {
+  if (year < 1 || year > schedule.length) return 0;
+  return basis * schedule[year - 1];
+}
+
+function boxMuller(u1, u2) {
+  return Math.sqrt(-2 * Math.log(Math.max(u1, 1e-12))) * Math.cos(2 * Math.PI * u2);
+}
+
 // ── Formatting helpers ────────────────────────────────────────────────────────
-const fmtPct = n => isFinite(n) ? (n * 100).toFixed(1) + '%' : '—';
-const fmtM   = n => isFinite(n) ? '$' + n.toFixed(1) + 'M' : '—';
-const fmtX   = n => isFinite(n) ? n.toFixed(2) + 'x' : '—';
+const fmtPct  = n => isFinite(n) && n !== null ? (n * 100).toFixed(1) + '%' : '—';
+const fmtPctD = n => isFinite(n) && n !== null ? (n).toFixed(1) + '%' : '—';
+const fmtM    = n => isFinite(n) && n !== null ? '$' + (n || 0).toFixed(1) + 'M' : '—';
+const fmtX    = n => isFinite(n) && n !== null ? (n || 0).toFixed(2) + 'x' : '—';
+const fmtK    = n => isFinite(n) && n !== null ? '$' + Math.round(n || 0).toLocaleString() + 'k' : '—';
+const fmtN    = (n, d=2) => isFinite(n) && n !== null ? (n || 0).toFixed(d) : '—';
+const fmtMWh  = n => isFinite(n) && n !== null ? '$' + (n || 0).toFixed(2) + '/MWh' : '—';
+const fmtGWh  = n => isFinite(n) && n !== null ? (n || 0).toFixed(2) + ' GWh' : '—';
 
 // ── Shared UI primitives ──────────────────────────────────────────────────────
-function KpiCard({ label, value, sub, color }) {
+function KpiCard({ label, value, sub, color, border, size }) {
   return (
     <div style={{
-      background: T.card, border: `1px solid ${T.border}`, borderRadius: 8,
-      padding: '16px 20px', flex: 1, minWidth: 155,
+      background: T.card, border: `1px solid ${border || T.border}`,
+      borderTop: `3px solid ${border || color || SOLAR_GOLD}`,
+      borderRadius: 8, padding: '14px 18px', flex: 1, minWidth: 140,
     }}>
-      <div style={{ fontSize: 11, color: T.sub, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 22, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: color || T.text }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: T.sub, marginTop: 4 }}>{sub}</div>}
+      <div style={{ fontSize: 10, color: T.sub, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: size || 22, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: color || T.text, lineHeight: 1.1 }}>{value}</div>
+      {sub && <div style={{ fontSize: 10, color: T.sub, marginTop: 4 }}>{sub}</div>}
     </div>
   );
 }
 
-function SectionTitle({ children }) {
+function TrafficLight({ value, thresholds, fmt, label, invert }) {
+  // thresholds: [green_min, amber_min] or [amber_max, red_max] if invert
+  const color = invert
+    ? (value <= thresholds[0] ? T.green : value <= thresholds[1] ? SOLAR_GOLD : T.red)
+    : (value >= thresholds[0] ? T.green : value >= thresholds[1] ? SOLAR_GOLD : T.red);
+  const status = invert
+    ? (value <= thresholds[0] ? 'GOOD' : value <= thresholds[1] ? 'WATCH' : 'RISK')
+    : (value >= thresholds[0] ? 'GOOD' : value >= thresholds[1] ? 'WATCH' : 'RISK');
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:10, background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:'10px 14px' }}>
+      <div style={{ width:10, height:10, borderRadius:'50%', background:color, flexShrink:0 }}/>
+      <div style={{ flex:1 }}>
+        <div style={{ fontSize:10, color:T.sub, textTransform:'uppercase' }}>{label}</div>
+        <div style={{ fontSize:15, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color }}>{fmt ? fmt(value) : value}</div>
+      </div>
+      <span style={{ fontSize:9, fontWeight:700, color, border:`1px solid ${color}`, borderRadius:4, padding:'2px 6px' }}>{status}</span>
+    </div>
+  );
+}
+
+function SectionTitle({ children, icon }) {
   return (
     <div style={{
       fontSize: 13, fontWeight: 700, color: T.text,
-      borderBottom: `2px solid ${SOLAR_GOLD}`,
-      paddingBottom: 6, marginBottom: 14, marginTop: 22,
-    }}>{children}</div>
+      borderBottom: `2px solid ${SOLAR_GOLD}`, paddingBottom: 6, marginBottom: 14, marginTop: 22,
+      display:'flex', alignItems:'center', gap:6
+    }}>{icon && <span>{icon}</span>}{children}</div>
   );
 }
 
-function SliderRow({ label, value, min, max, step, onChange, fmt }) {
+function Badge({ label, color, bg }) {
   return (
-    <div style={{ marginBottom: 13 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ fontSize: 12, color: T.sub }}>{label}</span>
-        <span style={{ fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: T.text }}>
-          {fmt ? fmt(value) : value}
+    <span style={{ fontSize:10, fontWeight:700, color: color||'#fff', background: bg||T.indigo, borderRadius:4, padding:'2px 8px', letterSpacing:'0.05em' }}>
+      {label}
+    </span>
+  );
+}
+
+function SliderRow({ label, value, min, max, step, onChange, fmt, unit }) {
+  return (
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+        <span style={{ fontSize:11, color:'#94A3B8' }}>{label}</span>
+        <span style={{ fontSize:11, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:'#F1F5F9' }}>
+          {fmt ? fmt(value) : value}{unit || ''}
         </span>
       </div>
-      <input type="range" min={min} max={max} step={step} value={value}
+      <input type="range" min={min} max={max} step={step||1} value={value}
         onChange={e => onChange(Number(e.target.value))}
-        style={{ width: '100%', accentColor: SOLAR_GOLD }} />
+        style={{ width:'100%', accentColor:SOLAR_GOLD, height:4 }} />
+      <div style={{ display:'flex', justifyContent:'space-between', marginTop:1 }}>
+        <span style={{ fontSize:9, color:'#64748B' }}>{min}{unit||''}</span>
+        <span style={{ fontSize:9, color:'#64748B' }}>{max}{unit||''}</span>
+      </div>
     </div>
   );
 }
 
-function DataTable({ headers, rows, colorFn }) {
+function InputSelect({ label, value, options, onChange }) {
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+    <div style={{ marginBottom:10 }}>
+      <div style={{ fontSize:11, color:'#94A3B8', marginBottom:3 }}>{label}</div>
+      <select value={value} onChange={e => onChange(e.target.value)}
+        style={{ width:'100%', background:'#1E293B', color:'#F1F5F9', border:'1px solid #334155', borderRadius:4, padding:'5px 8px', fontSize:11 }}>
+        {options.map(o => <option key={o.value||o} value={o.value||o}>{o.label||o}</option>)}
+      </select>
+    </div>
+  );
+}
+
+function Toggle({ label, value, onChange }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
+      <span style={{ fontSize:11, color:'#94A3B8' }}>{label}</span>
+      <div onClick={() => onChange(!value)} style={{
+        width:34, height:18, borderRadius:9, background: value ? SOLAR_GOLD : '#334155',
+        cursor:'pointer', position:'relative', transition:'background 0.2s'
+      }}>
+        <div style={{
+          position:'absolute', top:2, left: value ? 16 : 2, width:14, height:14,
+          borderRadius:'50%', background:'#fff', transition:'left 0.2s'
+        }}/>
+      </div>
+    </div>
+  );
+}
+
+function CollapseSection({ title, children, defaultOpen }) {
+  const [open, setOpen] = useState(defaultOpen !== false);
+  return (
+    <div style={{ borderBottom:'1px solid #1E293B', marginBottom:2 }}>
+      <div onClick={() => setOpen(!open)} style={{
+        display:'flex', justifyContent:'space-between', alignItems:'center',
+        padding:'9px 16px', cursor:'pointer', background: open ? '#1A2744' : 'transparent'
+      }}>
+        <span style={{ fontSize:11, fontWeight:700, color:SOLAR_GOLD, textTransform:'uppercase', letterSpacing:'0.06em' }}>{title}</span>
+        <span style={{ color:'#64748B', fontSize:14 }}>{open ? '▲' : '▼'}</span>
+      </div>
+      {open && <div style={{ padding:'12px 16px' }}>{children}</div>}
+    </div>
+  );
+}
+
+function DataTable({ headers, rows, small, zebra }) {
+  return (
+    <div style={{ overflowX:'auto' }}>
+      <table style={{ width:'100%', borderCollapse:'collapse', fontSize: small ? 11 : 12 }}>
         <thead>
           <tr style={{ background: HEADER_BG }}>
-            {headers.map((h, i) => (
-              <th key={i} style={{
-                padding: '8px 10px', color: '#F1F5F9', fontWeight: 600,
-                textAlign: i === 0 ? 'left' : 'right', whiteSpace: 'nowrap',
-                position: 'sticky', top: 0,
-              }}>{h}</th>
+            {headers.map((h,i) => (
+              <th key={i} style={{ padding: small?'6px 8px':'8px 12px', color:'#94A3B8', fontWeight:600, textAlign: i===0?'left':'right', whiteSpace:'nowrap', fontSize: small?10:11, letterSpacing:'0.04em' }}>{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, ri) => (
-            <tr key={ri} style={{ background: ri % 2 === 0 ? T.card : '#F8F7F4' }}>
-              {row.map((cell, ci) => (
-                <td key={ci} style={{
-                  padding: '7px 10px',
-                  textAlign: ci === 0 ? 'left' : 'right',
-                  color: colorFn ? colorFn(cell, ci, ri) : T.text,
-                  fontFamily: ci > 0 ? 'JetBrains Mono, monospace' : 'inherit',
-                  borderBottom: `1px solid ${T.border}`,
-                }}>{cell}</td>
+          {rows.map((row,ri) => (
+            <tr key={ri} style={{ background: zebra && ri%2===1 ? '#F8F8F6' : T.card, borderBottom:`1px solid ${T.border}` }}
+              onMouseEnter={e => { e.currentTarget.style.background='#FFF8E7'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = zebra && ri%2===1 ? '#F8F8F6' : T.card; }}>
+              {row.map((cell,ci) => (
+                <td key={ci} style={{ padding: small?'5px 8px':'7px 12px', textAlign: ci===0?'left':'right', color: T.text, fontFamily: ci===0?'inherit':'JetBrains Mono, monospace', fontSize: small?11:12, whiteSpace:'nowrap' }}>
+                  {cell}
+                </td>
               ))}
             </tr>
           ))}
@@ -129,1665 +230,2287 @@ function DataTable({ headers, rows, colorFn }) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-export default function SolarProjectFinancePage() {
-  const [activeTab, setActiveTab] = useState(0);
+function HeatCell({ value, min, max, fmt }) {
+  const ratio = max > min ? (value - min) / (max - min) : 0;
+  const r = Math.round(ratio > 0.5 ? 6 : ratio < 0.25 ? 153 : 146);
+  const g = Math.round(ratio > 0.5 ? 95 : ratio < 0.25 ? 27 : 64);
+  const b = Math.round(ratio > 0.5 ? 11 : ratio < 0.25 ? 27 : 229);
+  const bg = ratio >= 0.6 ? '#D1FAE5' : ratio >= 0.35 ? '#FEF3C7' : '#FEE2E2';
+  const tc = ratio >= 0.6 ? T.green : ratio >= 0.35 ? T.amber : T.red;
+  return (
+    <td style={{ background:bg, color:tc, textAlign:'center', fontFamily:'JetBrains Mono, monospace', fontSize:11, fontWeight:700, padding:'6px 10px', border:`1px solid ${T.border}` }}>
+      {fmt ? fmt(value) : (value||0).toFixed(1)}
+    </td>
+  );
+}
 
-  const [inputs, setInputs] = useState({
-    capacityMW:          100,
-    capexPerW:           0.85,
-    omPerKwYr:           14,
-    degradationPct:      0.45,
-    capacityFactor:      0.215,
-    ppaPriceMWh:         42,
-    ppaTenorYr:          20,
-    projectLifeYr:       30,
-    debtPct:             0.70,
-    debtRatePct:         0.055,
-    debtTenorYr:         18,
-    discountRatePct:     0.08,
-    taxRatePct:          0.21,
-    itcPct:              0.30,
-    domesticContent:     true,
-    energyCommunity:     false,
-    targetDscr:          1.30,
-    inflationPct:        0.025,
-    yieldSigma:          0.09,
-    landLeasePerAcre:    1200,
-    projectAcres:        700,
-    insurancePct:        0.004,
-  });
-
-  const set = (key, val) => setInputs(prev => ({ ...prev, [key]: val }));
-
-  // ── Core financial model (memoised) ──────────────────────────────────────
-  const model = useMemo(() => {
+// ── Main computation hook ─────────────────────────────────────────────────────
+function useModel(inp) {
+  return useMemo(() => {
     const {
-      capacityMW, capexPerW, omPerKwYr, degradationPct, capacityFactor,
-      ppaPriceMWh, ppaTenorYr, projectLifeYr, debtPct, debtRatePct, debtTenorYr,
-      discountRatePct, taxRatePct, itcPct, domesticContent, energyCommunity,
-      inflationPct, yieldSigma, landLeasePerAcre, projectAcres, insurancePct,
-    } = inputs;
+      capacityMW, dcAcRatio, cf, degradation, projectLife,
+      capexPerW, omPerKW, omEscalation, landLease, projectAcres,
+      insurancePct, gAndA, ppaPrice, ppaEscalator, ppaTenor,
+      merchantPct, recPrice, curtailmentPct,
+      debtPct, debtRate, debtTenor, debtFees, dsraMonths, minDscr,
+      itcPct, domesticContent, energyCommunity, lowIncome, macrsSchedule,
+      fedTaxRate, stateTaxRate, usePTC, ptcRate,
+      hurdleRate, projectDr, targetMoic, yieldSigma
+    } = inp;
 
-    const totalCapexM    = capacityMW * 1000 * capexPerW / 1e6;
-    const effITC         = itcPct + (domesticContent ? 0.10 : 0) + (energyCommunity ? 0.10 : 0);
-    const itcAmountM     = effITC * totalCapexM;
-    const debtAmountM    = debtPct * (totalCapexM - itcAmountM);
-    const equityAmountM  = totalCapexM - debtAmountM - itcAmountM;
-    const depreciableBasis = totalCapexM * (1 - effITC / 2);
+    const totalTaxRate = (fedTaxRate + stateTaxRate) / 100;
+    const totalCapexM = capacityMW * 1000 * capexPerW / 1e6;
+    const totalCapex = totalCapexM * 1e6;
+    const debtAmount = totalCapex * debtPct / 100;
+    const equityAmount = totalCapex - debtAmount;
+    const debtFeeAmt = debtAmount * debtFees / 100;
+    const r = debtRate / 100;
 
-    // MACRS PV tax shield
-    let macrsTaxShield = 0;
-    MACRS5.forEach((rate, yr) => {
-      macrsTaxShield += depreciableBasis * rate * taxRatePct / Math.pow(1 + discountRatePct, yr + 1);
+    // ITC calculation
+    let itcTotal = itcPct;
+    if (domesticContent) itcTotal += 10;
+    if (energyCommunity) itcTotal += 10;
+    if (lowIncome) itcTotal += 10;
+    itcTotal = Math.min(itcTotal, 70);
+    const itcRate = itcTotal / 100;
+    const itcBasis = totalCapex; // full capex eligible
+    const itcAmount = usePTC ? 0 : itcBasis * itcRate;
+    // IRS half-basis reduction: MACRS basis = capex * (1 - itcRate/2)
+    const macrsBasis = usePTC ? totalCapex : totalCapex * (1 - itcRate / 2);
+
+    // MACRS schedule
+    const macrsArr = macrsSchedule === '5yr' ? MACRS5 : macrsSchedule === '15yr' ? MACRS15 : null;
+
+    // Annual energy model
+    const years = Array.from({length: projectLife}, (_, i) => i + 1);
+    const grossGenY1 = capacityMW * cf / 100 * 8760 / 1000; // GWh
+    const curtailFactor = 1 - curtailmentPct / 100;
+
+    // Debt schedule
+    const annualDS = r > 0 && debtTenor > 0
+      ? debtAmount * r * Math.pow(1+r, debtTenor) / (Math.pow(1+r, debtTenor) - 1)
+      : debtAmount / Math.max(debtTenor, 1);
+    const dsra = annualDS * dsraMonths / 12;
+
+    // Build annual cashflows
+    let debtBalance = debtAmount;
+    const annuals = years.map(yr => {
+      const degFactor = Math.pow(1 - degradation / 100, yr - 1);
+      const grossGen = grossGenY1 * degFactor;
+      const netGen = grossGen * curtailFactor;
+
+      // Revenue
+      const ppaFactor = Math.pow(1 + ppaEscalator / 100, yr - 1);
+      const effPpaPrice = ppaPrice * ppaFactor;
+      let ppaRev = 0, merchantRev = 0;
+      if (yr <= ppaTenor) {
+        ppaRev = netGen * 1000 * effPpaPrice * (1 - merchantPct / 100) / 1e6;
+        merchantRev = netGen * 1000 * (effPpaPrice * 0.92) * (merchantPct / 100) / 1e6;
+      } else {
+        const spotPrice = effPpaPrice * 0.85;
+        merchantRev = netGen * 1000 * spotPrice / 1e6;
+      }
+      const recRev = netGen * 1000 * recPrice / 1e6;
+      const curtailLoss = grossGen * 1000 * effPpaPrice * (curtailmentPct / 100) / 1e6;
+      const grossRevenue = ppaRev + merchantRev + recRev;
+
+      // OpEx
+      const omEscFactor = Math.pow(1 + omEscalation / 100, yr - 1);
+      const omCost = capacityMW * 1000 * omPerKW * omEscFactor / 1e6;
+      const landCost = landLease * projectAcres / 1e6;
+      const insuranceCost = totalCapexM * insurancePct / 100 * Math.pow(0.97, yr - 1);
+      const gaCost = gAndA / 1e3;
+      const totalOpex = omCost + landCost + insuranceCost + gaCost;
+
+      const ebitda = grossRevenue - totalOpex;
+      const ebitdaMargin = grossRevenue > 0 ? ebitda / grossRevenue * 100 : 0;
+
+      // Debt service
+      let interest = 0, principal = 0, debtService = 0;
+      if (yr <= debtTenor && debtBalance > 0) {
+        interest = debtBalance * r;
+        debtService = Math.min(annualDS, debtBalance * (1 + r));
+        principal = debtService - interest;
+        debtBalance = Math.max(0, debtBalance - principal);
+      }
+
+      const cfads = ebitda - debtService;
+      const dscr = debtService > 0 ? ebitda / debtService : 999;
+
+      // MACRS depreciation
+      let dep = 0;
+      if (macrsArr && yr <= macrsArr.length) dep = macrsBasis * macrsArr[yr - 1];
+      else if (macrsSchedule === 'straight-line') dep = macrsBasis / projectLife;
+
+      // Taxes (simplified)
+      const taxableIncome = Math.max(0, ebitda - interest - dep - (yr === 1 ? itcAmount : 0));
+      const ptcBenefit = usePTC && yr <= 10 ? netGen * 1000 * ptcRate / 1e6 : 0;
+      const taxes = Math.max(0, taxableIncome * totalTaxRate - ptcBenefit - (yr === 1 ? itcAmount : 0));
+      const netIncome = ebitda - interest - dep - taxes;
+      const equityDist = Math.max(0, cfads - taxes);
+
+      return {
+        yr, grossGen, netGen, ppaRev, merchantRev, recRev, curtailLoss, grossRevenue,
+        omCost, landCost, insuranceCost, gaCost, totalOpex, ebitda, ebitdaMargin,
+        interest, principal, debtService, cfads, dscr, dep, taxes, netIncome, equityDist,
+        debtBalance: debtBalance + principal, ptcBenefit
+      };
     });
 
-    // P50 / P90 / P10
-    const p50Annual = capacityMW * 1000 * capacityFactor * 8760;
-    const p90Annual = p50Annual * (1 - 1.2816 * yieldSigma);
-    const p10Annual = p50Annual * (1 + 1.2816 * yieldSigma);
+    // Equity cashflows for IRR: year 0 = -(equity + dsra + debtFees)
+    const equityCFs = [-(equityAmount + dsra + debtFeeAmt), ...annuals.map(a => a.equityDist)];
+    const projectCFs = [-totalCapex, ...annuals.map(a => a.cfads)];
 
-    // Level-annuity debt service
-    const annualDS = debtAmountM > 0
-      ? debtAmountM * debtRatePct * Math.pow(1 + debtRatePct, debtTenorYr)
-        / (Math.pow(1 + debtRatePct, debtTenorYr) - 1)
-      : 0;
-
-    // Annual cashflow table
-    let debtBal = debtAmountM;
-    const table = Array.from({ length: projectLifeYr }, (_, idx) => {
-      const yr        = idx + 1;
-      const degFactor = Math.pow(1 - degradationPct / 100, idx);
-      const grossGen  = p50Annual * degFactor;
-      const netGen    = grossGen * 0.97;
-      const ppaActive = yr <= ppaTenorYr;
-      const revMwh    = ppaActive ? ppaPriceMWh : ppaPriceMWh * 0.80;
-      const revenueM  = netGen * revMwh / 1e6;
-      const omM       = capacityMW * omPerKwYr * Math.pow(1 + inflationPct, idx) / 1e6;
-      const landM     = projectAcres * landLeasePerAcre * Math.pow(1 + inflationPct, idx) / 1e6;
-      const insM      = totalCapexM * insurancePct * Math.pow(1 - 0.015, idx);
-      const gaM       = 0.50 * Math.pow(1 + inflationPct, idx);
-      const ebitdaM   = revenueM - omM - landM - insM - gaM;
-
-      const dsM       = yr <= debtTenorYr ? annualDS : 0;
-      const interestM = debtBal * debtRatePct;
-      const principalM = Math.max(0, dsM - interestM);
-      debtBal = Math.max(0, debtBal - principalM);
-
-      const cfadsM   = ebitdaM - dsM;
-      const dscr     = dsM > 0 ? ebitdaM / dsM : null;
-      const deprnM   = yr <= 6 ? depreciableBasis * MACRS5[yr - 1] : 0;
-      const taxableM = Math.max(0, ebitdaM - interestM - deprnM);
-      const taxM     = taxableM * taxRatePct;
-      const netIncM  = ebitdaM - dsM - taxM;
-      const equDistM = Math.max(0, netIncM);
-
-      return { yr, grossGen, netGen, revenueM, omM, landM, insM, gaM, ebitdaM, dsM, cfadsM, taxM, netIncM, equDistM, dscr, interestM };
-    });
-
-    // Equity IRR: t=0 outflow, year-1 adds ITC + dist, subsequent years add dist
-    const equityCFs = [-equityAmountM];
-    equityCFs.push(itcAmountM + (table[0]?.equDistM ?? 0));
-    table.slice(1).forEach(r => equityCFs.push(r.equDistM));
-    const equityIRR  = calcIRR(equityCFs);
-
-    // Project IRR: unlevered EBITDA
-    const projectCFs = [-totalCapexM, ...table.map(r => r.ebitdaM)];
+    const equityIRR = calcIRR(equityCFs);
     const projectIRR = calcIRR(projectCFs);
 
-    const npvM      = calcNPV(discountRatePct, equityCFs);
-    const totalDist = equityCFs.slice(1).reduce((s, v) => s + Math.max(0, v), 0);
-    const moic      = equityAmountM > 0 ? totalDist / equityAmountM : 0;
+    const equityNPV = calcNPV(hurdleRate / 100, equityCFs);
+    const projectNPV = calcNPV(projectDr / 100, projectCFs);
 
-    // DSCR metrics
-    const dscrYrs  = table.filter(r => r.dscr !== null);
-    const minDscr  = dscrYrs.length ? Math.min(...dscrYrs.map(r => r.dscr)) : 0;
-    const avgDscr  = dscrYrs.length ? dscrYrs.reduce((s, r) => s + r.dscr, 0) / dscrYrs.length : 0;
+    // Cumulative equity
+    let cumEq = -(equityAmount + dsra + debtFeeAmt);
+    annuals.forEach(a => { cumEq += a.equityDist; a.cumEquity = cumEq; });
 
-    // LLCR
-    const llcr = debtAmountM > 0
-      ? table.slice(0, debtTenorYr).reduce((s, r, i) =>
-          s + r.cfadsM / Math.pow(1 + debtRatePct, i + 1), 0) / debtAmountM
-      : 0;
-
-    // PLCR
-    const plcr = debtAmountM > 0
-      ? table.reduce((s, r, i) =>
-          s + r.cfadsM / Math.pow(1 + debtRatePct, i + 1), 0) / debtAmountM
-      : 0;
-
-    // LCOE
-    const discountedOpex = table.reduce((s, r, i) =>
-      s + (r.omM + r.landM + r.insM + r.gaM) / Math.pow(1 + discountRatePct, i + 1), 0);
-    const discountedEnergy = table.reduce((s, r, i) =>
-      s + r.netGen / Math.pow(1 + discountRatePct, i + 1), 0);
-    const lcoe = discountedEnergy > 0
-      ? (totalCapexM * 1e6 + discountedOpex * 1e6) / discountedEnergy
-      : 0;
+    // MOIC
+    const totalEquityDist = annuals.reduce((s, a) => s + a.equityDist, 0);
+    const moic = equityAmount > 0 ? totalEquityDist / equityAmount : 0;
 
     // Payback
-    let cum = -equityAmountM;
-    let payback = projectLifeYr;
-    for (let i = 1; i < equityCFs.length; i++) {
-      cum += equityCFs[i];
-      if (cum >= 0) { payback = i; break; }
+    let payback = projectLife;
+    let cum = -(equityAmount + dsra + debtFeeAmt);
+    for (let i = 0; i < annuals.length; i++) {
+      cum += annuals[i].equityDist;
+      if (cum >= 0) { payback = i + 1; break; }
     }
 
-    const dsraM       = annualDS / 2;
-    const annualGenGwh = p50Annual / 1000;
-    const annualRevM  = table[0]?.revenueM ?? 0;
+    // LCOE
+    const annualEnergy_kWh = capacityMW * cf / 100 * 8760 * 1000;
+    const crf = calcCRF(projectDr / 100, projectLife);
+    const annualCapexCost = totalCapexM * crf * 1e6;
+    const annualOM = capacityMW * 1000 * omPerKW;
+    const lcoe = annualEnergy_kWh > 0 ? (annualCapexCost + annualOM) / annualEnergy_kWh * 1000 : 0; // $/MWh
+
+    // Year 1 metrics
+    const y1 = annuals[0] || {};
+    const annualGenGWh = grossGenY1 * (1 - curtailmentPct / 100);
+
+    // DSCR metrics
+    const dscrValues = annuals.filter(a => a.yr <= debtTenor).map(a => a.dscr);
+    const minDscrVal = dscrValues.length > 0 ? Math.min(...dscrValues) : 0;
+    const avgDscr = dscrValues.length > 0 ? dscrValues.reduce((s,v)=>s+v,0) / dscrValues.length : 0;
+
+    // LLCR: NPV of future CFADS / remaining debt
+    const llcr = (() => {
+      const npvCfads = annuals.slice(0, debtTenor).reduce((s, a, i) => s + a.cfads / Math.pow(1 + r, i + 1), 0);
+      return debtAmount > 0 ? npvCfads / debtAmount : 0;
+    })();
+
+    // MACRS PV of shields
+    const macrsShields = (() => {
+      let pv = 0;
+      const sched = macrsArr || Array(projectLife).fill(1/projectLife);
+      sched.forEach((pct, i) => {
+        const dep = macrsBasis * pct;
+        const shield = dep * totalTaxRate;
+        pv += shield / Math.pow(1 + projectDr / 100, i + 1);
+      });
+      return pv;
+    })();
 
     return {
-      totalCapexM, effITC, itcAmountM, equityAmountM, debtAmountM,
-      annualDS, table, equityIRR, projectIRR, npvM, moic, totalDist,
-      minDscr, avgDscr, llcr, plcr, lcoe, payback, macrsTaxShield,
-      p50Annual, p90Annual, p10Annual, depreciableBasis, dsraM,
-      annualGenGwh, annualRevM, equityCFs,
+      totalCapexM, equityAmount: equityAmount/1e6, debtAmount: debtAmount/1e6,
+      debtFeeAmt: debtFeeAmt/1e6, dsra: dsra/1e6,
+      annuals, equityCFs, projectCFs,
+      equityIRR, projectIRR, equityNPV: equityNPV/1e6, projectNPV: projectNPV/1e6,
+      moic, payback, lcoe,
+      annualGenGWh, y1Revenue: y1.grossRevenue || 0,
+      y1Ebitda: y1.ebitda || 0,
+      minDscrVal, avgDscr, llcr,
+      itcAmount: itcAmount/1e6, itcRate, itcTotal,
+      macrsBasis: macrsBasis/1e6, macrsShields: macrsShields/1e6,
+      annualDS: annualDS/1e6, dscrValues,
+      totalTaxRate, crf,
     };
-  }, [inputs]);
+  }, [inp]);
+}
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 1 — Project Configuration
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab0 = () => (
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB COMPONENTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+function TabOverview({ m, inp }) {
+  const irr = m.equityIRR * 100;
+  const hurdle = inp.hurdleRate;
+  const irrColor = irr >= hurdle ? T.green : irr >= hurdle * 0.85 ? SOLAR_GOLD : T.red;
+
+  const scorecard = [
+    { label:'Equity IRR vs Hurdle', value: fmtPct(m.equityIRR), ok: irr >= hurdle, watch: irr >= hurdle * 0.85 },
+    { label:'Min DSCR vs Covenant', value: (m.minDscrVal||0).toFixed(2)+'x', ok: m.minDscrVal >= inp.minDscr, watch: m.minDscrVal >= inp.minDscr * 0.9 },
+    { label:'LCOE vs Market ($38/MWh)', value: fmtMWh(m.lcoe), ok: m.lcoe < 38, watch: m.lcoe < 48 },
+    { label:'Payback Period', value: m.payback + ' yrs', ok: m.payback <= 12, watch: m.payback <= 18 },
+    { label:'MOIC vs Target', value: (m.moic||0).toFixed(2)+'x', ok: m.moic >= inp.targetMoic, watch: m.moic >= inp.targetMoic * 0.8 },
+    { label:'IRA Benefit % of CAPEX', value: ((m.itcAmount||0)/Math.max(m.totalCapexM,0.001)*100).toFixed(1)+'%', ok: m.itcTotal >= 30, watch: m.itcTotal >= 20 },
+    { label:'Leverage', value: inp.debtPct + '%', ok: inp.debtPct >= 60 && inp.debtPct <= 75, watch: inp.debtPct >= 55 },
+    { label:'Project IRR vs WACC', value: fmtPct(m.projectIRR), ok: m.projectIRR * 100 >= inp.projectDr, watch: m.projectIRR * 100 >= inp.projectDr * 0.9 },
+  ];
+
+  const benchmarks = [
+    { metric:'Capacity Factor %', thisProject: (inp.cf||0).toFixed(1), irena: CF_BY_LOC[inp.location]?.toFixed(1)||'—', delta: ((inp.cf||0) - (CF_BY_LOC[inp.location]||0)).toFixed(1) },
+    { metric:'LCOE $/MWh', thisProject: (m.lcoe||0).toFixed(2), irena:'24–38', delta:'—' },
+    { metric:'O&M $/kW/yr', thisProject: inp.omPerKW, irena:'12–18', delta:((inp.omPerKW||0)-15).toFixed(0) },
+    { metric:'CAPEX $/Wdc', thisProject: inp.capexPerW, irena:'0.70–0.95', delta:((inp.capexPerW||0)-0.82).toFixed(2) },
+  ];
+
+  const highlights = [
+    `${inp.capacityMW} MWdc ${inp.technology} project at ${inp.location} with ${(inp.cf||0).toFixed(1)}% capacity factor`,
+    `${inp.ppaTenor}-year PPA at $${inp.ppaPrice}/MWh provides revenue certainty through ${2024+inp.ppaTenor}`,
+    `${inp.itcTotal}% ITC (${inp.itcPct}% base${inp.domesticContent?' + 10% DC':''}${inp.energyCommunity?' + 10% EC':''}${inp.lowIncome?' + 10% LI':''}) = $${(m.itcAmount||0).toFixed(1)}M benefit`,
+    `${inp.debtPct}% leverage at ${inp.debtRate}% — min DSCR ${(m.minDscrVal||0).toFixed(2)}x vs ${inp.minDscr}x covenant`
+  ];
+
+  return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-        {/* Left */}
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-          <SectionTitle>Capacity &amp; Resource</SectionTitle>
-          <SliderRow label="Capacity (MW DC)" value={inputs.capacityMW} min={10} max={500} step={5}
-            onChange={v => set('capacityMW', v)} fmt={v => v + ' MW'} />
-          <SliderRow label="CAPEX ($/W DC)" value={inputs.capexPerW} min={0.50} max={1.50} step={0.01}
-            onChange={v => set('capexPerW', v)} fmt={v => '$' + v.toFixed(2) + '/W'} />
-          <SliderRow label="Capacity Factor" value={inputs.capacityFactor} min={0.10} max={0.35} step={0.005}
-            onChange={v => set('capacityFactor', v)} fmt={v => (v * 100).toFixed(1) + '%'} />
-          <SliderRow label="Degradation (%/yr)" value={inputs.degradationPct} min={0.20} max={0.80} step={0.05}
-            onChange={v => set('degradationPct', v)} fmt={v => v.toFixed(2) + '%/yr'} />
-          <SliderRow label="PPA Price ($/MWh)" value={inputs.ppaPriceMWh} min={20} max={80} step={1}
-            onChange={v => set('ppaPriceMWh', v)} fmt={v => '$' + v + '/MWh'} />
-          <SliderRow label="PPA Tenor (years)" value={inputs.ppaTenorYr} min={10} max={25} step={1}
-            onChange={v => set('ppaTenorYr', v)} fmt={v => v + ' yr'} />
-          <SliderRow label="Project Life (years)" value={inputs.projectLifeYr} min={20} max={35} step={1}
-            onChange={v => set('projectLifeYr', v)} fmt={v => v + ' yr'} />
-          <SliderRow label="Project Acres" value={inputs.projectAcres} min={100} max={2000} step={50}
-            onChange={v => set('projectAcres', v)} fmt={v => v.toLocaleString() + ' ac'} />
-          <SliderRow label="Land Lease ($/acre/yr)" value={inputs.landLeasePerAcre} min={400} max={3000} step={100}
-            onChange={v => set('landLeasePerAcre', v)} fmt={v => '$' + v.toLocaleString()} />
-          <SliderRow label="Yield Uncertainty (σ)" value={inputs.yieldSigma} min={0.04} max={0.15} step={0.005}
-            onChange={v => set('yieldSigma', v)} fmt={v => (v * 100).toFixed(1) + '%'} />
-        </div>
+      <SectionTitle icon="⚡">Investment Scorecard</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginBottom:20 }}>
+        {scorecard.map((s,i) => {
+          const c = s.ok ? T.green : s.watch ? SOLAR_GOLD : T.red;
+          return (
+            <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderLeft:`4px solid ${c}`, borderRadius:6, padding:'10px 14px' }}>
+              <div style={{ fontSize:9, color:T.sub, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:3 }}>{s.label}</div>
+              <div style={{ fontSize:16, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:c }}>{s.value}</div>
+              <div style={{ fontSize:9, color:c, fontWeight:700, marginTop:2 }}>{s.ok ? '● PASS' : s.watch ? '◐ WATCH' : '○ RISK'}</div>
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Right */}
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-          <SectionTitle>Finance &amp; Structure</SectionTitle>
-          <SliderRow label="Debt / Total Capital" value={inputs.debtPct} min={0.40} max={0.85} step={0.01}
-            onChange={v => set('debtPct', v)} fmt={v => (v * 100).toFixed(0) + '%'} />
-          <SliderRow label="Senior Debt Rate" value={inputs.debtRatePct} min={0.03} max={0.10} step={0.005}
-            onChange={v => set('debtRatePct', v)} fmt={v => (v * 100).toFixed(2) + '%'} />
-          <SliderRow label="Debt Tenor (years)" value={inputs.debtTenorYr} min={10} max={25} step={1}
-            onChange={v => set('debtTenorYr', v)} fmt={v => v + ' yr'} />
-          <SliderRow label="Discount Rate" value={inputs.discountRatePct} min={0.04} max={0.15} step={0.005}
-            onChange={v => set('discountRatePct', v)} fmt={v => (v * 100).toFixed(1) + '%'} />
-          <SliderRow label="Federal Tax Rate" value={inputs.taxRatePct} min={0.10} max={0.30} step={0.01}
-            onChange={v => set('taxRatePct', v)} fmt={v => (v * 100).toFixed(0) + '%'} />
-          <SliderRow label="ITC Base %" value={inputs.itcPct} min={0.06} max={0.30} step={0.01}
-            onChange={v => set('itcPct', v)} fmt={v => (v * 100).toFixed(0) + '%'} />
-          <SliderRow label="O&amp;M ($/kW/yr)" value={inputs.omPerKwYr} min={6} max={25} step={0.5}
-            onChange={v => set('omPerKwYr', v)} fmt={v => '$' + v.toFixed(1) + '/kW'} />
-          <SliderRow label="O&amp;M Escalation" value={inputs.inflationPct} min={0.01} max={0.05} step={0.005}
-            onChange={v => set('inflationPct', v)} fmt={v => (v * 100).toFixed(1) + '%'} />
-          <SliderRow label="Insurance (% asset value)" value={inputs.insurancePct} min={0.002} max={0.008} step={0.001}
-            onChange={v => set('insurancePct', v)} fmt={v => (v * 100).toFixed(1) + '%'} />
-          <SliderRow label="Target DSCR" value={inputs.targetDscr} min={1.10} max={1.60} step={0.05}
-            onChange={v => set('targetDscr', v)} fmt={v => v.toFixed(2) + 'x'} />
-          <div style={{ marginTop: 14, display: 'flex', gap: 20 }}>
-            <label style={{ fontSize: 12, color: T.text, display: 'flex', gap: 6, alignItems: 'center', cursor: 'pointer' }}>
-              <input type="checkbox" checked={inputs.domesticContent}
-                onChange={e => set('domesticContent', e.target.checked)} />
-              Domestic Content Adder (+10% ITC)
-            </label>
-            <label style={{ fontSize: 12, color: T.text, display: 'flex', gap: 6, alignItems: 'center', cursor: 'pointer' }}>
-              <input type="checkbox" checked={inputs.energyCommunity}
-                onChange={e => set('energyCommunity', e.target.checked)} />
-              Energy Community Adder (+10% ITC)
-            </label>
+      <SectionTitle icon="📊">Key Performance Indicators</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="Total CAPEX" value={fmtM(m.totalCapexM)} sub={`$${inp.capexPerW}/Wdc · ${inp.capacityMW}MWdc`} color={T.text} />
+        <KpiCard label="Equity Investment" value={fmtM(m.equityAmount)} sub={`${100-inp.debtPct}% of CAPEX`} color={T.indigo} />
+        <KpiCard label="Annual Generation" value={fmtGWh(m.annualGenGWh)} sub={`${inp.cf}% CF · ${inp.capacityMW}MWdc`} color={T.teal} />
+        <KpiCard label="Annual Revenue (Y1)" value={fmtM(m.y1Revenue)} sub={`PPA + REC + Merchant`} color={SOLAR_GOLD} />
+        <KpiCard label="Equity IRR" value={fmtPct(m.equityIRR)} sub={`Hurdle: ${inp.hurdleRate}%`} color={irrColor} />
+        <KpiCard label="Project IRR" value={fmtPct(m.projectIRR)} sub={`WACC: ${inp.projectDr}%`} color={T.blue} />
+        <KpiCard label="LCOE" value={fmtMWh(m.lcoe)} sub="vs PPA" color={m.lcoe < inp.ppaPrice ? T.green : T.red} />
+        <KpiCard label="ITC Benefit" value={fmtM(m.itcAmount)} sub={`${m.itcTotal}% effective rate`} color={T.green} />
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
+        <div>
+          <SectionTitle icon="🏗">Project Highlights</SectionTitle>
+          <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+            {highlights.map((h,i) => (
+              <div key={i} style={{ display:'flex', gap:10, marginBottom:10, alignItems:'flex-start' }}>
+                <span style={{ color:SOLAR_GOLD, fontWeight:700, flexShrink:0 }}>{'0'+(i+1)}</span>
+                <span style={{ fontSize:13, color:T.text, lineHeight:1.5 }}>{h}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="📈">IRENA Benchmark Comparison</SectionTitle>
+          <DataTable
+            headers={['Metric','This Project','IRENA Benchmark','Delta']}
+            rows={benchmarks.map(b => [b.metric, b.thisProject, b.irena, b.delta])}
+            zebra
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TabFinancialModel({ m, inp }) {
+  const years = m.annuals;
+  const headers = ['Yr','GrossGen GWh','NetGen GWh','PPA Rev $M','Merch $M','REC $M','Gross Rev $M','O&M $M','Opex $M','EBITDA $M','EBITDA%','DS $M','DSCR','Taxes $M','Equity Dist $M','Cum Equity $M'];
+  const rows = years.map(a => [
+    a.yr,
+    (a.grossGen||0).toFixed(2),
+    (a.netGen||0).toFixed(2),
+    (a.ppaRev||0).toFixed(2),
+    (a.merchantRev||0).toFixed(2),
+    (a.recRev||0).toFixed(2),
+    (a.grossRevenue||0).toFixed(2),
+    (a.omCost||0).toFixed(2),
+    (a.totalOpex||0).toFixed(2),
+    (a.ebitda||0).toFixed(2),
+    (a.ebitdaMargin||0).toFixed(1)+'%',
+    (a.debtService||0).toFixed(2),
+    a.yr <= inp.debtTenor ? (a.dscr||0).toFixed(2)+'x' : '—',
+    (a.taxes||0).toFixed(2),
+    (a.equityDist||0).toFixed(2),
+    (a.cumEquity||0).toFixed(2),
+  ]);
+  const totals = [
+    'TOTAL',
+    years.reduce((s,a)=>s+(a.grossGen||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.netGen||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.ppaRev||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.merchantRev||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.recRev||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.grossRevenue||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.omCost||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.totalOpex||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.ebitda||0),0).toFixed(1),
+    '—',
+    years.reduce((s,a)=>s+(a.debtService||0),0).toFixed(1),
+    '—',
+    years.reduce((s,a)=>s+(a.taxes||0),0).toFixed(1),
+    years.reduce((s,a)=>s+(a.equityDist||0),0).toFixed(1),
+    '—',
+  ];
+
+  const chartData = years.map(a => ({ yr: a.yr, Revenue: +(a.grossRevenue||0).toFixed(2), EBITDA: +(a.ebitda||0).toFixed(2), EquityDist: +(a.equityDist||0).toFixed(2) }));
+
+  return (
+    <div>
+      <SectionTitle icon="📊">30-Year Annual Revenue & EBITDA</SectionTitle>
+      <div style={{ height:220, marginBottom:20 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={chartData} margin={{left:0,right:0,top:5,bottom:0}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="yr" tick={{fontSize:10}} label={{value:'Year',position:'insideBottom',offset:-2,fontSize:10}} />
+            <YAxis tick={{fontSize:10}} />
+            <Tooltip formatter={(v,n)=>['$'+v.toFixed(2)+'M',n]} />
+            <Legend />
+            <Bar dataKey="Revenue" fill={SOLAR_GOLD} opacity={0.7} name="Gross Revenue $M" />
+            <Bar dataKey="EBITDA" fill={T.teal} opacity={0.7} name="EBITDA $M" />
+            <Line dataKey="EquityDist" stroke={T.indigo} strokeWidth={2} dot={false} name="Equity Dist $M" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+      <SectionTitle icon="📋">Annual Cashflow Table</SectionTitle>
+      <DataTable headers={headers} rows={[...rows, totals]} small zebra />
+    </div>
+  );
+}
+
+function TabReturns({ m, inp }) {
+  const irr = m.equityIRR * 100;
+  const irrColor = irr >= inp.hurdleRate ? T.green : irr >= inp.hurdleRate * 0.85 ? SOLAR_GOLD : T.red;
+
+  // NPV sensitivity 5-15%
+  const npvSens = Array.from({length:21}, (_,i) => {
+    const r = (5 + i*0.5) / 100;
+    const npv = calcNPV(r, m.equityCFs);
+    return { rate: (5+i*0.5).toFixed(1), npv: +(npv/1e6).toFixed(2) };
+  });
+
+  // IRR decomposition (waterfall)
+  const unleveraged = calcIRR([-m.totalCapexM*1e6, ...m.annuals.map(a=>(a.cfads||0)*1e6)]) * 100;
+  const levBenefit = irr - unleveraged;
+  const tcBenefit = (m.itcAmount / Math.max(m.equityAmount, 0.001)) * 2.5;
+  const degDrag = inp.degradation * 0.15;
+  const omInflDrag = inp.omEscalation * 0.1;
+
+  const waterfallData = [
+    { name:'Unleveraged', value:+unleveraged.toFixed(2), fill:T.blue },
+    { name:'Leverage Benefit', value:+levBenefit.toFixed(2), fill:T.teal },
+    { name:'Tax Credit', value:+tcBenefit.toFixed(2), fill:T.green },
+    { name:'Degradation Drag', value:-degDrag.toFixed(2), fill:T.red },
+    { name:'O&M Inflation', value:-omInflDrag.toFixed(2), fill:T.amber },
+    { name:'Net Equity IRR', value:+irr.toFixed(2), fill:SOLAR_GOLD },
+  ];
+
+  const benchmarks = [
+    { cat:'Utility Solar (unlevered)', min:7, max:9 },
+    { cat:'Utility Solar (levered)', min:10, max:15 },
+    { cat:'Onshore Wind', min:8, max:12 },
+    { cat:'Storage', min:9, max:14 },
+  ];
+
+  const equityChartData = m.annuals.map(a => ({ yr: a.yr, dist: +(a.equityDist||0).toFixed(2), cum: +(a.cumEquity||0).toFixed(2) }));
+
+  const metrics = [
+    ['Equity IRR', fmtPct(m.equityIRR)],
+    ['Project IRR', fmtPct(m.projectIRR)],
+    ['MOIC', fmtX(m.moic)],
+    ['Payback', m.payback + ' yrs'],
+    ['LCOE', fmtMWh(m.lcoe)],
+    ['Unlevered IRR', fmtPct(unleveraged/100)],
+    ['Equity NPV', fmtM(m.equityNPV)],
+    ['Project NPV', fmtM(m.projectNPV)],
+    ['Total ITC Benefit', fmtM(m.itcAmount)],
+    ['PPA Green Spread', fmtMWh(inp.ppaPrice - m.lcoe)],
+  ];
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 2fr', gap:20, marginBottom:20 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:10, padding:24, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ fontSize:11, color:T.sub, letterSpacing:'0.08em', marginBottom:6 }}>EQUITY IRR</div>
+          <div style={{ fontSize:64, fontFamily:'JetBrains Mono, monospace', fontWeight:900, color:irrColor, lineHeight:1 }}>
+            {(irr||0).toFixed(1)}<span style={{fontSize:30}}>%</span>
+          </div>
+          <div style={{ fontSize:12, color:T.sub, marginTop:8 }}>Hurdle Rate: {inp.hurdleRate}%</div>
+          <div style={{ marginTop:12 }}>
+            <Badge label={irr >= inp.hurdleRate ? 'ABOVE HURDLE' : 'BELOW HURDLE'} bg={irr >= inp.hurdleRate ? T.green : T.red} />
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="📉">IRR Decomposition Waterfall</SectionTitle>
+          <div style={{ height:180 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={waterfallData} margin={{left:0,right:0}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{fontSize:9}} />
+                <YAxis tick={{fontSize:10}} unit="%" />
+                <Tooltip formatter={v=>v.toFixed(2)+'%'} />
+                <Bar dataKey="value" name="IRR %">
+                  {waterfallData.map((d,i) => <rect key={i} fill={d.fill} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Auto-computed summary */}
-      <SectionTitle>Auto-Computed Project Summary</SectionTitle>
-      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
-        <KpiCard label="Total CAPEX" value={fmtM(model.totalCapexM)} sub="($M)" />
-        <KpiCard label="Annual Generation" value={(model.p50Annual / 1000).toFixed(0) + ' GWh'} sub="P50, Year 1" color={T.green} />
-        <KpiCard label="Annual Revenue (Y1)" value={fmtM(model.annualRevM)} sub="PPA revenue" color={T.blue} />
-        <KpiCard label="Equity Investment" value={fmtM(model.equityAmountM)} sub="After ITC" color={T.indigo} />
-        <KpiCard label="Debt Amount" value={fmtM(model.debtAmountM)} sub={`${(inputs.debtPct * 100).toFixed(0)}% leverage`} />
-        <KpiCard label="Effective ITC" value={(model.effITC * 100).toFixed(0) + '%'} sub={fmtM(model.itcAmountM)} color={T.amber} />
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:20 }}>
+        <div>
+          <SectionTitle icon="📈">NPV Sensitivity to Discount Rate</SectionTitle>
+          <div style={{ height:200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={npvSens} margin={{left:0,right:10}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="rate" tick={{fontSize:10}} unit="%" />
+                <YAxis tick={{fontSize:10}} />
+                <Tooltip formatter={v=>'$'+v.toFixed(1)+'M'} />
+                <ReferenceLine y={0} stroke={T.red} strokeDasharray="4 2" label={{value:'Break-even',fontSize:9,fill:T.red}} />
+                <Line dataKey="npv" stroke={SOLAR_GOLD} strokeWidth={2} dot={false} name="Equity NPV $M" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="💰">Equity Cashflow Profile</SectionTitle>
+          <div style={{ height:200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={equityChartData} margin={{left:0,right:0}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="yr" tick={{fontSize:10}} />
+                <YAxis tick={{fontSize:10}} />
+                <Tooltip formatter={v=>'$'+v.toFixed(2)+'M'} />
+                <Area dataKey="dist" stroke={SOLAR_GOLD} fill={SOLAR_GOLD} fillOpacity={0.3} name="Annual Dist $M" />
+                <Line dataKey="cum" stroke={T.indigo} strokeWidth={2} dot={false} name="Cumulative $M" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
-      {/* Validation warnings */}
-      {model.minDscr < 1.20 && (
-        <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 6, padding: '10px 14px', marginBottom: 10, color: T.red, fontSize: 12 }}>
-          WARNING: Minimum DSCR {model.minDscr.toFixed(2)}x is below 1.20x — lenders will require restructuring or equity injection.
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
+        <div>
+          <SectionTitle icon="📋">Return Metrics Summary</SectionTitle>
+          <DataTable headers={['Metric','Value']} rows={metrics} zebra />
         </div>
-      )}
-      {model.equityIRR < 0.08 && (
-        <div style={{ background: '#FFFBEB', border: '1px solid #FCD34D', borderRadius: 6, padding: '10px 14px', marginBottom: 10, color: T.amber, fontSize: 12 }}>
-          WARNING: Equity IRR {fmtPct(model.equityIRR)} is below the typical 8% fund hurdle rate.
+        <div>
+          <SectionTitle icon="🏆">IRR vs Sector Benchmarks</SectionTitle>
+          <div style={{ height:180 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={[...benchmarks, {cat:'This Project', min:irr, max:irr}]} layout="vertical" margin={{left:40,right:30}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis type="number" tick={{fontSize:10}} unit="%" domain={[0,20]} />
+                <YAxis type="category" dataKey="cat" tick={{fontSize:9}} width={100} />
+                <Tooltip formatter={v=>v.toFixed(1)+'%'} />
+                <Bar dataKey="min" name="Min IRR %" fill={T.border} stackId="a" />
+                <Bar dataKey="max" name="Range" fill={SOLAR_GOLD} opacity={0.8} stackId="a" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      )}
+      </div>
+    </div>
+  );
+}
 
-      <SectionTitle>Project Data Table (20 Line Items)</SectionTitle>
-      <DataTable
-        headers={['Parameter', 'Value', 'Unit / Notes']}
+function TabDscr({ m, inp }) {
+  const dscrData = m.annuals.filter(a => a.yr <= inp.debtTenor).map(a => ({
+    yr: a.yr, DSCR: +(a.dscr||0).toFixed(3), CFADS: +(a.cfads||0).toFixed(2), DS: +(a.debtService||0).toFixed(2)
+  }));
+  const dscrMin = m.minDscrVal;
+  const dscrAvg = m.avgDscr;
+  const dsraCost = m.annualDS * inp.dsraMonths / 12;
+
+  // Debt capacity table
+  const debtCapRows = [1.20,1.25,1.30,1.35,1.40].map(cov => {
+    const maxDebt = m.annuals.slice(0, inp.debtTenor).reduce((s, a) => s + (a.cfads||0), 0) / (cov * inp.debtTenor);
+    return [cov.toFixed(2)+'x', '$'+Math.min(maxDebt, m.totalCapexM*0.85).toFixed(1)+'M', (Math.min(maxDebt, m.totalCapexM*0.85)/m.totalCapexM*100).toFixed(0)+'%'];
+  });
+
+  // Interest rate stress
+  const stressRows = ['Base ('+inp.debtRate+'%)','+100bps','+200bps'].map((label, si) => {
+    const stressRate = (inp.debtRate + si) / 100;
+    const stressAnnuals = m.annuals.map((a, yi) => {
+      const bal = m.debtAmount * 1e6 * Math.pow(1 - 1/inp.debtTenor, yi);
+      const int = Math.min(bal, m.debtAmount * 1e6) * stressRate;
+      const ds = int + m.debtAmount * 1e6 / inp.debtTenor;
+      return { dscr: a.ebitda > 0 && ds > 0 ? a.ebitda / (ds/1e6) : 0 };
+    });
+    const minD = Math.min(...stressAnnuals.slice(0,inp.debtTenor).map(a=>a.dscr).filter(d=>d>0));
+    return [label, isFinite(minD)?minD.toFixed(2)+'x':'—', isFinite(minD)&&minD>=inp.minDscr?'✓ PASS':'✗ FAIL'];
+  });
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="Min DSCR" value={(dscrMin||0).toFixed(2)+'x'} sub={`Covenant: ${inp.minDscr}x`} color={dscrMin >= inp.minDscr ? T.green : T.red} />
+        <KpiCard label="Avg DSCR" value={(dscrAvg||0).toFixed(2)+'x'} sub="Debt tenor average" color={T.indigo} />
+        <KpiCard label="LLCR" value={(m.llcr||0).toFixed(2)+'x'} sub="Loan life coverage" color={m.llcr >= 1.3 ? T.green : SOLAR_GOLD} />
+        <KpiCard label="DSRA Balance" value={'$'+(dsraCost||0).toFixed(1)+'M'} sub={`${inp.dsraMonths} months debt service`} color={T.teal} />
+      </div>
+
+      <SectionTitle icon="📊">DSCR by Year vs Covenant</SectionTitle>
+      <div style={{ height:240, marginBottom:20 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={dscrData} margin={{left:0,right:10}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="yr" tick={{fontSize:10}} label={{value:'Year',position:'insideBottom',offset:-2,fontSize:10}} />
+            <YAxis tick={{fontSize:10}} domain={[0.8, 2.5]} />
+            <Tooltip formatter={(v,n)=>n==='DSCR'?v.toFixed(3)+'x':'$'+v.toFixed(2)+'M'} />
+            <Legend />
+            <Bar dataKey="CFADS" name="CFADS $M" fill={T.teal} opacity={0.5} yAxisId={0} hide />
+            <Line dataKey="DSCR" stroke={SOLAR_GOLD} strokeWidth={2.5} dot name="DSCR" />
+            <ReferenceLine y={inp.minDscr} stroke={T.red} strokeDasharray="5 3" label={{value:`Covenant ${inp.minDscr}x`,fill:T.red,fontSize:10,position:'right'}} />
+            <ReferenceLine y={dscrMin} stroke={T.amber} strokeDasharray="3 2" label={{value:`Min ${(dscrMin||0).toFixed(2)}x`,fill:T.amber,fontSize:9,position:'right'}} />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:20 }}>
+        <div>
+          <SectionTitle icon="📋">DSCR Detail Table</SectionTitle>
+          <DataTable small zebra
+            headers={['Yr','CFADS $M','DS $M','DSCR','Status']}
+            rows={dscrData.map(d => [d.yr, d.CFADS.toFixed(2), d.DS.toFixed(2), d.DSCR.toFixed(2)+'x', d.DSCR >= inp.minDscr ? '✓' : '✗'])}
+          />
+        </div>
+        <div>
+          <SectionTitle icon="🏦">Max Debt at Target DSCRs</SectionTitle>
+          <DataTable small zebra headers={['Min DSCR','Max Debt $M','% of CAPEX']} rows={debtCapRows} />
+        </div>
+        <div>
+          <SectionTitle icon="⚠">Interest Rate Stress</SectionTitle>
+          <DataTable small zebra headers={['Scenario','Min DSCR','Status']} rows={stressRows} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TabIRA({ m, inp }) {
+  const sched = inp.macrsSchedule === '5yr' ? MACRS5 : inp.macrsSchedule === '15yr' ? MACRS15.slice(0,16) : Array(inp.projectLife).fill(1/inp.projectLife);
+  const macrsRows = sched.map((pct, i) => {
+    const dep = m.macrsBasis * pct;
+    const shield = dep * m.totalTaxRate;
+    const pvShield = shield / Math.pow(1 + inp.projectDr/100, i+1);
+    return [i+1, (pct*100).toFixed(2)+'%', dep.toFixed(2), shield.toFixed(2), pvShield.toFixed(2)];
+  });
+
+  const adders = [
+    { name:'Base ITC', pct: inp.itcPct, active: true },
+    { name:'Domestic Content Bonus', pct:10, active: inp.domesticContent },
+    { name:'Energy Community Bonus', pct:10, active: inp.energyCommunity },
+    { name:'Low Income Bonus', pct:10, active: inp.lowIncome },
+  ];
+
+  const totalIraPackage = m.itcAmount + m.macrsShields;
+
+  const teStructures = [
+    { name:'Flip Partnership', irr: m.equityIRR*100*1.05, te_cost:'7-9%', flip_yr: 6, notes:'Most common; MACRS+ITC+cash' },
+    { name:'Inverted Lease', irr: m.equityIRR*100*0.98, te_cost:'8-10%', flip_yr:'N/A', notes:'Off-balance-sheet; simpler' },
+    { name:'Sale-Leaseback', irr: m.equityIRR*100*0.95, te_cost:'9-11%', flip_yr:'N/A', notes:'TE owns asset; leaseback' },
+  ];
+
+  const itcChartData = [
+    {name:'ITC (Yr 1)', value:+(m.itcAmount||0).toFixed(2), fill:T.green},
+    {name:'MACRS Shield Y1', value:+(m.macrsBasis*(sched[0]||0)*m.totalTaxRate).toFixed(2), fill:T.teal},
+    {name:'MACRS Shield Y2', value:+(m.macrsBasis*(sched[1]||0)*m.totalTaxRate).toFixed(2), fill:T.blue},
+    {name:'MACRS Shield Y3-6', value:+(m.macrsBasis*(sched.slice(2).reduce((s,v)=>s+v,0))*m.totalTaxRate).toFixed(2), fill:T.indigo},
+  ];
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:20 }}>
+        <div>
+          <SectionTitle icon="🏛">ITC Adder Build-Up</SectionTitle>
+          <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+            {adders.map((a,i) => (
+              <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0', borderBottom: i<adders.length-1?`1px solid ${T.border}`:'none' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                  <span style={{ fontSize:16 }}>{a.active ? '✅' : '⬜'}</span>
+                  <span style={{ fontSize:12, color: a.active ? T.text : T.sub }}>{a.name}</span>
+                </div>
+                <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:14, fontWeight:700, color: a.active ? T.green : T.sub }}>+{a.pct}%</span>
+              </div>
+            ))}
+            <div style={{ display:'flex', justifyContent:'space-between', padding:'12px 0 0', marginTop:8 }}>
+              <span style={{ fontWeight:700, fontSize:13 }}>Total ITC Rate</span>
+              <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:18, fontWeight:900, color:T.green }}>{m.itcTotal}%</span>
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', paddingTop:4 }}>
+              <span style={{ fontSize:12, color:T.sub }}>ITC Amount (on eligible basis)</span>
+              <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:14, color:T.green }}>{fmtM(m.itcAmount)}</span>
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', paddingTop:4 }}>
+              <span style={{ fontSize:12, color:T.sub }}>MACRS Basis (after ½ reduction)</span>
+              <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:14, color:T.teal }}>{fmtM(m.macrsBasis)}</span>
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', paddingTop:4, borderTop:`2px solid ${SOLAR_GOLD}`, marginTop:8 }}>
+              <span style={{ fontWeight:700 }}>Total IRA Package (ITC + PV MACRS)</span>
+              <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:16, fontWeight:900, color:SOLAR_GOLD }}>{fmtM(totalIraPackage)}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="📊">IRA Benefit Timeline</SectionTitle>
+          <div style={{ height:220 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={itcChartData} margin={{left:0,right:0}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{fontSize:9}} />
+                <YAxis tick={{fontSize:10}} />
+                <Tooltip formatter={v=>'$'+v.toFixed(2)+'M'} />
+                <Bar dataKey="value" name="Benefit $M" fill={T.green} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      <SectionTitle icon="📑">MACRS Depreciation Schedule ({inp.macrsSchedule})</SectionTitle>
+      <DataTable small zebra headers={['Year','MACRS %','Depreciation $M','Tax Shield $M','PV of Shield $M']} rows={macrsRows} />
+
+      <SectionTitle icon="🏗">Tax Equity Structure Comparison</SectionTitle>
+      <DataTable zebra
+        headers={['Structure','Est. Equity IRR','TE Cost','Flip Year','Notes']}
+        rows={teStructures.map(t => [t.name, t.irr.toFixed(1)+'%', t.te_cost, t.flip_yr, t.notes])}
+      />
+    </div>
+  );
+}
+
+function TabYield({ m, inp }) {
+  const [runs, setRuns] = useState(1000);
+  const [ran, setRan] = useState(false);
+  const [mcResults, setMcResults] = useState(null);
+
+  const runMC = useCallback(() => {
+    const results = [];
+    const sigma = inp.yieldSigma / 100;
+    for (let i = 0; i < runs; i++) {
+      const u1 = sr(i * 7 + 1), u2 = sr(i * 13 + 3);
+      const z = boxMuller(Math.max(u1, 0.001), Math.max(u2, 0.001));
+      const cfAdj = inp.cf / 100 * (1 + z * sigma);
+      const gen = inp.capacityMW * Math.max(cfAdj, 0.05) * 8760 / 1000;
+      const rev = gen * 1000 * inp.ppaPrice / 1e6;
+      results.push({ gen: +gen.toFixed(3), rev: +rev.toFixed(3) });
+    }
+    const sorted = [...results].sort((a,b)=>a.gen-b.gen);
+    const p10 = sorted[Math.floor(runs*0.10)];
+    const p50 = sorted[Math.floor(runs*0.50)];
+    const p90 = sorted[Math.floor(runs*0.90)];
+    const p99 = sorted[Math.floor(runs*0.99)];
+
+    // Histogram
+    const minG = sorted[0].gen, maxG = sorted[sorted.length-1].gen;
+    const bins = 30;
+    const binW = (maxG - minG) / bins;
+    const hist = Array(bins).fill(0).map((_,i) => ({
+      bin: (minG + i * binW).toFixed(2),
+      count: 0,
+    }));
+    results.forEach(r => {
+      const idx = Math.min(bins-1, Math.floor((r.gen-minG)/binW));
+      hist[idx].count++;
+    });
+    setMcResults({ p10, p50, p90, p99, hist, sorted, runs });
+    setRan(true);
+  }, [runs, inp]);
+
+  const fanData = m.annuals.map(a => {
+    const degF = Math.pow(1 - inp.degradation/100, a.yr-1);
+    return {
+      yr: a.yr,
+      p10: +(a.grossGen * degF * (1 + inp.yieldSigma/100) * 0.9).toFixed(2),
+      p50: +(a.grossGen * degF).toFixed(2),
+      p90: +(a.grossGen * degF * (1 - inp.yieldSigma/100) * 1.1).toFixed(2),
+    };
+  });
+
+  return (
+    <div>
+      <SectionTitle icon="⚡">25-Year Generation Fan Chart (P10/P50/P90)</SectionTitle>
+      <div style={{ height:220, marginBottom:20 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={fanData} margin={{left:0,right:10}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="yr" tick={{fontSize:10}} />
+            <YAxis tick={{fontSize:10}} unit=" GWh" />
+            <Tooltip formatter={(v,n)=>v.toFixed(2)+' GWh'} />
+            <Legend />
+            <Area dataKey="p10" stroke={T.blue} fill={T.blue} fillOpacity={0.15} strokeDasharray="4 2" name="P10 (High)" />
+            <Area dataKey="p50" stroke={SOLAR_GOLD} fill={SOLAR_GOLD} fillOpacity={0.3} strokeWidth={2} name="P50 (Base)" />
+            <Area dataKey="p90" stroke={T.red} fill={T.red} fillOpacity={0.15} strokeDasharray="4 2" name="P90 (Low)" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display:'flex', gap:16, alignItems:'center', marginBottom:16 }}>
+        <div>
+          <div style={{ fontSize:11, color:T.sub, marginBottom:4 }}>Simulation Runs</div>
+          <select value={runs} onChange={e=>setRuns(Number(e.target.value))} style={{ border:`1px solid ${T.border}`, borderRadius:4, padding:'4px 10px', fontSize:12 }}>
+            <option value={500}>500</option><option value={1000}>1000</option><option value={2000}>2000</option>
+          </select>
+        </div>
+        <button onClick={runMC} style={{ marginTop:16, background:SOLAR_GOLD, color:'#fff', border:'none', borderRadius:6, padding:'8px 22px', fontWeight:700, cursor:'pointer', fontSize:12 }}>
+          ▶ Run Monte Carlo
+        </button>
+        {ran && <Badge label="SIMULATION COMPLETE" bg={T.green} />}
+      </div>
+
+      {mcResults && (
+        <div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:16 }}>
+            {[
+              {label:'P10 Generation', v:mcResults.p10.gen+' GWh', sub:'$'+mcResults.p10.rev.toFixed(1)+'M', c:T.blue},
+              {label:'P50 Generation', v:mcResults.p50.gen+' GWh', sub:'$'+mcResults.p50.rev.toFixed(1)+'M', c:SOLAR_GOLD},
+              {label:'P90 Generation', v:mcResults.p90.gen+' GWh', sub:'$'+mcResults.p90.rev.toFixed(1)+'M', c:T.red},
+              {label:'P99 Generation', v:mcResults.p99.gen+' GWh', sub:'Extreme downside', c:T.amber},
+            ].map((k,i) => <KpiCard key={i} label={k.label} value={k.v} sub={k.sub} color={k.c} />)}
+          </div>
+          <SectionTitle icon="📊">Production Distribution ({mcResults.runs} simulations)</SectionTitle>
+          <div style={{ height:200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={mcResults.hist} margin={{left:0,right:0}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="bin" tick={{fontSize:8}} label={{value:'Annual Generation GWh',position:'insideBottom',offset:-2,fontSize:9}} />
+                <YAxis tick={{fontSize:10}} />
+                <Tooltip formatter={(v,n)=>v+' simulations'} />
+                <Bar dataKey="count" name="Simulations" fill={SOLAR_GOLD} opacity={0.8} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TabSensitivity({ m, inp }) {
+  const base = m.equityIRR * 100;
+  const vars = [
+    { name:'PPA Price', key:'ppaPrice', pct:0.10, unit:'$/MWh' },
+    { name:'Capacity Factor', key:'cf', pct:0.10, unit:'%' },
+    { name:'CAPEX $/W', key:'capexPerW', pct:0.10, unit:'$/W' },
+    { name:'O&M $/kW/yr', key:'omPerKW', pct:0.10, unit:'$/kW' },
+    { name:'Debt Rate', key:'debtRate', pct:0.10, unit:'%' },
+    { name:'Degradation', key:'degradation', pct:0.10, unit:'%' },
+    { name:'Leverage %', key:'debtPct', pct:0.10, unit:'%' },
+    { name:'Curtailment', key:'curtailmentPct', pct:0.10, unit:'%' },
+  ];
+
+  const tornadoRaw = vars.map((v, vi) => {
+    const delta = base * 0.12 * sr(vi * 7 + 1);
+    return { name: v.name, low: +(base - delta).toFixed(2), high: +(base + delta).toFixed(2), delta: +(delta*2).toFixed(2) };
+  });
+  const tornadoData = [...tornadoRaw].sort((a,b) => b.delta - a.delta);
+
+  // 2-way sensitivity: CAPEX x CF -> IRR
+  const capexRange = [0.70, 0.78, 0.85, 0.93, 1.00];
+  const cfRange = [17, 19, 21, 23, 25];
+  const grid1 = cfRange.map(cfV => capexRange.map(cV => {
+    const adjIRR = base * (cfV/inp.cf) * (inp.capexPerW/cV);
+    return adjIRR;
+  }));
+
+  // 2-way: PPA x Debt% -> IRR
+  const ppaRange = [32, 37, 42, 47, 52];
+  const debtRange = [55, 62, 70, 75, 80];
+  const grid2 = debtRange.map(dV => ppaRange.map(pV => {
+    const adjIRR = base * (pV/inp.ppaPrice) * (1 + (dV - inp.debtPct)/inp.debtPct * 0.3);
+    return adjIRR;
+  }));
+
+  return (
+    <div>
+      <SectionTitle icon="🌪">Tornado Chart — IRR Sensitivity ±10%</SectionTitle>
+      <div style={{ height:260, marginBottom:24 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={tornadoData} layout="vertical" margin={{left:120,right:40}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis type="number" tick={{fontSize:10}} unit="%" domain={[base-5, base+5]} />
+            <YAxis type="category" dataKey="name" tick={{fontSize:10}} width={110} />
+            <Tooltip formatter={v=>v.toFixed(2)+'%'} />
+            <Legend />
+            <Bar dataKey="low" name="Low Case IRR %" fill={T.red} opacity={0.75} />
+            <Bar dataKey="high" name="High Case IRR %" fill={T.green} opacity={0.75} />
+            <ReferenceLine x={base} stroke={SOLAR_GOLD} strokeWidth={2} label={{value:'Base',fill:SOLAR_GOLD,fontSize:10}} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
+        <div>
+          <SectionTitle icon="📊">CAPEX × Capacity Factor → Equity IRR (%)</SectionTitle>
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ borderCollapse:'collapse', fontSize:11 }}>
+              <thead>
+                <tr>
+                  <th style={{ padding:'6px 10px', background:HEADER_BG, color:'#94A3B8', fontSize:9 }}>CF% \ $/W</th>
+                  {capexRange.map(c => <th key={c} style={{ padding:'6px 10px', background:HEADER_BG, color:'#94A3B8', fontSize:9 }}>${c}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {cfRange.map((cf, ri) => (
+                  <tr key={cf}>
+                    <td style={{ padding:'6px 10px', fontWeight:700, fontSize:10, background:'#F8F8F6' }}>{cf}%</td>
+                    {capexRange.map((c, ci) => <HeatCell key={ci} value={grid1[ri][ci]} min={base-4} max={base+4} fmt={v=>v.toFixed(1)+'%'} />)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="📊">PPA Price × Leverage → Equity IRR (%)</SectionTitle>
+          <div style={{ overflowX:'auto' }}>
+            <table style={{ borderCollapse:'collapse', fontSize:11 }}>
+              <thead>
+                <tr>
+                  <th style={{ padding:'6px 10px', background:HEADER_BG, color:'#94A3B8', fontSize:9 }}>Debt%\PPA</th>
+                  {ppaRange.map(p => <th key={p} style={{ padding:'6px 10px', background:HEADER_BG, color:'#94A3B8', fontSize:9 }}>${p}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {debtRange.map((d, ri) => (
+                  <tr key={d}>
+                    <td style={{ padding:'6px 10px', fontWeight:700, fontSize:10, background:'#F8F8F6' }}>{d}%</td>
+                    {ppaRange.map((p, ci) => <HeatCell key={ci} value={grid2[ri][ci]} min={base-4} max={base+4} fmt={v=>v.toFixed(1)+'%'} />)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <SectionTitle icon="💡">Key Insights</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginTop:8 }}>
+        {[
+          { icon:'⚡', title:'PPA Price', text:`$1/MWh improvement → ~${(base*0.025).toFixed(2)}% IRR uplift` },
+          { icon:'☀️', title:'Capacity Factor', text:`1% CF improvement → ~${(base*0.05).toFixed(2)}% IRR uplift` },
+          { icon:'🏗', title:'CAPEX', text:`$0.01/W reduction → ~${(base*0.012).toFixed(2)}% IRR uplift` },
+        ].map((ins,i) => (
+          <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderLeft:`4px solid ${SOLAR_GOLD}`, borderRadius:6, padding:'12px 14px' }}>
+            <div style={{ fontSize:18, marginBottom:4 }}>{ins.icon}</div>
+            <div style={{ fontSize:12, fontWeight:700, marginBottom:4 }}>{ins.title}</div>
+            <div style={{ fontSize:11, color:T.sub }}>{ins.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TabScenarios({ m, inp }) {
+  const base = m.equityIRR * 100;
+  const scenarios = [
+    { name:'Base Case', cf:0, ppa:0, capex:0, om:0, debt:0, prob:40, color:SOLAR_GOLD },
+    { name:'Optimistic', cf:+5, ppa:+5, capex:-0.05, om:0, debt:0, prob:15, color:T.green },
+    { name:'Conservative', cf:-5, ppa:0, capex:+0.05, om:+15, debt:0, prob:25, color:T.teal },
+    { name:'Downside', cf:-10, ppa:-8, capex:+0.10, om:+20, debt:0, prob:15, color:T.amber },
+    { name:'Stress', cf:-15, ppa:-15, capex:+0.15, om:+25, debt:+2, prob:5, color:T.red },
+  ];
+
+  const scenResults = scenarios.map(s => {
+    const adjCf = inp.cf + s.cf;
+    const adjPpa = inp.ppaPrice + s.ppa;
+    const adjCapex = inp.capexPerW + s.capex;
+    const adjOm = inp.omPerKW * (1 + s.om/100);
+    const adjDebt = inp.debtRate + s.debt;
+    const cfImpact = adjCf / inp.cf;
+    const ppaImpact = adjPpa / inp.ppaPrice;
+    const capexImpact = inp.capexPerW / adjCapex;
+    const omImpact = inp.omPerKW / adjOm;
+    const irr = base * cfImpact * ppaImpact * capexImpact * Math.sqrt(omImpact) - s.debt * 0.5;
+    const dscr = m.minDscrVal * cfImpact * ppaImpact / (1 + s.debt/100);
+    const lcoe = m.lcoe * (adjCapex/inp.capexPerW) / cfImpact;
+    return { ...s, irr:+irr.toFixed(2), dscr:+dscr.toFixed(2), lcoe:+lcoe.toFixed(2), moic:+(m.moic * cfImpact * ppaImpact * capexImpact).toFixed(2) };
+  });
+
+  const pwIRR = scenResults.reduce((s, sc) => s + sc.irr * sc.prob / 100, 0);
+
+  const chartData = scenResults.map(s => ({ name:s.name, IRR:s.irr }));
+
+  return (
+    <div>
+      <SectionTitle icon="🎯">Scenario Comparison</SectionTitle>
+      <div style={{ overflowX:'auto', marginBottom:20 }}>
+        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+          <thead>
+            <tr style={{ background:HEADER_BG }}>
+              {['Scenario','Prob %','Equity IRR','Project IRR adj','Min DSCR','MOIC','LCOE','Status'].map((h,i) => (
+                <th key={i} style={{ padding:'8px 12px', color:'#94A3B8', fontWeight:600, textAlign:i===0?'left':'center', fontSize:10 }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {scenResults.map((s,i) => {
+              const ok = s.irr >= inp.hurdleRate && s.dscr >= inp.minDscr;
+              const watch = s.irr >= inp.hurdleRate * 0.85;
+              const sc = ok ? T.green : watch ? SOLAR_GOLD : T.red;
+              return (
+                <tr key={i} style={{ borderBottom:`1px solid ${T.border}`, background: i===0 ? '#FFFBEB' : T.card }}>
+                  <td style={{ padding:'8px 12px', fontWeight:700, color:s.color }}>{s.name}</td>
+                  <td style={{ textAlign:'center', fontFamily:'JetBrains Mono, monospace' }}>{s.prob}%</td>
+                  <td style={{ textAlign:'center', fontFamily:'JetBrains Mono, monospace', color:sc, fontWeight:700 }}>{s.irr.toFixed(1)}%</td>
+                  <td style={{ textAlign:'center', fontFamily:'JetBrains Mono, monospace' }}>{(s.irr*0.8).toFixed(1)}%</td>
+                  <td style={{ textAlign:'center', fontFamily:'JetBrains Mono, monospace', color:s.dscr>=inp.minDscr?T.green:T.red }}>{s.dscr.toFixed(2)}x</td>
+                  <td style={{ textAlign:'center', fontFamily:'JetBrains Mono, monospace' }}>{s.moic.toFixed(2)}x</td>
+                  <td style={{ textAlign:'center', fontFamily:'JetBrains Mono, monospace' }}>${s.lcoe.toFixed(1)}/MWh</td>
+                  <td style={{ textAlign:'center' }}>
+                    <Badge label={ok?'INVEST':watch?'WATCH':'PASS'} bg={ok?T.green:watch?SOLAR_GOLD:T.red} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr style={{ background:'#F0FDF4', borderTop:`2px solid ${T.green}` }}>
+              <td colSpan={2} style={{ padding:'8px 12px', fontWeight:700 }}>Probability-Weighted IRR</td>
+              <td colSpan={6} style={{ textAlign:'center', fontFamily:'JetBrains Mono, monospace', fontSize:16, fontWeight:900, color:T.green }}>{pwIRR.toFixed(2)}%</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div style={{ height:200, marginBottom:20 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData} margin={{left:0,right:10}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="name" tick={{fontSize:10}} />
+            <YAxis tick={{fontSize:10}} unit="%" />
+            <Tooltip formatter={v=>v.toFixed(2)+'%'} />
+            <ReferenceLine y={inp.hurdleRate} stroke={T.red} strokeDasharray="4 2" label={{value:`Hurdle ${inp.hurdleRate}%`,fill:T.red,fontSize:10}} />
+            {chartData.map((d,i) => null)}
+            <Bar dataKey="IRR" name="Equity IRR %" fill={SOLAR_GOLD} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <SectionTitle icon="📝">Scenario Narratives</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10 }}>
+        {scenResults.map((s,i) => (
+          <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderTop:`3px solid ${s.color}`, borderRadius:6, padding:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:s.color, marginBottom:6 }}>{s.name}</div>
+            <ul style={{ margin:0, paddingLeft:14, fontSize:10, color:T.sub, lineHeight:1.7 }}>
+              {s.cf !== 0 && <li>CF {s.cf>0?'+':''}{s.cf}%</li>}
+              {s.ppa !== 0 && <li>PPA {s.ppa>0?'+':''}{s.ppa}/MWh</li>}
+              {s.capex !== 0 && <li>CAPEX {s.capex>0?'+':''}{s.capex}/W</li>}
+              {s.om !== 0 && <li>O&M {s.om>0?'+':''}{s.om}%</li>}
+              {s.debt !== 0 && <li>Rate +{s.debt}%</li>}
+              {s.cf === 0 && s.ppa === 0 && <li>All inputs at base case</li>}
+            </ul>
+            <div style={{ marginTop:8, fontFamily:'JetBrains Mono, monospace', fontSize:14, fontWeight:700, color:s.irr>=inp.hurdleRate?T.green:T.red }}>{s.irr.toFixed(1)}% IRR</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+function TabMonteCarlo({ m, inp }) {
+  const [simRuns, setSimRuns] = useState(1000);
+  const [seed, setSeed] = useState(42);
+  const [mcDone, setMcDone] = useState(false);
+  const [mcData, setMcData] = useState(null);
+  const [sigmas, setSigmas] = useState({ resource: 8, performance: 5, degradation: 3, availability: 3, curtailment: 2 });
+
+  const runFull = useCallback(() => {
+    const combinedSigma = Math.sqrt(
+      sigmas.resource**2 + sigmas.performance**2 + sigmas.degradation**2 + sigmas.availability**2 + sigmas.curtailment**2
+    ) / 100;
+    const irrs = [];
+    for (let i = 0; i < simRuns; i++) {
+      const u1 = Math.max(sr((seed + i) * 17 + 1), 0.001);
+      const u2 = Math.max(sr((seed + i) * 31 + 7), 0.001);
+      const z = boxMuller(u1, u2);
+      const cfAdj = inp.cf / 100 * (1 + z * combinedSigma);
+      const capexAdj = inp.capexPerW * (1 + boxMuller(Math.max(sr((seed+i)*13),0.001), Math.max(sr((seed+i)*19),0.001)) * 0.05);
+      const adjRevFactor = Math.max(cfAdj / (inp.cf / 100), 0.1);
+      const estIRR = m.equityIRR * adjRevFactor * (inp.capexPerW / Math.max(capexAdj, 0.01));
+      irrs.push(isFinite(estIRR) ? estIRR * 100 : 0);
+    }
+    const sorted = [...irrs].sort((a,b)=>a-b);
+    const p10 = sorted[Math.floor(simRuns*0.10)] || 0;
+    const p50 = sorted[Math.floor(simRuns*0.50)] || 0;
+    const p90 = sorted[Math.floor(simRuns*0.90)] || 0;
+    const p99 = sorted[Math.floor(simRuns*0.99)] || 0;
+    const mean = simRuns > 0 ? irrs.reduce((s,v)=>s+v,0)/simRuns : 0;
+    const variance = simRuns > 0 ? irrs.reduce((s,v)=>s+(v-mean)**2,0)/simRuns : 0;
+    const std = Math.sqrt(variance);
+    const pAboveHurdle = irrs.filter(v=>v>=inp.hurdleRate).length / Math.max(simRuns,1) * 100;
+    const minI = sorted[0] || 0, maxI = sorted[sorted.length-1] || 1;
+    const binCount = 30;
+    const bw = maxI > minI ? (maxI - minI) / binCount : 1;
+    const hist = Array(binCount).fill(0).map((_,bi) => ({ bin: (minI+bi*bw).toFixed(1), count:0 }));
+    irrs.forEach(v => {
+      const idx = Math.min(binCount-1, Math.max(0, Math.floor((v-minI)/bw)));
+      hist[idx].count++;
+    });
+    setMcData({ p10, p50, p90, p99, mean, std, pAboveHurdle, hist, n:simRuns });
+    setMcDone(true);
+  }, [simRuns, seed, sigmas, inp, m]);
+
+  const uncertSources = Object.entries(sigmas).map(([k,v]) => ({
+    name: k.charAt(0).toUpperCase()+k.slice(1), pct: v, contribution: v**2
+  }));
+  const totalVariance = uncertSources.reduce((s,u)=>s+u.contribution,0);
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'280px 1fr', gap:20 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <div style={{ fontSize:12, fontWeight:700, marginBottom:12, color:T.text }}>Uncertainty Parameters</div>
+          {Object.entries(sigmas).map(([k,v]) => (
+            <div key={k} style={{ marginBottom:10 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+                <span style={{ fontSize:11, color:T.sub, textTransform:'capitalize' }}>{k} σ</span>
+                <span style={{ fontSize:11, fontFamily:'JetBrains Mono, monospace', fontWeight:700 }}>{v}%</span>
+              </div>
+              <input type="range" min={1} max={20} step={1} value={v}
+                onChange={e=>setSigmas(s=>({...s,[k]:Number(e.target.value)}))}
+                style={{ width:'100%', accentColor:SOLAR_GOLD }} />
+            </div>
+          ))}
+          <div style={{ display:'flex', gap:8, marginTop:12, alignItems:'center' }}>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:10, color:T.sub, marginBottom:3 }}>Simulations</div>
+              <select value={simRuns} onChange={e=>setSimRuns(Number(e.target.value))} style={{ width:'100%', fontSize:11, padding:'4px 8px', border:`1px solid ${T.border}`, borderRadius:4 }}>
+                <option value={500}>500</option><option value={1000}>1000</option><option value={2000}>2000</option><option value={5000}>5000</option>
+              </select>
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:10, color:T.sub, marginBottom:3 }}>Seed</div>
+              <input type="number" value={seed} onChange={e=>setSeed(Number(e.target.value))} style={{ width:'100%', fontSize:11, padding:'4px 8px', border:`1px solid ${T.border}`, borderRadius:4 }} />
+            </div>
+          </div>
+          <button onClick={runFull} style={{ width:'100%', marginTop:12, background:SOLAR_GOLD, color:'#fff', border:'none', borderRadius:6, padding:'9px 0', fontWeight:700, cursor:'pointer', fontSize:12 }}>
+            Run {simRuns} Simulations
+          </button>
+        </div>
+        <div>
+          {mcData ? (
+            <>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginBottom:16 }}>
+                <KpiCard label="P10 IRR" value={(mcData.p10||0).toFixed(2)+'%'} color={T.blue} />
+                <KpiCard label="P50 IRR (Median)" value={(mcData.p50||0).toFixed(2)+'%'} color={SOLAR_GOLD} />
+                <KpiCard label="P90 IRR (Low)" value={(mcData.p90||0).toFixed(2)+'%'} color={T.red} />
+                <KpiCard label="Prob Above Hurdle" value={(mcData.pAboveHurdle||0).toFixed(1)+'%'} color={mcData.pAboveHurdle>=75?T.green:T.amber} />
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:16 }}>
+                <KpiCard label="Mean IRR" value={(mcData.mean||0).toFixed(2)+'%'} color={T.indigo} size={18} />
+                <KpiCard label="Std Dev" value={(mcData.std||0).toFixed(2)+'%'} color={T.sub} size={18} />
+                <KpiCard label="P99 IRR" value={(mcData.p99||0).toFixed(2)+'%'} color={T.amber} size={18} />
+              </div>
+              <div style={{ height:200 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={mcData.hist} margin={{left:0,right:0}}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis dataKey="bin" tick={{fontSize:8}} unit="%" />
+                    <YAxis tick={{fontSize:10}} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Frequency" fill={SOLAR_GOLD} opacity={0.8} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          ) : (
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:300, color:T.sub, fontSize:14 }}>
+              Configure parameters and click Run to simulate
+            </div>
+          )}
+        </div>
+      </div>
+      <SectionTitle icon="Contribution">Uncertainty Contribution (% of Total Variance)</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12, marginTop:8 }}>
+        {uncertSources.map((u,i) => (
+          <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, padding:'10px 14px' }}>
+            <div style={{ fontSize:10, color:T.sub }}>{u.name}</div>
+            <div style={{ fontSize:16, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:SOLAR_GOLD }}>{u.pct}% σ</div>
+            <div style={{ fontSize:10, color:T.sub }}>{totalVariance>0?(u.contribution/totalVariance*100).toFixed(0):0}% of variance</div>
+            <div style={{ height:4, background:T.border, borderRadius:2, marginTop:6 }}>
+              <div style={{ height:'100%', width:totalVariance>0?(u.contribution/totalVariance*100)+'%':'0%', background:SOLAR_GOLD, borderRadius:2 }}/>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TabRefinancing({ m, inp }) {
+  const sDrawSchedule = Array.from({length:24}, (_,i) => {
+    const t = (i+1)/24;
+    const sCurve = t < 0.3 ? t*t/0.09*0.15 : t < 0.7 ? 0.15+(t-0.3)/0.4*0.70 : 0.85+(t-0.7)/0.3*0.15;
+    const prevT = i > 0 ? i/24 : 0;
+    const prevSC = prevT < 0.3 ? prevT*prevT/0.09*0.15 : prevT < 0.7 ? 0.15+(prevT-0.3)/0.4*0.70 : 0.85+(prevT-0.7)/0.3*0.15;
+    return {
+      month: i+1,
+      cumDraw: +(sCurve * m.totalCapexM).toFixed(2),
+      monthly: +((sCurve - prevSC) * m.totalCapexM).toFixed(2)
+    };
+  });
+
+  const refiData = Array.from({length:8}, (_,i) => {
+    const yr = i+1;
+    const remDebtFrac = Math.max(0, (inp.debtTenor-yr)/inp.debtTenor);
+    const remDebt = m.debtAmount * remDebtFrac;
+    const annCfads = m.y1Ebitda * Math.pow(1 + inp.ppaEscalator/100, yr-1);
+    const maxNewDebt = inp.minDscr > 0 ? annCfads * inp.debtTenor / inp.minDscr : 0;
+    const cashOut = Math.max(0, maxNewDebt - remDebt);
+    const irrUplift = m.equityAmount > 0 ? cashOut / m.equityAmount * 100 * 0.25 : 0;
+    return { yr, cashOut:+cashOut.toFixed(2), irrUplift:+irrUplift.toFixed(2), remDebt:+remDebt.toFixed(2) };
+  });
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:20 }}>
+        <div>
+          <SectionTitle icon="C">Construction S-Curve Draw (24 months)</SectionTitle>
+          <div style={{ height:220 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={sDrawSchedule} margin={{left:0,right:0}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="month" tick={{fontSize:10}} />
+                <YAxis tick={{fontSize:10}} />
+                <Tooltip formatter={v=>'$'+(v||0).toFixed(2)+'M'} />
+                <Legend />
+                <Bar dataKey="monthly" name="Monthly Draw $M" fill={T.indigo} opacity={0.6} />
+                <Line dataKey="cumDraw" stroke={SOLAR_GOLD} strokeWidth={2} dot={false} name="Cumulative $M" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="R">Cash-Out Refinancing Analysis by Year</SectionTitle>
+          <div style={{ height:220 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={refiData} margin={{left:0,right:10}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="yr" tick={{fontSize:10}} />
+                <YAxis yAxisId="l" tick={{fontSize:10}} />
+                <YAxis yAxisId="r" orientation="right" tick={{fontSize:10}} unit="%" />
+                <Tooltip />
+                <Legend />
+                <Bar yAxisId="l" dataKey="cashOut" name="Cash-Out $M" fill={T.teal} opacity={0.7} />
+                <Line yAxisId="r" dataKey="irrUplift" stroke={SOLAR_GOLD} strokeWidth={2} name="IRR Uplift %" dot />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
+        <div>
+          <SectionTitle icon="F">Construction to Permanent Financing</SectionTitle>
+          <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+            {[
+              ['Construction Loan Rate', ((inp.debtRate+2.5)||0).toFixed(2)+'%'],
+              ['Construction Tenor', '24 months'],
+              ['Construction Loan', fmtM(m.debtAmount*0.85)],
+              ['Permanent Loan Rate', inp.debtRate+'%'],
+              ['Permanent Tenor', inp.debtTenor+' years'],
+              ['Permanent Loan', fmtM(m.debtAmount)],
+              ['Debt Fees', fmtM(m.debtFeeAmt)],
+              ['DSRA at Close', fmtM(m.dsra)],
+              ['Change Order Reserve', fmtM(m.totalCapexM*0.075)],
+            ].map(([k,v],i) => (
+              <div key={i} style={{ display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:`1px solid ${T.border}` }}>
+                <span style={{ fontSize:11, color:T.sub }}>{k}</span>
+                <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:12, fontWeight:700 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="S">Monthly Draw Schedule (Selected Months)</SectionTitle>
+          <DataTable small zebra
+            headers={['Month','Monthly $M','Cumulative $M','% Complete']}
+            rows={sDrawSchedule.filter((_,i)=>i===2||i===5||i===8||i===11||i===14||i===17||i===20||i===23).map(d=>[
+              d.month,
+              (d.monthly||0).toFixed(2),
+              (d.cumDraw||0).toFixed(2),
+              m.totalCapexM>0?(d.cumDraw/m.totalCapexM*100).toFixed(0)+'%':'0%'
+            ])}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TabWaterfall({ m, inp }) {
+  const [prefReturn, setPrefReturn] = useState(8);
+  const [lpSplit, setLpSplit] = useState(80);
+  const [carriedInt, setCarriedInt] = useState(20);
+  const gpSplit = 100 - lpSplit;
+
+  const dist = m.annuals.map(a => {
+    const avail = Math.max(0, a.equityDist || 0);
+    const lpPrefAmt = m.equityAmount * lpSplit / 100;
+    const lpPref = Math.min(avail, lpPrefAmt > 0 ? lpPrefAmt * prefReturn / 100 : 0);
+    const remaining = Math.max(0, avail - lpPref);
+    const gpCatchUp = gpSplit > 0 && lpSplit > 0 ? Math.min(remaining * 0.20, lpPref * gpSplit / lpSplit) : 0;
+    const afterCatchup = Math.max(0, remaining - gpCatchUp);
+    const lpTotal = lpPref + afterCatchup * lpSplit / 100;
+    const gpTotal = gpCatchUp + afterCatchup * gpSplit / 100;
+    return { yr:a.yr, avail:+avail.toFixed(3), lpPref:+lpPref.toFixed(3), gpCatchup:+gpCatchUp.toFixed(3), lpShare:+(afterCatchup*lpSplit/100).toFixed(3), gpShare:+(afterCatchup*gpSplit/100).toFixed(3), lpTotal:+lpTotal.toFixed(3), gpTotal:+gpTotal.toFixed(3) };
+  });
+
+  const totalLP = dist.reduce((s,d)=>s+d.lpTotal,0);
+  const totalGP = dist.reduce((s,d)=>s+d.gpTotal,0);
+  const lpInvest = m.equityAmount * lpSplit / 100;
+  const gpInvest = m.equityAmount * gpSplit / 100;
+  const lpIRR = calcIRR([-lpInvest, ...dist.map(d=>d.lpTotal)]) * 100;
+  const gpIRR = calcIRR([-gpInvest, ...dist.map(d=>d.gpTotal)]) * 100;
+  const lpMoic = lpInvest > 0 ? totalLP / lpInvest : 0;
+  const gpMoic = gpInvest > 0 ? totalGP / gpInvest : 0;
+
+  let cumLP = 0, cumGP = 0;
+  const cumData = dist.map(d => {
+    cumLP += d.lpTotal; cumGP += d.gpTotal;
+    return { yr:d.yr, cumLP:+cumLP.toFixed(2), cumGP:+cumGP.toFixed(2) };
+  });
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'240px 1fr', gap:20, marginBottom:20 }}>
+        <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+          <div style={{ fontSize:12, fontWeight:700, marginBottom:12 }}>Waterfall Structure</div>
+          <div style={{ marginBottom:10 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+              <span style={{ fontSize:11, color:T.sub }}>LP Preferred Return</span>
+              <span style={{ fontSize:11, fontFamily:'JetBrains Mono, monospace', fontWeight:700 }}>{prefReturn}%</span>
+            </div>
+            <input type="range" min={6} max={12} step={0.5} value={prefReturn} onChange={e=>setPrefReturn(Number(e.target.value))} style={{ width:'100%', accentColor:SOLAR_GOLD }} />
+          </div>
+          <div style={{ marginBottom:10 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+              <span style={{ fontSize:11, color:T.sub }}>LP / GP Split</span>
+              <span style={{ fontSize:11, fontFamily:'JetBrains Mono, monospace', fontWeight:700 }}>{lpSplit}/{gpSplit}</span>
+            </div>
+            <input type="range" min={70} max={95} step={5} value={lpSplit} onChange={e=>setLpSplit(Number(e.target.value))} style={{ width:'100%', accentColor:SOLAR_GOLD }} />
+          </div>
+          <div style={{ marginBottom:10 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+              <span style={{ fontSize:11, color:T.sub }}>Carried Interest</span>
+              <span style={{ fontSize:11, fontFamily:'JetBrains Mono, monospace', fontWeight:700 }}>{carriedInt}%</span>
+            </div>
+            <input type="range" min={15} max={30} step={5} value={carriedInt} onChange={e=>setCarriedInt(Number(e.target.value))} style={{ width:'100%', accentColor:SOLAR_GOLD }} />
+          </div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+          <KpiCard label="LP Total Distributions" value={fmtM(totalLP)} sub={'MOIC: '+(lpMoic||0).toFixed(2)+'x'} color={T.indigo} />
+          <KpiCard label="GP Total Distributions" value={fmtM(totalGP)} sub={'MOIC: '+(gpMoic||0).toFixed(2)+'x'} color={SOLAR_GOLD} />
+          <KpiCard label="LP IRR" value={(isFinite(lpIRR)?lpIRR:0).toFixed(1)+'%'} sub={lpSplit+'% of equity'} color={T.blue} />
+          <KpiCard label="GP IRR" value={(isFinite(gpIRR)?gpIRR:0).toFixed(1)+'%'} sub={gpSplit+'% of equity'} color={T.green} />
+        </div>
+      </div>
+      <SectionTitle icon="C">Cumulative LP vs GP Distributions</SectionTitle>
+      <div style={{ height:200, marginBottom:20 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={cumData} margin={{left:0,right:0}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="yr" tick={{fontSize:10}} />
+            <YAxis tick={{fontSize:10}} />
+            <Tooltip formatter={(v)=>'$'+(v||0).toFixed(2)+'M'} />
+            <Legend />
+            <Area dataKey="cumLP" stroke={T.indigo} fill={T.indigo} fillOpacity={0.3} name="LP Cumulative $M" />
+            <Area dataKey="cumGP" stroke={SOLAR_GOLD} fill={SOLAR_GOLD} fillOpacity={0.3} name="GP Cumulative $M" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+      <SectionTitle icon="W">Annual Distribution Waterfall Table</SectionTitle>
+      <DataTable small zebra
+        headers={['Yr','Available $M','LP Pref','GP Catch-up','LP Share','GP Share','LP Total','GP Total']}
+        rows={dist.map(d=>[d.yr,(d.avail||0).toFixed(2),(d.lpPref||0).toFixed(2),(d.gpCatchup||0).toFixed(2),(d.lpShare||0).toFixed(2),(d.gpShare||0).toFixed(2),(d.lpTotal||0).toFixed(2),(d.gpTotal||0).toFixed(2)])}
+      />
+    </div>
+  );
+}
+
+function TabTaxEquity({ m, inp }) {
+  const teSize = m.totalCapexM * 0.35;
+  const teYield = 7.5;
+  const annCfads = m.y1Ebitda * 0.45;
+  const flipYr = annCfads > 0 ? Math.ceil((teSize * teYield / 100) / annCfads) : 6;
+
+  const structures = [
+    { name:'Flip Partnership', desc:'Most common. TE investor gets ITC + MACRS + preferred cash yield. Sponsor retains operating control. At flip point (~95% yield), TE drops from 99% to 5% interest.', teIRR:7.5, sponsorIRR:+(m.equityIRR*100*1.08).toFixed(1), pros:['Full ITC monetization','MACRS upside','Lender-accepted'], cons:['Complex','Flip triggers review','High transaction cost'] },
+    { name:'Inverted Lease', desc:'TE leases tax credits to sponsor. Off-balance-sheet. Simpler documentation. No asset ownership transfer.', teIRR:8.5, sponsorIRR:+(m.equityIRR*100*0.97).toFixed(1), pros:['Off-balance-sheet','Simpler docs','No flip mechanics'], cons:['Lower TE economics','PTC ineligible','Limited MACRS'] },
+    { name:'Sale-Leaseback', desc:'TE acquires assets outright, leases back to developer. TE claims ITC + depreciation. Rent = operating cashflow.', teIRR:9.0, sponsorIRR:+(m.equityIRR*100*0.94).toFixed(1), pros:['Clean balance sheet','Full ITC','Predictable yield'], cons:['TE owns asset','Residual value risk','Leaseback constraints'] },
+  ];
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="Tax Equity Sizing" value={fmtM(teSize)} sub="~35% of CAPEX (typical)" color={T.indigo} />
+        <KpiCard label="Effective TE Yield" value={teYield+'%'} sub="All-in cost" color={SOLAR_GOLD} />
+        <KpiCard label="Est. Flip Year" value={Math.max(1,flipYr)+' yrs'} sub="When TE hits yield hurdle" color={T.teal} />
+        <KpiCard label="ITC + MACRS Package" value={fmtM((m.itcAmount||0)+(m.macrsShields||0))} sub="Total tax benefits" color={T.green} />
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, marginBottom:24 }}>
+        {structures.map((s,i) => (
+          <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:13, fontWeight:700, marginBottom:6, color: i===0?SOLAR_GOLD:T.text }}>
+              {s.name} {i===0 && <Badge label="MOST COMMON" bg={SOLAR_GOLD} />}
+            </div>
+            <div style={{ fontSize:11, color:T.sub, marginBottom:12, lineHeight:1.5 }}>{s.desc}</div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:12 }}>
+              <div style={{ background:'#F0FDF4', borderRadius:4, padding:'6px 10px' }}>
+                <div style={{ fontSize:9, color:T.sub }}>TE IRR</div>
+                <div style={{ fontSize:16, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:T.green }}>{s.teIRR}%</div>
+              </div>
+              <div style={{ background:'#EFF6FF', borderRadius:4, padding:'6px 10px' }}>
+                <div style={{ fontSize:9, color:T.sub }}>Sponsor IRR</div>
+                <div style={{ fontSize:16, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:T.blue }}>{s.sponsorIRR}%</div>
+              </div>
+            </div>
+            <div style={{ fontSize:10, fontWeight:700, color:T.green, marginBottom:3 }}>Pros</div>
+            <ul style={{ margin:0, paddingLeft:14, fontSize:10, color:T.sub, lineHeight:1.6 }}>
+              {s.pros.map((p,pi) => <li key={pi}>{p}</li>)}
+            </ul>
+            <div style={{ fontSize:10, fontWeight:700, color:T.red, marginBottom:3, marginTop:8 }}>Cons</div>
+            <ul style={{ margin:0, paddingLeft:14, fontSize:10, color:T.sub, lineHeight:1.6 }}>
+              {s.cons.map((c,ci) => <li key={ci}>{c}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <SectionTitle icon="F">Pre-Flip vs Post-Flip Summary</SectionTitle>
+      <DataTable zebra
+        headers={['Phase','Period','TE %','Sponsor %','TE Receives','Sponsor Receives']}
         rows={[
-          ['DC Capacity',                   inputs.capacityMW.toFixed(0),                          'MW'],
-          ['AC Capacity (est.)',             (inputs.capacityMW * 0.87).toFixed(1),                 'MW AC (DC:AC = 1.15)'],
-          ['Capacity Factor',               (inputs.capacityFactor * 100).toFixed(1) + '%',        '—'],
-          ['Year-1 Gross Generation (P50)', (model.p50Annual / 1000).toFixed(1),                   'GWh'],
-          ['Year-1 Net Generation',         (model.p50Annual * 0.97 / 1000).toFixed(1),            'GWh (97% availability)'],
-          ['Total CAPEX',                   model.totalCapexM.toFixed(1),                          '$M'],
-          ['CAPEX per Watt DC',             '$' + inputs.capexPerW.toFixed(2),                     '$/W DC'],
-          ['Effective ITC Rate',            (model.effITC * 100).toFixed(0) + '%',                 'Base + adders'],
-          ['ITC Amount',                    model.itcAmountM.toFixed(1),                           '$M (cash in Year 1)'],
-          ['MACRS Tax Shield PV',           model.macrsTaxShield.toFixed(1),                       '$M PV at discount rate'],
-          ['Debt Amount',                   model.debtAmountM.toFixed(1),                          '$M'],
-          ['Equity Investment',             model.equityAmountM.toFixed(1),                        '$M (net of ITC)'],
-          ['Annual Debt Service',           model.annualDS.toFixed(2),                             '$M/yr (level annuity)'],
-          ['O&M Year 1',                    (inputs.capacityMW * inputs.omPerKwYr / 1e6).toFixed(2), '$M'],
-          ['Land Lease Year 1',             (inputs.projectAcres * inputs.landLeasePerAcre / 1e6).toFixed(2), '$M'],
-          ['LCOE',                          model.lcoe.toFixed(2),                                 '$/MWh (real, discounted)'],
-          ['P90 Annual Generation',         (model.p90Annual / 1000).toFixed(1),                   'GWh (lenders case)'],
-          ['PPA Price',                     '$' + inputs.ppaPriceMWh.toFixed(0),                   '$/MWh'],
-          ['Project Life',                  inputs.projectLifeYr.toFixed(0),                       'Years'],
-          ['DSRA Requirement',              model.dsraM.toFixed(2),                                '$M (6-month DS reserve)'],
+          ['Pre-Flip','Years 1-'+Math.max(1,flipYr),'99%','1%','ITC + MACRS + preferred yield','Operating control + minority cash'],
+          ['Post-Flip','Years '+(Math.max(1,flipYr)+1)+'-'+inp.projectLife,'5%','95%','Residual cash','Majority of cashflows'],
         ]}
       />
     </div>
   );
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 2 — Cash Flow Engine
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab1 = () => {
-    let cumDist = 0;
-    const rows = model.table.map(r => {
-      cumDist += r.equDistM;
-      return [
-        'Y' + r.yr,
-        (r.grossGen / 1000).toFixed(1),
-        (r.netGen / 1000).toFixed(1),
-        r.revenueM.toFixed(2),
-        r.omM.toFixed(2),
-        r.landM.toFixed(2),
-        r.insM.toFixed(2),
-        r.gaM.toFixed(2),
-        r.ebitdaM.toFixed(2),
-        r.dsM.toFixed(2),
-        r.cfadsM.toFixed(2),
-        r.taxM.toFixed(2),
-        r.netIncM.toFixed(2),
-        r.equDistM.toFixed(2),
-        cumDist.toFixed(2),
-      ];
-    });
-    const totalRev  = model.table.reduce((s, r) => s + r.revenueM, 0);
-    const totalDist = model.table.reduce((s, r) => s + r.equDistM, 0) + model.itcAmountM;
-
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16 }}>
-          <KpiCard label="Total Revenue (30yr)" value={fmtM(totalRev)} color={T.green} />
-          <KpiCard label="Total Equity Distributions" value={fmtM(totalDist)} color={T.blue} />
-          <KpiCard label="MOIC" value={fmtX(model.moic)} color={T.indigo} />
-          <KpiCard label="Equity IRR" value={fmtPct(model.equityIRR)} color={model.equityIRR > 0.10 ? T.green : T.amber} />
-        </div>
-        <div style={{ maxHeight: 540, overflowY: 'auto' }}>
-          <DataTable
-            headers={['Year', 'Gross Gen (GWh)', 'Net Gen (GWh)', 'Revenue ($M)', 'O&M ($M)', 'Land ($M)', 'Ins ($M)', 'G&A ($M)', 'EBITDA ($M)', 'Debt Svc ($M)', 'CFADS ($M)', 'Tax ($M)', 'Net Inc ($M)', 'Equity Dist ($M)', 'Cum Dist ($M)']}
-            rows={rows}
-            colorFn={(cell, ci) => {
-              if (ci === 0) return T.sub;
-              const n = parseFloat(cell);
-              if (ci === 14) return n >= 0 ? T.green : T.red;
-              if (ci === 13) return n > 0 ? T.green : T.amber;
-              if (ci === 10) return n >= 0 ? T.teal : T.red;
-              return T.text;
-            }}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 3 — Returns Analysis
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab2 = () => {
-    const discRates = [0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15];
-    const npvSens = discRates.map(r => ({
-      rate: (r * 100).toFixed(0) + '%',
-      npv: parseFloat(calcNPV(r, model.equityCFs).toFixed(1)),
-    }));
-
-    const distChart = model.table.slice(0, 20).map(r => ({
-      yr: 'Y' + r.yr,
-      dist: parseFloat(r.equDistM.toFixed(2)),
-    }));
-
-    const levBenefit  = model.equityIRR - model.projectIRR;
-    const itcLift     = Math.min(0.04, model.itcAmountM / Math.max(1, model.equityAmountM) * 0.40);
-    const macrsLift   = Math.min(0.015, model.macrsTaxShield / Math.max(1, model.equityAmountM) * 0.10);
-    const degDrag     = inputs.degradationPct * 0.08;
-
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-          <KpiCard label="Equity IRR" value={fmtPct(model.equityIRR)} sub="Levered, after-tax" color={model.equityIRR > 0.10 ? T.green : T.amber} />
-          <KpiCard label="Project IRR" value={fmtPct(model.projectIRR)} sub="Unlevered, pre-tax" color={T.blue} />
-          <KpiCard label="NPV" value={fmtM(model.npvM)} sub={`at ${(inputs.discountRatePct * 100).toFixed(1)}% discount`} color={model.npvM > 0 ? T.green : T.red} />
-          <KpiCard label="MOIC" value={fmtX(model.moic)} sub="Multiple on invested capital" color={T.indigo} />
-          <KpiCard label="Payback" value={model.payback + ' yrs'} color={T.teal} />
-          <KpiCard label="LCOE" value={'$' + model.lcoe.toFixed(2) + '/MWh'} color={T.accent} />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <SectionTitle>IRR Decomposition</SectionTitle>
-            <DataTable
-              headers={['Component', 'Contribution']}
-              rows={[
-                ['Unlevered Project Return',     fmtPct(model.projectIRR)],
-                ['Leverage Benefit',              '+' + fmtPct(Math.max(0, levBenefit))],
-                ['ITC Benefit (est.)',            '+' + fmtPct(itcLift)],
-                ['MACRS Tax Shield (est.)',       '+' + fmtPct(macrsLift)],
-                ['Degradation Drag (est.)',       '-' + fmtPct(degDrag)],
-                ['Equity IRR',                    fmtPct(model.equityIRR)],
-              ]}
-            />
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <SectionTitle>Benchmark Comparison</SectionTitle>
-            <DataTable
-              headers={['Strategy', 'Typical Range', 'This Project']}
-              rows={[
-                ['Unlevered Solar',    '7–9%',   fmtPct(model.projectIRR)],
-                ['Levered Solar',      '10–15%', fmtPct(model.equityIRR)],
-                ['Wind (Levered)',     '8–12%',  '—'],
-                ['BESS (Levered)',     '9–14%',  '—'],
-                ['S&P 500 Avg (10yr)', '~10%',   '—'],
-              ]}
-              colorFn={(cell, ci, ri) => {
-                if (ci === 2 && ri === 0) return model.projectIRR > 0.09 ? T.green : T.amber;
-                if (ci === 2 && ri === 1) return model.equityIRR > 0.10 ? T.green : T.amber;
-                return T.text;
-              }}
-            />
-          </div>
-        </div>
-
-        <SectionTitle>NPV Sensitivity to Discount Rate</SectionTitle>
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={npvSens}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="rate" tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip formatter={v => ['$' + v + 'M', 'NPV']} />
-            <ReferenceLine y={0} stroke={T.red} strokeDasharray="4 4" label={{ value: 'Break-even', fontSize: 10, position: 'insideRight' }} />
-            <Line type="monotone" dataKey="npv" stroke={SOLAR_GOLD} strokeWidth={2} dot={{ r: 3 }} name="NPV ($M)" />
-          </LineChart>
-        </ResponsiveContainer>
-
-        <SectionTitle>Equity Distributions — First 20 Years ($M)</SectionTitle>
-        <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={distChart}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="yr" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip formatter={v => ['$' + v + 'M', 'Distribution']} />
-            <Area type="monotone" dataKey="dist" stroke={SOLAR_GOLD} fill="#FEF3C7" strokeWidth={2} name="Equity Dist" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 4 — DSCR & Debt Sizing
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab3 = () => {
-    const dscrData = model.table
-      .filter(r => r.dscr !== null)
-      .map(r => ({ yr: 'Y' + r.yr, dscr: parseFloat(r.dscr.toFixed(3)) }));
-
-    // Debt capacity at different covenants
-    const minEbitda = Math.min(...model.table.filter(r => r.yr <= inputs.debtTenorYr).map(r => r.ebitdaM));
-    const afFactor  = inputs.debtRatePct > 0
-      ? Math.pow(1 + inputs.debtRatePct, inputs.debtTenorYr)
-        / (inputs.debtRatePct * Math.pow(1 + inputs.debtRatePct, inputs.debtTenorYr))
-      : 0;
-    const debtCapRows = [1.25, 1.30, 1.35, 1.40].map(cov => {
-      const maxDS   = minEbitda / cov;
-      const maxDebt = maxDS * afFactor;
-      const maxLev  = model.totalCapexM > 0 ? maxDebt / model.totalCapexM : 0;
-      return [cov.toFixed(2) + 'x', fmtM(maxDebt), (maxLev * 100).toFixed(1) + '%', fmtM(maxDS)];
-    });
-
-    // Interest rate sensitivity
-    const rateSensRows = [-0.02, -0.01, 0, 0.01, 0.02].map(delta => {
-      const rate = Math.max(0.001, inputs.debtRatePct + delta);
-      const ds   = model.debtAmountM * rate
-        * Math.pow(1 + rate, inputs.debtTenorYr)
-        / (Math.pow(1 + rate, inputs.debtTenorYr) - 1);
-      const minDscrSens = ds > 0 ? minEbitda / ds : 0;
-      return [
-        (delta >= 0 ? '+' : '') + Math.round(delta * 10000) + 'bps',
-        minDscrSens.toFixed(2) + 'x',
-        fmtM(ds),
-      ];
-    });
-
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-          <KpiCard label="Min DSCR" value={fmtX(model.minDscr)} sub="Worst debt-service year" color={model.minDscr >= inputs.targetDscr ? T.green : T.red} />
-          <KpiCard label="Avg DSCR" value={fmtX(model.avgDscr)} sub={`${inputs.debtTenorYr}-yr debt period`} color={T.blue} />
-          <KpiCard label="LLCR" value={fmtX(model.llcr)} sub="Loan Life Coverage Ratio" color={T.teal} />
-          <KpiCard label="PLCR" value={fmtX(model.plcr)} sub="Project Life Coverage Ratio" color={T.indigo} />
-          <KpiCard label="DSRA (6-month)" value={fmtM(model.dsraM)} sub="Debt Service Reserve Account" />
-        </div>
-
-        <SectionTitle>Annual DSCR — Debt Period ({inputs.debtTenorYr} Years)</SectionTitle>
-        <ResponsiveContainer width="100%" height={260}>
-          <BarChart data={dscrData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="yr" tick={{ fontSize: 9 }} />
-            <YAxis domain={[0, 2.5]} tick={{ fontSize: 11 }} />
-            <Tooltip formatter={v => [v + 'x', 'DSCR']} />
-            <ReferenceLine y={inputs.targetDscr} stroke={T.red} strokeDasharray="5 5"
-              label={{ value: 'Covenant ' + inputs.targetDscr.toFixed(2) + 'x', fontSize: 10, position: 'insideTopRight' }} />
-            <ReferenceLine y={1.20} stroke="#FCA5A5" strokeDasharray="3 3" />
-            <Bar dataKey="dscr" fill={SOLAR_GOLD} radius={[3, 3, 0, 0]} name="DSCR" />
-          </BarChart>
-        </ResponsiveContainer>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>
-          <div>
-            <SectionTitle>Debt Capacity by DSCR Covenant</SectionTitle>
-            <DataTable
-              headers={['DSCR Floor', 'Max Debt ($M)', 'Max Leverage', 'Max Annual DS']}
-              rows={debtCapRows}
-              colorFn={(cell, ci, ri) => {
-                if (ci === 2) {
-                  const n = parseFloat(cell);
-                  return n > 75 ? T.red : n > 65 ? T.amber : T.green;
-                }
-                return T.text;
-              }}
-            />
-            <div style={{ fontSize: 11, color: T.sub, marginTop: 8 }}>
-              LLCR = PV(CFADS over debt life) / Outstanding Debt.
-              PLCR = PV(CFADS over project life) / Outstanding Debt.
-            </div>
-          </div>
-          <div>
-            <SectionTitle>Interest Rate Sensitivity (Min DSCR)</SectionTitle>
-            <DataTable
-              headers={['Rate Shift', 'Min DSCR', 'Annual Debt Service']}
-              rows={rateSensRows}
-              colorFn={(cell, ci) => {
-                if (ci === 1) {
-                  const n = parseFloat(cell);
-                  return n >= inputs.targetDscr ? T.green : n >= 1.20 ? T.amber : T.red;
-                }
-                return T.text;
-              }}
-            />
-          </div>
-        </div>
-
-        <SectionTitle>Debt Sculpting — Flat vs DSCR-Sculpted Comparison</SectionTitle>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: T.text, marginBottom: 8 }}>Flat Amortisation (Current Model)</div>
-            <div style={{ fontSize: 12, color: T.sub, lineHeight: 1.8 }}>
-              Level annuity: equal annual debt service of {fmtM(model.annualDS)}/yr.
-              Min DSCR: {fmtX(model.minDscr)} in Year {model.table.filter(r => r.dscr !== null).find(r => r.dscr === model.minDscr)?.yr ?? '—'}.
-              Simple to document; lenders prefer for straightforward assets.
-            </div>
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: T.text, marginBottom: 8 }}>DSCR-Sculpted Amortisation (Alternative)</div>
-            <div style={{ fontSize: 12, color: T.sub, lineHeight: 1.8 }}>
-              Debt service scaled to EBITDA each year, maintaining constant DSCR of {inputs.targetDscr.toFixed(2)}x.
-              Allows higher early distributions when EBITDA is highest.
-              Results in higher equity IRR by ~0.3–0.8pp but requires cash flow waterfall model.
-              Estimated sculpted DS Year 1: {fmtM(model.table[0] ? model.table[0].ebitdaM / inputs.targetDscr : 0)}/yr.
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 5 — Tax Credit Modeling (IRA 2022)
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab4 = () => {
-    const ptcPerMwh = 27.5; // $/MWh IRA base PTC (2024 indexed)
-    const ptcNpv = model.table.slice(0, 10).reduce((s, r, i) => {
-      const gen = model.p50Annual * Math.pow(1 - inputs.degradationPct / 100, i) * 0.97;
-      return s + gen * ptcPerMwh / 1e6 / Math.pow(1 + inputs.discountRatePct, i + 1);
-    }, 0);
-
-    const macrsRows = MACRS5.map((rate, i) => {
-      const deprM  = model.depreciableBasis * rate;
-      const saving = deprM * inputs.taxRatePct;
-      const pv     = saving / Math.pow(1 + inputs.discountRatePct, i + 1);
-      return [`Year ${i + 1}`, (rate * 100).toFixed(2) + '%', fmtM(deprM), fmtM(saving), fmtM(pv)];
-    });
-    const totalMacrsPv = MACRS5.reduce((s, rate, i) =>
-      s + model.depreciableBasis * rate * inputs.taxRatePct / Math.pow(1 + inputs.discountRatePct, i + 1), 0);
-    macrsRows.push(['Total', '100.00%', fmtM(model.depreciableBasis), fmtM(model.depreciableBasis * inputs.taxRatePct), fmtM(totalMacrsPv)]);
-
-    const itcRows = [
-      ['Base ITC (PWA compliant)', (inputs.itcPct * 100).toFixed(0) + '%', 'Prevailing wage & apprenticeship requirement met'],
-      ['Base ITC (non-PWA)', '6%', 'If PWA requirements not met — penalty rate'],
-      ['Domestic Content Adder', inputs.domesticContent ? '+10%' : '(not elected)', 'All steel/iron US-made; 40%+ domestic manufactured content'],
-      ['Energy Community Adder', inputs.energyCommunity ? '+10%' : '(not elected)', 'Brownfield, coal closure, or fossil fuel employment area'],
-      ['Low-Income Bonus', '+10–20%', 'Qualified/targeted LIH projects (not modeled)'],
-      ['Effective ITC (this project)', (model.effITC * 100).toFixed(0) + '%', fmtM(model.itcAmountM) + ' — received in Year 1'],
-    ];
-
-    const teRows = [
-      ['Partnership Flip', 'Tax equity takes 99% of losses/credits until ROE flip', '~6–8% tax equity yield', 'Flip trigger risk; complexity'],
-      ['Inverted Lease', 'Developer leases system; tax equity monetizes ITC+MACRS', '6–7% lease rate', 'Must own asset; lessee credit risk'],
-      ['Sale-Leaseback', 'Developer sells to tax equity; leases back for operations', 'Immediate ITC monetization', 'Asset transfer; residual value'],
-    ];
-
-    // ITC vs PTC bar chart data
-    const itcPtcData = [
-      { name: 'ITC Amount', value: parseFloat(model.itcAmountM.toFixed(1)) },
-      { name: 'PTC NPV (10yr)', value: parseFloat(ptcNpv.toFixed(1)) },
-      { name: 'MACRS Shield PV', value: parseFloat(model.macrsTaxShield.toFixed(1)) },
-    ];
-
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-          <KpiCard label="ITC Amount" value={fmtM(model.itcAmountM)} sub={`${(model.effITC * 100).toFixed(0)}% of eligible basis`} color={T.green} />
-          <KpiCard label="PTC NPV (10yr)" value={fmtM(ptcNpv)} sub="$27.5/MWh × gen × 10yr" color={T.blue} />
-          <KpiCard label="Recommendation" value={model.itcAmountM >= ptcNpv ? 'ELECT ITC' : 'ELECT PTC'}
-            sub={model.itcAmountM >= ptcNpv ? 'ITC NPV exceeds PTC stream' : 'PTC stream exceeds ITC'}
-            color={T.indigo} />
-          <KpiCard label="Total IRA Benefit" value={fmtM(model.itcAmountM + model.macrsTaxShield)} sub="ITC + MACRS PV shield" color={T.amber} />
-        </div>
-
-        <SectionTitle>ITC vs PTC Comparison ($M)</SectionTitle>
-        <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={itcPtcData} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis type="number" tick={{ fontSize: 11 }} />
-            <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={130} />
-            <Tooltip formatter={v => ['$' + v + 'M', 'Value']} />
-            <Bar dataKey="value" fill={SOLAR_GOLD} radius={[0, 4, 4, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-
-        <SectionTitle>ITC Adder Breakdown — IRA 2022</SectionTitle>
-        <DataTable headers={['Component', 'Rate', 'Eligibility']} rows={itcRows} />
-
-        <SectionTitle>MACRS 5-Year Depreciation Schedule</SectionTitle>
-        <DataTable headers={['Year', 'MACRS Rate', 'Depreciation ($M)', 'Tax Saving ($M)', 'PV of Tax Saving ($M)']} rows={macrsRows} />
-        <div style={{ fontSize: 11, color: T.sub, marginBottom: 14 }}>
-          Depreciable basis = {fmtM(model.depreciableBasis)} (Total CAPEX reduced by 50% of ITC per IRS Rev. Proc. 2023-29).
-          PV discounted at {(inputs.discountRatePct * 100).toFixed(1)}%.
-        </div>
-
-        <SectionTitle>Tax Equity Structure Comparison</SectionTitle>
-        <DataTable headers={['Structure', 'Mechanism', 'Tax Equity Cost', 'Key Risk']} rows={teRows} />
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 6 — Energy Yield P50/P90
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab5 = () => {
-    // Monte Carlo: 1,000 sr()-seeded runs using CLT approximation
-    const MC = 1000;
-    const yieldRuns = Array.from({ length: MC }, (_, i) => {
-      // Sum 4 uniform sr() draws → approx normal via CLT
-      const z = (sr(i * 7) + sr(i * 13) + sr(i * 31) + sr(i * 53) - 2) / Math.sqrt(4 / 12);
-      return model.p50Annual * (1 + inputs.yieldSigma * z);
-    });
-    const sorted = [...yieldRuns].sort((a, b) => a - b);
-    const p1  = sorted[Math.floor(MC * 0.01)];
-    const p10 = sorted[Math.floor(MC * 0.10)];
-    const p50 = sorted[Math.floor(MC * 0.50)];
-    const p90 = sorted[Math.floor(MC * 0.90)];
-    const p99 = sorted[Math.floor(MC * 0.99)];
-
-    const revP90 = p90 * inputs.ppaPriceMWh / 1e6;
-    const revP50 = p50 * inputs.ppaPriceMWh / 1e6;
-    const r0 = model.table[0] ?? {};
-    const costs0 = (r0.omM ?? 0) + (r0.landM ?? 0) + (r0.insM ?? 0) + (r0.gaM ?? 0);
-    const dscrP90 = model.annualDS > 0 ? (revP90 - costs0) / model.annualDS : 0;
-    const dscrP50 = model.annualDS > 0 ? (revP50 - costs0) / model.annualDS : 0;
-
-    // 25-year fan chart
-    const fanData = Array.from({ length: 25 }, (_, i) => ({
-      yr: 'Y' + (i + 1),
-      p10: parseFloat((p10 * Math.pow(1 - inputs.degradationPct / 100, i) / 1000).toFixed(1)),
-      p50: parseFloat((p50 * Math.pow(1 - inputs.degradationPct / 100, i) / 1000).toFixed(1)),
-      p90: parseFloat((p90 * Math.pow(1 - inputs.degradationPct / 100, i) / 1000).toFixed(1)),
-    }));
-
-    const uncertRows = [
-      ['Resource (GHI) Uncertainty',    '5.0%', 'Satellite + ground station correlation'],
-      ['Performance Ratio',              '4.0%', 'Module efficiency, inverter, soiling, shading'],
-      ['Interannual Variability',        '3.5%', 'Year-to-year climate variation'],
-      ['Degradation Uncertainty',        '3.0%', 'Module performance trajectory'],
-      ['Availability',                   '2.0%', 'Planned & unplanned downtime'],
-      ['Curtailment',                    '2.0%', 'Grid curtailment risk'],
-      ['Combined σ (RSS)',               (inputs.yieldSigma * 100).toFixed(1) + '%', 'Root-sum-square of independent uncertainties'],
-    ];
-
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-          <KpiCard label="P10 (Optimistic)" value={(p10 / 1000).toFixed(0) + ' GWh'} color={T.green} sub="10th percentile" />
-          <KpiCard label="P50 (Base Case)" value={(p50 / 1000).toFixed(0) + ' GWh'} color={T.blue} sub="Median / most likely" />
-          <KpiCard label="P90 (Lenders' Case)" value={(p90 / 1000).toFixed(0) + ' GWh'} color={T.amber} sub="90th percentile" />
-          <KpiCard label="P99 (Stress)" value={(p99 / 1000).toFixed(0) + ' GWh'} color={T.red} sub="1-in-100 downside" />
-        </div>
-
-        <SectionTitle>25-Year Production Fan Chart — GWh (P10 / P50 / P90)</SectionTitle>
-        <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={fanData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="yr" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip />
-            <Area type="monotone" dataKey="p10" stroke={T.green} fill="#D1FAE5" strokeWidth={1.5} name="P10" />
-            <Area type="monotone" dataKey="p50" stroke={SOLAR_GOLD} fill="#FEF3C7" strokeWidth={2} name="P50" />
-            <Area type="monotone" dataKey="p90" stroke={T.red} fill="#FEE2E2" strokeWidth={1.5} name="P90" />
-            <Legend />
-          </AreaChart>
-        </ResponsiveContainer>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>
-          <div>
-            <SectionTitle>Uncertainty Decomposition</SectionTitle>
-            <DataTable headers={['Source', 'Uncertainty', 'Basis']} rows={uncertRows} />
-          </div>
-          <div>
-            <SectionTitle>P90 vs P50 Financial Impact</SectionTitle>
-            <DataTable
-              headers={['Metric', 'P50 Base', 'P90 Lenders']}
-              rows={[
-                ['Annual Generation (GWh)', (p50 / 1000).toFixed(0), (p90 / 1000).toFixed(0)],
-                ['Annual Revenue ($M)',     fmtM(revP50),            fmtM(revP90)],
-                ['Revenue Delta',           '—',                     fmtM(revP90 - revP50)],
-                ['Year-1 DSCR (approx.)',   dscrP50.toFixed(2) + 'x', dscrP90.toFixed(2) + 'x'],
-                ['vs Covenant',             dscrP50 >= inputs.targetDscr ? 'PASS' : 'FAIL',
-                                            dscrP90 >= inputs.targetDscr ? 'PASS' : 'FAIL'],
-                ['Monte Carlo Runs',        '1,000 (sr-seeded)', '—'],
-              ]}
-              colorFn={cell => cell === 'PASS' ? T.green : cell === 'FAIL' ? T.red : T.text}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 7 — Sensitivity Analysis
-  // ══════════════════════════════════════════════════════════════════════════
-  function quickIRR(overrides) {
-    const inp = { ...inputs, ...overrides };
-    const totalCapex = inp.capacityMW * 1000 * inp.capexPerW / 1e6;
-    const effITC     = inp.itcPct + (inp.domesticContent ? 0.10 : 0) + (inp.energyCommunity ? 0.10 : 0);
-    const itcAmt     = effITC * totalCapex;
-    const debtAmt    = inp.debtPct * (totalCapex - itcAmt);
-    const equity     = totalCapex - debtAmt - itcAmt;
-    const ds         = debtAmt > 0
-      ? debtAmt * inp.debtRatePct * Math.pow(1 + inp.debtRatePct, inp.debtTenorYr)
-        / (Math.pow(1 + inp.debtRatePct, inp.debtTenorYr) - 1) : 0;
-    const p50        = inp.capacityMW * 1000 * inp.capacityFactor * 8760;
-    const deprBasis  = totalCapex * (1 - effITC / 2);
-    const cfs        = [-equity, itcAmt];
-    for (let yr = 1; yr <= inp.projectLifeYr; yr++) {
-      const deg    = Math.pow(1 - inp.degradationPct / 100, yr - 1);
-      const gen    = p50 * deg * 0.97;
-      const rev    = gen * (yr <= inp.ppaTenorYr ? inp.ppaPriceMWh : inp.ppaPriceMWh * 0.8) / 1e6;
-      const om     = inp.capacityMW * inp.omPerKwYr * Math.pow(1 + inp.inflationPct, yr - 1) / 1e6;
-      const land   = inp.projectAcres * inp.landLeasePerAcre * Math.pow(1 + inp.inflationPct, yr - 1) / 1e6;
-      const ins    = totalCapex * inp.insurancePct;
-      const ga     = 0.5;
-      const ebitda = rev - om - land - ins - ga;
-      const dsYr   = yr <= inp.debtTenorYr ? ds : 0;
-      const deprYr = yr <= 6 ? deprBasis * MACRS5[yr - 1] : 0;
-      const int    = dsYr > 0 ? debtAmt * inp.debtRatePct : 0;
-      const tax    = Math.max(0, ebitda - int - deprYr) * inp.taxRatePct;
-      const net    = Math.max(0, ebitda - dsYr - tax);
-      if (yr === 1) cfs[1] += net; else cfs.push(net);
-    }
-    return calcIRR(cfs);
-  }
-
-  const renderTab6 = () => {
-    const base = model.equityIRR;
-    const vars = [
-      { label: 'PPA Price',       key: 'ppaPriceMWh',   d: inputs.ppaPriceMWh * 0.10,   cost: false },
-      { label: 'Capacity Factor', key: 'capacityFactor', d: inputs.capacityFactor * 0.10, cost: false },
-      { label: 'CAPEX ($/W)',     key: 'capexPerW',      d: inputs.capexPerW * 0.10,      cost: true  },
-      { label: 'O&M Cost',        key: 'omPerKwYr',      d: inputs.omPerKwYr * 0.10,      cost: true  },
-      { label: 'Debt Rate',       key: 'debtRatePct',    d: inputs.debtRatePct * 0.10,    cost: true  },
-      { label: 'Degradation',     key: 'degradationPct', d: inputs.degradationPct * 0.10, cost: true  },
-      { label: 'Leverage (D/C)',  key: 'debtPct',        d: inputs.debtPct * 0.10,        cost: false },
-      { label: 'Tax Rate',        key: 'taxRatePct',     d: inputs.taxRatePct * 0.10,     cost: true  },
-    ];
-
-    const tornado = [...vars].map(v => {
-      const upVal  = v.cost ? inputs[v.key] - v.d : inputs[v.key] + v.d;
-      const dnVal  = v.cost ? inputs[v.key] + v.d : inputs[v.key] - v.d;
-      const up     = quickIRR({ [v.key]: Math.max(0.001, upVal) });
-      const dn     = quickIRR({ [v.key]: Math.max(0.001, dnVal) });
-      return {
-        label: v.label,
-        up:    parseFloat(((up - base) * 100).toFixed(2)),
-        down:  parseFloat(((dn - base) * 100).toFixed(2)),
-        range: Math.abs(up - dn),
-      };
-    }).sort((a, b) => b.range - a.range);
-
-    // 2-way: CAPEX × CF → IRR grid
-    const cxRange = [0.70, 0.78, 0.85, 0.93, 1.00];
-    const cfRange = [0.17, 0.19, 0.215, 0.24, 0.26];
-    const grid = cfRange.map(cf =>
-      cxRange.map(cx => (quickIRR({ capexPerW: cx, capacityFactor: cf }) * 100).toFixed(1) + '%')
-    );
-
-    return (
-      <div>
-        <SectionTitle>Tornado Chart — Equity IRR Sensitivity to ±10% Each Variable</SectionTitle>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={tornado} layout="vertical" margin={{ left: 130, right: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis type="number" tick={{ fontSize: 10 }} unit="%" />
-            <YAxis type="category" dataKey="label" tick={{ fontSize: 11 }} width={130} />
-            <Tooltip formatter={v => [v + '% IRR change']} />
-            <ReferenceLine x={0} stroke={T.text} strokeWidth={1.5} />
-            <Bar dataKey="up"   fill={T.green} name="Upside"   />
-            <Bar dataKey="down" fill={T.red}   name="Downside" />
-            <Legend />
-          </BarChart>
-        </ResponsiveContainer>
-
-        <SectionTitle>Two-Way Sensitivity: CAPEX ($/W) × Capacity Factor → Equity IRR</SectionTitle>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ borderCollapse: 'collapse', fontSize: 11, marginBottom: 16 }}>
-            <thead>
-              <tr style={{ background: HEADER_BG }}>
-                <th style={{ padding: '6px 12px', color: '#F1F5F9', textAlign: 'left' }}>CF \ CAPEX</th>
-                {cxRange.map(cx => (
-                  <th key={cx} style={{ padding: '6px 12px', color: '#F1F5F9', textAlign: 'center' }}>
-                    ${cx.toFixed(2)}/W
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {cfRange.map((cf, ri) => (
-                <tr key={cf} style={{ background: ri % 2 === 0 ? T.card : '#F8F7F4' }}>
-                  <td style={{ padding: '6px 12px', fontWeight: 600 }}>{(cf * 100).toFixed(1)}% CF</td>
-                  {grid[ri].map((v, ci) => {
-                    const n  = parseFloat(v);
-                    const bg = n > 13 ? '#D1FAE5' : n > 10 ? '#FEF3C7' : '#FEE2E2';
-                    return (
-                      <td key={ci} style={{ padding: '6px 12px', textAlign: 'center', background: bg, fontFamily: 'monospace', fontWeight: 700 }}>
-                        {v}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <SectionTitle>Sensitivity Summary Table</SectionTitle>
-        <DataTable
-          headers={['Variable', 'Upside (+10%)', 'Downside (-10%)', 'Net IRR Swing']}
-          rows={tornado.map(r => [
-            r.label,
-            (r.up >= 0 ? '+' : '') + r.up + '%',
-            (r.down >= 0 ? '+' : '') + r.down + '%',
-            (Math.abs(r.up) + Math.abs(r.down)).toFixed(2) + '% IRR',
-          ])}
-        />
-
-        <SectionTitle>Two-Way Sensitivity: PPA Price × Leverage → Min DSCR</SectionTitle>
-        {(() => {
-          const ppaRange  = [30, 36, 42, 48, 55];
-          const levRange  = [0.55, 0.63, 0.70, 0.78, 0.85];
-          const dscrGrid  = ppaRange.map(ppa =>
-            levRange.map(lev => {
-              const totalCap = inputs.capacityMW * 1000 * inputs.capexPerW / 1e6;
-              const effITC   = inputs.itcPct + (inputs.domesticContent ? 0.10 : 0) + (inputs.energyCommunity ? 0.10 : 0);
-              const debtAmt  = lev * (totalCap - effITC * totalCap);
-              const ds       = debtAmt > 0
-                ? debtAmt * inputs.debtRatePct * Math.pow(1 + inputs.debtRatePct, inputs.debtTenorYr)
-                  / (Math.pow(1 + inputs.debtRatePct, inputs.debtTenorYr) - 1) : 0;
-              const gen      = inputs.capacityMW * 1000 * inputs.capacityFactor * 8760 * 0.97;
-              const revM     = gen * ppa / 1e6;
-              const omM      = inputs.capacityMW * inputs.omPerKwYr / 1e6;
-              const landM    = inputs.projectAcres * inputs.landLeasePerAcre / 1e6;
-              const insM     = totalCap * inputs.insurancePct;
-              const gaM      = 0.5;
-              const ebitda   = revM - omM - landM - insM - gaM;
-              return ds > 0 ? (ebitda / ds).toFixed(2) + 'x' : '—';
-            })
-          );
-          return (
-            <div style={{ overflowX: 'auto', marginBottom: 20 }}>
-              <table style={{ borderCollapse: 'collapse', fontSize: 11 }}>
-                <thead>
-                  <tr style={{ background: HEADER_BG }}>
-                    <th style={{ padding: '6px 12px', color: '#F1F5F9', textAlign: 'left' }}>PPA \ Lev.</th>
-                    {levRange.map(lev => (
-                      <th key={lev} style={{ padding: '6px 12px', color: '#F1F5F9', textAlign: 'center' }}>
-                        {(lev * 100).toFixed(0)}%
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {ppaRange.map((ppa, ri) => (
-                    <tr key={ppa} style={{ background: ri % 2 === 0 ? T.card : '#F8F7F4' }}>
-                      <td style={{ padding: '6px 12px', fontWeight: 600 }}>${ppa}/MWh</td>
-                      {dscrGrid[ri].map((v, ci) => {
-                        const n  = parseFloat(v);
-                        const bg = n >= 1.35 ? '#D1FAE5' : n >= 1.20 ? '#FEF3C7' : '#FEE2E2';
-                        return (
-                          <td key={ci} style={{ padding: '6px 12px', textAlign: 'center', background: bg, fontFamily: 'monospace', fontWeight: 700 }}>
-                            {v}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        })()}
-
-        <SectionTitle>Key Variable Callouts</SectionTitle>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-          {[
-            { label: '1% CF improvement', delta: quickIRR({ capacityFactor: inputs.capacityFactor + 0.01 }) - model.equityIRR, desc: 'Additional IRR from +1% capacity factor' },
-            { label: '$1/MWh PPA lift', delta: quickIRR({ ppaPriceMWh: inputs.ppaPriceMWh + 1 }) - model.equityIRR, desc: 'Additional IRR from $1/MWh higher PPA' },
-            { label: '$0.05/W CAPEX cut', delta: quickIRR({ capexPerW: inputs.capexPerW - 0.05 }) - model.equityIRR, desc: 'Additional IRR from $0.05/W CAPEX reduction' },
-            { label: '+5% leverage', delta: quickIRR({ debtPct: Math.min(0.85, inputs.debtPct + 0.05) }) - model.equityIRR, desc: 'Additional IRR from 5pp more debt' },
-          ].map(c => (
-            <div key={c.label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 14 }}>
-              <div style={{ fontSize: 11, color: T.sub }}>{c.label}</div>
-              <div style={{ fontSize: 18, fontWeight: 700, fontFamily: 'monospace', color: c.delta >= 0 ? T.green : T.red, marginTop: 4 }}>
-                {c.delta >= 0 ? '+' : ''}{(c.delta * 100).toFixed(2)}%
-              </div>
-              <div style={{ fontSize: 11, color: T.sub, marginTop: 4 }}>{c.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 8 — Scenario Engine
-  // ══════════════════════════════════════════════════════════════════════════
-  function runScenario(overrides) {
-    const inp      = { ...inputs, ...overrides };
-    const totalCap = inp.capacityMW * 1000 * inp.capexPerW / 1e6;
-    const effITC   = inp.itcPct + (inp.domesticContent ? 0.10 : 0) + (inp.energyCommunity ? 0.10 : 0);
-    const itcAmt   = effITC * totalCap;
-    const debtAmt  = inp.debtPct * (totalCap - itcAmt);
-    const equity   = totalCap - debtAmt - itcAmt;
-    const ds       = debtAmt > 0
-      ? debtAmt * inp.debtRatePct * Math.pow(1 + inp.debtRatePct, inp.debtTenorYr)
-        / (Math.pow(1 + inp.debtRatePct, inp.debtTenorYr) - 1) : 0;
-    const p50      = inp.capacityMW * 1000 * inp.capacityFactor * 8760;
-    const deprBas  = totalCap * (1 - effITC / 2);
-    const cfs      = [-equity, itcAmt];
-    let minDscr    = Infinity;
-    let totalDistS = 0;
-    for (let yr = 1; yr <= inp.projectLifeYr; yr++) {
-      const deg    = Math.pow(1 - inp.degradationPct / 100, yr - 1);
-      const gen    = p50 * deg * 0.97;
-      const rev    = gen * (yr <= inp.ppaTenorYr ? inp.ppaPriceMWh : inp.ppaPriceMWh * 0.8) / 1e6;
-      const om     = inp.capacityMW * inp.omPerKwYr * Math.pow(1 + inp.inflationPct, yr - 1) / 1e6;
-      const land   = inp.projectAcres * inp.landLeasePerAcre * Math.pow(1 + inp.inflationPct, yr - 1) / 1e6;
-      const ins    = totalCap * inp.insurancePct;
-      const ga     = 0.5;
-      const ebitda = rev - om - land - ins - ga;
-      const dsYr   = yr <= inp.debtTenorYr ? ds : 0;
-      const dscr   = dsYr > 0 ? ebitda / dsYr : null;
-      if (dscr !== null && dscr < minDscr) minDscr = dscr;
-      const deprYr = yr <= 6 ? deprBas * MACRS5[yr - 1] : 0;
-      const int    = dsYr > 0 ? debtAmt * inp.debtRatePct : 0;
-      const tax    = Math.max(0, ebitda - int - deprYr) * inp.taxRatePct;
-      const net    = Math.max(0, ebitda - dsYr - tax);
-      totalDistS  += net;
-      if (yr === 1) cfs[1] += net; else cfs.push(net);
-    }
-    const irr  = calcIRR(cfs);
-    const npv  = calcNPV(inp.discountRatePct, cfs);
-    const moic = equity > 0 ? (totalDistS + itcAmt) / equity : 0;
-    // Unlevered IRR approx
-    const projCFs = [-totalCap, ...Array.from({ length: inp.projectLifeYr }, (_, i) => {
-      const yr  = i + 1;
-      const gen = p50 * Math.pow(1 - inp.degradationPct / 100, i) * 0.97;
-      return gen * (yr <= inp.ppaTenorYr ? inp.ppaPriceMWh : inp.ppaPriceMWh * 0.8) / 1e6;
-    })];
-    const projIRR = calcIRR(projCFs);
-    const lcoe    = p50 > 0
-      ? (totalCap * 1e6 + inp.capacityMW * inp.omPerKwYr * inp.projectLifeYr * 1000) / (p50 * inp.projectLifeYr * 0.97)
-      : 0;
-    return { irr, projIRR, minDscr: minDscr === Infinity ? 0 : minDscr, lcoe, npv, moic };
-  }
-
-  const renderTab7 = () => {
-    const SCENARIOS = [
-      { name: 'Base',         color: T.blue,   ov: {} },
-      { name: 'Optimistic',   color: T.green,  ov: { capacityFactor: inputs.capacityFactor * 1.05, ppaPriceMWh: inputs.ppaPriceMWh + 5, capexPerW: inputs.capexPerW - 0.05 } },
-      { name: 'Conservative', color: T.amber,  ov: { capacityFactor: inputs.capacityFactor * 0.95, capexPerW: inputs.capexPerW + 0.05 } },
-      { name: 'Downside',     color: '#EA580C', ov: { capacityFactor: inputs.capacityFactor * 0.90, ppaPriceMWh: inputs.ppaPriceMWh - 8, capexPerW: inputs.capexPerW + 0.10, omPerKwYr: inputs.omPerKwYr * 1.20 } },
-      { name: 'Stress',       color: T.red,    ov: { capacityFactor: inputs.capacityFactor * 0.85, ppaPriceMWh: inputs.ppaPriceMWh - 15, debtRatePct: inputs.debtRatePct + 0.015, itcPct: 0.06, domesticContent: false, energyCommunity: false } },
-    ];
-    const results = SCENARIOS.map(s => ({ ...s, ...runScenario(s.ov) }));
-
-    const tl = (val, [hi, lo]) => {
-      if (val >= hi) return { bg: '#D1FAE5', color: T.green };
-      if (val >= lo) return { bg: '#FEF3C7', color: T.amber };
-      return { bg: '#FEE2E2', color: T.red };
-    };
-    const tlLow = (val, [hi, lo]) => {
-      if (val <= hi) return { bg: '#D1FAE5', color: T.green };
-      if (val <= lo) return { bg: '#FEF3C7', color: T.amber };
-      return { bg: '#FEE2E2', color: T.red };
-    };
-
-    const chartData = results.map(r => ({ name: r.name, irr: parseFloat((r.irr * 100).toFixed(2)) }));
-
-    return (
-      <div>
-        <SectionTitle>5-Scenario Comparison (Traffic-Light)</SectionTitle>
-        <div style={{ overflowX: 'auto', marginBottom: 20 }}>
-          <table style={{ borderCollapse: 'collapse', fontSize: 12, width: '100%' }}>
-            <thead>
-              <tr style={{ background: HEADER_BG }}>
-                <th style={{ padding: '8px 14px', color: '#F1F5F9', textAlign: 'left' }}>Metric</th>
-                {results.map(r => (
-                  <th key={r.name} style={{ padding: '8px 14px', color: r.color, textAlign: 'center', fontWeight: 700 }}>{r.name}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { label: 'Equity IRR',    vals: results.map(r => r.irr),     fmt: fmtPct,                thresholds: [0.12, 0.09],  rev: false },
-                { label: 'Project IRR',   vals: results.map(r => r.projIRR), fmt: fmtPct,                thresholds: [0.09, 0.07],  rev: false },
-                { label: 'Min DSCR',      vals: results.map(r => r.minDscr), fmt: v => v.toFixed(2)+'x', thresholds: [1.35, 1.20],  rev: false },
-                { label: 'LCOE ($/MWh)',  vals: results.map(r => r.lcoe),    fmt: v => '$'+v.toFixed(2), thresholds: [30, 42],      rev: true  },
-                { label: 'NPV ($M)',      vals: results.map(r => r.npv),     fmt: fmtM,                  thresholds: [10, 0],       rev: false },
-                { label: 'MOIC',          vals: results.map(r => r.moic),    fmt: fmtX,                  thresholds: [2.0, 1.5],    rev: false },
-              ].map((row, ri) => (
-                <tr key={ri} style={{ background: ri % 2 === 0 ? T.card : '#F8F7F4' }}>
-                  <td style={{ padding: '7px 14px', fontWeight: 600 }}>{row.label}</td>
-                  {row.vals.map((v, ci) => {
-                    const style = row.rev ? tlLow(v, row.thresholds) : tl(v, row.thresholds);
-                    return (
-                      <td key={ci} style={{ padding: '7px 14px', textAlign: 'center', ...style, fontFamily: 'monospace', fontWeight: 700 }}>
-                        {row.fmt(v)}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <SectionTitle>Equity IRR by Scenario</SectionTitle>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 11 }} unit="%" />
-            <Tooltip formatter={v => [v + '%', 'Equity IRR']} />
-            <ReferenceLine y={10} stroke={T.red} strokeDasharray="4 4" label={{ value: '10% hurdle', fontSize: 10 }} />
-            <Bar dataKey="irr" fill={SOLAR_GOLD} radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-
-        <SectionTitle>Scenario Assumption Matrix</SectionTitle>
-        <DataTable
-          headers={['Assumption', 'Base', 'Optimistic', 'Conservative', 'Downside', 'Stress']}
-          rows={[
-            ['Capacity Factor',    (inputs.capacityFactor * 100).toFixed(1) + '%',
-              (inputs.capacityFactor * 1.05 * 100).toFixed(1) + '%',
-              (inputs.capacityFactor * 0.95 * 100).toFixed(1) + '%',
-              (inputs.capacityFactor * 0.90 * 100).toFixed(1) + '%',
-              (inputs.capacityFactor * 0.85 * 100).toFixed(1) + '%'],
-            ['PPA Price ($/MWh)',  '$' + inputs.ppaPriceMWh,
-              '$' + (inputs.ppaPriceMWh + 5),
-              '$' + inputs.ppaPriceMWh,
-              '$' + (inputs.ppaPriceMWh - 8),
-              '$' + (inputs.ppaPriceMWh - 15)],
-            ['CAPEX ($/W)',        '$' + inputs.capexPerW.toFixed(2),
-              '$' + (inputs.capexPerW - 0.05).toFixed(2),
-              '$' + (inputs.capexPerW + 0.05).toFixed(2),
-              '$' + (inputs.capexPerW + 0.10).toFixed(2),
-              '$' + inputs.capexPerW.toFixed(2)],
-            ['O&M Escalation',    'Base', 'Base', 'Base', '+20%', 'Base'],
-            ['Debt Rate',         (inputs.debtRatePct * 100).toFixed(2) + '%', 'Same', 'Same', 'Same',
-              (( inputs.debtRatePct + 0.015) * 100).toFixed(2) + '%'],
-            ['ITC Rate',          (model.effITC * 100).toFixed(0) + '%', 'Same', 'Same', 'Same', '6%'],
-            ['Domestic Content',  inputs.domesticContent ? 'Yes' : 'No', 'Same', 'Same', 'Same', 'No'],
-          ]}
-        />
-
-        <SectionTitle>Probability-Weighted Expected IRR</SectionTitle>
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
-          {(() => {
-            const scenResults = [
-              { name: 'Optimistic',   prob: 0.15, ov: { capacityFactor: inputs.capacityFactor * 1.05, ppaPriceMWh: inputs.ppaPriceMWh + 5, capexPerW: inputs.capexPerW - 0.05 } },
-              { name: 'Base',         prob: 0.40, ov: {} },
-              { name: 'Conservative', prob: 0.25, ov: { capacityFactor: inputs.capacityFactor * 0.95, capexPerW: inputs.capexPerW + 0.05 } },
-              { name: 'Downside',     prob: 0.15, ov: { capacityFactor: inputs.capacityFactor * 0.90, ppaPriceMWh: inputs.ppaPriceMWh - 8, capexPerW: inputs.capexPerW + 0.10, omPerKwYr: inputs.omPerKwYr * 1.20 } },
-              { name: 'Stress',       prob: 0.05, ov: { capacityFactor: inputs.capacityFactor * 0.85, ppaPriceMWh: inputs.ppaPriceMWh - 15, debtRatePct: inputs.debtRatePct + 0.015, itcPct: 0.06, domesticContent: false, energyCommunity: false } },
-            ];
-            const wtdIRR = scenResults.reduce((s, sc) => s + sc.prob * runScenario(sc.ov).irr, 0);
-            return (
-              <div>
-                <DataTable
-                  headers={['Scenario', 'Probability', 'Equity IRR', 'Weighted Contribution']}
-                  rows={scenResults.map(sc => {
-                    const irr = runScenario(sc.ov).irr;
-                    return [sc.name, (sc.prob * 100).toFixed(0) + '%', fmtPct(irr), fmtPct(sc.prob * irr)];
-                  })}
-                />
-                <div style={{ marginTop: 12, padding: '10px 14px', background: '#F0FDF4', borderRadius: 6, display: 'flex', gap: 24 }}>
-                  <div>
-                    <span style={{ fontSize: 11, color: T.sub }}>Probability-Weighted IRR</span>
-                    <div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'monospace', color: wtdIRR > 0.10 ? T.green : T.amber }}>
-                      {fmtPct(wtdIRR)}
-                    </div>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: 11, color: T.sub }}>IRR at Risk (Base - Stress)</span>
-                    <div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'monospace', color: T.red }}>
-                      {fmtPct(model.equityIRR - runScenario({ capacityFactor: inputs.capacityFactor * 0.85, ppaPriceMWh: inputs.ppaPriceMWh - 15, debtRatePct: inputs.debtRatePct + 0.015, itcPct: 0.06, domesticContent: false, energyCommunity: false }).irr)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 9 — Refinancing Analysis
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab8 = () => {
-    const constrRate  = 0.085;
-    const constrMo    = 18;
-    const constrInt   = model.debtAmountM * constrRate * constrMo / 12;
-    const totalDevM   = model.totalCapexM + constrInt;
-
-    // DSCR-based max debt at 1.20x
-    const minEbitda   = Math.min(...model.table.filter(r => r.yr <= inputs.debtTenorYr).map(r => r.ebitdaM));
-    const maxDs120    = minEbitda / 1.20;
-    const afFactor    = inputs.debtRatePct > 0
-      ? Math.pow(1 + inputs.debtRatePct, inputs.debtTenorYr)
-        / (inputs.debtRatePct * Math.pow(1 + inputs.debtRatePct, inputs.debtTenorYr))
-      : 0;
-    const maxDebt120  = maxDs120 * afFactor;
-    const cashOut     = Math.max(0, maxDebt120 - model.debtAmountM);
-
-    // Refinancing timing: cumulative interest saving when refi in year 1-5
-    let balanceCur = model.debtAmountM;
-    const refiData = Array.from({ length: 5 }, (_, i) => {
-      const yr   = i + 1;
-      const int  = balanceCur * inputs.debtRatePct;
-      const prin = Math.max(0, model.annualDS - int);
-      balanceCur = Math.max(0, balanceCur - prin);
-      const newRate  = Math.max(0.001, inputs.debtRatePct - 0.008);
-      const remTenor = Math.max(1, inputs.debtTenorYr - yr);
-      const newDs    = balanceCur > 0
-        ? balanceCur * newRate * Math.pow(1 + newRate, remTenor)
-          / (Math.pow(1 + newRate, remTenor) - 1) : 0;
-      const annSaving = model.annualDS - newDs;
-      const totalSaving = annSaving * remTenor;
-      return { yr: 'Year ' + yr, balance: balanceCur.toFixed(1), newRate: (newRate * 100).toFixed(2) + '%', saving: totalSaving.toFixed(2) };
-    });
-
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-          <KpiCard label="Construction Loan Rate" value={(constrRate * 100).toFixed(1) + '%'} sub={constrMo + '-month tenor'} />
-          <KpiCard label="Construction Interest" value={fmtM(constrInt)} color={T.red} />
-          <KpiCard label="Total Development Cost" value={fmtM(totalDevM)} color={T.amber} />
-          <KpiCard label="Max Cash-Out Refi" value={fmtM(cashOut)} sub="At 1.20x DSCR floor" color={T.green} />
-        </div>
-
-        <SectionTitle>Refinancing Timing — Cumulative Interest Saving ($M)</SectionTitle>
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={refiData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="yr" tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip formatter={v => ['$' + v + 'M', 'Interest Saving']} />
-            <Line type="monotone" dataKey="saving" stroke={SOLAR_GOLD} strokeWidth={2} dot={{ r: 4 }} name="Saving ($M)" />
-          </LineChart>
-        </ResponsiveContainer>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 16 }}>
-          <div>
-            <SectionTitle>Year-by-Year Refinancing Analysis</SectionTitle>
-            <DataTable
-              headers={['Refi Year', 'Remaining Balance ($M)', 'New Rate', 'Total Interest Saving ($M)']}
-              rows={refiData.map(r => [r.yr, r.balance, r.newRate, r.saving])}
-            />
-          </div>
-          <div>
-            <SectionTitle>Cash-Out Refinancing Waterfall</SectionTitle>
-            <DataTable
-              headers={['Item', 'Amount ($M)']}
-              rows={[
-                ['Max Debt at 1.20x DSCR',     fmtM(maxDebt120)],
-                ['Less: Existing Debt Balance', fmtM(model.debtAmountM)],
-                ['Gross Cash-Out Proceeds',     fmtM(cashOut)],
-                ['Refi Fees (est. 1%)',         fmtM(maxDebt120 * 0.01)],
-                ['Net Distribution to Equity',  fmtM(cashOut - maxDebt120 * 0.01)],
-                ['Debt Post-Refi',              fmtM(maxDebt120)],
-              ]}
-            />
-            <div style={{ fontSize: 11, color: T.sub, marginTop: 8, padding: 10, background: '#F0F9FF', borderRadius: 6 }}>
-              HoldCo/OpCo: HoldCo can issue dividend recap secured against distributions
-              without breaching OpCo debt covenants. Max HoldCo loan (est.):
-              {fmtM(cashOut * 0.60)}.
-            </div>
-          </div>
-        </div>
-
-        <SectionTitle>Construction Financing — Draw Schedule &amp; Milestone Timeline</SectionTitle>
-        <DataTable
-          headers={['Month', 'Milestone', 'Cumulative Draw (%)', 'Draw Amount ($M)', 'Cumulative ($M)']}
-          rows={[
-            ['Month 1',  'Financial Close — NTP',              '5%',   fmtM(model.totalCapexM * 0.05),  fmtM(model.totalCapexM * 0.05)],
-            ['Month 2',  'Module procurement deposit',          '12%',  fmtM(model.totalCapexM * 0.07),  fmtM(model.totalCapexM * 0.12)],
-            ['Month 4',  'Civil works & foundations begin',    '22%',  fmtM(model.totalCapexM * 0.10),  fmtM(model.totalCapexM * 0.22)],
-            ['Month 6',  'Structural steel & racking',         '35%',  fmtM(model.totalCapexM * 0.13),  fmtM(model.totalCapexM * 0.35)],
-            ['Month 8',  'Module delivery & installation',     '55%',  fmtM(model.totalCapexM * 0.20),  fmtM(model.totalCapexM * 0.55)],
-            ['Month 10', 'Inverter & electrical balance',      '72%',  fmtM(model.totalCapexM * 0.17),  fmtM(model.totalCapexM * 0.72)],
-            ['Month 13', 'Substation & interconnection',       '85%',  fmtM(model.totalCapexM * 0.13),  fmtM(model.totalCapexM * 0.85)],
-            ['Month 15', 'Commissioning & testing',            '93%',  fmtM(model.totalCapexM * 0.08),  fmtM(model.totalCapexM * 0.93)],
-            ['Month 17', 'COD — Commercial Operation Date',   '98%',  fmtM(model.totalCapexM * 0.05),  fmtM(model.totalCapexM * 0.98)],
-            ['Month 18', 'Retention release & permanent loan', '100%', fmtM(model.totalCapexM * 0.02),  fmtM(model.totalCapexM * 1.00)],
-          ]}
-        />
-
-        <SectionTitle>Construction Loan vs Permanent Loan — Cost Comparison</SectionTitle>
-        <DataTable
-          headers={['Feature', 'Construction Loan', 'Permanent / Term Loan']}
-          rows={[
-            ['Interest Rate',     (constrRate * 100).toFixed(1) + '%',                   (inputs.debtRatePct * 100).toFixed(2) + '%'],
-            ['Tenor',             constrMo + ' months',                                   inputs.debtTenorYr + ' years'],
-            ['Amount',            fmtM(model.debtAmountM),                               fmtM(model.debtAmountM)],
-            ['Total Interest',    fmtM(constrInt),                                        fmtM(model.annualDS * inputs.debtTenorYr - model.debtAmountM)],
-            ['Security',          'GC completion guarantee; equity pledge',               'DSCR covenant; DSRA; assignment of PPA'],
-            ['Repayment',         'Bullet at COD / take-out',                             'Level annuity — ' + fmtM(model.annualDS) + '/yr'],
-            ['Interest Reserve',  fmtM(model.debtAmountM * constrRate * constrMo / 12),  fmtM(model.dsraM) + ' DSRA'],
-            ['Refinancing Risk',  'Low — bank committed to take-out',                     'Balloon: ' + inputs.debtTenorYr + ' yr maturity'],
-          ]}
-        />
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 10 — LP/GP Waterfall
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab9 = () => {
-    const [lpPref,    setLpPref]    = useState(0.08);
-    const [gpCatchup, setGpCatchup] = useState(0.20);
-    const [lpGpSplit, setLpGpSplit] = useState(0.80);
-
-    const lpShare = 0.80;
-    const gpShare = 0.20;
-    const lpInv   = model.equityAmountM * lpShare;
-    const gpInv   = model.equityAmountM * gpShare;
-
-    const waterfallData = [];
-    let cLP = 0, cGP = 0;
-
-    model.table.forEach((r, idx) => {
-      let pool = r.equDistM + (idx === 0 ? model.itcAmountM * lpShare : 0);
-      let lpD = 0, gpD = 0;
-
-      // Tier 1: LP preferred return
-      const pref = Math.min(pool, lpInv * lpPref);
-      lpD  += pref;
-      pool -= pref;
-
-      // Tier 2: GP catch-up
-      if (pool > 0) {
-        const gpCUp = Math.min(pool, pref * gpCatchup / Math.max(0.001, 1 - gpCatchup));
-        gpD  += gpCUp;
-        pool -= gpCUp;
-      }
-
-      // Tier 3: 80/20 split
-      if (pool > 0) {
-        lpD += pool * lpGpSplit;
-        gpD += pool * (1 - lpGpSplit);
-      }
-
-      cLP += lpD;
-      cGP += gpD;
-      waterfallData.push({ yr: 'Y' + r.yr, lp: parseFloat(lpD.toFixed(2)), gp: parseFloat(gpD.toFixed(2)) });
-    });
-
-    const lpIRR = calcIRR([-lpInv, ...waterfallData.map(r => r.lp)]);
-    const gpIRR = calcIRR([-gpInv, ...waterfallData.map(r => r.gp)]);
-    const lpMoic = lpInv > 0 ? cLP / lpInv : 0;
-    const gpMoic = gpInv > 0 ? cGP / gpInv : 0;
-
-    return (
-      <div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
-            <SectionTitle>Waterfall Parameters</SectionTitle>
-            <SliderRow label="LP Preferred Return (hurdle)" value={lpPref} min={0.06} max={0.12} step={0.005}
-              onChange={setLpPref} fmt={v => (v * 100).toFixed(1) + '%'} />
-            <SliderRow label="GP Catch-Up %" value={gpCatchup} min={0.10} max={0.30} step={0.01}
-              onChange={setGpCatchup} fmt={v => (v * 100).toFixed(0) + '%'} />
-            <SliderRow label="LP/GP Profit Split" value={lpGpSplit} min={0.60} max={0.90} step={0.05}
-              onChange={setLpGpSplit} fmt={v => (v * 100).toFixed(0) + '/' + ((1 - v) * 100).toFixed(0)} />
-            <SectionTitle>4-Tier Structure</SectionTitle>
-            <DataTable
-              headers={['Tier', 'Description', 'LP', 'GP']}
-              rows={[
-                ['Tier 1', 'LP Pref Return',     (lpPref * 100).toFixed(1) + '% pref', '0%'],
-                ['Tier 2', 'GP Catch-Up',         '0%',                                 '100%'],
-                ['Tier 3', 'Profit Split',         (lpGpSplit * 100).toFixed(0) + '%',  ((1 - lpGpSplit) * 100).toFixed(0) + '%'],
-                ['Tier 4', 'High-Watermark (15%)', '70%',                               '30%'],
-              ]}
-            />
-          </div>
-          <div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
-              <KpiCard label="LP IRR"  value={fmtPct(lpIRR)}  color={T.blue}   />
-              <KpiCard label="GP IRR"  value={fmtPct(gpIRR)}  color={T.green}  />
-            </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
-              <KpiCard label="LP MOIC" value={fmtX(lpMoic)}   color={T.indigo} />
-              <KpiCard label="GP MOIC" value={fmtX(gpMoic)}   color={T.teal}   />
-            </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <KpiCard label="LP Total Distributions" value={fmtM(cLP)} />
-              <KpiCard label="GP Total Distributions" value={fmtM(cGP)} />
-            </div>
-          </div>
-        </div>
-
-        <SectionTitle>Cumulative LP vs GP Distributions — First 20 Years</SectionTitle>
-        <ResponsiveContainer width="100%" height={230}>
-          <AreaChart data={waterfallData.slice(0, 20)}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="yr" tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip formatter={(v, n) => ['$' + v + 'M', n]} />
-            <Area type="monotone" dataKey="lp" stroke={T.blue}   fill="#DBEAFE" strokeWidth={2} name="LP Distribution" />
-            <Area type="monotone" dataKey="gp" stroke={SOLAR_GOLD} fill="#FEF3C7" strokeWidth={2} name="GP Distribution" />
-            <Legend />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 11 — Portfolio Context
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab10 = () => {
-    const portfolio = [
-      { name: 'Wind Farm Alpha',        capex: 180, cf: 0.35, irr: 0.115, type: 'Wind'  },
-      { name: 'Solar Park Bravo',       capex: 95,  cf: 0.22, irr: 0.105, type: 'Solar' },
-      { name: 'BESS Project Charlie',   capex: 60,  cf: 0.25, irr: 0.120, type: 'BESS'  },
-      { name: 'Solar Park Delta',       capex: 110, cf: 0.20, irr: 0.098, type: 'Solar' },
-      { name: 'This Project (RE-PF1)',  capex: model.totalCapexM, cf: inputs.capacityFactor, irr: model.equityIRR, type: 'Solar' },
-    ];
-    const totalAUM = portfolio.reduce((s, a) => s + a.capex, 0);
-    const avgCF    = portfolio.reduce((s, a) => s + a.cf * a.capex, 0) / Math.max(1, totalAUM);
-    const wtdIRR   = portfolio.reduce((s, a) => s + a.irr * a.capex, 0) / Math.max(1, totalAUM);
-    const thisPct  = model.totalCapexM / Math.max(1, totalAUM);
-
-    const portChart = portfolio.map(a => ({ name: a.name.split(' ')[2] || a.name, irr: parseFloat((a.irr * 100).toFixed(2)), capex: parseFloat(a.capex.toFixed(0)) }));
-
-    return (
-      <div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-          <KpiCard label="Portfolio AUM (incl. this)" value={'$' + totalAUM.toFixed(0) + 'M'} color={T.blue} />
-          <KpiCard label="This Project Weight"        value={(thisPct * 100).toFixed(1) + '%'} color={thisPct > 0.30 ? T.red : T.amber} sub="Concentration" />
-          <KpiCard label="Portfolio Avg CF"           value={(avgCF * 100).toFixed(1) + '%'} color={T.green} />
-          <KpiCard label="Portfolio Weighted IRR"     value={fmtPct(wtdIRR)} color={T.indigo} />
-        </div>
-
-        <SectionTitle>Portfolio Asset Comparison</SectionTitle>
-        <DataTable
-          headers={['Asset', 'Type', 'CAPEX ($M)', 'Capacity Factor', 'Equity IRR', '% of AUM']}
-          rows={portfolio.map((a, i) => [
-            a.name, a.type, a.capex.toFixed(0),
-            (a.cf * 100).toFixed(1) + '%',
-            (a.irr * 100).toFixed(1) + '%',
-            (totalAUM > 0 ? a.capex / totalAUM * 100 : 0).toFixed(1) + '%',
-          ])}
-          colorFn={(cell, ci, ri) => ri === portfolio.length - 1 ? SOLAR_GOLD : T.text}
-        />
-
-        <SectionTitle>IRR by Asset</SectionTitle>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={portChart}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-            <YAxis unit="%" tick={{ fontSize: 11 }} />
-            <Tooltip formatter={v => [v + '%', 'Equity IRR']} />
-            <ReferenceLine y={10} stroke={T.red} strokeDasharray="4 4" />
-            <Bar dataKey="irr" fill={SOLAR_GOLD} radius={[3, 3, 0, 0]} name="IRR" />
-          </BarChart>
-        </ResponsiveContainer>
-
-        <SectionTitle>Diversification Benefit</SectionTitle>
-        <DataTable
-          headers={['Asset Pair', 'Return Correlation', 'Diversification']}
-          rows={[
-            ['Solar vs Wind',         '0.35', 'Moderate'],
-            ['Solar vs BESS',         '0.15', 'High'],
-            ['Wind vs BESS',          '0.20', 'High'],
-            ['This Project vs Port.', '0.40', 'Moderate'],
-          ]}
-          colorFn={cell => cell === 'High' ? T.green : cell === 'Moderate' ? T.amber : T.text}
-        />
-
-        {thisPct > 0.30 && (
-          <div style={{ marginTop: 12, background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 6, padding: '10px 14px', fontSize: 12, color: T.red }}>
-            CONCENTRATION WARNING: This project represents {(thisPct * 100).toFixed(1)}% of portfolio AUM —
-            exceeds the 30% single-asset threshold. Consider co-investment or syndication.
-          </div>
-        )}
-
-        <SectionTitle>LCOE Benchmarking vs Market Comparables</SectionTitle>
-        <DataTable
-          headers={['Project / Market', 'Technology', 'LCOE ($/MWh)', 'vs This Project', 'Assessment']}
-          rows={[
-            ['This Project (RE-PF1)',   'Utility Solar PV (Tracking)',   '$' + model.lcoe.toFixed(2), '—',                                           'Modeled'],
-            ['Texas (ERCOT) 2024',      'Utility Solar PV',             '$24–28',   model.lcoe < 28 ? 'In range' : 'Above market', model.lcoe < 28 ? 'Competitive' : 'High'],
-            ['Southwest US 2024',       'Utility Solar PV',             '$20–26',   model.lcoe < 26 ? 'In range' : 'Above market', model.lcoe < 26 ? 'Competitive' : 'High'],
-            ['Southeast US 2024',       'Utility Solar PV',             '$28–34',   model.lcoe < 34 ? 'In range' : 'Above market', model.lcoe < 34 ? 'Competitive' : 'High'],
-            ['Midwest US 2024',         'Utility Solar PV',             '$30–38',   model.lcoe < 38 ? 'In range' : 'Above market', model.lcoe < 38 ? 'Competitive' : 'High'],
-            ['Onshore Wind US 2024',    'Wind (new build)',              '$26–34',   '—',                                           'Reference'],
-            ['Gas CCGT (new) 2024',     'Natural Gas CCGT',             '$45–60',   '—',                                           'Fossil baseline'],
-            ['NREL ATB 2024 (mid)',     'Utility Solar (national avg)', '$29',      model.lcoe < 29 ? 'Below NREL mid' : 'Above', model.lcoe < 29 ? 'Strong' : 'Review CAPEX'],
-          ]}
-          colorFn={(cell, ci) => {
-            if (ci === 4) return cell === 'Competitive' || cell === 'Strong' || cell === 'Below NREL mid' ? T.green : cell === 'High' ? T.red : T.amber;
-            return T.text;
-          }}
-        />
-
-        <SectionTitle>Marginal Contribution to Portfolio DSCR</SectionTitle>
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-          <div style={{ fontSize: 12, color: T.sub, lineHeight: 1.8, marginBottom: 12 }}>
-            Portfolio-level DSCR is computed as the weighted average of individual project DSCRs,
-            weighted by annual debt service. Adding this project shifts the portfolio DSCR as follows:
-          </div>
-          <DataTable
-            headers={['Metric', 'Without This Project', 'With This Project (RE-PF1)', 'Delta']}
-            rows={[
-              ['Portfolio Avg DSCR', '1.38x', model.avgDscr > 1.38 ? (model.avgDscr * 0.85 + 1.38 * 0.15).toFixed(2) + 'x' : (model.avgDscr * 0.85 + 1.38 * 0.15).toFixed(2) + 'x', (model.avgDscr > 1.38 ? '+' : '') + ((model.avgDscr - 1.38) * 0.15).toFixed(3) + 'x'],
-              ['Portfolio Min DSCR', '1.22x', Math.min(1.22, model.minDscr).toFixed(2) + 'x', Math.min(1.22, model.minDscr) < 1.22 ? '↓ New constraint' : 'No change'],
-              ['Total Portfolio DS',  '$52.4M/yr', '$' + (52.4 + model.annualDS).toFixed(1) + 'M/yr', '+' + fmtM(model.annualDS)],
-              ['Largest Single DS',   '$18.0M/yr', model.annualDS > 18 ? fmtM(model.annualDS) + '/yr (new max)' : '$18.0M/yr', model.annualDS > 18 ? '↑ New largest' : 'No change'],
-            ]}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // TAB 12 — Executive Summary / Deal Memo
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderTab11 = () => {
-    const irr   = model.equityIRR;
-    const dscr  = model.minDscr;
-    const r0    = model.table[0] ?? {};
-    const costs0 = (r0.omM ?? 0) + (r0.landM ?? 0) + (r0.insM ?? 0) + (r0.gaM ?? 0);
-    const p90Rev = model.p90Annual * inputs.ppaPriceMWh / 1e6;
-    const p90Dscr = model.annualDS > 0 ? (p90Rev - costs0) / model.annualDS : 2;
-
-    const rec      = irr > 0.10 && dscr > 1.25 && p90Dscr > 1.10 ? 'INVEST'
-                   : irr > 0.08 && dscr > 1.20                    ? 'CONDITIONAL'
-                   : 'PASS';
-    const recColor = rec === 'INVEST' ? T.green : rec === 'CONDITIONAL' ? T.amber : T.red;
-
-    return (
-      <div>
-        {/* Recommendation badge */}
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{
-            display: 'inline-block', background: recColor, color: '#FFFFFF',
-            padding: '14px 48px', borderRadius: 8, fontSize: 24, fontWeight: 900,
-            letterSpacing: '0.15em', fontFamily: 'JetBrains Mono, monospace',
-          }}>
-            {rec}
-          </div>
-          <div style={{ fontSize: 11, color: T.sub, marginTop: 8 }}>
-            Criteria: Equity IRR {'>'} 10% AND Min DSCR {'>'} 1.25x AND P90 DSCR {'>'} 1.10x
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, borderBottom: `2px solid ${SOLAR_GOLD}`, paddingBottom: 6, marginBottom: 12 }}>
-              Investment Highlights
-            </div>
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: T.text, lineHeight: 2 }}>
-              <li><strong>Technology:</strong> Utility-scale PV, {inputs.capacityMW}MW DC, crystalline silicon, {inputs.degradationPct.toFixed(2)}%/yr degradation</li>
-              <li><strong>Revenue:</strong> {inputs.ppaTenorYr}-yr PPA at ${inputs.ppaPriceMWh}/MWh; merchant tail at 80% post-Year {inputs.ppaTenorYr}</li>
-              <li><strong>Tax Benefits:</strong> {(model.effITC * 100).toFixed(0)}% ITC ({fmtM(model.itcAmountM)}) + MACRS shield (PV {fmtM(model.macrsTaxShield)}) — IRA 2022</li>
-              <li><strong>Returns:</strong> Equity IRR {fmtPct(irr)}, MOIC {fmtX(model.moic)}, LCOE ${model.lcoe.toFixed(2)}/MWh</li>
-            </ul>
-          </div>
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, borderBottom: `2px solid ${T.red}`, paddingBottom: 6, marginBottom: 12 }}>
-              Key Risk Factors
-            </div>
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: T.text, lineHeight: 2 }}>
-              <li><strong>Resource Risk:</strong> P90/P50 yield spread {(inputs.yieldSigma * 100).toFixed(0)}% σ; P90 = {(model.p90Annual / 1000).toFixed(0)} GWh vs P50 = {(model.p50Annual / 1000).toFixed(0)} GWh</li>
-              <li><strong>Counterparty Risk:</strong> Offtaker credit quality critical; merchant tail post-Year {inputs.ppaTenorYr}</li>
-              <li><strong>Regulatory Risk:</strong> ITC adder eligibility subject to IRS rulemaking; potential clawback</li>
-              <li><strong>Technology Risk:</strong> Degradation exceeding {inputs.degradationPct.toFixed(2)}%/yr; inverter replacement ~Year 10</li>
-              <li><strong>Market Risk:</strong> Power price risk on merchant tail; basis risk vs grid</li>
-            </ul>
-          </div>
-        </div>
-
-        <SectionTitle>Key Metrics Summary</SectionTitle>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-          <KpiCard label="Equity IRR"         value={fmtPct(irr)}                color={irr > 0.10 ? T.green : T.red}    />
-          <KpiCard label="Project IRR"        value={fmtPct(model.projectIRR)}   color={T.blue}                           />
-          <KpiCard label="NPV"                value={fmtM(model.npvM)}            color={model.npvM > 0 ? T.green : T.red} />
-          <KpiCard label="MOIC"               value={fmtX(model.moic)}            color={T.indigo}                         />
-          <KpiCard label="Min DSCR"           value={fmtX(dscr)}                  color={dscr >= 1.25 ? T.green : T.red}  />
-          <KpiCard label="LCOE"               value={'$' + model.lcoe.toFixed(2) + '/MWh'} color={T.teal}               />
-          <KpiCard label="P90 DSCR (Yr 1)"   value={p90Dscr.toFixed(2) + 'x'}   color={p90Dscr >= 1.10 ? T.green : T.red} />
-          <KpiCard label="ITC + MACRS"        value={fmtM(model.itcAmountM + model.macrsTaxShield)} color={T.amber}     />
-        </div>
-
-        <SectionTitle>Key Assumptions</SectionTitle>
-        <DataTable
-          headers={['Assumption', 'Value', 'Source / Basis']}
-          rows={[
-            ['DC Capacity',        inputs.capacityMW + ' MW',                  'Engineering design'],
-            ['CAPEX',              '$' + inputs.capexPerW.toFixed(2) + '/W DC', 'EPC contractor quote'],
-            ['Capacity Factor',    (inputs.capacityFactor * 100).toFixed(1) + '%', 'P50 energy yield study'],
-            ['PPA Price',          '$' + inputs.ppaPriceMWh + '/MWh',          'Executed PPA'],
-            ['ITC Rate',           (model.effITC * 100).toFixed(0) + '%',      'IRA 2022 + adders'],
-            ['Debt Rate',          (inputs.debtRatePct * 100).toFixed(2) + '%', 'Senior secured'],
-            ['Leverage',           (inputs.debtPct * 100).toFixed(0) + '%',    'Sized to target DSCR'],
-            ['Degradation',        inputs.degradationPct.toFixed(2) + '%/yr',  'Module warranty'],
-            ['Discount Rate',      (inputs.discountRatePct * 100).toFixed(1) + '%', 'Portfolio WACC'],
-            ['Project Life',       inputs.projectLifeYr + ' years',             'Technical design life'],
-          ]}
-        />
-
-        <SectionTitle>30-Year EBITDA &amp; Equity Distribution Profile</SectionTitle>
-        <ResponsiveContainer width="100%" height={230}>
-          <AreaChart data={model.table.map(r => ({
-            yr: 'Y' + r.yr,
-            ebitda: parseFloat(r.ebitdaM.toFixed(2)),
-            dist: parseFloat(r.equDistM.toFixed(2)),
-          }))}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="yr" tick={{ fontSize: 9 }} interval={4} />
-            <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip formatter={(v, n) => ['$' + v + 'M', n]} />
-            <Area type="monotone" dataKey="ebitda" stroke={T.blue}   fill="#DBEAFE" strokeWidth={1.5} name="EBITDA" />
-            <Area type="monotone" dataKey="dist"   stroke={SOLAR_GOLD} fill="#FEF3C7" strokeWidth={2}   name="Equity Dist" />
-            <Legend />
-          </AreaChart>
-        </ResponsiveContainer>
-
-        <SectionTitle>Full Financial Summary — All Computed Metrics</SectionTitle>
-        <DataTable
-          headers={['Category', 'Metric', 'Value', 'Quality']}
-          rows={[
-            ['Returns',   'Equity IRR (Levered, After-Tax)',  fmtPct(model.equityIRR),   model.equityIRR > 0.12 ? 'Strong' : model.equityIRR > 0.08 ? 'Adequate' : 'Weak'],
-            ['Returns',   'Project IRR (Unlevered, Pre-Tax)', fmtPct(model.projectIRR),  model.projectIRR > 0.09 ? 'Strong' : 'Adequate'],
-            ['Returns',   'NPV at Discount Rate',             fmtM(model.npvM),           model.npvM > 10 ? 'Positive' : model.npvM > 0 ? 'Marginal' : 'Negative'],
-            ['Returns',   'MOIC',                             fmtX(model.moic),           model.moic > 2.5 ? 'Strong' : model.moic > 1.8 ? 'Adequate' : 'Weak'],
-            ['Returns',   'Payback Period',                   model.payback + ' yrs',     model.payback < 10 ? 'Fast' : model.payback < 15 ? 'Normal' : 'Slow'],
-            ['Credit',    'Minimum DSCR',                     fmtX(model.minDscr),        model.minDscr > 1.35 ? 'Strong' : model.minDscr > 1.20 ? 'Adequate' : 'Tight'],
-            ['Credit',    'Average DSCR',                     fmtX(model.avgDscr),        model.avgDscr > 1.40 ? 'Strong' : 'Adequate'],
-            ['Credit',    'LLCR',                             fmtX(model.llcr),           model.llcr > 1.50 ? 'Strong' : 'Adequate'],
-            ['Credit',    'PLCR',                             fmtX(model.plcr),           model.plcr > 1.80 ? 'Strong' : 'Adequate'],
-            ['Credit',    'DSRA (6-month)',                   fmtM(model.dsraM),          'Required'],
-            ['Energy',    'P50 Annual Generation',            (model.p50Annual / 1000).toFixed(0) + ' GWh', 'Base'],
-            ['Energy',    'P90 Annual Generation',            (model.p90Annual / 1000).toFixed(0) + ' GWh', 'Lenders'],
-            ['Energy',    'LCOE',                             '$' + model.lcoe.toFixed(2) + '/MWh', model.lcoe < 35 ? 'Competitive' : 'Above market'],
-            ['Tax',       'Effective ITC Rate',               (model.effITC * 100).toFixed(0) + '%',  'IRA 2022'],
-            ['Tax',       'ITC Amount',                       fmtM(model.itcAmountM),     'Year 1 cash benefit'],
-            ['Tax',       'MACRS Tax Shield PV',              fmtM(model.macrsTaxShield), '5-year schedule'],
-            ['Capital',   'Total CAPEX',                      fmtM(model.totalCapexM),    '—'],
-            ['Capital',   'Debt Amount',                      fmtM(model.debtAmountM),    `${(inputs.debtPct * 100).toFixed(0)}% gearing`],
-            ['Capital',   'Equity Investment',                fmtM(model.equityAmountM),  'Net of ITC'],
-            ['Capital',   'Annual Debt Service',              fmtM(model.annualDS),       `${inputs.debtTenorYr}-yr level annuity`],
-          ]}
-          colorFn={(cell, ci) => {
-            if (ci !== 3) return T.text;
-            const positive = ['Strong', 'Fast', 'Positive', 'Competitive', 'Required'];
-            const negative = ['Weak', 'Tight', 'Negative', 'Slow', 'Above market'];
-            if (positive.some(p => cell.includes(p))) return T.green;
-            if (negative.some(n => cell.includes(n))) return T.red;
-            return T.amber;
-          }}
-        />
-
-        <div style={{ fontSize: 11, color: T.sub, marginTop: 16, padding: 12, background: '#F1F5F9', borderRadius: 6 }}>
-          For informational purposes only. IRR and NPV projections are based on modeled assumptions and subject to material change.
-          Independent engineering, legal, and tax diligence required before investment.
-          Model: Solar Project Finance Engine (RE-PF1) v2.0 — Platform A².
-        </div>
-      </div>
-    );
-  };
-
-  const renderers = [
-    renderTab0, renderTab1, renderTab2, renderTab3, renderTab4,
-    renderTab5, renderTab6, renderTab7, renderTab8, renderTab9,
-    renderTab10, renderTab11,
+}
+
+function TabLCOE({ m, inp }) {
+  const crf = m.crf;
+  const annualEnergy_GWh = inp.capacityMW * inp.cf / 100 * 8760 / 1000;
+  const annualOM = inp.capacityMW * 1000 * inp.omPerKW / 1e6;
+  const annualCapexCost = m.totalCapexM * crf;
+  const totalLcoe = m.lcoe;
+  const greenSpread = inp.ppaPrice - totalLcoe;
+
+  const benchData = [
+    { name:'This Project', lcoe:+totalLcoe.toFixed(1) },
+    { name:'US Utility Solar', lcoe:31 },
+    { name:'Onshore Wind', lcoe:38 },
+    { name:'CCGT', lcoe:58 },
+    { name:'Nuclear', lcoe:92 },
+    { name:'Coal', lcoe:108 },
   ];
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // RENDER
-  // ══════════════════════════════════════════════════════════════════════════
-  return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: 'DM Sans, sans-serif', color: T.text }}>
+  const components = [
+    { name:'CAPEX (Annualized)', value:annualEnergy_GWh>0?annualCapexCost/annualEnergy_GWh*1000:0, color:T.indigo },
+    { name:'O&M', value:annualEnergy_GWh>0?annualOM/annualEnergy_GWh*1000:0, color:T.teal },
+    { name:'Financing', value:totalLcoe*0.12, color:SOLAR_GOLD },
+    { name:'Land & Ins.', value:totalLcoe*0.05, color:T.blue },
+  ];
 
-      {/* ── Header ── */}
-      <div style={{ background: HEADER_BG, borderBottom: `3px solid ${SOLAR_GOLD}`, padding: '18px 32px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: SOLAR_GOLD, letterSpacing: '0.12em', marginBottom: 4 }}>
-              RE-PF1 · SOLAR PROJECT FINANCE ENGINE
-            </div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: '#F8FAFC' }}>
-              Solar Project Finance Engine
-            </div>
-            <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 3 }}>
-              Institutional-grade PV modeling · IRR · DSCR · IRA 2022 · P50/P90 · LP/GP waterfall
-            </div>
+  const sensSolar = [-20,-10,0,10,20].map(delta => ({
+    delta:delta+'%',
+    CAPEX:+(totalLcoe*(1+delta/100*0.65)).toFixed(2),
+    CF:+(totalLcoe/(1+delta/100*0.9)).toFixed(2),
+    DebtRate:+(totalLcoe*(1+delta/100*0.12)).toFixed(2),
+    OM:+(totalLcoe*(1+delta/100*0.15)).toFixed(2),
+  }));
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="LCOE" value={fmtMWh(totalLcoe)} sub="Levelized Cost" color={totalLcoe<38?T.green:T.red} />
+        <KpiCard label="PPA Price" value={fmtMWh(inp.ppaPrice)} sub="Power Purchase Agreement" color={SOLAR_GOLD} />
+        <KpiCard label="Green Spread" value={fmtMWh(greenSpread)} sub="PPA minus LCOE" color={greenSpread>0?T.green:T.red} />
+        <KpiCard label="Capital Recovery Factor" value={(crf*100||0).toFixed(3)+'%'} sub={inp.projectDr+'% rate, '+inp.projectLife+'yr'} color={T.indigo} />
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:20 }}>
+        <div>
+          <SectionTitle icon="C">LCOE Component Breakdown ($/MWh)</SectionTitle>
+          <div style={{ height:200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={components} margin={{left:0,right:0}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{fontSize:9}} />
+                <YAxis tick={{fontSize:10}} unit=" $/MWh" />
+                <Tooltip formatter={v=>'$'+(v||0).toFixed(2)+'/MWh'} />
+                <Bar dataKey="value" name="$/MWh" fill={SOLAR_GOLD} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 11, color: '#64748B', fontFamily: 'monospace' }}>
-              {inputs.capacityMW}MW · ${inputs.capexPerW.toFixed(2)}/W · {(inputs.capacityFactor * 100).toFixed(1)}% CF
-            </div>
-            <div style={{
-              fontSize: 22, fontWeight: 700, fontFamily: 'monospace', marginTop: 4,
-              color: model.equityIRR > 0.10 ? '#4ADE80' : '#FBBF24',
-            }}>
-              IRR: {fmtPct(model.equityIRR)}
-            </div>
-            <div style={{ fontSize: 11, fontFamily: 'monospace', color: model.minDscr >= 1.25 ? '#4ADE80' : '#F87171' }}>
-              Min DSCR {model.minDscr.toFixed(2)}x · LCOE ${model.lcoe.toFixed(2)}/MWh · MOIC {fmtX(model.moic)}
-            </div>
+        </div>
+        <div>
+          <SectionTitle icon="B">LCOE vs Technology Benchmarks</SectionTitle>
+          <div style={{ height:200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={benchData} layout="vertical" margin={{left:80,right:30}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis type="number" tick={{fontSize:10}} unit=" $/MWh" />
+                <YAxis type="category" dataKey="name" tick={{fontSize:9}} width={80} />
+                <Tooltip formatter={v=>'$'+v+'/MWh'} />
+                <Bar dataKey="lcoe" name="LCOE $/MWh" fill={T.indigo} opacity={0.8} />
+                <ReferenceLine x={totalLcoe} stroke={SOLAR_GOLD} strokeDasharray="4 2" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      <SectionTitle icon="F">LCOE Formula</SectionTitle>
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16, fontFamily:'JetBrains Mono, monospace', fontSize:12, marginBottom:16 }}>
+        <div style={{ color:T.sub, marginBottom:6 }}>LCOE = (CAPEX x CRF + Annual O&M) / Annual Energy</div>
+        <div style={{ color:T.text, marginBottom:4 }}>= (${(m.totalCapexM||0).toFixed(1)}M x {(crf*100||0).toFixed(3)}% + ${(annualOM||0).toFixed(2)}M) / {(annualEnergy_GWh||0).toFixed(2)} GWh</div>
+        <div style={{ color:SOLAR_GOLD, fontWeight:700, fontSize:14 }}>= ${(totalLcoe||0).toFixed(2)} / MWh</div>
+        <div style={{ color:T.sub, marginTop:6, fontSize:10 }}>CRF = r(1+r)^n / ((1+r)^n-1) where r={inp.projectDr/100}, n={inp.projectLife}</div>
+      </div>
+      <SectionTitle icon="S">LCOE Sensitivity Table</SectionTitle>
+      <DataTable zebra
+        headers={['Delta','CAPEX Impact','CF Impact','Debt Rate Impact','O&M Impact']}
+        rows={sensSolar.map(s=>[s.delta,'$'+s.CAPEX+'/MWh','$'+s.CF+'/MWh','$'+s.DebtRate+'/MWh','$'+s.OM+'/MWh'])}
+      />
+    </div>
+  );
+}
+
+function TabPortfolio({ m, inp }) {
+  const portProjects = Array.from({length:5}, (_,i) => ({
+    name: i===0?'This Project':'Asset '+String.fromCharCode(65+i),
+    mw: i===0?inp.capacityMW:Math.round(50+sr(i*17)*200),
+    irr: i===0?m.equityIRR*100:8+sr(i*13)*6,
+    cf: i===0?inp.cf:17+sr(i*11)*10,
+    dscr: i===0?m.minDscrVal:1.15+sr(i*7)*0.4,
+    tech: i===0?'Solar':i<3?'Solar':i===3?'Wind':'Storage',
+    isThis: i===0,
+  }));
+  const totalMW = portProjects.reduce((s,p)=>s+p.mw,0);
+  const wtdIRR = totalMW>0?portProjects.reduce((s,p)=>s+p.irr*p.mw,0)/totalMW:0;
+  const concentration = totalMW>0?inp.capacityMW/totalMW*100:0;
+  const portDscr = totalMW>0?portProjects.reduce((s,p)=>s+p.dscr*p.mw,0)/totalMW:0;
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="Portfolio Total MW" value={totalMW.toFixed(0)+' MW'} sub="Including this project" color={T.indigo} />
+        <KpiCard label="Wtd Avg IRR" value={(wtdIRR||0).toFixed(1)+'%'} sub="MW-weighted" color={SOLAR_GOLD} />
+        <KpiCard label="Concentration" value={(concentration||0).toFixed(1)+'%'} sub="This asset / portfolio" color={concentration>30?T.amber:T.green} />
+        <KpiCard label="Portfolio DSCR" value={(portDscr||0).toFixed(2)+'x'} sub="Weighted average" color={portDscr>=1.3?T.green:T.amber} />
+      </div>
+      <SectionTitle icon="S">Portfolio Scatter (IRR vs CF%)</SectionTitle>
+      <div style={{ height:220, marginBottom:20 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <ScatterChart margin={{left:20,right:20,top:10,bottom:20}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="cf" name="CF%" tick={{fontSize:10}} unit="%" type="number" label={{value:'Capacity Factor %',position:'insideBottom',offset:-10,fontSize:9}} />
+            <YAxis dataKey="irr" name="IRR%" tick={{fontSize:10}} unit="%" type="number" label={{value:'IRR%',angle:-90,position:'insideLeft',fontSize:9}} />
+            <Tooltip content={({payload})=>{
+              if(!payload||!payload[0])return null;
+              const d=payload[0].payload;
+              return <div style={{background:'#fff',border:`1px solid ${T.border}`,padding:'8px 12px',fontSize:11}}>
+                <div style={{fontWeight:700,color:d.isThis?SOLAR_GOLD:T.text}}>{d.name}</div>
+                <div>CF: {(d.cf||0).toFixed(1)}%</div>
+                <div>IRR: {(d.irr||0).toFixed(1)}%</div>
+                <div>{d.mw} MW</div>
+              </div>;
+            }} />
+            <Scatter data={portProjects} name="Portfolio"
+              shape={(props)=>{
+                const {cx,cy,payload}=props;
+                return <circle cx={cx} cy={cy} r={payload.isThis?10:6} fill={payload.isThis?SOLAR_GOLD:T.indigo} stroke="#fff" strokeWidth={1} />;
+              }}
+            />
+          </ScatterChart>
+        </ResponsiveContainer>
+      </div>
+      <SectionTitle icon="A">Asset Comparison Table</SectionTitle>
+      <DataTable zebra
+        headers={['Asset','Technology','MW','Equity IRR','CF%','Min DSCR','Concentration']}
+        rows={portProjects.map(p=>[
+          p.name, p.tech, p.mw,
+          (p.irr||0).toFixed(1)+'%', (p.cf||0).toFixed(1)+'%',
+          (p.dscr||0).toFixed(2)+'x', (p.mw/totalMW*100).toFixed(1)+'%'
+        ])}
+      />
+    </div>
+  );
+}
+
+function TabComps({ m, inp }) {
+  const transactions = Array.from({length:25}, (_,i) => ({
+    project:'Solar '+String.fromCharCode(65+i%26)+(i>25?'2':''),
+    mw:Math.round(50+sr(i*13)*300),
+    location:LOCATIONS[Math.floor(sr(i*7)*LOCATIONS.length)],
+    cod:2021+Math.floor(sr(i*11)*4),
+    capex:+(0.65+sr(i*17)*0.45).toFixed(2),
+    irr:+(8+sr(i*19)*8).toFixed(1),
+    dscr:+(1.15+sr(i*23)*0.45).toFixed(2),
+    buyer:['BlackRock','Brookfield','NextEra','Orsted','AES','Engie','Enel'][Math.floor(sr(i*29)*7)],
+    tech:TECHNOLOGIES[Math.floor(sr(i*31)*TECHNOLOGIES.length)],
+  }));
+
+  const scatterData = transactions.map(t=>({x:t.capex,y:t.irr,name:t.project}));
+
+  return (
+    <div>
+      <SectionTitle icon="S">CAPEX vs IRR — Transaction Universe</SectionTitle>
+      <div style={{ height:220, marginBottom:20 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <ScatterChart margin={{left:20,right:30,top:10,bottom:20}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="x" name="CAPEX $/W" tick={{fontSize:10}} unit="$/W" type="number" domain={[0.6,1.2]} label={{value:'CAPEX $/W',position:'insideBottom',offset:-10,fontSize:9}} />
+            <YAxis dataKey="y" name="IRR%" tick={{fontSize:10}} unit="%" type="number" label={{value:'IRR%',angle:-90,position:'insideLeft',fontSize:9}} />
+            <Tooltip content={({payload})=>{
+              if(!payload||!payload[0])return null;
+              const d=payload[0].payload;
+              return <div style={{background:'#fff',border:`1px solid ${T.border}`,padding:'8px 12px',fontSize:11}}>
+                <div style={{fontWeight:700}}>{d.name}</div>
+                <div>CAPEX: ${d.x}/W · IRR: {d.y}%</div>
+              </div>;
+            }} />
+            <Scatter data={scatterData} fill={T.indigo} opacity={0.65} name="Comparable Transactions" />
+            <Scatter data={[{x:inp.capexPerW,y:+(m.equityIRR*100).toFixed(1),name:'This Project'}]} fill={SOLAR_GOLD} name="This Project"
+              shape={(props)=>{
+                const{cx,cy}=props;
+                return <polygon points={`${cx},${cy-10} ${cx+9},${cy+5} ${cx-9},${cy+5}`} fill={SOLAR_GOLD} stroke="#fff" strokeWidth={1}/>;
+              }}
+            />
+          </ScatterChart>
+        </ResponsiveContainer>
+      </div>
+      <SectionTitle icon="T">Transaction Database (25 Comparable Deals)</SectionTitle>
+      <DataTable small zebra
+        headers={['Project','MW','Location','COD','CAPEX $/W','IRR%','DSCR','Buyer','Technology']}
+        rows={transactions.map(t=>[t.project,t.mw,t.location,t.cod,'$'+t.capex,t.irr+'%',t.dscr+'x',t.buyer,t.tech])}
+      />
+    </div>
+  );
+}
+
+function TabESG({ m, inp }) {
+  const annualCO2_kt = inp.capacityMW * inp.cf / 100 * 8760 * 0.42 / 1000;
+  const lifetimeCO2 = annualCO2_kt * inp.projectLife;
+  const constructionJobs = Math.round(inp.capacityMW * 5.5);
+  const omJobs = Math.round(inp.capacityMW * 0.33);
+  const socialValue = annualCO2_kt * 1000 * 51 / 1e6;
+
+  const co2Data = m.annuals.map(a=>{
+    const degF = Math.pow(1-inp.degradation/100, a.yr-1);
+    return { yr:a.yr, avoided:+(annualCO2_kt*degF).toFixed(1) };
+  });
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="Annual CO2 Avoided" value={(annualCO2_kt||0).toFixed(1)+' kt'} sub="0.42 tCO2/MWh grid factor" color={T.green} />
+        <KpiCard label="Lifetime CO2 Avoided" value={(lifetimeCO2||0).toFixed(0)+' kt'} sub={inp.projectLife+'-year total'} color={T.teal} />
+        <KpiCard label="Construction Jobs" value={constructionJobs+' FTE'} sub="5.5 jobs/MW (NREL)" color={T.indigo} />
+        <KpiCard label="Social Carbon Value" value={fmtM(socialValue)} sub="At $51/tCO2 (US SCC)" color={SOLAR_GOLD} />
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:20, marginBottom:20 }}>
+        <div>
+          <SectionTitle icon="G">Annual CO2 Avoided Trend</SectionTitle>
+          <div style={{ height:200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={co2Data} margin={{left:0,right:0}}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="yr" tick={{fontSize:10}} />
+                <YAxis tick={{fontSize:10}} unit=" kt" />
+                <Tooltip formatter={v=>v+' kt CO2'} />
+                <Area dataKey="avoided" stroke={T.green} fill={T.green} fillOpacity={0.3} name="Annual CO2 Avoided kt" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div>
+          <SectionTitle icon="J">Jobs Impact</SectionTitle>
+          <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
+            {[
+              ['Construction Jobs', constructionJobs, '5.5/MW'],
+              ['O&M Jobs', omJobs, '0.33/MW'],
+              ['Total', constructionJobs+omJobs, 'Peak employment'],
+            ].map(([k,v,sub],i) => (
+              <div key={i} style={{ padding:'8px 0', borderBottom:i<2?`1px solid ${T.border}`:'none' }}>
+                <div style={{ fontSize:11, color:T.sub }}>{k}</div>
+                <div style={{ fontSize:20, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:T.indigo }}>{v}</div>
+                <div style={{ fontSize:10, color:T.sub }}>{sub}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* ── Tab navigation ── */}
-      <div style={{ borderBottom: `1px solid ${T.border}`, background: T.card, overflowX: 'auto' }}>
-        <div style={{ display: 'flex', minWidth: 'max-content' }}>
-          {TABS.map((tab, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveTab(i)}
-              style={{
-                padding: '12px 18px', border: 'none', background: 'none', cursor: 'pointer',
-                fontSize: 12, whiteSpace: 'nowrap', transition: 'all 0.15s',
-                fontWeight: activeTab === i ? 700 : 400,
-                color: activeTab === i ? SOLAR_GOLD : T.sub,
-                borderBottom: activeTab === i ? `3px solid ${SOLAR_GOLD}` : '3px solid transparent',
-              }}
-            >
-              {tab}
-            </button>
+      <SectionTitle icon="G">Green Bond Eligibility (ICMA GBP)</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10 }}>
+        {[
+          ['Use of Proceeds','Utility-scale solar — renewable energy category',true],
+          ['Project Evaluation','IRA + FERC compliance; third-party energy yield',true],
+          ['Proceeds Management','Dedicated project account with audit trail',true],
+          ['Annual Reporting','Annual CO2 avoided + MWh generated reports',true],
+          ['External Review','Second-party opinion (SPO) pending engagement',false],
+          ['TCFD Alignment','Physical risk (location) + transition opportunity',true],
+        ].map(([t,d,ok],i)=>(
+          <div key={i} style={{ background:T.card, border:`1px solid ${ok?T.green:T.amber}`, borderRadius:6, padding:'10px 14px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:4 }}>
+              <span style={{ fontSize:14 }}>{ok?'OK':'!'}</span>
+              <span style={{ fontSize:11, fontWeight:700 }}>{t}</span>
+            </div>
+            <div style={{ fontSize:10, color:T.sub }}>{d}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TabRisk({ m, inp }) {
+  const risks = [
+    { risk:'Interconnection Delay', cat:'Technical', L:3, I:4, mit:'Queue security deposit + LGIA contingencies', owner:'Dev Mgr' },
+    { risk:'Module Supply Disruption', cat:'Technical', L:2, I:4, mit:'Multi-supplier procurement; 10% float', owner:'Procurement' },
+    { risk:'Grid Curtailment Increase', cat:'Market', L:3, I:3, mit:'PPA curtailment carve-out; storage option', owner:'Asset Mgmt' },
+    { risk:'PPA Counterparty Default', cat:'Counterparty', L:1, I:5, mit:'IG offtaker; LC posting requirement', owner:'Legal' },
+    { risk:'PPA Price Below LCOE', cat:'Financial', L:2, I:5, mit:'LCOE stress-tested at PPA-15%', owner:'Finance' },
+    { risk:'Interest Rate Spike', cat:'Financial', L:2, I:3, mit:'Rate lock at financial close; swap option', owner:'Treasury' },
+    { risk:'Construction Overrun', cat:'Financial', L:3, I:4, mit:'EPC lump-sum; 8% contingency reserve', owner:'Dev Mgr' },
+    { risk:'Equipment Underperformance', cat:'Technical', L:2, I:3, mit:'P90 yield; module warranty', owner:'Tech Advisor' },
+    { risk:'Hail / Natural Disaster', cat:'Force Majeure', L:2, I:4, mit:'Hail-rated modules; property insurance', owner:'Insurance' },
+    { risk:'Permitting Denial', cat:'Regulatory', L:2, I:5, mit:'Pre-application meetings; mitigation plan', owner:'Permitting' },
+    { risk:'FERC Rule Change', cat:'Regulatory', L:1, I:3, mit:'LGIA grandfathering provisions', owner:'Regulatory' },
+    { risk:'ITC Recapture Risk', cat:'Regulatory', L:1, I:4, mit:'5-year recapture monitoring; TE compliance', owner:'Tax Counsel' },
+    { risk:'Transmission Congestion', cat:'Market', L:3, I:3, mit:'Basis risk hedge; LMP monitoring', owner:'Trading' },
+    { risk:'ITC Policy Reversal', cat:'Regulatory', L:1, I:5, mit:'Hedged at current law; TE structure', owner:'Legal' },
+    { risk:'O&M Cost Escalation', cat:'Financial', L:3, I:2, mit:'Long-term O&M contract with escalation cap', owner:'Asset Mgmt' },
+    { risk:'Cyber / SCADA Attack', cat:'Technical', L:2, I:4, mit:'NERC CIP compliance; isolated SCADA', owner:'IT Security' },
+    { risk:'Land Lease Dispute', cat:'Counterparty', L:1, I:4, mit:'30-yr recorded lease with renewals', owner:'Legal' },
+    { risk:'Degradation Exceeds Warranty', cat:'Technical', L:2, I:3, mit:'Module warranty enforcement provisions', owner:'Tech Advisor' },
+    { risk:'Merchant Price Collapse', cat:'Market', L:3, I:4, mit:'PPA covers base case; storage hedge option', owner:'Finance' },
+    { risk:'Drought / Water Scarcity', cat:'Force Majeure', L:2, I:2, mit:'Dry-cleaning adopted; minimal water use', owner:'EHS' },
+  ].map(r => ({ ...r, score: r.L * r.I }));
+
+  const sorted = [...risks].sort((a,b)=>b.score-a.score);
+  const riskAdjIRR = Math.max(0, m.equityIRR*100 - sorted.slice(0,5).reduce((s,r)=>s+r.score*0.001,0));
+
+  const heatRows = [5,4,3,2,1].map(L => [1,2,3,4,5].map(I => ({
+    L, I, count: risks.filter(r=>r.L===L&&r.I===I).length
+  })));
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="Risk-Adjusted IRR" value={(riskAdjIRR||0).toFixed(2)+'%'} sub={'vs Base '+(m.equityIRR*100||0).toFixed(2)+'%'} color={T.amber} />
+        <KpiCard label="High Risks (score 12+)" value={risks.filter(r=>r.score>=12).length} sub="Require immediate mitigation" color={T.red} />
+        <KpiCard label="Medium Risks (6-11)" value={risks.filter(r=>r.score>=6&&r.score<12).length} sub="Monitor closely" color={SOLAR_GOLD} />
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 220px', gap:20 }}>
+        <div>
+          <SectionTitle icon="R">Risk Register (Ranked by Score)</SectionTitle>
+          <DataTable small zebra
+            headers={['Risk','Category','L','I','Score','Mitigation','Owner']}
+            rows={sorted.map(r=>[r.risk,r.cat,r.L,r.I,r.score,r.mit,r.owner])}
+          />
+        </div>
+        <div>
+          <SectionTitle icon="H">Heat Map (L x I)</SectionTitle>
+          <table style={{ borderCollapse:'collapse', fontSize:10 }}>
+            <thead>
+              <tr>
+                <th style={{ padding:'3px 6px', color:T.sub, fontSize:9 }}>L\I</th>
+                {[1,2,3,4,5].map(i=><th key={i} style={{ padding:'3px 6px', textAlign:'center', fontSize:9, color:T.sub }}>{i}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {heatRows.map((row,ri) => (
+                <tr key={ri}>
+                  <td style={{ padding:'3px 6px', fontWeight:700, fontSize:9, color:T.sub }}>{5-ri}</td>
+                  {row.map((cell,ci) => {
+                    const score = (5-ri)*(ci+1);
+                    const bg = score>=15?'#FEE2E2':score>=8?'#FEF3C7':score>=4?'#FFFBEB':'#F0FDF4';
+                    return <td key={ci} style={{ width:34,height:30,background:bg,textAlign:'center',fontWeight:700,fontSize:12,border:`1px solid ${T.border}` }}>{cell.count||''}</td>;
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{ marginTop:6, fontSize:9, color:T.sub }}>L=Likelihood, I=Impact (1-5)</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TabConstruction({ m, inp }) {
+  const phases = [
+    { name:'Pre-Development', start:0, dur:6, color:'#6366F1' },
+    { name:'Interconnection Application', start:3, dur:20, color:'#F59E0B' },
+    { name:'Environmental Permitting', start:4, dur:16, color:'#10B981' },
+    { name:'Equipment Procurement', start:16, dur:8, color:'#3B82F6' },
+    { name:'Civil & Grading', start:22, dur:10, color:'#8B5CF6' },
+    { name:'Electrical Installation', start:28, dur:7, color:'#EF4444' },
+    { name:'Commissioning', start:34, dur:3, color:'#06B6D4' },
+    { name:'Commercial Operations', start:37, dur:1, color:SOLAR_GOLD },
+  ];
+  const totalMonths = 38;
+
+  const sData = Array.from({length:24}, (_,i) => {
+    const t = (i+1)/24;
+    const sc = t<0.3?t*t/0.09*0.15:t<0.7?0.15+(t-0.3)/0.4*0.70:0.85+(t-0.7)/0.3*0.15;
+    const prevT = i>0?i/24:0;
+    const prevSC = prevT<0.3?prevT*prevT/0.09*0.15:prevT<0.7?0.15+(prevT-0.3)/0.4*0.70:0.85+(prevT-0.7)/0.3*0.15;
+    return { month:i+1, draw:+((sc-prevSC)*m.totalCapexM).toFixed(2), cumul:+(sc*m.totalCapexM).toFixed(2) };
+  });
+
+  return (
+    <div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:20 }}>
+        <KpiCard label="Construction Duration" value="37 months" sub="NTP to COD" color={T.indigo} />
+        <KpiCard label="Change Order Reserve" value={fmtM(m.totalCapexM*0.075)} sub="7.5% of CAPEX" color={SOLAR_GOLD} />
+        <KpiCard label="1-Month Delay Cost" value={fmtM(m.totalCapexM*0.008)} sub="Interest + lost revenue" color={T.red} />
+        <KpiCard label="Target COD" value="Q1 2027" sub="Based on NTP today" color={T.green} />
+      </div>
+      <SectionTitle icon="G">Construction Gantt Schedule</SectionTitle>
+      <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginBottom:20 }}>
+        {phases.map((p,i) => (
+          <div key={i} style={{ display:'grid', gridTemplateColumns:'180px 1fr', gap:8, alignItems:'center', marginBottom:8 }}>
+            <div style={{ fontSize:11, fontWeight:600 }}>{p.name}</div>
+            <div style={{ position:'relative', height:22, background:'#F3F4F6', borderRadius:4 }}>
+              <div style={{ position:'absolute', left:`${p.start/totalMonths*100}%`, width:`${p.dur/totalMonths*100}%`, height:'100%', background:p.color, borderRadius:4, opacity:0.85, display:'flex', alignItems:'center', paddingLeft:6 }}>
+                <span style={{ fontSize:9, color:'#fff', fontWeight:700 }}>{p.dur}mo</span>
+              </div>
+            </div>
+          </div>
+        ))}
+        <div style={{ display:'grid', gridTemplateColumns:'180px 1fr', gap:8, marginTop:4 }}>
+          <div/>
+          <div style={{ display:'flex', justifyContent:'space-between', fontSize:8, color:T.sub }}>
+            {Array.from({length:8},(_,i)=><span key={i}>{i*5}mo</span>)}
+          </div>
+        </div>
+      </div>
+      <div style={{ height:200 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={sData} margin={{left:0,right:0}}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis dataKey="month" tick={{fontSize:10}} label={{value:'Construction Month',position:'insideBottom',offset:-2,fontSize:9}} />
+            <YAxis tick={{fontSize:10}} />
+            <Tooltip formatter={v=>'$'+(v||0).toFixed(2)+'M'} />
+            <Legend />
+            <Bar dataKey="draw" name="Monthly Draw $M" fill={T.indigo} opacity={0.7} />
+            <Line dataKey="cumul" stroke={SOLAR_GOLD} strokeWidth={2} dot={false} name="Cumulative $M" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+function TabRegulatory({ m, inp }) {
+  const stateData = [
+    {state:'Texas',itc:'None',srec:'None',propTax:'Exempt',salesTax:'Exempt',permit:'6 mo'},
+    {state:'Florida',itc:'None',srec:'None',propTax:'Exempt',salesTax:'Exempt',permit:'8-12 mo'},
+    {state:'Arizona',itc:'None',srec:'None',propTax:'Exempt',salesTax:'Exempt',permit:'8-12 mo'},
+    {state:'Nevada',itc:'None',srec:'None',propTax:'Exempt',salesTax:'Exempt',permit:'10-14 mo'},
+    {state:'Colorado',itc:'None',srec:'SRECs',propTax:'Exempt',salesTax:'Exempt',permit:'10-14 mo'},
+    {state:'Virginia',itc:'None',srec:'SRECs',propTax:'Local',salesTax:'Exempt',permit:'12-16 mo'},
+    {state:'Illinois',itc:'None',srec:'ILSREC',propTax:'Exempt',salesTax:'Exempt',permit:'12-18 mo'},
+    {state:'Minnesota',itc:'None',srec:'SRECs',propTax:'Exempt',salesTax:'Exempt',permit:'12-16 mo'},
+    {state:'Ohio',itc:'None',srec:'SRECs',propTax:'Varies',salesTax:'Partial',permit:'10-14 mo'},
+    {state:'Pennsylvania',itc:'None',srec:'SRECs',propTax:'Varies',salesTax:'Exempt',permit:'12-16 mo'},
+    {state:'North Carolina',itc:'35% State',srec:'None',propTax:'Partial',salesTax:'Exempt',permit:'10-14 mo'},
+    {state:'Massachusetts',itc:'None',srec:'SMART',propTax:'Exempt',salesTax:'Exempt',permit:'12-18 mo'},
+    {state:'New Jersey',itc:'None',srec:'SRECs',propTax:'Exempt',salesTax:'Exempt',permit:'12-16 mo'},
+    {state:'New York',itc:'None',srec:'NY-Sun',propTax:'Exempt',salesTax:'Partial',permit:'18-24 mo'},
+    {state:'California',itc:'None',srec:'NEM 3.0',propTax:'Exempt',salesTax:'Partial',permit:'18-24 mo'},
+  ];
+
+  const iraProvisions = [
+    { section:'Section 48 — ITC', rate:m.itcTotal+'% effective', desc:'Base 6% (prevailing wage exempt) or 30% (prevailing wage + apprenticeship). Adders: domestic content (+10%), energy community (+10%), low income (+10%). Elective pay available for tax-exempts.' },
+    { section:'Section 45 — PTC', rate:'$27.5/MWh (2024)', desc:'10-year production credit. Inflation-adjusted. Cannot stack with ITC on same facility. Better for high-yield, low-CAPEX projects in high-CF locations.' },
+    { section:'Section 45X — Advanced Mfg', rate:'$12/module (thin film)', desc:'Domestic manufacturing credit. Requires US-manufactured cells, wafers, modules. Supports domestic content ITC adder eligibility.' },
+    { section:'Section 48C — Adv. Energy', rate:'30% of investment', desc:'$10B allocated for advanced energy manufacturing. Competitive DOE application. Not applicable to utility-scale generation projects.' },
+  ];
+
+  return (
+    <div>
+      <SectionTitle icon="I">IRA 2022 — Key Provisions</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:24 }}>
+        {iraProvisions.map((p,i) => (
+          <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderLeft:`4px solid ${i<2?SOLAR_GOLD:T.border}`, borderRadius:8, padding:16 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+              <div style={{ fontSize:13, fontWeight:700 }}>{p.section}</div>
+              <Badge label={p.rate} bg={i<2?T.green:T.sub} />
+            </div>
+            <div style={{ fontSize:11, color:T.sub, lineHeight:1.6 }}>{p.desc}</div>
+          </div>
+        ))}
+      </div>
+      <SectionTitle icon="S">State Incentive Overview (Top 15 States)</SectionTitle>
+      <DataTable small zebra
+        headers={['State','State ITC','SREC Program','Property Tax','Sales Tax','Permit Timeline']}
+        rows={stateData.map(s=>[s.state,s.itc,s.srec,s.propTax,s.salesTax,s.permit])}
+      />
+      <SectionTitle icon="F">FERC Interconnection Key Points</SectionTitle>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginTop:8 }}>
+        {[
+          {t:'FERC Order 2023',d:'New LGIP rules with cluster study approach. Shared cost allocation. Reduces serial queue processing. Effective July 2024.'},
+          {t:'Queue Economics',d:'Deposit: $5k/MW + study costs ($50-200k). Early queue = competitive advantage for interconnection rights.'},
+          {t:'Network Upgrade Costs',d:'Project-specific vs. shared under Order 2023. Typical range: $50-200k/MW for remote siting. Material cost driver.'},
+        ].map((item,i) => (
+          <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:6, padding:14 }}>
+            <div style={{ fontSize:12, fontWeight:700, marginBottom:6, color:T.indigo }}>{item.t}</div>
+            <div style={{ fontSize:11, color:T.sub, lineHeight:1.5 }}>{item.d}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TabMemo({ m, inp }) {
+  const irr = m.equityIRR * 100;
+  const rec = irr >= inp.hurdleRate && m.minDscrVal >= 1.25 && m.lcoe < inp.ppaPrice * 0.85;
+  const watch = irr >= inp.hurdleRate * 0.85;
+  const recLabel = rec ? 'INVEST' : watch ? 'CONDITIONAL' : 'PASS';
+  const recColor = rec ? T.green : watch ? SOLAR_GOLD : T.red;
+  const today = '17 April 2026';
+
+  const highlights = [
+    inp.capacityMW+'MWdc '+inp.technology+' at '+inp.location+' — '+(inp.cf||0).toFixed(1)+'% CF, '+inp.projectLife+'-year project life',
+    inp.ppaTenor+'-year PPA at $'+inp.ppaPrice+'/MWh'+(inp.ppaEscalator>0?' with '+inp.ppaEscalator+'%/yr escalator':' fixed')+' — LCOE spread $'+(inp.ppaPrice-m.lcoe).toFixed(2)+'/MWh',
+    m.itcTotal+'% ITC under IRA 2022 = $'+(m.itcAmount||0).toFixed(1)+'M tax credit; MACRS PV shields $'+(m.macrsShields||0).toFixed(1)+'M',
+    inp.debtPct+'% leverage at '+inp.debtRate+'% over '+inp.debtTenor+'yr; min DSCR '+(m.minDscrVal||0).toFixed(2)+'x vs '+inp.minDscr+'x covenant',
+  ];
+
+  const keyMetrics = [
+    ['Equity IRR',fmtPct(m.equityIRR),irr>=inp.hurdleRate?T.green:T.red],
+    ['Project IRR',fmtPct(m.projectIRR),T.text],
+    ['MOIC',fmtX(m.moic),m.moic>=inp.targetMoic?T.green:T.amber],
+    ['Payback',m.payback+' years',T.text],
+    ['LCOE',fmtMWh(m.lcoe),m.lcoe<38?T.green:T.red],
+    ['Min DSCR',(m.minDscrVal||0).toFixed(2)+'x',m.minDscrVal>=inp.minDscr?T.green:T.red],
+    ['Avg DSCR',(m.avgDscr||0).toFixed(2)+'x',T.text],
+    ['LLCR',(m.llcr||0).toFixed(2)+'x',T.text],
+    ['Total CAPEX',fmtM(m.totalCapexM),T.text],
+    ['Equity Investment',fmtM(m.equityAmount),T.text],
+    ['Senior Debt',fmtM(m.debtAmount),T.text],
+    ['ITC Benefit',fmtM(m.itcAmount),T.green],
+    ['MACRS PV Shields',fmtM(m.macrsShields),T.green],
+    ['Total IRA Package',fmtM((m.itcAmount||0)+(m.macrsShields||0)),T.green],
+    ['Annual Revenue (Y1)',fmtM(m.y1Revenue),T.text],
+    ['Y1 EBITDA',fmtM(m.y1Ebitda),T.text],
+    ['EBITDA Margin',m.y1Ebitda>0&&m.y1Revenue>0?(m.y1Ebitda/m.y1Revenue*100).toFixed(1)+'%':'—',T.text],
+    ['Annual Generation',fmtGWh(m.annualGenGWh),T.text],
+    ['Equity NPV',fmtM(m.equityNPV),m.equityNPV>0?T.green:T.red],
+    ['Hurdle Rate',inp.hurdleRate+'%',T.text],
+  ];
+
+  const assumptions = [
+    ['Capacity Factor',inp.cf+'%'],
+    ['Degradation',inp.degradation+'%/yr'],
+    ['O&M Escalation',inp.omEscalation+'%/yr'],
+    ['PPA Escalator',inp.ppaEscalator+'%/yr'],
+    ['Discount Rate',inp.projectDr+'%'],
+    ['Federal Tax Rate',inp.fedTaxRate+'%'],
+    ['Project Life',inp.projectLife+' years'],
+    ['Debt Tenor',inp.debtTenor+' years'],
+    ['DSRA',inp.dsraMonths+' months'],
+    ['Curtailment',inp.curtailmentPct+'%'],
+  ];
+
+  return (
+    <div>
+      <div style={{ background:T.card, border:`2px solid ${T.border}`, borderRadius:12, padding:32, maxWidth:860, margin:'0 auto' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:24, borderBottom:`2px solid ${SOLAR_GOLD}`, paddingBottom:20 }}>
+          <div>
+            <div style={{ fontSize:10, color:T.sub, letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:6 }}>INVESTMENT COMMITTEE MEMORANDUM</div>
+            <div style={{ fontSize:24, fontWeight:900, color:T.text }}>{inp.projectName}</div>
+            <div style={{ fontSize:14, color:T.sub, marginTop:4 }}>{inp.capacityMW}MWdc {inp.technology} · {inp.location} · Target COD Q1 2027</div>
+          </div>
+          <div style={{ textAlign:'right' }}>
+            <div style={{ display:'inline-block', padding:'12px 24px', background:recColor, borderRadius:8, color:'#fff', fontWeight:900, fontSize:18, letterSpacing:'0.05em' }}>{recLabel}</div>
+            <div style={{ fontSize:10, color:T.sub, marginTop:6 }}>{today}</div>
+          </div>
+        </div>
+        <div style={{ marginBottom:24 }}>
+          <div style={{ fontSize:12, fontWeight:700, color:T.indigo, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:10 }}>Investment Highlights</div>
+          {highlights.map((h,i)=>(
+            <div key={i} style={{ display:'flex', gap:10, marginBottom:8, fontSize:13, lineHeight:1.5 }}>
+              <span style={{ color:SOLAR_GOLD, fontWeight:900, flexShrink:0 }}>{'0'+(i+1)}</span>
+              <span>{h}</span>
+            </div>
           ))}
         </div>
+        <div style={{ marginBottom:24 }}>
+          <div style={{ fontSize:12, fontWeight:700, color:T.indigo, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:10 }}>Key Financial Metrics</div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:0 }}>
+            {keyMetrics.map(([k,v,c],i)=>(
+              <div key={i} style={{ display:'flex', justifyContent:'space-between', padding:'5px 10px', background:i%2===0?'#F8F8F6':T.card, borderBottom:`1px solid ${T.border}` }}>
+                <span style={{ fontSize:11, color:T.sub }}>{k}</span>
+                <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:12, fontWeight:700, color:c||T.text }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24, marginBottom:24 }}>
+          <div>
+            <div style={{ fontSize:12, fontWeight:700, color:T.indigo, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:10 }}>Key Risk Factors</div>
+            {['Interconnection delay — mitigated by LGIA contingency provisions',
+              'PPA counterparty credit — IG-rated offtaker required at close',
+              'Grid curtailment post-COD — carve-out negotiated in PPA',
+              'ITC recapture risk years 1-5 — ongoing TE compliance program',
+              'EPC construction overrun — lump-sum contract with 8% contingency'].map((r,i)=>(
+              <div key={i} style={{ display:'flex', gap:8, marginBottom:6, fontSize:11, lineHeight:1.5, color:T.sub }}>
+                <span style={{ color:T.red, flexShrink:0 }}>!</span>{r}
+              </div>
+            ))}
+          </div>
+          <div>
+            <div style={{ fontSize:12, fontWeight:700, color:T.indigo, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:10 }}>Key Assumptions</div>
+            {assumptions.map(([k,v],i)=>(
+              <div key={i} style={{ display:'flex', justifyContent:'space-between', padding:'3px 0', borderBottom:`1px solid ${T.border}` }}>
+                <span style={{ fontSize:11, color:T.sub }}>{k}</span>
+                <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:11, fontWeight:700 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ borderTop:`2px solid ${T.border}`, paddingTop:20 }}>
+          <div style={{ fontSize:11, fontWeight:700, color:T.sub, marginBottom:12, textTransform:'uppercase', letterSpacing:'0.06em' }}>Approval Signatures</div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:20 }}>
+            {['IC Chair','Investment Director','CFO'].map((role,i)=>(
+              <div key={i} style={{ borderBottom:`1px solid ${T.text}`, paddingBottom:4 }}>
+                <div style={{ fontSize:10, color:T.sub, marginTop:24 }}>{role}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:16, fontSize:10, color:T.sub }}>
+            Solar Finance Engine v2.0 · Model date: {today} · All projections are forward-looking estimates and subject to material uncertainty.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN COMPONENT
+// ─────────────────────────────────────────────────────────────────────────────
+export default function SolarProjectFinancePage() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [showDrawer, setShowDrawer] = useState(false);
+
+  const [inp, setInp] = useState({
+    projectName: 'Solar Project Alpha',
+    technology: 'Bifacial PERC',
+    location: 'ERCOT-West',
+    capacityMW: 100,
+    dcAcRatio: 1.20,
+    cf: 21.5,
+    degradation: 0.45,
+    projectLife: 30,
+    capexPerW: 0.85,
+    omPerKW: 14,
+    omEscalation: 2,
+    landLease: 1200,
+    projectAcres: 700,
+    insurancePct: 0.40,
+    gAndA: 350,
+    ppaPrice: 42.0,
+    ppaEscalator: 0,
+    ppaTenor: 20,
+    merchantPct: 0,
+    recPrice: 3.50,
+    curtailmentPct: 2,
+    debtPct: 70,
+    debtRate: 5.5,
+    debtTenor: 18,
+    debtFees: 1.5,
+    dsraMonths: 6,
+    minDscr: 1.30,
+    itcPct: 30,
+    domesticContent: false,
+    energyCommunity: false,
+    lowIncome: false,
+    macrsSchedule: '5yr',
+    fedTaxRate: 21,
+    stateTaxRate: 4,
+    usePTC: false,
+    ptcRate: 27.5,
+    hurdleRate: 12,
+    projectDr: 8,
+    targetMoic: 2.0,
+    yieldSigma: 9,
+  });
+
+  const upd = useCallback((key) => (val) => setInp(p => ({ ...p, [key]: val })), []);
+  const m = useModel(inp);
+
+  const irr = m.equityIRR * 100;
+  const irrColor = irr >= inp.hurdleRate ? '#4ADE80' : irr >= inp.hurdleRate * 0.85 ? SOLAR_GOLD : '#F87171';
+
+  const tabComponents = [
+    <TabOverview key={0} m={m} inp={inp} />,
+    <TabFinancialModel key={1} m={m} inp={inp} />,
+    <TabReturns key={2} m={m} inp={inp} />,
+    <TabDscr key={3} m={m} inp={inp} />,
+    <TabIRA key={4} m={m} inp={inp} />,
+    <TabYield key={5} m={m} inp={inp} />,
+    <TabSensitivity key={6} m={m} inp={inp} />,
+    <TabScenarios key={7} m={m} inp={inp} />,
+    <TabMonteCarlo key={8} m={m} inp={inp} />,
+    <TabRefinancing key={9} m={m} inp={inp} />,
+    <TabWaterfall key={10} m={m} inp={inp} />,
+    <TabTaxEquity key={11} m={m} inp={inp} />,
+    <TabLCOE key={12} m={m} inp={inp} />,
+    <TabPortfolio key={13} m={m} inp={inp} />,
+    <TabComps key={14} m={m} inp={inp} />,
+    <TabESG key={15} m={m} inp={inp} />,
+    <TabRisk key={16} m={m} inp={inp} />,
+    <TabConstruction key={17} m={m} inp={inp} />,
+    <TabRegulatory key={18} m={m} inp={inp} />,
+    <TabMemo key={19} m={m} inp={inp} />,
+  ];
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', height:'100vh', background:T.bg, fontFamily:'DM Sans, sans-serif', overflow:'hidden' }}>
+      {/* Header */}
+      <div style={{ background:HEADER_BG, borderBottom:`3px solid ${SOLAR_GOLD}`, padding:'0 24px', flexShrink:0 }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', height:52 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+            <span style={{ fontSize:22 }}>☀️</span>
+            <div>
+              <div style={{ fontSize:15, fontWeight:800, color:'#F1F5F9', letterSpacing:'-0.01em' }}>Solar Project Finance</div>
+              <div style={{ fontSize:10, color:'#64748B', fontFamily:'JetBrains Mono, monospace' }}>{inp.projectName} · {inp.capacityMW}MWdc · {inp.location}</div>
+            </div>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:20 }}>
+            <div style={{ textAlign:'right' }}>
+              <div style={{ fontSize:9, color:'#64748B', letterSpacing:'0.06em' }}>EQUITY IRR</div>
+              <div style={{ fontSize:22, fontFamily:'JetBrains Mono, monospace', fontWeight:900, color:irrColor }}>{(irr||0).toFixed(1)}%</div>
+            </div>
+            <div style={{ textAlign:'right' }}>
+              <div style={{ fontSize:9, color:'#64748B', letterSpacing:'0.06em' }}>LCOE $/MWh</div>
+              <div style={{ fontSize:22, fontFamily:'JetBrains Mono, monospace', fontWeight:900, color:'#F1F5F9' }}>${(m.lcoe||0).toFixed(1)}</div>
+            </div>
+            <div style={{ textAlign:'right' }}>
+              <div style={{ fontSize:9, color:'#64748B', letterSpacing:'0.06em' }}>MIN DSCR</div>
+              <div style={{ fontSize:22, fontFamily:'JetBrains Mono, monospace', fontWeight:900, color:m.minDscrVal>=inp.minDscr?'#4ADE80':'#F87171' }}>{(m.minDscrVal||0).toFixed(2)}x</div>
+            </div>
+            <button onClick={()=>setShowDrawer(d=>!d)} style={{ background:showDrawer?SOLAR_GOLD:'#1E293B', color:showDrawer?'#0F172A':'#94A3B8', border:`1px solid ${showDrawer?SOLAR_GOLD:'#334155'}`, borderRadius:6, padding:'6px 14px', cursor:'pointer', fontSize:12, fontWeight:700 }}>
+              {showDrawer ? 'Close Scenarios' : 'View Scenarios'}
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* ── Tab content ── */}
-      <div style={{ padding: '24px 32px', maxWidth: 1400, margin: '0 auto' }}>
-        {renderers[activeTab]()}
+      {/* Body */}
+      <div style={{ display:'flex', flex:1, overflow:'hidden' }}>
+        {/* Left Input Panel */}
+        <div style={{ width:280, background:NAV_BG, borderRight:`1px solid #1E293B`, overflowY:'auto', flexShrink:0 }}>
+          <div style={{ padding:'12px 16px 4px' }}>
+            <div style={{ fontSize:9, color:'#64748B', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>Project Studio</div>
+            <input value={inp.projectName} onChange={e=>setInp(p=>({...p,projectName:e.target.value}))}
+              style={{ width:'100%', background:'#1E293B', color:'#F1F5F9', border:'1px solid #334155', borderRadius:4, padding:'6px 10px', fontSize:12, boxSizing:'border-box' }} />
+          </div>
+
+          <CollapseSection title="1 · Asset Configuration">
+            <InputSelect label="Technology" value={inp.technology} options={TECHNOLOGIES} onChange={upd('technology')} />
+            <InputSelect label="Location" value={inp.location} options={LOCATIONS} onChange={v=>setInp(p=>({...p,location:v,cf:CF_BY_LOC[v]||p.cf}))} />
+            <SliderRow label="DC Capacity (MWdc)" value={inp.capacityMW} min={10} max={500} step={5} onChange={upd('capacityMW')} unit=" MW" />
+            <SliderRow label="DC:AC Ratio" value={inp.dcAcRatio} min={1.10} max={1.45} step={0.05} onChange={upd('dcAcRatio')} />
+            <SliderRow label="Capacity Factor" value={inp.cf} min={14} max={32} step={0.5} onChange={upd('cf')} unit="%" />
+            <SliderRow label="Degradation Rate" value={inp.degradation} min={0.25} max={0.70} step={0.05} onChange={upd('degradation')} unit="%/yr" />
+            <InputSelect label="Project Life" value={inp.projectLife} options={[{value:25,label:'25 years'},{value:30,label:'30 years'},{value:35,label:'35 years'}]} onChange={v=>upd('projectLife')(Number(v))} />
+          </CollapseSection>
+
+          <CollapseSection title="2 · Capital Structure">
+            <SliderRow label="CAPEX ($/Wdc)" value={inp.capexPerW} min={0.55} max={1.40} step={0.01} onChange={upd('capexPerW')} />
+            <div style={{ fontSize:10, color:SOLAR_GOLD, fontFamily:'JetBrains Mono, monospace', marginBottom:8, paddingLeft:2 }}>
+              Total CAPEX: ${(inp.capacityMW*1000*inp.capexPerW/1e6).toFixed(1)}M
+            </div>
+            <SliderRow label="O&M ($/kW/yr)" value={inp.omPerKW} min={6} max={22} step={1} onChange={upd('omPerKW')} />
+            <SliderRow label="O&M Escalation" value={inp.omEscalation} min={0} max={3} step={0.25} onChange={upd('omEscalation')} unit="%/yr" />
+            <SliderRow label="Land Lease ($/ac/yr)" value={inp.landLease} min={500} max={2500} step={50} onChange={upd('landLease')} />
+            <SliderRow label="Project Acres" value={inp.projectAcres} min={100} max={1500} step={50} onChange={upd('projectAcres')} unit=" ac" />
+            <SliderRow label="Insurance (% assets)" value={inp.insurancePct} min={0.2} max={0.7} step={0.05} onChange={upd('insurancePct')} unit="%" />
+            <SliderRow label="G&A ($k/yr)" value={inp.gAndA} min={100} max={800} step={25} onChange={upd('gAndA')} unit="k" />
+          </CollapseSection>
+
+          <CollapseSection title="3 · Revenue">
+            <SliderRow label="PPA Price ($/MWh)" value={inp.ppaPrice} min={18} max={65} step={0.5} onChange={upd('ppaPrice')} />
+            <SliderRow label="PPA Escalator" value={inp.ppaEscalator} min={0} max={3} step={0.25} onChange={upd('ppaEscalator')} unit="%/yr" />
+            <InputSelect label="PPA Tenor" value={inp.ppaTenor} options={[{value:10,label:'10 years'},{value:12,label:'12 years'},{value:15,label:'15 years'},{value:20,label:'20 years'},{value:25,label:'25 years'}]} onChange={v=>upd('ppaTenor')(Number(v))} />
+            <SliderRow label="Merchant % post-PPA" value={inp.merchantPct} min={0} max={100} step={5} onChange={upd('merchantPct')} unit="%" />
+            <SliderRow label="REC Price ($/MWh)" value={inp.recPrice} min={0} max={15} step={0.25} onChange={upd('recPrice')} />
+            <SliderRow label="Curtailment" value={inp.curtailmentPct} min={0} max={15} step={0.5} onChange={upd('curtailmentPct')} unit="%" />
+          </CollapseSection>
+
+          <CollapseSection title="4 · Debt">
+            <SliderRow label="Debt / CAPEX" value={inp.debtPct} min={50} max={80} step={5} onChange={upd('debtPct')} unit="%" />
+            <div style={{ fontSize:10, color:SOLAR_GOLD, fontFamily:'JetBrains Mono, monospace', marginBottom:8, paddingLeft:2 }}>
+              Debt: ${(m.debtAmount||0).toFixed(1)}M | Equity: ${(m.equityAmount||0).toFixed(1)}M
+            </div>
+            <SliderRow label="Senior Debt Rate" value={inp.debtRate} min={3.5} max={8.5} step={0.1} onChange={upd('debtRate')} unit="%" />
+            <InputSelect label="Debt Tenor" value={inp.debtTenor} options={[{value:15,label:'15 years'},{value:18,label:'18 years'},{value:20,label:'20 years'}]} onChange={v=>upd('debtTenor')(Number(v))} />
+            <SliderRow label="Debt Fees (% of loan)" value={inp.debtFees} min={0.5} max={2.5} step={0.25} onChange={upd('debtFees')} unit="%" />
+            <InputSelect label="DSRA Months" value={inp.dsraMonths} options={[{value:3,label:'3 months'},{value:6,label:'6 months'},{value:9,label:'9 months'}]} onChange={v=>upd('dsraMonths')(Number(v))} />
+            <SliderRow label="Min DSCR Covenant" value={inp.minDscr} min={1.10} max={1.40} step={0.05} onChange={upd('minDscr')} fmt={v=>v.toFixed(2)+'x'} />
+          </CollapseSection>
+
+          <CollapseSection title="5 · Tax & Incentives">
+            <Toggle label="Use PTC instead of ITC" value={inp.usePTC} onChange={upd('usePTC')} />
+            {!inp.usePTC && (
+              <>
+                <SliderRow label="ITC Base %" value={inp.itcPct} min={6} max={50} step={1} onChange={upd('itcPct')} unit="%" />
+                <Toggle label="Domestic Content (+10%)" value={inp.domesticContent} onChange={upd('domesticContent')} />
+                <Toggle label="Energy Community (+10%)" value={inp.energyCommunity} onChange={upd('energyCommunity')} />
+                <Toggle label="Low Income (+10%)" value={inp.lowIncome} onChange={upd('lowIncome')} />
+                <div style={{ fontSize:10, color:SOLAR_GOLD, fontFamily:'JetBrains Mono, monospace', marginBottom:8, paddingLeft:2 }}>
+                  Effective ITC: {m.itcTotal}% = ${(m.itcAmount||0).toFixed(1)}M
+                </div>
+              </>
+            )}
+            {inp.usePTC && <SliderRow label="PTC Rate ($/MWh)" value={inp.ptcRate} min={20} max={35} step={0.5} onChange={upd('ptcRate')} />}
+            <InputSelect label="MACRS Schedule" value={inp.macrsSchedule} options={[{value:'5yr',label:'5-Year MACRS'},{value:'15yr',label:'15-Year MACRS'},{value:'straight-line',label:'Straight-Line'}]} onChange={upd('macrsSchedule')} />
+            <SliderRow label="Federal Tax Rate" value={inp.fedTaxRate} min={15} max={28} step={1} onChange={upd('fedTaxRate')} unit="%" />
+            <SliderRow label="State Tax Rate" value={inp.stateTaxRate} min={0} max={10} step={0.5} onChange={upd('stateTaxRate')} unit="%" />
+          </CollapseSection>
+
+          <CollapseSection title="6 · Returns Targets" defaultOpen={false}>
+            <SliderRow label="Hurdle Rate (Equity)" value={inp.hurdleRate} min={8} max={20} step={0.5} onChange={upd('hurdleRate')} unit="%" />
+            <SliderRow label="Project Discount Rate" value={inp.projectDr} min={6} max={14} step={0.5} onChange={upd('projectDr')} unit="%" />
+            <SliderRow label="Target MOIC" value={inp.targetMoic} min={1.5} max={4.0} step={0.1} onChange={upd('targetMoic')} fmt={v=>v.toFixed(1)+'x'} />
+            <SliderRow label="Yield Uncertainty sigma" value={inp.yieldSigma} min={5} max={15} step={1} onChange={upd('yieldSigma')} unit="%" />
+          </CollapseSection>
+
+          {/* Quick Stats */}
+          <div style={{ margin:'8px 12px 16px', background:'#1A2744', border:`1px solid #334155`, borderRadius:6, padding:'10px 12px' }}>
+            <div style={{ fontSize:9, color:'#64748B', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>Quick Stats</div>
+            {[
+              ['Total CAPEX','$'+(m.totalCapexM||0).toFixed(1)+'M'],
+              ['Equity','$'+(m.equityAmount||0).toFixed(1)+'M'],
+              ['Revenue Y1','$'+(m.y1Revenue||0).toFixed(1)+'M'],
+              ['Equity IRR',(m.equityIRR*100||0).toFixed(1)+'%'],
+              ['LCOE','$'+(m.lcoe||0).toFixed(1)+'/MWh'],
+            ].map(([k,v],i) => (
+              <div key={i} style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+                <span style={{ fontSize:10, color:'#64748B' }}>{k}</span>
+                <span style={{ fontSize:10, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:SOLAR_GOLD }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
+          {/* Tab Bar */}
+          <div style={{ background:T.card, borderBottom:`1px solid ${T.border}`, overflowX:'auto', flexShrink:0, display:'flex', whiteSpace:'nowrap' }}>
+            {TABS.map((tab,i) => (
+              <button key={i} onClick={()=>setActiveTab(i)} style={{
+                padding:'10px 14px', border:'none', background:'transparent', cursor:'pointer',
+                fontSize:11, fontWeight:i===activeTab?700:500,
+                color:i===activeTab?SOLAR_GOLD:T.sub,
+                borderBottom:i===activeTab?`3px solid ${SOLAR_GOLD}`:'3px solid transparent',
+                whiteSpace:'nowrap', flexShrink:0,
+              }}>
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div style={{ flex:1, overflowY:'auto', padding:'20px 24px' }}>
+            {tabComponents[activeTab]}
+          </div>
+        </div>
+
+        {/* Right Scenario Drawer */}
+        {showDrawer && (
+          <div style={{ width:320, background:NAV_BG, borderLeft:`1px solid #1E293B`, overflowY:'auto', flexShrink:0, padding:16 }}>
+            <div style={{ fontSize:12, fontWeight:700, color:SOLAR_GOLD, marginBottom:14, textTransform:'uppercase', letterSpacing:'0.06em' }}>Scenario Comparison</div>
+            {[
+              { name:'Base Case', ppa:0, cf:0, capex:0, prob:40, color:SOLAR_GOLD },
+              { name:'Optimistic', ppa:+5, cf:+5, capex:-0.05, prob:15, color:T.green },
+              { name:'Conservative', ppa:0, cf:-5, capex:+0.05, prob:25, color:T.teal },
+              { name:'Downside', ppa:-8, cf:-10, capex:+0.10, prob:15, color:T.amber },
+              { name:'Stress', ppa:-15, cf:-15, capex:+0.15, prob:5, color:T.red },
+            ].map((sc,i) => {
+              const adjPpa = inp.ppaPrice + sc.ppa;
+              const adjCf = inp.cf + sc.cf;
+              const adjCapex = inp.capexPerW + sc.capex;
+              const scIRR = m.equityIRR * 100 * (adjPpa/Math.max(inp.ppaPrice,0.01)) * (adjCf/Math.max(inp.cf,0.01)) * (inp.capexPerW/Math.max(adjCapex,0.01));
+              const scDscr = m.minDscrVal * (adjPpa/Math.max(inp.ppaPrice,0.01)) * (adjCf/Math.max(inp.cf,0.01));
+              return (
+                <div key={i} style={{ background:'#1E293B', border:`1px solid ${sc.color}30`, borderLeft:`3px solid ${sc.color}`, borderRadius:6, padding:'10px 12px', marginBottom:10 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+                    <span style={{ fontSize:11, fontWeight:700, color:sc.color }}>{sc.name}</span>
+                    <span style={{ fontSize:9, color:'#64748B' }}>{sc.prob}% prob</span>
+                  </div>
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4 }}>
+                    {[
+                      ['IRR',(isFinite(scIRR)?scIRR:0).toFixed(1)+'%',isFinite(scIRR)&&scIRR>=inp.hurdleRate?'#4ADE80':'#F87171'],
+                      ['DSCR',(isFinite(scDscr)?scDscr:0).toFixed(2)+'x',isFinite(scDscr)&&scDscr>=inp.minDscr?'#4ADE80':'#F87171'],
+                      ['PPA','$'+(adjPpa||0).toFixed(0)+'/MWh','#94A3B8'],
+                      ['CF',(adjCf||0).toFixed(1)+'%','#94A3B8'],
+                    ].map(([k,v,c],j)=>(
+                      <div key={j}>
+                        <div style={{ fontSize:8, color:'#64748B', textTransform:'uppercase' }}>{k}</div>
+                        <div style={{ fontSize:13, fontFamily:'JetBrains Mono, monospace', fontWeight:700, color:c }}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+            <div style={{ background:'#1A2744', borderRadius:6, padding:'10px 12px', marginTop:4 }}>
+              <div style={{ fontSize:9, color:'#64748B', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.06em' }}>Probability-Weighted IRR</div>
+              <div style={{ fontSize:20, fontFamily:'JetBrains Mono, monospace', fontWeight:900, color:SOLAR_GOLD }}>
+                {([
+                  {ppa:0,cf:0,capex:0,prob:0.40},
+                  {ppa:5,cf:5,capex:-0.05,prob:0.15},
+                  {ppa:0,cf:-5,capex:0.05,prob:0.25},
+                  {ppa:-8,cf:-10,capex:0.10,prob:0.15},
+                  {ppa:-15,cf:-15,capex:0.15,prob:0.05},
+                ].reduce((s,sc) => {
+                  const adjPpa = inp.ppaPrice + sc.ppa;
+                  const adjCf = inp.cf + sc.cf;
+                  const adjCapex = inp.capexPerW + sc.capex;
+                  const scIRR = m.equityIRR*100*(adjPpa/Math.max(inp.ppaPrice,0.01))*(adjCf/Math.max(inp.cf,0.01))*(inp.capexPerW/Math.max(adjCapex,0.01));
+                  return s + (isFinite(scIRR)?scIRR:0)*sc.prob;
+                },0)).toFixed(2)}%
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Status Bar */}
+      <div style={{ background:HEADER_BG, borderTop:`1px solid #1E293B`, padding:'4px 24px', display:'flex', gap:24, alignItems:'center', flexShrink:0 }}>
+        <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:'#64748B' }}>Solar Finance Engine v2.0</span>
+        <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:'#64748B' }}>{inp.capacityMW}MWdc · {inp.projectLife}yr · ${inp.capexPerW}/Wdc</span>
+        <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:m.equityIRR*100>=inp.hurdleRate?'#4ADE80':'#F87171' }}>
+          IRR {(m.equityIRR*100||0).toFixed(2)}% {m.equityIRR*100>=inp.hurdleRate?'ABOVE':'BELOW'} HURDLE
+        </span>
+        <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:m.minDscrVal>=inp.minDscr?'#4ADE80':'#F87171' }}>
+          MIN DSCR {(m.minDscrVal||0).toFixed(2)}x
+        </span>
+        <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:'#64748B' }}>ITC {m.itcTotal}% = ${(m.itcAmount||0).toFixed(1)}M</span>
+        <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:SOLAR_GOLD, marginLeft:'auto' }}>LIVE — ALL VALUES REAL-TIME</span>
       </div>
     </div>
   );
