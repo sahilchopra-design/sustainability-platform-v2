@@ -725,6 +725,12 @@ const GreeniumSignalPage    = React.lazy(() => import("./features/greenium-signa
 const SentimentPipelinePage = React.lazy(() => import("./features/sentiment-pipeline/pages/SentimentPipelinePage"));
 // EP-SAD1 — Social & Alternative Data Intelligence
 const SocialAlternativeDataPage = React.lazy(() => import("./features/social-alternative-data/pages/SocialAlternativeDataPage"));
+// Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
+const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
+const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
+const PPARevenueAnalyticsPage         = React.lazy(() => import("./features/ppa-revenue-analytics/pages/PPARevenueAnalyticsPage"));
+const BESSGridAnalyticsPage           = React.lazy(() => import("./features/bess-grid-analytics/pages/BESSGridAnalyticsPage"));
+const RenewableMLForecastingPage      = React.lazy(() => import("./features/renewable-ml-forecasting/pages/RenewableMLForecastingPage"));
 // Sprint BC — Residential RE Assessment · XBRL Ingestion
 const ResidentialReAssessmentPage = React.lazy(() => import("./features/residential-re-assessment/pages/ResidentialReAssessmentPage"));
 const XbrlIngestionPage            = React.lazy(() => import("./features/xbrl-ingestion/pages/XbrlIngestionPage"));
@@ -1009,6 +1015,14 @@ const NAV_GROUPS = [
     { path: '/document-similarity',        label: 'Document Similarity',           badge: 'Cosine · K-Means · Boilerplate',                                   code: 'EP-W5' },
     { path: '/ai-data-live-platform',      label: 'AI Data Live Platform',         badge: 'GDELT · SEC EDGAR · OpenAlex · World Bank · 4 Live APIs · Real-Time', code: 'EP-LIV1' },
     { path: '/social-alternative-data', label: 'Social & Alternative Data', badge: 'Bluesky API · GDELT · ABSA · NLI · Hedge Detection · Boilerplate · Alt-Data Alpha · 3 Live APIs', code: 'EP-SAD1' },
+  ]},
+  { label: 'Solar & Renewable Energy', icon: '☀️', color: '#D97706', items: [
+    { path: '/solar-project-finance',          label: 'Solar Project Finance Engine',       badge: 'IRR · DSCR · ITC/PTC IRA · P50/P90 · DCF · LP/GP Waterfall · 12 Tabs', code: 'RE-PF1' },
+    { path: '/renewable-portfolio-intelligence', label: 'Renewable Portfolio Intelligence', badge: '50 Assets · 6 Technologies · VaR · Efficient Frontier · Peer Benchmark', code: 'RE-PORT1' },
+    { path: '/solar-resource-performance',     label: 'Solar Resource & Performance',       badge: 'NASA POWER Live · Loss Waterfall · Degradation · Weather Normalization', code: 'RE-RES1' },
+    { path: '/ppa-revenue-analytics',          label: 'PPA & Revenue Analytics',            badge: 'PPA Pricing · Merchant VaR · VPPA · Curtailment · Counterparty ECL', code: 'RE-PPA1' },
+    { path: '/bess-grid-analytics',            label: 'BESS & Grid Services Analytics',     badge: 'LCOS · Revenue Stacking · Arrhenius Degradation · Dispatch · FERC 841', code: 'RE-BESS1' },
+    { path: '/renewable-ml-forecasting',       label: 'ML Forecasting & Risk Engine',       badge: 'Monte Carlo · Bayesian · HMM ENSO · OLS Factor · Portfolio VaR · Stress', code: 'RE-ML1' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -2929,6 +2943,12 @@ function AppContent() {
             <Route path="/greenium-signal"    element={<GreeniumSignalPage />} />
             <Route path="/sentiment-pipeline" element={<SentimentPipelinePage />} />
             <Route path="/social-alternative-data" element={<SocialAlternativeDataPage />} />
+            {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
+            <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
+            <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
+            <Route path="/ppa-revenue-analytics"           element={<PPARevenueAnalyticsPage />} />
+            <Route path="/bess-grid-analytics"             element={<BESSGridAnalyticsPage />} />
+            <Route path="/renewable-ml-forecasting"        element={<RenewableMLForecastingPage />} />
             {/* Sprint BC — Residential RE Assessment · XBRL Ingestion */}
             <Route path="/residential-re-assessment" element={<ResidentialReAssessmentPage />} />
             <Route path="/xbrl-ingestion"            element={<XbrlIngestionPage />} />
