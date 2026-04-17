@@ -809,7 +809,7 @@ export default function BESSGridAnalyticsPage() {
         <KpiCard label="Replacement Year" value={calc.replacementYear} unit="yr" sub="at 80% capacity fade" color={T.amber} />
         <KpiCard label="Year-20 Capacity" value={(degradationSeries[Math.min(20, degradationSeries.length - 1)]?.capacity || 0).toFixed(1)} unit="%" color={T.red} />
         <KpiCard label="Total EFC" value={(bessInputs.cyclesPerDay * 365 * bessInputs.projectLifeYr).toFixed(0)} unit="cycles" color={T.teal} />
-        <KpiCard label="Degradation Cost" value={((calc.npvReplacement / 1e6) / calc.totalEnergyGWh).toFixed(2)} unit="$/MWh" sub="amortized replacement" color={T.blue} />
+        <KpiCard label="Degradation Cost" value={(calc.totalEnergyGWh > 0 ? (calc.npvReplacement / 1e6) / calc.totalEnergyGWh : 0).toFixed(2)} unit="$/MWh" sub="amortized replacement" color={T.blue} />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>

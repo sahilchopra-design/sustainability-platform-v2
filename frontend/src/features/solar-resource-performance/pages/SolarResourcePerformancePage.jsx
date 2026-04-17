@@ -316,9 +316,10 @@ export default function SolarResourcePerformancePage() {
     const sumY = pts.reduce((s, p) => s + p.actual, 0);
     const sumXY = pts.reduce((s, p) => s + p.ghi * p.actual, 0);
     const sumX2 = pts.reduce((s, p) => s + p.ghi * p.ghi, 0);
-    const beta1 = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-    const beta0 = (sumY - beta1 * sumX) / n;
-    const meanY = sumY / n;
+    const denom = (n * sumX2 - sumX * sumX);
+    const beta1 = denom !== 0 ? (n * sumXY - sumX * sumY) / denom : 0;
+    const beta0 = n > 0 ? (sumY - beta1 * sumX) / n : 0;
+    const meanY = n > 0 ? sumY / n : 0;
     const ssTot = pts.reduce((s, p) => s + Math.pow(p.actual - meanY, 2), 0);
     const ssRes = pts.reduce((s, p) => s + Math.pow(p.actual - (beta0 + beta1 * p.ghi), 2), 0);
     const r2 = ssTot > 0 ? 1 - ssRes / ssTot : 0;

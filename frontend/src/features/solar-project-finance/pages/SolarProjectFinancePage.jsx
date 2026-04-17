@@ -1498,7 +1498,7 @@ export default function SolarProjectFinancePage() {
             a.name, a.type, a.capex.toFixed(0),
             (a.cf * 100).toFixed(1) + '%',
             (a.irr * 100).toFixed(1) + '%',
-            (a.capex / totalAUM * 100).toFixed(1) + '%',
+            (totalAUM > 0 ? a.capex / totalAUM * 100 : 0).toFixed(1) + '%',
           ])}
           colorFn={(cell, ci, ri) => ri === portfolio.length - 1 ? SOLAR_GOLD : T.text}
         />

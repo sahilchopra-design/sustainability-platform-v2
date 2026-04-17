@@ -1214,7 +1214,7 @@ function Tab8Stress() {
     const stressedRev = stressedP50 * 55 / 1000;
     const stressedDSCR = debtService > 0 ? stressedRev / debtService : 0;
     const revImpact = stressedRev - baseRev;
-    const dscrImpact = stressedDSCR - (baseRev / debtService);
+    const dscrImpact = stressedDSCR - (debtService > 0 ? baseRev / debtService : 0);
     const irrImpact = (stressedRev / capex - baseRev / capex) * 100;
     const ael = Math.abs(revImpact) * s.prob;
     return { ...s, stressedP50: stressedP50.toFixed(0), stressedRev: stressedRev.toFixed(1), revImpact: revImpact.toFixed(1), stressedDSCR: stressedDSCR.toFixed(2), dscrImpact: dscrImpact.toFixed(2), irrImpact: irrImpact.toFixed(1), ael: ael.toFixed(2) };
@@ -1228,7 +1228,7 @@ function Tab8Stress() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         <KpiCard label="Base P50 Revenue" value={`$${baseRev.toFixed(1)}M`} color={T.indigo} />
-        <KpiCard label="Base DSCR" value={(baseRev / debtService).toFixed(2)} color={T.green} />
+        <KpiCard label="Base DSCR" value={(debtService > 0 ? baseRev / debtService : 0).toFixed(2)} color={T.green} />
         <KpiCard label="Total AEL" value={`$${totalAEL.toFixed(2)}M`} color={T.red} sub="Annual Expected Loss" />
         <KpiCard label="Worst Scenario" value={`${scenarios[5].p50Impact}%`} color={T.red} sub="Combined Stress P50" />
       </div>
@@ -1339,7 +1339,7 @@ function Tab9PPA() {
   const npvPPA = buyerData.reduce((s, d, i) => s + d.totalCost / Math.pow(1.07, i + 1), 0);
   const npvBaseline = buyerData.reduce((s, d, i) => s + d.baseline / Math.pow(1.07, i + 1), 0);
   const npvSavings = npvBaseline - npvPPA;
-  const avgRE100 = buyerData.reduce((s, d) => s + d.re100, 0) / buyerData.length;
+  const avgRE100 = buyerData.length ? buyerData.reduce((s, d) => s + d.re100, 0) / buyerData.length : 0;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -1501,7 +1501,7 @@ function Tab10Validation() {
     const fc = i < 7 ? trainForecast[i] : testForecast[i - 7];
     return v - fc;
   });
-  const meanError = allErrors.reduce((s, v) => s + v, 0) / allErrors.length;
+  const meanError = allErrors.length ? allErrors.reduce((s, v) => s + v, 0) / allErrors.length : 0;
 
   // Diebold-Mariano concept
   const modelA_errors = testActual.map((v, i) => Math.pow(v - testForecast[i], 2));
