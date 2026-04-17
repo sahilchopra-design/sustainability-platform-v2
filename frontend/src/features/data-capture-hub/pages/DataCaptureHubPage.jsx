@@ -527,15 +527,21 @@ function RequirementsTab({ allModules, domainGroups, capturedData, getDataCovera
   const [domainFilter, setDomainFilter] = useState('');
   const [expandedDomain, setExpandedDomain] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
-  const [viewMode, setViewMode] = useState('accordion'); // 'accordion' | 'table'
+  const [viewMode, setViewMode] = useState('table'); // default to table — more usable with 596 modules
   const [tablePage, setTablePage] = useState(1);
 
   const filteredModules = useMemo(() => {
     let mods = allModules;
-    if (search) { const q = search.toLowerCase(); mods = mods.filter(m => m.name.toLowerCase().includes(q) || m.route.toLowerCase().includes(q) || (m.code || '').toLowerCase().includes(q)); }
+    if (search) { const q = search.toLowerCase(); mods = mods.filter(m => (m.name || '').toLowerCase().includes(q) || (m.route || '').toLowerCase().includes(q) || (m.code || '').toLowerCase().includes(q)); }
     if (domainFilter) mods = mods.filter(m => m.domain === domainFilter);
     return mods;
   }, [allModules, search, domainFilter]);
+
+  // Auto-expand all matched domains when searching
+  const activeDomains = useMemo(() => {
+    if (!search && !domainFilter) return null; // null = manual control
+    return new Set(filteredModules.map(m => m.domain));
+  }, [filteredModules, search, domainFilter]);
 
   const moduleCoverage = useCallback((route) => getDataCoverage(route), [getDataCoverage]);
 
@@ -600,15 +606,23 @@ function RequirementsTab({ allModules, domainGroups, capturedData, getDataCovera
       {viewMode === 'accordion' && (
         <div style={{ display: 'grid', gridTemplateColumns: selectedModule ? '1fr 1fr' : '1fr', gap: 20 }}>
           <div>
+            {search || domainFilter ? (
+              <div style={{ ...cardStyle, marginBottom: 8, padding: '10px 14px', background: '#eff6ff', borderColor: T.indigo + '40' }}>
+                <span style={{ fontSize: 12, color: T.indigo, fontWeight: 600 }}>
+                  {filteredModules.length} module{filteredModules.length !== 1 ? 's' : ''} match{filteredModules.length === 1 ? 'es' : ''} — showing all results expanded. Switch to Table view for easier navigation.
+                </span>
+              </div>
+            ) : null}
             {domainGroups.map(dg => {
               const mods = filteredModules.filter(m => m.domain === dg.id);
               if (mods.length === 0) return null;
-              const isOpen = expandedDomain === dg.id;
+              // Auto-expand when searching; otherwise use manual expandedDomain
+              const isOpen = activeDomains ? activeDomains.has(dg.id) : expandedDomain === dg.id;
               return (
                 <div key={dg.id} style={{ ...cardStyle, marginBottom: 8 }}>
-                  <div onClick={() => setExpandedDomain(isOpen ? null : dg.id)} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div onClick={() => { if (!activeDomains) setExpandedDomain(isOpen ? null : dg.id); }} style={{ cursor: activeDomains ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: 14, fontWeight: 600, color: dg.color }}>{dg.icon} {dg.name} ({mods.length})</span>
-                    <span style={{ fontSize: 18, color: T.sub }}>{isOpen ? '-' : '+'}</span>
+                    {!activeDomains && <span style={{ fontSize: 18, color: T.sub }}>{isOpen ? '−' : '+'}</span>}
                   </div>
                   {isOpen && (
                     <div style={{ marginTop: 12 }}>
@@ -1879,13 +1893,16 @@ function ModuleRegistryTab({ allModules, domainGroups, getDataCoverage, entityMa
       <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div style={{ flex: 1, minWidth: 200 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Search</label>
-          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by name or route..." style={inputStyle} />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by name, route or keyword..." style={{ ...inputStyle, borderColor: search ? T.indigo : T.border }} />
         </div>
         <div style={{ minWidth: 180 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Domain</label>
           <select value={domainFilter} onChange={e => { setDomainFilter(e.target.value); setPage(1); }} style={selectStyle}>
-            <option value="">All Domains</option>
-            {domainGroups.map(dg => <option key={dg.id} value={dg.id}>{dg.name}</option>)}
+            <option value="">All Domains ({allModules.length})</option>
+            {domainGroups.map(dg => {
+              const cnt = allModules.filter(m => m.domain === dg.id).length;
+              return <option key={dg.id} value={dg.id}>{dg.name} ({cnt})</option>;
+            })}
           </select>
         </div>
         <div style={{ minWidth: 160 }}>
@@ -1896,7 +1913,17 @@ function ModuleRegistryTab({ allModules, domainGroups, getDataCoverage, entityMa
             <option value="needsdata">Needs Data (0%)</option>
           </select>
         </div>
+        {(search || domainFilter || covFilter !== 'all') && (
+          <button onClick={() => { setSearch(''); setDomainFilter(''); setCovFilter('all'); setPage(1); }} style={{ ...btnSmStyle, alignSelf: 'flex-end', color: T.red, borderColor: T.red + '60' }}>✕ Clear</button>
+        )}
       </div>
+      {(search || domainFilter || covFilter !== 'all') && (
+        <div style={{ fontSize: 12, color: T.indigo, fontWeight: 600, marginBottom: 12 }}>
+          {filtered.length} module{filtered.length !== 1 ? 's' : ''} found
+          {search && <> · matching "<em>{search}</em>"</>}
+          {domainFilter && <> · in domain</>}
+        </div>
+      )}
 
       <div style={{ ...cardStyle }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Module Registry — {filtered.length} modules (50 per page)</h3>
