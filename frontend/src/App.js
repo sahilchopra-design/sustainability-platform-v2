@@ -236,7 +236,12 @@ const SdgBondImpactPage = React.lazy(() => import("./features/sdg-bond-impact/pa
 const BlendedFinancePage = React.lazy(() => import("./features/blended-finance/pages/BlendedFinancePage"));
 const ImpactVerificationPage = React.lazy(() => import("./features/impact-verification/pages/ImpactVerificationPage"));
 const ImpactHubPage = React.lazy(() => import("./features/impact-hub/pages/ImpactHubPage"));
+// EP-MEI1 — Macro ESG Intelligence
+const MacroESGIntelligencePage = React.lazy(() => import("./features/macro-esg-intelligence/pages/MacroESGIntelligencePage"));
 // Sprint W — AI & NLP Analytics
+const QuantitativeNLPResearchPage = React.lazy(() => import("./features/quantitative-nlp-research/pages/QuantitativeNLPResearchPage"));
+const AIDataLivePlatformPage = React.lazy(() => import("./features/ai-data-live-platform/pages/AIDataLivePlatformPage"));
+const ClimateEmissionsIntelligencePage = React.lazy(() => import("./features/climate-emissions-intelligence/pages/ClimateEmissionsIntelligencePage"));
 const EsgReportParserPage = React.lazy(() => import("./features/esg-report-parser/pages/EsgReportParserPage"));
 const PredictiveEsgPage = React.lazy(() => import("./features/predictive-esg/pages/PredictiveEsgPage"));
 const AnomalyDetectionPage = React.lazy(() => import("./features/anomaly-detection/pages/AnomalyDetectionPage"));
@@ -718,6 +723,8 @@ const DmeIndexPage         = React.lazy(() => import("./features/dme-index/pages
 // Sprint BD — Greenium Signal Engine · Sentiment Pipeline Engine
 const GreeniumSignalPage    = React.lazy(() => import("./features/greenium-signal/pages/GreeniumSignalPage"));
 const SentimentPipelinePage = React.lazy(() => import("./features/sentiment-pipeline/pages/SentimentPipelinePage"));
+// EP-SAD1 — Social & Alternative Data Intelligence
+const SocialAlternativeDataPage = React.lazy(() => import("./features/social-alternative-data/pages/SocialAlternativeDataPage"));
 // Sprint BC — Residential RE Assessment · XBRL Ingestion
 const ResidentialReAssessmentPage = React.lazy(() => import("./features/residential-re-assessment/pages/ResidentialReAssessmentPage"));
 const XbrlIngestionPage            = React.lazy(() => import("./features/xbrl-ingestion/pages/XbrlIngestionPage"));
@@ -988,6 +995,9 @@ const NAV_GROUPS = [
     { path: '/ai-compliance-agent',         label: 'AI Compliance Agent',          badge: '8 Frameworks · Agentic Scan · CSRD/ISSB/TCFD/SFDR · Evidence Map', code: 'EP-BZ3' },
   ]},
   { label: 'AI & NLP Analytics', icon: '🤖', color: '#0891b2', items: [
+    { path: '/macro-esg-intelligence', label: 'Macro ESG Intelligence', badge: 'GLEIF LEI · IMF · Eurostat · World Bank · Kalman Filter · Panel Data · Hausman Test · 4 Live APIs', code: 'EP-MEI1' },
+    { path: '/quantitative-nlp-research', label: 'Quantitative NLP Research', badge: 'arXiv · OpenAlex · 10 Models · Fama-MacBeth · Copula · Factor Attribution', code: 'EP-QNR1' },
+    { path: '/climate-emissions-intelligence', label: 'Climate Emissions Intelligence', badge: 'OWID CO2 · Kaya Identity · LMDI · GARCH · Net Zero · 40 Countries · 3 Live APIs', code: 'EP-CEI1' },
     { path: '/ai-hub',                     label: 'AI Analytics Hub',              badge: 'Mission Control · 9 Modules · Agentic Workflows · Signal Bus',   code: 'EP-W6' },
     { path: '/esg-report-parser',          label: 'ESG Report Parser',             badge: 'LLM Pipeline · ESRS/ISSB/TCFD · JSON Output · Multi-Doc Compare', code: 'EP-W1' },
     { path: '/predictive-esg',             label: 'Predictive ESG Model',          badge: 'XGBoost · LightGBM · Ensemble · SHAP · 15 Features · CI Bands',   code: 'EP-W2' },
@@ -997,6 +1007,8 @@ const NAV_GROUPS = [
     { path: '/anomaly-detection',          label: 'Anomaly Detection',             badge: 'Z-Score · IQR · Isolation · 10 Fields',                           code: 'EP-W3' },
     { path: '/ai-engagement',              label: 'AI Engagement Advisor',         badge: '20 Rules · Priority · Templates',                                  code: 'EP-W4' },
     { path: '/document-similarity',        label: 'Document Similarity',           badge: 'Cosine · K-Means · Boilerplate',                                   code: 'EP-W5' },
+    { path: '/ai-data-live-platform',      label: 'AI Data Live Platform',         badge: 'GDELT · SEC EDGAR · OpenAlex · World Bank · 4 Live APIs · Real-Time', code: 'EP-LIV1' },
+    { path: '/social-alternative-data', label: 'Social & Alternative Data', badge: 'Bluesky API · GDELT · ABSA · NLI · Hedge Detection · Boilerplate · Alt-Data Alpha · 3 Live APIs', code: 'EP-SAD1' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -2434,12 +2446,16 @@ function AppContent() {
             <Route path="/carbon-economy"             element={<CarbonEconomyPage />} />
             <Route path="/consumer-carbon-hub"        element={<ConsumerCarbonHubPage />} />
             {/* Sprint W — AI & NLP Analytics */}
+            <Route path="/quantitative-nlp-research" element={<QuantitativeNLPResearchPage />} />
+            <Route path="/macro-esg-intelligence" element={<MacroESGIntelligencePage />} />
+            <Route path="/climate-emissions-intelligence" element={<ClimateEmissionsIntelligencePage />} />
             <Route path="/esg-report-parser"       element={<EsgReportParserPage />} />
             <Route path="/predictive-esg"          element={<PredictiveEsgPage />} />
             <Route path="/anomaly-detection"       element={<AnomalyDetectionPage />} />
             <Route path="/ai-engagement"           element={<AiEngagementPage />} />
             <Route path="/document-similarity"     element={<DocumentSimilarityPage />} />
             <Route path="/ai-hub"                  element={<AiHubPage />} />
+            <Route path="/ai-data-live-platform"   element={<AIDataLivePlatformPage />} />
             {/* Sprint Y — Commodity Lifecycle Intelligence */}
             <Route path="/commodity-intelligence"     element={<CommodityIntelligencePage />} />
             <Route path="/commodity-inventory"        element={<CommodityInventoryPage />} />
@@ -2912,6 +2928,7 @@ function AppContent() {
             {/* Sprint BD — Greenium Signal Engine · Sentiment Pipeline Engine */}
             <Route path="/greenium-signal"    element={<GreeniumSignalPage />} />
             <Route path="/sentiment-pipeline" element={<SentimentPipelinePage />} />
+            <Route path="/social-alternative-data" element={<SocialAlternativeDataPage />} />
             {/* Sprint BC — Residential RE Assessment · XBRL Ingestion */}
             <Route path="/residential-re-assessment" element={<ResidentialReAssessmentPage />} />
             <Route path="/xbrl-ingestion"            element={<XbrlIngestionPage />} />
