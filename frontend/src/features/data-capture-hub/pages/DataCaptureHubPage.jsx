@@ -34,6 +34,43 @@ const TABS = [
   { key: 'records', label: 'Records Browser' },
   { key: 'importexport', label: 'Import / Export' },
   { key: 'docs', label: 'Platform Documentation' },
+  { key: 'sprints', label: 'Sprint Coverage' },
+  { key: 'registry', label: 'Module Registry' },
+  { key: 'lineage', label: 'Data Lineage' },
+  { key: 'quickstart', label: 'Quick-Start Guide' },
+];
+
+/* ── sprint groups ── */
+const SPRINT_GROUPS = [
+  { label: 'Carbon & Emissions (F-001–F-015)', domain: 'carbon', code_prefix: 'F-' },
+  { label: 'PCAF & Financed Emissions (P-001–P-008)', domain: 'pcaf', code_prefix: 'P-' },
+  { label: 'CBAM & Trade (C-001–C-003)', domain: 'cbam', code_prefix: 'C-' },
+  { label: 'Compliance & Disclosure (D-001–D-012+)', domain: 'disclosure', code_prefix: 'D-' },
+  { label: 'Climate Risk & Capital (R-001–R-010+)', domain: 'climate_risk', code_prefix: 'R-' },
+  { label: 'Water & Physical Risk (W-001–W-006+)', domain: 'physical', code_prefix: 'W-' },
+  { label: 'Supply Chain (S-001–S-005+)', domain: 'supply_chain', code_prefix: 'S-' },
+  { label: 'ESG & Benchmarking (E-001–E-008+)', domain: 'esg', code_prefix: 'E-' },
+  { label: 'Carbon Credits (CC-001–CC-030+)', domain: 'carbon_credits', code_prefix: 'CC-' },
+  { label: 'Impact & SDG (I-001–I-005+)', domain: 'impact', code_prefix: 'I-' },
+  { label: 'Insurance & Sovereign (IN-001–IN-006+)', domain: 'insurance', code_prefix: 'IN-' },
+  { label: 'Reference Data (REF-001–REF-003)', domain: 'reference', code_prefix: 'REF-' },
+  { label: 'Solar & Renewable Energy (Sprint RE)', domain: 'renewable_energy', code_prefix: 'RE-' },
+  { label: 'Offshore Wind & Marine (Sprint DR)', domain: 'offshore_wind', code_prefix: 'DR-' },
+  { label: 'Climate Litigation & Legal (Sprint DA)', domain: 'climate_litigation', code_prefix: 'DA-' },
+  { label: 'Climate Risk Capital & Supervisory (Sprint DB)', domain: 'supervisory', code_prefix: 'DB-' },
+  { label: 'Insurance Climate Actuarial (Sprint DC)', domain: 'actuarial_insurance', code_prefix: 'DC-' },
+  { label: 'Corporate Finance & Capital Markets (Sprint DD)', domain: 'corporate_finance', code_prefix: 'DD-' },
+  { label: 'AI, NLP & Real-Time (Sprint CY)', domain: 'ai_nlp', code_prefix: 'AI-' },
+  { label: 'Nature & Biodiversity', domain: 'nature_biodiversity', code_prefix: 'NB-' },
+  { label: 'Sovereign & Emerging Markets', domain: 'sovereign_em', code_prefix: 'EM-' },
+  { label: 'Real Estate & Infrastructure', domain: 'real_estate', code_prefix: 'RE2-' },
+  { label: 'Green Finance & Bonds', domain: 'green_finance', code_prefix: 'GF-' },
+  { label: 'Governance & Social', domain: 'governance_social', code_prefix: 'GS-' },
+  { label: 'Scenario & Stress Testing', domain: 'scenario_stress', code_prefix: 'SS-' },
+  { label: 'Transition Planning & Net Zero', domain: 'transition_planning', code_prefix: 'TP-' },
+  { label: 'Geopolitical & Trade', domain: 'geopolitical', code_prefix: 'GP-' },
+  { label: 'Private Markets & PE/VC', domain: 'private_markets', code_prefix: 'PM-' },
+  { label: 'Data Infrastructure & Ops', domain: 'data_infra', code_prefix: 'DI-' },
 ];
 
 /* ── utility: paginate ── */
@@ -140,7 +177,7 @@ export default function DataCaptureHubPage() {
       {tabBar}
       <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: '', type: 'success' })} />
 
-      {tab === 'dashboard' && <DashboardTab capturedData={capturedData} stats={stats} totalFields={totalFields} totalPipelines={totalPipelines} allModules={allModules} getDataCoverage={getDataCoverage} domainGroups={domainGroups} onQuickCapture={(eid) => { setSelectedEntity(eid); setTab('entry'); }} />}
+      {tab === 'dashboard' && <DashboardTab capturedData={capturedData} stats={stats} totalFields={totalFields} totalPipelines={totalPipelines} allModules={allModules} getDataCoverage={getDataCoverage} domainGroups={domainGroups} pipelines={pipelines} entities={entities} onQuickCapture={(eid) => { setSelectedEntity(eid); setTab('entry'); }} />}
       {tab === 'entry' && <DataEntryTab selectedEntity={selectedEntity} entitySelector={entitySelector} entityMap={entityMap} addRecord={addRecord} getRecords={getRecords} deleteRecord={deleteRecord} showToast={showToast} />}
       {tab === 'requirements' && <RequirementsTab allModules={allModules} domainGroups={domainGroups} capturedData={capturedData} getDataCoverage={getDataCoverage} entityMap={entityMap} />}
       {tab === 'pipelines' && <PipelineTab allModules={allModules} pipelines={pipelines} domainGroups={domainGroups} getEntityConsumers={getEntityConsumers} />}
@@ -149,7 +186,11 @@ export default function DataCaptureHubPage() {
       {tab === 'validation' && <ValidationTab selectedEntity={selectedEntity} entitySelector={entitySelector} entityMap={entityMap} capturedData={capturedData} validateRecord={validateRecord} />}
       {tab === 'records' && <RecordsTab capturedData={capturedData} entityMap={entityMap} deleteRecord={deleteRecord} searchRecords={searchRecords} showToast={showToast} />}
       {tab === 'importexport' && <ImportExportTab selectedEntity={selectedEntity} entitySelector={entitySelector} entityMap={entityMap} capturedData={capturedData} exportRecords={exportRecords} addRecord={addRecord} showToast={showToast} />}
-      {tab === 'docs' && <DocsTab entityMap={entityMap} allModules={allModules} pipelines={pipelines} domainGroups={domainGroups} getEntityConsumers={getEntityConsumers} />}
+      {tab === 'docs' && <DocsTab entityMap={entityMap} allModules={allModules} pipelines={pipelines} domainGroups={domainGroups} getEntityConsumers={getEntityConsumers} onGoToSprints={() => setTab('sprints')} />}
+      {tab === 'sprints' && <SprintCoverageTab allModules={allModules} getDataCoverage={getDataCoverage} domainGroups={domainGroups} />}
+      {tab === 'registry' && <ModuleRegistryTab allModules={allModules} domainGroups={domainGroups} getDataCoverage={getDataCoverage} entityMap={entityMap} pipelines={pipelines} />}
+      {tab === 'lineage' && <DataLineageTab allModules={allModules} pipelines={pipelines} entityMap={entityMap} />}
+      {tab === 'quickstart' && <QuickStartTab allModules={allModules} capturedData={capturedData} entityMap={entityMap} onGoToEntry={(eid) => { setSelectedEntity(eid); setTab('entry'); }} getDataCoverage={getDataCoverage} />}
     </div>
   );
 }
@@ -158,7 +199,7 @@ export default function DataCaptureHubPage() {
 /* ══════════════════════════════════════════════════════════════════════════════
    TAB 1: CAPTURE DASHBOARD
    ══════════════════════════════════════════════════════════════════════════════ */
-function DashboardTab({ capturedData, stats, totalFields, totalPipelines, allModules, getDataCoverage, domainGroups, onQuickCapture }) {
+function DashboardTab({ capturedData, stats, totalFields, totalPipelines, allModules, getDataCoverage, domainGroups, pipelines, entities, onQuickCapture }) {
   const totalRecords = stats.totalRecords;
   const entitiesWithData = stats.totalEntities;
   const validationRate = useMemo(() => {
@@ -170,7 +211,7 @@ function DashboardTab({ capturedData, stats, totalFields, totalPipelines, allMod
     return totalRecords > 0 ? Math.round((passed / totalRecords) * 100) : 0;
   }, [capturedData, totalRecords]);
 
-  /* KPI values */
+  /* KPI row 1 */
   const kpis = [
     { label: 'Entities Defined', value: DATA_ENTITIES.length, color: T.indigo },
     { label: 'Total Fields', value: totalFields, color: T.green },
@@ -182,18 +223,29 @@ function DashboardTab({ capturedData, stats, totalFields, totalPipelines, allMod
     { label: 'Validation Pass', value: `${validationRate}%`, color: totalRecords > 0 ? T.green : T.sub },
   ];
 
+  /* KPI row 2 */
+  const kpis2 = [
+    { label: 'Total Module Routes', value: allModules.length, color: T.indigo },
+    { label: 'Total Domain Groups', value: domainGroups.length, color: '#0891b2' },
+    { label: 'Total Pipelines', value: (pipelines || []).length, color: T.gold },
+    { label: 'Total Entities', value: DATA_ENTITIES.length, color: T.green },
+  ];
+
   /* Records by entity for pie */
   const pieData = useMemo(() => DATA_ENTITIES.map((e, i) => ({
     name: e.name, value: (capturedData[e.id] || []).length, fill: CHART_COLORS[i % CHART_COLORS.length],
   })).filter(d => d.value > 0), [capturedData]);
 
-  /* Coverage by domain for bar */
+  /* Stacked coverage bar by domain: red/amber/green buckets */
   const domainCoverage = useMemo(() => domainGroups.map(dg => {
     const mods = allModules.filter(m => m.domain === dg.id);
-    if (mods.length === 0) return { name: dg.name.split(' ')[0], coverage: 0 };
-    const avg = mods.reduce((s, m) => s + getDataCoverage(m.route), 0) / mods.length;
-    return { name: dg.name.length > 14 ? dg.name.slice(0, 12) + '..' : dg.name, coverage: Math.round(avg) };
-  }), [allModules, domainGroups, getDataCoverage]);
+    if (mods.length === 0) return null;
+    const low = mods.filter(m => getDataCoverage(m.route) <= 33).length;
+    const mid = mods.filter(m => { const c = getDataCoverage(m.route); return c > 33 && c <= 66; }).length;
+    const high = mods.filter(m => getDataCoverage(m.route) > 66).length;
+    const name = dg.name.length > 14 ? dg.name.slice(0, 12) + '..' : dg.name;
+    return { name, low, mid, high, total: mods.length };
+  }).filter(Boolean), [allModules, domainGroups, getDataCoverage]);
 
   /* Activity feed */
   const recentCaptures = useMemo(() => {
@@ -208,11 +260,21 @@ function DashboardTab({ capturedData, stats, totalFields, totalPipelines, allMod
 
   return (
     <div>
-      {/* KPI row */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
+      {/* KPI row 1 */}
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
         {kpis.map((k, i) => (
           <div key={i} style={kpiStyle}>
             <div style={{ fontSize: 26, fontWeight: 700, color: k.color }}>{k.value}</div>
+            <div style={{ fontSize: 12, color: T.sub, marginTop: 4 }}>{k.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* KPI row 2 */}
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
+        {kpis2.map((k, i) => (
+          <div key={i} style={{ ...kpiStyle, background: T.surface, borderColor: T.border }}>
+            <div style={{ fontSize: 22, fontWeight: 700, color: k.color }}>{k.value}</div>
             <div style={{ fontSize: 12, color: T.sub, marginTop: 4 }}>{k.label}</div>
           </div>
         ))}
@@ -234,16 +296,20 @@ function DashboardTab({ capturedData, stats, totalFields, totalPipelines, allMod
           )}
         </div>
 
-        {/* Bar: coverage by domain */}
+        {/* Stacked bar: modules per domain by coverage level */}
         <div style={cardStyle}>
-          <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Coverage by Domain (%)</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 4px' }}>Modules per Domain — Coverage Bands</h3>
+          <p style={{ fontSize: 11, color: T.sub, margin: '0 0 10px' }}>Red: 0–33% | Amber: 34–66% | Green: 67–100%</p>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={domainCoverage} layout="vertical" margin={{ left: 80 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={80} />
-              <Tooltip formatter={v => `${v}%`} />
-              <Bar dataKey="coverage" fill={T.indigo} radius={[0, 4, 4, 0]} />
+              <XAxis type="number" tick={{ fontSize: 11 }} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} width={80} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="low" stackId="a" fill="#dc2626" name="Needs Data (0-33%)" />
+              <Bar dataKey="mid" stackId="a" fill="#d97706" name="Partial (34-66%)" />
+              <Bar dataKey="high" stackId="a" fill="#059669" name="Ready (67-100%)" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -458,124 +524,169 @@ function DataEntryTab({ selectedEntity, entitySelector, entityMap, addRecord, ge
    ══════════════════════════════════════════════════════════════════════════════ */
 function RequirementsTab({ allModules, domainGroups, capturedData, getDataCoverage, entityMap }) {
   const [search, setSearch] = useState('');
+  const [domainFilter, setDomainFilter] = useState('');
   const [expandedDomain, setExpandedDomain] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
+  const [viewMode, setViewMode] = useState('accordion'); // 'accordion' | 'table'
+  const [tablePage, setTablePage] = useState(1);
 
   const filteredModules = useMemo(() => {
-    if (!search) return allModules;
-    const q = search.toLowerCase();
-    return allModules.filter(m => m.name.toLowerCase().includes(q) || m.route.toLowerCase().includes(q));
-  }, [allModules, search]);
+    let mods = allModules;
+    if (search) { const q = search.toLowerCase(); mods = mods.filter(m => m.name.toLowerCase().includes(q) || m.route.toLowerCase().includes(q) || (m.code || '').toLowerCase().includes(q)); }
+    if (domainFilter) mods = mods.filter(m => m.domain === domainFilter);
+    return mods;
+  }, [allModules, search, domainFilter]);
 
   const moduleCoverage = useCallback((route) => getDataCoverage(route), [getDataCoverage]);
 
   const coverageBadge = (pct) => {
-    if (pct >= 100) return <span style={badgeStyle(T.green)}>Ready</span>;
-    if (pct >= 50) return <span style={badgeStyle(T.amber)}>Partial</span>;
+    if (pct >= 67) return <span style={badgeStyle(T.green)}>Ready</span>;
+    if (pct >= 34) return <span style={badgeStyle(T.amber)}>Partial</span>;
     return <span style={badgeStyle(T.red)}>Needs Data</span>;
   };
 
+  const { items: tableItems, totalPages: tPages } = paginate(filteredModules, tablePage, 30);
+
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search modules..." style={{ ...inputStyle, maxWidth: 400 }} />
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: selectedModule ? '1fr 1fr' : '1fr', gap: 20 }}>
-        {/* Domain accordions */}
-        <div>
-          {domainGroups.map(dg => {
-            const mods = filteredModules.filter(m => m.domain === dg.id);
-            if (mods.length === 0) return null;
-            const isOpen = expandedDomain === dg.id;
-            return (
-              <div key={dg.id} style={{ ...cardStyle, marginBottom: 8 }}>
-                <div onClick={() => setExpandedDomain(isOpen ? null : dg.id)} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: dg.color }}>{dg.icon} {dg.name} ({mods.length})</span>
-                  <span style={{ fontSize: 18, color: T.sub }}>{isOpen ? '-' : '+'}</span>
-                </div>
-                {isOpen && (
-                  <div style={{ marginTop: 12 }}>
-                    {mods.map(m => {
-                      const cov = moduleCoverage(m.route);
-                      return (
-                        <div key={m.route} onClick={() => setSelectedModule(m)} style={{
-                          padding: '8px 12px', borderRadius: 6, marginBottom: 4, cursor: 'pointer',
-                          background: selectedModule?.route === m.route ? T.indigo + '12' : 'transparent',
-                          border: `1px solid ${selectedModule?.route === m.route ? T.indigo : 'transparent'}`,
-                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        }}>
-                          <div>
-                            <span style={{ fontSize: 13, fontWeight: 500, color: T.text }}>{m.name}</span>
-                            <span style={{ fontSize: 11, color: T.sub, marginLeft: 8 }}>{m.code}</span>
-                          </div>
-                          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                            <span style={{ fontSize: 12, color: T.sub }}>{cov}%</span>
-                            {coverageBadge(cov)}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Search</label>
+          <input value={search} onChange={e => { setSearch(e.target.value); setTablePage(1); }} placeholder="Search modules by name, route, or code..." style={inputStyle} />
         </div>
-
-        {/* Module detail panel */}
-        {selectedModule && (
-          <div style={cardStyle}>
-            <h3 style={{ fontSize: 16, fontWeight: 600, color: T.navy, margin: '0 0 4px' }}>{selectedModule.name}</h3>
-            <p style={{ fontSize: 12, color: T.sub, margin: '0 0 16px' }}>{selectedModule.code} | {selectedModule.domain}</p>
-
-            <h4 style={{ fontSize: 13, fontWeight: 600, color: T.green, margin: '0 0 8px' }}>Required Entities</h4>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 16 }}>
-              {(selectedModule.requiredEntities || []).map(eid => (
-                <span key={eid} style={{ ...badgeStyle(T.green), padding: '4px 10px' }}>{entityMap[eid]?.icon} {entityMap[eid]?.name || eid}</span>
-              ))}
-              {(selectedModule.requiredEntities || []).length === 0 && <span style={{ fontSize: 12, color: T.sub }}>None (reference module)</span>}
-            </div>
-
-            <h4 style={{ fontSize: 13, fontWeight: 600, color: T.indigo, margin: '0 0 8px' }}>Optional Entities</h4>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 16 }}>
-              {(selectedModule.optionalEntities || []).map(eid => (
-                <span key={eid} style={{ ...badgeStyle(T.indigo), padding: '4px 10px' }}>{entityMap[eid]?.icon} {entityMap[eid]?.name || eid}</span>
-              ))}
-              {(selectedModule.optionalEntities || []).length === 0 && <span style={{ fontSize: 12, color: T.sub }}>None</span>}
-            </div>
-
-            {selectedModule.specificFields && Object.keys(selectedModule.specificFields).length > 0 && (
-              <>
-                <h4 style={{ fontSize: 13, fontWeight: 600, color: T.navy, margin: '0 0 8px' }}>Specific Fields Needed</h4>
-                {Object.entries(selectedModule.specificFields).map(([eid, fields]) => (
-                  <div key={eid} style={{ marginBottom: 8 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: T.sub }}>{entityMap[eid]?.name || eid}:</span>
-                    <span style={{ fontSize: 12, color: T.text, marginLeft: 6 }}>{fields.join(', ')}</span>
-                  </div>
-                ))}
-              </>
-            )}
-
-            {(selectedModule.outputs || []).length > 0 && (
-              <>
-                <h4 style={{ fontSize: 13, fontWeight: 600, color: T.gold, margin: '16px 0 8px' }}>Outputs</h4>
-                {selectedModule.outputs.map((o, i) => (
-                  <div key={i} style={{ fontSize: 12, color: T.text, marginBottom: 4 }}>
-                    <strong>{o.name}</strong> ({o.entity}) - {o.description}
-                  </div>
-                ))}
-              </>
-            )}
-
-            <div style={{ marginTop: 16, padding: '8px 12px', background: T.surface, borderRadius: 6 }}>
-              <span style={{ fontSize: 12, fontWeight: 600, color: T.sub }}>Coverage: </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: T.navy }}>{moduleCoverage(selectedModule.route)}%</span>
-              <span style={{ marginLeft: 8 }}>{coverageBadge(moduleCoverage(selectedModule.route))}</span>
-            </div>
-          </div>
-        )}
+        <div style={{ minWidth: 200 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Domain</label>
+          <select value={domainFilter} onChange={e => { setDomainFilter(e.target.value); setTablePage(1); }} style={selectStyle}>
+            <option value="">All Domains</option>
+            {domainGroups.map(dg => <option key={dg.id} value={dg.id}>{dg.name}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button onClick={() => setViewMode('accordion')} style={{ ...btnSmStyle, background: viewMode === 'accordion' ? T.indigo + '15' : T.card, borderColor: viewMode === 'accordion' ? T.indigo : T.border }}>Accordion</button>
+          <button onClick={() => setViewMode('table')} style={{ ...btnSmStyle, background: viewMode === 'table' ? T.indigo + '15' : T.card, borderColor: viewMode === 'table' ? T.indigo : T.border }}>Table</button>
+        </div>
       </div>
+
+      {viewMode === 'table' && (
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Module Requirements Table ({filteredModules.length})</h3>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>{['Module', 'Domain', 'Code', 'Required Entities', 'Coverage %'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {tableItems.map((m, i) => {
+                  const cov = moduleCoverage(m.route);
+                  const covColor = cov >= 67 ? T.green : cov >= 34 ? T.amber : T.red;
+                  const dg = domainGroups.find(d => d.id === m.domain);
+                  return (
+                    <tr key={i} onClick={() => setSelectedModule(selectedModule?.route === m.route ? null : m)} style={{ cursor: 'pointer', background: selectedModule?.route === m.route ? T.indigo + '08' : 'transparent' }}>
+                      <td style={{ ...tdStyle, fontWeight: 500 }}>{m.name}</td>
+                      <td style={tdStyle}><span style={badgeStyle(dg?.color || T.indigo)}>{dg?.name || m.domain}</span></td>
+                      <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 11 }}>{m.code || '-'}</td>
+                      <td style={{ ...tdStyle, fontSize: 12 }}>{(m.requiredEntities || []).map(eid => entityMap[eid]?.name || eid).join(', ') || 'None'}</td>
+                      <td style={{ ...tdStyle, fontWeight: 700, color: covColor }}>{cov}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <PaginationBar page={tablePage} totalPages={tPages} onPage={setTablePage} />
+        </div>
+      )}
+
+      {viewMode === 'accordion' && (
+        <div style={{ display: 'grid', gridTemplateColumns: selectedModule ? '1fr 1fr' : '1fr', gap: 20 }}>
+          <div>
+            {domainGroups.map(dg => {
+              const mods = filteredModules.filter(m => m.domain === dg.id);
+              if (mods.length === 0) return null;
+              const isOpen = expandedDomain === dg.id;
+              return (
+                <div key={dg.id} style={{ ...cardStyle, marginBottom: 8 }}>
+                  <div onClick={() => setExpandedDomain(isOpen ? null : dg.id)} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: dg.color }}>{dg.icon} {dg.name} ({mods.length})</span>
+                    <span style={{ fontSize: 18, color: T.sub }}>{isOpen ? '-' : '+'}</span>
+                  </div>
+                  {isOpen && (
+                    <div style={{ marginTop: 12 }}>
+                      {mods.map(m => {
+                        const cov = moduleCoverage(m.route);
+                        return (
+                          <div key={m.route} onClick={() => setSelectedModule(selectedModule?.route === m.route ? null : m)} style={{
+                            padding: '8px 12px', borderRadius: 6, marginBottom: 4, cursor: 'pointer',
+                            background: selectedModule?.route === m.route ? T.indigo + '12' : 'transparent',
+                            border: `1px solid ${selectedModule?.route === m.route ? T.indigo : 'transparent'}`,
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          }}>
+                            <div>
+                              <span style={{ fontSize: 13, fontWeight: 500, color: T.text }}>{m.name}</span>
+                              <span style={{ fontSize: 11, color: T.sub, marginLeft: 8 }}>{m.code}</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                              <span style={{ fontSize: 12, color: T.sub }}>{cov}%</span>
+                              {coverageBadge(cov)}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {selectedModule && (
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: T.navy, margin: '0 0 4px' }}>{selectedModule.name}</h3>
+              <p style={{ fontSize: 12, color: T.sub, margin: '0 0 16px' }}>{selectedModule.code} | {selectedModule.domain}</p>
+              <h4 style={{ fontSize: 13, fontWeight: 600, color: T.green, margin: '0 0 8px' }}>Required Entities</h4>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 16 }}>
+                {(selectedModule.requiredEntities || []).map(eid => (
+                  <span key={eid} style={{ ...badgeStyle(T.green), padding: '4px 10px' }}>{entityMap[eid]?.icon} {entityMap[eid]?.name || eid}</span>
+                ))}
+                {(selectedModule.requiredEntities || []).length === 0 && <span style={{ fontSize: 12, color: T.sub }}>None</span>}
+              </div>
+              <h4 style={{ fontSize: 13, fontWeight: 600, color: T.indigo, margin: '0 0 8px' }}>Optional Entities</h4>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 16 }}>
+                {(selectedModule.optionalEntities || []).map(eid => (
+                  <span key={eid} style={{ ...badgeStyle(T.indigo), padding: '4px 10px' }}>{entityMap[eid]?.icon} {entityMap[eid]?.name || eid}</span>
+                ))}
+                {(selectedModule.optionalEntities || []).length === 0 && <span style={{ fontSize: 12, color: T.sub }}>None</span>}
+              </div>
+              {selectedModule.specificFields && Object.keys(selectedModule.specificFields).length > 0 && (
+                <>
+                  <h4 style={{ fontSize: 13, fontWeight: 600, color: T.navy, margin: '0 0 8px' }}>Specific Fields Needed</h4>
+                  {Object.entries(selectedModule.specificFields).map(([eid, fields]) => (
+                    <div key={eid} style={{ marginBottom: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: T.sub }}>{entityMap[eid]?.name || eid}:</span>
+                      <span style={{ fontSize: 12, color: T.text, marginLeft: 6 }}>{fields.join(', ')}</span>
+                    </div>
+                  ))}
+                </>
+              )}
+              {(selectedModule.outputs || []).length > 0 && (
+                <>
+                  <h4 style={{ fontSize: 13, fontWeight: 600, color: T.gold, margin: '16px 0 8px' }}>Outputs</h4>
+                  {selectedModule.outputs.map((o, i) => (
+                    <div key={i} style={{ fontSize: 12, color: T.text, marginBottom: 4 }}>
+                      <strong>{o.name}</strong> ({o.entity}) - {o.description}
+                    </div>
+                  ))}
+                </>
+              )}
+              <div style={{ marginTop: 16, padding: '8px 12px', background: T.surface, borderRadius: 6 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: T.sub }}>Coverage: </span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: T.navy }}>{moduleCoverage(selectedModule.route)}%</span>
+                <span style={{ marginLeft: 8 }}>{coverageBadge(moduleCoverage(selectedModule.route))}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -615,14 +726,14 @@ function PipelineTab({ allModules, pipelines, domainGroups, getEntityConsumers }
     return Object.values(counts);
   }, [pipelines, domainGroups]);
 
-  /* Top 5 most-connected modules */
+  /* Top 10 most-connected modules */
   const topConnected = useMemo(() => {
     const countMap = {};
     for (const p of pipelines) {
       countMap[p.from] = (countMap[p.from] || 0) + 1;
       countMap[p.to] = (countMap[p.to] || 0) + 1;
     }
-    return [...Object.entries(countMap)].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([route, count]) => ({
+    return [...Object.entries(countMap)].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([route, count]) => ({
       route, name: moduleNameMap[route] || route, count,
     }));
   }, [pipelines, moduleNameMap]);
@@ -686,7 +797,7 @@ function PipelineTab({ allModules, pipelines, domainGroups, getEntityConsumers }
         {/* Top connected + entity flow */}
         <div>
           <div style={{ ...cardStyle, marginBottom: 16 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Top 5 Connected Modules</h3>
+            <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Top 10 Connected Modules</h3>
             {topConnected.map((m, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${T.border}` }}>
                 <span style={{ fontSize: 13, color: T.text }}>{m.name}</span>
@@ -1430,7 +1541,7 @@ function ImportExportTab({ selectedEntity, entitySelector, entityMap, capturedDa
 /* ══════════════════════════════════════════════════════════════════════════════
    TAB 10: PLATFORM DOCUMENTATION
    ══════════════════════════════════════════════════════════════════════════════ */
-function DocsTab({ entityMap, allModules, pipelines, domainGroups, getEntityConsumers }) {
+function DocsTab({ entityMap, allModules, pipelines, domainGroups, getEntityConsumers, onGoToSprints }) {
   const [expandedEntity, setExpandedEntity] = useState(null);
 
   /* Glossary */
@@ -1609,6 +1720,25 @@ function DocsTab({ entityMap, allModules, pipelines, domainGroups, getEntityCons
         </div>
       </div>
 
+      {/* Sprint Index section */}
+      <div style={{ ...cardStyle, marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 600, color: T.navy, margin: 0 }}>Sprint Index ({SPRINT_GROUPS.length} groups)</h3>
+          {onGoToSprints && <button onClick={onGoToSprints} style={{ ...btnStyle, background: T.indigo, fontSize: 12 }}>View Sprint Coverage Tab</button>}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 8 }}>
+          {SPRINT_GROUPS.map((sg, i) => {
+            const mods = allModules.filter(m => m.domain === sg.domain || (m.code || '').startsWith(sg.code_prefix));
+            return (
+              <div key={i} style={{ padding: '8px 12px', background: T.surface, borderRadius: 6, border: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: T.text }}>{sg.label}</span>
+                <span style={badgeStyle(T.indigo)}>{mods.length} modules</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Version info */}
       <div style={cardStyle}>
         <h3 style={{ fontSize: 16, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Platform Info</h3>
@@ -1622,6 +1752,393 @@ function DocsTab({ entityMap, allModules, pipelines, domainGroups, getEntityCons
             <div key={i} style={{ textAlign: 'center', padding: 16, background: T.surface, borderRadius: 8 }}>
               <div style={{ fontSize: 24, fontWeight: 700, color: T.navy }}>{item.value}</div>
               <div style={{ fontSize: 12, color: T.sub, marginTop: 4 }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   NEW TAB: SPRINT COVERAGE
+   ══════════════════════════════════════════════════════════════════════════════ */
+function SprintCoverageTab({ allModules, getDataCoverage, domainGroups }) {
+  const [expanded, setExpanded] = useState(null);
+
+  const sprintData = useMemo(() => SPRINT_GROUPS.map((sg, idx) => {
+    const mods = allModules.filter(m => m.domain === sg.domain || (m.code || '').startsWith(sg.code_prefix));
+    const avgCov = mods.length ? Math.round(mods.reduce((s, m) => s + getDataCoverage(m.route), 0) / mods.length) : 0;
+    return { ...sg, mods, avgCov, idx };
+  }), [allModules, getDataCoverage]);
+
+  /* Summary bar chart data */
+  const barData = sprintData.map(s => ({ name: s.code_prefix.replace('-', ''), count: s.mods.length }));
+
+  return (
+    <div>
+      <div style={{ ...cardStyle, marginBottom: 24 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Module Count by Sprint Group</h3>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={barData} layout="vertical" margin={{ left: 60 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+            <XAxis type="number" tick={{ fontSize: 11 }} />
+            <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} width={60} />
+            <Tooltip />
+            <Bar dataKey="count" fill={T.indigo} radius={[0, 4, 4, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 12 }}>
+        {sprintData.map((sg, i) => {
+          const isOpen = expanded === i;
+          const covColor = sg.avgCov >= 67 ? T.green : sg.avgCov >= 34 ? T.amber : T.red;
+          return (
+            <div key={i} style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
+              <div
+                onClick={() => setExpanded(isOpen ? null : i)}
+                style={{ padding: '12px 16px', cursor: 'pointer', background: isOpen ? T.surface : T.card, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: T.navy, marginBottom: 6 }}>{sg.label}</div>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <span style={badgeStyle(T.indigo)}>{sg.mods.length} modules</span>
+                    <span style={{ fontSize: 12, color: covColor, fontWeight: 600 }}>{sg.avgCov}% avg coverage</span>
+                  </div>
+                  <div style={{ marginTop: 6, width: '100%', height: 6, background: T.border, borderRadius: 3 }}>
+                    <div style={{ width: `${sg.avgCov}%`, height: 6, background: covColor, borderRadius: 3, transition: 'width 0.3s' }} />
+                  </div>
+                </div>
+                <span style={{ fontSize: 16, color: T.sub, marginLeft: 12 }}>{isOpen ? '-' : '+'}</span>
+              </div>
+              {isOpen && sg.mods.length > 0 && (
+                <div style={{ padding: '8px 16px 12px', borderTop: `1px solid ${T.border}` }}>
+                  {sg.mods.map((m, mi) => {
+                    const cov = getDataCoverage(m.route);
+                    const cc = cov >= 67 ? T.green : cov >= 34 ? T.amber : T.red;
+                    return (
+                      <div key={mi} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: mi < sg.mods.length - 1 ? `1px solid ${T.border}` : 'none' }}>
+                        <span style={{ fontSize: 12, color: T.text }}>{m.name}</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: cc }}>{cov}%</span>
+                      </div>
+                    );
+                  })}
+                  {sg.mods.length === 0 && <p style={{ fontSize: 12, color: T.sub }}>No modules mapped to this sprint group yet.</p>}
+                </div>
+              )}
+              {isOpen && sg.mods.length === 0 && (
+                <div style={{ padding: '8px 16px 12px', borderTop: `1px solid ${T.border}` }}>
+                  <p style={{ fontSize: 12, color: T.sub }}>No modules mapped to this sprint group yet.</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   NEW TAB: MODULE REGISTRY
+   ══════════════════════════════════════════════════════════════════════════════ */
+function ModuleRegistryTab({ allModules, domainGroups, getDataCoverage, entityMap, pipelines }) {
+  const [search, setSearch] = useState('');
+  const [domainFilter, setDomainFilter] = useState('');
+  const [covFilter, setCovFilter] = useState('all'); // 'all' | 'hasdata' | 'needsdata'
+  const [page, setPage] = useState(1);
+  const [expandedRoute, setExpandedRoute] = useState(null);
+
+  const pipelineMap = useMemo(() => {
+    const m = {};
+    for (const p of pipelines) {
+      if (!m[p.from]) m[p.from] = { upstream: [], downstream: [] };
+      if (!m[p.to]) m[p.to] = { upstream: [], downstream: [] };
+      m[p.from].downstream.push(p);
+      m[p.to].upstream.push(p);
+    }
+    return m;
+  }, [pipelines]);
+
+  const filtered = useMemo(() => {
+    let mods = allModules;
+    if (search) { const q = search.toLowerCase(); mods = mods.filter(m => m.name.toLowerCase().includes(q) || m.route.toLowerCase().includes(q)); }
+    if (domainFilter) mods = mods.filter(m => m.domain === domainFilter);
+    if (covFilter === 'hasdata') mods = mods.filter(m => getDataCoverage(m.route) > 0);
+    if (covFilter === 'needsdata') mods = mods.filter(m => getDataCoverage(m.route) === 0);
+    return mods;
+  }, [allModules, search, domainFilter, covFilter, getDataCoverage]);
+
+  const { items, totalPages } = paginate(filtered, page, 50);
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Search</label>
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by name or route..." style={inputStyle} />
+        </div>
+        <div style={{ minWidth: 180 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Domain</label>
+          <select value={domainFilter} onChange={e => { setDomainFilter(e.target.value); setPage(1); }} style={selectStyle}>
+            <option value="">All Domains</option>
+            {domainGroups.map(dg => <option key={dg.id} value={dg.id}>{dg.name}</option>)}
+          </select>
+        </div>
+        <div style={{ minWidth: 160 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Coverage Filter</label>
+          <select value={covFilter} onChange={e => { setCovFilter(e.target.value); setPage(1); }} style={selectStyle}>
+            <option value="all">All</option>
+            <option value="hasdata">Has Data (&gt;0%)</option>
+            <option value="needsdata">Needs Data (0%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={{ ...cardStyle }}>
+        <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Module Registry — {filtered.length} modules (50 per page)</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>{['Route', 'Module Name', 'Code', 'Domain', 'Required Entities', 'Optional Entities', 'Coverage'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {items.map((m, i) => {
+                const cov = getDataCoverage(m.route);
+                const covColor = cov >= 67 ? T.green : cov >= 34 ? T.amber : T.red;
+                const dg = domainGroups.find(d => d.id === m.domain);
+                const isExp = expandedRoute === m.route;
+                const pl = pipelineMap[m.route] || { upstream: [], downstream: [] };
+                return (
+                  <React.Fragment key={i}>
+                    <tr onClick={() => setExpandedRoute(isExp ? null : m.route)} style={{ cursor: 'pointer', background: isExp ? T.indigo + '08' : 'transparent' }}>
+                      <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 11, maxWidth: 180 }}>{m.route.slice(0, 30)}{m.route.length > 30 ? '..' : ''}</td>
+                      <td style={{ ...tdStyle, fontWeight: 500 }}>{m.name}</td>
+                      <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 11 }}>{m.code || '-'}</td>
+                      <td style={tdStyle}><span style={badgeStyle(dg?.color || T.indigo)}>{dg?.name || m.domain}</span></td>
+                      <td style={{ ...tdStyle, fontSize: 12 }}>{(m.requiredEntities || []).length}</td>
+                      <td style={{ ...tdStyle, fontSize: 12 }}>{(m.optionalEntities || []).length}</td>
+                      <td style={{ ...tdStyle, fontWeight: 700, color: covColor }}>{cov}%</td>
+                    </tr>
+                    {isExp && (
+                      <tr>
+                        <td colSpan={7} style={{ padding: 16, background: T.surface, borderBottom: `1px solid ${T.border}` }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                            <div>
+                              <h4 style={{ fontSize: 12, fontWeight: 600, color: T.green, margin: '0 0 6px' }}>Required Entities ({(m.requiredEntities || []).length})</h4>
+                              {(m.requiredEntities || []).map(eid => <div key={eid} style={{ fontSize: 12, color: T.text, padding: '2px 0' }}>{entityMap[eid]?.icon} {entityMap[eid]?.name || eid}</div>)}
+                              {(m.requiredEntities || []).length === 0 && <span style={{ fontSize: 12, color: T.sub }}>None</span>}
+                            </div>
+                            <div>
+                              <h4 style={{ fontSize: 12, fontWeight: 600, color: T.indigo, margin: '0 0 6px' }}>Optional Entities ({(m.optionalEntities || []).length})</h4>
+                              {(m.optionalEntities || []).map(eid => <div key={eid} style={{ fontSize: 12, color: T.text, padding: '2px 0' }}>{entityMap[eid]?.icon} {entityMap[eid]?.name || eid}</div>)}
+                              {(m.optionalEntities || []).length === 0 && <span style={{ fontSize: 12, color: T.sub }}>None</span>}
+                            </div>
+                            <div>
+                              <h4 style={{ fontSize: 12, fontWeight: 600, color: T.gold, margin: '0 0 6px' }}>Pipeline Connections</h4>
+                              <div style={{ fontSize: 12, color: T.sub }}>Upstream: {pl.upstream.length} | Downstream: {pl.downstream.length}</div>
+                              {pl.downstream.slice(0, 3).map((p, pi) => <div key={pi} style={{ fontSize: 11, color: T.text, padding: '1px 0' }}>{'->'} {p.to.slice(-20)}</div>)}
+                              {pl.upstream.slice(0, 3).map((p, pi) => <div key={pi} style={{ fontSize: 11, color: T.text, padding: '1px 0' }}>{p.from.slice(-20)} {'->'}</div>)}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <PaginationBar page={page} totalPages={totalPages} onPage={setPage} />
+      </div>
+    </div>
+  );
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   NEW TAB: DATA LINEAGE
+   ══════════════════════════════════════════════════════════════════════════════ */
+function DataLineageTab({ allModules, pipelines, entityMap }) {
+  const [selectedEntityId, setSelectedEntityId] = useState(DATA_ENTITIES[0]?.id || '');
+
+  const lineage = useMemo(() => {
+    if (!selectedEntityId) return null;
+    const producers = [];
+    const requiredBy = [];
+    const optionalIn = [];
+
+    for (const m of allModules) {
+      if ((m.outputs || []).some(o => o.entity === selectedEntityId)) {
+        producers.push(m);
+      }
+      if ((m.requiredEntities || []).includes(selectedEntityId)) {
+        requiredBy.push(m);
+      } else if ((m.optionalEntities || []).includes(selectedEntityId)) {
+        optionalIn.push(m);
+      }
+    }
+    return { producers, requiredBy, optionalIn };
+  }, [selectedEntityId, allModules]);
+
+  const ModuleRow = ({ m, badge, color }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: `1px solid ${T.border}` }}>
+      <div>
+        <span style={{ fontSize: 13, color: T.text }}>{m.name}</span>
+        <span style={{ fontSize: 11, color: T.sub, marginLeft: 8, fontFamily: 'monospace' }}>{m.route.slice(-24)}</span>
+      </div>
+      <div style={{ display: 'flex', gap: 6 }}>
+        <span style={badgeStyle(color)}>{badge}</span>
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <div style={{ marginBottom: 20 }}>
+        <label style={{ fontSize: 12, fontWeight: 600, color: T.sub, display: 'block', marginBottom: 4 }}>Select Entity</label>
+        <select value={selectedEntityId} onChange={e => setSelectedEntityId(e.target.value)} style={{ ...selectStyle, maxWidth: 360 }}>
+          {DATA_ENTITIES.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
+        </select>
+      </div>
+
+      {lineage && (
+        <>
+          {/* Summary */}
+          <div style={{ ...cardStyle, marginBottom: 20, background: T.navy, borderColor: T.navy }}>
+            <p style={{ fontSize: 13, color: '#e2e8f0', margin: 0 }}>
+              Entity <strong style={{ color: T.gold }}>{entityMap[selectedEntityId]?.name || selectedEntityId}</strong> is required by{' '}
+              <strong style={{ color: '#86efac' }}>{lineage.requiredBy.length} modules</strong>, optional in{' '}
+              <strong style={{ color: '#93c5fd' }}>{lineage.optionalIn.length} modules</strong>, and produced by{' '}
+              <strong style={{ color: '#fcd34d' }}>{lineage.producers.length} modules</strong>.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+            {/* Upstream Sources (producers) */}
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 15, fontWeight: 600, color: T.green, margin: '0 0 12px' }}>Upstream Sources — Produce this Entity ({lineage.producers.length})</h3>
+              {lineage.producers.length === 0 ? <p style={{ fontSize: 12, color: T.sub }}>No modules produce this entity via declared outputs.</p> :
+                lineage.producers.map((m, i) => <ModuleRow key={i} m={m} badge="Produces" color={T.green} />)
+              }
+            </div>
+
+            {/* Downstream Consumers */}
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 15, fontWeight: 600, color: T.indigo, margin: '0 0 12px' }}>Downstream Consumers ({lineage.requiredBy.length + lineage.optionalIn.length})</h3>
+              {lineage.requiredBy.length === 0 && lineage.optionalIn.length === 0 ? <p style={{ fontSize: 12, color: T.sub }}>No modules consume this entity.</p> : (
+                <>
+                  {lineage.requiredBy.map((m, i) => <ModuleRow key={`req-${i}`} m={m} badge="Required" color={T.green} />)}
+                  {lineage.optionalIn.map((m, i) => <ModuleRow key={`opt-${i}`} m={m} badge="Optional" color={T.indigo} />)}
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   NEW TAB: QUICK-START GUIDE
+   ══════════════════════════════════════════════════════════════════════════════ */
+function QuickStartTab({ allModules, capturedData, entityMap, onGoToEntry, getDataCoverage }) {
+  const steps = [
+    {
+      num: 1, title: 'Start with Company records', entity: 'company',
+      desc: 'Most modules require company master data. Add at least one company to unlock basic analytics.',
+      icon: '🏢',
+    },
+    {
+      num: 2, title: 'Add Emissions records', entity: 'emissions',
+      desc: 'Required by 150+ modules including PCAF, CSRD, SFDR, Paris Alignment, and all carbon analytics.',
+      icon: '💨',
+    },
+    {
+      num: 3, title: 'Add Portfolio Holdings', entity: 'portfolio_holding',
+      desc: 'Required for all PCAF and portfolio analytics modules — financed emissions, WACI, ITR scoring.',
+      icon: '📊',
+    },
+    {
+      num: 4, title: 'Add Climate Scenarios', entity: 'climate_scenario',
+      desc: 'Required for stress testing and risk modules — NGFS scenarios, physical risk, transition risk.',
+      icon: '🌡️',
+    },
+  ];
+
+  /* Which entity types have at least 1 record */
+  const entityProgress = useMemo(() => DATA_ENTITIES.map(e => ({
+    ...e,
+    hasData: (capturedData[e.id] || []).length > 0,
+    count: (capturedData[e.id] || []).length,
+  })), [capturedData]);
+
+  /* Modules unlocked = all required entities have data */
+  const unlockedCount = useMemo(() => {
+    return allModules.filter(m => {
+      const reqs = m.requiredEntities || [];
+      if (reqs.length === 0) return true;
+      return reqs.every(eid => (capturedData[eid] || []).length > 0);
+    }).length;
+  }, [allModules, capturedData]);
+
+  const totalWithData = entityProgress.filter(e => e.hasData).length;
+  const progressPct = DATA_ENTITIES.length > 0 ? Math.round((totalWithData / DATA_ENTITIES.length) * 100) : 0;
+
+  return (
+    <div>
+      {/* Progress summary */}
+      <div style={{ ...cardStyle, marginBottom: 24, background: T.navy, borderColor: T.navy }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Your Progress</h3>
+          <span style={{ fontSize: 24, fontWeight: 700, color: T.gold }}>{unlockedCount} / {allModules.length}</span>
+        </div>
+        <p style={{ fontSize: 13, color: '#94a3b8', margin: '0 0 12px' }}>Modules Unlocked — {totalWithData} of {DATA_ENTITIES.length} entity types have data ({progressPct}%)</p>
+        <div style={{ width: '100%', height: 8, background: '#1e3a5f', borderRadius: 4 }}>
+          <div style={{ width: `${progressPct}%`, height: 8, background: T.gold, borderRadius: 4, transition: 'width 0.4s' }} />
+        </div>
+      </div>
+
+      {/* Steps */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16, marginBottom: 24 }}>
+        {steps.map((step) => {
+          const entityRec = entityProgress.find(e => e.id === step.entity);
+          const done = entityRec?.hasData;
+          const unlocked = allModules.filter(m => (m.requiredEntities || []).includes(step.entity)).length;
+          return (
+            <div key={step.num} style={{ ...cardStyle, border: `2px solid ${done ? T.green : T.border}`, position: 'relative' }}>
+              {done && <div style={{ position: 'absolute', top: 12, right: 12, fontSize: 20 }}>✓</div>}
+              <div style={{ fontSize: 28, marginBottom: 8 }}>{step.icon}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: done ? T.green : T.sub, marginBottom: 4 }}>STEP {step.num}</div>
+              <h4 style={{ fontSize: 14, fontWeight: 600, color: T.navy, margin: '0 0 8px' }}>{step.title}</h4>
+              <p style={{ fontSize: 12, color: T.sub, margin: '0 0 12px', lineHeight: 1.6 }}>{step.desc}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: T.indigo, fontWeight: 600 }}>Unlocks {unlocked} modules</span>
+                {onGoToEntry && entityRec && (
+                  <button onClick={() => onGoToEntry(step.entity)} style={{ ...btnStyle, fontSize: 11, padding: '4px 10px', background: done ? T.green : T.indigo }}>
+                    {done ? `${entityRec.count} records` : 'Add Data'}
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Entity checklist */}
+      <div style={cardStyle}>
+        <h3 style={{ fontSize: 15, fontWeight: 600, color: T.navy, margin: '0 0 16px' }}>Entity Checklist — {totalWithData}/{DATA_ENTITIES.length} Complete</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
+          {entityProgress.map((e, i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: e.hasData ? '#f0fdf4' : T.surface, borderRadius: 6, border: `1px solid ${e.hasData ? T.green + '40' : T.border}` }}>
+              <span style={{ fontSize: 13, color: T.text }}>{e.icon} {e.name}</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: e.hasData ? T.green : T.sub }}>{e.hasData ? `${e.count} rec` : 'Empty'}</span>
             </div>
           ))}
         </div>
