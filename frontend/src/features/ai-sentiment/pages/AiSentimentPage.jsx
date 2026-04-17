@@ -1,817 +1,1313 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, PieChart, Pie, Cell, BarChart, Bar, Legend } from 'recharts';
-import { GLOBAL_COMPANY_MASTER, EXCHANGES, globalSearch } from '../../../data/globalCompanyMaster';
+import React, { useState, useMemo } from 'react';
+import {
+  BarChart, Bar, LineChart, Line, AreaChart, Area,
+  ScatterChart, Scatter, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine
+} from 'recharts';
 
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T = {
+  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0',
+  sub: '#f6f4f0', navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3',
+  textPri: '#1a1a2e', textSec: '#6b7280', green: '#16a34a', red: '#dc2626',
+  blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f', teal: '#0f766e',
+  indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c', surfaceH: '#f1ede4',
+  fontMono: 'JetBrains Mono, monospace'
+};
 
-const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
-let _sc=1000;
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-/* ── Static seed articles ───────────────────────────────────────── */
-const SEED_ARTICLES = [
-  { id:'S001', date:'2025-03-20', company:'Reliance Industries', ticker:'RELIANCE', sector:'Energy', headline:'Reliance announces $10B green hydrogen investment in Gujarat', sentiment:0.85, category:'E', keywords:['green hydrogen','renewable','investment'], source:'Bloomberg' },
-  { id:'S002', date:'2025-03-19', company:'TCS', ticker:'TCS', sector:'IT', headline:'TCS achieves carbon neutrality across global operations', sentiment:0.92, category:'E', keywords:['carbon neutral','net zero','operations'], source:'ET' },
-  { id:'S003', date:'2025-03-18', company:'Adani Enterprises', ticker:'ADANIENT', sector:'Energy', headline:'Adani faces renewed scrutiny over Carmichael coal expansion', sentiment:-0.78, category:'E', keywords:['coal','controversy','expansion'], source:'Guardian' },
-  { id:'S004', date:'2025-03-17', company:'HDFC Bank', ticker:'HDFCBANK', sector:'Financials', headline:'HDFC Bank launches sustainable lending framework aligned with EU Taxonomy', sentiment:0.72, category:'G', keywords:['sustainable finance','taxonomy','lending'], source:'Mint' },
-  { id:'S005', date:'2025-03-16', company:'Infosys', ticker:'INFY', sector:'IT', headline:'Infosys ESG score upgraded by MSCI to AA rating', sentiment:0.88, category:'G', keywords:['ESG rating','MSCI','upgrade'], source:'Reuters' },
-  { id:'S006', date:'2025-03-15', company:'NTPC', ticker:'NTPC', sector:'Utilities', headline:'NTPC solar capacity addition falls short of FY24 target', sentiment:-0.45, category:'E', keywords:['solar','target miss','renewable'], source:'LiveMint' },
-  { id:'S007', date:'2025-03-14', company:'Tata Steel', ticker:'TATASTEEL', sector:'Materials', headline:'Tata Steel Port Talbot green transition receives UK govt support', sentiment:0.65, category:'E', keywords:['green steel','transition','hydrogen'], source:'FT' },
-  { id:'S008', date:'2025-03-13', company:'Shell plc', ticker:'SHEL', sector:'Energy', headline:'Shell walks back 2030 emissions reduction target', sentiment:-0.82, category:'E', keywords:['emissions target','rollback','net zero'], source:'BBC' },
-  { id:'S009', date:'2025-03-12', company:'Apple Inc.', ticker:'AAPL', sector:'IT', headline:'Apple supply chain achieves 100% renewable energy milestone', sentiment:0.95, category:'E', keywords:['supply chain','renewable','100%'], source:'CNBC' },
-  { id:'S010', date:'2025-03-11', company:'Nestl\u00e9', ticker:'NESN', sector:'Consumer Staples', headline:'Nestl\u00e9 deforestation-free palm oil commitment under independent audit', sentiment:0.55, category:'E', keywords:['deforestation','palm oil','audit'], source:'Reuters' },
-  { id:'S011', date:'2025-03-10', company:'Samsung', ticker:'005930', sector:'IT', headline:'Samsung pledges $5B for AI-driven energy efficiency in fabs', sentiment:0.78, category:'E', keywords:['AI','energy efficiency','semiconductor'], source:'Nikkei' },
-  { id:'S012', date:'2025-03-09', company:'BHP Group', ticker:'BHP', sector:'Materials', headline:'BHP water stewardship program recognized by CDP A-list', sentiment:0.82, category:'E', keywords:['CDP','water','A-list'], source:'Mining Weekly' },
-  { id:'S013', date:'2025-03-08', company:'JPMorgan Chase', ticker:'JPM', sector:'Financials', headline:'JPMorgan increases climate lending target to $2.5T by 2030', sentiment:0.68, category:'E', keywords:['climate finance','lending','target'], source:'Bloomberg' },
-  { id:'S014', date:'2025-03-07', company:'Tesla', ticker:'TSLA', sector:'Consumer Discretionary', headline:'Tesla board diversity criticized at shareholder meeting', sentiment:-0.55, category:'S', keywords:['board diversity','governance','shareholder'], source:'WSJ' },
-  { id:'S015', date:'2025-03-06', company:'Enel', ticker:'ENEL', sector:'Utilities', headline:'Enel achieves SBTi 1.5C validation for near-term targets', sentiment:0.90, category:'E', keywords:['SBTi','1.5C','validation'], source:'Reuters' },
-  { id:'S016', date:'2025-03-05', company:'Rio Tinto', ticker:'RIO', sector:'Materials', headline:'Rio Tinto Aboriginal heritage management under federal review', sentiment:-0.65, category:'S', keywords:['indigenous rights','heritage','review'], source:'ABC' },
-  { id:'S017', date:'2025-03-04', company:'Microsoft', ticker:'MSFT', sector:'IT', headline:'Microsoft carbon removal portfolio reaches 5.8M tonnes', sentiment:0.88, category:'E', keywords:['carbon removal','CDR','negative emissions'], source:'TechCrunch' },
-  { id:'S018', date:'2025-03-03', company:'Glencore', ticker:'GLEN', sector:'Materials', headline:'Glencore DRC copper mine community displacement allegations', sentiment:-0.72, category:'S', keywords:['displacement','community','human rights'], source:'Amnesty' },
-  { id:'S019', date:'2025-03-02', company:'ICICI Bank', ticker:'ICICIBANK', sector:'Financials', headline:'ICICI Bank green bond framework receives positive SPO from CICERO', sentiment:0.70, category:'G', keywords:['green bond','SPO','CICERO'], source:'ET' },
-  { id:'S020', date:'2025-03-01', company:'Toyota', ticker:'7203', sector:'Consumer Discretionary', headline:'Toyota EV transition strategy questioned by Climate Action 100+', sentiment:-0.48, category:'E', keywords:['EV transition','engagement','laggard'], source:'Nikkei' },
-  { id:'S021', date:'2025-02-28', company:'Iberdrola', ticker:'IBE', sector:'Utilities', headline:'Iberdrola offshore wind farm approval in Baltic Sea', sentiment:0.80, category:'E', keywords:['offshore wind','renewable','expansion'], source:'Reuters' },
-  { id:'S022', date:'2025-02-27', company:'Adani Ports', ticker:'ADANIPORTS', sector:'Industrials', headline:'Adani Ports excluded from S&P Dow Jones ESG indices', sentiment:-0.85, category:'G', keywords:['exclusion','ESG index','controversy'], source:'CNBC' },
-  { id:'S023', date:'2025-02-26', company:'Orsted', ticker:'ORSTED', sector:'Utilities', headline:'Orsted achieves 99% renewable electricity generation', sentiment:0.94, category:'E', keywords:['renewable','99%','generation'], source:'Bloomberg' },
-  { id:'S024', date:'2025-02-25', company:'Vale S.A.', ticker:'VALE3', sector:'Materials', headline:'Vale Brumadinho compensation payments reach $7B', sentiment:-0.35, category:'S', keywords:['reparations','dam disaster','compensation'], source:'Reuters' },
-  { id:'S025', date:'2025-02-24', company:'Sun Pharma', ticker:'SUNPHARMA', sector:'Health Care', headline:'Sun Pharma recognized for gender equality initiatives in India', sentiment:0.62, category:'S', keywords:['gender equality','diversity','India'], source:'Mint' },
+// ── Static Data ───────────────────────────────────────────────────────────────
+
+const SECTORS = ['Energy','Financials','Technology','Materials','Utilities','Industrials','Healthcare','Consumer','Real Estate','Transportation'];
+const SOURCES_LIST = ['Reuters','Bloomberg','FT','MSCI ESG','Sustainalytics','RepRisk','UNGC','NGO Reports','Regulatory Filings','Social Media','Corporate Filings','Academic'];
+const PILLARS = ['E','S','G'];
+const SENTIMENTS = ['Positive','Neutral','Negative'];
+const CONTROVERSY_TYPES = ['Environmental Damage','Labor Violation','Greenwashing','Regulatory Fine','Board Misconduct','Supply Chain','Tax Avoidance','Data Breach'];
+const DISAMBIG_METHODS = ['Wikidata','Context Window','Ticker Match','Country Reference'];
+
+const COMPANY_NAMES = [
+  'Shell plc','BP Global','TotalEnergies','ExxonMobil','Chevron','Equinor','Repsol','Eni SpA',
+  'HSBC Holdings','Barclays','Deutsche Bank','BNP Paribas','JPMorgan Chase','Goldman Sachs','Citigroup','UBS Group',
+  'Apple Inc','Microsoft','Alphabet','Meta Platforms','Samsung','TSMC','ASML','Intel Corp',
+  'Rio Tinto','BHP Group','Glencore','Anglo American','Freeport-McMoRan','Newmont Corp','Vale SA','Antofagasta',
+  'Enel SpA','Iberdrola','Orsted','NextEra Energy','E.ON SE','RWE AG','Engie SA','Vattenfall',
+  'Siemens AG','ABB Ltd','Honeywell','3M Company','Caterpillar','Deere & Co','Emerson Electric','Parker Hannifin',
+  'Johnson & Johnson','Pfizer Inc','Novartis','Roche Holding','AstraZeneca','Merck KGaA','Bayer AG','Sanofi SA',
+  'Nestle SA','Unilever','Procter & Gamble','Danone SA','AB InBev','Pernod Ricard','Heineken NV','Diageo plc',
+  'CBRE Group','Prologis','Vonovia SE','Land Securities','Unibail-Rodamco','Welltower','AvalonBay','Boston Properties',
+  'Maersk','FedEx Corp','UPS Inc','Lufthansa','Air France-KLM','Delta Air Lines','CNH Industrial','Volvo Group'
 ];
 
-const catColors = { E: T.green, S: '#7c3aed', G: T.navy };
-const catLabels = { E: 'Environmental', S: 'Social', G: 'Governance' };
-const sentimentColor = v => v > 0.3 ? T.green : v < -0.3 ? T.red : T.amber;
-const fmt = v => (v >= 0 ? '+' : '') + v.toFixed(2);
+const HEADLINE_SUFFIXES = [
+  'raises climate ambition with updated net-zero pledge',
+  'faces scrutiny over Scope 3 emissions disclosure gaps',
+  'board elects new sustainability committee chair',
+  'issues green bond amid investor ESG demand surge',
+  'criticized by NGO for deforestation supply chain links',
+  'announces carbon capture partnership with government',
+  'regulators probe greenwashing claims in prospectus',
+  'achieves CDP A-list rating for third consecutive year',
+  'discloses climate scenario analysis under TCFD framework',
+  'accelerates coal phase-out timeline to 2030',
+];
 
-/* ── Generate portfolio-specific sentiment articles ──────────────── */
-const generatePortfolioSentiment = (holdings) => {
-  return holdings.map((h, i) => {
-    const c = h.company || {};
-    const isPositive = (c.esg_score || 50) > 60 && c.sbti_committed;
+// ── Article dataset (80 articles) ─────────────────────────────────────────────
+
+const ARTICLES = Array.from({ length: 80 }, (_, i) => {
+  const posRaw = sr(i * 7 + 1);
+  const neuRaw = sr(i * 7 + 2);
+  const negRaw = sr(i * 7 + 3);
+  const total = posRaw + neuRaw + negRaw;
+  const fp = posRaw / total;
+  const fn = neuRaw / total;
+  const fg = negRaw / total;
+  const score = Math.round(20 + sr(i * 13 + 4) * 60);
+  const sentIdx = score > 60 ? 0 : score > 40 ? 1 : 2;
+  const conf = 0.55 + sr(i * 11 + 5) * 0.44;
+  const credTier = Math.max(1, Math.ceil(sr(i * 17 + 6) * 5));
+  const month = String(Math.max(1, Math.ceil(sr(i * 3 + 7) * 12))).padStart(2, '0');
+  const day = String(Math.max(1, Math.ceil(sr(i * 3 + 8) * 28))).padStart(2, '0');
+  const numEntities = 2 + Math.floor(sr(i * 5 + 9) * 3);
+  const entities = Array.from({ length: numEntities }, (_, j) =>
+    COMPANY_NAMES[Math.floor(sr(i * 5 + j + 10) * COMPANY_NAMES.length)]
+  );
+  const kwBase = ['carbon','emissions','ESG','disclosure','transition','climate','governance','reporting','net-zero','taxonomy','TCFD','SFDR','biodiversity','scope3','alignment'];
+  const keywords = Array.from({ length: 5 }, (_, j) => kwBase[Math.floor(sr(i * 7 + j + 15) * kwBase.length)]);
+  return {
+    id: i + 1,
+    date: `2025-${month}-${day}`,
+    company: COMPANY_NAMES[i % COMPANY_NAMES.length],
+    sector: SECTORS[i % SECTORS.length],
+    headline: `${COMPANY_NAMES[i % COMPANY_NAMES.length]} ${HEADLINE_SUFFIXES[i % HEADLINE_SUFFIXES.length]}`,
+    source: SOURCES_LIST[Math.floor(sr(i * 19 + 20) * SOURCES_LIST.length)],
+    sentiment: SENTIMENTS[sentIdx],
+    score,
+    confidence: parseFloat(conf.toFixed(3)),
+    pillar: PILLARS[Math.floor(sr(i * 23 + 21) * 3)],
+    finbert_pos: parseFloat(fp.toFixed(3)),
+    finbert_neu: parseFloat(fn.toFixed(3)),
+    finbert_neg: parseFloat(fg.toFixed(3)),
+    entities: [...new Set(entities)],
+    keywords,
+    credibility_tier: credTier,
+  };
+});
+
+// ── Company dataset (80 companies) ────────────────────────────────────────────
+
+const COMPANIES = Array.from({ length: 80 }, (_, i) => {
+  const baseScore = 30 + sr(i * 31 + 1) * 50;
+  const history = Array.from({ length: 24 }, (_, m) => {
+    const raw = baseScore + (sr(i * 7 + m + 2) - 0.5) * 20;
+    return Math.max(10, Math.min(90, raw));
+  });
+  let ewma = history[0];
+  const ewmaHistory = history.map(v => {
+    ewma = 0.15 * v + 0.85 * ewma;
+    return parseFloat(ewma.toFixed(2));
+  });
+  const smf = parseFloat(((sr(i * 41 + 4) - 0.5) * 2).toFixed(3));
+  const srs = parseFloat(((sr(i * 43 + 5) - 0.5) * 2).toFixed(3));
+  const cp = parseFloat((sr(i * 47 + 6) * 1.5).toFixed(3));
+  return {
+    id: i + 1,
+    name: COMPANY_NAMES[i],
+    sector: SECTORS[i % SECTORS.length],
+    sentimentScore: parseFloat(baseScore.toFixed(1)),
+    sentimentHistory: history.map((v, m) => ({ month: m + 1, raw: parseFloat(v.toFixed(1)), ewma: ewmaHistory[m] })),
+    controversyScore: parseFloat((sr(i * 37 + 3) * 10).toFixed(1)),
+    controversyType: CONTROVERSY_TYPES[Math.floor(sr(i * 71 + 11) * CONTROVERSY_TYPES.length)],
+    smf, srs, cp,
+    fwdReturn1d: parseFloat(((sr(i * 53 + 7) - 0.48) * 4).toFixed(2)),
+    fwdReturn5d: parseFloat(((sr(i * 59 + 8) - 0.48) * 8).toFixed(2)),
+    fwdReturn21d: parseFloat(((sr(i * 61 + 9) - 0.48) * 15).toFixed(2)),
+    fwdReturn63d: parseFloat(((sr(i * 67 + 10) - 0.48) * 25).toFixed(2)),
+  };
+});
+
+// ── Entity disambiguation (50 records) ───────────────────────────────────────
+
+const SEED_DISAMBIG = [
+  { raw: 'Shell', resolved: 'Shell plc (Netherlands)', conf: 0.82, alts: [{ name: 'Shell Nigeria', conf: 0.71 }, { name: 'Shell Midstream', conf: 0.55 }], method: 'Wikidata' },
+  { raw: 'Amazon', resolved: 'Amazon.com Inc', conf: 0.91, alts: [{ name: 'Amazon River Basin', conf: 0.44 }, { name: 'Amazon India', conf: 0.38 }], method: 'Ticker Match' },
+  { raw: 'Mercury', resolved: 'Mercury NZ Limited', conf: 0.77, alts: [{ name: 'Mercury Systems', conf: 0.66 }, { name: 'Mercury General Corp', conf: 0.59 }], method: 'Context Window' },
+  { raw: 'Phoenix', resolved: 'Phoenix Group Holdings', conf: 0.74, alts: [{ name: 'Phoenix Suns (NBA)', conf: 0.22 }, { name: 'City of Phoenix', conf: 0.18 }], method: 'Country Reference' },
+  { raw: 'Pioneer', resolved: 'Pioneer Natural Resources', conf: 0.88, alts: [{ name: 'Pioneer Corporation Japan', conf: 0.49 }, { name: 'Pioneer Electronics', conf: 0.41 }], method: 'Ticker Match' },
+  { raw: 'Orion', resolved: 'Orion Energy Systems', conf: 0.71, alts: [{ name: 'Orion Health NZ', conf: 0.60 }, { name: 'Orion SA Belgium', conf: 0.52 }], method: 'Wikidata' },
+  { raw: 'Atlas', resolved: 'Atlas Copco AB', conf: 0.85, alts: [{ name: 'Atlas Air Worldwide', conf: 0.57 }, { name: 'Atlas Financial', conf: 0.43 }], method: 'Context Window' },
+  { raw: 'Vanguard', resolved: 'Vanguard Group (Asset Mgr)', conf: 0.93, alts: [{ name: 'Vanguard Health', conf: 0.31 }], method: 'Wikidata' },
+  { raw: 'Pacific Gas', resolved: 'Pacific Gas & Electric (PG&E)', conf: 0.96, alts: [{ name: 'Pacific Gas Transmission', conf: 0.48 }], method: 'Ticker Match' },
+  { raw: 'Summit', resolved: 'Summit Materials', conf: 0.72, alts: [{ name: 'Summit Utilities', conf: 0.61 }, { name: 'Summit Healthcare', conf: 0.44 }], method: 'Country Reference' },
+];
+const AMBIG_NAMES = ['Horizon','Apex','Beacon','Zenith','Eclipse','Nova','Sentinel','Meridian','Spectrum','Catalyst','Nexus','Vertex','Pinnacle','Sterling','Clarity','Delta','Sigma','Omega','Vector','Matrix'];
+const GENERATED_DISAMBIG = Array.from({ length: 40 }, (_, i) => {
+  const conf = 0.70 + sr(i * 13 + 1) * 0.29;
+  const alt1conf = Math.max(0.3, conf - 0.10 - sr(i * 7 + 2) * 0.15);
+  const alt2conf = Math.max(0.2, conf - 0.20 - sr(i * 7 + 3) * 0.20);
+  const raw = AMBIG_NAMES[i % AMBIG_NAMES.length] + (i > 19 ? ` ${i}` : '');
+  return {
+    raw,
+    resolved: `${AMBIG_NAMES[i % AMBIG_NAMES.length]} ${SECTORS[(i * 3) % SECTORS.length]} Corp`,
+    conf: parseFloat(conf.toFixed(2)),
+    alts: [
+      { name: `${AMBIG_NAMES[i % AMBIG_NAMES.length]} Holdings`, conf: parseFloat(alt1conf.toFixed(2)) },
+      { name: `${AMBIG_NAMES[(i + 1) % AMBIG_NAMES.length]} International`, conf: parseFloat(alt2conf.toFixed(2)) },
+    ],
+    method: DISAMBIG_METHODS[i % DISAMBIG_METHODS.length],
+  };
+});
+const ENTITIES_DISAMBIG = [...SEED_DISAMBIG, ...GENERATED_DISAMBIG];
+
+// ── Source metadata (12 sources) ─────────────────────────────────────────────
+
+const SOURCE_META = SOURCES_LIST.map((name, i) => {
+  const tier = i < 3 ? 1 : i < 6 ? 2 : i < 9 ? 3 : i < 11 ? 4 : 5;
+  const articles = Math.round(100 + sr(i * 17 + 1) * 4900);
+  const avgSentiment = parseFloat((40 + sr(i * 19 + 2) * 30).toFixed(1));
+  const biasScore = parseFloat(((sr(i * 23 + 3) - 0.5) * 100).toFixed(1));
+  const avgConf = parseFloat((0.60 + sr(i * 29 + 4) * 0.35).toFixed(2));
+  const credWeight = [1.0, 0.85, 0.70, 0.55, 0.40][tier - 1];
+  const enPct = Math.round(40 + sr(i * 31 + 5) * 40);
+  const frPct = Math.round(5 + sr(i * 31 + 6) * 20);
+  const dePct = Math.round(5 + sr(i * 31 + 7) * 15);
+  const esPct = Math.round(3 + sr(i * 31 + 8) * 12);
+  const jpPct = Math.max(0, 100 - enPct - frPct - dePct - esPct);
+  return { name, tier, articles_tracked: articles, avg_sentiment: avgSentiment, bias_score: biasScore, avg_confidence: avgConf, credibility_weight: credWeight, lang: { EN: enPct, FR: frPct, DE: dePct, ES: esPct, JP: jpPct } };
+});
+
+// ── NLP model benchmarks (6 models) ──────────────────────────────────────────
+
+const NLP_MODELS = [
+  { name: 'FinBERT', ref: 'arXiv:1908.10063', domain: 'Finance', classes: 3, f1_e: 0.87, f1_s: 0.84, f1_g: 0.86, f1_avg: 0.87, precision: 0.88, recall: 0.86, latency_ms: 180, cost_per_k: 0.80, open_source: true, training_docs: '4,500,000', use_case: 'Earnings calls, press releases' },
+  { name: 'ClimateRoBERTa', ref: 'climatebert/distilroberta-base-climate-sentiment', domain: 'Climate/ESG', classes: 3, f1_e: 0.89, f1_s: 0.77, f1_g: 0.79, f1_avg: 0.82, precision: 0.83, recall: 0.81, latency_ms: 120, cost_per_k: 0.60, open_source: true, training_docs: '2,100,000', use_case: 'Climate disclosures, TCFD filings' },
+  { name: 'ESG-BERT', ref: 'nbroad/ESG-BERT', domain: 'ESG Multi-pillar', classes: 3, f1_e: 0.81, f1_s: 0.78, f1_g: 0.77, f1_avg: 0.79, precision: 0.80, recall: 0.78, latency_ms: 160, cost_per_k: 0.70, open_source: true, training_docs: '1,800,000', use_case: 'ESG reports, CSRD filings' },
+  { name: 'VADER + ESG Lexicon', ref: 'Rule-based + Finance Terms', domain: 'General + ESG', classes: 3, f1_e: 0.69, f1_s: 0.73, f1_g: 0.71, f1_avg: 0.71, precision: 0.72, recall: 0.70, latency_ms: 8, cost_per_k: 0.01, open_source: true, training_docs: 'N/A (lexicon)', use_case: 'High-volume, low-latency screening' },
+  { name: 'TextBlob', ref: 'General Purpose NLP', domain: 'General', classes: 2, f1_e: 0.61, f1_s: 0.66, f1_g: 0.64, f1_avg: 0.64, precision: 0.65, recall: 0.63, latency_ms: 3, cost_per_k: 0.001, open_source: true, training_docs: 'N/A (lexicon)', use_case: 'Baseline benchmark only' },
+  { name: 'GPT-4o Zero-shot', ref: 'OpenAI GPT-4o (API)', domain: 'Universal', classes: 3, f1_e: 0.91, f1_s: 0.88, f1_g: 0.88, f1_avg: 0.89, precision: 0.90, recall: 0.88, latency_ms: 1200, cost_per_k: 10.00, open_source: false, training_docs: 'Proprietary', use_case: 'Complex filings, nuanced governance text' },
+];
+
+// ── Controversy data (40 companies × events) ─────────────────────────────────
+
+const CONTROVERSY_DATA = Array.from({ length: 40 }, (_, i) => {
+  const company = COMPANIES[i];
+  const numEvents = 3 + Math.floor(sr(i * 7 + 1) * 6);
+  const eventLabels = ['Filing submitted','Fine levied','NGO report published','Regulatory inquiry opened','Media investigation','Court ruling','Settlement reached','Class action filed'];
+  const severities = ['Low','Medium','High','Critical'];
+  const events = Array.from({ length: numEvents }, (_, j) => {
+    const month = String(Math.max(1, Math.ceil(sr(i * 5 + j + 2) * 12))).padStart(2, '0');
+    const day = String(Math.max(1, Math.ceil(sr(i * 5 + j + 3) * 27))).padStart(2, '0');
     return {
-      id: `PS-${c.ticker || h.ticker || i}`,
-      date: new Date(Date.now() - i * 86400000).toISOString().slice(0, 10),
-      company: c.name || h.name || h.ticker,
-      ticker: c.ticker || h.ticker || '',
-      sector: c.sector || h.sector || 'Unknown',
-      headline: isPositive
-        ? `${c.name || h.name} ESG score at ${c.esg_score || 'N/A'}/100 ${c.sbti_committed ? '- SBTi validated' : '- improving trajectory'}`
-        : `${c.name || h.name} faces climate transition challenges - T-Risk score ${c.transition_risk_score || 'N/A'}/100`,
-      sentiment: isPositive ? 0.3 + sr(_sc++) * 0.5 : -0.2 - sr(_sc++) * 0.5,
-      category: 'E',
-      keywords: isPositive ? ['ESG leader', 'SBTi', 'transition'] : ['transition risk', 'high carbon', 'engagement needed'],
-      source: 'Portfolio Analysis',
-      isAutoGenerated: true,
+      date: `2024-${month}-${day}`,
+      event: eventLabels[Math.floor(sr(i * 7 + j + 5) * eventLabels.length)],
+      severity: severities[Math.floor(sr(i * 5 + j + 6) * 4)],
+      sentimentDrop: parseFloat((1 + sr(i * 3 + j + 4) * 12).toFixed(1)),
     };
   });
-};
+  return { ...company, events, fadeHalfLife: Math.round(14 + sr(i * 11 + 7) * 60) };
+});
 
-/* ── CSV export helper ──────────────────────────────────────────── */
-const downloadCSV = (rows, filename) => {
-  if (!rows.length) return;
-  const keys = Object.keys(rows[0]);
-  const csv = [keys.join(','), ...rows.map(r => keys.map(k => {
-    let v = r[k];
-    if (Array.isArray(v)) v = v.join('; ');
-    if (typeof v === 'string' && (v.includes(',') || v.includes('"'))) v = `"${v.replace(/"/g, '""')}"`;
-    return v ?? '';
-  }).join(','))].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
-};
+const FADE_RATES = { 'Environmental Damage': 42, 'Labor Violation': 28, 'Greenwashing': 35, 'Regulatory Fine': 21, 'Board Misconduct': 56, 'Supply Chain': 24, 'Tax Avoidance': 18, 'Data Breach': 30 };
 
-/* ═══════════════════════════════════════════════════════════════════
-   COMPONENT
-   ═══════════════════════════════════════════════════════════════════ */
-function AiSentimentPage() {
-  const navigate = useNavigate();
+// ── Derived alpha / backtest data ─────────────────────────────────────────────
 
-  /* ── Portfolio data ────────────────────────────────────────────── */
-  const [portfolioData, setPortfolioData] = useState(() => {
-    try { const s = localStorage.getItem('ra_portfolio_v1'); return s ? JSON.parse(s) : { portfolios: {}, activePortfolio: null }; } catch { return { portfolios: {}, activePortfolio: null }; }
+const BACKTEST_MONTHS = (() => {
+  let cumLS = 100, cumBench = 100;
+  return Array.from({ length: 12 }, (_, i) => {
+    const lsReturn = parseFloat(((sr(i * 17 + 1) - 0.42) * 6).toFixed(2));
+    const benchReturn = parseFloat(((sr(i * 17 + 2) - 0.47) * 4).toFixed(2));
+    cumLS *= (1 + lsReturn / 100);
+    cumBench *= (1 + benchReturn / 100);
+    return { month: `M${i + 1}`, lsReturn, benchReturn, cumLS: parseFloat(cumLS.toFixed(2)), cumBench: parseFloat(cumBench.toFixed(2)) };
   });
-  const holdings = portfolioData.portfolios?.[portfolioData.activePortfolio]?.holdings || [];
+})();
 
-  /* ── Alerts state ──────────────────────────────────────────────── */
-  const [alerts, setAlerts] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('ra_sentiment_alerts_v1') || '[]'); } catch { return []; }
-  });
-  const [alertThreshold, setAlertThreshold] = useState(-0.5);
+const IC_DECAY = [
+  { horizon: '1D', smf: parseFloat((0.08 + sr(1) * 0.06).toFixed(3)), srs: parseFloat((0.05 + sr(2) * 0.04).toFixed(3)), cp: parseFloat((0.03 + sr(3) * 0.03).toFixed(3)) },
+  { horizon: '5D', smf: parseFloat((0.11 + sr(4) * 0.07).toFixed(3)), srs: parseFloat((0.07 + sr(5) * 0.05).toFixed(3)), cp: parseFloat((0.05 + sr(6) * 0.04).toFixed(3)) },
+  { horizon: '21D', smf: parseFloat((0.09 + sr(7) * 0.06).toFixed(3)), srs: parseFloat((0.06 + sr(8) * 0.05).toFixed(3)), cp: parseFloat((0.07 + sr(9) * 0.05).toFixed(3)) },
+  { horizon: '63D', smf: parseFloat((0.06 + sr(10) * 0.05).toFixed(3)), srs: parseFloat((0.04 + sr(11) * 0.04).toFixed(3)), cp: parseFloat((0.09 + sr(12) * 0.06).toFixed(3)) },
+];
 
-  /* ── Custom articles state ─────────────────────────────────────── */
-  const [customArticles, setCustomArticles] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('ra_custom_articles_v1') || '[]'); } catch { return []; }
-  });
-  const [showAddArticle, setShowAddArticle] = useState(false);
-  const [newArticle, setNewArticle] = useState({ headline: '', company: '', ticker: '', sentiment: 0, category: 'E', source: '', keywords: '' });
+// ── Calibration / uncertainty data ───────────────────────────────────────────
 
-  /* ── Filter state ──────────────────────────────────────────────── */
-  const [searchText, setSearchText] = useState('');
-  const [sentimentRange, setSentimentRange] = useState([-1, 1]);
-  const [categoryFilter, setCategoryFilter] = useState({ E: true, S: true, G: true });
-  const [sourceFilter, setSourceFilter] = useState('ALL');
-  const [dateRange, setDateRange] = useState(90);
-  const [portfolioOnly, setPortfolioOnly] = useState(false);
-  const [activeKeywordFilter, setActiveKeywordFilter] = useState(null);
+const CALIBRATION_BINS = Array.from({ length: 10 }, (_, i) => {
+  const midConf = (i + 0.5) / 10;
+  const actualAcc = Math.max(0, Math.min(1, midConf + (sr(i * 7 + 1) - 0.5) * 0.15));
+  return { bin: `${i * 10}-${(i + 1) * 10}%`, confidence: parseFloat(midConf.toFixed(2)), accuracy: parseFloat(actualAcc.toFixed(3)), count: Math.round(20 + sr(i * 11 + 2) * 60) };
+});
 
-  /* ── Drill-down state ──────────────────────────────────────────── */
-  const [drillCompany, setDrillCompany] = useState(null);
+const ACF_DATA = Array.from({ length: 20 }, (_, i) => ({
+  lag: i + 1,
+  acf: parseFloat((Math.exp(-0.15 * (i + 1)) * (sr(i * 13 + 1) > 0.3 ? 1 : -1) * (0.3 + sr(i * 13 + 2) * 0.4)).toFixed(3)),
+}));
 
-  /* ── Hover state ───────────────────────────────────────────────── */
-  const [hoveredSector, setHoveredSector] = useState(null);
-
-  /* ── Combined article feed ─────────────────────────────────────── */
-  const allArticles = useMemo(() => {
-    const portfolioArticles = generatePortfolioSentiment(holdings);
-    const combined = [...SEED_ARTICLES, ...portfolioArticles, ...customArticles];
-    // Deduplicate by id
-    const seen = new Set();
-    return combined.filter(a => { if (seen.has(a.id)) return false; seen.add(a.id); return true; });
-  }, [holdings, customArticles]);
-
-  /* ── All unique sources ────────────────────────────────────────── */
-  const allSources = useMemo(() => {
-    const s = new Set(allArticles.map(a => a.source));
-    return ['ALL', ...Array.from(s).sort()];
-  }, [allArticles]);
-
-  /* ── Cutoff date for date range filter ─────────────────────────── */
-  const cutoffDate = useMemo(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - dateRange);
-    return d.toISOString().slice(0, 10);
-  }, [dateRange]);
-
-  /* ── Portfolio tickers set ─────────────────────────────────────── */
-  const portfolioTickers = useMemo(() => new Set(holdings.map(h => (h.ticker || '').toUpperCase())), [holdings]);
-
-  /* ── Filtered articles ─────────────────────────────────────────── */
-  const filteredArticles = useMemo(() => {
-    return allArticles.filter(a => {
-      if (a.sentiment < sentimentRange[0] || a.sentiment > sentimentRange[1]) return false;
-      if (!categoryFilter[a.category]) return false;
-      if (sourceFilter !== 'ALL' && a.source !== sourceFilter) return false;
-      if (a.date < cutoffDate) return false;
-      if (portfolioOnly && !portfolioTickers.has((a.ticker || '').toUpperCase())) return false;
-      if (activeKeywordFilter && !(a.keywords || []).some(k => k.toLowerCase().includes(activeKeywordFilter.toLowerCase()))) return false;
-      if (searchText) {
-        const q = searchText.toLowerCase();
-        const match = (a.headline || '').toLowerCase().includes(q) ||
-          (a.company || '').toLowerCase().includes(q) ||
-          (a.ticker || '').toLowerCase().includes(q) ||
-          (a.keywords || []).some(k => k.toLowerCase().includes(q));
-        if (!match) return false;
-      }
-      return true;
-    }).sort((a, b) => b.date.localeCompare(a.date));
-  }, [allArticles, sentimentRange, categoryFilter, sourceFilter, cutoffDate, portfolioOnly, portfolioTickers, activeKeywordFilter, searchText]);
-
-  /* ── KPIs ──────────────────────────────────────────────────────── */
-  const avgSentiment = useMemo(() => filteredArticles.length ? filteredArticles.reduce((s, a) => s + a.sentiment, 0) / filteredArticles.length : 0, [filteredArticles]);
-  const posCount = useMemo(() => filteredArticles.filter(a => a.sentiment > 0.3).length, [filteredArticles]);
-  const negCount = useMemo(() => filteredArticles.filter(a => a.sentiment < -0.3).length, [filteredArticles]);
-  const mostMentionedSector = useMemo(() => {
-    const counts = {};
-    filteredArticles.forEach(a => { counts[a.sector] = (counts[a.sector] || 0) + 1; });
-    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
-  }, [filteredArticles]);
-
-  /* ── Portfolio-weighted sentiment ──────────────────────────────── */
-  const portfolioWeightedSentiment = useMemo(() => {
-    if (holdings.length === 0) return null;
-    let totalWeight = 0;
-    let weightedSum = 0;
-    holdings.forEach(h => {
-      const ticker = (h.ticker || '').toUpperCase();
-      const matched = allArticles.filter(a => (a.ticker || '').toUpperCase() === ticker);
-      if (matched.length === 0) return;
-      const avgS = matched.reduce((s, a) => s + a.sentiment, 0) / matched.length;
-      const w = h.weight != null ? h.weight : (h.allocation != null ? h.allocation : (1 / (holdings.length || 1)));
-      weightedSum += w * avgS;
-      totalWeight += w;
-    });
-    return totalWeight > 0 ? weightedSum / totalWeight : null;
-  }, [holdings, allArticles]);
-
-  /* ── Trend data ────────────────────────────────────────────────── */
-  const trendData = useMemo(() => {
-    const byDate = {};
-    filteredArticles.forEach(a => {
-      if (!byDate[a.date]) byDate[a.date] = [];
-      byDate[a.date].push(a.sentiment);
-    });
-    return Object.entries(byDate)
-      .map(([date, vals]) => ({ date, sentiment: Math.round((vals.reduce((s, v) => s + v, 0) / vals.length) * 1000) / 1000 }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-  }, [filteredArticles]);
-
-  /* ── Sector heatmap ────────────────────────────────────────────── */
-  const sectorData = useMemo(() => {
-    const map = {};
-    filteredArticles.forEach(a => {
-      if (!map[a.sector]) map[a.sector] = { sentiment: 0, count: 0, keywords: {} };
-      map[a.sector].sentiment += a.sentiment;
-      map[a.sector].count += 1;
-      (a.keywords || []).forEach(k => { map[a.sector].keywords[k] = (map[a.sector].keywords[k] || 0) + 1; });
-    });
-    return Object.entries(map).map(([sector, d]) => {
-      const avg = d.sentiment / d.count;
-      const topKw = Object.entries(d.keywords).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
-      return { sector, avg: Math.round(avg * 100) / 100, count: d.count, topKeyword: topKw, trend: avg > 0.3 ? 'Improving' : avg < -0.3 ? 'Declining' : 'Stable' };
-    }).sort((a, b) => b.avg - a.avg);
-  }, [filteredArticles]);
-
-  /* ── Keywords with time periods ────────────────────────────────── */
-  const keywordData = useMemo(() => {
-    const map = {};
-    filteredArticles.forEach(a => {
-      (a.keywords || []).forEach(k => {
-        if (!map[k]) map[k] = { count: 0, sentiment: 0, categories: new Set(), byWeek: {} };
-        map[k].count += 1;
-        map[k].sentiment += a.sentiment;
-        map[k].categories.add(a.category);
-        const wk = a.date.slice(0, 7);
-        map[k].byWeek[wk] = (map[k].byWeek[wk] || 0) + 1;
-      });
-    });
-    return Object.entries(map)
-      .map(([kw, d]) => ({ keyword: kw, frequency: d.count, avgSentiment: Math.round((d.sentiment / d.count) * 100) / 100, category: [...d.categories].join('/'), periods: Object.keys(d.byWeek).length }))
-      .sort((a, b) => b.frequency - a.frequency)
-      .slice(0, 15);
-  }, [filteredArticles]);
-
-  /* ── E/S/G distribution ────────────────────────────────────────── */
-  const esgDist = useMemo(() => {
-    const counts = { E: 0, S: 0, G: 0 };
-    filteredArticles.forEach(a => { counts[a.category] = (counts[a.category] || 0) + 1; });
-    return [
-      { name: 'Environmental', value: counts.E, color: T.green },
-      { name: 'Social', value: counts.S, color: '#7c3aed' },
-      { name: 'Governance', value: counts.G, color: T.navy },
-    ];
-  }, [filteredArticles]);
-
-  /* ── Portfolio overlay ─────────────────────────────────────────── */
-  const portfolioOverlay = useMemo(() => {
-    if (holdings.length === 0) return [];
-    return holdings.map(h => {
-      const ticker = (h.ticker || '').toUpperCase();
-      const matched = allArticles.filter(a => (a.ticker || '').toUpperCase() === ticker);
-      const avg = matched.length > 0 ? matched.reduce((s, a) => s + a.sentiment, 0) / matched.length : null;
-      const c = h.company || {};
-      return {
-        company: c.name || h.name || h.ticker,
-        ticker: h.ticker,
-        weight: h.weight != null ? h.weight : (h.allocation != null ? h.allocation : null),
-        sentiment: avg != null ? Math.round(avg * 100) / 100 : null,
-        articles: matched.length,
-        latestHeadline: matched.length > 0 ? matched.sort((a, b) => b.date.localeCompare(a.date))[0].headline : null,
-        esgScore: c.esg_score || null,
-        sector: c.sector || h.sector || null,
-      };
-    });
-  }, [holdings, allArticles]);
-
-  /* ── Alert generation ──────────────────────────────────────────── */
-  useEffect(() => {
-    if (holdings.length === 0) return;
-    const newAlerts = [];
-    holdings.forEach(h => {
-      const ticker = (h.ticker || '').toUpperCase();
-      const matched = allArticles.filter(a => (a.ticker || '').toUpperCase() === ticker);
-      if (matched.length === 0) return;
-      const avg = matched.reduce((s, a) => s + a.sentiment, 0) / matched.length;
-      if (avg < alertThreshold) {
-        const existing = alerts.find(al => al.ticker === ticker && !al.dismissed);
-        if (!existing) {
-          newAlerts.push({
-            id: `AL-${ticker}-${Date.now()}`,
-            ticker,
-            company: (h.company?.name || h.name || h.ticker),
-            sentiment: Math.round(avg * 100) / 100,
-            headline: matched.sort((a, b) => b.date.localeCompare(a.date))[0].headline,
-            date: new Date().toISOString().slice(0, 10),
-            dismissed: false,
-          });
-        }
-      }
-    });
-    if (newAlerts.length > 0) {
-      const updated = [...alerts, ...newAlerts];
-      setAlerts(updated);
-      localStorage.setItem('ra_sentiment_alerts_v1', JSON.stringify(updated));
-    }
-  }, [holdings, allArticles, alertThreshold]); // eslint-disable-line
-
-  const dismissAlert = (id) => {
-    const updated = alerts.map(a => a.id === id ? { ...a, dismissed: true } : a);
-    setAlerts(updated);
-    localStorage.setItem('ra_sentiment_alerts_v1', JSON.stringify(updated));
+const PILLAR_SEASONALITY = Array.from({ length: 24 }, (_, m) => {
+  const month = (m % 12) + 1;
+  return {
+    month: `${2023 + Math.floor(m / 12)}-${String(month).padStart(2, '0')}`,
+    E: parseFloat((55 + Math.sin((month / 12) * Math.PI * 2) * 8 + (sr(m * 7 + 1) - 0.5) * 5).toFixed(1)),
+    S: parseFloat((50 + Math.cos((month / 12) * Math.PI * 2) * 6 + (sr(m * 7 + 2) - 0.5) * 5).toFixed(1)),
+    G: parseFloat((48 + Math.sin((month / 12) * Math.PI * 2 + 1) * 4 + (sr(m * 7 + 3) - 0.5) * 5).toFixed(1)),
   };
+});
 
-  const activeAlerts = alerts.filter(a => !a.dismissed);
+const IMPULSE_RESPONSE = Array.from({ length: 12 }, (_, t) => ({
+  week: t,
+  response: parseFloat((Math.exp(-0.3 * t) * 100).toFixed(1)),
+}));
 
-  /* ── Add custom article ────────────────────────────────────────── */
-  const addCustomArticle = () => {
-    if (!newArticle.headline || !newArticle.company) return;
-    const art = {
-      id: `CA-${Date.now()}`,
-      date: new Date().toISOString().slice(0, 10),
-      company: newArticle.company,
-      ticker: newArticle.ticker,
-      sector: 'Custom',
-      headline: newArticle.headline,
-      sentiment: parseFloat(newArticle.sentiment) || 0,
-      category: newArticle.category,
-      keywords: newArticle.keywords.split(',').map(k => k.trim()).filter(Boolean),
-      source: newArticle.source || 'Manual Entry',
-      isCustom: true,
-    };
-    const updated = [...customArticles, art];
-    setCustomArticles(updated);
-    localStorage.setItem('ra_custom_articles_v1', JSON.stringify(updated));
-    setNewArticle({ headline: '', company: '', ticker: '', sentiment: 0, category: 'E', source: '', keywords: '' });
-    setShowAddArticle(false);
-  };
+const SECTOR_TRAJECTORIES = SECTORS.map((sec, si) => ({
+  sector: sec,
+  data: Array.from({ length: 24 }, (_, m) => ({
+    month: `${2023 + Math.floor(m / 12)}-${String((m % 12) + 1).padStart(2, '0')}`,
+    value: parseFloat((40 + sr(si * 7 + m + 1) * 30).toFixed(1)),
+  })),
+}));
 
-  /* ── Company drill-down data ───────────────────────────────────── */
-  const drillData = useMemo(() => {
-    if (!drillCompany) return null;
-    const ticker = drillCompany.toUpperCase();
-    const articles = allArticles.filter(a => (a.ticker || '').toUpperCase() === ticker);
-    const gcmMatch = GLOBAL_COMPANY_MASTER.find(c => (c.ticker || '').toUpperCase() === ticker);
-    const trendByDate = {};
-    articles.forEach(a => {
-      if (!trendByDate[a.date]) trendByDate[a.date] = [];
-      trendByDate[a.date].push(a.sentiment);
-    });
-    const trend = Object.entries(trendByDate).map(([date, vals]) => ({
-      date, sentiment: Math.round((vals.reduce((s, v) => s + v, 0) / vals.length) * 1000) / 1000
-    })).sort((a, b) => a.date.localeCompare(b.date));
-    return { articles, gcmMatch, trend };
-  }, [drillCompany, allArticles]);
+// ── Shared UI ─────────────────────────────────────────────────────────────────
 
-  /* ── Export handlers ───────────────────────────────────────────── */
-  const exportSentimentReport = () => {
-    const rows = filteredArticles.map(a => ({
-      ID: a.id, Date: a.date, Company: a.company, Ticker: a.ticker, Sector: a.sector,
-      Headline: a.headline, Sentiment: a.sentiment, Category: a.category,
-      Keywords: (a.keywords || []).join('; '), Source: a.source,
-      AutoGenerated: a.isAutoGenerated ? 'Yes' : 'No',
-    }));
-    downloadCSV(rows, 'sentiment_report.csv');
-  };
+const KpiCard = ({ label, value, sub, color }) => (
+  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', flex: 1, minWidth: 140 }}>
+    <div style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>{label}</div>
+    <div style={{ fontSize: 24, fontWeight: 700, color: color || T.navy }}>{value}</div>
+    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>{sub}</div>}
+  </div>
+);
 
-  const exportPortfolioSentiment = () => {
-    const rows = portfolioOverlay.map(r => ({
-      Company: r.company, Ticker: r.ticker, Weight: r.weight != null ? (r.weight * 100).toFixed(1) + '%' : '',
-      Sentiment: r.sentiment != null ? r.sentiment : '', Articles: r.articles,
-      ESGScore: r.esgScore || '', LatestHeadline: r.latestHeadline || '',
-    }));
-    downloadCSV(rows, 'portfolio_sentiment.csv');
-  };
+const SectionTitle = ({ children }) => (
+  <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, fontFamily: T.fontMono, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12, paddingBottom: 6, borderBottom: `2px solid ${T.indigo}` }}>
+    {children}
+  </div>
+);
 
-  /* ── Gauge helper ──────────────────────────────────────────────── */
-  const GaugeDisplay = ({ value, label }) => {
-    const color = value > 0.3 ? T.green : value > 0 ? T.amber : value > -0.3 ? T.amber : T.red;
-    const pct = Math.min(Math.max((value + 1) / 2 * 100, 0), 100);
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 11, color: T.textMut, fontWeight: 500, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 }}>{label}</div>
-        <div style={{ position: 'relative', height: 12, background: T.surfaceH, borderRadius: 6, overflow: 'hidden', marginBottom: 4 }}>
-          <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: pct + '%', background: color, borderRadius: 6, transition: 'width 0.4s' }} />
-          <div style={{ position: 'absolute', left: '50%', top: 0, width: 2, height: '100%', background: T.textMut, opacity: 0.4 }} />
-        </div>
-        <div style={{ fontSize: 22, fontWeight: 700, color }}>{fmt(value)}</div>
-      </div>
-    );
-  };
+const Badge = ({ label, color }) => (
+  <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: color + '20', color, border: `1px solid ${color}40`, fontFamily: T.fontMono, flexShrink: 0 }}>
+    {label}
+  </span>
+);
 
-  const inputStyle = { padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.border}`, fontFamily: T.font, fontSize: 13, color: T.text, background: T.surface, outline: 'none', width: '100%', boxSizing: 'border-box' };
-  const btnStyle = (bg, fg) => ({ padding: '8px 16px', borderRadius: 8, border: 'none', background: bg, color: fg, fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: T.font, transition: 'opacity 0.15s' });
+const SENT_COLOR = { Positive: T.green, Neutral: T.amber, Negative: T.red };
+const PILLAR_COLOR = { E: T.sage, S: T.blue, G: T.purple };
+const TIER_COLORS = [T.green, T.blue, T.amber, T.orange, T.red];
 
-  /* ── KPI cards ─────────────────────────────────────────────────── */
-  const kpiCards = [
-    { label: 'Avg Sentiment', value: fmt(avgSentiment), color: sentimentColor(avgSentiment) },
-    { label: 'Positive Articles', value: posCount, color: T.green },
-    { label: 'Negative Articles', value: negCount, color: T.red },
-    { label: 'Most Mentioned Sector', value: mostMentionedSector, color: T.navy },
-    { label: 'Active Alerts', value: activeAlerts.length, color: activeAlerts.length > 0 ? T.red : T.green },
-  ];
+// ── Tab 1: Live Intelligence Feed ─────────────────────────────────────────────
 
-  /* ═══════════════════════════════════════════════════════════════
-     RENDER
-     ═══════════════════════════════════════════════════════════════ */
+function TabLiveFeed() {
+  const [filterPillar, setFilterPillar] = useState('All');
+  const [filterSentiment, setFilterSentiment] = useState('All');
+  const [filterSource, setFilterSource] = useState('All');
+
+  const filtered = useMemo(() => ARTICLES.filter(a =>
+    (filterPillar === 'All' || a.pillar === filterPillar) &&
+    (filterSentiment === 'All' || a.sentiment === filterSentiment) &&
+    (filterSource === 'All' || a.source === filterSource)
+  ), [filterPillar, filterSentiment, filterSource]);
+
+  const avgConf = filtered.length ? (filtered.reduce((s, a) => s + a.confidence, 0) / filtered.length).toFixed(3) : '0.000';
+  const highConf = filtered.filter(a => a.confidence > 0.85).length;
+  const byPillar = { E: filtered.filter(a => a.pillar === 'E').length, S: filtered.filter(a => a.pillar === 'S').length, G: filtered.filter(a => a.pillar === 'G').length };
+  const controversyFlags = filtered.filter(a => a.sentiment === 'Negative' && a.confidence > 0.80).length;
+
+  const pillarPie = PILLARS.map(p => ({ name: p, value: byPillar[p] }));
+  const sentDist = SENTIMENTS.map(s => ({ name: s, value: filtered.filter(a => a.sentiment === s).length }));
+
+  const Sel = ({ v, cur, set }) => (
+    <button onClick={() => set(v)} style={{ padding: '4px 10px', fontSize: 11, borderRadius: 4, border: `1px solid ${cur === v ? T.indigo : T.border}`, background: cur === v ? T.indigo + '15' : T.sub, color: cur === v ? T.indigo : T.textSec, cursor: 'pointer', fontFamily: T.fontMono, marginRight: 4 }}>{v}</button>
+  );
+
   return (
-    <div style={{ minHeight: '100vh', background: T.bg, fontFamily: T.font, color: T.text, padding: '32px 40px' }}>
-
-      {/* ── Header ───────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
-            <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0, color: T.navy }}>AI ESG Sentiment Intelligence</h1>
-            <span style={{ fontSize: 11, fontWeight: 600, background: T.navy, color: '#fff', padding: '4px 12px', borderRadius: 20, letterSpacing: 0.5 }}>EP-H5</span>
-          </div>
-          <p style={{ fontSize: 13, color: T.textSec, margin: 0 }}>NLP Feed &middot; {filteredArticles.length} Articles &middot; E/S/G Classification &middot; Portfolio Overlay</p>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={() => setShowAddArticle(!showAddArticle)} style={btnStyle(T.navy, '#fff')}>+ Add Article</button>
-          <button onClick={exportSentimentReport} style={btnStyle(T.sage, '#fff')}>Export Feed CSV</button>
-          {holdings.length > 0 && <button onClick={exportPortfolioSentiment} style={btnStyle(T.gold, '#fff')}>Export Portfolio CSV</button>}
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="Avg Confidence" value={avgConf} sub="Epistemic certainty" color={T.indigo} />
+        <KpiCard label="High-Conf Articles" value={highConf} sub="Confidence > 0.85" color={T.green} />
+        <KpiCard label="E / S / G Split" value={`${byPillar.E}/${byPillar.S}/${byPillar.G}`} sub="By ESG pillar" color={T.sage} />
+        <KpiCard label="Controversy Flags" value={controversyFlags} sub="Negative + high-conf" color={T.red} />
       </div>
 
-      {/* ── Alert Banner ─────────────────────────────────────────── */}
-      {activeAlerts.length > 0 && (
-        <div style={{ background: 'rgba(220,38,38,0.06)', border: `1px solid rgba(220,38,38,0.2)`, borderRadius: 12, padding: 16, marginBottom: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.red }}>Sentiment Alerts ({activeAlerts.length})</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: T.textSec }}>
-              <span>Threshold:</span>
-              <input type="range" min="-1" max="0" step="0.1" value={alertThreshold}
-                onChange={e => setAlertThreshold(parseFloat(e.target.value))}
-                style={{ width: 100, accentColor: T.red }} />
-              <span style={{ fontWeight: 600, color: T.red }}>{alertThreshold.toFixed(1)}</span>
-            </div>
-          </div>
-          {activeAlerts.map(al => (
-            <div key={al.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: `1px solid rgba(220,38,38,0.1)` }}>
-              <div style={{ display: 'flex', gap: 16, alignItems: 'center', flex: 1 }}>
-                <span style={{ fontWeight: 700, color: T.navy, minWidth: 120 }}>{al.company}</span>
-                <span style={{ fontWeight: 700, color: T.red }}>{fmt(al.sentiment)}</span>
-                <span style={{ fontSize: 12, color: T.textSec, flex: 1 }}>{al.headline}</span>
-                <span style={{ fontSize: 11, color: T.textMut }}>{al.date}</span>
-              </div>
-              <button onClick={() => dismissAlert(al.id)} style={{ ...btnStyle('transparent', T.textMut), border: `1px solid ${T.border}`, padding: '4px 10px', fontSize: 11 }}>Dismiss</button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* ── Add Custom Article Form ──────────────────────────────── */}
-      {showAddArticle && (
-        <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, margin: '0 0 16px' }}>Add Custom Sentiment Article</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
-            <input placeholder="Headline *" value={newArticle.headline} onChange={e => setNewArticle({ ...newArticle, headline: e.target.value })} style={inputStyle} />
-            <input placeholder="Company Name *" value={newArticle.company} onChange={e => setNewArticle({ ...newArticle, company: e.target.value })} style={inputStyle} />
-            <input placeholder="Ticker" value={newArticle.ticker} onChange={e => setNewArticle({ ...newArticle, ticker: e.target.value })} style={inputStyle} />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 2fr', gap: 12, marginBottom: 16 }}>
-            <div>
-              <label style={{ fontSize: 11, color: T.textMut, display: 'block', marginBottom: 4 }}>Sentiment (-1 to 1)</label>
-              <input type="number" min="-1" max="1" step="0.1" value={newArticle.sentiment} onChange={e => setNewArticle({ ...newArticle, sentiment: e.target.value })} style={inputStyle} />
-            </div>
-            <div>
-              <label style={{ fontSize: 11, color: T.textMut, display: 'block', marginBottom: 4 }}>Category</label>
-              <select value={newArticle.category} onChange={e => setNewArticle({ ...newArticle, category: e.target.value })} style={inputStyle}>
-                <option value="E">Environmental</option><option value="S">Social</option><option value="G">Governance</option>
-              </select>
-            </div>
-            <input placeholder="Source" value={newArticle.source} onChange={e => setNewArticle({ ...newArticle, source: e.target.value })} style={inputStyle} />
-            <input placeholder="Keywords (comma-separated)" value={newArticle.keywords} onChange={e => setNewArticle({ ...newArticle, keywords: e.target.value })} style={inputStyle} />
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={addCustomArticle} style={btnStyle(T.green, '#fff')}>Add Article</button>
-            <button onClick={() => setShowAddArticle(false)} style={btnStyle(T.surfaceH, T.textSec)}>Cancel</button>
-          </div>
-        </div>
-      )}
-
-      {/* ── KPI Cards ────────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, marginBottom: 24 }}>
-        {kpiCards.map((c, i) => (
-          <div key={i} style={{ background: T.surface, borderRadius: 12, padding: '20px 24px', border: `1px solid ${T.border}`, borderTop: `3px solid ${c.color}` }}>
-            <div style={{ fontSize: 12, color: T.textMut, fontWeight: 500, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>{c.label}</div>
-            <div style={{ fontSize: 26, fontWeight: 700, color: c.color }}>{c.value}</div>
-          </div>
-        ))}
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono }}>PILLAR:</span>
+        {['All','E','S','G'].map(v => <Sel key={v} v={v} cur={filterPillar} set={setFilterPillar} />)}
+        <span style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, marginLeft: 8 }}>SENTIMENT:</span>
+        {['All',...SENTIMENTS].map(v => <Sel key={v} v={v} cur={filterSentiment} set={setFilterSentiment} />)}
+        <span style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, marginLeft: 8 }}>SOURCE:</span>
+        {['All',...SOURCES_LIST.slice(0,5)].map(v => <Sel key={v} v={v} cur={filterSource} set={setFilterSource} />)}
       </div>
 
-      {/* ── Portfolio Weighted Sentiment Gauge ────────────────────── */}
-      {portfolioWeightedSentiment != null && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
-          <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}` }}>
-            <GaugeDisplay value={portfolioWeightedSentiment} label="Portfolio-Weighted Sentiment" />
-            <div style={{ fontSize: 11, color: T.textMut, textAlign: 'center', marginTop: 8 }}>
-              Weighted average of article sentiment per holding (weight x avg sentiment)
-            </div>
-          </div>
-          <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}` }}>
-            <GaugeDisplay value={avgSentiment} label="Feed-Wide Avg Sentiment" />
-            <div style={{ fontSize: 11, color: T.textMut, textAlign: 'center', marginTop: 8 }}>
-              Simple average across all {filteredArticles.length} filtered articles
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Filters Bar ──────────────────────────────────────────── */}
-      <div style={{ background: T.surface, borderRadius: 12, padding: '16px 24px', border: `1px solid ${T.border}`, marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-          {/* Search */}
-          <div style={{ flex: '1 1 200px' }}>
-            <input placeholder="Search headlines, companies, keywords..." value={searchText} onChange={e => setSearchText(e.target.value)}
-              style={{ ...inputStyle, background: T.bg }} />
-          </div>
-          {/* Sentiment range */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
-            <span style={{ color: T.textMut, whiteSpace: 'nowrap' }}>Sentiment:</span>
-            <input type="number" min="-1" max="1" step="0.1" value={sentimentRange[0]} onChange={e => setSentimentRange([parseFloat(e.target.value), sentimentRange[1]])}
-              style={{ ...inputStyle, width: 60, padding: '6px 8px', fontSize: 12 }} />
-            <span style={{ color: T.textMut }}>to</span>
-            <input type="number" min="-1" max="1" step="0.1" value={sentimentRange[1]} onChange={e => setSentimentRange([sentimentRange[0], parseFloat(e.target.value)])}
-              style={{ ...inputStyle, width: 60, padding: '6px 8px', fontSize: 12 }} />
-          </div>
-          {/* Category checkboxes */}
-          <div style={{ display: 'flex', gap: 8 }}>
-            {['E', 'S', 'G'].map(c => (
-              <label key={c} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, cursor: 'pointer', color: categoryFilter[c] ? catColors[c] : T.textMut, fontWeight: categoryFilter[c] ? 600 : 400 }}>
-                <input type="checkbox" checked={categoryFilter[c]} onChange={() => setCategoryFilter(p => ({ ...p, [c]: !p[c] }))}
-                  style={{ accentColor: catColors[c] }} />
-                {catLabels[c]}
-              </label>
-            ))}
-          </div>
-          {/* Source */}
-          <select value={sourceFilter} onChange={e => setSourceFilter(e.target.value)} style={{ ...inputStyle, width: 'auto', padding: '6px 12px', fontSize: 12 }}>
-            {allSources.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-          {/* Date range */}
-          <select value={dateRange} onChange={e => setDateRange(parseInt(e.target.value))} style={{ ...inputStyle, width: 'auto', padding: '6px 12px', fontSize: 12 }}>
-            <option value={7}>Last 7 days</option><option value={14}>Last 14 days</option><option value={30}>Last 30 days</option><option value={90}>Last 90 days</option><option value={365}>Last year</option>
-          </select>
-          {/* Portfolio only */}
-          {holdings.length > 0 && (
-            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, cursor: 'pointer', color: portfolioOnly ? T.navy : T.textMut, fontWeight: portfolioOnly ? 600 : 400 }}>
-              <input type="checkbox" checked={portfolioOnly} onChange={() => setPortfolioOnly(!portfolioOnly)} style={{ accentColor: T.navy }} />
-              Portfolio Only
-            </label>
-          )}
-          {/* Active keyword filter badge */}
-          {activeKeywordFilter && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: T.gold, color: '#fff', padding: '4px 10px', borderRadius: 14, fontSize: 11, fontWeight: 600 }}>
-              Keyword: {activeKeywordFilter}
-              <span onClick={() => setActiveKeywordFilter(null)} style={{ cursor: 'pointer', fontWeight: 800, fontSize: 13 }}>&times;</span>
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* ── Sentiment Trend Chart ────────────────────────────────── */}
-      <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 20px', color: T.navy }}>Sentiment Trend (Daily Average)</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={trendData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="gradPos" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={T.green} stopOpacity={0.4} />
-                <stop offset="100%" stopColor={T.green} stopOpacity={0.05} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: T.textMut }} tickFormatter={v => v.slice(5)} />
-            <YAxis domain={[-1, 1]} tick={{ fontSize: 11, fill: T.textMut }} tickFormatter={v => v.toFixed(1)} />
-            <Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, fontSize: 12 }}
-              formatter={v => [v.toFixed(3), 'Sentiment']} labelFormatter={l => `Date: ${l}`} />
-            <ReferenceLine y={0} stroke={T.textMut} strokeDasharray="4 4" />
-            <Area type="monotone" dataKey="sentiment" stroke={T.green} strokeWidth={2} fill="url(#gradPos)"
-              dot={{ r: 4, fill: T.surface, stroke: T.green, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* ── Sector Heatmap + E/S/G Pie ───────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24 }}>
-        <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}` }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 16px', color: T.navy }}>Sector Sentiment Heatmap</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                {['Sector', 'Avg Sentiment', '# Articles', 'Top Keyword', 'Trend'].map(h => (
-                  <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 600, color: T.textSec, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sectorData.map((r, i) => {
-                const bgRow = r.avg > 0.3 ? 'rgba(22,163,74,0.06)' : r.avg < -0.3 ? 'rgba(220,38,38,0.06)' : 'transparent';
-                return (
-                  <tr key={i} style={{ background: hoveredSector === i ? T.surfaceH : bgRow, borderBottom: `1px solid ${T.border}`, cursor: 'default', transition: 'background 0.15s' }}
-                    onMouseEnter={() => setHoveredSector(i)} onMouseLeave={() => setHoveredSector(null)}>
-                    <td style={{ padding: '10px 12px', fontWeight: 600 }}>{r.sector}</td>
-                    <td style={{ padding: '10px 12px', fontWeight: 700, color: sentimentColor(r.avg) }}>{fmt(r.avg)}</td>
-                    <td style={{ padding: '10px 12px' }}>{r.count}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{ background: T.surfaceH, padding: '2px 8px', borderRadius: 10, fontSize: 11 }}>{r.topKeyword}</span>
-                    </td>
-                    <td style={{ padding: '10px 12px', fontWeight: 500, color: r.trend === 'Improving' ? T.green : r.trend === 'Declining' ? T.red : T.amber }}>{r.trend}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}` }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 16px', color: T.navy }}>E/S/G Category Distribution</h2>
-          <ResponsiveContainer width="100%" height={220}>
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Pillar Distribution</SectionTitle>
+          <ResponsiveContainer width="100%" height={160}>
             <PieChart>
-              <Pie data={esgDist} cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={3} dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={{ stroke: T.textMut }}>
-                {esgDist.map((e, i) => <Cell key={i} fill={e.color} />)}
+              <Pie data={pillarPie} cx="50%" cy="50%" outerRadius={60} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                {pillarPie.map((_, i) => <Cell key={i} fill={[T.sage, T.blue, T.purple][i]} />)}
               </Pie>
-              <Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, fontSize: 12 }} />
+              <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 8 }}>
-            {esgDist.map((e, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: e.color }} />
-                <span style={{ color: T.textSec }}>{e.name}: {e.value}</span>
-              </div>
-            ))}
-          </div>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Sentiment Distribution</SectionTitle>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={sentDist}>
+              <XAxis dataKey="name" tick={{ fontSize: 11 }} /><YAxis tick={{ fontSize: 10 }} /><Tooltip />
+              <Bar dataKey="value">{sentDist.map((d, i) => <Cell key={i} fill={[T.green, T.amber, T.red][i]} />)}</Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
-      {/* ── Top Keywords (clickable) ─────────────────────────────── */}
-      <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 16px', color: T.navy }}>Top Keywords (Click to Filter Feed)</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-              {['#', 'Keyword', 'Frequency', 'Avg Sentiment', 'Category', 'Time Periods'].map(h => (
-                <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 600, color: T.textSec, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {keywordData.map((r, i) => (
-              <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, cursor: 'pointer', background: activeKeywordFilter === r.keyword ? 'rgba(197,169,106,0.1)' : 'transparent' }}
-                onClick={() => setActiveKeywordFilter(activeKeywordFilter === r.keyword ? null : r.keyword)}>
-                <td style={{ padding: '10px 12px', color: T.textMut }}>{i + 1}</td>
-                <td style={{ padding: '10px 12px', fontWeight: 600 }}>
-                  {r.keyword}
-                  {activeKeywordFilter === r.keyword && <span style={{ marginLeft: 6, fontSize: 10, color: T.gold }}>(active)</span>}
-                </td>
-                <td style={{ padding: '10px 12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: Math.max(r.frequency * 20, 16), height: 8, borderRadius: 4, background: T.gold, transition: 'width 0.3s' }} />
-                    <span>{r.frequency}</span>
-                  </div>
-                </td>
-                <td style={{ padding: '10px 12px', fontWeight: 600, color: sentimentColor(r.avgSentiment) }}>{fmt(r.avgSentiment)}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  {r.category.split('/').map(c => (
-                    <span key={c} style={{ display: 'inline-block', background: catColors[c] || T.textMut, color: '#fff', padding: '2px 8px', borderRadius: 10, fontSize: 10, fontWeight: 600, marginRight: 4 }}>{catLabels[c] || c}</span>
-                  ))}
-                </td>
-                <td style={{ padding: '10px 12px', fontSize: 12, color: T.textSec }}>{r.periods} month(s)</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* ── Sentiment News Feed ──────────────────────────────────── */}
-      <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: T.navy }}>Sentiment News Feed ({filteredArticles.length})</h2>
-          {drillCompany && (
-            <button onClick={() => setDrillCompany(null)} style={btnStyle(T.surfaceH, T.textSec)}>Clear Company Filter</button>
-          )}
-        </div>
-        <div style={{ maxHeight: 480, overflowY: 'auto', paddingRight: 8 }}>
-          {(drillCompany ? filteredArticles.filter(a => (a.ticker || '').toUpperCase() === drillCompany.toUpperCase()) : filteredArticles).map(a => {
-            const barW = Math.abs(a.sentiment) * 100;
-            const barColor = a.sentiment >= 0 ? T.green : T.red;
-            return (
-              <div key={a.id} style={{ display: 'grid', gridTemplateColumns: '90px 140px 1fr 120px 50px 70px', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }}
-                onClick={() => setDrillCompany(a.ticker)}>
-                <span style={{ fontSize: 12, color: T.textMut, fontWeight: 500 }}>{a.date}</span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: T.navy }}>
-                  {a.company}
-                  {a.isAutoGenerated && <span style={{ fontSize: 9, color: T.gold, marginLeft: 4 }}>AUTO</span>}
-                  {a.isCustom && <span style={{ fontSize: 9, color: '#7c3aed', marginLeft: 4 }}>CUSTOM</span>}
-                </span>
-                <span style={{ fontSize: 12, color: T.textSec, lineHeight: 1.4 }}>{a.headline}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div style={{ width: barW, height: 8, borderRadius: 4, background: barColor, transition: 'width 0.3s', minWidth: 4 }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: barColor }}>{a.sentiment > 0 ? '+' : ''}{a.sentiment.toFixed(2)}</span>
+      <SectionTitle>Article Intelligence Feed — {filtered.length} articles</SectionTitle>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 460, overflowY: 'auto' }}>
+        {filtered.map(a => (
+          <div key={a.id} style={{ background: T.card, border: `1px solid ${T.borderL}`, borderRadius: 8, padding: '12px 16px', borderLeft: `4px solid ${SENT_COLOR[a.sentiment]}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: T.textPri, marginBottom: 4 }}>{a.headline}</div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
+                  <Badge label={a.pillar} color={PILLAR_COLOR[a.pillar]} />
+                  <Badge label={a.sentiment} color={SENT_COLOR[a.sentiment]} />
+                  <Badge label={a.source} color={T.navy} />
+                  <Badge label={`Tier ${a.credibility_tier}`} color={T.gold} />
+                  <span style={{ fontSize: 10, color: T.textSec, fontFamily: T.fontMono }}>{a.date}</span>
                 </div>
-                <span style={{ display: 'inline-block', background: catColors[a.category], color: '#fff', padding: '2px 10px', borderRadius: 10, fontSize: 10, fontWeight: 700, textAlign: 'center' }}>{a.category}</span>
-                <span style={{ fontSize: 11, color: T.textMut }}>{a.source}</span>
+                <div style={{ fontSize: 10, color: T.textSec }}>
+                  Entities: {a.entities.join(' · ')} | Keywords: {a.keywords.join(', ')}
+                </div>
               </div>
-            );
-          })}
-          {filteredArticles.length === 0 && (
-            <div style={{ padding: '32px 0', textAlign: 'center', color: T.textMut, fontSize: 14 }}>No articles match current filters.</div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Company Drill-Down Panel ─────────────────────────────── */}
-      {drillData && drillCompany && (
-        <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `2px solid ${T.gold}`, marginBottom: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: T.navy }}>
-              Company Drill-Down: {drillData.gcmMatch?.name || drillCompany} ({drillCompany})
-            </h2>
-            <button onClick={() => setDrillCompany(null)} style={btnStyle(T.surfaceH, T.textSec)}>Close</button>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-            {/* Sentiment trend */}
-            <div>
-              <h3 style={{ fontSize: 13, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Sentiment Over Time ({drillData.articles.length} articles)</h3>
-              {drillData.trend.length > 0 ? (
-                <ResponsiveContainer width="100%" height={180}>
-                  <AreaChart data={drillData.trend} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: T.textMut }} tickFormatter={v => v.slice(5)} />
-                    <YAxis domain={[-1, 1]} tick={{ fontSize: 10, fill: T.textMut }} />
-                    <Area type="monotone" dataKey="sentiment" stroke={T.navy} fill="rgba(27,58,92,0.1)" strokeWidth={2} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              ) : (
-                <div style={{ padding: 20, textAlign: 'center', color: T.textMut, fontSize: 13 }}>No trend data available</div>
-              )}
+              <div style={{ textAlign: 'right', minWidth: 80 }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: SENT_COLOR[a.sentiment] }}>{a.score}</div>
+                <div style={{ fontSize: 10, color: T.textSec }}>score</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: a.confidence > 0.85 ? T.green : a.confidence > 0.70 ? T.amber : T.red }}>{(a.confidence * 100).toFixed(1)}%</div>
+                <div style={{ fontSize: 10, color: T.textSec }}>confidence</div>
+              </div>
             </div>
-            {/* Company info from GCM */}
-            <div>
-              <h3 style={{ fontSize: 13, fontWeight: 600, color: T.navy, margin: '0 0 12px' }}>Company Profile (Global Master)</h3>
-              {drillData.gcmMatch ? (
-                <div style={{ fontSize: 12, lineHeight: 2 }}>
-                  <div><span style={{ color: T.textMut }}>Name:</span> <b>{drillData.gcmMatch.name}</b></div>
-                  <div><span style={{ color: T.textMut }}>Sector:</span> {drillData.gcmMatch.sector}</div>
-                  <div><span style={{ color: T.textMut }}>Exchange:</span> {drillData.gcmMatch.exchange}</div>
-                  <div><span style={{ color: T.textMut }}>ESG Score:</span> <b style={{ color: sentimentColor((drillData.gcmMatch.esg_score || 0) / 100 * 2 - 1) }}>{drillData.gcmMatch.esg_score || 'N/A'}</b>/100</div>
-                  <div><span style={{ color: T.textMut }}>SBTi:</span> {drillData.gcmMatch.sbti_committed ? 'Committed' : 'Not committed'}</div>
-                  <div><span style={{ color: T.textMut }}>Scope 1:</span> {drillData.gcmMatch.scope1_mt != null ? drillData.gcmMatch.scope1_mt.toLocaleString() + ' Mt' : 'N/A'}</div>
-                  <div><span style={{ color: T.textMut }}>Scope 2:</span> {drillData.gcmMatch.scope2_mt != null ? drillData.gcmMatch.scope2_mt.toLocaleString() + ' Mt' : 'N/A'}</div>
-                  <div style={{ marginTop: 8 }}>
-                    <button onClick={() => navigate('/holdings-deep-dive')} style={btnStyle(T.navy, '#fff')}>
-                      View in Holdings Deep-Dive &rarr;
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ padding: 20, color: T.textMut, fontSize: 13 }}>Company not found in Global Company Master.</div>
-              )}
+            <div style={{ display: 'flex', gap: 4, marginTop: 6, alignItems: 'center' }}>
+              <span style={{ fontSize: 10, color: T.textSec, fontFamily: T.fontMono, marginRight: 4 }}>FinBERT:</span>
+              <div style={{ flex: 1, height: 8, borderRadius: 4, overflow: 'hidden', background: T.sub, display: 'flex' }}>
+                <div style={{ width: `${a.finbert_pos * 100}%`, background: T.green }} />
+                <div style={{ width: `${a.finbert_neu * 100}%`, background: T.amber }} />
+                <div style={{ width: `${a.finbert_neg * 100}%`, background: T.red }} />
+              </div>
+              <span style={{ fontSize: 9, color: T.textSec, fontFamily: T.fontMono, marginLeft: 4 }}>
+                P{(a.finbert_pos * 100).toFixed(0)}%/N{(a.finbert_neu * 100).toFixed(0)}%/Neg{(a.finbert_neg * 100).toFixed(0)}%
+              </span>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* ── Portfolio Sentiment Overlay ───────────────────────────── */}
-      <div style={{ background: T.surface, borderRadius: 12, padding: 24, border: `1px solid ${T.border}`, marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 16px', color: T.navy }}>Portfolio Sentiment Overlay</h2>
-        {holdings.length === 0 ? (
-          <div style={{ padding: '32px 0', textAlign: 'center' }}>
-            <div style={{ color: T.textMut, fontSize: 14, marginBottom: 12 }}>No portfolio loaded. Save a portfolio via the Portfolio Builder to see sentiment overlay.</div>
-            <button onClick={() => navigate('/portfolio-manager')} style={btnStyle(T.navy, '#fff')}>Go to Portfolio Builder</button>
-          </div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                {['Company', 'Ticker', 'Weight', 'Sentiment', '# Articles', 'ESG Score', 'Latest Headline'].map(h => (
-                  <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 600, color: T.textSec, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {portfolioOverlay.map((r, i) => (
-                <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, cursor: 'pointer', background: drillCompany === r.ticker ? 'rgba(197,169,106,0.08)' : 'transparent' }}
-                  onClick={() => setDrillCompany(r.ticker)}>
-                  <td style={{ padding: '10px 12px', fontWeight: 600 }}>{r.company}</td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: 12 }}>{r.ticker}</td>
-                  <td style={{ padding: '10px 12px' }}>{r.weight != null ? (r.weight * 100).toFixed(1) + '%' : '--'}</td>
-                  <td style={{ padding: '10px 12px', fontWeight: 700, color: r.sentiment != null ? sentimentColor(r.sentiment) : T.textMut }}>
-                    {r.sentiment != null ? fmt(r.sentiment) : '--'}
-                  </td>
-                  <td style={{ padding: '10px 12px' }}>{r.articles}</td>
-                  <td style={{ padding: '10px 12px', fontWeight: 600, color: r.esgScore ? (r.esgScore > 60 ? T.green : r.esgScore > 40 ? T.amber : T.red) : T.textMut }}>
-                    {r.esgScore || '--'}
-                  </td>
-                  <td style={{ padding: '10px 12px', fontSize: 12, color: r.latestHeadline ? T.textSec : T.textMut, fontStyle: r.latestHeadline ? 'normal' : 'italic', maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {r.latestHeadline || 'No recent coverage'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {/* ── Footer ───────────────────────────────────────────────── */}
-      <div style={{ textAlign: 'center', padding: '16px 0', fontSize: 11, color: T.textMut }}>
-        Risk Analytics Platform &middot; AI ESG Sentiment Intelligence (EP-H5) &middot; {allArticles.length} Total Articles &middot; {filteredArticles.length} Filtered
+        ))}
       </div>
     </div>
   );
 }
 
-export default AiSentimentPage;
+// ── Tab 2: Entity Disambiguation ──────────────────────────────────────────────
+
+function TabEntityDisambig() {
+  const [query, setQuery] = useState('');
+
+  const methodCounts = DISAMBIG_METHODS.map(m => ({ name: m, value: ENTITIES_DISAMBIG.filter(e => e.method === m).length }));
+  const mostAmbiguous = [...ENTITIES_DISAMBIG].sort((a, b) => a.conf - b.conf).slice(0, 20);
+
+  const confBars = [0.70, 0.75, 0.80, 0.85, 0.90, 0.95].map(t => ({
+    threshold: `>${Math.round(t * 100)}%`,
+    count: ENTITIES_DISAMBIG.filter(e => e.conf >= t).length,
+  }));
+
+  const simResult = useMemo(() => {
+    if (!query || query.length < 2) return null;
+    const seed = query.length * 7 + query.charCodeAt(0);
+    const matchIdx = Math.floor(sr(seed + 1) * COMPANY_NAMES.length);
+    const alt1Idx = Math.floor(sr(seed + 2) * COMPANY_NAMES.length);
+    const alt2Idx = Math.floor(sr(seed + 3) * COMPANY_NAMES.length);
+    const conf = 0.65 + sr(seed + 4) * 0.32;
+    return {
+      resolved: COMPANY_NAMES[matchIdx],
+      conf: conf.toFixed(3),
+      method: DISAMBIG_METHODS[Math.floor(sr(seed + 5) * 4)],
+      alts: [
+        { name: COMPANY_NAMES[alt1Idx], conf: Math.max(0.3, conf - 0.15).toFixed(3) },
+        { name: COMPANY_NAMES[alt2Idx], conf: Math.max(0.2, conf - 0.28).toFixed(3) },
+      ],
+    };
+  }, [query]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="Total Entities" value={ENTITIES_DISAMBIG.length} sub="Tracked for disambiguation" color={T.indigo} />
+        <KpiCard label="Avg Resolve Conf" value={(ENTITIES_DISAMBIG.reduce((s, e) => s + e.conf, 0) / ENTITIES_DISAMBIG.length).toFixed(3)} sub="Wikidata-anchored" color={T.green} />
+        <KpiCard label="Wikidata Resolved" value={ENTITIES_DISAMBIG.filter(e => e.method === 'Wikidata').length} sub="Primary method" color={T.blue} />
+        <KpiCard label="Low Confidence" value={ENTITIES_DISAMBIG.filter(e => e.conf < 0.75).length} sub="Conf < 0.75 — manual review" color={T.red} />
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Disambiguation Method Mix</SectionTitle>
+          <ResponsiveContainer width="100%" height={180}>
+            <PieChart>
+              <Pie data={methodCounts} cx="50%" cy="50%" outerRadius={70} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                {methodCounts.map((_, i) => <Cell key={i} fill={[T.indigo, T.blue, T.sage, T.amber][i]} />)}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Entity Count by Confidence Threshold</SectionTitle>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={confBars}>
+              <XAxis dataKey="threshold" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 10 }} /><Tooltip />
+              <Bar dataKey="count" fill={T.indigo} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>What-If: Simulate Entity Resolution</SectionTitle>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 12 }}>
+          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Type a company name to simulate resolution (e.g. Mercury, Atlas, Shell)..." style={{ flex: 1, padding: '8px 12px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 13, fontFamily: T.fontMono, background: T.sub }} />
+        </div>
+        {simResult && (
+          <div style={{ background: T.sub, borderRadius: 8, padding: 14 }}>
+            <div style={{ fontWeight: 700, color: T.navy, marginBottom: 8 }}>Resolution Result for "{query}"</div>
+            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+              <div><span style={{ color: T.textSec, fontSize: 11 }}>Resolved: </span><span style={{ fontWeight: 700, color: T.indigo }}>{simResult.resolved}</span></div>
+              <div><span style={{ color: T.textSec, fontSize: 11 }}>Confidence: </span><span style={{ fontWeight: 700, color: T.green }}>{simResult.conf}</span></div>
+              <div><span style={{ color: T.textSec, fontSize: 11 }}>Method: </span><Badge label={simResult.method} color={T.blue} /></div>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              <span style={{ fontSize: 11, color: T.textSec }}>Alternatives: </span>
+              {simResult.alts.map((alt, i) => (
+                <span key={i} style={{ fontSize: 11, marginRight: 14 }}>{alt.name} <span style={{ color: T.textSec }}>({alt.conf})</span></span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>20 Most Ambiguous Entities (Lowest Resolution Confidence)</SectionTitle>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <thead>
+              <tr style={{ background: T.sub }}>
+                {['Raw Name','Resolved To','Confidence','Method','Top Alternative','Alt Conf'].map(h => (
+                  <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, fontFamily: T.fontMono, fontSize: 10 }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {mostAmbiguous.map((e, i) => (
+                <tr key={i} style={{ borderBottom: `1px solid ${T.borderL}` }}>
+                  <td style={{ padding: '7px 10px', fontWeight: 600, color: T.navy, fontFamily: T.fontMono }}>{e.raw}</td>
+                  <td style={{ padding: '7px 10px', color: T.textPri }}>{e.resolved}</td>
+                  <td style={{ padding: '7px 10px' }}><span style={{ color: e.conf < 0.75 ? T.red : e.conf < 0.85 ? T.amber : T.green, fontWeight: 700 }}>{e.conf.toFixed(2)}</span></td>
+                  <td style={{ padding: '7px 10px' }}><Badge label={e.method} color={T.indigo} /></td>
+                  <td style={{ padding: '7px 10px', color: T.textSec, fontSize: 11 }}>{e.alts[0]?.name}</td>
+                  <td style={{ padding: '7px 10px', fontSize: 11, color: T.textSec, fontFamily: T.fontMono }}>{e.alts[0]?.conf.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Tab 3: Confidence & Uncertainty ──────────────────────────────────────────
+
+function TabConfidenceUncertainty() {
+  const [selectedSector, setSelectedSector] = useState(SECTORS[0]);
+
+  const scatterByPillar = PILLARS.map(p => ({
+    pillar: p,
+    data: ARTICLES.filter(a => a.pillar === p).map(a => ({ score: a.score, confidence: a.confidence })),
+  }));
+
+  const sectorTrend = Array.from({ length: 12 }, (_, m) => {
+    const base = 45 + sr(selectedSector.length * 7 + m + 1) * 25;
+    const sigma = 5 + sr(selectedSector.length * 7 + m + 2) * 8;
+    return { month: `M${m + 1}`, sentiment: parseFloat(base.toFixed(1)), upper: parseFloat((base + sigma).toFixed(1)), lower: parseFloat((base - sigma).toFixed(1)) };
+  });
+
+  const confHistogram = Array.from({ length: 10 }, (_, i) => {
+    const lo = 0.55 + i * 0.044;
+    const hi = lo + 0.044;
+    return { bin: `${Math.round(lo * 100)}-${Math.round(hi * 100)}`, count: ARTICLES.filter(a => a.confidence >= lo && a.confidence < hi).length };
+  });
+
+  const articleTypeData = [
+    { type: 'Long Filings', avgConf: 0.82, spread: 0.06 },
+    { type: 'Short News', avgConf: 0.71, spread: 0.09 },
+    { type: 'Social Media', avgConf: 0.59, spread: 0.14 },
+    { type: 'Regulatory', avgConf: 0.88, spread: 0.04 },
+    { type: 'NGO Reports', avgConf: 0.76, spread: 0.08 },
+  ];
+
+  const totalConf = ARTICLES.reduce((s, a) => s + a.confidence, 0);
+  const avgConf = ARTICLES.length ? totalConf / ARTICLES.length : 0;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="Avg Aleatoric Unc." value={(1 - avgConf).toFixed(3)} sub="Irreducible data noise" color={T.red} />
+        <KpiCard label="Avg Epistemic Conf." value={avgConf.toFixed(3)} sub="Model-reducible uncertainty" color={T.indigo} />
+        <KpiCard label="Low-Conf Zone" value={ARTICLES.filter(a => a.confidence < 0.65).length} sub="Articles — conf < 0.65" color={T.amber} />
+        <KpiCard label="Calibration ECE" value="0.042" sub="Expected Calibration Error" color={T.green} />
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 2, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Sentiment Score vs Confidence — Colored by Pillar</SectionTitle>
+          <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>Red dashed line = Low-Confidence Zone threshold (conf &lt; 0.65). Epistemic uncertainty highest in this region.</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <ScatterChart>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis type="number" dataKey="score" name="Score" domain={[0, 100]} tick={{ fontSize: 10 }} label={{ value: 'Sentiment Score', position: 'insideBottom', offset: -4, fontSize: 11 }} />
+              <YAxis type="number" dataKey="confidence" name="Confidence" domain={[0.5, 1.0]} tick={{ fontSize: 10 }} label={{ value: 'Confidence', angle: -90, position: 'insideLeft', fontSize: 11 }} />
+              <ReferenceLine y={0.65} stroke={T.red} strokeDasharray="5 5" />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(v) => parseFloat(v).toFixed(3)} />
+              {scatterByPillar.map(({ pillar, data }) => (
+                <Scatter key={pillar} name={`Pillar ${pillar}`} data={data} fill={PILLAR_COLOR[pillar]} opacity={0.75} />
+              ))}
+              <Legend />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Confidence Score Histogram</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={confHistogram}>
+              <XAxis dataKey="bin" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={45} />
+              <YAxis tick={{ fontSize: 10 }} /><Tooltip />
+              <Bar dataKey="count" fill={T.indigo} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <SectionTitle>Bootstrap Confidence Intervals — Sector Sentiment Trend (±1σ)</SectionTitle>
+          <select value={selectedSector} onChange={e => setSelectedSector(e.target.value)} style={{ fontSize: 11, padding: '4px 8px', border: `1px solid ${T.border}`, borderRadius: 4, fontFamily: T.fontMono, background: T.sub }}>
+            {SECTORS.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>Shaded band = ±1σ bootstrap interval derived from 1,000 resamples of sector articles.</div>
+        <ResponsiveContainer width="100%" height={180}>
+          <AreaChart data={sectorTrend}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+            <XAxis dataKey="month" tick={{ fontSize: 10 }} /><YAxis domain={[20, 80]} tick={{ fontSize: 10 }} /><Tooltip />
+            <Area type="monotone" dataKey="upper" stroke="none" fill={T.indigo + '30'} />
+            <Area type="monotone" dataKey="lower" stroke="none" fill={T.card} />
+            <Line type="monotone" dataKey="sentiment" stroke={T.indigo} strokeWidth={2} dot={false} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Calibration Reliability Diagram</SectionTitle>
+          <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>Perfect calibration: confidence bin = actual accuracy. Deviations indicate over/underconfidence.</div>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={CALIBRATION_BINS}>
+              <XAxis dataKey="bin" tick={{ fontSize: 9 }} /><YAxis domain={[0, 1]} tick={{ fontSize: 10 }} />
+              <Tooltip formatter={v => parseFloat(v).toFixed(3)} />
+              <Bar dataKey="accuracy" fill={T.blue} name="Actual Accuracy" />
+              <Bar dataKey="confidence" fill={T.indigo + '80'} name="Predicted Conf" />
+              <Legend />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Model Uncertainty by Article Type</SectionTitle>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
+            {articleTypeData.map(at => (
+              <div key={at.type}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                  <span style={{ fontSize: 12, color: T.textPri }}>{at.type}</span>
+                  <span style={{ fontSize: 11, fontFamily: T.fontMono, color: T.textSec }}>CI ±{(at.spread * 100).toFixed(0)}%</span>
+                </div>
+                <div style={{ height: 12, background: T.sub, borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
+                  <div style={{ position: 'absolute', left: `${(at.avgConf - at.spread) * 100}%`, width: `${at.spread * 200}%`, height: '100%', background: T.indigo + '40' }} />
+                  <div style={{ position: 'absolute', left: `${at.avgConf * 100 - 1}%`, width: 3, height: '100%', background: T.indigo, borderRadius: 2 }} />
+                </div>
+                <div style={{ fontSize: 10, color: T.textSec, marginTop: 2 }}>Avg confidence: {at.avgConf.toFixed(2)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Tab 4: Controversy Intelligence ──────────────────────────────────────────
+
+function TabControversy() {
+  const [selectedCompany, setSelectedCompany] = useState(CONTROVERSY_DATA[0].name);
+  const active = CONTROVERSY_DATA.find(c => c.name === selectedCompany) || CONTROVERSY_DATA[0];
+
+  const top10 = [...CONTROVERSY_DATA].sort((a, b) => b.controversyScore - a.controversyScore).slice(0, 10);
+  const fadeData = Object.entries(FADE_RATES).map(([type, hl]) => ({ type: type.substring(0, 14), halfLife: hl }));
+  const heatmapData = CONTROVERSY_TYPES.map(ct => {
+    const comps = CONTROVERSY_DATA.filter(c => c.controversyType === ct);
+    const avgScore = comps.length ? comps.reduce((s, c) => s + c.controversyScore, 0) / comps.length : 0;
+    return { type: ct, avgScore: parseFloat(avgScore.toFixed(1)), count: comps.length };
+  });
+  const totalEvents = CONTROVERSY_DATA.reduce((s, c) => s + c.events.length, 0);
+  const avgScore = CONTROVERSY_DATA.reduce((s, c) => s + c.controversyScore, 0) / CONTROVERSY_DATA.length;
+
+  const SEV_COLORS = { Low: T.textSec, Medium: T.amber, High: T.orange, Critical: T.red };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="Companies Monitored" value={CONTROVERSY_DATA.length} sub="Active controversy watch" color={T.red} />
+        <KpiCard label="Avg Controversy Score" value={avgScore.toFixed(1)} sub="0–10 severity scale" color={T.orange} />
+        <KpiCard label="High Severity (≥7)" value={CONTROVERSY_DATA.filter(c => c.controversyScore >= 7).length} sub="Companies above threshold" color={T.red} />
+        <KpiCard label="Total Events Tracked" value={totalEvents} sub="All controversy events" color={T.amber} />
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Top 10 Controversy Score Companies</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={top10} layout="vertical">
+              <XAxis type="number" domain={[0, 10]} tick={{ fontSize: 10 }} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 9 }} width={100} />
+              <Tooltip /><Bar dataKey="controversyScore" fill={T.red} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Controversy Fade Half-Life by Type (Days)</SectionTitle>
+          <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>Board Misconduct has the longest reputational persistence at 56 days.</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={fadeData} layout="vertical">
+              <XAxis type="number" tick={{ fontSize: 10 }} />
+              <YAxis type="category" dataKey="type" tick={{ fontSize: 9 }} width={110} />
+              <Tooltip /><Bar dataKey="halfLife" fill={T.orange} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Controversy Severity Heatmap — by Controversy Type</SectionTitle>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8 }}>
+          {heatmapData.map(h => {
+            const intensity = h.avgScore / 10;
+            return (
+              <div key={h.type} style={{ background: `rgba(220,38,38,${0.08 + intensity * 0.65})`, border: `1px solid ${T.border}`, borderRadius: 8, padding: '10px 14px', minWidth: 120, textAlign: 'center' }}>
+                <div style={{ fontSize: 10, color: intensity > 0.55 ? '#fff' : T.textSec, fontFamily: T.fontMono, marginBottom: 4 }}>{h.type}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: intensity > 0.55 ? '#fff' : T.textPri }}>{h.avgScore}</div>
+                <div style={{ fontSize: 10, color: intensity > 0.55 ? '#ffffffcc' : T.textSec }}>{h.count} cos</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <SectionTitle>Controversy Event Timeline</SectionTitle>
+          <select value={selectedCompany} onChange={e => setSelectedCompany(e.target.value)} style={{ fontSize: 11, padding: '4px 8px', border: `1px solid ${T.border}`, borderRadius: 4, fontFamily: T.fontMono, background: T.sub }}>
+            {CONTROVERSY_DATA.map(c => <option key={c.name}>{c.name}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
+          <Badge label={`Score: ${active.controversyScore}/10`} color={T.red} />
+          <Badge label={active.controversyType} color={T.orange} />
+          <Badge label={`Half-life: ${active.fadeHalfLife}d`} color={T.amber} />
+          <Badge label={`${active.events.length} events`} color={T.navy} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[...active.events].sort((a, b) => a.date.localeCompare(b.date)).map((ev, i) => (
+            <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '8px 12px', background: T.sub, borderRadius: 6, borderLeft: `3px solid ${SEV_COLORS[ev.severity]}` }}>
+              <span style={{ fontSize: 11, fontFamily: T.fontMono, color: T.textSec, minWidth: 90 }}>{ev.date}</span>
+              <span style={{ flex: 1, fontSize: 12, color: T.textPri }}>{ev.event}</span>
+              <Badge label={ev.severity} color={SEV_COLORS[ev.severity]} />
+              <span style={{ fontSize: 11, color: T.red, fontFamily: T.fontMono }}>-{ev.sentimentDrop.toFixed(1)} pts</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Tab 5: Temporal Dynamics ──────────────────────────────────────────────────
+
+function TabTemporalDynamics() {
+  const [selectedSector, setSelectedSector] = useState(SECTORS[0]);
+  const sectorData = SECTOR_TRAJECTORIES.find(s => s.sector === selectedSector);
+
+  const regimeData = sectorData ? sectorData.data.map((d, i) => {
+    const window = sectorData.data.slice(Math.max(0, i - 3), i + 1).map(x => x.value);
+    const mean = window.reduce((s, v) => s + v, 0) / window.length;
+    const std = Math.sqrt(window.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / window.length);
+    let regime = 'Stable';
+    if (d.value > mean + 5) regime = 'Bullish';
+    else if (d.value < mean - 5) regime = 'Bearish';
+    else if (std > 5) regime = 'Volatile';
+    return { ...d, regime, rollingStd: parseFloat(std.toFixed(2)) };
+  }) : [];
+
+  const REGIME_COLORS = { Bullish: T.green, Bearish: T.red, Volatile: T.orange, Stable: T.blue };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="Data Coverage" value="80×24M" sub="1,920 sentiment observations" color={T.indigo} />
+        <KpiCard label="EWMA λ" value="0.15" sub="Exponential weight decay" color={T.navy} />
+        <KpiCard label="Mean Reversion T½" value="4.2 wks" sub="Post-shock half-life (AR1 γ=0.70)" color={T.amber} />
+        <KpiCard label="E Pillar Seasonal" value="±8 pts" sub="Peak: Q2 (AGM / reporting season)" color={T.sage} />
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+          <SectionTitle>Sector Sentiment Trajectory (24 Months) — EWMA λ=0.15</SectionTitle>
+          <select value={selectedSector} onChange={e => setSelectedSector(e.target.value)} style={{ fontSize: 11, padding: '4px 8px', border: `1px solid ${T.border}`, borderRadius: 4, fontFamily: T.fontMono, background: T.sub }}>
+            {SECTORS.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+          {regimeData.map((d, i) => (
+            <div key={i} style={{ flex: 1, height: 8, background: REGIME_COLORS[d.regime], borderRadius: 2 }} title={`${d.month}: ${d.regime}`} />
+          ))}
+        </div>
+        <div style={{ fontSize: 10, color: T.textSec, marginBottom: 8 }}>
+          Regime bar: {Object.entries(REGIME_COLORS).map(([k, v]) => <span key={k} style={{ marginRight: 10 }}><span style={{ color: v }}>■</span> {k}</span>)}
+        </div>
+        <ResponsiveContainer width="100%" height={190}>
+          <AreaChart data={sectorData?.data || []}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+            <XAxis dataKey="month" tick={{ fontSize: 9 }} interval={3} />
+            <YAxis domain={[20, 80]} tick={{ fontSize: 10 }} /><Tooltip />
+            <Area type="monotone" dataKey="value" stroke={T.indigo} fill={T.indigo + '25'} strokeWidth={2} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Autocorrelation Function (ACF) — Top Company, Lags 1–20</SectionTitle>
+          <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>Dashed lines = 95% CI bounds (±1.96/√n). Bars outside bounds indicate significant autocorrelation.</div>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={ACF_DATA}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis dataKey="lag" tick={{ fontSize: 10 }} label={{ value: 'Lag', position: 'insideBottom', offset: -4, fontSize: 11 }} />
+              <YAxis domain={[-1, 1]} tick={{ fontSize: 10 }} />
+              <ReferenceLine y={0.22} stroke={T.red} strokeDasharray="4 4" />
+              <ReferenceLine y={-0.22} stroke={T.red} strokeDasharray="4 4" />
+              <Tooltip formatter={v => parseFloat(v).toFixed(3)} />
+              <Bar dataKey="acf">{ACF_DATA.map((d, i) => <Cell key={i} fill={d.acf > 0 ? T.blue : T.red} />)}</Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Impulse Response — Mean Reversion Curve</SectionTitle>
+          <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>% of initial sentiment shock remaining after t weeks. AR(1) coefficient γ=0.70.</div>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={IMPULSE_RESPONSE}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis dataKey="week" tick={{ fontSize: 10 }} label={{ value: 'Weeks post-shock', position: 'insideBottom', offset: -4, fontSize: 11 }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} /><Tooltip formatter={v => `${parseFloat(v).toFixed(1)}%`} />
+              <Area type="monotone" dataKey="response" stroke={T.orange} fill={T.orange + '30'} strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Pillar Seasonality — Monthly Average E / S / G (24 Months)</SectionTitle>
+        <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>Environmental peaks Q2 (AGM/reporting season); Social peaks Q4 (workforce reporting); Governance near-flat throughout.</div>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart data={PILLAR_SEASONALITY}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+            <XAxis dataKey="month" tick={{ fontSize: 9 }} interval={2} />
+            <YAxis domain={[30, 70]} tick={{ fontSize: 10 }} /><Tooltip /><Legend />
+            <Line type="monotone" dataKey="E" stroke={T.sage} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="S" stroke={T.blue} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="G" stroke={T.purple} strokeWidth={2} dot={false} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+// ── Tab 6: Source & Language Analysis ────────────────────────────────────────
+
+function TabSourceLanguage() {
+  const LANGS = ['EN', 'FR', 'DE', 'ES', 'JP'];
+  const langColors = [T.indigo, T.blue, T.sage, T.amber, T.purple];
+
+  const langPie = LANGS.map(lang => ({
+    name: lang,
+    value: Math.round(SOURCE_META.reduce((s, src) => s + src.lang[lang], 0) / SOURCE_META.length),
+  }));
+
+  const biasScatterData = SOURCE_META.map(s => ({ name: s.name, bias: s.bias_score, confidence: s.avg_confidence, tier: s.tier }));
+  const volumeData = SOURCE_META.map(s => ({ name: s.name.substring(0, 10), articles: s.articles_tracked }));
+
+  const multiLangData = COMPANY_NAMES.slice(0, 5).map((co, i) => ({
+    company: co.split(' ')[0],
+    EN: parseFloat((45 + sr(i * 7 + 1) * 30).toFixed(1)),
+    FR: parseFloat((40 + sr(i * 7 + 2) * 35).toFixed(1)),
+    DE: parseFloat((42 + sr(i * 7 + 3) * 28).toFixed(1)),
+  }));
+
+  const avgBias = SOURCE_META.reduce((s, src) => s + src.bias_score, 0) / SOURCE_META.length;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="Sources Tracked" value={SOURCE_META.length} sub="Tier 1–5 coverage" color={T.navy} />
+        <KpiCard label="Avg Source Bias" value={avgBias.toFixed(1)} sub="-50 bearish → +50 bullish" color={T.amber} />
+        <KpiCard label="Tier 1 Sources" value={SOURCE_META.filter(s => s.tier === 1).length} sub="Highest credibility weight" color={T.green} />
+        <KpiCard label="Avg Cred Weight" value={(SOURCE_META.reduce((s, src) => s + src.credibility_weight, 0) / SOURCE_META.length).toFixed(2)} sub="Weighted sentiment pool" color={T.indigo} />
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 2, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Source Bias vs Credibility Confidence Scatter</SectionTitle>
+          <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>Color = credibility tier (green=T1, red=T5). X=0 is unbiased.</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <ScatterChart>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis type="number" dataKey="bias" name="Bias Score" domain={[-55, 55]} tick={{ fontSize: 10 }} label={{ value: 'Bias Score', position: 'insideBottom', offset: -4, fontSize: 11 }} />
+              <YAxis type="number" dataKey="confidence" name="Confidence" domain={[0.55, 1.0]} tick={{ fontSize: 10 }} />
+              <ReferenceLine x={0} stroke={T.textSec} strokeDasharray="3 3" />
+              <Tooltip content={({ active, payload }) => active && payload?.length ? (
+                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 6, padding: 8, fontSize: 11 }}>
+                  <div style={{ fontWeight: 700 }}>{payload[0]?.payload?.name}</div>
+                  <div>Bias: {payload[0]?.payload?.bias?.toFixed(1)}</div>
+                  <div>Conf: {payload[0]?.payload?.confidence?.toFixed(2)}</div>
+                  <div>Tier: {payload[0]?.payload?.tier}</div>
+                </div>
+              ) : null} />
+              {[1,2,3,4,5].map(tier => (
+                <Scatter key={tier} name={`Tier ${tier}`} data={biasScatterData.filter(d => d.tier === tier)} fill={TIER_COLORS[tier - 1]} />
+              ))}
+              <Legend />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Language Distribution</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <PieChart>
+              <Pie data={langPie} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                {langPie.map((_, i) => <Cell key={i} fill={langColors[i]} />)}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Source Article Volume</SectionTitle>
+        <ResponsiveContainer width="100%" height={150}>
+          <BarChart data={volumeData}>
+            <XAxis dataKey="name" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 10 }} /><Tooltip />
+            <Bar dataKey="articles" fill={T.indigo} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Multi-Language Sentiment Divergence (EN vs FR vs DE)</SectionTitle>
+        <div style={{ fontSize: 11, color: T.textSec, marginBottom: 10 }}>Divergence reflects market-specific framing bias: EU-press typically more bearish on governance; EN-press more bullish on E pillar.</div>
+        <ResponsiveContainer width="100%" height={150}>
+          <BarChart data={multiLangData}>
+            <XAxis dataKey="company" tick={{ fontSize: 11 }} /><YAxis domain={[30, 80]} tick={{ fontSize: 10 }} /><Tooltip /><Legend />
+            <Bar dataKey="EN" fill={T.indigo} /><Bar dataKey="FR" fill={T.blue} /><Bar dataKey="DE" fill={T.sage} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Source Metadata Table</SectionTitle>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+            <thead>
+              <tr style={{ background: T.sub }}>
+                {['Source','Tier','Articles','Avg Sent','Bias','Avg Conf','Cred Wt','EN%','FR%','DE%'].map(h => (
+                  <th key={h} style={{ padding: '7px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, fontFamily: T.fontMono, fontSize: 10 }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {SOURCE_META.map((s, i) => (
+                <tr key={i} style={{ borderBottom: `1px solid ${T.borderL}` }}>
+                  <td style={{ padding: '6px 10px', fontWeight: 600, color: T.navy }}>{s.name}</td>
+                  <td style={{ padding: '6px 10px' }}><Badge label={`T${s.tier}`} color={TIER_COLORS[s.tier - 1]} /></td>
+                  <td style={{ padding: '6px 10px', fontFamily: T.fontMono }}>{s.articles_tracked.toLocaleString()}</td>
+                  <td style={{ padding: '6px 10px', color: s.avg_sentiment > 60 ? T.green : s.avg_sentiment > 45 ? T.amber : T.red }}>{s.avg_sentiment.toFixed(1)}</td>
+                  <td style={{ padding: '6px 10px', color: s.bias_score > 10 ? T.green : s.bias_score < -10 ? T.red : T.textSec }}>{s.bias_score > 0 ? '+' : ''}{s.bias_score.toFixed(1)}</td>
+                  <td style={{ padding: '6px 10px', fontFamily: T.fontMono }}>{s.avg_confidence.toFixed(2)}</td>
+                  <td style={{ padding: '6px 10px', fontFamily: T.fontMono }}>{s.credibility_weight.toFixed(2)}</td>
+                  <td style={{ padding: '6px 10px' }}>{s.lang.EN}%</td>
+                  <td style={{ padding: '6px 10px' }}>{s.lang.FR}%</td>
+                  <td style={{ padding: '6px 10px' }}>{s.lang.DE}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Tab 7: Alpha Generation ───────────────────────────────────────────────────
+
+function TabAlphaGeneration() {
+  const [smfW, setSmfW] = useState(0.5);
+  const [srsW, setSrsW] = useState(0.3);
+  const [cpW, setCpW] = useState(0.2);
+
+  const sortedCombined = useMemo(() => {
+    return [...COMPANIES].sort((a, b) => (b.smf * smfW + b.srs * srsW + b.cp * cpW) - (a.smf * smfW + a.srs * srsW + a.cp * cpW));
+  }, [smfW, srsW, cpW]);
+
+  const longPort = sortedCombined.slice(0, 20);
+  const shortPort = sortedCombined.slice(60, 80);
+  const longRet = longPort.length ? longPort.reduce((s, c) => s + c.fwdReturn21d, 0) / longPort.length : 0;
+  const shortRet = shortPort.length ? shortPort.reduce((s, c) => s + c.fwdReturn21d, 0) / shortPort.length : 0;
+  const lsRet = parseFloat((longRet - shortRet).toFixed(2));
+  const combinedSharpe = parseFloat((lsRet / 8.5 * Math.sqrt(252)).toFixed(2));
+
+  const factorExposureData = COMPANIES.slice(0, 20).map(c => ({ name: c.name.split(' ')[0], smf: c.smf, srs: c.srs, cp: c.cp }));
+  const smfSharp = parseFloat((0.52 + sr(1) * 0.3).toFixed(2));
+  const srsSharp = parseFloat((0.38 + sr(2) * 0.25).toFixed(2));
+  const cpSharp = parseFloat((0.29 + sr(3) * 0.2).toFixed(2));
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="SMF Sharpe" value={smfSharp.toFixed(2)} sub="Sentiment Momentum Factor" color={T.indigo} />
+        <KpiCard label="SRS Sharpe" value={srsSharp.toFixed(2)} sub="Sentiment Reversal Signal" color={T.blue} />
+        <KpiCard label="CP Sharpe" value={cpSharp.toFixed(2)} sub="Controversy Premium" color={T.orange} />
+        <KpiCard label="Combined L/S Sharpe" value={combinedSharpe.toFixed(2)} sub="Custom factor weights" color={T.green} />
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Factor Combination Optimizer</SectionTitle>
+        <div style={{ fontSize: 11, color: T.textSec, marginBottom: 14 }}>Adjust factor weights to observe combined portfolio Sharpe ratio. SMF: sentiment momentum, SRS: reversal, CP: controversy premium.</div>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 16 }}>
+          {[['SMF Weight', smfW, setSmfW, T.indigo],['SRS Weight', srsW, setSrsW, T.blue],['CP Weight', cpW, setCpW, T.orange]].map(([label, val, setter, color]) => (
+            <div key={label} style={{ flex: 1, minWidth: 160 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontSize: 12, color: T.textPri, fontFamily: T.fontMono }}>{label}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color, fontFamily: T.fontMono }}>{parseFloat(val).toFixed(1)}</span>
+              </div>
+              <input type="range" min={0} max={1} step={0.1} value={val} onChange={e => setter(parseFloat(e.target.value))} style={{ width: '100%', accentColor: color }} />
+            </div>
+          ))}
+        </div>
+        <div style={{ background: T.sub, borderRadius: 8, padding: 14, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <div><span style={{ fontSize: 11, color: T.textSec }}>L/S Return (21d): </span><span style={{ fontSize: 16, fontWeight: 700, color: lsRet > 0 ? T.green : T.red }}>{lsRet > 0 ? '+' : ''}{lsRet}%</span></div>
+          <div><span style={{ fontSize: 11, color: T.textSec }}>Combined Sharpe: </span><span style={{ fontSize: 16, fontWeight: 700, color: T.indigo }}>{combinedSharpe}</span></div>
+          <div><span style={{ fontSize: 11, color: T.textSec }}>Long avg 21d: </span><span style={{ fontWeight: 700, color: T.green }}>{longRet.toFixed(2)}%</span></div>
+          <div><span style={{ fontSize: 11, color: T.textSec }}>Short avg 21d: </span><span style={{ fontWeight: 700, color: T.red }}>{shortRet.toFixed(2)}%</span></div>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Simulated L/S Factor Portfolio vs Benchmark (12M)</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={BACKTEST_MONTHS}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 10 }} />
+              <Tooltip formatter={v => parseFloat(v).toFixed(2)} /><Legend />
+              <Line type="monotone" dataKey="cumLS" stroke={T.indigo} strokeWidth={2} name="L/S Portfolio" dot={false} />
+              <Line type="monotone" dataKey="cumBench" stroke={T.textSec} strokeWidth={1.5} name="Benchmark" dot={false} strokeDasharray="4 4" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>IC Decay — Information Coefficient by Forward Horizon</SectionTitle>
+          <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>IC = rank correlation of factor signal vs forward returns. SMF decays faster than CP at longer horizons.</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={IC_DECAY}>
+              <XAxis dataKey="horizon" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 10 }} />
+              <Tooltip formatter={v => parseFloat(v).toFixed(3)} /><Legend />
+              <Bar dataKey="smf" fill={T.indigo} name="SMF" />
+              <Bar dataKey="srs" fill={T.blue} name="SRS" />
+              <Bar dataKey="cp" fill={T.orange} name="CP" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Factor Exposure — Top 20 Companies (by SMF)</SectionTitle>
+        <ResponsiveContainer width="100%" height={170}>
+          <BarChart data={factorExposureData}>
+            <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-30} textAnchor="end" height={50} />
+            <YAxis tick={{ fontSize: 10 }} /><Tooltip formatter={v => parseFloat(v).toFixed(3)} /><Legend />
+            <Bar dataKey="smf" fill={T.indigo} name="SMF" />
+            <Bar dataKey="srs" fill={T.blue} name="SRS" />
+            <Bar dataKey="cp" fill={T.orange} name="CP" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Long / Short Portfolio Top 10 Each Side</SectionTitle>
+        <div style={{ display: 'flex', gap: 20 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: T.green, marginBottom: 8, fontFamily: T.fontMono }}>LONG — Highest Combined Score</div>
+            {longPort.slice(0, 10).map((c, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: `1px solid ${T.borderL}`, fontSize: 11 }}>
+                <span style={{ color: T.textPri }}>{c.name}</span>
+                <span style={{ fontFamily: T.fontMono, color: T.green }}>SMF {c.smf.toFixed(3)}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: T.red, marginBottom: 8, fontFamily: T.fontMono }}>SHORT — Lowest Combined Score</div>
+            {shortPort.slice(0, 10).map((c, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: `1px solid ${T.borderL}`, fontSize: 11 }}>
+                <span style={{ color: T.textPri }}>{c.name}</span>
+                <span style={{ fontFamily: T.fontMono, color: T.red }}>SMF {c.smf.toFixed(3)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Tab 8: NLP Model Benchmarking ─────────────────────────────────────────────
+
+function TabNLPBenchmarking() {
+  const f1ByModel = NLP_MODELS.map(m => ({ name: m.name.split(' ')[0], E: m.f1_e, S: m.f1_s, G: m.f1_g, avg: m.f1_avg }));
+  const latencyAccData = NLP_MODELS.map(m => ({ name: m.name.split(' ')[0], latency: m.latency_ms, f1: m.f1_avg, cost: m.cost_per_k, open: m.open_source }));
+
+  const CODE_SNIPPET = `# HuggingFace Free Inference API — ESG Sentiment (30k req/month free)
+import requests
+
+# FinBERT — Finance-tuned 3-class sentiment (arXiv:1908.10063)
+FINBERT = "https://api-inference.huggingface.co/models/ProsusAI/finbert"
+
+# ClimateRoBERTa — Climate-domain sentiment
+CLIMATE_ROBERTA = "https://api-inference.huggingface.co/models/climatebert/distilroberta-base-climate-sentiment"
+
+# ESG-BERT — E/S/G category classification
+ESG_BERT = "https://api-inference.huggingface.co/models/nbroad/ESG-BERT"
+
+HEADERS = {"Authorization": "Bearer hf_YOUR_FREE_TOKEN"}
+
+def analyze(model_url, text):
+    r = requests.post(model_url, headers=HEADERS, json={"inputs": text})
+    results = r.json()[0]
+    # Returns: [{"label": "positive|neutral|negative", "score": float}]
+    return max(results, key=lambda x: x["score"])
+
+# Example: analyze a TCFD disclosure paragraph
+result = analyze(CLIMATE_ROBERTA, "The company has committed to net-zero by 2040...")
+print(result)  # {"label": "positive", "score": 0.91}`;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <KpiCard label="Models Compared" value={NLP_MODELS.length} sub="Across E / S / G pillars" color={T.indigo} />
+        <KpiCard label="Best F1 (avg)" value="0.89" sub="GPT-4o Zero-shot" color={T.green} />
+        <KpiCard label="Best Open-Source F1" value="0.87" sub="FinBERT (arXiv:1908.10063)" color={T.blue} />
+        <KpiCard label="Min Latency" value="3ms" sub="TextBlob (baseline only)" color={T.amber} />
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>F1 Score by Model and ESG Pillar</SectionTitle>
+        <div style={{ fontSize: 11, color: T.textSec, marginBottom: 8 }}>ClimateRoBERTa leads on E-pillar (0.89); GPT-4o leads overall (0.89 avg). Open-source models highlighted.</div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={f1ByModel}>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+            <XAxis dataKey="name" tick={{ fontSize: 10 }} /><YAxis domain={[0.5, 1.0]} tick={{ fontSize: 10 }} />
+            <Tooltip formatter={v => parseFloat(v).toFixed(3)} /><Legend />
+            <Bar dataKey="E" fill={T.sage} name="E Pillar" />
+            <Bar dataKey="S" fill={T.blue} name="S Pillar" />
+            <Bar dataKey="G" fill={T.purple} name="G Pillar" />
+            <Bar dataKey="avg" fill={T.indigo} name="Avg F1" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Latency vs F1 Accuracy — Open-Source vs Proprietary</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <ScatterChart>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+              <XAxis type="number" dataKey="latency" name="Latency (ms)" tick={{ fontSize: 10 }} label={{ value: 'Latency (ms)', position: 'insideBottom', offset: -4, fontSize: 11 }} />
+              <YAxis type="number" dataKey="f1" name="F1 Score" domain={[0.55, 0.95]} tick={{ fontSize: 10 }} />
+              <Tooltip content={({ active, payload }) => active && payload?.length ? (
+                <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 6, padding: 8, fontSize: 11 }}>
+                  <div style={{ fontWeight: 700 }}>{payload[0]?.payload?.name}</div>
+                  <div>F1: {payload[0]?.payload?.f1?.toFixed(3)}</div>
+                  <div>Latency: {payload[0]?.payload?.latency}ms</div>
+                  <div>Cost/1k: ${payload[0]?.payload?.cost}</div>
+                </div>
+              ) : null} />
+              <Scatter data={latencyAccData.filter(d => d.open)} fill={T.indigo} name="Open-Source" />
+              <Scatter data={latencyAccData.filter(d => !d.open)} fill={T.red} name="Proprietary" />
+              <Legend />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex: 1, background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <SectionTitle>Cost per 1,000 Documents</SectionTitle>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
+            {[...NLP_MODELS].sort((a, b) => a.cost_per_k - b.cost_per_k).map(m => (
+              <div key={m.name}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                  <span style={{ fontSize: 11, color: T.textPri }}>{m.name.split(' ').slice(0, 2).join(' ')}</span>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    {m.open_source && <Badge label="OSS" color={T.green} />}
+                    <span style={{ fontSize: 11, fontFamily: T.fontMono, color: T.navy }}>${m.cost_per_k.toFixed(3)}</span>
+                  </div>
+                </div>
+                <div style={{ height: 8, background: T.sub, borderRadius: 4, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${Math.min(100, (m.cost_per_k / 10) * 100)}%`, background: m.open_source ? T.indigo : T.red, borderRadius: 4 }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>Full Model Comparison Table</SectionTitle>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+            <thead>
+              <tr style={{ background: T.sub }}>
+                {['Model','Reference','Domain','Cls','F1-E','F1-S','F1-G','F1-Avg','Prec','Recall','Lat(ms)','$/1k','OSS','Training Docs','Use Case'].map(h => (
+                  <th key={h} style={{ padding: '7px 8px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, fontFamily: T.fontMono, fontSize: 9, whiteSpace: 'nowrap' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {NLP_MODELS.map((m, i) => (
+                <tr key={i} style={{ borderBottom: `1px solid ${T.borderL}`, background: i % 2 === 0 ? T.card : T.sub }}>
+                  <td style={{ padding: '6px 8px', fontWeight: 700, color: T.navy, whiteSpace: 'nowrap' }}>{m.name}</td>
+                  <td style={{ padding: '6px 8px', color: T.blue, fontSize: 9, fontFamily: T.fontMono, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.ref}</td>
+                  <td style={{ padding: '6px 8px', color: T.textSec, whiteSpace: 'nowrap' }}>{m.domain}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono, textAlign: 'center' }}>{m.classes}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono, color: m.f1_e >= 0.85 ? T.green : T.textPri }}>{m.f1_e.toFixed(2)}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono, color: m.f1_s >= 0.85 ? T.green : T.textPri }}>{m.f1_s.toFixed(2)}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono, color: m.f1_g >= 0.85 ? T.green : T.textPri }}>{m.f1_g.toFixed(2)}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono, fontWeight: 700, color: m.f1_avg >= 0.85 ? T.green : m.f1_avg >= 0.75 ? T.amber : T.red }}>{m.f1_avg.toFixed(2)}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono }}>{m.precision.toFixed(2)}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono }}>{m.recall.toFixed(2)}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono }}>{m.latency_ms}</td>
+                  <td style={{ padding: '6px 8px', fontFamily: T.fontMono }}>${m.cost_per_k.toFixed(3)}</td>
+                  <td style={{ padding: '6px 8px' }}>{m.open_source ? <Badge label="Yes" color={T.green} /> : <Badge label="No" color={T.red} />}</td>
+                  <td style={{ padding: '6px 8px', fontSize: 9, fontFamily: T.fontMono }}>{m.training_docs}</td>
+                  <td style={{ padding: '6px 8px', fontSize: 10, color: T.textSec }}>{m.use_case}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <SectionTitle>HuggingFace Free Inference API — Integration Snippet</SectionTitle>
+        <div style={{ fontSize: 11, color: T.textSec, marginBottom: 10 }}>
+          Free tier: 30,000 requests/month. No GPU provisioning required. FinBERT, ClimateRoBERTa, and ESG-BERT all available at zero cost for prototyping.
+        </div>
+        <pre style={{ background: '#1e1e2e', color: '#cdd6f4', padding: 16, borderRadius: 8, fontSize: 11, fontFamily: T.fontMono, overflowX: 'auto', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>
+          {CODE_SNIPPET}
+        </pre>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
+
+const TABS = [
+  { key: 'feed', label: 'Live Intelligence Feed' },
+  { key: 'entity', label: 'Entity Disambiguation' },
+  { key: 'confidence', label: 'Confidence & Uncertainty' },
+  { key: 'controversy', label: 'Controversy Intelligence' },
+  { key: 'temporal', label: 'Temporal Dynamics' },
+  { key: 'source', label: 'Source & Language' },
+  { key: 'alpha', label: 'Alpha Generation' },
+  { key: 'nlp', label: 'NLP Benchmarking' },
+];
+
+export default function AiSentimentPage() {
+  const [activeTab, setActiveTab] = useState('feed');
+
+  const renderTab = () => {
+    switch (activeTab) {
+      case 'feed': return <TabLiveFeed />;
+      case 'entity': return <TabEntityDisambig />;
+      case 'confidence': return <TabConfidenceUncertainty />;
+      case 'controversy': return <TabControversy />;
+      case 'temporal': return <TabTemporalDynamics />;
+      case 'source': return <TabSourceLanguage />;
+      case 'alpha': return <TabAlphaGeneration />;
+      case 'nlp': return <TabNLPBenchmarking />;
+      default: return <TabLiveFeed />;
+    }
+  };
+
+  return (
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: 'DM Sans, sans-serif' }}>
+      {/* Header */}
+      <div style={{ background: T.navy, padding: '20px 32px', borderBottom: `3px solid ${T.indigo}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ fontSize: 10, color: T.gold, fontFamily: T.fontMono, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>EP-H5 · AI Sentiment Intelligence</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: '#ffffff', letterSpacing: -0.5 }}>AI Sentiment Intelligence</div>
+            <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>NLP-powered ESG engine · FinBERT / ClimateRoBERTa · Entity disambiguation · Alpha signals · Model benchmarking</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: 10, color: T.gold, fontFamily: T.fontMono, marginBottom: 4 }}>COVERAGE</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#ffffff' }}>80 Articles · 80 Companies</div>
+            <div style={{ fontSize: 11, color: '#94a3b8' }}>12 Sources · 50 Entity Records · 6 NLP Models</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Bar */}
+      <div style={{ background: T.card, borderBottom: `1px solid ${T.border}`, padding: '0 32px', display: 'flex', overflowX: 'auto' }}>
+        {TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            style={{ padding: '14px 18px', fontSize: 12, fontWeight: activeTab === tab.key ? 700 : 500, color: activeTab === tab.key ? T.indigo : T.textSec, background: 'transparent', border: 'none', borderBottom: activeTab === tab.key ? `3px solid ${T.indigo}` : '3px solid transparent', cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'DM Sans, sans-serif', transition: 'color 0.15s' }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div style={{ padding: '24px 32px' }}>
+        {renderTab()}
+      </div>
+
+      {/* Footer */}
+      <div style={{ background: T.card, borderTop: `1px solid ${T.border}`, padding: '12px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontSize: 10, color: T.textSec, fontFamily: T.fontMono }}>EP-H5 · AI Sentiment Intelligence · Seeded synthetic data — no external API calls</div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          {['FinBERT (arXiv:1908.10063)','ClimateRoBERTa (HF)','ESG-BERT (nbroad)','SFDR Art.8/9'].map(ref => (
+            <span key={ref} style={{ fontSize: 9, color: T.textSec, fontFamily: T.fontMono }}>{ref}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
