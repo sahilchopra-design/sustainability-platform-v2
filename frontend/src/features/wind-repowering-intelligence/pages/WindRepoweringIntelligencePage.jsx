@@ -357,7 +357,7 @@ export default function WindRepoweringIntelligencePage() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
           <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
             <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Cost-Benefit Summary ($M)</div>
             <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
@@ -368,6 +368,8 @@ export default function WindRepoweringIntelligencePage() {
                   ['New Fleet NPV (20yr)', `$${newNPV.toFixed(1)}M`, T.green],
                   ['Incremental NPV', `$${incrementalNPV.toFixed(1)}M`, incrementalNPV >= 0 ? T.green : T.red],
                   ['CAPEX / MWp New', `$${(totalInvestM / Math.max(0.001, metrics.newCapMW)).toFixed(2)}M/MW`, T.text],
+                  ['New LCOE', `$${lcoeNew.toFixed(1)}/MWh`, T.blue],
+                  ['CO₂ Benefit 20yr', `${(co2Saved * 20 / 1e6).toFixed(2)} MtCO₂`, T.teal],
                 ].map(([l, v, c]) => (
                   <tr key={l} style={{ borderBottom: `1px solid ${T.border}` }}>
                     <td style={{ padding: '5px 0', color: T.sub }}>{l}</td>
@@ -379,7 +381,7 @@ export default function WindRepoweringIntelligencePage() {
           </div>
           <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
             <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>CAPEX Breakdown ($M)</div>
-            <ResponsiveContainer width="100%" height={180}>
+            <ResponsiveContainer width="100%" height={220}>
               <BarChart data={costBreakdown.filter(d => Math.abs(d.value) > 0.01)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize: 9 }} />
@@ -388,6 +390,48 @@ export default function WindRepoweringIntelligencePage() {
                 <Bar dataKey="value" fill={T.indigo} radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Fleet Metrics: Old vs New</div>
+            <ResponsiveContainer width="100%" height={200}>
+              <RadarChart data={[
+                { subject: 'Capacity Factor', A: currentCF / 52 * 100, B: metrics.newCF / 52 * 100 },
+                { subject: 'Unit Count Eff.', A: 40, B: Math.max(20, 100 - metrics.newTurbineCount / numTurbines * 100 + 50) },
+                { subject: 'LCOE Score', A: 40, B: Math.min(100, (70 - metrics.lcoeNew) * 2) },
+                { subject: 'Revenue/MW', A: metrics.oldCapMW > 0 ? Math.min(100, metrics.oldRevenue / metrics.oldCapMW * 20) : 0, B: metrics.newCapMW > 0 ? Math.min(100, metrics.newRevenue / metrics.newCapMW * 20) : 0 },
+                { subject: 'Environmental', A: 50, B: 82 },
+                { subject: 'Grid Utilisation', A: Math.min(100, metrics.oldCapMW / gridCapMW * 100), B: Math.min(100, metrics.newCapMW / gridCapMW * 100) },
+              ]}>
+                <PolarGrid stroke={T.border} />
+                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9 }} />
+                <PolarRadiusAxis domain={[0, 100]} tick={false} />
+                <Radar name="Old Fleet" dataKey="A" stroke={T.sub} fill={T.sub} fillOpacity={0.2} />
+                <Radar name="New Fleet" dataKey="B" stroke={T.indigo} fill={T.indigo} fillOpacity={0.25} />
+                <Legend />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Key Investment Metrics Summary</div>
+            {[
+              { label: 'Strategy', value: strategy, color: T.indigo },
+              { label: 'Old Capacity', value: `${metrics.oldCapMW.toFixed(1)} MW (${numTurbines} × ${oldRatingKw}kW)`, color: T.sub },
+              { label: 'New Capacity', value: `${metrics.newCapMW.toFixed(1)} MW (${metrics.newTurbineCount} × ${(newRatingKw / 1000).toFixed(1)}MW)`, color: T.green },
+              { label: 'CF Uplift', value: `${currentCF}% → ${metrics.newCF.toFixed(1)}% (+${(metrics.newCF - currentCF).toFixed(1)} ppt)`, color: T.teal },
+              { label: 'Total CAPEX', value: `$${metrics.totalInvestM.toFixed(1)}M ($${((turbineCapex + bopCapex)).toFixed(0)}/kW)`, color: T.red },
+              { label: 'Grid Connection', value: reuseGrid ? 'Reused (saves cost)' : 'New connection required', color: reuseGrid ? T.green : T.amber },
+              { label: 'Permit Route', value: permitFastTrack ? 'Fast-track (modification)' : 'Full planning application', color: T.indigo },
+              { label: 'Revenue Route', value: retainSubsidy ? 'Retain legacy FiT' : `New ${newPPA} $/MWh PPA/CfD`, color: T.blue },
+              { label: 'Project Life', value: `${newProjectLife} years post-COD`, color: T.text },
+              { label: 'Breakeven PPA', value: `~$${(newPPA * (discountRate / metrics.incIRR)).toFixed(0)}/MWh`, color: T.amber },
+            ].map(({ label, value, color }) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
+                <span style={{ color: T.sub }}>{label}</span>
+                <span style={{ color, fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textAlign: 'right', maxWidth: '55%' }}>{value}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -415,7 +459,7 @@ export default function WindRepoweringIntelligencePage() {
           <KpiCard label="Avg CF" value={`${avgCF.toFixed(1)}%`} sub="Capacity factor" color={T.blue} />
           <KpiCard label="Total Residual Value" value={`$${(totalRV).toFixed(0)}K`} sub="Est. scrap + parts" color={T.teal} />
         </div>
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
               <thead>
@@ -446,6 +490,44 @@ export default function WindRepoweringIntelligencePage() {
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Fleet Age Distribution</div>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={[
+                { age: '15-17yr', count: sorted.filter(t => t.age >= 15 && t.age < 18).length },
+                { age: '18-20yr', count: sorted.filter(t => t.age >= 18 && t.age < 21).length },
+                { age: '21-23yr', count: sorted.filter(t => t.age >= 21 && t.age < 24).length },
+                { age: '24-26yr', count: sorted.filter(t => t.age >= 24 && t.age < 27).length },
+                { age: '27+yr', count: sorted.filter(t => t.age >= 27).length },
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="age" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="count" name="Turbines" fill={T.indigo} radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>CF Distribution Across Fleet</div>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={[
+                { cf: '<26%', count: sorted.filter(t => Number(t.cf) < 26).length },
+                { cf: '26-28%', count: sorted.filter(t => Number(t.cf) >= 26 && Number(t.cf) < 28).length },
+                { cf: '28-30%', count: sorted.filter(t => Number(t.cf) >= 28 && Number(t.cf) < 30).length },
+                { cf: '30-32%', count: sorted.filter(t => Number(t.cf) >= 30 && Number(t.cf) < 32).length },
+                { cf: '>32%', count: sorted.filter(t => Number(t.cf) >= 32).length },
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="cf" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="count" name="Turbines" fill={T.teal} radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
@@ -522,16 +604,27 @@ export default function WindRepoweringIntelligencePage() {
       { name: 'Life Extension', capex: totalInvestM * 0.12, aep: oldAEP / 1000 * 0.97, irr: incIRR * 0.6, gridUtil: Math.min(100, (metrics.oldCapMW / gridCapMW) * 100) },
     ];
     const tiers = [
-      { tier: 'Tier 1 (>35% CF)', count: Math.floor(numTurbines * 0.2), action: 'Extend Life', reason: 'Still performing well' },
-      { tier: 'Tier 2 (30-35% CF)', count: Math.floor(numTurbines * 0.35), action: 'Partial Repower', reason: 'Moderate performance decline' },
-      { tier: 'Tier 3 (<30% CF)', count: Math.floor(numTurbines * 0.45), action: 'Full Repower', reason: 'Significant underperformance' },
+      { tier: 'Tier 1 (>35% CF)', count: Math.floor(numTurbines * 0.2), action: 'Extend Life', reason: 'Still performing well', age: '<20yr', foundationCond: 'Good' },
+      { tier: 'Tier 2 (30-35% CF)', count: Math.floor(numTurbines * 0.35), action: 'Partial Repower', reason: 'Moderate performance decline', age: '20-24yr', foundationCond: 'Fair' },
+      { tier: 'Tier 3 (<30% CF)', count: Math.floor(numTurbines * 0.45), action: 'Full Repower', reason: 'Significant underperformance', age: '>24yr', foundationCond: 'Assess' },
+    ];
+    const capexIRRData = [
+      { name: 'Full Repower', capex: totalInvestM, irr: incIRR, aep: newAEP / 1000 },
+      { name: 'Partial Repower', capex: partialCapex, irr: incIRR * 0.85, aep: partialAEP / 1000 },
+      { name: 'Life Extension', capex: totalInvestM * 0.12, irr: incIRR * 0.6, aep: oldAEP / 1000 * 0.97 },
     ];
     return (
       <div>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+          <KpiCard label="Full Repower Capex" value={`$${totalInvestM.toFixed(1)}M`} sub={`${metrics.newTurbineCount} new turbines`} color={T.red} />
+          <KpiCard label="Partial Repower Capex" value={`$${partialCapex.toFixed(1)}M`} sub={`${Math.ceil(metrics.newTurbineCount * 0.5)} new turbines`} color={T.amber} />
+          <KpiCard label="Full vs Partial AEP" value={`${((newAEP - partialAEP) / 1000).toFixed(0)} GWh`} sub="Additional annual AEP" color={T.indigo} />
+          <KpiCard label="Grid Utilisation" value={`${Math.min(100, (metrics.newCapMW / gridCapMW * 100)).toFixed(0)}%`} sub="Full repower grid load" color={T.teal} />
+        </div>
         <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Strategy Comparison</div>
+          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Strategy Comparison — Capex, AEP, IRR</div>
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={comparison} barGap={4}>
+            <BarChart data={capexIRRData} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="name" tick={{ fontSize: 11 }} />
               <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
@@ -547,13 +640,15 @@ export default function WindRepoweringIntelligencePage() {
           <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Decision Matrix by Turbine Performance Tier</div>
           <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
             <thead><tr style={{ background: T.navy }}>
-              {['Tier', 'Count', 'Recommended Action', 'Rationale'].map(h =>
-                <th key={h} style={{ padding: '8px 12px', color: '#fff', textAlign: 'left', fontSize: 11 }}>{h}</th>)}
+              {['Tier', 'Count', 'Typical Age', 'Foundation', 'Recommended Action', 'Rationale'].map(h =>
+                <th key={h} style={{ padding: '8px 12px', color: '#fff', textAlign: 'left', fontSize: 10 }}>{h}</th>)}
             </tr></thead>
             <tbody>{tiers.map((t, i) => (
               <tr key={t.tier} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
                 <td style={{ padding: '8px 12px', fontWeight: 700 }}>{t.tier}</td>
                 <td style={{ padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace' }}>{t.count}</td>
+                <td style={{ padding: '8px 12px', color: T.sub }}>{t.age}</td>
+                <td style={{ padding: '8px 12px', color: t.foundationCond === 'Good' ? T.green : t.foundationCond === 'Fair' ? T.amber : T.red }}>{t.foundationCond}</td>
                 <td style={{ padding: '8px 12px', color: T.indigo, fontWeight: 700 }}>{t.action}</td>
                 <td style={{ padding: '8px 12px', color: T.sub }}>{t.reason}</td>
               </tr>
@@ -717,20 +812,42 @@ export default function WindRepoweringIntelligencePage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
           <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>CF Uplift Drivers</div>
           {[
-            { driver: 'Rotor diameter increase', from: `${Math.round(rotorDiam * 0.5)}m → ${rotorDiam}m`, impact: `+${((rotorDiam / (rotorDiam * 0.5)) ** 2 * currentCF - currentCF).toFixed(1)} ppt CF` },
-            { driver: 'Hub height increase', from: `80m → ${hubHeight}m`, impact: `+${((hubHeight - 80) / 300 * 4).toFixed(1)} ppt CF` },
-            { driver: 'Modern power curve', from: 'Gen 1 curve', impact: '+2.5 ppt CF (IEC Class IIA)' },
-            { driver: 'Wake loss reduction', from: 'Fewer, larger turbines', impact: '+0.8 ppt CF' },
+            { driver: 'Rotor diameter increase', from: `${Math.round(rotorDiam * 0.5)}m → ${rotorDiam}m`, impact: `+${((rotorDiam / (rotorDiam * 0.5)) ** 2 * currentCF - currentCF).toFixed(1)} ppt CF`, basis: 'Swept area ∝ D²' },
+            { driver: 'Hub height increase', from: `80m → ${hubHeight}m`, impact: `+${((hubHeight - 80) / 300 * 4).toFixed(1)} ppt CF`, basis: 'Wind shear α=0.25 power law' },
+            { driver: 'Modern power curve', from: 'Gen 1 → Gen 4', impact: '+2.5 ppt CF (IEC Class IIA)', basis: 'Improved aero efficiency' },
+            { driver: 'Wake loss reduction', from: 'Fewer, larger turbines', impact: '+0.8 ppt CF', basis: 'Jensen wake model' },
+            { driver: 'Control algorithm upgrade', from: 'Fixed pitch → IPC', impact: '+0.4 ppt CF', basis: 'Individual pitch control' },
           ].map(d => (
             <div key={d.driver} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${T.border}`, fontSize: 12 }}>
-              <span style={{ color: T.text }}>{d.driver}</span>
-              <span style={{ color: T.sub }}>{d.from}</span>
-              <span style={{ color: T.green, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace' }}>{d.impact}</span>
+              <div style={{ flex: 2 }}>
+                <div style={{ color: T.text, fontWeight: 600 }}>{d.driver}</div>
+                <div style={{ color: T.sub, fontSize: 10 }}>{d.basis}</div>
+              </div>
+              <span style={{ color: T.sub, fontSize: 11, flex: 1, textAlign: 'center' }}>{d.from}</span>
+              <span style={{ color: T.green, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', fontSize: 11, textAlign: 'right', flex: 1 }}>{d.impact}</span>
             </div>
           ))}
+        </div>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>AEP Components: Loss Waterfall (GWh/yr)</div>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={[
+              { name: 'Gross AEP', value: (metrics.newAEP * 1.08 / 1000).toFixed(1) },
+              { name: 'Wake Losses', value: -(metrics.newAEP * 0.045 / 1000).toFixed(1) },
+              { name: 'Electrical Losses', value: -(metrics.newAEP * 0.015 / 1000).toFixed(1) },
+              { name: 'Availability Loss', value: -(metrics.newAEP * 0.02 / 1000).toFixed(1) },
+              { name: 'Net AEP', value: (metrics.newAEP / 1000).toFixed(1) },
+            ]}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} unit=" GWh" />
+              <Tooltip formatter={v => `${v} GWh`} />
+              <Bar dataKey="value" name="GWh/yr" fill={T.indigo} radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     );
@@ -786,41 +903,98 @@ export default function WindRepoweringIntelligencePage() {
       { name: 'Escalation (5yr)', value: newAnnual * (Math.pow(1 + ppaEscalation / 100, 5) - 1), fill: T.teal },
     ];
     const routeComparison = [
-      { route: 'CfD Auction', price: 52, certainty: 'High', term: '15yr', risk: 'Regulatory price review' },
-      { route: 'PTC (IRA US)', price: 45, certainty: 'High', term: '10yr', risk: 'Partial transfer for repower' },
-      { route: 'Corporate PPA', price: newPPA, certainty: 'Medium', term: '12yr', risk: 'Offtaker credit risk' },
-      { route: 'Merchant', price: newPPA * 0.9, certainty: 'Low', term: 'Spot', risk: 'Price volatility exposure' },
+      { route: 'CfD Auction', price: 52, certainty: 'High', term: '15yr', risk: 'Regulatory price review', irrImpact: '+1.2ppt vs merchant' },
+      { route: 'PTC (IRA US)', price: 45, certainty: 'High', term: '10yr', risk: 'Partial transfer for repower', irrImpact: '+0.8ppt vs merchant' },
+      { route: 'Corporate PPA', price: newPPA, certainty: 'Medium', term: '12yr', risk: 'Offtaker credit risk', irrImpact: 'Benchmark' },
+      { route: 'Merchant', price: newPPA * 0.9, certainty: 'Low', term: 'Spot', risk: 'Price volatility exposure', irrImpact: '-1.1ppt vs PPA' },
+      { route: 'Hybrid (PPA + merchant)', price: newPPA * 0.95, certainty: 'Medium', term: 'Blended', risk: 'Market basis risk', irrImpact: '+0.3ppt vs merchant' },
     ];
+    // 10-year revenue projection by route
+    const revenueProjection = Array.from({ length: 10 }, (_, t) => ({
+      year: `Y${t + 1}`,
+      cfd: (metrics.newAEP * 52 / 1e6 * Math.pow(1.015, t)).toFixed(2),
+      ppa: (metrics.newAEP * newPPA / 1e6 * Math.pow(1 + ppaEscalation / 100, t)).toFixed(2),
+      merchant: (metrics.newAEP * newPPA * 0.9 / 1e6 * Math.pow(0.98, t) * (1 + sr(t * 7) * 0.2 - 0.1)).toFixed(2),
+    }));
+
+    // Construction period revenue detail
+    const constructionPhases = [
+      { phase: 'Month 1-3', oldRev: oldAnnual * 0.25, newRev: 0, status: 'Decommissioning' },
+      { phase: 'Month 4-6', oldRev: oldAnnual * 0.15, newRev: 0, status: 'Civil works' },
+      { phase: 'Month 7-9', oldRev: 0, newRev: 0, status: 'Installation' },
+      { phase: 'Month 10-12', oldRev: 0, newRev: newAnnual * 0.25 * 0.7, status: 'Commissioning (70%)' },
+      { phase: 'Post-COD', oldRev: 0, newRev: newAnnual, status: 'Full operation' },
+    ];
+
     return (
       <div>
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Revenue Waterfall ($M/yr)</div>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={bridgeData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip formatter={v => `$${Number(v).toFixed(2)}M`} />
-              <Bar dataKey="value" name="Revenue $M" radius={[3, 3, 0, 0]}>
-                {bridgeData.map((d, i) => <rect key={i} fill={d.fill} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+          <KpiCard label="Current Annual Revenue" value={`$${oldAnnual.toFixed(2)}M`} sub={`${existingRevMWh} $/MWh`} />
+          <KpiCard label="New Annual Revenue" value={`$${newAnnual.toFixed(2)}M`} sub={`${newPPA} $/MWh PPA`} color={T.green} />
+          <KpiCard label="Revenue Uplift" value={`+$${(newAnnual - oldAnnual).toFixed(2)}M/yr`} sub="Incremental annual" color={metrics.newRevenue > metrics.oldRevenue ? T.green : T.red} />
+          <KpiCard label="Construction Loss" value={`-$${constructionLoss.toFixed(2)}M`} sub="6-month downtime" color={T.amber} />
         </div>
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Revenue Waterfall ($M/yr)</div>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={bridgeData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fontSize: 9 }} />
+                <YAxis tick={{ fontSize: 10 }} />
+                <Tooltip formatter={v => `$${Number(v).toFixed(2)}M`} />
+                <Bar dataKey="value" name="Revenue $M" radius={[3, 3, 0, 0]} fill={T.indigo} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>10-Year Revenue Projection by Route ($M/yr)</div>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={revenueProjection}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" tick={{ fontSize: 9 }} />
+                <YAxis tick={{ fontSize: 10 }} />
+                <Tooltip formatter={v => `$${v}M`} />
+                <Legend />
+                <Line dataKey="cfd" stroke={T.green} strokeWidth={2} name="CfD/PTC" dot={false} />
+                <Line dataKey="ppa" stroke={T.indigo} strokeWidth={2} name="Corporate PPA" dot={false} />
+                <Line dataKey="merchant" stroke={T.amber} strokeWidth={1} name="Merchant" dot={false} strokeDasharray="4 2" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
           <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Revenue Route Comparison</div>
           <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
             <thead><tr style={{ background: T.navy }}>
-              {['Route', 'Price $/MWh', 'Certainty', 'Term', 'Key Risk'].map(h =>
-                <th key={h} style={{ padding: '8px 12px', color: '#fff', textAlign: 'left', fontSize: 11 }}>{h}</th>)}
+              {['Route', 'Price $/MWh', 'Certainty', 'Term', 'Key Risk', 'IRR Impact'].map(h =>
+                <th key={h} style={{ padding: '8px 10px', color: '#fff', textAlign: 'left', fontSize: 10 }}>{h}</th>)}
             </tr></thead>
             <tbody>{routeComparison.map((r, i) => (
               <tr key={r.route} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
-                <td style={{ padding: '8px 12px', fontWeight: 700 }}>{r.route}</td>
-                <td style={{ padding: '8px 12px', fontFamily: 'JetBrains Mono, monospace', color: T.green }}>${r.price}</td>
-                <td style={{ padding: '8px 12px', color: r.certainty === 'High' ? T.green : r.certainty === 'Medium' ? T.amber : T.red }}>{r.certainty}</td>
-                <td style={{ padding: '8px 12px' }}>{r.term}</td>
-                <td style={{ padding: '8px 12px', color: T.sub, fontSize: 11 }}>{r.risk}</td>
+                <td style={{ padding: '7px 10px', fontWeight: 700 }}>{r.route}</td>
+                <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', color: T.green }}>${typeof r.price === 'number' ? r.price.toFixed(0) : r.price}</td>
+                <td style={{ padding: '7px 10px', color: r.certainty === 'High' ? T.green : r.certainty === 'Medium' ? T.amber : T.red }}>{r.certainty}</td>
+                <td style={{ padding: '7px 10px' }}>{r.term}</td>
+                <td style={{ padding: '7px 10px', color: T.sub, fontSize: 10 }}>{r.risk}</td>
+                <td style={{ padding: '7px 10px', color: T.indigo, fontWeight: 700, fontSize: 11 }}>{r.irrImpact}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Construction Period Revenue Schedule</div>
+          <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
+            <thead><tr style={{ background: T.navy }}>
+              {['Period', 'Old Fleet Rev $M', 'New Fleet Rev $M', 'Status'].map(h =>
+                <th key={h} style={{ padding: '7px 12px', color: '#fff', textAlign: 'left', fontSize: 10 }}>{h}</th>)}
+            </tr></thead>
+            <tbody>{constructionPhases.map((p, i) => (
+              <tr key={p.phase} style={{ background: i % 2 === 0 ? T.bg : T.card, borderBottom: `1px solid ${T.border}` }}>
+                <td style={{ padding: '6px 12px', fontWeight: 700 }}>{p.phase}</td>
+                <td style={{ padding: '6px 12px', fontFamily: 'JetBrains Mono, monospace', color: p.oldRev > 0 ? T.text : T.sub }}>${p.oldRev.toFixed(2)}M</td>
+                <td style={{ padding: '6px 12px', fontFamily: 'JetBrains Mono, monospace', color: p.newRev > 0 ? T.green : T.sub }}>${p.newRev.toFixed(2)}M</td>
+                <td style={{ padding: '6px 12px', color: T.sub }}>{p.status}</td>
               </tr>
             ))}</tbody>
           </table>
@@ -1140,7 +1314,7 @@ export default function WindRepoweringIntelligencePage() {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
               <thead><tr style={{ background: T.navy }}>
@@ -1155,6 +1329,39 @@ export default function WindRepoweringIntelligencePage() {
                 </tr>
               ))}</tbody>
             </table>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>DSCR Schedule</div>
+            <ResponsiveContainer width="100%" height={160}>
+              <LineChart data={annualRows.slice(0, 15).map(r => ({ yr: r.yr, dscr: Number(r.dscr) }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="yr" tick={{ fontSize: 9 }} />
+                <YAxis tick={{ fontSize: 10 }} domain={[0, 4]} />
+                <Tooltip formatter={v => `${Number(v).toFixed(2)}x`} />
+                <Line dataKey="dscr" stroke={T.indigo} strokeWidth={2} name="DSCR" dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+            <div style={{ fontSize: 11, color: T.sub, marginTop: 8 }}>Minimum DSCR covenant: typically 1.20x for project finance</div>
+          </div>
+          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12 }}>Financing Structure Summary</div>
+            {[
+              { label: 'Total Project Cost', value: `$${totalInvestM.toFixed(1)}M` },
+              { label: 'Equity Contribution', value: `$${(totalInvestM * equityPct / 100).toFixed(1)}M (${equityPct}%)` },
+              { label: 'Debt Financing', value: `$${(totalInvestM * (100 - equityPct) / 100).toFixed(1)}M (${100 - equityPct}%)` },
+              { label: 'Assumed Debt Cost', value: '4.5% p.a.' },
+              { label: 'Debt Tenor', value: `${Math.min(newProjectLife, 18)} years` },
+              { label: 'Annual Debt Service', value: `$${(totalInvestM * (1 - equityPct / 100) * 0.045 / (1 - Math.pow(1.045, -Math.min(newProjectLife, 18)))).toFixed(2)}M` },
+              { label: 'Equity IRR', value: `${(metrics.incIRR * (1 + (1 - equityPct / 100) * 0.3)).toFixed(1)}%` },
+              { label: 'Corporate Tax Rate', value: `${taxRate}%` },
+            ].map(({ label, value }) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${T.border}`, fontSize: 11 }}>
+                <span style={{ color: T.sub }}>{label}</span>
+                <span style={{ fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: T.text }}>{value}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -1211,6 +1418,25 @@ export default function WindRepoweringIntelligencePage() {
               </LineChart>
             </ResponsiveContainer>
           </div>
+        </div>
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginTop: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 10 }}>Optimal Repowering Timing — NPV vs Delay</div>
+          <div style={{ fontSize: 11, color: T.sub, marginBottom: 12 }}>
+            Delaying repowering by 1-5 years trades current old-fleet revenue against future technology improvements and lower CAPEX. The NPV of delay
+            must exceed the present value of lost incremental revenue in the interim.
+          </div>
+          <ResponsiveContainer width="100%" height={160}>
+            <LineChart data={Array.from({ length: 6 }, (_, d) => {
+              const delayedNPV = metrics.incrementalNPV * Math.pow(1 / (1 + metrics.dr), d) + metrics.oldRevenue * d * 0.7;
+              return { delay: `+${d}yr`, npv: delayedNPV.toFixed(1) };
+            })}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="delay" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <Tooltip formatter={v => `$${v}M`} />
+              <Line dataKey="npv" stroke={T.accent} strokeWidth={2} name="Delay-adjusted NPV $M" dot={true} />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     );
@@ -1645,6 +1871,15 @@ export default function WindRepoweringIntelligencePage() {
             {tabContent[tab] ? tabContent[tab]() : <div>Tab not implemented</div>}
           </div>
         </div>
+      </div>
+
+      {/* Footer info strip */}
+      <div style={{ background: T.card, borderTop: `1px solid ${T.border}`, padding: '6px 24px', display: 'flex', gap: 32, fontSize: 10, color: T.sub }}>
+        <span>Old Fleet: {numTurbines} × {oldRatingKw}kW = <strong style={{ color: T.text }}>{metrics.oldCapMW.toFixed(0)} MW</strong></span>
+        <span>New Fleet: {metrics.newTurbineCount} × {(newRatingKw / 1000).toFixed(1)}MW = <strong style={{ color: T.green }}>{metrics.newCapMW.toFixed(0)} MW</strong></span>
+        <span>AEP: {(metrics.oldAEP / 1000).toFixed(0)} → <strong style={{ color: T.green }}>{(metrics.newAEP / 1000).toFixed(0)} GWh/yr</strong></span>
+        <span>WACC: {discountRate}% | Tax: {taxRate}% | Equity: {equityPct}%</span>
+        <span style={{ marginLeft: 'auto', color: T.accent }}>EP-DR6 · Wind Repowering & Life Extension Intelligence</span>
       </div>
 
       {/* Status bar */}
