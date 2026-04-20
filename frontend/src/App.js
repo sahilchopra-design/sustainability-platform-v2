@@ -763,6 +763,13 @@ const NuclearFuelCyclePage           = React.lazy(() => import("./features/nucle
 const AdvancedReactorFinancePage     = React.lazy(() => import("./features/advanced-reactor-finance/pages/AdvancedReactorFinancePage"));
 const NuclearDecommissioningPage     = React.lazy(() => import("./features/nuclear-decommissioning/pages/NuclearDecommissioningPage"));
 const NuclearMarketIntelligencePage  = React.lazy(() => import("./features/nuclear-market-intelligence/pages/NuclearMarketIntelligencePage"));
+// Sprint DV — Geothermal Energy Finance Intelligence Suite
+const GeothermalLcoeEconomicsPage    = React.lazy(() => import("./features/geothermal-lcoe-economics/pages/GeothermalLcoeEconomicsPage"));
+const GeothermalProjectFinancePage   = React.lazy(() => import("./features/geothermal-project-finance/pages/GeothermalProjectFinancePage"));
+const EnhancedGeothermalSystemsPage  = React.lazy(() => import("./features/enhanced-geothermal-systems/pages/EnhancedGeothermalSystemsPage"));
+const GeothermalDirectUsePage        = React.lazy(() => import("./features/geothermal-direct-use/pages/GeothermalDirectUsePage"));
+const GeothermalPowerMarketsPage     = React.lazy(() => import("./features/geothermal-power-markets/pages/GeothermalPowerMarketsPage"));
+const GeothermalMarketIntelligencePage = React.lazy(() => import("./features/geothermal-market-intelligence/pages/GeothermalMarketIntelligencePage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1101,6 +1108,14 @@ const NAV_GROUPS = [
     { path: '/advanced-reactor-finance',   label: 'Advanced & Gen IV Reactor Finance',              badge: 'MSR · SFR · HTGR · GFR · LFR · DOE ARDP · TRISO · Process Heat · 10 Tabs', code: 'EP-DU4' },
     { path: '/nuclear-decommissioning',    label: 'Nuclear Decommissioning Finance Intelligence',   badge: 'D&D Strategies · Cost Model · NDA · DOE EM · Fund Adequacy · SMR Decomm · 10 Tabs', code: 'EP-DU5' },
     { path: '/nuclear-market-intelligence',label: 'Nuclear Market Intelligence Platform',           badge: 'Global Fleet · New Build · Export Markets · COP28 · SMR Pipeline · Outlook 2050 · 10 Tabs', code: 'EP-DU6' },
+  ]},
+  { label: '🌋 Geothermal Energy Finance', icon: '🌋', color: '#1a2a1a', items: [
+    { path: '/geothermal-lcoe-economics',    label: 'Geothermal LCOE Economics & Resource Analytics',  badge: 'Dry Steam · Flash · Binary ORC · EGS · Heat Flow Atlas · Carbon Value · 10 Tabs', code: 'EP-DV1' },
+    { path: '/geothermal-project-finance',   label: 'Geothermal Project Finance & Drilling Risk',      badge: 'Well Success Prob · Monte Carlo · DSCR · DFI · LP/GP Waterfall · Case Studies · 10 Tabs', code: 'EP-DV2' },
+    { path: '/enhanced-geothermal-systems',  label: 'Enhanced Geothermal Systems (EGS) Finance',      badge: 'EGS Cost Model · Stimulation · Flow Risk · DOE GeoVision · Superhot Rock · 10 Tabs', code: 'EP-DV3' },
+    { path: '/geothermal-direct-use',        label: 'Geothermal Direct Use & Heat Pump Economics',    badge: 'GHP COP · District Heating · Industrial Heat · Cascade · vs Fossil HVAC · 10 Tabs', code: 'EP-DV4' },
+    { path: '/geothermal-power-markets',     label: 'Geothermal Power Markets & Grid Services',       badge: 'Baseload Premium · Ancillary · PPA Structures · Marginal Value · Grid Integration · 10 Tabs', code: 'EP-DV5' },
+    { path: '/geothermal-market-intelligence',label: 'Global Geothermal Market Intelligence',         badge: '16 Countries · Developer Landscape · Pipeline · Investment Flows · Outlook 2050 · 10 Tabs', code: 'EP-DV6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3058,6 +3073,13 @@ function AppContent() {
             <Route path="/advanced-reactor-finance"  element={<AdvancedReactorFinancePage />} />
             <Route path="/nuclear-decommissioning"   element={<NuclearDecommissioningPage />} />
             <Route path="/nuclear-market-intelligence" element={<NuclearMarketIntelligencePage />} />
+            {/* Sprint DV — Geothermal Energy Finance Intelligence Suite */}
+            <Route path="/geothermal-lcoe-economics"     element={<GeothermalLcoeEconomicsPage />} />
+            <Route path="/geothermal-project-finance"    element={<GeothermalProjectFinancePage />} />
+            <Route path="/enhanced-geothermal-systems"   element={<EnhancedGeothermalSystemsPage />} />
+            <Route path="/geothermal-direct-use"         element={<GeothermalDirectUsePage />} />
+            <Route path="/geothermal-power-markets"      element={<GeothermalPowerMarketsPage />} />
+            <Route path="/geothermal-market-intelligence" element={<GeothermalMarketIntelligencePage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
