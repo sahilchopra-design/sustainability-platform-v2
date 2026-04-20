@@ -770,6 +770,13 @@ const EnhancedGeothermalSystemsPage  = React.lazy(() => import("./features/enhan
 const GeothermalDirectUsePage        = React.lazy(() => import("./features/geothermal-direct-use/pages/GeothermalDirectUsePage"));
 const GeothermalPowerMarketsPage     = React.lazy(() => import("./features/geothermal-power-markets/pages/GeothermalPowerMarketsPage"));
 const GeothermalMarketIntelligencePage = React.lazy(() => import("./features/geothermal-market-intelligence/pages/GeothermalMarketIntelligencePage"));
+// Sprint DW — FI Climate Finance Instruments Intelligence Suite
+const SustainabilityLinkedInstrumentsPage = React.lazy(() => import("./features/sustainability-linked-instruments/pages/SustainabilityLinkedInstrumentsPage"));
+const TransitionFinanceEnginePage         = React.lazy(() => import("./features/transition-finance-engine/pages/TransitionFinanceEnginePage"));
+const GreenSecuritizationPage             = React.lazy(() => import("./features/green-securitization/pages/GreenSecuritizationPage"));
+const ClimateCreditPricingPage            = React.lazy(() => import("./features/climate-credit-pricing/pages/ClimateCreditPricingPage"));
+const BlendedFinanceStructuringPage       = React.lazy(() => import("./features/blended-finance-structuring/pages/BlendedFinanceStructuringPage"));
+const FiNetZeroPathwaysPage               = React.lazy(() => import("./features/fi-net-zero-pathways/pages/FiNetZeroPathwaysPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1116,6 +1123,14 @@ const NAV_GROUPS = [
     { path: '/geothermal-direct-use',        label: 'Geothermal Direct Use & Heat Pump Economics',    badge: 'GHP COP · District Heating · Industrial Heat · Cascade · vs Fossil HVAC · 10 Tabs', code: 'EP-DV4' },
     { path: '/geothermal-power-markets',     label: 'Geothermal Power Markets & Grid Services',       badge: 'Baseload Premium · Ancillary · PPA Structures · Marginal Value · Grid Integration · 10 Tabs', code: 'EP-DV5' },
     { path: '/geothermal-market-intelligence',label: 'Global Geothermal Market Intelligence',         badge: '16 Countries · Developer Landscape · Pipeline · Investment Flows · Outlook 2050 · 10 Tabs', code: 'EP-DV6' },
+  ]},
+  { label: '🏦 FI Climate Finance Instruments', icon: '🏦', color: '#1e3a5f', items: [
+    { path: '/sustainability-linked-instruments', label: 'Sustainability-Linked Instruments Suite',    badge: 'SLL/SLB Pricing · KPI Ratchet · LMA/ICMA · Greenwashing Risk · FI Revenue Model · 10 Tabs', code: 'EP-DW1' },
+    { path: '/transition-finance-engine',         label: 'Transition Finance Engine',                 badge: 'Paris-Aligned Lending · Credibility Score · Taxonomy · Hard-to-Abate · GFANZ · 10 Tabs',   code: 'EP-DW2' },
+    { path: '/green-securitization',              label: 'Green Securitization Intelligence Suite',   badge: 'Green ABS/RMBS/CMBS · Waterfall · Credit Enhancement · Greenium · FI Economics · 10 Tabs',  code: 'EP-DW3' },
+    { path: '/climate-credit-pricing',            label: 'Climate Credit Pricing Intelligence Suite', badge: 'TCFD Spreads · Physical/Trans Premium · Climate VaR · Regulatory Capital · 10 Tabs',        code: 'EP-DW4' },
+    { path: '/blended-finance-structuring',       label: 'Blended Finance Structuring Suite',         badge: 'First-Loss/Mezz/Senior · DFI Guarantee · Mobilization · OECD Principles · 10 Tabs',         code: 'EP-DW5' },
+    { path: '/fi-net-zero-pathways',              label: 'FI Net-Zero Pathways Intelligence Suite',   badge: 'NZBA/PCAF/GFANZ · Portfolio Temperature · Financed Emissions · Engagement · 10 Tabs',       code: 'EP-DW6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3080,6 +3095,13 @@ function AppContent() {
             <Route path="/geothermal-direct-use"         element={<GeothermalDirectUsePage />} />
             <Route path="/geothermal-power-markets"      element={<GeothermalPowerMarketsPage />} />
             <Route path="/geothermal-market-intelligence" element={<GeothermalMarketIntelligencePage />} />
+            {/* Sprint DW — FI Climate Finance Instruments Intelligence Suite */}
+            <Route path="/sustainability-linked-instruments" element={<SustainabilityLinkedInstrumentsPage />} />
+            <Route path="/transition-finance-engine"         element={<TransitionFinanceEnginePage />} />
+            <Route path="/green-securitization"              element={<GreenSecuritizationPage />} />
+            <Route path="/climate-credit-pricing"            element={<ClimateCreditPricingPage />} />
+            <Route path="/blended-finance-structuring"       element={<BlendedFinanceStructuringPage />} />
+            <Route path="/fi-net-zero-pathways"              element={<FiNetZeroPathwaysPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
