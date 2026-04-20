@@ -749,6 +749,13 @@ const PowerToXFinancePage            = React.lazy(() => import("./features/power
 const HydrogenProjectFinancePage     = React.lazy(() => import("./features/hydrogen-project-finance/pages/HydrogenProjectFinancePage"));
 const BlueHydrogenCcsPage            = React.lazy(() => import("./features/blue-hydrogen-ccs/pages/BlueHydrogenCcsPage"));
 const HydrogenMarketIntelligencePage = React.lazy(() => import("./features/hydrogen-market-intelligence/pages/HydrogenMarketIntelligencePage"));
+// Sprint DT — Battery Energy Storage & Grid Flexibility Finance Intelligence Suite
+const BessProjectFinancePage         = React.lazy(() => import("./features/bess-project-finance/pages/BessProjectFinancePage"));
+const BatteryTechSupplyChainPage     = React.lazy(() => import("./features/battery-tech-supply-chain/pages/BatteryTechSupplyChainPage"));
+const VirtualPowerPlantPage          = React.lazy(() => import("./features/virtual-power-plant/pages/VirtualPowerPlantPage"));
+const GridFlexibilityMarketsPage     = React.lazy(() => import("./features/grid-flexibility-markets/pages/GridFlexibilityMarketsPage"));
+const EvV2gGridIntegrationPage       = React.lazy(() => import("./features/ev-v2g-grid-integration/pages/EvV2gGridIntegrationPage"));
+const LdesInvestmentPage             = React.lazy(() => import("./features/ldes-investment/pages/LdesInvestmentPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1071,6 +1078,14 @@ const NAV_GROUPS = [
     { path: '/hydrogen-project-finance',      label: 'Hydrogen Project Finance & Investment',        badge: 'DSCR · IRR · NPV · Monte Carlo · EU H₂ Bank · IRA §45V · LP/GP Waterfall · 10 Tabs', code: 'EP-DS4' },
     { path: '/blue-hydrogen-ccs',             label: 'Blue Hydrogen & CCS Economics Engine',         badge: 'SMR · ATR · POX · Methane Slip · CCS Storage · Carbon Price · GHG Lifecycle · 10 Tabs', code: 'EP-DS5' },
     { path: '/hydrogen-market-intelligence',  label: 'Hydrogen Market Intelligence & Trade Flows',   badge: 'Global Demand · Supply · Trade Corridors · H₂ Valleys · Geopolitical Risk · 10 Tabs', code: 'EP-DS6' },
+  ]},
+  { label: '⚡ Battery Storage & Grid Flexibility Finance', icon: '🔋', color: '#0d4f5c', items: [
+    { path: '/bess-project-finance',       label: 'BESS Project Finance & Investment Analytics',    badge: 'LCOS · Arrhenius Degradation · Revenue Stack · IRR · Monte Carlo · Wright\'s Law · 10 Tabs', code: 'EP-DT1' },
+    { path: '/battery-tech-supply-chain',  label: 'Battery Technology & Supply Chain Finance',      badge: 'Cell Cost · Critical Minerals · Gigafactory · Recycling · Geopolitical Risk · 10 Tabs', code: 'EP-DT2' },
+    { path: '/virtual-power-plant',        label: 'Virtual Power Plant & Aggregated Dispatch',      badge: 'VPP · FCR · aFRR · DSO Flex · Revenue Stack · Optimal Dispatch · 10 Tabs', code: 'EP-DT3' },
+    { path: '/grid-flexibility-markets',   label: 'Grid Flexibility Markets & Ancillary Services',  badge: 'FCR · aFRR · mFRR · PICASSO · MARI · Capacity Market · Revenue Opt. · 10 Tabs', code: 'EP-DT4' },
+    { path: '/ev-v2g-grid-integration',    label: 'EV Fleet & V2G Grid Integration Finance',        badge: 'V2G Revenue · ISO 15118 · Fleet Finance · Degradation · Smart Charging · 10 Tabs', code: 'EP-DT5' },
+    { path: '/ldes-investment',            label: 'Long-Duration Energy Storage (LDES) Investment', badge: 'Iron-Air · Flow Battery · LAES · Gravity · Green H₂ · LCOS Engine · 10 Tabs', code: 'EP-DT6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3014,6 +3029,13 @@ function AppContent() {
             <Route path="/hydrogen-project-finance"     element={<HydrogenProjectFinancePage />} />
             <Route path="/blue-hydrogen-ccs"            element={<BlueHydrogenCcsPage />} />
             <Route path="/hydrogen-market-intelligence" element={<HydrogenMarketIntelligencePage />} />
+            {/* Sprint DT — Battery Energy Storage & Grid Flexibility Finance Intelligence Suite */}
+            <Route path="/bess-project-finance"      element={<BessProjectFinancePage />} />
+            <Route path="/battery-tech-supply-chain" element={<BatteryTechSupplyChainPage />} />
+            <Route path="/virtual-power-plant"       element={<VirtualPowerPlantPage />} />
+            <Route path="/grid-flexibility-markets"  element={<GridFlexibilityMarketsPage />} />
+            <Route path="/ev-v2g-grid-integration"   element={<EvV2gGridIntegrationPage />} />
+            <Route path="/ldes-investment"           element={<LdesInvestmentPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
