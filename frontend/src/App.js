@@ -756,6 +756,13 @@ const VirtualPowerPlantPage          = React.lazy(() => import("./features/virtu
 const GridFlexibilityMarketsPage     = React.lazy(() => import("./features/grid-flexibility-markets/pages/GridFlexibilityMarketsPage"));
 const EvV2gGridIntegrationPage       = React.lazy(() => import("./features/ev-v2g-grid-integration/pages/EvV2gGridIntegrationPage"));
 const LdesInvestmentPage             = React.lazy(() => import("./features/ldes-investment/pages/LdesInvestmentPage"));
+// Sprint DU — Nuclear & Advanced Fission Finance Intelligence Suite
+const NuclearLcoeEconomicsPage       = React.lazy(() => import("./features/nuclear-lcoe-economics/pages/NuclearLcoeEconomicsPage"));
+const SmrProjectFinancePage          = React.lazy(() => import("./features/smr-project-finance/pages/SmrProjectFinancePage"));
+const NuclearFuelCyclePage           = React.lazy(() => import("./features/nuclear-fuel-cycle/pages/NuclearFuelCyclePage"));
+const AdvancedReactorFinancePage     = React.lazy(() => import("./features/advanced-reactor-finance/pages/AdvancedReactorFinancePage"));
+const NuclearDecommissioningPage     = React.lazy(() => import("./features/nuclear-decommissioning/pages/NuclearDecommissioningPage"));
+const NuclearMarketIntelligencePage  = React.lazy(() => import("./features/nuclear-market-intelligence/pages/NuclearMarketIntelligencePage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1086,6 +1093,14 @@ const NAV_GROUPS = [
     { path: '/grid-flexibility-markets',   label: 'Grid Flexibility Markets & Ancillary Services',  badge: 'FCR · aFRR · mFRR · PICASSO · MARI · Capacity Market · Revenue Opt. · 10 Tabs', code: 'EP-DT4' },
     { path: '/ev-v2g-grid-integration',    label: 'EV Fleet & V2G Grid Integration Finance',        badge: 'V2G Revenue · ISO 15118 · Fleet Finance · Degradation · Smart Charging · 10 Tabs', code: 'EP-DT5' },
     { path: '/ldes-investment',            label: 'Long-Duration Energy Storage (LDES) Investment', badge: 'Iron-Air · Flow Battery · LAES · Gravity · Green H₂ · LCOS Engine · 10 Tabs', code: 'EP-DT6' },
+  ]},
+  { label: '☢️ Nuclear & Advanced Fission Finance', icon: '⚛️', color: '#1a3a2a', items: [
+    { path: '/nuclear-lcoe-economics',     label: 'Nuclear LCOE Economics & Cost Modelling',        badge: 'IDC Factor · PWR/BWR/EPR/VVER/CANDU · Carbon Value · IRR · Reactor Compare · 10 Tabs', code: 'EP-DU1' },
+    { path: '/smr-project-finance',        label: 'SMR Project Finance & NOAK Learning',            badge: 'NOAK Learning · NuScale/BWRX/RR-SMR · Monte Carlo · Revenue Stack · 10 Tabs', code: 'EP-DU2' },
+    { path: '/nuclear-fuel-cycle',         label: 'Nuclear Fuel Cycle Finance Intelligence',        badge: 'Uranium Mining · SWU Economics · HALEU · Back-End · Strategic Stockpiles · 10 Tabs', code: 'EP-DU3' },
+    { path: '/advanced-reactor-finance',   label: 'Advanced & Gen IV Reactor Finance',              badge: 'MSR · SFR · HTGR · GFR · LFR · DOE ARDP · TRISO · Process Heat · 10 Tabs', code: 'EP-DU4' },
+    { path: '/nuclear-decommissioning',    label: 'Nuclear Decommissioning Finance Intelligence',   badge: 'D&D Strategies · Cost Model · NDA · DOE EM · Fund Adequacy · SMR Decomm · 10 Tabs', code: 'EP-DU5' },
+    { path: '/nuclear-market-intelligence',label: 'Nuclear Market Intelligence Platform',           badge: 'Global Fleet · New Build · Export Markets · COP28 · SMR Pipeline · Outlook 2050 · 10 Tabs', code: 'EP-DU6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3036,6 +3051,13 @@ function AppContent() {
             <Route path="/grid-flexibility-markets"  element={<GridFlexibilityMarketsPage />} />
             <Route path="/ev-v2g-grid-integration"   element={<EvV2gGridIntegrationPage />} />
             <Route path="/ldes-investment"           element={<LdesInvestmentPage />} />
+            {/* Sprint DU — Nuclear & Advanced Fission Finance Intelligence Suite */}
+            <Route path="/nuclear-lcoe-economics"    element={<NuclearLcoeEconomicsPage />} />
+            <Route path="/smr-project-finance"       element={<SmrProjectFinancePage />} />
+            <Route path="/nuclear-fuel-cycle"        element={<NuclearFuelCyclePage />} />
+            <Route path="/advanced-reactor-finance"  element={<AdvancedReactorFinancePage />} />
+            <Route path="/nuclear-decommissioning"   element={<NuclearDecommissioningPage />} />
+            <Route path="/nuclear-market-intelligence" element={<NuclearMarketIntelligencePage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
