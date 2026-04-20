@@ -199,6 +199,13 @@ const IssbMaterialityPage = React.lazy(() => import("./features/issb-materiality
 const GriAlignmentPage = React.lazy(() => import("./features/gri-alignment/pages/GriAlignmentPage"));
 const FrameworkInteropPage = React.lazy(() => import("./features/framework-interop/pages/FrameworkInteropPage"));
 const TaxonomyHubPage = React.lazy(() => import("./features/taxonomy-hub/pages/TaxonomyHubPage"));
+// Sprint Q-Extended — ML-Driven Taxonomy · Capital Markets · FI · Carbon · Energy · Global Interop v2
+const TaxonomyMlClassifierPage = React.lazy(() => import("./features/taxonomy-ml-classifier/pages/TaxonomyMlClassifierPage"));
+const CapitalMarketsTaxonomyPage = React.lazy(() => import("./features/capital-markets-taxonomy/pages/CapitalMarketsTaxonomyPage"));
+const FiTaxonomyPcafBridgePage = React.lazy(() => import("./features/fi-taxonomy-pcaf-bridge/pages/FiTaxonomyPcafBridgePage"));
+const CarbonInstitutionsTaxonomyPage = React.lazy(() => import("./features/carbon-institutions-taxonomy/pages/CarbonInstitutionsTaxonomyPage"));
+const EnergySectorTaxonomyPage = React.lazy(() => import("./features/energy-sector-taxonomy/pages/EnergySectorTaxonomyPage"));
+const GlobalTaxonomyInteropV2Page = React.lazy(() => import("./features/global-taxonomy-interop-v2/pages/GlobalTaxonomyInteropV2Page"));
 // Sprint R — Client & Reporting Automation
 const ReportGeneratorPage = React.lazy(() => import("./features/report-generator/pages/ReportGeneratorPage"));
 const TemplateManagerPage = React.lazy(() => import("./features/template-manager/pages/TemplateManagerPage"));
@@ -222,6 +229,9 @@ const DmeContagionPage = React.lazy(() => import("./features/dme-contagion/pages
 const DmePortfolioPage = React.lazy(() => import("./features/dme-portfolio/pages/DmePortfolioPage"));
 const DmeCompetitivePage = React.lazy(() => import("./features/dme-competitive/pages/DmeCompetitivePage"));
 const DmeDashboardPage = React.lazy(() => import("./features/dme-dashboard/pages/DmeDashboardPage"));
+// Sprint U-Extended — DME ML & NLP Intelligence
+const DmeNlpEnginePage      = React.lazy(() => import("./features/dme-nlp-engine/pages/DmeNlpEnginePage"));
+const DmeMlMaterialityPage  = React.lazy(() => import("./features/dme-ml-materiality/pages/DmeMlMaterialityPage"));
 // Sprint T — Dynamic Materiality Engine
 // DoubleMaterialityPage already imported from Sprint 35 (line 55)
 const StakeholderImpactPage = React.lazy(() => import("./features/stakeholder-impact/pages/StakeholderImpactPage"));
@@ -732,6 +742,13 @@ const OffshoreWindFinancePage        = React.lazy(() => import("./features/offsh
 const OffshoreGridInfrastructurePage = React.lazy(() => import("./features/offshore-grid-infrastructure/pages/OffshoreGridInfrastructurePage"));
 const OffshoreWindOmPage             = React.lazy(() => import("./features/offshore-wind-om/pages/OffshoreWindOmPage"));
 const WindRepoweringIntelligencePage = React.lazy(() => import("./features/wind-repowering-intelligence/pages/WindRepoweringIntelligencePage"));
+// Sprint DS — Green Hydrogen & Power-to-X Finance Intelligence Suite
+const GreenHydrogenLcohPage          = React.lazy(() => import("./features/green-hydrogen-lcoh/pages/GreenHydrogenLcohPage"));
+const HydrogenStorageTransportPage   = React.lazy(() => import("./features/hydrogen-storage-transport/pages/HydrogenStorageTransportPage"));
+const PowerToXFinancePage            = React.lazy(() => import("./features/power-to-x-finance/pages/PowerToXFinancePage"));
+const HydrogenProjectFinancePage     = React.lazy(() => import("./features/hydrogen-project-finance/pages/HydrogenProjectFinancePage"));
+const BlueHydrogenCcsPage            = React.lazy(() => import("./features/blue-hydrogen-ccs/pages/BlueHydrogenCcsPage"));
+const HydrogenMarketIntelligencePage = React.lazy(() => import("./features/hydrogen-market-intelligence/pages/HydrogenMarketIntelligencePage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -974,6 +991,12 @@ const NAV_GROUPS = [
     { path: '/issb-materiality',          label: 'ISSB Materiality',           badge: 'SASB · 26 Topics · IFRS S2',       code: 'EP-Q3' },
     { path: '/gri-alignment',             label: 'GRI Alignment',              badge: '26 Standards · 85 Disclosures',    code: 'EP-Q4' },
     { path: '/framework-interop',         label: 'Framework Interoperability', badge: '8 Frameworks · 20 Topics',         code: 'EP-Q5' },
+    { path: '/taxonomy-ml-classifier',    label: 'Taxonomy ML Classifier',     badge: 'XGBoost · NLP · Probabilistic TSC/DNSH', code: 'EP-Q7' },
+    { path: '/capital-markets-taxonomy',  label: 'Capital Markets Taxonomy',   badge: 'GSS Bonds · Greenium · CTB/PAB · GAR', code: 'EP-Q8' },
+    { path: '/fi-taxonomy-pcaf-bridge',   label: 'FI & PCAF Bridge',           badge: 'Banking GAR · Solvency II · Loan Alignment', code: 'EP-Q9' },
+    { path: '/carbon-institutions-taxonomy', label: 'Carbon Institutions Taxonomy', badge: 'CDP · SBTi · VCM · ICROA · Article 6', code: 'EP-Q10' },
+    { path: '/energy-sector-taxonomy',    label: 'Energy Sector Taxonomy',     badge: 'IEA NZE · IRENA · NGFS · Pathways',        code: 'EP-Q11' },
+    { path: '/global-taxonomy-interop-v2', label: 'Global Taxonomy Interop v2', badge: 'UK SDR · ASEAN · China · Japan · LATAM', code: 'EP-Q12' },
   ]},
   { label: 'Client & Reporting', icon: '📄', color: '#b45309', items: [
     { path: '/reporting-hub',              label: 'Reporting Hub',              badge: 'Hub · 12 Types · 8 Clients · 15 Filings', code: 'EP-R6' },
@@ -992,6 +1015,8 @@ const NAV_GROUPS = [
     { path: '/dme-contagion',     label: 'DME Contagion Network',    badge: 'Interconnection · Propagation',       code: 'EP-U5' },
     { path: '/dme-portfolio',     label: 'DME Portfolio Analytics',  badge: 'DMI · Regime · PCAF · Attribution',   code: 'EP-U6' },
     { path: '/dme-competitive',   label: 'DME Competitive Intel',    badge: 'Peer Benchmarking · 5 Dimensions',    code: 'EP-U7' },
+    { path: '/dme-nlp-engine',    label: 'DME NLP Intelligence',     badge: 'Topic Extraction · Sentiment · Greenwash · NER', code: 'EP-U9' },
+    { path: '/dme-ml-materiality', label: 'DME ML Materiality',      badge: 'LDA · Clustering · Anomaly · Classification',    code: 'EP-U10' },
   ]},
   { label: 'Impact & SDG Finance', icon: '💰', color: '#047857', items: [
     { path: '/impact-hub',                label: 'Impact Hub',               badge: 'Hub · IWA · IRIS+ · SDG · Blended',     code: 'EP-X6' },
@@ -1038,6 +1063,14 @@ const NAV_GROUPS = [
     { path: '/offshore-grid-infrastructure', label: 'Offshore Grid & Cable Infrastructure',     badge: 'AC vs HVDC · Jensen Wake · Cable Loss · Grid Code · Black Start · 18 Tabs', code: 'EP-DR4' },
     { path: '/offshore-wind-om',             label: 'Offshore Wind O&M & Asset Management',    badge: 'MTBF · Vessel Dispatch · Predictive Maint · Availability · Blade Erosion · 18 Tabs', code: 'EP-DR5' },
     { path: '/wind-repowering-intelligence', label: 'Wind Repowering & Life Extension',        badge: 'Incremental IRR · AEP Uplift · Grid Re-use · Brownfield NPV · 18 Tabs', code: 'EP-DR6' },
+  ]},
+  { label: '🔬 Green Hydrogen & Power-to-X Finance', icon: '⚗️', color: '#065f46', items: [
+    { path: '/green-hydrogen-lcoh',           label: 'Green Hydrogen LCOH & Electrolyzer Economics', badge: 'PEM · AEL · SOEC · AEM · Learning Curves · Sensitivity · EU Taxonomy · 10 Tabs', code: 'EP-DS1' },
+    { path: '/hydrogen-storage-transport',    label: 'Hydrogen Storage & Transport Economics',       badge: 'CGH₂ · LH₂ · LOHC · NH₃ · Pipeline · Shipping · Import Terminals · 10 Tabs', code: 'EP-DS2' },
+    { path: '/power-to-x-finance',            label: 'Power-to-X & e-Fuel Production Finance',       badge: 'e-Methanol · e-Ammonia · e-SAF · FT Diesel · SNG · CO₂ Sourcing · 10 Tabs', code: 'EP-DS3' },
+    { path: '/hydrogen-project-finance',      label: 'Hydrogen Project Finance & Investment',        badge: 'DSCR · IRR · NPV · Monte Carlo · EU H₂ Bank · IRA §45V · LP/GP Waterfall · 10 Tabs', code: 'EP-DS4' },
+    { path: '/blue-hydrogen-ccs',             label: 'Blue Hydrogen & CCS Economics Engine',         badge: 'SMR · ATR · POX · Methane Slip · CCS Storage · Carbon Price · GHG Lifecycle · 10 Tabs', code: 'EP-DS5' },
+    { path: '/hydrogen-market-intelligence',  label: 'Hydrogen Market Intelligence & Trade Flows',   badge: 'Global Demand · Supply · Trade Corridors · H₂ Valleys · Geopolitical Risk · 10 Tabs', code: 'EP-DS6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -2428,6 +2461,13 @@ function AppContent() {
             <Route path="/gri-alignment"             element={<GriAlignmentPage />} />
             <Route path="/framework-interop"         element={<FrameworkInteropPage />} />
             <Route path="/taxonomy-hub"              element={<TaxonomyHubPage />} />
+            {/* Sprint Q-Extended — ML Taxonomy · Capital Markets · FI · Carbon · Energy · Global v2 */}
+            <Route path="/taxonomy-ml-classifier"    element={<TaxonomyMlClassifierPage />} />
+            <Route path="/capital-markets-taxonomy"  element={<CapitalMarketsTaxonomyPage />} />
+            <Route path="/fi-taxonomy-pcaf-bridge"   element={<FiTaxonomyPcafBridgePage />} />
+            <Route path="/carbon-institutions-taxonomy" element={<CarbonInstitutionsTaxonomyPage />} />
+            <Route path="/energy-sector-taxonomy"    element={<EnergySectorTaxonomyPage />} />
+            <Route path="/global-taxonomy-interop-v2" element={<GlobalTaxonomyInteropV2Page />} />
             {/* Sprint R — Client & Reporting Automation */}
             <Route path="/report-generator"          element={<ReportGeneratorPage />} />
             <Route path="/template-manager"          element={<TemplateManagerPage />} />
@@ -2451,6 +2491,8 @@ function AppContent() {
             <Route path="/dme-contagion"     element={<DmeContagionPage />} />
             <Route path="/dme-portfolio"     element={<DmePortfolioPage />} />
             <Route path="/dme-competitive"   element={<DmeCompetitivePage />} />
+            <Route path="/dme-nlp-engine"    element={<DmeNlpEnginePage />} />
+            <Route path="/dme-ml-materiality" element={<DmeMlMaterialityPage />} />
             {/* Sprint T — Dynamic Materiality Engine */}
             {/* double-materiality route already exists from Sprint 35 (line 801) */}
             <Route path="/stakeholder-impact"        element={<StakeholderImpactPage />} />
@@ -2965,6 +3007,13 @@ function AppContent() {
             <Route path="/offshore-grid-infrastructure" element={<OffshoreGridInfrastructurePage />} />
             <Route path="/offshore-wind-om"             element={<OffshoreWindOmPage />} />
             <Route path="/wind-repowering-intelligence" element={<WindRepoweringIntelligencePage />} />
+            {/* Sprint DS — Green Hydrogen & Power-to-X Finance Intelligence Suite */}
+            <Route path="/green-hydrogen-lcoh"          element={<GreenHydrogenLcohPage />} />
+            <Route path="/hydrogen-storage-transport"   element={<HydrogenStorageTransportPage />} />
+            <Route path="/power-to-x-finance"           element={<PowerToXFinancePage />} />
+            <Route path="/hydrogen-project-finance"     element={<HydrogenProjectFinancePage />} />
+            <Route path="/blue-hydrogen-ccs"            element={<BlueHydrogenCcsPage />} />
+            <Route path="/hydrogen-market-intelligence" element={<HydrogenMarketIntelligencePage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
