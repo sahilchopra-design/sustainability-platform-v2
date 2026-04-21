@@ -777,6 +777,13 @@ const GreenSecuritizationPage             = React.lazy(() => import("./features/
 const ClimateCreditPricingPage            = React.lazy(() => import("./features/climate-credit-pricing/pages/ClimateCreditPricingPage"));
 const BlendedFinanceStructuringPage       = React.lazy(() => import("./features/blended-finance-structuring/pages/BlendedFinanceStructuringPage"));
 const FiNetZeroPathwaysPage               = React.lazy(() => import("./features/fi-net-zero-pathways/pages/FiNetZeroPathwaysPage"));
+// Sprint DX — Bioenergy, BECCS & Nature-Based Carbon Finance Intelligence Suite
+const BioenergyLcoeEconomicsPage          = React.lazy(() => import("./features/bioenergy-lcoe-economics/pages/BioenergyLcoeEconomicsPage"));
+const BeccsProjectFinancePage             = React.lazy(() => import("./features/beccs-project-finance/pages/BeccsProjectFinancePage"));
+const ForestryTimberFinancePage           = React.lazy(() => import("./features/forestry-timber-finance/pages/ForestryTimberFinancePage"));
+const NatureBasedSolutionsFinancePage     = React.lazy(() => import("./features/nature-based-solutions-finance/pages/NatureBasedSolutionsFinancePage"));
+const CarbonRemovalMarketsPage            = React.lazy(() => import("./features/carbon-removal-markets/pages/CarbonRemovalMarketsPage"));
+const BiodiversityNaturalCapitalPage      = React.lazy(() => import("./features/biodiversity-natural-capital/pages/BiodiversityNaturalCapitalPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1131,6 +1138,14 @@ const NAV_GROUPS = [
     { path: '/climate-credit-pricing',            label: 'Climate Credit Pricing Intelligence Suite', badge: 'TCFD Spreads · Physical/Trans Premium · Climate VaR · Regulatory Capital · 10 Tabs',        code: 'EP-DW4' },
     { path: '/blended-finance-structuring',       label: 'Blended Finance Structuring Suite',         badge: 'First-Loss/Mezz/Senior · DFI Guarantee · Mobilization · OECD Principles · 10 Tabs',         code: 'EP-DW5' },
     { path: '/fi-net-zero-pathways',              label: 'FI Net-Zero Pathways Intelligence Suite',   badge: 'NZBA/PCAF/GFANZ · Portfolio Temperature · Financed Emissions · Engagement · 10 Tabs',       code: 'EP-DW6' },
+  ]},
+  { label: '🌿 Bioenergy, BECCS & Nature Finance', icon: '🌿', color: '#2d6a4f', items: [
+    { path: '/bioenergy-lcoe-economics',       label: 'Bioenergy LCOE Economics Suite',              badge: 'LCOE Model · Feedstock Cost · Co-firing · Carbon Credits · Policy Support · 10 Tabs',        code: 'EP-DX1' },
+    { path: '/beccs-project-finance',          label: 'BECCS Project Finance Intelligence Suite',    badge: 'Dual Revenue Stack · CCS CapEx · CDR Credits · Drax/Stockholm · IRR Engine · 10 Tabs',      code: 'EP-DX2' },
+    { path: '/forestry-timber-finance',        label: 'Forestry & Timber Finance Intelligence Suite',badge: 'Timber IRR · TIMO Landscape · Forest Carbon · FSC Premium · Risk Framework · 10 Tabs',      code: 'EP-DX3' },
+    { path: '/nature-based-solutions-finance', label: 'Nature-Based Solutions Finance Suite',        badge: 'REDD+/A-R/Blue Carbon · VCU Pricing · Co-Benefit Valuation · Article 6.4 · 10 Tabs',        code: 'EP-DX4' },
+    { path: '/carbon-removal-markets',         label: 'Carbon Removal Markets Intelligence Suite',   badge: 'DAC/BECCS/Biochar/EW · Frontier AMC · LCDR Engine · 45Q · Policy & FI Products · 10 Tabs',  code: 'EP-DX5' },
+    { path: '/biodiversity-natural-capital',   label: 'Biodiversity & Natural Capital Finance Suite',badge: 'TNFD LEAP · NCA Valuation · BNG Credits · GBF Targets · Portfolio Alignment · 10 Tabs',     code: 'EP-DX6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3102,6 +3117,13 @@ function AppContent() {
             <Route path="/climate-credit-pricing"            element={<ClimateCreditPricingPage />} />
             <Route path="/blended-finance-structuring"       element={<BlendedFinanceStructuringPage />} />
             <Route path="/fi-net-zero-pathways"              element={<FiNetZeroPathwaysPage />} />
+            {/* Sprint DX — Bioenergy, BECCS & Nature-Based Carbon Finance Intelligence Suite */}
+            <Route path="/bioenergy-lcoe-economics"       element={<BioenergyLcoeEconomicsPage />} />
+            <Route path="/beccs-project-finance"          element={<BeccsProjectFinancePage />} />
+            <Route path="/forestry-timber-finance"        element={<ForestryTimberFinancePage />} />
+            <Route path="/nature-based-solutions-finance" element={<NatureBasedSolutionsFinancePage />} />
+            <Route path="/carbon-removal-markets"         element={<CarbonRemovalMarketsPage />} />
+            <Route path="/biodiversity-natural-capital"   element={<BiodiversityNaturalCapitalPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
