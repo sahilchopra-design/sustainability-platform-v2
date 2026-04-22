@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -583,6 +584,18 @@ export default function HydrogenMarketIntelligencePage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DS6" title="H2 Market Intelligence — MC Demand, Tornado & NGFS Scenario Suite"
+        mcModel={{ title: 'MC Global H2 Demand 2040 (Mt)', unit: ' Mt', fmt: (n) => n.toFixed(0),
+        vars: { steel: { min: 15, mode: 35, max: 70 }, refining: { min: 25, mode: 45, max: 70 }, ammonia: { min: 35, mode: 60, max: 90 }, mobility: { min: 5, mode: 20, max: 50 } },
+        compute: (v) => v.steel + v.refining + v.ammonia + v.mobility }}
+      tornadoModel={{ title: 'Tornado — H2 Demand Drivers', unit: ' Mt', fmt: (n) => `${n.toFixed(0)} Mt`,
+        inputs: { steel: 35, refining: 45, ammonia: 60, mobility: 20 },
+        compute: (v) => v.steel + v.refining + v.ammonia + v.mobility }}
+      scenarioImpact={(p) => 160 + 0.6 * Math.max(0, p - 40)} scenarioFmt={(v) => `${v.toFixed(0)} Mt`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Clean H2 demand (Mt)"
+      peers={{ cols: [{ k: 'exp', label: 'Exporter' }, { k: 'cap', label: 'Cap 2030 (GW)', fmt: (v) => `${v}` }, { k: 'lcoh', label: 'LCOH ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'policy', label: 'Policy' }, { k: 'risk', label: 'Geo risk' }],
+        rows: [{ exp: 'Australia',  cap: 45, lcoh: 2.20, policy: 'H2Headstart',     risk: 'Low' }, { exp: 'Chile',      cap: 25, lcoh: 1.80, policy: 'H2 Strategy',     risk: 'Med' }, { exp: 'Saudi Arabia', cap: 35, lcoh: 1.70, policy: 'NEOM',             risk: 'Med' }, { exp: 'Morocco',    cap: 12, lcoh: 2.10, policy: 'National H2 Plan', risk: 'Med' }, { exp: 'Canada',     cap: 10, lcoh: 2.50, policy: 'ITC 30%',          risk: 'Low' }, { exp: 'India',      cap: 25, lcoh: 2.80, policy: 'SIGHT',            risk: 'Med' }] }}
+      />
     </div>
   );
 }

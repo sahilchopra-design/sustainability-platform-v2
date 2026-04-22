@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ReferenceLine } from "recharts";
@@ -532,6 +533,18 @@ export default function VirtualPowerPlantPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DT3" title="Virtual Power Plant — MC Aggregator P&L, Tornado & NGFS Scenarios"
+        mcModel={{ title: 'MC VPP Aggregator EBITDA ($M) · 500 MW fleet', unit: 'M', fmt: (n) => n.toFixed(1),
+        vars: { fcrPrice: { min: 15, mode: 35, max: 65 }, arbSpread: { min: 40, mode: 85, max: 150 }, avail: { min: 0.82, mode: 0.91, max: 0.97 }, opexPct: { min: 0.08, mode: 0.12, max: 0.18 } },
+        compute: (v) => { const fcrRev = 500 * v.fcrPrice * 8760 * 0.2 / 1000 / 1e6; const arbRev = 500 * 2 * 300 * v.arbSpread * v.avail / 1e6 / 1000; const gross = (fcrRev + arbRev) * 10; return gross * (1 - v.opexPct); } }}
+      tornadoModel={{ title: 'Tornado — VPP EBITDA Drivers', unit: 'M', fmt: (n) => `$${n.toFixed(1)}M`,
+        inputs: { fcrPrice: 35, arbSpread: 85, avail: 0.91, opexPct: 0.12 },
+        compute: (v) => { const fcrRev = 500 * v.fcrPrice * 8760 * 0.2 / 1000 / 1e6; const arbRev = 500 * 2 * 300 * v.arbSpread * v.avail / 1e6 / 1000; const gross = (fcrRev + arbRev) * 10; return gross * (1 - v.opexPct); } }}
+      scenarioImpact={(p) => 45 + 0.3 * Math.max(0, p - 50)} scenarioFmt={(v) => `$${v.toFixed(0)}M`}
+      scenarioTitle="Carbon Price × NGFS Pathway — VPP EBITDA uplift ($M)"
+      peers={{ cols: [{ k: 'agg', label: 'Aggregator' }, { k: 'mw', label: 'MW under mgmt', fmt: (v) => `${v}` }, { k: 'mkts', label: 'Markets' }, { k: 'mgn', label: 'Gross margin', fmt: (v) => `${v}%` }, { k: 'ctry', label: 'Country' }],
+        rows: [{ agg: 'Next Kraftwerke',   mw: 11500, mkts: 'FCR/aFRR/mFRR/arb', mgn: 22, ctry: 'DE/EU' }, { agg: 'Sonnen Community',  mw: 450,   mkts: 'FCR/DSR',           mgn: 18, ctry: 'DE/US' }, { agg: 'Tesla Autobidder',  mw: 3500,  mkts: 'FCAS/arb',           mgn: 28, ctry: 'AU/US' }, { agg: 'Voltalis',          mw: 1600,  mkts: 'DSR/cap mkt',        mgn: 19, ctry: 'FR' }, { agg: 'Stem Athena',       mw: 1200,  mkts: 'C&I arb+DR',         mgn: 24, ctry: 'US' }, { agg: 'Octopus Kraken',    mw: 2200,  mkts: 'BM/FFR/arb',         mgn: 20, ctry: 'UK' }] }}
+      />
     </div>
   );
 }

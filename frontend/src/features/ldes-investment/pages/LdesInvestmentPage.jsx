@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ComposedChart,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -653,6 +654,18 @@ export default function LdesInvestmentPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DT6" title="LDES Investment — MC LCOS, Tornado & NGFS Seasonal Arbitrage Scenarios"
+        mcModel={{ title: 'MC LCOS Iron-Air ($/MWh discharge)', unit: '/MWh', fmt: (n) => `$${n.toFixed(0)}`,
+        vars: { capexKwh: { min: 20, mode: 35, max: 60 }, cycles: { min: 200, mode: 300, max: 400 }, rte: { min: 0.48, mode: 0.52, max: 0.58 }, lifeYrs: { min: 18, mode: 22, max: 30 } },
+        compute: (v) => { const capexAnn = (v.capexKwh * 0.08) / (1 - Math.pow(1.08, -v.lifeYrs)); const cost = capexAnn / (v.cycles * v.rte); return cost * 1000; } }}
+      tornadoModel={{ title: 'Tornado — LDES LCOS Drivers', unit: '/MWh', fmt: (n) => `$${n.toFixed(0)}`,
+        inputs: { capexKwh: 35, cycles: 300, rte: 0.52, lifeYrs: 22 },
+        compute: (v) => { const capexAnn = (v.capexKwh * 0.08) / (1 - Math.pow(1.08, -v.lifeYrs)); const cost = capexAnn / (v.cycles * v.rte); return cost * 1000; } }}
+      scenarioImpact={(p) => Math.max(40, 95 - 0.25 * Math.max(0, p - 40))} scenarioFmt={(v) => `$${v.toFixed(0)}/MWh`}
+      scenarioTitle="Carbon Price × NGFS Pathway — LCOS incl. seasonal arb value"
+      peers={{ cols: [{ k: 'tech', label: 'LDES tech' }, { k: 'dur', label: 'Duration (h)', fmt: (v) => `${v}` }, { k: 'rte', label: 'RTE (%)', fmt: (v) => `${v}%` }, { k: 'lcos', label: 'LCOS ($/MWh)', fmt: (v) => `$${v}` }, { k: 'trl', label: 'TRL' }],
+        rows: [{ tech: 'Iron-Air (Form Energy)',  dur: 100, rte: 52, lcos: 45,  trl: 7 }, { tech: 'VRFB (Invinity)',        dur: 12,  rte: 72, lcos: 110, trl: 9 }, { tech: 'Zn-Br (Redflow)',        dur: 10,  rte: 68, lcos: 115, trl: 8 }, { tech: 'LAES (Highview)',        dur: 24,  rte: 55, lcos: 95,  trl: 8 }, { tech: 'Gravity (Energy Vault)', dur: 12,  rte: 80, lcos: 105, trl: 7 }, { tech: 'Compressed CO2 (Energy Dome)', dur: 24, rte: 72, lcos: 95, trl: 7 }] }}
+      />
     </div>
   );
 }

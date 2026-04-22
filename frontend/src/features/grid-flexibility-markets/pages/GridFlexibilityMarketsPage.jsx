@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ComposedChart,
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -536,6 +537,18 @@ export default function GridFlexibilityMarketsPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DT4" title="Grid Flexibility Markets — MC Ancillary Revenue, Tornado & NGFS Scenarios"
+        mcModel={{ title: 'MC Ancillary Revenue ($k/MW-yr) · Merchant BESS', unit: 'k', fmt: (n) => n.toFixed(1),
+        vars: { fcrEur: { min: 8, mode: 20, max: 50 }, afrrEur: { min: 10, mode: 28, max: 65 }, cfFcr: { min: 0.15, mode: 0.28, max: 0.45 }, cfAfrr: { min: 0.10, mode: 0.20, max: 0.35 } },
+        compute: (v) => (v.fcrEur * 8760 * v.cfFcr + v.afrrEur * 8760 * v.cfAfrr) / 1000 }}
+      tornadoModel={{ title: 'Tornado — Ancillary Rev Drivers', unit: 'k', fmt: (n) => `$${n.toFixed(0)}k`,
+        inputs: { fcrEur: 20, afrrEur: 28, cfFcr: 0.28, cfAfrr: 0.20 },
+        compute: (v) => (v.fcrEur * 8760 * v.cfFcr + v.afrrEur * 8760 * v.cfAfrr) / 1000 }}
+      scenarioImpact={(p) => 85 + 0.4 * Math.max(0, p - 50)} scenarioFmt={(v) => `$${v.toFixed(0)}k`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Ancillary services $/MW-yr"
+      peers={{ cols: [{ k: 'mkt', label: 'TSO / Market' }, { k: 'fcr', label: 'FCR ($/MW-yr)', fmt: (v) => `$${(v/1000).toFixed(0)}k` }, { k: 'afrr', label: 'aFRR ($/MW-yr)', fmt: (v) => `$${(v/1000).toFixed(0)}k` }, { k: 'cap', label: 'Cap mkt' }, { k: 'ctry', label: 'Country' }],
+        rows: [{ mkt: 'PICASSO / MARI EU', fcr: 180000, afrr: 240000, cap: 'MS-level', ctry: 'EU' }, { mkt: 'ENTSO-E DE',      fcr: 160000, afrr: 220000, cap: 'Strategic R', ctry: 'DE' }, { mkt: 'National Grid ESO',fcr: 125000, afrr: 145000, cap: 'T-4/T-1',    ctry: 'UK' }, { mkt: 'EirGrid DS3',     fcr: 105000, afrr: 135000, cap: 'Capacity',   ctry: 'IE' }, { mkt: 'CAISO',           fcr: 70000,  afrr: 95000,  cap: 'RA market',  ctry: 'US-CA' }, { mkt: 'AEMO FCAS',       fcr: 180000, afrr: 260000, cap: 'RRO',        ctry: 'AU' }] }}
+      />
     </div>
   );
 }

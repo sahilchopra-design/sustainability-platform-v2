@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -646,6 +647,18 @@ export default function HydrogenProjectFinancePage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DS4" title="H2 Project Finance — MC IRR, Tornado & NGFS Offtake Scenarios"
+        mcModel={{ title: 'MC Levered IRR (%) · 200 MW Electrolyzer', unit: '%', fmt: (n) => n.toFixed(2),
+        vars: { offtake: { min: 3.0, mode: 5.5, max: 8.5 }, capexMw: { min: 1.0, mode: 1.6, max: 2.5 }, ppa: { min: 25, mode: 45, max: 80 }, debtPct: { min: 0.50, mode: 0.70, max: 0.80 } },
+        compute: (v) => { const ebitda = v.offtake * 28000 - (v.ppa / 1000) * 200 * 8760 * 0.55 - 24; return Math.max(-5, Math.min(28, (ebitda / (v.capexMw * 200) / (1 - v.debtPct)) * 15)); } }}
+      tornadoModel={{ title: 'Tornado — IRR Drivers', unit: '%', fmt: (n) => `${n.toFixed(1)}%`,
+        inputs: { offtake: 5.5, capexMw: 1.6, ppa: 45, debtPct: 0.70 },
+        compute: (v) => { const ebitda = v.offtake * 28000 - (v.ppa / 1000) * 200 * 8760 * 0.55 - 24; return Math.max(-5, Math.min(28, (ebitda / (v.capexMw * 200) / (1 - v.debtPct)) * 15)); } }}
+      scenarioImpact={(p) => Math.max(4, 8 + 0.02 * Math.max(0, p - 50))} scenarioFmt={(v) => `${v.toFixed(1)}%`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Project IRR (%)"
+      peers={{ cols: [{ k: 'proj', label: 'Project' }, { k: 'mw', label: 'MW', fmt: (v) => `${v}` }, { k: 'capex', label: 'Capex ($M)', fmt: (v) => `$${v}` }, { k: 'off', label: 'Offtake ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'irr', label: 'IRR', fmt: (v) => `${v.toFixed(1)}%` }],
+        rows: [{ proj: 'NEOM (Air Products)', mw: 2200, capex: 8400, off: 6.8, irr: 11.5 }, { proj: 'HyDeal España', mw: 7500, capex: 15000, off: 4.5, irr: 9.8 }, { proj: 'Asian Renewable Hub', mw: 14000, capex: 28000, off: 4.2, irr: 10.2 }, { proj: 'H2 Magallanes', mw: 8000, capex: 16500, off: 4.8, irr: 10.8 }, { proj: 'Hyport Duqm', mw: 1300, capex: 2800, off: 5.5, irr: 11.0 }, { proj: 'Salzgitter SALCOS', mw: 500, capex: 1100, off: 6.0, irr: 9.5 }] }}
+      />
     </div>
   );
 }

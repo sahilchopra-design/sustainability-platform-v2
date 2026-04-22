@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -731,6 +732,18 @@ export default function GreenHydrogenLcohPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DS1" title="Green H2 LCOH — MC, Stack Tornado & NGFS Hydrogen Price Scenarios"
+        mcModel={{ title: 'MC LCOH ($/kg H2)', unit: '/kg', fmt: (n) => `$${n.toFixed(2)}`,
+        vars: { capex: { min: 550, mode: 900, max: 1500 }, elec: { min: 22, mode: 45, max: 85 }, cf: { min: 0.35, mode: 0.55, max: 0.80 }, eff: { min: 48, mode: 55, max: 65 } },
+        compute: (v) => { const kwhPerKg = 50 / (v.eff / 55); const elecCost = (v.elec / 1000) * kwhPerKg; const annuity = v.capex * 0.085 / (v.cf * 8760) * kwhPerKg; return elecCost + annuity + 0.3; } }}
+      tornadoModel={{ title: 'Tornado — LCOH Drivers', unit: '/kg', fmt: (n) => `$${n.toFixed(2)}`,
+        inputs: { capex: 900, elec: 45, cf: 0.55, eff: 55 },
+        compute: (v) => { const kwhPerKg = 50 / (v.eff / 55); const elecCost = (v.elec / 1000) * kwhPerKg; const annuity = v.capex * 0.085 / (v.cf * 8760) * kwhPerKg; return elecCost + annuity + 0.3; } }}
+      scenarioImpact={(p) => Math.max(1.5, 4.0 - 0.01 * Math.max(0, p - 30))} scenarioFmt={(v) => `$${v.toFixed(2)}/kg`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Required H2 offtake price ($/kg)"
+      peers={{ cols: [{ k: 'tech', label: 'Electrolyzer' }, { k: 'capex', label: 'Capex ($/kW)', fmt: (v) => `$${v}` }, { k: 'eff', label: 'Eff (%LHV)', fmt: (v) => `${v}%` }, { k: 'life', label: 'Stack life (h)', fmt: (v) => `${(v/1000).toFixed(0)}k` }, { k: 'tier', label: 'IRA §45V' }],
+        rows: [{ tech: 'Alkaline (AEL)', capex: 750, eff: 66, life: 90000, tier: 'T3-T4' }, { tech: 'PEM', capex: 1100, eff: 60, life: 80000, tier: 'T3-T4' }, { tech: 'SOEC', capex: 2200, eff: 78, life: 40000, tier: 'T4' }, { tech: 'AEM', capex: 900, eff: 63, life: 30000, tier: 'T3' }, { tech: 'Chlor-Alkali byprod', capex: 400, eff: 55, life: 60000, tier: 'T2' }, { tech: 'Nafion-PEM LowPGM', capex: 850, eff: 62, life: 85000, tier: 'T3-T4' }] }}
+      />
     </div>
   );
 }

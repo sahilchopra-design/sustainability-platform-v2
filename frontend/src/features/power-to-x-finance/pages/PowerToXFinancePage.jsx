@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -706,6 +707,18 @@ export default function PowerToXFinancePage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DS3" title="Power-to-X Finance — MC LCOP, Tornado & NGFS Scenario Suite"
+        mcModel={{ title: 'MC LCOP e-Methanol ($/t)', unit: '/t', fmt: (n) => `$${n.toFixed(0)}`,
+        vars: { h2Cost: { min: 2.0, mode: 3.5, max: 6.0 }, co2Cost: { min: 50, mode: 110, max: 250 }, capexPct: { min: 0.06, mode: 0.09, max: 0.13 }, opexPct: { min: 0.02, mode: 0.04, max: 0.07 } },
+        compute: (v) => (v.h2Cost * 190) + (v.co2Cost * 1.4) + (800 * v.capexPct) + (800 * v.opexPct) }}
+      tornadoModel={{ title: 'Tornado — e-Methanol LCOP', unit: '/t', fmt: (n) => `$${n.toFixed(0)}`,
+        inputs: { h2Cost: 3.5, co2Cost: 110, capexPct: 0.09, opexPct: 0.04 },
+        compute: (v) => (v.h2Cost * 190) + (v.co2Cost * 1.4) + (800 * v.capexPct) + (800 * v.opexPct) }}
+      scenarioImpact={(p) => Math.max(400, 1100 - 2.5 * Math.max(0, p - 40))} scenarioFmt={(v) => `$${v.toFixed(0)}/t`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Break-even e-Methanol ($/t)"
+      peers={{ cols: [{ k: 'prod', label: 'Product' }, { k: 'lcop', label: 'LCOP ($/t)', fmt: (v) => `$${v}` }, { k: 'h2', label: 'H2 input (t/t)', fmt: (v) => `${v}` }, { k: 'co2', label: 'CO2 input (t/t)', fmt: (v) => `${v.toFixed(1)}` }, { k: 'eff', label: 'Carbon eff (%)', fmt: (v) => `${v}%` }],
+        rows: [{ prod: 'e-Methanol',      lcop: 1050, h2: 0.19, co2: 1.4, eff: 86 }, { prod: 'e-Ammonia',       lcop: 950, h2: 0.18, co2: 0.0, eff: 92 }, { prod: 'e-SAF (FT)',      lcop: 2200, h2: 0.32, co2: 3.2, eff: 55 }, { prod: 'e-Diesel (FT)',   lcop: 1900, h2: 0.28, co2: 3.0, eff: 58 }, { prod: 'e-SNG',           lcop: 780, h2: 0.52, co2: 2.7, eff: 78 }, { prod: 'e-Naphtha',       lcop: 1650, h2: 0.30, co2: 3.0, eff: 57 }] }}
+      />
     </div>
   );
 }

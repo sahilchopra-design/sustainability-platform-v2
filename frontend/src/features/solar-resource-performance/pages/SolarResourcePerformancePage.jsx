@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -1402,6 +1403,18 @@ export default function SolarResourcePerformancePage() {
           </div>
         </div>
       </div>
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-RE2" title="Solar Resource & Performance — MC Yield, Tornado & NGFS Derate Suite"
+        mcModel={{ title: 'MC Annual Yield (GWh) · 100 MWac Plant', unit: ' GWh', fmt: (n) => n.toFixed(1),
+        vars: { ghi: { min: 1600, mode: 1950, max: 2300 }, pr: { min: 0.74, mode: 0.80, max: 0.85 }, soiling: { min: 0.005, mode: 0.015, max: 0.035 }, degrad: { min: 0.004, mode: 0.006, max: 0.010 } },
+        compute: (v) => (v.ghi * 100 * v.pr * (1 - v.soiling) * (1 - v.degrad * 5)) / 1000 }}
+      tornadoModel={{ title: 'Tornado — Yield Drivers', unit: ' GWh', fmt: (n) => `${n.toFixed(0)} GWh`,
+        inputs: { ghi: 1950, pr: 0.80, soiling: 0.015, degrad: 0.006 },
+        compute: (v) => (v.ghi * 100 * v.pr * (1 - v.soiling) * (1 - v.degrad * 5)) / 1000 }}
+      scenarioImpact={(p) => 156 * (1 - 0.0002 * Math.max(0, p - 50))} scenarioFmt={(v) => `${v.toFixed(0)} GWh`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Yield under heat stress (GWh)"
+      peers={{ cols: [{ k: 'site', label: 'Region/Site' }, { k: 'ghi', label: 'GHI (kWh/m²/yr)' }, { k: 'pr', label: 'PR (%)', fmt: (v) => `${(v*100).toFixed(1)}%` }, { k: 'soil', label: 'Soiling (%)', fmt: (v) => `${(v*100).toFixed(1)}%` }, { k: 'deg', label: 'Degrad (%/yr)', fmt: (v) => `${(v*100).toFixed(2)}%` }],
+        rows: [{ site: 'Rajasthan IN', ghi: 2150, pr: 0.79, soil: 0.028, deg: 0.006 }, { site: 'Atacama CL', ghi: 2550, pr: 0.82, soil: 0.018, deg: 0.004 }, { site: 'NV / SW US', ghi: 2100, pr: 0.83, soil: 0.012, deg: 0.005 }, { site: 'Andalusia ES', ghi: 1850, pr: 0.81, soil: 0.010, deg: 0.005 }, { site: 'Queensland AU', ghi: 1980, pr: 0.80, soil: 0.015, deg: 0.006 }, { site: 'Riyadh SA', ghi: 2250, pr: 0.77, soil: 0.040, deg: 0.007 }] }}
+      />
     </div>
   );
 }

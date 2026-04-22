@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -804,6 +805,18 @@ export default function HydrogenStorageTransportPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DS2" title="H2 Storage & Transport — MC Delivered Cost, Tornado & NGFS Scenarios"
+        mcModel={{ title: 'MC Delivered H2 Cost ($/kg)', unit: '/kg', fmt: (n) => `$${n.toFixed(2)}`,
+        vars: { liquefyUsd: { min: 0.8, mode: 1.3, max: 2.0 }, shipKm: { min: 3000, mode: 9000, max: 15000 }, regasUsd: { min: 0.4, mode: 0.9, max: 1.6 }, boilOff: { min: 0.003, mode: 0.006, max: 0.012 } },
+        compute: (v) => v.liquefyUsd + 0.00015 * v.shipKm + v.regasUsd + (v.shipKm / 500) * v.boilOff * 1.5 }}
+      tornadoModel={{ title: 'Tornado — Delivered H2 Cost', unit: '/kg', fmt: (n) => `$${n.toFixed(2)}`,
+        inputs: { liquefyUsd: 1.3, shipKm: 9000, regasUsd: 0.9, boilOff: 0.006 },
+        compute: (v) => v.liquefyUsd + 0.00015 * v.shipKm + v.regasUsd + (v.shipKm / 500) * v.boilOff * 1.5 }}
+      scenarioImpact={(p) => 3.2 - 0.008 * Math.max(0, p - 40)} scenarioFmt={(v) => `$${v.toFixed(2)}/kg`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Break-even delivered H2 price"
+      peers={{ cols: [{ k: 'route', label: 'Route' }, { k: 'cgh2', label: 'CGH2 ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'lh2', label: 'LH2 ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'lohc', label: 'LOHC ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'nh3', label: 'NH3 ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }],
+        rows: [{ route: 'Rotterdam → Hamburg (300 km)', cgh2: 0.80, lh2: 2.40, lohc: 1.90, nh3: 1.60 }, { route: 'AU → JP (8,000 km)', cgh2: 4.20, lh2: 2.80, lohc: 2.60, nh3: 2.10 }, { route: 'Saudi → EU (6,500 km)', cgh2: 3.60, lh2: 2.60, lohc: 2.40, nh3: 1.90 }, { route: 'Chile → Japan (17,000 km)', cgh2: 6.10, lh2: 3.40, lohc: 3.10, nh3: 2.40 }, { route: 'Morocco → EU (3,500 km)', cgh2: 2.80, lh2: 2.40, lohc: 2.20, nh3: 1.70 }, { route: 'India → Singapore (5,000 km)', cgh2: 3.20, lh2: 2.50, lohc: 2.30, nh3: 1.80 }] }}
+      />
     </div>
   );
 }

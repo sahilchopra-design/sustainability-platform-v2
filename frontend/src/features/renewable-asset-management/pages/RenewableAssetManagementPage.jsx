@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 
 const T = { bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0', navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280', green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f', teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c', surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace' };
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
@@ -451,6 +452,18 @@ export default function RenewableAssetManagementPage() {
           </div>
         )}
       </div>
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-RE3" title="Renewable Asset Management — MC Availability, Tornado & NGFS Scenarios"
+        mcModel={{ title: 'MC Fleet Availability (%)', unit: '%', fmt: (n) => n.toFixed(2),
+        vars: { mtbf: { min: 1800, mode: 3500, max: 5500 }, mttr: { min: 6, mode: 18, max: 48 }, spareLeadDays: { min: 14, mode: 45, max: 120 }, weatherDown: { min: 0.01, mode: 0.03, max: 0.07 } },
+        compute: (v) => { const base = v.mtbf / (v.mtbf + v.mttr); return Math.max(70, 100 * base * (1 - v.weatherDown) * (1 - v.spareLeadDays / 3650)); } }}
+      tornadoModel={{ title: 'Tornado — Availability Drivers', unit: '%', fmt: (n) => `${n.toFixed(1)}%`,
+        inputs: { mtbf: 3500, mttr: 18, spareLeadDays: 45, weatherDown: 0.03 },
+        compute: (v) => { const base = v.mtbf / (v.mtbf + v.mttr); return Math.max(70, 100 * base * (1 - v.weatherDown) * (1 - v.spareLeadDays / 3650)); } }}
+      scenarioImpact={(p) => 97 - 0.002 * Math.max(0, p - 80)} scenarioFmt={(v) => `${v.toFixed(2)}%`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Availability under extreme-weather load"
+      peers={{ cols: [{ k: 'op', label: 'O&M Operator' }, { k: 'fleet', label: 'Fleet GW', fmt: (v) => `${v.toFixed(1)}` }, { k: 'avail', label: 'Avail (%)', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'om', label: 'O&M ($/MWh)', fmt: (v) => `$${v.toFixed(1)}` }, { k: 'cmms', label: 'CMMS' }],
+        rows: [{ op: 'Vestas Service', fleet: 112, avail: 97.2, om: 8.1, cmms: 'VestasOnline' }, { op: 'Siemens Gamesa', fleet: 95, avail: 97.0, om: 8.4, cmms: 'SGRE Diagnostic' }, { op: 'GE Renewables', fleet: 88, avail: 96.5, om: 8.8, cmms: 'GE Predix' }, { op: 'Nordex Group', fleet: 41, avail: 96.8, om: 8.6, cmms: 'NORDEX Connect' }, { op: 'ISS A/S', fleet: 22, avail: 96.2, om: 9.2, cmms: 'IBM Maximo' }, { op: 'SKF Bearings Ops', fleet: 18, avail: 97.5, om: 7.8, cmms: 'SKF Enlight' }] }}
+      />
     </div>
   );
 }

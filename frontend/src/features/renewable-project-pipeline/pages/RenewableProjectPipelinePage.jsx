@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 
 const T = { bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0', navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280', green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f', teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c', surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace' };
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
@@ -429,6 +430,18 @@ export default function RenewableProjectPipelinePage() {
           </div>
         )}
       </div>
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-RE4" title="Renewable Project Pipeline — MC Risk-Adjusted MW, Tornado & NGFS Scenarios"
+        mcModel={{ title: 'MC Probability-Weighted Pipeline (MW)', unit: ' MW', fmt: (n) => n.toFixed(0),
+        vars: { mwGross: { min: 8000, mode: 12000, max: 16000 }, pInterconnect: { min: 0.35, mode: 0.55, max: 0.75 }, pPermit: { min: 0.55, mode: 0.75, max: 0.90 }, pFinance: { min: 0.50, mode: 0.70, max: 0.88 } },
+        compute: (v) => v.mwGross * v.pInterconnect * v.pPermit * v.pFinance }}
+      tornadoModel={{ title: 'Tornado — Pipeline Conversion Drivers', unit: ' MW', fmt: (n) => `${n.toFixed(0)} MW`,
+        inputs: { mwGross: 12000, pInterconnect: 0.55, pPermit: 0.75, pFinance: 0.70 },
+        compute: (v) => v.mwGross * v.pInterconnect * v.pPermit * v.pFinance }}
+      scenarioImpact={(p) => 12000 * (0.30 + 0.003 * Math.max(0, p - 30))} scenarioFmt={(v) => `${(v/1000).toFixed(1)} GW`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Risk-weighted pipeline (GW)"
+      peers={{ cols: [{ k: 'dev', label: 'Developer' }, { k: 'pipe', label: 'Pipeline GW', fmt: (v) => `${v.toFixed(1)}` }, { k: 'conv', label: 'Conv rate', fmt: (v) => `${(v*100).toFixed(0)}%` }, { k: 'gic', label: 'GIC hit', fmt: (v) => `${v}%` }, { k: 'ncc', label: 'Net cap' }],
+        rows: [{ dev: 'NextEra', pipe: 24, conv: 0.45, gic: 32, ncc: '10.8 GW' }, { dev: 'AES Clean', pipe: 15, conv: 0.40, gic: 30, ncc: '6.0 GW' }, { dev: 'EDF Renewables', pipe: 18, conv: 0.38, gic: 28, ncc: '6.8 GW' }, { dev: 'Invenergy', pipe: 22, conv: 0.42, gic: 31, ncc: '9.2 GW' }, { dev: 'Clearway', pipe: 12, conv: 0.41, gic: 29, ncc: '4.9 GW' }, { dev: 'sPower', pipe: 8, conv: 0.44, gic: 33, ncc: '3.5 GW' }] }}
+      />
     </div>
   );
 }

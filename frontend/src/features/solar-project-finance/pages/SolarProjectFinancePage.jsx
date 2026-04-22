@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -2512,6 +2513,19 @@ export default function SolarProjectFinancePage() {
         <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:'#64748B' }}>ITC {m.itcTotal}% = ${(m.itcAmount||0).toFixed(1)}M</span>
         <span style={{ fontFamily:'JetBrains Mono, monospace', fontSize:10, color:SOLAR_GOLD, marginLeft:'auto' }}>LIVE — ALL VALUES REAL-TIME</span>
       </div>
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-RE1" title="Solar Project Finance — MC IRR, Tornado & NGFS PPA Scenario"
+        mcModel={{ title: 'MC Levered IRR (%) · 100 MW Solar PV', unit: '%', fmt: (n) => n.toFixed(2),
+        vars: { capexMwUsd: { min: 0.55, mode: 0.70, max: 0.95 }, tariffUsdKwh: { min: 0.028, mode: 0.042, max: 0.065 },
+                plf: { min: 0.18, mode: 0.22, max: 0.26 }, opexPctCapex: { min: 0.008, mode: 0.014, max: 0.022 } },
+        compute: (v) => { const rev = v.tariffUsdKwh * 100 * 1000 * v.plf * 8760; const opex = v.capexMwUsd * 100 * 1e6 * v.opexPctCapex; const ebitda = rev - opex; const capex = v.capexMwUsd * 100 * 1e6; return Math.max(-5, Math.min(35, (ebitda / capex) * 100)); } }}
+      tornadoModel={{ title: 'Tornado — Levered IRR Drivers', unit: '%', fmt: (n) => `${n.toFixed(1)}%`,
+        inputs: { capex: 0.70, tariff: 0.042, plf: 0.22, opex: 0.014 },
+        compute: (v) => { const rev = v.tariff * 100 * 1000 * v.plf * 8760; const opex = v.capex * 100 * 1e6 * v.opex; return Math.max(-5, ((rev - opex) / (v.capex * 100 * 1e6)) * 100); } }}
+      scenarioImpact={(p) => Math.max(0, 14 + (p - 85) * 0.04)} scenarioFmt={(v) => `${v.toFixed(1)}%`}
+      scenarioTitle="Carbon Price × NGFS Pathway — PPA uplift → IRR (%)"
+      peers={{ cols: [{ k: 'name', label: 'Developer' }, { k: 'gw', label: 'GW deployed', fmt: (v) => `${v.toFixed(1)}` }, { k: 'plf', label: 'PLF (%)', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'lcoe', label: 'LCOE (¢/kWh)', fmt: (v) => `${v.toFixed(1)}` }, { k: 'irr', label: 'Levered IRR', fmt: (v) => `${v.toFixed(1)}%` }],
+        rows: [{ name: 'NextEra Energy', gw: 35.0, plf: 24.5, lcoe: 3.1, irr: 13.5 }, { name: 'Iberdrola', gw: 18.0, plf: 21.8, lcoe: 3.6, irr: 12.2 }, { name: 'Enel Green Power', gw: 14.5, plf: 22.4, lcoe: 3.5, irr: 12.8 }, { name: 'Brookfield Renewable', gw: 11.0, plf: 21.0, lcoe: 3.8, irr: 11.5 }, { name: 'EDP Renováveis', gw: 13.2, plf: 21.5, lcoe: 3.7, irr: 11.8 }, { name: 'Ørsted Onshore', gw: 4.8, plf: 24.0, lcoe: 3.3, irr: 13.0 }] }}
+      />
     </div>
   );
 }

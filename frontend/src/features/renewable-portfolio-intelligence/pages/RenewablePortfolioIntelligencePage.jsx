@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   LineChart, Line, BarChart, Bar, AreaChart, Area, ScatterChart, Scatter,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PieChart, Pie, Cell,
@@ -1109,6 +1110,18 @@ export default function RenewablePortfolioIntelligencePage() {
           {renderTab()}
         </div>
       </div>
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-RE5" title="Renewable Portfolio Intelligence — MC Portfolio Cashflow, Tornado & NGFS Suite"
+        mcModel={{ title: 'MC Portfolio EBITDA ($M) · 2.5 GW mixed-tech', unit: 'M', fmt: (n) => n.toFixed(0),
+        vars: { solarTariff: { min: 0.030, mode: 0.045, max: 0.065 }, windTariff: { min: 0.035, mode: 0.050, max: 0.070 }, plfBlended: { min: 0.23, mode: 0.28, max: 0.33 }, merchantMix: { min: 0.10, mode: 0.25, max: 0.50 } },
+        compute: (v) => { const gwh = 2500 * v.plfBlended * 8760 / 1000; const blended = v.solarTariff * 0.6 + v.windTariff * 0.4; const rev = gwh * 1000 * blended * (1 - v.merchantMix * 0.15); return (rev * 0.72) / 1e6; } }}
+      tornadoModel={{ title: 'Tornado — Portfolio EBITDA Drivers', unit: 'M', fmt: (n) => `$${n.toFixed(0)}M`,
+        inputs: { solarTariff: 0.045, windTariff: 0.050, plfBlended: 0.28, merchantMix: 0.25 },
+        compute: (v) => { const gwh = 2500 * v.plfBlended * 8760 / 1000; const blended = v.solarTariff * 0.6 + v.windTariff * 0.4; const rev = gwh * 1000 * blended * (1 - v.merchantMix * 0.15); return (rev * 0.72) / 1e6; } }}
+      scenarioImpact={(p) => 420 + 0.9 * Math.max(0, p - 40)} scenarioFmt={(v) => `$${v.toFixed(0)}M`}
+      scenarioTitle="Carbon Price × NGFS Pathway — PPA repricing uplift ($M EBITDA)"
+      peers={{ cols: [{ k: 'op', label: 'Operator' }, { k: 'mix', label: 'Tech mix' }, { k: 'gw', label: 'GW', fmt: (v) => `${v.toFixed(1)}` }, { k: 'ebitda', label: 'EBITDA ($M)', fmt: (v) => `$${v}` }, { k: 'mul', label: 'EV/EBITDA', fmt: (v) => `${v.toFixed(1)}x` }],
+        rows: [{ op: 'Brookfield RE', mix: 'Hydro+Wind+Solar', gw: 33, ebitda: 2350, mul: 11.2 }, { op: 'Enel Green Power', mix: 'Solar+Wind+Geo', gw: 62, ebitda: 4180, mul: 10.1 }, { op: 'Iberdrola', mix: 'Wind+Solar+Hydro', gw: 42, ebitda: 3620, mul: 10.8 }, { op: 'EDF Renewables', mix: 'Solar+Wind', gw: 14, ebitda: 1100, mul: 10.4 }, { op: 'NextEra Resources', mix: 'Wind+Solar+Stor', gw: 35, ebitda: 3900, mul: 13.0 }, { op: 'RWE Renewables', mix: 'Offshore+Solar', gw: 12, ebitda: 980, mul: 9.8 }] }}
+      />
     </div>
   );
 }

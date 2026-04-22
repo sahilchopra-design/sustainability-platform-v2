@@ -213,6 +213,8 @@ export default function IndiaAdvancedAnalytics({
   scenarioImpact, scenarioFmt = (n) => n.toFixed(1), scenarioTitle = 'Scenario × Horizon — EBITDA / Margin impact (%)',
   checklist = IN_S2_CHECKLIST, defaultCovered = ['gov1', 'str1', 'met1', 'met2'],
   peers, brsrDefault = ['brsr1', 'brsr4', 'brsr5', 'brsr6'],
+  frameworkBLabel = 'SEBI BRSR CORE COVERAGE', frameworkBRingLabel = 'BRSR',
+  frameworkB = BRSR_CORE, scenarioPathsLabel = 'NGFS × IEA × domestic paths',
 }) {
   const [mcN, setMcN] = useState(1000);
   const [reseed, setReseed] = useState(0);
@@ -246,7 +248,7 @@ export default function IndiaAdvancedAnalytics({
   }, [heatRows, scenarioImpact]);
 
   const s2Pct = (covered.size / checklist.length) * 100;
-  const brsrPct = (brsrCov.size / BRSR_CORE.length) * 100;
+  const brsrPct = (brsrCov.size / frameworkB.length) * 100;
   const toggle = (set, setter, id) => { const n = new Set(set); n.has(id) ? n.delete(id) : n.add(id); setter(n); };
 
   return (
@@ -288,7 +290,7 @@ export default function IndiaAdvancedAnalytics({
         <div style={{ marginBottom: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textMut }}>{scenarioTitle}</div>
-            <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>NGFS × IEA × domestic paths</div>
+            <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>{scenarioPathsLabel}</div>
           </div>
           <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14 }}>
             <Heatmap data={heatData} rows={heatRows} cols={heatCols} fmt={scenarioFmt} T={T} />
@@ -319,12 +321,12 @@ export default function IndiaAdvancedAnalytics({
           </div>
         </div>
         <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14 }}>
-          <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, marginBottom: 10 }}>SEBI BRSR CORE COVERAGE</div>
+          <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, marginBottom: 10 }}>{frameworkBLabel}</div>
           <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-            <ProgressRing pct={brsrPct} size={84} label="BRSR" T={T} />
+            <ProgressRing pct={brsrPct} size={84} label={frameworkBRingLabel} T={T} />
             <div style={{ flex: 1 }}>
               <table style={{ width: '100%', fontSize: 10, borderCollapse: 'collapse' }}>
-                <tbody>{BRSR_CORE.map(b => (
+                <tbody>{frameworkB.map(b => (
                   <tr key={b.id} style={{ borderTop: `1px solid ${T.borderL}` }}>
                     <td style={{ padding: 3, width: 24 }}><input type="checkbox" checked={brsrCov.has(b.id)} onChange={() => toggle(brsrCov, setBrsrCov, b.id)} /></td>
                     <td style={{ padding: 3, color: T.text }}>{b.item}</td>

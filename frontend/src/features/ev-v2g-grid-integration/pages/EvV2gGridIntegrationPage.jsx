@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ComposedChart,
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ReferenceLine } from "recharts";
@@ -570,6 +571,18 @@ export default function EvV2gGridIntegrationPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DT5" title="EV V2G Grid Integration — MC Driver Revenue, Tornado & NGFS Scenarios"
+        mcModel={{ title: 'MC V2G Driver Revenue ($/yr)', unit: '/yr', fmt: (n) => `$${n.toFixed(0)}`,
+        vars: { availHrs: { min: 1500, mode: 3500, max: 5500 }, v2gPrice: { min: 0.05, mode: 0.12, max: 0.25 }, batKwh: { min: 55, mode: 77, max: 120 }, degradCost: { min: 0.02, mode: 0.04, max: 0.08 } },
+        compute: (v) => Math.max(0, (v.availHrs * v.v2gPrice * 6 - v.availHrs * v.batKwh * v.degradCost * 0.5)) }}
+      tornadoModel={{ title: 'Tornado — V2G Revenue Drivers', unit: '/yr', fmt: (n) => `$${n.toFixed(0)}`,
+        inputs: { availHrs: 3500, v2gPrice: 0.12, batKwh: 77, degradCost: 0.04 },
+        compute: (v) => Math.max(0, (v.availHrs * v.v2gPrice * 6 - v.availHrs * v.batKwh * v.degradCost * 0.5)) }}
+      scenarioImpact={(p) => 1800 + 5 * Math.max(0, p - 40)} scenarioFmt={(v) => `$${v.toFixed(0)}`}
+      scenarioTitle="Carbon Price × NGFS Pathway — V2G arbitrage revenue per vehicle ($/yr)"
+      peers={{ cols: [{ k: 'plat', label: 'V2G platform' }, { k: 'fleet', label: 'EVs', fmt: (v) => `${v.toLocaleString()}` }, { k: 'std', label: 'Std' }, { k: 'rev', label: 'Rev ($/yr)', fmt: (v) => `$${v}` }, { k: 'reg', label: 'Region' }],
+        rows: [{ plat: 'Nuvve',            fleet: 5200,  std: 'ISO15118-20', rev: 1400, reg: 'US/EU' }, { plat: 'Fermata Energy',   fleet: 1800,  std: 'CHAdeMO',     rev: 1600, reg: 'US' }, { plat: 'dcbel',            fleet: 3500,  std: 'ISO15118-2',  rev: 1100, reg: 'NA' }, { plat: 'The Mobility House',fleet: 14500, std: 'ISO15118-20', rev: 1900, reg: 'EU' }, { plat: 'Wallbox Quasar',   fleet: 6800,  std: 'ISO15118-2',  rev: 1300, reg: 'EU' }, { plat: 'Octopus Powerloop',fleet: 1200,  std: 'ISO15118-2',  rev: 1800, reg: 'UK' }] }}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ComposedChart,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
@@ -703,6 +704,18 @@ export default function BatteryTechSupplyChainPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DT2" title="Battery Tech & Supply Chain — MC Cell Cost, Tornado & NGFS Mineral Scenarios"
+        mcModel={{ title: 'MC NMC Cell Cost ($/kWh)', unit: '/kWh', fmt: (n) => `$${n.toFixed(1)}`,
+        vars: { liCarb: { min: 12000, mode: 22000, max: 45000 }, ni: { min: 14000, mode: 22000, max: 34000 }, co: { min: 22000, mode: 35000, max: 60000 }, ggLearn: { min: 0.16, mode: 0.20, max: 0.24 } },
+        compute: (v) => { const base = 75; const mat = (v.liCarb / 22000) * 15 + (v.ni / 22000) * 12 + (v.co / 35000) * 8; const learn = base * Math.pow(0.9, v.ggLearn * 10); return Math.max(55, learn + mat - 25); } }}
+      tornadoModel={{ title: 'Tornado — NMC Cell Cost Drivers', unit: '/kWh', fmt: (n) => `$${n.toFixed(1)}`,
+        inputs: { liCarb: 22000, ni: 22000, co: 35000, ggLearn: 0.20 },
+        compute: (v) => { const base = 75; const mat = (v.liCarb / 22000) * 15 + (v.ni / 22000) * 12 + (v.co / 35000) * 8; const learn = base * Math.pow(0.9, v.ggLearn * 10); return Math.max(55, learn + mat - 25); } }}
+      scenarioImpact={(p) => Math.max(55, 95 - 0.15 * Math.max(0, p - 40))} scenarioFmt={(v) => `$${v.toFixed(0)}/kWh`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Cell cost through scale-up ($/kWh)"
+      peers={{ cols: [{ k: 'mfr', label: 'Cell maker' }, { k: 'gwh', label: 'GWh cap', fmt: (v) => `${v}` }, { k: 'chem', label: 'Dominant chemistry' }, { k: 'cost', label: 'Cost ($/kWh)', fmt: (v) => `$${v}` }, { k: 'region', label: 'Region' }],
+        rows: [{ mfr: 'CATL',        gwh: 650, chem: 'LFP / NMC',  cost: 68,  region: 'CN' }, { mfr: 'BYD',         gwh: 285, chem: 'LFP (Blade)', cost: 72,  region: 'CN' }, { mfr: 'LG Energy',   gwh: 345, chem: 'NMC / NCM9',  cost: 82,  region: 'KR/US' }, { mfr: 'Samsung SDI', gwh: 190, chem: 'NCA / NMC',   cost: 86,  region: 'KR/HU' }, { mfr: 'Panasonic',   gwh: 175, chem: 'NCA',          cost: 88,  region: 'JP/US' }, { mfr: 'Northvolt',   gwh: 85,  chem: 'NMC 811',      cost: 98,  region: 'EU' }] }}
+      />
     </div>
   );
 }

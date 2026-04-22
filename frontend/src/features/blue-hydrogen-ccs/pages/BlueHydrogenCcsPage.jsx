@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -594,6 +595,18 @@ export default function BlueHydrogenCcsPage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DS5" title="Blue H2 + CCS — MC LCOH, Tornado & NGFS Carbon Price Scenarios"
+        mcModel={{ title: 'MC Blue H2 LCOH ($/kg)', unit: '/kg', fmt: (n) => `$${n.toFixed(2)}`,
+        vars: { gas: { min: 3.0, mode: 6.5, max: 12.0 }, captureRate: { min: 0.85, mode: 0.95, max: 0.99 }, ccsCost: { min: 35, mode: 60, max: 95 }, methSlip: { min: 0.005, mode: 0.015, max: 0.035 } },
+        compute: (v) => { const gasCost = v.gas * 0.185; const co2Gross = 9.3; const co2Captured = co2Gross * v.captureRate; const ccs = (co2Captured * v.ccsCost) / 1000; const slipGwp100 = v.methSlip * 30 * 0.005; return gasCost + ccs + 0.5 + slipGwp100; } }}
+      tornadoModel={{ title: 'Tornado — Blue LCOH Drivers', unit: '/kg', fmt: (n) => `$${n.toFixed(2)}`,
+        inputs: { gas: 6.5, captureRate: 0.95, ccsCost: 60, methSlip: 0.015 },
+        compute: (v) => { const gasCost = v.gas * 0.185; const co2Gross = 9.3; const co2Captured = co2Gross * v.captureRate; const ccs = (co2Captured * v.ccsCost) / 1000; const slipGwp100 = v.methSlip * 30 * 0.005; return gasCost + ccs + 0.5 + slipGwp100; } }}
+      scenarioImpact={(p) => 1.8 + 0.003 * Math.max(0, p - 30)} scenarioFmt={(v) => `$${v.toFixed(2)}/kg`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Blue H2 LCOH including uncaptured CO2 cost"
+      peers={{ cols: [{ k: 'route', label: 'Route' }, { k: 'eff', label: 'Eff (%)', fmt: (v) => `${v}%` }, { k: 'cap', label: 'Capture (%)', fmt: (v) => `${v}%` }, { k: 'lcoh', label: 'LCOH ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'int', label: 'Intensity (kgCO2/kgH2)', fmt: (v) => `${v.toFixed(1)}` }],
+        rows: [{ route: 'SMR + CCS',     eff: 72, cap: 90, lcoh: 2.10, int: 1.0 }, { route: 'ATR + CCS',     eff: 78, cap: 95, lcoh: 1.95, int: 0.6 }, { route: 'POX + CCS',     eff: 71, cap: 92, lcoh: 2.20, int: 0.8 }, { route: 'SMR (no CCS)',  eff: 72, cap: 0,  lcoh: 1.60, int: 9.3 }, { route: 'Methane pyrolysis', eff: 58, cap: 0, lcoh: 2.80, int: 0.1 }, { route: 'Blue NH3 → H2',  eff: 68, cap: 90, lcoh: 2.50, int: 1.2 }] }}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -660,6 +661,18 @@ export default function BessProjectFinancePage() {
           </div>
         </div>
       )}
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-DT1" title="BESS Project Finance — MC IRR, Stack Tornado & NGFS Ancillary Price Scenarios"
+        mcModel={{ title: 'MC Levered IRR (%) · 200 MW / 4h BESS', unit: '%', fmt: (n) => n.toFixed(2),
+        vars: { capexKwh: { min: 220, mode: 300, max: 420 }, cycles: { min: 280, mode: 365, max: 420 }, spread: { min: 60, mode: 110, max: 180 }, fcr: { min: 20, mode: 45, max: 80 } },
+        compute: (v) => { const mwh = 200 * 4; const arbRev = mwh * 0.85 * v.spread * v.cycles / 1000; const fcrRev = 200 * v.fcr * 8760 * 0.3 / 1000; const capex = mwh * v.capexKwh / 1000; return Math.max(-5, Math.min(30, ((arbRev + fcrRev) * 0.75 / capex) * 100)); } }}
+      tornadoModel={{ title: 'Tornado — BESS IRR Drivers', unit: '%', fmt: (n) => `${n.toFixed(1)}%`,
+        inputs: { capexKwh: 300, cycles: 365, spread: 110, fcr: 45 },
+        compute: (v) => { const mwh = 200 * 4; const arbRev = mwh * 0.85 * v.spread * v.cycles / 1000; const fcrRev = 200 * v.fcr * 8760 * 0.3 / 1000; const capex = mwh * v.capexKwh / 1000; return Math.max(-5, Math.min(30, ((arbRev + fcrRev) * 0.75 / capex) * 100)); } }}
+      scenarioImpact={(p) => Math.max(5, 12 + 0.04 * Math.max(0, p - 60))} scenarioFmt={(v) => `${v.toFixed(1)}%`}
+      scenarioTitle="Carbon Price × NGFS Pathway — BESS IRR via arbitrage depth (%)"
+      peers={{ cols: [{ k: 'own', label: 'Owner' }, { k: 'fleet', label: 'Fleet GWh', fmt: (v) => `${v.toFixed(1)}` }, { k: 'lcos', label: 'LCOS ($/MWh)', fmt: (v) => `$${v.toFixed(0)}` }, { k: 'irr', label: 'Run IRR', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'rev', label: 'Rev stack' }],
+        rows: [{ own: 'Gresham House ES', fleet: 1.1, lcos: 165, irr: 13.5, rev: 'FCR+arb' }, { own: 'Zenobe',            fleet: 1.5, lcos: 150, irr: 14.2, rev: 'FCR+arb+DSR' }, { own: 'Fluence portf',     fleet: 4.2, lcos: 155, irr: 13.0, rev: 'Arb+aFRR+DSR' }, { own: 'RWE Storage',       fleet: 2.8, lcos: 158, irr: 12.8, rev: 'Cap+arb+FCR' }, { own: 'Neoen',             fleet: 2.3, lcos: 148, irr: 14.8, rev: 'FCAS+arb' }, { own: 'Plus Power',        fleet: 2.0, lcos: 152, irr: 13.8, rev: 'RA+arb' }] }}
+      />
     </div>
   );
 }
