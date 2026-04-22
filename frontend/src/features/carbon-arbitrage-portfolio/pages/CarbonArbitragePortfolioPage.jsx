@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -556,6 +557,8 @@ export default function CarbonArbitragePortfolioPage() {
         <span>EP-EA6 · Cross-Market Carbon Arbitrage & Net-Zero Portfolio Builder</span>
         <span>EU ETS · CCTS · JCM · VCS · Article 6 · CORSIA · 6 Regimes · 10 Tabs</span>
       </div>
+
+      <Apr2026CarbonAnalytics moduleCode="EP-EA6" moduleTitle="Carbon Arbitrage & NZ Portfolio" flavor="arbitrage" basePrice={25} T={T} />
     </div>
   );
 }

@@ -804,6 +804,14 @@ const SolarManufacturerCarbonFinancePage  = React.lazy(() => import("./features/
 const GreenHydrogenAmmoniaCarbonPage      = React.lazy(() => import("./features/green-hydrogen-ammonia-carbon/pages/GreenHydrogenAmmoniaCarbonPage"));
 const IndiaGreenInfraFinancePage          = React.lazy(() => import("./features/india-green-infra-finance/pages/IndiaGreenInfraFinancePage"));
 const CarbonArbitragePortfolioPage        = React.lazy(() => import("./features/carbon-arbitrage-portfolio/pages/CarbonArbitragePortfolioPage"));
+const CarbonIntegrityMrvAnalyticsPage     = React.lazy(() => import("./features/carbon-integrity-mrv-analytics/pages/CarbonIntegrityMrvAnalyticsPage"));
+// Sprint EB — Impact Advisory Suite (client-anonymised RE-IPP)
+const RenewableLcaEpdPage                 = React.lazy(() => import("./features/renewable-lca-epd/pages/RenewableLcaEpdPage"));
+const CctsOffsetRegistrationPage          = React.lazy(() => import("./features/ccts-offset-registration/pages/CctsOffsetRegistrationPage"));
+const SustainabilityLinkedFinancePage     = React.lazy(() => import("./features/sustainability-linked-finance/pages/SustainabilityLinkedFinancePage"));
+const EsgRatingsUpliftPage                = React.lazy(() => import("./features/esg-ratings-uplift/pages/EsgRatingsUpliftPage"));
+const TcfdPhysicalRiskAssessmentPage      = React.lazy(() => import("./features/tcfd-physical-risk-assessment/pages/TcfdPhysicalRiskAssessmentPage"));
+const TnfdBiodiversityBaselinePage        = React.lazy(() => import("./features/tnfd-biodiversity-baseline/pages/TnfdBiodiversityBaselinePage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1190,6 +1198,15 @@ const NAV_GROUPS = [
     { path: '/green-hydrogen-ammonia-carbon',     label: 'Green Hydrogen & Ammonia Carbon Finance',     badge: 'SIGHT · RFNBO · JCM ITMO · GX-ETS · Article 6 · 6 Developers · 10 Tabs',                     code: 'EP-EA4' },
     { path: '/india-green-infra-finance',         label: 'India Green Infrastructure & Project Finance', badge: 'NaBFID · InvIT · GCF/ADB · BRSR · CCTS · 8 Infra Types · 10 Tabs',                          code: 'EP-EA5' },
     { path: '/carbon-arbitrage-portfolio',        label: 'Cross-Market Carbon Arbitrage & NZ Portfolio', badge: 'EU ETS · CCTS · JCM · VCS · Article 6 · CORSIA · Portfolio VaR · 10 Tabs',                  code: 'EP-EA6' },
+    { path: '/carbon-integrity-mrv-analytics',    label: 'Carbon Integrity, Digital MRV & Quant Analytics', badge: 'ICVCM CCPs · VCMI 2.0 · Sylvera/BeZero/Calyx · A6.4 · dMRV · Monte Carlo · Forward IV · 12 Tabs', code: 'EP-EA7' },
+  ]},
+  { label: '🎯 Impact Advisory — Balance-Sheet Value from Sustainability', icon: '🎯', color: '#0d4f5c', items: [
+    { path: '/renewable-lca-epd',                 label: 'RE Portfolio LCA & EPD Certification',       badge: 'ISO 14040/44 · ISO 14025 · IEC 63274 · Peer Benchmark · Cradle-to-Gate · 7 Tabs',          code: 'EP-EB1' },
+    { path: '/ccts-offset-registration',          label: 'CCTS Offset Registration & Trading',         badge: '8 BEE Methodologies · Additionality 4-Prong · CCC Price Scenarios · MRV · 7 Tabs',         code: 'EP-EB2' },
+    { path: '/sustainability-linked-finance',     label: 'Sustainability-Linked Finance Framework',    badge: 'GB · SLB · SLL · Transition · Blue · 7 KPIs · 6 SPOs · ICMA/LMA · 7 Tabs',                 code: 'EP-EB3' },
+    { path: '/esg-ratings-uplift',                label: 'ESG Ratings Uplift Programme',               badge: 'MSCI BB→A · Sustainalytics · Passive Inflow Unlock · Remediation Map · 7 Tabs',           code: 'EP-EB4' },
+    { path: '/tcfd-physical-risk-assessment',     label: 'TCFD Physical Climate Risk Assessment',      badge: 'CMIP6 · SSP1-2.6/2-4.5/5-8.5 · 10 Assets · RaR · Adaptation Roadmap · 7 Tabs',             code: 'EP-EB5' },
+    { path: '/tnfd-biodiversity-baseline',        label: 'TNFD Biodiversity Baseline & LEAP',          badge: 'LEAP · TNFD v2.0 · SBTN · IBAT KBA · ENCORE · DNSH · 7 Tabs',                              code: 'EP-EB6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3188,6 +3205,14 @@ function AppContent() {
             <Route path="/green-hydrogen-ammonia-carbon"     element={<GreenHydrogenAmmoniaCarbonPage />} />
             <Route path="/india-green-infra-finance"         element={<IndiaGreenInfraFinancePage />} />
             <Route path="/carbon-arbitrage-portfolio"        element={<CarbonArbitragePortfolioPage />} />
+            <Route path="/carbon-integrity-mrv-analytics"    element={<CarbonIntegrityMrvAnalyticsPage />} />
+            {/* Sprint EB — Impact Advisory Suite */}
+            <Route path="/renewable-lca-epd"                 element={<RenewableLcaEpdPage />} />
+            <Route path="/ccts-offset-registration"          element={<CctsOffsetRegistrationPage />} />
+            <Route path="/sustainability-linked-finance"     element={<SustainabilityLinkedFinancePage />} />
+            <Route path="/esg-ratings-uplift"                element={<EsgRatingsUpliftPage />} />
+            <Route path="/tcfd-physical-risk-assessment"     element={<TcfdPhysicalRiskAssessmentPage />} />
+            <Route path="/tnfd-biodiversity-baseline"        element={<TnfdBiodiversityBaselinePage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />

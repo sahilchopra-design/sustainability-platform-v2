@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 
 const sr = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const T = { bg: '#0f1117', surface: '#1a1d27', surfaceH: '#22263a', border: '#2a2f45', borderL: '#1e2235', navy: '#1e3a5f', gold: '#d4a843', sage: '#2d6a4f', teal: '#0d4f5c', text: '#e8e0d0', textSec: '#a89880', textMut: '#6b6050', red: '#c0392b', green: '#27ae60', amber: '#e67e22', font: "'DM Sans', sans-serif", mono: "'JetBrains Mono', monospace" };
@@ -423,6 +424,8 @@ export default function SolarDeveloperCarbonFinancePage() {
           </div>
         </div>
       )}
+
+      <Apr2026CarbonAnalytics moduleCode="EP-EA2" moduleTitle="Solar Developer Carbon Finance" flavor="developer" basePrice={14} T={T} />
     </div>
   );
 }
