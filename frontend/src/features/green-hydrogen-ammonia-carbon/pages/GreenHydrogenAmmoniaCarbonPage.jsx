@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
+import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -110,7 +111,7 @@ export default function GreenHydrogenAmmoniaCarbonPage() {
   const sightH2 = useMemo(() => calcSightIncentive({ productionKtpa:h2ProductionKtpa, ratePerKg:sightRate, product:'H2' }), [h2ProductionKtpa, sightRate]);
   const sightNH3 = useMemo(() => calcSightIncentive({ productionKtpa:nh3ProductionKtpa, ratePerKg:30, product:'NH3' }), [nh3ProductionKtpa]);
 
-  const tabs = ['Overview','Developer Dashboard','GH2 Cost Curve','GA Cost Curve','SIGHT Incentive Calc','RFNBO Compliance','Electrolyzer Finance','JCM / Article 6','Carbon Credit Engine','IRR & Project Finance'];
+  const tabs = ['Overview','Developer Dashboard','GH2 Cost Curve','GA Cost Curve','SIGHT Incentive Calc','RFNBO Compliance','Electrolyzer Finance','JCM / Article 6','Carbon Credit Engine','IRR & Project Finance','Advanced Analytics'];
 
   return (
     <div style={{ background:T.bg, minHeight:'100vh', color:T.text, fontFamily:T.font, padding:24 }}>
@@ -581,9 +582,65 @@ export default function GreenHydrogenAmmoniaCarbonPage() {
         </div>
       )}
 
+      {activeTab === 10 && (
+        <IndiaAdvancedAnalytics
+          T={T}
+          moduleCode="EP-EA4"
+          title="Green H2/NH3 Carbon Credits — MC Revenue, SIGHT Tornado & NGFS Scenario Suite"
+          mcModel={{
+            title: `MC Carbon Credit Revenue ($M) · ${dev.name}`,
+            unit: 'M',
+            fmt: (n) => n.toFixed(2),
+            vars: {
+              ktpa: { min: Math.max(1, h2ProductionKtpa * 0.6), mode: h2ProductionKtpa, max: h2ProductionKtpa * 1.4 },
+              co2Red: { min: Math.max(0.5, 10.8 - co2PerKg - 1.0), mode: 10.8 - co2PerKg, max: 10.8 - co2PerKg + 0.5 },
+              price: { min: itmoPrice * 0.6, mode: itmoPrice, max: itmoPrice * 1.8 },
+              jcm: { min: 0.10, mode: Math.max(0.01, jcmSplit / 100), max: 0.50 },
+            },
+            compute: (v) => (v.ktpa * 1e6 * v.co2Red * v.price * v.jcm) / 1e6,
+          }}
+          tornadoModel={{
+            title: 'Tornado — Credit Revenue Drivers (±20%)',
+            unit: 'M',
+            fmt: (n) => `$${n.toFixed(1)}M`,
+            inputs: {
+              ktpa: Math.max(1, h2ProductionKtpa),
+              co2Red: Math.max(0.5, 10.8 - co2PerKg),
+              price: itmoPrice,
+              jcm: Math.max(0.05, jcmSplit / 100),
+            },
+            compute: (v) => (v.ktpa * 1e6 * v.co2Red * v.price * v.jcm) / 1e6,
+          }}
+          scenarioImpact={(priceUSDt) => (Math.max(1, h2ProductionKtpa) * 1e6 * Math.max(0.5, 10.8 - co2PerKg) * priceUSDt * Math.max(0.05, jcmSplit / 100)) / 1e6}
+          scenarioFmt={(v) => `$${v.toFixed(1)}M`}
+          scenarioTitle="ITMO Credit Price × NGFS Pathway — Revenue ($M)"
+          defaultCovered={['gov1','gov2','str1','str2','str3','rsk1','rsk2','met1','met2','tgt1','tgt2']}
+          brsrDefault={['p1','p2','p4','p6','p7','p9']}
+          peers={{
+            title: 'India H2/NH3 Developer Peer Benchmarks',
+            cols: [
+              { k: 'name', label: 'Developer' },
+              { k: 'h2', label: 'H2 (ktpa by 2030)', fmt: (v) => `${v}` },
+              { k: 'nh3', label: 'NH3 (ktpa)', fmt: (v) => `${v}` },
+              { k: 'capex', label: 'Capex ($/kg)', fmt: (v) => `$${v.toFixed(2)}` },
+              { k: 'sight', label: 'SIGHT (₹Cr)', fmt: (v) => `₹${v}` },
+              { k: 'artSix', label: 'Article 6 route', fmt: (v) => v },
+            ],
+            rows: [
+              { name: 'NTPC Green H2',  h2: 350, nh3: 120, capex: 3.80, sight: 1850, artSix: 'JCM + VCS' },
+              { name: 'Greenko H2',     h2: 420, nh3:  80, capex: 3.60, sight: 2100, artSix: 'JCM' },
+              { name: 'ReNew H2',       h2: 300, nh3: 100, capex: 3.90, sight: 1500, artSix: 'VCS + GS' },
+              { name: 'ACME Solar H2',  h2: 260, nh3: 180, capex: 4.20, sight: 1300, artSix: 'JCM' },
+              { name: 'IOCL Green H2',  h2: 200, nh3:  70, capex: 3.70, sight:  950, artSix: 'JCM' },
+              { name: 'Torrent H2',     h2: 150, nh3:  50, capex: 4.00, sight:  700, artSix: 'VCS' },
+            ],
+          }}
+        />
+      )}
+
       <div style={{ marginTop:20, padding:'10px 16px', background:T.surfaceH, borderRadius:6, display:'flex', justifyContent:'space-between', fontFamily:T.mono, fontSize:11, color:T.textMut }}>
         <span>EP-EA4 · Green Hydrogen & Ammonia Carbon Finance · India Focus</span>
-        <span>SIGHT + RFNBO + JCM + GX-ETS · 6 Developers · 10 Tabs</span>
+        <span>SIGHT + RFNBO + JCM + GX-ETS · 6 Developers · 11 Tabs</span>
       </div>
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA4" moduleTitle="Green Hydrogen & Ammonia Carbon" flavor="h2" basePrice={22} T={T} />

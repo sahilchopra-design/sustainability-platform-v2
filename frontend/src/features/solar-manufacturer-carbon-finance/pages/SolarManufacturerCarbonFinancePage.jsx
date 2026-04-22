@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
+import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -141,7 +142,7 @@ export default function SolarManufacturerCarbonFinancePage() {
   const gridEfNow = gridEfScenario === 'current' ? 0.82 : 0.47;
   const payback = calcCarbonPayback({ systemKwp: 1, gridEf: gridEfNow, annGenMwh: 1.6, moduleCI: (mfr.scope1KgW + mfr.scope2KgW + mfr.scope3KgW) });
 
-  const tabs = ['Overview','Manufacturer Dashboard','CBAM Exposure','PLI Carbon Nexus','Carbon Intensity','Scope 1-2-3 Breakdown','EPD & Standards','CCTS Compliance','Export Markets','Carbon Payback'];
+  const tabs = ['Overview','Manufacturer Dashboard','CBAM Exposure','PLI Carbon Nexus','Carbon Intensity','Scope 1-2-3 Breakdown','EPD & Standards','CCTS Compliance','Export Markets','Carbon Payback','Advanced Analytics'];
 
   return (
     <div style={{ background:T.bg, minHeight:'100vh', color:T.text, fontFamily:T.font, padding:24 }}>
@@ -644,6 +645,60 @@ export default function SolarManufacturerCarbonFinancePage() {
         <span>EP-EA3 · Solar Panel Manufacturer Carbon Finance · India Focus</span>
         <span>PLI + CBAM + CCTS + EPD · 6 Manufacturers · 10 Tabs</span>
       </div>
+
+      {activeTab === 10 && (
+        <IndiaAdvancedAnalytics
+          T={T}
+          moduleCode="EP-EA3"
+          title="Manufacturer Carbon Risk — CBAM MC, PLI Tornado & NGFS Scenario Suite"
+          mcModel={{
+            title: `MC CBAM Cost ($M) · ${mfr.name} @ ${exportMw} MW export`,
+            unit: 'M',
+            fmt: (n) => n.toFixed(2),
+            vars: {
+              intensity: { min: (mfr.scope1KgW + mfr.scope2KgW) * 0.7, mode: mfr.scope1KgW + mfr.scope2KgW, max: (mfr.scope1KgW + mfr.scope2KgW) * 1.4 },
+              eua:       { min: euEtsPrice * 0.7, mode: euEtsPrice, max: euEtsPrice * 1.6 },
+              mw:        { min: exportMw * 0.6,   mode: exportMw,   max: exportMw * 1.4 },
+              cbamPct:   { min: 0.5,              mode: cbamRow.cbamPct, max: 1.0 },
+            },
+            compute: (v) => {
+              const tco2 = (v.intensity / 1000) * v.mw * 1e6;
+              return (tco2 * v.eua * v.cbamPct) / 1e6;
+            },
+          }}
+          tornadoModel={{
+            title: `CBAM cost exposure ($M) — ${mfr.name}`,
+            fmt: (n) => '$' + n.toFixed(2) + 'M',
+            inputs: { intensity: mfr.scope1KgW + mfr.scope2KgW, eua: euEtsPrice, mw: exportMw, cbamPct: cbamRow.cbamPct },
+            compute: (v) => ((v.intensity / 1000) * v.mw * 1e6 * v.eua * v.cbamPct) / 1e6,
+          }}
+          scenarioImpact={(priceUSDt) => {
+            const tco2 = ((mfr.scope1KgW + mfr.scope2KgW) / 1000) * exportMw * 1e6;
+            return (tco2 * priceUSDt * cbamRow.cbamPct) / 1e6;
+          }}
+          scenarioFmt={(n) => '$' + n.toFixed(1) + 'M'}
+          scenarioTitle="CBAM cost exposure $M — EUA equivalent × horizon"
+          peers={{
+            cols: [
+              { k: 'name', label: 'Manufacturer' },
+              { k: 'cap',  label: 'Cap GW', align: 'right', mono: true },
+              { k: 's12',  label: 'S1+S2 kg/W', align: 'right', mono: true },
+              { k: 's3',   label: 'S3 kg/W', align: 'right', mono: true },
+              { k: 'pli',  label: 'PLI ₹Cr', align: 'right', mono: true },
+              { k: 'exp',  label: 'EU export %', align: 'right', mono: true },
+            ],
+            rows: [
+              { name: 'Waaree Energies',     cap: 13.3, s12: '0.18', s3: '2.05', pli: '1960', exp: 22 },
+              { name: 'Adani Solar',         cap: 4.0,  s12: '0.16', s3: '1.95', pli: '1400', exp: 18 },
+              { name: 'Vikram Solar',        cap: 3.5,  s12: '0.19', s3: '2.10', pli: '820',  exp: 35 },
+              { name: 'Tata Power Solar',    cap: 4.3,  s12: '0.17', s3: '2.00', pli: '1100', exp: 15 },
+              { name: 'Saatvik Green',       cap: 3.8,  s12: '0.20', s3: '2.15', pli: '780',  exp: 28 },
+              { name: 'RenewSys',            cap: 2.0,  s12: '0.18', s3: '2.05', pli: '620',  exp: 30 },
+            ],
+          }}
+          defaultCovered={['gov1', 'str1', 'str3', 'rsk1', 'met1', 'met2', 'met3', 'tgt1']}
+        />
+      )}
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA3" moduleTitle="Solar Manufacturer Carbon Finance" flavor="manufacturer" basePrice={68} T={T} />
     </div>

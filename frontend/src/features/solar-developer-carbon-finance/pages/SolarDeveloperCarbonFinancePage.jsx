@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
+import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
 
 const sr = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const T = { bg: '#0f1117', surface: '#1a1d27', surfaceH: '#22263a', border: '#2a2f45', borderL: '#1e2235', navy: '#1e3a5f', gold: '#d4a843', sage: '#2d6a4f', teal: '#0d4f5c', text: '#e8e0d0', textSec: '#a89880', textMut: '#6b6050', red: '#c0392b', green: '#27ae60', amber: '#e67e22', font: "'DM Sans', sans-serif", mono: "'JetBrains Mono', monospace" };
@@ -43,7 +44,7 @@ const PROJECT_FINANCE_WATERFALL = [
   { layer: 'Equity (Promoter + FDI)', share: 20, rate: '14-18% target IRR', tenor: 'Perpetual', security: 'Residual claim' },
 ];
 
-const TABS = ['Overview', 'IPP Dashboard', 'Carbon Credit Calc.', 'Methodology Compare', 'REC Market', 'Green Bond Structure', 'Project Finance', 'JCM Eligibility', 'CCTS Compliance', 'IRR Sensitivity'];
+const TABS = ['Overview', 'IPP Dashboard', 'Carbon Credit Calc.', 'Methodology Compare', 'REC Market', 'Green Bond Structure', 'Project Finance', 'JCM Eligibility', 'CCTS Compliance', 'IRR Sensitivity', 'Advanced Analytics'];
 
 function calcCarbonCredits({ gwInstalled, plf, gridEf, discountPct, creditPrice }) {
   const annGenMwh = gwInstalled * 1000 * plf * 8760;
@@ -423,6 +424,66 @@ export default function SolarDeveloperCarbonFinancePage() {
             })}
           </div>
         </div>
+      )}
+
+      {tab === 10 && (
+        <IndiaAdvancedAnalytics
+          T={T}
+          moduleCode="EP-EA2"
+          title="Solar IPP Carbon Finance — MC Credit Revenue, Tornado & NGFS Scenario Suite"
+          mcModel={{
+            title: `MC Annual Carbon Revenue ($M) · ${ipp.name} @ ${gwInput} GW`,
+            unit: 'M',
+            fmt: (n) => n.toFixed(2),
+            vars: {
+              plf:         { min: (plfInput - 4) / 100, mode: plfInput / 100, max: (plfInput + 4) / 100 },
+              gridEf:      { min: 0.60,                 mode: gridEfInput / 100, max: 0.88 },
+              creditPrice: { min: creditPriceInput * 0.6, mode: creditPriceInput, max: creditPriceInput * 1.8 },
+              discount:    { min: 0.01,                 mode: discountInput / 100, max: 0.08 },
+            },
+            compute: (v) => {
+              const mwh = gwInput * 1000 * v.plf * 8760;
+              const tco2 = mwh * v.gridEf * (1 - v.discount);
+              return (tco2 * v.creditPrice) / 1e6;
+            },
+          }}
+          tornadoModel={{
+            title: `Annual carbon credit revenue ($M) — ${ipp.name}`,
+            fmt: (n) => '$' + n.toFixed(2) + 'M',
+            inputs: { plf: plfInput / 100, gridEf: gridEfInput / 100, creditPrice: creditPriceInput, discount: discountInput / 100 },
+            compute: (v) => {
+              const mwh = gwInput * 1000 * v.plf * 8760;
+              const tco2 = mwh * v.gridEf * (1 - v.discount);
+              return (tco2 * v.creditPrice) / 1e6;
+            },
+          }}
+          scenarioImpact={(priceUSDt) => {
+            const mwh = gwInput * 1000 * (plfInput / 100) * 8760;
+            const tco2 = mwh * (gridEfInput / 100) * (1 - discountInput / 100);
+            return (tco2 * priceUSDt) / 1e6;
+          }}
+          scenarioFmt={(n) => '$' + n.toFixed(1) + 'M'}
+          scenarioTitle="Annual carbon revenue $M — credit price × horizon"
+          peers={{
+            cols: [
+              { k: 'name', label: 'IPP' },
+              { k: 'inst', label: 'GW', align: 'right', mono: true },
+              { k: 'lcoe', label: 'LCOE ₹/kWh', align: 'right', mono: true },
+              { k: 'plf',  label: 'PLF %', align: 'right', mono: true },
+              { k: 'gb',   label: 'Green $Bn', align: 'right', mono: true },
+              { k: 'irr',  label: 'IRR %', align: 'right', mono: true },
+            ],
+            rows: [
+              { name: 'NTPC Renewable',  inst: 3.5, lcoe: '2.25', plf: 23, gb: 1.0, irr: 12.5 },
+              { name: 'Adani Green',     inst: 10.9, lcoe: '2.45', plf: 22, gb: 2.5, irr: 13.2 },
+              { name: 'ReNew Power',     inst: 9.5,  lcoe: '2.35', plf: 22, gb: 1.2, irr: 11.8 },
+              { name: 'Greenko',         inst: 7.5,  lcoe: '2.40', plf: 22, gb: 1.8, irr: 12.0 },
+              { name: 'Azure Power',     inst: 4.0,  lcoe: '2.55', plf: 21, gb: 0.7, irr: 10.5 },
+              { name: 'Torrent Power',   inst: 1.5,  lcoe: '2.50', plf: 22, gb: 0.3, irr: 11.0 },
+            ],
+          }}
+          defaultCovered={['gov1', 'str1', 'str2', 'str3', 'rsk1', 'met1', 'met2', 'tgt1']}
+        />
       )}
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA2" moduleTitle="Solar Developer Carbon Finance" flavor="developer" basePrice={14} T={T} />

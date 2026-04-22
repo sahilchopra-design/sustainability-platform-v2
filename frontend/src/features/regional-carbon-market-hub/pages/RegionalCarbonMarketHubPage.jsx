@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
+import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
 
 const sr = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const T = { bg: '#0f1117', surface: '#1a1d27', surfaceH: '#22263a', border: '#2a2f45', borderL: '#1e2235', navy: '#1e3a5f', gold: '#d4a843', sage: '#2d6a4f', teal: '#0d4f5c', text: '#e8e0d0', textSec: '#a89880', textMut: '#6b6050', red: '#c0392b', green: '#27ae60', amber: '#e67e22', font: "'DM Sans', sans-serif", mono: "'JetBrains Mono', monospace" };
@@ -77,7 +78,7 @@ const CBAM_EXPOSURE = [
   { sector: 'Solar Panels (glass/al)', exportToEU_Mt: 0.5, co2IntensityT: 0.65, cbamCostUsdM: 68 * 0.5 * 1000 * 0.65 / 1e6 },
 ];
 
-const TABS = ['Market Overview', 'EU ETS Deep Dive', 'India CCTS Deep Dive', 'Japan GX-ETS', 'Cross-Market Compare', 'India PAT / CCTS Sectors', 'CBAM Exposure (India)', 'JCM Corridors', 'Price Convergence', 'Arbitrage Snapshot'];
+const TABS = ['Market Overview', 'EU ETS Deep Dive', 'India CCTS Deep Dive', 'Japan GX-ETS', 'Cross-Market Compare', 'India PAT / CCTS Sectors', 'CBAM Exposure (India)', 'JCM Corridors', 'Price Convergence', 'Arbitrage Snapshot', 'Advanced Analytics'];
 
 const Kpi = ({ label, value, sub, color }) => (
   <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 18px', flex: 1, minWidth: 140 }}>
@@ -450,6 +451,53 @@ export default function RegionalCarbonMarketHubPage() {
             ))}
           </div>
         </div>
+      )}
+
+      {tab === 10 && (
+        <IndiaAdvancedAnalytics
+          T={T}
+          moduleCode="EP-EA1"
+          title="Cross-Market Arbitrage — MC, Tornado & NGFS Scenario Suite"
+          mcModel={{
+            title: `MC Arbitrage Revenue ($M) · ${src.name} → ${dst.name}`,
+            unit: 'M',
+            fmt: (n) => (n / 1e6).toFixed(2),
+            vars: {
+              srcPrice: { min: src.price2025 * 0.7, mode: src.price2025, max: src.price2025 * 1.3 },
+              dstPrice: { min: dst.price2025 * 0.7, mode: dst.price2025, max: dst.price2025 * 1.3 },
+              qty:      { min: carbonQty * 0.6,     mode: carbonQty,     max: carbonQty * 1.4 },
+              artSix:   { min: 0.05,                mode: 0.12,          max: 0.25 },
+            },
+            compute: (v) => Math.max(0, (v.dstPrice - v.srcPrice) * (1 - v.artSix)) * v.qty,
+          }}
+          tornadoModel={{
+            title: `${src.name} → ${dst.name} arbitrage revenue ($)`,
+            fmt: (n) => '$' + (n / 1e6).toFixed(2) + 'M',
+            inputs: { srcPrice: src.price2025, dstPrice: dst.price2025, qty: carbonQty, artSix: 0.12 },
+            compute: (v) => Math.max(0, (v.dstPrice - v.srcPrice) * (1 - v.artSix)) * v.qty,
+          }}
+          scenarioImpact={(priceUSDt) => Math.max(0, priceUSDt - src.price2025) * carbonQty / 1e6}
+          scenarioFmt={(n) => '$' + n.toFixed(1) + 'M'}
+          scenarioTitle="Arbitrage Revenue $M — NGFS/IEA destination price × horizons"
+          peers={{
+            cols: [
+              { k: 'name', label: 'Market' },
+              { k: 'p25', label: '2025 $/t', align: 'right', mono: true },
+              { k: 'p30', label: '2030 $/t', align: 'right', mono: true },
+              { k: 'cov', label: 'Coverage Mt', align: 'right', mono: true },
+              { k: 'mech', label: 'Mechanism' },
+            ],
+            rows: [
+              { name: 'EU ETS',         p25: 68, p30: 110, cov: '1,290', mech: 'Cap-and-trade · Auction 57%' },
+              { name: 'India CCTS',     p25: 9,  p30: 35,  cov: '~500',  mech: 'Intensity-based · Offset' },
+              { name: 'Japan GX-ETS',   p25: 12, p30: 50,  cov: '600',   mech: 'Voluntary → Mandatory 2026' },
+              { name: 'UK ETS',         p25: 45, p30: 85,  cov: '156',   mech: 'Cap-and-trade · CBAM 2027' },
+              { name: 'Korea K-ETS',    p25: 8,  p30: 28,  cov: '590',   mech: 'Cap-and-trade · offset eligible' },
+              { name: 'China National', p25: 12, p30: 40,  cov: '4,500', mech: 'Power sector · intensity' },
+            ],
+          }}
+          defaultCovered={['gov1', 'str1', 'str2', 'met1', 'met2', 'met3']}
+        />
       )}
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA1" moduleTitle="Regional Carbon Market Hub" flavor="market" basePrice={mkt.price2025} T={T} />

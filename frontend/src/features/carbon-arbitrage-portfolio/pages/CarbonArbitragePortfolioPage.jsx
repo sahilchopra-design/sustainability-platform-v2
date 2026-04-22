@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
+import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -110,7 +111,7 @@ export default function CarbonArbitragePortfolioPage() {
 
   const horizonRow = FORWARD_CURVE.find(r => r.year === horizonYr) || FORWARD_CURVE[5];
 
-  const tabs = ['Overview','Price History','Forward Curve','Arbitrage Calculator','Portfolio Builder','Portfolio VaR','Article 6 ITMO','CORSIA Integration','India Corporate NZ Pathways','Deal Screener'];
+  const tabs = ['Overview','Price History','Forward Curve','Arbitrage Calculator','Portfolio Builder','Portfolio VaR','Article 6 ITMO','CORSIA Integration','India Corporate NZ Pathways','Deal Screener','Advanced Analytics'];
 
   return (
     <div style={{ background:T.bg, minHeight:'100vh', color:T.text, fontFamily:T.font, padding:24 }}>
@@ -553,9 +554,65 @@ export default function CarbonArbitragePortfolioPage() {
         </div>
       )}
 
+      {activeTab === 10 && (
+        <IndiaAdvancedAnalytics
+          T={T}
+          moduleCode="EP-EA6"
+          title="Cross-Market Arbitrage — MC P&L, Spread Tornado & NGFS Scenario Suite"
+          mcModel={{
+            title: `MC Arbitrage P&L ($M) · ${srcR.name} → ${dstR.name}`,
+            unit: 'M',
+            fmt: (n) => n.toFixed(2),
+            vars: {
+              srcPrice: { min: srcR.price2025 * 0.7, mode: srcR.price2025, max: srcR.price2025 * 1.5 },
+              dstPrice: { min: dstR.price2025 * 0.7, mode: dstR.price2025, max: dstR.price2025 * 1.5 },
+              qty:      { min: arbQty * 0.6,          mode: arbQty,          max: arbQty * 1.4 },
+              artSix:   { min: 0.02,                   mode: artSixDeduct/100, max: 0.18 },
+            },
+            compute: (v) => (Math.max(0, (v.dstPrice - v.srcPrice) * (1 - v.artSix)) * v.qty) / 1e6,
+          }}
+          tornadoModel={{
+            title: 'Tornado — Arbitrage Drivers (±20%)',
+            unit: 'M',
+            fmt: (n) => `$${n.toFixed(2)}M`,
+            inputs: {
+              srcPrice: srcR.price2025,
+              dstPrice: dstR.price2025,
+              qty: arbQty,
+              artSix: Math.max(0.01, artSixDeduct/100),
+            },
+            compute: (v) => (Math.max(0, (v.dstPrice - v.srcPrice) * (1 - v.artSix)) * v.qty) / 1e6,
+          }}
+          scenarioImpact={(priceUSDt) => (Math.max(0, priceUSDt - srcR.price2025) * (1 - artSixDeduct/100) * arbQty) / 1e6}
+          scenarioFmt={(v) => `$${v.toFixed(2)}M`}
+          scenarioTitle="Destination Carbon Price × NGFS Pathway — Arbitrage P&L ($M)"
+          defaultCovered={['gov1','gov2','str1','str2','str3','rsk1','rsk2','met1','met2','tgt1','tgt2']}
+          brsrDefault={['p1','p2','p6','p7','p8','p9']}
+          peers={{
+            title: 'Cross-Market Regime Peer Benchmarks',
+            cols: [
+              { k: 'name',  label: 'Regime' },
+              { k: 'p25',   label: '2025 Price ($/t)', fmt: (v) => `$${v.toFixed(0)}` },
+              { k: 'p30',   label: '2030 Price ($/t)', fmt: (v) => `$${v.toFixed(0)}` },
+              { k: 'cov',   label: 'Cov (GtCO₂)',      fmt: (v) => `${v.toFixed(1)}` },
+              { k: 'art6',  label: 'Art 6 eligible' },
+              { k: 'mech',  label: 'Mechanism' },
+            ],
+            rows: [
+              { name: 'EU ETS',          p25: 85, p30: 140, cov: 1.7, art6: 'No',  mech: 'Cap-and-trade' },
+              { name: 'UK ETS',          p25: 70, p30: 120, cov: 0.2, art6: 'No',  mech: 'Cap-and-trade' },
+              { name: 'India CCTS',      p25: 12, p30:  35, cov: 0.4, art6: 'Yes', mech: 'Intensity-based' },
+              { name: 'Japan GX-ETS',    p25: 22, p30:  60, cov: 0.6, art6: 'Yes', mech: 'Voluntary → mandatory' },
+              { name: 'Korea K-ETS',     p25: 25, p30:  55, cov: 0.6, art6: 'Yes', mech: 'Cap-and-trade' },
+              { name: 'China National',  p25: 15, p30:  40, cov: 4.5, art6: 'No',  mech: 'Intensity-based' },
+            ],
+          }}
+        />
+      )}
+
       <div style={{ marginTop:20, padding:'10px 16px', background:T.surfaceH, borderRadius:6, display:'flex', justifyContent:'space-between', fontFamily:T.mono, fontSize:11, color:T.textMut }}>
         <span>EP-EA6 · Cross-Market Carbon Arbitrage & Net-Zero Portfolio Builder</span>
-        <span>EU ETS · CCTS · JCM · VCS · Article 6 · CORSIA · 6 Regimes · 10 Tabs</span>
+        <span>EU ETS · CCTS · JCM · VCS · Article 6 · CORSIA · 6 Regimes · 11 Tabs</span>
       </div>
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA6" moduleTitle="Carbon Arbitrage & NZ Portfolio" flavor="arbitrage" basePrice={25} T={T} />

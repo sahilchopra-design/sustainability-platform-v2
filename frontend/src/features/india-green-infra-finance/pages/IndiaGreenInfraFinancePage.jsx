@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
+import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -99,7 +100,7 @@ export default function IndiaGreenInfraFinancePage() {
   const annCashflow = annRevenueBnInr - annOpexBnInr;
   const npv = calcNpv({ annCashflow, capex:capexBnInr, discRate, lifeYrs });
 
-  const tabs = ['Overview','Infra Type Dashboard','NaBFID & InvIT','Project Finance Calc','Yield Curve','Blended Finance','InvIT Deals','BRSR Compliance','Carbon Credit Eligibility','Deal Pipeline'];
+  const tabs = ['Overview','Infra Type Dashboard','NaBFID & InvIT','Project Finance Calc','Yield Curve','Blended Finance','InvIT Deals','BRSR Compliance','Carbon Credit Eligibility','Deal Pipeline','Advanced Analytics'];
 
   return (
     <div style={{ background:T.bg, minHeight:'100vh', color:T.text, fontFamily:T.font, padding:24 }}>
@@ -464,9 +465,75 @@ export default function IndiaGreenInfraFinancePage() {
         </div>
       )}
 
+      {activeTab === 10 && (
+        <IndiaAdvancedAnalytics
+          T={T}
+          moduleCode="EP-EA5"
+          title="Green Infra DSCR — MC, Driver Tornado & NGFS Yield Scenario Suite"
+          mcModel={{
+            title: `MC Project DSCR · ${infra.name}`,
+            unit: 'x',
+            fmt: (n) => n.toFixed(2),
+            vars: {
+              rev:  { min: annRevenueBnInr * 0.7, mode: annRevenueBnInr, max: annRevenueBnInr * 1.2 },
+              opex: { min: annOpexBnInr * 0.8,    mode: annOpexBnInr,    max: annOpexBnInr * 1.4 },
+              capex:{ min: capexBnInr * 0.85,     mode: capexBnInr,      max: capexBnInr * 1.25 },
+              rate: { min: 0.075,                  mode: 0.085,            max: 0.105 },
+            },
+            compute: (v) => {
+              const ds = v.capex * (debtPct/100) * v.rate;
+              return Math.max(0, (v.rev - v.opex) / Math.max(0.01, ds));
+            },
+          }}
+          tornadoModel={{
+            title: 'Tornado — DSCR Drivers (±20%)',
+            unit: 'x',
+            fmt: (n) => `${n.toFixed(2)}x`,
+            inputs: {
+              rev: annRevenueBnInr,
+              opex: annOpexBnInr,
+              capex: capexBnInr,
+              rate: 0.085,
+            },
+            compute: (v) => {
+              const ds = v.capex * (debtPct/100) * v.rate;
+              return Math.max(0, (v.rev - v.opex) / Math.max(0.01, ds));
+            },
+          }}
+          scenarioImpact={(priceUSDt) => {
+            const tariffUplift = 1 + (priceUSDt / 500);
+            const ds = capexBnInr * (debtPct/100) * 0.085;
+            return Math.max(0, (annRevenueBnInr * tariffUplift - annOpexBnInr) / Math.max(0.01, ds));
+          }}
+          scenarioFmt={(v) => `${v.toFixed(2)}x`}
+          scenarioTitle="Carbon Price × NGFS Pathway — DSCR impact"
+          defaultCovered={['gov1','gov2','str1','str2','rsk1','rsk2','met1','met2','tgt1']}
+          brsrDefault={['p1','p2','p6','p7','p8','p9']}
+          peers={{
+            title: 'India Green Infra / InvIT Peer Benchmarks',
+            cols: [
+              { k: 'name',  label: 'InvIT / Platform' },
+              { k: 'aum',   label: 'AUM (₹Cr)',         fmt: (v) => `₹${v}` },
+              { k: 'yield', label: 'Yield (%)',         fmt: (v) => `${v.toFixed(1)}%` },
+              { k: 'dscr',  label: 'DSCR (x)',          fmt: (v) => `${v.toFixed(2)}x` },
+              { k: 'ltv',   label: 'LTV (%)',           fmt: (v) => `${v}%` },
+              { k: 'rating',label: 'Rating' },
+            ],
+            rows: [
+              { name: 'IRB InvIT',        aum: 6500, yield: 11.2, dscr: 1.45, ltv: 55, rating: 'AAA' },
+              { name: 'India Grid Trust', aum: 20500, yield: 9.8,  dscr: 1.60, ltv: 50, rating: 'AAA' },
+              { name: 'PowerGrid InvIT',  aum: 13800, yield: 10.1, dscr: 1.70, ltv: 45, rating: 'AAA' },
+              { name: 'Virescent Infra',  aum: 7200,  yield: 10.6, dscr: 1.40, ltv: 55, rating: 'AA+' },
+              { name: 'Anzen Green',      aum: 2700,  yield: 9.5,  dscr: 1.35, ltv: 60, rating: 'AA'  },
+              { name: 'Bharat Highways',  aum: 3200,  yield: 10.8, dscr: 1.50, ltv: 55, rating: 'AA+' },
+            ],
+          }}
+        />
+      )}
+
       <div style={{ marginTop:20, padding:'10px 16px', background:T.surfaceH, borderRadius:6, display:'flex', justifyContent:'space-between', fontFamily:T.mono, fontSize:11, color:T.textMut }}>
         <span>EP-EA5 · India Green Infrastructure & Project Finance</span>
-        <span>NaBFID · InvIT · GCF/ADB · BRSR · CCTS · 8 Infra Types · 10 Tabs</span>
+        <span>NaBFID · InvIT · GCF/ADB · BRSR · CCTS · 8 Infra Types · 11 Tabs</span>
       </div>
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA5" moduleTitle="India Green Infra Finance" flavor="infra" basePrice={16} T={T} />
