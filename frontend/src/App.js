@@ -784,6 +784,13 @@ const ForestryTimberFinancePage           = React.lazy(() => import("./features/
 const NatureBasedSolutionsFinancePage     = React.lazy(() => import("./features/nature-based-solutions-finance/pages/NatureBasedSolutionsFinancePage"));
 const CarbonRemovalMarketsPage            = React.lazy(() => import("./features/carbon-removal-markets/pages/CarbonRemovalMarketsPage"));
 const BiodiversityNaturalCapitalPage      = React.lazy(() => import("./features/biodiversity-natural-capital/pages/BiodiversityNaturalCapitalPage"));
+// Sprint DY — Municipal & Sub-Sovereign Climate Finance Intelligence Suite
+const MunicipalGreenBondAnalyticsPage     = React.lazy(() => import("./features/municipal-green-bond-analytics/pages/MunicipalGreenBondAnalyticsPage"));
+const CdfiClimateFinancePage              = React.lazy(() => import("./features/cdfi-climate-finance/pages/CdfiClimateFinancePage"));
+const MdbSubSovereignLendingPage          = React.lazy(() => import("./features/mdb-sub-sovereign-lending/pages/MdbSubSovereignLendingPage"));
+const CPaceClimateFinancePage             = React.lazy(() => import("./features/cpace-climate-finance/pages/CPaceClimateFinancePage"));
+const ClimateRevenueBondModelerPage       = React.lazy(() => import("./features/climate-revenue-bond-modeler/pages/ClimateRevenueBondModelerPage"));
+const MunicipalClimateResilienceHubPage   = React.lazy(() => import("./features/municipal-climate-resilience-hub/pages/MunicipalClimateResilienceHubPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1146,6 +1153,14 @@ const NAV_GROUPS = [
     { path: '/nature-based-solutions-finance', label: 'Nature-Based Solutions Finance Suite',        badge: 'REDD+/A-R/Blue Carbon · VCU Pricing · Co-Benefit Valuation · Article 6.4 · 10 Tabs',        code: 'EP-DX4' },
     { path: '/carbon-removal-markets',         label: 'Carbon Removal Markets Intelligence Suite',   badge: 'DAC/BECCS/Biochar/EW · Frontier AMC · LCDR Engine · 45Q · Policy & FI Products · 10 Tabs',  code: 'EP-DX5' },
     { path: '/biodiversity-natural-capital',   label: 'Biodiversity & Natural Capital Finance Suite',badge: 'TNFD LEAP · NCA Valuation · BNG Credits · GBF Targets · Portfolio Alignment · 10 Tabs',     code: 'EP-DX6' },
+  ]},
+  { label: '🏙️ Municipal & Sub-Sovereign Climate Finance', icon: '🏙️', color: '#1e3a5f', items: [
+    { path: '/municipal-green-bond-analytics', label: 'Municipal Green Bond Analytics Suite',         badge: 'GO vs Revenue · Greenium Engine · Tax Equivalency · AMT · Credit Spreads · 10 Tabs',         code: 'EP-DY1' },
+    { path: '/cdfi-climate-finance',           label: 'CDFI Climate Finance Intelligence Suite',      badge: 'NMTC Analytics · IRA GGRF · CDFI Landscape · Capital Stack · Community Impact · 10 Tabs',   code: 'EP-DY2' },
+    { path: '/mdb-sub-sovereign-lending',      label: 'MDB Sub-Sovereign Lending Engine',             badge: 'WB/IFC/ADB/AIIB · Concessionality · Blended Finance · Guarantees · ESG Conditions · 10 Tabs', code: 'EP-DY3' },
+    { path: '/cpace-climate-finance',          label: 'C-PACE & Property-Assessed Climate Finance',   badge: 'PACE Mechanics · Underwriting Engine · Securitization · Energy Savings · State Programs · 10 Tabs', code: 'EP-DY4' },
+    { path: '/climate-revenue-bond-modeler',   label: 'Climate Revenue Bond Modeler',                 badge: 'Water/Electric/Airport/Transit · DSCR Engine · Rate Covenant · Green Certification · 10 Tabs', code: 'EP-DY5' },
+    { path: '/municipal-climate-resilience-hub', label: 'Municipal Climate Resilience Finance Hub',   badge: 'FEMA BRIC · BCR Engine · 8-City Dashboard · Adaptation Calculator · Bond Structures · 10 Tabs', code: 'EP-DY6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3124,6 +3139,13 @@ function AppContent() {
             <Route path="/nature-based-solutions-finance" element={<NatureBasedSolutionsFinancePage />} />
             <Route path="/carbon-removal-markets"         element={<CarbonRemovalMarketsPage />} />
             <Route path="/biodiversity-natural-capital"   element={<BiodiversityNaturalCapitalPage />} />
+            {/* Sprint DY — Municipal & Sub-Sovereign Climate Finance Intelligence Suite */}
+            <Route path="/municipal-green-bond-analytics"  element={<MunicipalGreenBondAnalyticsPage />} />
+            <Route path="/cdfi-climate-finance"            element={<CdfiClimateFinancePage />} />
+            <Route path="/mdb-sub-sovereign-lending"       element={<MdbSubSovereignLendingPage />} />
+            <Route path="/cpace-climate-finance"           element={<CPaceClimateFinancePage />} />
+            <Route path="/climate-revenue-bond-modeler"    element={<ClimateRevenueBondModelerPage />} />
+            <Route path="/municipal-climate-resilience-hub" element={<MunicipalClimateResilienceHubPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
