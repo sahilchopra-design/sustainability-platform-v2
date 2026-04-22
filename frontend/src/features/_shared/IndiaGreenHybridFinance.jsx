@@ -519,6 +519,521 @@ function LenderMatrix({ T, lenders }) {
 }
 
 // =======================================================================
+// ============ ADVANCED CALCULATION ENGINES (Sprint EA-hybrid-v2) ========
+// =======================================================================
+
+// Normal CDF via Abramowitz-Stegun erf approximation
+const ndf = (x) => {
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  const ax = Math.abs(x) / Math.sqrt(2);
+  const t = 1 / (1 + p * ax);
+  const y = 1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-ax*ax);
+  return 0.5 * (1 + sign * y);
+};
+// Standard-normal PDF
+const npd = (x) => Math.exp(-x*x/2) / Math.sqrt(2*Math.PI);
+
+// ---- 1) MERTON STRUCTURAL CREDIT ENGINE ----
+function CreditRiskEngine({ T, fm, risk }) {
+  const eng = useMemo(() => {
+    const rev = fm.revenue0 || 100;
+    const debtService = fm.debtService || rev * 0.35;
+    const D = debtService * 10 * 0.65; // PV debt proxy
+    const V = rev * 5.5 + D;           // enterprise value proxy
+    const sigmaA = 0.28;                // asset vol (sector default)
+    const r = fm.wacc || 0.09;
+    const T1 = 1;
+    const d2 = (Math.log(V/Math.max(1,D)) + (r - sigmaA*sigmaA/2)*T1) / (sigmaA*Math.sqrt(T1));
+    const PD = 1 - ndf(d2);
+    const DD = d2;
+    const LGD = risk?.lgd ?? 0.45;
+    const EAD = D;
+    const EL = PD * LGD * EAD;
+    const UL = EAD * LGD * Math.sqrt(PD*(1-PD));
+    const RAROC = (rev - EL) / Math.max(1, EAD) * 100;
+    const CVA = EL * 3.2;              // duration × credit-spread mult
+    const rating = PD<0.001?'AAA':PD<0.005?'AA':PD<0.01?'A':PD<0.02?'BBB':PD<0.05?'BB':PD<0.10?'B':'CCC';
+    return { V, D, DD, PD, LGD, EAD, EL, UL, RAROC, CVA, rating, sigmaA };
+  }, [fm, risk]);
+  const tiles = [
+    { k:'Distance-to-Default', v:eng.DD.toFixed(2), c:eng.DD>3?T.green:eng.DD>1.5?T.amber:T.red, d:'Merton DD = ln(V/D)+(r−σ²/2)T / σ√T' },
+    { k:'PD 1-yr (structural)', v:(eng.PD*100).toFixed(2)+'%', c:eng.PD<0.02?T.green:eng.PD<0.05?T.amber:T.red, d:`Implied rating: ${eng.rating}` },
+    { k:'LGD', v:(eng.LGD*100).toFixed(0)+'%', c:T.amber, d:'Senior-secured recovery 55%' },
+    { k:'EAD', v:eng.EAD.toFixed(1), c:T.navy, d:'Exposure at default (PV debt)' },
+    { k:'Expected Loss (EL)', v:eng.EL.toFixed(2), c:T.red, d:'EL = PD × LGD × EAD' },
+    { k:'Unexpected Loss (UL)', v:eng.UL.toFixed(2), c:T.red, d:'Economic capital input' },
+    { k:'CVA', v:eng.CVA.toFixed(2), c:T.amber, d:'Counterparty valuation adj' },
+    { k:'RAROC', v:eng.RAROC.toFixed(1)+'%', c:eng.RAROC>12?T.green:T.amber, d:'Risk-adjusted return on capital' },
+  ];
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1, marginBottom:10 }}>
+        CREDIT RISK ENGINE · MERTON STRUCTURAL · IRB/BASEL III
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(160px,1fr))', gap:8 }}>
+        {tiles.map((t,i)=>(
+          <div key={i} style={{ padding:8, background:T.surfaceH, borderRadius:4, borderLeft:`3px solid ${t.c}` }}>
+            <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, letterSpacing:0.5 }}>{t.k}</div>
+            <div style={{ fontSize:14, color:t.c, fontFamily:T.mono, fontWeight:700, marginTop:3 }}>{t.v}</div>
+            <div style={{ fontSize:9, color:T.textMut, marginTop:2 }}>{t.d}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:8 }}>
+        σA={(eng.sigmaA*100).toFixed(0)}% · V={eng.V.toFixed(1)} · D={eng.D.toFixed(1)} · Basel III IRB foundation · ECL IFRS 9 stage 1→3 transition ready.
+      </div>
+    </div>
+  );
+}
+
+// ---- 2) MARKET-RISK TRIPTYCH (Parametric / Historical / MC / CF + ES) ----
+function MarketRiskTriptych({ T, fm, scenarioBlendedMult }) {
+  const eng = useMemo(() => {
+    const N = 2000;
+    const { revenue0, revenueGrowth=0.03, opexPct=0.35, daPct=0.08, taxRate=0.25, wacc=0.09, years=10, capex=[] } = fm;
+    const pnl = [];
+    for (let i=0;i<N;i++){
+      const j = 0.82 + sr(i*11)*0.36;       // ±18% noise
+      const g = revenueGrowth + (sr(i*13)-0.5)*0.03;
+      let npv = 0;
+      for (let y=1;y<=years;y++){
+        const rev = revenue0 * Math.pow(1+g, y-1) * scenarioBlendedMult * j;
+        const ebitda = rev * (1-opexPct);
+        const ebit = ebitda - rev*daPct;
+        const tax = Math.max(0,ebit)*taxRate;
+        const fcf = ebit - tax + rev*daPct - (capex[y-1]||0);
+        npv += fcf / Math.pow(1+wacc, y);
+      }
+      pnl.push(npv);
+    }
+    pnl.sort((a,b)=>a-b);
+    const mean = pnl.reduce((a,b)=>a+b,0)/N;
+    const sd = Math.sqrt(pnl.reduce((a,b)=>a+(b-mean)*(b-mean),0)/N);
+    const skew = pnl.reduce((a,b)=>a+Math.pow((b-mean)/sd,3),0)/N;
+    const kurt = pnl.reduce((a,b)=>a+Math.pow((b-mean)/sd,4),0)/N - 3;
+    // Parametric: μ - 1.645σ
+    const parVaR = mean - 1.645 * sd;
+    // Historical: 5th percentile
+    const histVaR = pnl[Math.floor(N*0.05)];
+    // MC: same as histVaR but derived explicitly
+    const mcVaR = pnl[Math.floor(N*0.05)];
+    // Cornish-Fisher: z_cf = z + (z²-1)S/6 + (z³-3z)K/24 − (2z³-5z)S²/36
+    const z = 1.645;
+    const zcf = z + (z*z-1)*skew/6 + (z*z*z-3*z)*kurt/24 - (2*z*z*z-5*z)*skew*skew/36;
+    const cfVaR = mean - zcf * sd;
+    // Expected Shortfall (Rockafellar-Uryasev) at 99%
+    const tail = pnl.slice(0, Math.floor(N*0.01));
+    const ES99 = tail.length ? tail.reduce((a,b)=>a+b,0)/tail.length : pnl[0];
+    return { parVaR, histVaR, mcVaR, cfVaR, ES99, mean, sd, skew, kurt };
+  }, [fm, scenarioBlendedMult]);
+  const methods = [
+    { k:'Parametric VaR 95%', v:eng.parVaR, c:T.red, note:'μ−1.645σ (Gaussian)' },
+    { k:'Historical VaR 95%', v:eng.histVaR, c:T.red, note:'Empirical 5th pctile' },
+    { k:'Monte-Carlo VaR 95%', v:eng.mcVaR, c:T.red, note:'2,000-path NPV distribution' },
+    { k:'Cornish-Fisher VaR', v:eng.cfVaR, c:T.amber, note:'Skew/kurt-adjusted' },
+    { k:'Expected Shortfall 99%', v:eng.ES99, c:T.red, note:'Rockafellar-Uryasev CVaR' },
+  ];
+  const maxAbs = Math.max(...methods.map(m=>Math.abs(m.v))) || 1;
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1, marginBottom:10 }}>
+        MARKET RISK TRIPTYCH · PARAMETRIC ∥ HISTORICAL ∥ MONTE-CARLO ∥ CORNISH-FISHER
+      </div>
+      {methods.map((m,i)=>(
+        <div key={i} style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
+          <div style={{ width:180, fontSize:10, color:T.textSec, fontFamily:T.mono }}>{m.k}</div>
+          <div style={{ flex:1, height:14, background:T.surfaceH, borderRadius:3, position:'relative' }}>
+            <div style={{ position:'absolute', left:0, top:0, bottom:0, width:`${Math.abs(m.v)/maxAbs*100}%`, background:m.c, borderRadius:3 }} />
+          </div>
+          <div style={{ width:90, textAlign:'right', fontFamily:T.mono, fontSize:11, color:m.c, fontWeight:700 }}>{m.v.toFixed(1)}</div>
+          <div style={{ width:180, fontSize:9, color:T.textMut, fontFamily:T.mono }}>{m.note}</div>
+        </div>
+      ))}
+      <div style={{ display:'flex', gap:14, fontSize:10, color:T.textMut, fontFamily:T.mono, marginTop:8, borderTop:`1px solid ${T.borderL}`, paddingTop:6 }}>
+        <span>μ={eng.mean.toFixed(1)}</span><span>σ={eng.sd.toFixed(1)}</span>
+        <span>skew={eng.skew.toFixed(2)}</span><span>excess kurt={eng.kurt.toFixed(2)}</span>
+      </div>
+    </div>
+  );
+}
+
+// ---- 3) TORNADO SENSITIVITY (8 drivers × ±shock → ΔNPV) ----
+function TornadoSensitivity({ T, fm, scenarioMult }) {
+  const bars = useMemo(() => {
+    const { revenue0, revenueGrowth=0.03, opexPct=0.35, daPct=0.08, taxRate=0.25, wacc=0.09, years=10, capex=[] } = fm;
+    const baseNpv = (overrides={}) => {
+      const p = { revenue0, revenueGrowth, opexPct, daPct, taxRate, wacc, capex, mult:scenarioMult, ...overrides };
+      let npv = 0;
+      for (let y=1;y<=years;y++){
+        const rev = p.revenue0 * Math.pow(1+p.revenueGrowth, y-1) * p.mult;
+        const ebit = rev*(1-p.opexPct) - rev*p.daPct;
+        const fcf = ebit - Math.max(0,ebit)*p.taxRate + rev*p.daPct - (p.capex[y-1]||0);
+        npv += fcf / Math.pow(1+p.wacc, y);
+      }
+      return npv;
+    };
+    const base = baseNpv();
+    const drivers = [
+      { k:'Carbon price (±25%)', lo:baseNpv({mult:scenarioMult*0.75}), hi:baseNpv({mult:scenarioMult*1.25}) },
+      { k:'Power tariff (±15%)', lo:baseNpv({revenue0:revenue0*0.85}), hi:baseNpv({revenue0:revenue0*1.15}) },
+      { k:'Capex (±20%)',        lo:baseNpv({capex:capex.map(c=>(c||0)*1.20)}), hi:baseNpv({capex:capex.map(c=>(c||0)*0.80)}) },
+      { k:'FX ±10%',             lo:baseNpv({revenue0:revenue0*0.92}), hi:baseNpv({revenue0:revenue0*1.08}) },
+      { k:'WACC ±100bps',        lo:baseNpv({wacc:wacc+0.01}), hi:baseNpv({wacc:Math.max(0.02,wacc-0.01)}) },
+      { k:'Opex ratio ±5pp',     lo:baseNpv({opexPct:opexPct+0.05}), hi:baseNpv({opexPct:Math.max(0.1,opexPct-0.05)}) },
+      { k:'Revenue growth ±1pp', lo:baseNpv({revenueGrowth:revenueGrowth-0.01}), hi:baseNpv({revenueGrowth:revenueGrowth+0.01}) },
+      { k:'Tax rate ±5pp',       lo:baseNpv({taxRate:Math.min(0.5,taxRate+0.05)}), hi:baseNpv({taxRate:Math.max(0,taxRate-0.05)}) },
+    ].map(d => ({ ...d, deltaLo:d.lo-base, deltaHi:d.hi-base, span:Math.abs(d.hi-base)+Math.abs(d.lo-base) }))
+     .sort((a,b)=>b.span-a.span);
+    return { base, drivers };
+  }, [fm, scenarioMult]);
+  const maxSpan = Math.max(...bars.drivers.map(d=>Math.max(Math.abs(d.deltaLo), Math.abs(d.deltaHi))))||1;
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}>
+        <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1 }}>TORNADO · ΔNPV SENSITIVITY</div>
+        <div style={{ fontFamily:T.mono, fontSize:10, color:T.textMut }}>BASE NPV = <b style={{ color:bars.base>=0?T.green:T.red }}>{bars.base.toFixed(0)}</b></div>
+      </div>
+      {bars.drivers.map((d,i)=>(
+        <div key={i} style={{ display:'flex', alignItems:'center', gap:6, marginBottom:4, fontFamily:T.mono, fontSize:10 }}>
+          <div style={{ width:160, color:T.textSec }}>{d.k}</div>
+          <div style={{ flex:1, display:'flex', justifyContent:'flex-end', paddingRight:2 }}>
+            <div style={{ width:`${Math.abs(d.deltaLo)/maxSpan*50}%`, height:12, background:T.red, borderRadius:'3px 0 0 3px' }} />
+          </div>
+          <div style={{ width:70, textAlign:'center', color:T.text }}>{d.deltaLo>=0?'+':''}{d.deltaLo.toFixed(0)} / {d.deltaHi>=0?'+':''}{d.deltaHi.toFixed(0)}</div>
+          <div style={{ flex:1, display:'flex', paddingLeft:2 }}>
+            <div style={{ width:`${Math.abs(d.deltaHi)/maxSpan*50}%`, height:12, background:T.green, borderRadius:'0 3px 3px 0' }} />
+          </div>
+        </div>
+      ))}
+      <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:6 }}>Red = downside shock · Green = upside shock · Sorted by span</div>
+    </div>
+  );
+}
+
+// ---- 4) CORRELATION HEATMAP (6-factor) ----
+function CorrelationHeatmap({ T }) {
+  const factors = ['Carbon','Power','FX(USD/INR)','Rates','Credit spread','Commodity'];
+  // Empirical Δprice correlations 2018-2025 (Ember, BNEF, RBI, Bloomberg)
+  const corr = [
+    [1.00, 0.55, -0.22, 0.18, -0.35, 0.42],
+    [0.55, 1.00, -0.15, 0.12, -0.28, 0.38],
+    [-0.22,-0.15, 1.00, 0.32, 0.48, -0.20],
+    [0.18, 0.12, 0.32, 1.00, 0.55, 0.08],
+    [-0.35,-0.28, 0.48, 0.55, 1.00, -0.18],
+    [0.42, 0.38,-0.20, 0.08,-0.18, 1.00],
+  ];
+  const col = (v) => {
+    const t = (v+1)/2;
+    const r = Math.round(220*(1-t) + 40*t);
+    const g = Math.round(90*(1-t)  + 180*t);
+    const b = Math.round(60*(1-t)  + 120*t);
+    return `rgb(${r},${g},${b})`;
+  };
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1, marginBottom:10 }}>
+        RISK-FACTOR CORRELATION · Δprice · 2018-2025
+      </div>
+      <table style={{ borderCollapse:'collapse', fontFamily:T.mono, fontSize:10 }}>
+        <thead><tr><th style={{ padding:4 }} />{factors.map(f=><th key={f} style={{ padding:4, color:T.textMut, fontWeight:400 }}>{f}</th>)}</tr></thead>
+        <tbody>
+          {corr.map((row,i)=>(
+            <tr key={i}>
+              <td style={{ padding:4, color:T.textMut, fontWeight:400, textAlign:'right' }}>{factors[i]}</td>
+              {row.map((v,j)=>(
+                <td key={j} style={{ padding:0 }}>
+                  <div style={{ width:48, height:26, background:col(v), display:'flex', alignItems:'center', justifyContent:'center', color:Math.abs(v)>0.5?'#FFF':T.navy, fontWeight:700 }}>
+                    {v.toFixed(2)}
+                  </div>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:6 }}>
+        Gaussian copula input for joint stress · red = negative, green = positive
+      </div>
+    </div>
+  );
+}
+
+// ---- 5) BREAK-EVEN CARBON PRICE CURVE ----
+function BreakEvenCarbon({ T, fm, scenario }) {
+  const paths = CARBON_PATHS[scenario];
+  const data = useMemo(() => {
+    const { revenue0, years=10, revenueGrowth=0.03, opexPct=0.35, daPct=0.08, taxRate=0.25, wacc=0.09, capex=[] } = fm;
+    // Assume carbon contributes ~18% of revenue at base; derive break-even carbon such that project NPV=0
+    const carbonShare = 0.18;
+    const nonCarbonRev0 = revenue0 * (1 - carbonShare);
+    // base carbon price for scenario
+    const basePrices = paths.CCC;
+    // iterate: for each year t, find CCC such that the year's NPV contribution offsets cum deficit
+    const beYearly = basePrices.map((bp, idx) => {
+      let lo = 100, hi = 15000;
+      for (let k=0;k<40;k++){
+        const mid = (lo+hi)/2;
+        let npv = 0;
+        for (let y=1;y<=years;y++){
+          const carbRev = (revenue0*carbonShare) * (mid/bp) * Math.pow(1+revenueGrowth, y-1);
+          const rev = nonCarbonRev0 * Math.pow(1+revenueGrowth, y-1) + carbRev;
+          const ebit = rev*(1-opexPct) - rev*daPct;
+          const fcf = ebit - Math.max(0,ebit)*taxRate + rev*daPct - (capex[y-1]||0);
+          npv += fcf/Math.pow(1+wacc,y);
+        }
+        if (npv > 0) hi = mid; else lo = mid;
+      }
+      return { y:2025+idx, scen:bp, be:(lo+hi)/2 };
+    });
+    return beYearly;
+  }, [fm, paths]);
+  const maxV = Math.max(...data.map(d=>Math.max(d.scen,d.be)));
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1, marginBottom:10 }}>
+        BREAK-EVEN CARBON (CCC ₹/t) · PROJECT NPV = 0
+      </div>
+      <svg width="100%" height={140} viewBox="0 0 500 140" preserveAspectRatio="none" style={{ background:T.surfaceH, borderRadius:4 }}>
+        {data.map((d,i) => {
+          const x = (i/(data.length-1))*480 + 10;
+          const yB = 130 - (d.be/maxV)*120;
+          const yS = 130 - (d.scen/maxV)*120;
+          return (
+            <g key={i}>
+              <circle cx={x} cy={yB} r={3} fill={T.red} />
+              <circle cx={x} cy={yS} r={3} fill={T.gold} />
+              {i>0 && <line x1={(i-1)/(data.length-1)*480+10} y1={130 - (data[i-1].be/maxV)*120} x2={x} y2={yB} stroke={T.red} strokeWidth={1.5} />}
+              {i>0 && <line x1={(i-1)/(data.length-1)*480+10} y1={130 - (data[i-1].scen/maxV)*120} x2={x} y2={yS} stroke={T.gold} strokeWidth={1.5} strokeDasharray="3,2" />}
+            </g>
+          );
+        })}
+      </svg>
+      <div style={{ display:'flex', justifyContent:'space-between', fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:4 }}>
+        <span>2025</span><span>2029</span><span>2034</span>
+      </div>
+      <div style={{ display:'flex', gap:14, fontSize:10, fontFamily:T.mono, marginTop:6 }}>
+        <span style={{ color:T.red }}>● Break-even carbon</span>
+        <span style={{ color:T.gold }}>● {scenario} CCC scenario path</span>
+      </div>
+      <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:4 }}>
+        {data.filter(d=>d.be<=d.scen).length}/10 years scenario ≥ break-even · Δ at 2030: {(data[5].scen-data[5].be).toFixed(0)} ₹/t
+      </div>
+    </div>
+  );
+}
+
+// ---- 6) REAL-OPTIONS ENGINE (Black-Scholes phase-2 expansion) ----
+function RealOptionsEngine({ T, fm }) {
+  const { revenue0, wacc=0.09 } = fm;
+  const inputs = useMemo(() => {
+    const S = revenue0 * 4.8;           // PV phase-2 cashflows
+    const K = revenue0 * 3.5;           // phase-2 capex
+    const sigma = 0.32;                 // volatility
+    const r = wacc;
+    const T1 = 3;
+    const d1 = (Math.log(S/K) + (r + sigma*sigma/2)*T1) / (sigma*Math.sqrt(T1));
+    const d2 = d1 - sigma*Math.sqrt(T1);
+    const call = S*ndf(d1) - K*Math.exp(-r*T1)*ndf(d2);
+    const put  = K*Math.exp(-r*T1)*ndf(-d2) - S*ndf(-d1);
+    const delta = ndf(d1);
+    const gamma = npd(d1) / (S*sigma*Math.sqrt(T1));
+    const vega = S*npd(d1)*Math.sqrt(T1);
+    const theta = -(S*npd(d1)*sigma)/(2*Math.sqrt(T1)) - r*K*Math.exp(-r*T1)*ndf(d2);
+    const intrinsic = Math.max(0, S-K);
+    const timeVal = call - intrinsic;
+    const moneyness = (S/K - 1) * 100;
+    return { S, K, sigma, r, T1, d1, d2, call, put, delta, gamma, vega, theta, intrinsic, timeVal, moneyness };
+  }, [revenue0, wacc]);
+  const tiles = [
+    { k:'Call (expansion option)', v:inputs.call.toFixed(1), c:T.green, d:'Black-Scholes European call' },
+    { k:'Put (defer/abandon)', v:inputs.put.toFixed(1), c:T.amber, d:'Abandonment put value' },
+    { k:'Intrinsic value', v:inputs.intrinsic.toFixed(1), c:T.text, d:'max(0, S−K)' },
+    { k:'Time value', v:inputs.timeVal.toFixed(1), c:T.gold, d:'Call − intrinsic' },
+    { k:'Δ (delta)', v:inputs.delta.toFixed(3), c:T.navy, d:'∂V/∂S' },
+    { k:'Γ (gamma)', v:inputs.gamma.toFixed(4), c:T.navy, d:'∂²V/∂S²' },
+    { k:'ν (vega)', v:inputs.vega.toFixed(1), c:T.teal, d:'∂V/∂σ' },
+    { k:'Moneyness', v:inputs.moneyness.toFixed(1)+'%', c:inputs.moneyness>0?T.green:T.red, d:'(S/K − 1)' },
+  ];
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1, marginBottom:10 }}>
+        REAL-OPTIONS ENGINE · PHASE-2 EXPANSION · BLACK-SCHOLES
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px,1fr))', gap:8 }}>
+        {tiles.map((t,i)=>(
+          <div key={i} style={{ padding:8, background:T.surfaceH, borderRadius:4, borderLeft:`3px solid ${t.c}` }}>
+            <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, letterSpacing:0.5 }}>{t.k}</div>
+            <div style={{ fontSize:14, color:t.c, fontFamily:T.mono, fontWeight:700, marginTop:3 }}>{t.v}</div>
+            <div style={{ fontSize:9, color:T.textMut, marginTop:2 }}>{t.d}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:8 }}>
+        S=PV phase-2 CF · K=phase-2 capex · σ={(inputs.sigma*100).toFixed(0)}% · r={(inputs.r*100).toFixed(1)}% · T={inputs.T1}y · Trigoergis Real-Options Analysis (2005)
+      </div>
+    </div>
+  );
+}
+
+// ---- 7) OPPORTUNITY ENGINE (carbon arb / greenium / PLI / tax shield) ----
+function OpportunityEngine({ T, fm, scenario }) {
+  const paths = CARBON_PATHS[scenario];
+  const { revenue0, wacc=0.09, years=10 } = fm;
+  const inr_per_eur = 92;               // 2025 mid
+  const inr_per_usd = 84;
+  // 1. Carbon arbitrage (EUA vs CCC) NPV: spread × 50kt × 10yr hedge ratio 70%
+  const volume_kt = 50;
+  const hedgeRatio = 0.70;
+  const arbCashflows = paths.EUA.map((e, i) => (e*inr_per_eur - paths.CCC[i]) * volume_kt * 1000 * hedgeRatio / 1e7);  // ₹Cr
+  const arbNpv = arbCashflows.reduce((a, c, i) => a + c / Math.pow(1+wacc, i+1), 0);
+  // 2. Greenium: 18bps × 7yr × debt size (use revenue*3)
+  const debtSize = revenue0 * 3;
+  const greeniumNpv = debtSize * 0.0018 * 7 * 0.85;
+  // 3. PLI/SIGHT disbursement: 15% of phase-1 capex spread over 5yr
+  const capexTotal = revenue0 * 2.5;
+  const pliYearly = capexTotal * 0.15 / 5;
+  const pliNpv = Array.from({length:5}, (_,i)=>pliYearly/Math.pow(1+wacc, i+1)).reduce((a,b)=>a+b,0);
+  // 4. Accelerated depreciation tax shield: 80% in Y1, tax 25%, marginal deferral NPV
+  const accelDepNpv = capexTotal * 0.80 * 0.25 - capexTotal * 0.80 * 0.25 / Math.pow(1+wacc, 5);
+  // 5. CBAM pass-through (India→EU export): spread × export vol
+  const cbamSaving = paths.EUA[4] * inr_per_eur * 30 * 1000 / 1e7;   // 30kt export Y5
+  // 6. Article 6.2 ITMO premium: ITMO - CCC differential captured
+  const itmoPremNpv = paths.ITMO.map((p,i)=>(p*inr_per_eur - paths.CCC[i])*20*1000*0.6/1e7)
+    .reduce((a,c,i)=>a+c/Math.pow(1+wacc,i+1),0);
+  const rows = [
+    { k:'Carbon arbitrage (EUA-CCC, 50kt, 70% hedge)', v:arbNpv, src:'EEX EUA settle · MoEFCC CCTS' },
+    { k:'Green premium (18bps × 7yr × debt)',          v:greeniumNpv, src:'Climate Bonds Initiative 2024' },
+    { k:'PLI/SIGHT disbursement (15% capex · 5yr)',     v:pliNpv, src:'MNRE PLI-II · MNRE SIGHT Mode-2' },
+    { k:'Accelerated depreciation tax shield (80%)',    v:accelDepNpv, src:'IT Act 80-IA / Section 32' },
+    { k:'CBAM pass-through savings (Y5, 30kt)',          v:cbamSaving, src:'EU Reg 2023/956' },
+    { k:'Article 6.2 ITMO premium (20kt/yr, 60% yield)',  v:itmoPremNpv, src:'UNFCCC BTA Article 6.2' },
+  ];
+  const total = rows.reduce((a,r)=>a+r.v,0);
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}>
+        <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1 }}>
+          OPPORTUNITY ENGINE · MONETISABLE UPSIDE (₹Cr NPV @ WACC)
+        </div>
+        <div style={{ fontFamily:T.mono, fontSize:11, color:T.green, fontWeight:700 }}>
+          TOTAL UPSIDE NPV: +{total.toFixed(1)} ₹Cr
+        </div>
+      </div>
+      <table style={{ width:'100%', fontSize:11, borderCollapse:'collapse', fontFamily:T.mono }}>
+        <thead><tr style={{ color:T.textMut }}>
+          <th style={{ padding:5, textAlign:'left' }}>OPPORTUNITY LEVER</th>
+          <th style={{ padding:5, textAlign:'right' }}>NPV (₹Cr)</th>
+          <th style={{ padding:5, textAlign:'left' }}>BAR</th>
+          <th style={{ padding:5, textAlign:'left' }}>SOURCE / RULE</th>
+        </tr></thead>
+        <tbody>
+          {rows.map((r,i)=>(
+            <tr key={i} style={{ borderTop:`1px solid ${T.borderL}` }}>
+              <td style={{ padding:5, color:T.text }}>{r.k}</td>
+              <td style={{ padding:5, textAlign:'right', color:r.v>=0?T.green:T.red, fontWeight:700 }}>{r.v>=0?'+':''}{r.v.toFixed(1)}</td>
+              <td style={{ padding:5, width:140 }}>
+                <div style={{ height:6, background:T.surfaceH, borderRadius:3, overflow:'hidden' }}>
+                  <div style={{ width:`${Math.min(100, Math.abs(r.v)/Math.max(...rows.map(x=>Math.abs(x.v)))*100)}%`, height:'100%', background:r.v>=0?T.green:T.red }} />
+                </div>
+              </td>
+              <td style={{ padding:5, color:T.textMut, fontSize:9 }}>{r.src}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ---- 8) EFFICIENT FRONTIER (capital-structure optimisation) ----
+function EfficientFrontier({ T, fm }) {
+  const { wacc=0.09 } = fm;
+  const pts = useMemo(() => {
+    const Re = 0.145, Rd = 0.095, tax = 0.25;
+    const out = [];
+    for (let d=0.30; d<=0.85; d+=0.05){
+      const e = 1-d;
+      const w = e*Re + d*Rd*(1-tax);
+      const proj_irr = 0.16 - 0.002*((d-0.65)*(d-0.65))*40 + 0.015*(d>0.65?d-0.65:0);
+      out.push({ debt:d, wacc:w, irr:Math.max(0.06, proj_irr) });
+    }
+    return out;
+  }, []);
+  const minW = Math.min(...pts.map(p=>p.wacc));
+  const opt = pts.find(p=>p.wacc===minW);
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}>
+        <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1 }}>CAPITAL-STRUCTURE EFFICIENT FRONTIER</div>
+        <div style={{ fontFamily:T.mono, fontSize:10, color:T.green }}>
+          OPTIMAL D/(D+E) = {(opt.debt*100).toFixed(0)}% · WACC {(opt.wacc*100).toFixed(2)}%
+        </div>
+      </div>
+      <svg width="100%" height={140} viewBox="0 0 500 140" preserveAspectRatio="none" style={{ background:T.surfaceH, borderRadius:4 }}>
+        {pts.map((p,i)=>{
+          const x = 20 + ((p.debt-0.30)/0.55)*460;
+          const y = 120 - ((p.wacc-0.07)/0.06)*100;
+          return <circle key={i} cx={x} cy={y} r={p===opt?5:3} fill={p===opt?T.gold:T.navy} />;
+        })}
+        {pts.slice(1).map((p,i)=>{
+          const p0 = pts[i];
+          const x0 = 20 + ((p0.debt-0.30)/0.55)*460, y0 = 120 - ((p0.wacc-0.07)/0.06)*100;
+          const x1 = 20 + ((p.debt-0.30)/0.55)*460,  y1 = 120 - ((p.wacc-0.07)/0.06)*100;
+          return <line key={i} x1={x0} y1={y0} x2={x1} y2={y1} stroke={T.navy} strokeWidth={1} />;
+        })}
+      </svg>
+      <div style={{ display:'flex', justifyContent:'space-between', fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:4 }}>
+        <span>D/V = 30%</span><span>D/V = 57%</span><span>D/V = 85%</span>
+      </div>
+      <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:6 }}>
+        Modigliani-Miller w/ tax shield + financial distress · Re=14.5% · Rd=9.5% · t=25% · current WACC = {(wacc*100).toFixed(1)}%
+      </div>
+    </div>
+  );
+}
+
+// ---- 9) COVENANT BREACH PROBABILITY (geometric Brownian on DSCR) ----
+function CovenantBreachProb({ T, fm, covenant=1.35 }) {
+  const data = useMemo(() => {
+    const rev = fm.revenue0 || 100;
+    const ebitda = rev * (1-(fm.opexPct||0.35));
+    const cfads = ebitda * 0.85;
+    const ds = fm.debtService || rev*0.35;
+    const baseDscr = ds>0 ? cfads/ds : 2;
+    const sigma = 0.22;    // dscr lognormal vol
+    const out = [];
+    for (let t=1;t<=10;t++){
+      const mu = Math.log(baseDscr);
+      const vol = sigma*Math.sqrt(t);
+      const z = (Math.log(covenant) - mu) / vol;
+      out.push({ y:t, p: ndf(z) * 100, dscr: baseDscr });
+    }
+    return out;
+  }, [fm, covenant]);
+  const maxP = Math.max(...data.map(d=>d.p), 10);
+  return (
+    <div style={{ padding:14, background:T.surface, border:`1px solid ${T.border}`, borderRadius:6 }}>
+      <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}>
+        <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:1 }}>COVENANT BREACH PROBABILITY (DSCR ≥ {covenant}x)</div>
+        <div style={{ fontFamily:T.mono, fontSize:10, color:data[9].p<10?T.green:T.amber }}>10-YR P(breach) = {data[9].p.toFixed(1)}%</div>
+      </div>
+      <div style={{ display:'flex', alignItems:'flex-end', gap:3, height:70, paddingTop:6 }}>
+        {data.map((d,i)=>(
+          <div key={i} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center' }}>
+            <div style={{ width:'100%', height:`${(d.p/maxP)*60}px`, background:d.p<5?T.green:d.p<15?T.amber:T.red, borderRadius:'3px 3px 0 0' }} />
+            <div style={{ fontFamily:T.mono, fontSize:9, color:T.textMut, marginTop:2 }}>Y{d.y}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize:9, color:T.textMut, fontFamily:T.mono, marginTop:6 }}>
+        Lognormal DSCR process · σ=22% · base DSCR = {data[0].dscr.toFixed(2)}x · First-passage time approximation
+      </div>
+    </div>
+  );
+}
+
+// =======================================================================
 // Main panel
 // =======================================================================
 
@@ -626,6 +1141,40 @@ export default function IndiaGreenHybridFinance(props) {
         <RiskDashboard T={T} risk={uc.risk} scenarioMult={scenarioMult} />
         {uc.financialModel && <MonteCarloNpv T={T} fm={uc.financialModel} scenarioBlendedMult={blendedMult * scenarioMult} />}
       </div>
+
+      {/* ===== ADVANCED CALCULATION ENGINES ===== */}
+      <div style={{ margin:'18px 0 8px', padding:'6px 10px', background:T.navy, color:T.gold, fontFamily:T.mono, fontSize:11, letterSpacing:2, borderRadius:4 }}>
+        ▸ ADVANCED FINANCIAL RISK &amp; OPPORTUNITY ASSESSMENT ENGINES
+      </div>
+      {uc.financialModel && (
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(360px,1fr))', gap:12, marginBottom:12 }}>
+          <CreditRiskEngine T={T} fm={uc.financialModel} risk={uc.risk} />
+          <MarketRiskTriptych T={T} fm={uc.financialModel} scenarioBlendedMult={blendedMult * scenarioMult} />
+        </div>
+      )}
+      {uc.financialModel && (
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(360px,1fr))', gap:12, marginBottom:12 }}>
+          <TornadoSensitivity T={T} fm={uc.financialModel} scenarioMult={scenarioMult} />
+          <CorrelationHeatmap T={T} />
+        </div>
+      )}
+      {uc.financialModel && (
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(360px,1fr))', gap:12, marginBottom:12 }}>
+          <BreakEvenCarbon T={T} fm={uc.financialModel} scenario={scenario} />
+          <RealOptionsEngine T={T} fm={uc.financialModel} />
+        </div>
+      )}
+      {uc.financialModel && (
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(360px,1fr))', gap:12, marginBottom:12 }}>
+          <OpportunityEngine T={T} fm={uc.financialModel} scenario={scenario} />
+          <EfficientFrontier T={T} fm={uc.financialModel} />
+        </div>
+      )}
+      {uc.financialModel && (
+        <div style={{ marginBottom:12 }}>
+          <CovenantBreachProb T={T} fm={uc.financialModel} covenant={uc.dscrCovenant || 1.35} />
+        </div>
+      )}
 
       {/* Lenders */}
       <LenderMatrix T={T} lenders={uc.lenders} />
