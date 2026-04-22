@@ -1,202 +1,227 @@
-import React, { useState, useMemo } from 'react';
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
+import React, { useMemo, useState } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar, Legend } from 'recharts';
+import { T, useScenario, ToolkitBar, NumInput, TextInput, Kpi, Panel, Table, td, TabBar, PageHeader, Badge, downloadText, toCsv, openDeliverable, html } from '../../_shared/AdvisoryToolkit';
 
-const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
+const INSTRUMENTS = ['Green Bond', 'Sustainability-Linked Bond', 'Sustainability-Linked Loan', 'Transition Bond', 'Blue Bond'];
+const SPOS = ['Sustainalytics', 'S&P Global', "Moody's ESG", 'CICERO', 'CRISIL', 'ISS ESG'];
 
-const INSTRUMENTS = [
-  { k: 'Green Bond (ICMA GBP)', t: 'Use-of-proceeds', issuer: 'Senior unsecured / project', pricing: '-15 to -25bps', eligAssets: 'Solar / wind / BESS / GH2', spoReq: 'Mandatory (CBI/Sustainalytics)' },
-  { k: 'Green Loan (LMA GLP)', t: 'Use-of-proceeds', issuer: 'Syndicated / bilateral', pricing: '-10 to -20bps', eligAssets: 'Project-level green assets', spoReq: 'Mandatory (CBI/VigeoEiris)' },
-  { k: 'Sustainability-Linked Bond (SLB)', t: 'KPI-linked coupon', issuer: 'General corporate', pricing: 'Step-up/down ±25bps', eligAssets: 'Any (incl. capex)', spoReq: 'Mandatory (Sustainalytics/S&P)' },
-  { k: 'Sustainability-Linked Loan (SLL)', t: 'KPI-linked margin', issuer: 'Bilateral syndicated', pricing: 'Margin adj ±5-15bps', eligAssets: 'General corporate', spoReq: 'Recommended (verifier)' },
-  { k: 'Transition Bond', t: 'Transition use', issuer: 'High-emitting sectors', pricing: '-5 to -15bps', eligAssets: 'Legacy → low-carbon', spoReq: 'Mandatory' },
-  { k: 'Blue Bond', t: 'Ocean use-of-proceeds', issuer: 'Marine RE / coastal', pricing: '-10 to -20bps', eligAssets: 'Offshore wind / blue H2', spoReq: 'Mandatory' },
-];
+const DEFAULTS = {
+  issuerName: 'Integrated RE-IPP Client (anonymised)',
+  faceAmount: 2500,
+  currency: 'INR Cr',
+  baseCoupon: 8.15,
+  tenorYrs: 7,
+  stepUpBps: 25,
+  spo: 'Sustainalytics',
+  kpis: [
+    { kpi: 'Portfolio GHG intensity (Scope 1+2)', unit: 'tCO₂e/MWh', baseline: 0.052, spt: 0.028, year: 2030, weight: 40, achieved: 0.048 },
+    { kpi: 'Renewable capacity share', unit: '%', baseline: 62, spt: 85, year: 2030, weight: 25, achieved: 68 },
+    { kpi: 'Module LCA-verified intensity', unit: 'g CO₂e/kWh', baseline: 42, spt: 28, year: 2030, weight: 20, achieved: 40 },
+    { kpi: 'Water withdrawal intensity', unit: 'm³/MWh', baseline: 0.35, spt: 0.20, year: 2030, weight: 10, achieved: 0.31 },
+    { kpi: 'Safety — LTIFR', unit: '/Mhrs', baseline: 0.48, spt: 0.15, year: 2030, weight: 5, achieved: 0.41 },
+  ],
+};
 
-const KPI_LIBRARY = [
-  { kpi: 'Portfolio carbon intensity (gCO₂e/kWh)', materiality: 'Core', target2030: 4.0, baseline: 31, source: 'LCA-verified', icmaAlign: '✓' },
-  { kpi: 'RE capacity commissioned (GW)', materiality: 'Lagging', target2030: 12, baseline: 7.4, source: 'Financial reporting', icmaAlign: '✓ secondary' },
-  { kpi: 'TCFD physical risk-adjusted DSCR', materiality: 'Core', target2030: 1.45, baseline: 1.28, source: 'TCFD SSP2-4.5', icmaAlign: '✓ innovative' },
-  { kpi: 'CCTS CCCs generated & retired (kt)', materiality: 'Supplementary', target2030: 800, baseline: 0, source: 'BEE registry', icmaAlign: '✓' },
-  { kpi: 'Supply chain scope 3 reduction vs 2024', materiality: 'Core mfg', target2030: 35, baseline: 0, source: 'GHG Protocol Scope 3', icmaAlign: '✓' },
-  { kpi: 'Water withdrawal intensity (kL/GWh)', materiality: 'Core operations', target2030: 1.8, baseline: 3.2, source: 'BRSR Core', icmaAlign: '✓' },
-  { kpi: 'TNFD LEAP baseline completion (%)', materiality: 'Supplementary', target2030: 100, baseline: 0, source: 'TNFD v1.0', icmaAlign: '✓ innovative' },
-];
-
-const SPT_TRAJECTORY = Array.from({ length: 7 }, (_, i) => ({
-  yr: 2025 + i,
-  ci: +(31 - i * (31 - 4) / 6).toFixed(1),
-  target: +(31 - i * (31 - 4) / 6).toFixed(1),
-  ambition: +(31 - i * (31 - 4) / 5).toFixed(1),
-}));
-
-const SPO_PROVIDERS = [
-  { sp: 'Sustainalytics', cov: 'SLB/GB · SPO · CBI licensed', fee: '$45-85k', td: '6-8wk' },
-  { sp: 'S&P Global', cov: 'SLB/GB · 2nd party opinion', fee: '$60-120k', td: '8-10wk' },
-  { sp: 'Moody\'s ESG', cov: 'SLB · climate scenario', fee: '$55-100k', td: '8-10wk' },
-  { sp: 'CICERO Shades', cov: 'GB · climate science-grounded', fee: '$50-90k', td: '6-8wk' },
-  { sp: 'CRISIL', cov: 'India-specific · SLL · GB', fee: '₹25-60L', td: '5-7wk' },
-  { sp: 'ISS Corporate', cov: 'SLB · ESG data layer', fee: '$40-80k', td: '6-8wk' },
-];
-
-const COST_SAVINGS = [
-  { scen: 'Conventional INR bond', bps: 0, notional: 2000, cat: 'Baseline', cost: 0 },
-  { scen: 'Green Bond (domestic)', bps: -20, notional: 2000, cat: 'Use-of-proceeds', cost: -40 },
-  { scen: 'Green Bond (USD)', bps: -35, notional: 2000, cat: 'International', cost: -70 },
-  { scen: 'SLB (hit SPT)', bps: -25, notional: 2000, cat: 'KPI step-down', cost: -50 },
-  { scen: 'SLB (miss SPT)', bps: 25, notional: 2000, cat: 'Coupon step-up', cost: 50 },
-  { scen: 'Transition Bond', bps: -10, notional: 2000, cat: 'Transition eligible', cost: -20 },
-];
-
-const TABS = ['Overview', 'Instrument Taxonomy', 'KPI Library', 'SPT Trajectory', 'SPO Provider Matrix', 'Cost Savings Calculator', 'Framework Timeline'];
-
-const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 18px', flex: 1, minWidth: 140 }}>
-    <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: color || T.gold, fontFamily: T.mono }}>{value}</div>
-    {sub && <div style={{ fontSize: 10, color: T.textSec, marginTop: 3 }}>{sub}</div>}
-  </div>
-);
+const TABS = ['Issuance Inputs', 'KPI Library', 'SPT Trajectory', 'Cost-Savings Calculator', 'Framework Alignment', 'Deliverables'];
 
 export default function SustainabilityLinkedFinancePage() {
+  const sc = useScenario('eb3_slf', DEFAULTS);
   const [tab, setTab] = useState(0);
-  const [notional, setNotional] = useState(2000);
-  const [tenor, setTenor] = useState(7);
-  const [instrument, setInstrument] = useState('SLB');
+  const s = sc.state;
 
-  const savings = useMemo(() => {
-    const bpsMap = { GB: -25, SLB: -20, SLL: -12, Transition: -10 };
-    const bps = bpsMap[instrument] || -20;
-    const annual = (notional * bps / 100 * -1);
-    const total = annual * tenor;
-    return { bps, annual: annual.toFixed(1), total: total.toFixed(1) };
-  }, [notional, tenor, instrument]);
+  const kpisWithScore = useMemo(() => s.kpis.map(k => {
+    const range = k.baseline - k.spt;
+    const done = k.baseline - k.achieved;
+    const prog = range !== 0 ? done / range : 0;
+    const prog01 = Math.max(0, Math.min(1, prog));
+    return { ...k, progress: prog01 * 100, onTrack: prog01 >= 0.3 };
+  }), [s.kpis]);
 
-  const sty = {
-    table: { width: '100%', borderCollapse: 'collapse' },
-    th: { textAlign: 'left', padding: '8px 10px', fontSize: 10, fontFamily: T.mono, color: T.gold, borderBottom: `1px solid ${T.border}` },
-    td: { padding: '8px 10px', fontSize: 11, color: T.text, borderBottom: `1px solid ${T.borderL}` },
-    panel: { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14 },
-    input: { background: T.surface, border: `1px solid ${T.border}`, color: T.text, borderRadius: 4, padding: '5px 8px', fontFamily: T.mono, fontSize: 11, width: 90 },
-    btn: (on) => ({ padding: '5px 12px', borderRadius: 4, fontSize: 11, fontFamily: T.mono, cursor: 'pointer', background: on ? T.gold : T.surface, color: on ? T.bg : T.textSec, border: `1px solid ${T.border}` }),
+  const weightedProgress = kpisWithScore.reduce((a, k) => a + (k.progress * k.weight), 0) / Math.max(1, kpisWithScore.reduce((a, k) => a + k.weight, 0));
+  const missRisk = weightedProgress < 50;
+
+  // Expected cost-of-debt savings: if SPT met, no step-up; if missed, coupon steps up
+  const annualInterestBase = s.faceAmount * s.baseCoupon / 100;
+  const annualInterestStepUp = s.faceAmount * (s.baseCoupon + s.stepUpBps / 100) / 100;
+  const stepUpPenaltyPerYr = annualInterestStepUp - annualInterestBase;
+  const yearsAfterSpt = Math.max(0, s.tenorYrs - (DEFAULTS.kpis[0].year - 2026));
+  const expectedPenalty = missRisk ? stepUpPenaltyPerYr * yearsAfterSpt : 0;
+  // "Greenium" — observed 3–7 bps pricing advantage vs vanilla on issuance
+  const assumedGreenium = 5;
+  const totalGreeniumBenefit = s.faceAmount * (assumedGreenium / 10000) * s.tenorYrs;
+
+  const upd = (i, k, v) => sc.update(st => ({ kpis: st.kpis.map((x, j) => j === i ? { ...x, [k]: v } : x) }));
+  const addKpi = () => sc.update(st => ({ kpis: [...st.kpis, { kpi: 'New KPI', unit: '', baseline: 0, spt: 0, year: 2030, weight: 0, achieved: 0 }] }));
+  const delKpi = (i) => sc.update(st => ({ kpis: st.kpis.filter((_, j) => j !== i) }));
+
+  const exportCsv = () => downloadText(`EB3_SLF_${sc.scenarioName}.csv`, toCsv(kpisWithScore.map(k => ({
+    kpi: k.kpi, unit: k.unit, baseline: k.baseline, spt: k.spt, spt_year: k.year, weight_pct: k.weight, achieved: k.achieved, progress_pct: +k.progress.toFixed(1), on_track: k.onTrack ? 'Yes' : 'No',
+  }))), 'text/csv');
+  const exportJson = () => downloadText(`EB3_${sc.scenarioName}.json`, JSON.stringify({ module: 'EB3', scenario: sc.scenarioName, state: s }, null, 2), 'application/json');
+
+  const generateFramework = () => {
+    const content = [
+      html.h1('Sustainability-Linked Finance Framework'),
+      html.meta({ Issuer: s.issuerName, Instrument: 'Sustainability-Linked Bond (SLB)', 'Face amount': `${s.currency} ${s.faceAmount.toLocaleString()}`, Tenor: `${s.tenorYrs} years`, 'Base coupon': `${s.baseCoupon}%`, 'Step-up': `${s.stepUpBps} bps`, SPO: s.spo, Aligned: 'ICMA SLBP 2024 + LMA SLLP 2024', Scenario: sc.scenarioName }),
+      html.h2('1. Rationale & Strategy'),
+      html.p('This framework links the cost-of-debt of the Issuer to the achievement of material, ambitious KPIs aligned to the net-zero pathway of the Issuer and the science-based decarbonisation trajectory of the Indian power sector.'),
+      html.h2('2. Selection of KPIs'),
+      html.p('KPIs are selected to be: (i) <b>Core & material</b> to the Issuer\'s business model, (ii) <b>Measurable & quantifiable</b> on a consistent methodological basis, (iii) <b>Externally verifiable</b> by the SPO and an assurance provider, and (iv) <b>Benchmarkable</b> against peers and industry references.'),
+      html.table(['KPI', 'Unit', 'Baseline', 'SPT', 'SPT year', 'Weight %'], s.kpis.map(k => [k.kpi, k.unit, k.baseline, k.spt, k.year, k.weight])),
+      html.h2('3. Sustainability Performance Targets (SPTs)'),
+      html.p(`Each KPI has a pre-defined SPT with annual trigger observation dates. Weighted aggregate SPT progress to date: <b>${weightedProgress.toFixed(1)}%</b>. Aggregate determination: if <b>any</b> SPT is missed at trigger date, bond coupon steps up by <b>${s.stepUpBps} bps</b> for the remaining tenor.`),
+      html.h2('4. Bond Financial Characteristics'),
+      html.kpi('Face amount', `${s.currency} ${s.faceAmount.toLocaleString()}`) + html.kpi('Base coupon', `${s.baseCoupon}%`) + html.kpi('Tenor', `${s.tenorYrs} yrs`) + html.kpi('Step-up', `${s.stepUpBps} bps`) + html.kpi('Annual interest (base)', `${s.currency} ${annualInterestBase.toFixed(0)}`) + html.kpi('Annual interest (stepped)', `${s.currency} ${annualInterestStepUp.toFixed(0)}`),
+      html.h2('5. Reporting & Verification'),
+      html.p(`The Issuer will publish an annual Sustainability Performance Report aligned to ICMA SLBP Reporting Annex. Assurance: limited assurance (ISAE 3000) in Yr1, reasonable assurance (ISAE 3410) from SPT trigger onwards. SPO: <b>${s.spo}</b>.`),
+      html.h2('6. Framework Alignment'),
+      html.p('This framework is aligned to: ICMA Sustainability-Linked Bond Principles 2024; LMA Sustainability-Linked Loan Principles 2024; SEBI Circular on ESG Debt Securities 2023; applicable sections of the EU Green Bond Standard 2024 (for EU-placed tranches).'),
+      html.h2('7. Economic Summary'),
+      html.p(`Expected greenium benefit: <b>${s.currency} ${totalGreeniumBenefit.toFixed(1)}</b> over tenor (${assumedGreenium} bps × ${s.tenorYrs} yrs). Expected step-up penalty (if current trajectory holds): <b>${s.currency} ${expectedPenalty.toFixed(1)}</b>. Net expected advantage: <b>${s.currency} ${(totalGreeniumBenefit - expectedPenalty).toFixed(1)}</b>.`),
+    ].join('');
+    openDeliverable(content, `SLB Framework — ${s.issuerName}`);
   };
 
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: 24 }}>
-      <div style={{ borderBottom: `2px solid ${T.gold}`, paddingBottom: 12, marginBottom: 20 }}>
-        <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, letterSpacing: 2 }}>EP-EB3 · IMPACT ADVISORY — BALANCE-SHEET VALUE FROM SUSTAINABILITY</div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, margin: '4px 0', color: T.text }}>Sustainability-Linked Finance Framework & SPO Advisory</h1>
-        <div style={{ fontSize: 12, color: T.textSec }}>ICMA SLBP · GBP · LMA GLP · Green Bond · Green Loan · SLB · SLL · Transition Bond · SPO · KPI Architecture · 7 Tabs</div>
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '28px 40px' }}>
+      <PageHeader code="EP-EB3" title="Sustainability-Linked Finance Framework" subtitle={`${s.issuerName} · ICMA SLBP · LMA SLLP · SEBI ESG Debt Circular · ${s.currency} ${s.faceAmount.toLocaleString()} facility`} />
+      <ToolkitBar moduleCode="EB3" scenario={sc} onExportCsv={exportCsv} onExportJson={exportJson} onDeliverable={generateFramework}
+        importLabel="Import KPI CSV"
+        onImportCsv={(rows) => { if (rows.length) sc.update({ kpis: rows.map(r => ({
+          kpi: r.kpi, unit: r.unit, baseline: Number(r.baseline) || 0, spt: Number(r.spt) || 0, year: Number(r.spt_year || r.year) || 2030, weight: Number(r.weight_pct || r.weight) || 0, achieved: Number(r.achieved) || 0,
+        })) }); }} />
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 18 }}>
+        <Kpi label="Facility size" value={`${s.faceAmount.toLocaleString()}`} sub={s.currency} />
+        <Kpi label="Base coupon" value={`${s.baseCoupon}%`} sub={`${s.tenorYrs}y tenor`} />
+        <Kpi label="Weighted SPT progress" value={`${weightedProgress.toFixed(1)}%`} sub={missRisk ? 'Miss risk' : 'On track'} color={missRisk ? T.red : T.green} />
+        <Kpi label="Expected greenium" value={`${s.currency} ${totalGreeniumBenefit.toFixed(1)}`} sub={`${assumedGreenium} bps × tenor`} color={T.gold} />
+        <Kpi label="Expected step-up" value={`${s.currency} ${expectedPenalty.toFixed(1)}`} sub={`${s.stepUpBps} bps × post-SPT yrs`} color={expectedPenalty > 0 ? T.red : T.green} />
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        <Kpi label="NET DEBT" value="₹7,507 Cr" sub="Client-anonymised RE-IPP FY25" />
-        <Kpi label="LT BORROWINGS" value="₹9,857 Cr" sub="Mar 2025" />
-        <Kpi label="REFI TRACK RECORD" value="-70bps" sub="₹7,700 Cr refinanced FY25" color={T.green} />
-        <Kpi label="SLF UPLIFT TARGET" value="-15 to -25bps" sub="vs conventional INR" color={T.gold} />
-        <Kpi label="ELIGIBLE ASSETS" value="₹18,000+ Cr" sub="Solar/Wind/FDRE/BESS/GH2" />
-      </div>
-
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: `1px solid ${T.border}`, flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <div key={i} onClick={() => setTab(i)} style={{ padding: '10px 16px', fontSize: 11, fontFamily: T.mono, cursor: 'pointer', borderBottom: tab === i ? `2px solid ${T.gold}` : 'none', color: tab === i ? T.gold : T.textSec }}>{t}</div>
-        ))}
-      </div>
+      <TabBar tabs={TABS} tab={tab} setTab={setTab} />
 
       {tab === 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>Two Instrument Classes</div>
-            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}><b>Use-of-proceeds</b> (Green Bond/Loan) earmarks capital for eligible green assets — pool exists, documentation is the gap.<br/><br/><b>KPI-linked</b> (SLB/SLL) ties coupon to pre-defined ESG KPIs with step-up/step-down mechanics. General corporate flexibility retained.</p>
+        <Panel title="Issuance parameters">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, maxWidth: 800 }}>
+            <L label="Issuer name"><TextInput value={s.issuerName} onChange={v => sc.update({ issuerName: v })} style={{ width: 220 }} /></L>
+            <L label="Face amount"><NumInput value={s.faceAmount} onChange={v => sc.update({ faceAmount: v })} step={50} /></L>
+            <L label="Currency"><TextInput value={s.currency} onChange={v => sc.update({ currency: v })} style={{ width: 100 }} /></L>
+            <L label="Base coupon"><NumInput value={s.baseCoupon} onChange={v => sc.update({ baseCoupon: v })} step={0.05} suffix="%" /></L>
+            <L label="Tenor"><NumInput value={s.tenorYrs} onChange={v => sc.update({ tenorYrs: v })} suffix="yrs" /></L>
+            <L label="Step-up on miss"><NumInput value={s.stepUpBps} onChange={v => sc.update({ stepUpBps: v })} step={5} suffix="bps" /></L>
+            <L label="SPO provider"><select value={s.spo} onChange={e => sc.update({ spo: e.target.value })} style={selS}>{SPOS.map(o => <option key={o}>{o}</option>)}</select></L>
           </div>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>KPI Credibility Challenge</div>
-            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>Generic capacity-addition KPIs are binary and lagging — poor fit for coupon adjustment. LCA-verified gCO₂e/kWh + TCFD-derived climate resilience score produce substantively differentiated KPIs vs peer Indian IPP SLBs.</p>
-          </div>
-        </div>
+        </Panel>
       )}
 
       {tab === 1 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Sustainable finance instrument taxonomy · ICMA/LMA aligned.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Instrument</th><th style={sty.th}>Type</th><th style={sty.th}>Issuer form</th><th style={sty.th}>Pricing benefit</th><th style={sty.th}>Eligible assets</th><th style={sty.th}>SPO</th></tr></thead>
-            <tbody>{INSTRUMENTS.map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold, fontWeight: 700 }}>{r.k}</td><td style={sty.td}>{r.t}</td><td style={sty.td}>{r.issuer}</td><td style={{ ...sty.td, color: T.green, fontFamily: T.mono }}>{r.pricing}</td><td style={sty.td}>{r.eligAssets}</td><td style={sty.td}>{r.spoReq}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title={`KPI library (${s.kpis.length}) — total weight ${s.kpis.reduce((a,k)=>a+k.weight,0)}%`} right={<button style={addBtn} onClick={addKpi}>+ Add KPI</button>}>
+          <Table cols={['KPI', 'Unit', 'Baseline', 'SPT', 'SPT Year', 'Weight %', 'Achieved', 'Progress', 'Status', '']}>
+            {kpisWithScore.map((k, i) => (
+              <tr key={i}>
+                <td style={td}><TextInput value={k.kpi} onChange={v => upd(i, 'kpi', v)} style={{ width: 200 }} /></td>
+                <td style={td}><TextInput value={k.unit} onChange={v => upd(i, 'unit', v)} style={{ width: 100 }} /></td>
+                <td style={td}><NumInput value={k.baseline} onChange={v => upd(i, 'baseline', v)} step={0.01} /></td>
+                <td style={td}><NumInput value={k.spt} onChange={v => upd(i, 'spt', v)} step={0.01} /></td>
+                <td style={td}><NumInput value={k.year} onChange={v => upd(i, 'year', v)} style={{ width: 60 }} /></td>
+                <td style={td}><NumInput value={k.weight} onChange={v => upd(i, 'weight', v)} style={{ width: 60 }} /></td>
+                <td style={td}><NumInput value={k.achieved} onChange={v => upd(i, 'achieved', v)} step={0.01} /></td>
+                <td style={{ ...td, fontFamily: T.mono, color: k.onTrack ? T.green : T.amber }}>{k.progress.toFixed(1)}%</td>
+                <td style={td}>{k.onTrack ? <Badge level="good">On track</Badge> : <Badge level="warn">Behind</Badge>}</td>
+                <td style={td}><button onClick={() => delKpi(i)} style={delBtn}>✕</button></td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 2 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>KPI library — methodology-backed, third-party assurable, ICMA SLBP-aligned.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>KPI</th><th style={sty.th}>Materiality</th><th style={sty.th}>Baseline</th><th style={sty.th}>2030 Target</th><th style={sty.th}>Source</th><th style={sty.th}>ICMA</th></tr></thead>
-            <tbody>{KPI_LIBRARY.map((r, i) => <tr key={i}><td style={sty.td}>{r.kpi}</td><td style={{ ...sty.td, color: r.materiality.includes('Core') ? T.green : T.gold }}>{r.materiality}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r.baseline}</td><td style={{ ...sty.td, fontFamily: T.mono, color: T.gold }}>{r.target2030}</td><td style={sty.td}>{r.source}</td><td style={{ ...sty.td, color: T.green }}>{r.icmaAlign}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="SPT trajectory — baseline → achieved → target">
+          <ResponsiveContainer width="100%" height={360}>
+            <BarChart data={kpisWithScore.map(k => ({ kpi: k.kpi, baseline: k.baseline, achieved: k.achieved, spt: k.spt }))}>
+              <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+              <XAxis dataKey="kpi" tick={{ fill: T.textSec, fontSize: 10 }} angle={-20} textAnchor="end" height={100} interval={0} />
+              <YAxis tick={{ fill: T.textSec, fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="baseline" fill={T.textMut} />
+              <Bar dataKey="achieved" fill={T.gold} />
+              <Bar dataKey="spt" fill={T.green} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Panel>
       )}
 
       {tab === 3 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Sustainability Performance Target (SPT) trajectory — gCO₂e/kWh. Achievement enables step-down; miss triggers step-up.</div>
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={SPT_TRAJECTORY}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="yr" stroke={T.textSec} tick={{ fontSize: 11 }} /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Legend /><Line type="monotone" dataKey="target" stroke={T.gold} strokeWidth={2} name="Target SPT" /><Line type="monotone" dataKey="ambition" stroke="#27ae60" strokeWidth={2} strokeDasharray="4 4" name="Ambition (CBI)" /><ReferenceLine y={4.0} stroke="#27ae60" strokeDasharray="3 3" label={{ value: 'CBI 1.5°C aligned', fill: '#27ae60', fontSize: 10 }} /></LineChart>
-          </ResponsiveContainer>
-        </div>
+        <Panel title="Cost-of-debt economics (live)">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <Table cols={['Metric', 'Value']}>
+              <tr><td style={td}>Annual interest (base coupon)</td><td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{s.currency} {annualInterestBase.toFixed(2)}</td></tr>
+              <tr><td style={td}>Annual interest (stepped up)</td><td style={{ ...td, fontFamily: T.mono, color: T.red }}>{s.currency} {annualInterestStepUp.toFixed(2)}</td></tr>
+              <tr><td style={td}>Step-up penalty / yr</td><td style={{ ...td, fontFamily: T.mono }}>{s.currency} {stepUpPenaltyPerYr.toFixed(2)}</td></tr>
+              <tr><td style={td}>Expected total step-up (current traj.)</td><td style={{ ...td, fontFamily: T.mono, color: expectedPenalty > 0 ? T.red : T.green }}>{s.currency} {expectedPenalty.toFixed(2)}</td></tr>
+              <tr><td style={td}>Greenium advantage (~{assumedGreenium} bps)</td><td style={{ ...td, fontFamily: T.mono, color: T.green }}>{s.currency} {totalGreeniumBenefit.toFixed(2)}</td></tr>
+              <tr style={{ background: T.surfaceH }}><td style={{ ...td, fontWeight: 600 }}>Net expected advantage</td><td style={{ ...td, fontFamily: T.mono, color: T.gold, fontWeight: 600 }}>{s.currency} {(totalGreeniumBenefit - expectedPenalty).toFixed(2)}</td></tr>
+            </Table>
+            <Panel title="Scenario comparison — miss vs meet">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={[
+                  { s: 'Base vanilla', interest: +(annualInterestBase * s.tenorYrs).toFixed(1) },
+                  { s: 'SLB (SPT met)', interest: +(annualInterestBase * s.tenorYrs - totalGreeniumBenefit).toFixed(1) },
+                  { s: 'SLB (SPT missed)', interest: +(annualInterestBase * s.tenorYrs - totalGreeniumBenefit + stepUpPenaltyPerYr * yearsAfterSpt).toFixed(1) },
+                ]}>
+                  <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+                  <XAxis dataKey="s" tick={{ fill: T.textSec, fontSize: 11 }} />
+                  <YAxis tick={{ fill: T.textSec, fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+                  <Bar dataKey="interest" fill={T.gold} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Panel>
+          </div>
+        </Panel>
       )}
 
       {tab === 4 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>SPO provider matrix — selection criteria: jurisdictional fit, methodology depth, turnaround.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Provider</th><th style={sty.th}>Coverage</th><th style={sty.th}>Fee range</th><th style={sty.th}>Turnaround</th></tr></thead>
-            <tbody>{SPO_PROVIDERS.map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold }}>{r.sp}</td><td style={sty.td}>{r.cov}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r.fee}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r.td}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="Framework alignment (live checklist)">
+          <Table cols={['Standard', 'Required element', 'Status', 'Reference']}>
+            {[
+              ['ICMA SLBP 2024', 'KPI selection rationale (5 pillars)', 'met', 'Section 2 of framework'],
+              ['ICMA SLBP 2024', 'SPT ambition & science-alignment', s.kpis.some(k => k.spt === 0) ? 'partial' : 'met', 'Section 3'],
+              ['ICMA SLBP 2024', 'Bond characteristics (step-up)', 'met', `${s.stepUpBps} bps`],
+              ['ICMA SLBP 2024', 'Reporting cadence (annual)', 'met', 'Section 5'],
+              ['ICMA SLBP 2024', 'External verification (SPO + assurance)', 'met', s.spo],
+              ['LMA SLLP 2024', 'Margin ratchet mechanism', 'met', 'Step-up analog'],
+              ['SEBI ESG Debt 2023', 'Disclosure of KPIs in OD/PPM', 'met', 'Annex to framework'],
+              ['CBI Climate Bonds', 'Project eligibility (use of proceeds)', 'info', 'N/A for SLB — general corporate'],
+            ].map(([st, req, status, ref], i) => (
+              <tr key={i}>
+                <td style={td}><b style={{ fontSize: 12 }}>{st}</b></td>
+                <td style={td}>{req}</td>
+                <td style={td}>{status === 'met' ? <Badge level="good">Met</Badge> : status === 'partial' ? <Badge level="warn">Partial</Badge> : <Badge level="info">Info</Badge>}</td>
+                <td style={{ ...td, fontSize: 11, color: T.textMut }}>{ref}</td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 5 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 14 }}>Cost-of-debt calculator — coupon savings against conventional baseline.</div>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-            <label style={{ fontSize: 11, color: T.textSec }}>Notional (₹ Cr) <input type="number" value={notional} onChange={e=>setNotional(+e.target.value)} style={sty.input} /></label>
-            <label style={{ fontSize: 11, color: T.textSec }}>Tenor (yr) <input type="number" value={tenor} onChange={e=>setTenor(+e.target.value)} style={sty.input} /></label>
-            <div style={{ fontSize: 11, color: T.textSec }}>Instrument:</div>
-            {['GB', 'SLB', 'SLL', 'Transition'].map(s => <div key={s} onClick={() => setInstrument(s)} style={sty.btn(instrument === s)}>{s}</div>)}
-          </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <Kpi label="PRICING BENEFIT" value={`${savings.bps}bps`} sub="vs conventional" color={T.green} />
-            <Kpi label="ANNUAL SAVING" value={`₹${savings.annual} Cr`} sub={`${notional} Cr × |${savings.bps}|bps`} color={T.green} />
-            <Kpi label="TENOR TOTAL" value={`₹${savings.total} Cr`} sub={`${tenor}-yr cumulative`} color={T.gold} />
-            <Kpi label="vs ADVISORY FEE" value="8-15x" sub="payback" />
-          </div>
-          <ResponsiveContainer width="100%" height={230}>
-            <BarChart data={COST_SAVINGS}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="scen" stroke={T.textSec} tick={{ fontSize: 10 }} angle={-15} height={70} textAnchor="end" /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Bar dataKey="cost" name="Annual cost saving ₹ Cr (neg=save)">{COST_SAVINGS.map((d, i) => <Cell key={i} fill={d.cost < 0 ? T.green : d.cost > 0 ? T.red : T.textSec} />)}</Bar></BarChart>
-          </ResponsiveContainer>
-        </div>
+        <Panel title="Client deliverable stack">
+          <ul style={{ lineHeight: 1.9, fontSize: 13, color: T.textSec }}>
+            <li><b style={{ color: T.text }}>KPI progress CSV</b> — for annual SPR. <button style={btnInline} onClick={exportCsv}>Download</button></li>
+            <li><b style={{ color: T.text }}>Scenario state JSON</b>. <button style={btnInline} onClick={exportJson}>Download</button></li>
+            <li><b style={{ color: T.text }}>SLB Framework Document (HTML/PDF)</b> — ICMA SLBP 2024 aligned, ready for SPO engagement. <button style={{ ...btnInline, background: T.gold, color: T.navy, borderColor: T.gold }} onClick={generateFramework}>Generate</button></li>
+          </ul>
+        </Panel>
       )}
-
-      {tab === 6 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Framework & SPO timeline — 14-18 weeks from mandate to issuance-ready.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Phase</th><th style={sty.th}>Deliverable</th><th style={sty.th}>Week</th></tr></thead>
-            <tbody>{[
-              ['Framework draft', 'ICMA-aligned Green/SLB Framework · KPI calibration', 'W1-4'],
-              ['Data enablement', 'LCA · TCFD · TNFD inputs harmonised', 'W3-8'],
-              ['Pre-SPO gap review', 'Internal gap analysis · remediation', 'W6-8'],
-              ['SPO submission', 'Sustainalytics/S&P formal engagement', 'W8-12'],
-              ['SPO response & revisions', 'SPO iteration · final draft', 'W12-14'],
-              ['Issuance-ready pack', 'Framework · SPO · allocation report · KPI dashboard', 'W14-16'],
-              ['Annual covenant reporting', 'KPI tracking · assurance letter · investor report', 'Annual'],
-            ].map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold }}>{r[0]}</td><td style={sty.td}>{r[1]}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r[2]}</td></tr>)}</tbody>
-          </table>
-        </div>
-      )}
-
-      <div style={{ marginTop: 24, padding: '10px 16px', background: T.surfaceH, borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 11, color: T.textMut }}>
-        <span>EP-EB3 · Sustainability-Linked Finance · Impact Advisory</span>
-        <span>ICMA · LMA · GBP · SLBP · SPO · 7 Tabs</span>
-      </div>
     </div>
   );
 }
+
+function L({ label, children }) { return <label style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 12, color: T.textSec }}><span style={{ minWidth: 140 }}>{label}</span>{children}</label>; }
+const selS = { background: T.surface, color: T.text, border: `1px solid ${T.border}`, padding: '4px 6px', fontSize: 12, borderRadius: 2 };
+const addBtn = { background: T.teal, color: T.text, border: 'none', padding: '4px 12px', fontSize: 11, cursor: 'pointer', borderRadius: 3 };
+const delBtn = { background: 'transparent', color: T.red, border: 'none', cursor: 'pointer', fontSize: 14 };
+const btnInline = { background: T.surface, color: T.gold, border: `1px solid ${T.gold}`, padding: '3px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 3, marginLeft: 8 };

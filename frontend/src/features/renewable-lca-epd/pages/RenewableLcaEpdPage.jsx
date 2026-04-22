@@ -1,238 +1,290 @@
-import React, { useState, useMemo } from 'react';
-import { BarChart, Bar, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
+import React, { useMemo, useState } from 'react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { T, useScenario, ToolkitBar, NumInput, TextInput, Kpi, Panel, Table, td, TabBar, PageHeader, Badge, downloadText, toCsv, openDeliverable, html } from '../../_shared/AdvisoryToolkit';
 
-const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
+const EF = {
+  'Polysilicon': 37.2, 'Silver paste': 180, 'EVA encapsulant': 3.1, 'Glass (low-Fe)': 1.05,
+  'Aluminium frame': 8.9, 'Backsheet (PET)': 3.4, 'Junction box (PBT)': 4.2, 'Copper ribbon': 3.9,
+  'Steel (BoS)': 1.85, 'Concrete (foundations)': 0.11, 'Cable (Cu+XLPE)': 4.1, 'Inverter (balanced)': 620,
+};
+const GRID_EF = { India: 0.71, China: 0.55, EU: 0.23, US: 0.38, 'Norway (hydro)': 0.019 };
 
-const FACILITY = {
-  name: 'Integrated RE-IPP Client (anonymised)', portfolioGw: 7.4, underConstrMw: 4265,
-  techSplit: [ { k: 'Solar PV', v: 5.8 }, { k: 'Wind', v: 0.8 }, { k: 'FDRE/BESS', v: 0.5 }, { k: 'Green H2/NH3', v: 0.3 } ],
-  mfgCapGw: 1.2, mfgSite: 'North India', mfgTech: 'TOPCon mono-PERC'
+const DEFAULTS = {
+  portfolioName: 'Integrated RE-IPP Client (anonymised)',
+  vintage: 2026, mfgLocation: 'India', mfgElecIntensity: 185, moduleWatt: 620,
+  bom: [
+    { material: 'Polysilicon', kgPerModule: 1.9, notes: 'N-type TOPCon 7g/W wafer' },
+    { material: 'Silver paste', kgPerModule: 0.014, notes: '90 mg/cell × 156 cells' },
+    { material: 'EVA encapsulant', kgPerModule: 1.1, notes: 'Dual-layer 450µm' },
+    { material: 'Glass (low-Fe)', kgPerModule: 22, notes: '3.2mm front, 2mm rear' },
+    { material: 'Aluminium frame', kgPerModule: 2.4, notes: '6063-T5 anodised' },
+    { material: 'Backsheet (PET)', kgPerModule: 0.65, notes: '' },
+    { material: 'Junction box (PBT)', kgPerModule: 0.45, notes: 'IP68' },
+    { material: 'Copper ribbon', kgPerModule: 0.38, notes: '' },
+  ],
+  genAssets: [
+    { id: 'RAJ-SOL-1', name: 'Rajasthan Solar', mw: 1200, cf: 23, pr: 82, deg: 0.5, lifeYrs: 25, bosKg: 4800000, grid: 'India' },
+    { id: 'GUJ-SOL-1', name: 'Gujarat Solar',   mw: 900,  cf: 22, pr: 81, deg: 0.5, lifeYrs: 25, bosKg: 3700000, grid: 'India' },
+    { id: 'ODI-FDR',   name: 'Odisha FDRE',      mw: 500,  cf: 55, pr: 79, deg: 0.6, lifeYrs: 25, bosKg: 2200000, grid: 'India' },
+  ],
+  peers: [
+    { peer: 'Tier-1 reference A', mfgKgCo2PerKw: 485 },
+    { peer: 'Tier-1 reference B', mfgKgCo2PerKw: 530 },
+    { peer: 'Tier-1 low-C (Norway wafer)', mfgKgCo2PerKw: 285 },
+    { peer: 'Industry median ITRPV 2025', mfgKgCo2PerKw: 560 },
+  ],
 };
 
-const LCA_STAGES_MFG = [
-  { stage: 'Raw materials (polysilicon)', co2: 168, share: 42, iso: 'A1' },
-  { stage: 'Wafer & cell manufacturing', co2: 72, share: 18, iso: 'A3' },
-  { stage: 'Module assembly (glass+frame+EVA)', co2: 88, share: 22, iso: 'A3' },
-  { stage: 'Packaging', co2: 12, share: 3, iso: 'A3' },
-  { stage: 'Transport to site', co2: 24, share: 6, iso: 'A4' },
-  { stage: 'Installation', co2: 16, share: 4, iso: 'A5' },
-  { stage: 'EoL/recycling', co2: 20, share: 5, iso: 'C1-C4' },
-];
+function calcModule(s) {
+  const bomEmb = s.bom.reduce((a, b) => a + (EF[b.material] || 0) * b.kgPerModule, 0);
+  const procEmb = s.mfgElecIntensity * (GRID_EF[s.mfgLocation] || 0.5);
+  const total = bomEmb + procEmb;
+  const kgPerKw = total / (s.moduleWatt / 1000);
+  return { bomEmb, procEmb, totalKgPerModule: total, kgPerKw };
+}
+function calcAsset(a, kgPerKw) {
+  const lifetimeKwh = a.mw * 1000 * a.cf / 100 * 8760 * a.lifeYrs * (1 - a.deg / 100 * a.lifeYrs / 2);
+  const moduleEmb = a.mw * 1000 * kgPerKw;
+  const bosEmb = a.bosKg * 1.6;
+  const totalEmb = moduleEmb + bosEmb;
+  const gCo2PerKwh = lifetimeKwh > 0 ? (totalEmb * 1000) / lifetimeKwh : 0;
+  return { lifetimeKwh, moduleEmb, bosEmb, totalEmb, gCo2PerKwh };
+}
 
-const LCA_GEN_STAGES = [
-  { stage: 'Module embedded (amortised)', cikWh: 18.2, pct: 58 },
-  { stage: 'BoS + inverter (amortised)', cikWh: 6.5, pct: 21 },
-  { stage: 'O&M (water/cleaning/diesel)', cikWh: 3.8, pct: 12 },
-  { stage: 'Transport/logistics', cikWh: 1.4, pct: 4 },
-  { stage: 'EoL decommissioning', cikWh: 1.5, pct: 5 },
-];
-
-const PEER_BENCHMARK = [
-  { peer: 'Jinko Neo 610W', ci: 395, country: 'CN' },
-  { peer: 'Trina Vertex 670W', ci: 382, country: 'CN' },
-  { peer: 'Longi Hi-MO6', ci: 404, country: 'CN' },
-  { peer: 'Saatvik TOPCon', ci: 268, country: 'IN' },
-  { peer: 'Waaree 600W', ci: 289, country: 'IN' },
-  { peer: 'Adani Solar', ci: 301, country: 'IN' },
-  { peer: 'Client (target)', ci: 256, country: 'IN', self: true },
-];
-
-const EPD_STANDARDS = [
-  { std: 'ISO 14040:2006', scope: 'LCA Principles & Framework', status: 'Aligned' },
-  { std: 'ISO 14044:2006', scope: 'LCA Requirements', status: 'Aligned' },
-  { std: 'ISO 14025:2006', scope: 'Type III Env. Declarations', status: 'Target' },
-  { std: 'EN 15804+A2', scope: 'Construction products', status: 'Target' },
-  { std: 'IEC 63274:2024', scope: 'PV module EPD PCR', status: 'Target' },
-  { std: 'PCR 2019:14', scope: 'International EPD System PCR', status: 'In-scope' },
-];
-
-const TABS = ['Overview', 'Manufacturing LCA (Cradle-to-Gate)', 'Generation LCA (per kWh)', 'Peer Benchmark', 'EPD Pathway', 'What-If Calculator', 'Deliverables & Timeline'];
-
-const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 18px', flex: 1, minWidth: 140 }}>
-    <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: color || T.gold, fontFamily: T.mono }}>{value}</div>
-    {sub && <div style={{ fontSize: 10, color: T.textSec, marginTop: 3 }}>{sub}</div>}
-  </div>
-);
+const TABS = ['Inputs & BOM', 'Module LCA', 'Generation LCA', 'Peer Benchmark', 'EPD Pathway', 'What-If', 'Deliverables'];
 
 export default function RenewableLcaEpdPage() {
+  const sc = useScenario('eb1_lca_epd', DEFAULTS);
   const [tab, setTab] = useState(0);
-  const [gridEf, setGridEf] = useState(0.71);
-  const [captiveRePct, setCaptiveRePct] = useState(40);
-  const [logisticKm, setLogisticKm] = useState(1200);
+  const s = sc.state;
+  const mod = useMemo(() => calcModule(s), [s]);
+  const assets = useMemo(() => s.genAssets.map(a => ({ ...a, ...calcAsset(a, mod.kgPerKw) })), [s.genAssets, mod.kgPerKw]);
+  const totalGen = assets.reduce((x, a) => x + a.lifetimeKwh, 0);
+  const totalEmb = assets.reduce((x, a) => x + a.totalEmb, 0);
+  const portfolioG = totalGen > 0 ? (totalEmb * 1000) / totalGen : 0;
+  const bomDecomp = s.bom.map(b => ({ material: b.material, kg: +((EF[b.material] || 0) * b.kgPerModule).toFixed(2) })).filter(x => x.kg > 0).sort((a, b) => b.kg - a.kg);
 
-  const totalMfgCo2 = LCA_STAGES_MFG.reduce((a, b) => a + b.co2, 0);
-  const totalGenCi = LCA_GEN_STAGES.reduce((a, b) => a + b.cikWh, 0).toFixed(1);
+  const updateBom = (idx, k, v) => sc.update(st => ({ bom: st.bom.map((r, i) => i === idx ? { ...r, [k]: v } : r) }));
+  const addBomRow = () => sc.update(st => ({ bom: [...st.bom, { material: 'Polysilicon', kgPerModule: 0, notes: '' }] }));
+  const delBomRow = (idx) => sc.update(st => ({ bom: st.bom.filter((_, i) => i !== idx) }));
+  const updateAsset = (idx, k, v) => sc.update(st => ({ genAssets: st.genAssets.map((a, i) => i === idx ? { ...a, [k]: v } : a) }));
+  const addAsset = () => sc.update(st => ({ genAssets: [...st.genAssets, { id: `NEW-${st.genAssets.length + 1}`, name: 'New asset', mw: 100, cf: 22, pr: 80, deg: 0.5, lifeYrs: 25, bosKg: 400000, grid: 'India' }] }));
+  const delAsset = (idx) => sc.update(st => ({ genAssets: st.genAssets.filter((_, i) => i !== idx) }));
 
-  const whatif = useMemo(() => {
-    const baseline = totalMfgCo2;
-    const gridSaving = (1 - captiveRePct / 100) * gridEf / 0.82 * baseline * 0.35;
-    const transportSaving = logisticKm / 1200 * baseline * 0.06;
-    const final = gridSaving + transportSaving + baseline * 0.59;
-    return { baseline, final: Math.round(final), delta: Math.round(baseline - final) };
-  }, [gridEf, captiveRePct, logisticKm, totalMfgCo2]);
+  const exportCsv = () => {
+    const rows = assets.map(a => ({
+      asset_id: a.id, name: a.name, mw: a.mw, cf_pct: a.cf, lifetime_yrs: a.lifeYrs,
+      lifetime_gwh: +(a.lifetimeKwh / 1e6).toFixed(0),
+      module_emb_tco2: +(a.moduleEmb / 1000).toFixed(0), bos_emb_tco2: +(a.bosEmb / 1000).toFixed(0),
+      total_emb_tco2: +(a.totalEmb / 1000).toFixed(0), g_co2_per_kwh: +a.gCo2PerKwh.toFixed(2),
+    }));
+    downloadText(`EB1_LCA_${sc.scenarioName}.csv`, toCsv(rows), 'text/csv');
+  };
+  const exportJson = () => downloadText(`EB1_${sc.scenarioName}.json`, JSON.stringify({ module: 'EB1', scenario: sc.scenarioName, state: s, computed: { mod, portfolioG } }, null, 2), 'application/json');
 
-  const sty = {
-    table: { width: '100%', borderCollapse: 'collapse' },
-    th: { textAlign: 'left', padding: '8px 10px', fontSize: 10, fontFamily: T.mono, color: T.gold, borderBottom: `1px solid ${T.border}` },
-    td: { padding: '8px 10px', fontSize: 11, color: T.text, borderBottom: `1px solid ${T.borderL}` },
-    panel: { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14 },
-    input: { background: T.surface, border: `1px solid ${T.border}`, color: T.text, borderRadius: 4, padding: '5px 8px', fontFamily: T.mono, fontSize: 11, width: 90 },
+  const generateEpd = () => {
+    const content = [
+      html.h1('Environmental Product Declaration (draft)'),
+      html.meta({ Portfolio: s.portfolioName, 'Declared Unit': '1 kWh electricity', Vintage: s.vintage, Standard: 'ISO 14025 + IEC 63274', Scenario: sc.scenarioName }),
+      html.h2('1. Product & System Boundary'),
+      html.p(`Grid-connected PV electricity generated across ${s.genAssets.length} assets, ${s.genAssets.reduce((a,b)=>a+b.mw,0).toLocaleString()} MW nameplate. Boundary: cradle-to-grave per IEC 63274.`),
+      html.h2('2. Headline Results'),
+      html.kpi('Module cradle-to-gate', `${mod.kgPerKw.toFixed(0)} kg CO₂e/kW`) + html.kpi('Portfolio lifecycle intensity', `${portfolioG.toFixed(1)} g CO₂e/kWh`) + html.kpi('Lifetime generation', `${(totalGen / 1e9).toFixed(1)} TWh`) + html.kpi('Total embodied', `${(totalEmb / 1e6).toFixed(2)} Mt CO₂e`),
+      html.h2('3. Bill of Materials — A1 Raw Materials'),
+      html.table(['Material', 'kg/module', 'EF (kg CO₂e/kg)', 'Embodied', 'Notes'], s.bom.map(b => [b.material, b.kgPerModule, EF[b.material] || '—', ((EF[b.material]||0)*b.kgPerModule).toFixed(2), b.notes || ''])),
+      html.h2('4. A3 Manufacturing Energy'),
+      html.p(`${s.mfgElecIntensity} kWh/module in ${s.mfgLocation} (grid EF ${(GRID_EF[s.mfgLocation]||0).toFixed(3)} kg/kWh) → <b>${mod.procEmb.toFixed(1)} kg CO₂e/module</b>.`),
+      html.h2('5. Asset-Level Generation Inventory'),
+      html.table(['Asset', 'MW', 'CF %', 'Life yrs', 'Lifetime GWh', 'Emb tCO₂e', 'g CO₂e/kWh'], assets.map(a => [a.name, a.mw, a.cf, a.lifeYrs, (a.lifetimeKwh/1e6).toFixed(0), (a.totalEmb/1000).toFixed(0), a.gCo2PerKwh.toFixed(1)])),
+      html.h2('6. Peer Benchmark'),
+      html.table(['Peer', 'kg CO₂e/kW', 'Delta vs client'], s.peers.map(p => [p.peer, p.mfgKgCo2PerKw, ((mod.kgPerKw-p.mfgKgCo2PerKw)/p.mfgKgCo2PerKw*100).toFixed(1)+'%'])),
+      html.h2('7. Verification Pathway'),
+      html.p('Third-party critical review (ISO 14044 §6.3) → Programme Operator registration → 5-year validity → CBAM default-value replacement.'),
+    ].join('');
+    openDeliverable(content, `EPD — ${s.portfolioName}`);
   };
 
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: 24 }}>
-      <div style={{ borderBottom: `2px solid ${T.gold}`, paddingBottom: 12, marginBottom: 20 }}>
-        <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, letterSpacing: 2 }}>EP-EB1 · IMPACT ADVISORY — BALANCE-SHEET VALUE FROM SUSTAINABILITY</div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, margin: '4px 0', color: T.text }}>RE Portfolio Life Cycle Assessment & EPD</h1>
-        <div style={{ fontSize: 12, color: T.textSec }}>ISO 14040/44 · ISO 14025 · IEC 63274 · Cradle-to-Gate (Mfg) · Cradle-to-Grave (Generation) · International EPD System · 7 Tabs</div>
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '28px 40px' }}>
+      <PageHeader code="EP-EB1" title="RE Portfolio LCA & EPD Certification" subtitle={`${s.portfolioName} · ISO 14040/44 · ISO 14025 · IEC 63274 · Declared unit: 1 kWh`} />
+      <ToolkitBar moduleCode="EB1" scenario={sc} onExportCsv={exportCsv} onExportJson={exportJson} onDeliverable={generateEpd}
+        importLabel="Import BOM CSV"
+        onImportCsv={(rows) => { if (rows.length) sc.update({ bom: rows.map(r => ({ material: r.material, kgPerModule: Number(r.kgPerModule) || 0, notes: r.notes || '' })) }); }} />
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 18 }}>
+        <Kpi label="Module cradle-to-gate" value={`${mod.kgPerKw.toFixed(0)} kg/kW`} sub={`${mod.totalKgPerModule.toFixed(1)} kg per ${s.moduleWatt}W module`} />
+        <Kpi label="Portfolio intensity" value={`${portfolioG.toFixed(1)}`} sub="g CO₂e/kWh" color={portfolioG < 40 ? T.green : portfolioG < 55 ? T.amber : T.red} />
+        <Kpi label="Lifetime generation" value={`${(totalGen / 1e9).toFixed(1)} TWh`} sub={`${s.genAssets.length} assets · ${s.genAssets.reduce((a,b)=>a+b.mw,0).toLocaleString()} MW`} />
+        <Kpi label="Total embodied" value={`${(totalEmb / 1e6).toFixed(2)} Mt`} sub="CO₂e portfolio life" />
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        <Kpi label="PORTFOLIO" value={`${FACILITY.portfolioGw} GW`} sub="Integrated RE-IPP · 4 tech" />
-        <Kpi label="MFG CAPACITY" value={`${FACILITY.mfgCapGw} GW/yr`} sub={`${FACILITY.mfgTech} · ${FACILITY.mfgSite}`} />
-        <Kpi label="MFG CI (TARGET)" value={`${totalMfgCo2} kgCO₂e/kWp`} sub="Cradle-to-Gate A1-A5" color={T.green} />
-        <Kpi label="GEN CI (TARGET)" value={`${totalGenCi} gCO₂e/kWh`} sub="Cradle-to-Grave" color={T.green} />
-        <Kpi label="EPD STATUS" value="Target FY27" sub="IEC 63274 PCR" color={T.amber} />
-      </div>
-
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: `1px solid ${T.border}`, flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <div key={i} onClick={() => setTab(i)} style={{ padding: '10px 16px', fontSize: 11, fontFamily: T.mono, cursor: 'pointer', borderBottom: tab === i ? `2px solid ${T.gold}` : 'none', color: tab === i ? T.gold : T.textSec }}>{t}</div>
-        ))}
-      </div>
+      <TabBar tabs={TABS} tab={tab} setTab={setTab} />
 
       {tab === 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>Strategic Rationale</div>
-            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>LCA converts existing environmental performance into verified, audit-grade figures that are ingestible into CCTS baselines, SLF KPIs, ESG rater data submissions, and EPDs. No incremental capex required — the performance and data already exist.</p>
-            <div style={{ fontSize: 11, color: T.textMut, marginTop: 10, lineHeight: 1.7 }}>
-              <b style={{ color: T.gold }}>Two studies, two applications:</b><br/>
-              → Manufacturing cradle-to-gate — EPD per Wp of module produced<br/>
-              → Generation cradle-to-grave — gCO₂e/kWh for CCTS baseline & SLF KPI
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16 }}>
+          <Panel title="Portfolio inputs">
+            <div style={{ display: 'grid', gap: 10 }}>
+              <L label="Portfolio name"><TextInput value={s.portfolioName} onChange={v => sc.update({ portfolioName: v })} style={{ width: 220 }} /></L>
+              <L label="Vintage year"><NumInput value={s.vintage} onChange={v => sc.update({ vintage: v })} min={2020} max={2030} /></L>
+              <L label="Mfg location">
+                <select value={s.mfgLocation} onChange={e => sc.update({ mfgLocation: e.target.value })} style={selS}>{Object.keys(GRID_EF).map(k => <option key={k}>{k}</option>)}</select>
+                <span style={{ fontSize: 11, color: T.textMut, marginLeft: 8 }}>EF: {(GRID_EF[s.mfgLocation] || 0).toFixed(3)}</span>
+              </L>
+              <L label="Mfg elec intensity"><NumInput value={s.mfgElecIntensity} onChange={v => sc.update({ mfgElecIntensity: v })} suffix="kWh/mod" /></L>
+              <L label="Module wattage"><NumInput value={s.moduleWatt} onChange={v => sc.update({ moduleWatt: v })} suffix="W" /></L>
             </div>
-          </div>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>Portfolio Technology Mix (GW)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={FACILITY.techSplit}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="k" stroke={T.textSec} tick={{ fontSize: 11 }} /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Bar dataKey="v" fill={T.gold} /></BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div style={{ ...sty.panel, gridColumn: '1 / span 2' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 10 }}>Downstream Uses of LCA Output</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, fontSize: 11 }}>
-              {[
-                { u: 'CCTS Offset Registration', d: 'Verified baseline for Project Design Document' },
-                { u: 'SLF KPI', d: 'Third-party assured gCO₂e/kWh feeds bond coupon adjustment' },
-                { u: 'ESG Rater Input', d: 'MSCI carbon intensity sub-issue; Sustainalytics residual risk' },
-                { u: 'EPD for Procurement', d: 'Green public procurement; offtaker Scope-3 programmes' },
-              ].map((c, i) => (
-                <div key={i} style={{ background: T.surfaceH, padding: 10, borderRadius: 4 }}>
-                  <div style={{ color: T.gold, fontWeight: 700 }}>{c.u}</div>
-                  <div style={{ color: T.textSec, marginTop: 4 }}>{c.d}</div>
-                </div>
+          </Panel>
+          <Panel title={`Bill of materials (${s.bom.length} items)`} right={<button onClick={addBomRow} style={addBtn}>+ Add row</button>}>
+            <Table cols={['Material', 'kg/module', 'EF', 'Embodied', 'Notes', '']}>
+              {s.bom.map((b, i) => (
+                <tr key={i}>
+                  <td style={td}><select value={b.material} onChange={e => updateBom(i, 'material', e.target.value)} style={selS}>{Object.keys(EF).map(k => <option key={k}>{k}</option>)}</select></td>
+                  <td style={td}><NumInput value={b.kgPerModule} onChange={v => updateBom(i, 'kgPerModule', v)} step={0.001} style={{ width: 70 }} /></td>
+                  <td style={{ ...td, fontFamily: T.mono, color: T.textMut }}>{EF[b.material]?.toFixed(2) || '—'}</td>
+                  <td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{((EF[b.material] || 0) * b.kgPerModule).toFixed(2)}</td>
+                  <td style={td}><TextInput value={b.notes} onChange={v => updateBom(i, 'notes', v)} /></td>
+                  <td style={td}><button onClick={() => delBomRow(i)} style={delBtn}>✕</button></td>
+                </tr>
               ))}
-            </div>
-          </div>
+            </Table>
+          </Panel>
         </div>
       )}
 
       {tab === 1 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Cradle-to-Gate assessment per Wp of module produced. ISO 14040/44. Functional unit: 1 kWp.</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={LCA_STAGES_MFG}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="stage" stroke={T.textSec} tick={{ fontSize: 10 }} angle={-20} height={80} textAnchor="end" /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Bar dataKey="co2" fill={T.gold} name="kgCO₂e/kWp">{LCA_STAGES_MFG.map((d, i) => <Cell key={i} fill={d.share >= 20 ? T.red : d.share >= 10 ? T.gold : T.green} />)}</Bar></BarChart>
-          </ResponsiveContainer>
-          <table style={{ ...sty.table, marginTop: 16 }}>
-            <thead><tr><th style={sty.th}>Stage</th><th style={sty.th}>ISO Module</th><th style={sty.th}>kgCO₂e/kWp</th><th style={sty.th}>Share</th></tr></thead>
-            <tbody>{LCA_STAGES_MFG.map((r, i) => <tr key={i}><td style={sty.td}>{r.stage}</td><td style={{ ...sty.td, fontFamily: T.mono, color: T.gold }}>{r.iso}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r.co2}</td><td style={sty.td}>{r.share}%</td></tr>)}</tbody>
-          </table>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <Panel title="Module cradle-to-gate decomposition">
+            <Table cols={['Stage', 'kg CO₂e/module', '%']}>
+              <tr><td style={td}>A1 — Raw materials (BOM)</td><td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{mod.bomEmb.toFixed(2)}</td><td style={{ ...td, fontFamily: T.mono }}>{(mod.bomEmb/Math.max(mod.totalKgPerModule,0.001)*100).toFixed(1)}%</td></tr>
+              <tr><td style={td}>A3 — Manufacturing energy</td><td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{mod.procEmb.toFixed(2)}</td><td style={{ ...td, fontFamily: T.mono }}>{(mod.procEmb/Math.max(mod.totalKgPerModule,0.001)*100).toFixed(1)}%</td></tr>
+              <tr style={{ background: T.surfaceH }}><td style={{ ...td, fontWeight: 600 }}>Total A1–A3</td><td style={{ ...td, fontFamily: T.mono, color: T.gold, fontWeight: 600 }}>{mod.totalKgPerModule.toFixed(2)}</td><td style={{ ...td, fontFamily: T.mono }}>100%</td></tr>
+              <tr><td style={td}>Per kW</td><td style={{ ...td, fontFamily: T.mono, color: T.gold }} colSpan={2}>{mod.kgPerKw.toFixed(1)} kg CO₂e/kW</td></tr>
+            </Table>
+          </Panel>
+          <Panel title="BOM contribution">
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={bomDecomp} layout="vertical" margin={{ left: 40 }}>
+                <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+                <XAxis type="number" tick={{ fill: T.textSec, fontSize: 11 }} />
+                <YAxis type="category" dataKey="material" width={130} tick={{ fill: T.textSec, fontSize: 11 }} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+                <Bar dataKey="kg" fill={T.gold} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Panel>
         </div>
       )}
 
       {tab === 2 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Generation cradle-to-grave — gCO₂e per kWh delivered across 25-yr PPA life.</div>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={LCA_GEN_STAGES}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="stage" stroke={T.textSec} tick={{ fontSize: 10 }} angle={-15} height={70} textAnchor="end" /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Bar dataKey="cikWh" fill={T.teal} name="gCO₂e/kWh" /></BarChart>
-          </ResponsiveContainer>
-          <div style={{ display: 'flex', gap: 10, marginTop: 16, flexWrap: 'wrap' }}>
-            <Kpi label="TOTAL CI" value={`${totalGenCi} g/kWh`} sub="vs India grid 710 g/kWh" color={T.green} />
-            <Kpi label="vs GRID" value="96% below" sub="LCA-verified delta" color={T.green} />
-            <Kpi label="CBAM REPORT" value="Ready" sub="Scope 2 Clean Energy Guaranteed" />
-          </div>
-        </div>
+        <Panel title={`Generation assets (${assets.length})`} right={<button onClick={addAsset} style={addBtn}>+ Add</button>}>
+          <Table cols={['ID', 'Name', 'MW', 'CF %', 'Deg %/yr', 'Life', 'BoS kg', 'Grid', 'Lifetime GWh', 'Emb tCO₂e', 'g/kWh', '']}>
+            {assets.map((a, i) => (
+              <tr key={i}>
+                <td style={{ ...td, fontFamily: T.mono, fontSize: 11 }}>{a.id}</td>
+                <td style={td}><TextInput value={a.name} onChange={v => updateAsset(i, 'name', v)} /></td>
+                <td style={td}><NumInput value={a.mw} onChange={v => updateAsset(i, 'mw', v)} style={{ width: 60 }} /></td>
+                <td style={td}><NumInput value={a.cf} onChange={v => updateAsset(i, 'cf', v)} step={0.1} style={{ width: 50 }} /></td>
+                <td style={td}><NumInput value={a.deg} onChange={v => updateAsset(i, 'deg', v)} step={0.01} style={{ width: 50 }} /></td>
+                <td style={td}><NumInput value={a.lifeYrs} onChange={v => updateAsset(i, 'lifeYrs', v)} style={{ width: 50 }} /></td>
+                <td style={td}><NumInput value={a.bosKg} onChange={v => updateAsset(i, 'bosKg', v)} step={10000} style={{ width: 90 }} /></td>
+                <td style={td}><select value={a.grid} onChange={e => updateAsset(i, 'grid', e.target.value)} style={selS}>{Object.keys(GRID_EF).map(k => <option key={k}>{k}</option>)}</select></td>
+                <td style={{ ...td, fontFamily: T.mono }}>{(a.lifetimeKwh / 1e6).toFixed(0)}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{(a.totalEmb / 1000).toFixed(0)}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: a.gCo2PerKwh < 40 ? T.green : T.amber }}>{a.gCo2PerKwh.toFixed(1)}</td>
+                <td style={td}><button onClick={() => delAsset(i)} style={delBtn}>✕</button></td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 3 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Peer manufacturer benchmarking (modules — cradle-to-gate, kgCO₂e/kWp).</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={PEER_BENCHMARK} layout="vertical"><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis type="number" stroke={T.textSec} tick={{ fontSize: 11 }} /><YAxis type="category" dataKey="peer" stroke={T.textSec} tick={{ fontSize: 11 }} width={150} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Bar dataKey="ci">{PEER_BENCHMARK.map((d, i) => <Cell key={i} fill={d.self ? T.green : d.country === 'IN' ? T.gold : T.red} />)}</Bar></BarChart>
+        <Panel title="Peer benchmark (kg CO₂e/kW)">
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={[{ peer: `Client`, val: +mod.kgPerKw.toFixed(0) }, ...s.peers.map(p => ({ peer: p.peer, val: p.mfgKgCo2PerKw }))]}>
+              <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+              <XAxis dataKey="peer" tick={{ fill: T.textSec, fontSize: 10 }} angle={-20} textAnchor="end" height={80} interval={0} />
+              <YAxis tick={{ fill: T.textSec, fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+              <Bar dataKey="val" fill={T.gold} />
+            </BarChart>
           </ResponsiveContainer>
-          <div style={{ ...sty.panel, marginTop: 14 }}>
-            <div style={{ fontSize: 11, color: T.gold, marginBottom: 6 }}>India advantage</div>
-            <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.6 }}>Indian-manufactured + installed modules carry a structural carbon advantage: no transport emission premium vs Chinese imports, plus captive RE for manufacturing compresses embedded CO₂. This is unquantified today — LCA makes it visible and defensible.</div>
-          </div>
-        </div>
+          <Table cols={['Peer', 'kg CO₂e/kW', 'Delta', 'Position']}>
+            {s.peers.map((p, i) => {
+              const delta = mod.kgPerKw - p.mfgKgCo2PerKw;
+              return (
+                <tr key={i}>
+                  <td style={td}>{p.peer}</td>
+                  <td style={{ ...td, fontFamily: T.mono }}><NumInput value={p.mfgKgCo2PerKw} onChange={v => sc.update(st => ({ peers: st.peers.map((x, j) => j === i ? { ...x, mfgKgCo2PerKw: v } : x) }))} /></td>
+                  <td style={{ ...td, fontFamily: T.mono, color: delta <= 0 ? T.green : T.red }}>{delta > 0 ? '+' : ''}{delta.toFixed(0)}</td>
+                  <td style={td}>{delta <= 0 ? <Badge level="good">Client better</Badge> : <Badge level="warn">Peer better</Badge>}</td>
+                </tr>
+              );
+            })}
+          </Table>
+        </Panel>
       )}
 
       {tab === 4 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Environmental Product Declaration pathway — International EPD System · ISO 14025 Type III.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Standard</th><th style={sty.th}>Scope</th><th style={sty.th}>Status</th></tr></thead>
-            <tbody>{EPD_STANDARDS.map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold, fontFamily: T.mono }}>{r.std}</td><td style={sty.td}>{r.scope}</td><td style={{ ...sty.td, color: r.status === 'Aligned' ? T.green : r.status === 'Target' ? T.gold : T.textSec }}>{r.status}</td></tr>)}</tbody>
-          </table>
-          <div style={{ ...sty.panel, marginTop: 14 }}>
-            <div style={{ fontSize: 12, color: T.gold, fontWeight: 700, marginBottom: 6 }}>Competitive benchmark</div>
-            <div style={{ fontSize: 11, color: T.textSec }}>Saatvik Green Energy obtained EPD certification for its TOPCon module in early 2026, establishing the Indian benchmark. A ~1.2 GW facility is positioned to address this within 10–14 months.</div>
-          </div>
-        </div>
+        <Panel title="EPD certification pathway (ISO 14025 + IEC 63274)">
+          <Table cols={['Stage', 'Scope', 'Duration', 'Output']}>
+            {[
+              ['1. LCA study', 'ISO 14040/44 per IEC 63274 PCR', '8 wks', 'LCA report (this tool)'],
+              ['2. Critical review', 'ISO 14044 §6.3 expert panel', '4 wks', 'Review statement'],
+              ['3. PCR verification', 'Programme operator check', '2 wks', 'Conformance letter'],
+              ['4. EPD publication', 'EPD Norge / International EPD System', '2 wks', 'Published EPD (5-yr validity)'],
+              ['5. Client use', 'CBAM / GPP / green bond DD', 'Ongoing', 'Revenue / financing advantage'],
+            ].map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} style={j===0 ? { ...td, fontWeight: 600 } : td}>{c}</td>)}</tr>)}
+          </Table>
+        </Panel>
       )}
 
-      {tab === 5 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 14 }}>What-if — compress manufacturing CI through captive RE and logistics optimisation.</div>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-            <label style={{ fontSize: 11, color: T.textSec }}>Grid EF (kg/kWh) <input type="number" step="0.01" value={gridEf} onChange={e=>setGridEf(+e.target.value)} style={sty.input} /></label>
-            <label style={{ fontSize: 11, color: T.textSec }}>Captive RE % <input type="number" value={captiveRePct} onChange={e=>setCaptiveRePct(+e.target.value)} style={sty.input} /></label>
-            <label style={{ fontSize: 11, color: T.textSec }}>Logistics km <input type="number" value={logisticKm} onChange={e=>setLogisticKm(+e.target.value)} style={sty.input} /></label>
-          </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <Kpi label="BASELINE CI" value={`${whatif.baseline} kg/kWp`} sub="Current mix" />
-            <Kpi label="OPTIMISED CI" value={`${whatif.final} kg/kWp`} sub="After levers" color={T.green} />
-            <Kpi label="Δ REDUCTION" value={`${whatif.delta} kg/kWp`} sub={`${((whatif.delta/whatif.baseline)*100).toFixed(1)}%`} color={T.gold} />
-            <Kpi label="EPD RATING" value={whatif.final < 280 ? 'A+' : whatif.final < 330 ? 'A' : 'B'} sub="Peer quartile" color={T.gold} />
-          </div>
-        </div>
-      )}
+      {tab === 5 && <Panel title="What-if: mfg relocation / BOM reduction"><WhatIf s={s} mod={mod} portfolioG={portfolioG} /></Panel>}
 
       {tab === 6 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Deliverables & Timeline — ~14-week engagement.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Phase</th><th style={sty.th}>Deliverable</th><th style={sty.th}>Week</th><th style={sty.th}>Owner</th></tr></thead>
-            <tbody>{[
-              ['Goal & scope', 'ISO 14040 scope definition · functional unit', 'W1', 'Advisory'],
-              ['Inventory analysis', 'LCI collection · site audits · supply chain data', 'W2-5', 'Joint'],
-              ['Impact assessment', 'LCIA using CML/ReCiPe · uncertainty analysis', 'W6-8', 'Advisory'],
-              ['Interpretation', 'Hotspot analysis · sensitivity · peer benchmark', 'W9-10', 'Advisory'],
-              ['Critical review', 'ISO 14044 panel review (external)', 'W11-12', 'External'],
-              ['EPD registration', 'International EPD System submission · IEC 63274 PCR', 'W13-14', 'Advisory'],
-              ['Handover', 'EPD certificate · downstream-module data pack', 'W14', 'Advisory'],
-            ].map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold }}>{r[0]}</td><td style={sty.td}>{r[1]}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r[2]}</td><td style={sty.td}>{r[3]}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="Client deliverable stack">
+          <ul style={{ lineHeight: 1.9, fontSize: 13, color: T.textSec }}>
+            <li><b style={{ color: T.text }}>LCA data pack (CSV)</b> — asset lifecycle intensities for regulator submission. <button style={btnInline} onClick={exportCsv}>Download</button></li>
+            <li><b style={{ color: T.text }}>Scenario state (JSON)</b> — reproducible inputs for peer review. <button style={btnInline} onClick={exportJson}>Download</button></li>
+            <li><b style={{ color: T.text }}>EPD draft (HTML/PDF)</b> — ISO 14025 format, ready for critical review. <button style={{ ...btnInline, background: T.gold, color: T.navy, borderColor: T.gold }} onClick={generateEpd}>Generate</button></li>
+          </ul>
+          <div style={{ marginTop: 16, padding: 12, background: T.surfaceH, border: `1px solid ${T.border}`, borderRadius: 3, fontSize: 12, color: T.textMut }}>
+            <b style={{ color: T.gold }}>Use cases:</b> CBAM default-value replacement (saves €40–85/tCO₂e for EU exports), EU GPP tender qualification, Climate Bonds Standard solar criterion, BRSR P6, SLB KPI baseline.
+          </div>
+        </Panel>
       )}
+    </div>
+  );
+}
 
-      <div style={{ marginTop: 24, padding: '10px 16px', background: T.surfaceH, borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 11, color: T.textMut }}>
-        <span>EP-EB1 · RE Portfolio LCA & EPD · Impact Advisory Suite</span>
-        <span>ISO 14040/44/25 · IEC 63274 · International EPD System · 7 Tabs</span>
+function WhatIf({ s, mod, portfolioG }) {
+  const [scLoc, setScLoc] = useState(s.mfgLocation);
+  const [bomCut, setBomCut] = useState(0);
+  const newProcEmb = s.mfgElecIntensity * (GRID_EF[scLoc] || 0.5);
+  const newBom = mod.bomEmb * (1 - bomCut / 100);
+  const newTotal = newBom + newProcEmb;
+  const newKgPerKw = newTotal / (s.moduleWatt / 1000);
+  const delta = newKgPerKw - mod.kgPerKw;
+  const newPortG = mod.kgPerKw > 0 ? portfolioG * (newKgPerKw / mod.kgPerKw) : 0;
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 20, marginBottom: 16, flexWrap: 'wrap' }}>
+        <L label="Switch mfg location"><select value={scLoc} onChange={e => setScLoc(e.target.value)} style={selS}>{Object.keys(GRID_EF).map(k => <option key={k}>{k}</option>)}</select></L>
+        <L label="BOM reduction"><NumInput value={bomCut} onChange={setBomCut} min={0} max={60} suffix="%" /></L>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+        <Kpi label="New module intensity" value={`${newKgPerKw.toFixed(0)} kg/kW`} sub={`Δ ${delta > 0 ? '+' : ''}${delta.toFixed(0)} kg/kW`} color={delta < 0 ? T.green : T.red} />
+        <Kpi label="New portfolio g/kWh" value={`${newPortG.toFixed(1)}`} sub={`from ${portfolioG.toFixed(1)}`} />
+        <Kpi label="Lifetime tCO₂e avoided" value={`${((mod.kgPerKw - newKgPerKw) * s.genAssets.reduce((a,b)=>a+b.mw,0) / 1000).toFixed(0)}`} sub="across portfolio" color={T.green} />
       </div>
     </div>
   );
 }
+
+function L({ label, children }) {
+  return <label style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 12, color: T.textSec }}><span style={{ minWidth: 160 }}>{label}</span>{children}</label>;
+}
+const selS = { background: T.surface, color: T.text, border: `1px solid ${T.border}`, padding: '4px 6px', fontSize: 12, borderRadius: 2 };
+const addBtn = { background: T.teal, color: T.text, border: 'none', padding: '4px 12px', fontSize: 11, cursor: 'pointer', borderRadius: 3 };
+const delBtn = { background: 'transparent', color: T.red, border: 'none', cursor: 'pointer', fontSize: 14 };
+const btnInline = { background: T.surface, color: T.gold, border: `1px solid ${T.gold}`, padding: '3px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 3, marginLeft: 8 };

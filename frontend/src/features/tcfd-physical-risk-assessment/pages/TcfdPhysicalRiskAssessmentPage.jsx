@@ -1,205 +1,263 @@
-import React, { useState, useMemo } from 'react';
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
+import React, { useMemo, useState } from 'react';
+import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ScatterChart, Scatter, ZAxis } from 'recharts';
+import { T, useScenario, ToolkitBar, NumInput, TextInput, Kpi, Panel, Table, td, TabBar, PageHeader, Badge, downloadText, toCsv, openDeliverable, html } from '../../_shared/AdvisoryToolkit';
 
-const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
+const SSP_MULT = { 'SSP1-2.6': { 2030: 1.0, 2040: 1.1, 2050: 1.15 }, 'SSP2-4.5': { 2030: 1.1, 2040: 1.3, 2050: 1.55 }, 'SSP5-8.5': { 2030: 1.2, 2040: 1.6, 2050: 2.2 } };
+const HAZARDS = ['Heat', 'Water stress', 'Cyclone', 'Flood', 'Dust'];
 
-const ASSETS = [
-  { id: 'RAJ-SOL-1', state: 'Rajasthan', tech: 'Solar PV', mw: 1200, heat: 92, water: 88, dust: 78, cyclone: 8, flood: 12, lat: 27.0, lon: 74.2 },
-  { id: 'RAJ-SOL-2', state: 'Rajasthan', tech: 'Solar + BESS', mw: 450, heat: 94, water: 82, dust: 72, cyclone: 6, flood: 8, lat: 26.8, lon: 73.8 },
-  { id: 'GUJ-WND-1', state: 'Gujarat', tech: 'Wind', mw: 620, heat: 58, water: 62, dust: 48, cyclone: 82, flood: 44, lat: 23.0, lon: 69.5 },
-  { id: 'GUJ-SOL-1', state: 'Gujarat', tech: 'Solar PV', mw: 850, heat: 72, water: 70, dust: 54, cyclone: 68, flood: 38, lat: 23.2, lon: 71.0 },
-  { id: 'ODI-FDR-1', state: 'Odisha', tech: 'FDRE + Green H2', mw: 1800, heat: 42, water: 58, dust: 22, cyclone: 88, flood: 72, lat: 20.3, lon: 85.8 },
-  { id: 'TN-WND-1', state: 'Tamil Nadu', tech: 'Wind', mw: 380, heat: 48, water: 52, dust: 28, cyclone: 52, flood: 42, lat: 11.0, lon: 78.3 },
-  { id: 'MP-SOL-1', state: 'Madhya Pradesh', tech: 'Solar PV', mw: 550, heat: 68, water: 58, dust: 48, cyclone: 12, flood: 28, lat: 23.5, lon: 77.2 },
-  { id: 'KA-SOL-1', state: 'Karnataka', tech: 'Solar PV', mw: 420, heat: 62, water: 72, dust: 32, cyclone: 18, flood: 48, lat: 15.2, lon: 76.8 },
-  { id: 'AP-SOL-1', state: 'Andhra Pradesh', tech: 'Solar PV', mw: 380, heat: 64, water: 58, dust: 38, cyclone: 68, flood: 58, lat: 15.8, lon: 78.8 },
-  { id: 'OMN-NH3', state: 'Oman', tech: 'Green NH3', mw: 5200, heat: 95, water: 92, dust: 88, cyclone: 32, flood: 18, lat: 23.0, lon: 58.0 },
-];
+const DEFAULTS = {
+  portfolioName: 'Integrated RE-IPP Client (anonymised)',
+  ssp: 'SSP2-4.5',
+  horizonYr: 2040,
+  discountRate: 8,
+  assets: [
+    { id: 'RAJ-SOL-1', name: 'Rajasthan Solar 1', mw: 1200, revenueCr: 380, debtCr: 2100, state: 'Rajasthan', heatExp: 4, waterExp: 5, cycloneExp: 1, floodExp: 1, dustExp: 5, adaptCapex: 32, adaptOpex: 1.8, adaptBenefitPct: 45 },
+    { id: 'GUJ-WND-1', name: 'Gujarat Wind (Kutch)', mw: 300, revenueCr: 140, debtCr: 800, state: 'Gujarat', heatExp: 3, waterExp: 4, cycloneExp: 4, floodExp: 2, dustExp: 3, adaptCapex: 12, adaptOpex: 0.6, adaptBenefitPct: 35 },
+    { id: 'GUJ-SOL-1', name: 'Gujarat Solar', mw: 900, revenueCr: 290, debtCr: 1600, state: 'Gujarat', heatExp: 4, waterExp: 4, cycloneExp: 3, floodExp: 2, dustExp: 4, adaptCapex: 22, adaptOpex: 1.2, adaptBenefitPct: 40 },
+    { id: 'ODI-FDR-1', name: 'Odisha FDRE', mw: 500, revenueCr: 320, debtCr: 1800, state: 'Odisha', heatExp: 3, waterExp: 3, cycloneExp: 4, floodExp: 4, dustExp: 2, adaptCapex: 28, adaptOpex: 1.5, adaptBenefitPct: 42 },
+    { id: 'TN-WND-1', name: 'Tamil Nadu Wind', mw: 180, revenueCr: 85, debtCr: 480, state: 'Tamil Nadu', heatExp: 3, waterExp: 2, cycloneExp: 4, floodExp: 3, dustExp: 2, adaptCapex: 8, adaptOpex: 0.4, adaptBenefitPct: 30 },
+    { id: 'MP-SOL-1', name: 'MP Solar', mw: 260, revenueCr: 82, debtCr: 450, state: 'Madhya Pradesh', heatExp: 4, waterExp: 3, cycloneExp: 1, floodExp: 2, dustExp: 3, adaptCapex: 9, adaptOpex: 0.5, adaptBenefitPct: 35 },
+    { id: 'KA-SOL-1', name: 'Karnataka Solar', mw: 220, revenueCr: 70, debtCr: 380, state: 'Karnataka', heatExp: 3, waterExp: 3, cycloneExp: 2, floodExp: 2, dustExp: 2, adaptCapex: 7, adaptOpex: 0.4, adaptBenefitPct: 32 },
+    { id: 'AP-SOL-1', name: 'AP Solar', mw: 280, revenueCr: 88, debtCr: 490, state: 'Andhra Pradesh', heatExp: 3, waterExp: 3, cycloneExp: 3, floodExp: 2, dustExp: 2, adaptCapex: 10, adaptOpex: 0.5, adaptBenefitPct: 35 },
+    { id: 'OMN-NH3', name: 'Oman Green NH₃', mw: 500, revenueCr: 520, debtCr: 3800, state: 'Oman', heatExp: 5, waterExp: 5, cycloneExp: 2, floodExp: 1, dustExp: 4, adaptCapex: 85, adaptOpex: 4.2, adaptBenefitPct: 50 },
+  ],
+};
 
-const HAZARDS = [
-  { h: 'Chronic heat', ssp126_2030: 1.2, ssp245_2030: 1.5, ssp585_2030: 1.8, ssp126_2050: 1.4, ssp245_2050: 2.3, ssp585_2050: 3.4, unit: '°C avg' },
-  { h: 'Water stress', ssp126_2030: 1.08, ssp245_2030: 1.15, ssp585_2030: 1.22, ssp126_2050: 1.12, ssp245_2050: 1.28, ssp585_2050: 1.48, unit: 'x baseline' },
-  { h: 'Cyclone intensity', ssp126_2030: 1.04, ssp245_2030: 1.09, ssp585_2030: 1.14, ssp126_2050: 1.08, ssp245_2050: 1.18, ssp585_2050: 1.32, unit: 'x cat' },
-  { h: 'Flood frequency', ssp126_2030: 1.10, ssp245_2030: 1.18, ssp585_2030: 1.28, ssp126_2050: 1.15, ssp245_2050: 1.35, ssp585_2050: 1.68, unit: 'x events/decade' },
-  { h: 'Dust storms', ssp126_2030: 1.02, ssp245_2030: 1.06, ssp585_2030: 1.10, ssp126_2050: 1.05, ssp245_2050: 1.14, ssp585_2050: 1.22, unit: 'x AOD' },
-];
-
-const FINANCIAL_IMPACT = [
-  { yr: 2030, ssp126: 2.1, ssp245: 3.8, ssp585: 5.9 },
-  { yr: 2035, ssp126: 3.2, ssp245: 6.1, ssp585: 9.8 },
-  { yr: 2040, ssp126: 4.4, ssp245: 8.9, ssp585: 14.5 },
-  { yr: 2045, ssp126: 5.8, ssp245: 12.1, ssp585: 20.8 },
-  { yr: 2050, ssp126: 7.2, ssp245: 15.8, ssp585: 29.2 },
-];
-
-const ADAPTATION_ROADMAP = [
-  { asset: 'RAJ-SOL-1/2', intervention: 'Robotic waterless cleaning + sub-5°C inverter cooling', capex: 18, opex: -2.1, risk: 'Heat + water + dust', payback: 8.6 },
-  { asset: 'GUJ-WND-1', intervention: 'Cyclone Cat-IV rated turbines (retrofit blades)', capex: 42, opex: 0.6, risk: 'Cyclone', payback: 6.2 },
-  { asset: 'ODI-FDR-1', intervention: 'Elevated platform + cyclone shelter + rapid restart', capex: 65, opex: 0.8, risk: 'Cyclone + flood', payback: 5.8 },
-  { asset: 'GUJ-SOL-1', intervention: 'Flood-grade inverter pedestals + trackers reinforcement', capex: 24, opex: 0.4, risk: 'Cyclone + flood', payback: 7.1 },
-  { asset: 'OMN-NH3', intervention: 'Desalination redundancy + HVAC upgrade + dust shielding', capex: 95, opex: 1.2, risk: 'Heat + water + dust', payback: 4.9 },
-];
-
-const TABS = ['Overview', 'Asset Heat Map', 'SSP Scenario Projections', 'Financial Impact (RaR)', 'TCFD Four Pillars', 'Adaptation Roadmap', 'Scenario Stress Test'];
-
-const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 18px', flex: 1, minWidth: 140 }}>
-    <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: color || T.gold, fontFamily: T.mono }}>{value}</div>
-    {sub && <div style={{ fontSize: 10, color: T.textSec, marginTop: 3 }}>{sub}</div>}
-  </div>
-);
+function rarPct(a, ssp, horizon) {
+  const mult = SSP_MULT[ssp]?.[horizon] || 1;
+  const raw = (a.heatExp * 1.2 + a.waterExp * 1.5 + a.cycloneExp * 2.0 + a.floodExp * 1.8 + a.dustExp * 0.8) * mult;
+  return Math.min(40, raw * 0.6);
+}
+const TABS = ['Inputs & Assets', 'Heat Map', 'SSP Projections', 'Financial Impact (RaR + DSCR)', 'Adaptation ROI', 'TCFD 4 Pillars', 'Deliverables'];
 
 export default function TcfdPhysicalRiskAssessmentPage() {
+  const sc = useScenario('eb5_tcfd', DEFAULTS);
   const [tab, setTab] = useState(0);
-  const [scenario, setScenario] = useState('ssp245');
+  const s = sc.state;
 
-  const revenue2030 = 5800;
-  const rarYr2030 = useMemo(() => FINANCIAL_IMPACT[0][scenario], [scenario]);
-  const rar2050 = useMemo(() => FINANCIAL_IMPACT[4][scenario], [scenario]);
-  const totalMw = ASSETS.reduce((a, b) => a + b.mw, 0);
+  const assets = useMemo(() => s.assets.map(a => {
+    const rar = rarPct(a, s.ssp, s.horizonYr);
+    const rarBeforeAdapt = rar;
+    const rarAfterAdapt = rar * (1 - a.adaptBenefitPct / 100);
+    const revLossCr = a.revenueCr * rar / 100;
+    const revLossAfterCr = a.revenueCr * rarAfterAdapt / 100;
+    const ebitda = a.revenueCr * 0.55;
+    const debtSvc = a.debtCr * 0.09;
+    const dscrBase = ebitda / Math.max(1, debtSvc);
+    const dscrStressed = (ebitda - revLossCr) / Math.max(1, debtSvc);
+    const dscrAfterAdapt = (ebitda - revLossAfterCr - a.adaptOpex) / Math.max(1, debtSvc);
+    const adaptLifetimeBenefit = (revLossCr - revLossAfterCr - a.adaptOpex) * 15;
+    const adaptRoiPct = a.adaptCapex > 0 ? adaptLifetimeBenefit / a.adaptCapex * 100 : 0;
+    return { ...a, rar, rarBeforeAdapt, rarAfterAdapt, revLossCr, revLossAfterCr, ebitda, debtSvc, dscrBase, dscrStressed, dscrAfterAdapt, adaptRoiPct, adaptLifetimeBenefit };
+  }), [s.assets, s.ssp, s.horizonYr]);
 
-  const heatMapCells = useMemo(() => {
-    const cells = [];
-    ASSETS.forEach(a => {
-      ['heat', 'water', 'dust', 'cyclone', 'flood'].forEach(h => {
-        cells.push({ asset: a.id, hazard: h, val: a[h] });
-      });
-    });
-    return cells;
-  }, []);
+  const totalRev = assets.reduce((a, x) => a + x.revenueCr, 0);
+  const totalRaR = assets.reduce((a, x) => a + x.revLossCr, 0);
+  const totalRaRAfter = assets.reduce((a, x) => a + x.revLossAfterCr, 0);
+  const totalAdaptCapex = assets.reduce((a, x) => a + x.adaptCapex, 0);
+  const stressedAssets = assets.filter(a => a.dscrStressed < 1.2).length;
 
-  const sty = {
-    table: { width: '100%', borderCollapse: 'collapse' },
-    th: { textAlign: 'left', padding: '8px 10px', fontSize: 10, fontFamily: T.mono, color: T.gold, borderBottom: `1px solid ${T.border}` },
-    td: { padding: '8px 10px', fontSize: 11, color: T.text, borderBottom: `1px solid ${T.borderL}` },
-    panel: { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14 },
-    btn: (on) => ({ padding: '5px 12px', borderRadius: 4, fontSize: 11, fontFamily: T.mono, cursor: 'pointer', background: on ? T.gold : T.surface, color: on ? T.bg : T.textSec, border: `1px solid ${T.border}` }),
-    cellBg: (v) => v >= 80 ? 'rgba(192,57,43,0.45)' : v >= 60 ? 'rgba(230,126,34,0.35)' : v >= 40 ? 'rgba(212,168,67,0.25)' : 'rgba(39,174,96,0.20)',
+  const upd = (i, k, v) => sc.update(st => ({ assets: st.assets.map((a, j) => j === i ? { ...a, [k]: v } : a) }));
+  const addA = () => sc.update(st => ({ assets: [...st.assets, { id: `NEW-${st.assets.length+1}`, name: 'New', mw: 100, revenueCr: 50, debtCr: 200, state: '', heatExp: 2, waterExp: 2, cycloneExp: 2, floodExp: 2, dustExp: 2, adaptCapex: 5, adaptOpex: 0.3, adaptBenefitPct: 30 }] }));
+  const delA = (i) => sc.update(st => ({ assets: st.assets.filter((_, j) => j !== i) }));
+
+  const exportCsv = () => downloadText(`EB5_TCFD_${sc.scenarioName}.csv`, toCsv(assets.map(a => ({
+    id: a.id, name: a.name, state: a.state, mw: a.mw, rev_cr: a.revenueCr, debt_cr: a.debtCr,
+    ssp: s.ssp, horizon: s.horizonYr,
+    rar_pct: +a.rar.toFixed(2), rev_loss_cr: +a.revLossCr.toFixed(2),
+    dscr_base: +a.dscrBase.toFixed(2), dscr_stressed: +a.dscrStressed.toFixed(2), dscr_after_adapt: +a.dscrAfterAdapt.toFixed(2),
+    adapt_capex_cr: a.adaptCapex, adapt_roi_pct: +a.adaptRoiPct.toFixed(0),
+  }))), 'text/csv');
+  const exportJson = () => downloadText(`EB5_${sc.scenarioName}.json`, JSON.stringify({ module: 'EB5', state: s, assets }, null, 2), 'application/json');
+
+  const generateReport = () => {
+    const content = [
+      html.h1('TCFD Physical Climate Risk Assessment'),
+      html.meta({ Portfolio: s.portfolioName, Scenario: `${s.ssp} · ${s.horizonYr}`, Assets: assets.length, 'Total Rev': `₹${totalRev.toFixed(0)} Cr`, Discount: `${s.discountRate}%`, Basis: 'CMIP6 downscaled, 5-peril exposure, DSCR impact' }),
+      html.h2('Executive Summary'),
+      html.kpi('Total revenue at risk', `₹${totalRaR.toFixed(1)} Cr`) + html.kpi('% of portfolio revenue', `${(totalRaR/totalRev*100).toFixed(1)}%`) + html.kpi('After adaptation', `₹${totalRaRAfter.toFixed(1)} Cr`) + html.kpi('Adaptation capex', `₹${totalAdaptCapex.toFixed(0)} Cr`) + html.kpi('Stressed DSCR assets', stressedAssets),
+      html.h2('1. TCFD Pillar — Strategy'),
+      html.p(`Under ${s.ssp} by ${s.horizonYr}, ${assets.length} material assets carry physical climate exposure. Revenue-at-risk ₹${totalRaR.toFixed(1)} Cr (${(totalRaR/totalRev*100).toFixed(1)}% of portfolio revenue). Without adaptation, ${stressedAssets} assets breach DSCR 1.2× covenant.`),
+      html.h2('2. Asset-Level Exposure'),
+      html.table(['Asset', 'State', 'MW', 'Rev ₹Cr', 'RaR %', '₹Cr loss', 'DSCR base', 'DSCR stressed', 'DSCR + adapt'],
+        assets.map(a => [a.name, a.state, a.mw, a.revenueCr, a.rar.toFixed(1), a.revLossCr.toFixed(1), a.dscrBase.toFixed(2), a.dscrStressed.toFixed(2), a.dscrAfterAdapt.toFixed(2)])),
+      html.h2('3. Adaptation Roadmap & ROI'),
+      html.table(['Asset', 'Capex ₹Cr', 'Opex/yr', 'RaR before', 'RaR after', 'Lifetime benefit', 'ROI %'],
+        assets.map(a => [a.name, a.adaptCapex, a.adaptOpex, a.rarBeforeAdapt.toFixed(1)+'%', a.rarAfterAdapt.toFixed(1)+'%', '₹' + a.adaptLifetimeBenefit.toFixed(0) + ' Cr', a.adaptRoiPct.toFixed(0) + '%'])),
+      html.h2('4. TCFD Pillar — Metrics & Targets'),
+      html.p(`Physical RaR intensity: ${(totalRaR*10/totalRev).toFixed(2)} per ₹10 of revenue. Portfolio DSCR under stress: ${(assets.reduce((a,x)=>a+x.dscrStressed,0)/assets.length).toFixed(2)} (target: ≥1.4× covenant).`),
+      html.h2('5. Recommendations'),
+      html.p('Priority 1: Oman NH₃ adaptation — highest absolute RaR and highest adapt-capex leverage. Priority 2: Rajasthan/Gujarat solar — dust + heat drive yield loss, payback <5y. Priority 3: Odisha FDRE — cyclone/flood structural hardening.'),
+    ].join('');
+    openDeliverable(content, `TCFD Report — ${s.portfolioName}`);
   };
 
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: 24 }}>
-      <div style={{ borderBottom: `2px solid ${T.gold}`, paddingBottom: 12, marginBottom: 20 }}>
-        <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, letterSpacing: 2 }}>EP-EB5 · IMPACT ADVISORY — BALANCE-SHEET VALUE FROM SUSTAINABILITY</div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, margin: '4px 0', color: T.text }}>TCFD Physical Climate Risk Assessment — Asset-Level RaR</h1>
-        <div style={{ fontSize: 12, color: T.textSec }}>IFRS S2 · TCFD 4 pillars · CMIP6 SSP1-2.6/2-4.5/5-8.5 · 2030/2040/2050 horizons · Asset-level geo-referenced · 7 Tabs</div>
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '28px 40px' }}>
+      <PageHeader code="EP-EB5" title="TCFD Physical Climate Risk Assessment" subtitle={`${s.portfolioName} · CMIP6 · ${s.ssp} @ ${s.horizonYr} · ${assets.length} assets · RaR + DSCR + Adaptation ROI`} />
+      <ToolkitBar moduleCode="EB5" scenario={sc} onExportCsv={exportCsv} onExportJson={exportJson} onDeliverable={generateReport}
+        importLabel="Import Assets CSV"
+        onImportCsv={(rows) => { if (rows.length) sc.update({ assets: rows.map(r => ({
+          id: r.id, name: r.name, mw: Number(r.mw) || 0, revenueCr: Number(r.revenueCr || r.rev_cr) || 0, debtCr: Number(r.debtCr || r.debt_cr) || 0,
+          state: r.state || '', heatExp: Number(r.heatExp) || 0, waterExp: Number(r.waterExp) || 0, cycloneExp: Number(r.cycloneExp) || 0, floodExp: Number(r.floodExp) || 0, dustExp: Number(r.dustExp) || 0,
+          adaptCapex: Number(r.adaptCapex) || 0, adaptOpex: Number(r.adaptOpex) || 0, adaptBenefitPct: Number(r.adaptBenefitPct) || 30,
+        })) }); }} />
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 18 }}>
+        <Kpi label="Assets assessed" value={assets.length} sub={`${assets.reduce((a,x)=>a+x.mw,0).toLocaleString()} MW`} />
+        <Kpi label="Revenue at risk" value={`₹${totalRaR.toFixed(1)} Cr`} sub={`${(totalRaR/Math.max(1,totalRev)*100).toFixed(1)}% of portfolio`} color={T.red} />
+        <Kpi label="After adaptation" value={`₹${totalRaRAfter.toFixed(1)} Cr`} sub={`Residual ${(totalRaRAfter/Math.max(1,totalRev)*100).toFixed(1)}%`} color={T.amber} />
+        <Kpi label="Adaptation capex" value={`₹${totalAdaptCapex.toFixed(0)} Cr`} sub={`${(totalAdaptCapex/Math.max(1,totalRaR)).toFixed(2)}× RaR`} color={T.gold} />
+        <Kpi label="DSCR breach" value={stressedAssets} sub="Below 1.2× under stress" color={stressedAssets > 0 ? T.red : T.green} />
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        <Kpi label="ASSETS ASSESSED" value={ASSETS.length} sub={`${totalMw.toLocaleString()} MW · 9 states + Oman`} />
-        <Kpi label="HIGH RISK (≥80)" value={ASSETS.filter(a => Math.max(a.heat, a.water, a.cyclone, a.flood) >= 80).length} sub="any single hazard" color={T.red} />
-        <Kpi label="RaR 2030 (SSP2-4.5)" value={`${FINANCIAL_IMPACT[0].ssp245}%`} sub="of portfolio revenue" color={T.amber} />
-        <Kpi label="RaR 2050 (SSP5-8.5)" value={`${FINANCIAL_IMPACT[4].ssp585}%`} sub="high-emissions tail" color={T.red} />
-        <Kpi label="TCFD MATURITY" value="Phase 3" sub="Scenario + Financial" color={T.green} />
-      </div>
-
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: `1px solid ${T.border}`, flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <div key={i} onClick={() => setTab(i)} style={{ padding: '10px 16px', fontSize: 11, fontFamily: T.mono, cursor: 'pointer', borderBottom: tab === i ? `2px solid ${T.gold}` : 'none', color: tab === i ? T.gold : T.textSec }}>{t}</div>
-        ))}
-      </div>
+      <TabBar tabs={TABS} tab={tab} setTab={setTab} />
 
       {tab === 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>BRSR Floor vs TCFD Depth</div>
-            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>BRSR addresses climate risk <b>qualitatively at entity level</b>. TCFD delivers <b>asset-level, scenario-modelled, financially quantified</b> risk — revenue-at-risk, opex implications, asset impairment probability — across 2030/2040/2050 horizons. This is the output long-tenor lenders and insurance underwriters require.</p>
+        <Panel title="Portfolio & scenario parameters" right={<button style={addBtn} onClick={addA}>+ Add asset</button>}>
+          <div style={{ display: 'flex', gap: 20, marginBottom: 14, flexWrap: 'wrap' }}>
+            <L label="Portfolio"><TextInput value={s.portfolioName} onChange={v => sc.update({ portfolioName: v })} style={{ width: 220 }} /></L>
+            <L label="SSP scenario"><select value={s.ssp} onChange={e => sc.update({ ssp: e.target.value })} style={selS}>{Object.keys(SSP_MULT).map(k => <option key={k}>{k}</option>)}</select></L>
+            <L label="Horizon"><select value={s.horizonYr} onChange={e => sc.update({ horizonYr: Number(e.target.value) })} style={selS}><option>2030</option><option>2040</option><option>2050</option></select></L>
+            <L label="Discount rate"><NumInput value={s.discountRate} onChange={v => sc.update({ discountRate: v })} step={0.5} suffix="%" /></L>
           </div>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>Why Location Matters</div>
-            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>Rajasthan → chronic heat + water + dust (panel efficiency, cleaning, inverter thermal). Gujarat → cyclone corridor. Odisha → highest-frequency cyclone belt in India. Oman → acute heat + desalination dependency. PPA tenor 25yr + debt tenor 15-20yr require forward-looking climate adjustment.</p>
-          </div>
-          <div style={{ ...sty.panel, gridColumn: '1 / span 2' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 10 }}>Portfolio MW by State</div>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={Object.values(ASSETS.reduce((a, b) => { a[b.state] = a[b.state] || { state: b.state, mw: 0 }; a[b.state].mw += b.mw; return a; }, {}))}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="state" stroke={T.textSec} tick={{ fontSize: 11 }} angle={-15} height={60} textAnchor="end" /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Bar dataKey="mw" fill={T.gold} /></BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+          <div style={{ fontSize: 11, color: T.textMut, marginBottom: 10 }}>Exposure scores: 1 (low) — 5 (extreme). Heat/water/cyclone/flood/dust weighted per peril severity. Adaptation benefit % = expected RaR reduction.</div>
+          <Table cols={['ID', 'Name', 'State', 'MW', 'Rev ₹Cr', 'Debt ₹Cr', 'Heat', 'Water', 'Cyclone', 'Flood', 'Dust', 'Capex', 'Opex', 'Benefit %', '']}>
+            {assets.map((a, i) => (
+              <tr key={i}>
+                <td style={{ ...td, fontFamily: T.mono, fontSize: 11 }}>{a.id}</td>
+                <td style={td}><TextInput value={a.name} onChange={v => upd(i, 'name', v)} style={{ width: 140 }} /></td>
+                <td style={td}><TextInput value={a.state} onChange={v => upd(i, 'state', v)} style={{ width: 90 }} /></td>
+                <td style={td}><NumInput value={a.mw} onChange={v => upd(i, 'mw', v)} style={{ width: 60 }} /></td>
+                <td style={td}><NumInput value={a.revenueCr} onChange={v => upd(i, 'revenueCr', v)} step={5} style={{ width: 65 }} /></td>
+                <td style={td}><NumInput value={a.debtCr} onChange={v => upd(i, 'debtCr', v)} step={50} style={{ width: 70 }} /></td>
+                {['heatExp', 'waterExp', 'cycloneExp', 'floodExp', 'dustExp'].map(k => (
+                  <td key={k} style={td}><NumInput value={a[k]} onChange={v => upd(i, k, v)} min={0} max={5} style={{ width: 40 }} /></td>
+                ))}
+                <td style={td}><NumInput value={a.adaptCapex} onChange={v => upd(i, 'adaptCapex', v)} step={1} style={{ width: 55 }} /></td>
+                <td style={td}><NumInput value={a.adaptOpex} onChange={v => upd(i, 'adaptOpex', v)} step={0.1} style={{ width: 55 }} /></td>
+                <td style={td}><NumInput value={a.adaptBenefitPct} onChange={v => upd(i, 'adaptBenefitPct', v)} style={{ width: 50 }} /></td>
+                <td style={td}><button onClick={() => delA(i)} style={delBtn}>✕</button></td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 1 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Hazard heat map · score 0-100 · scoring geo-referenced against CMIP6 multi-model mean, IBAT layers, and national hazard atlases.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Asset</th><th style={sty.th}>State</th><th style={sty.th}>Tech</th><th style={sty.th}>MW</th><th style={sty.th}>Heat</th><th style={sty.th}>Water</th><th style={sty.th}>Dust</th><th style={sty.th}>Cyclone</th><th style={sty.th}>Flood</th></tr></thead>
-            <tbody>{ASSETS.map((a, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold }}>{a.id}</td><td style={sty.td}>{a.state}</td><td style={sty.td}>{a.tech}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{a.mw}</td>{['heat', 'water', 'dust', 'cyclone', 'flood'].map(h => <td key={h} style={{ ...sty.td, background: sty.cellBg(a[h]), fontFamily: T.mono, textAlign: 'center', fontWeight: 700 }}>{a[h]}</td>)}</tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title={`Asset heat map (${s.ssp} @ ${s.horizonYr})`}>
+          <Table cols={['Asset', ...HAZARDS, 'Total exposure', 'RaR %']}>
+            {assets.map((a, i) => (
+              <tr key={i}>
+                <td style={td}><b>{a.name}</b></td>
+                {['heatExp', 'waterExp', 'cycloneExp', 'floodExp', 'dustExp'].map(k => {
+                  const v = a[k]; const color = v >= 4 ? T.red : v >= 3 ? T.amber : v >= 2 ? T.sage : T.textMut;
+                  return <td key={k} style={{ ...td, background: color + '40', textAlign: 'center', fontFamily: T.mono, color: T.text, fontWeight: 600 }}>{v}</td>;
+                })}
+                <td style={{ ...td, fontFamily: T.mono }}>{a.heatExp + a.waterExp + a.cycloneExp + a.floodExp + a.dustExp}/25</td>
+                <td style={{ ...td, fontFamily: T.mono, color: a.rar > 25 ? T.red : a.rar > 15 ? T.amber : T.green }}>{a.rar.toFixed(1)}%</td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 2 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>CMIP6 SSP scenarios — hazard multipliers vs 2020 baseline. SSP1-2.6 (Paris) · SSP2-4.5 (policies) · SSP5-8.5 (high).</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Hazard</th><th style={sty.th}>Unit</th><th style={sty.th}>SSP1-2.6 2030</th><th style={sty.th}>SSP2-4.5 2030</th><th style={sty.th}>SSP5-8.5 2030</th><th style={sty.th}>SSP1-2.6 2050</th><th style={sty.th}>SSP2-4.5 2050</th><th style={sty.th}>SSP5-8.5 2050</th></tr></thead>
-            <tbody>{HAZARDS.map((h, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold }}>{h.h}</td><td style={sty.td}>{h.unit}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{h.ssp126_2030}</td><td style={{ ...sty.td, fontFamily: T.mono, color: T.gold }}>{h.ssp245_2030}</td><td style={{ ...sty.td, fontFamily: T.mono, color: T.amber }}>{h.ssp585_2030}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{h.ssp126_2050}</td><td style={{ ...sty.td, fontFamily: T.mono, color: T.gold }}>{h.ssp245_2050}</td><td style={{ ...sty.td, fontFamily: T.mono, color: T.red, fontWeight: 700 }}>{h.ssp585_2050}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="SSP × horizon projection (RaR %)">
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={[2030, 2040, 2050].map(yr => ({
+              year: yr,
+              'SSP1-2.6': assets.reduce((a, x) => a + rarPct(x, 'SSP1-2.6', yr), 0) / assets.length,
+              'SSP2-4.5': assets.reduce((a, x) => a + rarPct(x, 'SSP2-4.5', yr), 0) / assets.length,
+              'SSP5-8.5': assets.reduce((a, x) => a + rarPct(x, 'SSP5-8.5', yr), 0) / assets.length,
+            }))}>
+              <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+              <XAxis dataKey="year" tick={{ fill: T.textSec, fontSize: 11 }} />
+              <YAxis tick={{ fill: T.textSec, fontSize: 11 }} label={{ value: 'Mean RaR %', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Line dataKey="SSP1-2.6" stroke={T.green} strokeWidth={2} />
+              <Line dataKey="SSP2-4.5" stroke={T.amber} strokeWidth={2} />
+              <Line dataKey="SSP5-8.5" stroke={T.red} strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </Panel>
       )}
 
       {tab === 3 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Revenue-at-Risk — % of portfolio revenue exposed under each SSP scenario.</div>
-          <div style={{ marginBottom: 10, display: 'flex', gap: 6 }}>
-            {['ssp126', 'ssp245', 'ssp585'].map(s => <div key={s} onClick={() => setScenario(s)} style={sty.btn(scenario === s)}>{s.toUpperCase().replace('SSP', 'SSP')}</div>)}
-          </div>
-          <ResponsiveContainer width="100%" height={280}>
-            <AreaChart data={FINANCIAL_IMPACT}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="yr" stroke={T.textSec} tick={{ fontSize: 11 }} /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} unit="%" /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Legend /><Area type="monotone" dataKey="ssp585" stroke="#c0392b" fill="#c0392b" fillOpacity={0.3} name="SSP5-8.5" /><Area type="monotone" dataKey="ssp245" stroke={T.gold} fill={T.gold} fillOpacity={0.3} name="SSP2-4.5" /><Area type="monotone" dataKey="ssp126" stroke="#27ae60" fill="#27ae60" fillOpacity={0.3} name="SSP1-2.6" /></AreaChart>
-          </ResponsiveContainer>
-          <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
-            <Kpi label="PORTFOLIO REV" value={`₹${revenue2030} Cr`} sub="FY30 projected" />
-            <Kpi label={`RaR 2030 (${scenario.toUpperCase()})`} value={`${rarYr2030}%`} sub={`₹${(revenue2030 * rarYr2030 / 100).toFixed(0)} Cr exposed`} color={T.amber} />
-            <Kpi label={`RaR 2050 (${scenario.toUpperCase()})`} value={`${rar2050}%`} sub="late-horizon tail" color={T.red} />
-            <Kpi label="PV OF RaR" value={`₹${(revenue2030 * rar2050 / 100 / Math.pow(1.09, 25)).toFixed(0)} Cr`} sub="NPV @ 9%, 25-yr" />
-          </div>
-        </div>
+        <Panel title="Financial impact — revenue + DSCR">
+          <Table cols={['Asset', 'Rev ₹Cr', 'RaR ₹Cr', 'EBITDA', 'Debt svc', 'DSCR base', 'DSCR stressed', 'DSCR + adapt']}>
+            {assets.map((a, i) => (
+              <tr key={i}>
+                <td style={td}><b>{a.name}</b></td>
+                <td style={{ ...td, fontFamily: T.mono }}>{a.revenueCr}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.red }}>{a.revLossCr.toFixed(1)}</td>
+                <td style={{ ...td, fontFamily: T.mono }}>{a.ebitda.toFixed(1)}</td>
+                <td style={{ ...td, fontFamily: T.mono }}>{a.debtSvc.toFixed(1)}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.green }}>{a.dscrBase.toFixed(2)}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: a.dscrStressed < 1.2 ? T.red : a.dscrStressed < 1.4 ? T.amber : T.green }}>{a.dscrStressed.toFixed(2)}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: a.dscrAfterAdapt < 1.2 ? T.red : T.green }}>{a.dscrAfterAdapt.toFixed(2)}</td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 4 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>TCFD four-pillar maturity · IFRS S2-aligned.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Pillar</th><th style={sty.th}>Scope</th><th style={sty.th}>Current</th><th style={sty.th}>Target</th><th style={sty.th}>Deliverable</th></tr></thead>
-            <tbody>{[
-              ['Governance', 'Board climate oversight · mgmt responsibility', 'Phase 1', 'Phase 3', 'Board ESG Committee · Climate Risk Officer · formal delegation'],
-              ['Strategy', 'Scenario analysis · business model impact', 'Phase 1', 'Phase 3', 'SSP1-2.6/2-4.5/5-8.5 × 2030/2040/2050 × asset-level RaR'],
-              ['Risk Management', 'Identification · assessment · integration', 'Phase 1', 'Phase 3', 'Integrated ERM · KRI dashboard · quarterly board reporting'],
-              ['Metrics & Targets', 'GHG · climate KPIs · Scope 1/2/3 · targets', 'Phase 2', 'Phase 3', 'SBTi target · Scope 3 screening · transition plan'],
-            ].map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold, fontWeight: 700 }}>{r[0]}</td><td style={sty.td}>{r[1]}</td><td style={{ ...sty.td, color: T.red }}>{r[2]}</td><td style={{ ...sty.td, color: T.green }}>{r[3]}</td><td style={{ ...sty.td, fontSize: 10 }}>{r[4]}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="Adaptation investment — 15-yr ROI">
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={assets.map(a => ({ id: a.id, roi: +a.adaptRoiPct.toFixed(0), capex: a.adaptCapex }))}>
+              <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+              <XAxis dataKey="id" tick={{ fill: T.textSec, fontSize: 11 }} />
+              <YAxis tick={{ fill: T.textSec, fontSize: 11 }} label={{ value: 'ROI %', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+              <Bar dataKey="roi" fill={T.gold} />
+            </BarChart>
+          </ResponsiveContainer>
+          <Table cols={['Asset', 'Capex ₹Cr', 'Opex ₹Cr/yr', 'RaR before', 'RaR after', 'Lifetime benefit', 'ROI %']}>
+            {[...assets].sort((a, b) => b.adaptRoiPct - a.adaptRoiPct).map((a, i) => (
+              <tr key={i}>
+                <td style={td}><b>{a.name}</b></td>
+                <td style={{ ...td, fontFamily: T.mono }}>{a.adaptCapex}</td>
+                <td style={{ ...td, fontFamily: T.mono }}>{a.adaptOpex}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.red }}>{a.rarBeforeAdapt.toFixed(1)}%</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.amber }}>{a.rarAfterAdapt.toFixed(1)}%</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.green }}>₹{a.adaptLifetimeBenefit.toFixed(0)}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: a.adaptRoiPct > 200 ? T.green : a.adaptRoiPct > 100 ? T.gold : T.amber }}>{a.adaptRoiPct.toFixed(0)}%</td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 5 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Adaptation roadmap — engineering interventions prioritised by risk reduction × payback. Capex in ₹ Cr, opex ± ₹ Cr/yr.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Asset</th><th style={sty.th}>Intervention</th><th style={sty.th}>Capex</th><th style={sty.th}>ΔOpex</th><th style={sty.th}>Risk addressed</th><th style={sty.th}>Payback (yr)</th></tr></thead>
-            <tbody>{ADAPTATION_ROADMAP.map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold }}>{r.asset}</td><td style={sty.td}>{r.intervention}</td><td style={{ ...sty.td, fontFamily: T.mono }}>₹{r.capex}</td><td style={{ ...sty.td, fontFamily: T.mono, color: r.opex < 0 ? T.green : T.amber }}>{r.opex > 0 ? '+' : ''}{r.opex}</td><td style={sty.td}>{r.risk}</td><td style={{ ...sty.td, fontFamily: T.mono, color: r.payback < 6 ? T.green : r.payback < 8 ? T.gold : T.red, fontWeight: 700 }}>{r.payback}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="TCFD 4-pillar coverage (editable live inputs ↓)">
+          <Table cols={['Pillar', 'Recommended disclosures', 'Current status']}>
+            {[
+              ['Governance', '3 (Board oversight, Mgmt role, Climate committee)', 'Disclosed — board climate sub-committee FY25'],
+              ['Strategy', '4 (Risks/opps, Impact on biz, Scenario analysis, Transition plan)', `Scenario analysis live in this tool (${s.ssp} × 2030/2040/2050). Transition plan pending Q2.`],
+              ['Risk & Impact Mgmt', '4 (ID/assess, Manage, Integrate)', `Asset-level heat map live. ${assets.length} assets scored. Integration with ERM Q3.`],
+              ['Metrics & Targets', '3 (Metrics, GHG, Targets)', `Physical RaR ₹${totalRaR.toFixed(1)} Cr, DSCR-at-risk ${stressedAssets} assets. SBTi 1.5°C filed.`],
+            ].map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} style={j===0 ? { ...td, fontFamily: T.mono, color: T.gold, fontWeight: 600 } : td}>{c}</td>)}</tr>)}
+          </Table>
+        </Panel>
       )}
 
       {tab === 6 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Portfolio stress test — compounded hazard exposure vs SSP scenarios. DSCR degradation by asset.</div>
-          <ResponsiveContainer width="100%" height={320}>
-            <ScatterChart><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis type="number" dataKey="x" name="Hazard score" stroke={T.textSec} tick={{ fontSize: 11 }} domain={[0, 100]} unit="" /><YAxis type="number" dataKey="y" name="DSCR degradation" stroke={T.textSec} tick={{ fontSize: 11 }} unit="pp" /><ZAxis type="number" dataKey="z" range={[80, 600]} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} cursor={{ strokeDasharray: '3 3' }} /><Scatter data={ASSETS.map(a => {
-              const combo = (a.heat + a.water + a.cyclone + a.flood) / 4;
-              const dscrHit = combo * 0.03;
-              return { x: combo, y: dscrHit, z: a.mw, name: a.id };
-            })} fill={T.gold}>{ASSETS.map((a, i) => { const combo = (a.heat + a.water + a.cyclone + a.flood) / 4; return <Cell key={i} fill={combo >= 70 ? T.red : combo >= 50 ? T.gold : T.green} />; })}</Scatter></ScatterChart>
-          </ResponsiveContainer>
-        </div>
+        <Panel title="Client deliverable stack">
+          <ul style={{ lineHeight: 1.9, fontSize: 13, color: T.textSec }}>
+            <li><b style={{ color: T.text }}>Asset-level CSV</b> — RaR + DSCR by asset. <button style={btnInline} onClick={exportCsv}>Download</button></li>
+            <li><b style={{ color: T.text }}>Scenario state JSON</b>. <button style={btnInline} onClick={exportJson}>Download</button></li>
+            <li><b style={{ color: T.text }}>TCFD Report (HTML/PDF)</b> — board-ready, aligned IFRS S2. <button style={{ ...btnInline, background: T.gold, color: T.navy, borderColor: T.gold }} onClick={generateReport}>Generate</button></li>
+          </ul>
+        </Panel>
       )}
-
-      <div style={{ marginTop: 24, padding: '10px 16px', background: T.surfaceH, borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 11, color: T.textMut }}>
-        <span>EP-EB5 · TCFD Physical Climate Risk · Impact Advisory</span>
-        <span>IFRS S2 · CMIP6 SSP · 2030/2040/2050 · Asset-level RaR · 7 Tabs</span>
-      </div>
     </div>
   );
 }
+
+function L({ label, children }) { return <label style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 12, color: T.textSec }}><span style={{ minWidth: 110 }}>{label}</span>{children}</label>; }
+const selS = { background: T.surface, color: T.text, border: `1px solid ${T.border}`, padding: '4px 6px', fontSize: 12, borderRadius: 2 };
+const addBtn = { background: T.teal, color: T.text, border: 'none', padding: '4px 12px', fontSize: 11, cursor: 'pointer', borderRadius: 3 };
+const delBtn = { background: 'transparent', color: T.red, border: 'none', cursor: 'pointer', fontSize: 14 };
+const btnInline = { background: T.surface, color: T.gold, border: `1px solid ${T.gold}`, padding: '3px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 3, marginLeft: 8 };

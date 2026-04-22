@@ -1,218 +1,255 @@
-import React, { useState, useMemo } from 'react';
-import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
+import React, { useMemo, useState } from 'react';
+import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
+import { T, useScenario, ToolkitBar, NumInput, TextInput, Kpi, Panel, Table, td, TabBar, PageHeader, Badge, downloadText, toCsv, openDeliverable, html } from '../../_shared/AdvisoryToolkit';
 
-const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
-const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
+const METHODS = {
+  'M-001 Grid RE': { baseline: 0.71, crediting: 7 },
+  'M-002 Solar thermal': { baseline: 0.71, crediting: 10 },
+  'M-003 BESS': { baseline: 0.50, crediting: 7 },
+  'M-004 Green H₂': { baseline: 10.5, crediting: 10 },
+  'M-005 Green NH₃': { baseline: 2.8, crediting: 10 },
+  'M-006 EE industry': { baseline: 0.55, crediting: 7 },
+  'M-007 Biomass/BECCS': { baseline: 0.85, crediting: 20 },
+  'M-008 ARR/AFOLU': { baseline: 0, crediting: 20 },
+};
 
-const METHODS = [
-  { id: 'BEE-RE-001', name: 'Renewable Energy with Storage (BESS/FDRE)', add: 'High', elig: 'Eligible', applicable: true },
-  { id: 'BEE-GH2-002', name: 'Green H2 production via electrolysis', add: 'High', elig: 'Eligible', applicable: true },
-  { id: 'BEE-IEE-003', name: 'Industrial Energy Efficiency', add: 'Med', elig: 'Eligible', applicable: true },
-  { id: 'BEE-WTE-004', name: 'Waste-to-Energy', add: 'Med', elig: 'Eligible', applicable: false },
-  { id: 'BEE-AFOL-005', name: 'Afforestation / Land-Use', add: 'Med', elig: 'Eligible', applicable: false },
-  { id: 'BEE-GRID-006', name: 'Grid-connected utility solar (stand-alone)', add: 'LOW', elig: 'Eligible w/ scrutiny', applicable: false },
-  { id: 'BEE-WIND-007', name: 'Onshore wind (stand-alone)', add: 'LOW', elig: 'Eligible w/ scrutiny', applicable: false },
-  { id: 'BEE-EV-008', name: 'Transport & EV charging', add: 'Med', elig: 'Eligible', applicable: false },
-];
+const DEFAULTS = {
+  portfolioName: 'Integrated RE-IPP Client (anonymised)',
+  priceScenarios: { low: 650, mid: 1100, high: 1850 },
+  discountRate: 10,
+  projects: [
+    { id: 'BESS-A', name: 'BESS 250 MW (Rajasthan)', method: 'M-003 BESS', mw: 250, annualOutputMwh: 500000, projectEf: 0.08, startYr: 2026, vintageYrs: 7, ccc: 'Mid', additionality: { invest: true, tech: true, common: true, regBarrier: false } },
+    { id: 'BESS-B', name: 'BESS 150 MW (Gujarat)',   method: 'M-003 BESS', mw: 150, annualOutputMwh: 300000, projectEf: 0.08, startYr: 2026, vintageYrs: 7, ccc: 'Mid', additionality: { invest: true, tech: true, common: true, regBarrier: true } },
+    { id: 'FDRE-IV', name: 'FDRE 500 MW (Odisha)',    method: 'M-001 Grid RE', mw: 500, annualOutputMwh: 2400000, projectEf: 0.05, startYr: 2027, vintageYrs: 7, ccc: 'High', additionality: { invest: true, tech: true, common: false, regBarrier: true } },
+    { id: 'GH2-1',  name: 'Green H₂ 50 MW electrolyser', method: 'M-004 Green H₂', mw: 50, annualOutputMwh: 7200, projectEf: 1.2, startYr: 2027, vintageYrs: 10, ccc: 'High', additionality: { invest: true, tech: true, common: true, regBarrier: true } },
+    { id: 'NH3-1',  name: 'Green NH₃ 200 ktpa',          method: 'M-005 Green NH₃', mw: 500, annualOutputMwh: 200000, projectEf: 0.4, startYr: 2028, vintageYrs: 10, ccc: 'High', additionality: { invest: true, tech: true, common: true, regBarrier: true } },
+    { id: 'MFG-CAP', name: 'Captive solar 120 MW (Mfg)',  method: 'M-001 Grid RE', mw: 120, annualOutputMwh: 280000, projectEf: 0.05, startYr: 2026, vintageYrs: 7, ccc: 'Low', additionality: { invest: false, tech: false, common: false, regBarrier: false } },
+  ],
+};
 
-const ELIGIBLE_ASSETS = [
-  { asset: 'BESS-A (33 MW · Rajasthan)', method: 'BEE-RE-001', baseline: 0.71, proj: 0.05, mtCo2Yr: 42, addStatus: 'Pass' },
-  { asset: 'BESS-B (76 MW · Rajasthan)', method: 'BEE-RE-001', baseline: 0.71, proj: 0.05, mtCo2Yr: 96, addStatus: 'Pass' },
-  { asset: 'FDRE-IV (450 MW/1,800 MWh)', method: 'BEE-RE-001', baseline: 0.71, proj: 0.06, mtCo2Yr: 540, addStatus: 'Pass' },
-  { asset: 'Green NH3 export (100 ktpa)', method: 'BEE-GH2-002', baseline: 2.4, proj: 0.15, mtCo2Yr: 225, addStatus: 'Pass' },
-  { asset: 'Green H2 (Odisha FDRE-linked)', method: 'BEE-GH2-002', baseline: 2.4, proj: 0.18, mtCo2Yr: 72, addStatus: 'Pass' },
-  { asset: 'Module Mfg captive solar', method: 'BEE-IEE-003', baseline: 0.71, proj: 0.10, mtCo2Yr: 28, addStatus: 'Pass' },
-];
-
-const PRICE_SCENARIOS = [
-  { yr: '2026', low: 5.5, mid: 7.8, high: 10.5 },
-  { yr: '2027', low: 6.2, mid: 8.8, high: 12.0 },
-  { yr: '2028', low: 7.0, mid: 9.9, high: 14.2 },
-  { yr: '2029', low: 7.8, mid: 11.3, high: 16.8 },
-  { yr: '2030', low: 8.5, mid: 12.8, high: 19.5 },
-];
-
-const PROJECT_CYCLE = [
-  { step: 'PDD Authoring', wk: '1-4', output: 'Project Design Document (BEE template)' },
-  { step: 'ACVA Validation', wk: '5-8', output: 'Accredited Carbon Verification Agency sign-off' },
-  { step: 'BEE Registration', wk: '9-10', output: 'Registry ID · crediting period activation' },
-  { step: 'Annual MRV', wk: 'Year 1+', output: 'Monitoring report · CCC issuance request' },
-  { step: 'ACVA Verification', wk: 'Year 1+', output: 'Third-party verification of reductions' },
-  { step: 'CCC Issuance', wk: 'Year 1+', output: 'Credits issued to registry account' },
-  { step: 'Exchange Listing', wk: 'Year 1+', output: 'CERC power exchange · banking · trading' },
-];
-
-const TABS = ['Overview', 'Methodology Map', 'Eligible Asset Portfolio', 'Additionality Test', 'Price Scenarios & Revenue', 'Project Cycle', 'MRV & Banking Strategy'];
-
-const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 18px', flex: 1, minWidth: 140 }}>
-    <div style={{ fontSize: 11, color: T.textMut, fontFamily: T.mono, marginBottom: 4 }}>{label}</div>
-    <div style={{ fontSize: 22, fontWeight: 700, color: color || T.gold, fontFamily: T.mono }}>{value}</div>
-    {sub && <div style={{ fontSize: 10, color: T.textSec, marginTop: 3 }}>{sub}</div>}
-  </div>
-);
+function calcEru(p) {
+  const m = METHODS[p.method]; if (!m) return { eru: 0, baseline: 0, project: 0 };
+  const baseline = p.annualOutputMwh * m.baseline;
+  const project = p.annualOutputMwh * p.projectEf;
+  return { eru: Math.max(0, baseline - project), baseline, project };
+}
+function addlCount(a) { return Object.values(a).filter(Boolean).length; }
+function npv(cashflows, rate) { return cashflows.reduce((acc, cf, t) => acc + cf / Math.pow(1 + rate, t + 1), 0); }
+const TABS = ['Inputs & Projects', 'ERU Calculations', 'Additionality', 'Price Scenarios', 'Registration Cycle', 'Deliverables'];
 
 export default function CctsOffsetRegistrationPage() {
+  const sc = useScenario('eb2_ccts', DEFAULTS);
   const [tab, setTab] = useState(0);
-  const [priceScenario, setPriceScenario] = useState('mid');
-  const [bankYears, setBankYears] = useState(3);
+  const s = sc.state;
 
-  const totalMtYr = ELIGIBLE_ASSETS.reduce((a, b) => a + b.mtCo2Yr, 0);
-  const priceIdx = { low: 0, mid: 1, high: 2 };
+  const projects = useMemo(() => s.projects.map(p => {
+    const e = calcEru(p);
+    const aCount = addlCount(p.additionality);
+    const passes = aCount >= 3;
+    const lifetimeEru = e.eru * p.vintageYrs;
+    const cf = new Array(p.vintageYrs).fill(e.eru * s.priceScenarios[p.ccc === 'High' ? 'high' : p.ccc === 'Low' ? 'low' : 'mid']);
+    const pv = npv(cf, s.discountRate / 100);
+    return { ...p, ...e, aCount, passes, lifetimeEru, pv };
+  }), [s.projects, s.priceScenarios, s.discountRate]);
 
-  const revenue2030 = useMemo(() => {
-    const price = PRICE_SCENARIOS.find(p => p.yr === '2030')[priceScenario];
-    return (totalMtYr * price).toFixed(1);
-  }, [priceScenario, totalMtYr]);
+  const totalAnnualEru = projects.reduce((a, p) => a + (p.passes ? p.eru : 0), 0);
+  const totalLifetimeEru = projects.reduce((a, p) => a + (p.passes ? p.lifetimeEru : 0), 0);
+  const totalNpv = projects.reduce((a, p) => a + (p.passes ? p.pv : 0), 0);
+  const passedCount = projects.filter(p => p.passes).length;
 
-  const bankedValue = useMemo(() => {
-    const p2030 = PRICE_SCENARIOS[PRICE_SCENARIOS.length - 1][priceScenario];
-    const p2026 = PRICE_SCENARIOS[0][priceScenario];
-    return { saleNow: (totalMtYr * p2026 * bankYears).toFixed(1), saleBanked: (totalMtYr * p2030 * bankYears).toFixed(1) };
-  }, [priceScenario, bankYears, totalMtYr]);
+  const upd = (i, k, v) => sc.update(st => ({ projects: st.projects.map((p, j) => j === i ? { ...p, [k]: v } : p) }));
+  const updAddl = (i, k, v) => sc.update(st => ({ projects: st.projects.map((p, j) => j === i ? { ...p, additionality: { ...p.additionality, [k]: v } } : p) }));
+  const addProj = () => sc.update(st => ({ projects: [...st.projects, { id: `NEW-${st.projects.length+1}`, name: 'New project', method: 'M-001 Grid RE', mw: 100, annualOutputMwh: 200000, projectEf: 0.05, startYr: 2026, vintageYrs: 7, ccc: 'Mid', additionality: { invest: false, tech: false, common: false, regBarrier: false } }] }));
+  const delProj = (i) => sc.update(st => ({ projects: st.projects.filter((_, j) => j !== i) }));
 
-  const sty = {
-    table: { width: '100%', borderCollapse: 'collapse' },
-    th: { textAlign: 'left', padding: '8px 10px', fontSize: 10, fontFamily: T.mono, color: T.gold, borderBottom: `1px solid ${T.border}` },
-    td: { padding: '8px 10px', fontSize: 11, color: T.text, borderBottom: `1px solid ${T.borderL}` },
-    panel: { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14 },
-    input: { background: T.surface, border: `1px solid ${T.border}`, color: T.text, borderRadius: 4, padding: '5px 8px', fontFamily: T.mono, fontSize: 11, width: 90 },
-    btn: (on) => ({ padding: '5px 12px', borderRadius: 4, fontSize: 11, fontFamily: T.mono, cursor: 'pointer', background: on ? T.gold : T.surface, color: on ? T.bg : T.textSec, border: `1px solid ${T.border}` }),
+  const exportCsv = () => downloadText(`EB2_CCTS_${sc.scenarioName}.csv`, toCsv(projects.map(p => ({
+    id: p.id, name: p.name, method: p.method, mw: p.mw, annual_mwh: p.annualOutputMwh, baseline_ef: METHODS[p.method]?.baseline,
+    project_ef: p.projectEf, annual_eru_tco2: +p.eru.toFixed(0), lifetime_eru: +p.lifetimeEru.toFixed(0),
+    additionality_prongs: p.aCount, passes: p.passes ? 'Yes' : 'No', ccc_tier: p.ccc, npv_inr: +p.pv.toFixed(0),
+  }))), 'text/csv');
+  const exportJson = () => downloadText(`EB2_${sc.scenarioName}.json`, JSON.stringify({ module: 'EB2', scenario: sc.scenarioName, state: s, projects }, null, 2), 'application/json');
+
+  const generateDossier = () => {
+    const rows = projects.map(p => [p.id, p.name, p.method, (p.eru/1000).toFixed(1) + ' kt/yr', p.aCount + '/4', p.passes ? 'PASS' : 'FAIL', p.ccc, '₹' + (p.pv/1e7).toFixed(2) + ' Cr']);
+    const content = [
+      html.h1('CCTS Offset Registration Dossier'),
+      html.meta({ Portfolio: s.portfolioName, Issuer: 'Bureau of Energy Efficiency', Scheme: 'Carbon Credit Trading Scheme (India)', Scenario: sc.scenarioName }),
+      html.h2('Executive Summary'),
+      html.kpi('Projects in scope', projects.length) + html.kpi('Additionality-passing', passedCount) + html.kpi('Annual ERUs', (totalAnnualEru/1000).toFixed(1) + ' kt') + html.kpi('Lifetime ERUs', (totalLifetimeEru/1e6).toFixed(2) + ' Mt') + html.kpi('Portfolio NPV', '₹' + (totalNpv/1e7).toFixed(1) + ' Cr'),
+      html.h2('1. Project Portfolio'),
+      html.table(['ID', 'Project', 'Methodology', 'Annual ERU', 'Additionality', 'Status', 'CCC Tier', 'NPV'], rows),
+      html.h2('2. Methodology Mapping (BEE-approved)'),
+      html.p('All projects mapped to published BEE methodologies. Baseline emission factors: India CEA weighted-avg grid EF 0.71 tCO₂/MWh; Green H₂ baseline via SMR proxy 10.5 tCO₂/tH₂; Green NH₃ via grey-NH₃ proxy 2.8 tCO₂/t.'),
+      html.h2('3. Additionality Assessment — 4-Prong Test'),
+      html.p('Methodology: UNFCCC CDM Tool 01 adapted to CCTS. Projects passing ≥3 of 4 prongs (Investment barrier, Technology barrier, Common practice, Regulatory barrier) qualify for registration. Captive-like projects with weak additionality are flagged for deep-dive review before submission.'),
+      html.table(['ID', 'Investment', 'Technology', 'Common practice', 'Regulatory', 'Pass'],
+        projects.map(p => [p.id, p.additionality.invest ? '✓' : '✗', p.additionality.tech ? '✓' : '✗', p.additionality.common ? '✓' : '✗', p.additionality.regBarrier ? '✓' : '✗', p.passes ? 'PASS' : 'FAIL'])),
+      html.h2('4. Price Scenarios & NPV'),
+      html.table(['Tier', '₹/ERU'], [['Low', s.priceScenarios.low], ['Mid', s.priceScenarios.mid], ['High', s.priceScenarios.high]]),
+      html.p(`Discount rate: ${s.discountRate}% (nominal). NPV computed over project crediting period per BEE methodology defaults (7y RE, 10y H₂/NH₃, 20y AFOLU).`),
+      html.h2('5. Registration Cycle & Timeline'),
+      html.p('Stage 1 — Project Concept Note (BEE) · Stage 2 — Project Design Document per methodology template · Stage 3 — Third-party validation (DOE-accredited VVB) · Stage 4 — Registration at Indian Carbon Market registry · Stage 5 — Monitoring per PoA · Stage 6 — Verification + CCC issuance · Stage 7 — Auction / bilateral sale.'),
+      html.h2('6. Recommendation'),
+      html.p(`${passedCount}/${projects.length} projects cleared additionality. Prioritise high-integrity CCC Tier projects (H₂/NH₃/FDRE) for registration — estimated portfolio NPV ₹${(totalNpv/1e7).toFixed(1)} Cr over crediting periods. Captive/weak-additionality projects should be re-scoped or withdrawn.`),
+    ].join('');
+    openDeliverable(content, `CCTS Registration Dossier — ${sc.scenarioName}`);
   };
 
+  // Project NPV curve across CCC tiers
+  const curveData = [s.priceScenarios.low, s.priceScenarios.mid, s.priceScenarios.high].map((price, idx) => ({
+    tier: ['Low', 'Mid', 'High'][idx],
+    price,
+    npv: projects.filter(p => p.passes).reduce((a, p) => a + npv(new Array(p.vintageYrs).fill(p.eru * price), s.discountRate / 100), 0) / 1e7,
+  }));
+
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: 24 }}>
-      <div style={{ borderBottom: `2px solid ${T.gold}`, paddingBottom: 12, marginBottom: 20 }}>
-        <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, letterSpacing: 2 }}>EP-EB2 · IMPACT ADVISORY — BALANCE-SHEET VALUE FROM SUSTAINABILITY</div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, margin: '4px 0', color: T.text }}>CCTS Offset Mechanism — Registration, Trading & Banking Strategy</h1>
-        <div style={{ fontSize: 12, color: T.textSec }}>India Carbon Market · BEE 8 methodologies (Mar 2025) · CCC issuance · CERC exchange · Banking strategy · Additionality discipline · 7 Tabs</div>
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '28px 40px' }}>
+      <PageHeader code="EP-EB2" title="CCTS Offset Registration & Trading" subtitle={`${s.portfolioName} · Bureau of Energy Efficiency · 8 BEE-approved methodologies · 4-prong additionality`} />
+      <ToolkitBar moduleCode="EB2" scenario={sc} onExportCsv={exportCsv} onExportJson={exportJson} onDeliverable={generateDossier}
+        importLabel="Import Project CSV"
+        onImportCsv={(rows) => { if (rows.length) sc.update({ projects: rows.map(r => ({
+          id: r.id, name: r.name, method: r.method || 'M-001 Grid RE', mw: Number(r.mw) || 0, annualOutputMwh: Number(r.annualOutputMwh) || 0,
+          projectEf: Number(r.projectEf) || 0, startYr: Number(r.startYr) || 2026, vintageYrs: Number(r.vintageYrs) || 7, ccc: r.ccc || 'Mid',
+          additionality: { invest: String(r.invest).toLowerCase() === 'true', tech: String(r.tech).toLowerCase() === 'true', common: String(r.common).toLowerCase() === 'true', regBarrier: String(r.regBarrier).toLowerCase() === 'true' },
+        })) }); }} />
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 18 }}>
+        <Kpi label="Projects" value={projects.length} sub={`${passedCount} additionality pass`} />
+        <Kpi label="Annual ERUs" value={`${(totalAnnualEru/1000).toFixed(1)} kt`} sub="Passing projects only" />
+        <Kpi label="Lifetime ERUs" value={`${(totalLifetimeEru/1e6).toFixed(2)} Mt`} sub="Over crediting periods" />
+        <Kpi label="Portfolio NPV" value={`₹${(totalNpv/1e7).toFixed(1)} Cr`} sub={`Disc ${s.discountRate}%`} color={T.gold} />
+        <Kpi label="Pass rate" value={`${projects.length ? (passedCount/projects.length*100).toFixed(0) : 0}%`} sub="3+/4 prongs required" />
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-        <Kpi label="ELIGIBLE PORTFOLIO" value={`${ELIGIBLE_ASSETS.length} assets`} sub="BESS · FDRE · GH2 · Mfg EE" color={T.green} />
-        <Kpi label="CCC/YR (MID)" value={`${(totalMtYr/1000).toFixed(1)} k`} sub="tonnes CO₂e avoided" />
-        <Kpi label="2030 REVENUE" value={`₹${revenue2030} L`} sub={`${priceScenario} scenario`} color={T.gold} />
-        <Kpi label="PRICE RANGE" value="₹450–900" sub="per CCC · BEE-indicative" />
-        <Kpi label="ADDITIONALITY" value="6/6 PASS" sub="storage + GH2 + captive RE" color={T.green} />
-      </div>
-
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: `1px solid ${T.border}`, flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <div key={i} onClick={() => setTab(i)} style={{ padding: '10px 16px', fontSize: 11, fontFamily: T.mono, cursor: 'pointer', borderBottom: tab === i ? `2px solid ${T.gold}` : 'none', color: tab === i ? T.gold : T.textSec }}>{t}</div>
-        ))}
-      </div>
+      <TabBar tabs={TABS} tab={tab} setTab={setTab} />
 
       {tab === 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>Non-Obligated Credit Generator</div>
-            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>A pure-play RE-IPP carries no compliance burden under CCTS but is structurally positioned as a <b>credit generator and seller</b>. The Offset Mechanism — accepting registrations since June 2025 — converts real-world abatement into tradable CCCs on CERC exchanges.</p>
+        <Panel title="Portfolio-level assumptions" right={<button style={addBtn} onClick={addProj}>+ Add project</button>}>
+          <div style={{ display: 'flex', gap: 30, marginBottom: 14, flexWrap: 'wrap', fontSize: 12 }}>
+            <L label="Portfolio name"><TextInput value={s.portfolioName} onChange={v => sc.update({ portfolioName: v })} style={{ width: 220 }} /></L>
+            <L label="Discount rate"><NumInput value={s.discountRate} onChange={v => sc.update({ discountRate: v })} step={0.5} suffix="%" /></L>
+            <L label="Low price"><NumInput value={s.priceScenarios.low} onChange={v => sc.update({ priceScenarios: { ...s.priceScenarios, low: v } })} suffix="₹/ERU" /></L>
+            <L label="Mid price"><NumInput value={s.priceScenarios.mid} onChange={v => sc.update({ priceScenarios: { ...s.priceScenarios, mid: v } })} suffix="₹/ERU" /></L>
+            <L label="High price"><NumInput value={s.priceScenarios.high} onChange={v => sc.update({ priceScenarios: { ...s.priceScenarios, high: v } })} suffix="₹/ERU" /></L>
           </div>
-          <div style={sty.panel}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 8 }}>Critical Additionality Discipline</div>
-            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>Standard utility solar under SECI/NTPC PPAs FAILS financial additionality at current tariffs — a registration here invites BEE scrutiny and credit-quality discount. The engagement is explicitly scoped to 3 high-integrity categories: <b>BESS/FDRE</b>, <b>Green H2/NH3</b>, and <b>Manufacturing decarbonisation actions</b>.</p>
-          </div>
-          <div style={{ ...sty.panel, gridColumn: '1 / span 2' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.gold, marginBottom: 10 }}>Annual CCC Pipeline (ktCO₂e/yr)</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={ELIGIBLE_ASSETS}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="asset" stroke={T.textSec} tick={{ fontSize: 10 }} angle={-15} height={60} textAnchor="end" /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Bar dataKey="mtCo2Yr" fill={T.gold} /></BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+          <Table cols={['ID', 'Name', 'Methodology', 'MW', 'Annual MWh', 'Project EF', 'Vintage yrs', 'CCC tier', '']}>
+            {projects.map((p, i) => (
+              <tr key={i}>
+                <td style={{ ...td, fontFamily: T.mono, fontSize: 11 }}>{p.id}</td>
+                <td style={td}><TextInput value={p.name} onChange={v => upd(i, 'name', v)} /></td>
+                <td style={td}><select value={p.method} onChange={e => upd(i, 'method', e.target.value)} style={selS}>{Object.keys(METHODS).map(k => <option key={k}>{k}</option>)}</select></td>
+                <td style={td}><NumInput value={p.mw} onChange={v => upd(i, 'mw', v)} style={{ width: 70 }} /></td>
+                <td style={td}><NumInput value={p.annualOutputMwh} onChange={v => upd(i, 'annualOutputMwh', v)} step={1000} style={{ width: 90 }} /></td>
+                <td style={td}><NumInput value={p.projectEf} onChange={v => upd(i, 'projectEf', v)} step={0.01} style={{ width: 60 }} /></td>
+                <td style={td}><NumInput value={p.vintageYrs} onChange={v => upd(i, 'vintageYrs', v)} style={{ width: 50 }} /></td>
+                <td style={td}><select value={p.ccc} onChange={e => upd(i, 'ccc', e.target.value)} style={selS}><option>Low</option><option>Mid</option><option>High</option></select></td>
+                <td style={td}><button onClick={() => delProj(i)} style={delBtn}>✕</button></td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 1 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>BEE-approved methodologies (March 2025). Applicability flagged based on RE-IPP + solar mfg + green H2 archetype.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Method ID</th><th style={sty.th}>Name</th><th style={sty.th}>Additionality</th><th style={sty.th}>Eligibility</th><th style={sty.th}>Applicable</th></tr></thead>
-            <tbody>{METHODS.map((m, i) => <tr key={i} style={{ background: m.applicable ? 'rgba(212,168,67,0.07)' : 'transparent' }}><td style={{ ...sty.td, fontFamily: T.mono, color: T.gold }}>{m.id}</td><td style={sty.td}>{m.name}</td><td style={{ ...sty.td, color: m.add === 'High' ? T.green : m.add === 'Med' ? T.gold : T.red }}>{m.add}</td><td style={sty.td}>{m.elig}</td><td style={{ ...sty.td, color: m.applicable ? T.green : T.textMut, fontWeight: 700 }}>{m.applicable ? '✓' : '—'}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="ERU calculations (baseline − project)">
+          <Table cols={['ID', 'Method', 'Baseline EF', 'Baseline tCO₂/yr', 'Project tCO₂/yr', 'Annual ERU', 'Lifetime ERU', 'Pass']}>
+            {projects.map((p, i) => (
+              <tr key={i}>
+                <td style={{ ...td, fontFamily: T.mono, fontSize: 11 }}>{p.id}</td>
+                <td style={{ ...td, fontSize: 12 }}>{p.method}</td>
+                <td style={{ ...td, fontFamily: T.mono }}>{METHODS[p.method]?.baseline}</td>
+                <td style={{ ...td, fontFamily: T.mono }}>{p.baseline.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                <td style={{ ...td, fontFamily: T.mono }}>{p.project.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{p.eru.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                <td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{p.lifetimeEru.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                <td style={td}>{p.passes ? <Badge level="good">Pass</Badge> : <Badge level="bad">Fail</Badge>}</td>
+              </tr>
+            ))}
+          </Table>
+        </Panel>
       )}
 
       {tab === 2 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Eligible asset portfolio — emissions reduction per year vs grid baseline (0.71 tCO₂/MWh) or grey NH3 (2.4 tCO₂/t NH3).</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Asset</th><th style={sty.th}>Methodology</th><th style={sty.th}>Baseline</th><th style={sty.th}>Project</th><th style={sty.th}>ktCO₂e/yr</th><th style={sty.th}>Additionality</th></tr></thead>
-            <tbody>{ELIGIBLE_ASSETS.map((r, i) => <tr key={i}><td style={sty.td}>{r.asset}</td><td style={{ ...sty.td, color: T.gold, fontFamily: T.mono }}>{r.method}</td><td style={sty.td}>{r.baseline}</td><td style={sty.td}>{r.proj}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r.mtCo2Yr}</td><td style={{ ...sty.td, color: T.green, fontWeight: 700 }}>{r.addStatus}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="4-prong additionality test (toggle per project)">
+          <Table cols={['ID', 'Project', 'Investment barrier', 'Technology barrier', 'Common practice', 'Regulatory barrier', 'Prongs', 'Result']}>
+            {projects.map((p, i) => (
+              <tr key={i}>
+                <td style={{ ...td, fontFamily: T.mono }}>{p.id}</td>
+                <td style={td}>{p.name}</td>
+                {['invest', 'tech', 'common', 'regBarrier'].map(k => (
+                  <td key={k} style={{ ...td, textAlign: 'center' }}>
+                    <input type="checkbox" checked={p.additionality[k]} onChange={e => updAddl(i, k, e.target.checked)} />
+                  </td>
+                ))}
+                <td style={{ ...td, fontFamily: T.mono }}>{p.aCount}/4</td>
+                <td style={td}>{p.passes ? <Badge level="good">Pass</Badge> : <Badge level="bad">Fail</Badge>}</td>
+              </tr>
+            ))}
+          </Table>
+          <div style={{ marginTop: 14, padding: 12, background: T.surfaceH, borderRadius: 3, fontSize: 12, color: T.textSec }}>
+            <b style={{ color: T.gold }}>Rule:</b> Projects passing ≥3 of 4 prongs qualify. Captive solar assets typically fail "common practice" and "investment barrier" — they would not qualify for CCTS registration but may still be eligible for RECs or I-RECs.
+          </div>
+        </Panel>
       )}
 
       {tab === 3 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>Additionality 4-prong test — applied per asset class. Failure on any single test invalidates registration.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Test</th><th style={sty.th}>BESS/FDRE</th><th style={sty.th}>Green H2/NH3</th><th style={sty.th}>Mfg Captive Solar</th><th style={sty.th}>Utility Solar (excluded)</th></tr></thead>
-            <tbody>{[
-              { t: 'Regulatory', b: '✓ Voluntary beyond RPO', h: '✓ No mandate', m: '✓ Beyond PAT', u: '✗ Tariff-mandated' },
-              { t: 'Financial', b: '✓ IRR<hurdle without', h: '✓ Capex not viable', m: '✓ Positive NPV requires', u: '✗ IRR≥hurdle' },
-              { t: 'Barrier', b: '✓ Storage capex premium', h: '✓ First-of-kind scale', m: '✓ Switching cost', u: '✗ Mature tech' },
-              { t: 'Common Practice', b: '✓ <3% penetration', h: '✓ <1% penetration', m: '✓ <5% penetration', u: '✗ >15% penetration' },
-            ].map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold }}>{r.t}</td><td style={{ ...sty.td, color: T.green }}>{r.b}</td><td style={{ ...sty.td, color: T.green }}>{r.h}</td><td style={{ ...sty.td, color: T.green }}>{r.m}</td><td style={{ ...sty.td, color: T.red }}>{r.u}</td></tr>)}</tbody>
-          </table>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <Panel title="Portfolio NPV vs CCC price tier">
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={curveData}>
+                <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+                <XAxis dataKey="price" tick={{ fill: T.textSec, fontSize: 11 }} label={{ value: '₹/ERU', position: 'insideBottom', offset: -5, fill: T.textSec, fontSize: 11 }} />
+                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} label={{ value: 'NPV ₹Cr', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 11 }} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+                <Line dataKey="npv" stroke={T.gold} strokeWidth={2} dot={{ fill: T.gold, r: 5 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Panel>
+          <Panel title="Per-project NPV (mid scenario)">
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={projects.filter(p => p.passes).map(p => ({ id: p.id, npv: +(p.pv / 1e7).toFixed(2) }))}>
+                <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
+                <XAxis dataKey="id" tick={{ fill: T.textSec, fontSize: 11 }} />
+                <YAxis tick={{ fill: T.textSec, fontSize: 11 }} label={{ value: '₹ Cr', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 11 }} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
+                <Bar dataKey="npv" fill={T.gold} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Panel>
         </div>
       )}
 
       {tab === 4 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>CCC price scenarios 2026-2030 (BEE-linked market sources — indicative).</div>
-          <div style={{ marginBottom: 10, display: 'flex', gap: 6 }}>
-            {['low', 'mid', 'high'].map(s => <div key={s} onClick={() => setPriceScenario(s)} style={sty.btn(priceScenario === s)}>{s.toUpperCase()}</div>)}
-          </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={PRICE_SCENARIOS}><CartesianGrid stroke={T.border} strokeDasharray="3 3" /><XAxis dataKey="yr" stroke={T.textSec} tick={{ fontSize: 11 }} /><YAxis stroke={T.textSec} tick={{ fontSize: 11 }} /><Tooltip contentStyle={{ background: T.surface, border: `1px solid ${T.border}` }} /><Legend /><Area type="monotone" dataKey="high" stroke="#27ae60" fill="#27ae60" fillOpacity={0.3} name="High" /><Area type="monotone" dataKey="mid" stroke={T.gold} fill={T.gold} fillOpacity={0.4} name="Mid" /><Area type="monotone" dataKey="low" stroke="#c0392b" fill="#c0392b" fillOpacity={0.3} name="Low" /></AreaChart>
-          </ResponsiveContainer>
-          <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
-            <Kpi label="CCC/YR TOTAL" value={`${totalMtYr.toLocaleString()} t`} sub="across 6 eligible assets" />
-            <Kpi label="REVENUE 2026" value={`₹${(totalMtYr * PRICE_SCENARIOS[0][priceScenario]/100).toFixed(1)} Cr`} sub={`${priceScenario} price ₹${PRICE_SCENARIOS[0][priceScenario]*100}/CCC`} />
-            <Kpi label="REVENUE 2030" value={`₹${(totalMtYr * PRICE_SCENARIOS[4][priceScenario]/100).toFixed(1)} Cr`} sub={`${priceScenario} price ₹${PRICE_SCENARIOS[4][priceScenario]*100}/CCC`} color={T.gold} />
-            <Kpi label="5YR CUM" value={`₹${((totalMtYr * PRICE_SCENARIOS.reduce((a,b)=>a+b[priceScenario],0)/100)).toFixed(1)} Cr`} sub="banking-neutral" color={T.green} />
-          </div>
-        </div>
+        <Panel title="CCTS registration cycle (BEE/ICM)">
+          <Table cols={['Stage', 'Activity', 'Duration', 'Artefact']}>
+            {[
+              ['1', 'Project Concept Note → BEE scoping', '2–3 wks', 'PCN letter'],
+              ['2', 'Project Design Document (methodology-specific)', '6–8 wks', 'PDD (this tool)'],
+              ['3', 'Validation by DOE-accredited VVB', '8–10 wks', 'Validation report'],
+              ['4', 'Registration at Indian Carbon Market registry', '4 wks', 'Registered PoA'],
+              ['5', 'Monitoring per MRV plan (continuous)', 'Ongoing', 'MR reports'],
+              ['6', 'Verification + CCC issuance', '4–6 wks / cycle', 'CCC certificates'],
+              ['7', 'Auction (ICEX/IEX) or bilateral OTC', 'As market', 'Settlement statement'],
+            ].map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} style={j===0 ? { ...td, fontFamily: T.mono, color: T.gold } : td}>{c}</td>)}</tr>)}
+          </Table>
+        </Panel>
       )}
 
       {tab === 5 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 10 }}>CCTS Project Cycle — PDD → ACVA → BEE registry → MRV → CCC issuance → exchange. End-to-end advisory-managed.</div>
-          <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Step</th><th style={sty.th}>Week</th><th style={sty.th}>Output</th></tr></thead>
-            <tbody>{PROJECT_CYCLE.map((r, i) => <tr key={i}><td style={{ ...sty.td, color: T.gold, fontWeight: 700 }}>{r.step}</td><td style={{ ...sty.td, fontFamily: T.mono }}>{r.wk}</td><td style={sty.td}>{r.output}</td></tr>)}</tbody>
-          </table>
-        </div>
+        <Panel title="Client deliverable stack">
+          <ul style={{ lineHeight: 1.9, fontSize: 13, color: T.textSec }}>
+            <li><b style={{ color: T.text }}>Project portfolio CSV</b> — ERU projections and additionality flags for BEE submission. <button style={btnInline} onClick={exportCsv}>Download</button></li>
+            <li><b style={{ color: T.text }}>Scenario state JSON</b> — reproducible inputs for regulator / internal review. <button style={btnInline} onClick={exportJson}>Download</button></li>
+            <li><b style={{ color: T.text }}>CCTS Registration Dossier (HTML/PDF)</b> — full 6-section document ready for VVB engagement. <button style={{ ...btnInline, background: T.gold, color: T.navy, borderColor: T.gold }} onClick={generateDossier}>Generate</button></li>
+          </ul>
+        </Panel>
       )}
-
-      {tab === 6 && (
-        <div>
-          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 14 }}>Banking strategy — CCTS permits unlimited banking. Hold vs sell optimisation under price trajectory.</div>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-            <label style={{ fontSize: 11, color: T.textSec }}>Banking horizon (yrs) <input type="number" value={bankYears} onChange={e=>setBankYears(+e.target.value)} style={sty.input} /></label>
-            <div style={{ fontSize: 11, color: T.textSec }}>Scenario:</div>
-            {['low', 'mid', 'high'].map(s => <div key={s} onClick={() => setPriceScenario(s)} style={sty.btn(priceScenario === s)}>{s.toUpperCase()}</div>)}
-          </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <Kpi label="SELL NOW (2026)" value={`₹${bankedValue.saleNow} L`} sub={`${bankYears} vintages at 2026 price`} />
-            <Kpi label="BANK TO 2030" value={`₹${bankedValue.saleBanked} L`} sub={`${bankYears} vintages at 2030 price`} color={T.green} />
-            <Kpi label="BANKING UPLIFT" value={`${(((+bankedValue.saleBanked - +bankedValue.saleNow) / +bankedValue.saleNow) * 100).toFixed(0)}%`} sub="vs sell-now" color={T.gold} />
-          </div>
-          <div style={{ ...sty.panel, marginTop: 14 }}>
-            <div style={{ fontSize: 11, color: T.gold, fontWeight: 700, marginBottom: 6 }}>MRV & Annual Monitoring</div>
-            <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.7 }}>
-              • Quarterly inverter-level telemetry + SCADA integration (digital MRV tier 3)<br/>
-              • Annual ACVA verification with site audit<br/>
-              • CCC issuance request filed within 60 days of annual MRV<br/>
-              • Portfolio tracked in BEE registry account · exchange-ready for liquidity events
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div style={{ marginTop: 24, padding: '10px 16px', background: T.surfaceH, borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontFamily: T.mono, fontSize: 11, color: T.textMut }}>
-        <span>EP-EB2 · CCTS Offset Mechanism · Impact Advisory</span>
-        <span>BEE · CERC · CCC · Additionality · MRV · Banking · 7 Tabs</span>
-      </div>
     </div>
   );
 }
+
+function L({ label, children }) { return <label style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 12, color: T.textSec }}><span style={{ minWidth: 120 }}>{label}</span>{children}</label>; }
+const selS = { background: T.surface, color: T.text, border: `1px solid ${T.border}`, padding: '4px 6px', fontSize: 12, borderRadius: 2 };
+const addBtn = { background: T.teal, color: T.text, border: 'none', padding: '4px 12px', fontSize: 11, cursor: 'pointer', borderRadius: 3 };
+const delBtn = { background: 'transparent', color: T.red, border: 'none', cursor: 'pointer', fontSize: 14 };
+const btnInline = { background: T.surface, color: T.gold, border: `1px solid ${T.gold}`, padding: '3px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 3, marginLeft: 8 };
