@@ -791,6 +791,12 @@ const MdbSubSovereignLendingPage          = React.lazy(() => import("./features/
 const CPaceClimateFinancePage             = React.lazy(() => import("./features/cpace-climate-finance/pages/CPaceClimateFinancePage"));
 const ClimateRevenueBondModelerPage       = React.lazy(() => import("./features/climate-revenue-bond-modeler/pages/ClimateRevenueBondModelerPage"));
 const MunicipalClimateResilienceHubPage   = React.lazy(() => import("./features/municipal-climate-resilience-hub/pages/MunicipalClimateResilienceHubPage"));
+const BlueBondAnalyticsPage               = React.lazy(() => import("./features/blue-bond-analytics/pages/BlueBondAnalyticsPage"));
+const ShippingDecarbonizationFinancePage  = React.lazy(() => import("./features/shipping-decarbonization-finance/pages/ShippingDecarbonizationFinancePage"));
+const MarineBlueCarbonFinancePage         = React.lazy(() => import("./features/marine-blue-carbon-finance/pages/MarineBlueCarbonFinancePage"));
+const AquacultureClimateFinancePage       = React.lazy(() => import("./features/aquaculture-climate-finance/pages/AquacultureClimateFinancePage"));
+const OceanCarbonCreditMarketPage         = React.lazy(() => import("./features/ocean-carbon-credit-market/pages/OceanCarbonCreditMarketPage"));
+const CoastalResilienceFinancePage        = React.lazy(() => import("./features/coastal-resilience-finance/pages/CoastalResilienceFinancePage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1161,6 +1167,14 @@ const NAV_GROUPS = [
     { path: '/cpace-climate-finance',          label: 'C-PACE & Property-Assessed Climate Finance',   badge: 'PACE Mechanics · Underwriting Engine · Securitization · Energy Savings · State Programs · 10 Tabs', code: 'EP-DY4' },
     { path: '/climate-revenue-bond-modeler',   label: 'Climate Revenue Bond Modeler',                 badge: 'Water/Electric/Airport/Transit · DSCR Engine · Rate Covenant · Green Certification · 10 Tabs', code: 'EP-DY5' },
     { path: '/municipal-climate-resilience-hub', label: 'Municipal Climate Resilience Finance Hub',   badge: 'FEMA BRIC · BCR Engine · 8-City Dashboard · Adaptation Calculator · Bond Structures · 10 Tabs', code: 'EP-DY6' },
+  ]},
+  { label: '🌊 Ocean & Blue Economy Finance', icon: '🌊', color: '#0d4f5c', items: [
+    { path: '/blue-bond-analytics',               label: 'Blue Bond Analytics Suite',                  badge: 'Sovereign · Supranational · ISWG/CBI/ICMA · Greenium Engine · Ocean Impact · 10 Tabs',        code: 'EP-DZ1' },
+    { path: '/shipping-decarbonization-finance',  label: 'Shipping Decarbonization Finance Engine',    badge: 'IMO 2050 · CII/EEXI · Alt-Fuel Economics · Poseidon Principles · FuelEU Levy · 10 Tabs',      code: 'EP-DZ2' },
+    { path: '/marine-blue-carbon-finance',        label: 'Marine & Blue Carbon Finance Intelligence',  badge: 'Mangrove · Seagrass · MPA Finance · Verra VCS · CBCA · Blue Carbon Credits · 10 Tabs',        code: 'EP-DZ3' },
+    { path: '/aquaculture-climate-finance',       label: 'Aquaculture & Ocean Food System Finance',    badge: 'ASC/MSC · Acidification Risk · Temperature Stress · Carbon Intensity · Seafood Finance · 10 Tabs', code: 'EP-DZ4' },
+    { path: '/ocean-carbon-credit-market',        label: 'Ocean Carbon Credit Market Intelligence',    badge: 'Blue Carbon · Verra VCS · OAE · Forward Curve · Buyer Landscape · Quality Framework · 10 Tabs', code: 'EP-DZ5' },
+    { path: '/coastal-resilience-finance',        label: 'Coastal Resilience & Adaptation Finance Hub', badge: 'BCR Engine · 8-City Dashboard · Sea Level Rise · Parametric Insurance · NbS · 10 Tabs',       code: 'EP-DZ6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3146,6 +3160,12 @@ function AppContent() {
             <Route path="/cpace-climate-finance"           element={<CPaceClimateFinancePage />} />
             <Route path="/climate-revenue-bond-modeler"    element={<ClimateRevenueBondModelerPage />} />
             <Route path="/municipal-climate-resilience-hub" element={<MunicipalClimateResilienceHubPage />} />
+            <Route path="/blue-bond-analytics"              element={<BlueBondAnalyticsPage />} />
+            <Route path="/shipping-decarbonization-finance" element={<ShippingDecarbonizationFinancePage />} />
+            <Route path="/marine-blue-carbon-finance"       element={<MarineBlueCarbonFinancePage />} />
+            <Route path="/aquaculture-climate-finance"      element={<AquacultureClimateFinancePage />} />
+            <Route path="/ocean-carbon-credit-market"       element={<OceanCarbonCreditMarketPage />} />
+            <Route path="/coastal-resilience-finance"       element={<CoastalResilienceFinancePage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
