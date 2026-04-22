@@ -470,6 +470,174 @@ export function Note({ children, level = 'info' }) {
   return <div style={{ borderLeft: `3px solid ${c}`, background: T.surfaceH, padding: '8px 12px', fontSize: 12, color: T.textSec, margin: '8px 0' }}>{children}</div>;
 }
 
+// =========================================================================
+// ADVANCED ANALYTICS VIZ PRIMITIVES
+// =========================================================================
+
+// Horizontal tornado (sensitivity) bar: rows = [{label, low, high, base?}]
+export function Tornado({ rows, fmt = (n) => n.toFixed(1), height = 22 }) {
+  if (!rows || !rows.length) return null;
+  const mag = Math.max(...rows.map(r => Math.max(Math.abs(r.low), Math.abs(r.high))));
+  const rng = mag || 1;
+  return (
+    <div style={{ width: '100%' }}>
+      {rows.map((r, i) => {
+        const negW = Math.min(0, r.low) / -rng * 45;
+        const posW = Math.max(0, r.high) / rng * 45;
+        const lowNeg = r.low < 0 ? Math.abs(r.low) / rng * 45 : 0;
+        const highPos = r.high > 0 ? r.high / rng * 45 : 0;
+        return (
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: '180px 1fr 90px', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <div style={{ fontSize: 11, color: T.textSec, fontFamily: T.font, textAlign: 'right' }}>{r.label}</div>
+            <div style={{ position: 'relative', height, background: T.surfaceH, border: `1px solid ${T.borderL}`, borderRadius: 2 }}>
+              <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, background: T.border }} />
+              <div style={{ position: 'absolute', right: `${50}%`, width: `${lowNeg}%`, top: 2, bottom: 2, background: T.red, opacity: 0.75 }} />
+              <div style={{ position: 'absolute', left: `${50}%`, width: `${highPos}%`, top: 2, bottom: 2, background: T.green, opacity: 0.75 }} />
+            </div>
+            <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>{fmt(r.low)} / {fmt(r.high)}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Inline sparkline: values = [n,...]
+export function Sparkline({ values, width = 120, height = 28, color }) {
+  if (!values || values.length < 2) return null;
+  const mn = Math.min(...values), mx = Math.max(...values);
+  const rng = mx - mn || 1;
+  const pts = values.map((v, i) => {
+    const x = (i / (values.length - 1)) * (width - 2) + 1;
+    const y = height - 1 - ((v - mn) / rng) * (height - 2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return (
+    <svg width={width} height={height} style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+      <polyline points={pts} fill="none" stroke={color || T.gold} strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+// 2D heatmap: data = [[v,...],...]; rows/cols = string labels
+export function Heatmap({ data, rows, cols, fmt = (n) => n.toFixed(0), min, max, loColor = T.teal, hiColor = T.red }) {
+  if (!data || !data.length) return null;
+  const flat = data.flat();
+  const mn = min !== undefined ? min : Math.min(...flat);
+  const mx = max !== undefined ? max : Math.max(...flat);
+  const rng = mx - mn || 1;
+  const mix = (t) => {
+    const a = parseInt(loColor.slice(1), 16), b = parseInt(hiColor.slice(1), 16);
+    const ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255;
+    const br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255;
+    const r = Math.round(ar + (br - ar) * t), g = Math.round(ag + (bg - ag) * t), bl = Math.round(ab + (bb - ab) * t);
+    return `rgb(${r},${g},${bl})`;
+  };
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{ borderCollapse: 'separate', borderSpacing: 2, fontFamily: T.mono, fontSize: 11 }}>
+        <thead>
+          <tr>
+            <th />
+            {cols.map((c, i) => <th key={i} style={{ color: T.textMut, fontWeight: 400, padding: '4px 6px', fontSize: 10, textAlign: 'center' }}>{c}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, r) => (
+            <tr key={r}>
+              <td style={{ color: T.textMut, padding: '4px 8px', fontSize: 10, textAlign: 'right', fontWeight: 500 }}>{rows[r]}</td>
+              {row.map((v, c) => {
+                const t = (v - mn) / rng;
+                return <td key={c} style={{ background: mix(Math.max(0, Math.min(1, t))), color: t > 0.5 ? '#fff' : T.navy, padding: '6px 10px', textAlign: 'center', minWidth: 52, borderRadius: 2 }}>{fmt(v)}</td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// Circular progress
+export function ProgressRing({ pct, size = 64, label, color }) {
+  const r = size / 2 - 4;
+  const c = 2 * Math.PI * r;
+  const p = Math.max(0, Math.min(100, pct));
+  const off = c * (1 - p / 100);
+  return (
+    <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
+      <svg width={size} height={size}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={T.borderL} strokeWidth="4" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color || T.gold} strokeWidth="4"
+          strokeDasharray={c} strokeDashoffset={off} strokeLinecap="round" transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+        <text x={size / 2} y={size / 2 + 4} textAnchor="middle" style={{ fontFamily: T.mono, fontSize: 12, fill: T.text }}>{p.toFixed(0)}%</text>
+      </svg>
+      {label && <div style={{ fontSize: 10, color: T.textMut, marginTop: 2 }}>{label}</div>}
+    </div>
+  );
+}
+
+// Monte Carlo distribution card: stats = {mean, p5, p50, p95, samples?}
+export function MonteCarloCard({ title, stats, fmt = (n) => n.toFixed(1), unit = '' }) {
+  const s = stats || {};
+  return (
+    <div style={{ background: T.surfaceH, border: `1px solid ${T.borderL}`, borderRadius: 3, padding: 12 }}>
+      <div style={{ fontSize: 10, color: T.textMut, letterSpacing: 1, marginBottom: 8 }}>{title}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
+        {[['P5', s.p5 ?? s.p05], ['P50', s.p50], ['Mean', s.mean], ['P95', s.p95]].map(([k, v]) => (
+          <div key={k} style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 9, color: T.textMut }}>{k}</div>
+            <div style={{ fontFamily: T.mono, fontSize: 13, color: k === 'Mean' ? T.gold : T.text }}>{v !== undefined ? fmt(v) : '—'}</div>
+          </div>
+        ))}
+      </div>
+      {unit && <div style={{ fontSize: 10, color: T.textMut, textAlign: 'right', marginTop: 6 }}>{unit}</div>}
+      {s.samples && <div style={{ marginTop: 8 }}><Histogram values={s.samples} /></div>}
+    </div>
+  );
+}
+
+// Histogram (for MC sample arrays)
+export function Histogram({ values, bins = 20, width = 320, height = 60, color }) {
+  if (!values || !values.length) return null;
+  const mn = Math.min(...values), mx = Math.max(...values);
+  const rng = mx - mn || 1;
+  const counts = new Array(bins).fill(0);
+  values.forEach(v => {
+    const b = Math.min(bins - 1, Math.floor(((v - mn) / rng) * bins));
+    counts[b]++;
+  });
+  const cmax = Math.max(...counts) || 1;
+  const bw = width / bins;
+  return (
+    <svg width={width} height={height} style={{ display: 'block' }}>
+      {counts.map((c, i) => {
+        const h = (c / cmax) * (height - 2);
+        return <rect key={i} x={i * bw + 0.5} y={height - h} width={bw - 1} height={h} fill={color || T.gold} opacity={0.8} />;
+      })}
+    </svg>
+  );
+}
+
+// Simple Gantt: tasks = [{label, start, duration, color?}]
+export function Gantt({ tasks, totalSpan, unit = 'mo' }) {
+  if (!tasks || !tasks.length) return null;
+  const span = totalSpan || Math.max(...tasks.map(t => t.start + t.duration));
+  return (
+    <div>
+      {tasks.map((t, i) => (
+        <div key={i} style={{ display: 'grid', gridTemplateColumns: '180px 1fr 60px', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+          <div style={{ fontSize: 11, color: T.textSec }}>{t.label}</div>
+          <div style={{ position: 'relative', height: 18, background: T.surfaceH, borderRadius: 2, border: `1px solid ${T.borderL}` }}>
+            <div style={{ position: 'absolute', left: `${(t.start / span) * 100}%`, width: `${(t.duration / span) * 100}%`, top: 2, bottom: 2, background: t.color || T.teal, borderRadius: 2 }} />
+          </div>
+          <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>{t.duration}{unit}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // HTML deliverable building blocks (return strings)
 export const html = {
   kpi: (label, value) => `<div class="kpi"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div></div>`,

@@ -432,6 +432,303 @@ export const tornado = (inputs, outputFn, pct = 0.20) => {
   }).sort((a, b) => b.range - a.range);
 };
 
+// -------------------------------------------------------------------------
+// 10. ADVANCED LCA — IMPACT CATEGORIES (EN 15804+A2), CIRCULARITY, TRANSPORT
+// -------------------------------------------------------------------------
+// Multi-impact per kWh generated (PV utility, ITRPV 2024 ref)
+export const LCA_IMPACT_CATEGORIES = {
+  GWP:  { label: 'Global Warming',     unit: 'g CO₂e/kWh',      refPV: 43,   refWind: 12,  refBattery: 88 },
+  AP:   { label: 'Acidification',      unit: 'mg SO₂e/kWh',     refPV: 210,  refWind: 75,  refBattery: 420 },
+  EP:   { label: 'Eutrophication',     unit: 'mg PO₄e/kWh',     refPV: 28,   refWind: 12,  refBattery: 62 },
+  ODP:  { label: 'Ozone Depletion',    unit: 'µg CFC11e/kWh',   refPV: 2.8,  refWind: 0.9, refBattery: 6.4 },
+  POCP: { label: 'Photochem. Oxid.',   unit: 'mg NMVOCe/kWh',   refPV: 110,  refWind: 45,  refBattery: 240 },
+  ADP:  { label: 'Abiotic Depletion',  unit: 'mg Sbe/kWh',      refPV: 0.45, refWind: 0.18,refBattery: 1.10 },
+  WD:   { label: 'Water Depletion',    unit: 'L/kWh',           refPV: 0.85, refWind: 0.02,refBattery: 2.10 },
+};
+
+// Circularity factors per material (recycled content %, end-of-life recovery %)
+export const CIRCULARITY = {
+  'Silicon (mono)':          { recContent: 5,  eolRec: 65, eolUseful: 55 },
+  'Silicon (poly)':          { recContent: 5,  eolRec: 60, eolUseful: 50 },
+  'Silicon (n-type TOPCon)': { recContent: 3,  eolRec: 70, eolUseful: 60 },
+  'Glass (tempered)':        { recContent: 35, eolRec: 85, eolUseful: 78 },
+  'Glass (anti-reflective)': { recContent: 25, eolRec: 82, eolUseful: 75 },
+  'Aluminium frame':         { recContent: 60, eolRec: 95, eolUseful: 92 },
+  'Aluminium (recycled)':    { recContent: 95, eolRec: 95, eolUseful: 92 },
+  'EVA backsheet':           { recContent: 0,  eolRec: 20, eolUseful: 10 },
+  'POE encapsulant':         { recContent: 0,  eolRec: 25, eolUseful: 15 },
+  'Backsheet (PVDF/PET)':    { recContent: 5,  eolRec: 30, eolUseful: 20 },
+  'Copper wiring':           { recContent: 40, eolRec: 90, eolUseful: 85 },
+  'Silver paste':            { recContent: 15, eolRec: 95, eolUseful: 88 },
+  'Steel mounting':          { recContent: 50, eolRec: 92, eolUseful: 88 },
+  'Concrete ballast':        { recContent: 10, eolRec: 40, eolUseful: 25 },
+  'Junction box (plastic)':  { recContent: 5,  eolRec: 30, eolUseful: 15 },
+  'Inverter (electronics)':  { recContent: 10, eolRec: 60, eolUseful: 45 },
+  'Lithium (LCE)':           { recContent: 5,  eolRec: 55, eolUseful: 45 },
+  'Graphite (anode)':        { recContent: 0,  eolRec: 35, eolUseful: 20 },
+  'NMC cathode':             { recContent: 8,  eolRec: 75, eolUseful: 65 },
+};
+
+// Transport emission factors (kg CO2e per t·km)
+export const TRANSPORT_EF = {
+  'Ocean container (global)': 0.012,
+  'Ocean bulk':               0.008,
+  'Road truck (40t)':         0.065,
+  'Road truck (7.5t)':        0.18,
+  'Rail (diesel)':            0.028,
+  'Rail (electric)':          0.015,
+  'Air freight (intl)':       1.10,
+};
+
+// Approximate distance (km) between common mfg origins and deployment
+export const TRANSPORT_DIST = {
+  'China':  { 'India': 4500, 'USA': 11000, 'Germany': 8000, 'Global': 9000 },
+  'India':  { 'India': 500,  'USA': 13500, 'Germany': 6800, 'Global': 7000 },
+  'USA':    { 'India': 13500,'USA': 1500,  'Germany': 7000, 'Global': 8500 },
+  'Germany':{ 'India': 6800, 'USA': 7000,  'Germany': 500,  'Global': 6500 },
+};
+
+// Grid decarbonization trajectory (IEA NZE 2050 — % of 2024 baseline)
+export const GRID_DECARB = {
+  'India':   { 2024: 1.00, 2030: 0.72, 2040: 0.42, 2050: 0.18 },
+  'China':   { 2024: 1.00, 2030: 0.68, 2040: 0.38, 2050: 0.12 },
+  'USA':     { 2024: 1.00, 2030: 0.55, 2040: 0.25, 2050: 0.05 },
+  'Germany': { 2024: 1.00, 2030: 0.48, 2040: 0.20, 2050: 0.03 },
+  'EU27':    { 2024: 1.00, 2030: 0.52, 2040: 0.22, 2050: 0.04 },
+  'Global':  { 2024: 1.00, 2030: 0.65, 2040: 0.35, 2050: 0.12 },
+};
+
+// -------------------------------------------------------------------------
+// 11. SLF — PEER DEAL COMPS + SLBP 5-COMPONENT CHECKLIST
+// -------------------------------------------------------------------------
+export const SLBP_COMPONENTS = [
+  { id: 'KPI',  label: 'Selection of KPIs',          desc: 'Core, relevant, externally verifiable', weight: 20 },
+  { id: 'SPT',  label: 'Calibration of SPTs',         desc: 'Ambitious (beyond BAU), benchmarked, timebound', weight: 20 },
+  { id: 'CF',   label: 'Bond characteristics',        desc: 'Financial/structural change on trigger',  weight: 20 },
+  { id: 'RPT',  label: 'Reporting',                   desc: 'Annual KPI + verification report',        weight: 20 },
+  { id: 'VER',  label: 'Verification',                desc: 'Independent limited-assurance, post-issue', weight: 20 },
+];
+
+export const SLF_PEER_DEALS = [
+  { issuer: 'ENEL SpA',         sector: 'Utilities — Power', notionalMn: 1500, tenor: 10, couponPct: 1.125, greeniumBps: 7, stepUp: 25, yr: 2023 },
+  { issuer: 'Tesco',            sector: 'Consumer',          notionalMn: 750,  tenor: 8,  couponPct: 2.50,  greeniumBps: 4, stepUp: 25, yr: 2023 },
+  { issuer: 'H&M',              sector: 'Consumer',          notionalMn: 500,  tenor: 9,  couponPct: 3.125, greeniumBps: 5, stepUp: 75, yr: 2024 },
+  { issuer: 'JBS',              sector: 'Food & Ag',         notionalMn: 3200, tenor: 10, couponPct: 6.25,  greeniumBps: 0, stepUp: 25, yr: 2022 },
+  { issuer: 'UltraTech Cement', sector: 'Cement',            notionalMn: 400,  tenor: 7,  couponPct: 5.85,  greeniumBps: 3, stepUp: 50, yr: 2024 },
+  { issuer: 'Vedanta',          sector: 'Mining',            notionalMn: 1000, tenor: 6,  couponPct: 9.25,  greeniumBps: 0, stepUp: 25, yr: 2024 },
+  { issuer: 'JSW Steel',        sector: 'Steel',             notionalMn: 500,  tenor: 7,  couponPct: 5.95,  greeniumBps: 5, stepUp: 50, yr: 2024 },
+  { issuer: 'HDFC Bank',        sector: 'Banks',             notionalMn: 500,  tenor: 5,  couponPct: 4.25,  greeniumBps: 8, stepUp: 25, yr: 2024 },
+];
+
+// -------------------------------------------------------------------------
+// 12. RATINGS — MULTI-AGENCY CROSSWALK + CONTROVERSY IMPACT + INDEX MATRIX
+// -------------------------------------------------------------------------
+// Same 0-100 equivalent score mapped across agencies
+export const AGENCY_CROSSWALK = {
+  // [min, max, letter]
+  MSCI:          [[0,14.3,'CCC'],[14.3,28.6,'B'],[28.6,42.9,'BB'],[42.9,57.1,'BBB'],[57.1,71.4,'A'],[71.4,85.7,'AA'],[85.7,100,'AAA']],
+  Sustainalytics:[[0,20,'Severe'],[20,30,'High'],[30,40,'Medium'],[40,55,'Low'],[55,70,'Negligible'],[70,100,'Industry leader']],
+  ISS:           [[0,20,'D-'],[20,35,'D'],[35,50,'C'],[50,65,'B-'],[65,75,'B'],[75,85,'B+'],[85,95,'A'],[95,100,'A+']],
+  CDP:           [[0,20,'F'],[20,35,'D-'],[35,50,'D'],[50,60,'C-'],[60,70,'C'],[70,80,'B-'],[80,90,'B'],[90,96,'A-'],[96,100,'A']],
+};
+
+export const controversyImpact = (level) => ({ None: 0, Low: -2, Medium: -6, High: -12, Severe: -25 }[level] || 0);
+
+export const CONTROVERSY_CATEGORIES = [
+  'Environmental - biodiversity', 'Environmental - pollution', 'Environmental - climate',
+  'Social - human rights',        'Social - labour',           'Social - community',
+  'Governance - business ethics', 'Governance - accounting',   'Governance - tax',
+];
+
+// Index eligibility thresholds (score on same 0-100 scale)
+export const INDEX_ELIGIBILITY = {
+  'MSCI World ESG Leaders':   { minScore: 57, excludeControv: 'High',   flowPctPerNotch: 2.2 },
+  'MSCI World SRI':           { minScore: 71, excludeControv: 'Medium', flowPctPerNotch: 1.4 },
+  'FTSE4Good':                { minScore: 42, excludeControv: 'Severe', flowPctPerNotch: 1.1 },
+  'S&P DJSI World':           { minScore: 65, excludeControv: 'High',   flowPctPerNotch: 1.8 },
+  'Euronext Vigeo':           { minScore: 60, excludeControv: 'High',   flowPctPerNotch: 1.0 },
+  'STOXX Global ESG Leaders': { minScore: 55, excludeControv: 'High',   flowPctPerNotch: 1.3 },
+};
+
+// Inter-action dependencies: action → prerequisite-action
+export const ACTION_DEPS = {
+  'SBTi 1.5°C validation':         ['Scope 3 Cat 11 disclosure'],
+  'TCFD-aligned climate report':   [],
+  'Water-positive pledge + disclosure': [],
+  'Supplier ESG audit programme':  [],
+  'Board ESG committee formalisation': [],
+  'Scope 3 Cat 11 disclosure':     [],
+  'Human rights due-diligence policy': ['Board ESG committee formalisation'],
+  'Biodiversity baseline (TNFD)':  [],
+  'Whistleblower & anti-corruption uplift': [],
+  'DE&I targets + disclosure':     [],
+};
+
+// -------------------------------------------------------------------------
+// 13. TCFD — TRANSITION RISK + CARBON PRICE PATHS + IFRS S2 CHECKLIST
+// -------------------------------------------------------------------------
+export const CARBON_PRICE_PATHS = {
+  'NGFS Orderly (1.5°C)':      { 2025: 80,  2030: 160, 2040: 280, 2050: 400 },
+  'NGFS Divergent (1.5°C)':    { 2025: 35,  2030: 200, 2040: 420, 2050: 620 },
+  'NGFS Delayed (1.8°C)':      { 2025: 15,  2030: 90,  2040: 320, 2050: 580 },
+  'NGFS Current Policies':     { 2025: 10,  2030: 35,  2040: 80,  2050: 140 },
+  'IEA NZE 2050':              { 2025: 90,  2030: 140, 2040: 205, 2050: 250 },
+  'India CCTS (domestic)':     { 2025: 15,  2030: 40,  2040: 80,  2050: 120 },
+};
+
+// Transition risk categories with sector sensitivity (elasticity of EBITDA per $100/t carbon price)
+export const TRANSITION_ELASTICITY = {
+  'Utilities — Power (fossil-heavy)': -0.18,
+  'Utilities — Power (renewables)':   +0.04,
+  'Cement':                           -0.22,
+  'Steel':                            -0.28,
+  'Oil & Gas (upstream)':             -0.35,
+  'Oil & Gas (downstream)':           -0.15,
+  'Aviation':                         -0.20,
+  'Shipping':                         -0.15,
+  'Chemicals':                        -0.12,
+  'Banks (loan book)':                -0.06,
+  'Real Estate':                      -0.04,
+  'Agriculture':                      -0.10,
+};
+
+export const IFRS_S2_CHECKLIST = [
+  { id: '6a',  area: 'Governance',       item: 'Oversight body & processes for climate risks/opportunities' },
+  { id: '6b',  area: 'Governance',       item: 'Management role in assessing/managing climate' },
+  { id: '10',  area: 'Strategy',         item: 'Climate risks/opportunities identified' },
+  { id: '13',  area: 'Strategy',         item: 'Current financial effects disclosed' },
+  { id: '14',  area: 'Strategy',         item: 'Anticipated financial effects over short/medium/long term' },
+  { id: '22',  area: 'Strategy',         item: 'Climate resilience — scenario analysis (incl 2°C-lower)' },
+  { id: '25',  area: 'Risk Management',  item: 'Risk assessment process, integration with ERM' },
+  { id: '29a', area: 'Metrics & Targets',item: 'Scope 1/2/3 GHG emissions (GHG Protocol)' },
+  { id: '29b', area: 'Metrics & Targets',item: 'Cross-industry: capex/opex on climate, internal carbon price' },
+  { id: '29d', area: 'Metrics & Targets',item: 'Industry-specific metrics (SASB-based)' },
+  { id: '33',  area: 'Metrics & Targets',item: 'Targets: absolute/intensity, base year, pathway, validation' },
+];
+
+// Opportunity categories with typical NPV uplift % of EBITDA
+export const CLIMATE_OPPORTUNITIES = [
+  { name: 'Energy efficiency retrofits',      cat: 'Resource efficiency', npvPctEbitda: 3.5,  horizonY: 4 },
+  { name: 'Solar self-consumption',           cat: 'Energy source',       npvPctEbitda: 2.2,  horizonY: 6 },
+  { name: 'Product line — climate solutions', cat: 'Products & services', npvPctEbitda: 8.5,  horizonY: 8 },
+  { name: 'New geographic markets (emerging)',cat: 'Markets',             npvPctEbitda: 5.0,  horizonY: 10 },
+  { name: 'Climate-resilient supply chain',   cat: 'Resilience',          npvPctEbitda: 1.8,  horizonY: 5 },
+  { name: 'Carbon-negative product premium',  cat: 'Products & services', npvPctEbitda: 2.9,  horizonY: 7 },
+];
+
+// -------------------------------------------------------------------------
+// 14. TNFD — MSA, WATER FOOTPRINT, MITIGATION HIERARCHY, GBF TARGETS
+// -------------------------------------------------------------------------
+// Mean Species Abundance (MSA) loss factor per sector × biome (0-1, 1 = total loss)
+export const MSA_LOSS = {
+  'Utilities — Renewables': {
+    'Arid / Desert': 0.05, 'Semi-arid grassland': 0.12, 'Tropical forest': 0.55,
+    'Coastal / Mangrove': 0.70, 'Temperate forest': 0.35, 'Wetlands': 0.60,
+    'Agricultural mosaic': 0.02, 'Marine': 0.18,
+  },
+  'Mining': {
+    'Arid / Desert': 0.75, 'Semi-arid grassland': 0.82, 'Tropical forest': 0.95,
+    'Coastal / Mangrove': 0.92, 'Temperate forest': 0.88, 'Wetlands': 0.90,
+    'Agricultural mosaic': 0.70, 'Marine': 0.85,
+  },
+  'Agriculture': {
+    'Arid / Desert': 0.35, 'Semi-arid grassland': 0.55, 'Tropical forest': 0.80,
+    'Coastal / Mangrove': 0.75, 'Temperate forest': 0.65, 'Wetlands': 0.70,
+    'Agricultural mosaic': 0.10, 'Marine': 0.05,
+  },
+  'Real Estate': {
+    'Arid / Desert': 0.30, 'Semi-arid grassland': 0.45, 'Tropical forest': 0.85,
+    'Coastal / Mangrove': 0.88, 'Temperate forest': 0.68, 'Wetlands': 0.82,
+    'Agricultural mosaic': 0.25, 'Marine': 0.50,
+  },
+};
+
+// Water footprint (m³/ha/yr) blue + green water demand per biome/use
+export const WATER_FP = {
+  'Arid / Desert':        { blue: 8500, green: 100,  grey: 300 },
+  'Semi-arid grassland':  { blue: 3200, green: 2500, grey: 250 },
+  'Tropical forest':      { blue: 1200, green: 9500, grey: 180 },
+  'Coastal / Mangrove':   { blue: 800,  green: 5800, grey: 400 },
+  'Temperate forest':     { blue: 600,  green: 6200, grey: 120 },
+  'Wetlands':             { blue: 4200, green: 4800, grey: 220 },
+  'Agricultural mosaic':  { blue: 5500, green: 3800, grey: 680 },
+  'Marine':               { blue: 0,    green: 0,    grey: 80 },
+};
+
+// Mitigation hierarchy with typical cost per unit MSA recovered
+export const MITIGATION_HIERARCHY = [
+  { step: 'Avoid',     desc: 'Redesign to prevent impact entirely',    costPerMsaHa: 0,    credibility: 100 },
+  { step: 'Minimise',  desc: 'Reduce intensity/duration of impact',    costPerMsaHa: 1200, credibility: 85 },
+  { step: 'Restore',   desc: 'Repair affected ecosystem in-situ',      costPerMsaHa: 4500, credibility: 70 },
+  { step: 'Offset',    desc: 'Compensate via like-for-like elsewhere', costPerMsaHa: 9500, credibility: 40 },
+];
+
+// GBF (Kunming-Montreal Global Biodiversity Framework) target alignment
+export const GBF_TARGETS = [
+  { id: 'T1',  name: 'Spatial planning',             relevanceFor: ['utilities','re','mining'] },
+  { id: 'T2',  name: 'Restore 30% degraded',         relevanceFor: ['utilities','re','mining','ag'] },
+  { id: 'T3',  name: '30×30 (conserve 30%)',         relevanceFor: ['utilities','re','mining','ag'] },
+  { id: 'T7',  name: 'Reduce pollution',             relevanceFor: ['utilities','mining','ag'] },
+  { id: 'T10', name: 'Sustainable agri/fish/forest', relevanceFor: ['ag'] },
+  { id: 'T14', name: 'Biodiv in decisions/DFS',      relevanceFor: ['utilities','re','mining','ag'] },
+  { id: 'T15', name: 'Business assess/disclose',     relevanceFor: ['utilities','re','mining','ag','banks'] },
+  { id: 'T18', name: 'Eliminate harmful subsidies',  relevanceFor: ['banks','ag'] },
+  { id: 'T19', name: 'Mobilise $200B/yr finance',    relevanceFor: ['banks','utilities'] },
+  { id: 'T22', name: 'IPLCs, women, youth',          relevanceFor: ['utilities','re','mining','ag'] },
+];
+
+// Ecosystem service Rev-at-Risk multipliers per sector
+export const ES_SECTOR_MULT = {
+  'Utilities — Renewables': { prov: 0.8, reg: 1.2, cult: 0.3, sup: 1.0 },
+  'Mining':                 { prov: 0.4, reg: 0.9, cult: 0.1, sup: 0.6 },
+  'Agriculture':            { prov: 1.8, reg: 2.2, cult: 0.8, sup: 2.4 },
+  'Real Estate':            { prov: 0.6, reg: 1.5, cult: 1.2, sup: 0.8 },
+};
+
+// -------------------------------------------------------------------------
+// 15. CCTS — STACKING REVENUES + BUFFER POOL + VINTAGE CURVE
+// -------------------------------------------------------------------------
+// Parallel instruments stackable with CCTS (₹/tCO₂e or ₹/MWh convertible)
+export const STACKING = {
+  'PAT ESCerts':       { unit: '₹/tCO₂e',  low: 200,  mid: 450,  high: 850,  convertFactor: 1.0 },
+  'I-REC':             { unit: '₹/MWh',    low: 110,  mid: 180,  high: 280,  convertFactor: 1.4 }, // tCO2e per MWh implied
+  'Voluntary VCS':     { unit: '₹/tCO₂e',  low: 280,  mid: 620,  high: 1400, convertFactor: 1.0 },
+  'Gold Standard':     { unit: '₹/tCO₂e',  low: 420,  mid: 780,  high: 1800, convertFactor: 1.0 },
+  'Article 6.2 ITMO':  { unit: '₹/tCO₂e',  low: 800,  mid: 1500, high: 3200, convertFactor: 1.0 },
+};
+
+// Buffer pool reserve % by methodology risk (non-permanence / reversal)
+export const BUFFER_POOL = {
+  'Solar PV (utility)':    0.02, 'Solar rooftop': 0.02, 'Wind onshore': 0.03,
+  'Small hydro':           0.05, 'Biomass': 0.08,       'Waste heat recovery': 0.04,
+  'Energy efficiency':     0.06, 'Fuel switching': 0.07,
+};
+
+// Vintage discount curve — older credits trade at discount to current-vintage prices
+export const VINTAGE_CURVE = {
+  currentYearPremium: 1.00, oneYearOld: 0.92, twoYearOld: 0.82,
+  threeYearOld: 0.70, fiveYearPlus: 0.50,
+};
+
+// Registry cycle phase durations (months)
+export const REGISTRY_CYCLE = [
+  { phase: 'PDD preparation',    months: 2 },
+  { phase: 'Validation (DoE)',   months: 3 },
+  { phase: 'CCTS registration',  months: 1 },
+  { phase: 'Monitoring period',  months: 12 },
+  { phase: 'Verification (DoE)', months: 2 },
+  { phase: 'CCC issuance',       months: 1 },
+];
+
+// Methodology compliance scorecard weights
+export const METHOD_COMPLIANCE_WEIGHTS = {
+  baselineRule: 15, conservatism: 10, mrvQuality: 20,
+  additionality: 20, permanence: 15, leakage: 10, stakeholder: 10,
+};
+
+// -------------------------------------------------------------------------
+// 16. HELPER FUNCTIONS (cont.)
+// -------------------------------------------------------------------------
 // Monte Carlo (triangular distribution)
 export const monteCarlo = (fn, vars, n = 1000) => {
   const results = [];
@@ -453,5 +750,6 @@ export const monteCarlo = (fn, vars, n = 1000) => {
     p50: results[Math.floor(n * 0.50)],
     p95: results[Math.floor(n * 0.95)],
     mean: results.reduce((x, y) => x + y, 0) / n,
+    samples: results,
   };
 };
