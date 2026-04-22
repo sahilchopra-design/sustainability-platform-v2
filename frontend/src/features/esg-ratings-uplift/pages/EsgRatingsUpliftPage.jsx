@@ -1,218 +1,164 @@
-import React, { useMemo, useState } from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend } from 'recharts';
-import { T, useScenario, ToolkitBar, NumInput, TextInput, Kpi, Panel, Table, td, TabBar, PageHeader, Badge, downloadText, toCsv, openDeliverable, html } from '../../_shared/AdvisoryToolkit';
+import React, { useMemo } from 'react';
+import {
+  T, useScenario, openDeliverable, toCsv, downloadText, html,
+  ToolShell, Step, OutputRail, PrimaryCTA, ToolMenu,
+  FieldRow, Worksheet, NumInput, TextInput, Note, PageHeader
+} from '../../_shared/AdvisoryToolkit';
 
 const LETTERS = ['CCC', 'B', 'BB', 'BBB', 'A', 'AA', 'AAA'];
-const letterFromScore = (s) => LETTERS[Math.max(0, Math.min(6, Math.floor(s / 10)))];
+const letterFor = (s) => LETTERS[Math.max(0, Math.min(6, Math.floor(s / 14.3)))];
 
 const DEFAULTS = {
-  issuerName: 'Integrated RE-IPP Client (anonymised)',
-  targetLetter: 'A',
-  passiveAumUnlock: 12000,
+  issuer: 'ACME Group',
+  sector: 'Utilities — Renewables',
+  aumPassive: 4500,    // $ M
   issues: [
-    { issue: 'Carbon emissions', weight: 14, score: 52, peer: 68, cost: 12, months: 12 },
-    { issue: 'Climate risk mgmt', weight: 12, score: 48, peer: 65, cost: 8, months: 9 },
-    { issue: 'Renewable energy', weight: 10, score: 72, peer: 70, cost: 2, months: 3 },
-    { issue: 'Water stress', weight: 8, score: 55, peer: 62, cost: 5, months: 9 },
-    { issue: 'Biodiversity & land use', weight: 7, score: 38, peer: 50, cost: 15, months: 18 },
-    { issue: 'Labour mgmt', weight: 8, score: 64, peer: 66, cost: 3, months: 6 },
-    { issue: 'Health & safety', weight: 7, score: 58, peer: 64, cost: 6, months: 9 },
-    { issue: 'Community relations', weight: 6, score: 55, peer: 60, cost: 4, months: 9 },
-    { issue: 'Supply chain labour', weight: 8, score: 45, peer: 55, cost: 10, months: 15 },
-    { issue: 'Governance', weight: 12, score: 61, peer: 68, cost: 6, months: 9 },
-    { issue: 'Business ethics', weight: 8, score: 60, peer: 64, cost: 4, months: 6 },
+    { _id: 1, issue: 'Carbon Emissions', weight: 15, current: 38, peer: 62 },
+    { _id: 2, issue: 'Climate Risk Exposure', weight: 10, current: 45, peer: 65 },
+    { _id: 3, issue: 'Renewable Energy', weight: 8, current: 72, peer: 68 },
+    { _id: 4, issue: 'Water Stress', weight: 6, current: 55, peer: 60 },
+    { _id: 5, issue: 'Biodiversity & Land Use', weight: 5, current: 40, peer: 55 },
+    { _id: 6, issue: 'Labour Management', weight: 10, current: 60, peer: 65 },
+    { _id: 7, issue: 'Health & Safety', weight: 8, current: 50, peer: 63 },
+    { _id: 8, issue: 'Community Relations', weight: 6, current: 58, peer: 60 },
+    { _id: 9, issue: 'Supply Chain Labour', weight: 7, current: 42, peer: 55 },
+    { _id: 10, issue: 'Corporate Governance', weight: 15, current: 65, peer: 70 },
+    { _id: 11, issue: 'Business Ethics', weight: 10, current: 55, peer: 65 },
   ],
-  sustainalytics: { score: 28.4, target: 18.0 },
+  actions: [
+    { _id: 1, action: 'Publish TCFD-aligned climate report', issue: 'Climate Risk Exposure', uplift: 12, costMn: 0.8, months: 6 },
+    { _id: 2, action: 'SBTi 1.5°C validation', issue: 'Carbon Emissions', uplift: 18, costMn: 1.2, months: 9 },
+    { _id: 3, action: 'Water-positive pledge + disclosure', issue: 'Water Stress', uplift: 10, costMn: 0.4, months: 4 },
+    { _id: 4, action: 'Supplier ESG audit program', issue: 'Supply Chain Labour', uplift: 14, costMn: 1.5, months: 12 },
+    { _id: 5, action: 'Board ESG committee formalisation', issue: 'Corporate Governance', uplift: 6, costMn: 0.2, months: 3 },
+  ],
 };
 
-const TABS = ['Inputs & Issues', 'Rating Gap', 'Remediation Plan', 'Passive AUM Unlock', 'Engagement Playbook', 'Deliverables'];
-
 export default function EsgRatingsUpliftPage() {
-  const sc = useScenario('eb4_ratings', DEFAULTS);
-  const [tab, setTab] = useState(0);
+  const sc = useScenario('esg-uplift', DEFAULTS);
   const s = sc.state;
 
-  const weighted = useMemo(() => {
-    const sumW = s.issues.reduce((a, x) => a + x.weight, 0);
-    const wScore = s.issues.reduce((a, x) => a + x.score * x.weight, 0) / Math.max(1, sumW);
-    const wPeer = s.issues.reduce((a, x) => a + x.peer * x.weight, 0) / Math.max(1, sumW);
-    const totalCost = s.issues.reduce((a, x) => a + x.cost, 0);
-    return { wScore, wPeer, totalCost, sumW };
-  }, [s.issues]);
-  const currentLetter = letterFromScore(weighted.wScore);
-  const targetScore = LETTERS.indexOf(s.targetLetter) * 10 + 5;
-  const gapPoints = Math.max(0, targetScore - weighted.wScore);
-  const remediation = useMemo(() => [...s.issues].map(x => ({ ...x, gap: Math.max(0, x.peer - x.score), uplift: Math.max(0, x.peer - x.score) * x.weight / 100, cpi: x.cost / Math.max(0.01, Math.max(0, x.peer - x.score)) })).sort((a, b) => a.cpi - b.cpi), [s.issues]);
+  const totalW = s.issues.reduce((x, i) => x + i.weight, 0) || 1;
+  const currentScore = s.issues.reduce((x, i) => x + i.current * i.weight, 0) / totalW;
+  const peerScore = s.issues.reduce((x, i) => x + i.peer * i.weight, 0) / totalW;
+  const gap = peerScore - currentScore;
 
-  const upd = (i, k, v) => sc.update(st => ({ issues: st.issues.map((x, j) => j === i ? { ...x, [k]: v } : x) }));
-  const addIss = () => sc.update(st => ({ issues: [...st.issues, { issue: 'New issue', weight: 0, score: 0, peer: 0, cost: 0, months: 0 }] }));
-  const delIss = (i) => sc.update(st => ({ issues: st.issues.filter((_, j) => j !== i) }));
+  const plan = useMemo(() => [...s.actions].map(a => ({ ...a, roi: a.costMn > 0 ? a.uplift / a.costMn : 0 })).sort((a, b) => b.roi - a.roi), [s.actions]);
+  const totalUplift = plan.reduce((x, a) => x + a.uplift, 0) * (totalW > 0 ? 15 / totalW : 0);  // scaled to overall
+  const projectedScore = Math.min(100, currentScore + totalUplift);
+  const totalCost = plan.reduce((x, a) => x + a.costMn, 0);
 
-  const exportCsv = () => downloadText(`EB4_ratings_${sc.scenarioName}.csv`, toCsv(remediation.map(r => ({
-    issue: r.issue, weight_pct: r.weight, current_score: r.score, peer_score: r.peer, gap: r.gap, weighted_uplift: +r.uplift.toFixed(2), cost_cr: r.cost, months: r.months, cost_per_uplift: +r.cpi.toFixed(2),
-  }))), 'text/csv');
-  const exportJson = () => downloadText(`EB4_${sc.scenarioName}.json`, JSON.stringify({ module: 'EB4', state: s, weighted }, null, 2), 'application/json');
+  const currentLetter = letterFor(currentScore);
+  const projectedLetter = letterFor(projectedScore);
+  const uplifts = LETTERS.indexOf(projectedLetter) - LETTERS.indexOf(currentLetter);
 
-  const generateRoadmap = () => {
-    const content = [
-      html.h1('ESG Ratings Uplift Roadmap'),
-      html.meta({ Issuer: s.issuerName, 'Current (MSCI-equivalent)': currentLetter, Target: s.targetLetter, Scenario: sc.scenarioName }),
-      html.h2('Executive Summary'),
-      html.kpi('Weighted current score', weighted.wScore.toFixed(1)) + html.kpi('Target score', targetScore.toFixed(1)) + html.kpi('Gap (points)', gapPoints.toFixed(1)) + html.kpi('Total remediation cost', `₹${weighted.totalCost.toFixed(1)} Cr`) + html.kpi('Passive AUM unlock', `${s.passiveAumUnlock.toLocaleString()} $Bn (at BBB+)`),
-      html.h2('1. Current Rating Snapshot'),
-      html.p(`Weighted MSCI-equivalent score <b>${weighted.wScore.toFixed(1)}</b> (${currentLetter}) vs peer-median <b>${weighted.wPeer.toFixed(1)}</b>. Sustainalytics residual: <b>${s.sustainalytics.score}</b> (target ${s.sustainalytics.target}).`),
-      html.h2('2. Issue-Level Gap Analysis'),
-      html.table(['Issue', 'Weight %', 'Score', 'Peer', 'Gap', 'Wtd uplift', '₹Cr', 'Months'], remediation.map(r => [r.issue, r.weight, r.score, r.peer, r.gap, r.uplift.toFixed(2), r.cost, r.months])),
-      html.h2('3. Remediation Sequencing (Cost per Uplift Point)'),
-      html.p('Issues sorted by cost-per-uplift-point (ascending). Quick wins: renewable energy (+0 gap already ahead), labour/governance. High-leverage: carbon emissions, climate risk mgmt, biodiversity. Most expensive per uplift: biodiversity (long-tenor, requires LEAP, field surveys, mitigation).'),
-      html.h2('4. Passive Flow Unlock'),
-      html.p(`MSCI ACWI SRI / FTSE4Good / DJSI index thresholds at BBB+ (score ≥35). Estimated passive AUM eligible: <b>$${s.passiveAumUnlock.toLocaleString()} Bn</b>. Sustainalytics "Medium Risk" (<20) unlocks additional active-ESG mandates.`),
+  const aumUnlock = uplifts > 0 ? s.aumPassive * 0.02 * uplifts : 0;   // 2% passive flow per notch
+  const ready = s.issues.length >= 5 && s.issuer.trim();
+
+  const updIssue = (i, k, v) => sc.update({ issues: s.issues.map((x, j) => j === i ? { ...x, [k]: v } : x) });
+  const updAct = (i, k, v) => sc.update({ actions: s.actions.map((x, j) => j === i ? { ...x, [k]: v } : x) });
+
+  const onDeliver = () => {
+    const body = [
+      html.h1(`ESG Ratings Uplift Roadmap — ${s.issuer}`),
+      html.meta({ Sector: s.sector, 'Current letter': currentLetter, 'Projected letter': projectedLetter, Generated: new Date().toLocaleDateString() }),
+      html.h2('1. Starting Position'),
+      html.p(`Weighted ESG score: <b>${currentScore.toFixed(1)} (${currentLetter})</b> · Peer median: ${peerScore.toFixed(1)} (${letterFor(peerScore)}) · Gap: <b>${gap.toFixed(1)} points</b>`),
+      html.h2('2. Issue-Level Scoring'),
+      html.table(['Issue', 'Weight %', 'Current', 'Peer', 'Δ'],
+        s.issues.map(i => [i.issue, i.weight, i.current, i.peer, (i.current - i.peer).toFixed(0)])),
+      html.h2('3. Remediation Plan (sorted by ROI)'),
+      html.table(['Priority', 'Action', 'Target issue', 'Uplift pts', 'Cost ($M)', 'Months', 'ROI'],
+        plan.map((a, i) => [i + 1, a.action, a.issue, a.uplift, a.costMn.toFixed(2), a.months, a.roi.toFixed(1)])),
+      html.h2('4. Projected Outcome'),
+      html.p(`Projected score: <b>${projectedScore.toFixed(1)} (${projectedLetter})</b> — ${uplifts > 0 ? html.badge('green', `+${uplifts} notch${uplifts > 1 ? 'es' : ''}`) : html.badge('amber', 'no letter change')}`),
+      html.p(`Total investment: $${totalCost.toFixed(2)}M · Passive AUM unlock: <b>$${aumUnlock.toFixed(0)}M</b> (at ~2% flow per notch uplift)`),
       html.h2('5. Engagement Playbook'),
-      html.p('Schedule MSCI / Sustainalytics consultative meetings at Q+1 post-remediation-milestone. Submit corrected controversies (1–2y lookback). Engage with Proxinvest, ISS on governance. Prepare 40–60-slide Analyst Day covering Scope 3, climate transition plan, biodiversity LEAP.'),
+      html.p('1) Pre-engagement briefing with rating agencies (MSCI, Sustainalytics, ISS) · 2) Data room preparation · 3) Rationale memo for each issue uplift · 4) Post-action re-submission with evidence pack.'),
     ].join('');
-    openDeliverable(content, `ESG Uplift Roadmap — ${s.issuerName}`);
+    openDeliverable(body, `Ratings Uplift — ${s.issuer}`);
   };
 
-  const radarData = s.issues.map(x => ({ issue: x.issue.length > 18 ? x.issue.substring(0, 17) + '…' : x.issue, current: x.score, peer: x.peer }));
-
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '28px 40px' }}>
-      <PageHeader code="EP-EB4" title="ESG Ratings Uplift Programme" subtitle={`${s.issuerName} · MSCI ESG · Sustainalytics · Issue-weighted · Remediation cost engine`} />
-      <ToolkitBar moduleCode="EB4" scenario={sc} onExportCsv={exportCsv} onExportJson={exportJson} onDeliverable={generateRoadmap}
-        importLabel="Import Issues CSV"
-        onImportCsv={(rows) => { if (rows.length) sc.update({ issues: rows.map(r => ({
-          issue: r.issue, weight: Number(r.weight_pct || r.weight) || 0, score: Number(r.current_score || r.score) || 0, peer: Number(r.peer_score || r.peer) || 0, cost: Number(r.cost_cr || r.cost) || 0, months: Number(r.months) || 0,
-        })) }); }} />
+    <ToolShell
+      header={<PageHeader code="EP-EB4 · Ratings Uplift" title="ESG Rating Improvement Tool" subtitle="Model current MSCI-equivalent score, prioritise remediation by ROI, produce a client-shareable uplift roadmap." />}
+      steps={
+        <>
+          <Step n={1} title="Issuer context">
+            <FieldRow label="Issuer"><TextInput value={s.issuer} onChange={v => sc.update({ issuer: v })} style={{ width: 320 }} /></FieldRow>
+            <FieldRow label="Sector"><TextInput value={s.sector} onChange={v => sc.update({ sector: v })} style={{ width: 320 }} /></FieldRow>
+            <FieldRow label="Passive AUM tracked" hint="For unlock estimate — index-inclusion AUM"><NumInput value={s.aumPassive} onChange={v => sc.update({ aumPassive: v })} step={100} suffix="$ M" /></FieldRow>
+          </Step>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 18 }}>
-        <Kpi label="Current rating" value={currentLetter} sub={`Score ${weighted.wScore.toFixed(1)}`} color={T.amber} />
-        <Kpi label="Target rating" value={s.targetLetter} sub={`Score ${targetScore}`} color={T.green} />
-        <Kpi label="Gap to target" value={`${gapPoints.toFixed(1)} pts`} sub={gapPoints === 0 ? 'Met' : 'Remaining'} color={gapPoints > 0 ? T.red : T.green} />
-        <Kpi label="Total cost" value={`₹${weighted.totalCost.toFixed(1)} Cr`} sub={`${s.issues.length} issues`} color={T.gold} />
-        <Kpi label="Passive AUM unlock" value={`$${s.passiveAumUnlock.toLocaleString()} Bn`} sub="At BBB+ threshold" />
-      </div>
+          <Step n={2} title="Current issue scoring" hint="Enter current score (0–100) per MSCI key issue alongside peer median.">
+            <Worksheet
+              cols={[
+                { h: 'Issue', width: '2fr', edit: (r, i) => <TextInput value={r.issue} onChange={v => updIssue(i, 'issue', v)} style={{ width: '100%' }} /> },
+                { h: 'Weight %', width: '90px', edit: (r, i) => <NumInput value={r.weight} onChange={v => updIssue(i, 'weight', v)} style={{ width: 60 }} /> },
+                { h: 'Current', width: '80px', edit: (r, i) => <NumInput value={r.current} onChange={v => updIssue(i, 'current', v)} style={{ width: 60 }} /> },
+                { h: 'Peer', width: '80px', edit: (r, i) => <NumInput value={r.peer} onChange={v => updIssue(i, 'peer', v)} style={{ width: 60 }} /> },
+                { h: 'Gap', width: '70px', edit: (r) => {
+                    const d = r.current - r.peer;
+                    return <span style={{ fontFamily: T.mono, fontSize: 12, color: d >= 0 ? T.green : T.red }}>{d > 0 ? '+' : ''}{d.toFixed(0)}</span>;
+                  } },
+              ]}
+              rows={s.issues}
+              onAdd={() => sc.update({ issues: [...s.issues, { _id: Date.now(), issue: 'New issue', weight: 5, current: 50, peer: 55 }] })}
+              onDel={(i) => sc.update({ issues: s.issues.filter((_, j) => j !== i) })}
+            />
+            {totalW !== 100 && <Note level="warn">Weights sum to {totalW}% — should total 100%.</Note>}
+          </Step>
 
-      <TabBar tabs={TABS} tab={tab} setTab={setTab} />
+          <Step n={3} title="Remediation actions" hint="Each row is a specific programme. Costs in $M, uplift in issue points. Plan auto-sorts by ROI (uplift / cost).">
+            <Worksheet
+              cols={[
+                { h: 'Action', width: '2.2fr', edit: (r, i) => <TextInput value={r.action} onChange={v => updAct(i, 'action', v)} style={{ width: '100%' }} /> },
+                { h: 'Target issue', width: '1.4fr', edit: (r, i) => <TextInput value={r.issue} onChange={v => updAct(i, 'issue', v)} style={{ width: '100%' }} /> },
+                { h: 'Uplift', width: '70px', edit: (r, i) => <NumInput value={r.uplift} onChange={v => updAct(i, 'uplift', v)} style={{ width: 50 }} /> },
+                { h: 'Cost $M', width: '90px', edit: (r, i) => <NumInput value={r.costMn} onChange={v => updAct(i, 'costMn', v)} step={0.1} style={{ width: 64 }} /> },
+                { h: 'Months', width: '70px', edit: (r, i) => <NumInput value={r.months} onChange={v => updAct(i, 'months', v)} style={{ width: 50 }} /> },
+                { h: 'ROI', width: '70px', edit: (r) => <span style={{ fontFamily: T.mono, color: T.gold, fontSize: 12 }}>{(r.costMn > 0 ? r.uplift / r.costMn : 0).toFixed(1)}</span> },
+              ]}
+              rows={s.actions}
+              onAdd={() => sc.update({ actions: [...s.actions, { _id: Date.now(), action: 'New action', issue: 'Corporate Governance', uplift: 5, costMn: 0.3, months: 6 }] })}
+              onDel={(i) => sc.update({ actions: s.actions.filter((_, j) => j !== i) })}
+            />
+          </Step>
 
-      {tab === 0 && (
-        <Panel title="Issue-level inputs" right={<button style={addBtn} onClick={addIss}>+ Add issue</button>}>
-          <div style={{ display: 'flex', gap: 20, marginBottom: 14, flexWrap: 'wrap' }}>
-            <L label="Issuer"><TextInput value={s.issuerName} onChange={v => sc.update({ issuerName: v })} style={{ width: 220 }} /></L>
-            <L label="Target letter"><select value={s.targetLetter} onChange={e => sc.update({ targetLetter: e.target.value })} style={selS}>{LETTERS.map(l => <option key={l}>{l}</option>)}</select></L>
-            <L label="Passive AUM unlock $Bn"><NumInput value={s.passiveAumUnlock} onChange={v => sc.update({ passiveAumUnlock: v })} /></L>
-            <L label="Sustainalytics current"><NumInput value={s.sustainalytics.score} onChange={v => sc.update({ sustainalytics: { ...s.sustainalytics, score: v } })} step={0.1} /></L>
-            <L label="Sustainalytics target"><NumInput value={s.sustainalytics.target} onChange={v => sc.update({ sustainalytics: { ...s.sustainalytics, target: v } })} step={0.1} /></L>
-          </div>
-          <Table cols={['Issue', 'Weight %', 'Current score', 'Peer', 'Remediation ₹Cr', 'Months', '']}>
-            {s.issues.map((x, i) => (
-              <tr key={i}>
-                <td style={td}><TextInput value={x.issue} onChange={v => upd(i, 'issue', v)} style={{ width: 200 }} /></td>
-                <td style={td}><NumInput value={x.weight} onChange={v => upd(i, 'weight', v)} style={{ width: 60 }} /></td>
-                <td style={td}><NumInput value={x.score} onChange={v => upd(i, 'score', v)} style={{ width: 70 }} /></td>
-                <td style={td}><NumInput value={x.peer} onChange={v => upd(i, 'peer', v)} style={{ width: 70 }} /></td>
-                <td style={td}><NumInput value={x.cost} onChange={v => upd(i, 'cost', v)} step={0.5} style={{ width: 70 }} /></td>
-                <td style={td}><NumInput value={x.months} onChange={v => upd(i, 'months', v)} style={{ width: 60 }} /></td>
-                <td style={td}><button onClick={() => delIss(i)} style={delBtn}>✕</button></td>
-              </tr>
-            ))}
-          </Table>
-        </Panel>
-      )}
-
-      {tab === 1 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <Panel title="Issue-level radar vs peer">
-            <ResponsiveContainer width="100%" height={360}>
-              <RadarChart data={radarData}>
-                <PolarGrid stroke={T.border} />
-                <PolarAngleAxis dataKey="issue" tick={{ fill: T.textSec, fontSize: 10 }} />
-                <PolarRadiusAxis tick={{ fill: T.textMut, fontSize: 10 }} />
-                <Radar name="Current" dataKey="current" stroke={T.gold} fill={T.gold} fillOpacity={0.3} />
-                <Radar name="Peer" dataKey="peer" stroke={T.sage} fill={T.sage} fillOpacity={0.15} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
-              </RadarChart>
-            </ResponsiveContainer>
-          </Panel>
-          <Panel title="Weighted score progression">
-            <Table cols={['Metric', 'Value']}>
-              <tr><td style={td}>Weighted score (current)</td><td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{weighted.wScore.toFixed(2)} ({currentLetter})</td></tr>
-              <tr><td style={td}>Weighted peer score</td><td style={{ ...td, fontFamily: T.mono }}>{weighted.wPeer.toFixed(2)}</td></tr>
-              <tr><td style={td}>Target score ({s.targetLetter})</td><td style={{ ...td, fontFamily: T.mono, color: T.green }}>{targetScore.toFixed(1)}</td></tr>
-              <tr><td style={td}>Weight sum check</td><td style={{ ...td, fontFamily: T.mono }}>{weighted.sumW}%</td></tr>
-              <tr><td style={td}>Sustainalytics current → target</td><td style={{ ...td, fontFamily: T.mono }}>{s.sustainalytics.score} → {s.sustainalytics.target}</td></tr>
-            </Table>
-          </Panel>
-        </div>
-      )}
-
-      {tab === 2 && (
-        <Panel title="Remediation plan — sorted by cost-per-uplift-point">
-          <Table cols={['Rank', 'Issue', 'Gap', 'Wtd uplift', 'Cost ₹Cr', '₹Cr / point', 'Months']}>
-            {remediation.map((r, i) => (
-              <tr key={i}>
-                <td style={{ ...td, fontFamily: T.mono, color: i < 3 ? T.green : T.textSec }}>{i + 1}</td>
-                <td style={td}>{r.issue}</td>
-                <td style={{ ...td, fontFamily: T.mono }}>{r.gap.toFixed(1)}</td>
-                <td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{r.uplift.toFixed(2)}</td>
-                <td style={{ ...td, fontFamily: T.mono }}>{r.cost}</td>
-                <td style={{ ...td, fontFamily: T.mono, color: i < 3 ? T.green : r.cpi > 2 ? T.red : T.textSec }}>{r.cpi.toFixed(2)}</td>
-                <td style={{ ...td, fontFamily: T.mono }}>{r.months}</td>
-              </tr>
-            ))}
-          </Table>
-          <div style={{ marginTop: 12, padding: 12, background: T.surfaceH, borderRadius: 3, fontSize: 12, color: T.textSec }}>
-            <b style={{ color: T.gold }}>Interpretation:</b> Focus on top-3 (lowest ₹Cr per uplift point) first — typically gets ~60% of the rating gap closed at ~30% of the total cost. Bottom-ranked items (biodiversity, supply chain) require multi-year remediation and should be sequenced across tenor.
-          </div>
-        </Panel>
-      )}
-
-      {tab === 3 && (
-        <Panel title="Passive AUM unlock at ratings thresholds">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={LETTERS.map((l, i) => ({ letter: l, unlock: i * i * 400, current: letterFromScore(weighted.wScore) === l ? 1 : 0, target: s.targetLetter === l ? 1 : 0 }))}>
-              <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
-              <XAxis dataKey="letter" tick={{ fill: T.textSec, fontSize: 11 }} />
-              <YAxis tick={{ fill: T.textSec, fontSize: 11 }} label={{ value: '$Bn AUM (illustrative)', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
-              <Bar dataKey="unlock" fill={T.gold} />
-            </BarChart>
-          </ResponsiveContainer>
-          <div style={{ marginTop: 10, fontSize: 12, color: T.textSec }}>Illustrative — actual unlock depends on specific index inclusion rules (MSCI ACWI SRI, FTSE4Good, DJSI) and fund eligibility. Estimated additional passive flow at BBB+: <b style={{ color: T.gold }}>${s.passiveAumUnlock.toLocaleString()} Bn</b>.</div>
-        </Panel>
-      )}
-
-      {tab === 4 && (
-        <Panel title="Engagement playbook (quarterly)">
-          <Table cols={['Quarter', 'Action', 'Stakeholder', 'Artefact']}>
-            {[
-              ['Q1', 'Submit corrected controversies to MSCI (1–2y lookback)', 'MSCI Controversies team', 'Controversy response pack'],
-              ['Q1', 'Publish first SPR vs SLB KPIs', 'Debt investors, SPO', 'Sustainability Performance Report'],
-              ['Q2', 'MSCI consultative meeting on top-3 remediated issues', 'MSCI ESG Research', '40-slide deep-dive deck'],
-              ['Q2', 'Sustainalytics engagement — residual risk re-scoring', 'Sustainalytics analyst', 'Risk response memo'],
-              ['Q3', 'Analyst Day — ESG transition, Scope 3, LEAP', 'Equity + debt investors', '60-slide Analyst Day deck'],
-              ['Q3', 'Proxinvest / ISS governance engagement', 'Proxy advisors', 'Governance Q&A'],
-              ['Q4', 'Refresh ESG ratings (MSCI + Sustainalytics)', 'Rating agencies', 'Updated scorecards'],
-            ].map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} style={j===0 ? { ...td, fontFamily: T.mono, color: T.gold } : td}>{c}</td>)}</tr>)}
-          </Table>
-        </Panel>
-      )}
-
-      {tab === 5 && (
-        <Panel title="Client deliverable stack">
-          <ul style={{ lineHeight: 1.9, fontSize: 13, color: T.textSec }}>
-            <li><b style={{ color: T.text }}>Issue-level CSV</b> — for internal steering + board. <button style={btnInline} onClick={exportCsv}>Download</button></li>
-            <li><b style={{ color: T.text }}>Scenario state JSON</b>. <button style={btnInline} onClick={exportJson}>Download</button></li>
-            <li><b style={{ color: T.text }}>Uplift Roadmap (HTML/PDF)</b> — board-ready remediation plan. <button style={{ ...btnInline, background: T.gold, color: T.navy, borderColor: T.gold }} onClick={generateRoadmap}>Generate</button></li>
-          </ul>
-        </Panel>
-      )}
-    </div>
+          <Step n={4} title="Generate roadmap">
+            {!ready && <Note level="bad">Add issuer and ≥5 scored issues.</Note>}
+            {ready && <Note level="ok">Ready. Roadmap is sorted by cost-per-uplift-point (quick wins first).</Note>}
+          </Step>
+        </>
+      }
+      rail={
+        <OutputRail
+          label="LIVE RATING PATH"
+          stats={[
+            { label: 'Current', value: currentLetter, sub: currentScore.toFixed(1), color: T.amber },
+            { label: 'Projected', value: projectedLetter, sub: projectedScore.toFixed(1), color: uplifts > 0 ? T.green : T.textSec },
+            { label: 'Peer gap', value: gap.toFixed(1), sub: 'pts below', color: T.textSec },
+            { label: 'AUM unlock', value: `$${aumUnlock.toFixed(0)}M`, sub: `+${uplifts} notch${uplifts !== 1 ? 'es' : ''}`, color: T.green },
+          ]}
+          preview={
+            <div>
+              <div><b style={{ color: T.text }}>{s.issuer}</b></div>
+              <div style={{ marginTop: 4 }}>{s.actions.length} remediation actions · ${totalCost.toFixed(1)}M total cost</div>
+              <div>Top action: <i>{plan[0]?.action || '—'}</i></div>
+            </div>
+          }
+          cta={<PrimaryCTA onClick={onDeliver}>Generate Uplift Roadmap →</PrimaryCTA>}
+          menu={
+            <ToolMenu
+              scenario={sc}
+              onExportCsv={() => downloadText('esg-remediation.csv', toCsv(plan), 'text/csv')}
+              onExportJson={() => downloadText('esg-uplift.json', JSON.stringify(s, null, 2), 'application/json')}
+              onImportCsv={(r) => sc.update({ actions: r.map((x, i) => ({ _id: Date.now() + i, action: x.action || 'Action', issue: x.issue || '', uplift: +x.uplift || 0, costMn: +x.costMn || 0, months: +x.months || 6 })) })}
+              importLabel="Import actions CSV"
+            />
+          }
+        />
+      }
+    />
   );
 }
-
-function L({ label, children }) { return <label style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 12, color: T.textSec }}><span style={{ minWidth: 150 }}>{label}</span>{children}</label>; }
-const selS = { background: T.surface, color: T.text, border: `1px solid ${T.border}`, padding: '4px 6px', fontSize: 12, borderRadius: 2 };
-const addBtn = { background: T.teal, color: T.text, border: 'none', padding: '4px 12px', fontSize: 11, cursor: 'pointer', borderRadius: 3 };
-const delBtn = { background: 'transparent', color: T.red, border: 'none', cursor: 'pointer', fontSize: 14 };
-const btnInline = { background: T.surface, color: T.gold, border: `1px solid ${T.gold}`, padding: '3px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 3, marginLeft: 8 };

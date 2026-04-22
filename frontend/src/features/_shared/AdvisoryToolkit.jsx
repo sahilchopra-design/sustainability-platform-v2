@@ -294,6 +294,182 @@ export function Badge({ level, children }) {
   return <span style={{ background: colors[level] || T.border, color: T.text, fontSize: 11, padding: '2px 8px', borderRadius: 3, fontWeight: 600, fontFamily: T.mono }}>{children}</span>;
 }
 
+// =========================================================================
+// TOOL-LAYOUT PRIMITIVES (worksheet / wizard feel)
+// =========================================================================
+
+export function ToolShell({ header, steps, rail }) {
+  return (
+    <div style={{ minHeight: '100vh', background: T.bg, color: T.text, fontFamily: T.font }}>
+      <div style={{ maxWidth: 1500, margin: '0 auto', padding: '24px 24px 80px' }}>
+        {header}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 380px', gap: 28, alignItems: 'start' }}>
+          <div style={{ minWidth: 0 }}>{steps}</div>
+          <div style={{ position: 'sticky', top: 24 }}>{rail}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Step({ n, title, hint, children, done }) {
+  return (
+    <section style={{ marginBottom: 22, paddingBottom: 22, borderBottom: `1px dashed ${T.borderL}` }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 10 }}>
+        <span style={{ fontFamily: T.mono, fontSize: 11, color: done ? T.green : T.gold, border: `1px solid ${done ? T.green : T.gold}`, padding: '2px 8px', borderRadius: 2, letterSpacing: 1 }}>
+          {done ? '✓' : ('STEP ' + n)}
+        </span>
+        <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.text }}>{title}</h2>
+      </div>
+      {hint && <div style={{ color: T.textMut, fontSize: 12, marginBottom: 10, marginLeft: 2 }}>{hint}</div>}
+      <div style={{ marginLeft: 2 }}>{children}</div>
+    </section>
+  );
+}
+
+export function OutputRail({ label = 'LIVE OUTPUT', stats = [], preview, cta, menu }) {
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.gold}`, borderRadius: 4, padding: 18 }}>
+      <div style={{ fontFamily: T.mono, fontSize: 10, color: T.gold, letterSpacing: 1.8, marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>● {label}</span>
+        {menu}
+      </div>
+      {stats.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
+          {stats.map((s, i) => <Stat key={i} {...s} />)}
+        </div>
+      )}
+      {preview && (
+        <div style={{ borderTop: `1px solid ${T.borderL}`, paddingTop: 12, marginBottom: 14, fontSize: 12, color: T.textSec, lineHeight: 1.6 }}>
+          {preview}
+        </div>
+      )}
+      {cta}
+    </div>
+  );
+}
+
+export function Stat({ label, value, sub, color }) {
+  return (
+    <div style={{ background: T.surfaceH, padding: '10px 12px', borderRadius: 3, border: `1px solid ${T.borderL}` }}>
+      <div style={{ fontSize: 10, color: T.textMut, letterSpacing: 0.5, textTransform: 'uppercase' }}>{label}</div>
+      <div style={{ fontSize: 17, fontFamily: T.mono, color: color || T.text, margin: '3px 0' }}>{value}</div>
+      {sub && <div style={{ fontSize: 10, color: T.textSec }}>{sub}</div>}
+    </div>
+  );
+}
+
+export function PrimaryCTA({ onClick, children }) {
+  return (
+    <button onClick={onClick} style={{
+      width: '100%', background: T.gold, color: T.navy, border: 'none', padding: '14px 16px',
+      fontFamily: T.font, fontSize: 14, fontWeight: 700, letterSpacing: 0.5, cursor: 'pointer',
+      borderRadius: 3, boxShadow: '0 2px 8px rgba(212,168,67,0.2)'
+    }}>{children}</button>
+  );
+}
+
+export function ToolMenu({ scenario, onExportCsv, onExportJson, onImportCsv, importLabel = 'Import CSV' }) {
+  const [open, setOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const fileRef = React.useRef(null);
+  return (
+    <span style={{ position: 'relative' }}>
+      <button onClick={() => setOpen(o => !o)} style={{ background: 'transparent', color: T.textSec, border: `1px solid ${T.border}`, padding: '3px 8px', fontSize: 11, cursor: 'pointer', borderRadius: 2, fontFamily: T.mono }}>⋯ actions</button>
+      {open && (
+        <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 4, background: T.surfaceH, border: `1px solid ${T.border}`, borderRadius: 3, padding: 10, width: 240, zIndex: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}>
+          <div style={{ fontSize: 10, color: T.textMut, letterSpacing: 1, marginBottom: 6 }}>SCENARIO</div>
+          <select value={scenario.scenarioName} onChange={e => { if (e.target.value) scenario.loadScenario(e.target.value); }} style={{ ...selStyle, width: '100%', marginBottom: 6 }}>
+            <option value="Baseline">Baseline</option>
+            {scenario.savedList.map(n => <option key={n} value={n}>{n}</option>)}
+          </select>
+          <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
+            <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="name" style={{ ...selStyle, flex: 1 }} />
+            <button style={btnStyle} onClick={() => { if (newName.trim()) { scenario.saveScenario(newName.trim()); setNewName(''); } }}>Save</button>
+          </div>
+          <div style={{ display: 'flex', gap: 4, marginBottom: 10 }}>
+            <button style={{ ...btnStyle, flex: 1 }} onClick={() => scenario.scenarioName !== 'Baseline' && scenario.deleteScenario(scenario.scenarioName)}>Delete</button>
+            <button style={{ ...btnStyle, flex: 1 }} onClick={scenario.reset}>Reset</button>
+          </div>
+          <div style={{ fontSize: 10, color: T.textMut, letterSpacing: 1, marginBottom: 6 }}>DATA</div>
+          {onImportCsv && (
+            <>
+              <input ref={fileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={async (e) => {
+                const f = e.target.files?.[0]; if (!f) return;
+                onImportCsv(parseCsv(await f.text())); e.target.value = '';
+              }} />
+              <button style={{ ...btnStyle, width: '100%', marginBottom: 4 }} onClick={() => fileRef.current?.click()}>{importLabel}</button>
+            </>
+          )}
+          {onExportCsv && <button style={{ ...btnStyle, width: '100%', marginBottom: 4 }} onClick={onExportCsv}>Export CSV</button>}
+          {onExportJson && <button style={{ ...btnStyle, width: '100%' }} onClick={onExportJson}>Export JSON</button>}
+        </div>
+      )}
+    </span>
+  );
+}
+
+export function FieldRow({ label, hint, children }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 14, alignItems: 'center', padding: '7px 0', borderBottom: `1px solid ${T.borderL}` }}>
+      <div>
+        <div style={{ fontSize: 12, color: T.text }}>{label}</div>
+        {hint && <div style={{ fontSize: 10, color: T.textMut, marginTop: 2 }}>{hint}</div>}
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+export function Worksheet({ cols, rows, onCell, onAdd, onDel, renderRow }) {
+  return (
+    <div style={{ border: `1px solid ${T.border}`, borderRadius: 3, overflow: 'hidden' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `36px ${cols.map(c => c.width || '1fr').join(' ')} 34px`, background: T.surfaceH, borderBottom: `1px solid ${T.border}` }}>
+        <div style={hdrCell}>#</div>
+        {cols.map((c, i) => <div key={i} style={hdrCell}>{c.h}</div>)}
+        <div style={hdrCell}></div>
+      </div>
+      {rows.map((r, i) => (
+        <div key={r._id ?? i} style={{ display: 'grid', gridTemplateColumns: `36px ${cols.map(c => c.width || '1fr').join(' ')} 34px`, borderBottom: `1px solid ${T.borderL}`, background: i % 2 ? T.surface : T.surfaceH }}>
+          <div style={{ ...cell, color: T.textMut, fontFamily: T.mono, fontSize: 11 }}>{i + 1}</div>
+          {renderRow ? renderRow(r, i) : cols.map((c, j) => (
+            <div key={j} style={cell}>
+              {c.edit ? c.edit(r, i) : <span style={{ fontSize: 12, color: T.text, fontFamily: c.mono ? T.mono : T.font }}>{r[c.k]}</span>}
+            </div>
+          ))}
+          <div style={{ ...cell, textAlign: 'center' }}>
+            {onDel && <button onClick={() => onDel(i)} style={xStyle}>×</button>}
+          </div>
+        </div>
+      ))}
+      {onAdd && (
+        <button onClick={onAdd} style={{ width: '100%', background: T.surface, color: T.gold, border: 'none', borderTop: `1px dashed ${T.border}`, padding: '8px', fontSize: 12, cursor: 'pointer', fontFamily: T.mono }}>+ add row</button>
+      )}
+    </div>
+  );
+}
+
+const hdrCell = { padding: '8px 10px', fontSize: 10, color: T.textMut, letterSpacing: 0.5, textTransform: 'uppercase', fontWeight: 500, borderRight: `1px solid ${T.borderL}` };
+const cell = { padding: '6px 10px', fontSize: 12, borderRight: `1px solid ${T.borderL}`, display: 'flex', alignItems: 'center' };
+const xStyle = { background: 'transparent', color: T.red, border: 'none', cursor: 'pointer', fontSize: 14, padding: 0 };
+
+export function Collapsible({ title, children, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div style={{ border: `1px solid ${T.borderL}`, borderRadius: 3, marginTop: 10 }}>
+      <button onClick={() => setOpen(o => !o)} style={{ width: '100%', textAlign: 'left', background: T.surfaceH, color: T.textSec, border: 'none', padding: '8px 12px', fontSize: 12, fontFamily: T.font, cursor: 'pointer', borderRadius: '3px 3px 0 0' }}>
+        {open ? '▾' : '▸'} {title}
+      </button>
+      {open && <div style={{ padding: 12 }}>{children}</div>}
+    </div>
+  );
+}
+
+export function Note({ children, level = 'info' }) {
+  const c = { info: T.teal, warn: T.amber, ok: T.green, bad: T.red }[level];
+  return <div style={{ borderLeft: `3px solid ${c}`, background: T.surfaceH, padding: '8px 12px', fontSize: 12, color: T.textSec, margin: '8px 0' }}>{children}</div>;
+}
+
 // HTML deliverable building blocks (return strings)
 export const html = {
   kpi: (label, value) => `<div class="kpi"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div></div>`,

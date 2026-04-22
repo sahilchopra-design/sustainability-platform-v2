@@ -1,256 +1,202 @@
-import React, { useMemo, useState } from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend } from 'recharts';
-import { T, useScenario, ToolkitBar, NumInput, TextInput, Kpi, Panel, Table, td, TabBar, PageHeader, Badge, downloadText, toCsv, openDeliverable, html } from '../../_shared/AdvisoryToolkit';
+import React, { useMemo } from 'react';
+import {
+  T, useScenario, openDeliverable, toCsv, downloadText, html,
+  ToolShell, Step, OutputRail, PrimaryCTA, ToolMenu,
+  FieldRow, Worksheet, NumInput, TextInput, SelectInput, Collapsible, Note, PageHeader
+} from '../../_shared/AdvisoryToolkit';
+
+const BIOMES = ['Arid / Desert', 'Semi-arid grassland', 'Tropical forest', 'Coastal / Mangrove', 'Temperate forest', 'Wetlands', 'Agricultural mosaic', 'Marine'];
+
+const priorityOf = (a) => Math.min(5, a.dep * 0.4 + a.imp * 0.4 + (a.kbaKm < 10 ? 0.8 : 0.2) + Math.min(1, a.iucnN * 0.15));
 
 const DEFAULTS = {
-  portfolioName: 'Integrated RE-IPP Client (anonymised)',
-  leapProgress: { locate: 92, evaluate: 78, assess: 64, prepare: 48 },
-  pillarMaturity: { governance: 62, strategy: 55, risk: 48, metrics: 41 },
+  entity: 'ACME Renewables',
+  reportingYear: 2025,
   assets: [
-    { id: 'OMN-NH3', name: 'Green NH₃ (Oman)', biome: 'Hyper-arid desert', areaKm2: 92, kbaProximityKm: 12, iucnSpecies: 2, depScore: 4.6, impScore: 4.2, priority: 'Critical', dnshRisk: true },
-    { id: 'ODI-FDR', name: 'Odisha FDRE', biome: 'Tropical forest edge', areaKm2: 48, kbaProximityKm: 5, iucnSpecies: 2, depScore: 3.8, impScore: 3.6, priority: 'High', dnshRisk: false },
-    { id: 'RAJ-SOL', name: 'Rajasthan Solar', biome: 'Thar semi-arid', areaKm2: 74, kbaProximityKm: 0, iucnSpecies: 2, depScore: 3.1, impScore: 4.5, priority: 'Critical', dnshRisk: true },
-    { id: 'GUJ-WND', name: 'Gujarat Wind (Kutch)', biome: 'Saline coastal', areaKm2: 31, kbaProximityKm: 0, iucnSpecies: 2, depScore: 2.4, impScore: 3.9, priority: 'High', dnshRisk: false },
-    { id: 'JPR-MFG', name: 'Jaipur Module Mfg', biome: 'Urban industrial', areaKm2: 1.2, kbaProximityKm: 25, iucnSpecies: 0, depScore: 3.6, impScore: 2.8, priority: 'Medium', dnshRisk: false },
-    { id: 'TN-WND', name: 'Tamil Nadu Wind', biome: 'Western Ghats foothill', areaKm2: 18, kbaProximityKm: 8, iucnSpecies: 1, depScore: 2.9, impScore: 3.2, priority: 'High', dnshRisk: false },
-    { id: 'AP-SOL', name: 'AP Solar', biome: 'Dry deciduous', areaKm2: 22, kbaProximityKm: 18, iucnSpecies: 1, depScore: 2.6, impScore: 2.9, priority: 'Medium', dnshRisk: false },
-    { id: 'MP-SOL', name: 'MP Solar', biome: 'Central Indian dry', areaKm2: 26, kbaProximityKm: 10, iucnSpecies: 2, depScore: 2.8, impScore: 3.1, priority: 'High', dnshRisk: false },
+    { _id: 1, name: 'Rajasthan 50 MW PV', biome: 'Arid / Desert', areaHa: 180, kbaKm: 15, iucnN: 2, dep: 2, imp: 3, dnsh: false },
+    { _id: 2, name: 'Gujarat 40 MW PV', biome: 'Semi-arid grassland', areaHa: 160, kbaKm: 8, iucnN: 4, dep: 2, imp: 4, dnsh: true },
+    { _id: 3, name: 'Karnataka 35 MW PV', biome: 'Temperate forest', areaHa: 140, kbaKm: 22, iucnN: 1, dep: 3, imp: 3, dnsh: false },
+    { _id: 4, name: 'Odisha 30 MW PV', biome: 'Coastal / Mangrove', areaHa: 120, kbaKm: 4, iucnN: 6, dep: 4, imp: 5, dnsh: true },
+    { _id: 5, name: 'TN Rooftop', biome: 'Agricultural mosaic', areaHa: 60, kbaKm: 40, iucnN: 0, dep: 1, imp: 1, dnsh: false },
+    { _id: 6, name: 'MP 25 MW PV', biome: 'Tropical forest', areaHa: 100, kbaKm: 12, iucnN: 3, dep: 3, imp: 4, dnsh: false },
+    { _id: 7, name: 'AP 30 MW PV', biome: 'Semi-arid grassland', areaHa: 110, kbaKm: 18, iucnN: 1, dep: 2, imp: 3, dnsh: false },
+    { _id: 8, name: 'Oman NH₃', biome: 'Arid / Desert', areaHa: 250, kbaKm: 30, iucnN: 2, dep: 2, imp: 3, dnsh: false },
   ],
-  ecoServices: [
-    { svc: 'Freshwater provisioning', dependency: 4.6, revenueAtRiskCr: 18 },
-    { svc: 'Climate regulation (local)', dependency: 3.8, revenueAtRiskCr: 12 },
-    { svc: 'Soil stability', dependency: 3.6, revenueAtRiskCr: 9 },
-    { svc: 'Air quality / dust suppression', dependency: 3.2, revenueAtRiskCr: 8 },
-    { svc: 'Flood regulation', dependency: 2.8, revenueAtRiskCr: 6 },
-    { svc: 'Pollination', dependency: 2.1, revenueAtRiskCr: 3 },
+  leap: { locate: 85, evaluate: 60, assess: 40, prepare: 20 },
+  pillars: { governance: 3, strategy: 3, riskMgmt: 2, metrics: 2 },
+  services: [
+    { _id: 1, service: 'Water provisioning', dependency: 4, revAtRisk: 120 },
+    { _id: 2, service: 'Soil stability', dependency: 3, revAtRisk: 60 },
+    { _id: 3, service: 'Pollination', dependency: 2, revAtRisk: 20 },
+    { _id: 4, service: 'Climate regulation', dependency: 3, revAtRisk: 80 },
+    { _id: 5, service: 'Natural disaster regulation', dependency: 4, revAtRisk: 150 },
+    { _id: 6, service: 'Habitat for biodiversity', dependency: 3, revAtRisk: 50 },
   ],
   opportunities: [
-    { opp: 'Agrivoltaic co-benefit (RAJ/MP/AP)', npvCr: 142, status: 'Scoping' },
-    { opp: 'Thar grassland restoration credit', npvCr: 38, status: 'MoU drafted' },
-    { opp: 'Mangrove offset Gujarat coastal', npvCr: 24, status: 'Pre-feasibility' },
-    { opp: 'Odisha Similipal PES', npvCr: 17, status: 'Conceptual' },
-    { opp: 'Oman acacia afforestation A6.4', npvCr: 56, status: 'Engaged consultant' },
+    { _id: 1, name: 'On-site native grassland restoration', capex: 2.5, npv: 8.0, years: 10 },
+    { _id: 2, name: 'Agri-PV with pollinator mix', capex: 4.0, npv: 12.5, years: 15 },
+    { _id: 3, name: 'Mangrove co-investment (Odisha)', capex: 6.0, npv: 22.0, years: 20 },
+    { _id: 4, name: 'Water stewardship partnership', capex: 1.5, npv: 5.5, years: 10 },
   ],
 };
 
-function priorityScore(a) { return a.depScore * 0.4 + a.impScore * 0.4 + (a.kbaProximityKm < 10 ? 0.8 : 0.2) + (a.iucnSpecies * 0.15); }
-const TABS = ['Inputs & Assets', 'LEAP & Pillars', 'Ecosystem Services', 'Opportunities (NPV)', 'DNSH Flags', 'Deliverables'];
-
 export default function TnfdBiodiversityBaselinePage() {
-  const sc = useScenario('eb6_tnfd', DEFAULTS);
-  const [tab, setTab] = useState(0);
+  const sc = useScenario('tnfd-biodiversity', DEFAULTS);
   const s = sc.state;
 
-  const assets = useMemo(() => s.assets.map(a => ({ ...a, priorityScore: priorityScore(a) })), [s.assets]);
-  const critical = assets.filter(a => a.priority === 'Critical').length;
-  const dnshAtRisk = assets.filter(a => a.dnshRisk).length;
-  const avgDep = (assets.reduce((x, a) => x + a.depScore, 0) / Math.max(1, assets.length)).toFixed(2);
-  const avgImp = (assets.reduce((x, a) => x + a.impScore, 0) / Math.max(1, assets.length)).toFixed(2);
-  const totalArea = assets.reduce((x, a) => x + a.areaKm2, 0);
-  const oppNpv = s.opportunities.reduce((x, o) => x + o.npvCr, 0);
-  const ecoRaR = s.ecoServices.reduce((x, e) => x + e.revenueAtRiskCr, 0);
-  const leapAvg = Object.values(s.leapProgress).reduce((a, b) => a + b, 0) / 4;
-  const pillarAvg = Object.values(s.pillarMaturity).reduce((a, b) => a + b, 0) / 4;
+  const rows = useMemo(() => s.assets.map(a => ({ ...a, priority: priorityOf(a) })), [s.assets]);
+  const highPriority = rows.filter(r => r.priority >= 3.5).length;
+  const totalArea = s.assets.reduce((x, a) => x + a.areaHa, 0);
+  const leapAvg = (s.leap.locate + s.leap.evaluate + s.leap.assess + s.leap.prepare) / 4;
+  const pillarAvg = (s.pillars.governance + s.pillars.strategy + s.pillars.riskMgmt + s.pillars.metrics) / 4;
+  const totalRaR = s.services.reduce((x, s2) => x + s2.revAtRisk, 0);
+  const totalNpv = s.opportunities.reduce((x, o) => x + o.npv, 0);
+  const totalCapex = s.opportunities.reduce((x, o) => x + o.capex, 0);
+  const dnshCount = s.assets.filter(a => a.dnsh).length;
+  const ready = s.assets.length >= 1 && s.entity.trim();
 
-  const upd = (i, k, v) => sc.update(st => ({ assets: st.assets.map((a, j) => j === i ? { ...a, [k]: v } : a) }));
-  const addA = () => sc.update(st => ({ assets: [...st.assets, { id: `NEW-${st.assets.length+1}`, name: 'New', biome: '', areaKm2: 0, kbaProximityKm: 99, iucnSpecies: 0, depScore: 2, impScore: 2, priority: 'Medium', dnshRisk: false }] }));
-  const delA = (i) => sc.update(st => ({ assets: st.assets.filter((_, j) => j !== i) }));
+  const upd = (k) => (v) => sc.update({ [k]: v });
+  const updAsset = (i, k, v) => sc.update({ assets: s.assets.map((a, j) => j === i ? { ...a, [k]: v } : a) });
+  const updSvc = (i, k, v) => sc.update({ services: s.services.map((x, j) => j === i ? { ...x, [k]: v } : x) });
+  const updOpp = (i, k, v) => sc.update({ opportunities: s.opportunities.map((x, j) => j === i ? { ...x, [k]: v } : x) });
 
-  const exportCsv = () => downloadText(`EB6_TNFD_${sc.scenarioName}.csv`, toCsv(assets.map(a => ({
-    id: a.id, name: a.name, biome: a.biome, area_km2: a.areaKm2, kba_km: a.kbaProximityKm, iucn_species: a.iucnSpecies,
-    dep_score: a.depScore, imp_score: a.impScore, priority_score: +a.priorityScore.toFixed(2), priority: a.priority, dnsh_at_risk: a.dnshRisk ? 'Yes' : 'No',
-  }))), 'text/csv');
-  const exportJson = () => downloadText(`EB6_${sc.scenarioName}.json`, JSON.stringify({ module: 'EB6', state: s, assets }, null, 2), 'application/json');
-
-  const generateDisclosure = () => {
-    const content = [
-      html.h1('TNFD Biodiversity Baseline & Disclosure Pack'),
-      html.meta({ Portfolio: s.portfolioName, Standard: 'TNFD v2.0 (Sep 2025) · LEAP · SBTN v1.0', Scenario: sc.scenarioName }),
-      html.h2('Executive Summary'),
-      html.kpi('Assets assessed', assets.length) + html.kpi('Critical priority', critical) + html.kpi('DNSH at-risk', dnshAtRisk) + html.kpi('Area km²', totalArea.toFixed(0)) + html.kpi('Opp NPV', `₹${oppNpv.toFixed(0)} Cr`) + html.kpi('Eco-svc RaR', `₹${ecoRaR.toFixed(0)} Cr/yr`),
-      html.h2('1. LEAP Phase Progress'),
-      html.table(['Phase', '% Complete'], [['L — Locate', s.leapProgress.locate + '%'], ['E — Evaluate', s.leapProgress.evaluate + '%'], ['A — Assess', s.leapProgress.assess + '%'], ['P — Prepare', s.leapProgress.prepare + '%']]),
-      html.h2('2. TNFD 4-Pillar Maturity'),
-      html.table(['Pillar', 'Maturity %'], [['Governance', s.pillarMaturity.governance + '%'], ['Strategy', s.pillarMaturity.strategy + '%'], ['Risk & Impact Mgmt', s.pillarMaturity.risk + '%'], ['Metrics & Targets', s.pillarMaturity.metrics + '%']]),
-      html.h2('3. Priority Assets (sensitive locations)'),
-      html.table(['ID', 'Name', 'Biome', 'Area km²', 'KBA km', 'IUCN spp', 'Dep', 'Imp', 'Priority', 'DNSH'],
-        assets.map(a => [a.id, a.name, a.biome, a.areaKm2, a.kbaProximityKm === 0 ? 'Overlap' : a.kbaProximityKm + 'km', a.iucnSpecies, a.depScore, a.impScore, a.priority, a.dnshRisk ? 'At Risk' : 'Aligned'])),
-      html.h2('4. Ecosystem Service Dependencies (ENCORE v2)'),
-      html.table(['Service', 'Dependency 1–5', 'Rev at risk ₹Cr/yr'], s.ecoServices.map(e => [e.svc, e.dependency, e.revenueAtRiskCr])),
-      html.h2('5. Nature-Positive Opportunities'),
-      html.table(['Opportunity', 'NPV ₹Cr', 'Status'], s.opportunities.map(o => [o.opp, o.npvCr, o.status])),
-      html.h2('6. DNSH to Biodiversity (EU Taxonomy)'),
-      html.p(`${dnshAtRisk} of ${assets.length} assets flagged At-Risk on biodiversity DNSH. Mitigation hierarchy (Avoid → Minimise → Restore → Offset) required for Rajasthan GIB corridor and Oman NH₃ KBA proximity. ~₹1,820 Cr of green-bond issuance tied to these assets pending remediation.`),
-      html.h2('7. SBTN v1.0 Progression'),
-      html.p('Step 1 (Assess) complete. Step 2 (Interpret & Prioritise) in progress. Steps 3–5 (Measure, Act, Track) scheduled FY27. Targets will cover freshwater withdrawal intensity, land-footprint/MW, and no-deforestation supply chain.'),
+  const onDeliver = () => {
+    const body = [
+      html.h1(`TNFD Biodiversity Disclosure — ${s.entity}`),
+      html.meta({ 'Reporting year': s.reportingYear, Assets: s.assets.length, 'Total area (ha)': totalArea, Generated: new Date().toLocaleDateString() }),
+      html.h2('1. Executive Summary'),
+      html.p(`Baseline assessment covering ${s.assets.length} assets across ${totalArea.toLocaleString()} hectares. ${highPriority} site${highPriority !== 1 ? 's' : ''} flagged as high priority. ${dnshCount} site${dnshCount !== 1 ? 's' : ''} with potential DNSH (Do No Significant Harm) flags.`),
+      html.h2('2. LEAP Progression'),
+      html.table(['Phase', 'Completion %'], [
+        ['Locate', `${s.leap.locate}%`], ['Evaluate', `${s.leap.evaluate}%`], ['Assess', `${s.leap.assess}%`], ['Prepare', `${s.leap.prepare}%`]
+      ]),
+      html.h2('3. TNFD Pillar Maturity'),
+      html.table(['Pillar', 'Maturity (0–5)'], [
+        ['Governance', s.pillars.governance], ['Strategy', s.pillars.strategy], ['Risk & Impact Mgmt', s.pillars.riskMgmt], ['Metrics & Targets', s.pillars.metrics]
+      ]),
+      html.h2('4. Asset Register'),
+      html.table(['Asset', 'Biome', 'Area ha', 'KBA km', 'IUCN #', 'Dep', 'Imp', 'Priority', 'DNSH'],
+        rows.map(r => [r.name, r.biome, r.areaHa, r.kbaKm, r.iucnN, r.dep, r.imp, r.priority.toFixed(1), r.dnsh ? html.badge('amber', 'FLAG') : '—'])),
+      html.h2('5. Ecosystem Services Materiality'),
+      html.table(['Service', 'Dependency', 'Revenue at Risk ($M)'], s.services.map(x => [x.service, x.dependency, x.revAtRisk])),
+      html.h2('6. Nature-Positive Opportunities'),
+      html.table(['Programme', 'Capex $M', 'NPV $M', 'Years'], s.opportunities.map(x => [x.name, x.capex.toFixed(1), x.npv.toFixed(1), x.years])),
+      html.h2('7. DNSH Summary'),
+      html.p(dnshCount > 0 ? `${dnshCount} site${dnshCount > 1 ? 's' : ''} require mitigation plans: ${s.assets.filter(a => a.dnsh).map(a => a.name).join(', ')}.` : 'No DNSH flags raised at current baseline.'),
       html.h2('8. Recommendation'),
-      html.p(`Priority 1: mitigation hierarchy execution at ${critical} Critical assets. Priority 2: launch ₹${oppNpv.toFixed(0)} Cr nature-positive opportunity portfolio — agrivoltaics and grassland restoration deliver highest risk-adjusted NPV. Priority 3: SBTN target-setting by Q4 to unlock SLB KPI credibility and CSDDD readiness.`),
+      html.p(`${ready && pillarAvg >= 3 ? html.badge('green', 'ALIGN') : html.badge('amber', 'ADVANCE')} — Continue LEAP progression; prioritise ${highPriority} high-priority sites for species surveys in FY${s.reportingYear + 1}.`),
     ].join('');
-    openDeliverable(content, `TNFD Disclosure Pack — ${s.portfolioName}`);
+    openDeliverable(body, `TNFD Disclosure — ${s.entity}`);
   };
 
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: T.font, color: T.text, padding: '28px 40px' }}>
-      <PageHeader code="EP-EB6" title="TNFD Biodiversity Baseline & LEAP" subtitle={`${s.portfolioName} · TNFD v2.0 · LEAP · SBTN v1.0 · ${assets.length} priority assets · ${totalArea.toFixed(0)} km²`} />
-      <ToolkitBar moduleCode="EB6" scenario={sc} onExportCsv={exportCsv} onExportJson={exportJson} onDeliverable={generateDisclosure}
-        importLabel="Import Assets CSV"
-        onImportCsv={(rows) => { if (rows.length) sc.update({ assets: rows.map(r => ({
-          id: r.id, name: r.name, biome: r.biome || '', areaKm2: Number(r.area_km2 || r.areaKm2) || 0, kbaProximityKm: Number(r.kba_km || r.kbaProximityKm) || 99, iucnSpecies: Number(r.iucn_species || r.iucnSpecies) || 0,
-          depScore: Number(r.dep_score || r.depScore) || 0, impScore: Number(r.imp_score || r.impScore) || 0, priority: r.priority || 'Medium', dnshRisk: String(r.dnsh_at_risk || r.dnshRisk).toLowerCase() === 'yes' || String(r.dnsh_at_risk).toLowerCase() === 'true',
-        })) }); }} />
+    <ToolShell
+      header={<PageHeader code="EP-EB6 · TNFD" title="Biodiversity Baseline Tool" subtitle="LEAP-methodology biodiversity baseline: asset scoring, ecosystem service materiality, nature-positive opportunity pipeline." />}
+      steps={
+        <>
+          <Step n={1} title="Reporting entity">
+            <FieldRow label="Entity"><TextInput value={s.entity} onChange={upd('entity')} style={{ width: 320 }} /></FieldRow>
+            <FieldRow label="Reporting year"><NumInput value={s.reportingYear} onChange={upd('reportingYear')} /></FieldRow>
+          </Step>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 12, marginBottom: 18 }}>
-        <Kpi label="Priority assets" value={assets.length} sub={`${critical} Critical · ${totalArea.toFixed(0)} km²`} />
-        <Kpi label="LEAP progress (avg)" value={`${leapAvg.toFixed(0)}%`} sub="Across 4 phases" color={leapAvg > 70 ? T.green : T.amber} />
-        <Kpi label="Pillar maturity (avg)" value={`${pillarAvg.toFixed(0)}%`} sub="TNFD 4 pillars" color={pillarAvg > 55 ? T.green : T.amber} />
-        <Kpi label="DNSH at-risk" value={dnshAtRisk} sub="EU Taxonomy biodiversity" color={dnshAtRisk > 0 ? T.red : T.green} />
-        <Kpi label="Opp NPV" value={`₹${oppNpv} Cr`} sub={`${s.opportunities.length} opportunities`} color={T.gold} />
-      </div>
+          <Step n={2} title="Asset register & priority scoring" hint="Priority = dep×0.4 + imp×0.4 + KBA<10km×0.8 + IUCN×0.15 (max 5).">
+            <Worksheet
+              cols={[
+                { h: 'Asset', width: '1.6fr', edit: (r, i) => <TextInput value={r.name} onChange={v => updAsset(i, 'name', v)} style={{ width: '100%' }} /> },
+                { h: 'Biome', width: '1.3fr', edit: (r, i) => <SelectInput value={r.biome} onChange={v => updAsset(i, 'biome', v)} options={BIOMES} style={{ width: '100%' }} /> },
+                { h: 'Ha', width: '70px', edit: (r, i) => <NumInput value={r.areaHa} onChange={v => updAsset(i, 'areaHa', v)} style={{ width: 56 }} /> },
+                { h: 'KBA km', width: '70px', edit: (r, i) => <NumInput value={r.kbaKm} onChange={v => updAsset(i, 'kbaKm', v)} style={{ width: 50 }} /> },
+                { h: 'IUCN', width: '60px', edit: (r, i) => <NumInput value={r.iucnN} onChange={v => updAsset(i, 'iucnN', v)} style={{ width: 42 }} /> },
+                { h: 'Dep 0–5', width: '70px', edit: (r, i) => <NumInput value={r.dep} onChange={v => updAsset(i, 'dep', v)} min={0} max={5} style={{ width: 42 }} /> },
+                { h: 'Imp 0–5', width: '70px', edit: (r, i) => <NumInput value={r.imp} onChange={v => updAsset(i, 'imp', v)} min={0} max={5} style={{ width: 42 }} /> },
+                { h: 'Priority', width: '80px', edit: (r) => {
+                    const p = priorityOf(r);
+                    return <span style={{ fontFamily: T.mono, fontSize: 12, color: p >= 3.5 ? T.red : p >= 2 ? T.amber : T.green }}>{p.toFixed(1)}</span>;
+                  } },
+                { h: 'DNSH?', width: '60px', edit: (r, i) => <input type="checkbox" checked={r.dnsh} onChange={e => updAsset(i, 'dnsh', e.target.checked)} /> },
+              ]}
+              rows={rows}
+              onAdd={() => sc.update({ assets: [...s.assets, { _id: Date.now(), name: 'New asset', biome: 'Semi-arid grassland', areaHa: 50, kbaKm: 20, iucnN: 1, dep: 2, imp: 2, dnsh: false }] })}
+              onDel={(i) => sc.update({ assets: s.assets.filter((_, j) => j !== i) })}
+            />
+          </Step>
 
-      <TabBar tabs={TABS} tab={tab} setTab={setTab} />
+          <Step n={3} title="LEAP & pillar maturity" hint="TNFD methodology: Locate → Evaluate → Assess → Prepare. Pillars are maturity 0–5.">
+            <FieldRow label="Locate %"><NumInput value={s.leap.locate} onChange={v => sc.update({ leap: { ...s.leap, locate: v } })} min={0} max={100} /></FieldRow>
+            <FieldRow label="Evaluate %"><NumInput value={s.leap.evaluate} onChange={v => sc.update({ leap: { ...s.leap, evaluate: v } })} min={0} max={100} /></FieldRow>
+            <FieldRow label="Assess %"><NumInput value={s.leap.assess} onChange={v => sc.update({ leap: { ...s.leap, assess: v } })} min={0} max={100} /></FieldRow>
+            <FieldRow label="Prepare %"><NumInput value={s.leap.prepare} onChange={v => sc.update({ leap: { ...s.leap, prepare: v } })} min={0} max={100} /></FieldRow>
+            <Collapsible title="Pillar maturity (Gov / Strat / Risk / Metrics)">
+              <FieldRow label="Governance"><NumInput value={s.pillars.governance} onChange={v => sc.update({ pillars: { ...s.pillars, governance: v } })} min={0} max={5} /></FieldRow>
+              <FieldRow label="Strategy"><NumInput value={s.pillars.strategy} onChange={v => sc.update({ pillars: { ...s.pillars, strategy: v } })} min={0} max={5} /></FieldRow>
+              <FieldRow label="Risk & Impact Mgmt"><NumInput value={s.pillars.riskMgmt} onChange={v => sc.update({ pillars: { ...s.pillars, riskMgmt: v } })} min={0} max={5} /></FieldRow>
+              <FieldRow label="Metrics & Targets"><NumInput value={s.pillars.metrics} onChange={v => sc.update({ pillars: { ...s.pillars, metrics: v } })} min={0} max={5} /></FieldRow>
+            </Collapsible>
+          </Step>
 
-      {tab === 0 && (
-        <Panel title={`Asset-level biodiversity register (${assets.length}) — depscore/impscore 1–5`} right={<button style={addBtn} onClick={addA}>+ Add</button>}>
-          <div style={{ display: 'flex', gap: 20, marginBottom: 14, flexWrap: 'wrap' }}>
-            <L label="Portfolio"><TextInput value={s.portfolioName} onChange={v => sc.update({ portfolioName: v })} style={{ width: 220 }} /></L>
-            <span style={{ fontSize: 11, color: T.textMut, alignSelf: 'center' }}>Mean dep {avgDep} · mean imp {avgImp}</span>
-          </div>
-          <Table cols={['ID', 'Name', 'Biome', 'Area km²', 'KBA km', 'IUCN spp', 'Dep', 'Imp', 'Priority score', 'Priority', 'DNSH risk', '']}>
-            {assets.map((a, i) => (
-              <tr key={i}>
-                <td style={{ ...td, fontFamily: T.mono, fontSize: 11 }}>{a.id}</td>
-                <td style={td}><TextInput value={a.name} onChange={v => upd(i, 'name', v)} style={{ width: 160 }} /></td>
-                <td style={td}><TextInput value={a.biome} onChange={v => upd(i, 'biome', v)} style={{ width: 160 }} /></td>
-                <td style={td}><NumInput value={a.areaKm2} onChange={v => upd(i, 'areaKm2', v)} step={0.5} style={{ width: 60 }} /></td>
-                <td style={td}><NumInput value={a.kbaProximityKm} onChange={v => upd(i, 'kbaProximityKm', v)} style={{ width: 50 }} /></td>
-                <td style={td}><NumInput value={a.iucnSpecies} onChange={v => upd(i, 'iucnSpecies', v)} style={{ width: 45 }} /></td>
-                <td style={td}><NumInput value={a.depScore} onChange={v => upd(i, 'depScore', v)} min={0} max={5} step={0.1} style={{ width: 50 }} /></td>
-                <td style={td}><NumInput value={a.impScore} onChange={v => upd(i, 'impScore', v)} min={0} max={5} step={0.1} style={{ width: 50 }} /></td>
-                <td style={{ ...td, fontFamily: T.mono, color: T.gold }}>{a.priorityScore.toFixed(2)}</td>
-                <td style={td}>
-                  <select value={a.priority} onChange={e => upd(i, 'priority', e.target.value)} style={selS}>
-                    <option>Critical</option><option>High</option><option>Medium</option><option>Low</option>
-                  </select>
-                </td>
-                <td style={{ ...td, textAlign: 'center' }}><input type="checkbox" checked={a.dnshRisk} onChange={e => upd(i, 'dnshRisk', e.target.checked)} /></td>
-                <td style={td}><button onClick={() => delA(i)} style={delBtn}>✕</button></td>
-              </tr>
-            ))}
-          </Table>
-        </Panel>
-      )}
+          <Step n={4} title="Ecosystem services">
+            <Worksheet
+              cols={[
+                { h: 'Service', width: '2fr', edit: (r, i) => <TextInput value={r.service} onChange={v => updSvc(i, 'service', v)} style={{ width: '100%' }} /> },
+                { h: 'Dependency', width: '110px', edit: (r, i) => <NumInput value={r.dependency} onChange={v => updSvc(i, 'dependency', v)} min={0} max={5} /> },
+                { h: 'RaR ($M)', width: '100px', edit: (r, i) => <NumInput value={r.revAtRisk} onChange={v => updSvc(i, 'revAtRisk', v)} /> },
+              ]}
+              rows={s.services}
+              onAdd={() => sc.update({ services: [...s.services, { _id: Date.now(), service: 'New service', dependency: 2, revAtRisk: 20 }] })}
+              onDel={(i) => sc.update({ services: s.services.filter((_, j) => j !== i) })}
+            />
+          </Step>
 
-      {tab === 1 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <Panel title="LEAP phase completion">
-            {Object.entries(s.leapProgress).map(([k, v]) => (
-              <div key={k} style={{ marginBottom: 14 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                  <b style={{ color: T.gold, textTransform: 'capitalize' }}>{k}</b>
-                  <NumInput value={v} onChange={nv => sc.update({ leapProgress: { ...s.leapProgress, [k]: nv } })} min={0} max={100} suffix="%" />
-                </div>
-                <div style={{ background: T.border, height: 8, borderRadius: 4 }}>
-                  <div style={{ background: v >= 70 ? T.green : v >= 50 ? T.amber : T.red, height: '100%', width: `${v}%`, borderRadius: 4 }} />
-                </div>
-              </div>
-            ))}
-          </Panel>
-          <Panel title="TNFD pillar maturity">
-            <ResponsiveContainer width="100%" height={300}>
-              <RadarChart data={Object.entries(s.pillarMaturity).map(([k, v]) => ({ pillar: k, maturity: v, target: 85 }))}>
-                <PolarGrid stroke={T.border} />
-                <PolarAngleAxis dataKey="pillar" tick={{ fill: T.text, fontSize: 11 }} />
-                <PolarRadiusAxis domain={[0, 100]} tick={{ fill: T.textMut, fontSize: 10 }} />
-                <Radar name="Current" dataKey="maturity" stroke={T.gold} fill={T.gold} fillOpacity={0.4} />
-                <Radar name="Target" dataKey="target" stroke={T.sage} fill={T.sage} fillOpacity={0.15} />
-                <Legend wrapperStyle={{ fontSize: 11, color: T.textSec }} />
-                <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
-              </RadarChart>
-            </ResponsiveContainer>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {Object.entries(s.pillarMaturity).map(([k, v]) => (
-                <label key={k} style={{ fontSize: 11, color: T.textSec }}>{k} <NumInput value={v} onChange={nv => sc.update({ pillarMaturity: { ...s.pillarMaturity, [k]: nv } })} min={0} max={100} style={{ width: 55 }} /></label>
-              ))}
+          <Step n={5} title="Nature-positive opportunities">
+            <Worksheet
+              cols={[
+                { h: 'Programme', width: '2fr', edit: (r, i) => <TextInput value={r.name} onChange={v => updOpp(i, 'name', v)} style={{ width: '100%' }} /> },
+                { h: 'Capex $M', width: '90px', edit: (r, i) => <NumInput value={r.capex} onChange={v => updOpp(i, 'capex', v)} step={0.1} /> },
+                { h: 'NPV $M', width: '90px', edit: (r, i) => <NumInput value={r.npv} onChange={v => updOpp(i, 'npv', v)} step={0.1} /> },
+                { h: 'Years', width: '70px', edit: (r, i) => <NumInput value={r.years} onChange={v => updOpp(i, 'years', v)} /> },
+                { h: 'ROI', width: '70px', edit: (r) => <span style={{ fontFamily: T.mono, color: T.gold, fontSize: 12 }}>{r.capex > 0 ? (r.npv / r.capex).toFixed(1) : '—'}x</span> },
+              ]}
+              rows={s.opportunities}
+              onAdd={() => sc.update({ opportunities: [...s.opportunities, { _id: Date.now(), name: 'New programme', capex: 1, npv: 3, years: 10 }] })}
+              onDel={(i) => sc.update({ opportunities: s.opportunities.filter((_, j) => j !== i) })}
+            />
+          </Step>
+
+          <Step n={6} title="Generate disclosure pack">
+            {!ready && <Note level="bad">Add entity name and at least one asset.</Note>}
+            {ready && <Note level="ok">Ready. Deliverable is TNFD v1.0 aligned with LEAP evidence table.</Note>}
+          </Step>
+        </>
+      }
+      rail={
+        <OutputRail
+          label="LIVE TNFD RESULT"
+          stats={[
+            { label: 'High-priority sites', value: `${highPriority}/${s.assets.length}`, sub: 'score ≥ 3.5', color: highPriority > 0 ? T.amber : T.green },
+            { label: 'LEAP avg', value: `${leapAvg.toFixed(0)}%`, sub: 'across 4 phases', color: leapAvg >= 60 ? T.green : T.amber },
+            { label: 'Pillar maturity', value: `${pillarAvg.toFixed(1)}/5`, sub: 'TNFD 4 pillars', color: pillarAvg >= 3 ? T.green : T.amber },
+            { label: 'Opportunity NPV', value: `$${totalNpv.toFixed(1)}M`, sub: `capex $${totalCapex.toFixed(1)}M`, color: T.green },
+          ]}
+          preview={
+            <div>
+              <div><b style={{ color: T.text }}>{s.entity}</b> · FY{s.reportingYear}</div>
+              <div style={{ marginTop: 4 }}>{s.assets.length} assets · {totalArea.toLocaleString()} ha</div>
+              <div>Rev-at-risk (eco services): ${totalRaR}M</div>
+              <div>DNSH flags: <b style={{ color: dnshCount > 0 ? T.amber : T.green }}>{dnshCount}</b></div>
             </div>
-          </Panel>
-        </div>
-      )}
-
-      {tab === 2 && (
-        <Panel title="Ecosystem service dependency & revenue at risk">
-          <Table cols={['Service', 'Dependency 1–5', 'Rev at risk ₹Cr/yr', '']}>
-            {s.ecoServices.map((e, i) => (
-              <tr key={i}>
-                <td style={td}>{e.svc}</td>
-                <td style={td}><NumInput value={e.dependency} onChange={v => sc.update(st => ({ ecoServices: st.ecoServices.map((x, j) => j === i ? { ...x, dependency: v } : x) }))} min={0} max={5} step={0.1} /></td>
-                <td style={td}><NumInput value={e.revenueAtRiskCr} onChange={v => sc.update(st => ({ ecoServices: st.ecoServices.map((x, j) => j === i ? { ...x, revenueAtRiskCr: v } : x) }))} step={1} /></td>
-                <td style={td}><button style={delBtn} onClick={() => sc.update(st => ({ ecoServices: st.ecoServices.filter((_, j) => j !== i) }))}>✕</button></td>
-              </tr>
-            ))}
-          </Table>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={s.ecoServices}>
-              <CartesianGrid stroke={T.border} strokeDasharray="3 3" />
-              <XAxis dataKey="svc" tick={{ fill: T.textSec, fontSize: 10 }} angle={-20} textAnchor="end" height={80} interval={0} />
-              <YAxis tick={{ fill: T.textSec, fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: T.surfaceH, border: `1px solid ${T.border}` }} />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="dependency" fill={T.gold} name="Dependency" />
-              <Bar dataKey="revenueAtRiskCr" fill={T.teal} name="₹Cr/yr RaR" />
-            </BarChart>
-          </ResponsiveContainer>
-        </Panel>
-      )}
-
-      {tab === 3 && (
-        <Panel title={`Nature-positive opportunities — cumulative NPV ₹${oppNpv} Cr`}>
-          <Table cols={['Opportunity', 'NPV ₹Cr', 'Status', '']}>
-            {s.opportunities.map((o, i) => (
-              <tr key={i}>
-                <td style={td}><TextInput value={o.opp} onChange={v => sc.update(st => ({ opportunities: st.opportunities.map((x, j) => j === i ? { ...x, opp: v } : x) }))} style={{ width: 300 }} /></td>
-                <td style={td}><NumInput value={o.npvCr} onChange={v => sc.update(st => ({ opportunities: st.opportunities.map((x, j) => j === i ? { ...x, npvCr: v } : x) }))} /></td>
-                <td style={td}><TextInput value={o.status} onChange={v => sc.update(st => ({ opportunities: st.opportunities.map((x, j) => j === i ? { ...x, status: v } : x) }))} /></td>
-                <td style={td}><button style={delBtn} onClick={() => sc.update(st => ({ opportunities: st.opportunities.filter((_, j) => j !== i) }))}>✕</button></td>
-              </tr>
-            ))}
-          </Table>
-          <button style={{ ...addBtn, marginTop: 10 }} onClick={() => sc.update(st => ({ opportunities: [...st.opportunities, { opp: 'New opportunity', npvCr: 0, status: 'Scoping' }] }))}>+ Add opportunity</button>
-        </Panel>
-      )}
-
-      {tab === 4 && (
-        <Panel title="EU Taxonomy DNSH — biodiversity environmental objective">
-          <Table cols={['Asset', 'KBA proximity', 'IUCN species', 'DNSH flag']}>
-            {assets.map((a, i) => (
-              <tr key={i}>
-                <td style={td}><b>{a.name}</b></td>
-                <td style={{ ...td, fontFamily: T.mono, color: a.kbaProximityKm < 5 ? T.red : a.kbaProximityKm < 15 ? T.amber : T.green }}>{a.kbaProximityKm === 0 ? 'Overlap' : a.kbaProximityKm + ' km'}</td>
-                <td style={{ ...td, fontFamily: T.mono }}>{a.iucnSpecies}</td>
-                <td style={td}>{a.dnshRisk ? <Badge level="bad">At Risk</Badge> : <Badge level="good">Aligned</Badge>}</td>
-              </tr>
-            ))}
-          </Table>
-          <div style={{ marginTop: 14, padding: 12, background: T.surfaceH, borderRadius: 3, fontSize: 12, color: T.textSec }}>
-            <b style={{ color: T.gold }}>Mitigation hierarchy:</b> Avoid → Minimise → Restore → Offset. Assets flagged At Risk cannot qualify for EU-Taxonomy-aligned green bond proceeds until DNSH remediation is verified. ~₹1,820 Cr of planned issuance is contingent on this pathway.
-          </div>
-        </Panel>
-      )}
-
-      {tab === 5 && (
-        <Panel title="Client deliverable stack">
-          <ul style={{ lineHeight: 1.9, fontSize: 13, color: T.textSec }}>
-            <li><b style={{ color: T.text }}>Asset register CSV</b> — for ERM / audit. <button style={btnInline} onClick={exportCsv}>Download</button></li>
-            <li><b style={{ color: T.text }}>Scenario state JSON</b>. <button style={btnInline} onClick={exportJson}>Download</button></li>
-            <li><b style={{ color: T.text }}>TNFD Disclosure Pack (HTML/PDF)</b> — LEAP + SBTN + DNSH + opportunity portfolio. <button style={{ ...btnInline, background: T.gold, color: T.navy, borderColor: T.gold }} onClick={generateDisclosure}>Generate</button></li>
-          </ul>
-        </Panel>
-      )}
-    </div>
+          }
+          cta={<PrimaryCTA onClick={onDeliver}>Generate TNFD Pack →</PrimaryCTA>}
+          menu={
+            <ToolMenu
+              scenario={sc}
+              onExportCsv={() => downloadText('tnfd-assets.csv', toCsv(rows), 'text/csv')}
+              onExportJson={() => downloadText('tnfd-scenario.json', JSON.stringify(s, null, 2), 'application/json')}
+              onImportCsv={(r) => sc.update({ assets: r.map((x, i) => ({ _id: Date.now() + i, name: x.name || 'Asset', biome: x.biome || 'Semi-arid grassland', areaHa: +x.areaHa || 0, kbaKm: +x.kbaKm || 20, iucnN: +x.iucnN || 0, dep: +x.dep || 2, imp: +x.imp || 2, dnsh: x.dnsh === 'true' || x.dnsh === true })) })}
+              importLabel="Import assets CSV"
+            />
+          }
+        />
+      }
+    />
   );
 }
-
-function L({ label, children }) { return <label style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 12, color: T.textSec }}><span style={{ minWidth: 110 }}>{label}</span>{children}</label>; }
-const selS = { background: T.surface, color: T.text, border: `1px solid ${T.border}`, padding: '4px 6px', fontSize: 12, borderRadius: 2 };
-const addBtn = { background: T.teal, color: T.text, border: 'none', padding: '4px 12px', fontSize: 11, cursor: 'pointer', borderRadius: 3 };
-const delBtn = { background: 'transparent', color: T.red, border: 'none', cursor: 'pointer', fontSize: 14 };
-const btnInline = { background: T.surface, color: T.gold, border: `1px solid ${T.gold}`, padding: '3px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 3, marginLeft: 8 };
