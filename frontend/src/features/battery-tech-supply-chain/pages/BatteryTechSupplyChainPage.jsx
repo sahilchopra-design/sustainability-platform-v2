@@ -715,6 +715,34 @@ export default function BatteryTechSupplyChainPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Cell cost through scale-up ($/kWh)"
       peers={{ cols: [{ k: 'mfr', label: 'Cell maker' }, { k: 'gwh', label: 'GWh cap', fmt: (v) => `${v}` }, { k: 'chem', label: 'Dominant chemistry' }, { k: 'cost', label: 'Cost ($/kWh)', fmt: (v) => `$${v}` }, { k: 'region', label: 'Region' }],
         rows: [{ mfr: 'CATL',        gwh: 650, chem: 'LFP / NMC',  cost: 68,  region: 'CN' }, { mfr: 'BYD',         gwh: 285, chem: 'LFP (Blade)', cost: 72,  region: 'CN' }, { mfr: 'LG Energy',   gwh: 345, chem: 'NMC / NCM9',  cost: 82,  region: 'KR/US' }, { mfr: 'Samsung SDI', gwh: 190, chem: 'NCA / NMC',   cost: 86,  region: 'KR/HU' }, { mfr: 'Panasonic',   gwh: 175, chem: 'NCA',          cost: 88,  region: 'JP/US' }, { mfr: 'Northvolt',   gwh: 85,  chem: 'NMC 811',      cost: 98,  region: 'EU' }] }}
+        indiaContext={{
+          subtitle: 'PLI-ACC · Critical minerals · KABIL JV · Giga roadmap',
+          regulations: [
+            { tag: 'PLI-ACC (50 GWh)', status: 'active' },
+            { tag: 'Critical Minerals List (30)', status: 'active' },
+            { tag: 'KABIL mining JVs (Argentina Li)', status: 'active' },
+            { tag: 'BIS IS 16893 cell standard', status: 'active' },
+            { tag: 'Battery Swap Policy', status: 'partial' },
+            { tag: 'Lithium J&K discovery (5.9 Mt)', status: 'active' },
+          ],
+          kpis: [
+            { label: 'PLI-ACC capacity awarded', value: '40 GWh', detail: 'Reliance+Ola+ACC Energy+Waaree' },
+            { label: 'India cell import (2024)', value: '$2.1B' },
+            { label: 'J&K Li reserve estimate', value: '5.9 Mt' },
+            { label: 'India EV battery demand 2030', value: '123 GWh' },
+          ],
+          peers: { title: 'INDIAN BATTERY MAKERS / PLI WINNERS',
+            cols: [{ k: 'co', label: 'Company' }, { k: 'gwh', label: 'PLI GWh' }, { k: 'chem', label: 'Chemistry' }, { k: 'loc', label: 'Location' }, { k: 'stage', label: 'Stage' }],
+            rows: [
+              { co: 'Reliance New Energy', gwh: '10', chem: 'LFP+NMC', loc: 'Jamnagar', stage: 'Construction' },
+              { co: 'Ola Electric', gwh: '20', chem: 'NMC 4680', loc: 'Krishnagiri', stage: 'Pilot ops' },
+              { co: 'ACC Energy Storage', gwh: '5', chem: 'LFP', loc: 'Gujarat', stage: 'FEED' },
+              { co: 'Waaree Energies', gwh: '5', chem: 'LFP', loc: 'Surat/Chikhli', stage: 'Construction' },
+              { co: 'Amara Raja Batteries', gwh: '16 (T-II)', chem: 'LFP', loc: 'Telangana', stage: 'FID' },
+              { co: 'Exide Industries (EESL JV)', gwh: '12', chem: 'LFP+NMC', loc: 'Bengaluru', stage: 'Construction' },
+            ] },
+          notes: 'India lithium discovery in J&K (Reasi, 5.9 Mt) is strategically significant but commercial extraction requires 5–7 yrs of feasibility+permitting. Near-term, KABIL JV (Argentina Catamarca) and Australia (Hancock, Finniss) are key offtake routes. NMC-to-LFP shift in PLI filings reflects cost pressure.',
+        }}
       />
     </div>
   );

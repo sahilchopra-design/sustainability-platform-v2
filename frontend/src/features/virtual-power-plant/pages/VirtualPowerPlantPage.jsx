@@ -544,6 +544,34 @@ export default function VirtualPowerPlantPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — VPP EBITDA uplift ($M)"
       peers={{ cols: [{ k: 'agg', label: 'Aggregator' }, { k: 'mw', label: 'MW under mgmt', fmt: (v) => `${v}` }, { k: 'mkts', label: 'Markets' }, { k: 'mgn', label: 'Gross margin', fmt: (v) => `${v}%` }, { k: 'ctry', label: 'Country' }],
         rows: [{ agg: 'Next Kraftwerke',   mw: 11500, mkts: 'FCR/aFRR/mFRR/arb', mgn: 22, ctry: 'DE/EU' }, { agg: 'Sonnen Community',  mw: 450,   mkts: 'FCR/DSR',           mgn: 18, ctry: 'DE/US' }, { agg: 'Tesla Autobidder',  mw: 3500,  mkts: 'FCAS/arb',           mgn: 28, ctry: 'AU/US' }, { agg: 'Voltalis',          mw: 1600,  mkts: 'DSR/cap mkt',        mgn: 19, ctry: 'FR' }, { agg: 'Stem Athena',       mw: 1200,  mkts: 'C&I arb+DR',         mgn: 24, ctry: 'US' }, { agg: 'Octopus Kraken',    mw: 2200,  mkts: 'BM/FFR/arb',         mgn: 20, ctry: 'UK' }] }}
+        indiaContext={{
+          subtitle: 'CERC ancillary · DISCOM pilots · IEX RT market',
+          regulations: [
+            { tag: 'CERC Ancillary Services', status: 'active' },
+            { tag: 'IEX RTM / DAM / GTAM', status: 'active' },
+            { tag: 'CEA VPP aggregator framework', status: 'partial' },
+            { tag: 'Net metering <500 kW', status: 'active' },
+            { tag: 'TOD tariffs (10 states)', status: 'active' },
+            { tag: 'Demand Flexibility (BEE draft)', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'IEX daily volume', value: '~400 GWh' },
+            { label: 'Aggregator pilots', value: '7 DISCOMs' },
+            { label: 'TOD peak/off-peak', value: '1.2–0.8x', detail: 'GERC/MERC' },
+            { label: 'C&I flex MW (potential)', value: '4 GW' },
+          ],
+          peers: { title: 'INDIAN VPP / DR AGGREGATORS',
+            cols: [{ k: 'agg', label: 'Aggregator' }, { k: 'mw', label: 'MW aggregated' }, { k: 'mkt', label: 'Market' }, { k: 'seg', label: 'Segment' }, { k: 'state', label: 'State' }],
+            rows: [
+              { agg: 'Fourth Partner Energy (VPP)', mw: '280', mkt: 'IEX RTM+DR', seg: 'C&I rooftop+BESS', state: 'Pan-India' },
+              { agg: 'Sheru', mw: '150', mkt: 'Ancillary pilots', seg: 'Telecom towers', state: 'KA/MH' },
+              { agg: 'Amplus Solar DR', mw: '220', mkt: 'C&I DR', seg: 'Industrial loads', state: 'MP/GJ' },
+              { agg: 'Tata Power DISCOM DR', mw: '180', mkt: 'Captive DR', seg: 'Residential', state: 'MH/DL' },
+              { agg: 'BSES Rajdhani DR', mw: '120', mkt: 'Pilot', seg: 'LT commercial', state: 'DL' },
+              { agg: 'EverSource Capital VPP', mw: '90', mkt: 'RTM+Anc', seg: 'C&I', state: 'TN' },
+            ] },
+          notes: 'India VPP is at pilot stage with CERC ancillary services market opening to aggregators in 2024. Real opportunity sits in C&I TOD arbitrage (₹2–5/kWh peak-to-off-peak) and DISCOM-commissioned DR programs. IEX RTM offers 15-min granularity for VPP bids since 2020.',
+        }}
       />
     </div>
   );

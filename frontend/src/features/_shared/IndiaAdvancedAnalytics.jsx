@@ -215,6 +215,7 @@ export default function IndiaAdvancedAnalytics({
   peers, brsrDefault = ['brsr1', 'brsr4', 'brsr5', 'brsr6'],
   frameworkBLabel = 'SEBI BRSR CORE COVERAGE', frameworkBRingLabel = 'BRSR',
   frameworkB = BRSR_CORE, scenarioPathsLabel = 'NGFS × IEA × domestic paths',
+  indiaContext,
 }) {
   const [mcN, setMcN] = useState(1000);
   const [reseed, setReseed] = useState(0);
@@ -340,8 +341,8 @@ export default function IndiaAdvancedAnalytics({
 
       {/* Row 4: Peer comparables */}
       {peers && peers.rows && peers.rows.length > 0 && (
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14 }}>
-          <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, marginBottom: 10 }}>PEER / BENCHMARK COMPARABLES</div>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14, marginBottom: 16 }}>
+          <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, marginBottom: 10 }}>{peers.title || 'PEER / BENCHMARK COMPARABLES'}</div>
           <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
             <thead><tr style={{ color: T.textMut }}>
               {peers.cols.map(c => <th key={c.k} style={{ padding: 6, textAlign: c.align || 'left', fontFamily: T.mono }}>{c.label}</th>)}
@@ -356,6 +357,65 @@ export default function IndiaAdvancedAnalytics({
               </tr>
             ))}</tbody>
           </table>
+        </div>
+      )}
+
+      {/* Row 5: India Market Context (regulatory badges + Indian peers + KPIs) */}
+      {indiaContext && (
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: 14, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 14 }}>🇮🇳</span>
+            <div style={{ fontFamily: T.mono, fontSize: 11, color: T.gold, letterSpacing: 1 }}>INDIA MARKET CONTEXT</div>
+            {indiaContext.subtitle && <div style={{ fontSize: 10, color: T.textMut, fontFamily: T.mono }}>· {indiaContext.subtitle}</div>}
+          </div>
+
+          {indiaContext.regulations && indiaContext.regulations.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+              {indiaContext.regulations.map((r, i) => (
+                <span key={i} title={r.detail || ''} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 8px', background: T.surfaceH, border: `1px solid ${T.borderL}`, borderRadius: 12, fontSize: 10, fontFamily: T.mono, color: r.status === 'active' ? T.green : r.status === 'partial' ? T.amber : T.textSec }}>
+                  {r.status === 'active' ? '●' : r.status === 'partial' ? '◐' : '○'} {r.tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {indiaContext.kpis && indiaContext.kpis.length > 0 && (
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(4, indiaContext.kpis.length)}, 1fr)`, gap: 10, marginBottom: 12 }}>
+              {indiaContext.kpis.map((k, i) => (
+                <div key={i} style={{ padding: 8, background: T.surfaceH, borderRadius: 4, borderLeft: `3px solid ${T.gold}` }}>
+                  <div style={{ fontSize: 9, color: T.textMut, fontFamily: T.mono, letterSpacing: 0.5 }}>{k.label}</div>
+                  <div style={{ fontSize: 14, color: T.text, fontFamily: T.mono, fontWeight: 700, marginTop: 2 }}>{k.value}</div>
+                  {k.detail && <div style={{ fontSize: 9, color: T.textMut, marginTop: 2 }}>{k.detail}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {indiaContext.peers && indiaContext.peers.rows && indiaContext.peers.rows.length > 0 && (
+            <div>
+              <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textSec, marginBottom: 6 }}>{indiaContext.peers.title || 'INDIAN PEER BENCHMARKS'}</div>
+              <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
+                <thead><tr style={{ color: T.textMut }}>
+                  {indiaContext.peers.cols.map(c => <th key={c.k} style={{ padding: 6, textAlign: c.align || 'left', fontFamily: T.mono }}>{c.label}</th>)}
+                </tr></thead>
+                <tbody>{indiaContext.peers.rows.map((r, i) => (
+                  <tr key={i} style={{ borderTop: `1px solid ${T.borderL}` }}>
+                    {indiaContext.peers.cols.map(c => {
+                      const v = r[c.k];
+                      const disp = c.fmt ? c.fmt(v, r) : v;
+                      return <td key={c.k} style={{ padding: 6, textAlign: c.align || 'left', fontFamily: c.mono ? T.mono : T.font, color: c.color ? c.color(v, r) : T.text }}>{disp}</td>;
+                    })}
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
+
+          {indiaContext.notes && (
+            <div style={{ marginTop: 10, padding: '8px 10px', background: T.surfaceH, borderRadius: 4, fontSize: 10, color: T.textSec, fontFamily: T.mono, lineHeight: 1.5 }}>
+              {indiaContext.notes}
+            </div>
+          )}
         </div>
       )}
     </div>

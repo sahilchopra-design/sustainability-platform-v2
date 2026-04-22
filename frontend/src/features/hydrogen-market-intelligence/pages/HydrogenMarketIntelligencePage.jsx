@@ -595,6 +595,33 @@ export default function HydrogenMarketIntelligencePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Clean H2 demand (Mt)"
       peers={{ cols: [{ k: 'exp', label: 'Exporter' }, { k: 'cap', label: 'Cap 2030 (GW)', fmt: (v) => `${v}` }, { k: 'lcoh', label: 'LCOH ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'policy', label: 'Policy' }, { k: 'risk', label: 'Geo risk' }],
         rows: [{ exp: 'Australia',  cap: 45, lcoh: 2.20, policy: 'H2Headstart',     risk: 'Low' }, { exp: 'Chile',      cap: 25, lcoh: 1.80, policy: 'H2 Strategy',     risk: 'Med' }, { exp: 'Saudi Arabia', cap: 35, lcoh: 1.70, policy: 'NEOM',             risk: 'Med' }, { exp: 'Morocco',    cap: 12, lcoh: 2.10, policy: 'National H2 Plan', risk: 'Med' }, { exp: 'Canada',     cap: 10, lcoh: 2.50, policy: 'ITC 30%',          risk: 'Low' }, { exp: 'India',      cap: 25, lcoh: 2.80, policy: 'SIGHT',            risk: 'Med' }] }}
+        indiaContext={{
+          subtitle: 'NGHM · India H2 demand by sector · Export market',
+          regulations: [
+            { tag: 'NGHM (5 MMT by 2030)', status: 'active' },
+            { tag: 'Refining H2 mandate', status: 'active' },
+            { tag: 'Fertilizer NH3 switch', status: 'active' },
+            { tag: 'Steel DRI roadmap', status: 'partial' },
+            { tag: 'H2 corridor — Japan, EU, Korea', status: 'active' },
+          ],
+          kpis: [
+            { label: 'India H2 demand 2024', value: '6.5 MMT/yr', detail: 'Grey' },
+            { label: 'India H2 demand 2030', value: '11 MMT', detail: 'NGHM projection' },
+            { label: 'Export potential 2030', value: '2 MMT', detail: 'EU/Japan/Korea' },
+            { label: 'Refining share', value: '54%', detail: 'Of current demand' },
+          ],
+          peers: { title: 'INDIA H2 DEMAND BY SECTOR',
+            cols: [{ k: 'sec', label: 'Sector' }, { k: 'cur', label: '2024 (MMT)' }, { k: 'tgt', label: '2030 (MMT)' }, { k: 'mode', label: 'Mode' }, { k: 'green', label: 'Green switch' }],
+            rows: [
+              { sec: 'Refining', cur: '3.5', tgt: '4.5', mode: 'SMR', green: 'Partial' },
+              { sec: 'Fertilizer (NH3)', cur: '2.4', tgt: '3.2', mode: 'SMR/coal gas', green: 'Target 3 MMT green' },
+              { sec: 'Steel (DRI)', cur: '0.3', tgt: '2.0', mode: 'NG/coke', green: 'Pilot JSW/Tata' },
+              { sec: 'Methanol/Chem', cur: '0.2', tgt: '0.6', mode: 'Coal/NG', green: 'Early' },
+              { sec: 'Mobility (FCEV)', cur: '<0.01', tgt: '0.3', mode: 'N/A', green: 'Pilot corridor' },
+              { sec: 'Export', cur: '0', tgt: '2.0', mode: 'NH3/LH2', green: 'SIGHT Mode-2' },
+            ] },
+          notes: 'India is 4th-largest H2 consumer globally (6.5 MMT/yr). Refining and fertilizer are captive demand; steel (DRI-H2) is the largest greenfield opportunity. Export corridors to Japan (800 ktpa NH3) and EU (500 ktpa) are SIGHT-backed.',
+        }}
       />
     </div>
   );

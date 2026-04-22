@@ -672,6 +672,34 @@ export default function BessProjectFinancePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — BESS IRR via arbitrage depth (%)"
       peers={{ cols: [{ k: 'own', label: 'Owner' }, { k: 'fleet', label: 'Fleet GWh', fmt: (v) => `${v.toFixed(1)}` }, { k: 'lcos', label: 'LCOS ($/MWh)', fmt: (v) => `$${v.toFixed(0)}` }, { k: 'irr', label: 'Run IRR', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'rev', label: 'Rev stack' }],
         rows: [{ own: 'Gresham House ES', fleet: 1.1, lcos: 165, irr: 13.5, rev: 'FCR+arb' }, { own: 'Zenobe',            fleet: 1.5, lcos: 150, irr: 14.2, rev: 'FCR+arb+DSR' }, { own: 'Fluence portf',     fleet: 4.2, lcos: 155, irr: 13.0, rev: 'Arb+aFRR+DSR' }, { own: 'RWE Storage',       fleet: 2.8, lcos: 158, irr: 12.8, rev: 'Cap+arb+FCR' }, { own: 'Neoen',             fleet: 2.3, lcos: 148, irr: 14.8, rev: 'FCAS+arb' }, { own: 'Plus Power',        fleet: 2.0, lcos: 152, irr: 13.8, rev: 'RA+arb' }] }}
+        indiaContext={{
+          subtitle: 'CERC ancillary mkt · PLI ACC · SECI BESS tenders',
+          regulations: [
+            { tag: 'PLI-ACC (₹18,100 Cr)', status: 'active', detail: '50 GWh ACC cells' },
+            { tag: 'SECI BESS Tender FDRE/StandAlone', status: 'active' },
+            { tag: 'CERC Ancillary Services Regs 2015/24', status: 'active' },
+            { tag: 'CEA Net Metering BESS', status: 'active' },
+            { tag: 'VGF for Standalone BESS', status: 'active', detail: '₹3,760 Cr allocation' },
+            { tag: 'GST on BESS (18% → 12% proposal)', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'India BESS target 2030', value: '74 GWh' },
+            { label: 'SECI Standalone cleared', value: '4 GWh', detail: 'FY25 cumul' },
+            { label: 'Avg cleared tariff', value: '₹3.84 lakh/MW/month', detail: 'Capacity charge' },
+            { label: 'VGF (per MWh)', value: 'Up to ₹27 lakh' },
+          ],
+          peers: { title: 'INDIAN BESS PROJECT COMPS',
+            cols: [{ k: 'proj', label: 'Project' }, { k: 'mwh', label: 'MWh' }, { k: 'owner', label: 'Owner' }, { k: 'tariff', label: 'Tariff (₹L/MW-mth)' }, { k: 'cod', label: 'COD' }],
+            rows: [
+              { proj: 'SECI SA-BESS Tr-I (Rajasthan)', mwh: '500', owner: 'JSW Neo', tariff: '4.49', cod: '2026' },
+              { proj: 'SECI SA-BESS Tr-II (Gujarat)', mwh: '1,000', owner: 'GMR+Reliance', tariff: '4.22', cod: '2026' },
+              { proj: 'SJVN FDRE Punjab', mwh: '1,500', owner: 'SJVN', tariff: '4.38', cod: '2027' },
+              { proj: 'NTPC Solar+BESS Kutch', mwh: '600', owner: 'NTPC', tariff: '3.95', cod: '2026' },
+              { proj: 'Adani Khavda FDRE', mwh: '3,000', owner: 'Adani Green', tariff: '4.14', cod: '2026-27' },
+              { proj: 'Tata Power Aravalli BESS', mwh: '500', owner: 'Tata Power', tariff: '4.05', cod: '2026' },
+            ] },
+          notes: 'India BESS finance is shifting from 2-hr frequency response to 4-hr capacity-pricing auctions (SECI SA-BESS, MSEDCL, GUVNL). Cleared tariffs of ₹3.8–4.5 L/MW/month imply project IRR of 11–13% with VGF support. PLI-ACC targets 50 GWh domestic cell capacity by 2030.',
+        }}
       />
     </div>
   );

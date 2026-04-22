@@ -441,6 +441,33 @@ export default function RenewableProjectPipelinePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Risk-weighted pipeline (GW)"
       peers={{ cols: [{ k: 'dev', label: 'Developer' }, { k: 'pipe', label: 'Pipeline GW', fmt: (v) => `${v.toFixed(1)}` }, { k: 'conv', label: 'Conv rate', fmt: (v) => `${(v*100).toFixed(0)}%` }, { k: 'gic', label: 'GIC hit', fmt: (v) => `${v}%` }, { k: 'ncc', label: 'Net cap' }],
         rows: [{ dev: 'NextEra', pipe: 24, conv: 0.45, gic: 32, ncc: '10.8 GW' }, { dev: 'AES Clean', pipe: 15, conv: 0.40, gic: 30, ncc: '6.0 GW' }, { dev: 'EDF Renewables', pipe: 18, conv: 0.38, gic: 28, ncc: '6.8 GW' }, { dev: 'Invenergy', pipe: 22, conv: 0.42, gic: 31, ncc: '9.2 GW' }, { dev: 'Clearway', pipe: 12, conv: 0.41, gic: 29, ncc: '4.9 GW' }, { dev: 'sPower', pipe: 8, conv: 0.44, gic: 33, ncc: '3.5 GW' }] }}
+        indiaContext={{
+          subtitle: 'SECI · NTPC · GUVNL · MSEDCL auction pipeline',
+          regulations: [
+            { tag: 'SECI ISTS-connected tender', status: 'active' },
+            { tag: 'GUVNL State Tender', status: 'active' },
+            { tag: 'PM-KUSUM (agri solar)', status: 'active' },
+            { tag: 'PLI Manufacturing link', status: 'active' },
+            { tag: 'CEA Transmission Planning', status: 'active' },
+          ],
+          kpis: [
+            { label: 'Tender pipeline 2025', value: '50 GW', detail: 'SECI + state DISCOMs' },
+            { label: 'Under construction', value: '47 GW', detail: 'As of Q1 2025' },
+            { label: 'Conversion rate', value: '68%', detail: 'Bid-to-PPA' },
+            { label: 'GIC queue', value: '220 GW', detail: 'Interconnect applications' },
+          ],
+          peers: { title: 'INDIAN DEVELOPER PIPELINE',
+            cols: [{ k: 'dev', label: 'Developer' }, { k: 'pipe', label: 'Pipeline GW' }, { k: 'won', label: 'Won FY25 GW' }, { k: 'avg', label: 'Avg tariff (₹/kWh)' }, { k: 'mix', label: 'Mix' }],
+            rows: [
+              { dev: 'NTPC Green', pipe: '19.5', won: '3.5', avg: '2.85', mix: 'Solar+Wind+Hybrid' },
+              { dev: 'Adani Green', pipe: '13.6', won: '2.4', avg: '2.95', mix: 'Solar+Hybrid' },
+              { dev: 'ReNew', pipe: '9.1', won: '1.8', avg: '3.05', mix: 'Solar+Wind+FDRE' },
+              { dev: 'Tata Power Renewables', pipe: '7.2', won: '1.2', avg: '3.10', mix: 'Solar+Wind' },
+              { dev: 'Juniper Green', pipe: '3.2', won: '0.7', avg: '3.15', mix: 'Solar' },
+              { dev: 'Avaada Energy', pipe: '5.8', won: '1.0', avg: '2.98', mix: 'Solar+Hybrid' },
+            ] },
+          notes: 'India FDRE (Firm Dispatchable RE) auctions at ₹4.2–₹4.8/kWh are reshaping pipeline economics, favoring developers with storage/hybrid capability. ISTS connectivity backlog is the binding constraint for 60+ GW of 2027+ COD projects.',
+        }}
       />
     </div>
   );

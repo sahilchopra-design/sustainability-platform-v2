@@ -548,6 +548,34 @@ export default function GridFlexibilityMarketsPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Ancillary services $/MW-yr"
       peers={{ cols: [{ k: 'mkt', label: 'TSO / Market' }, { k: 'fcr', label: 'FCR ($/MW-yr)', fmt: (v) => `$${(v/1000).toFixed(0)}k` }, { k: 'afrr', label: 'aFRR ($/MW-yr)', fmt: (v) => `$${(v/1000).toFixed(0)}k` }, { k: 'cap', label: 'Cap mkt' }, { k: 'ctry', label: 'Country' }],
         rows: [{ mkt: 'PICASSO / MARI EU', fcr: 180000, afrr: 240000, cap: 'MS-level', ctry: 'EU' }, { mkt: 'ENTSO-E DE',      fcr: 160000, afrr: 220000, cap: 'Strategic R', ctry: 'DE' }, { mkt: 'National Grid ESO',fcr: 125000, afrr: 145000, cap: 'T-4/T-1',    ctry: 'UK' }, { mkt: 'EirGrid DS3',     fcr: 105000, afrr: 135000, cap: 'Capacity',   ctry: 'IE' }, { mkt: 'CAISO',           fcr: 70000,  afrr: 95000,  cap: 'RA market',  ctry: 'US-CA' }, { mkt: 'AEMO FCAS',       fcr: 180000, afrr: 260000, cap: 'RRO',        ctry: 'AU' }] }}
+        indiaContext={{
+          subtitle: 'CERC markets · POSOCO · NLDC ancillary price cap',
+          regulations: [
+            { tag: 'CERC Ancillary Services 2015/24', status: 'active' },
+            { tag: 'NLDC / RLDC merit order', status: 'active' },
+            { tag: 'DSM penalty graded', status: 'active' },
+            { tag: 'IEX RTM 15-min', status: 'active' },
+            { tag: 'GNA (General Network Access)', status: 'active' },
+            { tag: 'Resource Adequacy (draft 2024)', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'Ancillary clearing price', value: '₹0.85–1.50/kWh', detail: 'SCED cap' },
+            { label: 'IEX RTM cleared price', value: '₹3.2/kWh avg', detail: 'FY24' },
+            { label: 'DSM settlement', value: '₹85 Cr/month' },
+            { label: 'Flexibility pool (draft)', value: '15 GW' },
+          ],
+          peers: { title: 'INDIAN ANCILLARY MARKET METRICS',
+            cols: [{ k: 'mkt', label: 'Market' }, { k: 'price', label: 'Avg price (₹/kWh)' }, { k: 'vol', label: 'Daily vol (MWh)' }, { k: 'participants', label: 'Participants' }, { k: 'notes', label: 'Notes' }],
+            rows: [
+              { mkt: 'SCED (Reserve Regulation)', price: '1.25', vol: '2,800', participants: 'CGS+ISTS', notes: 'POSOCO operator' },
+              { mkt: 'Tertiary Reserve', price: '1.05', vol: '1,200', participants: 'Open', notes: 'Ramping' },
+              { mkt: 'IEX RTM', price: '3.20', vol: '60,000', participants: '150+', notes: '15-min' },
+              { mkt: 'IEX DAM', price: '4.50', vol: '4,20,000', participants: '4,500+', notes: 'Day-ahead' },
+              { mkt: 'IEX GTAM (Green)', price: '4.15', vol: '12,000', participants: '200+', notes: 'RE only' },
+              { mkt: 'Contingency Reserve', price: '0.85', vol: '800', participants: 'CGS', notes: '10-sec' },
+            ] },
+          notes: 'India ancillary market is still ~₹300 Cr/yr (SCED+Tertiary), small vs EU (~€3B). The 2024 CERC Ancillary Services Regulations opens fast-acting reserves (<1 sec) to BESS/VPP aggregators. Resource Adequacy framework (draft Dec 2024) could add capacity market ~₹4 L/MW/month.',
+        }}
       />
     </div>
   );

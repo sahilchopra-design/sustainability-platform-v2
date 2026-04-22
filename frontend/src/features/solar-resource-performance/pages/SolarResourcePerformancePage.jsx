@@ -1414,6 +1414,33 @@ export default function SolarResourcePerformancePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Yield under heat stress (GWh)"
       peers={{ cols: [{ k: 'site', label: 'Region/Site' }, { k: 'ghi', label: 'GHI (kWh/m²/yr)' }, { k: 'pr', label: 'PR (%)', fmt: (v) => `${(v*100).toFixed(1)}%` }, { k: 'soil', label: 'Soiling (%)', fmt: (v) => `${(v*100).toFixed(1)}%` }, { k: 'deg', label: 'Degrad (%/yr)', fmt: (v) => `${(v*100).toFixed(2)}%` }],
         rows: [{ site: 'Rajasthan IN', ghi: 2150, pr: 0.79, soil: 0.028, deg: 0.006 }, { site: 'Atacama CL', ghi: 2550, pr: 0.82, soil: 0.018, deg: 0.004 }, { site: 'NV / SW US', ghi: 2100, pr: 0.83, soil: 0.012, deg: 0.005 }, { site: 'Andalusia ES', ghi: 1850, pr: 0.81, soil: 0.010, deg: 0.005 }, { site: 'Queensland AU', ghi: 1980, pr: 0.80, soil: 0.015, deg: 0.006 }, { site: 'Riyadh SA', ghi: 2250, pr: 0.77, soil: 0.040, deg: 0.007 }] }}
+        indiaContext={{
+          subtitle: 'NISE · MNRE PSS · IMD solar radiation stations',
+          regulations: [
+            { tag: 'NISE / MNRE PQM spec', status: 'active' },
+            { tag: 'IS/IEC 61724-1 PR std', status: 'active' },
+            { tag: 'CEA DSM regulations', status: 'active' },
+            { tag: 'BIS IS 14286 / 16221', status: 'active' },
+            { tag: 'CPRI module testing', status: 'active' },
+          ],
+          kpis: [
+            { label: 'Avg GHI (Rajasthan)', value: '2,150 kWh/m²' },
+            { label: 'Avg India PR', value: '78–82%', detail: 'Lower in humid SE' },
+            { label: 'Soiling loss (avg)', value: '2.8%/yr', detail: 'Up to 6% pre-monsoon' },
+            { label: 'Degrad (India field)', value: '0.65%/yr', detail: 'vs 0.5%/yr nameplate' },
+          ],
+          peers: { title: 'INDIAN SITE BENCHMARKS',
+            cols: [{ k: 'site', label: 'Site/State' }, { k: 'ghi', label: 'GHI (kWh/m²)' }, { k: 'pr', label: 'PR (%)' }, { k: 'soil', label: 'Soiling (%)' }, { k: 'deg', label: 'Degrad (%/yr)' }],
+            rows: [
+              { site: 'Bhadla (RJ)', ghi: 2200, pr: 79, soil: 4.2, deg: 0.7 },
+              { site: 'Pavagada (KA)', ghi: 1980, pr: 80, soil: 2.5, deg: 0.6 },
+              { site: 'Kurnool (AP)', ghi: 1950, pr: 81, soil: 2.1, deg: 0.55 },
+              { site: 'Rewa (MP)', ghi: 1880, pr: 80, soil: 2.8, deg: 0.65 },
+              { site: 'Charanka (GJ)', ghi: 2050, pr: 79, soil: 3.5, deg: 0.68 },
+              { site: 'Kadapa (AP)', ghi: 1920, pr: 81, soil: 2.3, deg: 0.6 },
+            ] },
+          notes: 'Indian PV plants see 50–100 bps higher degradation than IEC nameplate due to heat, humidity and dust. Pre-monsoon soiling in Rajasthan/Gujarat can exceed 6% without robotic cleaning.',
+        }}
       />
     </div>
   );

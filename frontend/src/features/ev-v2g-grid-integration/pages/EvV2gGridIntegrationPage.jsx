@@ -582,6 +582,34 @@ export default function EvV2gGridIntegrationPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — V2G arbitrage revenue per vehicle ($/yr)"
       peers={{ cols: [{ k: 'plat', label: 'V2G platform' }, { k: 'fleet', label: 'EVs', fmt: (v) => `${v.toLocaleString()}` }, { k: 'std', label: 'Std' }, { k: 'rev', label: 'Rev ($/yr)', fmt: (v) => `$${v}` }, { k: 'reg', label: 'Region' }],
         rows: [{ plat: 'Nuvve',            fleet: 5200,  std: 'ISO15118-20', rev: 1400, reg: 'US/EU' }, { plat: 'Fermata Energy',   fleet: 1800,  std: 'CHAdeMO',     rev: 1600, reg: 'US' }, { plat: 'dcbel',            fleet: 3500,  std: 'ISO15118-2',  rev: 1100, reg: 'NA' }, { plat: 'The Mobility House',fleet: 14500, std: 'ISO15118-20', rev: 1900, reg: 'EU' }, { plat: 'Wallbox Quasar',   fleet: 6800,  std: 'ISO15118-2',  rev: 1300, reg: 'EU' }, { plat: 'Octopus Powerloop',fleet: 1200,  std: 'ISO15118-2',  rev: 1800, reg: 'UK' }] }}
+        indiaContext={{
+          subtitle: 'FAME-III · Battery Swap Policy · BEE charging guidelines',
+          regulations: [
+            { tag: 'FAME-III (₹10,900 Cr)', status: 'active' },
+            { tag: 'Battery Swapping Policy', status: 'partial' },
+            { tag: 'BEE Charging Infra Guidelines', status: 'active' },
+            { tag: 'ISO 15118-2 adoption', status: 'partial', detail: 'Mandatory post-2025' },
+            { tag: 'V2G — CEA draft regs', status: 'partial' },
+            { tag: 'DISCOM TOD tariffs (EV)', status: 'active' },
+          ],
+          kpis: [
+            { label: 'India EV sales FY25', value: '1.9 M', detail: 'All segments' },
+            { label: 'Charging points', value: '21,500', detail: 'Public ECPS' },
+            { label: 'EV bus fleet', value: '10,800', detail: 'Under FAME/CESL' },
+            { label: '2030 EV stock (est)', value: '85 M' },
+          ],
+          peers: { title: 'INDIAN V2G / BIDIRECTIONAL PILOTS',
+            cols: [{ k: 'proj', label: 'Project' }, { k: 'oem', label: 'OEM / Partner' }, { k: 'fleet', label: 'Fleet' }, { k: 'std', label: 'Standard' }, { k: 'stage', label: 'Stage' }],
+            rows: [
+              { proj: 'IIT-B + Tata V2G Lab', oem: 'Tata Motors', fleet: '50 Nexon', std: 'ISO 15118-20', stage: 'Lab' },
+              { proj: 'Mahindra XUV400 V2G', oem: 'Mahindra+Delta', fleet: '25', std: 'CHAdeMO+CCS2', stage: 'Pilot' },
+              { proj: 'JBM Bus V2G pilot', oem: 'JBM+Glida', fleet: '10 buses', std: 'CCS2', stage: 'Pilot' },
+              { proj: 'Zypp-Exponent Swap', oem: 'Zypp+Exponent', fleet: '20K 2W', std: 'Swap', stage: 'Commercial' },
+              { proj: 'Ather Energy Grid', oem: 'Ather', fleet: 'Future', std: 'ISO 15118', stage: 'R&D' },
+              { proj: 'BESCOM V2G residential', oem: 'BESCOM+Tata P.', fleet: '12 HH', std: 'ISO 15118-2', stage: 'Pilot' },
+            ] },
+          notes: 'India V2G is nascent; mainstream OEMs (Tata, Mahindra) have activated CCS2 bidirectional ports but DISCOM-side regs + TOD tariffs are not yet rationalized. Battery swapping (Zypp/Bounce/Sun Mobility) is the dominant India-specific flexibility model for 2W/3W segments.',
+        }}
       />
     </div>
   );

@@ -718,6 +718,33 @@ export default function PowerToXFinancePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Break-even e-Methanol ($/t)"
       peers={{ cols: [{ k: 'prod', label: 'Product' }, { k: 'lcop', label: 'LCOP ($/t)', fmt: (v) => `$${v}` }, { k: 'h2', label: 'H2 input (t/t)', fmt: (v) => `${v}` }, { k: 'co2', label: 'CO2 input (t/t)', fmt: (v) => `${v.toFixed(1)}` }, { k: 'eff', label: 'Carbon eff (%)', fmt: (v) => `${v}%` }],
         rows: [{ prod: 'e-Methanol',      lcop: 1050, h2: 0.19, co2: 1.4, eff: 86 }, { prod: 'e-Ammonia',       lcop: 950, h2: 0.18, co2: 0.0, eff: 92 }, { prod: 'e-SAF (FT)',      lcop: 2200, h2: 0.32, co2: 3.2, eff: 55 }, { prod: 'e-Diesel (FT)',   lcop: 1900, h2: 0.28, co2: 3.0, eff: 58 }, { prod: 'e-SNG',           lcop: 780, h2: 0.52, co2: 2.7, eff: 78 }, { prod: 'e-Naphtha',       lcop: 1650, h2: 0.30, co2: 3.0, eff: 57 }] }}
+        indiaContext={{
+          subtitle: 'e-SAF · Green NH3 · Green Methanol · Steel',
+          regulations: [
+            { tag: 'SAF mandate 1% by 2027', status: 'active', detail: 'DGCA + MoPNG' },
+            { tag: 'Green NH3 for fertilizer', status: 'active', detail: 'DoF target 15% by 2030' },
+            { tag: 'IOCL methanol blending', status: 'partial' },
+            { tag: 'Steel Scope 1 — JSW target', status: 'active' },
+            { tag: 'CBAM (export offtake)', status: 'active' },
+          ],
+          kpis: [
+            { label: 'India NH3 demand', value: '20 MMT/yr', detail: 'Fertilizer sector' },
+            { label: 'Green NH3 target 2030', value: '3 MMT' },
+            { label: 'SAF blend mandate', value: '1–5%', detail: '2027→2030' },
+            { label: 'Steel DRI H2', value: '5 MMT', detail: 'Substitution target' },
+          ],
+          peers: { title: 'INDIAN PtX OFFTAKE PROJECTS',
+            cols: [{ k: 'proj', label: 'Project' }, { k: 'prod', label: 'Product' }, { k: 'cap', label: 'Cap (ktpa)' }, { k: 'off', label: 'Offtaker' }, { k: 'stage', label: 'Stage' }],
+            rows: [
+              { proj: 'RIL Jamnagar Green e-Fuels', prod: 'Methanol+SAF', cap: '200', off: 'Captive refining', stage: 'FEED' },
+              { proj: 'IOCL Panipat Methanol', prod: 'e-Methanol', cap: '80', off: 'Blending', stage: 'DPR' },
+              { proj: 'Adani-Total Paradip NH3', prod: 'Green NH3', cap: '450', off: 'Fertilizer+Export', stage: 'FID 2025' },
+              { proj: 'NFL Nangal Green NH3', prod: 'Green NH3', cap: '50', off: 'Urea retrofit', stage: 'Bid won' },
+              { proj: 'IFFCO Kalol NH3', prod: 'Green NH3', cap: '75', off: 'Urea', stage: 'Pilot' },
+              { proj: 'GAIL-BPCL e-SAF', prod: 'e-SAF (FT)', cap: '30', off: 'Airlines', stage: 'FEED' },
+            ] },
+          notes: 'India PtX offtake is anchored by 20 MMT grey NH3 domestic demand (fertilizer) and CBAM-compliant export corridors. e-SAF scaling constrained by CO2 point-source availability (cement + ethanol plants are priority DAC alternatives).',
+        }}
       />
     </div>
   );

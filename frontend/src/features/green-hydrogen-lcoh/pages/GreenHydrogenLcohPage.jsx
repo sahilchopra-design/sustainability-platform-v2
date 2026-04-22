@@ -743,6 +743,34 @@ export default function GreenHydrogenLcohPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Required H2 offtake price ($/kg)"
       peers={{ cols: [{ k: 'tech', label: 'Electrolyzer' }, { k: 'capex', label: 'Capex ($/kW)', fmt: (v) => `$${v}` }, { k: 'eff', label: 'Eff (%LHV)', fmt: (v) => `${v}%` }, { k: 'life', label: 'Stack life (h)', fmt: (v) => `${(v/1000).toFixed(0)}k` }, { k: 'tier', label: 'IRA §45V' }],
         rows: [{ tech: 'Alkaline (AEL)', capex: 750, eff: 66, life: 90000, tier: 'T3-T4' }, { tech: 'PEM', capex: 1100, eff: 60, life: 80000, tier: 'T3-T4' }, { tech: 'SOEC', capex: 2200, eff: 78, life: 40000, tier: 'T4' }, { tech: 'AEM', capex: 900, eff: 63, life: 30000, tier: 'T3' }, { tech: 'Chlor-Alkali byprod', capex: 400, eff: 55, life: 60000, tier: 'T2' }, { tech: 'Nafion-PEM LowPGM', capex: 850, eff: 62, life: 85000, tier: 'T3-T4' }] }}
+        indiaContext={{
+          subtitle: 'NGHM · SIGHT Mode-1/Mode-2 · MNRE PLI',
+          regulations: [
+            { tag: 'SIGHT Mode-1 (electrolyzer)', status: 'active', detail: '₹4,440 Cr capex support' },
+            { tag: 'SIGHT Mode-2 (H2 prod)', status: 'active', detail: '₹13,050 Cr over 3 yrs' },
+            { tag: 'PLI Electrolyzer', status: 'active', detail: '₹17,490 Cr allocation' },
+            { tag: 'NGHM (5 MMT H2 by 2030)', status: 'active' },
+            { tag: 'Green Tariff (RE-RTC)', status: 'partial' },
+            { tag: 'CCTS Scope 1 credit', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'India Green H2 target', value: '5 MMT/yr', detail: '2030; 125 GW RE tied' },
+            { label: 'SIGHT Mode-2 incentive', value: '₹50/kg', detail: 'Yr 1 (reducing)' },
+            { label: 'Target LCOH (2030)', value: '$1.8–2.2/kg' },
+            { label: 'PLI electrolyzer', value: '₹4,440 Cr', detail: '1.5 GW target' },
+          ],
+          peers: { title: 'INDIAN GREEN H2 DEVELOPERS',
+            cols: [{ k: 'dev', label: 'Developer' }, { k: 'capacity', label: '2030 target (TPA)' }, { k: 'tech', label: 'Electrolyzer' }, { k: 'off', label: 'Offtake' }, { k: 'stage', label: 'Stage' }],
+            rows: [
+              { dev: 'Reliance New Energy', capacity: '1,000,000', tech: 'PEM+AEL', off: 'Captive+Export', stage: 'FID 2025' },
+              { dev: 'Adani New Industries', capacity: '1,000,000', tech: 'AEL', off: 'Captive+Export', stage: 'Pilot' },
+              { dev: 'Indian Oil Green H2', capacity: '70,000', tech: 'PEM', off: 'Refinery', stage: 'FEED' },
+              { dev: 'NTPC Green H2', capacity: '50,000', tech: 'AEL', off: 'Internal+Steel', stage: 'Pilot (Leh)' },
+              { dev: 'JSW Energy', capacity: '3,800', tech: 'AEL', off: 'JSW Steel', stage: 'FEED' },
+              { dev: 'L&T – IOCL JV', capacity: '10,000', tech: 'PEM', off: 'Refineries', stage: 'Bid won' },
+            ] },
+          notes: 'SIGHT Mode-2 reverse auction (Tranche-I, 2024) cleared at ₹46.45/kg avg production incentive for AEL and ₹40.70/kg for PEM — de-risking LCOH to $2.5–2.8/kg landed. India target LCOH of $2/kg by 2030 requires RE-RTC at ₹3.5–4.0/kWh.',
+        }}
       />
     </div>
   );

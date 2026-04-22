@@ -606,6 +606,33 @@ export default function BlueHydrogenCcsPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Blue H2 LCOH including uncaptured CO2 cost"
       peers={{ cols: [{ k: 'route', label: 'Route' }, { k: 'eff', label: 'Eff (%)', fmt: (v) => `${v}%` }, { k: 'cap', label: 'Capture (%)', fmt: (v) => `${v}%` }, { k: 'lcoh', label: 'LCOH ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'int', label: 'Intensity (kgCO2/kgH2)', fmt: (v) => `${v.toFixed(1)}` }],
         rows: [{ route: 'SMR + CCS',     eff: 72, cap: 90, lcoh: 2.10, int: 1.0 }, { route: 'ATR + CCS',     eff: 78, cap: 95, lcoh: 1.95, int: 0.6 }, { route: 'POX + CCS',     eff: 71, cap: 92, lcoh: 2.20, int: 0.8 }, { route: 'SMR (no CCS)',  eff: 72, cap: 0,  lcoh: 1.60, int: 9.3 }, { route: 'Methane pyrolysis', eff: 58, cap: 0, lcoh: 2.80, int: 0.1 }, { route: 'Blue NH3 → H2',  eff: 68, cap: 90, lcoh: 2.50, int: 1.2 }] }}
+        indiaContext={{
+          subtitle: 'ONGC CCUS · Domestic gas price · DGH blocks',
+          regulations: [
+            { tag: 'CCUS Policy 2024 (DoCE)', status: 'active' },
+            { tag: 'APM gas price cap', status: 'active' },
+            { tag: 'DGH CO2-EOR incentive', status: 'partial' },
+            { tag: 'ONGC CCUS cluster (Mumbai)', status: 'active' },
+            { tag: 'MoPNG CCS-ready refinery', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'ONGC CCUS potential', value: '400 Mt/yr', detail: 'Depleted reservoirs' },
+            { label: 'Domestic gas price (APM)', value: '$6.5/MMBtu' },
+            { label: 'Blue H2 LCOH (India)', value: '$2.1–2.6/kg' },
+            { label: 'Cambay basin CO2 storage', value: '1.2 Gt', detail: 'Estimated capacity' },
+          ],
+          peers: { title: 'INDIAN BLUE H2 / CCUS PROJECTS',
+            cols: [{ k: 'proj', label: 'Project' }, { k: 'tech', label: 'Route' }, { k: 'cap', label: 'Cap ktpa' }, { k: 'co2', label: 'CO2 dest' }, { k: 'stage', label: 'Stage' }],
+            rows: [
+              { proj: 'ONGC Hazira CCUS', tech: 'SMR + amine', cap: '100', co2: 'EOR Gandhar', stage: 'FEED' },
+              { proj: 'IOCL Panipat CCS', tech: 'SMR + CCUS', cap: '350', co2: 'Depleted field', stage: 'Pilot' },
+              { proj: 'GAIL Vijaipur CCUS', tech: 'SMR + CCUS', cap: '80', co2: 'Sequestration', stage: 'DPR' },
+              { proj: 'BPCL Bina Refinery', tech: 'ATR + CCUS', cap: '140', co2: 'EOR', stage: 'DPR' },
+              { proj: 'NRL Numaligarh', tech: 'SMR + CCUS', cap: '60', co2: 'Basin storage', stage: 'Early' },
+              { proj: 'Reliance Dahej CCUS', tech: 'Multi', cap: '200', co2: 'Offshore inject', stage: 'FEED' },
+            ] },
+          notes: 'India blue H2 economics are constrained by $6.5/MMBtu APM gas (vs $4 in Middle East) — making blue LCOH 20–30% higher than Gulf equivalents. ONGC Mumbai-High offers 400 MtCO2/yr EOR-enabled storage within 150 km of refinery cluster.',
+        }}
       />
     </div>
   );

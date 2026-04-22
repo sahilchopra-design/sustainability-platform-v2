@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   LineChart, Line, BarChart, Bar, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -2586,6 +2587,45 @@ function Tab18LiveAPI({ nasaData, nasaLoading, nasaError, nasaFetchTime, lat, se
           Format: JSON | Units: kWh/m2/day (GHI), C (Temp)
         </div>
       </div>
+      <EnergyAdvancedAnalytics T={T} moduleCode="EP-RE6" title="Renewable ML Forecasting — MC Forecast Error, Tornado & NGFS Scenario Suite"
+        mcModel={{ title: 'MC Day-Ahead RMSE (% of rated)', unit: '%', fmt: (n) => n.toFixed(2),
+        vars: { nwpSkill: { min: 0.65, mode: 0.78, max: 0.90 }, ensembleN: { min: 10, mode: 25, max: 50 }, horizonHr: { min: 6, mode: 24, max: 48 }, siteDiverse: { min: 1, mode: 5, max: 15 } },
+        compute: (v) => Math.max(3, (18 - v.nwpSkill * 10) * Math.pow(v.horizonHr / 24, 0.4) / Math.pow(v.ensembleN / 25, 0.25) / Math.pow(v.siteDiverse, 0.15)) }}
+      tornadoModel={{ title: 'Tornado — Forecast Error Drivers', unit: '%', fmt: (n) => `${n.toFixed(2)}%`,
+        inputs: { nwpSkill: 0.78, ensembleN: 25, horizonHr: 24, siteDiverse: 5 },
+        compute: (v) => Math.max(3, (18 - v.nwpSkill * 10) * Math.pow(v.horizonHr / 24, 0.4) / Math.pow(v.ensembleN / 25, 0.25) / Math.pow(v.siteDiverse, 0.15)) }}
+      scenarioImpact={(p) => 8.5 - 0.02 * Math.max(0, p - 50)} scenarioFmt={(v) => `${v.toFixed(2)}%`}
+      scenarioTitle="Carbon Price × NGFS Pathway — Target forecast RMSE required for balancing"
+      peers={{ cols: [{ k: 'vendor', label: 'Forecast Vendor' }, { k: 'rmse', label: 'Day-ahead RMSE', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'mape', label: '1h MAPE', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'method', label: 'Method' }, { k: 'cov', label: 'Coverage' }],
+        rows: [{ vendor: 'DNV GreenMeter', rmse: 7.8, mape: 3.6, method: 'NWP+ML', cov: 'Global' }, { vendor: 'Vaisala Xweather', rmse: 8.2, mape: 3.9, method: 'Ensemble', cov: 'Global' }, { vendor: 'UL Solutions', rmse: 8.5, mape: 4.1, method: 'Hybrid', cov: 'N.A./EU' }, { vendor: 'EnFor', rmse: 8.0, mape: 3.8, method: 'XGBoost', cov: 'EU' }, { vendor: 'MeteoLogica', rmse: 8.6, mape: 4.2, method: 'Phys+ML', cov: 'IB/LatAm' }, { vendor: 'AWS ML Solar', rmse: 9.1, mape: 4.4, method: 'Transformer', cov: 'Global' }] }}
+        indiaContext={{
+          subtitle: 'POSOCO · NLDC · REMC forecasting framework',
+          regulations: [
+            { tag: 'CEA DSM — forecasting mandate', status: 'active' },
+            { tag: 'REMC (NLDC/RLDC/SLDC)', status: 'active' },
+            { tag: 'DSM Penalty — >15% error', status: 'active' },
+            { tag: 'IMD WRF-GFS coupling', status: 'active' },
+            { tag: 'Weather Risk Pool (SECI)', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'RE Penetration', value: '23%', detail: 'Peak share 2024; target 50% 2030' },
+            { label: 'DSM Penalty trigger', value: '>15% err', detail: '₹/kWh graded' },
+            { label: 'Day-ahead RMSE std', value: '8–12%', detail: 'Indian fleets' },
+            { label: 'REMC queries/day', value: '24k+' },
+          ],
+          peers: { title: 'INDIAN FORECAST VENDORS',
+            cols: [{ k: 'vendor', label: 'Vendor' }, { k: 'rmse', label: 'DA RMSE (%)' }, { k: 'mape', label: '1h MAPE (%)' }, { k: 'method', label: 'Method' }, { k: 'cov', label: 'Fleet GW' }],
+            rows: [
+              { vendor: 'Clean Max Solar Fcst', rmse: '8.9', mape: '3.8', method: 'NWP+XGB', cov: 'Own 1.6 GW' },
+              { vendor: 'Envision Digital (EnOS)', rmse: '8.4', mape: '3.6', method: 'Transformer', cov: '12 GW IN' },
+              { vendor: 'Amplus WindForecast', rmse: '9.6', mape: '4.2', method: 'WRF+ML', cov: '2.4 GW' },
+              { vendor: 'GE PulsePoint', rmse: '8.6', mape: '3.7', method: 'Hybrid', cov: '4.5 GW IN' },
+              { vendor: 'SkyMet RE', rmse: '9.1', mape: '4.0', method: 'WRF ensemble', cov: '6 GW IN' },
+              { vendor: 'CSTEP / IIT-Bombay', rmse: '8.7', mape: '3.8', method: 'Phys+NN', cov: 'Research' },
+            ] },
+          notes: 'India DSM penalty schedule escalates above 15% forecast error at 50 paise/kWh, capped at ₹1/kWh for >30% deviation. Target RMSE for FDRE tenders is <10% day-ahead.',
+        }}
+      />
     </div>
   );
 }

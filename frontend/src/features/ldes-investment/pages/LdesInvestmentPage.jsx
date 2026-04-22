@@ -665,6 +665,34 @@ export default function LdesInvestmentPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — LCOS incl. seasonal arb value"
       peers={{ cols: [{ k: 'tech', label: 'LDES tech' }, { k: 'dur', label: 'Duration (h)', fmt: (v) => `${v}` }, { k: 'rte', label: 'RTE (%)', fmt: (v) => `${v}%` }, { k: 'lcos', label: 'LCOS ($/MWh)', fmt: (v) => `$${v}` }, { k: 'trl', label: 'TRL' }],
         rows: [{ tech: 'Iron-Air (Form Energy)',  dur: 100, rte: 52, lcos: 45,  trl: 7 }, { tech: 'VRFB (Invinity)',        dur: 12,  rte: 72, lcos: 110, trl: 9 }, { tech: 'Zn-Br (Redflow)',        dur: 10,  rte: 68, lcos: 115, trl: 8 }, { tech: 'LAES (Highview)',        dur: 24,  rte: 55, lcos: 95,  trl: 8 }, { tech: 'Gravity (Energy Vault)', dur: 12,  rte: 80, lcos: 105, trl: 7 }, { tech: 'Compressed CO2 (Energy Dome)', dur: 24, rte: 72, lcos: 95, trl: 7 }] }}
+        indiaContext={{
+          subtitle: 'Pumped storage · FDRE · Long-duration needs 2030',
+          regulations: [
+            { tag: 'CEA Pumped Storage Roadmap (176 GW)', status: 'active' },
+            { tag: 'MoP PSP Guidelines 2023', status: 'active' },
+            { tag: 'FDRE Tenders (SECI 4-hr+)', status: 'active' },
+            { tag: 'Hydrogen LDES pathway (NGHM)', status: 'partial' },
+            { tag: 'R&D Mission (MNRE LDES)', status: 'partial' },
+            { tag: 'CERC Seasonal Flexibility (draft)', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'India PSP pipeline', value: '60 GW', detail: '176 GW theoretical' },
+            { label: 'LDES need 2030', value: '47 GW / 300 GWh', detail: 'MoP est' },
+            { label: 'PSP LCOS', value: '₹5.5–7.5/kWh' },
+            { label: 'Iron-air pilot (India)', value: '10 MWh', detail: 'Form Energy MoU' },
+          ],
+          peers: { title: 'INDIAN LDES / PSP PROJECTS',
+            cols: [{ k: 'proj', label: 'Project' }, { k: 'tech', label: 'Tech' }, { k: 'mw', label: 'MW' }, { k: 'dur', label: 'Duration' }, { k: 'stage', label: 'Stage' }],
+            rows: [
+              { proj: 'Greenko Pinnapuram (AP)', tech: 'PSP', mw: '1,200', dur: '8h', stage: 'Commissioning' },
+              { proj: 'Tehri PSP Stage-II (UK)', tech: 'PSP', mw: '1,000', dur: '6h', stage: 'Ops 2024' },
+              { proj: 'JSW Neo Kurnool PSP', tech: 'PSP', mw: '1,500', dur: '8h', stage: 'Construction' },
+              { proj: 'Adani Pune PSP', tech: 'PSP', mw: '1,500', dur: '8h', stage: 'Bid won' },
+              { proj: 'Form Energy + Reliance MoU', tech: 'Iron-Air', mw: '10', dur: '100h', stage: 'Pilot plan' },
+              { proj: 'NTPC VRFB pilot Leh', tech: 'VRFB', mw: '0.1', dur: '4h', stage: 'Ops' },
+            ] },
+          notes: 'India LDES is dominated by Pumped Storage (60 GW pipeline from MoP Roadmap, ₹5.5–7.5/kWh LCOS) with 8-hour duration typical. Post-2028 needs (47 GW by 2030) will require 10-hour+ chemistries — iron-air (Form Energy, Reliance MoU) and VRFB (Invinity+Indian OEMs) are leading candidates.',
+        }}
       />
     </div>
   );

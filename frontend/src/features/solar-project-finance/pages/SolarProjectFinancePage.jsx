@@ -2525,6 +2525,36 @@ export default function SolarProjectFinancePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — PPA uplift → IRR (%)"
       peers={{ cols: [{ k: 'name', label: 'Developer' }, { k: 'gw', label: 'GW deployed', fmt: (v) => `${v.toFixed(1)}` }, { k: 'plf', label: 'PLF (%)', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'lcoe', label: 'LCOE (¢/kWh)', fmt: (v) => `${v.toFixed(1)}` }, { k: 'irr', label: 'Levered IRR', fmt: (v) => `${v.toFixed(1)}%` }],
         rows: [{ name: 'NextEra Energy', gw: 35.0, plf: 24.5, lcoe: 3.1, irr: 13.5 }, { name: 'Iberdrola', gw: 18.0, plf: 21.8, lcoe: 3.6, irr: 12.2 }, { name: 'Enel Green Power', gw: 14.5, plf: 22.4, lcoe: 3.5, irr: 12.8 }, { name: 'Brookfield Renewable', gw: 11.0, plf: 21.0, lcoe: 3.8, irr: 11.5 }, { name: 'EDP Renováveis', gw: 13.2, plf: 21.5, lcoe: 3.7, irr: 11.8 }, { name: 'Ørsted Onshore', gw: 4.8, plf: 24.0, lcoe: 3.3, irr: 13.0 }] }}
+        indiaContext={{
+          subtitle: 'MNRE · CERC · NSE/BSE listed IPPs',
+          regulations: [
+            { tag: 'MNRE Solar Mission', status: 'active', detail: '500 GW RE by 2030' },
+            { tag: 'PLI — Solar PV (₹24k Cr)', status: 'active' },
+            { tag: 'CERC must-run status', status: 'active' },
+            { tag: 'ALMM list — modules', status: 'active' },
+            { tag: 'Solar Park Scheme Ph-II', status: 'active' },
+            { tag: 'SECI Tariff-based comp', status: 'active' },
+            { tag: 'CCTS Scope 1 compliance', status: 'partial' },
+            { tag: 'SEBI BRSR Core — FY26', status: 'active' },
+          ],
+          kpis: [
+            { label: 'India Solar Capacity', value: '89 GW', detail: 'As of 2025; target 280 GW by 2030' },
+            { label: 'SECI Tariff (bid low)', value: '₹2.18/kWh', detail: 'Record low Rajasthan 2024' },
+            { label: 'Avg Capex (₹/W DC)', value: '₹34', detail: '2025; target ₹26 by 2028' },
+            { label: 'Levelised CoE', value: '₹2.50/kWh', detail: 'Post ITC/PLI blended' },
+          ],
+          peers: { title: 'INDIAN IPP BENCHMARKS',
+            cols: [{ k: 'name', label: 'Indian IPP' }, { k: 'gw', label: 'Solar GW' }, { k: 'pipe', label: 'Pipeline GW' }, { k: 'ppa', label: 'Avg PPA (₹/kWh)' }, { k: 'rating', label: 'Credit' }],
+            rows: [
+              { name: 'Adani Green Energy', gw: '11.2', pipe: '10.9', ppa: '3.05', rating: 'BBB-' },
+              { name: 'ReNew Energy Global', gw: '9.8', pipe: '7.8', ppa: '2.95', rating: 'BB+' },
+              { name: 'NTPC Green Energy', gw: '3.3', pipe: '12.0', ppa: '2.85', rating: 'AAA(in)' },
+              { name: 'Tata Power Renewables', gw: '4.6', pipe: '4.2', ppa: '3.15', rating: 'AA(in)' },
+              { name: 'Azure Power', gw: '3.1', pipe: '2.3', ppa: '3.30', rating: 'B+' },
+              { name: 'Greenko Group', gw: '2.9', pipe: '5.4', ppa: '3.10', rating: 'BB' },
+            ] },
+          notes: 'India PV finance is shaped by SECI RE-auction tariffs (₹2.18–₹2.80/kWh), state DISCOM payment risk, and ALMM-restricted panel sourcing. ITC/Accelerated Depreciation (40% Yr1) improves post-tax IRR by 250–400 bps vs ex-incentive base case.',
+        }}
       />
     </div>
   );

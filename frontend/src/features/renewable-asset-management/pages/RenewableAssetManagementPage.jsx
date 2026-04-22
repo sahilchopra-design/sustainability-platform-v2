@@ -463,6 +463,33 @@ export default function RenewableAssetManagementPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Availability under extreme-weather load"
       peers={{ cols: [{ k: 'op', label: 'O&M Operator' }, { k: 'fleet', label: 'Fleet GW', fmt: (v) => `${v.toFixed(1)}` }, { k: 'avail', label: 'Avail (%)', fmt: (v) => `${v.toFixed(1)}%` }, { k: 'om', label: 'O&M ($/MWh)', fmt: (v) => `$${v.toFixed(1)}` }, { k: 'cmms', label: 'CMMS' }],
         rows: [{ op: 'Vestas Service', fleet: 112, avail: 97.2, om: 8.1, cmms: 'VestasOnline' }, { op: 'Siemens Gamesa', fleet: 95, avail: 97.0, om: 8.4, cmms: 'SGRE Diagnostic' }, { op: 'GE Renewables', fleet: 88, avail: 96.5, om: 8.8, cmms: 'GE Predix' }, { op: 'Nordex Group', fleet: 41, avail: 96.8, om: 8.6, cmms: 'NORDEX Connect' }, { op: 'ISS A/S', fleet: 22, avail: 96.2, om: 9.2, cmms: 'IBM Maximo' }, { op: 'SKF Bearings Ops', fleet: 18, avail: 97.5, om: 7.8, cmms: 'SKF Enlight' }] }}
+        indiaContext={{
+          subtitle: 'CEA O&M norms · DISCOM PPA terms',
+          regulations: [
+            { tag: 'CEA Grid Code 2023', status: 'active' },
+            { tag: 'PPA deemed-gen clauses', status: 'active' },
+            { tag: 'RECS (REC Mechanism)', status: 'active' },
+            { tag: 'Safety — IS 15001', status: 'active' },
+            { tag: 'SCADA mandate (>5 MW)', status: 'active' },
+          ],
+          kpis: [
+            { label: 'Avg fleet avail', value: '96.5%', detail: 'India solar IPPs 2024' },
+            { label: 'O&M cost', value: '₹4.2 lakh/MW-yr', detail: 'Benchmark' },
+            { label: 'Curtailment', value: '3–6%', detail: 'AP/TN high; RJ/GJ low' },
+            { label: 'DISCOM DSO days', value: '95 days', detail: 'Weighted avg 2024' },
+          ],
+          peers: { title: 'INDIAN O&M BENCHMARKS',
+            cols: [{ k: 'op', label: 'Operator' }, { k: 'fleet', label: 'Fleet MW' }, { k: 'avail', label: 'Avail' }, { k: 'om', label: 'O&M (₹L/MW-yr)' }, { k: 'cmms', label: 'Platform' }],
+            rows: [
+              { op: 'Adani Solar O&M', fleet: 10500, avail: '97.1%', om: '4.1', cmms: 'Adani E-Mobility' },
+              { op: 'Tata Power Renewable Services', fleet: 4200, avail: '96.8%', om: '4.3', cmms: 'TPRS SmartEye' },
+              { op: 'ReNew Power O&M', fleet: 9500, avail: '96.5%', om: '4.4', cmms: 'Renew Digital' },
+              { op: 'NTPC O&M', fleet: 3200, avail: '97.3%', om: '4.0', cmms: 'NTPC EMS' },
+              { op: 'Azure O&M', fleet: 2800, avail: '95.9%', om: '4.8', cmms: 'Azure 24x7' },
+              { op: 'Sterling & Wilson Solar', fleet: 4500, avail: '96.2%', om: '4.5', cmms: 'SWS Visio' },
+            ] },
+          notes: 'India O&M cost (₹4.0–4.8 L/MW-yr) includes robotic cleaning, vegetation, security and AMC. DISCOM payment cycle averages 95 days (range 45–180) impacting working capital.',
+        }}
       />
     </div>
   );

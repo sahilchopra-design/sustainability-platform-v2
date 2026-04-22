@@ -658,6 +658,33 @@ export default function HydrogenProjectFinancePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Project IRR (%)"
       peers={{ cols: [{ k: 'proj', label: 'Project' }, { k: 'mw', label: 'MW', fmt: (v) => `${v}` }, { k: 'capex', label: 'Capex ($M)', fmt: (v) => `$${v}` }, { k: 'off', label: 'Offtake ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'irr', label: 'IRR', fmt: (v) => `${v.toFixed(1)}%` }],
         rows: [{ proj: 'NEOM (Air Products)', mw: 2200, capex: 8400, off: 6.8, irr: 11.5 }, { proj: 'HyDeal España', mw: 7500, capex: 15000, off: 4.5, irr: 9.8 }, { proj: 'Asian Renewable Hub', mw: 14000, capex: 28000, off: 4.2, irr: 10.2 }, { proj: 'H2 Magallanes', mw: 8000, capex: 16500, off: 4.8, irr: 10.8 }, { proj: 'Hyport Duqm', mw: 1300, capex: 2800, off: 5.5, irr: 11.0 }, { proj: 'Salzgitter SALCOS', mw: 500, capex: 1100, off: 6.0, irr: 9.5 }] }}
+        indiaContext={{
+          subtitle: 'SIGHT auction economics · RBI ECB · IREDA',
+          regulations: [
+            { tag: 'SIGHT Mode-2 reverse auction', status: 'active' },
+            { tag: 'IREDA concessional financing', status: 'active', detail: '6.5–7.5%' },
+            { tag: 'RBI Priority Sector Lending', status: 'active' },
+            { tag: 'Sovereign Green Bond proceeds', status: 'active' },
+            { tag: 'MNRE Viability Gap Funding', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'SIGHT Tr-I cleared', value: '₹46.45/kg', detail: 'AEL avg' },
+            { label: 'IREDA GH2 loan book', value: '₹12,500 Cr', detail: 'Target FY26' },
+            { label: 'Typical debt cost', value: '8.5–9.5%', detail: 'INR term' },
+            { label: 'Debt/equity (India GH2)', value: '70:30' },
+          ],
+          peers: { title: 'INDIAN GH2 PROJECT FINANCE COMPS',
+            cols: [{ k: 'proj', label: 'Project' }, { k: 'mw', label: 'Elec MW' }, { k: 'capex', label: 'Capex (₹ Cr)' }, { k: 'dscr', label: 'DSCR' }, { k: 'irr', label: 'Equity IRR' }],
+            rows: [
+              { proj: 'Reliance Jamnagar Ph-1', mw: '3000', capex: '18,000', dscr: '1.45', irr: '14.5%' },
+              { proj: 'Adani Mundra GH2', mw: '2000', capex: '12,500', dscr: '1.38', irr: '13.2%' },
+              { proj: 'NTPC Leh Pilot', mw: '80', capex: '600', dscr: '1.55', irr: '11.0%' },
+              { proj: 'L&T-IOCL SIGHT bid', mw: '150', capex: '1,200', dscr: '1.48', irr: '13.8%' },
+              { proj: 'JSW Steel Vijaynagar', mw: '400', capex: '3,200', dscr: '1.40', irr: '12.5%' },
+              { proj: 'ACME Bikaner', mw: '1200', capex: '8,500', dscr: '1.35', irr: '12.8%' },
+            ] },
+          notes: 'India GH2 project finance is anchored by IREDA concessional debt (6.5–7.5%), SIGHT Mode-2 revenue support (₹50→₹30→₹15/kg over 3 yrs), and tax holiday under Sec 80-IA. Debt underwriting requires offtake hedging for >12 yrs or ₹/USD cross-currency swap.',
+        }}
       />
     </div>
   );

@@ -1121,6 +1121,33 @@ export default function RenewablePortfolioIntelligencePage() {
       scenarioTitle="Carbon Price × NGFS Pathway — PPA repricing uplift ($M EBITDA)"
       peers={{ cols: [{ k: 'op', label: 'Operator' }, { k: 'mix', label: 'Tech mix' }, { k: 'gw', label: 'GW', fmt: (v) => `${v.toFixed(1)}` }, { k: 'ebitda', label: 'EBITDA ($M)', fmt: (v) => `$${v}` }, { k: 'mul', label: 'EV/EBITDA', fmt: (v) => `${v.toFixed(1)}x` }],
         rows: [{ op: 'Brookfield RE', mix: 'Hydro+Wind+Solar', gw: 33, ebitda: 2350, mul: 11.2 }, { op: 'Enel Green Power', mix: 'Solar+Wind+Geo', gw: 62, ebitda: 4180, mul: 10.1 }, { op: 'Iberdrola', mix: 'Wind+Solar+Hydro', gw: 42, ebitda: 3620, mul: 10.8 }, { op: 'EDF Renewables', mix: 'Solar+Wind', gw: 14, ebitda: 1100, mul: 10.4 }, { op: 'NextEra Resources', mix: 'Wind+Solar+Stor', gw: 35, ebitda: 3900, mul: 13.0 }, { op: 'RWE Renewables', mix: 'Offshore+Solar', gw: 12, ebitda: 980, mul: 9.8 }] }}
+        indiaContext={{
+          subtitle: 'Listed Indian RE platforms · InvITs',
+          regulations: [
+            { tag: 'SEBI InvIT Regulations 2014', status: 'active' },
+            { tag: 'FDI 100% Auto RE', status: 'active' },
+            { tag: 'RBI ECB RE Sector', status: 'active' },
+            { tag: 'CBDC Green TLTRO pilot', status: 'partial' },
+            { tag: 'SEBI Green Bond framework', status: 'active' },
+          ],
+          kpis: [
+            { label: 'India listed RE EV', value: '₹5.8 Lakh Cr', detail: 'Aggregate FY25' },
+            { label: 'Avg EV/EBITDA', value: '11.2x', detail: 'India vs 10.5x global' },
+            { label: 'Green bond issuance', value: '₹27,400 Cr', detail: 'India 2024' },
+            { label: 'InvIT yield', value: '10.8%', detail: 'Virescent / Edelweiss' },
+          ],
+          peers: { title: 'LISTED INDIAN RE PLATFORMS',
+            cols: [{ k: 'co', label: 'Company' }, { k: 'mcap', label: 'Mcap (₹ Cr)' }, { k: 'gw', label: 'Installed GW' }, { k: 'ebitda', label: 'EBITDA (₹ Cr)' }, { k: 'mul', label: 'EV/EBITDA' }],
+            rows: [
+              { co: 'Adani Green Energy (AGEL)', mcap: '1,48,000', gw: '11.2', ebitda: '7,900', mul: '18.1x' },
+              { co: 'Tata Power (RE)', mcap: '1,24,000', gw: '4.6', ebitda: '2,400', mul: '13.2x' },
+              { co: 'NTPC Green Energy (NGEL)', mcap: '90,500', gw: '3.3', ebitda: '1,850', mul: '14.8x' },
+              { co: 'JSW Energy', mcap: '84,200', gw: '3.4 RE', ebitda: '3,150', mul: '11.5x' },
+              { co: 'SJVN Green', mcap: '40,800', gw: '2.0', ebitda: '950', mul: '12.9x' },
+              { co: 'Suzlon Energy', mcap: '62,500', gw: 'OEM', ebitda: '1,220', mul: '15.6x' },
+            ] },
+          notes: 'Indian listed RE trades at 13–18x EV/EBITDA — premium to global (9–12x) driven by 280 GW-by-2030 narrative. InvITs offer 10–11% yield vs 6–8% globally.',
+        }}
       />
     </div>
   );

@@ -816,6 +816,33 @@ export default function HydrogenStorageTransportPage() {
       scenarioTitle="Carbon Price × NGFS Pathway — Break-even delivered H2 price"
       peers={{ cols: [{ k: 'route', label: 'Route' }, { k: 'cgh2', label: 'CGH2 ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'lh2', label: 'LH2 ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'lohc', label: 'LOHC ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }, { k: 'nh3', label: 'NH3 ($/kg)', fmt: (v) => `$${v.toFixed(2)}` }],
         rows: [{ route: 'Rotterdam → Hamburg (300 km)', cgh2: 0.80, lh2: 2.40, lohc: 1.90, nh3: 1.60 }, { route: 'AU → JP (8,000 km)', cgh2: 4.20, lh2: 2.80, lohc: 2.60, nh3: 2.10 }, { route: 'Saudi → EU (6,500 km)', cgh2: 3.60, lh2: 2.60, lohc: 2.40, nh3: 1.90 }, { route: 'Chile → Japan (17,000 km)', cgh2: 6.10, lh2: 3.40, lohc: 3.10, nh3: 2.40 }, { route: 'Morocco → EU (3,500 km)', cgh2: 2.80, lh2: 2.40, lohc: 2.20, nh3: 1.70 }, { route: 'India → Singapore (5,000 km)', cgh2: 3.20, lh2: 2.50, lohc: 2.30, nh3: 1.80 }] }}
+        indiaContext={{
+          subtitle: 'PNGRB H2 pipeline · PSA/VPSA · Ammonia ports',
+          regulations: [
+            { tag: 'PNGRB H2 blending <10%', status: 'partial' },
+            { tag: 'MoPNG H2 Task Force', status: 'active' },
+            { tag: 'Deendayal / Paradip NH3 port', status: 'active' },
+            { tag: 'PESO storage licensing', status: 'active' },
+            { tag: 'IndianGas Grid (GAIL) retrofit', status: 'partial' },
+          ],
+          kpis: [
+            { label: 'Paradip NH3 cap (planned)', value: '1.2 MMTPA' },
+            { label: 'PNGRB blend cap', value: '10%' },
+            { label: 'Kandla H2 terminal', value: '100 ktpa (plan)' },
+            { label: 'GAIL retrofit capex', value: '₹800 Cr' },
+          ],
+          peers: { title: 'INDIA H2 EXPORT CORRIDORS',
+            cols: [{ k: 'corridor', label: 'Corridor' }, { k: 'carrier', label: 'Carrier' }, { k: 'ktpa', label: 'Plan ktpa' }, { k: 'offtake', label: 'Offtake' }, { k: 'cod', label: 'COD' }],
+            rows: [
+              { corridor: 'Kandla → Rotterdam', carrier: 'NH3', ktpa: '800', offtake: 'ARA cluster', cod: '2028' },
+              { corridor: 'Paradip → Japan', carrier: 'NH3', ktpa: '600', offtake: 'JERA', cod: '2029' },
+              { corridor: 'Tuticorin → Singapore', carrier: 'LH2', ktpa: '150', offtake: 'Sembcorp', cod: '2030' },
+              { corridor: 'V.O. Chidambaranar → EU', carrier: 'NH3', ktpa: '400', offtake: 'CBAM-compliant', cod: '2029' },
+              { corridor: 'Mundra → Korea', carrier: 'NH3', ktpa: '500', offtake: 'POSCO', cod: '2028' },
+              { corridor: 'Domestic (steel)', carrier: 'CGH2+pipe', ktpa: '200', offtake: 'JSW/TATA Steel', cod: '2027' },
+            ] },
+          notes: 'India has 4 ports (Kandla, Paradip, Tuticorin, V.O. Chidambaranar) notified as green H2/NH3 export hubs. Pipeline blending approvals sit with PNGRB; GAIL DVPL-II retrofit allows 10% blending.',
+        }}
       />
     </div>
   );
