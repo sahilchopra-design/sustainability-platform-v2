@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
+import IndiaGreenHybridFinance from '../../_shared/IndiaGreenHybridFinance';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -642,6 +643,133 @@ export default function GreenHydrogenAmmoniaCarbonPage() {
         <span>EP-EA4 · Green Hydrogen & Ammonia Carbon Finance · India Focus</span>
         <span>SIGHT + RFNBO + JCM + GX-ETS · 6 Developers · 11 Tabs</span>
       </div>
+
+
+      {tab === 11 && (
+        <IndiaGreenHybridFinance T={T} useCases={[
+    {
+      tag: 'UC-1', title: '100 ktpa green ammonia export via SIGHT Mode-2',
+      persona: 'Reliance / Adani-Total / L&T-IOCL / NTPC', personaDetail: 'Kandla / Paradip / Tuticorin export terminal; Japan/Korea 20Y offtake MoU',
+      problem: 'Landed NH3 ₹52/kg vs grey ₹28; need SIGHT + Art-6 ITMO + green bond to hit 12% IRR at ₹48/kg Tokyo delivered.', outcome: 'SIGHT Mode-2 ₹9/kg × 3Y + ITMO to Japan + $800M bond → IRR 12.4%, payback 9Y.',
+      capitalStack: [
+          { label: 'Sponsor equity', amount: 2400, unit: '₹Cr', source: 'Reliance/Adani' },
+          { label: 'SIGHT VGF Mode-2', amount: 2700, unit: '₹Cr', source: '₹9/kg × 100kt × 3Y' },
+          { label: 'Green bond USD', amount: 6800, unit: '₹Cr', source: '$800M 10Y SOFR+250' },
+          { label: 'NaBFID term', amount: 3200, unit: '₹Cr', source: '18Y MCLR+140' },
+          { label: 'GCF concessional', amount: 850, unit: '₹Cr', source: '$100M 3.5%/20Y' },
+          { label: 'JBIC JCM co-fin', amount: 1350, unit: '₹Cr', source: '¥20B JIBOR+110' },
+        ],
+      revenueStack: [
+          { label: 'NH3 export 100kt × ₹48', value: 4800, source: 'Japan/Korea 20Y' },
+          { label: 'SIGHT Mode-2 VGF avg 3Y', value: 900, source: '₹9/kg × 100kt' },
+          { label: 'JCM ITMO Japan', value: 315, source: '350kt × ¥1,800', scenSens: true },
+          { label: 'REC captive 1.2GW RE', value: 58, source: 'CERC floor', scenSens: true },
+          { label: 'CCTS credit', value: 185, source: '₹2,200/t × 840kt', scenSens: true },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'Capacity', v: '100 ktpa green NH3' },
+          { k: 'Capex', v: '₹17,300 Cr' },
+          { k: 'SIGHT tariff', v: '₹9/kg Tr-II cleared' },
+          { k: 'Offtake', v: 'Mitsubishi 50 / POSCO 30 / TEPCO 20 kt' },
+          { k: 'Bond tenor', v: '10Y bullet' },
+          { k: 'Coupon', v: 'SOFR+250' },
+          { k: 'D:E', v: '65:35' },
+          { k: 'DSCR', v: '1.40×' },
+        ],
+      dscrCovenant: 1.40,
+      financialModel: {
+        years: 18, revenue0: 6258, revenueGrowth: 0.028,
+        opexPct: 0.42, daPct: 0.09, taxRate: 0.22, wacc: 0.10,
+        capex: [12500, 2800, 1200, 600, 300, 250, 220, 200, 180, 160, 150, 140, 130, 120, 115, 110, 105, 100],
+        debtService: 1680,
+      },
+      risk: {
+        var95: 620, es99: 1420, defaultProb: 0.028,
+        policyScore: 7.5, fxSensPct: -8.5, fxPair: 'USD/INR + JPY/INR',
+        carbonBeta: 0.55, dv01: 18.4, climVaR: 185,
+        unit: '₹Cr', ratingImplied: 'BB+ (S&P) · Ba1 (Moody\'s)',
+      },
+      bankability: [
+          { label: 'Offtake (Japan/Korea BBB+)', score: 8.0 },
+          { label: 'SIGHT VGF disbursement', score: 8.5 },
+          { label: 'Electrolyzer tech risk', score: 6.5 },
+          { label: 'Art 6 ITMO BTA (Japan)', score: 7.0 },
+          { label: 'Captive RE (1.2GW)', score: 8.0 },
+          { label: 'Port infra (NH3 jetty)', score: 7.5 },
+        ],
+      lenders: [
+          { name: 'NaBFID', instrument: 'Senior term', tenor: '18Y', pricing: 'MCLR+140', ticket: '₹3,200Cr', fit: 'High' },
+          { name: 'IREDA', instrument: 'Sub-debt', tenor: '12Y', pricing: 'RR+200', ticket: '₹800Cr', fit: 'High' },
+          { name: 'GCF (NABARD)', instrument: 'Concessional', tenor: '20Y', pricing: '3.5% fixed', ticket: '$100M', fit: 'High' },
+          { name: 'JBIC', instrument: 'JCM co-fin', tenor: '15Y', pricing: 'JIBOR+110', ticket: '¥20B', fit: 'High' },
+          { name: 'HSBC / Barclays', instrument: 'Green bond JLM', tenor: '10Y', pricing: 'SOFR+250', ticket: '$800M', fit: 'High' },
+          { name: 'ADB', instrument: 'A-loan senior', tenor: '18Y', pricing: 'SOFR+165', ticket: '$200M', fit: 'Mid' },
+        ],
+      closingNotes: "India's largest GH2 deal template. Critical path: (i) SIGHT Mode-2 ₹9/kg locked 3Y — reset downside IRR to 10.8%; (ii) electrolyzer capex trajectory $900→$520/kW by 2028; (iii) Japan JCM corresponding adjustment. Disorderly+NH3 -25%: DSCR 1.12× (breach) — requires NH3 hedge or VGF extension.",
+    },
+    {
+      tag: 'UC-2', title: 'Green H2 for refinery Scope-3 (MoPNG mandate)',
+      persona: 'IOCL / BPCL / HPCL', personaDetail: 'Refinery grey-H2 demand 120 kt/yr · MoPNG 10% green by 2027, 25% by 2030',
+      problem: 'Switch grey→green adds ₹85/kg (₹150→₹235); refinery margin compression. Needs SIGHT + onsite RE + CCS on grey to hit mandate at <7% margin hit.', outcome: '40 kt green-H2 ₹190/kg + CCS on 80 kt grey with JCM ITMO → 45% GHG reduction, 4.2% margin hit.',
+      capitalStack: [
+          { label: 'OMC equity', amount: 1100, unit: '₹Cr', source: 'IOCL/BPCL/HPCL' },
+          { label: 'SIGHT Mode-1 VGF', amount: 1600, unit: '₹Cr', source: '₹40/kg × 40kt' },
+          { label: 'NaBFID green term', amount: 2800, unit: '₹Cr', source: '15Y MCLR+130' },
+          { label: 'Oil cess reallocation', amount: 450, unit: '₹Cr', source: 'MoPNG policy' },
+          { label: 'ADB climate', amount: 680, unit: '₹Cr', source: '$80M 15Y' },
+        ],
+      revenueStack: [
+          { label: 'Refinery internal transfer', value: 760, source: '40kt × ₹190' },
+          { label: 'SIGHT Mode-1', value: 320, source: '₹40/kg × 40kt × 2Y' },
+          { label: 'JCM ITMO (CCS)', value: 95, source: '₹1,900/t × 500kt', scenSens: true },
+          { label: 'CCTS refinery Scope-1', value: 125, source: '₹2,200/t × 570kt', scenSens: true },
+          { label: 'CBAM avoided (exports)', value: 68, source: 'Refinery export carve-out', scenSens: true },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'GH2 capacity', v: '40 kt/yr electrolyzer' },
+          { k: 'CCS retrofit', v: '80 kt grey · 90% capture' },
+          { k: 'Delivery', v: 'IOCL Panipat / Paradip' },
+          { k: 'SIGHT Mode-1', v: '₹40/kg Tr-I cleared' },
+          { k: 'Senior debt', v: '15Y MCLR+130' },
+          { k: 'CCS storage', v: 'Cambay basin' },
+          { k: 'MoPNG mandate', v: '10% green FY28' },
+          { k: 'RFNBO', v: 'EU RED III pathway' },
+        ],
+      dscrCovenant: 1.35,
+      financialModel: {
+        years: 15, revenue0: 1368, revenueGrowth: 0.022,
+        opexPct: 0.38, daPct: 0.08, taxRate: 0.22, wacc: 0.085,
+        capex: [4200, 850, 380, 250, 180, 150, 130, 120, 110, 100, 95, 90, 85, 80, 75],
+        debtService: 485,
+      },
+      risk: {
+        var95: 135, es99: 295, defaultProb: 0.008,
+        policyScore: 8.5, fxSensPct: -3.8, fxPair: 'USD/INR',
+        carbonBeta: 0.38, dv01: 6.2, climVaR: 42,
+        unit: '₹Cr', ratingImplied: 'AAA (IOCL/BPCL/HPCL PSU)',
+      },
+      bankability: [
+          { label: 'PSU sponsor (AAA)', score: 9.5 },
+          { label: 'Captive offtake (refinery)', score: 9.0 },
+          { label: 'MoPNG mandate (gazetted)', score: 8.5 },
+          { label: 'PEM + CCS technology', score: 7.0 },
+          { label: 'CCS storage (Cambay)', score: 6.5 },
+          { label: 'SIGHT disbursement', score: 8.0 },
+        ],
+      lenders: [
+          { name: 'NaBFID', instrument: 'Green term', tenor: '15Y', pricing: 'MCLR+130', ticket: '₹2,800Cr', fit: 'High' },
+          { name: 'ADB', instrument: 'Climate facility', tenor: '15Y', pricing: 'SOFR+160', ticket: '$80M', fit: 'High' },
+          { name: 'JBIC', instrument: 'JCM co-fin', tenor: '15Y', pricing: 'JIBOR+110', ticket: '¥8B', fit: 'Mid' },
+          { name: 'GCF (NABARD)', instrument: 'Concessional', tenor: '20Y', pricing: '3.5%', ticket: '$40M', fit: 'High' },
+          { name: 'SBI Capital', instrument: 'Arranger + bond', tenor: '10Y', pricing: 'MCLR+115', ticket: '₹1,500Cr', fit: 'High' },
+        ],
+      closingNotes: 'PSU offtake removes counterparty risk; MoPNG mandate = revenue visibility. SIGHT Mode-1 ₹40/kg may sunset after 3Y (12% downside Y4+). Deal replicable across 23 Indian refineries totalling 1.4 Mt/yr grey-H2.',
+    },
+  ]} moduleCode="EP-EA4" title="Green H2 & NH3 — VGF + SIGHT + ITMO Stacking"
+        />
+      )}
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA4" moduleTitle="Green Hydrogen & Ammonia Carbon" flavor="h2" basePrice={22} T={T} />
     </div>

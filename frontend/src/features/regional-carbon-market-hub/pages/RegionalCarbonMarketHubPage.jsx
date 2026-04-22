@@ -3,6 +3,7 @@ import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
+import IndiaGreenHybridFinance from '../../_shared/IndiaGreenHybridFinance';
 
 const sr = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const T = { bg: '#0f1117', surface: '#1a1d27', surfaceH: '#22263a', border: '#2a2f45', borderL: '#1e2235', navy: '#1e3a5f', gold: '#d4a843', sage: '#2d6a4f', teal: '#0d4f5c', text: '#e8e0d0', textSec: '#a89880', textMut: '#6b6050', red: '#c0392b', green: '#27ae60', amber: '#e67e22', font: "'DM Sans', sans-serif", mono: "'JetBrains Mono', monospace" };
@@ -78,7 +79,7 @@ const CBAM_EXPOSURE = [
   { sector: 'Solar Panels (glass/al)', exportToEU_Mt: 0.5, co2IntensityT: 0.65, cbamCostUsdM: 68 * 0.5 * 1000 * 0.65 / 1e6 },
 ];
 
-const TABS = ['Market Overview', 'EU ETS Deep Dive', 'India CCTS Deep Dive', 'Japan GX-ETS', 'Cross-Market Compare', 'India PAT / CCTS Sectors', 'CBAM Exposure (India)', 'JCM Corridors', 'Price Convergence', 'Arbitrage Snapshot', 'Advanced Analytics'];
+const TABS = ['Market Overview', 'EU ETS Deep Dive', 'India CCTS Deep Dive', 'Japan GX-ETS', 'Cross-Market Compare', 'India PAT / CCTS Sectors', 'CBAM Exposure (India)', 'JCM Corridors', 'Price Convergence', 'Arbitrage Snapshot', 'Advanced Analytics', 'Hybrid Finance'];
 
 const Kpi = ({ label, value, sub, color }) => (
   <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 18px', flex: 1, minWidth: 140 }}>
@@ -497,6 +498,124 @@ export default function RegionalCarbonMarketHubPage() {
             ],
           }}
           defaultCovered={['gov1', 'str1', 'str2', 'met1', 'met2', 'met3']}
+        />
+      )}
+
+
+      {tab === 11 && (
+        <IndiaGreenHybridFinance T={T} useCases={[
+    {
+      tag: 'UC-1', title: 'EU ETS compliance buyer: Art 6 ITMO procurement strategy',
+      persona: 'EU Steel Manufacturer (ETS obligated)', personaDetail: 'Annual ETS obligation: 4.5 MtCO2; short 800 ktCO2 post-MSR tightening',
+      problem: 'EUA @ €85/t creates €68M compliance cost; CBAM on scrap imports. Seeks ITMOs (Art 6.2 India-JCM) at cleared €12-18/t to offset 10% via DNSH projects.', outcome: 'Procures 500 kt ITMO @ €15/t from Indian solar portfolio; books €35M compliance saving vs EUA; 6.3x IRR on pre-paid ITMO advance to developer.',
+      capitalStack: [
+          { label: 'ITMO pre-pay (senior)', amount: 75, unit: '€M', source: 'EU buyer advance' },
+          { label: 'Developer equity', amount: 45, unit: '€M', source: 'Indian IPP' },
+          { label: 'Green bond (NaBFID wrap)', amount: 120, unit: '€M', source: '10-yr NaBFID/IREDA' },
+          { label: 'GCF concessional', amount: 25, unit: '€M', source: 'NABARD-GCF 3.5%/20Y' },
+        ],
+      revenueStack: [
+          { label: 'ITMO sale (500 kt × €15)', value: 7.5, source: 'Art 6.2 BTA · CA applied', scenSens: true },
+          { label: 'India CCTS credit', value: 2.2, source: '20% CCC retained · ₹2,200/t', scenSens: true },
+          { label: 'Green PPA premium', value: 3.1, source: 'Green tariff vs grey basis' },
+          { label: 'REC monetisation', value: 0.8, source: 'CERC REC floor ₹1,000' },
+        ],
+      revenueUnit: '€M/yr',
+      termSheet: [
+          { k: 'Instrument', v: 'Pre-paid ITMO forward' },
+          { k: 'Volume', v: '500 kt CO2e / 5Y' },
+          { k: 'Strike', v: '€15/t · collar €12-22' },
+          { k: 'Tenor', v: '5Y · annual delivery' },
+          { k: 'Settlement', v: 'Post-DOA + MoEFCC LoA' },
+          { k: 'Buffer pool', v: '15% delivery buffer' },
+          { k: 'Counterparty', v: 'A- (EU buyer)' },
+          { k: 'Legal', v: 'ICC Paris · English law' },
+        ],
+      dscrCovenant: 1.25,
+      financialModel: {
+        years: 10, revenue0: 13.6, revenueGrowth: 0.045,
+        opexPct: 0.18, daPct: 0.08, taxRate: 0.22, wacc: 0.07,
+        capex: [5.5, 4.8, 3.2, 1.8, 1.2, 0.8, 0.5, 0.5, 0.4, 0.3],
+        debtService: 8.4,
+      },
+      risk: {
+        var95: 2.1, es99: 4.8, defaultProb: 0.018,
+        policyScore: 6.5, fxSensPct: -3.2, fxPair: 'EUR/INR',
+        carbonBeta: 0.62, dv01: 0.08, climVaR: 1.6,
+        unit: '€M', ratingImplied: 'A- (EU buyer) · BB+ (developer)',
+      },
+      bankability: [
+          { label: 'EU buyer credit (A-)', score: 8.5 },
+          { label: 'Art 6 BTA enforceability', score: 6.5 },
+          { label: 'Solar portfolio tech risk', score: 9.0 },
+          { label: 'Price collar structure', score: 7.5 },
+          { label: 'MRV (DOE + ICVCM CCP)', score: 8.0 },
+          { label: 'Delivery / COD phasing', score: 7.0 },
+        ],
+      lenders: [
+          { name: 'NaBFID', instrument: 'Senior term (INR)', tenor: '15Y', pricing: 'MCLR+150', ticket: '₹800Cr', fit: 'High' },
+          { name: 'IREDA', instrument: 'Green senior', tenor: '15Y', pricing: 'RR+175', ticket: '₹400Cr', fit: 'High' },
+          { name: 'GCF (NABARD)', instrument: 'Concessional', tenor: '20Y', pricing: '3.5% fixed', ticket: '$40M', fit: 'High' },
+          { name: 'Credit Agricole', instrument: 'EU buyer structured', tenor: '7Y', pricing: 'EURIBOR+220', ticket: '€60M', fit: 'Mid' },
+          { name: 'JBIC', instrument: 'JCM co-finance', tenor: '12Y', pricing: 'JIBOR+120', ticket: '¥8B', fit: 'Mid' },
+        ],
+      closingNotes: 'Arbitrage window €50-70/t (EUA spot minus ITMO cleared). Critical: (1) Art 6 corresponding-adjustment timing (MoEFCC LoA post-verification); (2) CBAM deductibility of ITMOs — EC ruling pending. Mitigants: pre-pay locks price; buffer absorbs under-delivery; CCP label preserves VCM sale if compliance route closes.',
+    },
+    {
+      tag: 'UC-2', title: '$500M multi-market carbon trading book',
+      persona: 'Tier-1 commodity trading house', personaDetail: 'Proprietary mandate: $500M deployed across 4 carbon markets · VaR limit 8%',
+      problem: 'EU ETS, India CCTS, Japan GX-ETS, Art 6 ITMO show 5-8× dispersion. Construct optimal book: EUA long (€85) vs ITMO long (€15) + EUA puts @ €70 for carry.', outcome: 'Book: 60% ITMO long, 25% CCC long, 15% EUA collar. Expected ROE 22% vs single-market 9%.',
+      capitalStack: [
+          { label: 'Proprietary capital', amount: 300, unit: '$M', source: 'House book' },
+          { label: 'Repo on EUA inventory', amount: 120, unit: '$M', source: 'ICE Clear haircut 12%' },
+          { label: 'Prime brokerage margin', amount: 80, unit: '$M', source: 'JPM / MS' },
+        ],
+      revenueStack: [
+          { label: 'EUA carry (theta + basis)', value: 18, source: '€75-strike put roll-down', scenSens: true },
+          { label: 'ITMO appreciation', value: 37, source: 'MTM vs delivery', scenSens: true },
+          { label: 'CCC rally (CCTS compliance)', value: 23, source: 'Compliance cycle tightening', scenSens: true },
+          { label: 'VCM Removals rotational', value: 6, source: 'ICVCM CCP uplift', scenSens: true },
+        ],
+      revenueUnit: '$M/yr',
+      termSheet: [
+          { k: 'Book NAV', v: '$500M' },
+          { k: 'Max VaR 95%/1d', v: '$25M (5.0%)' },
+          { k: 'Stress loss ES 99%', v: '$60M (12%)' },
+          { k: 'Prime brokers', v: 'JPM · MS · Nomura' },
+          { k: 'Clearing', v: 'ICE · EEX · MEX' },
+          { k: 'Leverage cap', v: '2.5×' },
+          { k: 'Holding period', v: '6-24M' },
+          { k: 'Fee', v: '2% + 20% carry' },
+        ],
+      dscrCovenant: 1.50,
+      financialModel: {
+        years: 10, revenue0: 84, revenueGrowth: 0.055,
+        opexPct: 0.22, daPct: 0.04, taxRate: 0.20, wacc: 0.08,
+        capex: [25, 15, 10, 8, 6, 5, 4, 4, 3, 3],
+        debtService: 14.2,
+      },
+      risk: {
+        var95: 25.2, es99: 60.8, defaultProb: 0.008,
+        policyScore: 5.5, fxSensPct: -4.5, fxPair: 'EUR/USD · INR/USD basket',
+        carbonBeta: 1.35, dv01: 0.34, climVaR: 8.2,
+        unit: '$M', ratingImplied: 'Desk internal AA-',
+      },
+      bankability: [
+          { label: 'EU ETS liquidity', score: 9.5 },
+          { label: 'India CCTS liquidity', score: 4.5 },
+          { label: 'ITMO basis risk', score: 5.5 },
+          { label: 'Funding (repo stability)', score: 7.5 },
+          { label: 'Regulatory overhang (CBAM)', score: 6.5 },
+          { label: 'Desk talent (12Y ETS)', score: 8.0 },
+        ],
+      lenders: [
+          { name: 'JPMorgan Prime', instrument: 'Margin financing', tenor: 'Rolling', pricing: 'SOFR+85', ticket: '$50M', fit: 'High' },
+          { name: 'Morgan Stanley', instrument: 'Synthetic prime', tenor: 'Rolling', pricing: 'SOFR+95', ticket: '$40M', fit: 'High' },
+          { name: 'ICE Clear Europe', instrument: 'EUA repo', tenor: '1M', pricing: 'ESTR+45', ticket: '€30M', fit: 'High' },
+        ],
+      closingNotes: 'Book hinges on (i) Art 6 BTA delivery discipline; (ii) CCTS auction price discovery Q3-26; (iii) EUA MSR cancellation through 2027. 25% overlay via EUA Dec-27 puts @ €70 (prem 4.2%) caps drawdown in disorderly scenario.',
+    },
+  ]} moduleCode="EP-EA1" title="Cross-Market Carbon Arbitrage & Compliance"
         />
       )}
 

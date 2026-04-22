@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
+import IndiaGreenHybridFinance from '../../_shared/IndiaGreenHybridFinance';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -614,6 +615,124 @@ export default function CarbonArbitragePortfolioPage() {
         <span>EP-EA6 · Cross-Market Carbon Arbitrage & Net-Zero Portfolio Builder</span>
         <span>EU ETS · CCTS · JCM · VCS · Article 6 · CORSIA · 6 Regimes · 11 Tabs</span>
       </div>
+
+
+      {tab === 11 && (
+        <IndiaGreenHybridFinance T={T} useCases={[
+    {
+      tag: 'UC-1', title: '$500M net-zero carbon portfolio for sovereign wealth fund',
+      persona: 'SWF / EU pension (GPFG/ABP/CPPIB)', personaDetail: 'Mandate: offset $2B Scope 1-3 via institutional credits · 20Y horizon',
+      problem: 'Demand for 15-20 Mt CO2e ICVCM CCP + Art 6 aligned + >AAA integrity credits. Voluntary credits show 60% price dispersion.', outcome: '$500M book: 40% Art 6.2 ITMO + 25% CCC + 20% EU ETS + 15% CCP voluntary. Blended $28/t.',
+      capitalStack: [
+          { label: 'SWF capital', amount: 350, unit: '$M', source: '10Y drawdown' },
+          { label: 'Re-investment', amount: 95, unit: '$M', source: 'Profit' },
+          { label: 'GCF co-invest', amount: 55, unit: '$M', source: 'Blended' },
+        ],
+      revenueStack: [
+          { label: 'Carbon avoidance offset', value: 42, source: '15Mt × $2.80 avoided', scenSens: true },
+          { label: 'Credit appreciation MTM', value: 18, source: '+5%/yr', scenSens: true },
+          { label: 'Art 6 ITMO premium', value: 12, source: 'Gov buyer 30%', scenSens: true },
+          { label: '(-) Management fee', value: -6, source: '60bps NAV' },
+          { label: 'Retire & recycle', value: 8, source: 'Insurance float' },
+        ],
+      revenueUnit: '$M/yr',
+      termSheet: [
+          { k: 'AUM', v: '$500M' },
+          { k: 'Horizon', v: '20Y evergreen' },
+          { k: 'VaR 95%', v: '$32M (6.4%)' },
+          { k: 'ES 99%', v: '$75M (15%)' },
+          { k: 'Benchmark', v: 'S&P GSCI Carbon' },
+          { k: 'Fee', v: '60bps + 15% carry' },
+          { k: 'Retire', v: 'Annual true-up' },
+          { k: 'Rebal', v: 'Quarterly' },
+        ],
+      dscrCovenant: 1.20,
+      financialModel: {
+        years: 20, revenue0: 74, revenueGrowth: 0.04,
+        opexPct: 0.15, daPct: 0.02, taxRate: 0.20, wacc: 0.07,
+        capex: [120, 40, 30, 25, 22, 20, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 9, 8, 8, 7],
+        debtService: 0.1,
+      },
+      risk: {
+        var95: 32, es99: 75, defaultProb: 0.008,
+        policyScore: 6.5, fxSensPct: -4.8, fxPair: 'USD/EUR + USD/INR basket',
+        carbonBeta: 1.45, dv01: 0.8, climVaR: 18,
+        unit: '$M', ratingImplied: 'Portfolio-level AA- (ICVCM weighted)',
+      },
+      bankability: [
+          { label: 'ICVCM CCP coverage 60%', score: 8.5 },
+          { label: 'Art 6 BTA alignment', score: 7.0 },
+          { label: 'Liquidity (EU ETS 100%, CCTS 35%)', score: 7.0 },
+          { label: 'MRV integrity (Tier-1 DOEs)', score: 8.5 },
+          { label: 'Developer counterparty diversification', score: 6.5 },
+          { label: 'Regulatory durability', score: 6.5 },
+        ],
+      lenders: [
+          { name: 'MSCI Carbon Index', instrument: 'Benchmark', tenor: 'Perp', pricing: '12bps', ticket: '—', fit: 'High' },
+          { name: 'StanChart', instrument: 'Carbon FX + custody', tenor: 'Open', pricing: '35bps', ticket: '$500M', fit: 'High' },
+          { name: 'HSBC Carbon', instrument: 'EU ETS clearing + repo', tenor: 'Rolling', pricing: 'ESTR+50', ticket: '€80M', fit: 'High' },
+          { name: 'GCF (MSF)', instrument: 'Co-investment senior', tenor: '15Y', pricing: 'Flat return', ticket: '$55M', fit: 'Mid' },
+          { name: 'Climate Impact X', instrument: 'VCM platform', tenor: 'Spot', pricing: '25bps', ticket: '$120M', fit: 'High' },
+        ],
+      closingNotes: '40% ITMO + 25% CCTS blend delivers $22/t vs EU ETS $85/t — 75% discount. Fragility: Art 6 CA timing (18M accrual-cash mismatch). Mitigant: 15% CCP overlay as dry powder. Recommend 20% FX hedge via 3M rolling forwards.',
+    },
+    {
+      tag: 'UC-2', title: '$80M SBTi-aligned offset stack for FMCG (5Y)',
+      persona: 'Unilever / P&G / Nestle / ITC', personaDetail: '2030 SBTi 1.5°C commit; residual after abatement: 4 Mt CO2e/yr',
+      problem: 'Abatement covers 72%; 28% residual needs high-integrity removals (BECCS/ARR/DAC). VCM capacity constrained.', outcome: '$80M × 5Y: $45M BECCS + $25M ARR + $10M DAC. Weighted $95/t; 900 kt delivery 2027-32.',
+      capitalStack: [
+          { label: 'Corp net-zero budget', amount: 60, unit: '$M', source: 'Opex allocation' },
+          { label: 'Pre-pay developer discount', amount: 15, unit: '$M', source: '5Y pre-pay vs spot' },
+          { label: 'Insurance buffer', amount: 5, unit: '$M', source: 'Delivery insurance' },
+        ],
+      revenueStack: [
+          { label: 'Verified retirement (SBTi)', value: 16, source: '900kt × $17.8 blend', scenSens: true },
+          { label: 'Brand SBTi disclosure uplift', value: 12, source: '1-2% margin' },
+          { label: 'CBAM pass-through avoided', value: 4, source: 'EU export impact', scenSens: true },
+        ],
+      revenueUnit: '$M/yr',
+      termSheet: [
+          { k: 'Commitment', v: '$80M / 5Y' },
+          { k: 'Volume', v: '900kt 2027-32' },
+          { k: 'Blended price', v: '$95/t' },
+          { k: 'Mix', v: '45% BECCS / 30% ARR / 25% DAC' },
+          { k: 'ICVCM', v: '100% CCP-labelled' },
+          { k: 'SBTi', v: 'Post-95% abate neutralise' },
+          { k: 'Buffer', v: '15% over-purchase' },
+          { k: 'Delivery', v: '2027-2032' },
+        ],
+      dscrCovenant: 1.15,
+      financialModel: {
+        years: 8, revenue0: 32, revenueGrowth: 0.03,
+        opexPct: 0.18, daPct: 0.02, taxRate: 0.25, wacc: 0.075,
+        capex: [18, 15, 12, 10, 9, 8, 7, 6],
+        debtService: 0.1,
+      },
+      risk: {
+        var95: 8.5, es99: 18.2, defaultProb: 0.018,
+        policyScore: 7.5, fxSensPct: -2.5, fxPair: 'USD/EUR',
+        carbonBeta: 0.85, dv01: 0.12, climVaR: 4.2,
+        unit: '$M', ratingImplied: 'FMCG AA- sponsor',
+      },
+      bankability: [
+          { label: 'Developer pipeline (30 vetted)', score: 6.5 },
+          { label: 'ARR delivery (12Y track)', score: 7.5 },
+          { label: 'DAC scalability', score: 5.5 },
+          { label: 'SBTi/ICVCM alignment', score: 8.5 },
+          { label: 'GHG Protocol disclosure', score: 8.0 },
+          { label: 'Host-country stability', score: 6.5 },
+        ],
+      lenders: [
+          { name: 'South Pole / ClimeCo', instrument: 'Portfolio advisor', tenor: '5Y', pricing: '75bps', ticket: '$80M', fit: 'High' },
+          { name: 'Climate Asset Mgmt', instrument: 'BECCS co-pool', tenor: '10Y', pricing: 'IRR 12%', ticket: '$30M', fit: 'Mid' },
+          { name: 'Puro.earth', instrument: 'DAC+BECCS registry', tenor: 'Spot', pricing: '1% fee', ticket: '$25M', fit: 'High' },
+          { name: 'Verra VCS', instrument: 'ARR issuance', tenor: 'Perp', pricing: '$0.10/cr', ticket: '$12M', fit: 'High' },
+        ],
+      closingNotes: 'Corp net-zero stacks bankable at $80-200M with SBTi demand signal. 15% buffer absorbs under-delivery (ARR historical 6-18%). DAC contained at 25% ($450/t vs BECCS $60/t vs ARR $25/t). If DAC → $200/t by 2030, shift to 40% for higher integrity.',
+    },
+  ]} moduleCode="EP-EA6" title="Carbon Arbitrage Portfolio — Institutional Book Construction"
+        />
+      )}
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA6" moduleTitle="Carbon Arbitrage & NZ Portfolio" flavor="arbitrage" basePrice={25} T={T} />
     </div>

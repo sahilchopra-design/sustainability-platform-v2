@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
+import IndiaGreenHybridFinance from '../../_shared/IndiaGreenHybridFinance';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -535,6 +536,128 @@ export default function IndiaGreenInfraFinancePage() {
         <span>EP-EA5 · India Green Infrastructure & Project Finance</span>
         <span>NaBFID · InvIT · GCF/ADB · BRSR · CCTS · 8 Infra Types · 11 Tabs</span>
       </div>
+
+
+      {tab === 11 && (
+        <IndiaGreenHybridFinance T={T} useCases={[
+    {
+      tag: 'UC-1', title: 'Green Infra InvIT: 3 GW RE asset monetisation',
+      persona: 'ReNew / NTPC Green / Virescent', personaDetail: '3 GW operating RE listed as InvIT on BSE/NSE',
+      problem: 'Balance sheet strain limits 4 GW pipeline. Need capital recycling via InvIT at 9.5% distribution yield.', outcome: '₹6,500 Cr InvIT raise → recycles to 4 GW pipeline; sponsor retains 30% + management agreement.',
+      capitalStack: [
+          { label: 'Public units', amount: 4550, unit: '₹Cr', source: 'BSE/NSE listing' },
+          { label: 'Sponsor (locked)', amount: 1950, unit: '₹Cr', source: '30% share' },
+          { label: 'InvIT-level debt', amount: 4200, unit: '₹Cr', source: '2.1× EBITDA' },
+          { label: 'GCF/ADB anchor', amount: 680, unit: '₹Cr', source: '$80M cornerstone' },
+        ],
+      revenueStack: [
+          { label: 'PPA receipts 3GW × 22%', value: 1380, source: 'Blended ₹2.6/kWh' },
+          { label: 'REC sale', value: 55, source: 'CERC floor', scenSens: true },
+          { label: 'Merchant 15% surplus', value: 95, source: 'IEX DAM/RTM' },
+          { label: 'CCTS credit', value: 110, source: '₹2,200/t × 500kt', scenSens: true },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'Issuance', v: '₹6,500 Cr' },
+          { k: 'Yield', v: '9.5% distribution' },
+          { k: 'Listing', v: 'BSE + NSE' },
+          { k: 'Rating', v: 'AAA/Stable (CRISIL)' },
+          { k: 'Sponsor lock', v: '3Y mand + 2Y partial' },
+          { k: 'NAV/unit', v: '₹102' },
+          { k: 'DPU ratio', v: '>90% of DCF' },
+          { k: 'Asset life', v: 'WA 22Y' },
+        ],
+      dscrCovenant: 1.35,
+      financialModel: {
+        years: 15, revenue0: 1640, revenueGrowth: 0.018,
+        opexPct: 0.18, daPct: 0.10, taxRate: 0.0, wacc: 0.085,
+        capex: [150, 140, 130, 125, 120, 115, 110, 105, 100, 95, 90, 85, 80, 75, 70],
+        debtService: 1250,
+      },
+      risk: {
+        var95: 125, es99: 285, defaultProb: 0.015,
+        policyScore: 8.5, fxSensPct: -2.2, fxPair: 'USD/INR',
+        carbonBeta: 0.25, dv01: 8.5, climVaR: 42,
+        unit: '₹Cr', ratingImplied: 'AAA (CRISIL) · InvIT pass-through',
+      },
+      bankability: [
+          { label: 'Operating RE quality (3Y+)', score: 9.0 },
+          { label: 'Cash flow stability (25Y PPA)', score: 8.5 },
+          { label: 'Sponsor governance', score: 8.5 },
+          { label: 'DPU sustainability', score: 8.0 },
+          { label: 'SEBI InvIT framework', score: 8.5 },
+          { label: 'Secondary liquidity', score: 7.0 },
+        ],
+      lenders: [
+          { name: 'SBI Capital / Kotak', instrument: 'BRLM', tenor: 'Perp', pricing: '150bps fee', ticket: '₹6,500Cr', fit: 'High' },
+          { name: 'GCF (NABARD)', instrument: 'Cornerstone', tenor: '5Y', pricing: '9.5%', ticket: '$80M', fit: 'High' },
+          { name: 'ADB', instrument: 'Anchor investor', tenor: '5Y', pricing: '9.5%', ticket: '$60M', fit: 'High' },
+          { name: 'LIC / EPFO', instrument: 'Institutional alloc', tenor: 'Perp', pricing: '9.5%', ticket: '₹1,500Cr', fit: 'High' },
+          { name: 'NaBFID', instrument: 'Holdco term', tenor: '10Y', pricing: 'MCLR+120', ticket: '₹1,200Cr', fit: 'High' },
+        ],
+      closingNotes: '5+ RE InvITs listed (IndiGrid, PowerGrid, Virescent, Bharat Highways). Yield must stay 175-250bps above 10Y G-Sec for price stability; if G-Sec → 8.5%, InvIT yield must re-rate to 10.5-11%.',
+    },
+    {
+      tag: 'UC-2', title: 'NaBFID senior + GCF concessional for ISTS green corridor',
+      persona: 'PowerGrid / Adani Transmission', personaDetail: '765kV + HVDC Rajasthan-Gujarat-South green corridor',
+      problem: '₹18,500 Cr ISTS for 50 GW RE evacuation; needs 20Y+ tenor at <MCLR+100 + concessional for 12.5% equity IRR on 15.5% regulated RoE.', outcome: 'NaBFID ₹9,500Cr MCLR+110/20Y + GCF $200M 3.5%/25Y + green bond ₹3,500Cr → IRR 13.1%.',
+      capitalStack: [
+          { label: 'Sponsor equity', amount: 4625, unit: '₹Cr', source: 'PGCIL budget' },
+          { label: 'NaBFID senior', amount: 9500, unit: '₹Cr', source: '20Y MCLR+110' },
+          { label: 'GCF concessional', amount: 1700, unit: '₹Cr', source: '$200M 3.5%/25Y' },
+          { label: 'Green bond (INR)', amount: 3500, unit: '₹Cr', source: 'REC/PFC subs' },
+          { label: 'AIIB senior', amount: 1275, unit: '₹Cr', source: '$150M SOFR+155' },
+        ],
+      revenueStack: [
+          { label: 'Transmission charge (CERC)', value: 2870, source: '15.5% RoE × capex' },
+          { label: 'Loss pooling', value: 85, source: 'Energy fees' },
+          { label: 'Green corridor premium', value: 45, source: 'MoP Phase-II' },
+          { label: 'Ancillary services', value: 32, source: 'CERC ancillary regs' },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'Regulator', v: 'CERC MYT' },
+          { k: 'Regulated RoE', v: '15.5% on equity' },
+          { k: 'Capex', v: '₹18,500 Cr' },
+          { k: 'Longest tenor', v: '25Y GCF' },
+          { k: 'WACC', v: '8.4%' },
+          { k: 'DSCR cov', v: '1.30×' },
+          { k: 'DSRA', v: '6M' },
+          { k: 'Avail cov', v: '99.5%' },
+        ],
+      dscrCovenant: 1.30,
+      financialModel: {
+        years: 25, revenue0: 3032, revenueGrowth: 0.015,
+        opexPct: 0.12, daPct: 0.08, taxRate: 0.22, wacc: 0.084,
+        capex: [18500, 800, 600, 500, 400, 350, 300, 280, 260, 240, 220, 200, 180, 170, 160, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105],
+        debtService: 2240,
+      },
+      risk: {
+        var95: 145, es99: 310, defaultProb: 0.002,
+        policyScore: 9.5, fxSensPct: -1.8, fxPair: 'USD/INR (GCF, AIIB)',
+        carbonBeta: 0.05, dv01: 24.5, climVaR: 85,
+        unit: '₹Cr', ratingImplied: 'AAA (PGCIL PSU)',
+      },
+      bankability: [
+          { label: 'CERC regulated returns', score: 9.5 },
+          { label: 'PGCIL sovereign credit', score: 9.5 },
+          { label: 'PoC pooling (no counterparty)', score: 9.0 },
+          { label: '5Y EPC construction risk', score: 7.0 },
+          { label: '765kV + HVDC technology', score: 8.5 },
+          { label: 'Tenor match (25Y vs 35Y asset)', score: 9.0 },
+        ],
+      lenders: [
+          { name: 'NaBFID', instrument: 'Senior term', tenor: '20Y', pricing: 'MCLR+110', ticket: '₹9,500Cr', fit: 'High' },
+          { name: 'GCF (NABARD)', instrument: 'Concessional senior', tenor: '25Y', pricing: '3.5% fixed', ticket: '$200M', fit: 'High' },
+          { name: 'REC / PFC', instrument: 'Tax-free bond', tenor: '15Y', pricing: '7.15-7.25%', ticket: '₹3,500Cr', fit: 'High' },
+          { name: 'AIIB', instrument: 'Senior', tenor: '20Y', pricing: 'SOFR+155', ticket: '$150M', fit: 'High' },
+          { name: 'ADB', instrument: 'Senior + PRG', tenor: '20Y', pricing: 'SOFR+145', ticket: '$200M', fit: 'High' },
+        ],
+      closingNotes: 'Transmission is lowest-risk regulated asset (99.9% avail + CERC MYT). GCF concessional 3.5%/25Y lynchpin — blends WACC 8.9%→8.4% (50bps) = ₹185Cr NPV. Critical: forest/wildlife clearances (tiger corridor) 18M delay risk — elevated line mitigates.',
+    },
+  ]} moduleCode="EP-EA5" title="India Green Infra — NaBFID / InvIT / GCF Capital Stack"
+        />
+      )}
 
       <Apr2026CarbonAnalytics moduleCode="EP-EA5" moduleTitle="India Green Infra Finance" flavor="infra" basePrice={16} T={T} />
     </div>

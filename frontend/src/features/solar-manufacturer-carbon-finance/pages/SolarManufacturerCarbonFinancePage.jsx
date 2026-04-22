@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
+import IndiaGreenHybridFinance from '../../_shared/IndiaGreenHybridFinance';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -697,6 +698,130 @@ export default function SolarManufacturerCarbonFinancePage() {
             ],
           }}
           defaultCovered={['gov1', 'str1', 'str3', 'rsk1', 'met1', 'met2', 'met3', 'tgt1']}
+        />
+      )}
+
+
+      {tab === 11 && (
+        <IndiaGreenHybridFinance T={T} useCases={[
+    {
+      tag: 'UC-1', title: '10 GW integrated wafer-cell-module under PLI-II + CBAM',
+      persona: 'Waaree / Reliance / Adani Solar', personaDetail: '₹6,800 Cr integrated 10 GW; PLI-II slot awarded',
+      problem: 'EU CBAM from 2026 + China import pressure. Needs blended financing + PLI claim + green bond to protect 18% RoCE.', outcome: 'PLI ₹1,950 Cr over 5Y + green bond $350M + 250 MW captive RE → RoCE 19.2%, CBAM cut 55%.',
+      capitalStack: [
+          { label: 'Sponsor equity', amount: 2040, unit: '₹Cr', source: 'Promoter + IPO' },
+          { label: 'PLI-II (staged)', amount: 1950, unit: '₹Cr', source: '5Y disbursement' },
+          { label: 'Green bond USD', amount: 2950, unit: '₹Cr', source: '$350M SOFR+230' },
+          { label: 'Export credit', amount: 480, unit: '₹Cr', source: 'US EXIM / JBIC' },
+          { label: 'NaBFID term', amount: 1200, unit: '₹Cr', source: '12Y MCLR+125' },
+        ],
+      revenueStack: [
+          { label: 'Module sales domestic', value: 8400, source: '6GW × $0.11/W × 70%' },
+          { label: 'Module export EU+US', value: 3250, source: '4GW × $0.12/W' },
+          { label: 'PLI-II benefit', value: 390, source: '₹1,950Cr /5' },
+          { label: 'REC captive 250 MW', value: 35, source: 'CERC floor', scenSens: true },
+          { label: 'CCTS credit', value: 48, source: '350 kt × ₹2,200', scenSens: true },
+          { label: 'CBAM avoided (via RE100)', value: 180, source: '€85/t × 280 kt green-mod', scenSens: true },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'PLI-II slot', v: '10 GW integrated' },
+          { k: 'PLI size', v: '₹1,950 Cr / 5Y' },
+          { k: 'Green bond', v: '$350M 10Y bullet' },
+          { k: 'Coupon', v: 'SOFR + 230' },
+          { k: 'Rating', v: 'Ba2 / BB' },
+          { k: 'RE100 commit', v: 'By 2028' },
+          { k: 'CBAM strategy', v: '250MW captive + EPD' },
+          { k: 'Tech', v: 'n-type TOPCon 22.5%' },
+        ],
+      dscrCovenant: 1.30,
+      financialModel: {
+        years: 10, revenue0: 12303, revenueGrowth: 0.04,
+        opexPct: 0.72, daPct: 0.06, taxRate: 0.22, wacc: 0.10,
+        capex: [6800, 820, 450, 380, 320, 280, 250, 225, 200, 180],
+        debtService: 1050,
+      },
+      risk: {
+        var95: 680, es99: 1520, defaultProb: 0.035,
+        policyScore: 7.0, fxSensPct: -6.8, fxPair: 'USD/INR',
+        carbonBeta: 0.85, dv01: 15.8, climVaR: 125,
+        unit: '₹Cr', ratingImplied: 'BB (S&P) · Ba2 (Moody\'s)',
+      },
+      bankability: [
+          { label: 'MNRE PLI eligibility', score: 9.0 },
+          { label: 'CBAM mitigation via RE', score: 7.0 },
+          { label: 'Domestic + export offtake', score: 8.0 },
+          { label: 'China price dumping exposure', score: 5.5 },
+          { label: 'n-type technology leadership', score: 8.0 },
+          { label: '18-month EPC ramp', score: 7.5 },
+        ],
+      lenders: [
+          { name: 'NaBFID', instrument: 'Infra term', tenor: '12Y', pricing: 'MCLR+125', ticket: '₹1,200Cr', fit: 'High' },
+          { name: 'Goldman', instrument: 'Green bond JLM', tenor: '10Y', pricing: 'SOFR+230', ticket: '$350M', fit: 'High' },
+          { name: 'IREDA', instrument: 'PLI-linked finance', tenor: '10Y', pricing: 'RR+160', ticket: '₹600Cr', fit: 'High' },
+          { name: 'EDC Canada', instrument: 'Buyer export credit', tenor: '12Y', pricing: 'SOFR+175', ticket: '$60M', fit: 'Mid' },
+        ],
+      closingNotes: 'Integration: 250 MW captive RE (Scope-2 zero) + green bond for ALMM n-type lines → ₹85 Cr/yr CBAM deduction for EU buyers. PLI disbursement 85% realisation in base case. China tariff escalation could compress margins — BCD + ALMM regulatory moat offsets.',
+    },
+    {
+      tag: 'UC-2', title: 'Mid-cap mfg: CBAM mitigation + export competitiveness',
+      persona: 'Vikram / Goldi / Premier', personaDetail: '1.5 GW mfg · 60% EU+US exports · Tier-2 PLI',
+      problem: 'CBAM adds €8-12/module from 2026; Scope-3 supply chain high; no captive RE. Bank demands carbon strategy for refinancing.', outcome: 'Retrofit 50 MW captive + EPD + green bond ₹450 Cr → CBAM halved to €4-6/mod; refinancing closed.',
+      capitalStack: [
+          { label: 'Sponsor equity', amount: 180, unit: '₹Cr', source: 'Promoter' },
+          { label: 'Green bond', amount: 450, unit: '₹Cr', source: 'Retail + QIB' },
+          { label: 'IREDA term', amount: 280, unit: '₹Cr', source: '10Y RR+185' },
+          { label: 'PLI Tier-2', amount: 95, unit: '₹Cr', source: 'Scaled C+M' },
+          { label: 'Export factoring', amount: 120, unit: '₹Cr', source: 'EXIM WC' },
+        ],
+      revenueStack: [
+          { label: 'Modules domestic', value: 420, source: '0.5GW × ₹8.4/W' },
+          { label: 'Modules EU+US', value: 780, source: '1GW × €0.12/W' },
+          { label: 'PLI Tier-2', value: 19, source: '₹95Cr /5Y' },
+          { label: 'CBAM liability avoided', value: 58, source: '50% cut × €12 × 0.8M', scenSens: true },
+          { label: 'REC captive 50MW', value: 8, source: 'CERC floor', scenSens: true },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'Green bond', v: '₹450 Cr listed' },
+          { k: 'Tenor', v: '7Y' },
+          { k: 'Coupon', v: '10.25% fixed' },
+          { k: 'SPO', v: 'CRISIL ESG' },
+          { k: 'Use of proceeds', v: '50MW captive + EPD' },
+          { k: 'Rating', v: 'A- (ICRA)' },
+          { k: 'DSCR cov', v: '1.20×' },
+          { k: 'RE100', v: '100% by 2027' },
+        ],
+      dscrCovenant: 1.20,
+      financialModel: {
+        years: 8, revenue0: 1285, revenueGrowth: 0.032,
+        opexPct: 0.74, daPct: 0.07, taxRate: 0.22, wacc: 0.12,
+        capex: [680, 120, 80, 55, 45, 38, 32, 28],
+        debtService: 138,
+      },
+      risk: {
+        var95: 78, es99: 165, defaultProb: 0.045,
+        policyScore: 6.5, fxSensPct: -7.2, fxPair: 'USD/INR + EUR/USD',
+        carbonBeta: 0.95, dv01: 3.2, climVaR: 22,
+        unit: '₹Cr', ratingImplied: 'A- (ICRA)',
+      },
+      bankability: [
+          { label: 'Export customer mix', score: 7.0 },
+          { label: 'CBAM strategy maturity', score: 6.5 },
+          { label: 'Technology tier (PERC+TOPCon)', score: 6.5 },
+          { label: 'PLI Tier-2 credibility', score: 6.0 },
+          { label: 'Working capital (EXIM)', score: 6.5 },
+          { label: 'Governance (Big4 audit)', score: 7.5 },
+        ],
+      lenders: [
+          { name: 'IREDA', instrument: 'Term loan', tenor: '10Y', pricing: 'RR+185', ticket: '₹280Cr', fit: 'High' },
+          { name: 'SBI / ICICI', instrument: 'INR bond', tenor: '7Y', pricing: '10.25%', ticket: '₹250Cr', fit: 'High' },
+          { name: 'US EXIM', instrument: 'Buyer credit', tenor: '10Y', pricing: 'SOFR+170', ticket: '$25M', fit: 'Mid' },
+          { name: 'IFC', instrument: 'B-loan', tenor: '10Y', pricing: 'SOFR+195', ticket: '$20M', fit: 'Mid' },
+        ],
+      closingNotes: 'Squeezed between (a) Chinese import dumping (ALMM + BCD moat), (b) EU CBAM on exports (captive RE mitigates). Green bond 10.25% high vs ₹450 Cr size. IFC-wrapped alternative could shave 120 bps if Sustainalytics >80.',
+    },
+  ]} moduleCode="EP-EA3" title="Solar Manufacturer — PLI + CBAM + Green Bond"
         />
       )}
 

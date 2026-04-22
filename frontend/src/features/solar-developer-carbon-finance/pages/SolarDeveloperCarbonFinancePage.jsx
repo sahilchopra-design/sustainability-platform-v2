@@ -3,6 +3,7 @@ import { BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
+import IndiaGreenHybridFinance from '../../_shared/IndiaGreenHybridFinance';
 
 const sr = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const T = { bg: '#0f1117', surface: '#1a1d27', surfaceH: '#22263a', border: '#2a2f45', borderL: '#1e2235', navy: '#1e3a5f', gold: '#d4a843', sage: '#2d6a4f', teal: '#0d4f5c', text: '#e8e0d0', textSec: '#a89880', textMut: '#6b6050', red: '#c0392b', green: '#27ae60', amber: '#e67e22', font: "'DM Sans', sans-serif", mono: "'JetBrains Mono', monospace" };
@@ -44,7 +45,7 @@ const PROJECT_FINANCE_WATERFALL = [
   { layer: 'Equity (Promoter + FDI)', share: 20, rate: '14-18% target IRR', tenor: 'Perpetual', security: 'Residual claim' },
 ];
 
-const TABS = ['Overview', 'IPP Dashboard', 'Carbon Credit Calc.', 'Methodology Compare', 'REC Market', 'Green Bond Structure', 'Project Finance', 'JCM Eligibility', 'CCTS Compliance', 'IRR Sensitivity', 'Advanced Analytics'];
+const TABS = ['Overview', 'IPP Dashboard', 'Carbon Credit Calc.', 'Methodology Compare', 'REC Market', 'Green Bond Structure', 'Project Finance', 'JCM Eligibility', 'CCTS Compliance', 'IRR Sensitivity', 'Advanced Analytics', 'Hybrid Finance'];
 
 function calcCarbonCredits({ gwInstalled, plf, gridEf, discountPct, creditPrice }) {
   const annGenMwh = gwInstalled * 1000 * plf * 8760;
@@ -483,6 +484,128 @@ export default function SolarDeveloperCarbonFinancePage() {
             ],
           }}
           defaultCovered={['gov1', 'str1', 'str2', 'str3', 'rsk1', 'met1', 'met2', 'tgt1']}
+        />
+      )}
+
+
+      {tab === 11 && (
+        <IndiaGreenHybridFinance T={T} useCases={[
+    {
+      tag: 'UC-1', title: '2.5 GW solar IPP: green bond + REC + CCTS + ITMO stacking',
+      persona: 'Adani Green / ReNew / NTPC Green', personaDetail: '2.5 GW SECI PPA @ ₹2.35/kWh, COD 2027',
+      problem: 'Tariff-alone IRR 10.5% (below 13% hurdle). Needs REC + CCTS + JCM ITMO stacking to reach 14.2% and secure Board approval.', outcome: 'Green bond $600M @ SOFR+210 + 5 revenue streams → levered IRR 14.6%.',
+      capitalStack: [
+          { label: 'Sponsor equity', amount: 1500, unit: '₹Cr', source: 'Adani/ReNew' },
+          { label: 'Green bond (USD)', amount: 5100, unit: '₹Cr', source: '$600M SOFR+210' },
+          { label: 'IREDA term loan', amount: 2400, unit: '₹Cr', source: '15Y RR+175' },
+          { label: 'PowerGrid LC', amount: 350, unit: '₹Cr', source: 'Credit enhancement' },
+          { label: 'VGF (SECI)', amount: 180, unit: '₹Cr', source: '₹0.45 Cr/MW' },
+        ],
+      revenueStack: [
+          { label: 'PPA tariff 5.5 TWh × ₹2.35', value: 1292, source: 'SECI 25Y PPA' },
+          { label: 'REC ₹1,000 × 5.5L', value: 55, source: 'CERC floor', scenSens: true },
+          { label: 'CCTS CCC × ₹2,200/t', value: 120, source: 'SEEP Scope-2 grey offset', scenSens: true },
+          { label: 'JCM ITMO Japan', value: 145, source: '400 kt × ¥1,200/t', scenSens: true },
+          { label: 'REC sleeve premium', value: 60, source: 'Corp PPA green attribute' },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'Green bond', v: '$600M USD 144A' },
+          { k: 'Tenor', v: '10Y bullet' },
+          { k: 'Coupon', v: 'SOFR + 210 bps' },
+          { k: 'ICMA', v: 'GBP 2025' },
+          { k: 'SPO', v: 'DNV / Sustainalytics' },
+          { k: 'Rating', v: 'Ba1 / BB+' },
+          { k: 'DSCR cov', v: '1.35×' },
+          { k: 'D:E', v: '70:30' },
+        ],
+      dscrCovenant: 1.35,
+      financialModel: {
+        years: 15, revenue0: 1672, revenueGrowth: 0.028,
+        opexPct: 0.22, daPct: 0.09, taxRate: 0.22, wacc: 0.085,
+        capex: [8500, 1200, 150, 120, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50],
+        debtService: 1020,
+      },
+      risk: {
+        var95: 185, es99: 420, defaultProb: 0.025,
+        policyScore: 7.5, fxSensPct: -5.8, fxPair: 'USD/INR',
+        carbonBeta: 0.48, dv01: 12.5, climVaR: 68,
+        unit: '₹Cr', ratingImplied: 'BB+ (S&P) · Ba1 (Moody\'s)',
+      },
+      bankability: [
+          { label: 'SECI offtaker (sovereign-backed)', score: 8.5 },
+          { label: 'P90 PLF Rajasthan (22.5%)', score: 8.0 },
+          { label: 'L&T/Sterling EPC risk', score: 7.5 },
+          { label: 'Grid/curtailment (Bhadla)', score: 6.5 },
+          { label: 'Carbon stack monetisation', score: 7.0 },
+          { label: 'Refinance (10Y bullet vs 25Y)', score: 7.5 },
+        ],
+      lenders: [
+          { name: 'IREDA', instrument: 'Senior term', tenor: '18Y', pricing: 'RR+175', ticket: '₹2,400Cr', fit: 'High' },
+          { name: 'NaBFID', instrument: 'Partial credit guarantee', tenor: '10Y', pricing: '40bps fee', ticket: '₹800Cr', fit: 'High' },
+          { name: 'SBI / HDFC', instrument: 'INR rupee', tenor: '15Y', pricing: 'MCLR+135', ticket: '₹1,800Cr', fit: 'High' },
+          { name: 'ADB + AIIB', instrument: 'Senior + guarantee', tenor: '20Y', pricing: 'SOFR+145', ticket: '$350M', fit: 'High' },
+          { name: 'Goldman / Barclays', instrument: 'Green bond JLM', tenor: '10Y', pricing: 'SOFR+210', ticket: '$600M', fit: 'High' },
+        ],
+      closingNotes: 'Blending 5 streams lifts levered IRR from 10.5% (tariff-only) to 14.6% (stacked). ITMO revenue unlocks only if Japan-India BTA CAs flow. Base tariff case remains viable above cost-of-debt 7.2%. Green bond requires DSCR ≥1.35× with carbon haircut 40% in stress.',
+    },
+    {
+      tag: 'UC-2', title: 'C&I rooftop: corporate PPA + REC sleeve securitisation',
+      persona: 'CleanMax / Amp Energy / Fourth Partner', personaDetail: '150 MW C&I portfolio: Amazon / MSFT / Infosys offtakers',
+      problem: 'High WACC (12%) on rooftop; need green bond securitisation + REC sleeve @ $14/REC to hit 13% IRR + win 300 MW tender.', outcome: 'Securitise ₹1,200 Cr green ABS @ MCLR+160 + REC sleeve ₹35 Cr/yr → IRR 13.4%.',
+      capitalStack: [
+          { label: 'Sponsor equity', amount: 250, unit: '₹Cr', source: 'CleanMax' },
+          { label: 'Green ABS (securitised)', amount: 1200, unit: '₹Cr', source: 'Receivables PTC' },
+          { label: 'NaBFID senior', amount: 380, unit: '₹Cr', source: '10Y MCLR+140' },
+          { label: 'ADB climate', amount: 160, unit: '₹Cr', source: '$19M SOFR+170' },
+        ],
+      revenueStack: [
+          { label: 'Corp PPA ₹5.8/kWh × 22% PLF', value: 162, source: '25Y PPA' },
+          { label: 'REC sleeve premium $14 × 270k', value: 35, source: 'US Scope-2 mandate', scenSens: true },
+          { label: 'CCTS domestic credit', value: 12, source: 'Indian offtakers 2026+', scenSens: true },
+          { label: 'O&M margin', value: 8, source: '₹0.12/kWh' },
+        ],
+      revenueUnit: '₹Cr/yr',
+      termSheet: [
+          { k: 'Securitisation', v: '₹1,200 Cr PTC' },
+          { k: 'Tenor', v: '10Y amortising' },
+          { k: 'Coupon', v: 'MCLR+160' },
+          { k: 'Overcollat', v: '15% + LC' },
+          { k: 'Tranche A (AA)', v: '₹1,020 Cr' },
+          { k: 'Tranche B (A)', v: '₹180 Cr' },
+          { k: 'Servicer', v: 'CleanMax + trustee' },
+          { k: 'Post-tax WACC', v: '9.2%' },
+        ],
+      dscrCovenant: 1.20,
+      financialModel: {
+        years: 10, revenue0: 217, revenueGrowth: 0.022,
+        opexPct: 0.28, daPct: 0.10, taxRate: 0.22, wacc: 0.092,
+        capex: [850, 180, 60, 45, 40, 35, 30, 28, 25, 22],
+        debtService: 118,
+      },
+      risk: {
+        var95: 18, es99: 42, defaultProb: 0.012,
+        policyScore: 8.0, fxSensPct: -2.4, fxPair: 'USD/INR (REC sleeve only)',
+        carbonBeta: 0.22, dv01: 1.1, climVaR: 6.5,
+        unit: '₹Cr', ratingImplied: 'AA (tranche A) · A (tranche B)',
+      },
+      bankability: [
+          { label: 'Offtaker (Amazon/MSFT AAA-eq)', score: 9.5 },
+          { label: 'C&I rooftop P90 PLF', score: 7.0 },
+          { label: 'PPA enforceability', score: 8.0 },
+          { label: 'SPV cash waterfall', score: 8.5 },
+          { label: 'REC sleeve demand', score: 8.0 },
+          { label: 'Servicer quality', score: 8.5 },
+        ],
+      lenders: [
+          { name: 'NaBFID', instrument: 'Securitised senior', tenor: '10Y', pricing: 'MCLR+140', ticket: '₹380Cr', fit: 'High' },
+          { name: 'SBI Capital', instrument: 'Green ABS arranger', tenor: '10Y', pricing: 'MCLR+160', ticket: '₹1,200Cr', fit: 'High' },
+          { name: 'ADB', instrument: 'Climate facility', tenor: '12Y', pricing: 'SOFR+170', ticket: '$19M', fit: 'High' },
+          { name: 'IFC', instrument: 'B-loan participation', tenor: '10Y', pricing: 'SOFR+190', ticket: '$25M', fit: 'Mid' },
+        ],
+      closingNotes: 'C&I securitisation is fastest-growing Indian green bond sub-segment (CAGR 65% 2023-26). REC sleeve pre-sold to US tech at $14 (2.5× CERC floor) pays for credit enhancement. Downside: if corp PPA defaults, SPV waterfall + LC covers 14M debt service.',
+    },
+  ]} moduleCode="EP-EA2" title="Solar IPP Carbon Finance — Revenue Stacking & Green Bond"
         />
       )}
 
