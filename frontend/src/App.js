@@ -797,6 +797,13 @@ const MarineBlueCarbonFinancePage         = React.lazy(() => import("./features/
 const AquacultureClimateFinancePage       = React.lazy(() => import("./features/aquaculture-climate-finance/pages/AquacultureClimateFinancePage"));
 const OceanCarbonCreditMarketPage         = React.lazy(() => import("./features/ocean-carbon-credit-market/pages/OceanCarbonCreditMarketPage"));
 const CoastalResilienceFinancePage        = React.lazy(() => import("./features/coastal-resilience-finance/pages/CoastalResilienceFinancePage"));
+// Sprint EA — India Green Economy Carbon Finance Suite
+const RegionalCarbonMarketHubPage         = React.lazy(() => import("./features/regional-carbon-market-hub/pages/RegionalCarbonMarketHubPage"));
+const SolarDeveloperCarbonFinancePage     = React.lazy(() => import("./features/solar-developer-carbon-finance/pages/SolarDeveloperCarbonFinancePage"));
+const SolarManufacturerCarbonFinancePage  = React.lazy(() => import("./features/solar-manufacturer-carbon-finance/pages/SolarManufacturerCarbonFinancePage"));
+const GreenHydrogenAmmoniaCarbonPage      = React.lazy(() => import("./features/green-hydrogen-ammonia-carbon/pages/GreenHydrogenAmmoniaCarbonPage"));
+const IndiaGreenInfraFinancePage          = React.lazy(() => import("./features/india-green-infra-finance/pages/IndiaGreenInfraFinancePage"));
+const CarbonArbitragePortfolioPage        = React.lazy(() => import("./features/carbon-arbitrage-portfolio/pages/CarbonArbitragePortfolioPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1175,6 +1182,14 @@ const NAV_GROUPS = [
     { path: '/aquaculture-climate-finance',       label: 'Aquaculture & Ocean Food System Finance',    badge: 'ASC/MSC · Acidification Risk · Temperature Stress · Carbon Intensity · Seafood Finance · 10 Tabs', code: 'EP-DZ4' },
     { path: '/ocean-carbon-credit-market',        label: 'Ocean Carbon Credit Market Intelligence',    badge: 'Blue Carbon · Verra VCS · OAE · Forward Curve · Buyer Landscape · Quality Framework · 10 Tabs', code: 'EP-DZ5' },
     { path: '/coastal-resilience-finance',        label: 'Coastal Resilience & Adaptation Finance Hub', badge: 'BCR Engine · 8-City Dashboard · Sea Level Rise · Parametric Insurance · NbS · 10 Tabs',       code: 'EP-DZ6' },
+  ]},
+  { label: '🇮🇳 India Green Economy Carbon Finance', icon: '🇮🇳', color: '#FF9933', items: [
+    { path: '/regional-carbon-market-hub',        label: 'Regional Carbon Market Intelligence Hub',     badge: 'EU ETS · India CCTS · Japan GX-ETS · JCM · CBAM · Article 6 · 10 Tabs',                        code: 'EP-EA1' },
+    { path: '/solar-developer-carbon-finance',    label: 'Solar Developer Carbon Finance (India IPP)',  badge: '6 IPPs · ACM0002 · JCM · REC Market · Green Bond · DSCR Engine · 10 Tabs',                   code: 'EP-EA2' },
+    { path: '/solar-manufacturer-carbon-finance', label: 'Solar Manufacturer Carbon Finance',           badge: 'PLI · EU CBAM · Scope 1-2-3 · EPD Standards · CCTS · RE100 · 6 Manufacturers · 10 Tabs',      code: 'EP-EA3' },
+    { path: '/green-hydrogen-ammonia-carbon',     label: 'Green Hydrogen & Ammonia Carbon Finance',     badge: 'SIGHT · RFNBO · JCM ITMO · GX-ETS · Article 6 · 6 Developers · 10 Tabs',                     code: 'EP-EA4' },
+    { path: '/india-green-infra-finance',         label: 'India Green Infrastructure & Project Finance', badge: 'NaBFID · InvIT · GCF/ADB · BRSR · CCTS · 8 Infra Types · 10 Tabs',                          code: 'EP-EA5' },
+    { path: '/carbon-arbitrage-portfolio',        label: 'Cross-Market Carbon Arbitrage & NZ Portfolio', badge: 'EU ETS · CCTS · JCM · VCS · Article 6 · CORSIA · Portfolio VaR · 10 Tabs',                  code: 'EP-EA6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3166,6 +3181,13 @@ function AppContent() {
             <Route path="/aquaculture-climate-finance"      element={<AquacultureClimateFinancePage />} />
             <Route path="/ocean-carbon-credit-market"       element={<OceanCarbonCreditMarketPage />} />
             <Route path="/coastal-resilience-finance"       element={<CoastalResilienceFinancePage />} />
+            {/* Sprint EA — India Green Economy Carbon Finance Suite */}
+            <Route path="/regional-carbon-market-hub"        element={<RegionalCarbonMarketHubPage />} />
+            <Route path="/solar-developer-carbon-finance"    element={<SolarDeveloperCarbonFinancePage />} />
+            <Route path="/solar-manufacturer-carbon-finance" element={<SolarManufacturerCarbonFinancePage />} />
+            <Route path="/green-hydrogen-ammonia-carbon"     element={<GreenHydrogenAmmoniaCarbonPage />} />
+            <Route path="/india-green-infra-finance"         element={<IndiaGreenInfraFinancePage />} />
+            <Route path="/carbon-arbitrage-portfolio"        element={<CarbonArbitragePortfolioPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
