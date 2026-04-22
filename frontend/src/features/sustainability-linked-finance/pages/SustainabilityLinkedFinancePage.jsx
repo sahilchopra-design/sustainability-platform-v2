@@ -4,11 +4,16 @@ import {
   ToolShell, Step, OutputRail, PrimaryCTA, ToolMenu,
   FieldRow, Worksheet, NumInput, TextInput, SelectInput, Collapsible, Note, PageHeader
 } from '../../_shared/AdvisoryToolkit';
+import { ICMA_KPI_LIBRARY, CBI_GREENIUM_BPS, sbtiAmbitionCheck } from '../../_shared/AdvisoryReference';
 
 const INSTRUMENTS = ['Green Bond', 'Sustainability-Linked Bond', 'Sustainability-Linked Loan', 'Transition Bond', 'Blue Bond'];
+const SECTORS = Object.keys(ICMA_KPI_LIBRARY);
+const RATINGS = ['AAA', 'AA', 'A', 'BBB', 'BB'];
 
 const DEFAULTS = {
   issuer: 'ACME Group',
+  sector: 'Utilities — Power',
+  rating: 'A',
   instrument: 'Sustainability-Linked Bond',
   notional: 5000,      // ₹ Cr
   tenor: 7,
@@ -48,6 +53,31 @@ export default function SustainabilityLinkedFinancePage() {
   const upd = (k) => (v) => sc.update({ [k]: v });
   const updKpi = (i, k, v) => sc.update({ kpis: s.kpis.map((x, j) => j === i ? { ...x, [k]: v } : x) });
 
+  // Load ICMA sector template — replaces KPIs with sector-calibrated SPTs
+  const loadSector = (sector) => {
+    const lib = ICMA_KPI_LIBRARY[sector];
+    if (!lib) return;
+    const cbi = CBI_GREENIUM_BPS[sector]?.[s.rating] ?? 5;
+    sc.update({
+      sector,
+      greeniumBps: cbi,
+      kpis: lib.map((k, i) => ({
+        _id: Date.now() + i,
+        name: k.kpi, baseline: k.baseline, spt: k.spt2030,
+        unit: k.unit, year: 2030, weight: Math.round(100 / lib.length),
+        achieved: k.baseline + (k.spt2030 - k.baseline) * 0.3,
+      })),
+    });
+  };
+  const setRating = (r) => {
+    const cbi = CBI_GREENIUM_BPS[s.sector]?.[r] ?? s.greeniumBps;
+    sc.update({ rating: r, greeniumBps: cbi });
+  };
+
+  // SBTi ambition check per KPI
+  const sbtiChecks = s.kpis.map(k => sbtiAmbitionCheck(s.sector, k.baseline, k.spt, k.year));
+  const alignedCount = sbtiChecks.filter(c => c.aligned).length;
+
   const onDeliver = () => {
     const body = [
       html.h1(`${s.instrument} Framework — ${s.issuer}`),
@@ -76,12 +106,20 @@ export default function SustainabilityLinkedFinancePage() {
       header={<PageHeader code="EP-EB3 · SLF" title="Sustainability-Linked Finance Tool" subtitle="Structure SLB / SLL framework, model greenium economics, produce issuance-ready framework document." />}
       steps={
         <>
-          <Step n={1} title="Issuer & instrument">
+          <Step n={1} title="Issuer & instrument" hint="Sector + rating auto-loads ICMA KPI template and CBI greenium benchmark.">
             <FieldRow label="Issuer"><TextInput value={s.issuer} onChange={upd('issuer')} style={{ width: 320 }} /></FieldRow>
+            <FieldRow label="Sector" hint="Loads ICMA SLBP 2024 KPI registry">
+              <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+                <SelectInput value={s.sector} onChange={loadSector} options={SECTORS} />
+                <button onClick={() => loadSector(s.sector)} style={{ background: T.surfaceH, color: T.gold, border: `1px solid ${T.border}`, padding: '4px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 2, fontFamily: T.mono }}>↻ reload KPIs</button>
+              </span>
+            </FieldRow>
+            <FieldRow label="Credit rating" hint="CBI greenium lookup"><SelectInput value={s.rating} onChange={setRating} options={RATINGS} /></FieldRow>
             <FieldRow label="Instrument"><SelectInput value={s.instrument} onChange={upd('instrument')} options={INSTRUMENTS} /></FieldRow>
             <FieldRow label="Notional"><NumInput value={s.notional} onChange={upd('notional')} step={100} suffix="₹ Cr" /></FieldRow>
             <FieldRow label="Tenor"><NumInput value={s.tenor} onChange={upd('tenor')} suffix="years" /></FieldRow>
             <FieldRow label="Coupon"><NumInput value={s.coupon} onChange={upd('coupon')} step={0.1} suffix="%" /></FieldRow>
+            <Note level="info">CBI 2024 greenium for <b>{s.sector}</b> / <b>{s.rating}</b>: <b style={{ color: T.gold }}>{CBI_GREENIUM_BPS[s.sector]?.[s.rating] ?? '—'} bps</b> below vanilla comparable.</Note>
           </Step>
 
           <Step n={2} title="KPI library" hint="Define 2–5 KPIs, each with a baseline, SPT, and current achievement. Weights must sum to 100.">
@@ -104,6 +142,21 @@ export default function SustainabilityLinkedFinancePage() {
               onDel={(i) => sc.update({ kpis: s.kpis.filter((_, j) => j !== i) })}
             />
             {(s.kpis.reduce((x, k) => x + k.weight, 0) !== 100) && <Note level="warn">Weights sum to {s.kpis.reduce((x, k) => x + k.weight, 0)}% — should total 100%.</Note>}
+            <Collapsible title={`SBTi 1.5°C alignment (${alignedCount}/${s.kpis.length} KPIs aligned)`}>
+              <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
+                <thead><tr style={{ color: T.textMut }}><th style={{ padding: 4, textAlign: 'left' }}>KPI</th><th style={{ padding: 4 }}>Required Δ</th><th style={{ padding: 4 }}>Target Δ</th><th style={{ padding: 4 }}>Aligned</th></tr></thead>
+                <tbody>{s.kpis.map((k, i) => {
+                  const c = sbtiChecks[i];
+                  return <tr key={k._id} style={{ borderTop: `1px solid ${T.borderL}`, fontFamily: T.mono }}>
+                    <td style={{ padding: 4, fontFamily: T.font, color: T.textSec }}>{k.name}</td>
+                    <td style={{ padding: 4, textAlign: 'right' }}>{(c.required * 100).toFixed(1)}%</td>
+                    <td style={{ padding: 4, textAlign: 'right' }}>{(c.actual * 100).toFixed(1)}%</td>
+                    <td style={{ padding: 4, color: c.aligned ? T.green : T.amber }}>{c.aligned ? '✓' : '✗'}</td>
+                  </tr>;
+                })}</tbody>
+              </table>
+              <div style={{ fontSize: 10, color: T.textMut, marginTop: 6 }}>Required rates from SBTi SDA pathways — power 4.2%/yr, cement 2.5%, steel 3.5%, FI 4.2%, RE 4.8%, O&G 2.9%.</div>
+            </Collapsible>
           </Step>
 
           <Step n={3} title="Coupon mechanics">

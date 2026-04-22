@@ -4,12 +4,9 @@ import {
   ToolShell, Step, OutputRail, PrimaryCTA, ToolMenu,
   FieldRow, Worksheet, NumInput, TextInput, SelectInput, Collapsible, Note, PageHeader
 } from '../../_shared/AdvisoryToolkit';
+import { LCA_EF as EF_LIB, PV_ARCHETYPES, LCA_PEER_BENCHMARKS, IEA_GRID_EF, gridEfFor } from '../../_shared/AdvisoryReference';
 
-const EF_LIB = {
-  'Silicon (mono)': 25.5, 'Silicon (poly)': 21.2, 'Glass (tempered)': 1.44, 'Aluminium frame': 8.24,
-  'EVA backsheet': 3.10, 'Copper wiring': 4.60, 'Steel mounting': 2.10, 'Concrete ballast': 0.12,
-  'Junction box (plastic)': 5.20, 'Inverter (electronics)': 12.0,
-};
+const COUNTRIES = Object.keys(IEA_GRID_EF);
 
 const DEFAULTS = {
   product: 'ACME 550W Mono PERC Module',
@@ -64,6 +61,32 @@ export default function RenewableLcaEpdPage() {
   const updAsset = (i, k, v) => sc.update({ assets: s.assets.map((a, j) => j === i ? { ...a, [k]: v } : a) });
   const updPeer = (i, k, v) => sc.update({ peers: s.peers.map((p, j) => j === i ? { ...p, [k]: v } : p) });
 
+  // Load a PV archetype — replaces BOM and mfg energy with ITRPV 2024 reference values
+  const loadArchetype = (name) => {
+    const a = PV_ARCHETYPES[name];
+    if (!a) return;
+    sc.update({
+      product: `${s.manufacturer} ${a.tech} (${name})`,
+      bom: a.bom.map((b, i) => ({ _id: Date.now() + i, ...b })),
+      mfgElec: a.mfgElec,
+      assets: s.assets.map(x => ({ ...x, yieldKwhPerKw: a.yield, degPct: a.degPct })),
+    });
+  };
+
+  // Auto-update grid EF when country changes
+  const setCountry = (c) => sc.update({ mfgCountry: c, gridEF: IEA_GRID_EF[c] ?? s.gridEF });
+
+  // Tornado: ±20% each BOM row effect on module kgCO2/kW
+  const tornado = useMemo(() => {
+    return bomRows.map(r => ({
+      material: r.material, base: r.kgCO2,
+      low: r.kgCO2 * -0.2, high: r.kgCO2 * 0.2,
+    })).sort((a, b) => b.base - a.base).slice(0, 5);
+  }, [bomRows]);
+
+  const peerPct = LCA_PEER_BENCHMARKS.filter(p => p.gco2PerKwh > wtdGco2).length;
+  const peerRank = `beats ${peerPct}/${LCA_PEER_BENCHMARKS.length} benchmarks`;
+
   const onDeliver = () => {
     const body = [
       html.h1(`Environmental Product Declaration (draft) — ${s.product}`),
@@ -101,11 +124,17 @@ export default function RenewableLcaEpdPage() {
             <FieldRow label="Product name"><TextInput value={s.product} onChange={upd('product')} style={{ width: 360 }} /></FieldRow>
             <FieldRow label="Declared unit" hint="e.g. 1 kW installed, or 1 m² module"><TextInput value={s.declaredUnit} onChange={upd('declaredUnit')} style={{ width: 260 }} /></FieldRow>
             <FieldRow label="Manufacturer"><TextInput value={s.manufacturer} onChange={upd('manufacturer')} style={{ width: 260 }} /></FieldRow>
-            <FieldRow label="Mfg country"><TextInput value={s.mfgCountry} onChange={upd('mfgCountry')} style={{ width: 160 }} /></FieldRow>
+            <FieldRow label="Mfg country" hint="Auto-updates grid EF via IEA 2024"><SelectInput value={s.mfgCountry} onChange={setCountry} options={COUNTRIES} style={{ width: 160 }} /></FieldRow>
             <FieldRow label="Lifetime" hint="Reference service life"><NumInput value={s.lifetimeYears} onChange={upd('lifetimeYears')} suffix="years" /></FieldRow>
           </Step>
 
-          <Step n={2} title="Bill of materials (cradle-to-gate)" hint="Enter material quantities per kW of declared capacity. Emission factors auto-populate from ecoinvent-equivalent library.">
+          <Step n={2} title="Bill of materials (cradle-to-gate)" hint="Load an ITRPV 2024 archetype to auto-fill BOM + yield, or edit inline. EFs from ecoinvent-equivalent library.">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+              <span style={{ fontSize: 11, color: T.textMut, alignSelf: 'center', marginRight: 4 }}>LOAD ARCHETYPE:</span>
+              {Object.keys(PV_ARCHETYPES).map(n => (
+                <button key={n} onClick={() => loadArchetype(n)} style={{ background: T.surfaceH, color: T.gold, border: `1px solid ${T.border}`, padding: '4px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 2, fontFamily: T.mono }}>{n}</button>
+              ))}
+            </div>
             <Worksheet
               cols={[
                 { h: 'Material', width: '1.6fr', edit: (r, i) => <SelectInput value={r.material} onChange={v => updBom(i, 'material', v)} options={Object.keys(EF_LIB)} style={{ width: '100%' }} /> },
@@ -145,8 +174,30 @@ export default function RenewableLcaEpdPage() {
             />
           </Step>
 
-          <Step n={5} title="Peer benchmark">
-            <Collapsible title="Edit peer benchmarks" defaultOpen>
+          <Step n={5} title="Peer benchmark" hint="IEA PVPS Task 12 reference benchmarks + BOM sensitivity (top-5 drivers).">
+            <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse', marginBottom: 10 }}>
+              <thead><tr style={{ color: T.textMut, textAlign: 'left' }}><th style={{ padding: 6 }}>Benchmark</th><th style={{ padding: 6 }}>g CO₂/kWh</th><th style={{ padding: 6 }}>Δ vs you</th></tr></thead>
+              <tbody>{LCA_PEER_BENCHMARKS.map(p => {
+                const d = wtdGco2 - p.gco2PerKwh;
+                return <tr key={p.name} style={{ borderTop: `1px solid ${T.borderL}`, fontFamily: T.mono }}>
+                  <td style={{ padding: 6, fontFamily: T.font, color: T.textSec }}>{p.name}</td>
+                  <td style={{ padding: 6 }}>{p.gco2PerKwh}</td>
+                  <td style={{ padding: 6, color: d > 0 ? T.amber : T.green }}>{d > 0 ? '+' : ''}{d.toFixed(1)}</td>
+                </tr>;
+              })}</tbody>
+            </table>
+            <Collapsible title="BOM sensitivity (top-5 drivers, ±20%)">
+              <div style={{ fontFamily: T.mono, fontSize: 11, color: T.textSec, lineHeight: 1.8 }}>
+                {tornado.map(t => (
+                  <div key={t.material} style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr', gap: 8, padding: '4px 0', borderTop: `1px solid ${T.borderL}` }}>
+                    <span style={{ fontFamily: T.font, color: T.text }}>{t.material}</span>
+                    <span>base {t.base.toFixed(1)} kgCO₂/kW</span>
+                    <span style={{ color: T.amber }}>±{Math.abs(t.high).toFixed(1)}</span>
+                  </div>
+                ))}
+              </div>
+            </Collapsible>
+            <Collapsible title="Edit peer benchmarks">
               <Worksheet
                 cols={[
                   { h: 'Benchmark', width: '2fr', edit: (r, i) => <TextInput value={r.name} onChange={v => updPeer(i, 'name', v)} style={{ width: '100%' }} /> },
@@ -178,7 +229,8 @@ export default function RenewableLcaEpdPage() {
             <div>
               <div><b style={{ color: T.text }}>{s.product}</b></div>
               <div style={{ marginTop: 4 }}>vs best-in-class: <b style={{ color: vsBest > 0 ? T.amber : T.green }}>{vsBest > 0 ? '+' : ''}{vsBest.toFixed(1)} gCO₂/kWh</b></div>
-              <div>{s.bom.length} materials · {s.assets.length} assets · {s.peers.length} peers</div>
+              <div>Peer rank: <b style={{ color: T.gold }}>{peerRank}</b></div>
+              <div>{s.bom.length} materials · {s.assets.length} assets</div>
             </div>
           }
           cta={<PrimaryCTA onClick={onDeliver}>Generate EPD Draft →</PrimaryCTA>}

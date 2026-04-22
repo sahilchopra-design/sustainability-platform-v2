@@ -4,15 +4,12 @@ import {
   ToolShell, Step, OutputRail, PrimaryCTA, ToolMenu,
   FieldRow, Worksheet, NumInput, TextInput, SelectInput, Collapsible, Note, PageHeader
 } from '../../_shared/AdvisoryToolkit';
+import { SSP_MULT, IN_HAZARD_BASELINE, AQUEDUCT_STRESS, NGFS_DAMAGE } from '../../_shared/AdvisoryReference';
 
-const SSP_MULT = {
-  'SSP1-2.6': { 2030: 1.0, 2040: 1.1, 2050: 1.15 },
-  'SSP2-4.5': { 2030: 1.1, 2040: 1.3, 2050: 1.55 },
-  'SSP5-8.5': { 2030: 1.2, 2040: 1.6, 2050: 2.2 }
-};
+const STATES = Object.keys(IN_HAZARD_BASELINE);
 
 const rarFor = (a, ssp, yr) => {
-  const mult = SSP_MULT[ssp][yr];
+  const mult = SSP_MULT[ssp]?.[yr] ?? 1;
   return Math.min(40, 0.6 * (a.heat * 1.2 + a.water * 1.5 + a.cyclone * 2.0 + a.flood * 1.8 + a.dust * 0.8) * mult);
 };
 
@@ -26,14 +23,14 @@ const DEFAULTS = {
   adaptOpex: 12,      // ₹ Cr / yr
   adaptBenefitPct: 45,  // % RaR reduction
   assets: [
-    { _id: 1, name: 'Rajasthan 50 MW', lat: 26.9, lon: 75.8, heat: 7, water: 9, cyclone: 1, flood: 2, dust: 8 },
-    { _id: 2, name: 'Gujarat 40 MW', lat: 22.3, lon: 70.8, heat: 6, water: 6, cyclone: 5, flood: 3, dust: 6 },
-    { _id: 3, name: 'Odisha 35 MW', lat: 20.2, lon: 85.8, heat: 5, water: 3, cyclone: 8, flood: 7, dust: 2 },
-    { _id: 4, name: 'Tamil Nadu 30 MW', lat: 11.1, lon: 78.7, heat: 6, water: 5, cyclone: 7, flood: 5, dust: 2 },
-    { _id: 5, name: 'MP 25 MW', lat: 23.2, lon: 77.4, heat: 7, water: 6, cyclone: 1, flood: 3, dust: 5 },
-    { _id: 6, name: 'Karnataka 40 MW', lat: 13.3, lon: 77.0, heat: 5, water: 5, cyclone: 2, flood: 4, dust: 3 },
-    { _id: 7, name: 'AP 30 MW', lat: 16.5, lon: 80.6, heat: 6, water: 4, cyclone: 6, flood: 5, dust: 3 },
-    { _id: 8, name: 'Oman NH₃ Hub', lat: 23.6, lon: 58.5, heat: 9, water: 10, cyclone: 4, flood: 1, dust: 9 },
+    { _id: 1, name: 'Rajasthan 50 MW', state: 'RJ', ...IN_HAZARD_BASELINE.RJ },
+    { _id: 2, name: 'Gujarat 40 MW', state: 'GJ', ...IN_HAZARD_BASELINE.GJ },
+    { _id: 3, name: 'Odisha 35 MW', state: 'OD', ...IN_HAZARD_BASELINE.OD },
+    { _id: 4, name: 'Tamil Nadu 30 MW', state: 'TN', ...IN_HAZARD_BASELINE.TN },
+    { _id: 5, name: 'MP 25 MW', state: 'MP', ...IN_HAZARD_BASELINE.MP },
+    { _id: 6, name: 'Karnataka 40 MW', state: 'KA', ...IN_HAZARD_BASELINE.KA },
+    { _id: 7, name: 'AP 30 MW', state: 'AP', ...IN_HAZARD_BASELINE.AP },
+    { _id: 8, name: 'Oman NH₃ Hub', state: 'OM', ...IN_HAZARD_BASELINE.OM },
   ],
 };
 
@@ -61,7 +58,14 @@ export default function TcfdPhysicalRiskAssessmentPage() {
   const ready = s.assets.length >= 1 && s.portfolio.trim();
 
   const upd = (k) => (v) => sc.update({ [k]: v });
-  const updAsset = (i, k, v) => sc.update({ assets: s.assets.map((a, j) => j === i ? { ...a, [k]: v } : a) });
+  const updAsset = (i, k, v) => {
+    sc.update({ assets: s.assets.map((a, j) => {
+      if (j !== i) return a;
+      const next = { ...a, [k]: v };
+      if (k === 'state' && IN_HAZARD_BASELINE[v]) Object.assign(next, IN_HAZARD_BASELINE[v]);
+      return next;
+    }) });
+  };
 
   const hot = [...rows].sort((a, b) => b.rar - a.rar).slice(0, 3);
 
@@ -101,10 +105,11 @@ export default function TcfdPhysicalRiskAssessmentPage() {
             <Note level="info">{s.ssp} × {s.horizon} → RaR multiplier <b style={{ color: T.gold }}>{SSP_MULT[s.ssp][s.horizon]}×</b></Note>
           </Step>
 
-          <Step n={3} title="Asset hazard matrix" hint="Score each peril 0–10 per asset. RaR % auto-computes per asset from weighted perils × SSP multiplier.">
+          <Step n={3} title="Asset hazard matrix" hint="Pick state → hazard scores auto-fill from IMD + WRI Aqueduct + IPCC AR6. Override any cell to reflect site-level granularity.">
             <Worksheet
               cols={[
-                { h: 'Asset', width: '1.6fr', edit: (r, i) => <TextInput value={r.name} onChange={v => updAsset(i, 'name', v)} style={{ width: '100%' }} /> },
+                { h: 'Asset', width: '1.4fr', edit: (r, i) => <TextInput value={r.name} onChange={v => updAsset(i, 'name', v)} style={{ width: '100%' }} /> },
+                { h: 'State', width: '65px', edit: (r, i) => <SelectInput value={r.state || 'RJ'} onChange={v => updAsset(i, 'state', v)} options={STATES} style={{ width: '100%' }} /> },
                 { h: 'Heat', width: '60px', edit: (r, i) => <NumInput value={r.heat} onChange={v => updAsset(i, 'heat', v)} min={0} max={10} style={{ width: 42 }} /> },
                 { h: 'Water', width: '60px', edit: (r, i) => <NumInput value={r.water} onChange={v => updAsset(i, 'water', v)} min={0} max={10} style={{ width: 42 }} /> },
                 { h: 'Cyclone', width: '70px', edit: (r, i) => <NumInput value={r.cyclone} onChange={v => updAsset(i, 'cyclone', v)} min={0} max={10} style={{ width: 42 }} /> },
@@ -116,12 +121,27 @@ export default function TcfdPhysicalRiskAssessmentPage() {
                   } },
               ]}
               rows={rows}
-              onAdd={() => sc.update({ assets: [...s.assets, { _id: Date.now(), name: 'New asset', lat: 20, lon: 78, heat: 5, water: 5, cyclone: 3, flood: 3, dust: 3 }] })}
+              onAdd={() => sc.update({ assets: [...s.assets, { _id: Date.now(), name: 'New asset', state: 'RJ', ...IN_HAZARD_BASELINE.RJ }] })}
               onDel={(i) => sc.update({ assets: s.assets.filter((_, j) => j !== i) })}
             />
           </Step>
 
           <Step n={4} title="Adaptation economics" hint="Size capex/opex for adaptation — output rail shows ROI and post-adaptation DSCR.">
+            <Collapsible title="NGFS damage function cross-check">
+              <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
+                <thead><tr style={{ color: T.textMut }}><th style={{ padding: 4, textAlign: 'left' }}>NGFS scenario</th><th style={{ padding: 4 }}>β (% GDP/°C)</th><th style={{ padding: 4 }}>Max loss %</th><th style={{ padding: 4 }}>EBITDA impact</th></tr></thead>
+                <tbody>{Object.entries(NGFS_DAMAGE).map(([n, d]) => {
+                  const tempRise = { 'Orderly (1.5°C)': 0.5, 'Disorderly (late action)': 1.5, 'Hot house (3°C+)': 3.0, 'Current policies (2.8°C)': 2.0 }[n];
+                  const pct = Math.min(d.maxLoss, d.beta * tempRise);
+                  return <tr key={n} style={{ borderTop: `1px solid ${T.borderL}`, fontFamily: T.mono }}>
+                    <td style={{ padding: 4, fontFamily: T.font, color: T.textSec }}>{n}</td>
+                    <td style={{ padding: 4, textAlign: 'right' }}>{d.beta}</td>
+                    <td style={{ padding: 4, textAlign: 'right' }}>{d.maxLoss}</td>
+                    <td style={{ padding: 4, color: T.amber, textAlign: 'right' }}>₹{(s.ebitda * pct / 100).toFixed(0)} Cr</td>
+                  </tr>;
+                })}</tbody>
+              </table>
+            </Collapsible>
             <FieldRow label="Adaptation capex (upfront)"><NumInput value={s.adaptCapex} onChange={upd('adaptCapex')} step={5} suffix="₹ Cr" /></FieldRow>
             <FieldRow label="Adaptation opex (annual)"><NumInput value={s.adaptOpex} onChange={upd('adaptOpex')} step={1} suffix="₹ Cr" /></FieldRow>
             <FieldRow label="RaR reduction" hint="% of revenue-at-risk avoided post-adaptation"><NumInput value={s.adaptBenefitPct} onChange={upd('adaptBenefitPct')} min={0} max={90} suffix="%" /></FieldRow>

@@ -2,10 +2,12 @@ import React, { useMemo } from 'react';
 import {
   T, useScenario, openDeliverable, toCsv, downloadText, html,
   ToolShell, Step, OutputRail, PrimaryCTA, ToolMenu,
-  FieldRow, Worksheet, NumInput, TextInput, Note, PageHeader
+  FieldRow, Worksheet, NumInput, TextInput, SelectInput, Collapsible, Note, PageHeader
 } from '../../_shared/AdvisoryToolkit';
+import { MSCI_ISSUE_WEIGHTS, SECTOR_MEDIAN_SCORES, PRI_UPLIFT_LIBRARY, AUM_UNLOCK } from '../../_shared/AdvisoryReference';
 
 const LETTERS = ['CCC', 'B', 'BB', 'BBB', 'A', 'AA', 'AAA'];
+const SECTORS = Object.keys(MSCI_ISSUE_WEIGHTS);
 const letterFor = (s) => LETTERS[Math.max(0, Math.min(6, Math.floor(s / 14.3)))];
 
 const DEFAULTS = {
@@ -58,6 +60,29 @@ export default function EsgRatingsUpliftPage() {
   const updIssue = (i, k, v) => sc.update({ issues: s.issues.map((x, j) => j === i ? { ...x, [k]: v } : x) });
   const updAct = (i, k, v) => sc.update({ actions: s.actions.map((x, j) => j === i ? { ...x, [k]: v } : x) });
 
+  // Load MSCI sector template — auto-populate issues with correct weights and peer median as starting peer
+  const loadSector = (sector) => {
+    const weights = MSCI_ISSUE_WEIGHTS[sector];
+    const median = SECTOR_MEDIAN_SCORES[sector] ?? 55;
+    if (!weights) return;
+    sc.update({
+      sector,
+      issues: weights.map((w, i) => ({
+        _id: Date.now() + i, issue: w.issue, weight: w.weight,
+        current: Math.max(20, median - 15 + (i % 3) * 5), peer: median,
+      })),
+    });
+  };
+
+  // Append a PRI library action
+  const addPriAction = (a) => {
+    sc.update({ actions: [...s.actions, { _id: Date.now(), action: a.action, issue: a.issue, uplift: a.uplift, costMn: a.costMn, months: a.months }] });
+  };
+
+  const sectorMedian = SECTOR_MEDIAN_SCORES[s.sector] ?? 55;
+  const medianLetter = letterFor(sectorMedian);
+  const percentile = Math.round(Math.max(0, Math.min(100, 50 + (currentScore - sectorMedian) * 2)));
+
   const onDeliver = () => {
     const body = [
       html.h1(`ESG Ratings Uplift Roadmap — ${s.issuer}`),
@@ -84,10 +109,16 @@ export default function EsgRatingsUpliftPage() {
       header={<PageHeader code="EP-EB4 · Ratings Uplift" title="ESG Rating Improvement Tool" subtitle="Model current MSCI-equivalent score, prioritise remediation by ROI, produce a client-shareable uplift roadmap." />}
       steps={
         <>
-          <Step n={1} title="Issuer context">
+          <Step n={1} title="Issuer context" hint="Sector selector auto-loads MSCI key issues with sector weights and sets peer = sector median.">
             <FieldRow label="Issuer"><TextInput value={s.issuer} onChange={v => sc.update({ issuer: v })} style={{ width: 320 }} /></FieldRow>
-            <FieldRow label="Sector"><TextInput value={s.sector} onChange={v => sc.update({ sector: v })} style={{ width: 320 }} /></FieldRow>
+            <FieldRow label="Sector">
+              <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+                <SelectInput value={s.sector} onChange={loadSector} options={SECTORS} style={{ width: 260 }} />
+                <button onClick={() => loadSector(s.sector)} style={{ background: T.surfaceH, color: T.gold, border: `1px solid ${T.border}`, padding: '4px 10px', fontSize: 11, cursor: 'pointer', borderRadius: 2, fontFamily: T.mono }}>↻ reload issues</button>
+              </span>
+            </FieldRow>
             <FieldRow label="Passive AUM tracked" hint="For unlock estimate — index-inclusion AUM"><NumInput value={s.aumPassive} onChange={v => sc.update({ aumPassive: v })} step={100} suffix="$ M" /></FieldRow>
+            <Note level="info">Sector median (MSCI-equivalent, 2024): <b style={{ color: T.gold }}>{sectorMedian} ({medianLetter})</b> · Your score percentile: <b style={{ color: percentile >= 50 ? T.green : T.amber }}>{percentile}th</b></Note>
           </Step>
 
           <Step n={2} title="Current issue scoring" hint="Enter current score (0–100) per MSCI key issue alongside peer median.">
@@ -109,7 +140,16 @@ export default function EsgRatingsUpliftPage() {
             {totalW !== 100 && <Note level="warn">Weights sum to {totalW}% — should total 100%.</Note>}
           </Step>
 
-          <Step n={3} title="Remediation actions" hint="Each row is a specific programme. Costs in $M, uplift in issue points. Plan auto-sorts by ROI (uplift / cost).">
+          <Step n={3} title="Remediation actions" hint="Append from the PRI engagement library or edit inline. Plan auto-sorts by ROI (uplift / cost).">
+            <Collapsible title="PRI engagement library (click to append)" defaultOpen>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {PRI_UPLIFT_LIBRARY.map(a => (
+                  <button key={a.action} onClick={() => addPriAction(a)} style={{ background: T.surfaceH, color: T.gold, border: `1px solid ${T.border}`, padding: '4px 10px', fontSize: 10, cursor: 'pointer', borderRadius: 2, fontFamily: T.mono }}>
+                    + {a.action} <span style={{ color: T.textMut }}>({a.uplift}pt / ${a.costMn}M)</span>
+                  </button>
+                ))}
+              </div>
+            </Collapsible>
             <Worksheet
               cols={[
                 { h: 'Action', width: '2.2fr', edit: (r, i) => <TextInput value={r.action} onChange={v => updAct(i, 'action', v)} style={{ width: '100%' }} /> },
@@ -125,7 +165,23 @@ export default function EsgRatingsUpliftPage() {
             />
           </Step>
 
-          <Step n={4} title="Generate roadmap">
+          <Step n={4} title="AUM unlock curves" hint="Passive flow multipliers calibrated to index-inclusion cutoffs.">
+            <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
+              <thead><tr style={{ color: T.textMut }}><th style={{ padding: 4, textAlign: 'left' }}>Index</th><th style={{ padding: 4 }}>Cutoff letter</th><th style={{ padding: 4 }}>% flow / notch</th><th style={{ padding: 4 }}>Projected unlock</th></tr></thead>
+              <tbody>{Object.entries(AUM_UNLOCK).map(([name, cfg]) => {
+                const eligible = LETTERS.indexOf(projectedLetter) >= LETTERS.indexOf(cfg.cutoffLetter);
+                const unlock = eligible && uplifts > 0 ? s.aumPassive * (cfg.flowPctPerNotch / 100) * uplifts : 0;
+                return <tr key={name} style={{ borderTop: `1px solid ${T.borderL}`, fontFamily: T.mono }}>
+                  <td style={{ padding: 4, fontFamily: T.font, color: T.textSec }}>{name}</td>
+                  <td style={{ padding: 4, textAlign: 'center' }}>{cfg.cutoffLetter}</td>
+                  <td style={{ padding: 4, textAlign: 'right' }}>{cfg.flowPctPerNotch}</td>
+                  <td style={{ padding: 4, color: eligible ? T.green : T.textMut, textAlign: 'right' }}>{eligible ? `$${unlock.toFixed(1)}M` : 'not eligible'}</td>
+                </tr>;
+              })}</tbody>
+            </table>
+          </Step>
+
+          <Step n={5} title="Generate roadmap">
             {!ready && <Note level="bad">Add issuer and ≥5 scored issues.</Note>}
             {ready && <Note level="ok">Ready. Roadmap is sorted by cost-per-uplift-point (quick wins first).</Note>}
           </Step>

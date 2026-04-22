@@ -4,13 +4,16 @@ import {
   ToolShell, Step, OutputRail, PrimaryCTA, ToolMenu,
   FieldRow, Worksheet, NumInput, TextInput, SelectInput, Collapsible, Note, PageHeader
 } from '../../_shared/AdvisoryToolkit';
+import { ENCORE_MATRIX, IUCN_DENSITY, SBTN_FLAGS, DISCLOSURE_CROSSWALK } from '../../_shared/AdvisoryReference';
 
 const BIOMES = ['Arid / Desert', 'Semi-arid grassland', 'Tropical forest', 'Coastal / Mangrove', 'Temperate forest', 'Wetlands', 'Agricultural mosaic', 'Marine'];
+const SECTORS = Object.keys(ENCORE_MATRIX);
 
 const priorityOf = (a) => Math.min(5, a.dep * 0.4 + a.imp * 0.4 + (a.kbaKm < 10 ? 0.8 : 0.2) + Math.min(1, a.iucnN * 0.15));
 
 const DEFAULTS = {
   entity: 'ACME Renewables',
+  sector: 'Utilities — Renewables',
   reportingYear: 2025,
   assets: [
     { _id: 1, name: 'Rajasthan 50 MW PV', biome: 'Arid / Desert', areaHa: 180, kbaKm: 15, iucnN: 2, dep: 2, imp: 3, dnsh: false },
@@ -56,7 +59,31 @@ export default function TnfdBiodiversityBaselinePage() {
   const ready = s.assets.length >= 1 && s.entity.trim();
 
   const upd = (k) => (v) => sc.update({ [k]: v });
-  const updAsset = (i, k, v) => sc.update({ assets: s.assets.map((a, j) => j === i ? { ...a, [k]: v } : a) });
+  const updAsset = (i, k, v) => {
+    sc.update({ assets: s.assets.map((a, j) => {
+      if (j !== i) return a;
+      const next = { ...a, [k]: v };
+      if (k === 'biome') {
+        const enc = ENCORE_MATRIX[s.sector]?.[v];
+        if (enc) { next.dep = enc.dep; next.imp = enc.imp; }
+        next.iucnN = IUCN_DENSITY[v] ?? next.iucnN;
+      }
+      return next;
+    }) });
+  };
+
+  // Rebuild dep/imp for all assets from ENCORE when sector changes
+  const setSector = (sector) => {
+    sc.update({
+      sector,
+      assets: s.assets.map(a => {
+        const enc = ENCORE_MATRIX[sector]?.[a.biome];
+        return enc ? { ...a, dep: enc.dep, imp: enc.imp } : a;
+      }),
+    });
+  };
+
+  const sbtnFlagged = s.assets.filter(a => a.kbaKm < SBTN_FLAGS.kbaDistanceKm || a.iucnN >= SBTN_FLAGS.iucnSpeciesCount).length;
   const updSvc = (i, k, v) => sc.update({ services: s.services.map((x, j) => j === i ? { ...x, [k]: v } : x) });
   const updOpp = (i, k, v) => sc.update({ opportunities: s.opportunities.map((x, j) => j === i ? { ...x, [k]: v } : x) });
 
@@ -94,9 +121,11 @@ export default function TnfdBiodiversityBaselinePage() {
       header={<PageHeader code="EP-EB6 · TNFD" title="Biodiversity Baseline Tool" subtitle="LEAP-methodology biodiversity baseline: asset scoring, ecosystem service materiality, nature-positive opportunity pipeline." />}
       steps={
         <>
-          <Step n={1} title="Reporting entity">
+          <Step n={1} title="Reporting entity" hint="Sector selection loads ENCORE-derived dependency/impact scores per biome.">
             <FieldRow label="Entity"><TextInput value={s.entity} onChange={upd('entity')} style={{ width: 320 }} /></FieldRow>
+            <FieldRow label="Sector"><SelectInput value={s.sector} onChange={setSector} options={SECTORS} style={{ width: 260 }} /></FieldRow>
             <FieldRow label="Reporting year"><NumInput value={s.reportingYear} onChange={upd('reportingYear')} /></FieldRow>
+            <Note level="info">SBTN priority flags: <b style={{ color: sbtnFlagged > 0 ? T.amber : T.green }}>{sbtnFlagged}/{s.assets.length}</b> sites (KBA &lt; {SBTN_FLAGS.kbaDistanceKm}km OR IUCN ≥ {SBTN_FLAGS.iucnSpeciesCount} species)</Note>
           </Step>
 
           <Step n={2} title="Asset register & priority scoring" hint="Priority = dep×0.4 + imp×0.4 + KBA<10km×0.8 + IUCN×0.15 (max 5).">
@@ -163,8 +192,19 @@ export default function TnfdBiodiversityBaselinePage() {
           </Step>
 
           <Step n={6} title="Generate disclosure pack">
+            <Collapsible title="ESRS E4 / GRI 304 disclosure crosswalk">
+              <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
+                <thead><tr style={{ color: T.textMut }}><th style={{ padding: 4, textAlign: 'left' }}>Requirement</th><th style={{ padding: 4, textAlign: 'left' }}>Standards</th></tr></thead>
+                <tbody>{Object.entries(DISCLOSURE_CROSSWALK).map(([r, std]) => (
+                  <tr key={r} style={{ borderTop: `1px solid ${T.borderL}` }}>
+                    <td style={{ padding: 4, color: T.text }}>{r}</td>
+                    <td style={{ padding: 4, color: T.gold, fontFamily: T.mono }}>{std.join(' · ')}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </Collapsible>
             {!ready && <Note level="bad">Add entity name and at least one asset.</Note>}
-            {ready && <Note level="ok">Ready. Deliverable is TNFD v1.0 aligned with LEAP evidence table.</Note>}
+            {ready && <Note level="ok">Ready. Deliverable is TNFD v1.0 aligned with LEAP evidence table + ESRS E4 / GRI 304 crosswalk.</Note>}
           </Step>
         </>
       }
