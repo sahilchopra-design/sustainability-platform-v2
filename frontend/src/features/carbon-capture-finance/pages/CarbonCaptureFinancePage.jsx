@@ -1,358 +1,441 @@
 import React, { useState, useMemo } from 'react';
+import CleanTechAdvancedAnalytics from '../../_shared/CleanTechAdvancedAnalytics';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  ScatterChart, Scatter, LineChart, Line, Legend, Cell,
+  LineChart, Line, AreaChart, Area, ScatterChart, Scatter, Legend,
 } from 'recharts';
 
 const T = {
-  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0',
-  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280',
-  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f',
-  teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c',
-  surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace',
+  bg:'#f8f6f0', surface:'#ffffff', surfaceH:'#f1ede4',
+  border:'#e2ded5', borderL:'#ede9e0',
+  navy:'#1e3a5f', navyL:'#2d5282', gold:'#b8860b', goldL:'#d4a017',
+  sage:'#4d7c5f', sageL:'#6aad84', teal:'#0f766e',
+  text:'#1a1a2e', textSec:'#6b7280', textMut:'#9ca3af',
+  red:'#dc2626', green:'#16a34a', amber:'#d97706',
+  font:'DM Sans, sans-serif', mono:'JetBrains Mono, monospace',
 };
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const fmt0 = v => Number(v).toLocaleString('en-GB', { maximumFractionDigits:0 });
+const fmt1 = v => Number(v).toFixed(1);
+const fmt2 = v => Number(v).toFixed(2);
 
-const TYPES = ['Point Source CCS', 'BECCS', 'DAC', 'Mineralisation'];
-const CCS_COUNTRIES = ['USA', 'Norway', 'UK', 'Australia', 'Canada', 'Netherlands', 'Germany', 'Saudi Arabia', 'Japan'];
-const STATUSES = ['Operating', 'Construction', 'Development', 'Concept'];
-const STORAGE_TYPES = ['Geological', 'Ocean', 'Mineral'];
-
-const TYPE_COLORS = [T.blue, T.green, T.indigo, T.teal];
-const STATUS_COLORS = { Operating: T.green, Construction: T.blue, Development: T.amber, Concept: T.textSec };
-
-const PROJECTS = Array.from({ length: 40 }, (_, i) => {
-  const type = TYPES[Math.floor(sr(i * 7) * TYPES.length)];
-  const country = CCS_COUNTRIES[Math.floor(sr(i * 11) * CCS_COUNTRIES.length)];
-  const captureCapacity = parseFloat((0.05 + sr(i * 13) * 4.95).toFixed(2));
-  const capex = parseFloat((0.1 + sr(i * 17) * 9.9).toFixed(2));
-  const opexBase = { 'Point Source CCS': 50, BECCS: 80, DAC: 350, Mineralisation: 120 }[type];
-  const opex = Math.round(opexBase * (0.7 + sr(i * 19) * 0.6));
-  const tax45Q = ['USA'].includes(country) && sr(i * 23) > 0.3;
-  const storageType = STORAGE_TYPES[Math.floor(sr(i * 29) * STORAGE_TYPES.length)];
-  const status = STATUSES[Math.floor(sr(i * 31) * STATUSES.length)];
-  const netzeroContribution = parseFloat((1 + sr(i * 37) * 99).toFixed(1));
-  const projectIrr = Math.round(type === 'DAC' ? 2 + sr(i * 41) * 8 : 5 + sr(i * 41) * 20);
-  const names = ['Sleipner', 'Quest CCS', 'Boundary Dam', 'SaskPower', 'Northern Lights', 'Orca DAC', 'Mammoth DAC',
-    'Porthos', 'Hynet', 'Acorn CCS', 'Tomakomai', 'CarbonSafe', 'Summit AG', 'Tallgrass', 'Wolf Mid'];
-  const name = `${names[i % names.length]} ${['I', 'II', 'III', 'Phase 1', 'Phase 2', 'A', 'B'][Math.floor(sr(i * 53) * 7)]}`;
-  return { id: i + 1, name, type, country, captureCapacity, capex, opex, tax45Q, storageType, status, netzeroContribution, projectIrr };
-});
-
-const COST_LEARNING = [2020, 2022, 2024, 2026, 2028, 2030].map((yr, i) => ({
-  year: yr,
-  dac: Math.round(1000 - i * 110 + sr(i * 17) * 40),
-  beccs: Math.round(150 - i * 12 + sr(i * 23) * 15),
-  pointSource: Math.round(80 - i * 5 + sr(i * 29) * 8),
-}));
-
-const TABS = [
-  'Project Overview', 'Technology Comparison', 'Cost Curves', 'Storage Analytics',
-  'Policy (45Q)', 'Net Zero Contribution', 'Risk Assessment', 'Investment Case',
+const TECH_TYPES = [
+  { id:'POST', name:'Post-Combustion',  costRange:[50,100], trl:9, co2Purity:99, color:T.navy },
+  { id:'PRE',  name:'Pre-Combustion',   costRange:[40,80],  trl:8, co2Purity:98, color:'#3b82f6' },
+  { id:'OXY',  name:'Oxyfuel',          costRange:[55,90],  trl:7, co2Purity:99.5, color:T.teal },
+  { id:'BECCS',name:'BECCS',            costRange:[80,150], trl:6, co2Purity:98, color:T.sage },
+  { id:'DAC_S',name:'DAC (Solid Sorbent)',costRange:[200,400],trl:6,co2Purity:99.9,color:T.gold },
+  { id:'DAC_L',name:'DAC (Liquid Solvent)',costRange:[300,600],trl:5,co2Purity:99.9,color:T.amber },
 ];
 
+const STORAGE_TYPES = ['Saline Aquifer','Depleted Oil Field','Depleted Gas Field','Enhanced Oil Recovery (EOR)','Basalt Formation'];
+const UTILISATION   = ['Concrete Mineralisation','Synthetic Fuels (e-fuels)','Urea/Chemicals','Enhanced Geothermal','Direct Air Utilisation'];
+const REGIONS = ['North America','Europe','Asia-Pacific','Middle East','Australia','UK'];
+
+const PROJECTS = Array.from({ length: 40 }, (_, i) => {
+  const tech    = TECH_TYPES[Math.floor(sr(i*7)*TECH_TYPES.length)];
+  const region  = REGIONS[Math.floor(sr(i*11)*REGIONS.length)];
+  const storage = STORAGE_TYPES[Math.floor(sr(i*13)*STORAGE_TYPES.length)];
+  const util    = sr(i*17) > 0.6 ? UTILISATION[Math.floor(sr(i*19)*UTILISATION.length)] : null;
+
+  const captureRate   = Math.round(50 + sr(i*23)*950);      // ktCO₂/yr
+  const captureCost   = Math.round(tech.costRange[0] + sr(i*29)*(tech.costRange[1]-tech.costRange[0])); // $/tCO₂
+  const capex         = Math.round(captureRate * captureCost * 0.12 + sr(i*31)*50); // $M
+  const opex          = Math.round(captureRate * captureCost * 0.04 + sr(i*37)*5);  // $M/yr
+
+  const carbonPx      = 80; // baseline
+  const creditRevenue = captureRate * carbonPx / 1000;    // $M/yr
+  const eorPremium    = storage === 'Enhanced Oil Recovery (EOR)' ? captureRate * 30 / 1000 : 0;
+  const q45Credit     = region === 'North America' ? captureRate * 85 / 1000 : 0; // 45Q $85/t
+  const totalRevenue  = creditRevenue + eorPremium + q45Credit;
+
+  const annualNetRevenue = totalRevenue - opex;
+  const irr = annualNetRevenue > 0
+    ? Math.round(8 + (annualNetRevenue / capex) * 80 + sr(i*41)*8)
+    : Math.round(2 + sr(i*41)*6);
+  const payback = annualNetRevenue > 0 ? Math.round(capex / annualNetRevenue) : 99;
+  const breakEvenCx = Math.round(captureCost * 1.1 + sr(i*43)*20);
+  const npv20 = Math.round((annualNetRevenue * 12 - capex) + sr(i*47)*10); // simplified 20yr
+
+  return {
+    id:i+1, name:`CCS-${String(i+1).padStart(3,'0')}`,
+    techId:tech.id, techName:tech.name, region, storage, util,
+    captureRate, captureCost, capex, opex, totalRevenue,
+    irr, payback, breakEvenCx, npv20, q45Credit, eorPremium,
+    color:tech.color, trl:tech.trl,
+  };
+});
+
 const KpiCard = ({ label, value, sub, color }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: '18px 22px', flex: 1, minWidth: 180 }}>
-    <div style={{ fontSize: 12, color: T.textSec, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 800, color: color || T.navy, fontFamily: T.fontMono }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 4 }}>{sub}</div>}
+  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:'14px 18px', minWidth:160 }}>
+    <div style={{ fontSize:11, color:T.textMut, fontFamily:T.mono, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:4 }}>{label}</div>
+    <div style={{ fontSize:22, fontWeight:700, color:color||T.navy, fontFamily:T.mono }}>{value}</div>
+    {sub && <div style={{ fontSize:11, color:T.textSec, marginTop:3 }}>{sub}</div>}
+  </div>
+);
+const Card = ({ title, children, style }) => (
+  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:20, ...style }}>
+    {title && <div style={{ fontSize:13, fontWeight:700, color:T.navy, fontFamily:T.mono, marginBottom:14, textTransform:'uppercase', letterSpacing:'0.05em' }}>{title}</div>}
+    {children}
   </div>
 );
 
+const TABS = ['Overview','Project Portfolio','Capture Technology','Storage & Utilisation','Financial Modelling','Policy Incentives','Market Outlook','Advanced Analytics'];
+
 export default function CarbonCaptureFinancePage() {
-  const [tab, setTab] = useState(0);
-  const [typeFilter, setTypeFilter] = useState('All');
-  const [countryFilter, setCountryFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [carbonPrice, setCarbonPrice] = useState(100);
-  const [creditVal45Q, setCreditVal45Q] = useState(85);
+  const [tab, setTab]             = useState('Overview');
+  const [filterTech, setFilterTech]   = useState('All');
+  const [filterRegion, setFilterRegion] = useState('All');
+  const [carbonPx, setCarbonPx]   = useState(80);   // $/tCO₂
+  const [q45Rate, setQ45Rate]     = useState(85);   // $/t 45Q credit
+  const [discRate, setDiscRate]   = useState(8);    // % discount rate
 
   const filtered = useMemo(() => PROJECTS.filter(p =>
-    (typeFilter === 'All' || p.type === typeFilter) &&
-    (countryFilter === 'All' || p.country === countryFilter) &&
-    (statusFilter === 'All' || p.status === statusFilter)
-  ), [typeFilter, countryFilter, statusFilter]);
+    (filterTech   === 'All' || p.techId === filterTech) &&
+    (filterRegion === 'All' || p.region === filterRegion)
+  ), [filterTech, filterRegion]);
 
-  const totalCapture = filtered.reduce((s, p) => s + p.captureCapacity, 0).toFixed(2);
-  const avgCost = filtered.length ? (filtered.reduce((s, p) => s + p.opex, 0) / filtered.length).toFixed(0) : '0';
-  const totalCapex = filtered.reduce((s, p) => s + p.capex, 0).toFixed(1);
-  const pctOperating = filtered.length ? ((filtered.filter(p => p.status === 'Operating').length / filtered.length) * 100).toFixed(0) : '0';
+  const totals = useMemo(() => {
+    const n = filtered.length||1;
+    const revenue = filtered.reduce((s,p)=>s+p.captureRate*carbonPx/1000+(p.region==='North America'?p.captureRate*q45Rate/1000:0),0);
+    return {
+      n: filtered.length,
+      totalCapture: filtered.reduce((s,p)=>s+p.captureRate,0),
+      totalCapex:   filtered.reduce((s,p)=>s+p.capex,0),
+      avgCost:      filtered.reduce((s,p)=>s+p.captureCost,0)/n,
+      avgIrr:       filtered.reduce((s,p)=>s+p.irr,0)/n,
+      totalRevenue: revenue,
+      avgBreakEven: filtered.reduce((s,p)=>s+p.breakEvenCx,0)/n,
+    };
+  }, [filtered, carbonPx, q45Rate]);
 
-  const typeCapture = TYPES.map((t, ti) => ({
-    type: t,
-    capacity: filtered.filter(p => p.type === t).reduce((s, p) => s + p.captureCapacity, 0).toFixed(2),
-    count: filtered.filter(p => p.type === t).length,
-    avgOpex: (() => { const a = filtered.filter(p => p.type === t); return a.length ? Math.round(a.reduce((s, p) => s + p.opex, 0) / a.length) : 0; })(),
-  }));
+  // Tech breakdown
+  const techRows = useMemo(() => TECH_TYPES.map(t => {
+    const ps = filtered.filter(p=>p.techId===t.id);
+    const n  = ps.length||1;
+    return { ...t, count:ps.length, avgCost:ps.reduce((a,p)=>a+p.captureCost,0)/n,
+      totalCapture:ps.reduce((a,p)=>a+p.captureRate,0), avgIrr:ps.reduce((a,p)=>a+p.irr,0)/n };
+  }), [filtered]);
 
-  const storageData = STORAGE_TYPES.map(st => ({
-    storage: st,
-    count: filtered.filter(p => p.storageType === st).length,
-    capacity: parseFloat(filtered.filter(p => p.storageType === st).reduce((s, p) => s + p.captureCapacity, 0).toFixed(2)),
-  }));
+  // Cost reduction trajectory
+  const costTrajectory = useMemo(() => Array.from({length:6},(_,i)=>({
+    year:(2025+i*5).toString(),
+    postCombustion: Math.round(75-i*5),
+    beccs:          Math.round(115-i*8),
+    dacSolid:       Math.round(300-i*35),
+    dacLiquid:      Math.round(450-i*55),
+  })), []);
 
-  const nzData = [...filtered].sort((a, b) => b.netzeroContribution - a.netzeroContribution).slice(0, 12);
+  // Carbon price sensitivity on portfolio NPV
+  const npvSensitivity = useMemo(() => [40,60,80,100,130,160,200].map(px=>{
+    const totalNpv = filtered.reduce((s,p)=>{
+      const rev = p.captureRate*px/1000 + (p.region==='North America'?p.captureRate*q45Rate/1000:0);
+      const annNet = rev - p.opex;
+      const npv = annNet * (1-Math.pow(1+discRate/100,-20))/(discRate/100) - p.capex;
+      return s+npv;
+    },0);
+    return { price:`$${px}`, npv: Math.round(totalNpv) };
+  }), [filtered, q45Rate, discRate]);
 
-  const riskData = TYPES.map((t, ti) => ({
-    type: t,
-    techRisk: Math.round(20 + sr(ti * 17) * 60),
-    marketRisk: Math.round(15 + sr(ti * 23) * 55),
-    regRisk: Math.round(10 + sr(ti * 29) * 50),
-  }));
-
-  // Adjusted IRR with carbon price
-  const adjIrrData = filtered.slice(0, 12).map(p => ({
-    name: p.name.split(' ')[0],
-    baseIrr: p.projectIrr,
-    adjIrr: Math.min(35, p.projectIrr + (carbonPrice - 100) * 0.05 + (p.tax45Q ? (creditVal45Q - 85) * 0.03 : 0)),
-  }));
+  const labelStyle = { fontSize:11, color:T.textSec, marginBottom:4, display:'block' };
+  const selectStyle = { padding:'5px 10px', borderRadius:6, border:`1px solid ${T.border}`, fontSize:12, background:T.surface, color:T.text };
+  const sliderStyle = { width:'100%', accentColor:T.navy };
 
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: 'DM Sans, system-ui, sans-serif', padding: '28px 32px' }}>
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <span style={{ fontSize: 22, fontWeight: 800, color: T.navy }}>⚡ Carbon Capture Finance</span>
-          <span style={{ fontSize: 11, background: T.teal, color: '#fff', borderRadius: 4, padding: '2px 8px', fontWeight: 700 }}>EP-DF3</span>
+    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font, color:T.text }}>
+      <div style={{ background:T.navy, padding:'20px 32px', borderBottom:`3px solid ${T.gold}` }}>
+        <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:4 }}>EP-DF3 · Carbon Capture, Utilisation & Storage Finance</div>
+        <div style={{ fontSize:22, fontWeight:700, color:'#ffffff', marginBottom:4 }}>CCUS Finance Analytics</div>
+        <div style={{ fontSize:13, color:'#94a3b8' }}>40 projects · Post-combustion · Pre-combustion · BECCS · DAC · 45Q · Break-even carbon price</div>
+      </div>
+
+      <div style={{ padding:'24px 32px' }}>
+        <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginBottom:24, background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:'14px 20px', alignItems:'flex-end' }}>
+          <div><span style={labelStyle}>Technology</span>
+            <select style={selectStyle} value={filterTech} onChange={e=>setFilterTech(e.target.value)}>
+              <option>All</option>{TECH_TYPES.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
+            </select></div>
+          <div><span style={labelStyle}>Region</span>
+            <select style={selectStyle} value={filterRegion} onChange={e=>setFilterRegion(e.target.value)}>
+              <option>All</option>{REGIONS.map(r=><option key={r}>{r}</option>)}
+            </select></div>
+          <div style={{ flex:1, minWidth:180 }}>
+            <span style={labelStyle}>Carbon Price: ${carbonPx}/tCO₂</span>
+            <input type="range" min={20} max={250} step={10} value={carbonPx} onChange={e=>setCarbonPx(+e.target.value)} style={sliderStyle} />
+          </div>
+          <div style={{ minWidth:160 }}>
+            <span style={labelStyle}>45Q Credit: ${q45Rate}/t</span>
+            <input type="range" min={0} max={180} step={5} value={q45Rate} onChange={e=>setQ45Rate(+e.target.value)} style={sliderStyle} />
+          </div>
+          <div style={{ minWidth:160 }}>
+            <span style={labelStyle}>Discount Rate: {discRate}%</span>
+            <input type="range" min={4} max={18} step={1} value={discRate} onChange={e=>setDiscRate(+e.target.value)} style={sliderStyle} />
+          </div>
+          <div style={{ fontFamily:T.mono, fontSize:11, color:T.textMut }}>{totals.n} projects</div>
         </div>
-        <div style={{ fontSize: 13, color: T.textSec }}>40 CCS/BECCS/DAC projects · Cost curves, storage analytics, 45Q policy & net zero contribution</div>
-      </div>
 
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: '14px 18px' }}>
-        {[
-          { label: 'Type', value: typeFilter, setter: setTypeFilter, opts: ['All', ...TYPES] },
-          { label: 'Country', value: countryFilter, setter: setCountryFilter, opts: ['All', ...CCS_COUNTRIES] },
-          { label: 'Status', value: statusFilter, setter: setStatusFilter, opts: ['All', ...STATUSES] },
-        ].map(({ label, value, setter, opts }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 12, color: T.textSec, fontWeight: 600 }}>{label}</span>
-            <select value={value} onChange={e => setter(e.target.value)}
-              style={{ fontSize: 12, border: `1px solid ${T.border}`, borderRadius: 6, padding: '4px 8px', background: T.bg, color: T.textPri }}>
-              {opts.map(o => <option key={o}>{o}</option>)}
-            </select>
-          </div>
-        ))}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: T.textSec, fontWeight: 600 }}>Carbon: ${carbonPrice}/tCO₂</span>
-          <input type="range" min={0} max={250} value={carbonPrice} onChange={e => setCarbonPrice(+e.target.value)} style={{ width: 100 }} />
+        <div style={{ display:'flex', gap:4, marginBottom:24, flexWrap:'wrap' }}>
+          {TABS.map(t=>(
+            <button key={t} onClick={()=>setTab(t)} style={{ padding:'8px 16px', borderRadius:6, border:`1px solid ${tab===t?T.navy:T.border}`, background:tab===t?T.navy:T.surface, color:tab===t?'#fff':T.textSec, fontFamily:T.font, fontSize:12, fontWeight:tab===t?600:400, cursor:'pointer' }}>{t}</button>
+          ))}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: T.textSec, fontWeight: 600 }}>45Q: ${creditVal45Q}/tCO₂</span>
-          <input type="range" min={50} max={180} value={creditVal45Q} onChange={e => setCreditVal45Q(+e.target.value)} style={{ width: 100 }} />
-        </div>
-        <span style={{ fontSize: 12, color: T.textSec, alignSelf: 'center' }}>{filtered.length} projects</span>
-      </div>
 
-      {/* KPIs */}
-      <div style={{ display: 'flex', gap: 14, marginBottom: 22, flexWrap: 'wrap' }}>
-        <KpiCard label="Total Capture Capacity" value={`${totalCapture} MtCO₂/yr`} sub="filtered projects" color={T.teal} />
-        <KpiCard label="Avg Opex" value={`$${avgCost}/tCO₂`} sub="operating cost per tonne" color={T.blue} />
-        <KpiCard label="Total Capex" value={`$${totalCapex}Bn`} sub="capital expenditure" color={T.indigo} />
-        <KpiCard label="Operational" value={`${pctOperating}%`} sub="of filtered projects" color={T.green} />
-      </div>
-
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)}
-            style={{ padding: '7px 14px', borderRadius: 7, border: `1px solid ${tab === i ? T.teal : T.border}`, background: tab === i ? T.teal : T.card, color: tab === i ? '#fff' : T.textSec, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
-            {t}
-          </button>
-        ))}
-      </div>
-
-      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-        {tab === 0 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Project Overview</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: T.sub }}>
-                  {['Project', 'Type', 'Country', 'Capture (MtCO₂/yr)', 'Capex ($Bn)', 'Opex ($/tCO₂)', 'Storage', 'Status', '45Q', 'Net Zero %'].map(h => (
-                    <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 700, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.slice(0, 18).map((p, i) => (
-                  <tr key={p.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                    <td style={{ padding: '7px 10px', color: T.navy, fontWeight: 600 }}>{p.name}</td>
-                    <td style={{ padding: '7px 10px' }}><span style={{ background: TYPE_COLORS[TYPES.indexOf(p.type)] + '22', color: TYPE_COLORS[TYPES.indexOf(p.type)], borderRadius: 4, padding: '2px 6px', fontSize: 10, fontWeight: 700 }}>{p.type}</span></td>
-                    <td style={{ padding: '7px 10px', color: T.textSec }}>{p.country}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono, color: T.teal }}>{p.captureCapacity}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono }}>${p.capex}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono, color: p.opex > 200 ? T.red : p.opex > 100 ? T.amber : T.green }}>${p.opex}</td>
-                    <td style={{ padding: '7px 10px', color: T.textSec }}>{p.storageType}</td>
-                    <td style={{ padding: '7px 10px' }}><span style={{ color: STATUS_COLORS[p.status], fontWeight: 600, fontSize: 11 }}>{p.status}</span></td>
-                    <td style={{ padding: '7px 10px', color: p.tax45Q ? T.green : T.textSec, fontWeight: p.tax45Q ? 700 : 400 }}>{p.tax45Q ? '✓' : '–'}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono, color: T.blue }}>{p.netzeroContribution}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {tab === 1 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Technology Comparison — Capture Capacity & Avg Opex by Type</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={typeCapture} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="type" tick={{ fontSize: 10, fill: T.textSec }} />
-                <YAxis yAxisId="left" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: T.textSec }} />
-                <Tooltip />
-                <Bar yAxisId="left" dataKey="capacity" name="Capacity (MtCO₂/yr)" radius={[4, 4, 0, 0]}>
-                  {typeCapture.map((_, idx) => <Cell key={idx} fill={TYPE_COLORS[idx % TYPE_COLORS.length]} />)}
-                </Bar>
-                <Bar yAxisId="right" dataKey="avgOpex" name="Avg Opex ($/tCO₂)" fill={T.amber} radius={[4, 4, 0, 0]} />
-                <Legend />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {tab === 2 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Cost Learning Curves (2020–2030)</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={COST_LEARNING} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="year" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis tick={{ fontSize: 11, fill: T.textSec }} label={{ value: '$/tCO₂', angle: -90, position: 'insideLeft', fontSize: 11, fill: T.textSec }} />
-                <Tooltip formatter={(v) => [`$${v}/tCO₂`]} />
-                <Line type="monotone" dataKey="dac" name="DAC" stroke={T.indigo} strokeWidth={2} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="beccs" name="BECCS" stroke={T.green} strokeWidth={2} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="pointSource" name="Point Source CCS" stroke={T.blue} strokeWidth={2} dot={{ r: 3 }} />
-                <Legend />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {tab === 3 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Storage Analytics — Projects by Storage Type</div>
-            <div style={{ display: 'flex', gap: 14, marginBottom: 20 }}>
-              {storageData.map((sd, i) => (
-                <div key={sd.storage} style={{ flex: 1, background: TYPE_COLORS[i % TYPE_COLORS.length] + '18', border: `1px solid ${TYPE_COLORS[i % TYPE_COLORS.length]}44`, borderRadius: 10, padding: '18px 20px' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: TYPE_COLORS[i % TYPE_COLORS.length] }}>{sd.storage}</div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: TYPE_COLORS[i % TYPE_COLORS.length], fontFamily: T.fontMono }}>{sd.count}</div>
-                  <div style={{ fontSize: 11, color: T.textSec }}>projects · {sd.capacity} MtCO₂/yr capacity</div>
-                </div>
-              ))}
+        {tab==='Overview' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
+              <KpiCard label="Total CO₂ Capture" value={`${fmt0(totals.totalCapture)} ktCO₂/yr`} sub="Portfolio capacity" color={T.navy} />
+              <KpiCard label="Avg Capture Cost" value={`$${fmt1(totals.avgCost)}/tCO₂`} sub="Weighted average" color={T.amber} />
+              <KpiCard label="Total CAPEX" value={`$${fmt0(totals.totalCapex)}M`} sub="Portfolio investment" />
+              <KpiCard label="Portfolio Revenue" value={`$${fmt1(totals.totalRevenue)}M/yr`} sub={`@ $${carbonPx}/t + 45Q`} color={T.green} />
+              <KpiCard label="Avg Portfolio IRR" value={`${fmt1(totals.avgIrr)}%`} sub="Project-level average" color={totals.avgIrr>=10?T.green:T.red} />
+              <KpiCard label="Avg Break-Even Price" value={`$${fmt1(totals.avgBreakEven)}/tCO₂`} sub="To achieve positive NPV" color={T.red} />
             </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={storageData} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="storage" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
-                <Tooltip />
-                <Bar dataKey="capacity" name="Capacity (MtCO₂/yr)" radius={[4, 4, 0, 0]}>
-                  {storageData.map((_, idx) => <Cell key={idx} fill={TYPE_COLORS[idx % TYPE_COLORS.length]} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
 
-        {tab === 4 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>US 45Q Tax Credit Analysis</div>
-            <div style={{ background: T.blue + '12', border: `1px solid ${T.blue}33`, borderRadius: 10, padding: '16px 20px', marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>45Q Credit at ${creditVal45Q}/tCO₂ (slider adjustable)</div>
-              <div style={{ display: 'flex', gap: 20 }}>
-                <div><span style={{ fontSize: 12, color: T.textSec }}>Eligible projects:</span> <strong style={{ color: T.blue }}>{filtered.filter(p => p.tax45Q).length}</strong></div>
-                <div><span style={{ fontSize: 12, color: T.textSec }}>Total capacity eligible:</span> <strong style={{ color: T.blue }}>{filtered.filter(p => p.tax45Q).reduce((s, p) => s + p.captureCapacity, 0).toFixed(2)} MtCO₂/yr</strong></div>
-                <div><span style={{ fontSize: 12, color: T.textSec }}>Annual credit value:</span> <strong style={{ color: T.green }}>${(filtered.filter(p => p.tax45Q).reduce((s, p) => s + p.captureCapacity, 0) * creditVal45Q).toFixed(0)}M/yr</strong></div>
-              </div>
-            </div>
-            <ResponsiveContainer width="100%" height={240}>
-              <ScatterChart margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="x" name="Capex ($Bn)" label={{ value: 'Capex ($Bn)', position: 'bottom', fontSize: 11, fill: T.textSec }} tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis dataKey="y" name="Capture Capacity (MtCO₂/yr)" label={{ value: 'Capture (MtCO₂/yr)', angle: -90, position: 'insideLeft', fontSize: 11, fill: T.textSec }} tick={{ fontSize: 11, fill: T.textSec }} />
-                <Tooltip />
-                <Scatter data={filtered.map(p => ({ x: p.capex, y: p.captureCapacity, name: p.name, eligible: p.tax45Q }))} fill={T.blue} fillOpacity={0.65} />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {tab === 5 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Net Zero Contribution — Top Projects</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={nzData.map(p => ({ name: p.name.split(' ')[0], nz: p.netzeroContribution, type: p.type }))}
-                layout="vertical" margin={{ top: 10, right: 40, left: 100, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis type="number" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} width={100} />
-                <Tooltip formatter={(v) => [`${v}%`, 'Net Zero Contribution']} />
-                <Bar dataKey="nz" radius={[0, 4, 4, 0]}>
-                  {nzData.map((p, idx) => <Cell key={idx} fill={TYPE_COLORS[TYPES.indexOf(p.type) % TYPE_COLORS.length]} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {tab === 6 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Risk Assessment — Technology Risk Matrix</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: T.sub }}>
-                  {['Technology', 'Technology Risk', 'Market Risk', 'Regulatory Risk', 'Composite Risk'].map(h => (
-                    <th key={h} style={{ padding: '8px 12px', textAlign: 'left', color: T.textSec, fontWeight: 700, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {riskData.map((r, i) => {
-                  const composite = Math.round((r.techRisk + r.marketRisk + r.regRisk) / 3);
-                  const col = composite >= 60 ? T.red : composite >= 40 ? T.amber : T.green;
-                  return (
-                    <tr key={r.type} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                      <td style={{ padding: '10px 12px', color: T.navy, fontWeight: 600 }}>{r.type}</td>
-                      {[r.techRisk, r.marketRisk, r.regRisk].map((rv, ri) => (
-                        <td key={ri} style={{ padding: '10px 12px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ width: 60, height: 6, background: T.border, borderRadius: 3 }}>
-                              <div style={{ width: `${rv}%`, height: 6, background: rv >= 60 ? T.red : rv >= 40 ? T.amber : T.green, borderRadius: 3 }} />
-                            </div>
-                            <span style={{ fontFamily: T.fontMono, fontSize: 12 }}>{rv}</span>
-                          </div>
-                        </td>
-                      ))}
-                      <td style={{ padding: '10px 12px', fontWeight: 700, color: col, fontFamily: T.fontMono }}>{composite}</td>
+            <Card title="Technology Comparison Summary">
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                  <thead><tr style={{ background:T.surfaceH }}>
+                    {['Technology','TRL','Projects','Cost Range $/t','Avg Cost','Total ktCO₂/yr','Avg IRR %','CO₂ Purity'].map(h=>(
+                      <th key={h} style={{ padding:'8px 12px', textAlign:'left', fontFamily:T.mono, fontSize:11, color:T.navy, borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>{techRows.filter(r=>r.count>0).map((r,i)=>(
+                    <tr key={r.id} style={{ background:i%2===0?T.surface:T.surfaceH }}>
+                      <td style={{ padding:'8px 12px', fontWeight:600 }}><span style={{ display:'inline-block', width:10, height:10, borderRadius:'50%', background:r.color, marginRight:8 }} />{r.name}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{r.trl}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{r.count}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>${r.costRange[0]}–${r.costRange[1]}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono, color:r.avgCost<100?T.text:r.avgCost<250?T.amber:T.red }}>${fmt1(r.avgCost)}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{fmt0(r.totalCapture)}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono, color:r.avgIrr>=10?T.green:T.text }}>{fmt1(r.avgIrr)}%</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{r.co2Purity}%</td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  ))}</tbody>
+                </table>
+              </div>
+            </Card>
+
+            <Card title="Capture Cost Reduction Trajectory by Technology ($/tCO₂, 2025–2050)">
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart data={costTrajectory} margin={{ top:10, right:20, left:0, bottom:0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="year" tick={{ fontSize:11, fontFamily:T.mono }} />
+                  <YAxis tick={{ fontSize:10, fontFamily:T.mono }} unit="$/t" />
+                  <Tooltip formatter={v=>[`$${v}/tCO₂`]} />
+                  <Legend />
+                  <Line dataKey="postCombustion" name="Post-Combustion" stroke={T.navy}  strokeWidth={2} dot={false} />
+                  <Line dataKey="beccs"           name="BECCS"           stroke={T.sage}  strokeWidth={2} dot={false} />
+                  <Line dataKey="dacSolid"        name="DAC Solid"       stroke={T.gold}  strokeWidth={1.5} strokeDasharray="5 3" dot={false} />
+                  <Line dataKey="dacLiquid"       name="DAC Liquid"      stroke={T.amber} strokeWidth={1.5} strokeDasharray="3 3" dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
           </div>
         )}
 
-        {tab === 7 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 8 }}>Investment Case — IRR Sensitivity to Carbon Price & 45Q</div>
-            <div style={{ fontSize: 12, color: T.textSec, marginBottom: 16 }}>Carbon: ${carbonPrice}/tCO₂ · 45Q: ${creditVal45Q}/tCO₂ — IRR adjusted dynamically</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={adjIrrData} margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} angle={-30} textAnchor="end" />
-                <YAxis tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'IRR (%)', angle: -90, position: 'insideLeft', fontSize: 11, fill: T.textSec }} />
-                <Tooltip formatter={(v) => [`${typeof v === 'number' ? v.toFixed(1) : v}%`]} />
-                <Bar dataKey="baseIrr" name="Base IRR" fill={T.textSec + '88'} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="adjIrr" name="Adjusted IRR" fill={T.teal} radius={[4, 4, 0, 0]} />
-                <Legend />
-              </BarChart>
-            </ResponsiveContainer>
+        {tab==='Project Portfolio' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <Card title="Project Portfolio — All CCS/CCUS/DAC Projects">
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                  <thead><tr style={{ background:T.surfaceH }}>
+                    {['Project','Technology','Region','Storage','Capture kt/yr','Cost $/t','CAPEX $M','OPEX $M/yr','Revenue $M/yr','IRR %','Break-Even $/t'].map(h=>(
+                      <th key={h} style={{ padding:'6px 10px', textAlign:'left', fontFamily:T.mono, fontSize:10, color:T.navy, borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>{[...filtered].sort((a,b)=>b.irr-a.irr).map((p,i)=>{
+                    const adjRevenue = p.captureRate*carbonPx/1000+(p.region==='North America'?p.captureRate*q45Rate/1000:0)+p.eorPremium;
+                    return (
+                      <tr key={p.id} style={{ background:i%2===0?T.surface:T.surfaceH }}>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{p.name}</td>
+                        <td style={{ padding:'6px 10px' }}>{p.techName}</td>
+                        <td style={{ padding:'6px 10px' }}>{p.region}</td>
+                        <td style={{ padding:'6px 10px', fontSize:11, color:T.textSec }}>{p.storage.slice(0,20)}</td>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{fmt0(p.captureRate)}</td>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono, color:p.captureCost<100?T.text:p.captureCost<250?T.amber:T.red }}>${p.captureCost}</td>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono }}>${fmt0(p.capex)}</td>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono }}>${fmt0(p.opex)}</td>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono, color:adjRevenue>p.opex?T.green:T.red }}>${fmt1(adjRevenue)}</td>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono, fontWeight:600, color:p.irr>=10?T.green:T.text }}>{p.irr}%</td>
+                        <td style={{ padding:'6px 10px', fontFamily:T.mono }}>${p.breakEvenCx}</td>
+                      </tr>
+                    );
+                  })}</tbody>
+                </table>
+              </div>
+            </Card>
           </div>
         )}
+
+        {tab==='Capture Technology' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
+              <Card title="Avg Capture Cost by Technology ($/tCO₂)">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={techRows.filter(r=>r.count>0)} margin={{ top:5, right:20, left:0, bottom:60 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                    <XAxis dataKey="name" tick={{ fontSize:9, angle:-35, textAnchor:'end' }} />
+                    <YAxis tick={{ fontSize:10, fontFamily:T.mono }} unit="$/t" />
+                    <Tooltip formatter={v=>[`$${fmt1(v)}/tCO₂`]} />
+                    <Bar dataKey="avgCost" name="Avg Cost $/t" fill={T.navy} radius={[4,4,0,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+              <Card title="Total Capture Capacity by Technology (ktCO₂/yr)">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={techRows.filter(r=>r.count>0)} margin={{ top:5, right:20, left:0, bottom:60 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                    <XAxis dataKey="name" tick={{ fontSize:9, angle:-35, textAnchor:'end' }} />
+                    <YAxis tick={{ fontSize:10, fontFamily:T.mono }} />
+                    <Tooltip formatter={v=>[`${fmt0(v)} ktCO₂/yr`]} />
+                    <Bar dataKey="totalCapture" name="ktCO₂/yr" fill={T.teal} radius={[4,4,0,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
+            <Card title="Technology Profiles">
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
+                {TECH_TYPES.map(t=>(
+                  <div key={t.id} style={{ background:T.surfaceH, borderRadius:8, padding:14, border:`1px solid ${T.borderL}`, borderLeft:`3px solid ${t.color}` }}>
+                    <div style={{ fontWeight:700, fontSize:13, color:T.navy, marginBottom:6 }}>{t.name}</div>
+                    <div style={{ fontSize:11, color:T.textSec, marginBottom:3 }}>Cost range: ${t.costRange[0]}–${t.costRange[1]}/tCO₂</div>
+                    <div style={{ fontSize:11, color:T.textSec, marginBottom:3 }}>TRL: {t.trl}/9</div>
+                    <div style={{ fontSize:11, color:T.textSec, marginBottom:3 }}>CO₂ purity: {t.co2Purity}%</div>
+                    <div style={{ marginTop:8 }}><span style={{ padding:'2px 8px', borderRadius:4, fontSize:10, fontWeight:600, background:t.trl>=8?'#dcfce7':t.trl>=6?'#fef3c7':'#fce7f3', color:t.trl>=8?T.green:t.trl>=6?T.amber:'#9d174d' }}>TRL {t.trl}</span></div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {tab==='Storage & Utilisation' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
+              <Card title="Storage Type Distribution">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart
+                    data={STORAGE_TYPES.map(s=>({ storage:s.split(' ').slice(0,2).join(' '), count:filtered.filter(p=>p.storage===s).length }))}
+                    layout="vertical" margin={{ top:5, right:20, left:120, bottom:5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize:10 }} />
+                    <YAxis dataKey="storage" type="category" tick={{ fontSize:10 }} width={120} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Projects" fill={T.navy} radius={[0,4,4,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+              <Card title="Utilisation Pathway Distribution">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart
+                    data={['None (Storage only)',...UTILISATION].map(u=>({
+                      util: u.split('(')[0].trim().slice(0,20),
+                      count: u==='None (Storage only)'?filtered.filter(p=>!p.util).length:filtered.filter(p=>p.util===u).length,
+                    }))}
+                    layout="vertical" margin={{ top:5, right:20, left:140, bottom:5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize:10 }} />
+                    <YAxis dataKey="util" type="category" tick={{ fontSize:10 }} width={140} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Projects" fill={T.teal} radius={[0,4,4,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
+          </div>
+        )}
+
+        {tab==='Financial Modelling' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <Card title={`Portfolio NPV Sensitivity to Carbon Price (20-yr, ${discRate}% discount rate)`}>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={npvSensitivity} margin={{ top:5, right:20, left:0, bottom:5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="price" tick={{ fontSize:11, fontFamily:T.mono }} />
+                  <YAxis tick={{ fontSize:10, fontFamily:T.mono }} unit="M" />
+                  <Tooltip formatter={v=>[`$${fmt0(v)}M`]} />
+                  <Bar dataKey="npv" name="Portfolio NPV $M" radius={[4,4,0,0]}
+                    fill={T.navy}
+                    label={{ position:'top', fontSize:9, formatter:v=>v>0?`+$${fmt0(v)}M`:`-$${fmt0(Math.abs(v))}M` }} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+            <Card title="IRR vs Capture Cost Scatter">
+              <ResponsiveContainer width="100%" height={260}>
+                <ScatterChart margin={{ top:10, right:20, left:0, bottom:10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="x" name="Cost $/t" tick={{ fontSize:10, fontFamily:T.mono }} label={{ value:'$/tCO₂', position:'insideBottom', offset:-5, fontSize:10 }} />
+                  <YAxis dataKey="y" name="IRR %" tick={{ fontSize:10 }} />
+                  <Tooltip cursor={{ strokeDasharray:'3 3' }} formatter={(v,n)=>[n==='x'?`$${v}/t`:`${v}%`, n==='x'?'Cost':'IRR']} />
+                  <Scatter data={filtered.map(p=>({ x:p.captureCost, y:p.irr }))} fill={T.navy} opacity={0.55} r={4} />
+                </ScatterChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+        )}
+
+        {tab==='Policy Incentives' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <Card title="Carbon Capture Policy & Incentive Landscape">
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:12 }}>
+                {[
+                  { name:'US 45Q Tax Credit', region:'USA', value:'$85/t geological storage; $60/t utilisation', mechanism:'Federal tax credit per tCO₂ captured', notes:'10-yr credit period from commissioning; Direct Pay for non-taxable entities' },
+                  { name:'EU Innovation Fund', region:'Europe', value:'€10B+ (NER300 successor)', mechanism:'Capital grants + operating support', notes:'CCUS + renewables + industrial decarbonisation; auction-based' },
+                  { name:'UK CCS Infrastructure Fund', region:'UK', value:'£1B capital + CfD revenue support', mechanism:'Industrial CCS clusters (HyNet, East Coast)', notes:'Track 1 & 2 cluster programme; contracts for difference' },
+                  { name:'Canada CCUS ITC', region:'Canada', value:'50% CCUS project capex credit (direct)', mechanism:'Investment Tax Credit', notes:'Direct capture: 50%; transport/storage: 37.5%; 2022–2040' },
+                  { name:'Norway CLIMIT/Longship', region:'Norway', value:'NOK 16.8B (~$1.5B)', mechanism:'State-funded full-chain CCS (Northern Lights)', notes:'Tie-in to EU BECCS; offshore CO₂ storage' },
+                  { name:'IEA CCUS Roadmap', region:'Global', value:'1.6 Gt/yr by 2030 (NZE)', mechanism:'Policy coordination target', notes:'Only ~0.05 Gt/yr today; ~32× scale-up needed' },
+                ].map(p=>(
+                  <div key={p.name} style={{ background:T.surfaceH, borderRadius:8, padding:14, border:`1px solid ${T.borderL}` }}>
+                    <div style={{ fontWeight:700, fontSize:13, color:T.navy, marginBottom:4 }}>{p.name}</div>
+                    <div style={{ fontSize:11, color:T.textMut, marginBottom:4 }}>📍 {p.region}</div>
+                    <div style={{ fontSize:12, color:T.green, fontWeight:600, marginBottom:4 }}>{p.value}</div>
+                    <div style={{ fontSize:11, color:T.textSec, marginBottom:4 }}>{p.mechanism}</div>
+                    <div style={{ fontSize:11, color:T.textMut }}>{p.notes}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {tab==='Market Outlook' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
+              <KpiCard label="Current Global CCS Capacity" value="~50 MtCO₂/yr" sub="2024 operational" color={T.navy} />
+              <KpiCard label="IEA NZE Target 2030" value="1,600 MtCO₂/yr" sub="32× scale-up needed" color={T.red} />
+              <KpiCard label="DAC Cost Target" value="$100/tCO₂" sub="By 2030 (advanced DAC)" color={T.amber} />
+              <KpiCard label="Storage Capacity (global)" value=">8,000 Gt" sub="Geological potential" color={T.green} />
+            </div>
+            <Card title="Global CCS Capacity Outlook (MtCO₂/yr) — NZE Scenario">
+              <ResponsiveContainer width="100%" height={260}>
+                <AreaChart
+                  data={[2025,2030,2035,2040,2050].map((yr,i)=>({ year:yr.toString(), point_source:[50,360,800,1200,1600][i], dac:[0.01,5,35,150,450][i] }))}
+                  margin={{ top:10, right:20, left:0, bottom:0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="year" tick={{ fontSize:11, fontFamily:T.mono }} />
+                  <YAxis tick={{ fontSize:10, fontFamily:T.mono }} unit=" Mt" />
+                  <Tooltip formatter={v=>[`${fmt0(v)} MtCO₂/yr`]} />
+                  <Legend />
+                  <Area dataKey="point_source" name="Point Source CCS" stroke={T.navy} fill={T.navy} fillOpacity={0.15} strokeWidth={2} />
+                  <Area dataKey="dac"          name="Direct Air Capture" stroke={T.gold} fill={T.gold} fillOpacity={0.20} strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+        )}
+      </div>
+
+      {tab==='Advanced Analytics' && (
+        <div style={{ padding:'0 32px 24px' }}>
+          <CleanTechAdvancedAnalytics T={T} moduleId="DF3" moduleName="Carbon Capture Finance" />
+        </div>
+      )}
+
+      <div style={{ borderTop:`1px solid ${T.border}`, padding:'12px 32px', display:'flex', justifyContent:'space-between', background:T.surface, marginTop:24 }}>
+        <span style={{ fontFamily:T.mono, fontSize:10, color:T.textMut }}>EP-DF3 · CCUS Finance · IEA CCUS Roadmap 2024 · IRS 45Q · IPCC AR6</span>
+        <span style={{ fontFamily:T.mono, fontSize:10, color:T.textMut }}>{totals.n} projects · C ${carbonPx}/t · 45Q ${q45Rate}/t</span>
       </div>
     </div>
   );

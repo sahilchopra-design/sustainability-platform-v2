@@ -1,373 +1,454 @@
 import React, { useState, useMemo } from 'react';
+import CleanTechAdvancedAnalytics from '../../_shared/CleanTechAdvancedAnalytics';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  ScatterChart, Scatter, LineChart, Line, Legend, Cell,
+  LineChart, Line, AreaChart, Area, ScatterChart, Scatter, Legend,
 } from 'recharts';
 
 const T = {
-  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0',
-  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280',
-  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f',
-  teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c',
-  surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace',
+  bg:'#f8f6f0', surface:'#ffffff', surfaceH:'#f1ede4',
+  border:'#e2ded5', borderL:'#ede9e0',
+  navy:'#1e3a5f', navyL:'#2d5282', gold:'#b8860b', goldL:'#d4a017',
+  sage:'#4d7c5f', sageL:'#6aad84', teal:'#0f766e',
+  text:'#1a1a2e', textSec:'#6b7280', textMut:'#9ca3af',
+  red:'#dc2626', green:'#16a34a', amber:'#d97706',
+  font:'DM Sans, sans-serif', mono:'JetBrains Mono, monospace',
 };
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const fmt0 = v => Number(v).toLocaleString('en-GB', { maximumFractionDigits:0 });
+const fmt1 = v => Number(v).toFixed(1);
+const fmt2 = v => Number(v).toFixed(2);
 
-const EV_TYPES = ['OEM', 'Charging', 'Battery', 'Software'];
-const EV_COUNTRIES = ['USA', 'Germany', 'China', 'Japan', 'South Korea', 'UK', 'France', 'Sweden', 'India', 'Australia'];
+// Vehicle segments
+const SEGMENTS = ['Passenger Car','Light Commercial (LCV)','Heavy Goods (HGV)','Bus & Coach','2-Wheeler','Van'];
+const POWERTRAIN = ['BEV','PHEV','ICE'];
+const CHARGER_TYPES = ['Level 2 (7kW)','DC Fast (50kW)','Ultra-Rapid (150kW)','HPC (350kW)'];
+const GEOS = ['UK','Germany','France','USA','China','Norway','Netherlands','India'];
 
-const TYPE_COLORS = { OEM: T.blue, Charging: T.green, Battery: T.amber, Software: T.indigo };
+// TCO parameters (£k, 5-year) by segment
+const TCO_BASE = {
+  'Passenger Car':         { icePrice:28, bevPrice:38, phevPrice:35, fuelICE:9.5, fuelBEV:3.0, maintICE:5.0, maintBEV:3.0, residICE:0.45, residBEV:0.38 },
+  'Light Commercial (LCV)':{ icePrice:38, bevPrice:52, phevPrice:46, fuelICE:14.0,fuelBEV:4.5, maintICE:7.0, maintBEV:4.5, residICE:0.40, residBEV:0.35 },
+  'Heavy Goods (HGV)':     { icePrice:120,bevPrice:200,phevPrice:160,fuelICE:90.0,fuelBEV:28.0,maintICE:40.0,maintBEV:25.0,residICE:0.35,residBEV:0.30 },
+  'Bus & Coach':           { icePrice:250,bevPrice:380,phevPrice:310,fuelICE:60.0,fuelBEV:18.0,maintICE:50.0,maintBEV:30.0,residICE:0.30,residBEV:0.28 },
+  '2-Wheeler':             { icePrice:5,  bevPrice:8,  phevPrice:6,  fuelICE:1.5, fuelBEV:0.5, maintICE:1.0, maintBEV:0.5, residICE:0.50, residBEV:0.45 },
+  'Van':                   { icePrice:45, bevPrice:62, phevPrice:54, fuelICE:16.0,fuelBEV:5.0, maintICE:8.0, maintBEV:5.0, residICE:0.40, residBEV:0.33 },
+};
 
-const COMPANIES = Array.from({ length: 60 }, (_, i) => {
-  const type = i < 35 ? 'OEM' : EV_TYPES[1 + Math.floor(sr(i * 7) * 3)];
-  const country = EV_COUNTRIES[Math.floor(sr(i * 11) * EV_COUNTRIES.length)];
-  const evRevenuePct = type === 'OEM' ? parseFloat((5 + sr(i * 13) * 85).toFixed(1)) :
-    type === 'Charging' ? 100 : type === 'Battery' ? parseFloat((60 + sr(i * 13) * 40).toFixed(1)) : parseFloat((40 + sr(i * 13) * 60).toFixed(1));
-  const iceStrandedAssets = type === 'OEM' ? parseFloat((0.5 + sr(i * 17) * 49.5).toFixed(1)) : parseFloat((sr(i * 17) * 2).toFixed(1));
-  const evCapex = type === 'OEM' ? parseFloat((0.5 + sr(i * 19) * 19.5).toFixed(1)) : parseFloat((0.1 + sr(i * 19) * 4.9).toFixed(1));
-  const evModels = type === 'OEM' ? Math.round(1 + sr(i * 23) * 24) : 0;
-  const chargingPoints = type === 'Charging' ? Math.round(1 + sr(i * 29) * 499) : 0;
-  const batterySupplySecured = Math.round(20 + sr(i * 31) * 80);
-  const marketShare = parseFloat((0.1 + sr(i * 37) * 14.9).toFixed(1));
-  const transitionScore = Math.round(20 + sr(i * 41) * 80);
-  const climateAligned = transitionScore >= 60;
-  const oemNames = ['Tesla', 'BYD', 'Volkswagen', 'GM', 'Ford', 'Rivian', 'Lucid', 'NIO', 'Xpeng', 'Li Auto',
-    'Stellantis', 'BMW', 'Mercedes', 'Hyundai', 'Kia', 'Renault', 'Nissan', 'Toyota', 'Honda', 'Volvo',
-    'Polestar', 'SAIC', 'Geely', 'Chery', 'CATL OEM', 'Arrival', 'Canoo', 'Fisker', 'VinFast', 'Ola EV',
-    'Foxconn EV', 'Mahindra EV', 'Tata EV', 'Subaru EV', 'Mazda EV'];
-  const chargNames = ['ChargePoint', 'EVgo', 'Blink', 'IONITY', 'Electrify America', 'BP Pulse', 'Shell Recharge',
-    'Pod Point', 'Osprey', 'Gridserve', 'Fastned', 'Mer Charge', 'Engie EV', 'Allego', 'Zunder', 'NewMotion',
-    'Virta', 'Driveco', 'Circle K EV', 'TotalEnergies EV', 'AVIA Charge', 'Compleo', 'Heliox', 'ABB E-Mobility', 'Kempower'];
-  const name = type === 'OEM' ? oemNames[i % oemNames.length] : type === 'Charging' ? chargNames[(i - 35) % chargNames.length] :
-    type === 'Battery' ? ['CATL', 'LG Energy', 'Panasonic', 'Samsung SDI', 'SK On', 'BYD Battery', 'AESC', 'Northvolt'][Math.floor(sr(i * 53) * 8)] :
-    ['Mobileye', 'NVIDIA Drive', 'Waymo', 'Argo AI', 'Aurora', 'Zoox', 'Motional'][Math.floor(sr(i * 53) * 7)];
-  return { id: i + 1, name, type, country, evRevenuePct, iceStrandedAssets, evCapex, evModels, chargingPoints, batterySupplySecured, marketShare, transitionScore, climateAligned };
+// 50 fleet operators
+const FLEETS = Array.from({ length: 50 }, (_, i) => {
+  const seg     = SEGMENTS[Math.floor(sr(i*7)*SEGMENTS.length)];
+  const geo     = GEOS[Math.floor(sr(i*11)*GEOS.length)];
+  const fleetSz = Math.round(50 + sr(i*13)*4950);
+  const evPct   = Math.round(5 + sr(i*17)*80);
+  const base    = TCO_BASE[seg];
+  const iceUnits = Math.round(fleetSz*(1-evPct/100));
+  const bevUnits = fleetSz - iceUnits;
+
+  // TCO 5-year (£k per vehicle)
+  const tcoBEV = base.bevPrice + (base.fuelBEV*5) + (base.maintBEV*5) - (base.bevPrice*base.residBEV);
+  const tcoICE = base.icePrice + (base.fuelICE*5) + (base.maintICE*5) - (base.icePrice*base.residICE);
+  const tcoParity = tcoBEV <= tcoICE;
+
+  // Stranded asset value (ICE fleet at risk)
+  const strandedValue = iceUnits * base.icePrice * (1 - evPct/100) * 0.25; // £k
+  const zevMandateGap = Math.max(0, 80 - evPct); // % gap to 2035 mandate
+  const capexNeeded   = bevUnits * (base.bevPrice - base.icePrice); // £k incremental capex
+
+  const chargerInfra  = Math.round(bevUnits / 4); // charger count (1:4 ratio)
+
+  return { id:i+1, name:`Fleet-${String(i+1).padStart(3,'0')}`,
+    seg, geo, fleetSz, evPct, iceUnits, bevUnits,
+    tcoBEV:Math.round(tcoBEV*10)/10, tcoICE:Math.round(tcoICE*10)/10,
+    tcoParity, strandedValue:Math.round(strandedValue),
+    zevMandateGap, capexNeeded:Math.round(capexNeeded),
+    chargerInfra };
 });
 
-const MARKET_SHARE_PROJ = [2024, 2026, 2028, 2030, 2035, 2040].map((yr, i) => ({
-  year: yr,
-  global: Math.round(18 + i * 13 + sr(i * 17) * 5),
-  china: Math.round(35 + i * 11 + sr(i * 23) * 5),
-  europe: Math.round(22 + i * 12 + sr(i * 29) * 5),
-  usa: Math.round(10 + i * 12 + sr(i * 31) * 5),
-})).map(d => ({
-  ...d,
-  global: Math.min(100, d.global),
-  china: Math.min(100, d.china),
-  europe: Math.min(100, d.europe),
-  usa: Math.min(100, d.usa),
-}));
+// Battery cost learning curve data
+const BATTERY_CURVE = [
+  {year:'2010',cost:1100},{year:'2015',cost:580},{year:'2018',cost:280},{year:'2020',cost:137},
+  {year:'2022',cost:151},{year:'2023',cost:139},{year:'2024',cost:106},{year:'2025',cost:95},
+  {year:'2027',cost:75},{year:'2030',cost:55},{year:'2035',cost:40},
+];
 
-const TABS = [
-  'OEM Overview', 'EV Market Share', 'Stranded ICE Assets', 'Charging Infrastructure',
-  'Battery Supply Chain', 'Transition Scoring', 'Policy Alignment', 'Investment Flows',
+// OEM EV share data
+const OEM_DATA = [
+  {oem:'BYD',        evShare:100, sales2024:3.0,  target2030:100},
+  {oem:'Tesla',      evShare:100, sales2024:1.8,  target2030:100},
+  {oem:'VW Group',   evShare:22,  sales2024:9.2,  target2030:55},
+  {oem:'GM',         evShare:8,   sales2024:6.0,  target2030:40},
+  {oem:'Ford',       evShare:7,   sales2024:4.4,  target2030:40},
+  {oem:'Stellantis', evShare:14,  sales2024:5.5,  target2030:50},
+  {oem:'Toyota',     evShare:3,   sales2024:10.8, target2030:30},
+  {oem:'Hyundai/Kia',evShare:18,  sales2024:7.3,  target2030:45},
+  {oem:'BMW Group',  evShare:20,  sales2024:2.5,  target2030:50},
+  {oem:'Mercedes',   evShare:15,  sales2024:2.0,  target2030:50},
 ];
 
 const KpiCard = ({ label, value, sub, color }) => (
-  <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: '18px 22px', flex: 1, minWidth: 180 }}>
-    <div style={{ fontSize: 12, color: T.textSec, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 6 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 800, color: color || T.navy, fontFamily: T.fontMono }}>{value}</div>
-    {sub && <div style={{ fontSize: 11, color: T.textSec, marginTop: 4 }}>{sub}</div>}
+  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:'14px 18px', minWidth:160 }}>
+    <div style={{ fontSize:11, color:T.textMut, fontFamily:T.mono, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:4 }}>{label}</div>
+    <div style={{ fontSize:22, fontWeight:700, color:color||T.navy, fontFamily:T.mono }}>{value}</div>
+    {sub && <div style={{ fontSize:11, color:T.textSec, marginTop:3 }}>{sub}</div>}
+  </div>
+);
+const Card = ({ title, children, style }) => (
+  <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:20, ...style }}>
+    {title && <div style={{ fontSize:13, fontWeight:700, color:T.navy, fontFamily:T.mono, marginBottom:14, textTransform:'uppercase', letterSpacing:'0.05em' }}>{title}</div>}
+    {children}
   </div>
 );
 
+const TABS = ['Overview','TCO Analysis','Fleet Transition','Charging Infrastructure','Battery Economics','OEM Landscape','Policy & Regulation','Advanced Analytics'];
+
 export default function EVTransitionFinancePage() {
-  const [tab, setTab] = useState(0);
-  const [typeFilter, setTypeFilter] = useState('All');
-  const [countryFilter, setCountryFilter] = useState('All');
-  const [evAdoption, setEvAdoption] = useState(30);
-  const [carbonPrice, setCarbonPrice] = useState(80);
+  const [tab, setTab]           = useState('Overview');
+  const [filterSeg, setFilterSeg]   = useState('All');
+  const [filterGeo, setFilterGeo]   = useState('All');
+  const [energyPx, setEnergyPx]     = useState(0.28);  // £/kWh electricity
+  const [fuelPx, setFuelPx]         = useState(1.65);   // £/L diesel
+  const [battCost, setBattCost]     = useState(95);     // $/kWh current
 
-  const filtered = useMemo(() => COMPANIES.filter(c =>
-    (typeFilter === 'All' || c.type === typeFilter) &&
-    (countryFilter === 'All' || c.country === countryFilter)
-  ), [typeFilter, countryFilter]);
+  const filtered = useMemo(() => FLEETS.filter(f =>
+    (filterSeg === 'All' || f.seg === filterSeg) &&
+    (filterGeo === 'All' || f.geo === filterGeo)
+  ), [filterSeg, filterGeo]);
 
-  const totalStranded = filtered.reduce((s, c) => s + c.iceStrandedAssets, 0).toFixed(1);
-  const avgEvRevPct = filtered.length ? (filtered.reduce((s, c) => s + c.evRevenuePct, 0) / filtered.length).toFixed(1) : '0.0';
-  const totalEvCapex = filtered.reduce((s, c) => s + c.evCapex, 0).toFixed(1);
-  const avgTransScore = filtered.length ? Math.round(filtered.reduce((s, c) => s + c.transitionScore, 0) / filtered.length) : 0;
+  const totals = useMemo(() => {
+    const n = filtered.length||1;
+    return {
+      n: filtered.length,
+      totalFleet:   filtered.reduce((s,f)=>s+f.fleetSz,0),
+      totalBEV:     filtered.reduce((s,f)=>s+f.bevUnits,0),
+      avgEvPct:     filtered.reduce((s,f)=>s+f.evPct,0)/n,
+      totalStranded:filtered.reduce((s,f)=>s+f.strandedValue,0),
+      avgZevGap:    filtered.reduce((s,f)=>s+f.zevMandateGap,0)/n,
+      totalCapexNeeded: filtered.reduce((s,f)=>s+f.capexNeeded,0),
+      totalChargers: filtered.reduce((s,f)=>s+f.chargerInfra,0),
+    };
+  }, [filtered]);
 
-  const oems = filtered.filter(c => c.type === 'OEM');
-  const topOems = [...oems].sort((a, b) => b.evRevenuePct - a.evRevenuePct).slice(0, 15);
+  // TCO comparison by segment
+  const tcoBySegment = useMemo(() => SEGMENTS.map(seg => {
+    const b = TCO_BASE[seg];
+    const elecAdj = energyPx / 0.28; // scale by electricity price vs base
+    const fuelAdj = fuelPx   / 1.65;
+    return {
+      seg: seg.split(' ')[0],
+      bev: Math.round((b.bevPrice + b.fuelBEV*5*elecAdj + b.maintBEV*5 - b.bevPrice*b.residBEV)*10)/10,
+      ice: Math.round((b.icePrice + b.fuelICE*5*fuelAdj  + b.maintICE*5 - b.icePrice*b.residICE)*10)/10,
+    };
+  }), [energyPx, fuelPx]);
 
-  const strandedScatter = oems.map(c => ({ x: c.iceStrandedAssets, y: c.transitionScore, name: c.name, evPct: c.evRevenuePct }));
+  // Charger economics
+  const chargerEcon = useMemo(() => [
+    { type:'Level 2 (7kW)', capex:8,    opex:0.5, sessions:5,   revPerSess:2.5,  utilPct:20 },
+    { type:'DC Fast (50kW)',capex:35,   opex:3.5, sessions:15,  revPerSess:8.0,  utilPct:35 },
+    { type:'Ultra-Rapid (150kW)',capex:80,opex:8.0,sessions:20, revPerSess:15.0, utilPct:40 },
+    { type:'HPC (350kW)',   capex:150,  opex:14,  sessions:25,  revPerSess:25.0, utilPct:45 },
+  ].map(c=>{
+    const annRev  = c.sessions * 365 * c.revPerSess / 1000; // £k/yr
+    const annOpex = c.opex; // £k/yr
+    const payback = (c.capex / (annRev - annOpex)).toFixed(1);
+    return { ...c, annRev, payback };
+  }), []);
 
-  const chargingByCountry = EV_COUNTRIES.map(cn => ({
-    country: cn,
-    points: filtered.filter(c => c.type === 'Charging' && c.country === cn).reduce((s, c) => s + c.chargingPoints, 0),
-    companies: filtered.filter(c => c.type === 'Charging' && c.country === cn).length,
-  })).filter(d => d.companies > 0);
-
-  const batteryData = filtered.filter(c => c.type === 'Battery').map(c => ({
-    name: c.name,
-    secured: c.batterySupplySecured,
-    country: c.country,
-  }));
-
-  // Adjusted stranded assets with EV adoption
-  const adjStrandedFactor = 1 - (evAdoption - 30) * 0.01 - (carbonPrice - 80) * 0.002;
-  const adjStrandedTotal = (parseFloat(totalStranded) * Math.max(0.1, adjStrandedFactor)).toFixed(1);
-
-  const transitionBuckets = [
-    { label: 'Leader (≥70)', count: filtered.filter(c => c.transitionScore >= 70).length, color: T.green },
-    { label: 'Progressing (50–69)', count: filtered.filter(c => c.transitionScore >= 50 && c.transitionScore < 70).length, color: T.blue },
-    { label: 'Lagging (30–49)', count: filtered.filter(c => c.transitionScore >= 30 && c.transitionScore < 50).length, color: T.amber },
-    { label: 'At Risk (<30)', count: filtered.filter(c => c.transitionScore < 30).length, color: T.red },
-  ];
+  const labelStyle = { fontSize:11, color:T.textSec, marginBottom:4, display:'block' };
+  const selectStyle = { padding:'5px 10px', borderRadius:6, border:`1px solid ${T.border}`, fontSize:12, background:T.surface, color:T.text };
+  const sliderStyle = { width:'100%', accentColor:T.navy };
 
   return (
-    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: 'DM Sans, system-ui, sans-serif', padding: '28px 32px' }}>
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <span style={{ fontSize: 22, fontWeight: 800, color: T.navy }}>⚡ EV Transition Finance</span>
-          <span style={{ fontSize: 11, background: T.orange, color: '#fff', borderRadius: 4, padding: '2px 8px', fontWeight: 700 }}>EP-DF5</span>
-        </div>
-        <div style={{ fontSize: 13, color: T.textSec }}>60 OEM & infrastructure companies · Stranded ICE assets, transition scoring, battery supply chain & policy alignment</div>
+    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font, color:T.text }}>
+      <div style={{ background:T.navy, padding:'20px 32px', borderBottom:`3px solid ${T.gold}` }}>
+        <div style={{ fontFamily:T.mono, fontSize:11, color:T.gold, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:4 }}>EP-DF5 · EV Transition Finance</div>
+        <div style={{ fontSize:22, fontWeight:700, color:'#ffffff', marginBottom:4 }}>EV Transition Finance</div>
+        <div style={{ fontSize:13, color:'#94a3b8' }}>50 fleets · TCO BEV vs ICE · ZEV mandate gap · Charging economics · Battery learning curve · OEM landscape</div>
       </div>
 
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20, background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: '14px 18px' }}>
-        {[
-          { label: 'Type', value: typeFilter, setter: setTypeFilter, opts: ['All', ...EV_TYPES] },
-          { label: 'Country', value: countryFilter, setter: setCountryFilter, opts: ['All', ...EV_COUNTRIES] },
-        ].map(({ label, value, setter, opts }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 12, color: T.textSec, fontWeight: 600 }}>{label}</span>
-            <select value={value} onChange={e => setter(e.target.value)}
-              style={{ fontSize: 12, border: `1px solid ${T.border}`, borderRadius: 6, padding: '4px 8px', background: T.bg, color: T.textPri }}>
-              {opts.map(o => <option key={o}>{o}</option>)}
-            </select>
+      <div style={{ padding:'24px 32px' }}>
+        <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginBottom:24, background:T.surface, border:`1px solid ${T.border}`, borderRadius:10, padding:'14px 20px', alignItems:'flex-end' }}>
+          <div><span style={labelStyle}>Segment</span>
+            <select style={selectStyle} value={filterSeg} onChange={e=>setFilterSeg(e.target.value)}>
+              <option>All</option>{SEGMENTS.map(s=><option key={s}>{s}</option>)}
+            </select></div>
+          <div><span style={labelStyle}>Geography</span>
+            <select style={selectStyle} value={filterGeo} onChange={e=>setFilterGeo(e.target.value)}>
+              <option>All</option>{GEOS.map(g=><option key={g}>{g}</option>)}
+            </select></div>
+          <div style={{ flex:1, minWidth:180 }}>
+            <span style={labelStyle}>Electricity: £{energyPx.toFixed(2)}/kWh</span>
+            <input type="range" min={0.10} max={0.60} step={0.02} value={energyPx} onChange={e=>setEnergyPx(+e.target.value)} style={sliderStyle} />
           </div>
-        ))}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: T.textSec, fontWeight: 600 }}>EV Adoption: {evAdoption}%</span>
-          <input type="range" min={10} max={80} value={evAdoption} onChange={e => setEvAdoption(+e.target.value)} style={{ width: 100 }} />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: T.textSec, fontWeight: 600 }}>Carbon: ${carbonPrice}/tCO₂</span>
-          <input type="range" min={0} max={200} value={carbonPrice} onChange={e => setCarbonPrice(+e.target.value)} style={{ width: 100 }} />
-        </div>
-        <span style={{ fontSize: 12, color: T.textSec, alignSelf: 'center' }}>{filtered.length} companies</span>
-      </div>
-
-      {/* KPIs */}
-      <div style={{ display: 'flex', gap: 14, marginBottom: 22, flexWrap: 'wrap' }}>
-        <KpiCard label="Total Stranded ICE Assets" value={`$${totalStranded}Bn`} sub={`adj. for ${evAdoption}% EV adoption: $${adjStrandedTotal}Bn`} color={T.red} />
-        <KpiCard label="Avg EV Revenue %" value={`${avgEvRevPct}%`} sub="EV share of total revenue" color={T.green} />
-        <KpiCard label="Total EV Capex" value={`$${totalEvCapex}Bn/yr`} sub="annual EV investment" color={T.blue} />
-        <KpiCard label="Avg Transition Score" value={avgTransScore} sub="0–100 score" color={avgTransScore >= 60 ? T.green : T.amber} />
-      </div>
-
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)}
-            style={{ padding: '7px 14px', borderRadius: 7, border: `1px solid ${tab === i ? T.orange : T.border}`, background: tab === i ? T.orange : T.card, color: tab === i ? '#fff' : T.textSec, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
-            {t}
-          </button>
-        ))}
-      </div>
-
-      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24 }}>
-        {tab === 0 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>OEM Overview — All Filtered Companies</div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-              <thead>
-                <tr style={{ background: T.sub }}>
-                  {['Company', 'Type', 'Country', 'EV Rev %', 'ICE Stranded ($Bn)', 'EV Capex ($Bn/yr)', 'Models', 'Bat. Supply %', 'Trans. Score'].map(h => (
-                    <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 700, borderBottom: `1px solid ${T.border}` }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.slice(0, 20).map((c, i) => (
-                  <tr key={c.id} style={{ background: i % 2 === 0 ? T.card : T.sub }}>
-                    <td style={{ padding: '7px 10px', color: T.navy, fontWeight: 600 }}>{c.name}</td>
-                    <td style={{ padding: '7px 10px' }}><span style={{ background: TYPE_COLORS[c.type] + '22', color: TYPE_COLORS[c.type], borderRadius: 4, padding: '2px 6px', fontSize: 11, fontWeight: 700 }}>{c.type}</span></td>
-                    <td style={{ padding: '7px 10px', color: T.textSec }}>{c.country}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono, color: c.evRevenuePct >= 50 ? T.green : c.evRevenuePct >= 20 ? T.amber : T.red }}>{c.evRevenuePct}%</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono, color: c.iceStrandedAssets > 20 ? T.red : T.amber }}>{c.iceStrandedAssets}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono }}>{c.evCapex}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono, color: T.blue }}>{c.evModels || '–'}</td>
-                    <td style={{ padding: '7px 10px', fontFamily: T.fontMono }}>{c.batterySupplySecured}%</td>
-                    <td style={{ padding: '7px 10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <div style={{ width: 40, height: 5, background: T.border, borderRadius: 3 }}>
-                          <div style={{ width: `${c.transitionScore}%`, height: 5, background: c.transitionScore >= 70 ? T.green : c.transitionScore >= 50 ? T.blue : T.amber, borderRadius: 3 }} />
-                        </div>
-                        <span style={{ fontFamily: T.fontMono, fontSize: 11 }}>{c.transitionScore}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ minWidth:180 }}>
+            <span style={labelStyle}>Diesel: £{fuelPx.toFixed(2)}/L</span>
+            <input type="range" min={1.00} max={2.50} step={0.05} value={fuelPx} onChange={e=>setFuelPx(+e.target.value)} style={sliderStyle} />
           </div>
-        )}
+          <div style={{ minWidth:160 }}>
+            <span style={labelStyle}>Battery: ${battCost}/kWh</span>
+            <input type="range" min={50} max={200} step={5} value={battCost} onChange={e=>setBattCost(+e.target.value)} style={sliderStyle} />
+          </div>
+          <div style={{ fontFamily:T.mono, fontSize:11, color:T.textMut }}>{totals.n} fleets</div>
+        </div>
 
-        {tab === 1 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>EV Revenue % — Top 15 OEMs</div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={topOems.map(c => ({ name: c.name, pct: c.evRevenuePct, country: c.country }))}
-                layout="vertical" margin={{ top: 10, right: 40, left: 100, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis type="number" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} width={100} />
-                <Tooltip formatter={(v) => [`${v}%`, 'EV Revenue']} />
-                <Bar dataKey="pct" radius={[0, 4, 4, 0]}>
-                  {topOems.map((c, idx) => <Cell key={idx} fill={c.evRevenuePct >= 50 ? T.green : c.evRevenuePct >= 20 ? T.blue : T.amber} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-            <div style={{ marginTop: 20 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: T.navy, marginBottom: 12 }}>EV Market Share Projection by Region (% of new car sales)</div>
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={MARKET_SHARE_PROJ} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="year" tick={{ fontSize: 11, fill: T.textSec }} />
-                  <YAxis tick={{ fontSize: 11, fill: T.textSec }} unit="%" />
-                  <Tooltip formatter={(v) => [`${v}%`]} />
-                  <Line type="monotone" dataKey="global" name="Global" stroke={T.navy} strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="china" name="China" stroke={T.red} strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="europe" name="Europe" stroke={T.blue} strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="usa" name="USA" stroke={T.orange} strokeWidth={2} dot={{ r: 3 }} />
-                  <Legend />
-                </LineChart>
-              </ResponsiveContainer>
+        <div style={{ display:'flex', gap:4, marginBottom:24, flexWrap:'wrap' }}>
+          {TABS.map(t=>(
+            <button key={t} onClick={()=>setTab(t)} style={{ padding:'8px 16px', borderRadius:6, border:`1px solid ${tab===t?T.navy:T.border}`, background:tab===t?T.navy:T.surface, color:tab===t?'#fff':T.textSec, fontFamily:T.font, fontSize:12, fontWeight:tab===t?600:400, cursor:'pointer' }}>{t}</button>
+          ))}
+        </div>
+
+        {tab==='Overview' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
+              <KpiCard label="Total Vehicles" value={fmt0(totals.totalFleet)} sub="Portfolio fleets" color={T.navy} />
+              <KpiCard label="BEV Units" value={fmt0(totals.totalBEV)} sub={`${fmt1(totals.avgEvPct)}% avg EV share`} color={T.green} />
+              <KpiCard label="Avg ZEV Mandate Gap" value={`${fmt1(totals.avgZevGap)}%`} sub="To 2035 80% mandate" color={T.red} />
+              <KpiCard label="ICE Stranded Value" value={`£${fmt0(totals.totalStranded)}k`} sub="At-risk fleet book value" color={T.amber} />
+              <KpiCard label="Incremental BEV Capex" value={`£${fmt0(totals.totalCapexNeeded)}k`} sub="vs ICE equivalents" />
+              <KpiCard label="Charger Requirements" value={fmt0(totals.totalChargers)} sub="1:4 vehicle:charger ratio" color={T.teal} />
             </div>
-          </div>
-        )}
 
-        {tab === 2 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 8 }}>Stranded ICE Assets vs Transition Score</div>
-            <div style={{ fontSize: 12, color: T.textSec, marginBottom: 16 }}>EV Adoption {evAdoption}% · Carbon ${carbonPrice}/tCO₂ → Adjusted stranded: ${adjStrandedTotal}Bn</div>
-            <ResponsiveContainer width="100%" height={320}>
-              <ScatterChart margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="x" name="Stranded ICE Assets ($Bn)" label={{ value: 'Stranded ICE Assets ($Bn)', position: 'bottom', fontSize: 11, fill: T.textSec }} tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis dataKey="y" name="Transition Score" label={{ value: 'Transition Score', angle: -90, position: 'insideLeft', fontSize: 11, fill: T.textSec }} tick={{ fontSize: 11, fill: T.textSec }} />
-                <Tooltip formatter={(v, n) => [v, n]} />
-                <Scatter data={strandedScatter} fill={T.orange} fillOpacity={0.65} />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {tab === 3 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Charging Infrastructure by Country</div>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={chargingByCountry} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="country" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis yAxisId="left" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: T.textSec }} />
-                <Tooltip />
-                <Bar yAxisId="left" dataKey="points" name="Charging Points (k)" fill={T.green} radius={[4, 4, 0, 0]} />
-                <Bar yAxisId="right" dataKey="companies" name="Companies" fill={T.blue} radius={[4, 4, 0, 0]} />
-                <Legend />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {tab === 4 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Battery Supply Chain — Supply Security by Manufacturer</div>
-            {batteryData.length > 0 ? (
+            <Card title="5-Year TCO Comparison — BEV vs ICE by Segment (£k per vehicle)">
               <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={batteryData} margin={{ top: 10, right: 20, left: 10, bottom: 30 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} angle={-20} textAnchor="end" />
-                  <YAxis tick={{ fontSize: 11, fill: T.textSec }} unit="%" />
-                  <Tooltip formatter={(v) => [`${v}%`, 'Supply Secured']} />
-                  <Bar dataKey="secured" radius={[4, 4, 0, 0]}>
-                    {batteryData.map((d, idx) => <Cell key={idx} fill={d.secured >= 70 ? T.green : d.secured >= 50 ? T.amber : T.red} />)}
-                  </Bar>
+                <BarChart data={tcoBySegment} margin={{ top:5, right:20, left:0, bottom:5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="seg" tick={{ fontSize:11 }} />
+                  <YAxis tick={{ fontSize:10, fontFamily:T.mono }} unit="k" />
+                  <Tooltip formatter={v=>[`£${fmt1(v)}k`]} />
+                  <Legend />
+                  <Bar dataKey="bev" name="BEV 5yr TCO" fill={T.green}  radius={[4,4,0,0]} />
+                  <Bar dataKey="ice" name="ICE 5yr TCO" fill={T.navy}   radius={[4,4,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
-            ) : (
-              <div style={{ padding: 24, textAlign: 'center', color: T.textSec }}>Filter includes no Battery companies. Change filter to show battery supply data.</div>
-            )}
-          </div>
-        )}
+            </Card>
 
-        {tab === 5 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Transition Scoring — Portfolio Distribution</div>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-              {transitionBuckets.map(b => (
-                <div key={b.label} style={{ flex: 1, background: b.color + '18', border: `1px solid ${b.color}44`, borderRadius: 10, padding: '16px 18px' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: b.color, textTransform: 'uppercase' }}>{b.label}</div>
-                  <div style={{ fontSize: 28, fontWeight: 800, color: b.color, fontFamily: T.fontMono }}>{b.count}</div>
-                  <div style={{ fontSize: 11, color: T.textSec }}>{filtered.length ? ((b.count / filtered.length) * 100).toFixed(0) : 0}% of portfolio</div>
-                </div>
-              ))}
-            </div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={filtered.slice(0, 15).map(c => ({ name: c.name.split(' ')[0], score: c.transitionScore, type: c.type }))}
-                margin={{ top: 10, right: 20, left: 10, bottom: 30 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} angle={-30} textAnchor="end" />
-                <YAxis tick={{ fontSize: 11, fill: T.textSec }} domain={[0, 100]} />
-                <Tooltip formatter={(v) => [v, 'Transition Score']} />
-                <Bar dataKey="score" radius={[4, 4, 0, 0]}>
-                  {filtered.slice(0, 15).map((c, idx) => <Cell key={idx} fill={c.transitionScore >= 70 ? T.green : c.transitionScore >= 50 ? T.blue : T.amber} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {tab === 6 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Policy Alignment — Regulatory Landscape</div>
-            {[
-              { region: 'European Union', policy: 'ICE ban by 2035 · CBAM · EU Taxonomy Green criteria for EVs', score: 92, color: T.blue },
-              { region: 'United States', policy: 'IRA EV Tax Credit ($7.5k) · EPA ICE 2032 rules · Clean Vehicle Credits', score: 78, color: T.orange },
-              { region: 'China', policy: 'NEV dual-credit policy · 2060 carbon neutrality · Subsidy phase-out', score: 88, color: T.red },
-              { region: 'UK', policy: 'ZEV mandate 22% by 2024 → 100% by 2035 · OZEV grants ending 2025', score: 82, color: T.purple },
-              { region: 'Japan', policy: 'Green growth strategy · EV target 100% by 2035 · $7.8Bn battery investment', score: 71, color: T.green },
-            ].map(({ region, policy, score, color }) => (
-              <div key={region} style={{ background: T.sub, border: `1px solid ${T.border}`, borderRadius: 8, padding: '14px 18px', marginBottom: 10 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>{region}</div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color, fontFamily: T.fontMono }}>{score}/100</div>
-                </div>
-                <div style={{ fontSize: 12, color: T.textSec, marginBottom: 8 }}>{policy}</div>
-                <div style={{ background: T.border, borderRadius: 4, height: 5 }}>
-                  <div style={{ width: `${score}%`, height: 5, background: color, borderRadius: 4 }} />
-                </div>
+            <Card title="Fleet Portfolio — EV Transition Status">
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                  <thead><tr style={{ background:T.surfaceH }}>
+                    {['Fleet','Segment','Geography','Fleet Size','EV %','ICE Units','Stranded £k','ZEV Gap %','Capex Needed £k','TCO BEV','TCO ICE','Parity'].map(h=>(
+                      <th key={h} style={{ padding:'6px 10px', textAlign:'left', fontFamily:T.mono, fontSize:10, color:T.navy, borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>{[...filtered].sort((a,b)=>b.zevMandateGap-a.zevMandateGap).slice(0,25).map((f,i)=>(
+                    <tr key={f.id} style={{ background:i%2===0?T.surface:T.surfaceH }}>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{f.name}</td>
+                      <td style={{ padding:'6px 10px' }}>{f.seg}</td>
+                      <td style={{ padding:'6px 10px' }}>{f.geo}</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{fmt0(f.fleetSz)}</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono, color:f.evPct>=50?T.green:f.evPct>=20?T.amber:T.red }}>{f.evPct}%</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{fmt0(f.iceUnits)}</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono, color:f.strandedValue>100?T.red:T.text }}>{fmt0(f.strandedValue)}</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono, fontWeight:600, color:f.zevMandateGap>40?T.red:f.zevMandateGap>20?T.amber:T.green }}>{f.zevMandateGap}%</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{fmt0(f.capexNeeded)}</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{f.tcoBEV}</td>
+                      <td style={{ padding:'6px 10px', fontFamily:T.mono }}>{f.tcoICE}</td>
+                      <td style={{ padding:'6px 10px' }}>
+                        <span style={{ padding:'2px 8px', borderRadius:4, fontSize:10, fontWeight:600, background:f.tcoParity?'#dcfce7':'#fee2e2', color:f.tcoParity?T.green:T.red }}>{f.tcoParity?'At parity':'Premium'}</span>
+                      </td>
+                    </tr>
+                  ))}</tbody>
+                </table>
               </div>
-            ))}
+            </Card>
           </div>
         )}
 
-        {tab === 7 && (
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 16 }}>Investment Flows — EV Capex by Company Type</div>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={EV_TYPES.map(t => ({
-                type: t,
-                capex: parseFloat(filtered.filter(c => c.type === t).reduce((s, c) => s + c.evCapex, 0).toFixed(1)),
-                count: filtered.filter(c => c.type === t).length,
-              }))} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis dataKey="type" tick={{ fontSize: 11, fill: T.textSec }} />
-                <YAxis tick={{ fontSize: 11, fill: T.textSec }} label={{ value: '$Bn/yr', angle: -90, position: 'insideLeft', fontSize: 11, fill: T.textSec }} />
-                <Tooltip formatter={(v) => [`$${v}Bn/yr`, 'EV Capex']} />
-                <Bar dataKey="capex" radius={[4, 4, 0, 0]}>
-                  {EV_TYPES.map(t => <Cell key={t} fill={TYPE_COLORS[t]} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+        {tab==='TCO Analysis' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
+              <Card title="BEV vs ICE TCO Parity Year by Segment">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart
+                    data={SEGMENTS.map(seg=>({
+                      seg: seg.split(' ')[0],
+                      parityYr: 2024 + Math.round((battCost-80)/20),
+                    }))}
+                    margin={{ top:5, right:20, left:0, bottom:5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                    <XAxis dataKey="seg" tick={{ fontSize:10 }} />
+                    <YAxis domain={[2020,2035]} tick={{ fontSize:10, fontFamily:T.mono }} />
+                    <Tooltip />
+                    <Bar dataKey="parityYr" name="TCO Parity Year" fill={T.teal} radius={[4,4,0,0]} label={{ position:'top', fontSize:9 }} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+              <Card title="TCO Sensitivity: Electricity vs Diesel Prices">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={tcoBySegment} margin={{ top:5, right:20, left:0, bottom:5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                    <XAxis dataKey="seg" tick={{ fontSize:10 }} />
+                    <YAxis tick={{ fontSize:10, fontFamily:T.mono }} />
+                    <Tooltip formatter={(v,n)=>[`£${fmt1(v)}k`, n]} />
+                    <Legend />
+                    <Bar dataKey="bev" name="BEV TCO" fill={T.green}  radius={[4,4,0,0]} />
+                    <Bar dataKey="ice" name="ICE TCO" fill={T.red}    radius={[4,4,0,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
           </div>
         )}
+
+        {tab==='Fleet Transition' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
+              <KpiCard label="Total Stranded Value" value={`£${fmt0(totals.totalStranded)}k`} sub="ICE fleet at mandate risk" color={T.red} />
+              <KpiCard label="Avg ZEV Gap" value={`${fmt1(totals.avgZevGap)}%`} sub="vs 2035 80% mandate" color={T.amber} />
+              <KpiCard label="Total Capex Needed" value={`£${fmt0(totals.totalCapexNeeded)}k`} sub="Incremental BEV premium" />
+            </div>
+            <Card title="ZEV Mandate Gap Distribution (% of fleets)">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart
+                  data={[0,10,20,30,40,50,60,70].map((lo,i,a)=>({
+                    range:`${lo}–${a[i+1]||lo+10}%`,
+                    count: filtered.filter(f=>f.zevMandateGap>=lo&&f.zevMandateGap<(a[i+1]||lo+10)).length,
+                  }))}
+                  margin={{ top:5, right:20, left:0, bottom:5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="range" tick={{ fontSize:10, fontFamily:T.mono }} />
+                  <YAxis tick={{ fontSize:10 }} />
+                  <Tooltip />
+                  <Bar dataKey="count" name="Fleets" fill={T.red} radius={[4,4,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+        )}
+
+        {tab==='Charging Infrastructure' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
+              <KpiCard label="Total Chargers Required" value={fmt0(totals.totalChargers)} sub="1:4 vehicle ratio" color={T.navy} />
+              <KpiCard label="UK Public Chargers 2024" value="~65,000" sub="Target: 300k by 2030" color={T.amber} />
+            </div>
+            <Card title="Charging Infrastructure Economics by Type">
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                  <thead><tr style={{ background:T.surfaceH }}>
+                    {['Charger Type','CAPEX £k','OPEX £k/yr','Daily Sessions','Rev/Session £','Annual Rev £k','Simple Payback yr'].map(h=>(
+                      <th key={h} style={{ padding:'8px 12px', textAlign:'left', fontFamily:T.mono, fontSize:11, color:T.navy, borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>{chargerEcon.map((c,i)=>(
+                    <tr key={c.type} style={{ background:i%2===0?T.surface:T.surfaceH }}>
+                      <td style={{ padding:'8px 12px', fontWeight:600 }}>{c.type}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{c.capex}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{c.opex}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{c.sessions}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>£{c.revPerSess}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono, color:c.annRev>c.opex?T.green:T.red }}>£{fmt1(c.annRev)}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono, color:+c.payback<=10?T.green:+c.payback<=20?T.amber:T.red }}>{c.payback}</td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {tab==='Battery Economics' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
+              <KpiCard label="Current Battery Cost" value={`$${battCost}/kWh`} sub="Cell-level estimate" color={T.amber} />
+              <KpiCard label="Target Cost (BNEF 2030)" value="$55/kWh" sub="Cell-level projection" color={T.green} />
+              <KpiCard label="Cost Reduction vs 2010" value="-90%+" sub="$1,100 → $100/kWh" color={T.navy} />
+              <KpiCard label="EV Sticker Parity" value="~$80/kWh" sub="Pack-level threshold" color={T.teal} />
+            </div>
+            <Card title="Battery Cell Cost Learning Curve ($/kWh, 2010–2035)">
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={BATTERY_CURVE} margin={{ top:10, right:20, left:0, bottom:0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="year" tick={{ fontSize:11, fontFamily:T.mono }} />
+                  <YAxis tick={{ fontSize:10, fontFamily:T.mono }} unit="$/kWh" />
+                  <Tooltip formatter={v=>[`$${v}/kWh`]} />
+                  <Line dataKey="cost" name="Battery Cost $/kWh" stroke={T.navy} strokeWidth={2.5} dot={{ r:3 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
+          </div>
+        )}
+
+        {tab==='OEM Landscape' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <Card title="OEM EV Share (2024) vs 2030 Target (% of global sales)">
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={OEM_DATA} margin={{ top:5, right:20, left:0, bottom:5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
+                  <XAxis dataKey="oem" tick={{ fontSize:10 }} />
+                  <YAxis tick={{ fontSize:10, fontFamily:T.mono }} unit="%" />
+                  <Tooltip formatter={v=>[`${v}%`]} />
+                  <Legend />
+                  <Bar dataKey="evShare"    name="EV Share 2024"   fill={T.navy}  radius={[4,4,0,0]} />
+                  <Bar dataKey="target2030" name="Target 2030"     fill={T.green} radius={[4,4,0,0]} opacity={0.7} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+            <Card title="OEM EV Portfolio Detail">
+              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                <thead><tr style={{ background:T.surfaceH }}>
+                  {['OEM','EV Share 2024 %','Total Sales M','2030 Target %','Gap %','Rating'].map(h=>(
+                    <th key={h} style={{ padding:'8px 12px', textAlign:'left', fontFamily:T.mono, fontSize:11, color:T.navy, borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                  ))}
+                </tr></thead>
+                <tbody>{OEM_DATA.map((o,i)=>{
+                  const gap = o.target2030 - o.evShare;
+                  const rating = o.evShare>=50?'Leader':o.evShare>=20?'Transition':o.evShare>=10?'Lagging':'At Risk';
+                  return (
+                    <tr key={o.oem} style={{ background:i%2===0?T.surface:T.surfaceH }}>
+                      <td style={{ padding:'8px 12px', fontWeight:600 }}>{o.oem}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono, color:o.evShare>=50?T.green:o.evShare>=20?T.amber:T.red }}>{o.evShare}%</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{o.sales2024}</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono }}>{o.target2030}%</td>
+                      <td style={{ padding:'8px 12px', fontFamily:T.mono, color:gap>30?T.red:gap>10?T.amber:T.green }}>{gap}%</td>
+                      <td style={{ padding:'8px 12px' }}>
+                        <span style={{ padding:'2px 8px', borderRadius:4, fontSize:10, fontWeight:600, background:rating==='Leader'?'#dcfce7':rating==='Transition'?'#eff6ff':rating==='Lagging'?'#fef3c7':'#fee2e2', color:rating==='Leader'?T.green:rating==='Transition'?T.navyL:rating==='Lagging'?T.amber:T.red }}>{rating}</span>
+                      </td>
+                    </tr>
+                  );
+                })}</tbody>
+              </table>
+            </Card>
+          </div>
+        )}
+
+        {tab==='Policy & Regulation' && (
+          <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
+            <Card title="ZEV Mandate & EV Policy Landscape">
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:12 }}>
+                {[
+                  { region:'United Kingdom', policy:'Zero Emission Vehicle Mandate', detail:'22% new cars ZEV 2024; 80% by 2030; 100% by 2035. Tradeable credits system.', deadline:'2035' },
+                  { region:'European Union', policy:'CO₂ Regulation — 100% ZEV by 2035', detail:'Phase-out of new ICE passenger cars by 2035. E-fuel exemption carve-out under Article 9.', deadline:'2035' },
+                  { region:'United States', policy:'IRA EV Tax Credits + EPA Phase 3', detail:'$7,500 clean vehicle tax credit (30D). EPA sets 67% EV share target 2032 (new cars).', deadline:'2032' },
+                  { region:'China', policy:'NEV Dual Credit Policy', detail:'Mandatory NEV credit ratio (18% 2023, rising). Battery subsidies via MIIT.', deadline:'Ongoing' },
+                  { region:'Norway', policy:'100% ZEV new cars — achieved 2023', detail:'First market to hit 100% new EV share. VAT exemption + road pricing discounts.', deadline:'Achieved' },
+                  { region:'Global (IEA NZE)', policy:'2-Wheel EV Mandate', detail:'100% EV new 2-wheelers by 2030 in advanced economies (IEA Net Zero Scenario).', deadline:'2030' },
+                ].map(p=>(
+                  <div key={p.region} style={{ background:T.surfaceH, borderRadius:8, padding:14, border:`1px solid ${T.borderL}` }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                      <div style={{ fontWeight:700, fontSize:13, color:T.navy }}>{p.region}</div>
+                      <span style={{ fontFamily:T.mono, fontSize:11, color:T.gold }}>{p.deadline}</span>
+                    </div>
+                    <div style={{ fontSize:12, fontWeight:600, color:T.text, marginBottom:4 }}>{p.policy}</div>
+                    <div style={{ fontSize:11, color:T.textSec }}>{p.detail}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+      </div>
+
+      {tab==='Advanced Analytics' && (
+        <div style={{ padding:'0 32px 24px' }}>
+          <CleanTechAdvancedAnalytics T={T} moduleId="DF5" moduleName="EV Transition Finance" />
+        </div>
+      )}
+
+      <div style={{ borderTop:`1px solid ${T.border}`, padding:'12px 32px', display:'flex', justifyContent:'space-between', background:T.surface, marginTop:24 }}>
+        <span style={{ fontFamily:T.mono, fontSize:10, color:T.textMut }}>EP-DF5 · EV Transition Finance · BNEF EV Outlook 2024 · IEA EV Tracker · ZEV Mandate</span>
+        <span style={{ fontFamily:T.mono, fontSize:10, color:T.textMut }}>{totals.n} fleets · Elec £{energyPx.toFixed(2)}/kWh · Diesel £{fuelPx.toFixed(2)}/L</span>
       </div>
     </div>
   );
