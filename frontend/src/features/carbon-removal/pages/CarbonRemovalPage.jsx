@@ -1,30 +1,312 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,ScatterChart,Scatter,ZAxis} from 'recharts';
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};const CC=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899','#06b6d4'];const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontFamily:T.font,fontSize:12},labelStyle:{color:T.navy,fontWeight:600}};const PAGE=12;const TABS=['CDR Overview','Project Registry','Technology Assessment','Market Outlook'];
-const F1=['DACCS','BECCS','Biochar','Enhanced Weathering','Ocean Alkalinity','Afforestation','Soil Carbon','Blue Carbon'];const F2=['North America','Europe','Asia','Africa','Latin America','Oceania'];
-const ITEMS=Array.from({length:55},(_,i)=>({id:i+1,name:'CDR Project '+(i+1),technology:F1[Math.floor(sr(i*3)*F1.length)],region:F2[Math.floor(sr(i*7)*F2.length)],score:+(sr(i*11)*40+50).toFixed(1),rating:['AAA','AA','A','BBB','BB','B'][Math.floor(sr(i*13)*6)],coverage:+(sr(i*17)*30+60).toFixed(1),risk:+(sr(i*19)*50+10).toFixed(1),compliance:+(sr(i*23)*40+50).toFixed(1),impact:+(sr(i*29)*60+20).toFixed(1),trend:sr(i*31)>0.5?'Improving':'Stable',quality:['High','Medium','Low'][Math.floor(sr(i*37)*3)],value:+(sr(i*41)*5000+100).toFixed(0),pct1:+(sr(i*43)*40+20).toFixed(1),pct2:+(sr(i*47)*30+15).toFixed(1),flag1:sr(i*53)>0.3,flag2:sr(i*59)>0.35}));
-const TS=Array.from({length:12},(_,i)=>({period:''+(2015+i),v1:+(sr(i*61)*30+40).toFixed(1),v2:+(sr(i*67)*20+30).toFixed(1),v3:+(sr(i*71)*15+10).toFixed(1)}));
-const exportCSV=(data,fn)=>{if(!data.length)return;const h=Object.keys(data[0]);const csv=[h.join(','),...data.map(r=>h.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
-export default function CarbonRemovalPage(){const [tab,setTab]=useState(0);const [search,setSearch]=useState('');const [sortCol,setSortCol]=useState('score');const [sortDir,setSortDir]=useState('desc');const [page,setPage]=useState(0);const [expanded,setExpanded]=useState(null);const [f1,sf1]=useState('All');const [f2,sf2]=useState('All');
-const filtered=useMemo(()=>{let d=[...ITEMS];if(search)d=d.filter(x=>x.name.toLowerCase().includes(search.toLowerCase()));if(f1!=='All')d=d.filter(x=>x.technology===f1);if(f2!=='All')d=d.filter(x=>x.region===f2);d.sort((a,b)=>sortDir==='asc'?((a[sortCol]>b[sortCol])?1:-1):((a[sortCol]<b[sortCol])?1:-1));return d;},[search,sortCol,sortDir,f1,f2]);const paged=filtered.slice(page*PAGE,page*PAGE+PAGE);const totalPages=Math.ceil(filtered.length/PAGE);const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(0);};
-const SH=({col,label,w})=><th onClick={()=>doSort(col)} style={{cursor:'pointer',padding:'10px 8px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontSize:11,fontWeight:700,color:T.textSec,fontFamily:T.mono,width:w,userSelect:'none',whiteSpace:'nowrap'}}>{label}{sortCol===col?(sortDir==='asc'?' \u25B2':' \u25BC'):''}</th>;
-const Pg=()=><div style={{display:'flex',justifyContent:'center',gap:6,marginTop:14}}><button onClick={()=>setPage(p=>Math.max(0,p-1))} disabled={page===0} style={{padding:'6px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:page===0?'default':'pointer',opacity:page===0?0.4:1,fontSize:12}}>Prev</button>{Array.from({length:Math.min(totalPages,7)},(_,i)=>{const p=totalPages<=7?i:page<3?i:page>totalPages-4?totalPages-7+i:page-3+i;return <button key={p} onClick={()=>setPage(p)} style={{padding:'6px 12px',border:`1px solid ${page===p?T.gold:T.border}`,borderRadius:6,background:page===p?T.gold:'transparent',color:page===p?'#fff':T.text,cursor:'pointer',fontWeight:page===p?700:400,fontSize:12}}>{p+1}</button>;})}<button onClick={()=>setPage(p=>Math.min(totalPages-1,p+1))} disabled={page>=totalPages-1} style={{padding:'6px 14px',border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:page>=totalPages-1?'default':'pointer',opacity:page>=totalPages-1?0.4:1,fontSize:12}}>Next</button></div>;
-const kpis=useMemo(()=>{const n=filtered.length||1;return[{l:'Projects',v:filtered.length},{l:'Avg Score',v:(filtered.reduce((s,x)=>s+parseFloat(x.score),0)/n).toFixed(1)},{l:'Avg Coverage',v:(filtered.reduce((s,x)=>s+parseFloat(x.coverage),0)/n).toFixed(1)+'%'},{l:'Avg Risk',v:(filtered.reduce((s,x)=>s+parseFloat(x.risk),0)/n).toFixed(1)},{l:'Compliant',v:filtered.filter(x=>parseFloat(x.compliance)>70).length}];},[filtered]);
-const d1=useMemo(()=>{const m={};F1.forEach(s=>m[s]=0);filtered.forEach(x=>m[x.technology]++);return Object.entries(m).filter(([,v])=>v>0).map(([name,value])=>({name:name.length>14?name.slice(0,14)+'..':name,value}));},[filtered]);const d2=useMemo(()=>{const m={};F2.forEach(r=>m[r]=0);filtered.forEach(x=>m[x.region]++);return Object.entries(m).filter(([,v])=>v>0).map(([name,value])=>({name,value}));},[filtered]);
-const renderDash=()=>(<div><div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:20}}>{kpis.map((k,i)=><div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase',letterSpacing:0.5}}>{k.l}</div><div style={{fontSize:24,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div></div>)}</div>
-<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>CDR Capacity Trend</div><ResponsiveContainer width="100%" height={280}><AreaChart data={TS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="period" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/><Area type="monotone" dataKey="v1" stroke={T.navy} fill={T.navy} fillOpacity={0.15} name="Capacity (kt)"/><Area type="monotone" dataKey="v2" stroke={T.gold} fill={T.gold} fillOpacity={0.15} name="Delivered (kt)"/></AreaChart></ResponsiveContainer></div>
-<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Technology Distribution</div><ResponsiveContainer width="100%" height={280}><PieChart><Pie data={d1} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`}>{d1.map((_,i)=><Cell key={i} fill={CC[i%CC.length]}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div></div>
-<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Regional Breakdown</div><ResponsiveContainer width="100%" height={260}><BarChart data={d2} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="name" type="category" width={100} tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="value" fill={T.sage} radius={[0,6,6,0]}/></BarChart></ResponsiveContainer></div>
-<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Price Trend</div><ResponsiveContainer width="100%" height={260}><LineChart data={TS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="period" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Line type="monotone" dataKey="v3" stroke={T.red} strokeWidth={2} name="Avg Price ($/t)"/></LineChart></ResponsiveContainer></div></div>
-<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Score vs Risk</div><ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Score" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="y" name="Risk" tick={{fontSize:10,fill:T.textMut}}/><ZAxis dataKey="z" range={[40,400]}/><Tooltip {...tip}/><Scatter data={filtered.map(x=>({name:x.name,x:parseFloat(x.score),y:parseFloat(x.risk),z:parseFloat(x.value)/50}))} fill={T.navy} fillOpacity={0.5}/></ScatterChart></ResponsiveContainer></div></div>);
-const renderTable=()=>(<div><div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}><input value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}} placeholder="Search projects..." style={{flex:1,minWidth:200,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}/><select value={f1} onChange={e=>{sf1(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}><option value="All">All Technologies</option>{F1.map(s=><option key={s} value={s}>{s}</option>)}</select><select value={f2} onChange={e=>{sf2(e.target.value);setPage(0);}} style={{padding:'8px 12px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}><option value="All">All Regions</option>{F2.map(r=><option key={r} value={r}>{r}</option>)}</select><button onClick={()=>exportCSV(filtered,'carbon_removal.csv')} style={{padding:'8px 16px',border:'none',borderRadius:8,background:T.gold,color:'#fff',fontWeight:600,fontSize:13,cursor:'pointer'}}>Export CSV</button></div>
-<div style={{fontSize:12,color:T.textMut,marginBottom:8,fontFamily:T.mono}}>{filtered.length} projects | Page {page+1}/{totalPages}</div>
-<div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}><thead><tr style={{background:T.surfaceH}}><SH col="name" label="Project" w="150px"/><SH col="score" label="Score"/><SH col="rating" label="Rating"/><SH col="coverage" label="Coverage %"/><SH col="risk" label="Risk"/><SH col="compliance" label="Compliance"/><SH col="impact" label="Impact"/><SH col="value" label="Value"/><SH col="trend" label="Trend"/></tr></thead>
-<tbody>{paged.map(item=>(<React.Fragment key={item.id}><tr onClick={()=>setExpanded(expanded===item.id?null:item.id)} style={{cursor:'pointer',background:expanded===item.id?T.surfaceH:'transparent',borderBottom:`1px solid ${T.border}`}}><td style={{padding:'10px 8px',fontWeight:600,color:T.navy}}>{expanded===item.id?'\u25BC':'\u25B6'} {item.name}</td><td style={{padding:'10px 8px',fontFamily:T.mono,color:parseFloat(item.score)>70?T.green:T.navy}}>{item.score}</td><td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:T.surfaceH,color:T.navy}}>{item.rating}</span></td><td style={{padding:'10px 8px',fontFamily:T.mono}}>{item.coverage}%</td><td style={{padding:'10px 8px',fontFamily:T.mono,color:parseFloat(item.risk)>35?T.red:T.green}}>{item.risk}</td><td style={{padding:'10px 8px',fontFamily:T.mono}}>{item.compliance}</td><td style={{padding:'10px 8px',fontFamily:T.mono}}>{item.impact}</td><td style={{padding:'10px 8px',fontFamily:T.mono}}>{fmt(parseFloat(item.value))}</td><td style={{padding:'10px 8px'}}><span style={{padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:item.trend==='Improving'?'#d1fae5':'#fef3c7',color:item.trend==='Improving'?'#065f46':'#92400e'}}>{item.trend}</span></td></tr>
-{expanded===item.id&&(<tr><td colSpan={9} style={{padding:20,background:T.surfaceH,borderBottom:`2px solid ${T.gold}`}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}><div><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Details</div>{[['Technology',item.technology],['Region',item.region],['Quality',item.quality],['Metric 1',item.pct1+'%'],['Metric 2',item.pct2+'%'],['Flag 1',item.flag1?'Yes':'No'],['Flag 2',item.flag2?'Yes':'No']].map(([l,v])=><div key={l} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:12,borderBottom:`1px solid ${T.border}`}}><span style={{color:T.textMut}}>{l}</span><span style={{fontWeight:600,color:T.navy,fontFamily:T.mono}}>{v}</span></div>)}</div><div><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Analysis</div><div style={{fontSize:12,color:T.textSec,lineHeight:1.6}}><p>CDR project assessment with score {item.score} and {item.quality} data quality.</p><p>Risk level at {item.risk} with compliance at {item.compliance}.</p></div></div><div><div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:8}}>Profile</div><ResponsiveContainer width="100%" height={200}><RadarChart data={[{m:'Score',v:parseFloat(item.score)},{m:'Coverage',v:parseFloat(item.coverage)},{m:'Compliance',v:parseFloat(item.compliance)},{m:'Impact',v:parseFloat(item.impact)},{m:'Low Risk',v:100-parseFloat(item.risk)},{m:'Quality',v:item.quality==='High'?90:item.quality==='Medium'?60:30}]}><PolarGrid stroke={T.border}/><PolarAngleAxis dataKey="m" tick={{fontSize:9}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:8}}/><Radar dataKey="v" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/></RadarChart></ResponsiveContainer></div></div></td></tr>)}</React.Fragment>))}</tbody></table></div><Pg/></div>);
-const renderAnalytics=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Score by Technology</div><ResponsiveContainer width="100%" height={280}><BarChart data={F1.map(s=>{const cs=filtered.filter(x=>x.technology===s);return{name:s.slice(0,12),avg:cs.length?(cs.reduce((sum,x)=>sum+parseFloat(x.score),0)/cs.length).toFixed(1):0};}).filter(d=>d.avg>0)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-45} textAnchor="end" height={60}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="avg" fill={T.navy} radius={[6,6,0,0]}/></BarChart></ResponsiveContainer></div><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Evolution</div><ResponsiveContainer width="100%" height={280}><AreaChart data={TS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="period" tick={{fontSize:10,fill:T.textMut}}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/><Area type="monotone" dataKey="v1" stroke={T.navy} fill={T.navy} fillOpacity={0.15} name="Primary"/><Area type="monotone" dataKey="v2" stroke={T.gold} fill={T.gold} fillOpacity={0.15} name="Secondary"/><Area type="monotone" dataKey="v3" stroke={T.sage} fill={T.sage} fillOpacity={0.15} name="Tertiary"/></AreaChart></ResponsiveContainer></div></div>
-<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Region Composition</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={d2} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label>{d2.map((_,i)=><Cell key={i} fill={CC[i%CC.length]}/>)}</Pie><Tooltip {...tip}/><Legend/></PieChart></ResponsiveContainer></div><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Score vs Coverage</div><ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="y" tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Scatter data={filtered.slice(0,30).map(x=>({name:x.name,x:parseFloat(x.score),y:parseFloat(x.coverage)}))} fill={T.gold} fillOpacity={0.6}/></ScatterChart></ResponsiveContainer></div></div></div>);
-const renderMarket=()=>(<div><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>{kpis.slice(0,4).map((k,i)=><div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:'16px 18px'}}><div style={{fontSize:11,color:T.textMut,fontFamily:T.mono,textTransform:'uppercase'}}>{k.l}</div><div style={{fontSize:22,fontWeight:700,color:T.navy,marginTop:4}}>{k.v}</div></div>)}</div>
-<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Comparative View</div><ResponsiveContainer width="100%" height={280}><BarChart data={filtered.slice(0,12).map(item=>({name:item.name.slice(0,10),score:parseFloat(item.score),risk:parseFloat(item.risk)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:8,fill:T.textMut}} angle={-45} textAnchor="end" height={50}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/><Bar dataKey="score" fill={T.navy} name="Score" radius={[4,4,0,0]}/><Bar dataKey="risk" fill={T.red} name="Risk" radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div><div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Market Evolution</div><ResponsiveContainer width="100%" height={280}><LineChart data={TS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="period" tick={{fontSize:10,fill:T.textMut}}/><YAxis yAxisId="l" tick={{fontSize:10,fill:T.textMut}}/><YAxis yAxisId="r" orientation="right" tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Legend/><Line yAxisId="l" type="monotone" dataKey="v1" stroke={T.navy} strokeWidth={2} name="Primary"/><Line yAxisId="r" type="monotone" dataKey="v3" stroke={T.gold} strokeWidth={2} name="Tertiary"/></LineChart></ResponsiveContainer></div></div></div>);
-return(<div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:'24px 32px'}}><div style={{marginBottom:24}}><div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,textTransform:'uppercase',letterSpacing:1}}>CDR / DACCS / Biochar</div><h1 style={{fontSize:28,fontWeight:800,color:T.navy,margin:'4px 0 0'}}>Carbon Removal Intelligence</h1><div style={{width:40,height:3,background:T.gold,borderRadius:2,marginTop:6}}/></div><div style={{display:'flex',gap:0,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`3px solid ${T.gold}`:'3px solid transparent',background:'transparent',color:tab===i?T.navy:T.textMut,fontWeight:tab===i?700:500,fontSize:13,cursor:'pointer',fontFamily:T.font}}>{t}</button>)}</div>{tab===0&&renderDash()}{tab===1&&renderTable()}{tab===2&&renderAnalytics()}{tab===3&&renderMarket()}</div>);}
+import React, { useState, useMemo } from 'react';
+import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+const T = {
+  bg: '#0f172a', surface: '#1e293b', surfaceH: '#334155', border: '#334155',
+  navy: '#3b82f6', gold: '#f59e0b', sage: '#10b981', teal: '#14b8a6',
+  text: '#f1f5f9', textSec: '#94a3b8', textMut: '#64748b',
+  red: '#ef4444', green: '#22c55e', amber: '#f59e0b', font: 'Inter,sans-serif', mono: 'JetBrains Mono,monospace'
+};
+const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const KpiCard = ({ label, value, sub, color = T.navy }) => (
+  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', flex: 1, minWidth: 150 }}>
+    <div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase', letterSpacing: 1 }}>{label}</div>
+    <div style={{ fontSize: 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
+    {sub && <div style={{ fontSize: 12, color: T.textMut, marginTop: 2 }}>{sub}</div>}
+  </div>
+);
+
+const CDR_TECHNOLOGIES = [
+  { id: 'daccs', name: 'Direct Air Carbon Capture (DACCS)', category: 'Engineered', maturity: 'Scaling', costLow: 250, costHigh: 600, potential2030: 0.05, potential2050: 5.0, permanence: 10000, additionality: 'Very High', lca: 0.02, companies: ['Climeworks', 'Carbon Engineering', '1PointFive', 'Global Thermostat'], energy: 'High Electric' },
+  { id: 'beccs', name: 'Bioenergy + CCS (BECCS)', category: 'Hybrid', maturity: 'Demonstration', costLow: 80, costHigh: 200, potential2030: 0.5, potential2050: 5.0, permanence: 1000, additionality: 'High', lca: 0.08, companies: ['Drax', 'Boundary Dam', 'ILUC'], energy: 'Bioenergy' },
+  { id: 'biochar', name: 'Biochar', category: 'Nature-Based', maturity: 'Scaling', costLow: 60, costHigh: 200, potential2030: 0.3, potential2050: 2.0, permanence: 500, additionality: 'High', lca: 0.12, companies: ['Carbofex', 'Biochar Now', 'Pyreg'], energy: 'Low' },
+  { id: 'ew', name: 'Enhanced Weathering', category: 'Geochemical', maturity: 'Pilot', costLow: 50, costHigh: 200, potential2030: 0.2, potential2050: 4.0, permanence: 10000, additionality: 'Very High', lca: 0.15, companies: ['UNDO', 'Eion', 'Lithos Carbon'], energy: 'Medium' },
+  { id: 'ocean-alk', name: 'Ocean Alkalinity Enhancement', category: 'Geochemical', maturity: 'Research', costLow: 40, costHigh: 250, potential2030: 0.1, potential2050: 8.0, permanence: 10000, additionality: 'Very High', lca: 0.10, companies: ['Planetary Tech', 'Ebb Carbon', 'Reefblocks'], energy: 'Medium' },
+  { id: 'afforestation', name: 'Afforestation/Reforestation', category: 'Nature-Based', maturity: 'Proven', costLow: 5, costHigh: 50, potential2030: 3.5, potential2050: 10.0, permanence: 100, additionality: 'Medium', lca: 0.02, companies: ['Land Life', 'Terraformation', 'Pachama'], energy: 'Very Low' },
+  { id: 'soil', name: 'Soil Carbon Sequestration', category: 'Nature-Based', maturity: 'Scaling', costLow: 10, costHigh: 100, potential2030: 1.5, potential2050: 5.0, permanence: 50, additionality: 'Medium', lca: 0.05, companies: ['Indigo Ag', 'Nori', 'Regen Network'], energy: 'Very Low' },
+  { id: 'blue-carbon', name: 'Blue Carbon (Mangroves/Seagrass)', category: 'Nature-Based', maturity: 'Scaling', costLow: 20, costHigh: 100, potential2030: 0.8, potential2050: 3.0, permanence: 100, additionality: 'High', lca: 0.04, companies: ['South Pole', 'Verra', 'Plan Vivo'], energy: 'Very Low' },
+  { id: 'mineralization', name: 'Mineral Carbonation', category: 'Geochemical', maturity: 'Pilot', costLow: 100, costHigh: 300, potential2030: 0.05, potential2050: 3.0, permanence: 10000, additionality: 'Very High', lca: 0.08, companies: ['CarbonCure', 'Solidia', 'Carbon Clean'], energy: 'Low' },
+  { id: 'kelp', name: 'Macroalgae / Kelp Farming', category: 'Nature-Based', maturity: 'Research', costLow: 100, costHigh: 400, potential2030: 0.1, potential2050: 1.5, permanence: 50, additionality: 'Medium', lca: 0.06, companies: ['Running Tide', 'Phykos', 'SeaForester'], energy: 'Low' },
+];
+
+const PROJECTS = Array.from({ length: 24 }, (_, i) => ({
+  id: i + 1,
+  name: `${CDR_TECHNOLOGIES[i % CDR_TECHNOLOGIES.length].name.split('(')[0].trim()} Project ${i + 1}`,
+  technology: CDR_TECHNOLOGIES[i % CDR_TECHNOLOGIES.length].id,
+  techName: CDR_TECHNOLOGIES[i % CDR_TECHNOLOGIES.length].name.split('(')[0].trim(),
+  region: ['North America', 'Europe', 'Asia', 'Africa', 'Latin America'][Math.floor(sr(i * 7) * 5)],
+  capacityKtY: +(sr(i * 11) * 50 + 5).toFixed(1),
+  costPerTon: Math.round(CDR_TECHNOLOGIES[i % CDR_TECHNOLOGIES.length].costLow + sr(i * 13) * (CDR_TECHNOLOGIES[i % CDR_TECHNOLOGIES.length].costHigh - CDR_TECHNOLOGIES[i % CDR_TECHNOLOGIES.length].costLow)),
+  qualityScore: +(sr(i * 17) * 3 + 7).toFixed(1),
+  standard: ['Verra VCU', 'Gold Standard', 'Puro.earth', 'Plan Vivo', 'SBTi CDR'][Math.floor(sr(i * 19) * 5)],
+  status: ['Active', 'Pipeline', 'Operational', 'Development'][Math.floor(sr(i * 23) * 4)],
+  vintage: 2023 + Math.floor(sr(i * 29) * 3),
+  buyerType: ['Corporate', 'Government', 'Voluntary'][Math.floor(sr(i * 31) * 3)],
+}));
+
+const MARKET_DATA = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'].map((yr, i) => ({
+  year: yr,
+  'Engineered CDR': +(0.01 * Math.pow(2.4, i) + sr(i) * 0.01).toFixed(3),
+  'Nature-Based': +(0.1 + i * 0.18 + sr(i + 11) * 0.05).toFixed(2),
+  'Hybrid (BECCS)': +(0.05 + i * 0.08 + sr(i + 22) * 0.03).toFixed(2),
+  'Total Demand': +(0.16 + i * 0.32 + sr(i + 33) * 0.06).toFixed(2),
+}));
+
+const COST_CURVE = CDR_TECHNOLOGIES.map(t => ({ name: t.name.split(' ')[0] + (t.name.split(' ')[1] || ''), midCost: (t.costLow + t.costHigh) / 2, potential2050: t.potential2050, category: t.category }));
+
+const TABS = ['Overview', 'CDR Registry', 'Technology Assessment', 'Market Outlook', 'Cost Curves', 'Quality Standards', 'Portfolio'];
+
+export default function CarbonRemovalPage() {
+  const [tab, setTab] = useState('Overview');
+  const [techFilter, setTechFilter] = useState('All');
+  const [catFilter, setCatFilter] = useState('All');
+
+  const categories = ['All', 'Engineered', 'Nature-Based', 'Geochemical', 'Hybrid'];
+  const filteredTech = useMemo(() => catFilter === 'All' ? CDR_TECHNOLOGIES : CDR_TECHNOLOGIES.filter(t => t.category === catFilter), [catFilter]);
+  const filteredProjects = useMemo(() => techFilter === 'All' ? PROJECTS : PROJECTS.filter(p => p.technology === techFilter), [techFilter]);
+
+  const kpis = useMemo(() => {
+    const totalCap = filteredProjects.reduce((s, p) => s + p.capacityKtY, 0);
+    const avgCost = filteredProjects.length > 0 ? filteredProjects.reduce((s, p) => s + p.costPerTon, 0) / filteredProjects.length : 0;
+    const totalPot2050 = CDR_TECHNOLOGIES.reduce((s, t) => s + t.potential2050, 0);
+    return { count: filteredProjects.length, totalCapMt: (totalCap / 1000).toFixed(2), avgCost: avgCost.toFixed(0), totalPot2050: totalPot2050.toFixed(1) };
+  }, [filteredProjects]);
+
+  const tabBar = { display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 20 };
+  const tabBtn = (t) => ({ padding: '6px 14px', borderRadius: 6, fontSize: 13, cursor: 'pointer', border: 'none', background: tab === t ? T.navy : T.surfaceH, color: tab === t ? '#fff' : T.textSec, fontWeight: tab === t ? 600 : 400 });
+  const matColor = (m) => ({ 'Proven': T.green, 'Scaling': T.teal, 'Demonstration': T.amber, 'Pilot': T.gold, 'Research': T.red }[m] || T.textSec);
+  const catColor = (c) => ({ 'Engineered': T.navy, 'Nature-Based': T.sage, 'Geochemical': T.teal, 'Hybrid': T.gold }[c] || T.textSec);
+
+  return (
+    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: T.font, color: T.text }}>
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 22, fontWeight: 700 }}>Carbon Removal Intelligence</div>
+        <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>CDR technology registry, project pipeline, cost curves & market outlook — EP-DI2</div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
+        <KpiCard label="CDR Technologies" value={CDR_TECHNOLOGIES.length} sub="tracked pathways" color={T.navy} />
+        <KpiCard label="Projects Tracked" value={kpis.count} sub={`${kpis.totalCapMt} MtCO₂/yr capacity`} color={T.sage} />
+        <KpiCard label="Avg Cost" value={`$${kpis.avgCost}/t`} sub="across selected projects" color={T.gold} />
+        <KpiCard label="2050 CDR Potential" value={`${kpis.totalPot2050} Gt/yr`} sub="all technologies combined" color={T.teal} />
+        <KpiCard label="Gap to 1.5°C Need" value="~9 Gt/yr" sub="vs current 0.04 Gt deployed" color={T.red} />
+      </div>
+
+      <div style={tabBar}>{TABS.map(t => <button key={t} style={tabBtn(t)} onClick={() => setTab(t)}>{t}</button>)}</div>
+
+      {tab === 'Overview' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>2050 CDR Potential by Technology (GtCO₂/yr)</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={[...CDR_TECHNOLOGIES].sort((a, b) => b.potential2050 - a.potential2050)} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis type="number" stroke={T.textSec} fontSize={11} />
+                <YAxis type="category" dataKey="name" stroke={T.textSec} fontSize={9} width={160} tickFormatter={v => v.length > 22 ? v.slice(0, 22) + '…' : v} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="potential2050" fill={T.teal} name="Potential 2050 (Gt)" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>CDR Market Growth Trajectory (GtCO₂/yr)</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={MARKET_DATA}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" stroke={T.textSec} fontSize={11} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Legend wrapperStyle={{ color: T.textSec, fontSize: 11 }} />
+                <Area type="monotone" dataKey="Nature-Based" stroke={T.sage} fill={T.sage} fillOpacity={0.2} stackId="a" />
+                <Area type="monotone" dataKey="Hybrid (BECCS)" stroke={T.gold} fill={T.gold} fillOpacity={0.2} stackId="a" />
+                <Area type="monotone" dataKey="Engineered CDR" stroke={T.navy} fill={T.navy} fillOpacity={0.2} stackId="a" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20, gridColumn: '1 / -1' }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Cost vs Permanence by Technology</div>
+            <ResponsiveContainer width="100%" height={220}>
+              <ScatterChart>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="x" name="Cost ($/t)" stroke={T.textSec} fontSize={11} label={{ value: 'Mid Cost ($/tCO₂)', position: 'insideBottom', offset: -4, fill: T.textSec, fontSize: 10 }} />
+                <YAxis dataKey="y" name="Permanence (yrs)" stroke={T.textSec} fontSize={11} label={{ value: 'Permanence (yrs)', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 10 }} scale="log" domain={['auto', 'auto']} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={CDR_TECHNOLOGIES.map(t => ({ name: t.name, x: (t.costLow + t.costHigh) / 2, y: t.permanence }))} fill={T.amber} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {tab === 'CDR Registry' && (
+        <div>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            <button onClick={() => setTechFilter('All')} style={{ ...tabBtn('All'), background: techFilter === 'All' ? T.teal : T.surfaceH, color: techFilter === 'All' ? '#fff' : T.textSec }}>All</button>
+            {CDR_TECHNOLOGIES.slice(0, 6).map(t => (
+              <button key={t.id} onClick={() => setTechFilter(t.id)} style={{ ...tabBtn(t.id), background: techFilter === t.id ? T.teal : T.surfaceH, color: techFilter === t.id ? '#fff' : T.textSec, fontSize: 11 }}>{t.name.split('(')[0].trim().split(' ').slice(0, 3).join(' ')}</button>
+            ))}
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: T.surfaceH }}>
+                  {['Project', 'Technology', 'Region', 'Capacity (kt/yr)', 'Cost ($/t)', 'Standard', 'Quality', 'Status', 'Vintage', 'Buyer'].map(h => (
+                    <th key={h} style={{ padding: '10px 12px', textAlign: 'left', color: T.textSec, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProjects.map((p, i) => (
+                  <tr key={p.id} style={{ background: i % 2 === 0 ? T.surface : 'transparent' }}>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{p.name}</td>
+                    <td style={{ padding: '10px 12px', color: T.textSec, fontSize: 11 }}>{p.techName}</td>
+                    <td style={{ padding: '10px 12px', color: T.textSec }}>{p.region}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: T.mono }}>{p.capacityKtY}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: T.mono, color: T.gold }}>${p.costPerTon}</td>
+                    <td style={{ padding: '10px 12px', fontSize: 11, color: T.teal }}>{p.standard}</td>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: p.qualityScore >= 9 ? T.green : T.amber }}>{p.qualityScore}</td>
+                    <td style={{ padding: '10px 12px' }}><span style={{ color: p.status === 'Operational' ? T.green : p.status === 'Active' ? T.teal : T.amber, fontSize: 11, fontWeight: 600 }}>{p.status}</span></td>
+                    <td style={{ padding: '10px 12px', color: T.textSec }}>{p.vintage}</td>
+                    <td style={{ padding: '10px 12px', color: T.textSec }}>{p.buyerType}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Technology Assessment' && (
+        <div>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            {categories.map(c => <button key={c} onClick={() => setCatFilter(c)} style={{ ...tabBtn(c), background: catFilter === c ? T.teal : T.surfaceH, color: catFilter === c ? '#fff' : T.textSec }}>{c}</button>)}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 16 }}>
+            {filteredTech.map(t => (
+              <div key={t.id} style={{ background: T.surface, borderRadius: 10, padding: 18, borderTop: `3px solid ${catColor(t.category)}` }}>
+                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{t.name}</div>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 11, color: catColor(t.category), background: `${catColor(t.category)}20`, padding: '2px 8px', borderRadius: 4 }}>{t.category}</span>
+                  <span style={{ fontSize: 11, color: matColor(t.maturity), background: `${matColor(t.maturity)}20`, padding: '2px 8px', borderRadius: 4 }}>{t.maturity}</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {[['Cost Range', `$${t.costLow}–$${t.costHigh}/t`], ['2030 Potential', `${t.potential2030} GtCO₂/yr`], ['2050 Potential', `${t.potential2050} GtCO₂/yr`], ['Permanence', `${t.permanence.toLocaleString()} yrs`], ['Additionality', t.additionality], ['Energy', t.energy]].map(([k, v]) => (
+                    <div key={k}><div style={{ fontSize: 10, color: T.textSec }}>{k}</div><div style={{ fontSize: 12, fontWeight: 600 }}>{v}</div></div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 12, fontSize: 11, color: T.textSec }}>Key players: {t.companies.slice(0, 3).join(' · ')}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {tab === 'Market Outlook' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Total CDR Market Demand Growth</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={MARKET_DATA}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" stroke={T.textSec} fontSize={11} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Legend wrapperStyle={{ color: T.textSec, fontSize: 11 }} />
+                <Line type="monotone" dataKey="Total Demand" stroke={T.navy} strokeWidth={3} dot={false} />
+                <Line type="monotone" dataKey="Nature-Based" stroke={T.sage} strokeWidth={2} dot={false} strokeDasharray="4 2" />
+                <Line type="monotone" dataKey="Engineered CDR" stroke={T.teal} strokeWidth={2} dot={false} strokeDasharray="4 2" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Cost Reduction Trajectory ($/tCO₂)</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={['2024', '2026', '2028', '2030', '2035', '2040', '2050'].map((yr, i) => ({
+                year: yr,
+                'DACCS': Math.max(100, 450 - i * 45 + sr(i) * 20),
+                'BECCS': Math.max(60, 150 - i * 12 + sr(i + 7) * 10),
+                'Biochar': Math.max(40, 120 - i * 10 + sr(i + 14) * 8),
+                'Enhanced Weathering': Math.max(30, 130 - i * 14 + sr(i + 21) * 12),
+              }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" stroke={T.textSec} fontSize={11} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Legend wrapperStyle={{ color: T.textSec, fontSize: 11 }} />
+                {['DACCS', 'BECCS', 'Biochar', 'Enhanced Weathering'].map((k, i) => (
+                  <Line key={k} type="monotone" dataKey={k} stroke={[T.navy, T.sage, T.gold, T.teal][i]} strokeWidth={2} dot={false} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Cost Curves' && (
+        <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Marginal Abatement Cost Curve — CDR Technologies</div>
+          <ResponsiveContainer width="100%" height={340}>
+            <BarChart data={[...COST_CURVE].sort((a, b) => a.midCost - b.midCost)}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="name" stroke={T.textSec} fontSize={9} angle={-30} textAnchor="end" height={60} />
+              <YAxis stroke={T.textSec} fontSize={11} label={{ value: '$/tCO₂', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+              <Bar dataKey="midCost" fill={T.amber} name="Mid Cost ($/tCO₂)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {tab === 'Quality Standards' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            {[
+              { name: 'Puro.earth', focus: 'Engineered CDR', criteria: ['Quantification', 'Additionality', 'Permanence (≥50yr)', 'Leakage', 'MRV Protocol'], strength: 'Best for biochar/DACCS', color: T.navy },
+              { name: 'Verra (VCS + CCB)', focus: 'Nature-Based', criteria: ['Third-party verification', 'Buffer pool', 'Co-benefits', 'SD VISta', 'REDD+ compatible'], strength: 'Largest voluntary registry', color: T.sage },
+              { name: 'Gold Standard', focus: 'Mixed CDR', criteria: ['SDG impact scoring', 'Impact quantification', 'Third-party audit', 'Registry transparency', 'Social safeguards'], strength: 'SDG alignment leader', color: T.gold },
+              { name: 'Plan Vivo', focus: 'Community NbS', criteria: ['Community ownership', 'Co-design', 'MRV light', 'Buffer pool', 'Smallholder focus'], strength: 'Community & equity focus', color: T.teal },
+              { name: 'SBTi FLAG', focus: 'Land Sector', criteria: ['AFOLU guidance', 'IPCC AR6 aligned', 'Non-permanence risk', 'Scope 3 integration', 'Land use change'], strength: 'Corporate land-use targets', color: T.amber },
+              { name: 'ISO 14064-2', focus: 'Engineered', criteria: ['GHG project standard', 'Baseline setting', 'Leakage calculation', 'Monitoring plan', 'Third-party assurance'], strength: 'International ISO standard', color: T.red },
+            ].map(s => (
+              <div key={s.name} style={{ background: T.surface, borderRadius: 10, padding: 18, borderTop: `3px solid ${s.color}` }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: s.color, marginBottom: 4 }}>{s.name}</div>
+                <div style={{ fontSize: 11, color: T.textSec, marginBottom: 10 }}>{s.focus}</div>
+                {s.criteria.map((c, i) => <div key={i} style={{ fontSize: 12, color: T.textSec, padding: '3px 0', borderBottom: `1px solid ${T.border}` }}>✓ {c}</div>)}
+                <div style={{ fontSize: 11, color: s.color, marginTop: 10, fontStyle: 'italic' }}>{s.strength}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {tab === 'Portfolio' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Project Pipeline by Technology Type</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={CDR_TECHNOLOGIES.map(t => ({ name: t.name.split(' ')[0], count: PROJECTS.filter(p => p.technology === t.id).length, capacity: +PROJECTS.filter(p => p.technology === t.id).reduce((s, p) => s + p.capacityKtY, 0).toFixed(0) })).filter(d => d.count > 0)}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" stroke={T.textSec} fontSize={10} angle={-20} textAnchor="end" height={45} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="count" fill={T.navy} name="Projects" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Quality Score Distribution</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={[{ range: '7.0–7.5', count: PROJECTS.filter(p => p.qualityScore >= 7 && p.qualityScore < 7.5).length }, { range: '7.5–8.0', count: PROJECTS.filter(p => p.qualityScore >= 7.5 && p.qualityScore < 8).length }, { range: '8.0–8.5', count: PROJECTS.filter(p => p.qualityScore >= 8 && p.qualityScore < 8.5).length }, { range: '8.5–9.0', count: PROJECTS.filter(p => p.qualityScore >= 8.5 && p.qualityScore < 9).length }, { range: '9.0+', count: PROJECTS.filter(p => p.qualityScore >= 9).length }]}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="range" stroke={T.textSec} fontSize={11} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="count" fill={T.sage} name="Projects" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,31 +1,334 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,Legend,Cell,LineChart,Line,PieChart,Pie,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,AreaChart,Area,ScatterChart,Scatter,ZAxis} from 'recharts';
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};const fmt1=n=>Number(n).toFixed(1);const fmt0=n=>Number(n).toFixed(0);const fmt2=n=>Number(n).toFixed(2);const fmtM=n=>n>=1000?`$${(n/1000).toFixed(1)}B`:`$${n}M`;const scoreColor=v=>v>=70?T.green:v>=45?T.amber:T.red;const riskColor=v=>v==='Low'?T.green:v==='Medium'?T.amber:v==='High'?T.red:'#7c3aed';const COLORS=[T.navy,T.gold,T.sage,T.navyL,T.goldL,T.sageL,T.red,T.amber,T.green,'#7c3aed'];
-const CATEGORIES=['Energy Efficiency','Fuel Switching','Electrification','Carbon Capture','Process Change','Supply Chain','Offsets','Renewables'];const SECTORS=['Energy','Industrial','Transport','Buildings','Agriculture','Waste','Mining','Manufacturing'];const RISK_LEVELS=['Low','Medium','High','Critical'];
-const NAMES=['Shell Transition','BP Net Zero','TotalEnergies','Exxon Climate','Chevron Decarb','ArcelorMittal','HeidelbergCement','Rio Tinto','BHP Group','Glencore Path','Maersk Shipping','Delta Airlines','United Airlines','Volkswagen EV','Toyota Hydrogen','Siemens Energy','GE Vernova','Schneider Elec','ABB Green Plan','Hitachi NZ','Unilever SDG','Nestle Net Zero','Danone Climate','Mars Scope 3','PepsiCo Decarb','Coca-Cola Path','Nike Supply Chain','LVMH Climate','H&M Circular','Zara Green','Microsoft Carbon','Google Moonshot','Amazon Climate','Apple Carbon','Meta Net Zero','Samsung Green','TSMC Efficiency','Intel Climate','Qualcomm Decarb','ASML NZ','BASF Chemistry','Dow Chemical','DuPont Transition','3M Sustain','Linde Gas Green','Air Liquide H2','Praxair Clean','Yara Ammonia','Nutrien Farm','Mosaic Phosphate'];
-const cardS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:20,marginBottom:16};const inputS={fontFamily:T.mono,fontSize:13,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,outline:'none',background:T.surface,color:T.text,width:260};const btnS=(a)=>({fontFamily:T.font,fontSize:13,fontWeight:a?700:500,padding:'8px 18px',border:`1px solid ${a?T.gold:T.border}`,borderRadius:6,background:a?T.gold:T.surface,color:a?'#fff':T.text,cursor:'pointer'});const thS={fontFamily:T.mono,fontSize:12,fontWeight:600,color:T.textSec,padding:'10px 12px',textAlign:'left',borderBottom:`2px solid ${T.border}`,cursor:'pointer',userSelect:'none',whiteSpace:'nowrap'};const tdS={fontFamily:T.font,fontSize:13,color:T.text,padding:'10px 12px',borderBottom:`1px solid ${T.borderL}`};const badgeS=(bg)=>({display:'inline-block',padding:'2px 10px',borderRadius:99,fontSize:11,fontWeight:600,fontFamily:T.mono,background:bg+'18',color:bg});const kpiBoxS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:16,textAlign:'center',flex:1,minWidth:140};const kpiVal={fontFamily:T.mono,fontSize:26,fontWeight:700,color:T.navy};const kpiLab={fontFamily:T.font,fontSize:11,color:T.textMut,marginTop:4,textTransform:'uppercase',letterSpacing:0.5};
-const exportCSV=(rows,fn)=>{if(!rows.length)return;const ks=Object.keys(rows[0]);const csv=[ks.join(','),...rows.map(r=>ks.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
-const CT=({active,payload,label})=>{if(!active||!payload?.length)return null;return(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:6,padding:'10px 14px',fontFamily:T.font,fontSize:12}}><div style={{fontWeight:700,color:T.navy,marginBottom:4}}>{label}</div>{payload.map((p,i)=><div key={i} style={{color:p.color||T.text}}>{p.name}: {typeof p.value==='number'?fmt1(p.value):p.value}</div>)}</div>);};
-const genData=(n)=>{const d=[];for(let i=0;i<n;i++){const s=idx=>sr(i*idx+idx);d.push({id:i+1,name:NAMES[i%NAMES.length]+(i>=NAMES.length?` ${Math.floor(i/NAMES.length)+1}`:''),category:CATEGORIES[Math.floor(s(17)*CATEGORIES.length)],sector:SECTORS[Math.floor(s(23)*SECTORS.length)],risk:RISK_LEVELS[Math.floor(s(29)*RISK_LEVELS.length)],score:Math.floor(20+s(31)*75),envScore:Math.floor(15+s(37)*80),socScore:Math.floor(15+s(41)*80),govScore:Math.floor(20+s(43)*75),m1:Number((s(47)*100).toFixed(1)),m2:Number((s(53)*100).toFixed(1)),m3:Number((s(59)*50).toFixed(1)),m4:Math.floor(10+s(61)*90),m5:Math.floor(5+s(67)*90),m6:Number((s(71)*25).toFixed(2)),completion:Math.floor(20+s(73)*78),compliance:Math.floor(30+s(79)*68),volume:Math.floor(10+s(83)*490),exposure:Math.floor(5+s(89)*495),q1:Math.floor(20+s(97)*75),q2:Math.floor(22+s(101)*73),q3:Math.floor(24+s(103)*71),q4:Math.floor(23+s(107)*72),region:['North America','Europe','Asia Pacific','LATAM','Middle East','Africa'][Math.floor(s(109)*6)],status:s(113)>0.6?'Active':s(127)>0.3?'Pending':'Review'});}return d;};
-const DATA=genData(50);const TABS=['Roadmap Overview','Milestone Tracking','Abatement Actions','Progress Analytics'];const PAGE_SIZE=12;
-export default function DecarbonisationRoadmapPage(){const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sortCol,setSortCol]=useState('score');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(0);const[expanded,setExpanded]=useState(null);const[fCat,setFCat]=useState('All');const[fSector,setFSector]=useState('All');const[fRisk,setFRisk]=useState('All');
-  const filtered=useMemo(()=>{let d=[...DATA];if(search){const s=search.toLowerCase();d=d.filter(r=>r.name.toLowerCase().includes(s)||r.sector.toLowerCase().includes(s)||r.category.toLowerCase().includes(s)||r.region.toLowerCase().includes(s));}if(fCat!=='All')d=d.filter(r=>r.category===fCat);if(fSector!=='All')d=d.filter(r=>r.sector===fSector);if(fRisk!=='All')d=d.filter(r=>r.risk===fRisk);d.sort((a,b)=>{const av=a[sortCol],bv=b[sortCol];if(av==null)return 1;if(bv==null)return -1;return sortDir==='asc'?(av>bv?1:-1):(av<bv?1:-1);});return d;},[search,sortCol,sortDir,fCat,fSector,fRisk]);
-  const paged=useMemo(()=>filtered.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);const toggleSort=(c)=>{if(sortCol===c)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(c);setSortDir('desc');}setPage(0);};const sortArrow=(c)=>sortCol===c?(sortDir==='asc'?' \u25B2':' \u25BC'):'';
-  const kpis=useMemo(()=>{const d=filtered;if(!d.length)return{count:0,avgScore:0,avgCompl:0,avgConf:0,totalVol:0,highRisk:0};return{count:d.length,avgScore:d.reduce((a,r)=>a+r.score,0)/d.length,avgCompl:d.reduce((a,r)=>a+r.completion,0)/d.length,avgConf:d.reduce((a,r)=>a+r.compliance,0)/d.length,totalVol:d.reduce((a,r)=>a+r.volume,0),highRisk:d.filter(r=>r.risk==='High'||r.risk==='Critical').length};},[filtered]);
-  const catDist=useMemo(()=>{const m={};filtered.forEach(r=>{m[r.category]=(m[r.category]||0)+1;});return Object.entries(m).map(([name,value])=>({name:name.length>14?name.slice(0,14)+'..':name,value})).sort((a,b)=>b.value-a.value);},[filtered]);
-  const riskDist=useMemo(()=>RISK_LEVELS.map(l=>({name:l,value:filtered.filter(r=>r.risk===l).length})),[filtered]);
-  const radarData=useMemo(()=>{if(!filtered.length)return[];const avg=k=>filtered.reduce((a,r)=>a+r[k],0)/filtered.length;return[{axis:'Env',value:avg('envScore')},{axis:'Social',value:avg('socScore')},{axis:'Gov',value:avg('govScore')},{axis:'Completion',value:avg('completion')},{axis:'Compliance',value:avg('compliance')},{axis:'Score',value:avg('score')}];},[filtered]);
-  const trendData=useMemo(()=>['Q1','Q2','Q3','Q4'].map((q,i)=>({quarter:q,score:filtered.reduce((a,r)=>a+[r.q1,r.q2,r.q3,r.q4][i],0)/(filtered.length||1)})),[filtered]);
-  const sectorScore=useMemo(()=>{const m={};const c={};filtered.forEach(r=>{m[r.sector]=(m[r.sector]||0)+r.score;c[r.sector]=(c[r.sector]||0)+1;});return Object.entries(m).map(([name,sum])=>({name:name.length>14?name.slice(0,14)+'..':name,score:sum/c[name],env:filtered.filter(r=>r.sector===name).reduce((a,r)=>a+r.envScore,0)/c[name],soc:filtered.filter(r=>r.sector===name).reduce((a,r)=>a+r.socScore,0)/c[name],gov:filtered.filter(r=>r.sector===name).reduce((a,r)=>a+r.govScore,0)/c[name]}));},[filtered]);
-  const renderKPIs=()=>(<div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}><div style={kpiBoxS}><div style={kpiVal}>{kpis.count}</div><div style={kpiLab}>Corporates</div></div><div style={kpiBoxS}><div style={{...kpiVal,color:scoreColor(kpis.avgScore)}}>{fmt1(kpis.avgScore)}</div><div style={kpiLab}>Avg Score</div></div><div style={kpiBoxS}><div style={kpiVal}>{fmt1(kpis.avgCompl)}%</div><div style={kpiLab}>Avg Completion</div></div><div style={kpiBoxS}><div style={kpiVal}>{fmt1(kpis.avgConf)}%</div><div style={kpiLab}>Avg Compliance</div></div><div style={kpiBoxS}><div style={kpiVal}>{fmtM(kpis.totalVol)}</div><div style={kpiLab}>Total Investment</div></div><div style={kpiBoxS}><div style={{...kpiVal,color:T.red}}>{kpis.highRisk}</div><div style={kpiLab}>High/Crit Risk</div></div></div>);
-  const renderFilters=()=>(<div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}><input style={inputS} placeholder="Search corporates..." value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}}/><select style={{...inputS,width:160}} value={fCat} onChange={e=>{setFCat(e.target.value);setPage(0);}}><option value="All">All Actions</option>{CATEGORIES.map(c=><option key={c}>{c}</option>)}</select><select style={{...inputS,width:160}} value={fSector} onChange={e=>{setFSector(e.target.value);setPage(0);}}><option value="All">All Sectors</option>{SECTORS.map(s=><option key={s}>{s}</option>)}</select><select style={{...inputS,width:130}} value={fRisk} onChange={e=>{setFRisk(e.target.value);setPage(0);}}><option value="All">All Risk</option>{RISK_LEVELS.map(r=><option key={r}>{r}</option>)}</select><button style={{...btnS(false),marginLeft:'auto'}} onClick={()=>exportCSV(filtered,'decarb_roadmap.csv')}>Export CSV</button></div>);
-  const renderPagination=()=>(<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12,fontFamily:T.mono,fontSize:12,color:T.textSec}}><span>{page*PAGE_SIZE+1}-{Math.min((page+1)*PAGE_SIZE,filtered.length)} of {filtered.length}</span><div style={{display:'flex',gap:4}}><button style={btnS(false)} disabled={page===0} onClick={()=>setPage(p=>p-1)}>Prev</button>{Array.from({length:Math.min(totalPages,7)},(_,i)=>{let pg=i;if(totalPages>7){if(page<4)pg=i;else if(page>=totalPages-3)pg=totalPages-7+i;else pg=page-3+i;}return <button key={pg} style={btnS(pg===page)} onClick={()=>setPage(pg)}>{pg+1}</button>;})}<button style={btnS(false)} disabled={page>=totalPages-1} onClick={()=>setPage(p=>p+1)}>Next</button></div></div>);
-  const renderExpanded=(r)=>(<tr key={`exp-${r.id}`}><td colSpan={99} style={{background:T.surfaceH,padding:20,borderBottom:`1px solid ${T.border}`}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}><div><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:4}}>DETAILS</div><div style={{fontSize:13,lineHeight:1.8}}><div><strong>Action:</strong> {r.category}</div><div><strong>Sector:</strong> {r.sector}</div><div><strong>Region:</strong> {r.region}</div><div><strong>Status:</strong> <span style={{color:r.status==='Active'?T.green:r.status==='Pending'?T.amber:T.red}}>{r.status}</span></div><div><strong>Investment:</strong> {fmtM(r.volume)}</div><div><strong>Abatement:</strong> {fmtM(r.exposure)}</div></div></div><div><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:4}}>SCORES</div><div style={{fontSize:13,lineHeight:1.8}}><div><strong>Overall:</strong> <span style={{color:scoreColor(r.score),fontWeight:700}}>{r.score}</span></div><div><strong>Env:</strong> {r.envScore}</div><div><strong>Social:</strong> {r.socScore}</div><div><strong>Gov:</strong> {r.govScore}</div><div><strong>Completion:</strong> {r.completion}%</div><div><strong>Compliance:</strong> {r.compliance}%</div><div><strong>Risk:</strong> <span style={{color:riskColor(r.risk)}}>{r.risk}</span></div></div></div><div><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:4}}>TREND</div><ResponsiveContainer width="100%" height={140}><LineChart data={[{q:'Q1',s:r.q1},{q:'Q2',s:r.q2},{q:'Q3',s:r.q3},{q:'Q4',s:r.q4}]}><XAxis dataKey="q" tick={{fontSize:10}}/><YAxis domain={[0,100]} tick={{fontSize:9}}/><Line type="monotone" dataKey="s" stroke={T.navy} strokeWidth={2} dot={{r:3}}/></LineChart></ResponsiveContainer></div></div></td></tr>);
-  const renderTable=(cols)=>(<div style={{...cardS,overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{cols.map(([k,l])=><th key={k} style={thS} onClick={()=>toggleSort(k)}>{l}{sortArrow(k)}</th>)}</tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}><tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>{cols.map(([k])=>{const v=r[k];if(k==='name')return <td key={k} style={{...tdS,fontWeight:600,color:T.navy}}>{v}</td>;if(k==='risk')return <td key={k} style={tdS}><span style={badgeS(riskColor(v))}>{v}</span></td>;if(k==='score')return <td key={k} style={{...tdS,fontWeight:700,color:scoreColor(v)}}>{v}</td>;if(k==='status')return <td key={k} style={{...tdS,color:v==='Active'?T.green:v==='Pending'?T.amber:T.red,fontWeight:600}}>{v}</td>;if(typeof v==='number')return <td key={k} style={{...tdS,fontFamily:T.mono}}>{v<20?fmt1(v):fmt0(v)}</td>;return <td key={k} style={tdS}>{v}</td>;})}</tr>{expanded===r.id&&renderExpanded(r)}</React.Fragment>))}</tbody></table>{renderPagination()}</div>);
-  const renderTab0=()=>(<>{renderKPIs()}{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>ACTION TYPE DISTRIBUTION</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={catDist} cx="50%" cy="50%" outerRadius={90} innerRadius={45} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`}>{catDist.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip/><Legend/></PieChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SCORE BY SECTOR</div><ResponsiveContainer width="100%" height={260}><BarChart data={sectorScore}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Bar dataKey="score" name="Avg Score" radius={[4,4,0,0]}>{sectorScore.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Bar></BarChart></ResponsiveContainer></div></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SCORE vs COMPLIANCE</div><ResponsiveContainer width="100%" height={300}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="x" name="Score" tick={{fontSize:11}}/><YAxis dataKey="y" name="Compliance%" tick={{fontSize:11}}/><Tooltip content={({active,payload})=>{if(!active||!payload?.length)return null;const d=payload[0].payload;return <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:6,padding:10,fontSize:12}}><div style={{fontWeight:700}}>{d.n}</div><div>Score:{d.x} Comp:{d.y}%</div></div>}}/><Scatter data={filtered.map(r=>({n:r.name,x:r.score,y:r.compliance}))} fill={T.navy}/></ScatterChart></ResponsiveContainer></div>{renderTable([['name','Corporate'],['category','Action'],['sector','Sector'],['score','Score'],['completion','Compl%'],['compliance','Conform%'],['risk','Risk'],['status','Status']])}</>);
-  const renderTab1=()=>(<>{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>DECARB RADAR</div><ResponsiveContainer width="100%" height={300}><RadarChart data={radarData}><PolarGrid stroke={T.borderL}/><PolarAngleAxis dataKey="axis" tick={{fontSize:11}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:10}}/><Radar name="Avg" dataKey="value" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/><Tooltip/></RadarChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>RISK DISTRIBUTION</div><ResponsiveContainer width="100%" height={300}><PieChart><Pie data={riskDist} cx="50%" cy="50%" outerRadius={90} innerRadius={45} dataKey="value" label>{riskDist.map((e,i)=><Cell key={i} fill={[T.green,T.amber,T.red,'#7c3aed'][i]}/>)}</Pie><Tooltip/><Legend/></PieChart></ResponsiveContainer></div></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>E/S/G BY SECTOR</div><ResponsiveContainer width="100%" height={280}><BarChart data={sectorScore}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Legend/><Bar dataKey="env" name="Env" fill={T.sage} radius={[2,2,0,0]}/><Bar dataKey="soc" name="Soc" fill={T.gold} radius={[2,2,0,0]}/><Bar dataKey="gov" name="Gov" fill={T.navy} radius={[2,2,0,0]}/></BarChart></ResponsiveContainer></div>{renderTable([['name','Corporate'],['score','Score'],['envScore','Env'],['socScore','Soc'],['govScore','Gov'],['m1','Abatement'],['m2','Cost'],['risk','Risk']])}</>);
-  const renderTab2=()=>(<>{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>COMPLETION BY ACTION</div><ResponsiveContainer width="100%" height={280}><BarChart data={CATEGORIES.map(c=>{const items=filtered.filter(r=>r.category===c);return{name:c.length>14?c.slice(0,14)+'..':c,completion:items.length?items.reduce((a,r)=>a+r.completion,0)/items.length:0};}).filter(d=>d.completion>0)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis type="number" domain={[0,100]} tick={{fontSize:11}}/><YAxis dataKey="name" type="category" width={110} tick={{fontSize:10}}/><Tooltip content={<CT/>}/><Bar dataKey="completion" name="Avg Completion%" fill={T.sage} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>INVESTMENT CURVE</div><ResponsiveContainer width="100%" height={280}><AreaChart data={[...filtered].sort((a,b)=>a.exposure-b.exposure).map((r,i)=>({rank:i+1,exp:r.exposure}))}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="rank" tick={{fontSize:11}}/><YAxis tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Area type="monotone" dataKey="exp" stroke={T.gold} fill={T.gold} fillOpacity={0.15} name="Abatement $M"/></AreaChart></ResponsiveContainer></div></div>{renderTable([['name','Corporate'],['completion','Compl%'],['compliance','Conform%'],['m3','Milestones'],['m4','tCO2e Saved'],['m5','Progress'],['volume','Investment'],['risk','Risk']])}</>);
-  const renderTab3=()=>(<>{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SCORE TREND</div><ResponsiveContainer width="100%" height={280}><LineChart data={trendData}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="quarter" tick={{fontSize:12}}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Line type="monotone" dataKey="score" stroke={T.navy} strokeWidth={2} dot={{r:4}} name="Avg Score"/></LineChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SECTOR PERFORMANCE</div><ResponsiveContainer width="100%" height={280}><AreaChart data={sectorScore}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Area type="monotone" dataKey="score" stroke={T.navy} fill={T.navy} fillOpacity={0.15} name="Avg Score"/></AreaChart></ResponsiveContainer></div></div>{renderTable([['name','Corporate'],['q1','Q1'],['q2','Q2'],['q3','Q3'],['q4','Q4'],['exposure','Abatement'],['m6','Pathway'],['status','Status']])}</>);
-  return(<div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24}}><div style={{maxWidth:1400,margin:'0 auto'}}><div style={{marginBottom:20}}><h1 style={{fontFamily:T.font,fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Decarbonisation Roadmap Builder</h1><p style={{fontFamily:T.font,fontSize:13,color:T.textSec,marginTop:2}}>Corporate decarbonisation pathway planning across {DATA.length} corporates</p></div><div style={{display:'flex',gap:6,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:8}}>{TABS.map((t,i)=><button key={i} style={btnS(tab===i)} onClick={()=>{setTab(i);setPage(0);setExpanded(null);}}>{t}</button>)}</div>{tab===0&&renderTab0()}{tab===1&&renderTab1()}{tab===2&&renderTab2()}{tab===3&&renderTab3()}</div></div>);
+import React, { useState, useMemo } from 'react';
+import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+const T = {
+  bg: '#0f172a', surface: '#1e293b', surfaceH: '#334155', border: '#334155',
+  navy: '#3b82f6', gold: '#f59e0b', sage: '#10b981', teal: '#14b8a6',
+  text: '#f1f5f9', textSec: '#94a3b8', textMut: '#64748b',
+  red: '#ef4444', green: '#22c55e', amber: '#f59e0b', font: 'Inter,sans-serif', mono: 'JetBrains Mono,monospace'
+};
+const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const KpiCard = ({ label, value, sub, color = T.navy }) => (
+  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', flex: 1, minWidth: 150 }}>
+    <div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase', letterSpacing: 1 }}>{label}</div>
+    <div style={{ fontSize: 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
+    {sub && <div style={{ fontSize: 12, color: T.textMut, marginTop: 2 }}>{sub}</div>}
+  </div>
+);
+
+const CORPORATES = [
+  { name: 'Shell', sector: 'Energy', baseYear: 2019, baseline: 1620, target2030: 810, target2050: 0, current: 1240, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 65, investMn: 2800, abatement: 'Fuel Switching+CCS', status: 'On Track' },
+  { name: 'BP', sector: 'Energy', baseYear: 2019, baseline: 1450, target2030: 580, target2050: 0, current: 1120, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 58, investMn: 3200, abatement: 'Renewables+Electrification', status: 'Behind' },
+  { name: 'TotalEnergies', sector: 'Energy', baseYear: 2015, baseline: 1180, target2030: 590, target2050: 0, current: 980, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 72, investMn: 2100, abatement: 'NbS+CCS', status: 'On Track' },
+  { name: 'ArcelorMittal', sector: 'Steel', baseYear: 2018, baseline: 208, target2030: 167, target2050: 0, current: 192, netZeroYear: 2050, sbti: 'Approved', carbonPrice: 90, investMn: 4400, abatement: 'Hydrogen DRI', status: 'On Track' },
+  { name: 'HeidelbergCement', sector: 'Cement', baseYear: 1990, baseline: 800, target2030: 560, target2050: 0, current: 640, netZeroYear: 2050, sbti: 'Approved', carbonPrice: 85, investMn: 1800, abatement: 'CCS+Alt Fuels', status: 'On Track' },
+  { name: 'Maersk', sector: 'Shipping', baseYear: 2020, baseline: 10600, target2030: 10100, target2050: 0, current: 10300, netZeroYear: 2040, sbti: 'Approved', carbonPrice: 110, investMn: 5600, abatement: 'Green Methanol', status: 'Ahead' },
+  { name: 'Volkswagen', sector: 'Auto', baseYear: 2018, baseline: 82, target2030: 45, target2050: 0, current: 68, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 50, investMn: 8900, abatement: 'EV Transition', status: 'On Track' },
+  { name: 'Microsoft', sector: 'Technology', baseYear: 2020, baseline: 14, target2030: 7, target2050: -14, current: 11, netZeroYear: 2030, sbti: 'Approved', carbonPrice: 145, investMn: 1200, abatement: 'DACCS+Biochar', status: 'Ahead' },
+  { name: 'Apple', sector: 'Technology', baseYear: 2019, baseline: 25, target2030: 10, target2050: 0, current: 18, netZeroYear: 2030, sbti: 'Approved', carbonPrice: 200, investMn: 4500, abatement: 'Renewable+Suppliers', status: 'Ahead' },
+  { name: 'Unilever', sector: 'Consumer', baseYear: 2015, baseline: 56, target2030: 28, target2050: 0, current: 42, netZeroYear: 2039, sbti: 'Approved', carbonPrice: 68, investMn: 950, abatement: 'Supply Chain+NbS', status: 'On Track' },
+  { name: 'Nestle', sector: 'Consumer', baseYear: 2018, baseline: 92, target2030: 37, target2050: 0, current: 71, netZeroYear: 2050, sbti: 'Approved', carbonPrice: 62, investMn: 1400, abatement: 'Agri+Packaging', status: 'Behind' },
+  { name: 'Lafarge', sector: 'Cement', baseYear: 1990, baseline: 725, target2030: 480, target2050: 0, current: 590, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 78, investMn: 1200, abatement: 'CCS+Low Carbon Cement', status: 'On Track' },
+  { name: 'Rio Tinto', sector: 'Mining', baseYear: 2018, baseline: 32, target2030: 22, target2050: 0, current: 27, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 55, investMn: 7600, abatement: 'Electrification+H2', status: 'On Track' },
+  { name: 'BHP', sector: 'Mining', baseYear: 2020, baseline: 38, target2030: 30, target2050: 0, current: 34, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 50, investMn: 4200, abatement: 'Renewables+EV Fleet', status: 'Behind' },
+  { name: 'Delta Airlines', sector: 'Aviation', baseYear: 2019, baseline: 45, target2030: 36, target2050: 0, current: 42, netZeroYear: 2050, sbti: 'None', carbonPrice: 38, investMn: 1100, abatement: 'SAF+Offsets', status: 'Behind' },
+  { name: 'Siemens Energy', sector: 'Industrials', baseYear: 2019, baseline: 2.8, target2030: 1.4, target2050: 0, current: 2.1, netZeroYear: 2030, sbti: 'Approved', carbonPrice: 120, investMn: 680, abatement: 'Electrification', status: 'Ahead' },
+  { name: 'Schneider Electric', sector: 'Industrials', baseYear: 2017, baseline: 1.5, target2030: 0.8, target2050: 0, current: 1.1, netZeroYear: 2025, sbti: 'Approved', carbonPrice: 135, investMn: 420, abatement: 'Efficiency+RE', status: 'Ahead' },
+  { name: 'Yara International', sector: 'Agriculture', baseYear: 2018, baseline: 28, target2030: 19, target2050: 0, current: 24, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 72, investMn: 4800, abatement: 'Green Ammonia', status: 'On Track' },
+  { name: 'Duke Energy', sector: 'Utilities', baseYear: 2005, baseline: 108, target2030: 65, target2050: 0, current: 84, netZeroYear: 2050, sbti: 'Committed', carbonPrice: 45, investMn: 12000, abatement: 'RE+Nuclear', status: 'On Track' },
+  { name: 'Orsted', sector: 'Utilities', baseYear: 2006, baseline: 16, target2030: 0.4, target2050: 0, current: 1.8, netZeroYear: 2025, sbti: 'Approved', carbonPrice: 160, investMn: 5800, abatement: 'Offshore Wind', status: 'Ahead' },
+];
+
+const ABATEMENT_LEVERS = [
+  { lever: 'Renewable Energy', sector: 'Cross-Sector', potentialMtY: 8.4, cost: -12, maturity: 'Proven', adoption: 72 },
+  { lever: 'Energy Efficiency', sector: 'Cross-Sector', potentialMtY: 6.2, cost: -8, maturity: 'Proven', adoption: 68 },
+  { lever: 'Electrification (Heat)', sector: 'Industry', potentialMtY: 4.8, cost: 18, maturity: 'Scaling', adoption: 32 },
+  { lever: 'Green Hydrogen (DRI)', sector: 'Steel', potentialMtY: 2.6, cost: 95, maturity: 'Demonstration', adoption: 8 },
+  { lever: 'Carbon Capture (CCUS)', sector: 'Heavy Industry', potentialMtY: 4.2, cost: 62, maturity: 'Scaling', adoption: 14 },
+  { lever: 'Sustainable Aviation Fuel', sector: 'Aviation', potentialMtY: 1.4, cost: 220, maturity: 'Scaling', adoption: 6 },
+  { lever: 'Green Methanol/Ammonia', sector: 'Shipping', potentialMtY: 1.8, cost: 180, maturity: 'Demonstration', adoption: 4 },
+  { lever: 'Supply Chain Decarbonisation', sector: 'Consumer', potentialMtY: 5.6, cost: 28, maturity: 'Early', adoption: 22 },
+  { lever: 'Nature-Based Solutions', sector: 'Cross-Sector', potentialMtY: 3.2, cost: 15, maturity: 'Proven', adoption: 38 },
+  { lever: 'Low Carbon Cement', sector: 'Cement', potentialMtY: 1.6, cost: 42, maturity: 'Scaling', adoption: 18 },
+  { lever: 'EV Fleet Transition', sector: 'Transport', potentialMtY: 3.8, cost: 8, maturity: 'Scaling', adoption: 44 },
+  { lever: 'Circular Economy', sector: 'Manufacturing', potentialMtY: 2.2, cost: -4, maturity: 'Proven', adoption: 29 },
+];
+
+const PATHWAY_TREND = ['2020','2021','2022','2023','2024','2025','2026','2027','2028','2029','2030'].map((yr, i) => ({
+  year: yr,
+  'Committed Path': 100 - i * 4.5 + sr(i) * 1.5,
+  'Current Pace': 100 - i * 2.8 + sr(i + 11) * 1.8,
+  '1.5°C Required': 100 - i * 6.2,
+  'Best Practice': 100 - i * 5.8 + sr(i + 22) * 1.2,
+}));
+
+const TABS = ['Overview', 'Corporate Tracker', 'Abatement Levers', 'Pathway Analysis', 'Sector Benchmarks', 'Investment', 'Milestones'];
+
+export default function DecarbonisationRoadmapPage() {
+  const [tab, setTab] = useState('Overview');
+  const [sectorFilter, setSectorFilter] = useState('All');
+
+  const sectors = ['All', ...new Set(CORPORATES.map(c => c.sector))];
+  const filtered = useMemo(() => sectorFilter === 'All' ? CORPORATES : CORPORATES.filter(c => c.sector === sectorFilter), [sectorFilter]);
+
+  const kpis = useMemo(() => {
+    const n = filtered.length > 0 ? filtered.length : 1;
+    const onTrack = filtered.filter(c => c.status === 'On Track' || c.status === 'Ahead').length;
+    const sbtiApproved = filtered.filter(c => c.sbti === 'Approved').length;
+    const avgInvest = filtered.reduce((s, c) => s + c.investMn, 0) / n;
+    const avgCarbon = filtered.reduce((s, c) => s + c.carbonPrice, 0) / n;
+    return { n, onTrack, sbtiApproved, avgInvest: avgInvest.toFixed(0), avgCarbon: avgCarbon.toFixed(0) };
+  }, [filtered]);
+
+  const tabBar = { display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 20 };
+  const tabBtn = (t) => ({ padding: '6px 14px', borderRadius: 6, fontSize: 13, cursor: 'pointer', border: 'none', background: tab === t ? T.navy : T.surfaceH, color: tab === t ? '#fff' : T.textSec, fontWeight: tab === t ? 600 : 400 });
+  const statusColor = (s) => ({ 'Ahead': T.green, 'On Track': T.sage, 'Behind': T.amber, 'Off Track': T.red }[s] || T.textSec);
+  const maturityColor = (m) => ({ 'Proven': T.green, 'Scaling': T.teal, 'Demonstration': T.amber, 'Early': T.red }[m] || T.textSec);
+
+  return (
+    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: T.font, color: T.text }}>
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 22, fontWeight: 700 }}>Decarbonisation Roadmap Builder</div>
+        <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>Corporate net-zero pathways, abatement levers & milestone tracking — EP-DI1</div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        {sectors.map(s => <button key={s} onClick={() => setSectorFilter(s)} style={{ ...tabBtn(s), background: sectorFilter === s ? T.teal : T.surfaceH, color: sectorFilter === s ? '#fff' : T.textSec }}>{s}</button>)}
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
+        <KpiCard label="Corporates" value={kpis.n} sub={`${kpis.onTrack} on track or ahead`} color={T.navy} />
+        <KpiCard label="SBTi Approved" value={kpis.sbtiApproved} sub={`of ${kpis.n} corporates`} color={T.green} />
+        <KpiCard label="On/Ahead Track" value={`${kpis.onTrack}/${kpis.n}`} sub="pathway compliance" color={T.sage} />
+        <KpiCard label="Avg Investment" value={`$${Number(kpis.avgInvest).toLocaleString()}M`} sub="decarbonisation capex" color={T.gold} />
+        <KpiCard label="Avg Internal Carbon Price" value={`$${kpis.avgCarbon}/t`} sub="internal price assumption" color={T.teal} />
+      </div>
+
+      <div style={tabBar}>{TABS.map(t => <button key={t} style={tabBtn(t)} onClick={() => setTab(t)}>{t}</button>)}</div>
+
+      {tab === 'Overview' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Status Distribution</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={['Ahead', 'On Track', 'Behind', 'Off Track'].map(s => ({ status: s, count: CORPORATES.filter(c => c.status === s).length }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="status" stroke={T.textSec} fontSize={12} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="count" name="Corporates" radius={[6, 6, 0, 0]} fill={T.navy} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Emission Reduction vs Target (2030)</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <ScatterChart>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="x" name="Target Reduction %" stroke={T.textSec} fontSize={11} label={{ value: 'Target Reduction %', position: 'insideBottom', offset: -4, fill: T.textSec, fontSize: 10 }} />
+                <YAxis dataKey="y" name="Current Progress %" stroke={T.textSec} fontSize={11} label={{ value: 'Progress %', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 10 }} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={CORPORATES.map(c => ({ name: c.name, x: Math.round((1 - c.target2030 / c.baseline) * 100), y: Math.round((1 - c.current / c.baseline) * 100) }))} fill={T.teal} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20, gridColumn: '1 / -1' }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Aggregate Pathway vs 1.5°C Requirement (Index 2020=100)</div>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={PATHWAY_TREND}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" stroke={T.textSec} fontSize={11} />
+                <YAxis domain={[0, 105]} stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Legend wrapperStyle={{ color: T.textSec, fontSize: 11 }} />
+                <Line type="monotone" dataKey="1.5°C Required" stroke={T.red} strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                <Line type="monotone" dataKey="Best Practice" stroke={T.green} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Committed Path" stroke={T.navy} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Current Pace" stroke={T.amber} strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Corporate Tracker' && (
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: T.surfaceH }}>
+                {['Corporate', 'Sector', 'Baseline', 'Target 2030', 'Current', '2030 Gap', 'Net Zero Year', 'SBTi', 'Carbon Price', 'Status'].map(h => (
+                  <th key={h} style={{ padding: '10px 12px', textAlign: 'left', color: T.textSec, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c, i) => {
+                const gap = c.current - c.target2030;
+                return (
+                  <tr key={c.name} style={{ background: i % 2 === 0 ? T.surface : 'transparent' }}>
+                    <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{c.name}</td>
+                    <td style={{ padding: '10px 12px', color: T.textSec }}>{c.sector}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: T.mono }}>{c.baseline}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: T.mono, color: T.sage }}>{c.target2030}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: T.mono }}>{c.current}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: T.mono, color: gap > 0 ? T.amber : T.green }}>{gap > 0 ? `+${gap}` : gap}</td>
+                    <td style={{ padding: '10px 12px', color: T.gold }}>{c.netZeroYear}</td>
+                    <td style={{ padding: '10px 12px' }}><span style={{ color: c.sbti === 'Approved' ? T.green : c.sbti === 'Committed' ? T.amber : T.textSec, fontSize: 11, fontWeight: 600 }}>{c.sbti}</span></td>
+                    <td style={{ padding: '10px 12px', fontFamily: T.mono }}>${c.carbonPrice}</td>
+                    <td style={{ padding: '10px 12px' }}><span style={{ color: statusColor(c.status), fontWeight: 600, fontSize: 11 }}>{c.status}</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {tab === 'Abatement Levers' && (
+        <div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20, marginBottom: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Abatement Cost Curve ($/tCO₂ vs Mt/yr potential)</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <ScatterChart>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="x" name="Cost $/tCO₂" stroke={T.textSec} fontSize={11} label={{ value: 'Abatement Cost ($/tCO₂)', position: 'insideBottom', offset: -4, fill: T.textSec, fontSize: 10 }} />
+                <YAxis dataKey="y" name="Mt/yr Potential" stroke={T.textSec} fontSize={11} label={{ value: 'Potential (Mt/yr)', angle: -90, position: 'insideLeft', fill: T.textSec, fontSize: 10 }} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={ABATEMENT_LEVERS.map(l => ({ name: l.lever, x: l.cost, y: l.potentialMtY }))} fill={T.teal} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
+            {ABATEMENT_LEVERS.map(l => (
+              <div key={l.lever} style={{ background: T.surface, borderRadius: 8, padding: 16, borderLeft: `3px solid ${maturityColor(l.maturity)}` }}>
+                <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{l.lever}</div>
+                <div style={{ fontSize: 11, color: T.textSec, marginBottom: 10 }}>{l.sector}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                  {[['Potential', `${l.potentialMtY} Mt/yr`], ['Cost', `$${l.cost}/t`], ['Maturity', l.maturity], ['Adoption', `${l.adoption}%`]].map(([k, v]) => (
+                    <div key={k}><div style={{ fontSize: 10, color: T.textSec }}>{k}</div><div style={{ fontSize: 12, fontWeight: 600, color: k === 'Maturity' ? maturityColor(l.maturity) : T.text }}>{v}</div></div>
+                  ))}
+                </div>
+                <div style={{ background: T.surfaceH, borderRadius: 3, height: 6, marginTop: 10 }}>
+                  <div style={{ width: `${l.adoption}%`, height: '100%', background: maturityColor(l.maturity), borderRadius: 3 }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {tab === 'Pathway Analysis' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Corporate Investment in Decarbonisation ($M)</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={[...filtered].sort((a, b) => b.investMn - a.investMn).slice(0, 10)} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis type="number" stroke={T.textSec} fontSize={11} />
+                <YAxis type="category" dataKey="name" stroke={T.textSec} fontSize={10} width={100} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="investMn" fill={T.navy} name="Investment ($M)" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Internal Carbon Prices by Corporate</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={[...filtered].sort((a, b) => b.carbonPrice - a.carbonPrice)} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis type="number" stroke={T.textSec} fontSize={11} />
+                <YAxis type="category" dataKey="name" stroke={T.textSec} fontSize={10} width={100} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="carbonPrice" fill={T.gold} name="$/tCO₂" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Sector Benchmarks' && (
+        <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Sector Decarbonisation Progress (% vs Baseline)</div>
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={[...new Set(CORPORATES.map(c => c.sector))].map(s => {
+              const cos = CORPORATES.filter(c => c.sector === s);
+              const n = cos.length > 0 ? cos.length : 1;
+              return {
+                sector: s,
+                progress: +(cos.reduce((sum, c) => sum + (1 - c.current / c.baseline) * 100, 0) / n).toFixed(1),
+                target: +(cos.reduce((sum, c) => sum + (1 - c.target2030 / c.baseline) * 100, 0) / n).toFixed(1),
+              };
+            })}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="sector" stroke={T.textSec} fontSize={11} angle={-20} textAnchor="end" height={50} />
+              <YAxis stroke={T.textSec} fontSize={11} />
+              <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+              <Legend wrapperStyle={{ color: T.textSec, fontSize: 11 }} />
+              <Bar dataKey="progress" fill={T.sage} name="Current Progress %" />
+              <Bar dataKey="target" fill={T.navy} name="2030 Target %" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {tab === 'Investment' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Abatement Potential by Technology (Mt/yr)</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={[...ABATEMENT_LEVERS].sort((a, b) => b.potentialMtY - a.potentialMtY)}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="lever" stroke={T.textSec} fontSize={9} angle={-30} textAnchor="end" height={55} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="potentialMtY" fill={T.teal} name="Mt/yr Potential" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Adoption Rate by Abatement Lever</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={ABATEMENT_LEVERS} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis type="number" domain={[0, 100]} stroke={T.textSec} fontSize={11} />
+                <YAxis type="category" dataKey="lever" stroke={T.textSec} fontSize={9} width={140} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="adoption" fill={T.gold} name="Adoption %" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Milestones' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            {filtered.map(c => {
+              const pct2030 = Math.max(0, Math.min(100, ((c.baseline - c.current) / (c.baseline - c.target2030)) * 100));
+              return (
+                <div key={c.name} style={{ background: T.surface, borderRadius: 10, padding: 16, border: `1px solid ${statusColor(c.status)}40` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700 }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: T.textSec }}>{c.sector}</div>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: statusColor(c.status) }}>{c.status}</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: T.textSec, marginBottom: 4 }}>2030 Milestone Progress</div>
+                  <div style={{ background: T.surfaceH, borderRadius: 4, height: 8, marginBottom: 8 }}>
+                    <div style={{ width: `${pct2030.toFixed(0)}%`, height: '100%', background: statusColor(c.status), borderRadius: 4 }} />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.textMut }}>
+                    <span>Progress: {pct2030.toFixed(0)}%</span>
+                    <span>NZ: {c.netZeroYear}</span>
+                  </div>
+                  <div style={{ fontSize: 11, color: T.textSec, marginTop: 6 }}>🔧 {c.abatement}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

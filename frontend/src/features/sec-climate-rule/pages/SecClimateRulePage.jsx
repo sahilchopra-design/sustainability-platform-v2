@@ -1,31 +1,342 @@
-import React,{useState,useMemo} from 'react';
-import {BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,Legend,Cell,LineChart,Line,PieChart,Pie,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,AreaChart,Area,ScatterChart,Scatter,ZAxis} from 'recharts';
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};const fmt1=n=>Number(n).toFixed(1);const fmt0=n=>Number(n).toFixed(0);const fmt2=n=>Number(n).toFixed(2);const fmtM=n=>n>=1000?`$${(n/1000).toFixed(1)}B`:`$${n}M`;const scoreColor=v=>v>=70?T.green:v>=45?T.amber:T.red;const riskColor=v=>v==='Low'?T.green:v==='Medium'?T.amber:v==='High'?T.red:'#7c3aed';const COLORS=[T.navy,T.gold,T.sage,T.navyL,T.goldL,T.sageL,T.red,T.amber,T.green,'#7c3aed'];
-const CATEGORIES=['GHG Emissions','Climate Risk','Governance','Strategy','Targets','Financial Impact','Assurance','Attestation'];const SECTORS=['Large Accelerated','Accelerated','Non-Accelerated','SRC','EGC','Foreign Private'];const RISK_LEVELS=['Low','Medium','High','Critical'];
-const NAMES=['Apple Inc','Microsoft Corp','Amazon.com','Alphabet Inc','Tesla Inc','NVIDIA Corp','Meta Platforms','Berkshire Hathaway','JPMorgan Chase','Johnson & Johnson','Visa Inc','Procter & Gamble','UnitedHealth','Home Depot','Mastercard','Bank of America','Chevron Corp','AbbVie Inc','Pfizer Inc','Costco Wholesale','Coca-Cola Co','PepsiCo Inc','Thermo Fisher','Broadcom Inc','Cisco Systems','Walt Disney','Nike Inc','Intel Corp','Verizon Comm','Adobe Inc','Salesforce','Netflix Inc','Merck & Co','AMD Inc','Texas Instruments','Qualcomm Inc','Honeywell Intl','Goldman Sachs','Caterpillar Inc','Boeing Co','Morgan Stanley','Lockheed Martin','Deere & Co','Target Corp','General Electric','Ford Motor','General Motors','3M Company','Dow Inc','Duke Energy'];
-const cardS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:20,marginBottom:16};const inputS={fontFamily:T.mono,fontSize:13,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,outline:'none',background:T.surface,color:T.text,width:260};const btnS=(a)=>({fontFamily:T.font,fontSize:13,fontWeight:a?700:500,padding:'8px 18px',border:`1px solid ${a?T.gold:T.border}`,borderRadius:6,background:a?T.gold:T.surface,color:a?'#fff':T.text,cursor:'pointer'});const thS={fontFamily:T.mono,fontSize:12,fontWeight:600,color:T.textSec,padding:'10px 12px',textAlign:'left',borderBottom:`2px solid ${T.border}`,cursor:'pointer',userSelect:'none',whiteSpace:'nowrap'};const tdS={fontFamily:T.font,fontSize:13,color:T.text,padding:'10px 12px',borderBottom:`1px solid ${T.borderL}`};const badgeS=(bg)=>({display:'inline-block',padding:'2px 10px',borderRadius:99,fontSize:11,fontWeight:600,fontFamily:T.mono,background:bg+'18',color:bg});const kpiBoxS={background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:16,textAlign:'center',flex:1,minWidth:140};const kpiVal={fontFamily:T.mono,fontSize:26,fontWeight:700,color:T.navy};const kpiLab={fontFamily:T.font,fontSize:11,color:T.textMut,marginTop:4,textTransform:'uppercase',letterSpacing:0.5};
-const exportCSV=(rows,fn)=>{if(!rows.length)return;const ks=Object.keys(rows[0]);const csv=[ks.join(','),...rows.map(r=>ks.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
-const CT=({active,payload,label})=>{if(!active||!payload?.length)return null;return(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:6,padding:'10px 14px',fontFamily:T.font,fontSize:12}}><div style={{fontWeight:700,color:T.navy,marginBottom:4}}>{label}</div>{payload.map((p,i)=><div key={i} style={{color:p.color||T.text}}>{p.name}: {typeof p.value==='number'?fmt1(p.value):p.value}</div>)}</div>);};
-const genData=(n)=>{const d=[];for(let i=0;i<n;i++){const s=idx=>sr(i*idx+idx);d.push({id:i+1,name:NAMES[i%NAMES.length]+(i>=NAMES.length?` ${Math.floor(i/NAMES.length)+1}`:''),category:CATEGORIES[Math.floor(s(17)*CATEGORIES.length)],sector:SECTORS[Math.floor(s(23)*SECTORS.length)],risk:RISK_LEVELS[Math.floor(s(29)*RISK_LEVELS.length)],score:Math.floor(20+s(31)*75),envScore:Math.floor(15+s(37)*80),socScore:Math.floor(15+s(41)*80),govScore:Math.floor(20+s(43)*75),m1:Number((s(47)*100).toFixed(1)),m2:Number((s(53)*100).toFixed(1)),m3:Number((s(59)*50).toFixed(1)),m4:Math.floor(10+s(61)*90),m5:Math.floor(5+s(67)*90),m6:Number((s(71)*25).toFixed(2)),completion:Math.floor(20+s(73)*78),compliance:Math.floor(30+s(79)*68),volume:Math.floor(10+s(83)*490),exposure:Math.floor(5+s(89)*495),q1:Math.floor(20+s(97)*75),q2:Math.floor(22+s(101)*73),q3:Math.floor(24+s(103)*71),q4:Math.floor(23+s(107)*72),region:['North America','Europe','Asia Pacific','LATAM','Middle East','Africa'][Math.floor(s(109)*6)],status:s(113)>0.6?'Active':s(127)>0.3?'Pending':'Review'});}return d;};
-const DATA=genData(50);const TABS=['Compliance Overview','GHG Disclosure','Risk Assessment','Timeline & Gaps'];const PAGE_SIZE=12;
-export default function SecClimateRulePage(){const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[sortCol,setSortCol]=useState('score');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(0);const[expanded,setExpanded]=useState(null);const[fCat,setFCat]=useState('All');const[fSector,setFSector]=useState('All');const[fRisk,setFRisk]=useState('All');
-  const filtered=useMemo(()=>{let d=[...DATA];if(search){const s=search.toLowerCase();d=d.filter(r=>r.name.toLowerCase().includes(s)||r.sector.toLowerCase().includes(s)||r.category.toLowerCase().includes(s)||r.region.toLowerCase().includes(s));}if(fCat!=='All')d=d.filter(r=>r.category===fCat);if(fSector!=='All')d=d.filter(r=>r.sector===fSector);if(fRisk!=='All')d=d.filter(r=>r.risk===fRisk);d.sort((a,b)=>{const av=a[sortCol],bv=b[sortCol];if(av==null)return 1;if(bv==null)return -1;return sortDir==='asc'?(av>bv?1:-1):(av<bv?1:-1);});return d;},[search,sortCol,sortDir,fCat,fSector,fRisk]);
-  const paged=useMemo(()=>filtered.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE_SIZE);const toggleSort=(c)=>{if(sortCol===c)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(c);setSortDir('desc');}setPage(0);};const sortArrow=(c)=>sortCol===c?(sortDir==='asc'?' \u25B2':' \u25BC'):'';
-  const kpis=useMemo(()=>{const d=filtered;if(!d.length)return{count:0,avgScore:0,avgCompl:0,avgConf:0,totalVol:0,highRisk:0};return{count:d.length,avgScore:d.reduce((a,r)=>a+r.score,0)/d.length,avgCompl:d.reduce((a,r)=>a+r.completion,0)/d.length,avgConf:d.reduce((a,r)=>a+r.compliance,0)/d.length,totalVol:d.reduce((a,r)=>a+r.volume,0),highRisk:d.filter(r=>r.risk==='High'||r.risk==='Critical').length};},[filtered]);
-  const catDist=useMemo(()=>{const m={};filtered.forEach(r=>{m[r.category]=(m[r.category]||0)+1;});return Object.entries(m).map(([name,value])=>({name:name.length>14?name.slice(0,14)+'..':name,value})).sort((a,b)=>b.value-a.value);},[filtered]);
-  const riskDist=useMemo(()=>RISK_LEVELS.map(l=>({name:l,value:filtered.filter(r=>r.risk===l).length})),[filtered]);
-  const radarData=useMemo(()=>{if(!filtered.length)return[];const avg=k=>filtered.reduce((a,r)=>a+r[k],0)/filtered.length;return[{axis:'Env',value:avg('envScore')},{axis:'Social',value:avg('socScore')},{axis:'Gov',value:avg('govScore')},{axis:'Completion',value:avg('completion')},{axis:'Compliance',value:avg('compliance')},{axis:'Score',value:avg('score')}];},[filtered]);
-  const trendData=useMemo(()=>['Q1','Q2','Q3','Q4'].map((q,i)=>({quarter:q,score:filtered.reduce((a,r)=>a+[r.q1,r.q2,r.q3,r.q4][i],0)/(filtered.length||1)})),[filtered]);
-  const sectorScore=useMemo(()=>{const m={};const c={};filtered.forEach(r=>{m[r.sector]=(m[r.sector]||0)+r.score;c[r.sector]=(c[r.sector]||0)+1;});return Object.entries(m).map(([name,sum])=>({name:name.length>14?name.slice(0,14)+'..':name,score:sum/c[name],env:filtered.filter(r=>r.sector===name).reduce((a,r)=>a+r.envScore,0)/c[name],soc:filtered.filter(r=>r.sector===name).reduce((a,r)=>a+r.socScore,0)/c[name],gov:filtered.filter(r=>r.sector===name).reduce((a,r)=>a+r.govScore,0)/c[name]}));},[filtered]);
-  const renderKPIs=()=>(<div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}><div style={kpiBoxS}><div style={kpiVal}>{kpis.count}</div><div style={kpiLab}>Filers</div></div><div style={kpiBoxS}><div style={{...kpiVal,color:scoreColor(kpis.avgScore)}}>{fmt1(kpis.avgScore)}</div><div style={kpiLab}>Avg Score</div></div><div style={kpiBoxS}><div style={kpiVal}>{fmt1(kpis.avgCompl)}%</div><div style={kpiLab}>Avg Completion</div></div><div style={kpiBoxS}><div style={kpiVal}>{fmt1(kpis.avgConf)}%</div><div style={kpiLab}>Avg Compliance</div></div><div style={kpiBoxS}><div style={kpiVal}>{fmtM(kpis.totalVol)}</div><div style={kpiLab}>Total Volume</div></div><div style={kpiBoxS}><div style={{...kpiVal,color:T.red}}>{kpis.highRisk}</div><div style={kpiLab}>High/Crit Risk</div></div></div>);
-  const renderFilters=()=>(<div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16,alignItems:'center'}}><input style={inputS} placeholder="Search filers..." value={search} onChange={e=>{setSearch(e.target.value);setPage(0);}}/><select style={{...inputS,width:160}} value={fCat} onChange={e=>{setFCat(e.target.value);setPage(0);}}><option value="All">All Categories</option>{CATEGORIES.map(c=><option key={c}>{c}</option>)}</select><select style={{...inputS,width:170}} value={fSector} onChange={e=>{setFSector(e.target.value);setPage(0);}}><option value="All">All Filer Types</option>{SECTORS.map(s=><option key={s}>{s}</option>)}</select><select style={{...inputS,width:130}} value={fRisk} onChange={e=>{setFRisk(e.target.value);setPage(0);}}><option value="All">All Risk</option>{RISK_LEVELS.map(r=><option key={r}>{r}</option>)}</select><button style={{...btnS(false),marginLeft:'auto'}} onClick={()=>exportCSV(filtered,'sec_climate.csv')}>Export CSV</button></div>);
-  const renderPagination=()=>(<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:12,fontFamily:T.mono,fontSize:12,color:T.textSec}}><span>{page*PAGE_SIZE+1}-{Math.min((page+1)*PAGE_SIZE,filtered.length)} of {filtered.length}</span><div style={{display:'flex',gap:4}}><button style={btnS(false)} disabled={page===0} onClick={()=>setPage(p=>p-1)}>Prev</button>{Array.from({length:Math.min(totalPages,7)},(_,i)=>{let pg=i;if(totalPages>7){if(page<4)pg=i;else if(page>=totalPages-3)pg=totalPages-7+i;else pg=page-3+i;}return <button key={pg} style={btnS(pg===page)} onClick={()=>setPage(pg)}>{pg+1}</button>;})}<button style={btnS(false)} disabled={page>=totalPages-1} onClick={()=>setPage(p=>p+1)}>Next</button></div></div>);
-  const renderExpanded=(r)=>(<tr key={`exp-${r.id}`}><td colSpan={99} style={{background:T.surfaceH,padding:20,borderBottom:`1px solid ${T.border}`}}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}}><div><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:4}}>FILER DETAILS</div><div style={{fontSize:13,lineHeight:1.8}}><div><strong>Category:</strong> {r.category}</div><div><strong>Filer Type:</strong> {r.sector}</div><div><strong>Region:</strong> {r.region}</div><div><strong>Status:</strong> <span style={{color:r.status==='Active'?T.green:r.status==='Pending'?T.amber:T.red}}>{r.status}</span></div><div><strong>Volume:</strong> {fmtM(r.volume)}</div><div><strong>Exposure:</strong> {fmtM(r.exposure)}</div></div></div><div><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:4}}>COMPLIANCE SCORES</div><div style={{fontSize:13,lineHeight:1.8}}><div><strong>Overall:</strong> <span style={{color:scoreColor(r.score),fontWeight:700}}>{r.score}</span></div><div><strong>Env:</strong> {r.envScore}</div><div><strong>Social:</strong> {r.socScore}</div><div><strong>Gov:</strong> {r.govScore}</div><div><strong>Completion:</strong> {r.completion}%</div><div><strong>Compliance:</strong> {r.compliance}%</div><div><strong>Risk:</strong> <span style={{color:riskColor(r.risk)}}>{r.risk}</span></div></div></div><div><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:4}}>TREND</div><ResponsiveContainer width="100%" height={140}><LineChart data={[{q:'Q1',s:r.q1},{q:'Q2',s:r.q2},{q:'Q3',s:r.q3},{q:'Q4',s:r.q4}]}><XAxis dataKey="q" tick={{fontSize:10}}/><YAxis domain={[0,100]} tick={{fontSize:9}}/><Line type="monotone" dataKey="s" stroke={T.navy} strokeWidth={2} dot={{r:3}}/></LineChart></ResponsiveContainer></div></div></td></tr>);
-  const renderTable=(cols)=>(<div style={{...cardS,overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}><thead><tr>{cols.map(([k,l])=><th key={k} style={thS} onClick={()=>toggleSort(k)}>{l}{sortArrow(k)}</th>)}</tr></thead><tbody>{paged.map(r=>(<React.Fragment key={r.id}><tr style={{cursor:'pointer',background:expanded===r.id?T.surfaceH:'transparent'}} onClick={()=>setExpanded(expanded===r.id?null:r.id)}>{cols.map(([k])=>{const v=r[k];if(k==='name')return <td key={k} style={{...tdS,fontWeight:600,color:T.navy}}>{v}</td>;if(k==='risk')return <td key={k} style={tdS}><span style={badgeS(riskColor(v))}>{v}</span></td>;if(k==='score')return <td key={k} style={{...tdS,fontWeight:700,color:scoreColor(v)}}>{v}</td>;if(k==='status')return <td key={k} style={{...tdS,color:v==='Active'?T.green:v==='Pending'?T.amber:T.red,fontWeight:600}}>{v}</td>;if(typeof v==='number')return <td key={k} style={{...tdS,fontFamily:T.mono}}>{v<20?fmt1(v):fmt0(v)}</td>;return <td key={k} style={tdS}>{v}</td>;})}</tr>{expanded===r.id&&renderExpanded(r)}</React.Fragment>))}</tbody></table>{renderPagination()}</div>);
-  const renderTab0=()=>(<>{renderKPIs()}{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>CATEGORY DISTRIBUTION</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={catDist} cx="50%" cy="50%" outerRadius={90} innerRadius={45} dataKey="value" label={({name,percent})=>`${name} ${(percent*100).toFixed(0)}%`}>{catDist.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Pie><Tooltip/><Legend/></PieChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SCORE BY FILER TYPE</div><ResponsiveContainer width="100%" height={260}><BarChart data={sectorScore}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Bar dataKey="score" name="Avg Score" radius={[4,4,0,0]}>{sectorScore.map((e,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}</Bar></BarChart></ResponsiveContainer></div></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SCORE vs COMPLIANCE</div><ResponsiveContainer width="100%" height={300}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="x" name="Score" tick={{fontSize:11}}/><YAxis dataKey="y" name="Compliance%" tick={{fontSize:11}}/><Tooltip content={({active,payload})=>{if(!active||!payload?.length)return null;const d=payload[0].payload;return <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:6,padding:10,fontSize:12}}><div style={{fontWeight:700}}>{d.n}</div><div>Score:{d.x} Comp:{d.y}%</div></div>}}/><Scatter data={filtered.map(r=>({n:r.name,x:r.score,y:r.compliance}))} fill={T.navy}/></ScatterChart></ResponsiveContainer></div>{renderTable([['name','Filer'],['category','Category'],['sector','Type'],['score','Score'],['completion','Compl%'],['compliance','Conform%'],['risk','Risk'],['status','Status']])}</>);
-  const renderTab1=()=>(<>{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>ESG RADAR</div><ResponsiveContainer width="100%" height={300}><RadarChart data={radarData}><PolarGrid stroke={T.borderL}/><PolarAngleAxis dataKey="axis" tick={{fontSize:11}}/><PolarRadiusAxis domain={[0,100]} tick={{fontSize:10}}/><Radar name="Avg" dataKey="value" stroke={T.navy} fill={T.navy} fillOpacity={0.2}/><Tooltip/></RadarChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>RISK DISTRIBUTION</div><ResponsiveContainer width="100%" height={300}><PieChart><Pie data={riskDist} cx="50%" cy="50%" outerRadius={90} innerRadius={45} dataKey="value" label>{riskDist.map((e,i)=><Cell key={i} fill={[T.green,T.amber,T.red,'#7c3aed'][i]}/>)}</Pie><Tooltip/><Legend/></PieChart></ResponsiveContainer></div></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>E/S/G BY FILER TYPE</div><ResponsiveContainer width="100%" height={280}><BarChart data={sectorScore}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Legend/><Bar dataKey="env" name="Env" fill={T.sage} radius={[2,2,0,0]}/><Bar dataKey="soc" name="Soc" fill={T.gold} radius={[2,2,0,0]}/><Bar dataKey="gov" name="Gov" fill={T.navy} radius={[2,2,0,0]}/></BarChart></ResponsiveContainer></div>{renderTable([['name','Filer'],['score','Score'],['envScore','Env'],['socScore','Soc'],['govScore','Gov'],['m1','GHG Disc'],['m2','Risk Disc'],['risk','Risk']])}</>);
-  const renderTab2=()=>(<>{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>COMPLETION BY CATEGORY</div><ResponsiveContainer width="100%" height={280}><BarChart data={CATEGORIES.map(c=>{const items=filtered.filter(r=>r.category===c);return{name:c.length>14?c.slice(0,14)+'..':c,completion:items.length?items.reduce((a,r)=>a+r.completion,0)/items.length:0};}).filter(d=>d.completion>0)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis type="number" domain={[0,100]} tick={{fontSize:11}}/><YAxis dataKey="name" type="category" width={110} tick={{fontSize:10}}/><Tooltip content={<CT/>}/><Bar dataKey="completion" name="Avg Completion%" fill={T.sage} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>EXPOSURE CURVE</div><ResponsiveContainer width="100%" height={280}><AreaChart data={[...filtered].sort((a,b)=>a.exposure-b.exposure).map((r,i)=>({rank:i+1,exp:r.exposure}))}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="rank" tick={{fontSize:11}}/><YAxis tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Area type="monotone" dataKey="exp" stroke={T.gold} fill={T.gold} fillOpacity={0.15} name="Exposure"/></AreaChart></ResponsiveContainer></div></div>{renderTable([['name','Filer'],['completion','Compl%'],['compliance','Conform%'],['m3','Gaps'],['m4','Data Pts'],['m5','Assurance'],['volume','Volume'],['risk','Risk']])}</>);
-  const renderTab3=()=>(<>{renderFilters()}<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SCORE TREND</div><ResponsiveContainer width="100%" height={280}><LineChart data={trendData}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="quarter" tick={{fontSize:12}}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Line type="monotone" dataKey="score" stroke={T.navy} strokeWidth={2} dot={{r:4}} name="Avg Score"/></LineChart></ResponsiveContainer></div><div style={cardS}><div style={{fontFamily:T.mono,fontSize:11,color:T.textMut,marginBottom:8}}>SECTOR PERFORMANCE</div><ResponsiveContainer width="100%" height={280}><AreaChart data={sectorScore}><CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={50}/><YAxis domain={[0,100]} tick={{fontSize:11}}/><Tooltip content={<CT/>}/><Area type="monotone" dataKey="score" stroke={T.navy} fill={T.navy} fillOpacity={0.15} name="Avg Score"/></AreaChart></ResponsiveContainer></div></div>{renderTable([['name','Filer'],['q1','Q1'],['q2','Q2'],['q3','Q3'],['q4','Q4'],['exposure','Exposure'],['m6','Attestation'],['status','Status']])}</>);
-  return(<div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24}}><div style={{maxWidth:1400,margin:'0 auto'}}><div style={{marginBottom:20}}><h1 style={{fontFamily:T.font,fontSize:22,fontWeight:700,color:T.navy,margin:0}}>SEC Climate Rule Compliance</h1><p style={{fontFamily:T.font,fontSize:13,color:T.textSec,marginTop:2}}>SEC climate disclosure compliance tracking across {DATA.length} filers</p></div><div style={{display:'flex',gap:6,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:8}}>{TABS.map((t,i)=><button key={i} style={btnS(tab===i)} onClick={()=>{setTab(i);setPage(0);setExpanded(null);}}>{t}</button>)}</div>{tab===0&&renderTab0()}{tab===1&&renderTab1()}{tab===2&&renderTab2()}{tab===3&&renderTab3()}</div></div>);
+import React, { useState, useMemo } from 'react';
+import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+const T = {
+  bg: '#0f172a', surface: '#1e293b', surfaceH: '#334155', border: '#334155',
+  navy: '#3b82f6', gold: '#f59e0b', sage: '#10b981', teal: '#14b8a6',
+  text: '#f1f5f9', textSec: '#94a3b8', textMut: '#64748b',
+  red: '#ef4444', green: '#22c55e', amber: '#f59e0b', font: 'Inter,sans-serif', mono: 'JetBrains Mono,monospace'
+};
+const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const KpiCard = ({ label, value, sub, color = T.navy }) => (
+  <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', flex: 1, minWidth: 150 }}>
+    <div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase', letterSpacing: 1 }}>{label}</div>
+    <div style={{ fontSize: 24, fontWeight: 700, color, marginTop: 4 }}>{value}</div>
+    {sub && <div style={{ fontSize: 12, color: T.textMut, marginTop: 2 }}>{sub}</div>}
+  </div>
+);
+
+const FILER_TYPES = ['Large Accelerated Filer', 'Accelerated Filer', 'Non-Accelerated Filer', 'Smaller Reporting Co', 'EGC'];
+const SECTORS = ['Technology', 'Energy', 'Financials', 'Healthcare', 'Consumer', 'Industrials', 'Materials', 'Utilities', 'Real Estate'];
+const COMPLIANCE_PHASES = [
+  { phase: 'Phase 1 — Large Accelerated', deadline: 'FY2025 (filed 2026)', scope: 'Scope 1+2 GHG + Material Climate Risks + Financial Impact', filerType: 'Large Accelerated Filer', assurance: 'Limited Assurance', status: 'Active' },
+  { phase: 'Phase 2 — Accelerated Filers', deadline: 'FY2026 (filed 2027)', scope: 'Scope 1+2 GHG + Material Climate Risks', filerType: 'Accelerated Filer', assurance: 'Limited Assurance', status: 'Upcoming' },
+  { phase: 'Phase 3 — Non-Accelerated', deadline: 'FY2027 (filed 2028)', scope: 'Material Climate Risk Disclosures only', filerType: 'Non-Accelerated Filer', assurance: 'None Required', status: 'Upcoming' },
+  { phase: 'Scope 3 — Stayed Pending Review', deadline: 'TBD (court challenge)', scope: 'Scope 3 (value chain) — stayed by SEC March 2024', filerType: 'Large Accelerated', assurance: 'Stayed', status: 'Stayed' },
+];
+
+const DISCLOSURE_REQUIREMENTS = [
+  { req: 'Material Climate Risks', category: 'Risk Disclosure', required: true, notes: 'Both physical and transition risks if material', difficulty: 'Medium' },
+  { req: 'GHG Emissions (Scope 1)', category: 'GHG Quantification', required: true, notes: 'Mandatory for Large Accelerated + Accelerated', difficulty: 'Medium' },
+  { req: 'GHG Emissions (Scope 2)', category: 'GHG Quantification', required: true, notes: 'Location-based or market-based method', difficulty: 'Low' },
+  { req: 'GHG Emissions (Scope 3)', category: 'GHG Quantification', required: false, notes: 'Stayed — not currently required', difficulty: 'High' },
+  { req: 'Financial Impact Estimates', category: 'Financial Disclosure', required: true, notes: '1% of pretax income/loss or absolute $$ threshold', difficulty: 'High' },
+  { req: 'Climate Risk Governance', category: 'Governance', required: true, notes: 'Board oversight + management role', difficulty: 'Low' },
+  { req: 'Climate Risk Management', category: 'Strategy', required: true, notes: 'Integration into enterprise risk management', difficulty: 'Medium' },
+  { req: 'Transition Plans', category: 'Strategy', required: false, notes: 'Voluntary — if adopted must disclose', difficulty: 'Medium' },
+  { req: 'Internal Carbon Price', category: 'Strategy', required: false, notes: 'Voluntary — if used must disclose', difficulty: 'Low' },
+  { req: 'Limited Assurance (S1+S2)', category: 'Assurance', required: true, notes: 'Large Accelerated only, phased in', difficulty: 'Medium' },
+  { req: 'Cap/Trade + Carbon Offsets', category: 'GHG Quantification', required: true, notes: 'If material; registry/methodology required', difficulty: 'Medium' },
+  { req: 'Extreme Weather Costs', category: 'Financial Disclosure', required: true, notes: '>$100K threshold in financials footnote', difficulty: 'High' },
+];
+
+const COMPANIES = Array.from({ length: 30 }, (_, i) => {
+  const names = ['Apple', 'Microsoft', 'Amazon', 'Alphabet', 'Tesla', 'NVIDIA', 'Meta', 'JPMorgan', 'Visa', 'UnitedHealth', 'J&J', 'Walmart', 'P&G', 'Mastercard', 'Chevron', 'Home Depot', 'Coca-Cola', 'Pfizer', 'Exxon Mobil', 'Eli Lilly', 'Broadcom', 'Cisco', 'Merck', 'Accenture', 'Goldman Sachs', 'Caterpillar', 'Duke Energy', 'NextEra Energy', 'BHP USA', 'Ford Motor'];
+  const ftype = FILER_TYPES[Math.floor(sr(i * 7) * 3)];
+  const sector = SECTORS[i % SECTORS.length];
+  const scope1 = Math.round(sr(i * 11) * 8000 + 200);
+  const scope2 = Math.round(sr(i * 13) * 2000 + 100);
+  const complScore = Math.round(40 + sr(i * 17) * 55);
+  const ghgDisc = sr(i * 19) > 0.3;
+  const riskDisc = sr(i * 23) > 0.2;
+  const finImpact = sr(i * 29) > 0.4;
+  const assurance = ftype === 'Large Accelerated Filer' ? (sr(i * 31) > 0.5 ? 'Limited' : 'None Yet') : 'N/A';
+  const gaps = (!ghgDisc ? 1 : 0) + (!riskDisc ? 1 : 0) + (!finImpact ? 1 : 0);
+  return { id: i + 1, name: names[i], sector, filerType: ftype, scope1, scope2, scope3: sr(i * 37) > 0.6 ? Math.round(scope1 * (sr(i * 41) * 8 + 2)) : null, complianceScore: complScore, ghgDisclosed: ghgDisc, riskDisclosed: riskDisc, financialImpact: finImpact, assurance, transitionPlan: sr(i * 43) > 0.55, internalCarbonPrice: sr(i * 47) > 0.5 ? Math.round(sr(i * 53) * 140 + 20) : null, disclosureGaps: gaps, status: complScore >= 75 ? 'Compliant' : complScore >= 50 ? 'Partial' : 'Non-Compliant' };
+});
+
+const TREND = ['Q3-22', 'Q4-22', 'Q1-23', 'Q2-23', 'Q3-23', 'Q4-23', 'Q1-24', 'Q2-24', 'Q3-24', 'Q4-24'].map((q, i) => ({
+  quarter: q,
+  'GHG Disclosed': Math.round(42 + i * 4.2 + sr(i) * 3),
+  'Risk Disclosed': Math.round(55 + i * 3.8 + sr(i + 10) * 2),
+  'Compliant': Math.round(28 + i * 5.5 + sr(i + 20) * 3),
+}));
+
+const TABS = ['Overview', 'Compliance Tracker', 'Disclosure Requirements', 'GHG Disclosures', 'Phase Timeline', 'Sector Analysis', 'Gap Assessment'];
+
+export default function SecClimateRulePage() {
+  const [tab, setTab] = useState('Overview');
+  const [sectorFilter, setSectorFilter] = useState('All');
+  const [filerFilter, setFilerFilter] = useState('All');
+
+  const filtered = useMemo(() => {
+    let d = COMPANIES;
+    if (sectorFilter !== 'All') d = d.filter(c => c.sector === sectorFilter);
+    if (filerFilter !== 'All') d = d.filter(c => c.filerType === filerFilter);
+    return d;
+  }, [sectorFilter, filerFilter]);
+
+  const kpis = useMemo(() => {
+    const n = filtered.length > 0 ? filtered.length : 1;
+    return {
+      compliant: filtered.filter(c => c.status === 'Compliant').length,
+      avgScore: (filtered.reduce((s, c) => s + c.complianceScore, 0) / n).toFixed(1),
+      ghgDisc: filtered.filter(c => c.ghgDisclosed).length,
+      hasTransPlan: filtered.filter(c => c.transitionPlan).length,
+      hasICP: filtered.filter(c => c.internalCarbonPrice).length,
+    };
+  }, [filtered]);
+
+  const tabBar = { display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 20 };
+  const tabBtn = (t) => ({ padding: '6px 14px', borderRadius: 6, fontSize: 13, cursor: 'pointer', border: 'none', background: tab === t ? T.navy : T.surfaceH, color: tab === t ? '#fff' : T.textSec, fontWeight: tab === t ? 600 : 400 });
+  const statusColor = (s) => ({ 'Compliant': T.green, 'Partial': T.amber, 'Non-Compliant': T.red }[s] || T.textSec);
+  const diffColor = (d) => ({ 'Low': T.green, 'Medium': T.amber, 'High': T.red }[d] || T.textSec);
+
+  return (
+    <div style={{ background: T.bg, minHeight: '100vh', padding: 24, fontFamily: T.font, color: T.text }}>
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 22, fontWeight: 700 }}>SEC Climate Rule Compliance</div>
+        <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}>SEC climate disclosure tracking across S&P 500 filers — ESRS/TCFD/GHG alignment — EP-DI3</div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 12, color: T.textSec, alignSelf: 'center' }}>Sector:</span>
+        {['All', ...SECTORS].map(s => <button key={s} onClick={() => setSectorFilter(s)} style={{ ...tabBtn(s), background: sectorFilter === s ? T.teal : T.surfaceH, color: sectorFilter === s ? '#fff' : T.textSec, fontSize: 11 }}>{s}</button>)}
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
+        <KpiCard label="Compliant Filers" value={`${kpis.compliant}/${filtered.length}`} sub="full compliance" color={T.green} />
+        <KpiCard label="Avg Compliance Score" value={kpis.avgScore} sub="out of 100" color={T.navy} />
+        <KpiCard label="GHG Disclosed" value={`${kpis.ghgDisc}/${filtered.length}`} sub="Scope 1+2 reported" color={T.teal} />
+        <KpiCard label="Transition Plans" value={kpis.hasTransPlan} sub="voluntary disclosure" color={T.sage} />
+        <KpiCard label="Internal Carbon Price" value={kpis.hasICP} sub="companies using ICP" color={T.gold} />
+      </div>
+
+      <div style={tabBar}>{TABS.map(t => <button key={t} style={tabBtn(t)} onClick={() => setTab(t)}>{t}</button>)}</div>
+
+      {tab === 'Overview' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Compliance Status Distribution</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={['Compliant', 'Partial', 'Non-Compliant'].map(s => ({ status: s, count: COMPANIES.filter(c => c.status === s).length }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="status" stroke={T.textSec} fontSize={12} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="count" name="Companies" radius={[6, 6, 0, 0]} fill={T.navy} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Disclosure Adoption Trend</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={TREND}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="quarter" stroke={T.textSec} fontSize={10} />
+                <YAxis domain={[20, 100]} stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Legend wrapperStyle={{ color: T.textSec, fontSize: 11 }} />
+                <Line type="monotone" dataKey="GHG Disclosed" stroke={T.teal} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Risk Disclosed" stroke={T.sage} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Compliant" stroke={T.navy} strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20, gridColumn: '1 / -1' }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Key Rule Facts</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+              {[
+                { label: 'Rule Effective', value: 'March 2024', sub: 'Final rule adopted by SEC', color: T.navy },
+                { label: 'Scope 3 Status', value: 'Stayed', sub: '4th Circuit challenge — paused Mar 2024', color: T.amber },
+                { label: 'Phase 1 Deadline', value: 'FY2025', sub: 'Large Accelerated Filers first', color: T.teal },
+                { label: 'Assurance Standard', value: 'PCAOB / IAASB', sub: 'Limited → Reasonable phased', color: T.sage },
+                { label: 'GHG Protocol', value: 'Required', sub: 'Must use GHG Protocol for Scope 1+2', color: T.green },
+                { label: 'Financial Threshold', value: '1% Pretax', sub: 'Trigger for financial impact disclosure', color: T.gold },
+              ].map(k => (
+                <div key={k.label} style={{ background: T.surfaceH, borderRadius: 8, padding: 14 }}>
+                  <div style={{ fontSize: 11, color: T.textSec }}>{k.label}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: k.color, marginTop: 4 }}>{k.value}</div>
+                  <div style={{ fontSize: 11, color: T.textMut, marginTop: 2 }}>{k.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Compliance Tracker' && (
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <thead>
+              <tr style={{ background: T.surfaceH }}>
+                {['Company', 'Sector', 'Filer Type', 'Compliance Score', 'GHG Disc.', 'Risk Disc.', 'Fin. Impact', 'Trans. Plan', 'Assurance', 'Gaps', 'Status'].map(h => (
+                  <th key={h} style={{ padding: '10px 10px', textAlign: 'left', color: T.textSec, fontSize: 10, textTransform: 'uppercase' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c, i) => (
+                <tr key={c.id} style={{ background: i % 2 === 0 ? T.surface : 'transparent' }}>
+                  <td style={{ padding: '9px 10px', fontWeight: 600, color: T.navy }}>{c.name}</td>
+                  <td style={{ padding: '9px 10px', color: T.textSec }}>{c.sector}</td>
+                  <td style={{ padding: '9px 10px', fontSize: 11, color: T.textSec }}>{c.filerType.replace(' Filer', '')}</td>
+                  <td style={{ padding: '9px 10px', fontWeight: 700, color: statusColor(c.status) }}>{c.complianceScore}</td>
+                  <td style={{ padding: '9px 10px', textAlign: 'center', color: c.ghgDisclosed ? T.green : T.red }}>{c.ghgDisclosed ? '✓' : '✗'}</td>
+                  <td style={{ padding: '9px 10px', textAlign: 'center', color: c.riskDisclosed ? T.green : T.red }}>{c.riskDisclosed ? '✓' : '✗'}</td>
+                  <td style={{ padding: '9px 10px', textAlign: 'center', color: c.financialImpact ? T.green : T.red }}>{c.financialImpact ? '✓' : '✗'}</td>
+                  <td style={{ padding: '9px 10px', textAlign: 'center', color: c.transitionPlan ? T.green : T.textMut }}>{c.transitionPlan ? '✓' : '–'}</td>
+                  <td style={{ padding: '9px 10px', fontSize: 11, color: c.assurance === 'Limited' ? T.sage : T.textMut }}>{c.assurance}</td>
+                  <td style={{ padding: '9px 10px', textAlign: 'center', color: c.disclosureGaps > 0 ? T.amber : T.green }}>{c.disclosureGaps}</td>
+                  <td style={{ padding: '9px 10px' }}><span style={{ color: statusColor(c.status), fontWeight: 600, fontSize: 11 }}>{c.status}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {tab === 'Disclosure Requirements' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
+            <KpiCard label="Mandatory Items" value={DISCLOSURE_REQUIREMENTS.filter(r => r.required).length} sub={`of ${DISCLOSURE_REQUIREMENTS.length} total`} color={T.red} />
+            <KpiCard label="GHG-Related" value={DISCLOSURE_REQUIREMENTS.filter(r => r.category === 'GHG Quantification').length} sub="scope 1/2/3 items" color={T.teal} />
+            <KpiCard label="Financial Disclosure" value={DISCLOSURE_REQUIREMENTS.filter(r => r.category === 'Financial Disclosure').length} sub="financial impact items" color={T.gold} />
+            <KpiCard label="High Difficulty" value={DISCLOSURE_REQUIREMENTS.filter(r => r.difficulty === 'High').length} sub="complex requirements" color={T.amber} />
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: T.surfaceH }}>
+                  {['Requirement', 'Category', 'Required', 'Difficulty', 'Notes'].map(h => (
+                    <th key={h} style={{ padding: '10px 12px', textAlign: 'left', color: T.textSec, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {DISCLOSURE_REQUIREMENTS.map((r, i) => (
+                  <tr key={r.req} style={{ background: i % 2 === 0 ? 'transparent' : T.surfaceH }}>
+                    <td style={{ padding: '10px 12px', fontWeight: 600 }}>{r.req}</td>
+                    <td style={{ padding: '10px 12px', color: T.teal, fontSize: 11 }}>{r.category}</td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center', color: r.required ? T.green : T.textMut }}>{r.required ? '✓ Mandatory' : '○ Voluntary'}</td>
+                    <td style={{ padding: '10px 12px' }}><span style={{ color: diffColor(r.difficulty), fontSize: 11, fontWeight: 600 }}>{r.difficulty}</span></td>
+                    <td style={{ padding: '10px 12px', color: T.textSec, fontSize: 12 }}>{r.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {tab === 'GHG Disclosures' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Scope 1 Emissions Distribution</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={SECTORS.map(s => ({ sector: s, scope1: Math.round(COMPANIES.filter(c => c.sector === s).reduce((sum, c) => sum + c.scope1, 0) / Math.max(1, COMPANIES.filter(c => c.sector === s).length)) }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" stroke={T.textSec} fontSize={9} angle={-25} textAnchor="end" height={50} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="scope1" fill={T.navy} name="Avg Scope 1 (ktCO₂e)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Compliance Score vs GHG Intensity</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <ScatterChart>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="x" name="Scope 1 (kt)" stroke={T.textSec} fontSize={11} />
+                <YAxis dataKey="y" name="Compliance Score" stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={filtered.map(c => ({ name: c.name, x: c.scope1, y: c.complianceScore }))} fill={T.teal} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Phase Timeline' && (
+        <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 20 }}>
+            {COMPLIANCE_PHASES.map((p, i) => (
+              <div key={p.phase} style={{ background: T.surface, borderRadius: 10, padding: 20, borderLeft: `4px solid ${p.status === 'Active' ? T.green : p.status === 'Stayed' ? T.amber : T.navy}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 700 }}>{p.phase}</div>
+                    <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>Deadline: {p.deadline}</div>
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: p.status === 'Active' ? T.green : p.status === 'Stayed' ? T.amber : T.textSec, background: `${p.status === 'Active' ? T.green : T.amber}20`, padding: '4px 10px', borderRadius: 6 }}>{p.status}</span>
+                </div>
+                <div style={{ fontSize: 13, color: T.textSec }}><strong style={{ color: T.text }}>Scope:</strong> {p.scope}</div>
+                <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}><strong style={{ color: T.text }}>Assurance:</strong> {p.assurance}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {tab === 'Sector Analysis' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Avg Compliance Score by Sector</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={SECTORS.map(s => ({ sector: s, score: +(COMPANIES.filter(c => c.sector === s).reduce((sum, c) => sum + c.complianceScore, 0) / Math.max(1, COMPANIES.filter(c => c.sector === s).length)).toFixed(1) }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" stroke={T.textSec} fontSize={9} angle={-25} textAnchor="end" height={50} />
+                <YAxis domain={[0, 100]} stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Bar dataKey="score" fill={T.sage} name="Avg Score" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Transition Plan Adoption by Sector</div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={SECTORS.map(s => ({ sector: s, adopted: COMPANIES.filter(c => c.sector === s && c.transitionPlan).length, total: COMPANIES.filter(c => c.sector === s).length }))}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="sector" stroke={T.textSec} fontSize={9} angle={-25} textAnchor="end" height={50} />
+                <YAxis stroke={T.textSec} fontSize={11} />
+                <Tooltip contentStyle={{ background: T.surfaceH, border: 'none', color: T.text }} />
+                <Legend wrapperStyle={{ color: T.textSec, fontSize: 11 }} />
+                <Bar dataKey="total" fill={T.surfaceH} name="Total Filers" />
+                <Bar dataKey="adopted" fill={T.teal} name="With Trans. Plan" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {tab === 'Gap Assessment' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 20 }}>
+            {[['0 Gaps', COMPANIES.filter(c => c.disclosureGaps === 0).length, T.green], ['1 Gap', COMPANIES.filter(c => c.disclosureGaps === 1).length, T.amber], ['2+ Gaps', COMPANIES.filter(c => c.disclosureGaps >= 2).length, T.red]].map(([l, v, c]) => (
+              <KpiCard key={l} label={l} value={v} sub={`of ${COMPANIES.length} filers`} color={c} />
+            ))}
+          </div>
+          <div style={{ background: T.surface, borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14 }}>Filers with Disclosure Gaps</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {COMPANIES.filter(c => c.disclosureGaps > 0).map(c => (
+                <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: T.surfaceH, borderRadius: 8, borderLeft: `3px solid ${c.disclosureGaps >= 2 ? T.red : T.amber}` }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{c.name}</div>
+                    <div style={{ fontSize: 11, color: T.textSec }}>{c.sector} · {c.filerType.replace(' Filer', '')}</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    {!c.ghgDisclosed && <span style={{ fontSize: 11, color: T.red, background: `${T.red}20`, padding: '2px 8px', borderRadius: 4 }}>GHG Missing</span>}
+                    {!c.riskDisclosed && <span style={{ fontSize: 11, color: T.amber, background: `${T.amber}20`, padding: '2px 8px', borderRadius: 4 }}>Risk Missing</span>}
+                    {!c.financialImpact && <span style={{ fontSize: 11, color: T.gold, background: `${T.gold}20`, padding: '2px 8px', borderRadius: 4 }}>Fin. Impact Missing</span>}
+                    <span style={{ fontSize: 13, fontWeight: 700, color: statusColor(c.status) }}>{c.complianceScore}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
