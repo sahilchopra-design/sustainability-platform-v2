@@ -301,7 +301,7 @@ export default function CsrdEsrsAutomationPage(){
 
   /* ─── KPIs ─── */
   const kpis=useMemo(()=>{
-    const avg=(k)=>Math.round(CSRD_COMPANIES.reduce((s,c)=>s+c[k],0)/CSRD_COMPANIES.length);
+    const avg=(k)=>Math.round(CSRD_COMPANIES.reduce((s,c)=>s+c[k],0)/(CSRD_COMPANIES.length||1));
     return{
       avgReady:avg('overallReadiness'),
       avgAuto:avg('automationRate'),
