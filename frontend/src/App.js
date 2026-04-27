@@ -2036,7 +2036,7 @@ function Dashboard() {
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
   const pieData = NAV_GROUPS.map((g, i) => ({ name: g.label.split('&')[0].trim().split(' ').slice(0,2).join(' '), value: g.items.length, color: g.color || PASTEL[i % PASTEL.length] }));
-  const filteredGroups = domainFilter ? NAV_GROUPS.filter(g => g.label.toLowerCase().includes(domainFilter.toLowerCase()) || g.items.some(i => i.label.toLowerCase().includes(domainFilter.toLowerCase()))) : NAV_GROUPS;
+  const filteredGroups = domainFilter ? NAV_GROUPS.filter(g => (g.label || '').toLowerCase().includes(domainFilter.toLowerCase()) || g.items.some(i => (i.label || '').toLowerCase().includes(domainFilter.toLowerCase()))) : NAV_GROUPS;
 
   return (
     <div style={{ padding: '20px 24px', maxWidth: 1480, margin: '0 auto' }}>
@@ -2219,7 +2219,7 @@ function Sidebar({ search, setSearch, sidebarOpen }) {
     if (!search) return accessible;
     const q = search.toLowerCase();
     return accessible.map(g => ({
-      ...g, items: g.items.filter(i => i.label.toLowerCase().includes(q) || i.badge.toLowerCase().includes(q) || i.code.toLowerCase().includes(q)),
+      ...g, items: g.items.filter(i => (i.label || '').toLowerCase().includes(q) || (i.badge || '').toLowerCase().includes(q) || (i.code || '').toLowerCase().includes(q)),
     })).filter(g => g.items.length > 0);
   }, [search, canAccess]);
 

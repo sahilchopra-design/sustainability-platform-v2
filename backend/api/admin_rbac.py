@@ -569,7 +569,7 @@ class BulkPromoteBody(BaseModel):
 def bulk_review_modules(
     body: BulkPromoteBody,
     db: Session = Depends(get_db),
-    user=Depends(_require_super_admin),
+    user=Depends(require_super_admin),
 ):
     """Promote/demote multiple modules at once (e.g., entire sprint)."""
     action_map = {

@@ -52,8 +52,8 @@ function Tab1() {
   const active = NGFS_PHASE4.find(s => s.id === sel);
   const chartData = NGFS_PHASE4.map(s => ({
     name: s.name.replace('Net Zero ', 'NZ ').replace('Low Energy', 'LED').replace('Below ', '<').replace('Delayed Transition', 'Delayed').replace('Divergent Net Zero', 'Div. NZ').replace('Current Policies', 'Cur. Pol.'),
-    transition: s.transitionRisk,
-    physical: s.physicalRisk,
+    transition: s.transitionRiskScoreScore,
+    physical: s.physicalRiskScoreScore,
     color: s.color,
   }));
 
@@ -170,16 +170,16 @@ function Tab1() {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
                     <span style={{ fontSize: 10, color: T.textMut }}>Transition Risk</span>
-                    <span style={{ fontSize: 10, color: T.amber, fontWeight: 600 }}>{s.transitionRisk}/10</span>
+                    <span style={{ fontSize: 10, color: T.amber, fontWeight: 600 }}>{s.transitionRiskScore}/10</span>
                   </div>
-                  <MiniBar value={s.transitionRisk} max={10} color={T.amber} />
+                  <MiniBar value={s.transitionRiskScore} max={10} color={T.amber} />
                 </div>
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
                     <span style={{ fontSize: 10, color: T.textMut }}>Physical Risk</span>
-                    <span style={{ fontSize: 10, color: T.red, fontWeight: 600 }}>{s.physicalRisk}/10</span>
+                    <span style={{ fontSize: 10, color: T.red, fontWeight: 600 }}>{s.physicalRiskScore}/10</span>
                   </div>
-                  <MiniBar value={s.physicalRisk} max={10} color={T.red} />
+                  <MiniBar value={s.physicalRiskScore} max={10} color={T.red} />
                 </div>
               </div>
             </div>
@@ -200,7 +200,7 @@ function Tab1() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
                 <Stat label="Unemployment Peak" value={`${active.unemploymentPeak}%`} />
                 <Stat label="Property Price Drop" value={`${active.propertyPriceDrop}%`} />
-                <Stat label="Sovereign Spread" value={`${active.sovereignSpread} bps`} />
+                <Stat label="Sovereign Spread" value={`${active.sovereignSpreadBp} bps`} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginTop: 12 }}>
                 <Stat label="Stranded Assets 2050" value={`$${active.stranded2050}T`} />
@@ -434,7 +434,7 @@ function Tab4() {
     {
       name: 'Physical Damage',
       desc: 'GDP loss from physical climate risk',
-      values: NGFS_PHASE4.map(s => ({ id: s.id, name: s.name, value: s.physicalRisk > 6 ? `${(s.gdpImpact2050 * 0.6).toFixed(1)}%` : 'Contained' })),
+      values: NGFS_PHASE4.map(s => ({ id: s.id, name: s.name, value: s.physicalRiskScore > 6 ? `${(s.gdpImpact2050 * 0.6).toFixed(1)}%` : 'Contained' })),
     },
     {
       name: 'Macro / GDP Shock',
@@ -448,7 +448,7 @@ function Tab4() {
     },
   ];
 
-  const spreadData = NGFS_PHASE4.map(s => ({ name: s.name.replace('Net Zero 2050', 'NZ2050').replace('Low Energy Demand', 'LED').replace('Below 2°C', 'B2C').replace('Delayed Transition', 'Delayed').replace('Divergent Net Zero', 'Div NZ').replace('Current Policies', 'Cur. Pol.'), spread: s.sovereignSpread, color: s.color }));
+  const spreadData = NGFS_PHASE4.map(s => ({ name: s.name.replace('Net Zero 2050', 'NZ2050').replace('Low Energy Demand', 'LED').replace('Below 2°C', 'B2C').replace('Delayed Transition', 'Delayed').replace('Divergent Net Zero', 'Div NZ').replace('Current Policies', 'Cur. Pol.'), spread: s.sovereignSpreadBp, color: s.color }));
 
   // 24-month FSI trend (seeded)
   const fsiData = Array.from({ length: 24 }, (_, i) => ({
@@ -555,14 +555,14 @@ function Tab5() {
     { key: 'carbonPrice2030', label: 'Carbon Price 2030 ($/tCO₂)', fmt: v => `$${v}` },
     { key: 'carbonPrice2050', label: 'Carbon Price 2050 ($/tCO₂)', fmt: v => `$${v}` },
     { key: 'gdpImpact2050', label: 'GDP Impact 2050 (%)', fmt: v => `${v}%` },
-    { key: 'physicalRisk', label: 'Physical Risk Score (/10)', fmt: v => `${v}/10` },
-    { key: 'transitionRisk', label: 'Transition Risk Score (/10)', fmt: v => `${v}/10` },
+    { key: 'physicalRiskScore', label: 'Physical Risk Score (/10)', fmt: v => `${v}/10` },
+    { key: 'transitionRiskScore', label: 'Transition Risk Score (/10)', fmt: v => `${v}/10` },
     { key: 'renewableShare2050', label: 'Renewable Share 2050 (%)', fmt: v => `${v}%` },
     { key: 'coalShare2050', label: 'Coal Share 2050 (%)', fmt: v => `${v}%` },
     { key: 'stranded2050', label: 'Stranded Assets 2050 ($T)', fmt: v => `$${v}T` },
     { key: 'unemploymentPeak', label: 'Unemployment Peak (%)', fmt: v => `${v}%` },
     { key: 'propertyPriceDrop', label: 'Property Price Drop (%)', fmt: v => `${v}%` },
-    { key: 'sovereignSpread', label: 'Sovereign Spread (bps)', fmt: v => `${v} bps` },
+    { key: 'sovereignSpreadBp', label: 'Sovereign Spread (bps)', fmt: v => `${v} bps` },
   ];
 
   const selScens = NGFS_PHASE4.filter(s => selected.includes(s.id));
