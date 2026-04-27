@@ -7,12 +7,14 @@ import {
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
-  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0',
-  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280',
-  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f',
-  teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c',
-  surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace',
+  bg: '#f8f6f0', surface: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', surfaceH: '#f6f4f0',
+  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', text: '#1a1a2e', textSec: '#6b7280',
+  green: '#16a34a', red: '#dc2626', amber: '#d97706', sage: '#4d7c5f',
+  teal: '#0f766e', navyL: '#2c5a8c', fontMono: 'JetBrains Mono, monospace',
 };
+const INDIGO = '#4f46e5';
+const PURPLE = '#7c3aed';
+const BLUE = '#0369a1';
 
 const REGIONS = ['Sub-Saharan Africa', 'South Asia', 'Southeast Asia', 'MENA', 'Latin America', 'Pacific Islands', 'East Africa', 'Central America'];
 const DRIVERS = ['Sea Level', 'Drought', 'Flood', 'Heat', 'Conflict-Climate'];
@@ -138,14 +140,14 @@ export default function ClimateDisplacementRiskPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
           {kpis.map(k => (
-            <div key={k.label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
+            <div key={k.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
               <div style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
               <div style={{ fontSize: 28, fontWeight: 700, color: k.color }}>{k.value}</div>
             </div>
           ))}
         </div>
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           {[
             { label: 'Region', val: regionFilter, set: setRegionFilter, opts: ['All', ...REGIONS] },
             { label: 'Displacement Risk', val: riskFilter, set: setRiskFilter, opts: ['All', 'Low', 'Medium', 'High', 'Critical'] },
@@ -153,7 +155,7 @@ export default function ClimateDisplacementRiskPage() {
           ].map(f => (
             <div key={f.label}>
               <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4, fontFamily: T.fontMono }}>{f.label}</div>
-              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, fontSize: 13, color: T.textPri }}>
+              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surfaceH, fontSize: 13, color: T.text }}>
                 {f.opts.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
@@ -171,7 +173,7 @@ export default function ClimateDisplacementRiskPage() {
 
         <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
           {TABS.map((t, i) => (
-            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.card, color: tab === i ? '#fff' : T.textSec }}>
+            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.surface, color: tab === i ? '#fff' : T.textSec }}>
               {t}
             </button>
           ))}
@@ -179,7 +181,7 @@ export default function ClimateDisplacementRiskPage() {
 
         {tab === 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Risk Distribution by Category</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={['Low', 'Medium', 'High', 'Critical'].map(l => ({ label: l, count: filtered.filter(c => getRiskLabel(c.displacementRiskScore) === l).length }))} margin={{ left: -10 }}>
@@ -191,15 +193,15 @@ export default function ClimateDisplacementRiskPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Adaptation Funding vs Projected Displacement (2040)</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <ScatterChart margin={{ left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
                   <XAxis dataKey="x" name="Adaptation Funding ($Bn)" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Adapt Funding ($Bn)', position: 'insideBottom', offset: -5, fontSize: 10 }} />
                   <YAxis dataKey="y" name="Proj Displaced 2040 (M)" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Proj 2040 (M)', angle: -90, position: 'insideLeft', fontSize: 10 }} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Funding: ${payload[0]?.payload?.x}Bn<br />Proj: {payload[0]?.payload?.y}M</div> : null} />
-                  <Scatter data={scatterData} fill={T.indigo} opacity={0.7} />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Funding: ${payload[0]?.payload?.x}Bn<br />Proj: {payload[0]?.payload?.y}M</div> : null} />
+                  <Scatter data={scatterData} fill={INDIGO} opacity={0.7} />
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
@@ -207,7 +209,7 @@ export default function ClimateDisplacementRiskPage() {
         )}
 
         {tab === 1 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Top 15 Countries — Current vs Projected 2040 Displacement (M persons)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={top15Projection} margin={{ bottom: 60, left: -10 }}>
@@ -224,7 +226,7 @@ export default function ClimateDisplacementRiskPage() {
         )}
 
         {tab === 2 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Displacement Drivers — Countries Affected & Avg Displaced</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={driverBreakdown} margin={{ left: -10 }}>
@@ -242,7 +244,7 @@ export default function ClimateDisplacementRiskPage() {
         )}
 
         {tab === 3 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Migration Corridor Score by Region</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={REGIONS.map(r => { const sub = filtered.filter(c => c.region === r); return { region: r.split(' ').slice(0, 2).join(' '), corridor: sub.length ? +(sub.reduce((s, c) => s + c.migrationCorridors, 0) / sub.length).toFixed(1) : 0 }; }).filter(d => d.corridor > 0)} margin={{ bottom: 40, left: -10 }}>
@@ -257,7 +259,7 @@ export default function ClimateDisplacementRiskPage() {
         )}
 
         {tab === 4 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Social Cohesion Risk by Region</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={REGIONS.map(r => { const sub = filtered.filter(c => c.region === r); return { region: r.split(' ').slice(0, 2).join(' '), cohesion: sub.length ? +(sub.reduce((s, c) => s + c.socialCohesionRisk, 0) / sub.length).toFixed(1) : 0 }; }).filter(d => d.cohesion > 0)} margin={{ bottom: 40, left: -10 }}>
@@ -265,14 +267,14 @@ export default function ClimateDisplacementRiskPage() {
                 <XAxis dataKey="region" tick={{ fontSize: 11, fill: T.textSec }} angle={-20} textAnchor="end" interval={0} />
                 <YAxis domain={[0, 10]} tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="cohesion" fill={T.purple} radius={[3, 3, 0, 0]} name="Social Cohesion Risk (0-10)" />
+                <Bar dataKey="cohesion" fill={PURPLE} radius={[3, 3, 0, 0]} name="Social Cohesion Risk (0-10)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 5 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Adaptation Funding by Country (Top 15, $Bn)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={[...filtered].sort((a, b) => b.adaptationFunding - a.adaptationFunding).slice(0, 15).map(c => ({ name: c.name.slice(0, 12), funding: +(c.adaptationFunding * financeBoost).toFixed(2) }))} margin={{ bottom: 60, left: -10 }}>
@@ -287,7 +289,7 @@ export default function ClimateDisplacementRiskPage() {
         )}
 
         {tab === 6 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Financial Sector Exposure (Top 15, $Bn)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={[...filtered].sort((a, b) => b.financialSectorExposure - a.financialSectorExposure).slice(0, 15).map(c => ({ name: c.name.slice(0, 12), exposure: c.financialSectorExposure }))} margin={{ bottom: 60, left: -10 }}>
@@ -303,7 +305,7 @@ export default function ClimateDisplacementRiskPage() {
 
         {tab === 7 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Global Displacement Trend (M persons)</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <LineChart data={globalTrend} margin={{ left: -10 }}>
@@ -315,7 +317,7 @@ export default function ClimateDisplacementRiskPage() {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Policy Landscape</h3>
               {[
                 { label: 'UNHCR Climate Displacement Mandate', status: 'Partial' },
@@ -327,7 +329,7 @@ export default function ClimateDisplacementRiskPage() {
                 { label: 'Task Force on Displacement', status: 'Active' },
               ].map(p => (
                 <div key={p.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: `1px solid ${T.borderL}` }}>
-                  <span style={{ fontSize: 12, color: T.textPri }}>{p.label}</span>
+                  <span style={{ fontSize: 12, color: T.text }}>{p.label}</span>
                   <span style={{ fontSize: 11, color: p.status === 'Active' || p.status.startsWith('Active') ? T.green : p.status === 'Partial' ? T.amber : T.orange, fontWeight: 600 }}>{p.status}</span>
                 </div>
               ))}
@@ -335,11 +337,11 @@ export default function ClimateDisplacementRiskPage() {
           </div>
         )}
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Country Detail Table</h3>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
-              <tr style={{ background: T.sub }}>
+              <tr style={{ background: T.surfaceH }}>
                 {['Country', 'Region', 'Current (M)', 'Proj 2040 (M)', 'Driver', 'Adapt Funding ($Bn)', 'Migration Score', 'Social Risk', 'Fin Exposure ($Bn)', 'Refugee Recog.'].map(h => (
                   <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -348,15 +350,15 @@ export default function ClimateDisplacementRiskPage() {
             <tbody>
               {filtered.slice(0, 25).map(c => (
                 <tr key={c.id} style={{ borderBottom: `1px solid ${T.borderL}` }}>
-                  <td style={{ padding: '7px 10px', color: T.textPri, fontWeight: 500 }}>{c.name}</td>
+                  <td style={{ padding: '7px 10px', color: T.text, fontWeight: 500 }}>{c.name}</td>
                   <td style={{ padding: '7px 10px', color: T.textSec, fontSize: 11 }}>{c.region}</td>
                   <td style={{ padding: '7px 10px', color: T.amber, fontWeight: 600 }}>{c.currentDisplacedM}</td>
                   <td style={{ padding: '7px 10px', color: T.red, fontWeight: 600 }}>{(c.projected2040M * tempMultiplier).toFixed(2)}</td>
-                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.sub, padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{c.displacementDriver}</span></td>
+                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.surfaceH, padding: '2px 8px', borderRadius: 10, fontSize: 10 }}>{c.displacementDriver}</span></td>
                   <td style={{ padding: '7px 10px', color: T.green }}>{(c.adaptationFunding * financeBoost).toFixed(2)}</td>
-                  <td style={{ padding: '7px 10px', color: T.textPri }}>{c.migrationCorridors}</td>
+                  <td style={{ padding: '7px 10px', color: T.text }}>{c.migrationCorridors}</td>
                   <td style={{ padding: '7px 10px', color: c.socialCohesionRisk >= 7 ? T.red : c.socialCohesionRisk >= 4 ? T.amber : T.green }}>{c.socialCohesionRisk}</td>
-                  <td style={{ padding: '7px 10px', color: T.textPri }}>{c.financialSectorExposure}</td>
+                  <td style={{ padding: '7px 10px', color: T.text }}>{c.financialSectorExposure}</td>
                   <td style={{ padding: '7px 10px', color: c.climateRefugeeRecognition ? T.green : T.red, fontWeight: 600 }}>{c.climateRefugeeRecognition ? 'Yes' : 'No'}</td>
                 </tr>
               ))}

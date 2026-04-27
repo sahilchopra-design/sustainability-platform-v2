@@ -7,12 +7,14 @@ import {
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
-  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0',
-  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280',
-  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f',
-  teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c',
-  surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace',
+  bg: '#f8f6f0', surface: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', surfaceH: '#f6f4f0',
+  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', text: '#1a1a2e', textSec: '#6b7280',
+  green: '#16a34a', red: '#dc2626', amber: '#d97706', sage: '#4d7c5f',
+  teal: '#0f766e', navyL: '#2c5a8c', fontMono: 'JetBrains Mono, monospace',
 };
+const INDIGO = '#4f46e5';
+const PURPLE = '#7c3aed';
+const BLUE = '#0369a1';
 
 const FUEL_TYPES = ['Coal', 'Oil', 'Gas', 'Mixed'];
 const REGIONS = ['Asia-Pacific', 'Europe', 'North America', 'Latin America', 'Middle East', 'Africa'];
@@ -141,7 +143,7 @@ export default function FossilFuelWorkerTransitionPage() {
         {/* KPI Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
           {kpis.map(k => (
-            <div key={k.label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
+            <div key={k.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
               <div style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
               <div style={{ fontSize: 28, fontWeight: 700, color: k.color }}>{k.value}</div>
             </div>
@@ -149,7 +151,7 @@ export default function FossilFuelWorkerTransitionPage() {
         </div>
 
         {/* Filters */}
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           {[
             { label: 'Region', val: regionFilter, set: setRegionFilter, opts: ['All', ...REGIONS] },
             { label: 'Fuel Type', val: fuelFilter, set: setFuelFilter, opts: ['All', ...FUEL_TYPES] },
@@ -157,14 +159,14 @@ export default function FossilFuelWorkerTransitionPage() {
           ].map(f => (
             <div key={f.label}>
               <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4, fontFamily: T.fontMono }}>{f.label}</div>
-              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, fontSize: 13, color: T.textPri }}>
+              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surfaceH, fontSize: 13, color: T.text }}>
                 {f.opts.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
           ))}
           <div>
             <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4, fontFamily: T.fontMono }}>Transition Speed</div>
-            <select value={transitionSpeed} onChange={e => setTransitionSpeed(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, fontSize: 13, color: T.textPri }}>
+            <select value={transitionSpeed} onChange={e => setTransitionSpeed(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surfaceH, fontSize: 13, color: T.text }}>
               {[2030, 2035, 2040].map(y => <option key={y}>{y}</option>)}
             </select>
           </div>
@@ -178,7 +180,7 @@ export default function FossilFuelWorkerTransitionPage() {
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
           {TABS.map((t, i) => (
-            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.card, color: tab === i ? '#fff' : T.textSec }}>
+            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.surface, color: tab === i ? '#fff' : T.textSec }}>
               {t}
             </button>
           ))}
@@ -187,7 +189,7 @@ export default function FossilFuelWorkerTransitionPage() {
         {/* Tab Content */}
         {tab === 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Top 15 Regions — Job Loss by 2030 (k workers)</h3>
               <ResponsiveContainer width="100%" height={320}>
                 <BarChart data={topJobLoss} margin={{ left: -10, bottom: 60 }}>
@@ -199,15 +201,15 @@ export default function FossilFuelWorkerTransitionPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Workers vs Transition Fund Allocation</h3>
               <ResponsiveContainer width="100%" height={320}>
                 <ScatterChart margin={{ left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
                   <XAxis dataKey="x" name="Workers (k)" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Workers (k)', position: 'insideBottom', offset: -5, fontSize: 11 }} />
                   <YAxis dataKey="y" name="Fund ($M)" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Fund ($M)', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Workers: {payload[0]?.payload?.x}k<br />Fund: ${payload[0]?.payload?.y}M</div> : null} />
-                  <Scatter data={scatterData} fill={T.indigo} opacity={0.7} />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Workers: {payload[0]?.payload?.x}k<br />Fund: ${payload[0]?.payload?.y}M</div> : null} />
+                  <Scatter data={scatterData} fill={INDIGO} opacity={0.7} />
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
@@ -215,7 +217,7 @@ export default function FossilFuelWorkerTransitionPage() {
         )}
 
         {tab === 1 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Job Loss Projections — 2030 vs 2040 by Region</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={filtered.slice(0, 20).map(r => ({ name: r.name.split(' ').slice(0, 2).join(' '), '2030': +(r.projectedJobLoss2030 * speedMultiplier).toFixed(1), '2040': +(r.projectedJobLoss2040 * speedMultiplier).toFixed(1) }))} margin={{ bottom: 60, left: -10 }}>
@@ -232,7 +234,7 @@ export default function FossilFuelWorkerTransitionPage() {
         )}
 
         {tab === 2 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Retraining Capacity — Eligible vs Job Loss</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={filtered.slice(0, 20).map(r => ({ name: r.name.split(' ').slice(0, 2).join(' '), jobLoss: +(r.projectedJobLoss2030 * speedMultiplier).toFixed(1), retraining: +(r.retrainingEligible * retrainingBoost).toFixed(1) }))} margin={{ bottom: 60, left: -10 }}>
@@ -249,7 +251,7 @@ export default function FossilFuelWorkerTransitionPage() {
         )}
 
         {tab === 3 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Alternative Employment Gap — Top 15 Regions</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={altJobsData} margin={{ bottom: 60, left: -10 }}>
@@ -266,7 +268,7 @@ export default function FossilFuelWorkerTransitionPage() {
         )}
 
         {tab === 4 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Average Wage by Region (k$/yr)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={[...filtered].sort((a, b) => b.avgWage - a.avgWage).slice(0, 20).map(r => ({ name: r.name.split(' ').slice(0, 2).join(' '), wage: r.avgWage, fuelType: r.fuelType }))} margin={{ bottom: 60, left: -10 }}>
@@ -281,7 +283,7 @@ export default function FossilFuelWorkerTransitionPage() {
         )}
 
         {tab === 5 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Community Impact Score by Region</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={communityData} margin={{ bottom: 50, left: -10 }}>
@@ -296,7 +298,7 @@ export default function FossilFuelWorkerTransitionPage() {
         )}
 
         {tab === 6 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Transition Fund Allocated by Region (Top 15, $M)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={[...filtered].sort((a, b) => b.transitionFundAllocated - a.transitionFundAllocated).slice(0, 15).map(r => ({ name: r.name.split(' ').slice(0, 2).join(' '), fund: r.transitionFundAllocated }))} margin={{ bottom: 60, left: -10 }}>
@@ -312,7 +314,7 @@ export default function FossilFuelWorkerTransitionPage() {
 
         {tab === 7 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Policy Framework Summary</h3>
               {[
                 { label: 'ILO Just Transition Guidelines', status: 'Active', color: T.green },
@@ -323,12 +325,12 @@ export default function FossilFuelWorkerTransitionPage() {
                 { label: 'Global Fossil Fuel Worker Registry', status: 'Proposed', color: T.orange },
               ].map(p => (
                 <div key={p.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: `1px solid ${T.borderL}` }}>
-                  <span style={{ fontSize: 13, color: T.textPri }}>{p.label}</span>
+                  <span style={{ fontSize: 13, color: T.text }}>{p.label}</span>
                   <span style={{ fontSize: 12, color: p.color, fontWeight: 600 }}>{p.status}</span>
                 </div>
               ))}
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Unionisation Rate by Fuel Type</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={FUEL_TYPES.map(ft => {
@@ -339,7 +341,7 @@ export default function FossilFuelWorkerTransitionPage() {
                   <XAxis dataKey="ft" tick={{ fontSize: 12, fill: T.textSec }} />
                   <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
                   <Tooltip contentStyle={{ fontSize: 12 }} />
-                  <Bar dataKey="rate" fill={T.purple} radius={[3, 3, 0, 0]} name="Unionisation %" />
+                  <Bar dataKey="rate" fill={PURPLE} radius={[3, 3, 0, 0]} name="Unionisation %" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -347,11 +349,11 @@ export default function FossilFuelWorkerTransitionPage() {
         )}
 
         {/* Table */}
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Region Detail Table</h3>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
-              <tr style={{ background: T.sub }}>
+              <tr style={{ background: T.surfaceH }}>
                 {['Region', 'Country', 'Fuel', 'Workers (k)', 'Job Loss 2030 (k)', 'Retraining (k)', 'Alt Jobs (k)', 'Avg Wage ($k)', 'Fund ($M)', 'Timeline Risk'].map(h => (
                   <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -360,14 +362,14 @@ export default function FossilFuelWorkerTransitionPage() {
             <tbody>
               {filtered.slice(0, 25).map(r => (
                 <tr key={r.id} style={{ borderBottom: `1px solid ${T.borderL}` }}>
-                  <td style={{ padding: '7px 10px', color: T.textPri, fontWeight: 500 }}>{r.name}</td>
+                  <td style={{ padding: '7px 10px', color: T.text, fontWeight: 500 }}>{r.name}</td>
                   <td style={{ padding: '7px 10px', color: T.textSec }}>{r.country}</td>
-                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.sub, padding: '2px 8px', borderRadius: 10, fontSize: 11 }}>{r.fuelType}</span></td>
-                  <td style={{ padding: '7px 10px', color: T.textPri }}>{r.workersEmployed}</td>
+                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.surfaceH, padding: '2px 8px', borderRadius: 10, fontSize: 11 }}>{r.fuelType}</span></td>
+                  <td style={{ padding: '7px 10px', color: T.text }}>{r.workersEmployed}</td>
                   <td style={{ padding: '7px 10px', color: T.red, fontWeight: 600 }}>{(r.projectedJobLoss2030 * speedMultiplier).toFixed(1)}</td>
                   <td style={{ padding: '7px 10px', color: T.teal }}>{(r.retrainingEligible * retrainingBoost).toFixed(1)}</td>
                   <td style={{ padding: '7px 10px', color: T.green }}>{(r.alternativeJobsAvailable * retrainingBoost).toFixed(1)}</td>
-                  <td style={{ padding: '7px 10px', color: T.textPri }}>{r.avgWage}</td>
+                  <td style={{ padding: '7px 10px', color: T.text }}>{r.avgWage}</td>
                   <td style={{ padding: '7px 10px', color: T.gold }}>${r.transitionFundAllocated}</td>
                   <td style={{ padding: '7px 10px' }}>
                     <span style={{ color: RISK_COLORS[getTimelineRiskLabel(r.timelineRisk)], fontWeight: 600, fontSize: 11 }}>{getTimelineRiskLabel(r.timelineRisk)}</span>

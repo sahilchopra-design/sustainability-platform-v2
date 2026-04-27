@@ -7,12 +7,14 @@ import {
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
-  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0',
-  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280',
-  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f',
-  teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c',
-  surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace',
+  bg: '#f8f6f0', surface: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', surfaceH: '#f6f4f0',
+  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', text: '#1a1a2e', textSec: '#6b7280',
+  green: '#16a34a', red: '#dc2626', amber: '#d97706', sage: '#4d7c5f',
+  teal: '#0f766e', navyL: '#2c5a8c', fontMono: 'JetBrains Mono, monospace',
 };
+const INDIGO = '#4f46e5';
+const PURPLE = '#7c3aed';
+const BLUE = '#0369a1';
 
 const COMMODITIES = ['Textiles', 'Electronics', 'Food', 'Automotive', 'Chemicals', 'Construction'];
 const REGIONS = ['South Asia', 'Southeast Asia', 'East Asia', 'Sub-Saharan Africa', 'Latin America', 'MENA', 'Eastern Europe'];
@@ -147,14 +149,14 @@ export default function SupplyChainLaborClimateRiskPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
           {kpis.map(k => (
-            <div key={k.label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
+            <div key={k.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
               <div style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
               <div style={{ fontSize: 28, fontWeight: 700, color: k.color }}>{k.value}</div>
             </div>
           ))}
         </div>
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           {[
             { label: 'Commodity', val: commodityFilter, set: setCommodityFilter, opts: ['All', ...COMMODITIES] },
             { label: 'Region', val: regionFilter, set: setRegionFilter, opts: ['All', ...REGIONS] },
@@ -162,7 +164,7 @@ export default function SupplyChainLaborClimateRiskPage() {
           ].map(f => (
             <div key={f.label}>
               <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4, fontFamily: T.fontMono }}>{f.label}</div>
-              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, fontSize: 13, color: T.textPri }}>
+              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surfaceH, fontSize: 13, color: T.text }}>
                 {f.opts.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
@@ -180,7 +182,7 @@ export default function SupplyChainLaborClimateRiskPage() {
 
         <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
           {TABS.map((t, i) => (
-            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.card, color: tab === i ? '#fff' : T.textSec }}>
+            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.surface, color: tab === i ? '#fff' : T.textSec }}>
               {t}
             </button>
           ))}
@@ -188,7 +190,7 @@ export default function SupplyChainLaborClimateRiskPage() {
 
         {tab === 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Workers Affected by Commodity (M)</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={workersByCommodity} margin={{ left: -10 }}>
@@ -200,7 +202,7 @@ export default function SupplyChainLaborClimateRiskPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Risk Dimensions by Commodity — Radar</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart data={radarDimensions.map(d => ({
@@ -212,7 +214,7 @@ export default function SupplyChainLaborClimateRiskPage() {
                   <PolarGrid stroke={T.borderL} />
                   <PolarAngleAxis dataKey="dim" tick={{ fontSize: 10, fill: T.textSec }} />
                   <PolarRadiusAxis domain={[0, 10]} tick={{ fontSize: 9 }} />
-                  <Radar name="Textiles" dataKey="Textiles" stroke={T.indigo} fill={T.indigo} fillOpacity={0.25} />
+                  <Radar name="Textiles" dataKey="Textiles" stroke={INDIGO} fill={INDIGO} fillOpacity={0.25} />
                   <Radar name="Electronics" dataKey="Electronics" stroke={T.teal} fill={T.teal} fillOpacity={0.25} />
                   <Radar name="Food" dataKey="Food" stroke={T.amber} fill={T.amber} fillOpacity={0.25} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -223,7 +225,7 @@ export default function SupplyChainLaborClimateRiskPage() {
         )}
 
         {tab === 1 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Heat Stress Risk by Region (adjusted for +{tempScenario}°C)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={REGIONS.map(r => { const sub = filtered.filter(s => s.region === r); return { region: r.split(' ').slice(0, 2).join(' '), heatRisk: sub.length ? +(sub.reduce((s, x) => s + x.heatStressRisk * tempMult, 0) / sub.length).toFixed(1) : 0, workers: +(sub.reduce((s, x) => s + x.workersAffected, 0)).toFixed(2) }; }).filter(d => d.workers > 0)} margin={{ bottom: 40, left: -10 }}>
@@ -241,7 +243,7 @@ export default function SupplyChainLaborClimateRiskPage() {
         )}
 
         {tab === 2 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Flood Risk Score by Commodity</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={COMMODITIES.map(c => { const sub = filtered.filter(s => s.commodity === c); return { commodity: c, floodRisk: sub.length ? +(sub.reduce((s, x) => s + x.floodRisk, 0) / sub.length).toFixed(1) : 0 }; })} margin={{ left: -10 }}>
@@ -249,29 +251,29 @@ export default function SupplyChainLaborClimateRiskPage() {
                 <XAxis dataKey="commodity" tick={{ fontSize: 11, fill: T.textSec }} />
                 <YAxis domain={[0, 10]} tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="floodRisk" fill={T.blue} radius={[3, 3, 0, 0]} name="Avg Flood Risk (0-10)" />
+                <Bar dataKey="floodRisk" fill={BLUE} radius={[3, 3, 0, 0]} name="Avg Flood Risk (0-10)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 3 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Heat Stress vs Labor Rights Risk — Scatter</h3>
             <ResponsiveContainer width="100%" height={380}>
               <ScatterChart margin={{ left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
                 <XAxis dataKey="x" name="Heat Stress" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Heat Stress Risk (0-10)', position: 'insideBottom', offset: -5, fontSize: 11 }} />
                 <YAxis dataKey="y" name="Labor Rights Risk" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Labor Rights Risk (0-10)', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Heat: {payload[0]?.payload?.x}<br />Labor: {payload[0]?.payload?.y}</div> : null} />
-                <Scatter data={scatterData} fill={T.purple} opacity={0.7} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Heat: {payload[0]?.payload?.x}<br />Labor: {payload[0]?.payload?.y}</div> : null} />
+                <Scatter data={scatterData} fill={PURPLE} opacity={0.7} />
               </ScatterChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 4 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Wage Risk by Country (Top 15, % income at risk)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={wageRiskByCountry} margin={{ bottom: 60, left: -10 }}>
@@ -286,7 +288,7 @@ export default function SupplyChainLaborClimateRiskPage() {
         )}
 
         {tab === 5 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Child Labor Index by Commodity</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={COMMODITIES.map(c => { const sub = filtered.filter(s => s.commodity === c); return { commodity: c, childLabor: sub.length ? +(sub.reduce((s, x) => s + x.childLaborIndex, 0) / sub.length).toFixed(1) : 0 }; })} margin={{ left: -10 }}>
@@ -301,7 +303,7 @@ export default function SupplyChainLaborClimateRiskPage() {
         )}
 
         {tab === 6 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Modern Slavery Risk by Region</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={REGIONS.map(r => { const sub = filtered.filter(s => s.region === r); return { region: r.split(' ').slice(0, 2).join(' '), msr: sub.length ? +(sub.reduce((s, x) => s + x.modernSlaveryRisk, 0) / sub.length).toFixed(1) : 0 }; }).filter(d => d.msr > 0)} margin={{ bottom: 40, left: -10 }}>
@@ -309,14 +311,14 @@ export default function SupplyChainLaborClimateRiskPage() {
                 <XAxis dataKey="region" tick={{ fontSize: 11, fill: T.textSec }} angle={-20} textAnchor="end" interval={0} />
                 <YAxis domain={[0, 10]} tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="msr" fill={T.purple} radius={[3, 3, 0, 0]} name="Modern Slavery Risk (0-10)" />
+                <Bar dataKey="msr" fill={PURPLE} radius={[3, 3, 0, 0]} name="Modern Slavery Risk (0-10)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 7 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Climate Adaptation Score by Commodity</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={COMMODITIES.map(c => { const sub = filtered.filter(s => s.commodity === c); return { commodity: c, adaptation: sub.length ? +(sub.reduce((s, x) => s + x.climateAdaptationScore, 0) / sub.length).toFixed(1) : 0 }; })} margin={{ left: -10 }}>
@@ -330,11 +332,11 @@ export default function SupplyChainLaborClimateRiskPage() {
           </div>
         )}
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Supply Chain Detail Table</h3>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
-              <tr style={{ background: T.sub }}>
+              <tr style={{ background: T.surfaceH }}>
                 {['Supply Chain', 'Commodity', 'Region', 'Workers (M)', 'Heat Risk', 'Flood Risk', 'Labor Rights', 'Wage Risk %', 'Child Labor', 'Modern Slavery', 'Adaptation'].map(h => (
                   <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -343,8 +345,8 @@ export default function SupplyChainLaborClimateRiskPage() {
             <tbody>
               {filtered.filter(s => s.laborRightRisk > ddThreshold || s.heatStressRisk * tempMult > ddThreshold || true).slice(0, 25).map(s => (
                 <tr key={s.id} style={{ borderBottom: `1px solid ${T.borderL}` }}>
-                  <td style={{ padding: '7px 10px', color: T.textPri, fontWeight: 500 }}>{s.name}</td>
-                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.sub, padding: '2px 8px', borderRadius: 10, fontSize: 11 }}>{s.commodity}</span></td>
+                  <td style={{ padding: '7px 10px', color: T.text, fontWeight: 500 }}>{s.name}</td>
+                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.surfaceH, padding: '2px 8px', borderRadius: 10, fontSize: 11 }}>{s.commodity}</span></td>
                   <td style={{ padding: '7px 10px', color: T.textSec, fontSize: 11 }}>{s.region}</td>
                   <td style={{ padding: '7px 10px', color: T.navy, fontWeight: 600 }}>{s.workersAffected}</td>
                   <td style={{ padding: '7px 10px', color: RISK_COLORS[getRiskLabel(s.heatStressRisk * tempMult)] }}>{(s.heatStressRisk * tempMult).toFixed(1)}</td>

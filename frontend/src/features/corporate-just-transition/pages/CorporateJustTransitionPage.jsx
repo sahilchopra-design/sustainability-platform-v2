@@ -7,12 +7,14 @@ import {
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
-  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0',
-  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280',
-  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f',
-  teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c',
-  surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace',
+  bg: '#f8f6f0', surface: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', surfaceH: '#f6f4f0',
+  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', text: '#1a1a2e', textSec: '#6b7280',
+  green: '#16a34a', red: '#dc2626', amber: '#d97706', sage: '#4d7c5f',
+  teal: '#0f766e', navyL: '#2c5a8c', fontMono: 'JetBrains Mono, monospace',
 };
+const INDIGO = '#4f46e5';
+const PURPLE = '#7c3aed';
+const BLUE = '#0369a1';
 
 const SECTORS = ['Energy', 'Mining', 'Automotive', 'Steel', 'Chemicals', 'Aviation', 'Shipping', 'Agriculture', 'Real Estate', 'Finance'];
 const COUNTRIES = ['USA', 'Germany', 'China', 'UK', 'France', 'Japan', 'Australia', 'Canada', 'India', 'Brazil', 'Netherlands', 'Norway'];
@@ -125,14 +127,14 @@ export default function CorporateJustTransitionPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
           {kpis.map(k => (
-            <div key={k.label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
+            <div key={k.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
               <div style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
               <div style={{ fontSize: 28, fontWeight: 700, color: k.color }}>{k.value}</div>
             </div>
           ))}
         </div>
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           {[
             { label: 'Sector', val: sectorFilter, set: setSectorFilter, opts: ['All', ...SECTORS] },
             { label: 'Country', val: countryFilter, set: setCountryFilter, opts: ['All', ...COUNTRIES] },
@@ -140,7 +142,7 @@ export default function CorporateJustTransitionPage() {
           ].map(f => (
             <div key={f.label}>
               <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4, fontFamily: T.fontMono }}>{f.label}</div>
-              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, fontSize: 13, color: T.textPri }}>
+              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surfaceH, fontSize: 13, color: T.text }}>
                 {f.opts.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
@@ -158,7 +160,7 @@ export default function CorporateJustTransitionPage() {
 
         <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
           {TABS.map((t, i) => (
-            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.card, color: tab === i ? '#fff' : T.textSec }}>
+            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.surface, color: tab === i ? '#fff' : T.textSec }}>
               {t}
             </button>
           ))}
@@ -166,7 +168,7 @@ export default function CorporateJustTransitionPage() {
 
         {tab === 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>JT Score Distribution</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={['Low', 'Medium', 'High', 'Leader'].map(l => ({ label: l, count: filtered.filter(c => getJTLabel(c.justTransitionScore) === l).length }))} margin={{ left: -10 }}>
@@ -178,14 +180,14 @@ export default function CorporateJustTransitionPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Transition Capex vs JT Score</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <ScatterChart margin={{ left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
                   <XAxis dataKey="x" name="Transition Capex ($Bn)" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Capex ($Bn)', position: 'insideBottom', offset: -5, fontSize: 11 }} />
                   <YAxis dataKey="y" name="JT Score" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'JT Score', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Capex: ${payload[0]?.payload?.x?.toFixed(2)}Bn<br />JT Score: {payload[0]?.payload?.y}</div> : null} />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Capex: ${payload[0]?.payload?.x?.toFixed(2)}Bn<br />JT Score: {payload[0]?.payload?.y}</div> : null} />
                   <Scatter data={scatterData} fill={T.teal} opacity={0.7} />
                 </ScatterChart>
               </ResponsiveContainer>
@@ -194,7 +196,7 @@ export default function CorporateJustTransitionPage() {
         )}
 
         {tab === 1 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Transition Capex by Company (Top 20, $Bn)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={[...filtered].sort((a, b) => b.transitionCapex - a.transitionCapex).slice(0, 20).map(c => ({ name: c.name.slice(0, 12), capex: +(c.transitionCapex * carbonBoost).toFixed(2) }))} margin={{ bottom: 60, left: -10 }}>
@@ -202,14 +204,14 @@ export default function CorporateJustTransitionPage() {
                 <XAxis dataKey="name" tick={{ fontSize: 10, fill: T.textSec }} angle={-35} textAnchor="end" interval={0} />
                 <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="capex" fill={T.indigo} radius={[3, 3, 0, 0]} name="Transition Capex ($Bn)" />
+                <Bar dataKey="capex" fill={INDIGO} radius={[3, 3, 0, 0]} name="Transition Capex ($Bn)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 2 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Worker Retraining Budget by Sector ($M)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={retrainingBySector} margin={{ bottom: 40, left: -10 }}>
@@ -224,7 +226,7 @@ export default function CorporateJustTransitionPage() {
         )}
 
         {tab === 3 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Community Investment by Country ($M)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={communityByCountry} margin={{ bottom: 40, left: -10 }}>
@@ -239,7 +241,7 @@ export default function CorporateJustTransitionPage() {
         )}
 
         {tab === 4 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Supplier Transition Support by Sector ($M)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={SECTORS.map(sec => { const sub = filtered.filter(c => c.sector === sec); return { sector: sec, support: +(sub.reduce((s, c) => s + c.supplierTransitionSupport, 0)).toFixed(0) }; }).filter(d => d.support > 0)} margin={{ bottom: 40, left: -10 }}>
@@ -247,14 +249,14 @@ export default function CorporateJustTransitionPage() {
                 <XAxis dataKey="sector" tick={{ fontSize: 11, fill: T.textSec }} angle={-20} textAnchor="end" interval={0} />
                 <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="support" fill={T.purple} radius={[3, 3, 0, 0]} name="Supplier Support ($M)" />
+                <Bar dataKey="support" fill={PURPLE} radius={[3, 3, 0, 0]} name="Supplier Support ($M)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 5 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Top 20 Companies — JT Score Ranking</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={[...filtered].sort((a, b) => b.justTransitionScore - a.justTransitionScore).slice(0, 20).map(c => ({ name: c.name.slice(0, 12), score: c.justTransitionScore }))} margin={{ bottom: 60, left: -10 }}>
@@ -269,7 +271,7 @@ export default function CorporateJustTransitionPage() {
         )}
 
         {tab === 6 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Human Rights Score by Sector</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={SECTORS.map(sec => { const sub = filtered.filter(c => c.sector === sec); return { sector: sec, hr: sub.length ? +(sub.reduce((s, c) => s + c.humanRightsScore, 0) / sub.length).toFixed(1) : 0 }; }).filter(d => d.hr > 0)} margin={{ bottom: 40, left: -10 }}>
@@ -277,14 +279,14 @@ export default function CorporateJustTransitionPage() {
                 <XAxis dataKey="sector" tick={{ fontSize: 11, fill: T.textSec }} angle={-20} textAnchor="end" interval={0} />
                 <YAxis domain={[0, 10]} tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="hr" fill={T.blue} radius={[3, 3, 0, 0]} name="Human Rights Score (0-10)" />
+                <Bar dataKey="hr" fill={BLUE} radius={[3, 3, 0, 0]} name="Human Rights Score (0-10)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 7 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Net Jobs Impact — Top 15 Companies (k workers)</h3>
             <ResponsiveContainer width="100%" height={380}>
               <BarChart data={netJobsData} margin={{ bottom: 60, left: -10 }}>
@@ -300,11 +302,11 @@ export default function CorporateJustTransitionPage() {
           </div>
         )}
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Corporate Detail Table</h3>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
-              <tr style={{ background: T.sub }}>
+              <tr style={{ background: T.surfaceH }}>
                 {['Company', 'Sector', 'Country', 'Revenue ($Bn)', 'Capex ($Bn)', 'Retraining ($M)', 'Community ($M)', 'JT Score', 'Net Jobs (k)', 'HR Score'].map(h => (
                   <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -313,11 +315,11 @@ export default function CorporateJustTransitionPage() {
             <tbody>
               {filtered.slice(0, 25).map(c => (
                 <tr key={c.id} style={{ borderBottom: `1px solid ${T.borderL}` }}>
-                  <td style={{ padding: '7px 10px', color: T.textPri, fontWeight: 500 }}>{c.name}</td>
+                  <td style={{ padding: '7px 10px', color: T.text, fontWeight: 500 }}>{c.name}</td>
                   <td style={{ padding: '7px 10px', color: T.textSec }}>{c.sector}</td>
                   <td style={{ padding: '7px 10px', color: T.textSec }}>{c.country}</td>
-                  <td style={{ padding: '7px 10px', color: T.textPri }}>{c.revenue}</td>
-                  <td style={{ padding: '7px 10px', color: T.indigo, fontWeight: 600 }}>{(c.transitionCapex * carbonBoost).toFixed(2)}</td>
+                  <td style={{ padding: '7px 10px', color: T.text }}>{c.revenue}</td>
+                  <td style={{ padding: '7px 10px', color: INDIGO, fontWeight: 600 }}>{(c.transitionCapex * carbonBoost).toFixed(2)}</td>
                   <td style={{ padding: '7px 10px', color: T.teal }}>{(c.workerRetrainingBudget * retrainingMultiplier).toFixed(0)}</td>
                   <td style={{ padding: '7px 10px', color: T.sage }}>{c.communityInvestment}</td>
                   <td style={{ padding: '7px 10px' }}><span style={{ color: JT_COLORS[getJTLabel(c.justTransitionScore)], fontWeight: 700 }}>{c.justTransitionScore}</span></td>

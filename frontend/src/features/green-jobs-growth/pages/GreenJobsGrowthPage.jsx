@@ -7,12 +7,14 @@ import {
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
-  bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0',
-  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280',
-  green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f',
-  teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c',
-  surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace',
+  bg: '#f8f6f0', surface: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', surfaceH: '#f6f4f0',
+  navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', text: '#1a1a2e', textSec: '#6b7280',
+  green: '#16a34a', red: '#dc2626', amber: '#d97706', sage: '#4d7c5f',
+  teal: '#0f766e', navyL: '#2c5a8c', fontMono: 'JetBrains Mono, monospace',
 };
+const INDIGO = '#4f46e5';
+const PURPLE = '#7c3aed';
+const BLUE = '#0369a1';
 
 const SECTORS = ['Renewable Energy', 'Energy Efficiency', 'Transport', 'Agriculture', 'Construction', 'Manufacturing', 'Services'];
 const COUNTRIES = ['USA', 'Germany', 'China', 'India', 'UK', 'France', 'Brazil', 'Japan', 'Australia', 'Canada', 'Spain', 'Netherlands'];
@@ -133,14 +135,14 @@ export default function GreenJobsGrowthPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
           {kpis.map(k => (
-            <div key={k.label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
+            <div key={k.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px' }}>
               <div style={{ fontSize: 11, color: T.textSec, fontFamily: T.fontMono, marginBottom: 6 }}>{k.label.toUpperCase()}</div>
               <div style={{ fontSize: 28, fontWeight: 700, color: k.color }}>{k.value}</div>
             </div>
           ))}
         </div>
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 20, display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           {[
             { label: 'Sector', val: sectorFilter, set: setSectorFilter, opts: ['All', ...SECTORS] },
             { label: 'Country', val: countryFilter, set: setCountryFilter, opts: ['All', ...COUNTRIES] },
@@ -148,7 +150,7 @@ export default function GreenJobsGrowthPage() {
           ].map(f => (
             <div key={f.label}>
               <div style={{ fontSize: 11, color: T.textSec, marginBottom: 4, fontFamily: T.fontMono }}>{f.label}</div>
-              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.sub, fontSize: 13, color: T.textPri }}>
+              <select value={f.val} onChange={e => f.set(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, background: T.surfaceH, fontSize: 13, color: T.text }}>
                 {f.opts.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
@@ -166,14 +168,14 @@ export default function GreenJobsGrowthPage() {
 
         <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
           {TABS.map((t, i) => (
-            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.card, color: tab === i ? '#fff' : T.textSec }}>
+            <button key={t} onClick={() => setTab(i)} style={{ padding: '8px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: tab === i ? 600 : 400, background: tab === i ? T.navy : T.surface, color: tab === i ? '#fff' : T.textSec }}>
               {t}
             </button>
           ))}
         </div>
 
         {tab === 0 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Green Jobs by Sector — Current vs Projected 2030</h3>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={sectorData} margin={{ bottom: 40, left: -10 }}>
@@ -190,7 +192,7 @@ export default function GreenJobsGrowthPage() {
         )}
 
         {tab === 1 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Global Green Jobs Growth Trend 2024–2035 (M workers)</h3>
             <ResponsiveContainer width="100%" height={360}>
               <LineChart data={growthTrend} margin={{ left: -10 }}>
@@ -205,7 +207,7 @@ export default function GreenJobsGrowthPage() {
         )}
 
         {tab === 2 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Growth Rate by Sector (%/yr)</h3>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={growthBySector} margin={{ bottom: 40, left: -10 }}>
@@ -213,14 +215,14 @@ export default function GreenJobsGrowthPage() {
                 <XAxis dataKey="sector" tick={{ fontSize: 11, fill: T.textSec }} angle={-20} textAnchor="end" interval={0} />
                 <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="growthRate" fill={T.indigo} radius={[3, 3, 0, 0]} name="Avg Growth Rate (%/yr)" />
+                <Bar dataKey="growthRate" fill={INDIGO} radius={[3, 3, 0, 0]} name="Avg Growth Rate (%/yr)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 3 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Skills Gap by Occupation (top 20)</h3>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={[...filtered].sort((a, b) => b.skillsGap - a.skillsGap).slice(0, 20).map(j => ({ name: j.name.split(' ').slice(0, 3).join(' '), gap: j.skillsGap }))} margin={{ bottom: 60, left: -10 }}>
@@ -235,7 +237,7 @@ export default function GreenJobsGrowthPage() {
         )}
 
         {tab === 4 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Geographic Concentration by Country</h3>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={COUNTRIES.map(c => {
@@ -246,29 +248,29 @@ export default function GreenJobsGrowthPage() {
                 <XAxis dataKey="country" tick={{ fontSize: 11, fill: T.textSec }} angle={-20} textAnchor="end" interval={0} />
                 <YAxis tick={{ fontSize: 11, fill: T.textSec }} />
                 <Tooltip contentStyle={{ fontSize: 12 }} />
-                <Bar dataKey="jobs" fill={T.blue} radius={[3, 3, 0, 0]} name="Current Jobs (k)" />
+                <Bar dataKey="jobs" fill={BLUE} radius={[3, 3, 0, 0]} name="Current Jobs (k)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 5 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Salary vs Skills Gap — Scatter Analysis</h3>
             <ResponsiveContainer width="100%" height={360}>
               <ScatterChart margin={{ left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
                 <XAxis dataKey="x" name="Avg Salary ($k)" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Avg Salary ($k/yr)', position: 'insideBottom', offset: -5, fontSize: 11 }} />
                 <YAxis dataKey="y" name="Skills Gap" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Skills Gap (0-10)', angle: -90, position: 'insideLeft', fontSize: 11 }} />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.card, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Salary: ${payload[0]?.payload?.x}k<br />Skills Gap: {payload[0]?.payload?.y}</div> : null} />
-                <Scatter data={scatterData} fill={T.purple} opacity={0.7} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => payload?.length ? <div style={{ background: T.surface, border: `1px solid ${T.border}`, padding: '8px 12px', fontSize: 12 }}><b>{payload[0]?.payload?.name}</b><br />Salary: ${payload[0]?.payload?.x}k<br />Skills Gap: {payload[0]?.payload?.y}</div> : null} />
+                <Scatter data={scatterData} fill={PURPLE} opacity={0.7} />
               </ScatterChart>
             </ResponsiveContainer>
           </div>
         )}
 
         {tab === 6 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Diversity Score by Sector</h3>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={SECTORS.map(sec => {
@@ -286,7 +288,7 @@ export default function GreenJobsGrowthPage() {
         )}
 
         {tab === 7 && (
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+          <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 16 }}>Entry Barrier Distribution — Occupations by Barrier Level</h3>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={ENTRY_BARRIERS.map(b => {
@@ -306,11 +308,11 @@ export default function GreenJobsGrowthPage() {
           </div>
         )}
 
-        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20, marginTop: 20, overflowX: 'auto' }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, color: T.navy, marginBottom: 12 }}>Occupation Detail Table</h3>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
-              <tr style={{ background: T.sub }}>
+              <tr style={{ background: T.surfaceH }}>
                 {['Occupation', 'Sector', 'Country', 'Current (k)', 'Proj 2030 (k)', 'Growth %/yr', 'Salary ($k)', 'Skills Gap', 'Diversity', 'Entry Barrier'].map(h => (
                   <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: T.textSec, fontWeight: 600, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -319,16 +321,16 @@ export default function GreenJobsGrowthPage() {
             <tbody>
               {filtered.slice(0, 25).map(j => (
                 <tr key={j.id} style={{ borderBottom: `1px solid ${T.borderL}` }}>
-                  <td style={{ padding: '7px 10px', color: T.textPri, fontWeight: 500 }}>{j.name}</td>
+                  <td style={{ padding: '7px 10px', color: T.text, fontWeight: 500 }}>{j.name}</td>
                   <td style={{ padding: '7px 10px', color: T.textSec }}>{j.sector}</td>
                   <td style={{ padding: '7px 10px', color: T.textSec }}>{j.country}</td>
-                  <td style={{ padding: '7px 10px', color: T.textPri }}>{j.currentJobs}</td>
+                  <td style={{ padding: '7px 10px', color: T.text }}>{j.currentJobs}</td>
                   <td style={{ padding: '7px 10px', color: T.green, fontWeight: 600 }}>{(j.projectedJobs2030 * policyBoost * investmentMultiplier).toFixed(0)}</td>
                   <td style={{ padding: '7px 10px', color: T.teal }}>{j.growthRate}%</td>
                   <td style={{ padding: '7px 10px', color: T.gold }}>${j.avgSalary}k</td>
                   <td style={{ padding: '7px 10px', color: j.skillsGap >= 7 ? T.red : j.skillsGap >= 4 ? T.amber : T.green }}>{j.skillsGap}</td>
-                  <td style={{ padding: '7px 10px', color: T.textPri }}>{j.diversityScore}</td>
-                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.sub, padding: '2px 8px', borderRadius: 10, fontSize: 11 }}>{j.entryBarrier}</span></td>
+                  <td style={{ padding: '7px 10px', color: T.text }}>{j.diversityScore}</td>
+                  <td style={{ padding: '7px 10px' }}><span style={{ background: T.surfaceH, padding: '2px 8px', borderRadius: 10, fontSize: 11 }}>{j.entryBarrier}</span></td>
                 </tr>
               ))}
             </tbody>
