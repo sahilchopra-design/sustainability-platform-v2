@@ -5,7 +5,7 @@ const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',bord
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 const ACCENT='#7c3aed';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6','#ec4899'];
 const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
-const TABS=['PAI Dashboard','Fund Screening','Pre-contractual','Periodic Reports'];const CLASSF=['All','Article 6','Article 8','Article 8+','Article 9'];const PAGE=12;
+const TABS=['PAI Dashboard','Fund Screening','Pre-contractual','Periodic Reports'];const CLASSF=['All','Article 6','Article 8','Article 8+','Article 9'];const PAGE=12;const PERIODS=['H1 2024','H2 2023','H1 2023','FY 2023'];
 const PAI_INDICATORS=['GHG Emissions','Carbon Footprint','GHG Intensity','Fossil Fuel Exposure','Non-Renewable Energy','Energy Intensity','Biodiversity Impact','Water Emissions','Hazardous Waste','UNGC/OECD Violations','Gender Pay Gap','Board Gender Diversity','Controversial Weapons','Social Violations'];
 const FUNDS=Array.from({length:60},(_,i)=>{
   const names=['Amundi ESG Leaders','BlackRock Sustainable','Vanguard ESG','PIMCO Climate Bond','Robeco Climate','Nordea Stars','Pictet Clean Energy','BNP Paribas Green','DWS ESG Strategy','UBS Sustainable','Fidelity Sustainable','Schroders Climate','AXA Climate Equity','Invesco ESG','Wellington Climate','HSBC ESG Equity','JPM Climate Aware','Goldman Climate','Morgan Stanley Impact','T Rowe Price ESG','Allianz Climate','Aviva Investors ESG','Legal & General ESG','M&G Positive Impact','Aberdeen Climate','Columbia ESG','Natixis Impact','Franklin ESG','Nuveen ESG','State Street ESG','iShares ESG Core','Xtrackers MSCI ESG','SPDR Climate','Lyxor Green Bond','Ossiam Climate','Mirova Global Sust','Candriam Sustainable','NN Green Bond','Comgest Positive','First Sentier Sust','Impax Environmental','Liontrust Sustainable','Janus Henderson Sust','Jupiter Climate','Stewart Investors','Baillie Gifford Pos','EdenTree Responsible','Sarasin Responsible','Rathbone Ethical','Triodos Impact','BMO Responsible','Royal London Sust','Aegon Sustainable','Standard Life ESG','Scottish Widows ESG','Aviva Pen Steward','NEST Ethical','People Pension Sust','Hargreaves ESG','AJ Bell Resp'];
@@ -16,7 +16,7 @@ const FUNDS=Array.from({length:60},(_,i)=>{
 });
 export default function SfdrV2ReportingPage(){
   const ccData = useCarbonCredit(); const ccReg = ccData.adaptForRegulatory();
-  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[clsF,setClsF]=useState('All');const[sortCol,setSortCol]=useState('paiScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);
+  const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[clsF,setClsF]=useState('All');const[sortCol,setSortCol]=useState('paiScore');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);const[periodicPeriod,setPeriodicPeriod]=useState('H1 2024');const[periodicStatusF,setPeriodicStatusF]=useState('All');
   const filtered=useMemo(()=>{let d=[...FUNDS];if(search)d=d.filter(r=>r.name.toLowerCase().includes(search.toLowerCase()));if(clsF!=='All')d=d.filter(r=>r.classification===clsF);d.sort((a,b)=>sortDir==='asc'?(a[sortCol]>b[sortCol]?1:-1):(a[sortCol]<b[sortCol]?1:-1));return d;},[search,clsF,sortCol,sortDir]);
   const paged=useMemo(()=>filtered.slice((page-1)*PAGE,page*PAGE),[filtered,page]);const totalPages=Math.ceil(filtered.length/PAGE);
   const doSort=col=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(1);};
@@ -50,10 +50,52 @@ export default function SfdrV2ReportingPage(){
     <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Sustainable Investment %</div><ResponsiveContainer width="100%" height={300}><BarChart data={[...filtered].sort((a,b)=>b.sustainableInvest-a.sustainableInvest).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><YAxis type="category" dataKey="name" tick={{fontSize:7,fill:T.textSec}} width={110}/><Tooltip {...tip}/><Bar dataKey="sustainableInvest" fill={T.sage} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
     <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>DNSH Compliance</div><ResponsiveContainer width="100%" height={300}><BarChart data={[...filtered].sort((a,b)=>a.dnshCompliance-b.dnshCompliance).slice(0,15)} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} domain={[0,100]}/><YAxis type="category" dataKey="name" tick={{fontSize:7,fill:T.textSec}} width={110}/><Tooltip {...tip}/><Bar dataKey="dnshCompliance" fill={T.navy} radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></div>
   </div></div>);
-  const renderPeriodic=()=>(<div><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Report Status</div><ResponsiveContainer width="100%" height={260}><PieChart><Pie data={[{n:'Published',v:FUNDS.filter(f=>f.reportStatus==='Published').length},{n:'Draft',v:FUNDS.filter(f=>f.reportStatus==='Draft').length},{n:'Pending',v:FUNDS.filter(f=>f.reportStatus==='Pending').length}]} cx="50%" cy="50%" outerRadius={90} dataKey="v" label={({n,v})=>`${n}: ${v}`}>{[T.green,T.amber,T.red].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/></PieChart></ResponsiveContainer></div>
-    <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Data Completeness</div><ResponsiveContainer width="100%" height={260}><BarChart data={[{r:'<60%',c:filtered.filter(f=>f.dataCompleteness<60).length},{r:'60-70%',c:filtered.filter(f=>f.dataCompleteness>=60&&f.dataCompleteness<70).length},{r:'70-80%',c:filtered.filter(f=>f.dataCompleteness>=70&&f.dataCompleteness<80).length},{r:'80-90%',c:filtered.filter(f=>f.dataCompleteness>=80&&f.dataCompleteness<90).length},{r:'>90%',c:filtered.filter(f=>f.dataCompleteness>=90).length}]}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="r" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="c" fill={ACCENT} radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></div>
-  </div></div>);
+  const renderPeriodic=()=>{
+    const periodFunds=periodicStatusF==='All'?FUNDS:FUNDS.filter(f=>f.reportStatus===periodicStatusF);
+    const pStats={pub:FUNDS.filter(f=>f.reportStatus==='Published').length,dft:FUNDS.filter(f=>f.reportStatus==='Draft').length,pnd:FUNDS.filter(f=>f.reportStatus==='Pending').length};
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return(<div>
+      <div style={{display:'flex',gap:8,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}>
+        <span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>Period:</span>
+        {PERIODS.map(p=><button key={p} onClick={()=>setPeriodicPeriod(p)} style={btnS(periodicPeriod===p)}>{p}</button>)}
+        <span style={{fontSize:11,color:T.textSec,fontFamily:T.mono,marginLeft:8}}>Status:</span>
+        {['All','Published','Draft','Pending'].map(s=><button key={s} onClick={()=>setPeriodicStatusF(s)} style={btnS(periodicStatusF===s)}>{s}</button>)}
+      </div>
+      <div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
+        {kpi('Total Reports',FUNDS.length)}{kpi('Published',pStats.pub,T.green)}{kpi('Draft',pStats.dft,T.amber)}{kpi('Pending',pStats.pnd,T.red)}{kpi('Completion Rate',Math.round(pStats.pub/FUNDS.length*100)+'%',T.green)}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+        <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Report Status Distribution</div>
+          <ResponsiveContainer width="100%" height={240}><PieChart><Pie data={[{name:'Published',value:pStats.pub},{name:'Draft',value:pStats.dft},{name:'Pending',value:pStats.pnd}]} cx="50%" cy="50%" outerRadius={85} dataKey="value" nameKey="name" label={({name,value})=>`${name}: ${value}`}>{[T.green,T.amber,T.red].map((c,i)=><Cell key={i} fill={c}/>)}</Pie><Tooltip {...tip}/><Legend/></PieChart></ResponsiveContainer>
+        </div>
+        <div style={cS}><div style={{fontSize:12,fontWeight:600,color:T.navy,marginBottom:8}}>Data Completeness Distribution</div>
+          <ResponsiveContainer width="100%" height={240}><BarChart data={[{r:'<60%',c:FUNDS.filter(f=>f.dataCompleteness<60).length},{r:'60-70%',c:FUNDS.filter(f=>f.dataCompleteness>=60&&f.dataCompleteness<70).length},{r:'70-80%',c:FUNDS.filter(f=>f.dataCompleteness>=70&&f.dataCompleteness<80).length},{r:'80-90%',c:FUNDS.filter(f=>f.dataCompleteness>=80&&f.dataCompleteness<90).length},{r:'>90%',c:FUNDS.filter(f=>f.dataCompleteness>=90).length}]}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="r" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Bar dataKey="c" fill={ACCENT} radius={[4,4,0,0]} name="Funds"/></BarChart></ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{...cS,padding:0}}>
+        <div style={{padding:'10px 14px',borderBottom:`1px solid ${T.border}`,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <span style={{fontSize:12,fontWeight:600,color:T.navy}}>Periodic Report Inventory — {periodicPeriod}</span>
+          <span style={{fontSize:11,color:T.textSec,fontFamily:T.mono}}>{periodFunds.length} fund{periodFunds.length!==1?'s':''}</span>
+        </div>
+        <div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse'}}>
+          <thead><tr>{['Fund Name','Classification','AUM €B','PAI Score','Tax. Aligned','Data Quality','Report Status','Action'].map(l=><th key={l} style={thS}>{l}</th>)}</tr></thead>
+          <tbody>{periodFunds.map((f,i)=>{
+            const submDate=f.reportStatus==='Published'?`${months[Math.floor(sr(f.id*53)*12)]} 2024`:null;
+            return(<tr key={f.id} style={{background:i%2===0?T.surfaceH:'transparent'}}>
+              <td style={{...tdS,fontWeight:600,maxWidth:180,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{f.name}</td>
+              <td style={{...tdS,fontFamily:T.mono,fontSize:10}}>{f.classification}</td>
+              <td style={tdS}>€{f.aumBn}B</td>
+              <td style={tdS}>{f.paiScore}/100</td>
+              <td style={tdS}>{f.taxonomyAligned}%</td>
+              <td style={tdS}><div style={{display:'flex',alignItems:'center',gap:4}}><div style={{width:48,height:5,background:T.border,borderRadius:3,overflow:'hidden'}}><div style={{width:`${f.dataCompleteness}%`,height:'100%',background:f.dataCompleteness>=80?T.green:f.dataCompleteness>=60?T.amber:T.red}}/></div><span style={{fontSize:10,fontFamily:T.mono}}>{f.dataCompleteness}%</span></div></td>
+              <td style={tdS}><span style={{padding:'2px 8px',borderRadius:4,fontSize:10,fontWeight:600,background:f.reportStatus==='Published'?'#dcfce7':f.reportStatus==='Draft'?'#fef9c3':'#fee2e2',color:f.reportStatus==='Published'?T.green:f.reportStatus==='Draft'?T.amber:T.red}}>{f.reportStatus}{submDate?` · ${submDate}`:''}</span></td>
+              <td style={tdS}><span style={{fontSize:10,color:ACCENT,cursor:'pointer',fontWeight:500}}>{f.reportStatus==='Published'?'↓ Download':f.reportStatus==='Draft'?'✎ Continue':'⊕ Generate'}</span></td>
+            </tr>);
+          })}</tbody>
+        </table></div>
+      </div>
+    </div>);
+  };
   return(<div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
     <div style={{marginBottom:20}}><h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>SFDR V2 Reporting</h1><p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>60 funds | PAI indicators, pre-contractual disclosure, periodic reports</p></div>
     <div style={{display:'flex',gap:8,marginBottom:20}}>{TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={btnS(tab===i)}>{t}</button>)}</div>
