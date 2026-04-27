@@ -1,5 +1,6 @@
 import React,{useState,useMemo} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,Legend,AreaChart,Area} from 'recharts';
+import { BIODIVERSITY_COUNTRY_DATA } from '../../../data/biodiversityData';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -25,6 +26,17 @@ const accounts=Array.from({length:40},(_,i)=>{const s=sr(i*7);const s2=sr(i*13);
     seeaCompliant:sr(i*37)>0.4,dataQuality:['High','Medium','Low'][Math.floor(sr(i*41)*3)],
     lastAssessed:`2025-${String(1+Math.floor(sr(i*43)*12)).padStart(2,'0')}-01`,
     serviceValues:ECO_SERVICES.map((svc,j)=>({service:svc,annualMn:+(0.5+sr(i*47+j)*15).toFixed(1)}))};
+});
+
+// --- Real biodiversity data anchoring (IUCN/WDPA/BII 2023) ---
+const _BIO_MAP_NCA = Object.fromEntries(BIODIVERSITY_COUNTRY_DATA.map(d => [d.country, d]));
+accounts.forEach(r => {
+  const b = _BIO_MAP_NCA[r.country];
+  if (!b) return;
+  r.biodiversityIntactness = b.biodiversity_intactness_index != null ? Math.round(b.biodiversity_intactness_index * 100) : r.biodiversityIntactness;
+  r.soilHealth = b.mean_species_abundance != null ? Math.round(b.mean_species_abundance * 100) : r.soilHealth;
+  r.conditionIndex = b.biodiversity_intactness_index != null ? Math.round(b.biodiversity_intactness_index * 100) : r.conditionIndex;
+  r.habitatIntegrity = b.kba_coverage_pct != null ? Math.round(b.kba_coverage_pct) : r.habitatIntegrity;
 });
 
 const portfolioCompanies=Array.from({length:30},(_,i)=>{const s=sr(i*53);

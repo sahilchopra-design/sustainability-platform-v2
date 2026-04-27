@@ -3,6 +3,7 @@ import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, Cartesia
 import Apr2026CarbonAnalytics from '../../_shared/Apr2026CarbonAnalytics';
 import IndiaAdvancedAnalytics from '../../_shared/IndiaAdvancedAnalytics';
 import IndiaGreenHybridFinance from '../../_shared/IndiaGreenHybridFinance';
+import { INDIA_REC_PRICES, INDIA_PAC_CYCLE_RESULTS, INDIA_CBAM_EXPOSURE as _CCTS_CBAM_EXPOSURE } from '../../../data/indiaCarbonPrices';
 
 const T = { bg:'#0f1117', surface:'#1a1d27', surfaceH:'#22263a', border:'#2a2f45', borderL:'#1e2235', navy:'#1e3a5f', gold:'#d4a843', sage:'#2d6a4f', teal:'#0d4f5c', text:'#e8e0d0', textSec:'#a89880', textMut:'#6b6050', red:'#c0392b', green:'#27ae60', amber:'#e67e22', font:"'DM Sans',sans-serif", mono:"'JetBrains Mono',monospace" };
 const sr = s => { let x = Math.sin(s+1)*10000; return x - Math.floor(x); };
@@ -61,6 +62,26 @@ const BRSR_METRICS = [
   { metric:'Supply Chain Emissions (Scope 3)', unit:'%reported', benchmark:'35%', threshold:'>50%', sebiMandatory:false },
   { metric:'Board ESG Oversight', unit:'%', benchmark:'68%', threshold:'100% (top 1000)', sebiMandatory:true },
 ];
+
+// --- Real India REC & CBAM data (IEX / BEE / GTRI 2021-2023) ---
+const _LATEST_GIF_REC = INDIA_REC_PRICES.length ? INDIA_REC_PRICES[INDIA_REC_PRICES.length - 1] : null;
+// Reference REC prices for renewable energy finance sections
+const REAL_GIF_SOLAR_REC_INR   = _LATEST_GIF_REC ? _LATEST_GIF_REC.solar_rec_inr     : 2500;
+const REAL_GIF_NON_SOLAR_REC_INR = _LATEST_GIF_REC ? _LATEST_GIF_REC.non_solar_rec_inr : 2030;
+// Latest PAC clearing price for carbon credit reference
+const _LATEST_GIF_PAC = INDIA_PAC_CYCLE_RESULTS.length ? INDIA_PAC_CYCLE_RESULTS[INDIA_PAC_CYCLE_RESULTS.length - 1] : null;
+const REAL_GIF_PAC_PRICE_INR   = _LATEST_GIF_PAC ? _LATEST_GIF_PAC.clearing_price_inr_avg : 710;
+// Real CBAM exposure: wire into INFRA_TYPES that have cbamOverlap context where relevant
+// Patch RE Transmission carbonCreditMech description with live REC prices
+INFRA_TYPES.forEach(it => {
+  if (it.type === 'RE Transmission') {
+    it.recSolarInr    = REAL_GIF_SOLAR_REC_INR;
+    it.recNonSolarInr = REAL_GIF_NON_SOLAR_REC_INR;
+    it.pacPriceInr    = REAL_GIF_PAC_PRICE_INR;
+  }
+});
+// cbamExposure: available for display — keyed by product
+const CBAM_EXPOSURE_MAP = Object.fromEntries((_CCTS_CBAM_EXPOSURE || []).map(c => [c.product, c]));
 
 const Kpi = ({ label, value, sub, color }) => (
   <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:'16px 20px', minWidth:160 }}>

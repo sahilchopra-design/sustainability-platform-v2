@@ -5,6 +5,7 @@ import {
   ReferenceLine, ComposedChart, Cell, PieChart, Pie, RadarChart,
   PolarGrid, PolarAngleAxis, Radar,
 } from 'recharts';
+import { IRENA_RENEWABLE_CAPACITY_2023 } from '../../../data/publicDataSeed';
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = {
@@ -29,6 +30,12 @@ const COUNTRIES = [
   { name: 'United States',  cfdStrike: 0,  reference: 55, ptcBase: 27.5, currency: '$', taxRate: 21 },
   { name: 'Taiwan',         cfdStrike: 90, reference: 60, ptcBase: 0, currency: '$', taxRate: 20 },
 ];
+
+// ── Wire real IRENA offshore wind data (GAP-011) ──────────────────────────
+const IRENA_OFFSHORE = (IRENA_RENEWABLE_CAPACITY_2023||[]).filter(c=>(c.wind_offshore_gw||0)>0)
+  .sort((a,b)=>(b.wind_offshore_gw||0)-(a.wind_offshore_gw||0))
+  .map(c=>({country:c.country,iso3:c.iso3,offshore_gw:c.wind_offshore_gw,onshore_gw:c.wind_onshore_gw,total_wind_gw:(c.wind_offshore_gw||0)+(c.wind_onshore_gw||0)}));
+// Top offshore markets (IRENA 2023, GW): China 37.3, UK 14.7, Germany 8.5, Netherlands 3.0, Belgium 2.8, Denmark 2.6, Taiwan 2.2, USA 0.04
 
 function calcIRR(cfs, tol = 1e-8, maxIter = 200) {
   if (!cfs || cfs.length < 2) return 0;

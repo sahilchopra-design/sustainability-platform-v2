@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { VCM_CREDIT_PRICES_2023 } from '../../../data/sovereignMacroSeed';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area, ComposedChart,
   ScatterChart, Scatter, PieChart, Pie, RadarChart, Radar, PolarGrid,
@@ -23,6 +24,25 @@ const BEZERO_RATINGS = ['AAA','AA','A','BBB','BB','B','C','D'];
 const BEZERO_COLOR = { AAA:'#065f46', AA:'#047857', A:'#059669', BBB:'#d97706', BB:'#b45309', B:'#991b1b', C:'#7f1d1d', D:'#450a0a' };
 const BEZERO_PRICE_RANGE = { AAA:[18,35], AA:[14,25], A:[10,20], BBB:[7,15], BB:[4,10], B:[2,7], C:[1,4], D:[0.5,2] };
 
+// ── Real VCM benchmark prices (GAP-009) — Ecosystem Marketplace 2023 ──────
+const VCM_BENCH = Object.fromEntries(
+  (VCM_CREDIT_PRICES_2023?.byProjectType||[]).map(p=>[p.type.split(' ')[0], p])
+);
+const VCM_AVG_PRICES = {
+  'REDD+':        (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.startsWith('REDD+'))?.avg_usd||10.2,
+  'ARR':          (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.startsWith('ARR'))?.avg_usd||14.1,
+  'IFM':          (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.startsWith('IFM'))?.avg_usd||16.8,
+  'Cookstove':    (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('Cooking'))?.avg_usd||13.8,
+  'Renewable Energy': (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('Renewable'))?.avg_usd||3.2,
+  'Biochar':      (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('Biochar'))?.avg_usd||195.0,
+  'DAC':          (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('Direct Air'))?.avg_usd||420.8,
+  'Soil Carbon':  (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('Soil'))?.avg_usd||28.1,
+  'Blue Carbon':  (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('Blue'))?.avg_usd||25.4,
+  'Waste Gas':    (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('Methane'))?.avg_usd||8.4,
+  'CCS':          (VCM_CREDIT_PRICES_2023?.byProjectType||[]).find(p=>p.type.includes('BECCS'))?.avg_usd||180.4,
+  'Mineralization': 280.0,
+};
+
 const METHODOLOGY_NAMES = ['REDD+','ARR','IFM','Cookstove','Renewable Energy','Biochar','DAC','Soil Carbon','Blue Carbon','Waste Gas','CCS','Mineralization'];
 
 const REGISTRY_NAMES = ['Verra','Gold Standard','ACR','CAR','Puro.earth'];
@@ -45,20 +65,20 @@ const CREDITS = Array.from({ length: 40 }, (_, i) => {
   const registry = REGISTRY_NAMES[regIdx];
   const verifier = VERIFIER_NAMES[verIdx];
 
-  // base price by method archetype
+  // base price by method archetype — anchored to real Ecosystem Marketplace 2023 VCM prices
   const methodBase = {
-    'REDD+': 11 + sr(seed+6)*6,
-    'ARR': 13 + sr(seed+6)*8,
-    'IFM': 9 + sr(seed+6)*5,
-    'Cookstove': 6 + sr(seed+6)*6,
-    'Renewable Energy': 2 + sr(seed+6)*4,
-    'Biochar': 70 + sr(seed+6)*40,
-    'DAC': 400 + sr(seed+6)*250,
-    'Soil Carbon': 15 + sr(seed+6)*12,
-    'Blue Carbon': 22 + sr(seed+6)*18,
-    'Waste Gas': 4 + sr(seed+6)*5,
-    'CCS': 100 + sr(seed+6)*60,
-    'Mineralization': 80 + sr(seed+6)*50,
+    'REDD+': VCM_AVG_PRICES['REDD+'] + (sr(seed+6)-0.5)*4,
+    'ARR': VCM_AVG_PRICES['ARR'] + (sr(seed+6)-0.5)*5,
+    'IFM': VCM_AVG_PRICES['IFM'] + (sr(seed+6)-0.5)*6,
+    'Cookstove': VCM_AVG_PRICES['Cookstove'] + (sr(seed+6)-0.5)*5,
+    'Renewable Energy': VCM_AVG_PRICES['Renewable Energy'] + (sr(seed+6)-0.5)*1.5,
+    'Biochar': VCM_AVG_PRICES['Biochar'] + (sr(seed+6)-0.5)*40,
+    'DAC': VCM_AVG_PRICES['DAC'] + (sr(seed+6)-0.5)*60,
+    'Soil Carbon': VCM_AVG_PRICES['Soil Carbon'] + (sr(seed+6)-0.5)*8,
+    'Blue Carbon': VCM_AVG_PRICES['Blue Carbon'] + (sr(seed+6)-0.5)*8,
+    'Waste Gas': VCM_AVG_PRICES['Waste Gas'] + (sr(seed+6)-0.5)*3,
+    'CCS': VCM_AVG_PRICES['CCS'] + (sr(seed+6)-0.5)*30,
+    'Mineralization': VCM_AVG_PRICES['Mineralization'] + (sr(seed+6)-0.5)*50,
   }[method] || 10 + sr(seed+6)*10;
 
   const vintage    = 2010 + Math.floor(sr(seed+7) * 15);

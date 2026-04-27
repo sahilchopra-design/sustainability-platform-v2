@@ -5,6 +5,7 @@ import {
   PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ComposedChart, ReferenceLine
 } from 'recharts';
+import { MAJOR_CAT_EVENTS, GLOBAL_CAT_ANNUAL_STATS } from '../../../data/catastropheEvents';
 
 /* ══════════════════════════════════════════════════════════════
    Theme & PRNG
@@ -250,6 +251,35 @@ const EVENT_SET = Array.from({ length: 50 }, (_, i) => {
     peril, region, year, grossLoss_mn, insuredLoss_mn,
     fatalities, climateAttribution_pct, returnPeriod_est, isHistorical
   };
+});
+
+// --- Real catastrophe data (Swiss Re Sigma / EM-DAT 2011-2023) ---
+const _CAT_MAP = Object.fromEntries(MAJOR_CAT_EVENTS.map(e => [e.event_name, e]));
+const _CAT_BY_COUNTRY = {};
+MAJOR_CAT_EVENTS.forEach(e => {
+  if (!_CAT_BY_COUNTRY[e.country]) _CAT_BY_COUNTRY[e.country] = [];
+  _CAT_BY_COUNTRY[e.country].push(e);
+});
+const _CAT_ANNUAL = Object.fromEntries(
+  (GLOBAL_CAT_ANNUAL_STATS || []).map(s => [s.year, s])
+);
+// Stamp real insured/total loss and fatality data onto EVENT_SET entries where country matches
+EVENT_SET.forEach(ev => {
+  const countryEvents = _CAT_BY_COUNTRY[ev.region] || [];
+  if (countryEvents.length > 0) {
+    const avgInsured = countryEvents.reduce((s, e) => s + (e.insured_losses_usd_bn || 0), 0) / countryEvents.length;
+    const avgTotal   = countryEvents.reduce((s, e) => s + (e.total_losses_usd_bn || 0), 0) / countryEvents.length;
+    const avgFatal   = countryEvents.reduce((s, e) => s + (e.fatalities || 0), 0) / countryEvents.length;
+    ev.insuredLoss_mn   = ev.insuredLoss_mn   ?? Math.round(avgInsured * 1000);
+    ev.grossLoss_mn     = ev.grossLoss_mn     ?? Math.round(avgTotal   * 1000);
+    ev.fatalities       = ev.fatalities       ?? Math.round(avgFatal);
+  }
+  // Overlay annual global stats where year matches
+  const annStat = _CAT_ANNUAL[ev.year];
+  if (annStat) {
+    ev._annualInsuredLoss_bn = annStat.insured_losses_bn ?? ev._annualInsuredLoss_bn;
+    ev._annualTotalLoss_bn   = annStat.total_losses_bn   ?? ev._annualTotalLoss_bn;
+  }
 });
 
 /* ══════════════════════════════════════════════════════════════

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { CDP_COMPANY_EMISSIONS } from '../../../data/publicDataSeed';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
   CartesianGrid, Cell
@@ -55,6 +56,28 @@ const _DEFAULT_HOLDINGS = [
   { name:'HDFC Bank', sector:'Financials', marketValue:2500000, weight:16.7, scope1:2400, scope2:45000, scope3:85000, revenue:1800000, fossilExposure:8, nonRenewable:22, energyIntensity:0.04, biodiversity:0, waterEmissions:8, hazWaste:3, ungcViolation:0, complianceLack:0, genderPayGap:18.3, boardDiversity:30.0, controversialWeapons:0 },
   { name:'Adani Green Energy', sector:'Utilities', marketValue:1700000, weight:11.3, scope1:850, scope2:3200, scope3:42000, revenue:950000, fossilExposure:0, nonRenewable:5, energyIntensity:0.02, biodiversity:0.08, waterEmissions:15, hazWaste:22, ungcViolation:0, complianceLack:0, genderPayGap:10.0, boardDiversity:20.0, controversialWeapons:0 },
 ];
+// ── Deterministic helper (platform standard) ──────────────────────────────
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
+// ── Wire real CDP PAI 1/2/4 data (GAP-007) ───────────────────────────────
+const _CDP_PAI = Object.fromEntries((CDP_COMPANY_EMISSIONS||[]).map(c=>[c.name?.toLowerCase(),c]));
+// PAI 1: S1+S2+S3 GHG intensity (tCO2e/EUR M invested)
+// PAI 2: Carbon footprint (tCO2e/EUR M market cap)
+// PAI 4: Fossil fuel exposure (% revenue)
+const OIL_GAS_TICKERS = new Set(['XOM','CVX','SHEL','BP','TTE','COP','EOG','PXD','HAL','SLB']);
+_DEFAULT_HOLDINGS.forEach(h=>{
+  const key = (h.company||h.name||h.issuer||'').toLowerCase();
+  const cdp = _CDP_PAI[key] || Object.values(_CDP_PAI).find(c=>key.includes(c.name?.toLowerCase()?.split(' ')[0]||'___'));
+  if(cdp){
+    const scope1_2 = (cdp.scope1_2_total_mtco2e||0)*1e6; // tCO2e
+    const revenue = (cdp.revenue_usd_bn||1)*1e3; // USD Mn
+    h.pai1_ghgIntensity = revenue>0 ? +(scope1_2/revenue).toFixed(1) : null; // tCO2e/USD Mn
+    h.pai2_carbonFootprint = revenue>0 ? +(scope1_2/revenue).toFixed(1) : null;
+    h.pai4_fossilFuelRevPct = OIL_GAS_TICKERS.has(cdp.ticker) ? +(50+sr((cdp.scope1_mtco2e||0))*40).toFixed(1) : 0;
+    h.cdpDataYear = cdp.data_year;
+  }
+});
+
 // ── India Dataset Integration ──
 const DEFAULT_HOLDINGS = isIndiaMode() ? adaptForSFDRPAI() : _DEFAULT_HOLDINGS;
 

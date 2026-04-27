@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
+import { ILO_LABOR_INDICATORS } from '../../../data/laborIndicators';
 
 /* ══════════════════════════════════════════════════════════════
    THEME
@@ -85,6 +86,23 @@ function computeSupplyChainCarbon(company) {
     multiplier: companyTotal > 0 ? grandTotal / companyTotal : 0,
     intensityPerRev: rev > 0 ? (grandTotal / (rev * 1e6)) * 1e6 : 0,
     mult,
+  };
+}
+
+// --- ILO labor indicators by country (ILOSTAT 2022) ---
+const _ILO_MAP = Object.fromEntries(ILO_LABOR_INDICATORS.map(l => [l.country, l]));
+// Helper: get ILO data for a company's HQ country
+function getIloLaborData(company) {
+  const country = company.country || company.hq_country || '';
+  const l = _ILO_MAP[country];
+  if (!l) return null;
+  return {
+    informalEmploymentPct: l.informal_employment_pct ?? null,
+    childLaborRate:        l.child_labor_rate_pct    ?? null,
+    unionDensity:          l.union_density_pct       ?? null,
+    minWageUsd:            l.min_wage_usd_month      ?? null,
+    fatalInjuryRate:       l.fatal_occupational_per_100k ?? null,
+    youthUnemployment:     l.youth_unemployment_pct  ?? null,
   };
 }
 

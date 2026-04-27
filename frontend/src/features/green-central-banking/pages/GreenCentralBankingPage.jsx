@@ -1,5 +1,6 @@
 import React,{useState,useMemo,useCallback} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
+import { BANK_CAPITAL_RATIOS, CLIMATE_LOAN_EXPOSURE } from '../../../data/bankCapitalData';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -13,6 +14,42 @@ const badge=(v,th)=>{const[lo,mid,hi]=th;const bg=v>=hi?'rgba(5,150,105,0.12)':v
 const CBS=(()=>{const names=['European Central Bank','Federal Reserve','Bank of England','Bank of Japan','Peoples Bank China','Reserve Bank India','Bank of Canada','Reserve Bank Aus','Bundesbank','Banque de France','De Nederlandsche Bank','Banca dItalia','Banco de Espana','Swiss National Bank','Sveriges Riksbank','Norges Bank','Danmarks Nationalbank','Bank of Korea','Monetary Auth Singapore','Bank Negara Malaysia','Bank of Thailand','Central Bank Brazil','Banco de Mexico','Central Bank Chile','Central Bank Colombia','South African Reserve','Bank of Ghana','Central Bank Nigeria','Bank Al-Maghrib','Reserve Bank NZ'];
 const regs=['Europe','Americas','Europe','Asia Pacific','Asia Pacific','Asia Pacific','Americas','Asia Pacific','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Europe','Asia Pacific','Asia Pacific','Asia Pacific','Asia Pacific','Americas','Americas','Americas','Americas','Africa','Africa','Africa','Africa','Asia Pacific'];
 return names.map((n,i)=>({id:i+1,name:n,region:regs[i],ngfsMemb:sr(i*7)>0.2?'Yes':'No',greenQe:sr(i*11)>0.6?'Active':sr(i*11)>0.3?'Planned':'None',climateStress:sr(i*13)>0.45?'Mandatory':sr(i*13)>0.25?'Voluntary':'None',greenBondPurchase:Math.round(sr(i*17)*80),taxonomyAdoption:Math.round(sr(i*19)*90),disclosureReq:sr(i*23)>0.4?'Mandatory':sr(i*23)>0.2?'Comply-or-Explain':'Voluntary',capitalReqs:sr(i*29)>0.5?'Active':'Under Review',greenScore:Math.round(15+sr(i*31)*80),reserveGreening:Math.round(sr(i*37)*45),researchOutput:Math.round(2+sr(i*41)*48),coalExclusion:sr(i*43)>0.5?'Yes':'No',scenarioAnalysis:sr(i*47)>0.4?'NGFS':'Internal',supervisoryExpect:Math.round(10+sr(i*53)*85),transitionPlan:sr(i*59)>0.5?'Required':'Encouraged',macroprudential:Math.round(5+sr(i*61)*80),assets:Math.round(50+sr(i*67)*9950)}));})();
+
+// --- Real bank capital data overlay (World Bank GFDD / BIS / EBA 2022) ---
+const _BCR_MAP = Object.fromEntries(BANK_CAPITAL_RATIOS.map(b => [b.country, b]));
+const _CLE_MAP = Object.fromEntries(CLIMATE_LOAN_EXPOSURE.map(cl => [cl.country, cl]));
+// Map central bank names to country names for lookup
+const _CB_COUNTRY_MAP = {
+  'European Central Bank': 'Germany', 'Federal Reserve': 'United States',
+  'Bank of England': 'United Kingdom', 'Bank of Japan': 'Japan',
+  'Peoples Bank China': 'China', 'Reserve Bank India': 'India',
+  'Bank of Canada': 'Canada', 'Reserve Bank Aus': 'Australia',
+  'Bundesbank': 'Germany', 'Banque de France': 'France',
+  'De Nederlandsche Bank': 'Netherlands', 'Banca dItalia': 'Italy',
+  'Banco de Espana': 'Spain', 'Swiss National Bank': 'Switzerland',
+  'Sveriges Riksbank': 'Sweden', 'Norges Bank': 'Norway',
+  'Danmarks Nationalbank': 'Denmark', 'Bank of Korea': 'South Korea',
+  'Monetary Auth Singapore': 'Singapore', 'Bank Negara Malaysia': 'Malaysia',
+  'Bank of Thailand': 'Thailand', 'Central Bank Brazil': 'Brazil',
+  'Banco de Mexico': 'Mexico', 'Central Bank Chile': 'Chile',
+  'Central Bank Colombia': 'Colombia', 'South African Reserve': 'South Africa',
+  'Bank of Ghana': 'Ghana', 'Central Bank Nigeria': 'Nigeria',
+  'Bank Al-Maghrib': 'Morocco', 'Reserve Bank NZ': 'New Zealand',
+};
+CBS.forEach(cb => {
+  const cName = _CB_COUNTRY_MAP[cb.name] || cb.name;
+  const b  = _BCR_MAP[cName];
+  const cl = _CLE_MAP[cName];
+  if (b) {
+    cb.tier1Ratio              = b.tier1_capital_ratio_pct       ?? cb.tier1Ratio;
+    cb.capitalAdequacyRatio    = b.total_capital_ratio_pct       ?? cb.capitalAdequacyRatio;
+    cb.nplRatio                = b.npl_ratio_pct                 ?? cb.nplRatio;
+  }
+  if (cl) {
+    cb.greenLoanPct            = cl.taxonomy_aligned_pct         ?? cb.greenLoanPct;
+    cb.highCarbonExposure      = cl.high_carbon_loans_pct_total  ?? cb.highCarbonExposure;
+  }
+});
 
 const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,greenQeVol:Math.round(100+i*15+sr(i*7)*80),cbsActive:Math.round(8+i*0.6+sr(i*11)*3),stressTests:Math.round(3+sr(i*13)*8),greenBonds:Math.round(200+i*20+sr(i*17)*100)}));
 const QE_DATA=[{instrument:'Green Sovereign Bonds',volume:450,share:35,growth:12},{instrument:'Green Corporate Bonds',volume:280,share:22,growth:18},{instrument:'Climate MBS',volume:120,share:9,growth:25},{instrument:'Sustainability Bonds',volume:190,share:15,growth:15},{instrument:'Transition Bonds',volume:80,share:6,growth:30},{instrument:'Social Bonds',volume:165,share:13,growth:8}];

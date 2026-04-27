@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { GREEN_BOND_ISSUANCE_2023 } from '../../../data/publicDataSeed';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ComposedChart, Line, LineChart, ReferenceLine,
@@ -57,6 +58,13 @@ const _DEFAULT_BONDS = Array.from({ length: 100 }, (_, i) => {
     blendedImpact: sr(i * 103 + 24) * 80 + 20,
   };
 });
+// ── Wire real green bond market data (GAP-010) ────────────────────────────
+const GB_MARKET = GREEN_BOND_ISSUANCE_2023 || [];
+const GB_COUNTRY_MAP = Object.fromEntries(GB_MARKET.map(c=>[c.iso3, c]));
+const GB_TOTAL_2023 = GB_MARKET.reduce((s,c)=>s+c.issuance_usd_bn,0).toFixed(0);
+// Real country issuance volumes (USD bn, 2023) — CBI Annual Report 2023
+const GB_COUNTRY_ISSUANCE = GB_MARKET.slice(0,12).map(c=>({name:c.country, iso:c.iso3, value:c.issuance_usd_bn, yoy:c.yoy_change_pct, sovereign:c.sovereign_green_bond}));
+
 // ── India Dataset Integration ──
 const BONDS = isIndiaMode() ? (getIndiaGreenBonds() || _DEFAULT_BONDS) : _DEFAULT_BONDS;
 

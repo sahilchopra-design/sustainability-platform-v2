@@ -4,6 +4,7 @@ import {
   LineChart, Line, AreaChart, Area, Cell, Legend, PieChart, Pie,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
+import { SOVEREIGN_MACRO_2024 } from '../../../data/sovereignMacroSeed';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -59,6 +60,14 @@ const CENTRAL_BANKS=[
   {id:39,name:'Central Bank of Turkey',code:'CBRT',country:'Turkey',region:'Europe',ngfs:'Member',ngfsSince:2020,climateMandate:'Emerging',stressTestReq:false,stressTestYear:null,greenQE:false,greenQEVolBn:0,disclosureRules:'Proposed',prudentialReq:'Sustainability action plan',capitalBps:0,publications:2,methodology:'Planned',scenarios:'TBD',banksTested:0,coverageTrillions:0},
   {id:40,name:'Bank of Russia',code:'CBR',country:'Russia',region:'Europe',ngfs:'Non-Member',ngfsSince:null,climateMandate:'None',stressTestReq:false,stressTestYear:null,greenQE:false,greenQEVolBn:0,disclosureRules:'Voluntary',prudentialReq:'None',capitalBps:0,publications:1,methodology:'N/A',scenarios:'N/A',banksTested:0,coverageTrillions:0},
 ];
+
+// ── Wire real macro data (GAP-006) ────────────────────────────────────────
+const _CBC_MACRO_MAP = Object.fromEntries((SOVEREIGN_MACRO_2024||[]).map(c=>[c.country,c]));
+(typeof BANKS!=='undefined'?BANKS:typeof CENTRAL_BANKS!=='undefined'?CENTRAL_BANKS:[]).forEach(b=>{
+  const countryName = b.country || b.name;
+  const m=_CBC_MACRO_MAP[countryName];
+  if(m){ b.gdp=m.gdp_usd_bn; b.inflation=m.inflation_pct; b.debtGdp=m.debt_gdp_pct; }
+});
 
 /* ─── NGFS MEMBERSHIP GROWTH ─── */
 const NGFS_GROWTH=QUARTERS.map((q,i)=>({

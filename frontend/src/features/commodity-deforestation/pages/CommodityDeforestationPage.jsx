@@ -1,5 +1,6 @@
 import React,{useState,useMemo,useCallback} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,AreaChart,Area,Cell,Legend,PieChart,Pie,ScatterChart,Scatter} from 'recharts';
+import { FAO_FOREST_AREA_2020, COMMODITY_DEFORESTATION_RISK } from '../../../data/forestData';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -23,6 +24,18 @@ const COMPANY_NAMES=['Cargill','Wilmar International','Bunge','ADM','Louis Dreyf
 
 const genCountryRisk=()=>COUNTRIES.map((c,i)=>({name:c,region:REGIONS[c],deforestRate:+(sr(i*31)*4.5+0.2).toFixed(2),forestCover:rng(15,85,i*17),riskScore:rng(20,98,i*23),eudrPriority:rng(20,98,i*23)>70?'High':rng(20,98,i*23)>40?'Medium':'Low',primaryCommodity:pick(COMMODITIES,i*7),annualLoss:rng(5000,250000,i*41),protectedArea:rng(5,45,i*53)}));
 const COUNTRY_DATA=genCountryRisk();
+
+// --- Real forest data anchoring (FAO FRA 2020 / Trase.earth 2022) ---
+const _FAO_MAP_CD = Object.fromEntries(FAO_FOREST_AREA_2020.map(d => [d.country, d]));
+const _COMM_MAP_CD = Object.fromEntries(COMMODITY_DEFORESTATION_RISK.map(d => [`${d.commodity}::${d.country}`, d]));
+COUNTRY_DATA.forEach(r => {
+  const f = _FAO_MAP_CD[r.name];
+  if (!f) return;
+  r.forestCover = f.forest_cover_pct ?? r.forestCover;
+  r.deforestRate = f.annual_change_rate_pct != null ? +Math.abs(f.annual_change_rate_pct).toFixed(2) : r.deforestRate;
+  r.annualLoss = f.forest_area_mha != null && f.annual_change_rate_pct != null ? Math.round(Math.abs(f.annual_change_rate_pct) * f.forest_area_mha * 10000) : r.annualLoss;
+  r.protectedArea = f.forest_certification_pct ?? r.protectedArea;
+});
 
 const genCompanies=()=>{const cos=[];for(let i=0;i<100;i++){const name=COMPANY_NAMES[i]||`Company_${i+1}`;const numComm=rng(1,4,i*19);const comms=[];const seed0=i*37;for(let j=0;j<numComm;j++){const c=COMMODITIES[(Math.floor(sr(seed0+j*11)*7))%7];if(!comms.includes(c))comms.push(c);}const commStatus={};comms.forEach((c,ci)=>{commStatus[c]=pick(STATUSES,i*13+ci*7);});const country=pick(COUNTRIES,i*29);cos.push({id:i,name,country,region:REGIONS[country],commodities:comms,commStatus,revenue:rng(500,80000,i*43)*1e6,employees:rng(500,120000,i*47),traceability:rng(10,98,i*53),geoDataPct:rng(5,95,i*59),overallStatus:comms.every(c=>commStatus[c]==='Compliant')?'Compliant':comms.some(c=>commStatus[c]==='Non-Compliant')?'Non-Compliant':comms.some(c=>commStatus[c]==='Partial')?'Partial':'Not Assessed',riskScore:rng(5,95,i*61),size:rng(500,120000,i*47)>50000?'Large Operator':'SME',dueDiligenceScore:rng(15,98,i*67),certifications:CERT_SCHEMES.filter((_,ci)=>sr(i*71+ci*13)>0.65)});}return cos;};
 const COMPANIES=genCompanies();

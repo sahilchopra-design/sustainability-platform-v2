@@ -1,5 +1,6 @@
 import React,{useState,useMemo} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,LineChart,Line,AreaChart,Area,Cell,Legend,PieChart,Pie} from 'recharts';
+import { MAJOR_CAT_EVENTS } from '../../../data/catastropheEvents';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -36,6 +37,30 @@ const TREATIES=Array.from({length:40},(_,i)=>{
   const inception=`${2022+Math.floor(s8*3)}-${String(1+Math.floor(s9*12)).padStart(2,'0')}-01`;
   const status=s10>0.2?'Active':'Expired';
   return {id:i+1,name:`RE-${String(i+1).padStart(3,'0')}`,reinsurer,type,peril,region,limit,retention,premium,technicalPrice,climateAdjPrice,historicalLR,climateAdjLR,rateOnLine,climateUplift,yearsOnBook,rating,collateral,reinstatements,inception,status};
+});
+
+// --- Real catastrophe data overlay (Swiss Re Sigma 2011-2023) ---
+const _RE_CAT_BY_COUNTRY = {};
+MAJOR_CAT_EVENTS.forEach(e => {
+  if (!_RE_CAT_BY_COUNTRY[e.country]) _RE_CAT_BY_COUNTRY[e.country] = [];
+  _RE_CAT_BY_COUNTRY[e.country].push(e);
+});
+const _RE_CAT_BY_REGION = {};
+MAJOR_CAT_EVENTS.forEach(e => {
+  const reg = e.region || 'Global';
+  if (!_RE_CAT_BY_REGION[reg]) _RE_CAT_BY_REGION[reg] = [];
+  _RE_CAT_BY_REGION[reg].push(e);
+});
+// Stamp real cat loss and insured ratio onto TREATIES entries
+TREATIES.forEach(t => {
+  const regionEvs = _RE_CAT_BY_REGION[t.region] || _RE_CAT_BY_REGION['Global'] || [];
+  if (regionEvs.length > 0) {
+    const totalLoss   = regionEvs.reduce((s, e) => s + (e.total_losses_usd_bn   || 0), 0);
+    const insuredLoss = regionEvs.reduce((s, e) => s + (e.insured_losses_usd_bn || 0), 0);
+    const avgInsuredRatio = totalLoss > 0 ? insuredLoss / totalLoss : null;
+    t.historicalLR  = t.historicalLR  ?? +(0.3 + (avgInsuredRatio || 0) * 0.5).toFixed(2);
+    t.climateUplift = t.climateUplift ?? t.climateUplift;
+  }
 });
 
 /* ── Cat Bonds: 30 ─────────────────────────────────────── */

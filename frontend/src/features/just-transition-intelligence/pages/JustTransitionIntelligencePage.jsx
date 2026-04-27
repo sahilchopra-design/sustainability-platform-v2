@@ -3,6 +3,7 @@ import {
   BarChart, Bar, ScatterChart, Scatter, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine
 } from 'recharts';
+import { ILO_LABOR_INDICATORS } from '../../../data/laborIndicators';
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
@@ -14,6 +15,14 @@ const T = {
   teal: '#0891b2',
   card: '#ffffff', sub: '#5c6b7e', indigo: '#4f46e5', font: "'DM Sans','SF Pro Display',system-ui,sans-serif",
   mono: "'JetBrains Mono','SF Mono','Fira Code',monospace"
+};
+
+// --- ILO labor indicators overlay (ILOSTAT 2022) ---
+const _JT_ILO_MAP = Object.fromEntries(ILO_LABOR_INDICATORS.map(l => [l.country, l]));
+// ISO2 → ILO country name mapping for REGIONS entries
+const _JT_ISO2_TO_COUNTRY = {
+  US: 'United States', DE: 'Germany', PL: 'Poland', ZA: 'South Africa',
+  CA: 'Canada', RU: 'Russia', IN: 'India', CO: 'Colombia',
 };
 
 const REGIONS = [
@@ -28,6 +37,19 @@ const REGIONS = [
   { region: 'Jharkhand, India',     country: 'IN', sector: 'Coal Mining',     fossil_jobs: 340000,green_jobs: 45000, wage_fossil: 8000,   wage_green: 6500,   reskill_cost: 2800, vuln: 96, jtf_need: 34000, jtf_avail: 800, color: T.red },
   { region: 'La Guajira, Colombia', country: 'CO', sector: 'Coal Exports',    fossil_jobs: 12000, green_jobs: 18000, wage_fossil: 15000,  wage_green: 14000,  reskill_cost: 140,  vuln: 72, jtf_need: 1200, jtf_avail: 680, color: T.amber },
 ];
+
+// Stamp real ILO labor data onto REGIONS entries
+REGIONS.forEach(r => {
+  const cName = _JT_ISO2_TO_COUNTRY[r.country] || r.country;
+  const l = _JT_ILO_MAP[cName];
+  if (l) {
+    r.informalPct         = r.informalPct         ?? l.informal_employment_pct;
+    r.youthUnemploymentPct= r.youthUnemploymentPct ?? l.youth_unemployment_pct;
+    r.unionDensity        = r.unionDensity        ?? l.union_density_pct;
+    r.womenInMgmtPct      = r.womenInMgmtPct      ?? l.women_in_mgmt_pct;
+    r.minWage             = r.minWage             ?? l.min_wage_usd_month;
+  }
+});
 
 const ILO_PILLARS = [
   { name: 'Social Dialogue', desc: 'Inclusive consultation with workers, unions, communities', weight: 25, color: T.blue },

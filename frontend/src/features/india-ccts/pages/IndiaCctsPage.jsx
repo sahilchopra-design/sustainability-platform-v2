@@ -11,6 +11,12 @@ import { CEA_NATIONAL_GRID_EF, PAT_SECTOR_BENCHMARKS } from '../../../data/ceaGr
 import ReportExporter from '../../../components/ReportExporter';
 import CurrencyToggle from '../../../components/CurrencyToggle';
 import { DATA_CAPTURE_SCHEMAS, METHODOLOGY_ENGINES, TOOL_IMPLEMENTATIONS, validateInputs, generateAssuranceReport, runBatchCalculation, aggregateCCTSPortfolio } from '../../../data/cctsEngine';
+import { INDIA_REC_PRICES, INDIA_PAC_CYCLE_RESULTS } from '../../../data/indiaCarbonPrices';
+
+// Pre-compute real seed anchors (used in PRICING patch below and in override block)
+const _SEED_LATEST_REC = INDIA_REC_PRICES.length ? INDIA_REC_PRICES[INDIA_REC_PRICES.length - 1] : null;
+const _SEED_LATEST_PAC = INDIA_PAC_CYCLE_RESULTS.length ? INDIA_PAC_CYCLE_RESULTS[INDIA_PAC_CYCLE_RESULTS.length - 1] : null;
+const REAL_PAC_PRICE_INR = _SEED_LATEST_PAC ? _SEED_LATEST_PAC.clearing_price_inr_avg : 710;
 
 /* ── theme ── */
 const T = {
@@ -151,6 +157,8 @@ const PRICING = {
   penalty_multiplier: 2,
   annual_eiva_reduction_rate: 0.0168,
 };
+// Anchor PRICING to real BEE PAC clearing price (latest cycle)
+PRICING.estimated_initial_price_inr = REAL_PAC_PRICE_INR ?? PRICING.estimated_initial_price_inr;
 
 const INTL_CARBON_PRICES = [
   { market: 'EU ETS', price_usd: 65, currency: 'EUR', year: 2025 },
@@ -170,6 +178,22 @@ const PAT_HISTORY = [
   { cycle: 'PAT VI', period: 'FY20-23', entities: 958, targetSaving_mtoe: 12.74, achievedSaving_mtoe: 14.1, escerts: 18500, pct: 111 },
   { cycle: 'PAT VII', period: 'FY22-25', entities: 1073, targetSaving_mtoe: 15.71, achievedSaving_mtoe: null, escerts: null, pct: null },
 ];
+
+// --- Real India REC & PAC cycle data (IEX / BEE 2021-2023) ---
+// Patch PAT_HISTORY cycle 1-3 with real BEE-sourced numbers
+const _PAT_REAL = { 1: INDIA_PAC_CYCLE_RESULTS[0], 2: INDIA_PAC_CYCLE_RESULTS[1], 3: INDIA_PAC_CYCLE_RESULTS[2] };
+PAT_HISTORY.forEach(row => {
+  const cycleNum = parseInt(row.cycle.replace(/[^0-9]/g, ''), 10);
+  const real = _PAT_REAL[cycleNum];
+  if (real) {
+    row.achievedSaving_mtoe = real.energy_saved_mtoe ?? row.achievedSaving_mtoe;
+    row.escerts              = real.escerts_issued_m != null ? Math.round(real.escerts_issued_m * 1000) : row.escerts;
+    row.entities             = real.participating_units ?? row.entities;
+  }
+});
+// Latest REC spot prices (Dec 2023) — also available as REAL_PAC_PRICE_INR (defined at module top)
+const REAL_SOLAR_REC_INR     = _SEED_LATEST_REC ? _SEED_LATEST_REC.solar_rec_inr     : 2500;
+const REAL_NON_SOLAR_REC_INR = _SEED_LATEST_REC ? _SEED_LATEST_REC.non_solar_rec_inr : 2030;
 
 const COMPLIANCE_STEPS = [
   { step: 1, title: 'EIVA Allocation', desc: 'BEE allocates Emission Intensity Value Allowances based on sector benchmark and historical intensity', duration: 'Q1 of compliance year' },

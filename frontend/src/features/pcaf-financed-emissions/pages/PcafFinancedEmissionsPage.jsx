@@ -22,6 +22,7 @@ import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 import PortfolioUploader from '../../../components/PortfolioUploader';
 import ReportExporter from '../../../components/ReportExporter';
 import CurrencyToggle from '../../../components/CurrencyToggle';
+import { CDP_COMPANY_EMISSIONS } from '../../../data/publicDataSeed';
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME, PRNG, UTILITIES
@@ -275,6 +276,23 @@ const BASE_POSITIONS=[
   // ── Undrawn Commitments (1 position) ── PCAF Ch.4.13 ──
   {id:60,name:'Revolving Credit Facility \u2014 Diversified Ind.',ticker:null,country:'US',geo:'Americas',assetClass:'Undrawn Commitments',sector:'Industrials',evic:65,outstanding:200,scope1:1420000,scope2:680000,scope3:12000000,dqs:4,source:'Sector-avg EF; CCF=75%',currency:'USD',ccf:0.75,committedAmount:800},
 ];
+// ── Wire real CDP emissions for PCAF calculations (GAP-001) ──────────────
+const _CDP_PCAF = Object.fromEntries((CDP_COMPANY_EMISSIONS||[]).map(c=>[c.name?.toLowerCase(),c]));
+const _CDP_TICKER_PCAF = Object.fromEntries((CDP_COMPANY_EMISSIONS||[]).map(c=>[c.ticker?.toLowerCase(),c]));
+// Override synthetic GHG values with real CDP data where company names match
+(typeof BASE_POSITIONS!=='undefined'?BASE_POSITIONS:[]).forEach(h=>{
+  const key = (h.company||h.name||'').toLowerCase();
+  const cdp = _CDP_PCAF[key] || _CDP_TICKER_PCAF[(h.ticker||'').toLowerCase()] || Object.values(_CDP_PCAF).find(c=>key.includes(c.name?.toLowerCase()?.split(' ')[0]||'___'));
+  if(cdp){
+    h.scope1Kt = Math.round((cdp.scope1_mtco2e||0)*1000);
+    h.scope2Kt = Math.round((cdp.scope2_market_mtco2e||0)*1000);
+    h.totalEmissionsKt = Math.round((cdp.scope1_2_total_mtco2e||0)*1000);
+    h.ghgIntensity = cdp.ghg_intensity;
+    h.cdpDisclosed = true;
+    h.cdpDataYear = cdp.data_year;
+  }
+});
+
 // ── India Dataset Integration ──
 const _INDIA_PCAF = isIndiaMode() ? adaptForPCAF().slice(0, 30).map((c, i) => ({
   id: i + 1, name: c.name, ticker: c.ticker, country: 'IN', geo: 'APAC',

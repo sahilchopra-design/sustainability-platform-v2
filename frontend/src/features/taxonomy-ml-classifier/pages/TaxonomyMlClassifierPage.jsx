@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EU_TAXONOMY_ACTIVITIES, EU_TAXONOMY_SECTOR_ELIGIBILITY } from '../../../data/euTaxonomyEligibility';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -117,6 +118,35 @@ const ISSUERS = Array.from({ length: 40 }, (_, i) => {
     sbti: ['None', 'Committed', '1.5°C', 'WB2C'][Math.floor(sr(i + 16) * 4) % 4],
     country: regions[i % regions.length].split('-')[1]
   };
+});
+
+// --- Real EU Taxonomy eligibility data (EU Taxonomy Compass 2024) ---
+const _TAX_ACT_MAP = Object.fromEntries(EU_TAXONOMY_ACTIVITIES.map(a => [a.activity_name, a]));
+// Build fuzzy sector lookup: map issuer sector keywords → EU_TAXONOMY_SECTOR_ELIGIBILITY entries
+const _TAX_SECTOR_KEYWORD_MAP = {
+  'Utilities':      EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Electric Utilities (Renewable)'),
+  'Energy':         EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Oil & Gas Exploration & Production'),
+  'Financials':     EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Banks'),
+  'Real Estate':    EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Real Estate (Commercial & Residential)'),
+  'Materials':      EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector && s.sector.includes('Steel')),
+  'Industrials':    EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Construction & Engineering'),
+  'Consumer Disc':  EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Automobiles (EV manufacturers)'),
+  'Consumer Stap':  null,
+  'Tech':           null,
+  'Health Care':    null,
+};
+ISSUERS.forEach(r => {
+  const s = _TAX_SECTOR_KEYWORD_MAP[r.sector];
+  const a = EU_TAXONOMY_ACTIVITIES.find(x => x.nace_code && r.nace && x.nace_code.includes(r.nace.split('.')[0]));
+  if (s) {
+    r.taxonomyEligiblePct = s.taxonomy_eligible_pct_est ?? r.taxonomyEligiblePct;
+    r.taxonomyAlignedPct  = s.taxonomy_aligned_pct_est  ?? r.taxonomyAlignedPct;
+    r.disclosureRate       = r.disclosureRate; // field not in seed; preserve existing
+    r.eligibleActivities   = r.eligibleActivities; // field not in seed; preserve existing
+  }
+  if (a) {
+    r.climateMitigation = (a.objective === 'CCM') ?? r.climateMitigation;
+  }
 });
 
 const NLP_DOCUMENTS = [

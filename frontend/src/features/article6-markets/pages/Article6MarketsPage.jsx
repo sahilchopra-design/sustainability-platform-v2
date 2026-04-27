@@ -1,4 +1,5 @@
 import React,{useState,useMemo,useCallback} from 'react';
+import { VCM_CREDIT_PRICES_2023 } from '../../../data/sovereignMacroSeed';
 import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -23,6 +24,13 @@ const AGREEMENTS=Array.from({length:30},(_,i)=>{
 });
 
 const ITMOS=Array.from({length:60},(_,i)=>{const a=AGREEMENTS[i%30];return{id:i+1,serialNo:`ITMO-${2023+Math.floor(i/20)}-${String(i+1).padStart(4,'0')}`,buyer:a.buyer,seller:a.seller,agreementId:a.id,sector:a.sector,vintage:2022+Math.floor(sr(i*71)*3),volume:Math.round(sr(i*73)*5+0.5),status:['Authorised','Transferred','Used','Cancelled'][Math.floor(sr(i*77)*4)],firstTransfer:sr(i*79)>0.3?'Yes':'No',ca:a.correspondingAdj,methodology:a.methodology};});
+
+// ── Wire real VCM market data (GAP-009) ───────────────────────────────────
+const VCM_TOTAL = VCM_CREDIT_PRICES_2023?.annualVolume || { total_mtco2e: 296, total_usd_bn: 1.9, year: 2023 };
+const VCM_BY_TYPE = Object.fromEntries(
+  (VCM_CREDIT_PRICES_2023?.byProjectType||[]).map(p=>[p.cluster, p])
+);
+const VCM_REGISTRY_SHARE = VCM_CREDIT_PRICES_2023?.byRegistry || [];
 
 export default function Article6MarketsPage(){
   const[tab,setTab]=useState(0);const[search,setSearch]=useState('');const[statusF,setStatusF]=useState('All');const[typeF,setTypeF]=useState('All');const[sortCol,setSortCol]=useState('totalValueM');const[sortDir,setSortDir]=useState('desc');const[page,setPage]=useState(1);const[selected,setSelected]=useState(null);const[itmSearch,setItmSearch]=useState('');const[itmPage,setItmPage]=useState(1);

@@ -5,6 +5,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   PieChart, Pie, Cell, RadialBarChart, RadialBar,
 } from 'recharts';
+import { BIODIVERSITY_COUNTRY_DATA, BIODIVERSITY_HOTSPOTS } from '../../../data/biodiversityData';
 
 const API = 'http://localhost:8001';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -68,6 +69,10 @@ const HABITAT_TYPES = [
 const HABITAT_DISTINCTIVENESS = {
   woodland: 6, grassland: 8, wetland: 8, heathland: 7, coastal: 8, freshwater: 7, farmland: 3, urban_green: 4,
 };
+
+// --- Real biodiversity data anchoring (IUCN/WDPA/BII 2023) ---
+const _BIO_MAP = Object.fromEntries(BIODIVERSITY_COUNTRY_DATA.map(d => [d.country, d]));
+const _HS_MAP = Object.fromEntries(BIODIVERSITY_HOTSPOTS.map(d => [d.name, d]));
 
 const getBNGData = (habitat, area, preCondition, postPlan) => {
   const hi = HABITAT_TYPES.findIndex(h => h.value === habitat) + 1;

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EU_TAXONOMY_ACTIVITIES, EU_TAXONOMY_SECTOR_ELIGIBILITY } from '../../../data/euTaxonomyEligibility';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis,
@@ -87,6 +88,43 @@ const EQUITIES = EQUITY_TICKERS.map((ticker, i) => {
     id: i + 1, ticker, name: ISSUER_NAMES[i % ISSUER_NAMES.length], sector, nace, gics, revenue,
     eligibleRev, alignedRev, capexAlign, opexAlign, decarb, decarbTraj, mcap
   };
+});
+
+// --- Real EU Taxonomy eligibility data (EU Taxonomy Compass 2024) ---
+const _CMT_ACT_MAP = Object.fromEntries(EU_TAXONOMY_ACTIVITIES.map(a => [a.activity_name, a]));
+// Sector eligibility lookup keyed by GICS sector name
+const _CMT_SECTOR_KEYWORD_MAP = {
+  'Utilities':      EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Electric Utilities (Renewable)'),
+  'Energy':         EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Oil & Gas Exploration & Production'),
+  'Financials':     EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Banks'),
+  'Industrials':    EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Construction & Engineering'),
+  'Materials':      EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector && s.sector.includes('Steel')),
+  'Real Estate':    EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Real Estate (Commercial & Residential)'),
+  'Consumer':       EU_TAXONOMY_SECTOR_ELIGIBILITY.find(s => s.sector === 'Automobiles (EV manufacturers)'),
+  'Technology':     null,
+  'Health Care':    null,
+  'Communications': null,
+};
+BONDS.forEach(b => {
+  const s = _CMT_SECTOR_KEYWORD_MAP[b.sector];
+  if (s) {
+    b.taxonomyAligned    = s.taxonomy_aligned_pct_est  ?? b.taxonomyAligned;
+    b.eligibleRevenuePct = s.taxonomy_eligible_pct_est ?? b.eligibleRevenuePct;
+  }
+  // greenBondEligible: true if any matching CCM or CCA activity exists for this sector
+  const actForSector = EU_TAXONOMY_ACTIVITIES.find(a =>
+    s && a.sector_group && s.sector && a.sector_group.toLowerCase().includes(s.sector.split(' ')[0].toLowerCase())
+  );
+  if (actForSector !== undefined) {
+    b.greenBondEligible = (actForSector.objective === 'CCM' || actForSector.objective === 'CCA') ?? b.greenBondEligible;
+  }
+});
+EQUITIES.forEach(e => {
+  const s = _CMT_SECTOR_KEYWORD_MAP[e.sector];
+  if (s) {
+    e.alignedRev    = +(s.taxonomy_aligned_pct_est  ?? e.alignedRev);
+    e.eligibleRev   = +(s.taxonomy_eligible_pct_est ?? e.eligibleRev);
+  }
 });
 
 // ---- GSS FRAMEWORKS ----

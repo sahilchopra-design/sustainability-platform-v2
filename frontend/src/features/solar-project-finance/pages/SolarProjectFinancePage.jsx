@@ -5,6 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ReferenceLine, ScatterChart, Scatter, ComposedChart
 } from 'recharts';
+import { IRENA_RENEWABLE_CAPACITY_2023 } from '../../../data/publicDataSeed';
 
 // ── Platform standards ────────────────────────────────────────────────────────
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
@@ -32,6 +33,11 @@ const TABS = [
 const LOCATIONS = ['ERCOT-West','CAISO-SP15','PJM-West','MISO-Central','NYISO','ISO-NE'];
 const TECHNOLOGIES = ['Bifacial PERC','TOPCon','HJT','CdTe','Fixed Mono'];
 const CF_BY_LOC = { 'ERCOT-West':25.5,'CAISO-SP15':22.0,'PJM-West':19.5,'MISO-Central':20.0,'NYISO':17.0,'ISO-NE':15.5 };
+
+// ── Wire real IRENA solar capacity data (GAP-011) ─────────────────────────
+const IRENA_SOLAR = Object.fromEntries((IRENA_RENEWABLE_CAPACITY_2023||[]).map(c=>[c.country,c.solar_pv_gw]));
+// Top solar markets by installed GW (IRENA 2023): China 609, USA 140, Japan 87, Germany 81, India 73, Spain 32, Italy 30, Australia 31, Korea 22, Netherlands 24
+const TOP_SOLAR_MARKETS = (IRENA_RENEWABLE_CAPACITY_2023||[]).sort((a,b)=>(b.solar_pv_gw||0)-(a.solar_pv_gw||0)).slice(0,15).map(c=>({country:c.country,solar_gw:c.solar_pv_gw,yoy_growth:c.yoy_growth_pct}));
 
 // ── Calculation engines ───────────────────────────────────────────────────────
 function calcIRR(cashflows) {

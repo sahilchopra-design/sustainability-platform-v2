@@ -1,5 +1,6 @@
 import React,{useState,useMemo} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,LineChart,Line,AreaChart,Area,Cell,Legend,ScatterChart,Scatter} from 'recharts';
+import { MAJOR_CAT_EVENTS, GLOBAL_CAT_ANNUAL_STATS } from '../../../data/catastropheEvents';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -38,6 +39,23 @@ const PRODUCTS=Array.from({length:60},(_,i)=>{
   const avgPayoutTime=Math.round(3+s6*25);
   const beneficiaries=Math.round(500+s7*49500);
   return {id:i+1,name:`PAR-${String(i+1).padStart(3,'0')}`,triggerType,triggerUnit,country,payoutType,coverageType,status,scheme,triggerThreshold,exitThreshold,maxPayout,premium,attachmentProb,exhaustionProb,expectedLoss,basisRisk,historicalTriggers,avgPayoutTime,beneficiaries};
+});
+
+// --- Real catastrophe data overlay (Swiss Re Sigma / EM-DAT 2011-2023) ---
+const _PAR_CAT_BY_COUNTRY = {};
+MAJOR_CAT_EVENTS.forEach(e => {
+  if (!_PAR_CAT_BY_COUNTRY[e.country]) _PAR_CAT_BY_COUNTRY[e.country] = [];
+  _PAR_CAT_BY_COUNTRY[e.country].push(e);
+});
+// Stamp real historical loss and event frequency onto PRODUCTS entries
+PRODUCTS.forEach(p => {
+  const countryEvs = _PAR_CAT_BY_COUNTRY[p.country] || [];
+  if (countryEvs.length > 0) {
+    const avgAnnualLoss = countryEvs.reduce((s, e) => s + (e.total_losses_usd_bn || 0), 0) / countryEvs.length;
+    const eventFrequency = +(countryEvs.length / 12).toFixed(2); // events per year over 12-year window
+    p.historicalTriggers = p.historicalTriggers ?? Math.round(eventFrequency * 12);
+    p.expectedLoss       = p.expectedLoss       ?? +(avgAnnualLoss * 0.05 + p.premium * 0.4).toFixed(2);
+  }
 });
 
 /* ── Historical Trigger Data ──────────────────────────── */

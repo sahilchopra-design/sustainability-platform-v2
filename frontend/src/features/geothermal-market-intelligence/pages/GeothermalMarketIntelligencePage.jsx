@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ComposedChart,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ReferenceLine } from "recharts";
+import { IRENA_RENEWABLE_CAPACITY_2023 } from '../../../data/publicDataSeed';
 
 const T = {
   bg: "#0f1117", surface: "#1a1d27", surfaceH: "#22263a", border: "#2a2f45",
@@ -67,6 +68,12 @@ const INVESTMENT_FLOWS = [
   { region: "Latin America",    investment: 1.8, pipeline: 900,  growth: 25 },
   { region: "Pacific",          investment: 0.9, pipeline: 400,  growth: 8 },
 ];
+
+// ── Wire real IRENA geothermal capacity data (GAP-011) ────────────────────
+const IRENA_GEOTHERMAL = (IRENA_RENEWABLE_CAPACITY_2023||[]).filter(c=>c.geothermal_gw>0).map(c=>({
+  country: c.country, iso3: c.iso3, installed_gw: c.geothermal_gw,
+  total_renewables_gw: c.total_renewables_gw, share_of_total: +(c.geothermal_gw/Math.max(0.01,c.total_renewables_gw)*100).toFixed(1)
+}));
 
 const TABS = [
   "Global Overview", "Country Rankings", "Developer Landscape", "Capacity History",

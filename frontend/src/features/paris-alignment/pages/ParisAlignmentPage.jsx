@@ -6,6 +6,8 @@ import {
   ReferenceLine, PieChart, Pie
 } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
+import sbtiData from '../../../data/sbti-companies.json';
+import { CDP_COMPANY_EMISSIONS } from '../../../data/publicDataSeed';
 
 /* ══════════════════════════════════════════════════════════════
    THEME
@@ -166,6 +168,14 @@ const SECTOR_BENCHMARKS = [
 ];
 
 /* ══════════════════════════════════════════════════════════════
+   REAL DATA LOOKUP MAPS — SBTi + CDP (GAP-003 / GAP-001)
+   ══════════════════════════════════════════════════════════════ */
+const _SBTI_PA = {};
+(sbtiData?.companies||[]).forEach(c=>{ _SBTI_PA[c.n?.toLowerCase()] = c; });
+const _CDP_PA = Object.fromEntries((CDP_COMPANY_EMISSIONS||[]).map(c=>[(c.name||'').toLowerCase(),c]));
+const _SEC_TEMP_PA = { 'Energy':3.4,'Utilities':3.1,'Materials':3.0,'Industrials':2.8,'Consumer Staples':2.6,'Consumer Discretionary':2.7,'Financials':2.4,'Technology':2.3,'Automotive':2.9,'Cement':3.2,'Steel':3.1,'Oil & Gas':3.5 };
+
+/* ══════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ══════════════════════════════════════════════════════════════ */
 export default function ParisAlignmentPage() {
@@ -191,14 +201,23 @@ export default function ParisAlignmentPage() {
   const enriched = useMemo(() => {
     return holdings.map((h, i) => {
       const s = seed(i + 7);
-      const itr = +(1.4 + s * 2.6).toFixed(1);
+      const key = (h.name||h.company||'').toLowerCase();
+      // Real SBTi ITR derivation (GAP-003)
+      const sbti = _SBTI_PA[key] || Object.values(_SBTI_PA).find(rec=>key.includes((rec.n||'').toLowerCase().split(' ')[0]||'___'));
+      const sectorKey = h.sector || h.gics_sector || 'Unknown';
+      let itr;
+      if(sbti){ itr = sbti.c==='1.5C'?1.5:sbti.c==='WB2C'?1.7:sbti.s==='Committed'?1.8:(_SEC_TEMP_PA[sectorKey]||2.6); }
+      else { itr = +(_SEC_TEMP_PA[sectorKey] ? Math.min(_SEC_TEMP_PA[sectorKey], 1.4 + s * 2.6) : (1.4 + s * 2.6)).toFixed(1); }
+      // Real CDP emissions (GAP-001)
+      const cdp = _CDP_PA[key];
+      const scope1_2Mt = cdp ? cdp.scope1_2_total_mtco2e : null;
+      const annualEmissions = cdp ? (cdp.scope1_2_total_mtco2e||0)*1e6 : ((h.scope1_co2e || 50000) + (h.scope2_co2e || 20000));
       const budgetUsed = +(20 + s * 60).toFixed(1);
-      const hasSBTi = h.sbti_committed || s > 0.55;
-      const nzYear = h.carbon_neutral_target_year || (s > 0.3 ? (2035 + Math.floor(s * 25)) : null);
+      const hasSBTi = h.sbti_committed || !!sbti || s > 0.55;
+      const nzYear = h.carbon_neutral_target_year || (sbti?.y) || (s > 0.3 ? (2035 + Math.floor(s * 25)) : null);
       const onTrack15 = itr <= 1.5;
       const onTrack20 = itr <= 2.2;
       const nzQuality = nzYear && hasSBTi ? (s > 0.7 ? 'Law-Backed' : 'SBTi-Verified') : nzYear ? 'Pledged' : 'None';
-      const annualEmissions = (h.scope1_co2e || 50000) + (h.scope2_co2e || 20000);
       const budgetShare = +(annualEmissions / 40e9 * 100).toFixed(6);
       const country = h.country || 'India';
       const countryParis = COUNTRY_PARIS.find(c => c.country === country);
@@ -207,8 +226,10 @@ export default function ParisAlignmentPage() {
         ...h,
         itr, budgetUsed, hasSBTi, nzYear, onTrack15, onTrack20, nzQuality,
         annualEmissions, budgetShare, ndcAligned,
-        sector: h.sector || h.gics_sector || 'Unknown',
+        sector: sectorKey,
         country,
+        ...(scope1_2Mt!=null ? { scope1_2Mt, ghgIntensity: cdp.ghg_intensity } : {}),
+        sbtiStatus: sbti ? (sbti.s||'No target') : (hasSBTi ? 'Committed' : 'No target'),
       };
     });
   }, [holdings]);

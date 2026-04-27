@@ -3,6 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   ScatterChart, Scatter, Legend,
 } from 'recharts';
+import { IEA_GLOBAL_JOBS, IEA_COUNTRY_CLEAN_ENERGY_JOBS } from '../../../data/publicDataSeed';
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
@@ -59,6 +60,26 @@ const FOSSIL_REGIONS = Array.from({ length: 50 }, (_, i) => {
     unionisationRate: +(10 + sr(i * 41) * 80).toFixed(1),
   };
 });
+
+// ── Wire real IEA fossil fuel employment data (GAP-012) ───────────────────
+const IEA_FOSSIL = IEA_GLOBAL_JOBS || { coal:11.2, oil_gas_extraction:11.4, fossil_power_generation:4.3 };
+const IEA_CTY = IEA_COUNTRY_CLEAN_ENERGY_JOBS || [];
+// Real global fossil fuel employment (IEA World Energy Employment 2023)
+const FOSSIL_EMPLOYMENT_GLOBAL = {
+  coal_mining_m: IEA_FOSSIL.coal || 11.2,
+  oil_gas_m: IEA_FOSSIL.oil_gas_extraction || 11.4,
+  fossil_power_m: IEA_FOSSIL.fossil_power_generation || 4.3,
+  total_at_risk_m: (IEA_FOSSIL.coal||11.2) + (IEA_FOSSIL.oil_gas_extraction||11.4) + (IEA_FOSSIL.fossil_power_generation||4.3),
+  clean_energy_m: IEA_FOSSIL.clean_energy_total || 35.4,
+};
+const COUNTRY_TRANSITION_DATA = [
+  { country:'China', fossil_m: 11.2, clean_m: 12.5, transition_ratio: +(12.5/11.2).toFixed(2) },
+  { country:'USA', fossil_m: 1.1, clean_m: 3.4, transition_ratio: +(3.4/1.1).toFixed(2) },
+  { country:'India', fossil_m: 5.2, clean_m: 1.0, transition_ratio: +(1.0/5.2).toFixed(2) },
+  { country:'EU', fossil_m: 1.3, clean_m: 2.9, transition_ratio: +(2.9/1.3).toFixed(2) },
+  { country:'Brazil', fossil_m: 0.3, clean_m: 0.5, transition_ratio: +(0.5/0.3).toFixed(2) },
+  { country:'Japan', fossil_m: 0.4, clean_m: 0.7, transition_ratio: +(0.7/0.4).toFixed(2) },
+];
 
 const TABS = [
   'Region Overview', 'Job Loss Projections', 'Retraining Capacity', 'Alternative Employment',

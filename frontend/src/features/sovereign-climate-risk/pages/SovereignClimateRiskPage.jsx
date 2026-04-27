@@ -3,6 +3,7 @@ import {
   BarChart, Bar, LineChart, Line, ScatterChart, Scatter, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine, ComposedChart, Area
 } from 'recharts';
+import { SOVEREIGN_MACRO_2024 } from '../../../data/sovereignMacroSeed';
 
 const T = {
   bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
@@ -65,6 +66,13 @@ const COUNTRIES = [
   { iso: 'EC', name: 'Ecuador', region: 'Latin America', ndGain: 42.3, fossilPct: 8.2, rating: 'B-', spread: 650, itr: 3.2, population: 18, gdp: 115, co2PerCapita: 2.3 },
   { iso: 'TT', name: 'Trinidad & Tobago', region: 'Caribbean', ndGain: 51.0, fossilPct: 32.5, rating: 'BBB-', spread: 195, itr: 3.8, population: 1, gdp: 27, co2PerCapita: 22.4 },
 ];
+
+// ── Wire real macro data (GAP-006) ────────────────────────────────────────
+const _SOVMACRO_MAP = Object.fromEntries((SOVEREIGN_MACRO_2024||[]).map(c=>[c.country,c]));
+(typeof COUNTRIES!=='undefined'?COUNTRIES:[]).forEach(c=>{
+  const m=_SOVMACRO_MAP[c.name||c.country];
+  if(m){ c.gdp=m.gdp_usd_bn; c.gdpGrowth=m.gdp_growth_pct; c.debt=m.debt_gdp_pct; c.creditRating=m.credit_rating_composite; c.sovereignEsgScore=m.sovereign_esg_score; }
+});
 
 const NGFS_SCENARIOS = ['Current Policies', 'Delayed Transition', 'Below 2C', 'Net Zero 2050'];
 const SCENARIO_COLORS = { 'Current Policies': T.red, 'Delayed Transition': T.orange, 'Below 2C': T.amber, 'Net Zero 2050': T.green };

@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, PieChart, Pie, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
+import { FAO_FOREST_AREA_2020, COMMODITY_DEFORESTATION_RISK } from '../../../data/forestData';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
@@ -38,6 +39,17 @@ const COUNTRY_RISK = [
   { code: 'AU', name: 'Australia', forest_loss_kha: 480, governance_score: 82, eudr_benchmarked: 'Low Risk', commodities: ['Cattle', 'Timber'] },
   { code: 'NG', name: 'Nigeria', forest_loss_kha: 189, governance_score: 35, eudr_benchmarked: 'High Risk', commodities: ['Palm Oil', 'Cocoa'] },
 ];
+
+// --- Real forest data anchoring (FAO FRA 2020 / Trase.earth 2022) ---
+const _FAO_MAP = Object.fromEntries(FAO_FOREST_AREA_2020.map(d => [d.country, d]));
+const _COMM_DEF_MAP = Object.fromEntries(COMMODITY_DEFORESTATION_RISK.map(d => [`${d.commodity}::${d.country}`, d]));
+COUNTRY_RISK.forEach(r => {
+  const f = _FAO_MAP[r.name];
+  if (!f) return;
+  r.forest_cover_pct = f.forest_cover_pct ?? r.forest_cover_pct;
+  r.annual_deforestation_rate_pct = f.annual_change_rate_pct != null ? Math.abs(f.annual_change_rate_pct) : r.annual_deforestation_rate_pct;
+  r.primary_forest_pct = f.primary_forest_mha != null && f.forest_area_mha > 0 ? +(f.primary_forest_mha / f.forest_area_mha * 100).toFixed(1) : r.primary_forest_pct;
+});
 
 /* ══════════════════════════════════════════════════════════════
    EUDR COMPLIANCE CHECKLIST

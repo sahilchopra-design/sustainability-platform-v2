@@ -7,6 +7,8 @@ import {
 import { TEMPERATURE_PATHWAYS } from '../../../data/referenceData';
 import { isIndiaMode, adaptForTransitionRisk } from '../../../data/IndiaDataAdapter';
 import PortfolioUploader from '../../../components/PortfolioUploader';
+import sbtiData from '../../../data/sbti-companies.json';
+import { CDP_COMPANY_EMISSIONS } from '../../../data/publicDataSeed';
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',blue:'#2563eb',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
@@ -94,6 +96,33 @@ const _DEFAULT_ALL_HOLDINGS = Array.from({length:60}, (_,i) => {
     sbtiDelta: +(sr(s*59) * 0.4).toFixed(2),
   };
 });
+// ── Wire real SBTi temperature derivation + CDP emissions (GAP-003 / GAP-001) ─
+const _SBTI_MAP = {};
+(sbtiData?.companies||[]).forEach(c=>{ _SBTI_MAP[c.n?.toLowerCase()] = c; });
+const _CDP_MAP = Object.fromEntries((CDP_COMPANY_EMISSIONS||[]).map(c=>[c.name?.toLowerCase(),c]));
+const _CDP_TICKER_MAP = Object.fromEntries((CDP_COMPANY_EMISSIONS||[]).map(c=>[c.ticker?.toLowerCase(),c]));
+// ITR derivation: SBTi Approved ≤1.5°C, Committed 1.6-1.9°C, no target → sector default
+const _SECTOR_DEFAULT_TEMP = { 'Energy':3.4,'Utilities':3.1,'Materials':3.0,'Industrials':2.8,'Consumer Staples':2.6,'Consumer Discretionary':2.7,'Health Care':2.5,'Financials':2.4,'Technology':2.3,'Communication':2.4,'Real Estate':2.7,'Automotive':2.9,'Cement':3.2,'Steel':3.1,'Oil & Gas':3.5 };
+_DEFAULT_ALL_HOLDINGS.forEach((h,i)=>{
+  const key = h.company?.toLowerCase()||'';
+  const sbti = _SBTI_MAP[key] || Object.values(_SBTI_MAP).find(s=>key.includes(s.n?.toLowerCase()?.split(' ')[0]||'___'));
+  const cdp  = _CDP_MAP[key] || Object.values(_CDP_MAP).find(c=>key.includes(c.name?.toLowerCase()?.split(' ')[0]||'___'));
+  // Derive ITR from SBTi status
+  if(sbti){
+    h.itrDerived = sbti.c==='1.5C'?1.5 : sbti.c==='WB2C'?1.7 : sbti.s==='Committed'?+(1.6+sr(i*7)*0.4).toFixed(2) : _SECTOR_DEFAULT_TEMP[h.sector]||2.6;
+    h.sbtiStatus = sbti.s||'No target'; h.sbtiClassification = sbti.c||null; h.sbtiTargetYear = sbti.y||null;
+  } else {
+    h.itrDerived = _SECTOR_DEFAULT_TEMP[h.sector]||2.6;
+    h.sbtiStatus = 'No target'; h.sbtiClassification = null;
+  }
+  // Wire CDP scope 1+2 emissions
+  if(cdp){
+    h.scope1Mt = cdp.scope1_mtco2e; h.scope2Mt = cdp.scope2_market_mtco2e;
+    h.scope1_2Total = cdp.scope1_2_total_mtco2e; h.ghgIntensity = cdp.ghg_intensity;
+    h.cdpDataYear = cdp.data_year;
+  }
+});
+
 // ── India Dataset Integration ──
 const ALL_HOLDINGS = isIndiaMode() ? adaptForTransitionRisk().slice(0, 60).map((c, i) => ({
   id: i, company: c.name, sector: c.sector, country: 'IND', weight: +(100 / 60).toFixed(2),

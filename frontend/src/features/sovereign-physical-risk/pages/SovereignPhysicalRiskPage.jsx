@@ -4,6 +4,8 @@ import {
   AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ScatterChart, Scatter, Cell, Legend, ComposedChart, ReferenceLine, LineChart, Line,
 } from 'recharts';
+import { EMDAT_PHYSICAL_HAZARD_FREQUENCY } from '../../../data/sovereignMacroSeed';
+import { ND_GAIN_COUNTRY_SCORES } from '../../../data/publicDataSeed';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#0e7490',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',emerald:'#059669',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
@@ -78,6 +80,27 @@ const COUNTRIES_PHY=COUNTRY_NAMES.map((name,i)=>{
     scenario2030RCP26,scenario2030RCP45,scenario2030RCP85,lossAndDamageEstimateBnUSD,adaptationFinancingNeedBnUSD,
     infraScores,
   };
+});
+
+// ── Wire real physical hazard data (GAP-005) ──────────────────────────────
+const _PHYS_MAP  = Object.fromEntries((EMDAT_PHYSICAL_HAZARD_FREQUENCY||[]).map(c=>[c.country,c]));
+const _GAIN_PHY  = Object.fromEntries((ND_GAIN_COUNTRY_SCORES||[]).map(c=>[c.country,c]));
+COUNTRIES_PHY.forEach(c=>{
+  const em=_PHYS_MAP[c.name];
+  const g=_GAIN_PHY[c.name];
+  if(em){
+    c.compositePhysicalRisk=+Math.min(100,em.composite_hazard_score*10).toFixed(1);
+    c.avgAnnualFloodEvents=em.avg_annual_floods;
+    c.avgAnnualDroughtEvents=em.avg_annual_droughts;
+    c.avgAnnualStormEvents=em.avg_annual_storms;
+    c.economicLossesAvgBn=em.economic_losses_usd_bn_avg_annual;
+    c.populationAffectedAvg=em.population_affected_avg_annual;
+  }
+  if(g){
+    c.adaptationCapacity=+(g.readiness*100).toFixed(1);
+    c.climateVulnerabilityIndex=+(g.vulnerability*100).toFixed(1);
+    c.ndGainRank=g.rank;
+  }
 });
 
 /* ─── NGFS Scenario Data: 5 economies × 5 scenarios, 2020-2050 ────────────── */

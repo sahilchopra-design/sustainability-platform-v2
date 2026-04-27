@@ -3,6 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   ScatterChart, Scatter, LineChart, Line, Legend,
 } from 'recharts';
+import { IEA_GLOBAL_JOBS, IEA_COUNTRY_CLEAN_ENERGY_JOBS, IRENA_RENEWABLE_CAPACITY_2023 } from '../../../data/publicDataSeed';
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
@@ -56,6 +57,39 @@ const GREEN_JOBS = Array.from({ length: 60 }, (_, i) => {
     entryBarrier: ENTRY_BARRIERS[i % ENTRY_BARRIERS.length],
     growthRate,
   };
+});
+
+// ── Wire real IEA + IRENA employment data (GAP-012) ───────────────────────
+const IEA_JOBS = IEA_GLOBAL_JOBS || { clean_energy_total:35.4, solar_pv:3.6, wind:1.3, electric_vehicles:3.8, energy_efficiency_buildings:10.2, coal:11.2, oil_gas_extraction:11.4, fossil_fuel_total:32.4 };
+const IEA_COUNTRY = IEA_COUNTRY_CLEAN_ENERGY_JOBS || [];
+const IRENA_CAP = Object.fromEntries((IRENA_RENEWABLE_CAPACITY_2023||[]).map(c=>[c.country,c]));
+// Real global clean energy employment by technology (IEA 2023, millions of jobs)
+const CLEAN_ENERGY_BY_TECH = [
+  { tech:'Solar PV', jobs_m: IEA_JOBS.solar_pv||3.6, color:'#f59e0b' },
+  { tech:'Wind', jobs_m: IEA_JOBS.wind||1.3, color:'#0ea5e9' },
+  { tech:'Energy Efficiency (Buildings)', jobs_m: IEA_JOBS.energy_efficiency_buildings||10.2, color:'#10b981' },
+  { tech:'Electric Vehicles', jobs_m: IEA_JOBS.electric_vehicles||3.8, color:'#6366f1' },
+  { tech:'Hydro', jobs_m: IEA_JOBS.hydro||1.5, color:'#0891b2' },
+  { tech:'Bioenergy', jobs_m: IEA_JOBS.bioenergy||2.8, color:'#84cc16' },
+  { tech:'Storage & Grids', jobs_m: IEA_JOBS.storage_grids||0.9, color:'#8b5cf6' },
+  { tech:'Nuclear', jobs_m: IEA_JOBS.nuclear||0.7, color:'#ec4899' },
+  { tech:'Heat Pumps', jobs_m: IEA_JOBS.heat_pumps||0.9, color:'#f97316' },
+];
+const FOSSIL_FUEL_JOBS = [
+  { fuel:'Coal', jobs_m: IEA_JOBS.coal||11.2, color:'#374151' },
+  { fuel:'Oil & Gas', jobs_m: IEA_JOBS.oil_gas_extraction||11.4, color:'#6b7280' },
+  { fuel:'Fossil Power Gen', jobs_m: IEA_JOBS.fossil_power_generation||4.3, color:'#9ca3af' },
+  { fuel:'Fossil Refining', jobs_m: IEA_JOBS.fossil_refining||5.5, color:'#d1d5db' },
+];
+// Override country-level current/projected jobs with IEA data where available
+IEA_COUNTRY.forEach(row=>{
+  const countryName = row.country;
+  GREEN_JOBS.filter(j=>j.country===countryName).forEach(j=>{
+    if(j.sector==='Renewable Energy'||j.sector==='Energy Efficiency'){
+      const totalCleanM = row.clean_jobs_m || 0;
+      if(totalCleanM>0) j.currentJobs = Math.round(totalCleanM * 1e6 / 8); // distribute across ~8 RE job types per country
+    }
+  });
 });
 
 const TABS = [

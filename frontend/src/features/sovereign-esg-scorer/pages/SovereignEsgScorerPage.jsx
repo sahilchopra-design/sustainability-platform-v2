@@ -4,6 +4,8 @@ import {
   AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ScatterChart, Scatter, Cell, Legend, LineChart, Line,
 } from 'recharts';
+import { SOVEREIGN_MACRO_2024, EMDAT_PHYSICAL_HAZARD_FREQUENCY } from '../../../data/sovereignMacroSeed';
+import { ND_GAIN_COUNTRY_SCORES, IRENA_RENEWABLE_CAPACITY_2023 } from '../../../data/publicDataSeed';
 
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#0e7490',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',emerald:'#059669',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
@@ -87,6 +89,36 @@ const COUNTRIES=COUNTRY_NAMES.map((name,i)=>{
   }));
   const providerScores=PROVIDERS.map((prov,pi)=>+(totalEsg+(sr(s+50+pi*11)-0.5)*16).toFixed(1));
   return {id:i,name,iso2:ISO2[i],region:REGIONS[regionIdx],gdpTrillions,population:+population,eScore,sScore,gScore,totalEsg,esgRating,trend,co2PerCapita,renewableSharePct,corruptionIndex,pressureFreedomIndex,giniCoefficient,healthcareIndex,educationIndex,quarterlyTrend,providerScores};
+});
+
+// ── Wire real public data (GAP-006 / GAP-005) ─────────────────────────────
+const _MACRO_MAP = Object.fromEntries((SOVEREIGN_MACRO_2024||[]).map(c=>[c.country,c]));
+const _GAIN_MAP  = Object.fromEntries((ND_GAIN_COUNTRY_SCORES||[]).map(c=>[c.country,c]));
+const _IRENA_MAP = Object.fromEntries((IRENA_RENEWABLE_CAPACITY_2023||[]).map(c=>[c.country,c]));
+const _EMDAT_MAP = Object.fromEntries((EMDAT_PHYSICAL_HAZARD_FREQUENCY||[]).map(c=>[c.country,c]));
+COUNTRIES.forEach(c=>{
+  const m=_MACRO_MAP[c.name];
+  const g=_GAIN_MAP[c.name];
+  const ir=_IRENA_MAP[c.name];
+  const em=_EMDAT_MAP[c.name];
+  if(m){
+    c.gdpTrillions=+(m.gdp_usd_bn/1000).toFixed(3);
+    c.gdpGrowthPct=m.gdp_growth_pct;
+    c.debtGdpPct=m.debt_gdp_pct;
+    c.inflationPct=m.inflation_pct;
+    c.creditRating=m.credit_rating_composite;
+  }
+  if(g){
+    c.ndGainVulnerability=g.vulnerability;
+    c.ndGainReadiness=g.readiness;
+    c.ndGainScore=g.gain_score;
+  }
+  if(ir){
+    c.renewableSharePct=ir.renewable_share_pct;
+  }
+  if(em){
+    c.compositeHazardScore=em.composite_hazard_score;
+  }
 });
 
 /* ─── Provider Divergence Dataset (top 20 countries × 6 providers) ─────── */

@@ -1,5 +1,6 @@
 import React,{useState,useMemo,useCallback} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,AreaChart,Area,LineChart,Line,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Legend} from 'recharts';
+import { FAO_FOREST_AREA_2020 } from '../../../data/forestData';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 const ACCENT='#15803d';const fmt=v=>typeof v==='number'?v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed?v.toFixed(1):v:v;
@@ -14,6 +15,17 @@ const riskBadge=(r)=>{const m={Critical:{bg:'rgba(220,38,38,0.12)',c:T.red},High
 const COUNTRIES=(()=>{const names=['Brazil','Indonesia','DRC','Colombia','Bolivia','Peru','Malaysia','Myanmar','Cambodia','Laos','Guatemala','Honduras','Nicaragua','Cameroon','Ghana','Ivory Coast','Nigeria','Liberia','Sierra Leone','Madagascar','Mozambique','Tanzania','Papua New Guinea','Vietnam','Thailand','Philippines','Ecuador','Paraguay','Argentina','Guyana'];
 const regs=['Amazon Basin','Southeast Asia','Congo Basin','Amazon Basin','Amazon Basin','Amazon Basin','Southeast Asia','Southeast Asia','Southeast Asia','Southeast Asia','Central America','Central America','Central America','West Africa','West Africa','West Africa','West Africa','West Africa','West Africa','East Africa','East Africa','East Africa','Oceania','Southeast Asia','Southeast Asia','Southeast Asia','Amazon Basin','Amazon Basin','Amazon Basin','Amazon Basin'];
 return names.map((n,i)=>({id:i+1,country:n,region:regs[i],deforestationKha:Math.round(10+sr(i*7)*990),alertsMonth:Math.round(50+sr(i*11)*4950),forestCover:Math.round(20+sr(i*13)*70),treeGain:Math.round(sr(i*17)*200),primaryForestLoss:Math.round(5+sr(i*19)*495),fireAlerts:Math.round(10+sr(i*23)*2990),eudrRisk:Math.round(10+sr(i*29)*85),commodityExposure:Math.round(15+sr(i*31)*80),traceability:Math.round(5+sr(i*37)*85),governance:Math.round(10+sr(i*41)*75),enforcement:Math.round(5+sr(i*43)*80),protectedArea:Math.round(5+sr(i*47)*35),indigenousLand:Math.round(sr(i*53)*40),carbonStock:Math.round(50+sr(i*59)*200),soybExposure:Math.round(sr(i*61)*80),palmExposure:Math.round(sr(i*67)*90),cattleExposure:Math.round(sr(i*71)*85),cocaExposure:Math.round(sr(i*73)*70),riskRating:sr(i*7)<0.2?'Critical':sr(i*7)<0.4?'High':sr(i*7)<0.65?'Elevated':sr(i*7)<0.85?'Moderate':'Low'}));})();
+
+// --- Real forest data anchoring (FAO FRA 2020) ---
+const _FAO_MAP_LUD = Object.fromEntries(FAO_FOREST_AREA_2020.map(d => [d.country, d]));
+COUNTRIES.forEach(r => {
+  const f = _FAO_MAP_LUD[r.country];
+  if (!f) return;
+  r.forestCover = f.forest_cover_pct ?? r.forestCover;
+  r.deforestationKha = f.forest_area_mha != null && f.annual_change_rate_pct != null ? Math.round(Math.abs(f.annual_change_rate_pct) * f.forest_area_mha * 10000) : r.deforestationKha;
+  r.primaryForestLoss = f.primary_forest_mha != null && f.forest_area_mha > 0 ? Math.round(f.primary_forest_mha / f.forest_area_mha * 100) : r.primaryForestLoss;
+  r.protectedArea = f.forest_certification_pct ?? r.protectedArea;
+});
 
 const COMMODITIES=[{name:'Palm Oil',deforest:28,volume:78,traceability:45,eudrScope:true},{name:'Soy',deforest:22,volume:130,traceability:52,eudrScope:true},{name:'Cattle/Beef',deforest:35,volume:95,traceability:28,eudrScope:true},{name:'Cocoa',deforest:8,volume:5.5,traceability:38,eudrScope:true},{name:'Coffee',deforest:4,volume:10,traceability:55,eudrScope:true},{name:'Rubber',deforest:6,volume:14,traceability:32,eudrScope:true},{name:'Timber/Wood',deforest:12,volume:45,traceability:48,eudrScope:true},{name:'Maize',deforest:5,volume:120,traceability:40,eudrScope:false},{name:'Rice',deforest:3,volume:52,traceability:35,eudrScope:false},{name:'Sugarcane',deforest:4,volume:190,traceability:42,eudrScope:false}];
 const TREND=Array.from({length:24},(_,i)=>({month:`${2023+Math.floor(i/12)}-${String((i%12)+1).padStart(2,'0')}`,alerts:Math.round(5000+sr(i*7)*15000),deforest:Math.round(100+sr(i*11)*400),fires:Math.round(2000+sr(i*13)*8000)}));

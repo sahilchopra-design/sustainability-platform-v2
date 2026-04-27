@@ -1,4 +1,5 @@
 import React,{useState,useMemo,useCallback} from 'react';
+import { WRI_AQUEDUCT_WATER_RISK } from '../../../data/publicDataSeed';
 import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
 const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -15,6 +16,37 @@ const _DEFAULT_REGIONS=Array.from({length:40},(_,i)=>{
   const yearly=Array.from({length:6},(_,y)=>({year:2020+y,stress:+(stressLevel+y*0.08+sr(i*100+y)*0.3).toFixed(1),supply:Math.round(supply-y*5+sr(i*100+y*3)*10),demand:Math.round(demand+y*8+sr(i*100+y*7)*5)}));
   return{id:i+1,name:names[i],basin:basins[i],waterStress:stressLevel,riskCategory:riskCat,supplyBCM:supply,demandBCM:demand,deficitBCM:deficit,aqueductScore:+Math.min(5,stressLevel*0.9+sr(i*31)*0.5).toFixed(1),floodRisk,droughtRisk,pollutionIndex:pollutionIdx,groundwaterDepletion:groundwater,popAffectedM:+(sr(i*37)*50+1).toFixed(1),agWaterPct:Math.round(sr(i*41)*70+10),industrialPct:Math.round(sr(i*43)*30+5),domesticPct:Math.round(100-Math.round(sr(i*41)*70+10)-Math.round(sr(i*43)*30+5)),waterPrice:+(sr(i*47)*3+0.2).toFixed(2),infraInvestBn:+(sr(i*49)*10+0.5).toFixed(1),desalCapacity:Math.round(sr(i*51)*500),recycleRate:Math.round(sr(i*53)*60+10),yearly};
 });
+// ── Wire real WRI Aqueduct 4.0 water stress data (GAP-015) ───────────────
+const WRI_MAP = Object.fromEntries((WRI_AQUEDUCT_WATER_RISK||[]).map(c=>[c.country,c]));
+// Basin-to-country mapping for real data lookup
+const BASIN_COUNTRY = {
+  'Ganges Basin':'India','Indus Basin':'Pakistan','Yellow River':'China',
+  'Yangtze Delta':'China','Mekong Delta':'Vietnam','Nile Valley':'Egypt',
+  'Murray-Darling':'Australia','Colorado Basin':'USA','California Central':'USA',
+  'Sao Francisco':'Brazil','Tigris-Euphrates':'Iraq','Lake Chad':'Nigeria',
+  'Aral Sea':'Kazakhstan','Jordan River':'Jordan','Orange-Senqu':'South Africa',
+  'Volta Basin':'Ghana','Zambezi':'Zambia','Congo Basin':'Democratic Republic of the Congo',
+  'Amazon Basin':'Brazil','Mississippi Delta':'USA','Rhine-Meuse':'Germany',
+  'Danube Basin':'Romania','Po Valley':'Italy','Tagus Basin':'Portugal',
+  'Guadalquivir':'Spain','North China Plain':'China','Deccan Plateau':'India',
+  'Rajasthan Desert':'India','Middle East Gulf':'UAE','Sahel Region':'Niger',
+  'Horn of Africa':'Ethiopia','Central Asian Steppe':'Kazakhstan','Australian Outback':'Australia',
+  'Atacama Region':'Chile','Western US':'USA','Great Plains':'USA',
+  'SE Australia':'Australia','Southern Africa':'South Africa','NW India':'India','Pakistan Punjab':'Pakistan',
+};
+_DEFAULT_REGIONS.forEach(r=>{
+  const cName = BASIN_COUNTRY[r.name];
+  const w = cName ? WRI_MAP[cName] : null;
+  if(w){
+    r.waterStress = w.baseline_water_stress;
+    r.aqueductScore = w.baseline_water_stress;
+    r.droughtRisk = Math.round(w.drought_risk*20);
+    r.floodRisk = Math.round(w.riverine_flood_risk*20);
+    r.groundwaterDepletion = Math.round(w.groundwater_depletion*20);
+    r.riskCategory = w.overall_water_risk_category;
+  }
+});
+
 // ── India Dataset Integration ──
 const REGIONS = isIndiaMode() ? adaptForWaterRisk().map((c, i) => ({
   id: i + 1, name: c.name + ' (' + c.basin + ')', basin: c.basin, waterStress: +(c.stressScore / 20).toFixed(1),
