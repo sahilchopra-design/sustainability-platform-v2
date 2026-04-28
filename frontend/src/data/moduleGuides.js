@@ -8238,4 +8238,1653 @@ export const MODULE_GUIDES = {
     'Designed for wind energy asset managers, infrastructure fund portfolio managers, and developers evaluating the 15,000+ MW of ageing onshore wind assets globally reaching end of design life in 2024–2030. Provides the full decision analytics for repowering — from incremental IRR calculation and AEP uplift quantification through grid re-use value, decommissioning economics, country permitting pathways, and project finance — enabling data-driven repower vs extend vs decommission decisions.'
   ),
 
+
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SPRINTS DS–DZ · DD · DG · DH · DI · EB + PLATFORM MODULES
+  // ═══════════════════════════════════════════════════════════════════════
+'/green-hydrogen-lcoh': g(
+    'Green Hydrogen LCOH Engine', 'EP-DS1', 'DS',
+    'Levelised Cost of Hydrogen engine modelling electrolyser CAPEX, electricity cost, capacity factor, efficiency and stack replacement to target IEA <$2/kgH2 by 2030.',
+    ce('LCOH Methodology', 'LCOH = (CAPEX×CRF + OPEX) / Annual_H2_Production', ['IEA Hydrogen','IRENA Green Hydrogen Cost','Hydrogen Council Pathway'], 'Capital recovery factor applied to electrolyser CAPEX; electricity cost represents 60-70% of LCOH at current tariffs.'),
+    [dp('Electrolyser CAPEX','$400–2000/kW','CAPEX×CRF/Annual_H2','IEA 2023','Lower CAPEX directly reduces LCOH; target <$300/kW by 2030 for cost parity.'), dp('Electricity Cost Share','60–70% of LCOH','P_elec(kWh/kgH2)/LCOH','IRENA 2023','Dominant cost driver; green H2 viability requires renewable electricity <$30/MWh.'), dp('System Efficiency','kWh/kgH2 basis','η = H2_HHV/E_input','Hydrogen Council 2021','PEM efficiency 50–60 kWh/kgH2; alkaline 50–55 kWh/kgH2 at stack level.')],
+    ['Define electrolyser technology (PEM/ALK/SOEC) and capacity (MW)', 'Input electricity price ($/MWh) and annual capacity factor (%)', 'Apply capital recovery factor to CAPEX and add fixed/variable OPEX', 'Divide total annual cost by annual H2 production to yield LCOH ($/kgH2)'],
+    ['IEA Global Hydrogen Review 2023','IRENA Green Hydrogen Cost Reduction 2020','Hydrogen Council Hydrogen Insights 2023'],
+    [acr('LCOH','Levelised Cost of Hydrogen','All-in cost per kg of hydrogen produced over project lifetime'), acr('CRF','Capital Recovery Factor','Annualisation factor = r(1+r)^n/((1+r)^n-1)'), acr('PEM','Proton Exchange Membrane','Electrolyser technology using solid polymer electrolyte'), acr('ALK','Alkaline Electrolyser','Mature low-cost electrolyser technology using liquid KOH electrolyte')],
+    [dl('Electricity price feed','→ LCOH sensitivity model','$/kgH2 by scenario'), dl('CAPEX trajectory','→ learning rate curve','Cost reduction vs cumulative GW deployed')],
+    'Green hydrogen LCOH is dominated by electricity cost (60-70%); achieving <$2/kgH2 requires <$30/MWh renewable electricity and electrolyser CAPEX below $300/kW, consistent with IEA Net Zero by 2050 milestones.'
+  ),
+
+  '/hydrogen-project-finance': g(
+    'Green Hydrogen Project Finance', 'EP-DS2', 'DS',
+    'Project finance waterfall for green hydrogen assets covering electrolyser, compression, storage and distribution CAPEX with H2 price scenario analysis and IRR sensitivity to electricity costs.',
+    ce('Project Finance IRR', 'IRR: NPV(FCF, r)=0; DSCR=EBITDA/DebtService', ['BNEF Hydrogen Economy Outlook','IEA Project Finance Guidelines','Green Bond Principles'], 'H2 price scenarios ($2-8/kg) drive revenue; electricity cost sensitivity is the primary IRR lever for green H2 projects.'),
+    [dp('Total CAPEX','$500M–5B per project','Electrolyser+BOP+compression+storage','BNEF 2023','Electrolyser typically 40-50% of total CAPEX; BOP and compression add 25-35%.'), dp('Project IRR','6–15% unlevered','IRR = solve NPV(FCF)=0','IEA 2023','Merchant projects require >10% IRR; contracted offtake with H2 price floor can reach bankable 8-10%.'), dp('DSCR','≥1.25x covenant','EBITDA/Annual Debt Service','Project Finance Standard','Lenders typically require minimum DSCR of 1.25x; 1.40x target for investment-grade rating.')],
+    ['Structure CAPEX waterfall across electrolyser, compression, storage and distribution', 'Model H2 offtake price under base ($4/kg), bull ($6/kg) and bear ($2/kg) scenarios', 'Run IRR sensitivity grid across electricity price ($20-80/MWh) and capacity factor (40-95%)', 'Size project bond (tenor 15-20yr) and calculate DSCR covenant compliance'],
+    ['BNEF Hydrogen Economy Outlook 2023','IEA Hydrogen Projects Database 2023','Hydrogen Council Project Finance Guidelines'],
+    [acr('DSCR','Debt Service Coverage Ratio','EBITDA divided by total annual debt service; key project finance covenant'), acr('BOP','Balance of Plant','Non-electrolyser project components: transformers, cooling, piping, civil works'), acr('CAPEX','Capital Expenditure','Total upfront investment cost including contingency and owners costs'), acr('IRR','Internal Rate of Return','Discount rate at which project NPV equals zero')],
+    [dl('H2 spot price forecasts','→ revenue model','$/kg by year and scenario'), dl('Electricity contract','→ LCOH model','PPA price and volume profile')],
+    'Green H2 project finance viability hinges on secured offtake at >$4/kg and PPA electricity <$40/MWh; DSCR of 1.25x is achievable with 20-year contracts, enabling investment-grade project bonds under BNEF base case assumptions.'
+  ),
+
+  '/hydrogen-market-intelligence': g(
+    'Global Hydrogen Market Intelligence', 'EP-DS3', 'DS',
+    'Global hydrogen market dashboard tracking production by pathway, demand by sector, country project pipelines and cost trajectory from 2020 to 2050.',
+    ce('Market Intelligence Framework', 'Green share = Green_capacity / Total_H2_capacity × 100', ['IEA Global Hydrogen Review 2023','IRENA World Energy Transitions Outlook','Hydrogen Council Market Development'], 'Industry accounts for 54% of H2 demand, transport 17%, power 10%; green H2 share below 1% in 2023 but scaling rapidly.'),
+    [dp('Global H2 Demand','~94 Mt/yr (2023)','Sum across industry+transport+power+other','IEA 2023','Industrial feedstock (ammonia, refining) dominates at 54%; new demand in transport and power is nascent.'), dp('Green H2 Project Pipeline','>1,000 GW announced','Capacity_announced by country/stage','IEA Projects Database','Only ~5% of announced projects reach FID; policy certainty and offtake contracts are key gating factors.'), dp('Cost Trajectory','$3-8/kgH2 (2023) → $1-3 (2050)','Learning rate ~18% per doubling','IRENA 2023','Green H2 cost declines track electrolyser and renewable electricity cost curves; IEA targets <$2/kg by 2030 in high-resource regions.')],
+    ['Map current H2 production by pathway: grey (SMR), blue (SMR+CCS), green (electrolysis), pink (nuclear)', 'Analyse demand sectors: industry 54%, transport 17%, power 10%, other 19%', 'Track country project pipelines by stage (announced/FID/construction/operational)', 'Model cost trajectory 2020-2050 using learning rates and renewable electricity price curves'],
+    ['IEA Global Hydrogen Review 2023','IRENA Green Hydrogen: A Guide to Policy Making 2020','Hydrogen Council Hydrogen Insights 2023'],
+    [acr('SMR','Steam Methane Reforming','Dominant grey hydrogen production technology using natural gas'), acr('FID','Final Investment Decision','Formal commitment to proceed with project construction and financing'), acr('GW','Gigawatt','Unit of electrolyser or renewable power capacity'), acr('Mt','Megatonne','Million metric tonnes; unit for annual hydrogen production volumes')],
+    [dl('IEA Hydrogen Projects Database','→ pipeline tracker','Projects by country, technology, status'), dl('IRENA cost data','→ trajectory model','LCOH by region and year')],
+    'Green hydrogen represents <1% of global production in 2023 but >1,000 GW is in the announced pipeline; market intelligence confirms cost parity with grey H2 is achievable before 2030 in solar-rich regions per IEA and IRENA projections.'
+  ),
+
+  '/hydrogen-storage-transport': g(
+    'Hydrogen Storage and Transport Economics', 'EP-DS4', 'DS',
+    'Comparative economics of hydrogen storage and transport pathways: compressed gas, liquid H2, liquid organic hydrogen carriers and ammonia, covering cost, energy penalty and pipeline repurposing.',
+    ce('Storage & Transport Cost Model', 'Total_cost = Storage_cost($/kgH2) + Transport_cost($/kgH2/1000km) × distance', ['DNV Hydrogen Forecast 2023','IEA The Future of Hydrogen','Hydrogen Council Hydrogen Decarbonization Pathways'], 'Ammonia is lowest cost for long-distance shipping (>3,000 km); compressed gas optimal for short-haul (<500 km); pipeline repurposing reduces cost 50-70%.'),
+    [dp('Compressed Gas Storage Cost','$0.4–1.5/kgH2','P×V×Z/nRT adjusted CAPEX','IEA 2023','700 bar tanks used for transport; 350 bar for stationary; cost scales with pressure rating and tank volume.'), dp('Liquid H2 Transport Cost','$1.0–3.0/kgH2/1000km','CAPEX+boil-off+energy/throughput','DNV 2023','Liquefaction energy penalty 25-35% of H2 HHV; boil-off 0.2-0.3%/day adds cost for long voyages.'), dp('Ammonia Reconversion Efficiency','60–70% round-trip','η_NH3 = H2_out/H2_in','Hydrogen Council 2022','NH3 cracking to H2 adds $0.5-1.5/kgH2; often used directly as fuel/feedstock to avoid reconversion loss.')],
+    ['Compare four storage/transport pathways: compressed gas, liquid H2, LOHC, ammonia', 'Calculate storage cost ($/kgH2) and transport cost ($/kgH2/1000km) for each pathway', 'Apply energy penalty and infrastructure CAPEX to derive total delivered cost', 'Assess pipeline repurposing potential: cost reduction 50-70% vs new hydrogen pipelines'],
+    ['DNV Hydrogen Forecast to 2050 2023','IEA The Future of Hydrogen 2019','Hydrogen Council Hydrogen Decarbonization Pathways 2022'],
+    [acr('LOHC','Liquid Organic Hydrogen Carrier','Chemical hydrogen storage using reversible hydrogenation of organic molecules'), acr('HHV','Higher Heating Value','Total energy released by combustion including condensation of water vapour'), acr('NH3','Ammonia','Hydrogen carrier: 17.6 wt% H2; well-established shipping and storage infrastructure'), acr('BOG','Boil-Off Gas','H2 lost through evaporation in cryogenic liquid storage tanks')],
+    [dl('Transport distance matrix','→ pathway cost model','$/kgH2 by distance and mode'), dl('Pipeline repurposing assessment','→ infrastructure cost','Existing vs new pipeline $/km')],
+    'Ammonia dominates for intercontinental hydrogen trade (>3,000 km) at $1.5-2.5/kgH2 delivered; pipeline repurposing cuts intra-continental transport cost by 50-70% versus new build, per DNV and IEA analysis.'
+  ),
+
+  '/power-to-x-finance': g(
+    'Power-to-X Project Finance', 'EP-DS5', 'DS',
+    'Project finance for Power-to-X conversion chains: green H2 to green ammonia, methanol, e-SAF and direct reduced iron, with EU subsidy modelling and carbon credit revenue stacking.',
+    ce('PtX Conversion Chain Economics', 'PtX_LCOP = LCOH × conversion_ratio + CAPEX_converter×CRF/output + OPEX', ['IRENA Innovation Outlook: Electrofuels','EU Innovation Fund Guidelines','Hydrogen Council PtX Roadmap'], 'Conversion efficiency chain from renewable electricity to final product determines cost competitiveness; carbon credit revenue and EU H2Global subsidies bridge the gap to fossil incumbent prices.'),
+    [dp('Green Ammonia LCOP','$600–1200/tNH3','LCOH($/kgH2)×0.178+Haber-Bosch CAPEX','IRENA 2022','Green NH3 at $800/t is 2-3× grey NH3 at $250-350/t; requires $400-600/t carbon price or subsidy for parity.'), dp('e-SAF Production Cost','$2.5–6.0/litre','LCOH×H2_intensity+CO2_capture+FT_CAPEX','ICAO CORSIA','e-SAF is 3-5× conventional jet fuel; EU mandate 2% by 2030, 6% by 2035 creates guaranteed demand.'), dp('H2Global Subsidy Impact','$0.5–3.0/kgH2 equivalent','Subsidy = (offtake_price - import_price) × volume','EU H2Global 2023','EU H2Global auction mechanism bridges import/offtake price differential; first auctions cleared 2023.')],
+    ['Map full conversion chain efficiency from renewable electricity to PtX product', 'Model EU H2Global and Innovation Fund subsidy eligibility and auction clearing price', 'Stack carbon credit revenue (CBAM savings, voluntary carbon market) on top of product revenue', 'Calculate project IRR with and without subsidy to determine bankability threshold'],
+    ['IRENA Innovation Outlook Electrofuels 2021','EU Innovation Fund Technical Guidance 2023','Hydrogen Council Power-to-X Roadmap 2021'],
+    [acr('PtX','Power-to-X','Conversion of renewable electricity via hydrogen to synthetic fuels and feedstocks'), acr('e-SAF','electro-Sustainable Aviation Fuel','Synthetic aviation fuel produced from green H2 and captured CO2'), acr('DRI','Direct Reduced Iron','Green steel intermediate produced by reducing iron ore with H2 instead of coal'), acr('CBAM','Carbon Border Adjustment Mechanism','EU carbon price on imports of carbon-intensive goods, creating demand for green feedstocks')],
+    [dl('EU subsidy auction results','→ revenue model','Clearing price and volume by PtX product'), dl('Carbon credit price curve','→ revenue stacking model','VCM and compliance price by year')],
+    'Power-to-X economics require EU H2Global subsidies plus carbon credit revenue to reach bankable IRR of 8-10%; e-SAF and green ammonia are the nearest-term bankable PtX applications given EU regulatory mandates through 2035.'
+  ),
+
+  '/blue-hydrogen-ccs': g(
+    'Blue Hydrogen with CCS Economics', 'EP-DS6', 'DS',
+    'Economic and lifecycle analysis of blue hydrogen production via SMR with carbon capture, covering capture cost, CO2 transport and storage, lifecycle emissions versus grey H2, and US 45Q tax credit valuation.',
+    ce('Blue H2 Cost and Emissions', 'LCOH_blue = LCOH_SMR + CCS_cost($/tCO2) × emission_intensity(tCO2/kgH2)', ['IEA CCUS in Clean Energy Transitions','Global CCS Institute Blue Hydrogen','US 45Q Tax Credit Guidance'], 'CCS adds $0.5-1.5/kgH2 at $60-100/tCO2 capture cost; 45Q credit of $85/tCO2 captured significantly improves US project economics.'),
+    [dp('CO2 Capture Cost','$60–100/tCO2','CAPEX_capture×CRF + OPEX_capture / CO2_captured','IEA 2023','Post-combustion amine scrubbing dominates; pre-combustion (IGCC) offers higher capture rates but greater CAPEX.'), dp('Capture Rate','85–95%','CO2_captured/CO2_generated','Global CCS Institute 2023','95%+ capture requires advanced solvents and larger equipment; residual emissions from SMR process gas remain.'), dp('Lifecycle Emissions vs Grey H2','3–7 kgCO2e/kgH2 (blue) vs 10–12 (grey)','LCA boundary: extraction through gate','IEA Well-to-Gate 2022','Upstream methane leakage (>2%) can erode blue H2 emission advantage; supply chain integrity critical for lifecycle claim.')],
+    ['Model SMR CAPEX and OPEX as baseline blue H2 cost before CCS addition', 'Add CCS cost (capture + compression + transport + storage) at $/tCO2 and multiply by capture intensity', 'Apply US 45Q credit ($85/tCO2 for geological storage) to calculate net economics', 'Compare lifecycle emissions (well-to-gate) versus grey H2 and green H2 across capture rate scenarios'],
+    ['IEA CCUS in Clean Energy Transitions 2021','Global CCS Institute Blue Hydrogen State of the Art 2021','US Treasury 45Q Tax Credit Final Guidance 2023'],
+    [acr('SMR','Steam Methane Reforming','Natural gas reforming producing H2 and CO2; primary grey/blue H2 production route'), acr('CCS','Carbon Capture and Storage','Capture of CO2 at source, transport via pipeline and permanent geological storage'), acr('45Q','Section 45Q Tax Credit','US federal tax credit: $85/tCO2 for geological storage, $60/tCO2 for utilisation'), acr('IGCC','Integrated Gasification Combined Cycle','Pre-combustion CCS route with higher capture rates and thermal efficiency')],
+    [dl('SMR plant operating data','→ emissions intensity model','tCO2/kgH2 by feedstock quality'), dl('45Q credit eligibility','→ project economics','$/kgH2 tax credit value by capture rate')],
+    'Blue hydrogen with 90%+ CCS reduces lifecycle emissions to 3-5 kgCO2e/kgH2 versus 10-12 for grey H2; US 45Q credit at $85/tCO2 reduces blue H2 LCOH by $0.4-0.7/kg, making US projects broadly competitive with grey H2 before 2030.'
+  ),
+
+  '/green-hydrogen-ammonia-carbon': g(
+    'Green Ammonia and Carbon-Neutral Fuels', 'EP-DS7', 'DS',
+    'Economics and carbon intensity analysis of green ammonia and carbon-neutral shipping fuels, covering electrified Haber-Bosch, cost benchmarks, IMO 2023 GHG fuel mix targets and shipping fuel comparison.',
+    ce('Green Ammonia Cost Model', 'LCOP_NH3 = LCOH($/kgH2) / 0.178 + Haber-Bosch_CAPEX×CRF/output + OPEX', ['Ammonia Energy Association Green NH3 Roadmap','IRENA Innovation Outlook Ammonia','IMO GHG Strategy 2023'], 'Green ammonia at 17.6 wt% hydrogen content; electrified Haber-Bosch CAPEX $400-800/tNH3/yr; carbon intensity 0.0 tCO2e/t vs 1.6 for grey ammonia.'),
+    [dp('Green NH3 Production Cost','$600–1200/tNH3','LCOH/0.178 + BH_CAPEX×CRF + OPEX','IRENA 2022','Cost dominated by green H2 input (60-70%); Haber-Bosch plant CAPEX and N2 supply represent 20-30%.'), dp('Carbon Intensity vs Grey NH3','0.0 vs 1.6 tCO2e/tNH3','LCA: electrolysis + Haber-Bosch, grid boundary','Ammonia Energy Association','Grey NH3 at 1.6 tCO2e/t is the displacement target; blue NH3 achieves 0.2-0.4 tCO2e/t with 90% CCS.'), dp('IMO Fuel Mix Compliance','GFI = Σ(fuel_mass × EEXI_factor)','GFI ≤ Reference_Line × (1 - reduction_factor)','IMO MEPC 80 2023','IMO 2023 strategy targets 20-30% GHG reduction by 2030, 70-80% by 2040; green ammonia and methanol are primary compliant fuels.')],
+    ['Model green NH3 cost from LCOH input through electrified Haber-Bosch conversion', 'Compare shipping fuel options: green NH3 vs green methanol vs liquid H2 vs bio-LNG on $/GJ and gCO2e/MJ', 'Apply IMO 2023 GHG Fuel Intensity (GFI) framework to assess fleet compliance cost', 'Calculate carbon premium per tonne of cargo for green ammonia vs conventional fuels'],
+    ['Ammonia Energy Association Green Ammonia Technology Roadmap 2022','IRENA Innovation Outlook: Electrofuels — Ammonia Chapter 2021','IMO MEPC 80 Revised GHG Strategy 2023'],
+    [acr('GFI','Greenhouse Gas Fuel Intensity','IMO metric: well-to-wake CO2e emissions per MJ of energy'), acr('MEPC','Marine Environment Protection Committee','IMO committee setting GHG and pollution standards for shipping'), acr('EEXI','Energy Efficiency Existing Ship Index','IMO technical efficiency standard for existing ships in operation'), acr('HB','Haber-Bosch','Industrial process combining N2 and H2 to synthesise ammonia at high pressure and temperature')],
+    [dl('IMO fuel intensity benchmarks','→ compliance model','GFI by fuel type and ship class'), dl('Green NH3 spot price','→ cost model','$/tNH3 by trade route and year')],
+    'Green ammonia is the leading carbon-neutral shipping fuel candidate under IMO 2023 GHG strategy; at $800/tNH3 it is 2-3× the price of conventional bunker fuel but delivers zero well-to-wake emissions, with cost parity achievable below $500/tNH3 by 2035 per IRENA learning curves.'
+  ),
+
+  '/bess-project-finance': g(
+    'BESS Project Finance', 'EP-DT1', 'DT',
+    '4-hour battery energy storage system project finance covering CAPEX waterfall, multi-stream revenue stacking, degradation modelling to 80% end-of-life and augmentation cost for IRR optimisation.',
+    ce('BESS Revenue Stack IRR', 'Revenue = CM_rev + FFR_rev + Arb_rev; IRR: NPV(Revenue - OPEX - Augment - DebtService) = 0', ['BNEF BESS Market Outlook 2023','National Grid ESO Balancing Services','FERC Order 841 Storage Participation'], 'Revenue stacking across capacity market, frequency response and energy arbitrage is essential for bankable BESS IRR; degradation to 80% SoH at year 10 triggers augmentation cost.'),
+    [dp('4-hr BESS CAPEX','$250–400/kWh (2023)','System_CAPEX = Cells + BMS + PCS + EPC + O&C','BNEF 2023','Cell cost (40-50% of system) tracking 15% annual decline; target <$150/kWh system cost by 2030 for merchant viability.'), dp('Revenue Stack ($/kW/yr)','$80–200/kW/yr','R = CM + FFR + Arb; each stream independently modelled','National Grid/ERCOT 2023','Capacity market provides base revenue; FFR/DCR premium services add $40-80/kW/yr; arbitrage dependent on price spread volatility.'), dp('Degradation to 80% SoH','Year 8–12 depending on cycling','SoH(t) = 100% - Deg_rate × cycles(t)','NREL Battery Lifetime Model','Calendar ageing + cycle ageing; LFP degrades 10-15% slower than NMC per equivalent cycle count.')],
+    ['Size BESS system (MW/MWh) and calculate CAPEX waterfall: cells, BMS, PCS, EPC, grid connection, owners costs', 'Model revenue by stream: capacity market (contracted), FFR/DCR (tendered), energy arbitrage (price spread)', 'Apply degradation model to forecast SoH and schedule augmentation at 80% SoH threshold', 'Calculate project IRR with and without augmentation cost; test sensitivity to revenue stream pricing'],
+    ['BNEF Energy Storage Market Outlook 2023','National Grid ESO Balancing Mechanism Reports','FERC Order 841 Energy Storage Participation in Markets 2018'],
+    [acr('BESS','Battery Energy Storage System','Grid-scale electrochemical energy storage using lithium-ion or alternative battery chemistry'), acr('FFR','Fast Frequency Response','Grid ancillary service responding to frequency deviations within 1 second'), acr('SoH','State of Health','Battery capacity as percentage of nameplate; augmentation typically triggered at 80%'), acr('PCS','Power Conversion System','Bidirectional inverter converting DC battery to AC grid power')],
+    [dl('Capacity market auction results','→ revenue model','£/kW/yr clearing price by delivery year'), dl('Battery cell price forecast','→ CAPEX model','$/kWh by chemistry and year')],
+    'BESS project finance is bankable in markets with stacked revenue streams totalling >$120/kW/yr; CAPEX trajectory to <$200/kWh by 2030 combined with rising capacity market prices improves merchant IRR to 10-14% under BNEF base case assumptions.'
+  ),
+
+  '/grid-flexibility-markets': g(
+    'Grid Flexibility Market Analytics', 'EP-DT2', 'DT',
+    'Analytics platform for grid flexibility markets covering frequency response services, reserve markets, capacity market by technology, demand-side response aggregation and flexibility value quantification.',
+    ce('Flexibility Value Model', 'Value_flex = Σ(service_volume × clearing_price) - Opportunity_cost', ['National Grid ESO Electricity Market Reform','AEMO Integrated System Plan','ERCOT Ancillary Services Market Guide'], 'Flexibility value varies by market structure; FFR/DCR commands $50-150/MW/hr premium over energy-only dispatch; capacity market provides long-term revenue certainty.'),
+    [dp('FFR Procurement Volume','500–2000 MW (GB)','Procured via competitive tender; volume set by SO','National Grid ESO 2023','GB FFR market cleared at £6-12/MW/hr in 2023; technology-neutral open to BESS, demand response and hydro.'), dp('Capacity Market Clearing Price','£30–75/kW/yr (GB)','Competitive auction; T-1 and T-4 auctions annually','BEIS/National Grid 2023','GB T-4 auction 2023 cleared at £63/kW/yr; new build BESS required £75+/kW/yr for FID in most assessments.'), dp('DSR Aggregation Value','$20–80/MW/yr','DSR_value = Σ(load_shift × price_differential)','Rocky Mountain Institute 2022','Commercial and industrial DSR aggregation delivers 50-200 kW per site; aggregator margins 20-30% of gross revenue.')],
+    ['Map frequency response services by market: FFR/DCR (GB), FCAS (AU), RegUp/RegDown (ERCOT)', 'Analyse reserve market procurement volumes and clearing prices by technology type', 'Model capacity market participation for new-build BESS, gas peakers and demand response', 'Quantify DSR aggregation economics: load shift potential, revenue per MW and aggregator cost structure'],
+    ['National Grid ESO Electricity Market Reform Consultation 2023','AEMO 2022 Integrated System Plan','ERCOT Ancillary Services Market Guide 2023'],
+    [acr('FFR','Fast Frequency Response','Automated response to grid frequency deviation delivered within 1 second'), acr('DCR','Dynamic Containment Response','GB grid service: automated frequency response within 1 second to ±0.5 Hz deviation'), acr('DSR','Demand Side Response','Flexible electricity demand adjustment by commercial/industrial consumers in response to grid signals'), acr('FCAS','Frequency Control Ancillary Services','Australian NEM ancillary service framework for frequency regulation and contingency reserves')],
+    [dl('Market clearing price history','→ revenue model','$/MW/hr by service and market'), dl('DSR potential database','→ aggregation model','MW available by sector and region')],
+    'Grid flexibility markets are growing rapidly with >50% BESS share in GB FFR by 2023; DSR aggregation unlocks 10-30 GW of latent flexibility in developed markets, with value of flexibility estimated at $80-200/MW/yr across stacked service streams.'
+  ),
+
+  '/ldes-investment': g(
+    'Long Duration Energy Storage Investment Analytics', 'EP-DT3', 'DT',
+    'Investment analytics for long duration energy storage technologies including pumped hydro, CAES, vanadium and iron-air flow batteries, hydrogen storage and gravity systems across 4-100 hour duration.',
+    ce('Levelised Cost of Storage', 'LCOS = (CAPEX×CRF + OPEX) / (Annual_cycles × Discharged_energy_per_cycle)', ['LDES Council Net-Zero Power','BNEF Long-Duration Energy Storage Market Outlook','NREL Grid-Scale BESS Cost'], 'LCOS ($/kWh/cycle) enables cross-technology comparison; pumped hydro lowest LCOS for 100hr storage; flow batteries competitive at 8-24hr with declining vanadium electrolyte costs.'),
+    [dp('Pumped Hydro LCOS','$0.01–0.05/kWh/cycle','CAPEX ($800-2000/kWh)×CRF + O&M','IRENA 2023','Lowest LCOS for large-scale, long-life (50yr) projects; constrained by geography; 1,600 GW global installed capacity.'), dp('Vanadium Flow Battery LCOS','$0.05–0.15/kWh/cycle','(CAPEX+stack_replacement)×CRF / cycles','BNEF 2023','Electrolyte retains value (resale/reuse); stack replacement at year 10; scalable capacity independent of power rating.'), dp('Iron-Air Battery LCOS','$0.03–0.10/kWh/cycle (projected)','Similar to VFB; Fe electrolyte at <$5/kg','Form Energy / LDES Council 2023','100-hour duration with Earth-abundant materials; Form Energy targeting $20/kWh system cost at scale; pilot deployments 2024-2025.')],
+    ['Compare LCOS across technologies at 4hr, 12hr, 24hr, 48hr and 100hr discharge durations', 'Apply round-trip efficiency (RTE) penalty to calculate effective delivered energy cost', 'Assess market value of long-duration storage: capacity adequacy, seasonal arbitrage, transmission deferral', 'Screen investment opportunities by technology readiness level (TRL 6-9) and cost trajectory'],
+    ['LDES Council Net-Zero Power: The Clean Energy System 2021','BNEF Long-Duration Energy Storage Market Outlook 2023','NREL Grid-Scale Battery Storage Cost and Performance 2022'],
+    [acr('LDES','Long Duration Energy Storage','Energy storage systems with discharge duration >4 hours; typically 8-100+ hours'), acr('LCOS','Levelised Cost of Storage','All-in cost per kWh of energy discharged over system lifetime'), acr('RTE','Round-Trip Efficiency','Ratio of energy output to energy input; pumped hydro 70-85%, flow batteries 65-80%'), acr('CAES','Compressed Air Energy Storage','Energy stored as compressed air in underground caverns; discharge via expansion turbine')],
+    [dl('Technology cost database','→ LCOS model','CAPEX and OPEX by technology and year'), dl('Grid value model','→ investment screen','$/kW-year value by duration and market')],
+    'Long-duration energy storage is essential for deep decarbonisation with >80% variable renewable penetration; LCOS for 100-hour storage must reach $0.05/kWh/cycle or below for broad economic deployment, a threshold pumped hydro already meets and iron-air targets by 2030.'
+  ),
+
+  '/battery-tech-supply-chain': g(
+    'Battery Supply Chain Risk Analytics', 'EP-DT4', 'DT',
+    'Critical mineral supply chain risk analytics for battery technologies covering lithium, cobalt, nickel, manganese and graphite, country concentration risk, price volatility and NMC vs LFP vs solid-state chemistry comparison.',
+    ce('Supply Chain Risk Index', 'SCRI = Σ(CRM_weight × HHI_country × price_vol × substitutability_score)', ['IEA Critical Minerals Report 2023','BNEF Electric Vehicle Outlook 2023','European Commission CRM Act'], 'HHI concentration index applied to country production share; DRC produces 70% of cobalt (HHI ~5,000); lithium 50% Chile+Australia; supply risk highest for cobalt and natural graphite.'),
+    [dp('Cobalt Country Concentration','DRC 70% (2023)','HHI = Σ(market_share_i²) × 10000','USGS Mineral Commodity Summaries 2023','HHI of ~5,000 indicates extreme concentration; DRC political risk rated B- by S&P; ESG concerns in artisanal mining.'), dp('Lithium Price Volatility','±300% cycle (2021-2023)','CoV = StdDev(price)/Mean(price)','BNEF Metal Price Index','LCO/LFP divergence: LFP eliminates cobalt; NMC reduces cobalt 50-80% vs NMC-111; solid-state eliminates liquid electrolyte.'), dp('Battery Chemistry Comparison','LFP vs NMC vs SSB','Energy density (Wh/kg): LFP 120-180, NMC 200-300, SSB 400+','BNEF 2023','LFP dominates stationary storage (<$80/kWh cell); NMC dominates EV long-range; solid-state batteries TRL 5-7, commercial by 2027-2030.')],
+    ['Map critical mineral supply chain by commodity: Li, Co, Ni, Mn, graphite, copper', 'Calculate HHI concentration index by country for mining, processing and refining stages', 'Model price volatility and supply disruption scenarios for each critical mineral', 'Compare NMC 811, LFP and solid-state electrolyte chemistries on cost, energy density and supply risk'],
+    ['IEA Critical Minerals Report 2023: Role in Clean Energy Transitions','BNEF Electric Vehicle Outlook 2023 — Battery Technology Chapter','European Commission Critical Raw Materials Act 2023'],
+    [acr('HHI','Herfindahl-Hirschman Index','Market concentration measure: sum of squared market shares × 10,000; >2,500 = highly concentrated'), acr('NMC','Nickel Manganese Cobalt','Li-ion battery cathode chemistry; high energy density; NMC 811 uses 80% Ni, 10% Mn, 10% Co'), acr('LFP','Lithium Iron Phosphate','Li-ion cathode chemistry; lower energy density but higher cycle life, lower cost, no cobalt'), acr('CRM','Critical Raw Material','EU-designated materials with high economic importance and supply concentration risk')],
+    [dl('USGS mineral production data','→ HHI model','Mine output by country and mineral'), dl('Battery cell price history','→ chemistry comparison','$/kWh by chemistry and year')],
+    'Battery supply chain risk is dominated by cobalt (DRC 70%) and natural graphite (China 65%) concentration; LFP chemistry eliminates cobalt risk and is now preferred for stationary storage at <$80/kWh cell cost, while solid-state batteries represent a 2027-2030 transformative shift per IEA CRM analysis.'
+  ),
+
+  '/ev-v2g-grid-integration': g(
+    'EV Vehicle-to-Grid Integration Finance', 'EP-DT5', 'DT',
+    'Fleet electrification and Vehicle-to-Grid integration finance covering EV fleet cost modelling, V2G grid service revenue, battery degradation cost from V2G cycling, aggregation economics and smart charging optimisation.',
+    ce('V2G Net Revenue Model', 'Net_V2G = Grid_service_revenue - Battery_degradation_cost - Aggregation_cost', ['IEA EV Outlook 2023','National Grid ESO V2G Trials','Ofgem V2G Smart Charging Framework'], 'V2G battery degradation cost ($0.02-0.08/kWh discharged) must be exceeded by grid service revenue; FFR/DCR service revenue $0.05-0.15/kWh makes V2G marginally positive for high-cycle-life LFP batteries.'),
+    [dp('Fleet Electrification TCO','$/km over 5yr fleet cycle','TCO_EV = CAPEX_EV + Energy + Maintenance - Residual - V2G','IEA 2023','EV fleet TCO achieves parity with ICE at diesel >$1.20/litre; lower maintenance cost (40% reduction) offset by higher vehicle CAPEX.'), dp('V2G Grid Service Revenue','$50–150/kW/yr','Revenue = Σ(service_hours × price × V2G_capacity)','Nissan/National Grid Trial 2023','UK V2G trial achieved £100-200/vehicle/yr in grid services; scales with EV battery capacity and available discharge hours.'), dp('V2G Battery Degradation','$0.02–0.08/kWh discharged','Deg_cost = (CAPEX_battery × SoH_loss_per_kWh) / battery_kWh','NREL 2022','LFP batteries show 2-3× lower degradation per cycle than NMC; V2G with LFP adds minimal degradation at <20% DoD discharge.')],
+    ['Model fleet electrification CAPEX, charging infrastructure and TCO versus ICE baseline', 'Estimate V2G capacity available (kW per vehicle × fleet size × availability factor)', 'Calculate grid service revenue from FFR, DCR and energy arbitrage using V2G capacity', 'Net V2G revenue against battery degradation cost and aggregation platform cost to determine net benefit'],
+    ['IEA Global EV Outlook 2023','National Grid ESO Vehicle-to-Grid Technology Overview 2022','Ofgem Smart and Flexible Grids Call for Input 2022'],
+    [acr('V2G','Vehicle-to-Grid','Technology enabling EV batteries to discharge power back to the electricity grid'), acr('TCO','Total Cost of Ownership','All-in vehicle cost: purchase, fuel/energy, maintenance, insurance less residual value'), acr('DoD','Depth of Discharge','Percentage of battery capacity discharged in each cycle; deeper DoD accelerates degradation'), acr('DSO','Distribution System Operator','Electricity network operator managing local distribution grid including EV charging and V2G')],
+    [dl('Fleet vehicle data','→ V2G capacity model','kWh and charge/discharge window by vehicle type'), dl('Grid service price history','→ revenue model','£/MW/hr by service type and time-of-day')],
+    'V2G is financially positive for LFP-battery EV fleets with >5kW bidirectional capability and access to FFR/DCR markets; net annual V2G revenue of $100-200/vehicle exceeds degradation cost for LFP chemistry, creating a new fleet revenue stream per IEA EV Outlook 2023 projections.'
+  ),
+
+  '/virtual-power-plant': g(
+    'Virtual Power Plant Economics', 'EP-DT6', 'DT',
+    'Virtual Power Plant economics covering aggregated DER dispatch (rooftop solar, BESS, EV, DSR), multi-stream revenue from energy and ancillary markets, aggregation cost modelling and comparison versus gas peaker plants.',
+    ce('VPP Revenue Optimisation', 'VPP_profit = Σ_t(dispatch_decision_t × (price_t - marginal_cost_t)) - Aggregation_OPEX', ['NREL Virtual Power Plants 2023','Rocky Mountain Institute VPP Report 2022','AEMC VPP Demonstration Program'], 'VPP optimises dispatch across energy arbitrage, FFR, reserve and capacity markets simultaneously; ML-based dispatch improves revenue 15-25% over rule-based dispatch per NREL analysis.'),
+    [dp('Aggregated DER Capacity','50–500 MW per VPP program','C_VPP = Σ(C_solar + C_BESS + C_EV + C_DSR) × availability','NREL 2023','Typical residential VPP: 5kW solar + 10kWh BESS per home; 10,000 homes = 50MW/100MWh aggregate capacity.'), dp('VPP vs Peaker LCOE','VPP $80-120/MWh vs Gas $100-180/MWh','LCOE_VPP = Aggregation_cost + Incentive_payments / Energy_dispatched','Rocky Mountain Institute 2022','VPP cost advantage over gas peakers is confirmed in US, AU and GB markets; 2-hour capacity value critical to comparison.'), dp('Aggregation Platform Cost','$3–8/MWh dispatched','Platform_cost = Software + Comms + Metering + Staff / Annual_MWh','AEMC 2023','Aggregation cost declining with scale; >100MW portfolios achieve $3-5/MWh; key margin lever for VPP operators.')],
+    ['Define VPP portfolio composition: rooftop solar, residential/commercial BESS, EV fleet, industrial DSR', 'Model dispatch optimisation across energy, FFR, reserve and capacity market revenue streams', 'Calculate aggregation platform cost (software, communications, metering, customer incentives)', 'Compare VPP economics versus equivalent gas peaker on LCOE, emissions and response time'],
+    ['NREL Virtual Power Plants: Opportunities and Challenges 2023','Rocky Mountain Institute The Economics of Virtual Power Plants 2022','AEMC VPP Demonstration Final Report 2022'],
+    [acr('VPP','Virtual Power Plant','Aggregation of distributed energy resources managed as a single dispatchable entity'), acr('DER','Distributed Energy Resource','Small-scale generation, storage or flexible load connected to the distribution network'), acr('DERMS','DER Management System','Software platform coordinating dispatch of aggregated distributed energy resources'), acr('AEMC','Australian Energy Market Commission','Australian rule-maker for wholesale electricity and gas markets including VPP frameworks')],
+    [dl('DER asset registry','→ VPP capacity model','kW and availability by asset type and location'), dl('Spot and ancillary price history','→ dispatch optimiser','$/MWh by market and 30-min interval')],
+    'VPPs are cost-competitive with gas peakers in markets with high renewable penetration and flexible ancillary service markets; aggregated DER portfolios of 100MW+ achieve $3-5/MWh aggregation cost and $80-120/MWh LCOE, 20-40% below new-build gas peaker cost per Rocky Mountain Institute analysis.'
+  ),
+
+  '/renewable-lca-epd': g(
+    'Renewable Energy LCA and EPD Analytics', 'EP-CrossSprint', 'Cross-Sprint',
+    'Lifecycle assessment and Environmental Product Declaration analytics for renewable energy technologies covering carbon footprint by technology, ISO 14040/44 compliance, carbon payback period and EPD database integration.',
+    ce('Lifecycle Carbon Intensity', 'LCA_CI(gCO2e/kWh) = Σ(lifecycle_stage_emissions) / Total_lifetime_generation', ['ISO 14040:2006 LCA Principles','ISO 14044:2006 LCA Requirements','JRC Science for Policy: LCA of Electricity Generation'], 'Carbon footprint: solar PV 20-50 gCO2e/kWh, wind 7-15, nuclear 4-12, gas 400-490, coal 800-1050; system boundary must include manufacturing, O&M, decommissioning and fuel cycle.'),
+    [dp('Solar PV Carbon Intensity','20–50 gCO2e/kWh','LCA boundary: Si purification through decommissioning','NREL Harmonised LCA 2021','Variation driven by grid mix for manufacturing (c-Si monocrystalline lower than polycrystalline); improving with clean manufacturing energy.'), dp('Wind Carbon Intensity','7–15 gCO2e/kWh','LCA: steel + concrete + blades + installation + O&M','JRC 2021','Onshore wind 7-11 gCO2e/kWh; offshore 8-15 gCO2e/kWh due to marine installation and cable; tower material dominates lifecycle impact.'), dp('Carbon Payback Period','0.5–4 years','CPP = Manufacturing_CO2 / Annual_CO2_displacement','Ecoinvent 3.9 / NREL 2022','Solar PV CPP 1-4yr depending on irradiation and grid mix displaced; wind CPP 0.5-1yr; nuclear CPP 1-2yr including fuel cycle.')],
+    ['Define system boundary per ISO 14040/44: cradle-to-gate, cradle-to-grave or cradle-to-cradle', 'Calculate lifecycle GHG intensity for selected technology using NREL or JRC harmonised LCA data', 'Produce EPD-compliant output under relevant PCR (Product Category Rules) for energy products', 'Calculate carbon payback period against regional grid emission intensity displaced'],
+    ['ISO 14040:2006 Life Cycle Assessment — Principles and Framework','JRC Science for Policy Report: LCA of Electricity Generation Technologies 2021','NREL Harmonised Life Cycle Assessment for Utility-Scale Electricity Generation 2021'],
+    [acr('LCA','Life Cycle Assessment','Systematic environmental impact analysis from raw material extraction through end-of-life'), acr('EPD','Environmental Product Declaration','ISO 14025 standardised environmental performance report based on LCA'), acr('PCR','Product Category Rules','Standardised rules defining LCA methodology for a specific product category'), acr('GWP','Global Warming Potential','CO2-equivalent metric for greenhouse gas emissions over 100-year horizon per IPCC AR6')],
+    [dl('Ecoinvent database','→ LCA model','Background process emissions by region'), dl('NREL LCA Harmonisation','→ technology benchmarks','gCO2e/kWh by technology and year')],
+    'Renewable energy lifecycle carbon intensities are 10-100× lower than fossil fuels: solar PV 20-50 gCO2e/kWh, wind 7-15, nuclear 4-12 versus gas 400-490 and coal 800-1050; carbon payback periods of 0.5-4 years confirm strong climate benefit over 25-30 year project lifetimes per NREL and JRC harmonised LCA data.'
+  ),
+
+  '/sustainability-linked-instruments': g(
+    'Sustainability-Linked Instruments Analytics', 'EP-DW6', 'DW',
+    'Analytics platform for Sustainability-Linked Loans, Bonds, Derivatives and Insurance covering SPT calibration, KPI universe, margin ratchet modelling, second-party opinion scoring and ICMA/LMA/ISDA framework compliance.',
+    ce('SPT Calibration Methodology', 'SPT_ambition = (Baseline_KPI - Target_KPI) / Baseline_KPI × 100%; benchmark against sector leaders and science-based trajectories', ['ICMA SLB Principles 2023','LMA Sustainability Linked Loan Principles 2023','ISDA SL Derivatives Definitions 2022'], 'SPTs must be material, ambitious relative to sector benchmarks and aligned to science-based trajectories; ICMA requires external review confirming ambition level; margin ratchet of 5-50bps is market standard.'),
+    [dp('SPT Ambition Score','1–5 scale','Score = f(sector_benchmark_percentile, SBTi_alignment, baseline_year)','ICMA SPO Framework 2023','Ambitious SPTs benchmarked at top 15-25% of sector peers; SBTi alignment adds 1 score point; 2030 interim targets required for long-dated instruments.'), dp('Margin Ratchet','5–50 bps','Rate_adj = ±ratchet_bps if KPI_outcome vs SPT target','LMA 2023','SLL margin step-up 5-25bps on SPT miss; SLB coupon step-up 25-50bps; asymmetric ratchets (penalty>reward) gaining market acceptance.'), dp('Second-Party Opinion Score','60–95/100','SPO_score = Σ(KPI_relevance + SPT_ambition + reporting + verification)','Sustainalytics / ISS-ESG / Vigeo','SPO score >75/100 typically required for ESG index inclusion; ISS and Sustainalytics account for 60%+ of global SPO market.')],
+    ['Select 1-5 KPIs from ICMA-recommended universe (500+ metrics) aligned to issuer material ESG topics', 'Calibrate SPT ambition level against sector science-based trajectory and top-quartile peer performance', 'Model margin ratchet economics: issuer cost savings on SPT achievement vs penalty on miss', 'Obtain second-party opinion and structure external verification protocol (annually, by accredited verifier)'],
+    ['ICMA Sustainability-Linked Bond Principles June 2023','LMA/APLMA/LSTA Sustainability Linked Loan Principles March 2023','ISDA Sustainability-Linked Derivatives Definitions 2022'],
+    [acr('SLL','Sustainability-Linked Loan','Loan with interest rate adjusted based on borrower achievement of pre-set sustainability performance targets'), acr('SLB','Sustainability-Linked Bond','Bond with coupon step-up if issuer misses pre-agreed sustainability performance targets at observation dates'), acr('SPT','Sustainability Performance Target','Pre-agreed, measurable ESG milestone that triggers coupon/margin adjustment in SL instruments'), acr('SPO','Second-Party Opinion','External review by accredited provider assessing SL framework alignment with ICMA/LMA principles')],
+    [dl('ICMA KPI registry','→ SPT selection','500+ metrics by sector and ESG pillar'), dl('Peer SPT database','→ ambition benchmarking','Target levels and timelines by sector')],
+    'Sustainability-linked instruments have grown to >$1.5 trillion outstanding (2023) and require rigorous SPT calibration at sector top-quartile or science-based trajectory level; margin ratchets of 25-50bps on SLBs and 10-25bps on SLLs are market standard, with ICMA 2023 Principles tightening SPT ambition requirements to reduce greenwashing risk.'
+  ),
+
+'/nuclear-lcoe-economics': g(
+    'Nuclear LCOE Economics', 'EP-DU1', 'DU',
+    'Levelised cost analysis for large nuclear and SMR technologies covering overnight cost trends, historical overruns, capacity factors, decommissioning provisions and fuel cost components.',
+    ce('LCOE Methodology', 'LCOE = (Overnight Cost × FCR + O&M + Fuel + Decom) / (CF × 8760 × Capacity)', ['IEA Projected Costs of Generating Electricity 2020', 'WNA Economics of Nuclear Power'], 'Full lifecycle cost model normalised to $/MWh of generation.'),
+    [dp('Large Nuclear LCOE','$90–$160/MWh','(Capital + O&M + Fuel + Decom) / Annual Generation','IEA 2020','Benchmark range for new-build large light-water reactors in OECD markets.'), dp('SMR Projected LCOE','$60–$100/MWh','NOAK factory cost × learning rate / (CF × capacity)','NEA SMR Report 2021','Projected NOAK range assuming 10–15% learning rate on factory-fabricated units.'), dp('Capacity Factor','90–95%','Actual Generation / (Installed Capacity × 8760)','IAEA PRIS 2023','Nuclear fleet average CF; highest of any generating technology.')],
+    ['Establish overnight capital cost estimate using Vogtle/Hinkley reference class data','Apply fixed charge rate to annualise capital cost','Add O&M, fuel cycle and decommissioning provision components','Compute LCOE and benchmark against SMR and large-nuclear ranges'],
+    ['IEA Projected Costs of Generating Electricity (2020)', 'World Nuclear Association — Economics of Nuclear Power', 'NEA — Unlocking Reductions in the Construction Costs of Nuclear'],
+    [acr('LCOE','Levelised Cost of Energy','All-in cost per MWh over plant lifetime'), acr('FCR','Fixed Charge Rate','Annualisation factor applied to overnight capital cost'), acr('SMR','Small Modular Reactor','Reactor design ≤300 MWe using factory fabrication'), acr('CF','Capacity Factor','Ratio of actual to maximum possible generation')],
+    [dl('Vogtle/Hinkley cost-overrun data','Overnight cost → FCR → annualised capital','LCOE $/MWh by technology')],
+    'Nuclear LCOE ranges from $90–$160/MWh for large LWRs; SMRs target $60–$100/MWh at NOAK scale driven by 10–15% factory-learning rates and 90–95% capacity factors.'
+  ),
+
+  '/smr-project-finance': g(
+    'SMR Project Finance', 'EP-DU2', 'DU',
+    'Project finance structuring for small modular reactors covering factory fabrication economics, FOAK-to-NOAK learning, regulatory pathways across NRC/ONR/CNSC, IRA production tax credits and government guarantee structures.',
+    ce('NOAK Learning Rate', 'NOAK Cost = FOAK Cost × N^(log(1−LR)/log(2))', ['NEA Cost Estimation for SMRs 2015', 'DOE Advanced Reactor Demonstration Program'], 'Wright\'s Law applied to nth-of-a-kind factory unit cost reduction.'),
+    [dp('FOAK-to-NOAK Learning Rate','10–15%','Cost_N = Cost_1 × N^(log(1−LR)/log(2))','NEA SMR Report 2021','Estimated cost reduction per doubling of cumulative factory output.'), dp('IRA Production Tax Credit','2.6¢/kWh','PTC = 2.6¢ × Eligible Generation (MWh)','IRS Section 45U','Advanced nuclear PTC under Inflation Reduction Act for facilities commencing construction pre-2033.'), dp('DOE Loan Guarantee Coverage','Up to 80% of project cost','Guaranteed Debt = Total Project Cost × Coverage Ratio','DOE Loan Programs Office','Title XVII loan guarantee programme for innovative clean energy projects.')],
+    ['Assess FOAK capital cost envelope and learning-rate pathway to NOAK','Map regulatory pathway (NRC DC/COL, ONR GDA, CNSC pre-licensing)','Structure DOE loan guarantee and IRA PTC monetisation','Model debt service coverage across FOAK-risk scenarios'],
+    ['NEA — Cost Estimation Methodology and Assumptions for SMRs (2015)', 'DOE — Advanced Reactor Demonstration Program Guidance', 'IRS — IRC Section 45U Advanced Nuclear Production Tax Credit'],
+    [acr('FOAK','First-of-a-Kind','Initial commercial deployment carrying full development cost'), acr('NOAK','Nth-of-a-Kind','Mature serial production unit benefiting from learning economies'), acr('NRC','Nuclear Regulatory Commission','US federal nuclear safety regulator'), acr('GDA','Generic Design Assessment','UK ONR/EA pre-licensing review process'), acr('PTC','Production Tax Credit','Per-kWh tax credit incentivising clean electricity generation')],
+    [dl('Factory cost model','Learning-rate curves × regulatory timeline','DSCR and IRR sensitivity by FOAK/NOAK scenario')],
+    'SMR project finance viability hinges on achieving NOAK cost targets via 10–15% learning rates, monetising IRA Section 45U PTCs at 2.6¢/kWh and securing DOE Title XVII loan guarantees to bridge FOAK risk.'
+  ),
+
+  '/nuclear-market-intelligence': g(
+    'Nuclear Market Intelligence', 'EP-DU3', 'DU',
+    'Global nuclear market intelligence covering 440 operating reactors, 60+ units under construction, lifetime-extension economics, SMR order pipeline, uranium spot markets and national policy comparison.',
+    ce('Uranium Spot Price Model', 'U₃O₈ Spot = Supply–Demand Balance + Speculative Premium + Policy Shift Indicator', ['UxC Uranium Market Outlook', 'World Nuclear Association Fuel Report'], 'Structural supply-demand balance with policy-driven premium component.'),
+    [dp('Operating Reactor Fleet','440 reactors / ~390 GW','Fleet GW = Σ(Unit Capacity × Availability)','IAEA PRIS 2024','Global installed nuclear capacity tracking unit-by-unit status.'), dp('Units Under Construction','60+ units globally','Pipeline GW = Σ(Under-construction Unit Capacity)','IAEA PRIS 2024','Active construction projects including Chinese and Eastern European programmes.'), dp('Uranium Spot Price','$80–$100/lb U₃O₈','Spot = Exchange-cleared short-term transactions','UxC / TradeTech 2024','Benchmark spot price for natural uranium concentrate.')],
+    ['Aggregate IAEA PRIS fleet data by region and technology generation','Assess lifetime-extension decisions (60→80 year licence applications)','Map SMR order pipeline by developer and country','Analyse uranium spot/term price divergence and enrichment market capacity'],
+    ['IAEA PRIS — Power Reactor Information System', 'World Nuclear Association — World Nuclear Performance Report 2023', 'UxC Uranium Market Outlook Q1 2024'],
+    [acr('PRIS','Power Reactor Information System','IAEA database of global reactor operating history'), acr('LTO','Long-Term Operation','Reactor licence renewal beyond original design life'), acr('SWU','Separative Work Unit','Measure of uranium enrichment effort'), acr('SMR','Small Modular Reactor','Advanced reactor ≤300 MWe with factory-fabricated components')],
+    [dl('IAEA PRIS + UxC price feeds','Fleet status → uranium demand projection','Market intelligence dashboard by region and technology')],
+    'The 440-reactor global fleet (390 GW) is growing via 60+ units under construction; uranium spot prices at $80–$100/lb reflect post-Fukushima supply restarts and policy-driven demand from SMR programmes.'
+  ),
+
+  '/nuclear-decommissioning': g(
+    'Nuclear Decommissioning Finance', 'EP-DU4', 'DU',
+    'Financial analytics for nuclear decommissioning covering unit cost ranges, segregated fund adequacy, cost escalation drivers, SAFDM vs DECON strategy comparison and NDF/NDA fund performance.',
+    ce('Fund Adequacy Ratio', 'FAR = PV(Fund Assets) / PV(Estimated Decommissioning Cost)', ['IAEA Financing of Decommissioning (2007)', 'NRC Financial Assurance Regulations 10 CFR 50.75'], 'Ratio of discounted fund assets to discounted liabilities; regulatory minimum typically 100%.'),
+    [dp('Unit Decommissioning Cost','$500M–$8B','DCost = Labour + Waste Disposal + Engineering + Contingency','NDA UK / NRC US Cost Studies','Wide range reflects reactor type, site complexity, waste classification and national labour costs.'), dp('Fund Adequacy Ratio','Target ≥100%','FAR = PV(Assets) / PV(Liability)','NRC 10 CFR 50.75','Regulatory benchmark; sub-100% funds require remediation plans.'), dp('Cost Escalation Factor','2–4% real p.a.','Escalation = Labour CPI × 0.6 + Waste Disposal Inflation × 0.4','IAEA TRS-429','Labour and low-level waste disposal dominate escalation above general inflation.')],
+    ['Estimate total decommissioning liability using reference-unit cost benchmarks','Calculate present value using site-specific discount rate (real 2–4%)','Compare fund asset NAV to PV liability to derive adequacy ratio','Assess SAFDM vs DECON strategy timing impact on NPV cost'],
+    ['IAEA — Financing of Decommissioning of Nuclear Installations (2007)', 'NDA UK — Annual Report and Accounts', 'NRC — Decommissioning Financial Assurance Guidance (2012)'],
+    [acr('SAFDM','Safe Enclosure Followed by Deferred Dismantling','Decommissioning strategy deferring active dismantling 40–100 years'), acr('DECON','Immediate Dismantlement','Decommissioning strategy commencing active dismantling within years of shutdown'), acr('NDF','Nuclear Decommissioning Fund','Segregated financial vehicle holding provisions for future decommissioning'), acr('NDA','Nuclear Decommissioning Authority','UK government body responsible for civil nuclear decommissioning'), acr('FAR','Fund Adequacy Ratio','PV of fund assets divided by PV of decommissioning liability')],
+    [dl('NDA/NRC cost benchmarks + fund NAV data','Liability PV model → fund adequacy gap analysis','Decommissioning financial assurance dashboard')],
+    'Nuclear decommissioning costs range $500M–$8B per unit; fund adequacy ratios below 100% signal material balance sheet risk, with cost escalation driven by labour and low-level waste disposal at 2–4% real annually.'
+  ),
+
+  '/nuclear-fuel-cycle': g(
+    'Nuclear Fuel Cycle Economics', 'EP-DU5', 'DU',
+    'End-to-end nuclear fuel cycle cost analysis from uranium mining through conversion, enrichment, fabrication and used fuel management, including SWU pricing, MOX economics and HALEU supply chain for advanced reactors.',
+    ce('Fuel Cycle Cost per MWh', 'FCC = (U₃O₈ + Conversion + Enrichment_SWU + Fabrication + Used_Fuel_Mgmt) / (BU × Capacity)', ['WNA — The Nuclear Fuel Cycle', 'EIA — Uranium Marketing Annual Report'], 'Sum of front-end and back-end per-MWh costs at given burnup.'),
+    [dp('Fuel Cycle Cost','$5–$15/MWh','FCC = Σ(Stage Cost) / (BU × MWe)','WNA 2023','Total fuel cost per MWh; low vs fossil fuels, insensitive to uranium price swings.'), dp('SWU Price','$100–$160/SWU','Market SWU = Enrichment Service Contract Price','Urenco / USEC market data','Separative work unit price tracking enrichment capacity utilisation.'), dp('HALEU Enrichment Premium','3–5× standard SWU price','HALEU SWU Cost = Standard SWU × Premium Factor','DOE HALEU Availability Program','High-assay low-enriched uranium (5–20% U-235) required for many advanced reactor designs.')],
+    ['Map fuel cycle stages: mining → conversion → enrichment → fabrication → used fuel','Cost each stage per kgHM and convert to $/MWh at design burnup','Compare once-through vs MOX closed-cycle economics','Assess HALEU supply chain bottlenecks and cost premium for Gen IV reactors'],
+    ['World Nuclear Association — The Nuclear Fuel Cycle', 'EIA — Uranium Marketing Annual Report 2023', 'DOE — HALEU Availability Program Environmental Assessment'],
+    [acr('SWU','Separative Work Unit','Measure of enrichment effort; function of feed, product and tail assays'), acr('HALEU','High-Assay Low-Enriched Uranium','Uranium enriched to 5–20% U-235 for advanced reactor fuels'), acr('MOX','Mixed Oxide Fuel','Reactor fuel containing both uranium and plutonium oxides'), acr('BU','Burnup','Energy extracted per unit fuel mass, measured in MWd/tHM'), acr('kgHM','Kilograms Heavy Metal','Mass unit for nuclear fuel quantities')],
+    [dl('UxC uranium price + SWU market data','Stage cost model → burnup-adjusted $/MWh','Fuel cycle cost dashboard by reactor type')],
+    'Nuclear fuel cycle costs of $5–$15/MWh are dominated by enrichment (SWU at $100–$160) and fabrication; HALEU supply constraints impose a 3–5× SWU premium critical to advanced reactor economics.'
+  ),
+
+  '/advanced-reactor-finance': g(
+    'Advanced Reactor Finance', 'EP-DU6', 'DU',
+    'Financial analytics for Generation IV and fusion reactor concepts covering MSR, HTGR, fast reactors and fusion (ITER/Commonwealth Fusion), including TRL assessment, commercialisation timelines, capital cost uncertainty and DOE ARDP grant structures.',
+    ce('TRL-Adjusted NPV', 'TRL-NPV = Σ[P(success|TRL) × CF_t / (1+r)^t] − I₀', ['DOE Technology Readiness Assessment Guide', 'Fusion Industry Association — Global Fusion Industry 2023'], 'Probability-weighted NPV adjusting commercial cash flows by TRL-conditional success probability.'),
+    [dp('DOE ARDP Grant Size','$80M–$160M','Grant = DOE Share × Total Project Cost (50/50 cost-share)','DOE ARDP Awards 2020–2022','Advanced Reactor Demonstration Program awards to TerraPower and X-energy.'), dp('Commercialisation Timeline','2035–2050','Based on TRL progression rate and regulatory review duration','DOE / Fusion Industry Association','Gen IV commercial deployment 2035–2040; fusion pilot plant 2040–2050.'), dp('Capital Cost Uncertainty Band','±50–100% on point estimate','CAPEX Range = Base Estimate × (1 ± Uncertainty Factor)','IAEA Advanced Reactor Design Review','Wide uncertainty reflects pre-FOAK status; shrinks with ARDP demonstration results.')],
+    ['Classify reactor concept by TRL (1–9) and assign probability of commercial success','Model capital cost range with explicit uncertainty band','Size government grant contribution (DOE ARDP, EU Horizon) and residual private capital','Assess industrial heat and hydrogen market revenue diversification'],
+    ['DOE — Advanced Reactor Demonstration Program Award Summaries', 'IAEA — Advances in Small Modular Reactor Technology Developments 2022', 'Fusion Industry Association — Global Fusion Industry in 2023'],
+    [acr('MSR','Molten Salt Reactor','Gen IV reactor using liquid fluoride or chloride salt as fuel/coolant'), acr('HTGR','High-Temperature Gas-cooled Reactor','Gen IV reactor producing 700–950°C heat for industrial processes'), acr('TRL','Technology Readiness Level','1–9 scale measuring technology maturity from concept to deployment'), acr('ARDP','Advanced Reactor Demonstration Program','DOE programme funding two demonstration reactors by 2027'), acr('ITER','International Thermonuclear Experimental Reactor','35-nation fusion experiment under construction in France')],
+    [dl('DOE ARDP grant data + TRL assessments','TRL-adjusted NPV model + cost uncertainty simulation','Advanced reactor investment viability dashboard')],
+    'Gen IV and fusion finance requires TRL-adjusted NPV frameworks given $80–$160M DOE ARDP grants, ±50–100% capital cost uncertainty and commercialisation windows of 2035–2050; industrial heat and hydrogen revenues are key value diversifiers.'
+  ),
+
+  '/geothermal-lcoe-economics': g(
+    'Geothermal LCOE Economics', 'EP-DV1', 'DV',
+    'Levelised cost analysis for geothermal power covering hydrothermal vs EGS technologies, exploration dry-well risk, drilling cost by depth, reservoir productivity, flash/binary/dry-steam plant types and capacity factor benchmarks.',
+    ce('Geothermal LCOE', 'LCOE = (Exploration + Drilling + Surface Plant + O&M) / (CF × 8760 × Capacity)', ['IRENA — Geothermal Power Technology Brief 2017', 'ThinkGeoEnergy Market Report'], 'Full lifecycle cost model including dry-well exploration write-off and reservoir decline provisions.'),
+    [dp('Geothermal LCOE Range','$40–$100/MWh','LCOE = Annualised Total Cost / Annual Generation','IRENA 2023','Hydrothermal $40–$70/MWh; EGS $80–$100/MWh reflecting higher drilling and stimulation costs.'), dp('Exploration Dry-Well Cost','$5–$20M per well','Dry-Well Cost = Drilling Day Rate × Depth + Mobilisation','ThinkGeoEnergy 2023','Key risk factor; dry-well probability 30–50% in frontier areas drives project financing structure.'), dp('Capacity Factor','85–95%','CF = Actual Generation / (Installed Capacity × 8760)','IRENA Geothermal Capacity Factors','Among the highest of any renewable technology; reservoir management critical to maintaining output.')],
+    ['Assess resource quality via temperature gradient and permeability data','Model drilling programme cost by well count, depth and dry-well probability','Select plant technology (dry-steam, flash, binary ORC) matching resource enthalpy','Compute LCOE sensitivity to reservoir productivity decline and CF assumption'],
+    ['IRENA — Geothermal Power: Technology Brief (2017)', 'ThinkGeoEnergy — Global Geothermal Market Report 2023', 'IEA — Geothermal Electricity Technology Costs'],
+    [acr('EGS','Enhanced Geothermal System','Engineered reservoir created by hydraulic stimulation in hot dry rock'), acr('CF','Capacity Factor','Ratio of actual generation to nameplate capacity over a period'), acr('ORC','Organic Rankine Cycle','Binary power cycle using organic working fluid for low-enthalpy resources'), acr('LCOE','Levelised Cost of Energy','All-in cost per MWh over project lifetime')],
+    [dl('Drilling cost databases + IRENA benchmark data','Exploration risk model → LCOE sensitivity analysis','Geothermal LCOE dashboard by resource type and region')],
+    'Geothermal LCOE of $40–$100/MWh reflects high capacity factors (85–95%) offset by exploration dry-well risk ($5–$20M per well) and depth-driven drilling costs; hydrothermal projects are competitive with wind and solar.'
+  ),
+
+  '/geothermal-project-finance': g(
+    'Geothermal Project Finance', 'EP-DV2', 'DV',
+    'Project finance structuring for geothermal developments covering exploration-development-production CAPEX phases, well productivity uncertainty, resource risk insurance, IFC GGSP concessional support and country IRR benchmarks.',
+    ce('Geothermal IRR Model', 'Project IRR = f(Resource Risk, Drilling CAPEX, PPA Price, CF, Concessional Debt Share)', ['World Bank ESMAP — Geothermal Handbook 2012', 'IFC — Scaling Geothermal 2013'], 'Risk-adjusted IRR framework separating exploration, development and production phases.'),
+    [dp('Drilling Cost Contingency','30–50% of base estimate','Contingency = Base Drilling Cost × Contingency Factor','World Bank ESMAP 2012','Reflects geological uncertainty; EGS and frontier areas require higher contingency than proven hydrothermal fields.'), dp('Well Productivity P10/P50/P90','P10: 2 kg/s, P50: 8 kg/s, P90: 20 kg/s','Productivity Distribution = Resource Assessment Monte Carlo','GeothermEx / GNS Science','P-value spread drives project capacity uncertainty and lender sizing of debt.'), dp('IFC GGSP Grant Size','Up to $1.5M per well (exploration)','GGSP Grant = Well Cost × Coverage Ratio','IFC Global Geothermal Support Program','Concessional risk-sharing for exploration wells reducing private sector exposure.')],
+    ['Phase project into exploration (risk capital), development (project finance) and production (refinancing)','Model P10/P50/P90 well productivity scenarios for capacity sizing','Assess IFC GGSP, World Bank ESMAP and KfW concessional finance availability','Structure drilling cost contingency reserve and resource risk insurance'],
+    ['World Bank ESMAP — Geothermal Handbook: Planning and Finance (2012)', 'IFC — Scaling Geothermal Energy in Developing Countries (2013)', 'KfW Development Bank — Geothermal Finance Guidelines'],
+    [acr('GGSP','Global Geothermal Support Program','IFC programme providing grants for geothermal exploration risk mitigation'), acr('ESMAP','Energy Sector Management Assistance Program','World Bank technical assistance program for energy development'), acr('DSCR','Debt Service Coverage Ratio','Ratio of net operating income to debt service obligations'), acr('P50','Median Estimate','50th percentile outcome in probabilistic resource assessment')],
+    [dl('ESMAP geothermal benchmarks + IFC GGSP terms','Phase-gate CAPEX model → IRR sensitivity','Geothermal project finance term sheet dashboard')],
+    'Geothermal project finance requires phased capital structures separating exploration risk (GGSP grants) from development debt; 30–50% drilling contingency and P10/P50/P90 productivity scenarios drive lender sizing and IRR outcomes.'
+  ),
+
+  '/geothermal-market-intelligence': g(
+    'Geothermal Market Intelligence', 'EP-DV3', 'DV',
+    'Global geothermal market intelligence covering installed capacity by country, project pipeline, direct-use thermal capacity (90 GWth), national policy comparison and new entrant markets in Chile, Ethiopia and Saudi Arabia.',
+    ce('Market Capacity Share', 'Country Share = Country GW / Global Total GW × 100', ['IRENA Renewable Capacity Statistics 2023', 'ThinkGeoEnergy Top 10 Geothermal Countries'], 'Simple capacity-share metric benchmarking national positions in global geothermal market.'),
+    [dp('USA Installed Capacity','3.7 GW','Fleet GW = Σ(Operational Unit Capacity)','IRENA 2023','Largest geothermal fleet globally; concentrated in The Geysers and Salton Sea.'), dp('Global Direct-Use Thermal','~90 GWth','Direct-Use = Σ(Installed Thermal Application Capacity)','IGA World Geothermal Congress 2020','Heating, agri and industrial applications dwarf power generation in total energy terms.'), dp('Indonesia Installed Capacity','2.4 GW','Fleet GW = Σ(Operational Unit Capacity)','IRENA 2023','Second largest fleet; government target 7.2 GW by 2030 underpins strong pipeline.')],
+    ['Map global installed capacity by country using IRENA and ThinkGeoEnergy data','Assess project development pipeline (permitted, under construction, announced)','Compare national policy incentives (feed-in tariff, exploration grants, tax credits)','Identify new entrant markets and barriers to first-commercial-scale deployment'],
+    ['IRENA — Renewable Capacity Statistics 2023', 'ThinkGeoEnergy — Top 10 Geothermal Countries 2023', 'IGA — World Geothermal Congress 2020 Country Updates'],
+    [acr('IGA','International Geothermal Association','Global trade body publishing WGC country reports every 5 years'), acr('GWth','Gigawatts Thermal','Capacity unit for heat output as distinct from electrical output (GWe)'), acr('FIT','Feed-in Tariff','Guaranteed long-term price for renewable electricity generation')],
+    [dl('IRENA capacity database + ThinkGeoEnergy pipeline tracker','Capacity share model → policy incentive comparison','Geothermal market intelligence dashboard by country')],
+    'Global geothermal capacity is led by USA (3.7 GW), Indonesia (2.4 GW), Philippines (1.9 GW), Turkey (1.7 GW) and Kenya (0.9 GW); 90 GWth direct-use capacity underscores the technology\'s broader energy significance beyond power generation.'
+  ),
+
+  '/geothermal-power-markets': g(
+    'Geothermal Power Market Analytics', 'EP-DV4', 'DV',
+    'Geothermal power market analytics covering PPA pricing by region, firm baseload ancillary services value, co-location with desalination and hydrogen production, binary ORC retrofit economics and capacity factor benchmarks versus intermittent renewables.',
+    ce('Geothermal PPA Value', 'PPA Value = Energy Price + Capacity Payment + Ancillary Services Revenue', ['IRENA — Value of Variable Renewable Energy', 'GEA — Annual US Geothermal Power Production Report'], 'Total revenue stack capturing energy, capacity and flexibility value of firm baseload geothermal.'),
+    [dp('Regional PPA Price','$40–$80/MWh','PPA = Negotiated bilateral contract price','IRENA PPA Database 2023','Range reflects resource quality, grid location, country risk and project vintage.'), dp('Ancillary Services Premium','$5–$15/MWh equivalent','AS Value = Regulation + Spinning Reserve + Black Start','CAISO / NZEM market data','Firm dispatchable nature of geothermal commands premium over variable RE in capacity markets.'), dp('Binary ORC Retrofit Capex','$1,200–$2,000/kW','Retrofit CAPEX = Equipment + Civil + Grid Connection','GEA 2022','Cost of converting existing flash plant to binary cycle for lower-enthalpy secondary extraction.')],
+    ['Assess PPA price competitiveness versus wind, solar and gas peaker by region','Quantify ancillary services and capacity market revenue for firm geothermal dispatch','Model co-location economics with desalination (reject heat) and green hydrogen (firm power)','Evaluate binary ORC retrofit NPV for existing flash plants with declining well enthalpy'],
+    ['IRENA — Renewable Power Generation Costs 2023', 'GEA — Annual US Geothermal Power Production and Development Report', 'NZEM — Geothermal Baseload Ancillary Services Pricing Analysis'],
+    [acr('PPA','Power Purchase Agreement','Long-term bilateral contract for electricity sale at fixed or indexed price'), acr('ORC','Organic Rankine Cycle','Binary power cycle for sub-200°C geothermal resources'), acr('AS','Ancillary Services','Grid support services including frequency regulation and spinning reserve'), acr('GEA','Geothermal Energy Association','US trade body publishing annual geothermal market reports')],
+    [dl('PPA price databases + ancillary service market data','Revenue stack model → project NPV by configuration','Geothermal power market analytics dashboard')],
+    'Geothermal PPAs range $40–$80/MWh regionally, with ancillary service premiums of $5–$15/MWh; co-location with desalination and hydrogen production provides diversified revenue, while binary ORC retrofits extend asset life at $1,200–$2,000/kW.'
+  ),
+
+  '/geothermal-direct-use': g(
+    'Geothermal Direct Heat Analytics', 'EP-DV5', 'DV',
+    'Analytics for geothermal direct heat applications including district heating, greenhouse agriculture, industrial process heat (40–150°C), balneology and fish farming, with LCOH benchmarking and comparison against heat pumps.',
+    ce('Levelised Cost of Heat', 'LCOH = (Well Cost + Plant + O&M) / (Annual Heat Output GJ)', ['EGEC — European Geothermal Market Report', 'IEA — Geothermal Heat Roadmap'], 'Full lifecycle cost per GJ of useful heat delivered to end user.'),
+    [dp('District Heating LCOH','$8–$25/GJ','LCOH = Annualised Cost / Annual Heat Delivered','EGEC Market Report 2022','Competitive vs gas district heating at carbon prices above €30/tCO2; EU Directive supports expansion.'), dp('COP vs Electric Heat Pump','Geothermal direct: 10–30× vs ASHP 3–4×','COP = Useful Heat Output / Electrical Input Equivalent','IEA Geothermal Roadmap','Geothermal direct use avoids electricity conversion losses entirely; no parasitic load beyond pumping.'), dp('Industrial Process Heat Range','40–150°C application range','Temperature = Resource Temperature − Distribution Losses','IEA Industrial Heat Roadmap','Covers food processing, timber drying, textile, paper and chemical sectors below 150°C.')],
+    ['Map resource temperature to application type using Lindal diagram','Calculate LCOH for candidate applications and compare to incumbent fuel','Assess EU district heating Directive targets and regulatory support framework','Model COP advantage versus electric heat pump alternatives at current electricity prices'],
+    ['EGEC — European Geothermal Market Report 2022', 'IEA — Geothermal Heat in Industrial Processes (2022)', 'EU Renewable Energy Directive III — District Heating Provisions'],
+    [acr('LCOH','Levelised Cost of Heat','All-in cost per GJ of heat delivered over project lifetime'), acr('COP','Coefficient of Performance','Ratio of useful heat output to energy input'), acr('EGEC','European Geothermal Energy Council','EU trade body representing geothermal heat and power industry'), acr('ASHP','Air Source Heat Pump','Electrically-driven heat pump extracting heat from ambient air')],
+    [dl('EGEC market data + EU district heating policy database','LCOH model → COP comparison → application mapping','Geothermal direct use analytics dashboard')],
+    'Geothermal direct heat LCOH of $8–$25/GJ is competitive with gas where carbon prices exceed €30/tCO2; effective COP of 10–30× versus electric heat pumps reflects the elimination of electrical conversion losses in direct-use applications.'
+  ),
+
+  '/enhanced-geothermal-systems': g(
+    'EGS Project Analytics', 'EP-DV6', 'DV',
+    'Enhanced Geothermal Systems analytics covering hot dry rock hydraulic stimulation, reservoir engineering, induced seismicity risk management, flow rate and temperature targets, DOE FORGE programme results and LCOE pathway to $45/MWh by 2035.',
+    ce('EGS LCOE Pathway', 'LCOE_EGS(t) = Base_LCOE × (1 − LR)^(log₂(Cumulative_Wells(t)))', ['DOE — EGS Shot 2024', 'MIT — The Future of Geothermal Energy 2006'], 'Learning-curve LCOE projection targeting $45/MWh by 2035 through drilling cost reduction.'),
+    [dp('Flow Rate Target','≥10 kg/s per well pair','Flow Rate = Reservoir Permeability × ΔP / Fluid Viscosity','DOE FORGE Results 2023','Minimum commercial threshold; FORGE achieving 5–8 kg/s at Utah site as of 2023.'), dp('Temperature Target','≥175°C','T_reservoir = Surface Temperature + Geothermal Gradient × Depth','DOE EGS Targets','Minimum reservoir temperature for viable flash or binary power generation.'), dp('EGS LCOE Target','$45/MWh by 2035','Target = DOE EGS Shot Learning Curve Projection','DOE Enhanced Geothermal Shot 2022','Requires 90% reduction in stimulation and drilling costs from current $100–$200/MWh baseline.')],
+    ['Characterise reservoir using temperature gradient, permeability and stress field data','Design hydraulic stimulation programme with induced seismicity monitoring protocol','Model flow rate and temperature uncertainty across P10/P50/P90 scenarios','Project LCOE reduction pathway using learning-curve model toward $45/MWh target'],
+    ['DOE — Enhanced Geothermal Shot: A 2024 Liftoff Report', 'MIT Energy Initiative — The Future of Geothermal Energy (2006 + 2019 update)', 'DOE FORGE — Frontier Observatory for Research in Geothermal Energy Results 2023'],
+    [acr('EGS','Enhanced Geothermal System','Engineered geothermal reservoir in hot dry rock via hydraulic stimulation'), acr('FORGE','Frontier Observatory for Research in Geothermal Energy','DOE flagship EGS research site in Milford, Utah'), acr('HDR','Hot Dry Rock','Impermeable hot rock requiring hydraulic fracturing to create permeability'), acr('ML','Local Magnitude','Richter-scale measure used for induced seismicity threshold (≤2.0 for EGS)')],
+    [dl('DOE FORGE field data + drilling cost benchmarks','LCOE learning-curve model → induced seismicity risk dashboard','EGS project analytics platform')],
+    'EGS targets ≥10 kg/s flow rates and ≥175°C reservoir temperatures to reach $45/MWh LCOE by 2035; DOE FORGE is demonstrating feasibility at Utah with induced seismicity managed below ML 2.0 thresholds.'
+  ),
+
+  '/fi-net-zero-pathways': g(
+    'FI Net-Zero Pathway Analytics', 'EP-DW1', 'DW',
+    'Net-zero pathway analytics for financial institutions covering PCAF financed emissions baseline, NZBA sector alignment pathways across nine sectors, 2030 interim targets and portfolio decarbonisation lever analysis.',
+    ce('Portfolio Decarbonisation Rate', 'PDR = (Baseline Emissions − Current Emissions) / Baseline Emissions × 100', ['NZBA — Guidelines for Climate Target Setting for Banks 2021', 'PCAF — Global GHG Accounting Standard 2022'], 'Annual percentage reduction in financed emissions relative to baseline year (typically 2019 or 2020).'),
+    [dp('PCAF Data Quality Score','1 (best) to 5 (worst)','DQ = Weighted average of holding-level data quality scores','PCAF Standard 2022','Higher DQ scores indicate proxy/estimation-based emissions; DQ1 uses audited primary data.'), dp('NZBA 2030 Power Sector Target','≤100 gCO2e/kWh','Financed Emissions Intensity = Weighted Avg Grid Intensity of Financed Power Assets','NZBA Power Sector Guidance','Consistent with IEA NZE power sector pathway; absolute emissions reduction required simultaneously.'), dp('Portfolio Temperature Score','1.5–3.5°C range typical','PTS = Weighted Avg Company ITR from SBTI/MSCI/ISS methodologies','MSCI Climate Value-at-Risk / SBTI SBTi Tool','Headline metric for investor and regulator communication of portfolio alignment.')],
+    ['Establish financed emissions baseline by PCAF asset class using DQ 1–5 methodology','Map portfolio to NZBA sector pathways (power/O&G/steel/cement/aviation/shipping/agriculture/real estate/mortgages)','Set 2030 interim targets aligned to IEA NZE or IPCC 1.5°C pathways','Analyse decarbonisation levers: divestment, engagement, new finance allocation'],
+    ['NZBA — Guidelines for Climate Target Setting for Banks (2021)', 'PCAF — The Global GHG Accounting and Reporting Standard for the Financial Industry (2022)', 'IEA — Net Zero by 2050: A Roadmap for the Global Energy Sector'],
+    [acr('NZBA','Net-Zero Banking Alliance','UNEP FI-convened alliance of banks committing to net-zero financed emissions by 2050'), acr('PCAF','Partnership for Carbon Accounting Financials','Industry standard for measuring and disclosing financed emissions'), acr('DQ','Data Quality','PCAF 1–5 scale measuring reliability of financed emissions data'), acr('ITR','Implied Temperature Rise','Forward-looking temperature alignment metric for individual companies'), acr('PDR','Portfolio Decarbonisation Rate','Annual % reduction in financed emissions relative to baseline')],
+    [dl('PCAF asset-class emissions data + NZBA sector pathways','Financed emissions model → lever analysis → interim target dashboard','FI net-zero pathway analytics platform')],
+    'FI net-zero analytics requires PCAF-compliant financed emissions baselines (DQ 1–5), NZBA sector pathway alignment across nine sectors and 2030 interim targets; decarbonisation levers span divestment, engagement and new green finance allocation.'
+  ),
+
+  '/fi-taxonomy-pcaf-bridge': g(
+    'FI EU Taxonomy–PCAF Bridge Analytics', 'EP-DW2', 'DW',
+    'Analytics bridging EU Taxonomy alignment and PCAF financed emissions covering GAR/BTAR calculation, green asset ratio uplift pathways, financed emissions by taxonomy objective and EBA Pillar 3 ESG disclosure integration.',
+    ce('Green Asset Ratio', 'GAR = Taxonomy-Aligned Exposures / Total Eligible Exposures × 100', ['EBA — ITS on Pillar 3 ESG Disclosures', 'ECB — Guide on Climate-related and Environmental Risks'], 'Proportion of credit institution\'s eligible exposures meeting EU Taxonomy substantial contribution criteria.'),
+    [dp('Green Asset Ratio (GAR)','Target: progressive increase','GAR = TA Exposures / Eligible Exposures × 100','EBA Pillar 3 ITS 2022','Mandatory disclosure metric for EU credit institutions from 2024; basis for green lending targets.'), dp('BTAR','Banking Book Taxonomy Alignment Ratio','BTAR = TA Assets (incl. sovereign) / Total Assets','EBA Opinion on Taxonomy Reporting 2023','Broader coverage than GAR; includes sovereign bonds and SME exposures using estimation.'), dp('Financed Emissions by Taxonomy Objective','tCO2e by CCM, CCA, WTR, CE, PPA, BIO','FE = Attribution Factor × Company Scope 1+2+3 Emissions','PCAF Standard × Taxonomy Mapping','Linking taxonomy objective to emissions reduction impact per € of aligned financing.')],
+    ['Map portfolio exposures to EU Taxonomy eligibility by NACE code and activity','Apply substantial contribution criteria and DNSH screening to calculate aligned assets','Compute GAR and BTAR under EBA Pillar 3 ITS templates','Overlay PCAF DQ scores on taxonomy-aligned assets to quantify financed emissions quality'],
+    ['EBA — Final Draft ITS on Pillar 3 ESG Disclosures (2022)', 'ECB — Guide on Climate-related and Environmental Risks (2020)', 'PCAF — The Global GHG Accounting and Reporting Standard (2022)'],
+    [acr('GAR','Green Asset Ratio','EU Taxonomy-aligned exposures as % of eligible credit institution exposures'), acr('BTAR','Banking Book Taxonomy Alignment Ratio','Broader taxonomy alignment metric including sovereign and SME exposures'), acr('CCM','Climate Change Mitigation','First EU Taxonomy environmental objective'), acr('CCA','Climate Change Adaptation','Second EU Taxonomy environmental objective'), acr('DNSH','Do No Significant Harm','Requirement that taxonomy-aligned activities do not materially harm other objectives')],
+    [dl('EU Taxonomy activity database + EBA Pillar 3 templates','GAR/BTAR computation → PCAF DQ overlay','FI Taxonomy-PCAF bridge analytics dashboard')],
+    'The EU Taxonomy–PCAF bridge quantifies GAR and BTAR under EBA Pillar 3 ITS while linking taxonomy-aligned assets to PCAF financed emissions by objective, enabling institutions to demonstrate both regulatory compliance and real-economy decarbonisation impact.'
+  ),
+
+  '/energy-sector-taxonomy': g(
+    'Energy Sector EU Taxonomy Analytics', 'EP-DW4', 'DW',
+    'EU Taxonomy eligibility and alignment analytics for energy sector exposures covering power generation by technology, substantial contribution thresholds, DNSH climate hazard screening, and transitional gas and nuclear classifications.',
+    ce('Taxonomy Alignment Score', 'TAS = Σ(Exposure_i × Aligned_i) / Σ(Exposure_i)', ['EU Taxonomy Regulation (EU) 2020/852', 'TEG — Taxonomy Technical Report June 2019'], 'Exposure-weighted average of taxonomy alignment across energy sector portfolio.'),
+    [dp('Substantial Contribution Threshold','<100 gCO2e/kWh lifecycle','SC = Lifecycle GHG Intensity < 100 gCO2/kWh','Delegated Regulation (EU) 2021/2139','Power generation SC criterion for climate change mitigation; applies to solar, wind, hydro, nuclear and gas with CCS.'), dp('Transitional Gas Threshold','<270 gCO2e/kWh direct; <550 kg/kW in 20-year average','Gas SC = Direct Emissions < 270 gCO2/kWh AND lifecycle < 550 kg/kW','Delegated Regulation Annex I 4.29','Time-limited transitional activity for gas power plants meeting strict emissions and fuel-switching criteria.'), dp('Nuclear Classification','Lifecycle < 100 gCO2e/kWh; meets TSO criteria','Nuclear alignment requires compliance with Joint Research Centre TSO technical screening','Complementary Delegated Act (EU) 2022/1214','Nuclear classified as transitional under separate Complementary Delegated Act; eligible until 2045 for existing, 2040 for new.')],
+    ['Map energy generation assets to EU Taxonomy activity codes (4.1–4.30)','Apply substantial contribution lifecycle GHG threshold (<100 gCO2e/kWh) per technology','Conduct DNSH screening against six environmental objectives using climate hazard assessment','Apply transitional gas and nuclear criteria with appropriate sunset clauses'],
+    ['EU Taxonomy Regulation (EU) 2020/852 and Delegated Regulation (EU) 2021/2139', 'TEG — Taxonomy Technical Report (June 2019)', 'European Commission — EU Taxonomy Compass (online)'],
+    [acr('SC','Substantial Contribution','Positive contribution to at least one EU Taxonomy environmental objective'), acr('DNSH','Do No Significant Harm','No material adverse impact on any of the six environmental objectives'), acr('TSO','Technical Screening Criteria for Nuclear — Technical Specific Obligations','JRC-defined safety and waste management criteria for nuclear taxonomy eligibility'), acr('TEG','Technical Expert Group on Sustainable Finance','Commission advisory body that developed original EU Taxonomy criteria')],
+    [dl('EU Taxonomy Compass activity database + lifecycle LCA data','SC threshold screening → DNSH hazard assessment → alignment scoring','Energy sector taxonomy analytics dashboard')],
+    'Energy sector EU Taxonomy alignment hinges on the <100 gCO2e/kWh lifecycle SC threshold; gas power meets transitional criteria below 270 gCO2e/kWh direct, while nuclear qualifies under the Complementary Delegated Act subject to JRC TSO safety criteria.'
+  ),
+
+  '/green-securitization': g(
+    'Green Securitisation Analytics', 'EP-DW5', 'DW',
+    'Green securitisation analytics covering green ABS (solar/EV/PACE), green RMBS (energy-efficient mortgages), green CLO (green loans), use-of-proceeds waterfall, SPV structuring, greenium quantification and EU Green Bond Standard applicability.',
+    ce('Greenium Calculation', 'Greenium = YTM_Conventional_Comparable − YTM_Green_Equivalent (bps)', ['ICMA — Green Bond Principles 2021', 'EBA — Discussion Paper on Green Bonds (2020)'], 'Yield differential between green and conventional ABS/RMBS/CLO tranches with matched risk profiles.'),
+    [dp('Greenium (Green Premium)','5–10 bps','Greenium = YTM_Conv − YTM_Green on matched-maturity, same-credit tranches','ICMA STS Green ABS / Bloomberg data','Investor demand premium for labelled green securitisations; varies by asset class and ESG mandate penetration.'), dp('Solar ABS Green Eligibility','100% use-of-proceeds to solar loans','Eligibility = Loan Purpose × Taxonomy SC Check','ICMA GBP + EU GBS Criteria','Solar consumer loans and leases are core eligible asset class; EU GBS requires Taxonomy alignment.'), dp('EV Lease ABS Green Eligibility','Zero-emission vehicles (BEV/FCEV)','Eligibility = Vehicle Category × Emissions Standard','EU Taxonomy 6.5 + ICMA GBP','BEV and FCEV lease receivables fully eligible; PHEV eligibility dependent on utility factor methodology.')],
+    ['Screen underlying asset pool for green eligibility by asset class (solar/EV/PACE/mortgages/green loans)','Structure SPV with use-of-proceeds waterfall separating green and non-green tranches','Apply ICMA GBP or EU GBS framework for second-party opinion and pre-issuance disclosure','Quantify expected greenium and model impact on all-in financing cost vs conventional securitisation'],
+    ['ICMA — Green Bond Principles (2021)', 'EBA — Discussion Paper on the Role of Environmental Risks in the Prudential Framework (2020)', 'SFA — ESG in Securitisation Market Practice Guidelines (2022)'],
+    [acr('ABS','Asset-Backed Security','Securitisation backed by consumer loans, leases or other receivables'), acr('RMBS','Residential Mortgage-Backed Security','Securitisation backed by residential mortgage loans'), acr('CLO','Collateralised Loan Obligation','Securitisation backed by a portfolio of leveraged or green corporate loans'), acr('PACE','Property Assessed Clean Energy','US financing mechanism for energy efficiency and renewable improvements repaid via property tax'), acr('SPV','Special Purpose Vehicle','Bankruptcy-remote legal entity holding securitised assets'), acr('GBS','EU Green Bond Standard','EU regulatory framework for verified green bonds aligned to EU Taxonomy')],
+    [dl('Loan-level asset pool data + ICMA/EU GBS eligibility criteria','Use-of-proceeds waterfall → greenium pricing model','Green securitisation structuring and analytics dashboard')],
+    'Green securitisation commands a 5–10 bps greenium across solar ABS, EV lease ABS and energy-efficient RMBS; EU Green Bond Standard applicability requires full EU Taxonomy alignment of the underlying asset pool, raising the bar versus ICMA GBP self-labelling.'
+  ),
+
+'/blended-finance-structuring': g(
+    'Blended Finance Structuring Analytics', 'EP-DI1', 'DI',
+    'Blended finance structuring analytics covering first-loss tranche sizing, concessional capital catalytic ratio, DFI/MDB co-investment structures, and OECD DAC blended finance taxonomy. Quantifies the leverage ratio of private capital mobilised per unit of public/concessional capital deployed.',
+    ce('Catalytic Capital Leverage Modelling', 'Leverage Ratio = Private Capital Mobilised / Concessional Capital Deployed; First-Loss Buffer = Expected Loss × (1 + Stress Factor)', ['OECD DAC Blended Finance Taxonomy', 'G20 MDB Capital Adequacy Framework', 'CONVERGENCE Blended Finance Database'], 'Measures private capital catalysed per dollar of concessional/public capital using tranche waterfall and expected loss allocation'),
+    [
+      dp('Catalytic Leverage Ratio', '3.8x', 'Private capital mobilised / concessional capital deployed', 'OECD DAC blended finance dataset', 'Higher ratios indicate greater mobilisation efficiency; OECD target >3x for emerging markets'),
+      dp('First-Loss Tranche Size', '12%', 'Expected portfolio loss × stress multiplier / total facility size', 'DFI structuring guidelines', 'Absorbs initial losses protecting senior private investors; typically 8-20% of facility'),
+      dp('Concessional Capital Share', '18%', 'DFI/MDB concessional tranche / total capital stack', 'CONVERGENCE database', 'Share above 25% may crowd out private capital; below 10% may be insufficient to de-risk')
+    ],
+    ['Define blended finance objective (SDG/climate alignment, sector, geography)', 'Size concessional/first-loss tranches using expected loss and stress scenarios', 'Model private capital leverage ratio under base, optimistic, and stress assumptions', 'Apply OECD DAC taxonomy classification and generate term sheet summary'],
+    ['OECD (2023) Blended Finance Principles for Unlocking Commercial Finance for the SDGs', 'CONVERGENCE (2023) State of Blended Finance Report', 'G20 Sustainable Finance Working Group — MDB Capital Adequacy Framework 2022', 'World Bank (2023) Maximising Finance for Development — Cascade Approach'],
+    [
+      acr('DFI', 'Development Finance Institution', 'Government-backed institution providing finance to private sector in developing countries'),
+      acr('MDB', 'Multilateral Development Bank', 'International institution providing development loans, e.g. World Bank, ADB, AfDB'),
+      acr('DAC', 'Development Assistance Committee', 'OECD committee setting blended finance taxonomy and ODA reporting standards'),
+      acr('SPV', 'Special Purpose Vehicle', 'Ring-fenced legal entity used to hold blended finance assets and tranches')
+    ],
+    [
+      dl('CONVERGENCE Blended Finance Database', 'Historical deal terms → leverage ratio benchmarks by sector and region', 'Peer comparison for tranche sizing'),
+      dl('DFI/MDB term sheets', 'Concessional pricing, tenor, grace period → waterfall model inputs', 'First-loss and mezzanine tranche calibration'),
+      dl('OECD DAC taxonomy', 'Activity classification codes → concessional finance eligibility flags', 'ODA attribution and reporting output')
+    ],
+    'Quantifies private capital leverage, optimal tranche sizing, and OECD DAC taxonomy classification for blended finance structures targeting emerging-market climate and SDG investments.'
+  ),
+
+  '/transition-finance-engine': g(
+    'Transition Finance Credibility Engine', 'EP-DI2', 'DI',
+    'Transition finance credibility engine for high-emitting sectors including steel, cement, shipping, aviation, and oil & gas. Assesses transition taxonomy eligibility, Paris-aligned capex share, and transition assessment readiness score against the ICMA Climate Transition Finance Handbook.',
+    ce('Transition Readiness Scoring', 'TA-Score = 0.3×Strategy + 0.25×CapexAlignment + 0.25×Targets + 0.2×Governance; Paris CapEx Share = Climate CapEx / Total CapEx', ['ICMA Climate Transition Finance Handbook 2020', 'EU Platform on Sustainable Finance — Transition Finance Report', 'Science Based Targets initiative Corporate Net-Zero Standard'], 'Composite scoring of strategic ambition, Paris-aligned capital allocation, science-based target quality, and governance for transition credibility assessment'),
+    [
+      dp('Transition Assessment Score', '62/100', '0.3×Strategy + 0.25×CapexAlignment + 0.25×Targets + 0.2×Governance', 'ICMA Transition Finance Handbook criteria', 'Scores above 70 indicate credible transition; 50-70 requires monitoring; below 50 raises greenwashing risk'),
+      dp('Paris-Aligned CapEx Share', '34%', 'Climate-directed capex / total capex (3yr avg)', 'Company sustainability report', 'IEA NZE scenario requires >50% green capex share by 2025 for high-emitters; current gap quantified'),
+      dp('Scope 1+2 Intensity Trajectory', '-18% vs 2019', 'Current intensity / base year intensity - 1', 'GHG inventory (ISO 14064)', 'Must align with sector decarbonisation pathway; steel SBTi pathway requires -4.2%/yr')
+    ],
+    ['Classify sector and identify applicable transition pathway (SBTi, IEA, EU TEG sector)', 'Score transition strategy, capex alignment, targets, and governance using ICMA four-pillar framework', 'Map Paris-aligned capex share and intensity trajectory against benchmark decarbonisation pathway', 'Generate transition finance eligibility determination and issuer TA-Score with peer comparison'],
+    ['ICMA (2020) Climate Transition Finance Handbook', 'IEA (2023) Net Zero by 2050 — Sector Transition Roadmaps', 'SBTi (2023) Corporate Net-Zero Standard v1.1', 'EU Platform on Sustainable Finance (2022) Transition Finance Report'],
+    [
+      acr('TA', 'Transition Assessment', 'ICMA four-pillar framework evaluating strategic, capex, target, and governance dimensions of transition credibility'),
+      acr('SBTi', 'Science Based Targets initiative', 'Initiative validating corporate emissions reduction targets consistent with Paris Agreement'),
+      acr('CII', 'Carbon Intensity Indicator', 'IMO operational efficiency metric for shipping expressed as gCO2/tonne-nautical mile'),
+      acr('CAPEX', 'Capital Expenditure', 'Investment in long-term assets; Paris-aligned share measures green vs brown capex allocation')
+    ],
+    [
+      dl('Company sustainability reports / CDP disclosures', 'CapEx breakdown, Scope 1+2 data, net-zero target details → scoring inputs', 'ICMA four-pillar TA-Score'),
+      dl('SBTi target validation database', 'Approved targets by sector → Paris-alignment benchmark trajectory', 'CapEx gap analysis vs pathway'),
+      dl('IEA NZE sector roadmaps', 'Technology deployment milestones and investment requirements → credibility benchmarks', 'Sector-specific eligibility determination')
+    ],
+    'Provides an objective, ICMA-aligned credibility score for transition finance instruments across hard-to-abate sectors, quantifying CapEx alignment gaps and target robustness.'
+  ),
+
+  '/capital-markets-taxonomy': g(
+    'Capital Markets EU Taxonomy Analytics', 'EP-DI3', 'DI',
+    'EU Taxonomy alignment analytics for capital markets products including equity funds, bond indices, and ETFs. Calculates taxonomy-aligned revenue, capex, and opex by portfolio holding, computes GAR and BTAR metrics, and assesses Article 8/9 SFDR eligibility.',
+    ce('EU Taxonomy Alignment Aggregation', 'Fund Taxonomy Alignment = Σ(Holding Weight × Holding Taxonomy %) ; GAR = Taxonomy-Aligned Exposures / Total Covered Assets', ['EU Taxonomy Regulation (EU) 2020/852', 'SFDR Regulation (EU) 2019/2088 + RTS (EU) 2022/1288', 'EBA Green Asset Ratio Delegated Act 2022'], 'Weighted-average taxonomy alignment across holdings using revenue/capex/opex metrics, aggregated to fund level for disclosure'),
+    [
+      dp('Fund Taxonomy Alignment (Revenue)', '28.4%', 'Σ(weight_i × turnover_alignment_i)', 'EU Taxonomy company disclosures / Clarity AI', 'SFDR Art 9 funds target >80%; Art 8 funds typically 15-40%; regulatory minimum in PAIS template'),
+      dp('Green Asset Ratio', '14.2%', 'Taxonomy-aligned exposures / total covered assets × 100', 'EBA GAR disclosure template', 'Banks must disclose GAR; target trajectory to 2030 set in transition plans; sector leaders >20%'),
+      dp('DNSH Pass Rate', '71%', 'Holdings passing all DNSH criteria / holdings screened', 'MSCI ESG / Sustainalytics DNSH screening', 'Measures portfolio quality beyond headline alignment; low rate signals hidden ESG risks')
+    ],
+    ['Map portfolio holdings to EU Taxonomy NACE activity codes and climate objective eligibility', 'Retrieve revenue/capex/opex taxonomy alignment % from company disclosures or estimation models', 'Calculate weighted fund-level alignment and GAR/BTAR metrics', 'Assess SFDR Article 8/9 eligibility and generate PAI template inputs'],
+    ['European Commission (2020) EU Taxonomy Regulation (EU) 2020/852', 'European Commission (2022) Delegated Acts — Climate and Environmental Taxonomy', 'ESMA (2023) Guidelines on Funds Names Using ESG or Sustainability Factors', 'EBA (2022) Green Asset Ratio ITS and Reporting Templates'],
+    [
+      acr('GAR', 'Green Asset Ratio', 'EBA metric: taxonomy-aligned exposures as % of total covered banking book assets'),
+      acr('BTAR', 'Banking Book Taxonomy Alignment Ratio', 'Broader version of GAR including all counterparties subject to NFRD/CSRD'),
+      acr('DNSH', 'Do No Significant Harm', 'EU Taxonomy criterion requiring activities not to significantly harm any of six environmental objectives'),
+      acr('NACE', 'Nomenclature of Economic Activities', 'EU standard industrial classification system used to map activities to Taxonomy eligibility')
+    ],
+    [
+      dl('EU Taxonomy company disclosures (CSRD/NFRD)', 'Revenue/capex/opex alignment % by activity → holding-level taxonomy data', 'Fund-level weighted alignment metrics'),
+      dl('MSCI / Sustainalytics / Clarity AI taxonomy data', 'Estimated alignment for non-disclosing companies → gap filling for portfolio coverage', 'PAIS template and GAR inputs'),
+      dl('SFDR RTS templates', 'Principal adverse impact indicators → Article 8/9 eligibility assessment', 'Regulatory disclosure outputs')
+    ],
+    'Delivers end-to-end EU Taxonomy alignment analytics for capital markets products, enabling accurate GAR/BTAR computation and SFDR Article 8/9 classification with full holding-level transparency.'
+  ),
+
+  '/taxonomy-ml-classifier': g(
+    'ML-Powered EU Taxonomy Activity Classifier', 'EP-DI4', 'DI',
+    'ML-powered EU Taxonomy activity classifier mapping NACE codes to activity eligibility, DNSH screening criteria, and substantial contribution thresholds. Leverages EU Taxonomy Compass and TEG technical screening criteria to automate eligibility determination at scale.',
+    ce('NLP + Rule-Based Taxonomy Classification', 'Eligibility Score = α×ActivityMatch + β×SCScore + γ×DNSHPass; SC Score = Σ(criterion_i met) / total_criteria', ['EU Taxonomy Regulation (EU) 2020/852 Annex I-II', 'EU Taxonomy Compass (JRC)', 'TEG Final Report on EU Taxonomy 2020'], 'Combines NACE code matching with NLP activity description analysis and technical screening criteria scoring to produce eligibility determination'),
+    [
+      dp('Classification Confidence', '87%', 'Model posterior probability for top-1 activity match', 'EU Taxonomy Compass training data', 'Scores above 85% indicate reliable classification; 70-85% requires human review; below 70% manual classification'),
+      dp('Substantial Contribution Score', '6/9', 'Criteria met / total SC criteria for assigned climate objective', 'TEG technical screening criteria', 'Partial scores indicate gap to full eligibility; specific failed criteria flagged for remediation'),
+      dp('DNSH Pass Rate', '4/5', 'Environmental objectives where DNSH criteria are satisfied', 'Delegated Act Annex screening criteria', 'Single DNSH failure disqualifies activity regardless of SC score')
+    ],
+    ['Input company NACE code, activity description, and financial metrics (revenue, capex)', 'Run NLP classifier against EU Taxonomy Compass activity database for top-3 activity matches', 'Score substantial contribution criteria against climate objective thresholds', 'Apply DNSH screening across all five other environmental objectives and output eligibility determination'],
+    ['EU Technical Expert Group on Sustainable Finance (2020) EU Taxonomy Final Report', 'European Commission JRC — EU Taxonomy Compass v3.0', 'European Commission (2022) Climate Delegated Act — Technical Screening Criteria', 'EFRAG (2023) ESRS-Taxonomy Interoperability Guidance'],
+    [
+      acr('SC', 'Substantial Contribution', 'EU Taxonomy criterion requiring meaningful positive contribution to at least one of six environmental objectives'),
+      acr('TSC', 'Technical Screening Criteria', 'Quantitative and qualitative thresholds defining substantial contribution and DNSH for each Taxonomy activity'),
+      acr('JRC', 'Joint Research Centre', 'EU scientific body maintaining the Taxonomy Compass activity database'),
+      acr('NLP', 'Natural Language Processing', 'ML technique for analysing activity descriptions to match Taxonomy eligibility criteria')
+    ],
+    [
+      dl('EU Taxonomy Compass (JRC database)', 'Activity descriptions, NACE codes, TSC thresholds → NLP training and rule-base', 'Activity eligibility classification'),
+      dl('Company NACE codes and activity descriptions', 'Input data → NLP classifier inference', 'Top-3 activity matches with confidence scores'),
+      dl('TEG Technical Screening Criteria', 'SC thresholds and DNSH requirements → rule-based scoring layer', 'Full eligibility determination with gap analysis')
+    ],
+    'Automates EU Taxonomy eligibility classification at scale using ML and rule-based scoring, reducing manual classification effort while maintaining consistency with TEG technical screening criteria.'
+  ),
+
+  '/esrs-datapoint-navigator': g(
+    'ESRS Datapoint Navigator', 'EP-DH1', 'DH',
+    'ESRS datapoint navigator for CSRD reporting. Maps 1,144 ESRS datapoints across E1-E5, S1-S4, and G1 to materiality assessment outcomes, data availability status, and reporting complexity scores, enabling structured disclosure gap analysis.',
+    ce('ESRS Materiality-Weighted Gap Analysis', 'Disclosure Readiness = (Available DPs / Material DPs) × 100; Complexity Score = Σ(dp_complexity_weight × materiality_flag)', ['ESRS 1 General Requirements (EFRAG)', 'ESRS 2 General Disclosures', 'CSRD Directive 2022/2464/EU'], 'Systematic mapping of ESRS datapoints to materiality outcomes and data availability to produce disclosure readiness score and prioritised gap list'),
+    [
+      dp('Material Datapoints', '312 of 1,144', 'Datapoints flagged material in double materiality assessment', 'Internal DMA output', 'Typically 25-35% of datapoints are material for large industrial companies; varies significantly by sector'),
+      dp('Disclosure Readiness', '64%', 'Available datapoints / material datapoints × 100', 'Internal data inventory', 'Below 70% requires data collection programme before first reporting; target 95%+ by report date'),
+      dp('Avg Complexity Score', '2.8/5', 'Weighted average complexity across material datapoints', 'EFRAG complexity classification', 'High-complexity datapoints (4-5) require new processes or external assurance; plan 12+ months ahead')
+    ],
+    ['Load complete ESRS datapoint universe (E1-E5, S1-S4, G1) with standard, DR, and topic tags', 'Apply materiality assessment outputs to filter to entity-specific material datapoints', 'Map data availability status (available / gap / partial) against each material datapoint', 'Score complexity, flag mandatory vs voluntary, and generate prioritised gap remediation roadmap'],
+    ['EFRAG (2023) ESRS Set 1 — Final Standards E1-E5, S1-S4, G1', 'European Commission (2023) CSRD Directive 2022/2464/EU', 'EFRAG (2023) ESRS 1 General Requirements and Double Materiality Guidance', 'EFRAG (2024) Voluntary ESRS for SMEs (VSME)'],
+    [
+      acr('ESRS', 'European Sustainability Reporting Standards', 'EFRAG-developed standards mandated by CSRD for sustainability disclosures'),
+      acr('DMA', 'Double Materiality Assessment', 'CSRD-required process assessing both impact materiality and financial materiality'),
+      acr('DR', 'Disclosure Requirement', 'Specific ESRS reporting obligation within a topical standard, containing multiple datapoints'),
+      acr('CSRD', 'Corporate Sustainability Reporting Directive', 'EU directive mandating ESRS-based sustainability reporting for ~50,000 companies')
+    ],
+    [
+      dl('EFRAG ESRS Set 1 standards', 'Complete datapoint universe with mandatory/voluntary flags → navigator database', 'Filterable datapoint catalogue'),
+      dl('Internal double materiality assessment', 'Material topics and impacts → materiality filter for datapoint prioritisation', 'Material datapoint subset'),
+      dl('Internal data inventory / gap analysis', 'Data availability flags → readiness scoring and gap identification', 'Prioritised remediation roadmap')
+    ],
+    'Enables structured CSRD disclosure planning by mapping the full 1,144-datapoint ESRS universe to materiality and data availability, producing a prioritised gap remediation roadmap.'
+  ),
+
+  '/carbon-integrity-mrv-analytics': g(
+    'Carbon Credit MRV Analytics', 'EP-EB1', 'EB',
+    'Carbon credit MRV (Monitoring, Reporting, Verification) analytics covering Verra VCS, Gold Standard, and ACR methodology compliance scoring, additionality assessment, permanence risk quantification, and buffer pool requirements.',
+    ce('MRV Compliance Scoring', 'MRV Score = 0.3×Monitoring + 0.3×Reporting + 0.25×Verification + 0.15×Additionality; Buffer Contribution = Permanence Risk × Total Credits', ['Verra VCS Standard v4.0', 'Gold Standard for the Global Goals v3.0', 'American Carbon Registry Standard v15'], 'Multi-dimensional MRV quality score combining monitoring plan rigour, reporting completeness, third-party verification quality, and additionality demonstration strength'),
+    [
+      dp('MRV Compliance Score', '78/100', '0.3×Monitoring + 0.3×Reporting + 0.25×Verification + 0.15×Additionality', 'Verra VCS audit report', 'Scores above 80 qualify for premium registry listing; 65-80 standard; below 65 remediation required before registration'),
+      dp('Additionality Score', '72/100', 'Performance test + barrier analysis + common practice assessment', 'VCS CDM additionality tool', 'Regulatory additionality (score >85), financial additionality (IRR without credits < hurdle), common practice (<5% sector penetration)'),
+      dp('Buffer Pool Contribution', '16%', 'Permanence risk score × total estimated credits', 'Verra AFOLU pooled buffer account', 'Reversal buffer protects buyers; higher risk projects (REDD+) contribute 10-20%; permanence projects <5%')
+    ],
+    ['Input project type, methodology, monitoring plan, and verification body qualifications', 'Score monitoring plan against methodology-specific requirements (frequency, equipment, sampling)', 'Assess additionality using regulatory, financial barrier, and common practice tests', 'Calculate permanence risk, buffer pool contribution, and net credits available for issuance'],
+    ['Verra (2022) VCS Standard v4.0 and AFOLU Requirements', 'Gold Standard (2022) Gold Standard for the Global Goals Principles and Requirements', 'American Carbon Registry (2023) ACR Standard v15', 'ICROA (2023) Code of Best Practice for Voluntary Carbon Markets'],
+    [
+      acr('MRV', 'Monitoring, Reporting, Verification', 'System for measuring GHG reductions/removals, reporting them, and having them independently verified'),
+      acr('VCS', 'Verified Carbon Standard', 'Verra-administered voluntary carbon market standard; largest registry by volume'),
+      acr('AFOLU', 'Agriculture, Forestry and Other Land Use', 'VCS project category covering land-based carbon projects with specific permanence and leakage rules'),
+      acr('ACR', 'American Carbon Registry', 'Winrock-administered voluntary and compliance carbon registry operating since 1996')
+    ],
+    [
+      dl('Project design document (PDD)', 'Baseline scenario, monitoring plan, additionality arguments → MRV scoring inputs', 'Compliance gap analysis'),
+      dl('Third-party verification report (VVB)', 'Independent verification findings → verification sub-score', 'MRV overall score'),
+      dl('Verra/Gold Standard registry database', 'Historical buffer contributions and reversal events → permanence risk calibration', 'Buffer pool requirement')
+    ],
+    'Provides rigorous MRV quality scoring and additionality assessment for voluntary carbon credits, enabling buyers to distinguish high-integrity credits and sellers to identify compliance gaps.'
+  ),
+
+  '/ccts-offset-registration': g(
+    'Carbon Credit Registry & Offset Registration Analytics', 'EP-EB2', 'EB',
+    'Carbon credit registry and offset registration analytics comparing Verra, Gold Standard, CAR, and ACR registries. Covers serialisation standards, retirement tracking, double-counting prevention, and ICROA Code of Best Practice compliance.',
+    ce('Registry Integrity Scoring', 'Registry Score = 0.25×Serialisation + 0.25×Retirement + 0.25×DoubleCount + 0.25×Transparency; Double-Count Risk = 1 - Σ(exclusive_registry_flags)', ['ICROA Code of Best Practice v2.0', 'VCMI Claims Code of Practice', 'ICVCM Core Carbon Principles 2023'], 'Assesses registry-level and transaction-level integrity across serialisation uniqueness, retirement permanence, double-counting controls, and public transparency'),
+    [
+      dp('Registry Integrity Score', '84/100', '0.25×Serialisation + 0.25×Retirement + 0.25×DoubleCount + 0.25×Transparency', 'ICROA registry review', 'Verra and Gold Standard score 80-90; newer registries 60-75; ICVCM CCP label requires >75'),
+      dp('Double-Counting Risk Index', '0.08', '1 - exclusive registry controls score', 'ICVCM CCP assessment', 'Risks arise from corresponding adjustments absence (Article 6.2), bilateral use, and re-issuance across registries'),
+      dp('Retirement Integrity Rate', '99.2%', 'Credits with confirmed irreversible retirement / total retired credits', 'Registry serialisation audit', 'Near 100% required; gaps indicate potential re-use; Verra public retirement database enables verification')
+    ],
+    ['Map credit serialisation structure across Verra, Gold Standard, CAR, ACR, and Climate Action Reserve', 'Check cross-registry uniqueness and corresponding adjustment status for host country credits', 'Verify retirement records are publicly accessible, irreversible, and vintage-matched to claimed reductions', 'Score registry against ICROA Code of Best Practice and ICVCM Core Carbon Principles'],
+    ['ICROA (2023) Code of Best Practice for Voluntary Carbon Markets v2.0', 'ICVCM (2023) Core Carbon Principles Assessment Framework', 'VCMI (2023) Claims Code of Practice', 'UNFCCC (2022) Article 6 Rulebook — Corresponding Adjustments'],
+    [
+      acr('CAR', 'Climate Action Reserve', 'North American carbon registry operating in voluntary and compliance markets with focus on US-based projects'),
+      acr('ICVCM', 'Integrity Council for the Voluntary Carbon Market', 'Governance body setting Core Carbon Principles for high-integrity credit label'),
+      acr('VCMI', 'Voluntary Carbon Markets Integrity Initiative', 'Demand-side initiative setting corporate claims standards for voluntary carbon market use'),
+      acr('CCP', 'Core Carbon Principles', 'ICVCM-defined quality threshold for voluntary carbon credits covering governance, emissions impact, and sustainable development')
+    ],
+    [
+      dl('Registry serialisation databases (Verra, GSF, CAR, ACR)', 'Serial number ranges, project IDs, vintage, retirement records → integrity checks', 'Double-counting and retirement integrity scores'),
+      dl('UNFCCC Article 6 corresponding adjustment database', 'Host country authorisation and adjustment records → sovereign double-counting risk', 'Article 6 compliance flag'),
+      dl('ICROA/ICVCM assessment reports', 'Registry-level quality assessments → benchmark scores for peer comparison', 'Registry integrity ranking')
+    ],
+    'Delivers comprehensive carbon credit registry integrity analytics, enabling buyers to assess double-counting risk, retirement permanence, and ICROA/ICVCM compliance across major voluntary registries.'
+  ),
+
+  '/carbon-removal-markets': g(
+    'Carbon Removal Market Analytics', 'EP-DX1', 'DX',
+    'Carbon removal market analytics covering DAC, BECCS, enhanced weathering, biochar, soil carbon, and ocean alkalinity enhancement. Models cost curves (DAC $300-1000/t, biochar $50-200/t), permanence tiers, and CDR procurement platform dynamics.',
+    ce('CDR Cost Curve & Permanence Modelling', 'Levelised Cost of CDR = (CAPEX × CRF + OPEX) / Annual CO2 Removed; Permanence-Adjusted Price = Spot Price × (1 / (1 - Reversal Risk))', ['Oxford Principles for Net Zero Aligned Carbon Offsetting', 'IPCC AR6 WG3 Chapter 12 — CDR', 'Frontier Climate CDR procurement framework'], 'Cost curve analysis across CDR pathways weighted by permanence tier, scalability potential, and co-benefit profile'),
+    [
+      dp('Weighted Average CDR Cost', '$285/tCO2', '(Σ volume_i × cost_i) / Σ volume_i across portfolio', 'Carbon180 / CDR.fyi market data', 'Blended cost depends heavily on pathway mix; pure DAC portfolios $400-800/t; biochar-weighted $80-150/t'),
+      dp('Permanence-Adjusted Supply', '42 MtCO2/yr', 'Σ(CDR volume × permanence_factor by pathway)', 'CDR.fyi / Puro.earth registry', 'Permanence factors: geological (1.0), biochar (0.85), enhanced weathering (0.90), soil carbon (0.60)'),
+      dp('Pipeline Growth Rate', '+67% YoY', '(Current year pipeline - prior year) / prior year × 100', 'Frontier / Patch procurement data', 'CDR market growing rapidly; advance purchase commitments critical for scale-up financing')
+    ],
+    ['Map CDR pathway portfolio across geological, biological, and ocean-based removal categories', 'Build cost curves using technology-specific CAPEX/OPEX and capacity data', 'Apply permanence tier discounting to compute permanence-adjusted carbon value', 'Model procurement platform supply/demand dynamics and forward price scenarios'],
+    ['IPCC AR6 WG3 (2022) Chapter 12 — Cross-sectoral Perspectives on Carbon Dioxide Removal', 'Oxford Principles for Net Zero Aligned Carbon Offsetting (2024 revision)', 'Carbon180 (2023) CDR State of the Market Report', 'Frontier Climate (2023) Offtake and Advance Purchase Framework'],
+    [
+      acr('DAC', 'Direct Air Capture', 'Technology mechanically capturing CO2 from ambient air; highest cost but highest permanence CDR pathway'),
+      acr('BECCS', 'Bioenergy with Carbon Capture and Storage', 'Combines biomass energy generation with geological CO2 storage for net-negative emissions'),
+      acr('CDR', 'Carbon Dioxide Removal', 'Deliberate removal of CO2 from atmosphere through biological, chemical, or geological processes'),
+      acr('EW', 'Enhanced Weathering', 'Spreading crushed silicate rock on agricultural land to accelerate natural CO2 mineralisation')
+    ],
+    [
+      dl('CDR.fyi and Puro.earth registries', 'Project capacity, cost, permanence, and vintage data → cost curve inputs', 'Pathway-level cost and supply analytics'),
+      dl('Frontier / Stripe / Microsoft advance purchase data', 'Forward commitment volumes and prices → demand signal and price discovery', 'Forward price curve and market depth'),
+      dl('IPCC AR6 CDR potential estimates', 'Technical and sustainable CDR potential by pathway → scalability ceiling analysis', 'Market ceiling and pathway mix optimisation')
+    ],
+    'Provides comprehensive CDR market analytics enabling procurement optimisation across pathways, with permanence-adjusted pricing and cost curve visibility for corporate net-zero buyers.'
+  ),
+
+  '/beccs-project-finance': g(
+    'BECCS Project Finance Analytics', 'EP-DX2', 'DX',
+    'BECCS project finance analytics covering negative emissions credit revenue, CCS CAPEX/OPEX, biomass supply chain risk, 45Q tax credit (USA), and EU ETS interaction for carbon-negative bioenergy projects.',
+    ce('BECCS Levelised Cost of Negative Emissions', 'LCONE = (CAPEX × CRF + OPEX - Electricity Revenue - 45Q) / Annual Net CO2 Negative Emissions; Net Emissions = CO2 Stored - Biomass Supply Chain Emissions', ['IEA BECCS in Clean Energy Transitions 2021', 'US 45Q Tax Credit (IRA 2022 enhanced)', 'EU ETS Article 7 — Biogenic CO2'], 'Levelised cost of negative emissions accounting for energy revenue, policy credits, and full supply chain carbon accounting'),
+    [
+      dp('LCONE', '$112/tCO2e net removed', '(CAPEX×CRF + OPEX - Energy Rev - 45Q) / Net CO2 negative', 'IEA BECCS cost database', 'Current LCONE $80-200/tCO2; 45Q credit ($85-180/t) can make projects cash-positive; EU ETS drives additional revenue'),
+      dp('45Q Tax Credit Value', '$85/tCO2 (geologic)', 'IRA 2022 enhanced 45Q for captured and geologically stored CO2', 'US IRS 45Q guidance', 'IRA raised 45Q from $50 to $85/t geological; $60/t utilisation; direct pay option available for 5 years'),
+      dp('Biomass Supply Chain Emissions', '0.18 tCO2/MWh', 'Well-to-gate lifecycle emissions per MWh biomass input', 'RED II lifecycle methodology', 'Must be below 70% GHG saving vs fossil baseline per RED II; typically 0.1-0.3 tCO2/MWh for sustainable sources')
+    ],
+    ['Model BECCS plant CAPEX (CCS component $800-1,200/kW additional) and OPEX structure', 'Calculate 45Q tax credit eligibility and IRA direct pay option value over project life', 'Assess biomass supply chain GHG intensity against RED II sustainability criteria', 'Compute LCONE sensitivity to CO2 storage capacity, electricity price, and carbon credit prices'],
+    ['IEA (2021) BECCS in Clean Energy Transitions', 'US IRS (2023) 45Q Credit for Carbon Oxide Sequestration — IRA Updated Guidance', 'EU RED II Directive 2018/2001 — Biomass Sustainability Criteria', 'Global CCS Institute (2023) State of the CCS Industry Report'],
+    [
+      acr('LCONE', 'Levelised Cost of Negative Emissions', 'Cost metric for CDR pathways equivalent to LCOE for power generation; $/tCO2 net removed'),
+      acr('CCS', 'Carbon Capture and Storage', 'Technology capturing CO2 from industrial sources or atmosphere and storing geologically'),
+      acr('RED II', 'Renewable Energy Directive II', 'EU directive setting sustainability criteria for bioenergy including lifecycle GHG thresholds'),
+      acr('CRF', 'Capital Recovery Factor', 'Annualisation factor converting upfront CAPEX to annual cost based on discount rate and project life')
+    ],
+    [
+      dl('IEA BECCS cost database', 'Technology cost assumptions by feedstock and CCS type → CAPEX/OPEX model inputs', 'LCONE calculation'),
+      dl('US IRS 45Q guidance and IRA text', 'Credit rates, eligible technologies, direct pay rules → tax credit revenue stream', 'After-tax project IRR'),
+      dl('RED II biomass sustainability registry', 'Feedstock sustainability certification → lifecycle GHG calculation and net negativity verification', 'Net CO2 removal per MWh')
+    ],
+    'Enables rigorous BECCS project finance modelling incorporating 45Q incentives, RED II sustainability constraints, and full supply chain carbon accounting to determine project viability and LCONE.'
+  ),
+
+  '/bioenergy-lcoe-economics': g(
+    'Bioenergy LCOE Economics', 'EP-DX3', 'DX',
+    'Bioenergy LCOE analysis covering dedicated biomass, co-firing, biogas, and biomethane pathways. Models feedstock cost ($/GJ), conversion efficiency, RED II sustainability certification, and LCOE benchmarking against wind and solar. Data from IRENA.',
+    ce('Bioenergy LCOE Decomposition', 'LCOE = (CAPEX × CRF + Fixed OPEX) / AEP + Variable OPEX + Feedstock Cost / Efficiency; Feedstock Cost Share = (Feedstock $/GJ / Efficiency) / LCOE', ['IRENA Renewable Power Generation Costs 2023', 'EU RED II Directive — Bioenergy Sustainability', 'IEA World Energy Outlook 2023'], 'Levelised cost decomposition separating capital, fixed operating, and feedstock components to identify cost reduction levers'),
+    [
+      dp('Dedicated Biomass LCOE', '$118/MWh', '(CAPEX×CRF + Fixed OPEX) / AEP + Feedstock / Efficiency', 'IRENA LCOE database 2023', 'Range $80-160/MWh depending on feedstock cost; competitive vs gas peaker but above solar/wind'),
+      dp('Feedstock Cost Share', '58%', 'Feedstock cost component / total LCOE', 'IRENA biomass cost analysis', 'Dominant cost driver; pellet prices $200-300/t (2023 volatility); supply chain diversification critical'),
+      dp('RED II GHG Saving', '74%', 'Life-cycle GHG saving vs 35.7 gCO2e/MJ fossil fuel comparator', 'RED II calculation methodology', 'Minimum 70% required for existing plants post-2021; 80% for new plants post-2026; determines subsidy eligibility')
+    ],
+    ['Calculate LCOE for each bioenergy pathway (dedicated, co-firing, biogas, biomethane) using technology-specific parameters', 'Decompose LCOE into CAPEX, fixed OPEX, variable OPEX, and feedstock cost shares', 'Apply RED II GHG saving calculation to verify sustainability certification eligibility', 'Benchmark bioenergy LCOE against wind and solar comparators and identify competitiveness conditions'],
+    ['IRENA (2023) Renewable Power Generation Costs Report', 'EU RED II Directive 2018/2001 — Bioenergy Sustainability Criteria and GHG Calculation', 'IEA (2023) World Energy Outlook — Bioenergy Chapter', 'Ember (2023) Global Electricity Review — Bioenergy Cost Trends'],
+    [
+      acr('LCOE', 'Levelised Cost of Energy', 'All-in cost of generating one MWh over project lifetime, enabling cross-technology comparison'),
+      acr('AEP', 'Annual Energy Production', 'Total electricity output per year (MWh), determined by capacity and capacity factor'),
+      acr('RED II', 'Renewable Energy Directive II', 'EU directive requiring minimum GHG savings for bioenergy qualifying for renewable energy targets'),
+      acr('CHP', 'Combined Heat and Power', 'Bioenergy cogeneration plant producing both electricity and heat, improving overall efficiency')
+    ],
+    [
+      dl('IRENA LCOE database', 'Technology-specific CAPEX, OPEX, capacity factor data by region → LCOE calculation', 'LCOE benchmarking table'),
+      dl('Feedstock market data (S&P Commodity Insights, Argus)', 'Pellet, chip, and biogas feedstock prices by region → feedstock cost component', 'LCOE sensitivity to feedstock price'),
+      dl('RED II GHG calculation tool (EC)', 'Lifecycle emission factors by feedstock and conversion pathway → sustainability check', 'RED II eligibility determination')
+    ],
+    'Delivers granular bioenergy LCOE decomposition across pathways with RED II sustainability compliance checking and competitive benchmarking against solar/wind, enabling investment decisions.'
+  ),
+
+  '/nature-based-solutions-finance': g(
+    'Nature-Based Solutions Project Finance', 'EP-DX4', 'DX',
+    'NbS project finance covering REDD+, reforestation, blue carbon, and peatland restoration. Models carbon credit revenue, biodiversity and watershed co-benefit valuation, ICROA and Verra VCS standard compliance, and NbS blended finance structures.',
+    ce('NbS Financial Modelling', 'NbS IRR = f(Carbon Revenue + Ecosystem Service Revenue - CAPEX - OPEX - Buffer Contribution); Carbon Revenue = Credits × Price × (1 - Buffer%)', ['Verra VCS REDD+ Methodology VM0007', 'SBTN Guidance on Nature Targets', 'TNFD v1.0 Framework'], 'Integrated financial model combining carbon credit revenue, biodiversity credit income, and ecosystem service payments against project costs and buffer requirements'),
+    [
+      dp('Carbon Credit Revenue', '$2.8M/yr', 'Net credits issued × carbon price × (1 - buffer contribution)', 'Verra VCS project documentation', 'Dependent on verified emissions reductions; REDD+ typically 0.5-5 tCO2/ha/yr net of leakage and buffer'),
+      dp('Biodiversity Co-benefit Premium', '+$4.2/credit', 'Price premium for CCB-certified vs standard VCS credits', 'Ecosystem Marketplace data', 'CCB (Climate, Community & Biodiversity) certification adds $2-8/credit; biodiversity credits (BioCarbon) separate market'),
+      dp('Ecosystem Service Value', '$1.4M/yr', 'Watershed protection + pollination + flood regulation services valued at shadow prices', 'TEEB / Natural Capital Project', 'Co-benefits critical for blended finance from impact investors; watershed services often fundable via water utility payments')
+    ],
+    ['Define NbS project type and establish baseline carbon stock and ecosystem service inventory', 'Model carbon credit issuance schedule accounting for leakage (10-30%), permanence buffer (10-20%), and vintage timing', 'Value co-benefits using TEEB shadow prices, biodiversity credit prices, and ecosystem service payment data', 'Structure blended finance (grant + concessional + impact investment) and compute project IRR sensitivity'],
+    ['Verra (2022) VCS REDD+ Methodology VM0007 v1.6', 'ICROA (2023) Code of Best Practice — NbS Quality Criteria', 'SBTN (2023) Step-by-Step Guide for Business — Science Based Targets for Nature', 'TNFD (2023) Recommendations v1.0 — Nature-related Financial Disclosures'],
+    [
+      acr('NbS', 'Nature-Based Solutions', 'Actions protecting, restoring, or sustainably managing ecosystems to address societal challenges including climate change'),
+      acr('REDD+', 'Reducing Emissions from Deforestation and Forest Degradation', 'UN Framework Convention mechanism incentivising developing countries to preserve forest carbon stocks'),
+      acr('CCB', 'Climate, Community and Biodiversity Standards', 'Verra standard certifying carbon projects for co-benefits in biodiversity and community development'),
+      acr('TEEB', 'The Economics of Ecosystems and Biodiversity', 'Global initiative quantifying economic value of ecosystem services for decision-making')
+    ],
+    [
+      dl('Verra VCS project database', 'Issued credits, buffer contributions, methodology details → carbon revenue model', 'Project-level carbon revenue schedule'),
+      dl('Ecosystem Marketplace transaction data', 'Historical NbS credit prices by certification type → revenue assumptions', 'Price deck and premium analysis'),
+      dl('Natural Capital Project / TEEB valuations', 'Ecosystem service shadow prices by habitat type → co-benefit monetisation', 'Total economic value and blended finance attractiveness')
+    ],
+    'Provides integrated NbS project finance modelling combining carbon, biodiversity, and ecosystem service revenues with rigorous VCS/ICROA compliance, enabling impact investor decision-making.'
+  ),
+
+  '/forestry-timber-finance': g(
+    'Sustainable Forestry & Timber Project Finance', 'EP-DX5', 'DX',
+    'Sustainable forestry and timber project finance analytics covering timber REIT structures, FSC/PEFC certification premium, carbon-timber dual revenue streams, biological asset valuation under IAS 41, and climate risk to timber yield.',
+    ce('Biological Asset & Dual Revenue Valuation', 'Timberland Value = PV(Timber Revenue) + PV(Carbon Credits) - PV(Costs); IAS 41 Fair Value = Σ(Volume_i × Price_i × (1 - Harvesting Cost%))', ['IAS 41 Agriculture — Biological Assets', 'FSC Forest Management Standard', 'IPCC Good Practice Guidance for LULUCF'], 'Integrated valuation combining standing timber biological asset fair value with carbon credit revenue streams, adjusted for climate risk to yield'),
+    [
+      dp('Timberland IRR', '7.8%', 'PV(timber + carbon revenue) / Timberland acquisition cost, solving for discount rate', 'NCREIF Timberland Index', 'Historical timberland IRR 6-9%; outperforms listed equities over 20yr with low correlation; climate risk may reduce 1-2%'),
+      dp('FSC Certification Premium', '+12%', '(FSC timber price - non-certified price) / non-certified price', 'Forest Trends FSC price survey', 'Premium ranges 5-25% depending on end market (UK/EU higher); certification cost $0.5-2/ha/yr'),
+      dp('Carbon-Timber Dual Revenue', '$18/t CO2e/yr', 'Incremental carbon stock growth per ha × carbon price', 'Verra VCS improved forest management methodology', 'IFM additionality critical; cannot double-count with timber sale GHG accounting')
+    ],
+    ['Value standing timber inventory using IAS 41 fair value approach (volume × price × net realisable value)', 'Model FSC/PEFC certification premium impact on timber revenue assumptions', 'Layer carbon credit revenue from improved forest management (IFM) VCS methodology', 'Stress-test yield assumptions against climate risk scenarios (drought, fire, pest) and compute IRR sensitivity'],
+    ['NCREIF (2023) Timberland Property Index Annual Report', 'IAS 41 Agriculture — IASB Standard on Biological Assets Fair Value', 'FSC (2022) International Forest Management Standard FSC-STD-01-001', 'Verra (2022) Improved Forest Management Methodology VM0010'],
+    [
+      acr('REIT', 'Real Estate Investment Trust', 'Tax-advantaged vehicle; Timberland REITs (Weyerhaeuser, PotlatchDeltic) are major listed forestry investors'),
+      acr('IFM', 'Improved Forest Management', 'Verra VCS carbon methodology for forestry operations maintaining higher than baseline carbon stocks'),
+      acr('FSC', 'Forest Stewardship Council', 'International non-profit certifying forests managed to environmental, social, and economic standards'),
+      acr('PEFC', 'Programme for the Endorsement of Forest Certification', 'International umbrella body for national forest certification schemes; largest by area certified')
+    ],
+    [
+      dl('NCREIF Timberland Index', 'Historical returns, valuations by species and region → IRR benchmarks', 'Return expectations and risk calibration'),
+      dl('Forest Trends FSC price survey', 'Certified vs uncertified timber price differentials by product → premium model', 'Revenue uplift from certification'),
+      dl('Verra VCS IFM project database', 'Carbon credit issuance rates by forest type and management practice → carbon revenue model', 'Dual revenue stream analysis')
+    ],
+    'Enables integrated timberland investment analysis combining IAS 41 biological asset valuation, FSC certification premium, and carbon-timber dual revenue with climate risk stress-testing.'
+  ),
+
+  '/marine-blue-carbon-finance': g(
+    'Marine Blue Carbon Project Finance', 'EP-DX6', 'DX',
+    'Marine blue carbon project finance for mangrove, seagrass, and saltmarsh restoration. Models carbon sequestration rates (mangrove 6-8 tCO2/ha/yr), ICROA methodology compliance, coastal protection co-benefit valuation, and blue carbon credit market dynamics.',
+    ce('Blue Carbon Net Present Value', 'Blue Carbon NPV = Σ[(Carbon Credits × Price + Coastal Protection Value) - Restoration Cost - Monitoring Cost] / (1+r)^t; Sequestration = Area × Rate × (1 - Buffer%)', ['Verra VCS VM0033 Tidal Wetland and Seagrass Restoration', 'ICROA Blue Carbon Code of Best Practice', 'IPCC 2013 Wetlands Supplement'], 'NPV model integrating blue carbon sequestration revenue with avoided coastal damage co-benefit value against restoration and monitoring costs'),
+    [
+      dp('Mangrove Sequestration Rate', '7.2 tCO2/ha/yr', 'Above-ground + below-ground + soil organic carbon accumulation', 'IPCC 2013 Wetlands Supplement defaults', 'Mangrove soil carbon (8-10× soil depth) drives high rates; seagrass 0.5-2 t/ha/yr; saltmarsh 1.5-3 t/ha/yr'),
+      dp('Coastal Protection Co-benefit', '$8,400/ha/yr', 'Avoided storm damage + avoided erosion based on replacement cost', 'Natural Capital Project InVEST model', 'Often exceeds carbon revenue; enables project financing via coastal insurance premium reduction or municipal payment'),
+      dp('Blue Carbon Credit Price', '$28/tCO2', 'Market price for Verra VM0033 or Gold Standard mangrove credits', 'Ecosystem Marketplace 2023', 'Blue carbon premium over standard forestry credits; limited supply; tightening MRV standards may compress issuance')
+    ],
+    ['Map restoration site extent and classify by habitat type (mangrove, seagrass, saltmarsh)', 'Apply IPCC 2013 Wetlands Supplement sequestration rates with site-specific adjustments', 'Value coastal protection co-benefits using replacement cost or avoided damage approaches', 'Model credit issuance schedule under Verra VM0033, apply buffer contribution, and compute project NPV/IRR'],
+    ['Verra (2021) VCS Methodology VM0033 Tidal Wetland and Seagrass Restoration', 'IPCC (2013) 2013 Supplement to the 2006 IPCC Guidelines — Wetlands', 'IUCN (2020) Blue Carbon Initiative — Mangrove and Seagrass Restoration Guide', 'Ecosystem Marketplace (2023) Voluntary Carbon Markets Report'],
+    [
+      acr('VM0033', 'Verra Verified Carbon Standard Methodology 0033', 'Verra-approved methodology for carbon credits from tidal wetland and seagrass restoration'),
+      acr('SOC', 'Soil Organic Carbon', 'Carbon stored in soil organic matter; dominant carbon pool in blue carbon ecosystems and key credit driver'),
+      acr('InVEST', 'Integrated Valuation of Ecosystem Services and Trade-offs', 'Natural Capital Project software for mapping and valuing ecosystem services including coastal protection'),
+      acr('ICROA', 'International Carbon Reduction and Offset Alliance', 'Alliance setting quality standards for voluntary carbon offsets including blue carbon projects')
+    ],
+    [
+      dl('IPCC 2013 Wetlands Supplement', 'Habitat-specific sequestration rates by region and soil type → carbon stock change calculations', 'Annual carbon credit issuance estimate'),
+      dl('Natural Capital Project InVEST coastal model', 'Wave attenuation, storm surge reduction by habitat type → coastal protection valuation', 'Co-benefit revenue / avoided loss'),
+      dl('Ecosystem Marketplace blue carbon price data', 'Historical transaction prices for blue carbon credits → price deck assumptions', 'Project revenue sensitivity analysis')
+    ],
+    'Delivers rigorous blue carbon project finance modelling integrating IPCC-standard sequestration accounting, coastal protection co-benefit valuation, and VM0033 credit issuance scheduling.'
+  ),
+
+  '/municipal-green-bond-analytics': g(
+    'Municipal Green Bond Analytics', 'EP-DY1', 'DY',
+    'Municipal green bond analytics covering use-of-proceeds allocation (transport 35%, energy 25%, water 20%), ICMA GBP compliance, impact reporting KPIs, yield spread versus vanilla munis, and credit enhancement structures.',
+    ce('Green Bond Impact & Pricing Analytics', 'Greenium = Yield(Vanilla Muni) - Yield(Green Muni) in bps; Impact KPI Score = Σ(Category Weight × KPI Achievement Rate)', ['ICMA Green Bond Principles 2021', 'MSRB Rule G-17 and Muni Disclosure Standards', 'Climate Bonds Initiative Municipal Bonds Guidance'], 'Measures green bond quality through ICMA GBP four-component compliance and greenium analysis relative to issuer vanilla curve'),
+    [
+      dp('Greenium vs Vanilla Muni', '-6.2 bps', 'YTM(green) - YTM(vanilla) by matched maturity/rating issuer', 'Bloomberg BVAL municipal pricing', 'Negative greenium (green trades tighter) observed for high-quality issuers; averages -3 to -8 bps in established markets'),
+      dp('Use of Proceeds Alignment', '92%', 'Eligible green expenditure / total proceeds × 100', 'Municipal annual impact report', 'ICMA GBP requires all proceeds allocated to eligible categories; 92%+ typical; residual in liquidity management'),
+      dp('Impact KPI Coverage', '87%', 'KPIs reported / KPIs committed in framework × 100', 'Post-issuance impact report', 'High KPI coverage strengthens investor confidence and secondary market liquidity; below 70% risks reputational downgrade')
+    ],
+    ['Classify use-of-proceeds across ICMA GBP eligible categories and quantify per-category allocation', 'Calculate greenium by constructing issuer vanilla yield curve and spread to green bond yield', 'Score ICMA GBP four-component compliance (proceeds, project evaluation, management, reporting)', 'Model credit enhancement structures (bond insurance, reserve fund, intercept mechanism) and rating uplift'],
+    ['ICMA (2021) Green Bond Principles — Updated June 2021', 'Climate Bonds Initiative (2023) Municipal Bonds Briefing and Market Intelligence', 'MSRB (2023) Muni Green Bond Market Report', 'Moody\'s (2023) Municipal Green Bond Ratings Methodology'],
+    [
+      acr('GBP', 'Green Bond Principles', 'ICMA voluntary process guidelines for issuing green bonds, covering four core components'),
+      acr('MSRB', 'Municipal Securities Rulemaking Board', 'US self-regulatory organisation overseeing the municipal securities market'),
+      acr('SPO', 'Second Party Opinion', 'Independent review of green bond framework confirming alignment with GBP or CBI standards'),
+      acr('TIC', 'True Interest Cost', 'Municipal bond pricing metric accounting for all interest and discount/premium costs over bond life')
+    ],
+    [
+      dl('Bloomberg BVAL municipal pricing', 'Real-time and historical muni yields by issuer, maturity, rating → greenium calculation', 'Green vs vanilla pricing differential'),
+      dl('Issuer annual impact reports', 'Use-of-proceeds allocation and KPI achievement data → compliance scoring', 'ICMA GBP compliance score'),
+      dl('Climate Bonds Initiative certified issuance data', 'CBI-certified muni bonds with verified impact metrics → benchmark comparison', 'Peer issuance and impact benchmarking')
+    ],
+    'Provides comprehensive municipal green bond analytics integrating ICMA GBP compliance scoring, greenium measurement, and impact KPI tracking to support issuance and investor decisions.'
+  ),
+
+  '/climate-revenue-bond-modeler': g(
+    'Climate Revenue Bond Modeller', 'EP-DY2', 'DY',
+    'Climate revenue bond modelling with dedicated revenue stream analysis (toll, utility, tax increment), debt service coverage calculation, climate risk to revenue base assessment, and green certification premium. Covers MSRB and CDFA frameworks.',
+    ce('Debt Service Coverage & Climate Risk Adjustment', 'DSCR = Net Revenue / Annual Debt Service; Climate-Adjusted Revenue = Base Revenue × (1 - Physical Risk Discount) × (1 + Green Premium)', ['MSRB Revenue Bond Disclosure Guidelines', 'CDFA Climate-Resilient Infrastructure Finance Toolkit', 'Moody\'s Revenue Bond Rating Methodology 2022'], 'Forward-looking revenue bond model incorporating climate physical risk discounts to revenue streams and green certification premium'),
+    [
+      dp('Debt Service Coverage Ratio', '1.42x', 'Net pledged revenue / annual debt service (principal + interest)', 'Municipal financial statements', 'Investment grade threshold typically 1.25x; strong revenue bonds 1.5x+; climate risk stress requires 1.35x+ floor'),
+      dp('Climate Risk Revenue Discount', '-8.3%', 'Physical risk scenario reduction to pledged revenue base over bond term', 'Moody\'s Climate Risk Assessment', 'Flood, drought, or extreme heat can reduce toll, utility, or TIF revenue; quantified using RCP 4.5/8.5 scenarios'),
+      dp('Green Certification Premium', '-5.1 bps', 'Yield differential for CBI-certified vs uncertified revenue bond', 'Bloomberg BVAL', 'Smaller than GO greenium due to structure complexity; emerging as infrastructure green finance matures')
+    ],
+    ['Model dedicated revenue stream (toll, utility rate, tax increment, special assessment) under base and stress scenarios', 'Calculate DSCR under current, climate-stressed, and rate-adjustment scenarios', 'Apply physical climate risk discounts to revenue projections using scenario-specific impact factors', 'Assess green/climate certification eligibility and compute pricing premium benefit vs SPO cost'],
+    ['MSRB (2023) Revenue Bond Disclosure and Market Practice', 'CDFA (2023) Climate-Resilient Infrastructure Finance Toolkit', 'Moody\'s (2022) Revenue Bonds Rating Methodology', 'S&P (2023) Environmental Credit Factors in US Municipal Finance'],
+    [
+      acr('DSCR', 'Debt Service Coverage Ratio', 'Revenue bond credit metric: net pledged revenue divided by annual debt service'),
+      acr('TIF', 'Tax Increment Financing', 'Municipal finance mechanism using future tax revenue growth in a district to fund current infrastructure'),
+      acr('CDFA', 'Council of Development Finance Agencies', 'National association supporting public finance practitioners in climate and sustainable infrastructure finance'),
+      acr('GO', 'General Obligation', 'Municipal bond backed by full faith and credit taxing power, as distinct from revenue bonds backed by specific revenue streams')
+    ],
+    [
+      dl('Municipal financial statements and rate studies', 'Historical pledged revenue, DSCR, rate covenant compliance → base case model', 'Revenue bond credit metrics'),
+      dl('Physical climate risk models (RMS, AIR, Moody\'s)', 'Asset-level physical risk exposure by peril and scenario → revenue impact factors', 'Climate-adjusted DSCR'),
+      dl('Bloomberg BVAL and EMMA disclosure data', 'Market pricing and disclosure for comparable revenue bonds → greenium benchmarking', 'Pricing premium analysis')
+    ],
+    'Enables rigorous climate revenue bond modelling integrating DSCR analysis, physical risk revenue discounting, and green certification premium to support issuance structuring and investor credit assessment.'
+  ),
+
+  '/mdb-sub-sovereign-lending': g(
+    'MDB/DFI Sub-Sovereign Climate Lending Analytics', 'EP-DY3', 'DY',
+    'MDB/DFI sub-sovereign climate lending analytics covering sovereign guarantee structures, on-lending terms, fiscal space analysis, and climate co-financing ratios for World Bank, ADB, and AfDB operations.',
+    ce('Sub-Sovereign Lending Capacity & Co-Financing Analytics', 'Fiscal Space = Revenue × Coverage Ratio - Existing Debt Service; Co-Financing Ratio = Private Finance Mobilised / MDB Climate Finance Committed', ['World Bank Sub-Sovereign Finance Guidelines', 'ADB Climate Finance Tracking Methodology', 'OECD DAC Climate Finance Reporting'], 'Assesses sub-sovereign borrowing capacity, sovereign guarantee terms, and private capital mobilisation ratio for MDB climate lending programmes'),
+    [
+      dp('Climate Co-Financing Ratio', '2.8x', 'Private and other public climate finance mobilised / MDB committed climate finance', 'ADB climate finance tracking', 'World Bank Group target 3x mobilisation; higher ratios in middle-income countries (infrastructure) vs LDCs (grants needed)'),
+      dp('Sub-Sovereign Fiscal Space', '$420M', 'Net present value of revenue capacity above existing debt service obligations', 'IMF Article IV fiscal analysis', 'Determines maximum additional borrowing capacity for climate investment without crowding out essential services'),
+      dp('On-Lending Spread', '180 bps', 'Interest rate on-lent to sub-sovereign minus MDB sovereign window funding cost', 'World Bank treasury pricing', 'Covers credit enhancement, administrative cost, and currency risk; concessional windows offer 50-100 bps')
+    ],
+    ['Map sub-sovereign entity (city, state, utility, SOE) against MDB eligibility criteria and sovereign guarantee requirements', 'Analyse fiscal space using IMF framework — revenue base, existing debt service, and debt sustainability thresholds', 'Model on-lending structure: sovereign window rate, guarantee fee, sub-sovereign on-lending spread', 'Calculate climate co-financing ratio and OECD DAC attribution across contributing financiers'],
+    ['World Bank (2023) Sub-Sovereign and Structured Finance Primer', 'ADB (2023) Climate Finance Tracking and Reporting Methodology', 'AfDB (2022) Climate Change Action Plan and Co-Financing Guidelines', 'OECD DAC (2023) Climate-Related Official Development Finance'],
+    [
+      acr('SOE', 'State-Owned Enterprise', 'Government-controlled entity; common sub-sovereign borrower for infrastructure climate finance'),
+      acr('IDA', 'International Development Association', 'World Bank concessional window for least-developed countries; lower lending rates than IBRD'),
+      acr('IBRD', 'International Bank for Reconstruction and Development', 'World Bank standard lending window for middle-income countries'),
+      acr('LDC', 'Least Developed Country', 'UN designation for 46 poorest countries; eligible for maximum concessionality in MDB climate finance')
+    ],
+    [
+      dl('IMF World Economic Outlook and Article IV reports', 'GDP, revenue, debt stock by country → fiscal space calculation', 'Sub-sovereign borrowing capacity'),
+      dl('MDB project databases (World Bank ARAP, ADB PPIS)', 'Historical on-lending terms, co-financing ratios by sector → benchmark analysis', 'Structuring comparables'),
+      dl('OECD DAC climate finance statistics', 'Bilateral and multilateral climate finance flows by country → co-financing ratio validation', 'Climate finance attribution')
+    ],
+    'Provides analytical framework for MDB sub-sovereign climate lending decisions, integrating fiscal space analysis, co-financing ratio benchmarking, and sovereign guarantee structuring.'
+  ),
+
+  '/municipal-climate-resilience-hub': g(
+    'Municipal Climate Resilience Investment Hub', 'EP-DY4', 'DY',
+    'Municipal climate resilience investment planning analytics. Assesses physical risk to municipal assets (roads, buildings, utilities), prioritises adaptation capex, models resilience ROI, and values green infrastructure benefit-cost ratios.',
+    ce('Resilience ROI and Benefit-Cost Analysis', 'Resilience ROI = (Avoided Damage PV + Co-benefits PV - Adaptation CAPEX PV) / Adaptation CAPEX PV; BCR = Total Benefits / Total Costs', ['FEMA Benefit-Cost Analysis Reference Guide 2023', 'World Bank CURB Tool for Urban Resilience', 'IPCC AR6 WG2 Chapter 17 — Adaptation Options'], 'Multi-hazard benefit-cost analysis for municipal adaptation investments, combining avoided physical damage, insurance savings, and ecosystem co-benefits'),
+    [
+      dp('Average Asset Physical Risk Score', '62/100', 'Composite score across flood, heat, drought, and sea-level rise hazards', 'RMS / AIR municipal risk model', 'Scores above 70 require near-term adaptation investment; 50-70 monitor and plan; roadways and utilities typically highest risk'),
+      dp('Adaptation Investment BCR', '4.2x', 'Total adaptation benefits PV / adaptation capex PV', 'FEMA BCA methodology', 'FEMA minimum BCR threshold for grant eligibility is 1.0; resilient infrastructure typically 3-6x; nature-based solutions often higher'),
+      dp('Green Infrastructure Cost Savings', '-23%', 'Green infrastructure cost vs grey infrastructure equivalent at same performance standard', 'American Society of Civil Engineers', 'Green stormwater infrastructure 20-40% cheaper than grey; additional co-benefits in heat reduction, air quality, habitat')
+    ],
+    ['Inventory municipal assets by category and map to multi-hazard physical risk exposure using RCP 4.5 and 8.5 scenarios', 'Prioritise adaptation investments using risk score, asset criticality, and benefit-cost ratio', 'Model resilience ROI for top-priority interventions using FEMA BCA methodology', 'Identify green infrastructure opportunities and co-benefit valuation for grant applications (FEMA BRIC, CDBG-DR)'],
+    ['FEMA (2023) Benefit-Cost Analysis Reference Guide v6.0', 'World Bank (2023) CURB Tool for Urban Climate Resilience', 'IPCC AR6 WG2 (2022) Chapter 17 — Decision-Making Options for Managing Risk', 'C40 Cities (2023) Climate Action Planning — Adaptation Investment Framework'],
+    [
+      acr('BCR', 'Benefit-Cost Ratio', 'Total discounted benefits divided by total discounted costs; primary metric for public infrastructure investment decisions'),
+      acr('BRIC', 'Building Resilient Infrastructure and Communities', 'FEMA grant programme funding pre-disaster mitigation; minimum BCR 1.0 required for eligibility'),
+      acr('GI', 'Green Infrastructure', 'Nature-based approaches to stormwater, flood, and heat management using vegetation and natural systems'),
+      acr('CURB', 'City Urban Resilience Benefits Tool', 'World Bank model quantifying economic benefits of climate adaptation investments in cities')
+    ],
+    [
+      dl('Municipal GIS asset database', 'Asset locations, conditions, replacement values → physical risk exposure mapping', 'Asset-level risk scores'),
+      dl('RMS / AIR municipal physical risk models', 'Hazard intensity by location and RCP scenario → damage functions and loss estimates', 'Avoided damage benefit calculation'),
+      dl('FEMA BCA Toolkit / natural hazard loss data', 'Damage functions, unit costs, co-benefit valuation → BCR calculation', 'Grant application support and investment prioritisation')
+    ],
+    'Provides rigorous municipal climate resilience investment analytics integrating multi-hazard risk scoring, FEMA-methodology BCR calculation, and green infrastructure co-benefit valuation.'
+  ),
+
+  '/cpace-climate-finance': g(
+    'C-PACE Climate Finance Analytics', 'EP-DY5', 'DY',
+    'C-PACE (Commercial Property Assessed Clean Energy) financing analytics covering assessment lien structure, LTV impact, IPMVP energy savings verification, market volume by state, and lender consent requirements.',
+    ce('C-PACE Debt Service and Energy Savings Modelling', 'Net Cash Flow = Energy Savings - PACE Assessment Payment; Savings-to-Investment Ratio = NPV(Energy Savings) / PACE Loan Amount; LTV Impact = (First Mortgage + PACE) / Property Value', ['ASTM E2797 Energy Assessment Standard for PACE', 'IPMVP Core Concepts 2023', 'PACENation Market Intelligence Report 2023'], 'Models C-PACE financing net cash flow by comparing IPMVP-verified energy savings against assessment payment, with LTV and lender consent analysis'),
+    [
+      dp('Savings-to-Investment Ratio', '1.38x', 'NPV of projected energy savings over PACE term / PACE assessment amount', 'IPMVP Option C measurement and verification', 'Ratio above 1.0 indicates positive net cash flow; lenders typically require 1.2x+ coverage for project approval'),
+      dp('C-PACE Market Volume (US)', '$4.2Bn', 'Annual C-PACE origination volume (2023)', 'PACENation Market Intelligence 2023', 'Growing 20-30% annually; California, Florida, New York largest markets; 39 states with enabling legislation'),
+      dp('LTV Combined (with PACE)', '74%', '(First mortgage + PACE assessment) / appraised property value', 'Property appraisal + PACE lender calculation', 'Most mortgage lenders require combined LTV below 80%; PACE lien seniority creates lender consent requirement in most states')
+    ],
+    ['Calculate PACE assessment amount, term, and rate based on eligible improvements (solar, HVAC, EV charging, resilience)', 'Model IPMVP-verified energy savings using baseline consumption and improvement performance data', 'Assess lender consent requirement by state and calculate combined LTV impact', 'Generate savings-to-investment ratio, simple payback, and net present value summary'],
+    ['PACENation (2023) C-PACE Market Intelligence Annual Report', 'IPMVP (2023) Core Concepts for Determining Energy and Water Savings', 'ASTM (2023) E2797 Standard Practice for Building Energy Performance Assessment', 'Fannie Mae / Freddie Mac PACE Lender Consent Guidelines 2022'],
+    [
+      acr('C-PACE', 'Commercial Property Assessed Clean Energy', 'Long-term financing for commercial building energy efficiency and resilience improvements repaid through property tax assessment'),
+      acr('IPMVP', 'International Performance Measurement and Verification Protocol', 'Global standard for quantifying energy and water savings from efficiency improvements'),
+      acr('SIR', 'Savings-to-Investment Ratio', 'C-PACE underwriting metric: NPV of energy savings / PACE assessment amount; threshold typically 1.2x'),
+      acr('HERO', 'Home Energy Renovation Opportunity', 'Residential PACE programme; C-PACE is the commercial equivalent with larger deal sizes')
+    ],
+    [
+      dl('Utility bills and energy audits', 'Pre-retrofit energy consumption and costs → IPMVP baseline establishment', 'Energy savings projection'),
+      dl('PACENation state programme databases', 'State-specific PACE programme rates, terms, eligible improvements → product structuring', 'Assessment payment schedule'),
+      dl('Commercial property appraisals', 'As-is and as-improved property values → LTV calculation and lender consent analysis', 'Combined LTV and consent requirement')
+    ],
+    'Delivers end-to-end C-PACE financing analytics integrating IPMVP savings verification, LTV impact modelling, and state-specific programme comparison to support origination and underwriting decisions.'
+  ),
+
+  '/cdfi-climate-finance': g(
+    'CDFI Climate Finance Analytics', 'EP-DY6', 'DY',
+    'CDFI climate finance analytics covering equity-focused climate finance targeting LMI communities, green home improvement lending, clean energy access metrics, and Treasury CDFI Fund certification requirements.',
+    ce('Climate Equity Finance Targeting', 'LMI Targeting Rate = LMI-targeted climate loans / total climate portfolio × 100; Climate Equity Score = 0.4×LMI Rate + 0.3×Environmental Justice + 0.3×Energy Burden Reduction', ['Treasury CDFI Fund Certification Standards 2024', 'EPA Environmental Justice Screening Tool (EJSCREEN)', 'DOE Justice40 Initiative Guidelines'], 'Composite scoring of climate finance equity impact combining LMI community targeting, environmental justice co-benefits, and energy burden reduction for low-income households'),
+    [
+      dp('LMI Climate Finance Targeting Rate', '78%', 'Climate loans to LMI census tracts / total climate portfolio × 100', 'CDFI annual report to Treasury CDFI Fund', 'Treasury CDFI certification requires 60%+ activity in LMI; leading climate CDFIs achieve 80-95%'),
+      dp('Energy Burden Reduction', '3.2% of income', 'Pre-investment energy cost as % income minus post-investment energy cost % income', 'ACEEE low-income energy burden data', 'Average LMI energy burden 8-10% vs 3% national avg; clean energy investment reduces by 2-5 percentage points'),
+      dp('Treasury CDFI Award per $', '$0.18 subsidy leveraged', 'Treasury CDFI Fund award / total financing catalysed', 'CDFI Fund award announcement database', 'CDFIs leverage $8-12 of private capital per $1 CDFI Fund award; climate focus may achieve higher leverage via IRA')
+    ],
+    ['Map CDFI lending portfolio to LMI census tracts using FFIEC and CDFI Fund geographies', 'Calculate LMI targeting rate and environmental justice screening using EPA EJSCREEN scores', 'Model energy burden reduction impact from green home improvement and clean energy loan products', 'Assess Treasury CDFI Fund certification compliance and IRA new market tax credit eligibility'],
+    ['Treasury CDFI Fund (2024) CDFI Certification Application and Standards', 'EPA (2023) EJSCREEN Environmental Justice Screening and Mapping Tool', 'DOE (2022) Justice40 Initiative — Clean Energy Equity Framework', 'ACEEE (2023) The High Cost of Energy in Rural America — Low-Income Energy Burden Report'],
+    [
+      acr('CDFI', 'Community Development Financial Institution', 'Treasury-certified lender serving LMI communities; eligible for CDFI Fund awards and CRA credit'),
+      acr('LMI', 'Low-to-Moderate Income', 'Census tract or individual income below 80% of area median income; CDFI primary targeting requirement'),
+      acr('NMTC', 'New Markets Tax Credit', 'Federal tax credit for investments in low-income communities; allocated by Treasury CDFI Fund to CDFIs'),
+      acr('Justice40', 'Justice40 Initiative', 'Biden Administration commitment to direct 40% of clean energy benefits to disadvantaged communities')
+    ],
+    [
+      dl('FFIEC census tract data and CDFI Fund mapping', 'LMI census tract designations → portfolio targeting rate calculation', 'LMI compliance and CDFI certification support'),
+      dl('EPA EJSCREEN scores by census tract', 'Environmental justice indicators (pollution burden, demographics) → EJ screening for loan targeting', 'Environmental justice co-benefit measurement'),
+      dl('ACEEE low-income energy burden database', 'Pre-investment energy burden by geography and housing type → impact measurement baseline', 'Energy burden reduction outcome tracking')
+    ],
+    'Enables CDFI climate finance portfolio analytics integrating LMI targeting compliance, environmental justice screening, and energy burden reduction measurement to demonstrate climate equity impact.'
+  ),
+
+  '/coastal-resilience-finance': g(
+    'Coastal Resilience Project Finance', 'DY/DZ',
+    'DY',
+    'Coastal resilience project finance analytics covering seawall, living shoreline, and mangrove buffer investments. Models benefit-cost ratios from avoided storm damage, insurance premium reductions, ecosystem service valuation, and FEMA BRIC grant eligibility.',
+    ce('Coastal Resilience Benefit-Cost Analysis', 'BCR = (Avoided Storm Damage + Insurance Reduction + Ecosystem Services) / (CAPEX + OPEX); Annual Expected Loss Reduction = AAL(without) - AAL(with)', ['FEMA Benefit-Cost Analysis Reference Guide 2023', 'NOAA Coastal Resilience Investment Framework', 'Nature-based Solutions for Coastal Resilience — Swiss Re Institute 2023'], 'Multi-benefit coastal resilience BCR calculation combining engineering-based flood damage reduction with ecosystem service co-benefits and insurance market impacts'),
+    [
+      dp('Coastal Resilience BCR', '5.8x', '(Avoided damage PV + insurance reduction + ecosystem services) / CAPEX', 'FEMA BCA and Swiss Re model', 'Coastal resilience BCR typically 3-8x; living shorelines often higher than grey infrastructure due to co-benefits; FEMA threshold 1.0x'),
+      dp('Annual Expected Loss Reduction', '-$4.2M/yr', 'AAL without resilience project - AAL with project (expected annual loss from storm events)', 'RMS North Atlantic hurricane model', 'Primary benefit driver; depends on coastal exposure value, hazard intensity, and project attenuation performance'),
+      dp('Mangrove Storm Attenuation', '-29% wave height', 'Wave height reduction per 100m mangrove belt width', 'IUCN / Nature Conservancy coastal protection research', 'Mangroves reduce wave height 50-70% over 500m; direct analogue to 30-50cm seawall at fraction of cost')
+    ],
+    ['Map coastal assets at risk and establish without-project annual expected loss baseline using storm surge models', 'Model wave attenuation and flood reduction performance for each intervention type (seawall, living shoreline, mangrove)', 'Calculate multi-benefit BCR including avoided damage, insurance premium reduction, and ecosystem service values', 'Assess FEMA BRIC grant eligibility and identify co-financing from insurance sector resilience programmes'],
+    ['FEMA (2023) Benefit-Cost Analysis Reference Guide v6.0 — Coastal Flood Section', 'NOAA (2023) Coastal Resilience Investment Framework', 'Swiss Re Institute (2023) Nature-based Solutions for Coastal Resilience', 'Nature Conservancy (2020) Valuing the Coastal Protection Services of Mangroves'],
+    [
+      acr('AAL', 'Average Annual Loss', 'Probabilistic measure of expected annual damage from natural hazards across all return periods'),
+      acr('BRIC', 'Building Resilient Infrastructure and Communities', 'FEMA pre-disaster mitigation grant programme; 6% of total FEMA disaster mitigation budget'),
+      acr('NbS', 'Nature-based Solutions', 'Using natural and semi-natural systems to address coastal flooding and erosion challenges'),
+      acr('CBA', 'Cost-Benefit Analysis', 'Systematic comparison of quantified project costs and benefits to support investment decisions')
+    ],
+    [
+      dl('RMS / AIR North Atlantic storm surge models', 'Probabilistic hazard intensity and damage functions by location → AAL baseline and reduction', 'Avoided damage benefit calculation'),
+      dl('NOAA coastal bathymetry and asset exposure data', 'Coastal topography and asset values → flood inundation modelling', 'Physical risk quantification'),
+      dl('Swiss Re / Munich Re coastal resilience insurance data', 'Premium reduction evidence from coastal protection investments → insurance co-benefit value', 'Total BCR including insurance component')
+    ],
+    'Provides comprehensive coastal resilience project finance analytics combining FEMA-methodology avoided loss quantification, nature-based solutions performance data, and insurance market co-benefit valuation.'
+  ),
+
+  '/ocean-carbon-credit-market': g(
+    'Ocean Carbon Credit Market Analytics', 'EP-DZ1', 'DZ',
+    'Ocean-based carbon credit market analytics covering kelp/macroalgae, ocean alkalinity enhancement, seagrass, and shellfish aquaculture credits. Compares MRV methodologies, permanence challenges, and emerging price benchmarks.',
+    ce('Ocean CDR Credit Pricing & MRV Maturity', 'Ocean CDR Price = f(Permanence Tier, MRV Maturity, Co-benefit Score); Permanence-Adjusted Value = Spot Price × Permanence Factor × (1 - Reversal Risk)', ['High Level Panel for a Sustainable Ocean Economy — Ocean Carbon Guide', 'NOAA Ocean Carbon Research Programme', 'Verra VCS emerging ocean methodology pipeline'], 'Market analytics integrating MRV maturity scoring, permanence risk assessment, and emerging price benchmarks across ocean CDR pathways'),
+    [
+      dp('Ocean CDR Price Range', '$20-180/tCO2', 'Market price range across ocean CDR methods by permanence and MRV maturity', 'CDR.fyi and Frontier ocean procurement data', 'OAE/geological storage at high end ($100-180); macroalgae at low end ($20-50) due to permanence uncertainty'),
+      dp('MRV Maturity Score', '2.8/5', 'Average MRV maturity across ocean CDR pathways (methodology approval, monitoring, verification)', 'Verra/ISO methodology pipeline', 'Most ocean CDR pathways at pilot stage; geological marine CCS highest maturity; macroalgae/OAE pre-commercial'),
+      dp('Ocean CDR Market Volume', '180 ktCO2', 'Total forward commitments and spot purchases of ocean-based CDR credits (2023)', 'CDR.fyi ocean segment data', 'Nascent but rapidly growing; Stripe/Shopify advance purchases driving methodology development')
+    ],
+    ['Map ocean CDR pathway portfolio across biological (kelp, seagrass, shellfish) and chemical (OAE) categories', 'Score MRV maturity for each pathway: methodology approval status, monitoring approach, verification body availability', 'Assess permanence risk and assign permanence tier (geological, century-scale, decadal)', 'Benchmark prices against advance purchase data and model portfolio risk-return under different pathway mixes'],
+    ['High Level Panel for a Sustainable Ocean Economy (2023) Ocean Carbon Guide', 'NOAA (2023) Ocean Acidification and Carbon Cycle Research — CDR Implications', 'Carbon180 (2023) Ocean CDR State of the Field', 'Frontier Climate (2023) Ocean CDR Procurement and MRV Standards'],
+    [
+      acr('OAE', 'Ocean Alkalinity Enhancement', 'Adding alkaline minerals to seawater to increase CO2 absorption; high potential, emerging MRV'),
+      acr('DOC', 'Dissolved Organic Carbon', 'Carbon pathway in ocean CDR via marine photosynthesis; uncertain permanence as DOC can be remineralised'),
+      acr('BiCRS', 'Biomass Carbon Removal and Storage', 'NASEM category including marine biomass CDR pathways with geological or long-lived storage'),
+      acr('PIC', 'Particulate Inorganic Carbon', 'Shellfish calcification pathway; potential CDR credit but DNSH concerns regarding CO2 release on dissolution')
+    ],
+    [
+      dl('CDR.fyi ocean segment transaction database', 'Forward commitment prices, volumes, MRV approach → market price benchmarking', 'Ocean CDR price discovery'),
+      dl('Verra/Gold Standard methodology pipeline', 'Methodology development status for ocean pathways → MRV maturity scoring', 'Methodology risk assessment'),
+      dl('NOAA ocean monitoring data', 'pCO2, alkalinity, dissolved inorganic carbon → physical baseline for MRV', 'Ocean carbon flux quantification')
+    ],
+    'Provides market intelligence on the nascent ocean CDR credit market, integrating MRV maturity scoring, permanence risk assessment, and price benchmarking to guide procurement decisions.'
+  ),
+
+  '/blue-bond-analytics': g(
+    'Blue Bond Market Analytics', 'EP-DZ2', 'DZ',
+    'Blue bond market analytics covering sovereign and corporate issuance, sustainable ocean economy use-of-proceeds (fisheries, maritime transport, coastal resilience), ICMA Blue Bond Principles, and World Bank/ADB blue bond structures.',
+    ce('Blue Bond Impact & Pricing Analytics', 'Blue Bond Alignment Score = Σ(Category Weight × Category Compliance); Blue Premium = Yield(conventional) - Yield(blue) in bps', ['ICMA Blue Bond Principles 2023', 'World Bank Blue Bond Framework', 'Sustainable Ocean Economy Finance Principles (UNEP FI)'], 'Measures blue bond quality via use-of-proceeds alignment scoring and pricing premium analysis relative to vanilla issuer comparables'),
+    [
+      dp('Global Blue Bond Issuance', '$5.8Bn', 'Cumulative blue bond issuance (sovereign + corporate, 2018-2023)', 'Climate Bonds Initiative Blue Bond Database', 'Fastest growing sustainable bond segment; Seychelles (2018) sovereign first; ADB, World Bank leading MDB issuers'),
+      dp('Blue Bond Alignment Score', '81/100', 'Weighted average use-of-proceeds alignment across ICMA Blue Bond Principles categories', 'External review / SPO assessment', 'Scores above 80 qualify for CBI Climate Bonds certification; 70-80 standard green-equivalent; below 70 risks greenwashing'),
+      dp('Blue Greenium vs Vanilla', '-4.8 bps', 'Yield differential for blue vs conventional bond by matched issuer/maturity', 'Bloomberg BVAL', 'Emerging premium as investor demand grows; sovereign blue bonds show larger premium than corporate')
+    ],
+    ['Map use-of-proceeds across ICMA Blue Bond Principles categories (fisheries, aquaculture, shipping, coastal, ocean energy, waste)', 'Score alignment against sustainable ocean economy criteria and DNSH considerations', 'Calculate pricing premium by constructing issuer vanilla yield curve and comparing to blue bond yield', 'Benchmark against World Bank/ADB blue bond structures for best-practice framework design'],
+    ['ICMA (2023) Blue Bond Principles — Voluntary Process Guidelines', 'World Bank (2018) Blue Bond Framework and Impact Report', 'UNEP FI (2022) Sustainable Ocean Economy Finance Principles', 'Climate Bonds Initiative (2023) Marine and Fisheries Criteria'],
+    [
+      acr('BBP', 'Blue Bond Principles', 'ICMA voluntary guidelines for blue bonds financing sustainable ocean economy activities'),
+      acr('SOE', 'Sustainable Ocean Economy', 'Economic activities deriving value from oceans while preserving ocean health and ecosystem services'),
+      acr('MSC', 'Marine Stewardship Council', 'Fisheries sustainability certification; MSC-certified fisheries typically blue bond eligible'),
+      acr('IMO', 'International Maritime Organization', 'UN agency regulating international shipping; shipping decarbonisation is key blue bond use-of-proceeds category')
+    ],
+    [
+      dl('Climate Bonds Initiative blue bond database', 'Issuance terms, use-of-proceeds, impact data → market benchmarking and alignment scoring', 'Peer comparison and best practice identification'),
+      dl('Bloomberg BVAL and secondary market data', 'Real-time pricing for blue and conventional bonds by issuer → greenium calculation', 'Pricing premium analysis'),
+      dl('FAO fisheries sustainability data', 'Stock status, fishing pressure by species → sustainable fisheries eligibility assessment', 'Use-of-proceeds alignment scoring')
+    ],
+    'Delivers comprehensive blue bond market analytics integrating ICMA alignment scoring, pricing premium analysis, and sustainable ocean economy use-of-proceeds assessment across sovereign and corporate issuers.'
+  ),
+
+  '/aquaculture-climate-finance': g(
+    'Aquaculture Climate Finance Analytics', 'EP-DZ3', 'DZ',
+    'Aquaculture climate finance analytics covering sustainable aquaculture investment, ASC/BAP certification premiums, climate risk to production from sea temperature and ocean acidification, blue bond eligible capex, and insurance products.',
+    ce('Aquaculture Climate Risk-Adjusted Return', 'Climate-Adjusted IRR = Base IRR - Physical Risk Discount + Certification Premium; Production Risk = f(SST Anomaly, pH Change, Extreme Event Frequency)', ['Aquaculture Stewardship Council (ASC) Standard v3.0', 'FAO State of World Aquaculture 2022', 'Swiss Re Climate Risk in Aquaculture 2023'], 'IRR model adjusting for climate physical risks to aquaculture production combined with certification premium uplift and insurance product availability'),
+    [
+      dp('ASC Certification Premium', '+14%', 'Price premium for ASC-certified product vs standard at point of sale', 'ASC market price survey 2023', 'Premium varies by species and market; salmon 10-18%; shrimp 8-15%; critical for accessing EU and US premium retail'),
+      dp('Sea Surface Temperature Risk', '-8% production by 2050', 'Production volume reduction under RCP 4.5 SST projections for salmon farming sites', 'IPCC SROCC regional projections', 'Norwegian salmon sites face reduced optimal temperature window; tropical shrimp farms face increased disease pressure'),
+      dp('Blue Bond Eligible CapEx Share', '62%', 'Capex on sustainable feed systems, recirculating aquaculture, habitat restoration / total capex', 'Blue bond framework eligibility criteria', 'RAS (recirculating aquaculture systems) and offshore cage technology qualify; feed mill upgrade eligible if using non-FMFO feeds')
+    ],
+    ['Map aquaculture production sites against climate risk variables: SST projections, ocean acidification pH change, extreme storm frequency', 'Calculate production risk discount by species and site using climate-impact dose-response functions', 'Assess ASC/BAP certification status and premium uplift on revenue projections', 'Classify capex as blue bond eligible and model financing structure combining blue bonds, insurance, and concessional finance'],
+    ['ASC (2023) Aquaculture Stewardship Council Standard v3.0', 'FAO (2022) The State of World Fisheries and Aquaculture', 'IPCC SROCC (2019) Special Report on Ocean and Cryosphere — Chapter 5 Changing Ocean', 'Swiss Re (2023) Aquaculture Climate Risk Insurance Solutions'],
+    [
+      acr('ASC', 'Aquaculture Stewardship Council', 'Global certification body for responsibly farmed seafood; premium access to EU/US retail markets'),
+      acr('BAP', 'Best Aquaculture Practices', 'Global Aquaculture Alliance certification; four-star BAP covers farm, hatchery, feed mill, and processing'),
+      acr('RAS', 'Recirculating Aquaculture System', 'Land-based indoor aquaculture using water recycling; higher CAPEX but lower climate risk and site constraints'),
+      acr('FMFO', 'Fish Meal and Fish Oil', 'Feed ingredient from wild-caught forage fish; reduction critical for sustainable aquaculture certification')
+    ],
+    [
+      dl('CMIP6 sea surface temperature projections (IPCC AR6)', 'SST anomalies by site and RCP scenario → production risk model inputs', 'Climate-adjusted production volume projections'),
+      dl('FAO and national aquaculture production statistics', 'Historical production volumes by species, method, and country → baseline growth model', 'Investment sizing and revenue projections'),
+      dl('ASC market data and price surveys', 'Certification premium and market access data by species → revenue uplift from certification', 'Climate-adjusted IRR calculation')
+    ],
+    'Provides integrated aquaculture climate finance analytics combining physical risk-adjusted returns, certification premium modelling, and blue bond eligibility assessment to support investment decisions.'
+  ),
+
+  '/shipping-decarbonization-finance': g(
+    'Shipping Decarbonisation Finance Analytics', 'EP-DZ4', 'DZ',
+    'Shipping decarbonisation finance analytics covering Poseidon Principles alignment, CII rating, IMO GHG Strategy carbon levy, alternative fuel investment (methanol, ammonia, LNG), and OPEX/CAPEX trade-off modelling.',
+    ce('Shipping Decarbonisation Investment Analytics', 'CII Score = AER or cgDIST / Reference Line; Decarbonisation CAPEX NPV = ΔFuel Cost × OPEX Savings - Retrofit CAPEX + Carbon Levy Avoidance', ['IMO GHG Strategy 2023 (MEPC 80)', 'Poseidon Principles v3.0 — Ship Finance Alignment', 'SEA-LNG / Ammonia Energy Association fuel cost benchmarks'], 'Investment model for shipping decarbonisation comparing fuel switching CAPEX against fuel cost and carbon levy savings, benchmarked to Poseidon Principles CII alignment'),
+    [
+      dp('Poseidon Principles Alignment Score', '-12%', 'Vessel AER vs Poseidon Principles climate trajectory for vessel type (% above/below)', 'Poseidon Principles annual alignment report', 'Negative = above trajectory (worse); aligned banks require fleets to converge to 0% by 2050; ESRS disclosure required'),
+      dp('CII Rating', 'C', 'Carbon Intensity Indicator annual rating (A-E) vs IMO reference line', 'IMO MEPC.354(78) CII guidelines', 'D or E rating for 3 consecutive years triggers corrective action plan; lenders increasingly requiring B or better'),
+      dp('Alternative Fuel CapEx Premium', '+$18M', 'Incremental cost of methanol-ready dual-fuel newbuild vs conventional', 'Clarkson Research / DNV fuel-ready ship cost data', 'Ammonia $25-35M premium; LNG $8-15M; methanol $15-25M; fuel availability and price spread determine payback period')
+    ],
+    ['Calculate fleet-wide CII ratings and Poseidon Principles alignment using AER and cgDIST methodology', 'Model carbon levy exposure under IMO GHG Strategy 2023 flat levy and basket of measures scenarios', 'Evaluate alternative fuel investment NPV: CAPEX premium vs fuel cost savings and levy avoidance over 20yr ship life', 'Generate lender-ready Poseidon Principles disclosure and fleet transition roadmap to Paris-aligned trajectory'],
+    ['IMO (2023) Revised GHG Strategy MEPC 80 — 2030/2050 Targets and Carbon Levy', 'Poseidon Principles (2023) Framework v3.0 — Financial Sector Climate Alignment', 'DNV (2023) Maritime Forecast to 2050 — Fuel and Technology Pathways', 'UMAS / UCL (2023) IMO Carbon Levy Revenue and Shipping Transition Finance'],
+    [
+      acr('CII', 'Carbon Intensity Indicator', 'IMO annual operational efficiency rating for ships in service; grades A (best) to E (worst) vs reference line'),
+      acr('AER', 'Annual Efficiency Ratio', 'CII metric: CO2 emitted per tonne-nautical mile; applicable to most vessel types'),
+      acr('EEXI', 'Energy Efficiency Existing Ship Index', 'IMO technical efficiency standard for existing ships; one-time compliance requirement effective January 2023'),
+      acr('GHG', 'Greenhouse Gas', 'IMO GHG Strategy targets 20-30% emissions reduction by 2030 and net-zero GHG by 2050')
+    ],
+    [
+      dl('IMO GISIS ship registry and CII data', 'Vessel DWT, type, fuel consumption, voyage data → CII calculation', 'Fleet alignment and CII ratings'),
+      dl('Poseidon Principles annual alignment reports', 'Trajectory benchmarks by vessel type and year → alignment gap calculation', 'Lender disclosure and portfolio alignment score'),
+      dl('DNV / Clarksons fuel price scenarios', 'Alternative fuel cost projections (methanol, ammonia, green hydrogen) → NPV sensitivity', 'Fuel switching investment case')
+    ],
+    'Delivers shipping decarbonisation investment analytics integrating Poseidon Principles alignment, IMO carbon levy exposure, and alternative fuel CAPEX/OPEX modelling to guide fleet transition financing.'
+  ),
+
+  '/climate-wacc-engine': g(
+    'Climate-Adjusted WACC Engine', 'EP-DD1', 'DD',
+    'Climate-adjusted WACC engine for corporate valuation. Estimates carbon beta, decomposes climate risk premium into physical and transition components, applies sector-specific WACC uplift, and enables IFRS S2 cost of capital disclosure.',
+    ce('Climate Risk Premium Decomposition', 'Climate WACC = WACC_base + Carbon Beta × (Rm - Rf) + Physical Risk Premium + Transition Risk Premium; Carbon Beta = Cov(Return, Carbon Price) / Var(Return)', ['IFRS S2 Climate-related Disclosures 2023', 'ECB Guide on Climate and Environmental Risks 2020', 'Carney (2015) Breaking the Tragedy of the Horizon — Carbon Beta Framework'], 'WACC adjustment framework decomposing climate risk into systematic carbon beta and idiosyncratic physical/transition premiums by sector'),
+    [
+      dp('Carbon Beta', '0.38', 'Regression of stock return vs EUA carbon price return over 3yr rolling window', 'Bloomberg EUA price data + company equity returns', 'Beta>0.5 indicates high carbon price sensitivity (utilities, cement); <0.2 low sensitivity (tech, healthcare); negative possible for clean energy'),
+      dp('Climate WACC Uplift', '+87 bps', 'Total climate risk premium added to conventional WACC', 'ECB climate stress test framework', 'Uplift ranges 30-200 bps by sector; oil & gas 120-180 bps; utilities 60-90 bps; real estate coastal 80-150 bps'),
+      dp('Transition Risk Premium', '+52 bps', 'Additional cost of capital from stranded asset risk and regulatory transition costs', 'NGFS transition scenario implied equity risk premia', 'Dominant component for high-emitters; decomposed from scenario analysis of stranded asset NPV impact on enterprise value')
+    ],
+    ['Estimate carbon beta using 3-year rolling regression of equity returns against EUA carbon price changes', 'Decompose climate WACC uplift into physical risk premium (asset impairment) and transition risk premium (stranded assets, carbon cost)', 'Apply sector-specific calibration using ECB/NGFS scenario analysis', 'Generate IFRS S2-compliant cost of capital disclosure with sensitivity analysis'],
+    ['IFRS S2 (2023) Climate-related Disclosures — Cost of Capital Disclosure Requirements', 'ECB (2020) Guide on Climate and Environmental Risks — WACC Section', 'NGFS (2023) Climate Scenarios for Central Banks and Supervisors — Macro-Financial Implications', 'Dietz et al. (2023) Carbon Beta and the Cost of Capital — Journal of Finance'],
+    [
+      acr('WACC', 'Weighted Average Cost of Capital', 'Blended cost of equity and debt financing; key discount rate in DCF valuation'),
+      acr('EUA', 'European Union Allowance', 'EU ETS carbon credit; EUA price used as carbon price proxy for carbon beta estimation'),
+      acr('CAPM', 'Capital Asset Pricing Model', 'Standard equity cost of capital model extended to include climate risk premium in climate-adjusted WACC'),
+      acr('NGFS', 'Network for Greening the Financial System', 'Central bank network providing climate scenarios used for WACC calibration and stress testing')
+    ],
+    [
+      dl('Bloomberg equity returns and EUA price time series', 'Daily returns for carbon beta regression → systematic climate risk component', 'Carbon beta by company'),
+      dl('NGFS climate scenarios (orderly, disorderly, hot house)', 'GDP impact, carbon price, stranded asset trajectories → transition risk premium calibration', 'Climate WACC uplift by scenario'),
+      dl('IPCC physical risk data and asset exposure', 'Physical hazard by location and RCP scenario → physical risk premium by asset geography', 'Total climate WACC decomposition')
+    ],
+    'Provides sector-specific climate-adjusted WACC calculation decomposing carbon beta, physical risk, and transition risk premiums, enabling IFRS S2-compliant cost of capital disclosures.'
+  ),
+
+  '/green-debt-structuring': g(
+    'Green Debt Structuring Analytics', 'EP-DD2', 'DD',
+    'Green debt structuring analytics for green bonds, green loans, and sustainability-linked loans. Models coupon step-up/down mechanics, second-party opinion costs, post-issuance reporting burden, and greenium analysis. Covers ICMA GBP and GLP frameworks.',
+    ce('Green Debt Pricing & Structure Analytics', 'Greenium = Yield(conventional) - Yield(green) in bps; Net Benefit = Greenium Savings - SPO Cost - Reporting Cost over bond life', ['ICMA Green Bond Principles 2021', 'LMA/APLMA/LSTA Green Loan Principles 2023', 'Climate Bonds Initiative Certification Standard v4.0'], 'Pricing model comparing greenium benefit against incremental green debt costs (SPO, ongoing reporting) to determine net financial attractiveness'),
+    [
+      dp('Greenium vs Conventional', '-6.8 bps', 'Yield differential for green vs conventional bond by matched issuer/maturity/rating', 'Bloomberg BVAL / ICMA market survey', 'Average greenium -5 to -8 bps in EUR investment grade; USD market smaller (-2 to -4 bps); high-yield minimal'),
+      dp('Net Green Bond Benefit', '+$2.4M over 5yr', 'Coupon saving from greenium - SPO cost - annual reporting cost × 5', 'ICMA and CBI issuance cost survey', 'SPO cost $50-150k; annual reporting $30-80k; greenium saving typically covers costs for bonds >€200M'),
+      dp('SLL Margin Ratchet', '±5 bps', 'Coupon adjustment range for meeting/missing sustainability performance targets', 'LMA Green Loan Principles survey', 'Market convention ±5-10 bps; symmetric ratchet required by ICMA to avoid tokenism; tied to externally verified KPIs')
+    ],
+    ['Model green bond structure: use-of-proceeds allocation, ICMA GBP four-component compliance, SPO provider selection', 'Calculate greenium benefit using comparable conventional bond yield and current demand technicals', 'Assess net financial benefit: greenium savings minus SPO, verification, and annual reporting costs', 'Structure SLL margin ratchet: KPI selection, SPT calibration, verification agent, step-up/step-down symmetry'],
+    ['ICMA (2021) Green Bond Principles — Voluntary Process Guidelines', 'LMA/APLMA/LSTA (2023) Green Loan Principles', 'Climate Bonds Initiative (2023) CBI Certification Standard v4.0', 'ICMA (2023) Green, Social, Sustainability Bond Market Survey'],
+    [
+      acr('GBP', 'Green Bond Principles', 'ICMA four-component framework (proceeds, evaluation, management, reporting) for green bond issuance'),
+      acr('GLP', 'Green Loan Principles', 'LMA/APLMA/LSTA equivalent to GBP for private green loan markets'),
+      acr('SLL', 'Sustainability-Linked Loan', 'Loan with margin ratchet tied to borrower achieving pre-agreed sustainability performance targets'),
+      acr('SPO', 'Second Party Opinion', 'Independent external review confirming green bond/loan framework alignment with market standards')
+    ],
+    [
+      dl('Bloomberg BVAL green bond pricing data', 'Real-time and historical green vs conventional yield spreads → greenium calculation', 'Net financial benefit analysis'),
+      dl('ICMA/CBI SPO and reporting cost surveys', 'SPO provider fees and annual reporting cost benchmarks → total cost of green issuance', 'Break-even analysis by deal size'),
+      dl('LMA SLL market survey data', 'Margin ratchet size, KPI types, verification agent market practice → SLL structure benchmarking', 'SLL term sheet optimisation')
+    ],
+    'Provides rigorous green debt structuring analytics quantifying greenium benefit against SPO and reporting costs, enabling corporate treasurers to optimise green financing instrument selection.'
+  ),
+
+  '/climate-ma-due-diligence': g(
+    'Climate M&A Due Diligence Engine', 'EP-DD3', 'DD',
+    'Climate M&A due diligence engine assessing target company physical and transition risk, stranded asset exposure, carbon liability quantification, climate-adjusted enterprise value, and TCFD-aligned due diligence checklist.',
+    ce('Climate-Adjusted Enterprise Value', 'Climate EV = Reported EV - Carbon Liability NPV - Stranded Asset Writedown - Physical Risk Impairment; Carbon Liability = Scope 1+2+3 × Shadow Carbon Price', ['TCFD Recommendations 2017 + 2021 update', 'IFRS S2 Climate-related Disclosures 2023', 'ACE (Accounting for Carbon Emissions) Framework — WBCSD 2023'], 'EV adjustment framework quantifying climate liabilities (carbon cost, stranded assets, physical impairment) to derive climate-adjusted acquisition price'),
+    [
+      dp('Carbon Liability NPV', '-$420M', 'Σ(Scope 1+2+3 emissions × shadow price trajectory) discounted to PV', 'WBCSD ACE framework, SCC $51-220/t', 'Social cost of carbon $185/t (IWG 2021 update); internal carbon price trajectory fed through DCF model; dominant for energy assets'),
+      dp('Stranded Asset Exposure', '18% of PP&E', 'Assets at risk of early retirement under 1.5°C / 2°C scenario / total PP&E', 'IEA NZE scenario asset stranding analysis', 'Unburnable reserves plus fossil fuel infrastructure; quantified using IEA NZE remaining carbon budget by asset type'),
+      dp('Physical Risk Impairment', '-$85M', 'Expected value of physical asset writedowns from climate hazards over holding period', 'RMS/AIR physical risk model', 'Coastal, flood-prone, and water-stressed assets most vulnerable; key for real estate and infrastructure M&A')
+    ],
+    ['Complete TCFD-aligned climate due diligence checklist across governance, strategy, risk management, and metrics', 'Quantify carbon liability using Scope 1+2+3 emissions and shadow carbon price trajectory (NGFS orderly/disorderly)', 'Identify stranded assets using IEA NZE scenario asset retirement timeline', 'Calculate climate-adjusted EV and implied climate risk discount to headline enterprise value'],
+    ['TCFD (2021) Implementing the Recommendations of the Task Force on Climate-related Financial Disclosures', 'IFRS S2 (2023) Climate-related Disclosures Standard', 'WBCSD (2023) ACE Framework — Accounting for Carbon Emissions in M&A', 'IEA (2023) World Energy Outlook — Net Zero Emissions Scenario Asset Stranding'],
+    [
+      acr('EV', 'Enterprise Value', 'Total firm value (market cap + net debt); climate adjustments create climate-adjusted EV as acquisition price floor'),
+      acr('SCC', 'Social Cost of Carbon', 'Monetary value of damages from one additional tonne of CO2; US IWG estimate $185/t (2021 update)'),
+      acr('PP&E', 'Property Plant and Equipment', 'Tangible long-lived assets; stranded asset analysis focuses on fossil fuel PP&E at risk of early retirement'),
+      acr('ACE', 'Accounting for Carbon Emissions', 'WBCSD framework integrating carbon pricing into financial statements and M&A valuation')
+    ],
+    [
+      dl('Target company CDP disclosures and ESG reports', 'Scope 1+2+3 emissions, climate governance, physical risk exposure → due diligence inputs', 'Carbon liability and TCFD checklist'),
+      dl('IEA NZE scenario stranding database', 'Asset-type retirement timelines by scenario → stranded asset quantification', 'Stranded asset EV adjustment'),
+      dl('RMS / AIR physical risk platform', 'Asset-level physical hazard exposure → impairment risk quantification', 'Physical risk EV adjustment')
+    ],
+    'Delivers systematic climate M&A due diligence integrating TCFD checklist, carbon liability quantification, stranded asset identification, and physical risk impairment into a climate-adjusted enterprise value.'
+  ),
+
+  '/carbon-adjusted-valuation': g(
+    'Carbon-Adjusted Corporate Valuation', 'EP-DD4', 'DD',
+    'Carbon-adjusted corporate valuation covering Scope 1+2+3 emissions monetisation, shadow carbon price sensitivity analysis, carbon liability EV adjustment, and sector peer comparison on carbon-adjusted EV/EBITDA multiples.',
+    ce('Carbon-Adjusted Valuation Multiples', 'Carbon-Adj EV/EBITDA = (EV + Carbon Liability NPV) / EBITDA; Carbon Liability = Scope 1+2+3 × Shadow Price × (1-PassThrough) × Duration Factor', ['GHG Protocol Corporate Standard', 'WBCSD ACE Framework 2023', 'IIGCC (2023) Net Zero Investment Framework — Carbon-Adjusted Valuation Guidance'], 'Adjusts reported EV/EBITDA multiples for unpriced carbon liability, enabling like-for-like peer comparison that reflects climate transition exposure'),
+    [
+      dp('Carbon-Adjusted EV/EBITDA', '9.8x', '(EV + Carbon Liability NPV) / EBITDA', 'Company GHG data + shadow carbon price deck', 'Premium vs unadjusted multiple quantifies hidden carbon value destruction; high-emitter premium often 2-4x turns'),
+      dp('Scope 3 Carbon Liability Share', '73%', 'Scope 3 carbon liability NPV / total carbon liability NPV', 'GHG Protocol Scope 3 inventory', 'Scope 3 dominates for consumer goods, financials, and transportation; often excluded → understatement of true liability'),
+      dp('Shadow Carbon Price (2030)', '$105/tCO2', 'Internal carbon price assumption aligned with IEA NZE orderly transition trajectory', 'IEA NZE carbon price pathway', 'EU ETS spot ~€60-70; IEA NZE implies $130/t by 2030; high-ambition internal price $150-200/t used by Stern/Wagner')
+    ],
+    ['Collect Scope 1, 2, and 3 GHG inventory with quality flags and boundary alignment check', 'Apply shadow carbon price trajectory (base, high, low) over explicit forecast period and terminal year', 'Calculate net carbon liability after pass-through to customers and government (carbon tax rebates)', 'Compute carbon-adjusted EV/EBITDA and benchmark against sector peers on same carbon-adjusted basis'],
+    ['GHG Protocol (2023) Corporate Accounting and Reporting Standard — Revised Edition', 'WBCSD (2023) ACE Framework — Carbon-Adjusted Valuation Methodology', 'IIGCC (2023) Net Zero Investment Framework 2.0 — Portfolio Analytics', 'Dietz et al. (2023) Carbon Risk and Corporate Valuation — Nature Climate Change'],
+    [
+      acr('EV/EBITDA', 'Enterprise Value to EBITDA Multiple', 'Standard valuation multiple; carbon adjustment adds unpriced carbon liability to EV for climate-adjusted comparison'),
+      acr('SBTi', 'Science Based Targets initiative', 'Targets aligned with Paris Agreement; companies with SBTi targets show lower carbon liability uncertainty'),
+      acr('GHG', 'Greenhouse Gas', 'CO2, CH4, N2O, F-gases per GHG Protocol; monetised at shadow carbon price for valuation adjustment'),
+      acr('EVIC', 'Enterprise Value Including Cash', 'GHG Protocol denominator for WACI; distinct from EV excluding cash used in standard multiples')
+    ],
+    [
+      dl('Company CDP and GRI GHG inventories', 'Scope 1+2+3 emissions by category → carbon liability calculation', 'Gross carbon liability'),
+      dl('IEA NZE / NGFS carbon price trajectories', 'Forward carbon price path by scenario → shadow price deck', 'Carbon liability NPV sensitivity'),
+      dl('Sector peer EV/EBITDA (Bloomberg/FactSet)', 'Reported multiples → baseline for carbon-adjusted peer comparison', 'Sector carbon-adjusted multiple ranking')
+    ],
+    'Enables systematic carbon-adjusted corporate valuation incorporating Scope 1+2+3 monetisation and shadow carbon price sensitivity, producing carbon-adjusted EV/EBITDA peer comparisons.'
+  ),
+
+  '/treasury-climate-risk': g(
+    'Corporate Treasury Climate Risk Analytics', 'EP-DD5', 'DD',
+    'Corporate treasury climate risk analytics covering FX exposure to climate-stressed economies, commodity price climate sensitivity, liquidity risk from physical events, climate VaR for treasury portfolio, and TCFD treasury disclosures.',
+    ce('Treasury Climate VaR & Liquidity Risk', 'Climate VaR = VaR_conventional × (1 + Climate Multiplier); Climate Multiplier = f(Physical Risk Score, Transition Risk Score, Concentration); Liquidity Risk = P(Physical Event) × Working Capital Disruption', ['TCFD Recommendations — Treasury Risk Management', 'IFRS S2 Climate-related Disclosures 2023', 'BIS Working Paper 627 (2017) — FX and Climate Risk'], 'Augments conventional treasury VaR with climate multipliers derived from physical and transition risk scores, and models liquidity stress from physical climate events'),
+    [
+      dp('Climate-Adjusted Treasury VaR (95%)', '$38M', 'Conventional VaR × (1 + physical risk multiplier + transition risk multiplier)', 'Internal treasury risk model + NGFS calibration', 'Climate multiplier adds 15-40% to conventional VaR for high-exposure corporate treasuries; discloses per TCFD recommendations'),
+      dp('Commodity Climate Sensitivity', '+23% price vol', 'Increase in commodity price volatility under RCP 4.5 physical risk scenario', 'NGFS physical risk × commodity supply model', 'Agricultural and energy commodities most sensitive; metals relatively stable; hedging cost increases proportionally'),
+      dp('Physical Event Liquidity Risk', '$120M liquidity gap', 'Estimated working capital disruption from 1-in-50yr physical climate event affecting key facilities', 'RMS supply chain disruption model', 'Drives contingency liquidity requirement; increasingly relevant for climate-exposed supply chains and coastal assets')
+    ],
+    ['Map treasury portfolio exposures (FX, commodity, interest rate, counterparty) to climate risk drivers', 'Apply physical risk multipliers to FX positions in climate-exposed currencies (commodity-dependent, coastal economies)', 'Model commodity price climate sensitivity under RCP 4.5 and 8.5 scenarios', 'Calculate climate VaR uplift and liquidity buffer requirement; generate TCFD treasury risk disclosure'],
+    ['TCFD (2021) Implementing TCFD Recommendations — Treasury and Risk Management Section', 'BIS (2020) Working Paper 899 — Climate Change and Financial Risk', 'Moody\'s (2023) Climate Risk in Corporate Treasury — Methodological Guidance', 'NGFS (2023) Climate Scenarios for Central Banks — Macro-Financial Models'],
+    [
+      acr('VaR', 'Value at Risk', 'Statistical measure of potential portfolio loss at given confidence level; climate-adjusted VaR adds climate multiplier'),
+      acr('DSCR', 'Debt Service Coverage Ratio', 'Liquidity metric; physical climate events reducing operating cashflow can breach DSCR covenants'),
+      acr('NGFS', 'Network for Greening the Financial System', 'Central bank network providing climate scenarios used to calibrate treasury climate risk models'),
+      acr('CVaR', 'Conditional Value at Risk', 'Expected loss beyond VaR threshold; climate tail events make CVaR increasingly important for treasury risk')
+    ],
+    [
+      dl('Bloomberg FX and commodity data', 'Historical and forward price data → conventional VaR baseline', 'Standard treasury VaR'),
+      dl('NGFS climate scenarios and physical risk data', 'Climate multipliers by exposure type and scenario → climate VaR adjustment', 'Climate-adjusted VaR'),
+      dl('RMS supply chain disruption model', 'Physical event probability × business interruption loss → liquidity gap analysis', 'Contingency liquidity requirement')
+    ],
+    'Provides integrated corporate treasury climate risk analytics augmenting conventional VaR with physical and transition risk multipliers, enabling TCFD-compliant climate treasury risk disclosure.'
+  ),
+
+  '/climate-capital-markets': g(
+    'Climate Capital Markets Intelligence', 'EP-DD6', 'DD',
+    'Climate capital markets intelligence covering green, sustainability, and SLB issuance volumes by sector and region, investor demand signals, pricing dynamics, regulatory pipeline (EU Green Bond Standard, SEC climate disclosure), and market growth projections.',
+    ce('Capital Markets Climate Flow Analytics', 'Market Penetration = GSS+ Issuance / Total Bond Issuance × 100; Demand Pressure Index = Order Book Coverage Ratio × Green Investor Share × -Greenium', ['ICMA GSS Bond Market Data 2023', 'Climate Bonds Initiative Market Intelligence Q4 2023', 'EU Green Bond Standard Regulation (EU) 2023/2631'], 'Market flow analytics combining issuance volume tracking, investor demand signals, and pricing dynamics to forecast GSS+ market development'),
+    [
+      dp('Annual GSS+ Issuance', '$940Bn', 'Global green, social, sustainability, and sustainability-linked bond issuance (2023)', 'Climate Bonds Initiative H2 2023 report', 'Green bonds largest segment ($580Bn); SLBs growing fastest (+34% YoY); EU leading with 40%+ of global green issuance'),
+      dp('Average Order Book Coverage', '3.8x', 'Order book size / deal size for green bond new issues', 'Bloomberg new issue data 2023', 'Higher than vanilla comparables (typically 2.5-3x); signals strong green investor demand; enables pricing at tight end'),
+      dp('EU GBS Premium Estimate', '-3 to -5 bps', 'Expected additional greenium for EU Green Bond Standard-labelled bonds vs standard green bonds', 'ICMA/CBI regulatory impact analysis', 'EU GBS entered into force December 2024; first issues expected 2025; strict eligibility likely narrows supply but deepens premium')
+    ],
+    ['Track GSS+ issuance volumes by label (green, social, sustainability, SLB), sector, currency, and region', 'Analyse investor demand signals: order book coverage ratios, green investor book share, oversubscription rates', 'Monitor pricing dynamics: greenium trend by rating/maturity/sector, SLB coupon step-up market evolution', 'Track regulatory pipeline: EU GBS implementation, SEC climate disclosure rules, ISSB adoption by jurisdiction'],
+    ['Climate Bonds Initiative (2023) GSS+ Bond Market Intelligence H2 2023', 'ICMA (2023) Sustainable Finance Market Quarterly Report', 'European Council (2023) EU Green Bond Standard Regulation 2023/2631', 'SEC (2024) Final Rules for Climate-related Disclosures (Commission Guidance)'],
+    [
+      acr('GSS+', 'Green Social Sustainability plus', 'Umbrella category for labelled sustainable bonds including green, social, sustainability, SLB, and transition bonds'),
+      acr('SLB', 'Sustainability-Linked Bond', 'Bond with coupon tied to issuer achieving sustainability performance targets; proceeds not ring-fenced'),
+      acr('EU GBS', 'EU Green Bond Standard', 'Voluntary EU regulation setting gold standard for green bonds requiring EU Taxonomy alignment'),
+      acr('ESMA', 'European Securities and Markets Authority', 'EU financial markets regulator; issues GSS fund naming guidelines and monitors greenwashing risk')
+    ],
+    [
+      dl('Climate Bonds Initiative issuance database', 'Deal-level GSS+ issuance data by label, sector, region, issuer → market volume analytics', 'Issuance trend and market share'),
+      dl('Bloomberg new issue monitor and book-building data', 'Order book sizes, pricing versus guidance, investor participation → demand analytics', 'Demand pressure index'),
+      dl('EU Official Journal / SEC regulatory filings', 'Regulatory text, timelines, eligibility criteria → regulatory pipeline and compliance calendar', 'Market impact assessment')
+    ],
+    'Delivers comprehensive climate capital markets intelligence integrating issuance flow analytics, investor demand signals, pricing dynamics, and regulatory pipeline monitoring across GSS+ instrument types.'
+  ),
+
+  '/sustainability-linked-finance': g(
+    'Sustainability-Linked Finance Analytics', 'EP-DW3', 'DW',
+    'Sustainability-Linked Loan (SLL) and Bond (SLB) analytics covering SPT calibration methodology, KPI universe (carbon intensity, renewable energy %, water use, LTIFR), margin ratchet modelling, and LMA/ICMA Principles compliance.',
+    ce('SPT Calibration & Margin Ratchet Modelling', 'SPT Ambition = (Base Year KPI - Target KPI) / Base Year KPI × 100; Ratchet NPV = Σ[(P(Miss) × Step-Up bps × Notional) / (1+r)^t]; Compliance Score = SPTs meeting LMA/ICMA calibration criteria / total SPTs', ['LMA/APLMA/LSTA Sustainability-Linked Loan Principles 2023', 'ICMA Sustainability-Linked Bond Principles 2023', 'ICMA KPI Registry for Sustainability-Linked Finance'], 'SPT ambition scoring and margin ratchet NPV calculation combining KPI materiality, calibration ambition, and probability-weighted coupon adjustment'),
+    [
+      dp('SPT Ambition Score', '68/100', 'Assessed against sector decarbonisation pathway pace and historical peer performance', 'ICMA/LMA SPT calibration guidance', 'Scores below 60 raise greenwashing concerns; ICMA requires SPTs to represent material improvement, not business-as-usual'),
+      dp('Ratchet NPV (Borrower)', '$1.8M expected saving', 'Σ[P(Hit) × Step-Down bps × Notional / (1+r)^t] - Σ[P(Miss) × Step-Up bps × Notional / (1+r)^t]', 'Monte Carlo SPT achievement probability model', 'Positive NPV indicates borrower expects to achieve SPTs; symmetric ratchets (±5 bps) typical per LMA market convention'),
+      dp('KPI Materiality Score', '82/100', 'Relevance of selected KPIs to core business model and sustainability strategy', 'LMA ICMA KPI materiality assessment', 'Material KPIs specific to issuer sector; carbon intensity most common (35%); renewable energy share (28%); water use (15%)')
+    ],
+    ['Select material KPIs from ICMA KPI Registry matched to issuer sector and sustainability strategy', 'Calibrate SPTs against historical performance trajectory, sector SBTi pathway, and peer benchmarks', 'Model margin ratchet NPV under base, optimistic, and stress SPT achievement scenarios', 'Score LMA/ICMA Principles compliance across five components: KPI selection, SPT calibration, loan characteristics, reporting, verification'],
+    ['LMA/APLMA/LSTA (2023) Sustainability-Linked Loan Principles — Updated Guidance', 'ICMA (2023) Sustainability-Linked Bond Principles and Appendix 1 — KPI Registry', 'LSEG/Refinitiv (2023) Sustainability-Linked Finance Market Report', 'ESMA (2024) Guidelines on SLB Naming and Disclosure'],
+    [
+      acr('SLL', 'Sustainability-Linked Loan', 'Loan with margin ratchet tied to borrower achieving pre-agreed KPI-based SPTs; proceeds unrestricted'),
+      acr('SLB', 'Sustainability-Linked Bond', 'Bond equivalent to SLL; coupon step-up if SPT missed; proceeds not ring-fenced unlike green bonds'),
+      acr('SPT', 'Sustainability Performance Target', 'Pre-agreed measurable target for a KPI; triggers margin ratchet if met or missed at observation date'),
+      acr('LTIFR', 'Lost Time Injury Frequency Rate', 'Common social KPI in SLL/SLB: number of injuries causing lost time per million work hours')
+    ],
+    [
+      dl('ICMA KPI Registry', 'Universe of sector-appropriate KPIs with calibration guidance → KPI selection and materiality scoring', 'KPI shortlist and materiality score'),
+      dl('Company historical ESG data (Bloomberg, Sustainalytics)', 'Historical KPI performance trends → SPT baseline and ambition calibration', 'SPT ambition score'),
+      dl('LMA/ICMA market survey data', 'Market convention for ratchet size, KPI mix, verification agent standards → compliance benchmarking', 'Principles compliance score and peer comparison')
+    ],
+    'Provides rigorous SLL/SLB analytics integrating ICMA KPI materiality scoring, SPT ambition calibration against sector pathways, and margin ratchet NPV modelling to prevent greenwashing and optimise SLF structures.'
+  ),
+
+'/dme-ml-materiality': g(
+    'DME ML Materiality', 'EP-U9', 'U-extended',
+    'NLP-driven double materiality assessment using regulatory filings, news feeds, and stakeholder data to identify financially material and impact-material ESG topics. Applies TF-IDF and BERT sentence embeddings for topic clustering, then maps clusters to ESRS/ISSB topic taxonomy. Outputs a ranked materiality heatmap and audit-ready evidence log.',
+    ce('TF-IDF + BERT Double Materiality', 'score = α·financial_materiality + (1-α)·impact_materiality', ['CSRD Article 29a', 'ESRS 1 IRO Assessment', 'ISSB S1 Materiality'], 'Financial materiality scores are derived from regulatory filing keyword frequency weighted by investor sentiment signals; impact materiality scores aggregate stakeholder survey responses and NGO/media controversy intensity. BERT sentence embeddings cluster semantically similar disclosures to resolve synonym fragmentation. The dual-axis heatmap plots each topic on financial significance (y) vs impact significance (x).'),
+    [
+      dp('Materiality Score', '0–100', 'α·fin_materiality + (1-α)·impact_materiality', 'TF-IDF corpus + stakeholder survey', 'Topics scoring >60 are considered material for ESRS/ISSB disclosure; topics >80 warrant standalone section treatment.'),
+      dp('Topic Coverage Rate', '0–100%', 'ESRS_topics_identified / ESRS_topics_total × 100', 'ESRS 1 Appendix A topic list', 'Measures completeness of the materiality scan against all 84 ESRS sub-topics; <70% signals gaps in data inputs.'),
+      dp('Evidence Confidence', '0–1', 'n_sources_corroborating / n_sources_total', 'Document corpus metadata', 'Low confidence (<0.4) topics should be reviewed manually before filing; high confidence (>0.8) can be disclosed as assessed.'),
+    ],
+    ['Upload regulatory filings, news corpus, or connect live feed', 'Select ESRS or ISSB topic taxonomy for mapping', 'Run ML pipeline and review materiality heatmap', 'Export evidence log and materiality assessment table for CSRD filing'],
+    ['CSRD Article 29a – Double Materiality', 'ESRS 1 – General Requirements IRO Assessment', 'ISSB S1 – General Requirements for Sustainability-related Financial Disclosures'],
+    [acr('IRO', 'Impact, Risk and Opportunity', 'ESRS term for the three axes of double materiality assessment'), acr('TF-IDF', 'Term Frequency–Inverse Document Frequency', 'Statistical NLP measure of word relevance within a document corpus'), acr('BERT', 'Bidirectional Encoder Representations from Transformers', 'Transformer-based NLP model for contextual sentence embeddings')],
+    [dl('Regulatory filings (10-K, annual report PDFs) → text corpus', 'TF-IDF vectorisation → BERT clustering → ESRS topic mapping', 'Materiality score per ESRS sub-topic')],
+    'Used by sustainability managers and CSRD reporting officers to systematically identify and evidence material topics, replacing manual stakeholder workshop processes with auditable ML-assisted outputs.'
+  ),
+
+  '/dme-nlp-engine': g(
+    'DME NLP Engine', 'EP-U10', 'U-extended',
+    'Dynamic Materiality Engine NLP pipeline for named entity recognition of ESG topics in corporate disclosures, real-time sentiment scoring, controversy detection, and greenwashing flag scoring. Integrates spaCy NER, FinBERT sentiment classification, and GDELT news feed for media-disclosure divergence analysis.',
+    ce('FinBERT Sentiment + NER Controversy Detection', 'greenwashing_score = w1·commit_gap + w2·sentiment_divergence + w3·controversy_intensity', ['FinBERT (Araci 2019)', 'GDELT 2.0 Global Knowledge Graph', 'GRI 2-23 Commitment Integrity'], 'spaCy NER identifies ESG entity mentions (companies, places, initiatives) and routes them to FinBERT for domain-specific financial sentiment scoring. Sentiment divergence is computed as the signed difference between corporate disclosure tone and media/NGO coverage tone for the same topic. Controversy intensity uses GDELT GoldsteinScale and QuadClass for event severity weighting.'),
+    [
+      dp('Sentiment Divergence Score', '-1 to +1', 'disclosure_sentiment − media_sentiment', 'FinBERT + GDELT', 'Positive divergence means company claims more positively than media; >0.3 triggers greenwashing flag review.'),
+      dp('Greenwashing Flag Score', '0–100', 'w1·commit_gap + w2·sentiment_divergence + w3·controversy_intensity', 'Composite NLP pipeline', 'Scores >70 indicate high greenwashing risk requiring disclosure review; used in ESG controversy screening.'),
+      dp('Controversy Event Count', '0–n', 'COUNT(GDELT events | company_entity AND ESG_topic)', 'GDELT 2.0 GKG', 'Higher event counts (>5 per quarter) signal media-narrative misalignment with published disclosures.'),
+    ],
+    ['Connect corporate disclosure corpus (PDFs, XML) and GDELT live feed', 'Run NER pipeline to extract ESG entity mentions and events', 'Review sentiment divergence dashboard and greenwashing flag scores', 'Export controversy report and remediation recommendations'],
+    ['FinBERT: Financial Sentiment Analysis with BERT (Araci 2019)', 'GDELT 2.0 GKG Documentation', 'GRI Standard 2-23: Commitments and Obligations'],
+    [acr('NER', 'Named Entity Recognition', 'NLP technique to identify and classify named entities in text into categories such as company names, locations, ESG topics'), acr('FinBERT', 'Financial BERT', 'BERT model fine-tuned on financial news and regulatory filings for domain-specific sentiment analysis'), acr('GDELT', 'Global Database of Events, Language, and Tone', 'Open real-time database of world events extracted from global news media')],
+    [dl('Corporate sustainability reports + GDELT news stream', 'spaCy NER → FinBERT sentiment → divergence score → greenwashing flag', 'Per-topic sentiment divergence and greenwashing risk score')],
+    'Used by ESG analysts, compliance teams, and fund managers to automate controversy screening and verify consistency between corporate claims and external media evidence.'
+  ),
+
+  '/esrs-datapoint-navigator': g(
+    'ESRS Datapoint Navigator', 'EP-DH1', 'DH',
+    'Comprehensive navigator for all 1,144 ESRS mandatory and voluntary datapoints across E1-E5, S1-S4, and G1 topic standards, mapped to materiality assessment outcomes, data collection complexity ratings, and phased reporting requirements. Supports first-year CSRD reporters in scoping their disclosure obligations under EU Delegated Regulation 2023/2772.',
+    ce('ESRS Datapoint Obligation Mapping', 'obligation_weight = mandatory_flag × materiality_relevance × phase-in_discount', ['EU Delegated Regulation 2023/2772', 'ESRS 1 – General Requirements', 'ESRS 2 – General Disclosures'], 'Each of the 1,144 datapoints is classified as mandatory irrespective of materiality, mandatory if material, or voluntary. Materiality relevance links each datapoint to the IRO sub-topics assessed in the double materiality assessment. Phase-in discounts reflect the 3-year grace period for certain datapoints under Article 37 of the Delegated Regulation.'),
+    [
+      dp('Mandatory Datapoints in Scope', '0–1,144', 'COUNT(datapoints | materiality_flag = TRUE OR always_mandatory = TRUE)', 'EFRAG ESRS Set 1 Annex', 'Defines minimum reporting scope; typical large-cap scope is 300–600 mandatory datapoints in year one.'),
+      dp('Data Collection Complexity Score', '1–5', 'weighted average of collection_effort across in-scope datapoints', 'Internal assessment framework', 'Score >3.5 indicates significant new data infrastructure investment required; used to prioritise gap remediation.'),
+      dp('Phase-In Coverage Rate', '0–100%', 'phasedin_datapoints_available / phasedin_datapoints_total × 100', 'ESRS 1 Annex C phase-in schedule', 'Tracks progress against the 3-year phase-in plan; <50% in year 2 signals collection risk.'),
+    ],
+    ['Run double materiality assessment to determine material topics', 'Filter navigator to in-scope ESRS topics and mandatory datapoints', 'Assess data collection complexity and identify gaps', 'Generate phased reporting roadmap and data collection plan'],
+    ['EU Delegated Regulation 2023/2772 – ESRS', 'EFRAG ESRS Set 1 Annexes', 'ESRS 1 – General Requirements (Phase-in provisions Article 37)'],
+    [acr('ESRS', 'European Sustainability Reporting Standards', 'EU mandatory sustainability reporting standards adopted under CSRD'), acr('DNSH', 'Do No Significant Harm', 'EU Taxonomy and ESRS principle requiring activities not harm other environmental objectives'), acr('DMA', 'Double Materiality Assessment', 'CSRD-required process assessing both financial and impact materiality of ESG topics')],
+    [dl('EFRAG ESRS Set 1 Annex → datapoint list', 'DMA outcome → obligation filter → phase-in schedule mapping', 'Scoped disclosure obligation register with collection complexity ratings')],
+    'Used by CSRD reporting managers and external auditors to scope disclosure obligations, plan data collection programmes, and track ESRS compliance readiness.'
+  ),
+
+  '/taxonomy-ml-classifier': g(
+    'Taxonomy ML Classifier', 'EP-DI4', 'DI',
+    'ML-powered EU Taxonomy NACE activity classifier that maps NACE codes to eligible Taxonomy activities, automates DNSH screening criteria checking, and scores substantial contribution threshold compliance. Trained on the EU Taxonomy Compass dataset covering 67 climate mitigation activities across 6 environmental objectives.',
+    ce('NACE-to-Taxonomy Activity Classification', 'eligibility_score = P(eligible | NACE_code) × SC_threshold_score × DNSH_pass_rate', ['EU Taxonomy Regulation 2020/852', 'Climate Delegated Act 2021/2139', 'EU Taxonomy Compass Dataset'], 'A gradient-boosted classifier trained on the EU Taxonomy Compass maps NACE 4-digit codes to eligible activities with a probability score. Substantial contribution (SC) scores are calculated against quantitative thresholds (e.g., GHG intensity <100 gCO2e/kWh for electricity generation). DNSH screening checks the six DNSH criteria for each activity against available data, flagging gaps where evidence is insufficient.'),
+    [
+      dp('Taxonomy Eligibility Rate', '0–100%', 'eligible_revenue / total_revenue × 100', 'EU Taxonomy Compass + company NACE codes', 'Proportion of revenues from NACE activities that are listed in the Taxonomy; does not imply alignment.'),
+      dp('Taxonomy Alignment Rate', '0–100%', 'aligned_revenue / total_revenue × 100', 'DNSH screening + SC threshold assessment', 'Subset of eligible revenue that also meets SC thresholds and passes all DNSH checks; the key reported KPI under SFDR and Taxonomy regulation.'),
+      dp('DNSH Pass Rate', '0–100%', 'activities_DNSH_pass / activities_eligible × 100', 'Technical Screening Criteria per activity', 'Proportion of eligible activities passing all 6 DNSH criteria; low rates indicate environmental risk exposure in the portfolio.'),
+    ],
+    ['Upload company NACE codes or connect company database', 'Run ML classifier to map activities to Taxonomy eligibility', 'Review DNSH screening results and substantial contribution scores', 'Export Taxonomy KPI report (eligibility %, alignment %, CapEx/OpEx split)'],
+    ['EU Taxonomy Regulation 2020/852', 'Climate Delegated Act (EU) 2021/2139 – Technical Screening Criteria', 'EU Taxonomy Compass – eligible activities database'],
+    [acr('SC', 'Substantial Contribution', 'EU Taxonomy criterion: an economic activity must make a substantial positive contribution to at least one environmental objective'), acr('TSC', 'Technical Screening Criteria', 'Detailed EU Taxonomy thresholds and conditions that define substantial contribution and DNSH for each eligible activity'), acr('NACE', 'Nomenclature of Economic Activities', 'EU statistical classification of economic activities used as the basis for EU Taxonomy activity mapping')],
+    [dl('Company NACE codes → EU Taxonomy Compass activity list', 'ML classifier → SC threshold scoring → DNSH criteria check', 'Taxonomy KPIs: eligibility %, alignment %, CapEx/OpEx breakdown')],
+    'Used by portfolio managers, sustainability controllers, and SFDR/Taxonomy report authors to automate the complex NACE-to-activity mapping process and generate audit-ready Taxonomy alignment KPIs.'
+  ),
+
+  '/esg-ratings-uplift': g(
+    'ESG Ratings Uplift Analytics', 'EP-MISC', 'Platform',
+    'Analyses gaps between current ESG scores and peer benchmarks across MSCI, Sustainalytics, CDP, and ISS rating systems, quantifies the impact of controversies, and models achievable score uplift through disclosure improvements. Accounts for the known 0.61 average Spearman correlation between major ESG data providers when synthesising cross-provider recommendations.',
+    ce('Score Gap Decomposition & Uplift Modelling', 'uplift = Σ(weight_i × disclosure_gap_i) + Σ(weight_j × controversy_discount_j)', ['MSCI ESG Ratings Methodology 2024', 'Sustainalytics ESG Risk Rating Framework', 'Berg et al. (2022) Aggregate Confusion'], 'Score gaps are decomposed into three drivers: disclosure coverage gaps (topics not reported), controversy discounts (active or resolved incidents), and management assessment gaps (policy vs practice divergence). Uplift potential for each driver is weighted by its contribution to the provider-specific scoring model. Provider divergence analysis uses Spearman rank correlation across concurrent ratings to identify systematic differences in scope and weighting.'),
+    [
+      dp('ESG Score Gap vs Peer Median', '-50 to +50 pts', 'company_score − GICS_sector_peer_median', 'MSCI/Sustainalytics/CDP benchmarks', 'Negative values indicate underperformance vs sector peers; gaps >15 pts signal material rating risk.'),
+      dp('Achievable Uplift Score', '0–30 pts', 'Σ(weight_i × max_disclosure_gain_i)', 'Provider methodology weights', 'Maximum score improvement achievable through disclosure gap closure alone, without operational change; sets realistic target for reporting improvement programmes.'),
+      dp('Provider Divergence Index', '0–1', '1 − avg(Spearman ρ across provider pairs)', 'Cross-provider rating comparison', 'Higher values indicate greater inter-provider disagreement; >0.5 suggests the company sits in contested scoring territory requiring provider-specific investor outreach.'),
+    ],
+    ['Connect ESG score feeds or manually enter current scores across providers', 'Select peer benchmark group (GICS sub-industry or custom)', 'Review score gap decomposition and controversy impact waterfall', 'Generate uplift roadmap with prioritised disclosure actions by provider'],
+    ['Berg, Koelbel, Rigobon (2022) Aggregate Confusion: The Divergence of ESG Ratings', 'MSCI ESG Ratings Methodology 2024', 'Sustainalytics ESG Risk Rating Methodology'],
+    [acr('ESG', 'Environmental, Social and Governance', 'Three dimensions of non-financial corporate performance assessed by ESG rating agencies'), acr('GICS', 'Global Industry Classification Standard', 'MSCI/S&P industry classification system used for peer group construction in ESG benchmarking'), acr('CDP', 'Carbon Disclosure Project', 'Global ESG disclosure platform providing scores for climate, water, and forest topics')],
+    [dl('MSCI/Sustainalytics/CDP/ISS score feeds → company ESG scores', 'Peer group median calculation → gap decomposition → uplift weighting', 'Prioritised ESG improvement roadmap with estimated score impact per action')],
+    'Used by investor relations officers, sustainability managers, and ESG advisory teams to prioritise disclosure investments and set measurable ESG rating improvement targets.'
+  ),
+
+  '/sector-sustainability-benchmark': g(
+    'Sector Sustainability Benchmarking', 'EP-MISC', 'Platform',
+    'Benchmarks portfolio companies against GICS sector peers on a comprehensive set of ESG KPIs including carbon intensity, energy intensity, water use, waste generation, gender diversity, board independence, and supply chain audit coverage. Draws on MSCI ESG, S&P Global CSA, and CDP sector-level benchmarks.',
+    ce('Normalised ESG KPI Benchmarking', 'benchmark_score = (company_kpi − peer_p25) / (peer_p75 − peer_p25) × 100', ['MSCI ESG Research Sector Benchmarks', 'S&P Global Corporate Sustainability Assessment (CSA)', 'CDP Technical Notes Sector-Specific Guidance'], 'Each ESG KPI is normalised within the GICS sub-industry peer group using an interquartile range scaling so that scores reflect relative positioning (0=P25, 100=P75). Environmental KPIs are revenue-normalised (tCO2e/$M revenue, GJ/$M revenue) to remove size effects. Social KPIs use headcount normalisation. Combined benchmark scores weight KPIs by their materiality within each GICS sector based on SASB materiality map.'),
+    [
+      dp('Carbon Intensity Percentile', '0–100th', 'company tCO2e/M$ revenue vs peer distribution', 'CDP + MSCI ESG data', 'Above 75th percentile (lower intensity) indicates best-in-class climate performance; used in SBTi sector pathways.'),
+      dp('ESG Composite Benchmark Score', '0–100', 'weighted avg of normalised KPI scores across E/S/G pillars', 'MSCI ESG + S&P CSA combined', 'Overall relative ESG performance within the sector; <40 signals laggard status, >70 signals sector leader.'),
+      dp('Supply Chain Audit Coverage', '0–100%', 'tier_1_suppliers_audited / tier_1_suppliers_total × 100', 'Company-reported supply chain data', 'Reflects operational visibility and supply chain ESG risk management maturity; sector benchmark varies 20–80% by industry.'),
+    ],
+    ['Select portfolio companies or upload company list', 'Choose GICS sector classification and KPI weighting scheme', 'Review benchmark heatmap and identify underperforming KPIs', 'Download sector benchmark report and set KPI improvement targets'],
+    ['SASB Materiality Map by Industry', 'S&P Global CSA Methodology 2024', 'MSCI ESG Ratings Key Issues by Sector'],
+    [acr('CSA', 'Corporate Sustainability Assessment', 'S&P Global annual ESG survey used as the primary data source for DJSI index inclusion'), acr('SASB', 'Sustainability Accounting Standards Board', 'Industry-specific sustainability accounting standards adopted into ISSB framework'), acr('KPI', 'Key Performance Indicator', 'Quantitative metric used to measure ESG performance against benchmarks')],
+    [dl('MSCI ESG + S&P CSA + CDP sector data → peer KPI distributions', 'IQR normalisation → SASB materiality weighting → composite score', 'Company vs peer benchmark scorecard with percentile rankings')],
+    'Used by portfolio managers, sustainability analysts, and corporate strategy teams to identify sector-relative ESG strengths and weaknesses and set science-based improvement targets.'
+  ),
+
+  '/macro-esg-intelligence': g(
+    'Macro ESG Intelligence', 'EP-MISC', 'Platform',
+    'Country-level macro ESG intelligence dashboard integrating ND-GAIN climate vulnerability, World Bank WGI governance indicators, UNDP HDI, policy tightening risk indices, NGFS physical risk GDP drag estimates, and BloombergNEF/IRENA green investment flow data. Supports sovereign ESG integration and country-level climate risk overlay for EM portfolios.',
+    ce('Composite Country ESG Score with Climate Overlay', 'country_ESG = w_e·env_score + w_s·social_score + w_g·gov_score − climate_risk_discount', ['ND-GAIN Country Index (Notre Dame)', 'World Bank Worldwide Governance Indicators', 'NGFS Climate Scenarios GDP Impact Models'], 'Environmental scores draw on ND-GAIN readiness and vulnerability indices (updated annually). Governance scores use WGI rule of law, control of corruption, and government effectiveness. Climate risk discounts are calibrated from NGFS REMIND/ENGAGE model GDP impact pathways at 1.5°C, 2°C, and 3°C. Policy tightening risk is scored by tracking carbon tax implementation pace vs NDC commitments using UNDP NDC Registry.'),
+    [
+      dp('Composite Country ESG Score', '0–100', 'w_e·env + w_s·social + w_g·gov − climate_discount', 'ND-GAIN + WGI + NGFS', 'Higher scores indicate stronger macro ESG positioning; sovereign bond spreads show -0.3 correlation with country ESG scores in EM.'),
+      dp('Physical Risk GDP Drag (2030)', '-10% to 0%', 'NGFS REMIND model GDP impact at country level', 'NGFS Phase IV scenarios', 'Estimated % GDP loss by 2030 under NGFS Hot House World (3°C+); material for sovereign credit risk analysis.'),
+      dp('Green Investment Flow (USD bn/yr)', '0–500', 'BloombergNEF + IRENA renewable energy investment', 'BloombergNEF Energy Transition Investment', 'Annual clean energy investment flow; countries with >$50bn indicate strong transition momentum and policy effectiveness.'),
+    ],
+    ['Select countries or region for macro ESG analysis', 'Choose NGFS scenario and time horizon for climate overlay', 'Review composite scores, policy risk, and green investment flows', 'Export country ESG scorecard for sovereign bond or EM equity analysis'],
+    ['ND-GAIN Country Index Methodology', 'World Bank WGI 2024', 'NGFS Phase IV Climate Scenarios GDP Impact Estimates', 'IRENA World Energy Transitions Outlook 2024'],
+    [acr('ND-GAIN', 'Notre Dame Global Adaptation Initiative', 'Country index measuring vulnerability to climate change and readiness to improve resilience'), acr('WGI', 'Worldwide Governance Indicators', 'World Bank composite governance measurement covering 215 countries'), acr('NDC', 'Nationally Determined Contribution', 'Country-level climate commitments submitted to UNFCCC under the Paris Agreement')],
+    [dl('ND-GAIN + WGI + NGFS + BloombergNEF APIs → country-level datasets', 'Score normalisation → climate discount calibration → composite score', 'Country ESG scorecards with climate risk overlay for sovereign analysis')],
+    'Used by sovereign bond analysts, EM equity managers, and country risk officers to integrate macro ESG and climate risk factors into sovereign credit assessment and country allocation decisions.'
+  ),
+
+  '/carbon-arbitrage-portfolio': g(
+    'Carbon Arbitrage Portfolio', 'EP-MISC', 'Platform',
+    'Constructs and analyses long low-carbon / short high-carbon factor portfolios for carbon alpha generation, calculating carbon beta, net carbon exposure, and carbon carry costs. Uses MSCI Climate Value-at-Risk as a signal for cross-sectional carbon spread opportunities and models the portfolio-level impact of a rising internal carbon price.',
+    ce('Long-Short Carbon Factor Portfolio Construction', 'carbon_alpha = Σ(w_i · r_i) where w_i = +1 if carbon_beta < median, -1 if carbon_beta > median', ['MSCI Climate Value-at-Risk Methodology', 'Gorgen et al. (2020) Carbon Risk Factor', 'TCFD Scenario Analysis Financial Modelling'], 'Carbon beta measures a stock\'s return sensitivity to carbon price shocks, estimated by regressing historical returns on ETS price changes over rolling 3-year windows. The long-short portfolio is dollar-neutral and constructed monthly via portfolio optimisation subject to sector neutrality constraints to isolate the pure carbon factor. Carbon carry cost is modelled as the expected annual cost of holding carbon-intensive positions under a shadow carbon price rising at $10/tCO2/year.'),
+    [
+      dp('Portfolio Carbon Beta', '-2 to +2', 'Cov(r_portfolio, ΔETS_price) / Var(ΔETS_price)', 'ETS price data + equity returns', 'Positive carbon beta means portfolio benefits from rising carbon prices; target for low-carbon tilts is beta < 0.'),
+      dp('Net Carbon Exposure (tCO2e/$M AUM)', '0–500', 'Σ(w_i × WACI_i)', 'MSCI ESG + company GHG data', 'Lower is better for climate-aligned mandates; MSCI ACWI low-carbon index target is <50 tCO2e/$M revenue.'),
+      dp('Carbon Alpha (annualised, %)', '-5% to +15%', 'long_short_portfolio_return − risk_free_rate', 'Backtested factor portfolio', 'Positive carbon alpha indicates the carbon factor generates excess returns; historical 2015-2024 average ~3-5% annualised.'),
+    ],
+    ['Define carbon factor signal (carbon beta, WACI, CVaR)', 'Set long-short construction rules (sector neutrality, turnover constraints)', 'Review portfolio carbon exposure, beta, and carry cost projections', 'Backtest carbon alpha generation across carbon price regimes'],
+    ['Gorgen, Jacob, Nerlinger (2020) Carbon Risk Factor (HML Carbon)', 'MSCI Climate Value-at-Risk Technical Notes 2024', 'Andersson, Bolton, Samama (2016) Hedging Climate Risk'],
+    [acr('CVaR', 'Climate Value-at-Risk', 'MSCI metric estimating expected equity valuation impact from climate transition and physical risks'), acr('WACI', 'Weighted Average Carbon Intensity', 'Portfolio-level carbon intensity metric (tCO2e/$M revenue) weighted by portfolio allocation'), acr('ETS', 'Emissions Trading System', 'Cap-and-trade carbon pricing mechanism; EU ETS is the world\'s largest')],
+    [dl('ETS price history + company WACI + MSCI CVaR → factor signals', 'Carbon beta regression → long-short construction → carry cost model', 'Carbon alpha P&L, net exposure, and factor attribution report')],
+    'Used by quant portfolio managers, climate-focused hedge funds, and ESG factor investors to monetise the carbon risk premium and hedge portfolio carbon exposure.'
+  ),
+
+  '/carbon-institutions-taxonomy': g(
+    'Carbon Institutions Taxonomy', 'EP-MISC', 'Platform',
+    'Registry and methodology taxonomy for the voluntary carbon market, comparing Verra VCS, Gold Standard, ACR, CAR, and BioCarbon Fund across methodology families (AFOLU, energy, industry, waste), credit type taxonomy (avoidance vs removal), and quality label tiers from BeZero, Sylvera, and Calyx Global.',
+    ce('VCM Registry-Methodology Taxonomy', 'quality_score = registry_rigour_weight × methodology_permanence × additionality_score', ['Verra VCS Standard v4.0', 'Gold Standard for the Global Goals v2.2', 'BeZero Carbon Rating Methodology'], 'Each carbon credit is classified along four axes: registry governance quality, methodology family (AFOLU, energy, industrial, waste), credit type (emissions avoidance vs carbon removal), and vintage year. Quality tier ratings from BeZero, Sylvera, and Calyx Global are standardised to a 5-tier scale. Permanence risk is assessed separately for removal projects (forestry, soil) vs avoidance projects, given the materially higher reversal risk in nature-based solutions.'),
+    [
+      dp('Methodology Quality Score', '1–5', 'weighted avg(registry_score, additionality_score, permanence_score)', 'BeZero/Sylvera/Calyx ratings', 'Score 5 (AA/AAA tier): eligible for high-integrity corporate net-zero claims; Score <3: not recommended for scope 3 residual offsets.'),
+      dp('Permanence Risk Rating', 'Very Low–Very High', 'reversal_probability × time_horizon_discount', 'Methodology family + buffer pool analysis', 'Nature-based solutions have inherently higher permanence risk; technological removals (DACCS, BECCS) score Very Low.'),
+      dp('Additionality Evidence Score', '0–100', 'financial_additionality × regulatory_surplus × common_practice', 'Project-level documentation review', 'Scores <50 indicate projects that may have occurred anyway; critical screen for high-integrity offset procurement.'),
+    ],
+    ['Browse registry taxonomy and filter by methodology family', 'Compare quality tier ratings across BeZero/Sylvera/Calyx for selected credits', 'Assess permanence and additionality scores for procurement shortlist', 'Generate offset procurement policy compliance report'],
+    ['Verra VCS Standard v4.0', 'Gold Standard for the Global Goals v2.2', 'Integrity Council for Voluntary Carbon Markets (ICVCM) Core Carbon Principles 2023'],
+    [acr('VCS', 'Verified Carbon Standard', 'Verra\'s flagship carbon crediting standard; world\'s largest voluntary carbon market registry'), acr('AFOLU', 'Agriculture, Forestry and Other Land Use', 'Methodology family for land-based carbon projects; includes REDD+ and reforestation'), acr('ICVCM', 'Integrity Council for the Voluntary Carbon Markets', 'Independent governance body setting Core Carbon Principles for high-integrity VCM credits')],
+    [dl('Verra/GS/ACR/CAR project registries + BeZero/Sylvera ratings APIs', 'Taxonomy classification → quality tier standardisation → permanence risk scoring', 'VCM credit taxonomy database with multi-rater quality scores')],
+    'Used by carbon procurement officers, corporate sustainability teams, and impact investors to source, screen, and rank voluntary carbon credits for high-integrity offset and net-zero claims.'
+  ),
+
+  '/regional-carbon-market-hub': g(
+    'Regional Carbon Market Hub', 'EP-MISC', 'Platform',
+    'Comparative analytics hub for major compliance carbon markets including EU ETS, UK ETS, California-Quebec, RGGI, Korea ETS, China NETs, Australia ERF, and Singapore carbon tax. Tracks current allowance prices, coverage rates, allocation methodology, MRV regime quality, and linking status for cross-market arbitrage and policy risk analysis.',
+    ce('Cross-Market Carbon Price & Policy Analytics', 'price_gap = ETS_price_i − shadow_carbon_price_SCC × coverage_discount_i', ['ICAP Emissions Trading Worldwide Status Report 2024', 'World Bank Carbon Pricing Dashboard', 'IEA Carbon Market Review 2024'], 'Allowance prices are quoted in local currency and EUR-equivalent for comparability. Coverage discount reflects the proportion of economy-wide emissions subject to the ETS (a 90% coverage ETS has less leakage risk than a 40% coverage scheme). Shadow price gap measures the difference between current allowance price and the IMF/World Bank social cost of carbon ($85/tCO2 in 2030 terms), indicating policy ambition shortfall.'),
+    [
+      dp('Allowance Price (€/tCO2e)', '0–200', 'market spot price in EUR equivalent', 'ICAP + ICE/EEX spot data', 'EU ETS ~€60-70 (2024); prices >€80 generally needed to drive fuel switching away from coal in power generation.'),
+      dp('Market Coverage (% of nat. GHG)', '0–100%', 'covered_emissions / total_national_GHG × 100', 'ICAP National Inventory Data', 'Higher coverage reduces carbon leakage risk and improves policy effectiveness; EU ETS covers ~45% of EU GHG emissions.'),
+      dp('Policy Risk Score', '0–100', 'compound(political_risk, reform_probability, banking_rule_stability)', 'ICAP + national policy tracker', 'Score >70 indicates high regulatory uncertainty; significant for long-dated ETS forward pricing and project carbon revenue assumptions.'),
+    ],
+    ['Select carbon markets to compare from global registry', 'Review price, coverage, and MRV quality metrics side-by-side', 'Analyse linking status and cross-market price convergence potential', 'Export carbon market risk report for regulatory policy modelling'],
+    ['ICAP Emissions Trading Worldwide 2024', 'World Bank State and Trends of Carbon Pricing 2024', 'IEA Carbon Market Review 2024'],
+    [acr('ETS', 'Emissions Trading System', 'Cap-and-trade mechanism where total emissions are capped and allowances can be traded between participants'), acr('MRV', 'Measurement, Reporting and Verification', 'Framework for quantifying and auditing GHG emissions under compliance carbon markets'), acr('NETs', 'National Emissions Trading Scheme', 'China\'s national ETS covering the power sector; largest ETS by covered emissions volume')],
+    [dl('ICAP + World Bank + ICE/EEX price feeds → market parameters', 'Currency normalisation → coverage calculation → policy risk scoring', 'Cross-market carbon price and policy comparison dashboard')],
+    'Used by carbon market traders, climate policy advisors, corporate treasury teams, and project developers to compare compliance carbon market dynamics and assess cross-market arbitrage and policy risk.'
+  ),
+
+  '/climate-credit-pricing': g(
+    'Climate Credit Pricing Analytics', 'EP-MISC', 'Platform',
+    'Comprehensive carbon credit and ETS allowance pricing analytics covering supply/demand balance modelling, policy risk pricing, VCM benchmark prices by methodology and vintage, and corporate internal carbon price (ICP) adoption tracking. Models the gap between current market prices and shadow carbon prices consistent with Paris Agreement pathways.',
+    ce('ETS Allowance Price & VCM Benchmark Modelling', 'fair_value = f(net_long_position, banking_demand, policy_signal, MAC_curve_intersection)', ['EU ETS Market Stability Reserve Regulation 2018/842', 'Trove Intelligence VCM Price Benchmarks', 'Fortune 500 ICP Survey (CDP 2024)'], 'ETS allowance fair value is estimated by intersecting the marginal abatement cost (MAC) curve with the capped supply path, adjusted for banking demand (which typically adds €5-15/tCO2 premium in the EU ETS). VCM prices are benchmarked by methodology vintage using Trove Intelligence transaction data, normalised to 2024 USD. Corporate ICP data from CDP shows Fortune 500 average of $50/tCO2 with wide dispersion (P10=$5 to P90=$200).'),
+    [
+      dp('ETS Allowance Fair Value (€/tCO2)', '20–200', 'MAC_curve_intersection + banking_premium', 'MAC modelling + EEX forward curve', 'Provides anchor for ETS allowance trading decisions; significant deviations from fair value indicate short-term supply/demand imbalances.'),
+      dp('VCM Price by Methodology ($/tCO2)', '1–50', 'transaction-weighted median price by methodology family', 'Trove Intelligence + ACX exchange data', 'Nature-based avoidance ~$5-15; technological removal (DACCS) ~$200-600; gap reflects permanence and scalability differentials.'),
+      dp('Corporate ICP Adoption Rate', '0–100%', 'companies_with_ICP / Fortune_500_total × 100', 'CDP Corporate Action Score survey', 'CDP data shows ~30% of Fortune 500 use ICP for internal decision-making; higher ICP adoption correlates with SBTi target setting.'),
+    ],
+    ['Select ETS market and review supply/demand balance and price model', 'Browse VCM price benchmarks by methodology, vintage, and quality tier', 'Review corporate ICP distribution and shadow price gap analysis', 'Model portfolio-level carbon cost at current vs future shadow prices'],
+    ['EU ETS MSR Regulation 2018/842', 'CDP Global Carbon Price Survey 2024', 'Trove Intelligence VCM Transaction Data 2024'],
+    [acr('ICP', 'Internal Carbon Price', 'Carbon price companies use internally to guide investment and operational decisions; can be a shadow price or a fee-and-dividend scheme'), acr('MAC', 'Marginal Abatement Cost', 'Cost of reducing one additional tonne of CO2 equivalent; forms the basis for efficient carbon pricing'), acr('VCM', 'Voluntary Carbon Market', 'Market for carbon credits generated outside compliance schemes, purchased voluntarily by corporations and individuals')],
+    [dl('EEX/ICE ETS forward curves + Trove VCM transactions + CDP ICP survey', 'MAC curve modelling → fair value estimation → ICP gap analysis', 'Carbon price analytics dashboard for trading, procurement, and strategic planning')],
+    'Used by carbon traders, corporate treasury, climate strategists, and sustainability teams to price carbon risk, benchmark VCM procurement, and set internally consistent carbon pricing signals.'
+  ),
+
+  '/global-taxonomy-interop-v2': g(
+    'Global Taxonomy Interoperability v2', 'EP-MISC', 'Platform',
+    'Advanced cross-taxonomy interoperability analytics comparing EU Taxonomy, ICMA Green Bond Principles, ASEAN Taxonomy, UK GTF, Singapore-Asia Taxonomy, and China Green Bond Standard across activity definitions, DNSH principles, and transition activity treatment. Quantifies cross-taxonomy alignment scores and identifies mutual recognition pathways.',
+    ce('Cross-Taxonomy Alignment Scoring', 'alignment_score = Σ(activity_match_i × criteria_similarity_i × DNSH_equivalence_i) / n_activities', ['EU Taxonomy Regulation 2020/852', 'ASEAN Taxonomy for Sustainable Finance v2 (2023)', 'MAS Singapore-Asia Taxonomy 2023'], 'Activity-level alignment is assessed by comparing technical screening criteria (TSC) across taxonomies for matched activities. DNSH equivalence scoring checks whether a taxonomy\'s environmental safeguards achieve equivalent outcomes to EU DNSH criteria, even if the specific conditions differ. Transition activity divergence analysis maps how each taxonomy treats "amber" or "transition" activities with time-limited eligibility, a key point of regulatory fragmentation.'),
+    [
+      dp('Cross-Taxonomy Alignment Score', '0–100%', 'Σ(matched_activities) / total_activities × criteria_similarity', 'Taxonomy TSC comparison matrix', 'EU-ASEAN alignment ~55%; EU-UK ~85%; low scores indicate significant investor confusion risk in cross-border green finance.'),
+      dp('Transition Activity Divergence Index', '0–1', '1 − Jaccard_similarity(transition_activities_A, transition_activities_B)', 'Taxonomy transition activity lists', 'High divergence (>0.6) means transition activities acceptable in one taxonomy are ineligible in another; critical for cross-border issuance.'),
+      dp('DNSH Mutual Recognition Rate', '0–100%', 'DNSH_conditions_equivalent / DNSH_conditions_total × 100', 'Legal/regulatory analysis', 'Proportion of DNSH conditions in taxonomy B that achieve equivalent environmental protection to EU DNSH; used for dual-label bond structuring.'),
+    ],
+    ['Select two or more taxonomies to compare', 'Review activity alignment matrix and identify divergent TSC conditions', 'Analyse DNSH equivalence and transition activity treatment differences', 'Generate interoperability report for dual-label green bond issuance'],
+    ['EU Taxonomy Regulation 2020/852 Climate Delegated Act', 'ASEAN Taxonomy for Sustainable Finance Version 2 (2023)', 'Singapore-Asia Taxonomy for Sustainable Finance (MAS 2023)', 'CBI Climate Bonds Standard Version 4.0'],
+    [acr('GTF', 'Green Taxonomy Framework', 'UK government\'s domestic green finance taxonomy, aligned with but distinct from EU Taxonomy'), acr('GBP', 'Green Bond Principles', 'ICMA voluntary guidelines for green bond issuance; widely used as minimum standard for green label'), acr('TSC', 'Technical Screening Criteria', 'Detailed thresholds and conditions under taxonomies that activities must meet to qualify as green or sustainable')],
+    [dl('EU/ASEAN/UK/MAS/China taxonomy documentation → activity/TSC matrices', 'Activity matching algorithm → criteria similarity scoring → DNSH equivalence analysis', 'Cross-taxonomy alignment report for green bond structuring and investor disclosure')],
+    'Used by green bond structurers, multi-jurisdictional issuers, and sustainable finance regulators to navigate taxonomy fragmentation and structure dual-label green instruments for global distribution.'
+  ),
+
+  '/india-green-infra-finance': g(
+    'India Green Infrastructure Finance', 'EP-EA5', 'EA',
+    'Analytics for India\'s green infrastructure finance landscape covering the National Infrastructure Pipeline (NIP) green component, HAM/BOT project finance structures, IIFCL green bonds, India RE100 PPAs, SEBI Green Bond Framework 2023, SECI/NTPC tender pipeline, and VGF (viability gap funding) mechanisms.',
+    ce('India Green Infrastructure Project Finance Modelling', 'project_IRR = (PPA_revenue + VGF_grant + carbon_revenue - OPEX) / EPC_cost', ['SEBI Green Bond Framework 2023', 'Ministry of Finance VGF Scheme Guidelines', 'IIFCL Green Bond Framework 2022'], 'HAM (Hybrid Annuity Model) structures split capital cost between government (40% annuity) and private developer (60% equity + debt); this reduces demand risk vs pure BOT toll models for greenfield infrastructure. RE100 corporate PPA prices are modelled using SECI discovered rates plus wheeling/banking charges. VGF quantum is estimated using the standard MEA formula: VGF = max viable project cost - bankable project cost at 12% project IRR threshold.'),
+    [
+      dp('Project IRR (post-VGF)', '8–18%', '(PPA_revenue + VGF_grant + carbon_revenue - OPEX - DEBT_service) / equity_invested', 'Project cash flow model', 'IRRs >12% are required for private equity participation; VGF is sized to bridge the gap to this threshold.'),
+      dp('SECI Tender Pipeline (GW)', '10–100 GW', 'Announced + under-construction + commissioned capacity by technology', 'SECI tender announcements + MNRE data', 'Pipeline of 30–50GW annually; important for modelling sovereign green bond issuance size and RE sector credit risk.'),
+      dp('Green Bond Yield Spread (bps)', '0–150', 'green_bond_yield − comparable_vanilla_bond_yield', 'Bloomberg India bond data', 'India green bonds typically trade at 10-30bps greenium in international markets; SEBI framework aims to deepen domestic market.'),
+    ],
+    ['Select infrastructure sector (solar, wind, EV, water, rail)', 'Input project parameters (EPC cost, PPA tariff, capacity factor)', 'Review IRR with and without VGF and carbon revenue stacking', 'Analyse SECI tender pipeline and green bond issuance capacity'],
+    ['SEBI Green Bond Framework 2023', 'Ministry of Finance VGF Scheme Guidelines 2022', 'IIFCL Green Bond Framework 2022', 'MNRE National Solar Mission Phase III Guidelines'],
+    [acr('HAM', 'Hybrid Annuity Model', 'PPP model where government pays 40% as construction annuities and 60% is financed by developer; reduces demand risk'), acr('VGF', 'Viability Gap Funding', 'Capital grant to make commercially unviable but socially desirable infrastructure projects bankable'), acr('SECI', 'Solar Energy Corporation of India', 'Central PSU acting as procurer and facilitator for utility-scale solar and wind tenders in India')],
+    [dl('SECI/NTPC tender data + SEBI green bond registry + MNRE statistics', 'Project finance modelling → VGF sizing → IRR calculation → bond structuring', 'India green infrastructure investment analytics for DFIs, PE funds, and green bond issuers')],
+    'Used by infrastructure PE funds, DFIs (DEG, IFC, ADB), sovereign wealth funds, and India-focused green bond issuers to underwrite, structure, and monitor green infrastructure investments in India.'
+  ),
+
+  '/solar-developer-carbon-finance': g(
+    'Solar Developer Carbon Finance', 'EP-EA2', 'EA',
+    'Carbon finance analytics for solar energy developers, covering CDM/VCS ACM0002 methodology application, avoided emission calculations (tCO2/MWh × grid emission factor), carbon revenue stacking on top of PPA income, India REC and carbon credit bundling, and CCTS (Carbon Credit Trading Scheme) eligibility assessment.',
+    ce('ACM0002 Avoided Emission Calculation', 'avoided_tCO2 = AEP × (EF_grid − EF_project) × capacity_factor × hours', ['CDM ACM0002 v19.0', 'Verra VCS VM0038 Methodology', 'BEE/CEA India Grid Emission Factor'], 'Annual Energy Production (AEP) is estimated from P50 generation forecast. Grid emission factor (EF_grid) uses the combined margin factor (50% operating margin + 50% build margin) per CDM methodology. For India solar, CEA publishes state-wise grid emission factors annually (avg ~0.82 tCO2/MWh in 2022). Carbon revenue is layered on top of PPA income, improving project IRR by typically 1-3 percentage points depending on carbon price assumptions.'),
+    [
+      dp('Avoided Emissions (tCO2e/yr)', '1,000–500,000', 'AEP_MWh × EF_grid_tCO2/MWh', 'CEA Grid Emission Factors + project AEP', 'A 100MW solar plant at 25% CF and 0.82 tCO2/MWh avoids ~180,000 tCO2/yr; basis for CDM/VCS credit issuance.'),
+      dp('Carbon Revenue Uplift (INR/unit)', '0.05–0.50 INR/kWh', 'credit_price_INR / credits_per_MWh', 'VCM price + REC market price', 'At $5/tCO2 VCM price and 0.82 credits/MWh, carbon revenue adds ~INR 0.35/kWh; material for merchant and lower-tariff projects.'),
+      dp('CCTS Eligibility Score', '0–100', 'methodology_compliance × registry_recognition × vintage_eligibility', 'MoEF CCTS Framework 2023', 'Scores >70 indicate strong CCTS eligibility; India\'s CCTS may mandate grid-connected RE projects use domestic registry from 2025+.'),
+    ],
+    ['Input project specifications (capacity, location, grid zone)', 'Calculate avoided emissions using CEA grid emission factor', 'Model carbon revenue at current and projected VCM/CCTS prices', 'Assess REC + carbon bundling options and CCTS registration pathway'],
+    ['CDM ACM0002 Grid-Connected Renewable Electricity Generation v19.0', 'BEE/CEA CO2 Baseline Database for Indian Power Sector 2022', 'MoEF Carbon Credit Trading Scheme (CCTS) Framework 2023'],
+    [acr('ACM0002', 'Approved Consolidated Methodology 0002', 'CDM/VCS methodology for grid-connected renewable electricity generation'), acr('REC', 'Renewable Energy Certificate', 'Market-based instrument representing 1 MWh of renewable electricity generation in India'), acr('CCTS', 'Carbon Credit Trading Scheme', 'India\'s domestic carbon market framework under the Energy Conservation (Amendment) Act 2022')],
+    [dl('CEA grid emission factors + project AEP forecast + VCM/REC prices', 'ACM0002 avoided emission formula → credit volume → revenue model', 'Carbon finance revenue stack model for solar project IRR enhancement')],
+    'Used by solar developers, project finance advisors, and carbon credit brokers to quantify and monetise carbon value in Indian solar projects and structure blended carbon + REC revenue streams.'
+  ),
+
+  '/solar-manufacturer-carbon-finance': g(
+    'Solar Manufacturer Carbon Finance', 'EP-EA3', 'EA',
+    'Carbon finance analytics for solar module manufacturers covering product lifecycle LCA carbon footprint (20-50 gCO2e/kWh lifetime), EPD certification, CBAM export risk assessment, scope 3 upstream emissions (polysilicon, wafer, glass), and carbon credit eligibility for manufacturing decarbonisation projects.',
+    ce('Solar Module LCA Carbon Footprint Analysis', 'lifetime_CF = (mfg_emissions + BOS_emissions) / (AEP × system_lifetime_years)', ['IEA-PVPS Task 12 LCA Guidelines', 'ISO 14044 Life Cycle Assessment', 'EU CBAM Regulation 2023/956'], 'Manufacturing carbon footprint is driven primarily by upstream polysilicon energy intensity (Chinese grid: ~5.5 kgCO2e/kg Si vs EU grid: ~1.8 kgCO2e/kg Si). EPD (Environmental Product Declaration) certification under EN 15804 provides third-party verified product carbon footprint for procurement specifications. CBAM exposure is calculated on direct embedded emissions in exported modules for EU-destined shipments, applying the EU ETS carbon price at the point of export.'),
+    [
+      dp('Module Carbon Footprint (gCO2e/kWh)', '15–75', '(mfg_GHG + transport_GHG) / (AEP × 30yr)', 'IEA-PVPS LCA database + EPD data', 'Best-in-class monocrystalline modules ~20-25 gCO2e/kWh; Chinese grid-powered production ~35-50 gCO2e/kWh.'),
+      dp('CBAM Exposure (€/MW exported)', '5,000–50,000', 'embedded_tCO2e/MW × EU ETS carbon price', 'EU ETS price + production emission intensity', 'Estimated annual CBAM cost for a 1GW manufacturer exporting to EU at €65/tCO2 and 35 tCO2e/MW module production: ~€2.3M/GW.'),
+      dp('Scope 3 Upstream Intensity (kgCO2e/module)', '20–120', 'Σ(material_mass_i × emission_factor_i)', 'Exiobase EEIO + supplier EPDs', 'Polysilicon and glass dominate upstream scope 3; value chain decarbonisation requires supplier energy transition.'),
+    ],
+    ['Select module technology and production location', 'Calculate lifecycle carbon footprint from LCA database or EPD', 'Assess CBAM exposure for EU export scenarios', 'Identify scope 3 hotspots and carbon reduction roadmap'],
+    ['IEA-PVPS Task 12 Methodology Guidelines for LCA of PV Systems (2020)', 'ISO 14044:2006 Environmental Management – LCA', 'EU CBAM Regulation (EU) 2023/956'],
+    [acr('EPD', 'Environmental Product Declaration', 'Third-party verified document reporting the environmental impact of a product using standardised LCA methodology'), acr('CBAM', 'Carbon Border Adjustment Mechanism', 'EU mechanism imposing carbon cost on imports of carbon-intensive goods, effective from 2026'), acr('LCA', 'Life Cycle Assessment', 'Methodology for evaluating the total environmental impact of a product from raw material extraction to end-of-life')],
+    [dl('IEA-PVPS LCA database + Exiobase EEIO + EU ETS price + supplier EPDs', 'Module LCA calculation → CBAM exposure model → scope 3 hotspot analysis', 'Carbon footprint analytics for solar manufacturing decarbonisation and trade compliance')],
+    'Used by solar manufacturers, ESG procurement teams, green bond structurers, and EU customs/trade compliance officers to manage carbon regulatory risk and demonstrate product sustainability credentials.'
+  ),
+
+  '/ceda-emission-factors': g(
+    'CEDA Emission Factors Database', 'EP-DATA1', 'Platform',
+    'Comprehensive Environmentally-Extended Input-Output (EEIO) emission factors database covering 400 sectors across 149 countries, providing supply-chain emission intensity values (kgCO2e/USD) for scope 3 category mapping and enabling comparison between EEIO and process-based LCA approaches. Integrates Exiobase, WIOD, and CEDA 2025 v1.',
+    ce('EEIO Supply-Chain Emission Intensity', 'scope3_emissions = Σ(spend_category_i × EF_i_kgCO2e_USD)', ['CEDA 2025 v1 (Carnegie Mellon EIO-LCA)', 'Exiobase 3.8.2', 'ISO 14069 Scope 3 GHG Accounting'], 'EEIO emission factors are derived by solving the Leontief input-output model with environmental extensions: EF = f × (I - A)^(-1), where f is the direct emissions coefficient vector and (I-A)^(-1) is the Leontief inverse. Country-sector pairs are matched to ISIC Rev.4 codes. Emission factors are given in kgCO2e per USD of purchases, deflated to a common base year using PPP-adjusted industry deflators.'),
+    [
+      dp('Emission Intensity (kgCO2e/USD)', '0.01–10', 'f_i × (I-A)^(-1)_ij', 'Exiobase 3.8.2 + WIOD 2016', 'Higher intensities in coal (8-10 kgCO2e/$), steel (2-4), cement (1.5-3); used for spend-based scope 3 category 1 estimates.'),
+      dp('Scope 3 Category Coverage', '1–15', 'GHG Protocol scope 3 categories coverable by EEIO', 'ISO 14069 + GHG Protocol Scope 3 Standard', 'EEIO covers categories 1, 2, 4, 5, 6, 7, 8, 11, 12 reasonably well; categories 10/13/14/15 require process LCA data.'),
+      dp('EEIO vs Process LCA Divergence (%)', '0–200%', 'abs(EEIO_estimate − process_LCA_estimate) / process_LCA_estimate × 100', 'Harmonisation studies', 'Average divergence ~40-60%; EEIO systematically higher for manufacturing (upstream capture) vs process LCA which may truncate system boundary.'),
+    ],
+    ['Select industry sector and country for emission factor lookup', 'Map purchase categories to ISIC codes for spend-based scope 3 calculation', 'Compare EEIO vs process LCA estimates for key spend categories', 'Export emission factor dataset for GHG inventory tool integration'],
+    ['CEDA 2025 v1 – Carnegie Mellon EIO-LCA Database', 'Exiobase 3.8.2 Documentation', 'Wiedmann & Minx (2008) Definition of Carbon Footprint – Ecological Economics', 'GHG Protocol Corporate Value Chain (Scope 3) Standard'],
+    [acr('EEIO', 'Environmentally Extended Input-Output', 'Macroeconomic input-output model augmented with environmental (GHG, energy, water) extensions to estimate supply-chain impacts'), acr('WIOD', 'World Input-Output Database', 'Multi-country input-output tables for 43 countries and 56 sectors; key source for international supply-chain emission factors'), acr('ISIC', 'International Standard Industrial Classification', 'UN industry classification system used to map sectors across EEIO databases')],
+    [dl('Exiobase + WIOD tables + national emission inventories → EEIO model', 'Leontief inverse computation → emission intensity per sector/country', 'kgCO2e/USD emission factor database for scope 3 spend-based estimation')],
+    'Used by corporate GHG inventory teams, scope 3 data providers, and consultants to generate spend-based scope 3 estimates where primary supplier data is unavailable, and to validate process-based LCA results.'
+  ),
+
+  '/big-climate-database': g(
+    'Big Climate Database', 'EP-DATA2', 'Platform',
+    'Explorer for the Big Climate Database covering 2,700+ food system product lifecycle emission records across agriculture, processing, packaging, transport, and retail stages. Uses EU JRC EF3.0 methodology for environmental footprint calculation, enabling product carbon footprint comparison and supply chain emission hotspot identification.',
+    ce('Food System LCA via EF3.0 Methodology', 'product_CF = Σ(stage_i_emissions) = agriculture + processing + packaging + transport + retail + FLOSS', ['EU JRC Environmental Footprint EF3.0 (2019)', 'IPCC AR6 Chapter 5 Food Systems', 'FAO GLEAM 2.0 Livestock GHG Model'], 'EF3.0 characterisation factors cover 16 impact categories; carbon footprint uses GWP100 values from IPCC AR6 (CH4 fossil: 29.8, CH4 biogenic: 27.9, N2O: 273). Animal products dominate at 14.5 kgCO2e/kg beef, 2.9 kgCO2e/kg poultry, vs 1.4 kgCO2e/kg wheat. FLOSS (food loss and waste, supply chain) adds typically 15-25% to farmgate emissions for perishables.'),
+    [
+      dp('Product Carbon Footprint (kgCO2e/kg)', '0.3–100', 'Σ(stage_emissions) from farm to retail', 'EF3.0 LCA records + GLEAM 2.0', 'Beef: 14-100 kgCO2e/kg (land use variation); milk: 1.2-3.2 kgCO2e/L; tofu: 1.6-3.5 kgCO2e/kg; wheat: 0.3-1.1 kgCO2e/kg.'),
+      dp('Land Use Change Emission Share (%)', '0–80%', 'LUC_emissions / total_product_CF × 100', 'Pendrill et al. (2022) LUC emission database', 'For beef from deforestation-risk regions, LUC can constitute 40-80% of product footprint; key screen for EUDR compliance.'),
+      dp('Supply Chain Stage Hotspot', 'Agriculture/Processing/Packaging/Transport/Retail', 'stage_with_max_emission_share', 'EF3.0 stage breakdown', 'Agriculture dominates for animal products (>70%) and rice (>85%); packaging dominates for highly processed snack foods (>40%).'),
+    ],
+    ['Search database by product category or supply chain stage', 'Compare carbon footprints across product variants and regions of origin', 'Identify supply chain stage hotspots for targeted reduction', 'Export product carbon footprint comparison for procurement policy or labelling'],
+    ['EU JRC Environmental Footprint EF3.0 Methodology Report (2019)', 'Poore & Nemecek (2018) Reducing Food\'s Environmental Impacts Science', 'FAO GLEAM 2.0 Global Livestock Environmental Assessment Model'],
+    [acr('EF3.0', 'Environmental Footprint 3.0', 'EU JRC standardised LCA methodology for product environmental footprints; used for EU Green Claims Directive compliance'), acr('GLEAM', 'Global Livestock Environmental Assessment Model', 'FAO model for livestock sector GHG emissions; used for product-level beef, dairy, and poultry footprints'), acr('EUDR', 'EU Deforestation Regulation', 'EU regulation requiring supply chain due diligence on seven deforestation-linked commodities from 2025')],
+    [dl('EF3.0 LCA records + GLEAM 2.0 + Pendrill LUC database', 'Stage emission aggregation → product carbon footprint → hotspot identification', 'Food product carbon footprint database for procurement, labelling, and supply chain decarbonisation')],
+    'Used by food & beverage companies, retailers, sustainable procurement teams, and policy researchers to benchmark product carbon footprints and identify the highest-impact supply chain interventions.'
+  ),
+
+  '/ai-data-live-platform': g(
+    'AI-Driven Live Climate Data Platform', 'EP-MISC', 'Platform',
+    'Real-time climate data ingestion platform integrating satellite imagery, IoT sensor streams, and regulatory filing feeds with AI-powered anomaly detection, automated PCAF DQ tier scoring, data lineage tracking, API endpoint management, and data freshness monitoring for enterprise-grade climate intelligence.',
+    ce('Automated Data Quality & Lineage Management', 'DQ_tier = f(source_type, verification_level, recency, coverage_completeness)', ['PCAF Data Quality Framework (2022)', 'SASB Data Standards', 'ISO 8000 Data Quality Standards'], 'PCAF DQ tiers (1=highest, 5=lowest) are automatically assigned based on data source type (audited primary data = tier 1-2, modelled/estimated = tier 4-5), verification status, and temporal recency. Anomaly detection uses isolation forest algorithms on time-series data to flag outlier values >3σ from rolling 12-month mean. Data lineage is tracked using a directed acyclic graph (DAG) model from raw ingestion to derived KPI, enabling full audit trail for regulatory disclosure.'),
+    [
+      dp('Data Freshness Index', '0–100', '(1 - days_since_update / max_acceptable_age) × 100', 'Ingestion timestamp log', 'Score <60 triggers stale data warning; critical for real-time physical risk monitoring and daily portfolio carbon exposure.'),
+      dp('PCAF DQ Score (portfolio-weighted)', '1–5', 'Σ(w_i × DQ_tier_i)', 'PCAF Data Quality Framework', 'Lower scores are better (1=best); PCAF target for financed emissions is weighted avg DQ ≤ 3 for credible disclosure.'),
+      dp('Anomaly Detection Rate', '0–100%', 'flagged_anomalies / total_datapoints × 100', 'Isolation forest anomaly model', 'Rates >5% suggest systematic data quality issues; each flagged anomaly is routed for human review before inclusion in disclosures.'),
+    ],
+    ['Configure data ingestion pipelines (satellite, IoT, API, filing)', 'Review data freshness dashboard and PCAF DQ tier scores', 'Investigate flagged anomalies and update data quality scores', 'Monitor API endpoint performance and lineage DAG for key metrics'],
+    ['PCAF Data Quality Assessment Framework v2.0 (2022)', 'ISO 8000-8: Data Quality – Concepts and Measuring', 'Liu, Ting, Zhou (2008) Isolation Forest – ICDM'],
+    [acr('DAG', 'Directed Acyclic Graph', 'Data structure used to represent lineage flows from raw data sources to derived outputs without circular dependencies'), acr('IoT', 'Internet of Things', 'Network of connected sensors and devices providing real-time environmental and operational data'), acr('DQ', 'Data Quality', 'PCAF framework for rating the reliability and specificity of GHG emissions data used in financed emissions reporting')],
+    [dl('Satellite feeds + IoT sensors + regulatory filing APIs → raw ingestion layer', 'Anomaly detection → DQ tier scoring → lineage DAG construction', 'Clean, tagged, and auditable climate data with quality scores for regulatory disclosure')],
+    'Used by data engineering teams, ESG data managers, and chief sustainability officers to ensure climate data reliability, completeness, and audit-readiness for TCFD, SFDR, and CSRD disclosures.'
+  ),
+
+  '/data-capture-hub': g(
+    'Climate Data Capture Hub', 'EP-MISC', 'Platform',
+    'Multi-source climate data ingestion hub supporting API connections, PDF OCR extraction, spreadsheet parsing, and web scraping. Provides structured extraction templates for TCFD, CSRD, and SFDR disclosure data, manual entry workflows with validation, and full audit trails for data provenance in sustainability reporting.',
+    ce('Multi-Source Structured Data Extraction', 'extraction_confidence = OCR_accuracy × template_match_score × field_validation_pass_rate', ['TCFD Recommendations 2023 – Annex', 'EFRAG ESRS Data Collection Guidance', 'GRI 2 – General Disclosures'], 'PDF OCR uses layout-aware models (LayoutLM/DocTR) to extract tabular data from sustainability reports with field-level confidence scoring. Template matching maps extracted fields to canonical ESG data model entities. Validation rules check data type, range, unit consistency, and temporal continuity. All extraction actions are logged with extractor identity, timestamp, and source document hash for regulatory audit trail.'),
+    [
+      dp('OCR Extraction Accuracy', '0–100%', 'correctly_extracted_fields / total_fields × 100', 'Human review benchmark sample', 'Production systems achieve 85-95% accuracy on structured tables; narrative extraction lower at 60-75%; human review flags <80% confidence fields.'),
+      dp('Template Coverage Rate', '0–100%', 'template_matched_fields / required_fields_per_standard × 100', 'TCFD/CSRD/SFDR field registries', 'Measures how completely a submission fills the required data fields for a given standard; <70% triggers incomplete submission warning.'),
+      dp('Data Provenance Score', '0–100', 'fields_with_source_document / total_fields × 100', 'Audit trail log', 'Score 100 = every data point linked to source document; required for third-party assurance (ISAE 3000/3410 limited assurance standard).'),
+    ],
+    ['Upload or connect source documents (PDFs, spreadsheets, APIs)', 'Select extraction template (TCFD, CSRD ESRS, SFDR, GRI)', 'Review extraction results and validate flagged low-confidence fields', 'Publish extracted data to reporting module with provenance log'],
+    ['TCFD Recommendations (2023 Final Report Annex)', 'EFRAG ESRS Data Collection and Reporting Guidance', 'GRI 2 – General Disclosures 2021'],
+    [acr('OCR', 'Optical Character Recognition', 'Technology for converting printed or handwritten text in images and PDFs into machine-readable text'), acr('LayoutLM', 'Layout-aware Language Model', 'Microsoft AI model for understanding visually-rich document layouts including tables and forms for structured extraction'), acr('ISAE', 'International Standard on Assurance Engagements', 'IAASB standard for third-party assurance of non-financial information including sustainability reports')],
+    [dl('PDFs + spreadsheets + APIs → ingestion layer', 'OCR extraction → template matching → validation → provenance logging', 'Structured, validated, and audit-trailed ESG data for regulatory reporting')],
+    'Used by sustainability reporting teams, external assurance providers, and ESG data managers to automate the tedious data collection process and ensure audit-ready provenance for regulatory filings.'
+  ),
+
+  '/narrative-intelligence': g(
+    'ESG Narrative Intelligence Engine', 'EP-MISC', 'Platform',
+    'NLP analysis engine for sustainability reports, earnings calls, and regulatory filings. Scores topic coherence for greenwashing risk detection, identifies commitment-vs-action gaps, assesses net-zero pledge credibility, and checks alignment between controversy events and corporate disclosures.',
+    ce('Greenwashing Risk Scoring via NLP Coherence Analysis', 'greenwashing_risk = w1·topic_coherence_gap + w2·commitment_action_gap + w3·controversy_disclosure_gap', ['EU Green Claims Directive (2023/0085)', 'TCFD Recommendations – Strategy Disclosures', 'InfluenceMap Climate Accountability Report'], 'Topic coherence scoring uses LDA (Latent Dirichlet Allocation) to identify dominant themes in sustainability reports and checks for inconsistency between claimed priorities and allocated word/page real estate. Commitment-action gap detection compares quantitative pledges (net-zero date, SBTi target) against reported annual progress metrics using time-series consistency checking. Net-zero credibility scoring draws on the Oxford Net Zero Assessment criteria (coverage, interim targets, offsets disclosure, third-party verification).'),
+    [
+      dp('Greenwashing Risk Score', '0–100', 'w1·coherence_gap + w2·commitment_gap + w3·controversy_gap', 'NLP pipeline output', 'Scores >70 warrant disclosure review; used in ESG controversy screening and regulatory compliance monitoring.'),
+      dp('Net-Zero Pledge Credibility Score', '0–100', 'Oxford Net Zero criteria: coverage + interim + offsets + verification', 'Corporate net-zero pledges + SBTi registry', 'Scores <40 indicate high pledge credibility risk; correlates with future SBTi validation success probability.'),
+      dp('Commitment-Action Gap Index', '-1 to +1', '(actual_progress − pledged_progress) / pledged_progress', 'Corporate disclosure time series', 'Negative values indicate under-delivery vs pledges; <-0.3 triggers regulatory notification risk flag under EU Green Claims Directive.'),
+    ],
+    ['Upload sustainability reports or connect disclosure API', 'Run NLP pipeline for topic coherence and greenwashing risk scoring', 'Review commitment-action gap analysis and net-zero credibility assessment', 'Export narrative intelligence report for investor engagement or regulatory filing'],
+    ['EU Green Claims Directive (Proposal COM/2023/166)', 'Oxford Net Zero Assessment Criteria 2024', 'InfluenceMap Corporate Climate Responsibility Monitor 2024'],
+    [acr('LDA', 'Latent Dirichlet Allocation', 'Probabilistic topic modelling algorithm that identifies themes in a text corpus'), acr('NLP', 'Natural Language Processing', 'AI field enabling computers to understand, interpret, and generate human language'), acr('SBTi', 'Science Based Targets initiative', 'Corporate net-zero target standard aligned with limiting warming to 1.5°C; over 7,000 companies committed')],
+    [dl('Sustainability reports + earnings call transcripts + news feeds → text corpus', 'LDA topic modelling → commitment extraction → controversy matching → greenwashing score', 'Greenwashing risk scores and net-zero credibility assessments for investor and regulatory use')],
+    'Used by ESG analysts, sustainable finance regulators, and responsible investment teams to automate greenwashing detection and provide evidence-based credibility assessments of corporate sustainability claims.'
+  ),
+
+  '/quantitative-nlp-research': g(
+    'Quantitative NLP Research Tools', 'EP-MISC', 'Platform',
+    'Research toolkit for constructing ESG text-based quantitative factors from 10-K/annual report corpora, generating sentiment momentum signals, detecting regulatory filing change events, analysing green technology patent intensity, and mapping academic citation networks for climate risk models.',
+    ce('Text Factor Construction for Systematic ESG', 'text_factor_return = long(high_ESG_sentiment_decile) - short(low_ESG_sentiment_decile)', ['Loughran & McDonald (2011) Textual Analysis in Finance', 'Ke, Kelly, Xiu (2019) Predicting Returns with Text Data', 'NBER Working Paper ESG Text Factors 2023'], 'ESG text factors are constructed by computing a rolling sentiment score from 10-K filings using the Loughran-McDonald financial dictionary augmented with ESG-specific term lists (green, sustainability, climate, transition). Regulatory filing change detection uses BERT-based semantic similarity to flag material changes between consecutive annual filings. Patent intensity for green technology uses CPC Y02 classification codes to identify Scope 3 innovation capacity signals.'),
+    [
+      dp('ESG Sentiment Alpha (annualised)', '0–8%', 'long_short_ESG_text_factor_return', 'Backtested factor (2010-2024)', 'Academic studies show 2-5% annualised alpha from ESG text momentum; strongest in transition-exposed sectors (energy, materials).'),
+      dp('Filing Change Materiality Score', '0–100', 'BERT_semantic_similarity_delta × materiality_keyword_weight', 'EDGAR/SEDAR filing pairs', 'Scores >60 indicate material filing changes warranting analyst review; strong predictor of subsequent earnings surprises and regulatory actions.'),
+      dp('Green Patent Intensity Rank', '1–100th percentile', 'CPC_Y02_patents / total_patents × 100', 'USPTO/EPO patent database', 'Companies in top quartile of green patent intensity show 15-25% lower carbon intensity 5 years forward; leading indicator of transition readiness.'),
+    ],
+    ['Select filing corpus and ESG text factor specification', 'Run sentiment extraction and factor signal computation', 'Backtest factor strategy across sectors and time periods', 'Export factor scores for systematic portfolio construction'],
+    ['Loughran & McDonald (2011) When Is a Liability Not a Liability? JoF', 'Ke, Kelly, Xiu (2019) Predicting Returns with Text Data – RFS', 'USPTO CPC Y02 Green Technology Patent Classification Manual'],
+    [acr('CPC', 'Cooperative Patent Classification', 'International patent classification system; Y02 codes cover climate change mitigation technologies'), acr('EDGAR', 'Electronic Data Gathering, Analysis, and Retrieval', 'SEC database of US public company filings including 10-K annual reports'), acr('NLP', 'Natural Language Processing', 'AI techniques for analysing and extracting information from text documents at scale')],
+    [dl('SEC EDGAR 10-K corpus + USPTO Y02 patent data + BERT model', 'Sentiment scoring → factor construction → patent intensity ranking → backtest', 'Quantitative ESG text factors for systematic investment strategies')],
+    'Used by quant researchers, systematic ESG fund managers, and alternative data analysts to construct investment signals from unstructured sustainability and regulatory text data.'
+  ),
+
+  '/social-alternative-data': g(
+    'Social Alternative Data for ESG', 'EP-MISC', 'Platform',
+    'Aggregates and analyses social alternative data sources for ESG assessment, including employee satisfaction signals from Glassdoor/LinkedIn, consumer sentiment on sustainability claims, ESG controversy velocity on social media, and community impact proxies such as job postings in low-to-moderate income areas and local news sentiment.',
+    ce('Social Signal Aggregation for ESG Scoring', 'social_ESG_score = w1·employee_sentiment + w2·consumer_trust + w3·community_proxy − w4·controversy_velocity', ['SASB Human Capital Standards by Industry', 'GRI 401-404 – Employment Standards', 'PRI Reporting Framework Indicator SO3 – Community'], 'Employee sentiment is derived from Glassdoor rating distributions (overall, CEO approval, culture) and LinkedIn follower engagement velocity. Controversy velocity uses Twitter/X and Reddit ESG topic trend analysis with exponential decay weighting (half-life 30 days) to separate acute from chronic controversies. Community impact proxies use Indeed/LinkedIn job posting geolocation against FFIEC LMI census tract maps.'),
+    [
+      dp('Employee Sentiment Score', '0–100', 'weighted avg(Glassdoor overall, CEO approval, work-life balance)', 'Glassdoor API + LinkedIn engagement', 'Score >70 correlates with lower turnover, higher productivity, and better SASB human capital disclosure scores; material for S-pillar ratings.'),
+      dp('ESG Controversy Velocity', '0–100', 'Σ(controversy_mentions × recency_weight) / baseline_mention_rate', 'Social media API + news aggregator', 'Velocity >50 indicates accelerating controversy; predictive of negative ESG rating action within 90 days (accuracy ~65% in backtesting).'),
+      dp('Community Impact Proxy Score', '0–100', 'LMI_job_postings / total_job_postings × community_sentiment', 'Indeed + FFIEC LMI census tracts', 'Proxies for community investment quality; used in CRA (Community Reinvestment Act) analytics and impact investing screens.'),
+    ],
+    ['Configure social data feeds (Glassdoor, LinkedIn, Twitter/X, local news)', 'Review employee, consumer, and community ESG signal dashboard', 'Analyse controversy velocity trends and controversy event timeline', 'Export social ESG scores for integration with primary ESG rating models'],
+    ['SASB Materiality Map – Human Capital by Industry', 'GRI 401-404 Employment and Human Capital Standards', 'FFIEC Community Reinvestment Act Data and Resources'],
+    [acr('LMI', 'Low-to-Moderate Income', 'Census tract classification used in CRA assessment of bank community reinvestment activity'), acr('CRA', 'Community Reinvestment Act', 'US law encouraging depository institutions to serve the credit needs of the communities in which they operate'), acr('SASB', 'Sustainability Accounting Standards Board', 'Industry-specific sustainability accounting standards; human capital is a key SASB material topic across most industries')],
+    [dl('Glassdoor/LinkedIn/Twitter APIs + job posting databases + local news → aggregated social signals', 'Sentiment scoring → controversy velocity → community proxy calculation', 'Social ESG scores for S-pillar analytics and controversy monitoring')],
+    'Used by ESG data providers, responsible investment teams, and HR/sustainability officers to incorporate real-time social alternative data into holistic ESG assessments and controversy monitoring workflows.'
+  ),
+
+  '/metrics-data-architecture': g(
+    'ESG Metrics Data Architecture', 'EP-MISC', 'Platform',
+    'Platform canonical ESG data model defining the entity-metric-value-source-period architecture for time-series ESG data management. Covers unit harmonisation (MWh to GJ, tCO2e to kgCO2e), provider-agnostic schema, version control for reported vs restated values, and data lineage from raw source to published KPI.',
+    ce('Canonical ESG Data Model', 'normalised_value = raw_value × conversion_factor / intensity_denominator', ['GHG Protocol Corporate Standard 2015', 'ISO 14064-1 GHG Reporting', 'XBRL ESG Taxonomy (IFRS Foundation)'], 'The canonical model uses a star schema: entity (LEI, ISIN, SEDOL) → metric (GHG Protocol category, ESRS datapoint, ISSB metric) → value (magnitude, unit, decimal precision) → source (provider, methodology, DQ tier) → period (fiscal year, calendar year, quarterly). Unit harmonisation uses SI base units as canonical form with conversion factors from ISO 80000. Restatement versioning tracks original reported value, restatement reason code (boundary change, methodology change, correction), and restatement date.'),
+    [
+      dp('Schema Coverage Rate', '0–100%', 'mapped_ESG_metrics / total_platform_ESG_metrics × 100', 'Internal schema registry', 'Target >95% coverage; gaps indicate data model gaps requiring new metric definitions or source integration.'),
+      dp('Unit Harmonisation Accuracy', '0–100%', 'correctly_converted_values / total_unit_conversion_operations × 100', 'Test suite against reference conversions', 'Must be 100% for regulatory disclosure; unit errors are the most common data quality failure in ESG reporting.'),
+      dp('Restatement Frequency', 'events/year', 'COUNT(restatement_events) per entity per year', 'Version control log', 'High restatement frequency (>3/year) indicates immature data collection processes; tracked as a data quality governance metric.'),
+    ],
+    ['Browse canonical metric library and map to reporting standard requirements', 'Review data model schema and unit conversion rules', 'Track restatement history and version control for audited metrics', 'Export canonical ESG dataset for reporting tool integration'],
+    ['GHG Protocol Corporate Standard v15', 'ISO 14064-1:2018 GHG Reporting', 'IFRS Foundation XBRL ESG Taxonomy 2024', 'GRI Universal Standards GRI 1 (2021)'],
+    [acr('LEI', 'Legal Entity Identifier', '20-character ISO 17442 identifier for legal entities involved in financial transactions; foundation for ESG entity matching'), acr('XBRL', 'Extensible Business Reporting Language', 'XML-based standard for machine-readable financial and sustainability data; mandated under ESEF for EU issuers'), acr('DQ', 'Data Quality', 'PCAF tier-based system for rating confidence in GHG emissions data from audited primary (tier 1) to estimated (tier 5)')],
+    [dl('Multiple ESG data providers + company disclosures → raw ingestion', 'Entity matching → unit harmonisation → version control → canonical schema', 'Provider-agnostic ESG time-series database for regulatory reporting and analytics')],
+    'Used by ESG data engineers, CDOs, and sustainability reporting leads to ensure data consistency, auditability, and provider-agnostic portability across the ESG reporting technology stack.'
+  ),
+
+  '/reference-data-explorer': g(
+    'ESG Reference Data Explorer', 'EP-MISC', 'Platform',
+    'Explorer for ESG reference data including legal entity identifiers (LEI, ISIN, CUSIP, SEDOL), GICS sector taxonomy, country/region classification, currency conversion, index constituent history, and corporate action impact on ESG time series. Sources include GLEIF Global LEI Index and ESMA FIRDS security database.',
+    ce('Entity Reference Data Integration', 'entity_match_score = Σ(identifier_match_i × weight_i) / total_weight', ['GLEIF LEI Data Standard (ISO 17442)', 'ESMA Financial Instruments Reference Data System (FIRDS)', 'MSCI GICS Classification System 2023'], 'Legal entity matching uses a hierarchical identifier cascade: LEI (preferred) → ISIN → CUSIP/SEDOL → name/country fuzzy match. Entity resolution handles corporate actions (mergers, spin-offs, name changes) by maintaining a temporal entity graph with effective dates. ESG time series are linked to the entity graph so corporate action events automatically trigger data lineage review flags.'),
+    [
+      dp('Entity Match Rate', '0–100%', 'entities_with_LEI / total_entities × 100', 'GLEIF Global LEI Index', 'Target >90% for institutional portfolios; unmatched entities require manual review and cannot be included in regulatory financed emissions reports.'),
+      dp('GICS Classification Coverage', '0–100%', 'entities_with_GICS / total_entities × 100', 'MSCI GICS database', 'GICS is required for sector-normalised ESG benchmarking; incomplete classification degrades sector peer analysis quality.'),
+      dp('Corporate Action Impact Events', '0–n', 'COUNT(mergers + spin-offs + reclassifications) in period', 'GLEIF + ESMA FIRDS event log', 'High event counts require ESG time series splicing decisions; key operational risk in ESG data management.'),
+    ],
+    ['Search legal entity by LEI, ISIN, company name, or GICS sector', 'Review entity hierarchy and corporate action history', 'Map entities to ESG data coverage and time series completeness', 'Export entity reference dataset for portfolio analytics integration'],
+    ['GLEIF LEI Data Standard ISO 17442', 'ESMA FIRDS Technical Documentation 2024', 'MSCI GICS Classification System 2023 Update'],
+    [acr('GLEIF', 'Global Legal Entity Identifier Foundation', 'Non-profit organisation that manages the global LEI system; maintains open, freely available LEI reference data'), acr('FIRDS', 'Financial Instruments Reference Data System', 'ESMA database of reference data for financial instruments reported under MiFIR/EMIR'), acr('SEDOL', 'Stock Exchange Daily Official List', 'London Stock Exchange 7-character security identifier used in UK and international securities markets')],
+    [dl('GLEIF LEI database + ESMA FIRDS + MSCI GICS → entity reference layer', 'Identifier cascade matching → corporate action graph → ESG series linking', 'Unified entity reference data for ESG portfolio construction and regulatory reporting')],
+    'Used by ESG data teams, portfolio operations, and regulatory reporting functions to maintain a clean, consistent entity reference backbone that ensures ESG data can be matched, aggregated, and reported accurately.'
+  ),
+
+  '/report-quality-engine': g(
+    'Sustainability Report Quality Engine', 'EP-MISC', 'Platform',
+    'Automated quality assessment engine for sustainability reports scoring TCFD recommendation alignment (11 recommendations, 0-100%), CSRD completeness, GRI Standards coverage, data consistency through year-over-year variance analysis, and third-party assurance level tracking against ISAE 3000/3410 standards.',
+    ce('Multi-Standard Report Quality Scoring', 'quality_score = w_tcfd·TCFD_score + w_csrd·CSRD_score + w_gri·GRI_score + w_consistency·consistency_score', ['TCFD Final Recommendations 2017 / 2023 Annex', 'EFRAG CSRD Completeness Assessment Guide', 'GRI Universal Standards 2021'], 'TCFD scoring maps 11 recommended disclosures across Governance, Strategy, Risk Management, and Metrics & Targets to report sections using NLP, scoring 0 (absent) to 100 (fully addressed). CSRD completeness uses the EFRAG ESRS datapoint checklist against the reported datapoints. GRI coverage counts Standards disclosed vs applicable standards. Year-over-year variance flags metrics that change by >30% without restatement note, a key audit indicator.'),
+    [
+      dp('TCFD Alignment Score', '0–100', 'Σ(w_i × TCFD_rec_i_score) / 11', 'NLP-based TCFD recommendation mapping', 'Scores >70 indicate strong TCFD alignment; regulatory momentum (UK, EU, SEC) is moving toward mandatory full alignment requirements.'),
+      dp('CSRD Completeness Gap', '0–100%', '(required_datapoints − reported_datapoints) / required_datapoints × 100', 'EFRAG ESRS datapoint checklist', 'Gap >30% is a material compliance risk for first-year CSRD filers; gap analysis drives data collection prioritisation.'),
+      dp('Assurance Level', 'None/Limited/Reasonable', 'ISAE_3000_engagement_type from auditor report', 'Auditor assurance report', 'CSRD mandates limited assurance from 2025, moving to reasonable assurance by 2028; current Fortune 500 average: 62% limited assurance.'),
+    ],
+    ['Upload sustainability report (PDF or structured XML/XBRL)', 'Run quality scoring for TCFD, CSRD, GRI, and data consistency', 'Review gap analysis and year-over-year variance flags', 'Generate report quality certificate and improvement action plan'],
+    ['TCFD Final Recommendations and 2023 Annex', 'EFRAG CSRD Reporting Completeness Assessment Guidance', 'GRI Universal Standards 2021', 'IAASB ISAE 3000 and 3410 Assurance Standards'],
+    [acr('ISAE', 'International Standard on Assurance Engagements', 'IAASB standard for sustainability report assurance; ISAE 3000 for general non-financial, ISAE 3410 specifically for GHG assertions'), acr('GRI', 'Global Reporting Initiative', 'World\'s most widely used sustainability reporting standard; universal standards plus topic-specific standards'), acr('TCFD', 'Task Force on Climate-related Financial Disclosures', 'FSB-established framework for climate risk disclosure; basis for mandatory requirements in UK, EU, New Zealand, Singapore')],
+    [dl('Sustainability report PDFs/XBRL → NLP extraction + datapoint mapping', 'TCFD/CSRD/GRI scoring → consistency analysis → assurance level tracking', 'Report quality scorecard with gap analysis and improvement recommendations')],
+    'Used by sustainability reporting managers, external auditors, and ESG investors to assess and compare sustainability report quality, identify material gaps, and track improvement over time.'
+  ),
+
+  '/sustainability-report-builder': g(
+    'Sustainability Report Builder', 'EP-MISC', 'Platform',
+    'Automated sustainability report assembly platform drawing from live platform data to generate TCFD reports, GRI Standards index tables, CSRD ESRS disclosure templates, CDP questionnaire auto-fills, and investor-grade performance narratives. Includes ISSB S1/S2 alignment checker and one-click SFDR pre-contractual disclosure automation.',
+    ce('Template-Driven Report Assembly from Canonical Data', 'report_completeness = populated_fields / required_fields_per_template × 100', ['TCFD Final Recommendations 2017/2023', 'ISSB S1/S2 Standards 2023', 'GRI Universal Standards 2021'], 'Report assembly maps canonical ESG metric values to standard-specific disclosure templates using a field-mapping configuration layer. Narrative generation uses structured templates with metric-to-sentence substitution for quantitative sections; qualitative governance and strategy sections use AI-assisted drafting with human review. CDP questionnaire auto-fill uses sector-specific CDP mapping tables to route platform data to ~500 CDP question fields with evidence attachment support.'),
+    [
+      dp('Report Auto-Fill Rate', '0–100%', 'auto_populated_fields / total_template_fields × 100', 'Field mapping configuration', 'Target >80% auto-fill reduces manual reporting time by 60-70%; remaining fields require qualitative narrative input.'),
+      dp('ISSB S1/S2 Alignment Score', '0–100', 'ISSB_requirements_met / ISSB_requirements_total × 100', 'ISSB S1/S2 disclosure requirements checklist', 'Scores >85 indicate ISSB-compliant disclosure; required for IOSCO-member jurisdictions adopting IFRS S1/S2 from 2025.'),
+      dp('SFDR Pre-Contractual Completeness', '0–100%', 'SFDR_fields_populated / SFDR_mandatory_fields × 100', 'SFDR RTS Annex II/III templates', 'Must reach 100% before fund distribution in EU; incomplete templates trigger regulatory distribution restrictions.'),
+    ],
+    ['Select report standard and time period', 'Review auto-populated fields and complete qualitative sections', 'Run ISSB S1/S2 alignment check and CDP mapping review', 'Publish and export final report in required format (PDF, XBRL, CSV)'],
+    ['ISSB S1 General Requirements for Sustainability-related Financial Disclosures (2023)', 'ISSB S2 Climate-related Disclosures (2023)', 'GRI Universal Standards 2021', 'SFDR RTS (EU) 2022/1288'],
+    [acr('ISSB', 'International Sustainability Standards Board', 'IFRS Foundation body that issued S1 and S2 climate and sustainability disclosure standards adopted globally from 2025'), acr('CDP', 'Carbon Disclosure Project', 'Non-profit running the world\'s largest environmental disclosure platform; over 23,000 companies respond annually'), acr('SFDR', 'Sustainable Finance Disclosure Regulation', 'EU regulation requiring sustainability disclosures by financial market participants; Article 6/8/9 product classification')],
+    [dl('Platform canonical ESG data → field-mapping layer → report templates', 'Auto-fill population → narrative generation → alignment checking', 'Publication-ready sustainability reports for TCFD, ISSB, GRI, CDP, CSRD, SFDR')],
+    'Used by sustainability reporting teams, investor relations, and compliance officers to dramatically reduce report production time while ensuring multi-standard completeness and regulatory compliance.'
+  ),
+
+  '/module-navigator': g(
+    'Platform Module Navigator', 'EP-NAV', 'Platform',
+    'Comprehensive navigation and discovery hub for all 745 platform modules, with full-text search, domain/sprint/status filtering, guided mode previews, recently viewed history, bookmarks, module dependency mapping, and related module recommendations. Acts as the central entry point for platform users discovering analytical capabilities.',
+    ce('Module Discovery & Dependency Mapping', 'relevance_score = semantic_similarity(query, module_description) × status_weight × domain_weight', ['Platform module registry', 'Neo4j graph traversal (dependency DAG)', 'BM25 full-text retrieval'], 'Module discovery uses BM25 retrieval over module titles, descriptions, and tags for keyword search, supplemented by semantic similarity from BERT embeddings for conceptual queries. Dependency mapping tracks which modules consume each other\'s outputs (e.g., DMA feeds ESRS datapoint navigator; temperature score feeds portfolio analytics) using a directed graph that enables downstream impact analysis when data inputs change.'),
+    [
+      dp('Module Coverage', '745 modules', 'COUNT(routed_modules)', 'App.js route registry', 'Full platform scope across 93+ domains; filtered by status (live/beta/planned) for production navigation.'),
+      dp('Search Relevance Score', '0–1', 'BM25_score × semantic_similarity', 'Module metadata corpus', 'Score >0.7 indicates strong match; used to rank top-10 results in search and recommendations.'),
+      dp('Module Dependency Depth', '0–5 hops', 'max_shortest_path_length in dependency DAG', 'Module dependency graph', 'Deep dependency chains (>3 hops) indicate integration complexity; shown to users before enabling a module workflow.'),
+    ],
+    ['Search for modules by name, domain, topic, or standard', 'Browse domain tree and filter by sprint, status, or data type', 'View module dependency map to understand data flow prerequisites', 'Bookmark frequently used modules and review recently visited history'],
+    ['Platform Architecture Documentation', 'App.js Route Registry', 'React Router v6 Navigation API'],
+    [acr('BM25', 'Best Match 25', 'Probabilistic full-text retrieval ranking algorithm; state-of-the-art for keyword-based document search'), acr('DAG', 'Directed Acyclic Graph', 'Data structure used to represent module dependencies without circular relationships'), acr('UX', 'User Experience', 'Design discipline focused on the overall experience of users interacting with a product or platform')],
+    [dl('App.js route registry + module metadata store → searchable index', 'BM25 + semantic retrieval → dependency graph traversal → recommendations', 'Personalised module discovery experience with dependency-aware navigation')],
+    'Used by all platform users — from first-time onboarders to power analysts — to discover relevant analytical modules, understand platform capabilities, and efficiently navigate the 745-module ecosystem.'
+  ),
+
+  '/pitch': g(
+    'Climate Finance Pitch Builder', 'EP-MISC', 'Platform',
+    'Investment pitch and presentation builder for climate finance transactions. Provides green bond and sustainability-linked bond pitch deck templates, automated climate risk disclosure slide population, ESG story arc construction, regulatory compliance checklist for investor materials, and SFDR pre-contractual disclosure automation for fund launches.',
+    ce('Regulatory-Compliant Climate Finance Pitch Assembly', 'pitch_score = disclosure_completeness × regulatory_compliance × ESG_story_coherence', ['ICMA Green Bond Principles 2021', 'SFDR RTS Annex II/III (EU) 2022/1288', 'SEC Marketing Rule 206(4)-1 – ESG Disclosures'], 'Green bond pitch templates follow ICMA GBP four-component structure: use of proceeds, project evaluation/selection process, management of proceeds, and reporting commitment. SLB templates include KPI definitions, SPT (sustainability performance target) calibration rationale, step-up coupon mechanics, and third-party verification reference. Regulatory compliance checker flags claims that may constitute misleading ESG marketing under EU SFDR, UK FCA SDR, or SEC marketing rules.'),
+    [
+      dp('Pitch Completeness Score', '0–100%', 'populated_pitch_sections / required_sections × 100', 'ICMA GBP / SLB Principles checklist', 'Full ICMA GBP compliance requires 4 use of proceeds categories documented, 2nd party opinion, and ongoing impact reporting commitment.'),
+      dp('SPT Ambition Score', '0–100', 'SPT_reduction_vs_baseline / SBTi_pathway_required × 100', 'SBTi sector pathways + company baseline', 'SPT must represent meaningful improvement vs business-as-usual to meet ICMA SLB Principles; score <50 signals weak SPT credibility.'),
+      dp('Regulatory Compliance Risk Flags', '0–n', 'COUNT(flagged_claims)', 'SFDR/SDR/SEC marketing rule logic', 'Zero flags required before distribution; each flag identifies a specific claim that requires disclosure, qualification, or removal.'),
+    ],
+    ['Select transaction type (green bond, SLB, green fund, impact equity)', 'Populate key transaction parameters and ESG performance data', 'Review auto-generated slides and regulatory compliance flags', 'Finalise and export investor-ready pitch deck with disclosure checklist'],
+    ['ICMA Green Bond Principles 2021', 'ICMA Sustainability-Linked Bond Principles 2023', 'SFDR RTS (EU) 2022/1288 – Pre-contractual Disclosures', 'SEC Marketing Rule 206(4)-1 ESG Guidance 2022'],
+    [acr('SLB', 'Sustainability-Linked Bond', 'Bond where financial terms (coupon, redemption) are linked to the issuer achieving pre-defined sustainability performance targets'), acr('SPT', 'Sustainability Performance Target', 'Quantitative ESG target used in SLB structures; must be material, measurable, and externally verifiable'), acr('SDR', 'Sustainability Disclosure Requirements', 'UK FCA regime for sustainability-related investment product disclosures; includes sustainable, responsible, and impact labels')],
+    [dl('Transaction parameters + ESG performance data + ICMA templates', 'Template population → regulatory compliance check → narrative generation', 'Investor-ready green bond/SLB pitch deck with full regulatory disclosure checklist')],
+    'Used by debt capital markets bankers, IR teams, ESG advisory practices, and fund managers to prepare compliant, compelling climate finance investment materials efficiently and with regulatory confidence.'
+  ),
+
+  '/tcfd-physical-risk-assessment': g(
+    'TCFD Physical Risk Assessment', 'EP-MISC', 'Platform',
+    'Comprehensive TCFD physical risk assessment covering both chronic hazards (sea level rise, heat stress, precipitation change, drought) and acute hazards (riverine flood, coastal flood, wildfire, storm surge, cyclone/typhoon). Produces Overall Risk Ratings (ORR), asset-level exposure mapping, and financial materiality quantification per TCFD recommendations.',
+    ce('Dual-Hazard Physical Risk Assessment', 'ORR = max(chronic_risk_score, acute_risk_score) × exposure_weight × financial_sensitivity', ['TCFD Technical Supplement: Physical Risks (2017)', 'IPCC AR6 WGI Physical Climate Basis', 'NGFS Physical Risk Assessment Scenarios'], 'Chronic risk scores aggregate multi-decade climate projections for temperature, precipitation, and sea level change at asset location coordinates, normalised to IPCC AR6 RCP/SSP scenario pathways. Acute risk scores use return-period loss modelling (100yr, 200yr, 1000yr events) from catastrophe model databases (JBA flood, RMS wildfire, AIR tropical cyclone). Financial materiality is estimated by multiplying hazard intensity by asset replacement value, adaptation cost discount, and insurance coverage haircut.'),
+    [
+      dp('Physical Risk ORR', '1–5 (Low to Critical)', 'max(chronic_ORR, acute_ORR) weighted by exposure', 'TCFD Technical Supplement framework', 'ORR 4-5 (High/Critical) triggers TCFD mandatory disclosure under UK TCFD rules and CSRD ESRS E1-4; requires quantitative financial impact estimate.'),
+      dp('100-Year Flood Loss (% asset value)', '0–50%', 'expected_flood_damage / asset_replacement_value × 100', 'JBA/Fathom flood model + AIR damage functions', 'Loss >5% of asset value at 100-year return period is considered material for property and infrastructure assets under TCFD guidance.'),
+      dp('Climate Financial Exposure (USD)', '0–∞', 'asset_value × hazard_intensity × vulnerability_factor × (1 − insurance_coverage)', 'Physical risk × financial model', 'Uninsured climate financial exposure is the key metric for TCFD Strategy section; aggregated to portfolio level for sector/geography heat maps.'),
+    ],
+    ['Upload asset portfolio with geolocation data', 'Select hazard types, time horizons (2030/2050/2100), and SSP scenarios', 'Review ORR heat map and individual asset risk profiles', 'Generate TCFD physical risk disclosure narrative and financial impact summary'],
+    ['TCFD Technical Supplement: Physical Risks and Opportunities (2017)', 'IPCC AR6 WGI Summary for Policymakers', 'NGFS Physical Climate Risk Assessment Methodology (2024)'],
+    [acr('ORR', 'Overall Risk Rating', 'TCFD-aligned composite physical risk score combining chronic and acute hazard exposure'), acr('SSP', 'Shared Socioeconomic Pathway', 'IPCC AR6 climate scenario framework replacing RCPs; SSP1-1.9 to SSP5-8.5 covering 1.5°C to 4°C+ warming'), acr('RCP', 'Representative Concentration Pathway', 'IPCC AR5 climate scenario framework; RCP 2.6/4.5/6.0/8.5; being replaced by SSP framework in AR6')],
+    [dl('Asset geolocation data + JBA/Fathom/RMS hazard databases + IPCC AR6 climate projections', 'Hazard overlay → vulnerability assessment → financial exposure modelling → ORR scoring', 'TCFD-compliant physical risk assessment with asset-level ORRs and financial materiality quantification')],
+    'Used by real estate investors, infrastructure funds, corporate treasury, and insurance underwriters to systematically quantify and disclose physical climate risk exposure per TCFD recommendations.'
+  ),
+
+  '/tnfd-biodiversity-baseline': g(
+    'TNFD Biodiversity Baseline Assessment', 'EP-MISC', 'Platform',
+    'TNFD LEAP (Locate, Evaluate, Assess, Prepare) process implementation for biodiversity baseline assessment. Overlays business locations with biodiversity hotspot and KBA databases, evaluates ecosystem service dependencies, assesses impact drivers (land use, pollution, climate, invasive species, overexploitation), and computes TNFD CORE disclosure metrics.',
+    ce('TNFD LEAP Biodiversity Assessment', 'nature_risk_score = exposure × dependency × impact_driver_intensity', ['TNFD Final Recommendations v1.0 (2023)', 'KBA Partnership – Key Biodiversity Areas Criteria', 'IPBES Global Biodiversity Framework – Kunming-Montreal Targets'], 'The LEAP process begins with location mapping of all operated and upstream sites against IUCN WDPA (protected areas), KBA (Key Biodiversity Areas), and IBAT (biodiversity threat database) spatial layers. Ecosystem service dependency is assessed using ENCORE (Exploring Natural Capital Opportunities, Risks, and Exposure) for each NACE sector. Impact drivers are scored using the IPBES direct driver taxonomy (land/sea use change, direct exploitation, climate change, pollution, invasive species).'),
+    [
+      dp('KBA Proximity Score', '0–100', 'assets_in_or_adjacent_to_KBA / total_assets × 100', 'KBA Partnership database + IUCN WDPA', 'Higher scores indicate greater biodiversity exposure risk; triggers enhanced disclosure obligations under TNFD and EU CSRD ESRS E4.'),
+      dp('Ecosystem Service Dependency Score', '0–100', 'weighted avg(ENCORE dependency rating across services)', 'ENCORE tool (NCFA/UNEP-WCMC)', 'Sectors with high dependency (agriculture, food, construction) face material revenue-at-risk if ecosystem services degrade; ENCORE rates 21 ecosystem services.'),
+      dp('Biodiversity Impact Driver Count', '0–5', 'COUNT(high-intensity impact drivers per site)', 'IPBES driver assessment + site data', 'Sites with 3+ high-intensity drivers require dedicated biodiversity management plans and TNFD CORE metric disclosure.'),
+    ],
+    ['Upload operational and supply chain site locations', 'Run LEAP spatial analysis against KBA/WDPA/IBAT databases', 'Assess ecosystem service dependencies using ENCORE sector mapping', 'Generate TNFD CORE metrics and biodiversity risk disclosure'],
+    ['TNFD Final Recommendations v1.0 (September 2023)', 'KBA Partnership Key Biodiversity Areas Criteria and Category Definitions', 'ENCORE Tool Methodology (NCFA / UNEP-WCMC 2021)'],
+    [acr('LEAP', 'Locate, Evaluate, Assess, Prepare', 'TNFD four-stage assessment process for nature-related risk and opportunity identification'), acr('KBA', 'Key Biodiversity Area', 'Sites contributing significantly to global persistence of biodiversity; identified using standardised IUCN criteria'), acr('ENCORE', 'Exploring Natural Capital Opportunities, Risks, and Exposure', 'NCFA/UNEP-WCMC tool mapping sector dependencies and impacts on ecosystem services')],
+    [dl('Operational site data + KBA/WDPA/IBAT spatial databases + ENCORE sector maps', 'LEAP spatial overlay → dependency scoring → impact driver assessment → CORE metrics', 'TNFD-compliant biodiversity baseline assessment with CORE disclosure metrics')],
+    'Used by corporates, financial institutions, and asset managers to implement TNFD recommendations, comply with CSRD ESRS E4, and contribute to Kunming-Montreal Global Biodiversity Framework Target 15.'
+  ),
+
+  '/biodiversity-natural-capital': g(
+    'Biodiversity & Natural Capital Accounting', 'EP-MISC', 'Platform',
+    'Advanced biodiversity and natural capital accounting analytics covering SEEA EA natural capital stock valuation, ecosystem service flow accounting (provisioning, regulating, cultural), TNFD dependency mapping, MSA footprint calculation, and biodiversity net gain (BNG) metric computation including UK 2024 mandatory BNG units.',
+    ce('Natural Capital Stock & Ecosystem Service Flow Accounting', 'NCA_value = Σ(ecosystem_service_flow_i × unit_value_i × asset_condition_discount)', ['UN SEEA Ecosystem Accounting (SEEA EA) 2021', 'TEEB (The Economics of Ecosystems and Biodiversity)', 'UK BNG Statutory Metric (Natural England 2024)'], 'Natural capital stock is valued using SEEA EA extent and condition accounts: extent (ha of each ecosystem type) × condition score × unit economic value from benefit transfer studies. Ecosystem service flows are annual benefits derived from the stock (e.g., carbon sequestration, water purification, pollination services). MSA (Mean Species Abundance) footprint is calculated per GLOBIO model: MSA_loss = Σ(pressure_type_i × area_i × MSA_loss_factor_i). UK BNG units = post-development biodiversity units − pre-development biodiversity units, using the Natural England statutory metric.'),
+    [
+      dp('Natural Capital Asset Value (USD/ha)', '100–100,000', 'Σ(service_flow_i × unit_value_i) / asset_area', 'TEEB / SEEA EA benefit transfer studies', 'Global average natural capital value ~$1,000-5,000/ha; tropical forests ~$20,000-100,000/ha when carbon, water, and biodiversity services are included.'),
+      dp('MSA Footprint (MSA.ha)', '0–∞', 'Σ(pressure_type_i × area_i × MSA_loss_factor_i)', 'GLOBIO 4.0 model + land use data', 'MSA.ha measures biodiversity footprint in terms of habitat area equivalents at pristine condition; lower is better; used for corporate biodiversity target setting.'),
+      dp('BNG Units (UK Statutory Metric)', '0–∞ units', 'post_development_units − pre_development_units', 'Natural England Statutory Biodiversity Metric 4.0 (2024)', 'Mandatory ≥10% net gain required for UK developments under Environment Act 2021 from January 2024; BNG credits can be purchased if on-site gain is insufficient.'),
+    ],
+    ['Input land use / ecosystem extent and condition data', 'Calculate natural capital asset value and ecosystem service flows', 'Compute MSA footprint for corporate biodiversity accounting', 'Generate BNG calculation for UK development projects and credit purchase plan'],
+    ['UN SEEA Ecosystem Accounting Technical Recommendations (2021)', 'GLOBIO 4.0 Model Documentation (PBL Netherlands)', 'Natural England Statutory Biodiversity Metric 4.0 (2024)', 'TEEB Foundation 2012 – Ecosystem Service Valuation'],
+    [acr('SEEA EA', 'System of Environmental-Economic Accounting – Ecosystem Accounting', 'UN statistical standard for measuring natural capital stocks and ecosystem service flows alongside GDP accounts'), acr('MSA', 'Mean Species Abundance', 'Biodiversity integrity indicator measuring average population size of original species relative to pristine conditions; used in GLOBIO model'), acr('BNG', 'Biodiversity Net Gain', 'UK mandatory requirement under Environment Act 2021 for developments to achieve at least 10% net gain in biodiversity value')],
+    [dl('Land use mapping + GLOBIO pressure data + SEEA EA extent/condition accounts', 'Natural capital stock valuation → ecosystem service flow → MSA footprint → BNG metric', 'Corporate biodiversity accounting metrics for TNFD reporting, UK BNG compliance, and natural capital investment decisions')],
+    'Used by property developers, infrastructure companies, corporates, and natural capital investors to quantify biodiversity dependencies and impacts, comply with UK BNG, and report against TNFD and CSRD ESRS E4 nature-related standards.'
+  ),
+
 };
