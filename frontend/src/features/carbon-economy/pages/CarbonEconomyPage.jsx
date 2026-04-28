@@ -413,7 +413,7 @@ export default function CarbonEconomyPage() {
         <p style={sectionSub}>Per capita emissions (tonnes CO2e/year) by country. Red dashed line = 1.5C budget (2.3t).</p>
         <div style={{ height: 420 }}>
           <ResponsiveContainer>
-            <BarChart data={COUNTRY_FOOTPRINTS.sort((a, b) => b.per_capita_t - a.per_capita_t)} margin={{ top: 10, right: 20, bottom: 60, left: 10 }}>
+            <BarChart data={[...COUNTRY_FOOTPRINTS].sort((a, b) => b.per_capita_t - a.per_capita_t)} margin={{ top: 10, right: 20, bottom: 60, left: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="country" tick={{ fontSize: 11, fill: T.textSec }} angle={-40} textAnchor="end" />
               <YAxis tick={{ fontSize: 12, fill: T.textSec }} />
@@ -573,7 +573,7 @@ export default function CarbonEconomyPage() {
             ))}</tr>
           </thead>
           <tbody>
-            {PERSONAL_ACTIONS.sort((a, b) => b.savings_t - a.savings_t).map((a, i) => (
+            {[...PERSONAL_ACTIONS].sort((a, b) => b.savings_t - a.savings_t).map((a, i) => (
               <tr key={i} style={{ background: i % 2 === 0 ? T.surfaceH : '#fff' }}>
                 <td style={{ padding: '10px 12px', fontWeight: 700, color: T.gold, fontSize: 16 }}>{i + 1}</td>
                 <td style={{ padding: '10px 12px', fontSize: 14, color: T.navy, fontWeight: 600 }}>{a.action}</td>

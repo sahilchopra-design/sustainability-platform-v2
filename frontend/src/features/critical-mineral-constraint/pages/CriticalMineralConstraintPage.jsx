@@ -113,7 +113,7 @@ export default function CriticalMineralConstraintPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Substitution Elasticity</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={MINERALS.sort((a,b)=>a.substitutionElast-b.substitutionElast)} layout="vertical">
+            <BarChart data={[...MINERALS].sort((a,b)=>a.substitutionElast-b.substitutionElast)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,1]} tick={{fontSize:11}}/><YAxis dataKey="name" type="category" tick={{fontSize:11}} width={100}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/>
               <Bar dataKey="substitutionElast" name="Elasticity (0-1)">

@@ -290,7 +290,7 @@ export default function ClimateFinanceTrackerPage(){
           <div style={{background:T.surface,borderRadius:12,border:`1px solid ${T.border}`,padding:20}}>
             <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Risk-Return Profile</div>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={PIPELINE.sort((a,b)=>b.returnPct-a.returnPct).slice(0,10)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="project" tick={{fontSize:8,fill:T.textSec}} angle={-25} textAnchor="end" height={70}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tipS}/>
+              <BarChart data={[...PIPELINE].sort((a,b)=>b.returnPct-a.returnPct).slice(0,10)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="project" tick={{fontSize:8,fill:T.textSec}} angle={-25} textAnchor="end" height={70}/><YAxis tick={{fontSize:10,fill:T.textSec}}/><Tooltip {...tipS}/>
                 <Bar dataKey="returnPct" fill={T.navy} name="Return %" radius={[4,4,0,0]}>{PIPELINE.slice(0,10).map((p,i)=><Cell key={i} fill={p.riskRating==='Low'?T.green:p.riskRating==='Medium'?T.amber:T.red}/>)}</Bar>
               </BarChart>
             </ResponsiveContainer>

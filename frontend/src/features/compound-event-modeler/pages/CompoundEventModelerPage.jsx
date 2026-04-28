@@ -143,7 +143,7 @@ export default function CompoundEventModelerPage() {
         <div style={s.card}>
           <div style={s.cardTitle}>Dependence Ratio Distribution</div>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={COMPOUND_PAIRS.sort((a, b) => b.depRatio - a.depRatio).map(p => ({ name:`${p.eventA.slice(0,5)}+${p.eventB.slice(0,5)}`, ratio: p.depRatio }))}>
+            <BarChart data={[...COMPOUND_PAIRS].sort((a, b) => b.depRatio - a.depRatio).map(p => ({ name:`${p.eventA.slice(0,5)}+${p.eventB.slice(0,5)}`, ratio: p.depRatio }))}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="name" tick={{ fontSize:9 }} />
               <YAxis tick={{ fontSize:11 }} />
@@ -318,7 +318,7 @@ export default function CompoundEventModelerPage() {
           <div style={s.card}>
             <div style={s.cardTitle}>Amplification Factors</div>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={COMPOUND_PAIRS.sort((a, b) => b.ampFactor - a.ampFactor).map(p => ({ name:`${p.eventA.slice(0,5)}+${p.eventB.slice(0,5)}`, amp: p.ampFactor }))}>
+              <BarChart data={[...COMPOUND_PAIRS].sort((a, b) => b.ampFactor - a.ampFactor).map(p => ({ name:`${p.eventA.slice(0,5)}+${p.eventB.slice(0,5)}`, amp: p.ampFactor }))}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize:9 }} />
                 <YAxis domain={[1, 3.5]} tick={{ fontSize:11 }} />
@@ -380,7 +380,7 @@ export default function CompoundEventModelerPage() {
           <div style={s.card}>
             <div style={s.cardTitle}>Amplification Factors — Historical</div>
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={HISTORICAL_COMPOUND.sort((a, b) => b.ampFact - a.ampFact)}>
+              <BarChart data={[...HISTORICAL_COMPOUND].sort((a, b) => b.ampFact - a.ampFact)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="event" tick={{ fontSize:9 }} />
                 <YAxis domain={[1, 3.5]} tick={{ fontSize:11 }} />

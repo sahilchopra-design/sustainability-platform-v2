@@ -115,7 +115,7 @@ export default function TradeCarbonPolicyPage(){
   },[]);
 
   const virtualCarbonBalance=useMemo(()=>{
-    return COUNTRY_POLICIES.sort((a,b)=>b.virtualCarbonBalance-a.virtualCarbonBalance).slice(0,20).map(c=>({
+    return [...COUNTRY_POLICIES].sort((a,b)=>b.virtualCarbonBalance-a.virtualCarbonBalance).slice(0,20).map(c=>({
       country:c.country,balance:c.virtualCarbonBalance,embeddedMn:c.embeddedCO2Mn
     }));
   },[]);
@@ -252,13 +252,13 @@ export default function TradeCarbonPolicyPage(){
         <div style={sty.card}>
           <div style={sty.cardTitle}>Carbon Price by Country (Top 20)</div>
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={COUNTRY_POLICIES.sort((a,b)=>b.carbonPrice-a.carbonPrice).slice(0,20)}>
+            <BarChart data={[...COUNTRY_POLICIES].sort((a,b)=>b.carbonPrice-a.carbonPrice).slice(0,20)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis dataKey="country" tick={{fontSize:9,fill:T.textSec}} angle={-35} textAnchor="end" height={50}/>
               <YAxis tick={{fontSize:10,fill:T.textSec}} label={{value:'\u20AC/tCO2',position:'insideTopLeft',fontSize:9}}/>
               <Tooltip formatter={v=>`\u20AC${v}`} contentStyle={{fontSize:11,borderRadius:8}}/>
               <Bar dataKey="carbonPrice" name="Carbon Price" radius={[4,4,0,0]}>
-                {COUNTRY_POLICIES.sort((a,b)=>b.carbonPrice-a.carbonPrice).slice(0,20).map((e,i)=>(<Cell key={i} fill={e.carbonPrice>80?T.navy:e.carbonPrice>30?T.gold:T.textMut}/>))}
+                {[...COUNTRY_POLICIES].sort((a,b)=>b.carbonPrice-a.carbonPrice).slice(0,20).map((e,i)=>(<Cell key={i} fill={e.carbonPrice>80?T.navy:e.carbonPrice>30?T.gold:T.textMut}/>))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -347,7 +347,7 @@ export default function TradeCarbonPolicyPage(){
         <div style={{maxHeight:'400px',overflowY:'auto'}}>
           <table style={sty.table}>
             <thead><tr><th style={sty.th}>From</th><th style={sty.th}>To</th><th style={sty.th}>Sector</th><th style={sty.th}>Trade $Bn</th><th style={sty.th}>Intensity</th><th style={sty.th}>Embedded Mt</th><th style={sty.th}>CBAM \u20ACM</th></tr></thead>
-            <tbody>{TRADE_FLOWS.sort((a,b)=>parseFloat(b.cbamLiability)-parseFloat(a.cbamLiability)).map((f,i)=>(
+            <tbody>{[...TRADE_FLOWS].sort((a,b)=>parseFloat(b.cbamLiability)-parseFloat(a.cbamLiability)).map((f,i)=>(
               <tr key={i} style={{background:i%2===0?'transparent':T.surfaceH}}>
                 <td style={{...sty.td,fontWeight:600}}>{f.from}</td><td style={sty.td}>{f.to}</td><td style={sty.td}>{f.sector}</td>
                 <td style={{...sty.td,...sty.mono}}>${f.tradeBn}B</td>

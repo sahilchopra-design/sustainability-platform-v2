@@ -408,7 +408,7 @@ export default function CreditIntegrityDDPage() {
                 </tr>
               </thead>
               <tbody>
-                {GREENWASH_FLAGS.sort((a, b) => b.frequency - a.frequency).map((f, i) => (
+                {[...GREENWASH_FLAGS].sort((a, b) => b.frequency - a.frequency).map((f, i) => (
                   <tr key={f.flag} style={{ background: i % 2 === 0 ? '#faf9f7' : '#fff' }}>
                     <td style={{ padding: '8px 14px', fontWeight: 600 }}>{f.flag}</td>
                     <td style={{ padding: '8px 14px', fontSize: 12, color: T.purple }}>{f.type}</td>

@@ -126,7 +126,7 @@ export default function EnsemblePredictionEnginePage() {
           {['XGBoost','LightGBM','Neural MLP','Ensemble RMSE','Rank'].map(h => <th key={h} style={{textAlign:'left',padding:'8px 12px',color:T.textSec,fontWeight:600}}>{h}</th>)}
         </tr></thead>
         <tbody>
-          {WEIGHT_GRID.sort((a,b)=>a.rmse-b.rmse).map((w,i) => (
+          {[...WEIGHT_GRID].sort((a,b)=>a.rmse-b.rmse).map((w,i) => (
             <tr key={i} style={{borderBottom:`1px solid ${T.border}`,background:i===0?`${T.green}06`:'transparent'}}>
               <td style={{padding:'8px 12px',fontFamily:T.mono}}>{w.xgb}</td>
               <td style={{padding:'8px 12px',fontFamily:T.mono}}>{w.lgbm}</td>

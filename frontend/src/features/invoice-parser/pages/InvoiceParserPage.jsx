@@ -685,7 +685,7 @@ export default function InvoiceParserPage() {
           These are the products the parser can automatically detect and assign carbon values to.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 8 }}>
-          {KEYWORD_LIST.sort().map(kw => {
+          {[...KEYWORD_LIST].sort().map(kw => {
             const d = RECEIPT_KEYWORDS[kw];
             return (
               <div key={kw} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', borderRadius: 6, background: T.surfaceH, fontSize: 12 }}>

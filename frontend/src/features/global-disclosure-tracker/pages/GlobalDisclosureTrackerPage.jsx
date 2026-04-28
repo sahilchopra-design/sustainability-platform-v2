@@ -118,9 +118,9 @@ export default function GlobalDisclosureTrackerPage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Unique Requirements per Jurisdiction (Gap)</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={JURISDICTIONS.sort((a,b)=>b.uniqueReqs-a.uniqueReqs)}>
+            <BarChart data={[...JURISDICTIONS].sort((a,b)=>b.uniqueReqs-a.uniqueReqs)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="code" tick={{ fontSize:11, fontFamily:T.mono }}/><YAxis tick={{ fontSize:11, fontFamily:T.mono }}/><Tooltip/>
-              <Bar dataKey="uniqueReqs" name="Unique Reqs">{JURISDICTIONS.sort((a,b)=>b.uniqueReqs-a.uniqueReqs).map((j,i)=><Cell key={i} fill={j.uniqueReqs>=5?T.red:j.uniqueReqs>=3?T.amber:T.green}/>)}</Bar>
+              <Bar dataKey="uniqueReqs" name="Unique Reqs">{[...JURISDICTIONS].sort((a,b)=>b.uniqueReqs-a.uniqueReqs).map((j,i)=><Cell key={i} fill={j.uniqueReqs>=5?T.red:j.uniqueReqs>=3?T.amber:T.green}/>)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -145,9 +145,9 @@ export default function GlobalDisclosureTrackerPage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Overlap % with Other Jurisdictions</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={JURISDICTIONS.sort((a,b)=>b.overlap-a.overlap)}>
+            <BarChart data={[...JURISDICTIONS].sort((a,b)=>b.overlap-a.overlap)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="code" tick={{ fontSize:11, fontFamily:T.mono }}/><YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0,100]}/><Tooltip/>
-              <Bar dataKey="overlap" name="Overlap %">{JURISDICTIONS.sort((a,b)=>b.overlap-a.overlap).map((j,i)=><Cell key={i} fill={j.overlap>=70?T.green:j.overlap>=55?T.gold:T.amber}/>)}</Bar>
+              <Bar dataKey="overlap" name="Overlap %">{[...JURISDICTIONS].sort((a,b)=>b.overlap-a.overlap).map((j,i)=><Cell key={i} fill={j.overlap>=70?T.green:j.overlap>=55?T.gold:T.amber}/>)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -157,9 +157,9 @@ export default function GlobalDisclosureTrackerPage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Estimated Annual Compliance Cost ($K USD)</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={JURISDICTIONS.sort((a,b)=>b.costEstKUsd-a.costEstKUsd)}>
+            <BarChart data={[...JURISDICTIONS].sort((a,b)=>b.costEstKUsd-a.costEstKUsd)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="code" tick={{ fontSize:11, fontFamily:T.mono }}/><YAxis tick={{ fontSize:11, fontFamily:T.mono }}/><Tooltip formatter={v=>'$'+v+'K'}/>
-              <Bar dataKey="costEstKUsd" name="Cost ($K)">{JURISDICTIONS.sort((a,b)=>b.costEstKUsd-a.costEstKUsd).map((j,i)=><Cell key={i} fill={j.costEstKUsd>=300?T.red:j.costEstKUsd>=200?T.amber:T.green}/>)}</Bar>
+              <Bar dataKey="costEstKUsd" name="Cost ($K)">{[...JURISDICTIONS].sort((a,b)=>b.costEstKUsd-a.costEstKUsd).map((j,i)=><Cell key={i} fill={j.costEstKUsd>=300?T.red:j.costEstKUsd>=200?T.amber:T.green}/>)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

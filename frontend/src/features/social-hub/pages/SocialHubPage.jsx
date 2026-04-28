@@ -446,13 +446,13 @@ export default function SocialHubPage() {
             <Section title="Country Social Risk" sub="aggregate risk by country of operations">
               <Card>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={COUNTRY_RISK.sort((a, b) => b.riskScore - a.riskScore)} layout="vertical">
+                  <BarChart data={[...COUNTRY_RISK].sort((a, b) => b.riskScore - a.riskScore)} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                     <XAxis type="number" domain={[0, 80]} tick={{ fontSize: 11, fill: T.textSec }} />
                     <YAxis type="category" dataKey="country" tick={{ fontSize: 11, fill: T.textSec }} width={100} />
                     <Tooltip contentStyle={{ borderRadius: 8, fontFamily: T.font }} />
                     <Bar dataKey="riskScore" name="Social Risk Score" radius={[0, 6, 6, 0]}>
-                      {COUNTRY_RISK.sort((a, b) => b.riskScore - a.riskScore).map((c, i) => <Cell key={i} fill={getRiskColor(c.riskScore)} />)}
+                      {[...COUNTRY_RISK].sort((a, b) => b.riskScore - a.riskScore).map((c, i) => <Cell key={i} fill={getRiskColor(c.riskScore)} />)}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>

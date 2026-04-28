@@ -86,7 +86,7 @@ const STATUS_DIST=[
   {code:'500',count:Math.floor(sr(1013)*3000+200),color:'#8b5cf6'},
 ];
 
-const TOP_ENDPOINTS=ENDPOINTS.sort((a,b)=>b.calls24h-a.calls24h).slice(0,20);
+const TOP_ENDPOINTS=[...ENDPOINTS].sort((a,b)=>b.calls24h-a.calls24h).slice(0,20);
 
 const GEO_DIST=[
   {region:'North America',pct:42,requests:'1.2M'},
@@ -468,9 +468,9 @@ export default function ApiGatewayMonitorPage(){
         <div style={ss.card}>
           <div style={{fontSize:13,fontWeight:700,marginBottom:12}}>Quota Usage by Client</div>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={CLIENT_USAGE.sort((a,b)=>b.quotaUsed-a.quotaUsed).slice(0,10).map(c=>({name:c.name.slice(0,12),usage:c.quotaUsed}))}>
+            <BarChart data={[...CLIENT_USAGE].sort((a,b)=>b.quotaUsed-a.quotaUsed).slice(0,10).map(c=>({name:c.name.slice(0,12),usage:c.quotaUsed}))}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis dataKey="name" tick={{fontSize:9,fill:T.textSec}} angle={-30} textAnchor="end" height={60}/><YAxis domain={[0,100]} tick={{fontSize:10,fill:T.textSec}} tickFormatter={v=>`${v}%`}/><Tooltip {...tip}/>
-              <Bar dataKey="usage" radius={[4,4,0,0]}>{CLIENT_USAGE.sort((a,b)=>b.quotaUsed-a.quotaUsed).slice(0,10).map((c,i)=><Cell key={i} fill={c.quotaUsed>80?T.red:c.quotaUsed>60?T.amber:T.green}/>)}</Bar>
+              <Bar dataKey="usage" radius={[4,4,0,0]}>{[...CLIENT_USAGE].sort((a,b)=>b.quotaUsed-a.quotaUsed).slice(0,10).map((c,i)=><Cell key={i} fill={c.quotaUsed>80?T.red:c.quotaUsed>60?T.amber:T.green}/>)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

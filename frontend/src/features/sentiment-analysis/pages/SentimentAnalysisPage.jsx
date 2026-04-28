@@ -542,7 +542,7 @@ function TabTopicModeling() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
         <Kpi label="Total Topics (LDA)" value="20" sub="Optimal k via coherence" accent={T.indigo} />
         <Kpi label="Avg Coherence (Cv)" value={TOPICS.reduce((a, t) => a + t.coherence, 0) > 0 ? (TOPICS.reduce((a, t) => a + t.coherence, 0) / Math.max(1, TOPICS.length)).toFixed(3) : '0.000'} sub="Target > 0.55" accent={T.teal} />
-        <Kpi label="Top Topic Prevalence" value={`${(Math.max(...TOPICS.map(t => t.prevalence)) * 100).toFixed(1)}%`} sub={TOPICS.sort((a, b) => b.prevalence - a.prevalence)[0].name.split(' ').slice(0, 3).join(' ')} accent={T.gold} />
+        <Kpi label="Top Topic Prevalence" value={`${(Math.max(...TOPICS.map(t => t.prevalence)) * 100).toFixed(1)}%`} sub={[...TOPICS].sort((a, b) => b.prevalence - a.prevalence)[0].name.split(' ').slice(0, 3).join(' ')} accent={T.gold} />
         <Kpi label="Max Topic Drift" value={`${(Math.max(...TOPICS.map(t => Math.abs(t.drift))) * 100).toFixed(1)}pp`} sub="Monthly weight shift" accent={T.amber} />
       </div>
 

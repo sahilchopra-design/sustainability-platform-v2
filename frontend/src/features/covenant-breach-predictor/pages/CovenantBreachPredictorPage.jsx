@@ -91,7 +91,7 @@ export default function CovenantBreachPredictorPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Breach Probability Dashboard</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={BORROWERS.sort((a,b)=>b[`breachProb_${sk}`]-a[`breachProb_${sk}`])} layout="vertical">
+            <BarChart data={[...BORROWERS].sort((a,b)=>b[`breachProb_${sk}`]-a[`breachProb_${sk}`])} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,100]} tick={{fontSize:11}} tickFormatter={v=>`${v}%`}/><YAxis dataKey="name" type="category" tick={{fontSize:10}} width={130}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/><ReferenceLine x={50} stroke={T.red} strokeDasharray="5 5"/>
               <Bar dataKey={`breachProb_${sk}`} name="Breach Probability">

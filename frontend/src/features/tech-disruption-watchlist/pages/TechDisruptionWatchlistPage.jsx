@@ -155,7 +155,7 @@ export default function TechDisruptionWatchlistPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Cost Crossover Countdown</h3>
           <ResponsiveContainer width="100%" height={380}>
-            <BarChart data={DISRUPTIONS.sort((a,b)=>a.yearsToCrossover-b.yearsToCrossover)} layout="vertical">
+            <BarChart data={[...DISRUPTIONS].sort((a,b)=>a.yearsToCrossover-b.yearsToCrossover)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,16]} tick={{fontSize:11}} label={{value:'Years to Cost Crossover',position:'insideBottom',offset:-5}}/><YAxis dataKey="name" type="category" tick={{fontSize:10}} width={180}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/>
               <Bar dataKey="yearsToCrossover" name="Years">{DISRUPTIONS.map((d,i)=><Cell key={i} fill={d.yearsToCrossover<=3?T.green:d.yearsToCrossover<=5?T.amber:d.yearsToCrossover<=8?T.orange:T.red}/>)}</Bar>
@@ -169,7 +169,7 @@ export default function TechDisruptionWatchlistPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Adoption Tipping Points</h3>
           <ResponsiveContainer width="100%" height={320}>
-            <ComposedChart data={DISRUPTIONS.sort((a,b)=>a.tippingPoint-b.tippingPoint).slice(0,10)}>
+            <ComposedChart data={[...DISRUPTIONS].sort((a,b)=>a.tippingPoint-b.tippingPoint).slice(0,10)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:9}} angle={-15}/><YAxis yAxisId="left" tick={{fontSize:11}}/><YAxis yAxisId="right" orientation="right" domain={[0,20]} tick={{fontSize:11}}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/><Legend/>
               <Bar yAxisId="left" dataKey="tippingPoint" name="Tipping Point Year">{DISRUPTIONS.slice(0,10).map((d,i)=><Cell key={i} fill={d.color}/>)}</Bar>

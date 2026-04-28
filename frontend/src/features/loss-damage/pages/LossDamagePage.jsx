@@ -84,7 +84,7 @@ export default function LossDamagePage(){
       <Row cols="1fr 1fr">
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
           <div style={{fontWeight:600,fontSize:13,color:T.text,marginBottom:8}}>Donor Commitments (Top 18)</div>
-          <ResponsiveContainer width="100%" height={350}><BarChart data={FUND_COMMITMENTS.sort((a,b)=>b.pledged-a.pledged)} layout="vertical" margin={{left:80}}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textSec}} label={{value:'$M',position:'bottom',fontSize:11}}/><YAxis type="category" dataKey="donor" tick={{fontSize:10,fill:T.textSec}} width={75}/><Tooltip contentStyle={{fontSize:12,fontFamily:T.font}}/><Legend/><Bar dataKey="pledged" fill={T.navy} name="Pledged ($M)" radius={[0,3,3,0]}/><Bar dataKey="disbursed" fill={T.green} name="Disbursed ($M)" radius={[0,3,3,0]}/></BarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={350}><BarChart data={[...FUND_COMMITMENTS].sort((a,b)=>b.pledged-a.pledged)} layout="vertical" margin={{left:80}}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textSec}} label={{value:'$M',position:'bottom',fontSize:11}}/><YAxis type="category" dataKey="donor" tick={{fontSize:10,fill:T.textSec}} width={75}/><Tooltip contentStyle={{fontSize:12,fontFamily:T.font}}/><Legend/><Bar dataKey="pledged" fill={T.navy} name="Pledged ($M)" radius={[0,3,3,0]}/><Bar dataKey="disbursed" fill={T.green} name="Disbursed ($M)" radius={[0,3,3,0]}/></BarChart></ResponsiveContainer>
         </div>
         <div>
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16,marginBottom:12}}>
@@ -94,7 +94,7 @@ export default function LossDamagePage(){
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:16}}>
             <div style={{fontWeight:600,fontSize:13,color:T.text,marginBottom:8}}>Disbursement Rate by Donor</div>
             <div style={{maxHeight:200,overflowY:'auto'}}>
-              {FUND_COMMITMENTS.sort((a,b)=>(b.disbursed/b.pledged)-(a.disbursed/a.pledged)).map((f,i)=>{const pct=Math.round(f.disbursed/f.pledged*100);return<div key={i} style={{padding:'6px 0',borderBottom:`1px solid ${T.border}`}}>
+              {[...FUND_COMMITMENTS].sort((a,b)=>(b.disbursed/b.pledged)-(a.disbursed/a.pledged)).map((f,i)=>{const pct=Math.round(f.disbursed/f.pledged*100);return<div key={i} style={{padding:'6px 0',borderBottom:`1px solid ${T.border}`}}>
                 <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}><span style={{fontWeight:500}}>{f.donor}</span><span style={{fontFamily:T.mono,color:pct>50?T.green:T.red}}>{pct}%</span></div>
                 <div style={{width:'100%',height:5,background:T.border,borderRadius:3}}><div style={{width:`${pct}%`,height:5,background:pct>50?T.green:pct>25?T.amber:T.red,borderRadius:3}}/></div>
               </div>;})}

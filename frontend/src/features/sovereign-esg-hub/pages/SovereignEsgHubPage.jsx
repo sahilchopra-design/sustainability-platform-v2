@@ -507,7 +507,7 @@ export default function SovereignEsgHubPage() {
             <div style={S.card}>
               <SectionHeader title="Portfolio Positions — ESG Score vs Physical Risk by Weight" />
               <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart data={PORTFOLIO.sort((a,b)=>b.weightPct-a.weightPct)} margin={{ top:5, right:20, bottom:30, left:-10 }}>
+                <ComposedChart data={[...PORTFOLIO].sort((a,b)=>b.weightPct-a.weightPct)} margin={{ top:5, right:20, bottom:30, left:-10 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5ddd0" />
                   <XAxis dataKey="country" tick={{ fontFamily:T.mono, fontSize:9, angle:-35, textAnchor:"end" }} />
                   <YAxis yAxisId="left"  tick={{ fontFamily:T.mono, fontSize:9 }} />

@@ -597,7 +597,7 @@ export default function LivingWagePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {LIVING_WAGE_BY_COUNTRY.sort((a, b) => b.gap_pct - a.gap_pct).map((c, i) => {
+                  {[...LIVING_WAGE_BY_COUNTRY].sort((a, b) => b.gap_pct - a.gap_pct).map((c, i) => {
                     const holdingsHere = wageData.filter(h => h.countryCode === c.iso2);
                     const portWt = holdingsHere.reduce((s, h) => s + (h.weight || h.portfolio_weight || 0), 0);
                     return (

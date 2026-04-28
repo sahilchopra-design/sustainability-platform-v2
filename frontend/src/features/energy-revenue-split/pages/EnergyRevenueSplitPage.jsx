@@ -196,7 +196,7 @@ export default function EnergyRevenueSplitPage() {
               ))}
             </tr></thead>
             <tbody>
-              {PEERS.sort((a,b) => b.green_capex_pct - a.green_capex_pct).map(p => (
+              {[...PEERS].sort((a,b) => b.green_capex_pct - a.green_capex_pct).map(p => (
                 <tr key={p.name} style={{ borderBottom: `1px solid ${T.border}`, background: p.name.includes('Demo') ? '#fffff5' : 'transparent' }}>
                   <td style={{ padding: '6px 10px', fontWeight: p.name.includes('Demo') ? 800 : 500 }}>{p.name}</td>
                   <td style={{ padding: '6px 10px', textAlign: 'right', fontFamily: T.mono }}>{p.green_rev_pct}%</td>

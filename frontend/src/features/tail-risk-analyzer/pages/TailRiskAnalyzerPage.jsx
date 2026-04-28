@@ -368,7 +368,7 @@ export default function TailRiskAnalyzerPage() {
                 <thead><tr style={{ borderBottom: `2px solid ${T.border}` }}>
                   {['Sector', 'Marginal ES', 'Component ES', 'Systemic Contrib', 'Rank'].map(h => <th key={h} style={{ padding: 8, textAlign: 'right', color: T.navy }}>{h}</th>)}
                 </tr></thead>
-                <tbody>{SYSTEMIC_CONTRIB.sort((a, b) => b.systemic - a.systemic).map((r, i) => (
+                <tbody>{[...SYSTEMIC_CONTRIB].sort((a, b) => b.systemic - a.systemic).map((r, i) => (
                   <tr key={r.sector} style={{ borderBottom: `1px solid ${T.border}` }}>
                     <td style={{ padding: 8, textAlign: 'left', fontWeight: 600 }}>{r.sector}</td>
                     <td style={{ padding: 8, textAlign: 'right', fontFamily: T.mono }}>{r.margES}%</td>

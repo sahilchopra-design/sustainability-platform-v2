@@ -364,7 +364,7 @@ export default function SupplyChainContagionPage() {
           <div style={s.card}>
             <div style={s.cardTitle}>Cumulative Risk Reduction</div>
             <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={MITIGATIONS.sort((a, b) => b.riskReduction - a.riskReduction).reduce((acc, m, i) => {
+              <LineChart data={[...MITIGATIONS].sort((a, b) => b.riskReduction - a.riskReduction).reduce((acc, m, i) => {
                 const prev = i > 0 ? acc[i - 1].cumulative : 0;
                 acc.push({ name: m.strategy.slice(0, 20), cumulative: Math.min(100, prev + m.riskReduction) });
                 return acc;

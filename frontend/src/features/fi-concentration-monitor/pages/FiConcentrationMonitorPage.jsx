@@ -200,7 +200,7 @@ export default function FiConcentrationMonitorPage() {
         {tab === TABS[2] && (
           <Card title="Geographic Concentration Limits">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={COUNTRY_LIMITS.sort((a, b) => b.utilPct - a.utilPct)}>
+              <BarChart data={[...COUNTRY_LIMITS].sort((a, b) => b.utilPct - a.utilPct)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="code" tick={{ fontFamily: T.mono, fontSize: 11 }} />
                 <YAxis domain={[0, 110]} tick={{ fontFamily: T.mono, fontSize: 11 }} />
@@ -208,7 +208,7 @@ export default function FiConcentrationMonitorPage() {
                 <ReferenceLine y={95} stroke={T.red} strokeDasharray="5 5" label="Red" />
                 <ReferenceLine y={80} stroke={T.amber} strokeDasharray="5 5" label="Amber" />
                 <Bar dataKey="utilPct" name="Utilization %" radius={[4, 4, 0, 0]}>
-                  {COUNTRY_LIMITS.sort((a, b) => b.utilPct - a.utilPct).map((c, i) => {
+                  {[...COUNTRY_LIMITS].sort((a, b) => b.utilPct - a.utilPct).map((c, i) => {
                     const tl = trafficLight(c.utilPct);
                     return <Cell key={i} fill={tl.color} />;
                   })}
@@ -232,7 +232,7 @@ export default function FiConcentrationMonitorPage() {
                 </tr>
               </thead>
               <tbody>
-                {SINGLE_NAME.sort((a, b) => b.utilPct - a.utilPct).map((s, i) => { const tl = trafficLight(s.utilPct); return (
+                {[...SINGLE_NAME].sort((a, b) => b.utilPct - a.utilPct).map((s, i) => { const tl = trafficLight(s.utilPct); return (
                   <tr key={i} style={{ borderBottom: `1px solid ${T.border}`, background: s.utilPct > 95 ? '#fee2e2' : 'transparent' }}>
                     <td style={{ padding: 6, fontWeight: 600 }}>{s.name}</td>
                     <td style={{ padding: 6, textAlign: 'right', fontFamily: T.mono }}>{s.limit}</td>

@@ -337,7 +337,7 @@ export default function ClimateRiskMigrationPage() {
           <div style={s.card}>
             <div style={s.cardTitle}>Price Change by Region</div>
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={RE_IMPACTS.sort((a, b) => a.priceChange - b.priceChange)} layout="vertical">
+              <BarChart data={[...RE_IMPACTS].sort((a, b) => a.priceChange - b.priceChange)} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis type="number" tick={{ fontSize:11 }} />
                 <YAxis dataKey="region" type="category" width={110} tick={{ fontSize:10 }} />

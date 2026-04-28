@@ -558,7 +558,7 @@ export default function DecarbonisationRoadmapPage() {
             <div style={cS}>
               <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 8 }}>ROI on Decarbonisation CAPEX (%)</div>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={INVESTMENT_DATA.sort((a, b) => b.roi - a.roi)} layout="vertical">
+                <BarChart data={[...INVESTMENT_DATA].sort((a, b) => b.roi - a.roi)} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis type="number" tick={{ fontSize: 9, fill: T.textSec }} />
                   <YAxis type="category" dataKey="sector" tick={{ fontSize: 9, fill: T.textSec }} width={80} />

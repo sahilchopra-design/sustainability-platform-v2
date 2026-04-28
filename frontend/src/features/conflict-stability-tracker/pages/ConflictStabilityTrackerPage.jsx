@@ -188,7 +188,7 @@ export default function ConflictStabilityTrackerPage() {
               ))}
             </tr></thead>
             <tbody>
-              {ASSET_PROXIMITY.sort((a,b) => {const o = {CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3}; return o[a.risk] - o[b.risk]; }).map(a => (
+              {[...ASSET_PROXIMITY].sort((a,b) => {const o = {CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3}; return o[a.risk] - o[b.risk]; }).map(a => (
                 <tr key={a.asset} style={{ borderBottom: `1px solid ${T.border}`, background: a.risk === 'CRITICAL' ? '#fef2f2' : 'transparent' }}>
                   <td style={{ padding: '6px 10px', fontWeight: 600 }}>{a.asset}</td>
                   <td style={{ padding: '6px 10px' }}>{a.country}</td>
@@ -212,7 +212,7 @@ export default function ConflictStabilityTrackerPage() {
               ))}
             </tr></thead>
             <tbody>
-              {HOTSPOTS.sort((a,b) => b.coup_risk - a.coup_risk).map(h => (
+              {[...HOTSPOTS].sort((a,b) => b.coup_risk - a.coup_risk).map(h => (
                 <tr key={h.country} style={{ borderBottom: `1px solid ${T.border}` }}>
                   <td style={{ padding: '6px 10px', fontWeight: 600 }}>{h.country}</td>
                   <td style={{ padding: '6px 10px', fontFamily: T.mono, color: h.coup_risk > 30 ? T.red : h.coup_risk > 15 ? T.amber : T.green, fontWeight: 700 }}>{h.coup_risk}%</td>

@@ -197,7 +197,7 @@ export default function JustTransitionPage() {
 
   /* transition fund chart */
   const fundChartData = useMemo(() =>
-    TRANSITION_FUNDS.sort((a, b) => b.amount_bn - a.amount_bn).map(f => ({ name: f.name.length > 25 ? f.name.slice(0, 22) + '...' : f.name, amount: f.amount_bn, region: f.region })),
+    [...TRANSITION_FUNDS].sort((a, b) => b.amount_bn - a.amount_bn).map(f => ({ name: f.name.length > 25 ? f.name.slice(0, 22) + '...' : f.name, amount: f.amount_bn, region: f.region })),
   []);
 
   /* social dialogue assessment */

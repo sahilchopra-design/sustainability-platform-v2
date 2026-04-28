@@ -99,7 +99,7 @@ export default function StrandedRecoveryPathwaysPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Conversion CapEx by Pathway</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={PATHWAYS.sort((a,b)=>b.capex-a.capex)} layout="vertical">
+            <BarChart data={[...PATHWAYS].sort((a,b)=>b.capex-a.capex)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:11}} tickFormatter={v=>`$${v}M`}/><YAxis dataKey="to" type="category" tick={{fontSize:10}} width={160}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/><Bar dataKey="capex" name="CapEx ($M)">
                 {PATHWAYS.map((p,i)=><Cell key={i} fill={p.capex>300?T.red:p.capex>150?T.orange:T.green}/>)}
@@ -113,7 +113,7 @@ export default function StrandedRecoveryPathwaysPage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>IRR on Repurposing</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <ComposedChart data={PATHWAYS.sort((a,b)=>b.irr-a.irr)}>
+            <ComposedChart data={[...PATHWAYS].sort((a,b)=>b.irr-a.irr)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="to" tick={{fontSize:9}} angle={-20}/><YAxis tick={{fontSize:11}}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/><Legend/>
               <Bar dataKey="irr" name="IRR %" fill={T.green}/>

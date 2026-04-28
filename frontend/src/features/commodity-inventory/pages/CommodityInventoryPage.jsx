@@ -1859,7 +1859,7 @@ export default function CommodityInventoryPage(){
                   {['Commodity','Traceability','Certification','Transparency','Digitization','Resilience','Score'].map(h=><th key={h} style={{padding:'8px 6px',fontSize:10,fontWeight:700,color:T.textMut,textTransform:'uppercase',borderBottom:`2px solid ${T.border}`,textAlign:h==='Commodity'?'left':'center'}}>{h}</th>)}
                 </tr></thead>
                 <tbody>
-                  {SC_MATURITY.sort((a,b)=>b.maturity_score-a.maturity_score).map((m,i)=>{
+                  {[...SC_MATURITY].sort((a,b)=>b.maturity_score-a.maturity_score).map((m,i)=>{
                     const levelColor=l=>l.includes('High')||l.includes('Very')||l.includes('Advanced')?T.green:l.includes('Medium')||l.includes('Moderate')||l.includes('Emerging')?T.amber:T.red;
                     return(
                       <tr key={i}>

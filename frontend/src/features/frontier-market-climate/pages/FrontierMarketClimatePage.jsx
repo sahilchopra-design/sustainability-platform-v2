@@ -443,7 +443,7 @@ export default function FrontierMarketClimatePage() {
               <div style={card}>
                 <h3 style={{ margin: '0 0 12px', color: T.navy, fontSize: 15 }}>Growth Rate by Sector (%/yr)</h3>
                 <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={BLUE_ECONOMY.sort((a, b) => b.growth - a.growth)}>
+                  <BarChart data={[...BLUE_ECONOMY].sort((a, b) => b.growth - a.growth)}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                     <XAxis dataKey="sector" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={60} />
                     <YAxis tick={{ fontSize: 11 }} />

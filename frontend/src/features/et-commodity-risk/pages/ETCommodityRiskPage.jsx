@@ -160,7 +160,7 @@ export default function ETCommodityRiskPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {PORTFOLIO.sort((a, b) => b.total_mineral_exposure - a.total_mineral_exposure).map((p, i) => (
+                  {[...PORTFOLIO].sort((a, b) => b.total_mineral_exposure - a.total_mineral_exposure).map((p, i) => (
                     <tr key={p.name} style={{ background: i % 2 === 0 ? '#faf9f7' : '#fff' }}>
                       <td style={{ padding: '7px 10px', fontWeight: 700, color: T.navy, whiteSpace: 'nowrap' }}>{p.name}</td>
                       <td style={{ padding: '7px 10px', fontSize: 11, color: T.purple }}>{p.sector}</td>

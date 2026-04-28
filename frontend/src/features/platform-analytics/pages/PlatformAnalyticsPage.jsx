@@ -292,7 +292,7 @@ export default function PlatformAnalyticsPage() {
                 </tr>
               </thead>
               <tbody>
-                {API_ENDPOINTS.sort((a,b)=>b.calls-a.calls).map((e, i) => (
+                {[...API_ENDPOINTS].sort((a,b)=>b.calls-a.calls).map((e, i) => (
                   <tr key={e.endpoint} style={{ background: i % 2 === 0 ? '#fff' : T.cream + '80',
                     borderBottom: `1px solid ${T.navy}11` }}>
                     <td style={{ padding: '9px 12px', fontFamily: T.mono, fontSize: 10, color: T.teal }}>{e.endpoint}</td>
@@ -317,14 +317,14 @@ export default function PlatformAnalyticsPage() {
           <div style={{ background: '#fff', borderRadius: 10, border: `1px solid ${T.navy}22`, padding: 16 }}>
             <div style={{ fontWeight: 700, color: T.navy, marginBottom: 12 }}>P95 Latency by Endpoint</div>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={API_ENDPOINTS.sort((a,b)=>b.p95-a.p95)} layout="vertical" margin={{ left: 260 }}>
+              <BarChart data={[...API_ENDPOINTS].sort((a,b)=>b.p95-a.p95)} layout="vertical" margin={{ left: 260 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                 <XAxis type="number" tick={{ fontSize: 10 }} />
                 <YAxis type="category" dataKey="endpoint" tick={{ fontSize: 9, fontFamily: T.mono }} width={260} />
                 <Tooltip formatter={v=>[v+'ms','P95']} />
                 <ReferenceLine x={500} stroke={T.amber} strokeDasharray="4 2" />
                 <Bar dataKey="p95" radius={[0,3,3,0]}>
-                  {API_ENDPOINTS.sort((a,b)=>b.p95-a.p95).map((e,i) => (
+                  {[...API_ENDPOINTS].sort((a,b)=>b.p95-a.p95).map((e,i) => (
                     <Cell key={i} fill={e.p95 > 500 ? T.amber : T.teal} />
                   ))}
                 </Bar>
