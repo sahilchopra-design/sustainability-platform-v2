@@ -812,6 +812,27 @@ const SustainabilityLinkedFinancePage     = React.lazy(() => import("./features/
 const EsgRatingsUpliftPage                = React.lazy(() => import("./features/esg-ratings-uplift/pages/EsgRatingsUpliftPage"));
 const TcfdPhysicalRiskAssessmentPage      = React.lazy(() => import("./features/tcfd-physical-risk-assessment/pages/TcfdPhysicalRiskAssessmentPage"));
 const TnfdBiodiversityBaselinePage        = React.lazy(() => import("./features/tnfd-biodiversity-baseline/pages/TnfdBiodiversityBaselinePage"));
+// Sprint EC — Solar Energy Finance Suite
+const BifacialAgrivoltaicFinancePage      = React.lazy(() => import("./features/bifacial-agrivoltaic-finance/pages/BifacialAgrivoltaicFinancePage"));
+const FloatingSolarFinancePage            = React.lazy(() => import("./features/floating-solar-finance/pages/FloatingSolarFinancePage"));
+const SolarPlusStorageFinancePage         = React.lazy(() => import("./features/solar-plus-storage-finance/pages/SolarPlusStorageFinancePage"));
+const UtilitySolarEpcIntelligencePage     = React.lazy(() => import("./features/utility-solar-epc-intelligence/pages/UtilitySolarEpcIntelligencePage"));
+const DistributedCommunitySolarPage       = React.lazy(() => import("./features/distributed-community-solar/pages/DistributedCommunitySolarPage"));
+const SolarRepoweringAnalyticsPage        = React.lazy(() => import("./features/solar-repowering-analytics/pages/SolarRepoweringAnalyticsPage"));
+// Sprint ED — Solar Panel Manufacturing Intelligence
+const PolysiliconWaferSupplyChainPage     = React.lazy(() => import("./features/polysilicon-wafer-supply-chain/pages/PolysiliconWaferSupplyChainPage"));
+const SolarCellTechnologyAnalyzerPage     = React.lazy(() => import("./features/solar-cell-technology-analyzer/pages/SolarCellTechnologyAnalyzerPage"));
+const SolarModuleManufacturingEconomicsPage = React.lazy(() => import("./features/solar-module-manufacturing-economics/pages/SolarModuleManufacturingEconomicsPage"));
+const SolarManufacturingCarbonLcaPage     = React.lazy(() => import("./features/solar-manufacturing-carbon-lca/pages/SolarManufacturingCarbonLcaPage"));
+const SolarTradePolicyIntelligencePage    = React.lazy(() => import("./features/solar-trade-policy-intelligence/pages/SolarTradePolicyIntelligencePage"));
+const SolarModuleQualityBankabilityPage   = React.lazy(() => import("./features/solar-module-quality-bankability/pages/SolarModuleQualityBankabilityPage"));
+// Sprint EE — Green Ammonia & Hydrogen Derivatives
+const GreenAmmoniaProductionEconomicsPage = React.lazy(() => import("./features/green-ammonia-production-economics/pages/GreenAmmoniaProductionEconomicsPage"));
+const GreenAmmoniaShippingStoragePage     = React.lazy(() => import("./features/green-ammonia-shipping-storage/pages/GreenAmmoniaShippingStoragePage"));
+const GreenAmmoniaOfftakeMarketsPage      = React.lazy(() => import("./features/green-ammonia-offtake-markets/pages/GreenAmmoniaOfftakeMarketsPage"));
+const GreenAmmoniaCountryIntelligencePage = React.lazy(() => import("./features/green-ammonia-country-intelligence/pages/GreenAmmoniaCountryIntelligencePage"));
+const GreenAmmoniaPolicyCreditPage        = React.lazy(() => import("./features/green-ammonia-policy-credits/pages/GreenAmmoniaPolicyCreditPage"));
+const HydrogenDerivativesComparisonPage   = React.lazy(() => import("./features/hydrogen-derivatives-comparison/pages/HydrogenDerivativesComparisonPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1207,6 +1228,30 @@ const NAV_GROUPS = [
     { path: '/esg-ratings-uplift',                label: 'ESG Ratings Uplift Programme',               badge: 'MSCI BB→A · Sustainalytics · Passive Inflow Unlock · Remediation Map · 7 Tabs',           code: 'EP-EB4' },
     { path: '/tcfd-physical-risk-assessment',     label: 'TCFD Physical Climate Risk Assessment',      badge: 'CMIP6 · SSP1-2.6/2-4.5/5-8.5 · 10 Assets · RaR · Adaptation Roadmap · 7 Tabs',             code: 'EP-EB5' },
     { path: '/tnfd-biodiversity-baseline',        label: 'TNFD Biodiversity Baseline & LEAP',          badge: 'LEAP · TNFD v2.0 · SBTN · IBAT KBA · ENCORE · DNSH · 7 Tabs',                              code: 'EP-EB6' },
+  ]},
+  { label: '☀️ Solar Energy Finance Suite', icon: '☀️', color: '#d97706', items: [
+    { path: '/bifacial-agrivoltaic-finance',    label: 'Bifacial & Agrivoltaic Finance',             badge: 'Bifacial Gain · Agri Co-Benefits · Dual Revenue · KUSUM · IRA · 6 Tabs',                  code: 'EP-EC1' },
+    { path: '/floating-solar-finance',          label: 'Floating Solar (FPV) Finance',               badge: 'FPV · 4.5 GW Global · Cooling Boost · Evaporation Savings · 6 Tabs',                     code: 'EP-EC2' },
+    { path: '/solar-plus-storage-finance',      label: 'Solar + Storage Co-located Finance',         badge: 'BESS · IRA ITC 30-70% · Revenue Stack · Capacity/Ancillary · 6 Tabs',                    code: 'EP-EC3' },
+    { path: '/utility-solar-epc-intelligence',  label: 'Utility-Scale EPC Intelligence',             badge: 'EPC CAPEX $0.55-0.85/W · SAT +6% AEP · Bankability · Warranty · 6 Tabs',                 code: 'EP-EC4' },
+    { path: '/distributed-community-solar',     label: 'Distributed & Community Solar',              badge: 'SREC · Net Metering · Community Solar · LMI 20-30% · 6 Tabs',                            code: 'EP-EC5' },
+    { path: '/solar-repowering-analytics',      label: 'Solar Repowering & Life Extension',          badge: 'Degradation Model · AEP Uplift 15-35% · PPA Restructuring · IRR · 6 Tabs',               code: 'EP-EC6' },
+  ]},
+  { label: '🏭 Solar Panel Manufacturing Intelligence', icon: '🏭', color: '#1e40af', items: [
+    { path: '/polysilicon-wafer-supply-chain',       label: 'Polysilicon & Wafer Supply Chain',           badge: 'China 85% · UFLPA Compliance · HHI · Siemens vs FBR · 20 Suppliers · 6 Tabs',              code: 'EP-ED1' },
+    { path: '/solar-cell-technology-analyzer',       label: 'Solar Cell Technology Analyzer',             badge: 'PERC/TOPCon/HJT/IBC/Perovskite-Si · Efficiency 17-33% · Wright\'s Law · 6 Tabs',         code: 'EP-ED2' },
+    { path: '/solar-module-manufacturing-economics', label: 'Module Manufacturing Economics',             badge: '$0.16/W 2023 · BOM 8 Components · IRA §48C · 15 Manufacturers · 6 Tabs',                  code: 'EP-ED3' },
+    { path: '/solar-manufacturing-carbon-lca',       label: 'Manufacturing Carbon LCA',                   badge: '20-50 gCO2e/kWh · ISO 14040/44 · IEC 63274 · Carbon Payback · 6 Tabs',                    code: 'EP-ED4' },
+    { path: '/solar-trade-policy-intelligence',      label: 'Solar Trade Policy Intelligence',            badge: 'IRA §48C/48E · EU NZIA 40% · AD/CVD Tariffs · CBAM · UFLPA · 6 Tabs',                    code: 'EP-ED5' },
+    { path: '/solar-module-quality-bankability',     label: 'Module Quality & Bankability',               badge: 'P90/P50 Yield · IEC 61215/61730 · PVEL · 25-yr Degradation · 6 Tabs',                    code: 'EP-ED6' },
+  ]},
+  { label: '⚗️ Green Ammonia & Hydrogen Derivatives', icon: '⚗️', color: '#065f46', items: [
+    { path: '/green-ammonia-production-economics', label: 'Green Ammonia Production Economics',        badge: 'LCOA $400-1200/t · Haber-Bosch · 10 MWh/t · CRF Model · 20 Projects · 6 Tabs',            code: 'EP-EE1' },
+    { path: '/green-ammonia-shipping-storage',     label: 'Shipping & Terminal Infrastructure',        badge: 'VLGC $50-120/t · 5 Trade Routes · Cracking 15% Penalty · Safety · 6 Tabs',               code: 'EP-EE2' },
+    { path: '/green-ammonia-offtake-markets',      label: 'Offtake Markets & Demand Intelligence',    badge: '185 Mt Global NH3 · Japan 3 Mt 2030 · Maritime/Power/Fertilizer · 6 Tabs',               code: 'EP-EE3' },
+    { path: '/green-ammonia-country-intelligence', label: 'Country Export Intelligence',              badge: 'Australia 35Mt · Chile 20Mt · Morocco 15Mt · Readiness Index · 6 Tabs',                   code: 'EP-EE4' },
+    { path: '/green-ammonia-policy-credits',       label: 'Policy, Subsidies & Carbon Credits',       badge: 'IRA §45V $3/kg H2 · H2Global €900M · EU CBAM · Japan GIF · 6 Tabs',                      code: 'EP-EE5' },
+    { path: '/hydrogen-derivatives-comparison',    label: 'Hydrogen Carrier Comparison',               badge: 'GH2/LH2/LOHC/NH3/Methanol/e-fuels · Transport $/GJ · Radar · 6 Tabs',                    code: 'EP-EE6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3213,6 +3258,27 @@ function AppContent() {
             <Route path="/esg-ratings-uplift"                element={<EsgRatingsUpliftPage />} />
             <Route path="/tcfd-physical-risk-assessment"     element={<TcfdPhysicalRiskAssessmentPage />} />
             <Route path="/tnfd-biodiversity-baseline"        element={<TnfdBiodiversityBaselinePage />} />
+            {/* Sprint EC — Solar Energy Finance Suite */}
+            <Route path="/bifacial-agrivoltaic-finance"      element={<BifacialAgrivoltaicFinancePage />} />
+            <Route path="/floating-solar-finance"            element={<FloatingSolarFinancePage />} />
+            <Route path="/solar-plus-storage-finance"        element={<SolarPlusStorageFinancePage />} />
+            <Route path="/utility-solar-epc-intelligence"    element={<UtilitySolarEpcIntelligencePage />} />
+            <Route path="/distributed-community-solar"       element={<DistributedCommunitySolarPage />} />
+            <Route path="/solar-repowering-analytics"        element={<SolarRepoweringAnalyticsPage />} />
+            {/* Sprint ED — Solar Panel Manufacturing Intelligence */}
+            <Route path="/polysilicon-wafer-supply-chain"        element={<PolysiliconWaferSupplyChainPage />} />
+            <Route path="/solar-cell-technology-analyzer"        element={<SolarCellTechnologyAnalyzerPage />} />
+            <Route path="/solar-module-manufacturing-economics"  element={<SolarModuleManufacturingEconomicsPage />} />
+            <Route path="/solar-manufacturing-carbon-lca"        element={<SolarManufacturingCarbonLcaPage />} />
+            <Route path="/solar-trade-policy-intelligence"       element={<SolarTradePolicyIntelligencePage />} />
+            <Route path="/solar-module-quality-bankability"      element={<SolarModuleQualityBankabilityPage />} />
+            {/* Sprint EE — Green Ammonia & Hydrogen Derivatives */}
+            <Route path="/green-ammonia-production-economics"    element={<GreenAmmoniaProductionEconomicsPage />} />
+            <Route path="/green-ammonia-shipping-storage"        element={<GreenAmmoniaShippingStoragePage />} />
+            <Route path="/green-ammonia-offtake-markets"         element={<GreenAmmoniaOfftakeMarketsPage />} />
+            <Route path="/green-ammonia-country-intelligence"    element={<GreenAmmoniaCountryIntelligencePage />} />
+            <Route path="/green-ammonia-policy-credits"          element={<GreenAmmoniaPolicyCreditPage />} />
+            <Route path="/hydrogen-derivatives-comparison"       element={<HydrogenDerivativesComparisonPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
