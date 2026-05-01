@@ -854,6 +854,26 @@ const BiocharBeccsFinancePage             = React.lazy(() => import("./features/
 const OceanCdrFinancePage                 = React.lazy(() => import("./features/ocean-cdr-finance/pages/OceanCdrFinancePage"));
 const CdrCreditMarketsPage                = React.lazy(() => import("./features/cdr-credit-markets/pages/CdrCreditMarketsPage"));
 const CdrPortfolioNetzeroPage             = React.lazy(() => import("./features/cdr-portfolio-netzero/pages/CdrPortfolioNetzeroPage"));
+// Sprint EI — Climate Real Estate & Green Buildings Finance
+const GreenBuildingCertificationFinancePage = React.lazy(() => import("./features/green-building-certification-finance/pages/GreenBuildingCertificationFinancePage"));
+const CommercialReClimateRiskPage           = React.lazy(() => import("./features/commercial-re-climate-risk/pages/CommercialReClimateRiskPage"));
+const GreenMortgageRetrofitFinancePage      = React.lazy(() => import("./features/green-mortgage-retrofit-finance/pages/GreenMortgageRetrofitFinancePage"));
+const ReClimateStressTestPage               = React.lazy(() => import("./features/re-climate-stress-test/pages/ReClimateStressTestPage"));
+const GresbRealAssetsEsgPage                = React.lazy(() => import("./features/gresb-real-assets-esg/pages/GresbRealAssetsEsgPage"));
+const ClimateSmartInfrastructurePage        = React.lazy(() => import("./features/climate-smart-infrastructure/pages/ClimateSmartInfrastructurePage"));
+// Sprint EJ — Circular Economy & Waste Finance
+const CircularEconomyInvestmentPage         = React.lazy(() => import("./features/circular-economy-investment/pages/CircularEconomyInvestmentPage"));
+const PlasticCreditsEprFinancePage          = React.lazy(() => import("./features/plastic-credits-epr-finance/pages/PlasticCreditsEprFinancePage"));
+const WasteToEnergyBiogasFinancePage        = React.lazy(() => import("./features/waste-to-energy-biogas-finance/pages/WasteToEnergyBiogasFinancePage"));
+const RecycledContentMarketsPage            = React.lazy(() => import("./features/recycled-content-markets/pages/RecycledContentMarketsPage"));
+const EprComplianceIntelligencePage         = React.lazy(() => import("./features/epr-compliance-intelligence/pages/EprComplianceIntelligencePage"));
+const CircularSupplyChainFinancePage        = React.lazy(() => import("./features/circular-supply-chain-finance/pages/CircularSupplyChainFinancePage"));
+// Sprint EK — Climate Adaptation & Resilience Finance
+const FloodResilienceFinancePage            = React.lazy(() => import("./features/flood-resilience-finance/pages/FloodResilienceFinancePage"));
+const HeatAdaptationFinancePage             = React.lazy(() => import("./features/heat-adaptation-finance/pages/HeatAdaptationFinancePage"));
+const ResilienceBondAnalyticsPage           = React.lazy(() => import("./features/resilience-bond-analytics/pages/ResilienceBondAnalyticsPage"));
+const ClimateAdaptationPortfolioPage        = React.lazy(() => import("./features/climate-adaptation-portfolio/pages/ClimateAdaptationPortfolioPage"));
+const JustTransitionAdaptationPage          = React.lazy(() => import("./features/just-transition-adaptation/pages/JustTransitionAdaptationPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1297,6 +1317,30 @@ const NAV_GROUPS = [
     { path: '/ocean-cdr-finance',           label: 'Ocean CDR Finance',                  badge: 'OAE/Kelp/ElectroChem · 6 Approaches · MRV Maturity · Frontier Buyers · 6 Tabs',           code: 'EP-EH4' },
     { path: '/cdr-credit-markets',          label: 'CDR Credit Markets & Permanence',   badge: '7 Credit Types · Permanence Tiers · Buyer Intelligence · OTC Price History · 6 Tabs',      code: 'EP-EH5' },
     { path: '/cdr-portfolio-netzero',       label: 'CDR Portfolio & Net-Zero Integration', badge: 'Portfolio Builder · Oxford Principles · Cost Curve · Buyer Alignment · 6 Tabs',          code: 'EP-EH6' },
+  ]},
+  { label: '🏢 Climate Real Estate & Green Buildings Finance', icon: '🏢', color: '#16A34A', items: [
+    { path: '/green-building-certification-finance', label: 'Green Building Certification Finance', badge: 'LEED/BREEAM/NABERS/DGNB · 22 Buildings · NPV Calculator · ROI Waterfall · 6 Tabs', code: 'EP-EI1' },
+    { path: '/commercial-re-climate-risk',           label: 'Commercial RE Climate Risk',           badge: 'CRREM · EPC A–G · 4 NGFS · Stranding Year · Retrofit Economics · 6 Tabs',          code: 'EP-EI2' },
+    { path: '/green-mortgage-retrofit-finance',      label: 'Green Mortgage & Retrofit Finance',    badge: '8 Lenders · 6 Retrofit Schemes · ECO4/GBIS/MaPrimeRénov · IRA §25C · 6 Tabs',      code: 'EP-EI3' },
+    { path: '/re-climate-stress-test',               label: 'RE Climate Stress Test',               badge: '4 NGFS Scenarios · 6 Sectors · Stressed NAV · Radar · 20 Assets · 6 Tabs',         code: 'EP-EI4' },
+    { path: '/gresb-real-assets-esg',                label: 'GRESB Real Assets ESG',                badge: '20 Funds · Star Rating · 8-Year Trend · Best Practice · 6 Institutional Investors', code: 'EP-EI5' },
+    { path: '/climate-smart-infrastructure',         label: 'Climate-Smart Infrastructure Finance', badge: 'NbS · IFC PS 1–8 · GCF/Adapt Fund · Long-Horizon IRR · 22 Projects · 6 Tabs',      code: 'EP-EI6' },
+  ]},
+  { label: '♻️ Circular Economy & Waste Finance', icon: '♻️', color: '#D97706', items: [
+    { path: '/circular-economy-investment',   label: 'Circular Economy Investment',      badge: '6 CE Models · EMF Principles · 22 Companies · Market Forecast · 6 Tabs',        code: 'EP-EJ1' },
+    { path: '/plastic-credits-epr-finance',   label: 'Plastic Credits & EPR Finance',    badge: '8 Registries · Verra PWRS · Ocean-Bound · 8 EPR Schemes · Calculator · 6 Tabs',  code: 'EP-EJ2' },
+    { path: '/waste-to-energy-biogas-finance', label: 'Waste-to-Energy & Biogas Finance', badge: '8 Tech · AD/EfW/LFG/Gasification · Gate Fee · 22 Projects · IRR Calculator · 6 Tabs', code: 'EP-EJ3' },
+    { path: '/recycled-content-markets',      label: 'Recycled Content Markets',         badge: '10 Materials · rPET/rAl/rSteel · Price History · 20 Brand Buyers · 6 Tabs',      code: 'EP-EJ4' },
+    { path: '/epr-compliance-intelligence',   label: 'EPR Compliance Intelligence',      badge: '8 Jurisdictions · 26 Cos · Gap Analysis · Regulatory Timeline 2030 · 6 Tabs',    code: 'EP-EJ5' },
+    { path: '/circular-supply-chain-finance', label: 'Circular Supply Chain Finance',    badge: '6 CE Levers · 22 Companies · cSCF Instruments · Value Leakage · 6 Tabs',         code: 'EP-EJ6' },
+  ]},
+  { label: '🌊 Climate Adaptation & Resilience Finance', icon: '🌊', color: '#3B82F6', items: [
+    { path: '/flood-resilience-finance',       label: 'Flood Resilience Finance',          badge: '10 Cities · AAL · BCR Screener · RCP 2.6/4.5/8.5 · CAT Bond · 6 Tabs',         code: 'EP-EK1' },
+    { path: '/heat-adaptation-finance',        label: 'Heat Adaptation Finance',            badge: '8 Cities · UHI · Labour Productivity Loss · Urban Cooling · CBI · 6 Tabs',      code: 'EP-EK2' },
+    { path: '/nbs-adaptation-finance', label: 'NbS Adaptation Finance',     badge: '8 NbS Types · Blue Carbon · TNFD · 22 Projects · BCR · Blended Finance · 6 Tabs', code: 'EP-EK3' },
+    { path: '/resilience-bond-analytics',      label: 'Resilience Bond Analytics',          badge: 'CAT Bonds · 24 Bonds · Parametric vs Indemnity · KPI Coupon · ILS Market · 6 Tabs', code: 'EP-EK4' },
+    { path: '/climate-adaptation-portfolio',   label: 'Climate Adaptation Portfolio',       badge: '28 Assets · Multi-Peril · BCR · Risk-Return Map · Regional Radar · 6 Tabs',     code: 'EP-EK5' },
+    { path: '/just-transition-adaptation',     label: 'Just Transition & Adaptation',       badge: 'JETP · 22 Regions · Social Radar · Jobs Transition · ILO Framework · 6 Tabs',   code: 'EP-EK6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3345,6 +3389,27 @@ function AppContent() {
             <Route path="/ocean-cdr-finance"                   element={<OceanCdrFinancePage />} />
             <Route path="/cdr-credit-markets"                  element={<CdrCreditMarketsPage />} />
             <Route path="/cdr-portfolio-netzero"               element={<CdrPortfolioNetzeroPage />} />
+            {/* Sprint EI — Climate Real Estate & Green Buildings Finance */}
+            <Route path="/green-building-certification-finance" element={<GreenBuildingCertificationFinancePage />} />
+            <Route path="/commercial-re-climate-risk"           element={<CommercialReClimateRiskPage />} />
+            <Route path="/green-mortgage-retrofit-finance"      element={<GreenMortgageRetrofitFinancePage />} />
+            <Route path="/re-climate-stress-test"               element={<ReClimateStressTestPage />} />
+            <Route path="/gresb-real-assets-esg"                element={<GresbRealAssetsEsgPage />} />
+            <Route path="/climate-smart-infrastructure"         element={<ClimateSmartInfrastructurePage />} />
+            {/* Sprint EJ — Circular Economy & Waste Finance */}
+            <Route path="/circular-economy-investment"    element={<CircularEconomyInvestmentPage />} />
+            <Route path="/plastic-credits-epr-finance"    element={<PlasticCreditsEprFinancePage />} />
+            <Route path="/waste-to-energy-biogas-finance" element={<WasteToEnergyBiogasFinancePage />} />
+            <Route path="/recycled-content-markets"       element={<RecycledContentMarketsPage />} />
+            <Route path="/epr-compliance-intelligence"    element={<EprComplianceIntelligencePage />} />
+            <Route path="/circular-supply-chain-finance"  element={<CircularSupplyChainFinancePage />} />
+            {/* Sprint EK — Climate Adaptation & Resilience Finance */}
+            <Route path="/flood-resilience-finance"       element={<FloodResilienceFinancePage />} />
+            <Route path="/heat-adaptation-finance"        element={<HeatAdaptationFinancePage />} />
+            <Route path="/nbs-adaptation-finance"         element={<NatureBasedSolutionsFinancePage />} />
+            <Route path="/resilience-bond-analytics"      element={<ResilienceBondAnalyticsPage />} />
+            <Route path="/climate-adaptation-portfolio"   element={<ClimateAdaptationPortfolioPage />} />
+            <Route path="/just-transition-adaptation"     element={<JustTransitionAdaptationPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
