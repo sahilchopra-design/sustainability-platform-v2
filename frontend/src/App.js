@@ -833,6 +833,27 @@ const GreenAmmoniaOfftakeMarketsPage      = React.lazy(() => import("./features/
 const GreenAmmoniaCountryIntelligencePage = React.lazy(() => import("./features/green-ammonia-country-intelligence/pages/GreenAmmoniaCountryIntelligencePage"));
 const GreenAmmoniaPolicyCreditPage        = React.lazy(() => import("./features/green-ammonia-policy-credits/pages/GreenAmmoniaPolicyCreditPage"));
 const HydrogenDerivativesComparisonPage   = React.lazy(() => import("./features/hydrogen-derivatives-comparison/pages/HydrogenDerivativesComparisonPage"));
+// Sprint EF — SAF Finance
+const SafLcofEnginePage                   = React.lazy(() => import("./features/saf-lcof-engine/pages/SafLcofEnginePage"));
+const SafProjectFinancePage               = React.lazy(() => import("./features/saf-project-finance/pages/SafProjectFinancePage"));
+const SafFeedstockSupplyChainPage         = React.lazy(() => import("./features/saf-feedstock-supply-chain/pages/SafFeedstockSupplyChainPage"));
+const SafPolicyMandatePage                = React.lazy(() => import("./features/saf-policy-mandate/pages/SafPolicyMandatePage"));
+const AirlineSafProcurementPage           = React.lazy(() => import("./features/airline-saf-procurement/pages/AirlineSafProcurementPage"));
+const SafCarbonCreditsPage                = React.lazy(() => import("./features/saf-carbon-credits/pages/SafCarbonCreditsPage"));
+// Sprint EG — Green Steel & Industrial Decarbonization
+const GreenSteelLcopEnginePage            = React.lazy(() => import("./features/green-steel-lcop-engine/pages/GreenSteelLcopEnginePage"));
+const IndustrialHydrogenIntegrationPage   = React.lazy(() => import("./features/industrial-hydrogen-integration/pages/IndustrialHydrogenIntegrationPage"));
+const CbamAnalyticsCompliancePage         = React.lazy(() => import("./features/cbam-analytics-compliance/pages/CbamAnalyticsCompliancePage"));
+const GreenCementConcreteFinancePage      = React.lazy(() => import("./features/green-cement-concrete-finance/pages/GreenCementConcreteFinancePage"));
+const IndustrialElectrificationFinancePage = React.lazy(() => import("./features/industrial-electrification-finance/pages/IndustrialElectrificationFinancePage"));
+const HardToAbateTransitionPage           = React.lazy(() => import("./features/hard-to-abate-transition/pages/HardToAbateTransitionPage"));
+// Sprint EH — Carbon Dioxide Removal Finance
+const DirectAirCaptureFinancePage         = React.lazy(() => import("./features/direct-air-capture-finance/pages/DirectAirCaptureFinancePage"));
+const EnhancedWeatheringFinancePage       = React.lazy(() => import("./features/enhanced-weathering-finance/pages/EnhancedWeatheringFinancePage"));
+const BiocharBeccsFinancePage             = React.lazy(() => import("./features/biochar-beccs-finance/pages/BiocharBeccsFinancePage"));
+const OceanCdrFinancePage                 = React.lazy(() => import("./features/ocean-cdr-finance/pages/OceanCdrFinancePage"));
+const CdrCreditMarketsPage                = React.lazy(() => import("./features/cdr-credit-markets/pages/CdrCreditMarketsPage"));
+const CdrPortfolioNetzeroPage             = React.lazy(() => import("./features/cdr-portfolio-netzero/pages/CdrPortfolioNetzeroPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1252,6 +1273,30 @@ const NAV_GROUPS = [
     { path: '/green-ammonia-country-intelligence', label: 'Country Export Intelligence',              badge: 'Australia 35Mt · Chile 20Mt · Morocco 15Mt · Readiness Index · 6 Tabs',                   code: 'EP-EE4' },
     { path: '/green-ammonia-policy-credits',       label: 'Policy, Subsidies & Carbon Credits',       badge: 'IRA §45V $3/kg H2 · H2Global €900M · EU CBAM · Japan GIF · 6 Tabs',                      code: 'EP-EE5' },
     { path: '/hydrogen-derivatives-comparison',    label: 'Hydrogen Carrier Comparison',               badge: 'GH2/LH2/LOHC/NH3/Methanol/e-fuels · Transport $/GJ · Radar · 6 Tabs',                    code: 'EP-EE6' },
+  ]},
+  { label: '✈️ Sustainable Aviation Fuel (SAF) Finance', icon: '✈️', color: '#0369A1', items: [
+    { path: '/saf-lcof-engine',           label: 'SAF LCOF Engine',                   badge: '6 Pathways · HEFA/AtJ/FT/PtL · Wright\'s Law · IRA §40B · 24 Projects · 6 Tabs',           code: 'EP-EF1' },
+    { path: '/saf-project-finance',       label: 'SAF Project Finance',               badge: 'DSCR · IRR · NPV · Blended Finance · 20 Deals · Risk Register · 6 Tabs',                   code: 'EP-EF2' },
+    { path: '/saf-feedstock-supply-chain',label: 'SAF Feedstock Supply Chain',        badge: 'ISCC+/RSB · 6 Feedstocks · 18 Suppliers · Price Forecast · RadarChart · 6 Tabs',           code: 'EP-EF3' },
+    { path: '/saf-policy-mandate',        label: 'SAF Policy & Mandate Intelligence', badge: 'ReFuelEU 2% · UK 10% · IRA §40B · CORSIA · 8 Jurisdictions · Calculator · 6 Tabs',        code: 'EP-EF4' },
+    { path: '/airline-saf-procurement',   label: 'Airline SAF Procurement',           badge: '8 Airlines · 16 Deals · Book-and-Claim · PPA Pricing · Credit Scatter · 6 Tabs',           code: 'EP-EF5' },
+    { path: '/saf-carbon-credits',        label: 'SAF Carbon Credits & CORSIA',       badge: 'CORSIA CEF · ISCC+ · RSB · EU ETS · Revenue Stack · LCA Waterfall · 6 Tabs',               code: 'EP-EF6' },
+  ]},
+  { label: '🏭 Green Steel & Industrial Decarbonization', icon: '🏭', color: '#374151', items: [
+    { path: '/green-steel-lcop-engine',            label: 'Green Steel LCOP Engine',           badge: 'BF-BOF/DRI-EAF-H₂/MOE · 6 Routes · CBAM · H₂ Break-Even · 22 Projects · 6 Tabs',    code: 'EP-EG1' },
+    { path: '/industrial-hydrogen-integration',    label: 'Industrial Hydrogen Integration',   badge: '6 Sectors · Steel/Cement/Chemicals · PEM/AEL/SOEC · Abatement $/tCO₂ · 6 Tabs',    code: 'EP-EG2' },
+    { path: '/cbam-analytics-compliance',          label: 'CBAM Analytics & Compliance',       badge: 'EU CBAM 2024 · 7 Sectors · 20 Countries · Certificate Price · Phase-in · 6 Tabs',   code: 'EP-EG3' },
+    { path: '/green-cement-concrete-finance',      label: 'Green Cement & Concrete Finance',   badge: 'LC³/LEILAC/Oxyfuel/Geopolymer · 7 Tech · Break-Even Carbon · LCA · 6 Tabs',         code: 'EP-EG4' },
+    { path: '/industrial-electrification-finance', label: 'Industrial Electrification Finance',badge: 'Heat Pumps/EAF/Induction · 6 Tech · Payback · ROI · Grid Flexibility · 6 Tabs',     code: 'EP-EG5' },
+    { path: '/hard-to-abate-transition',           label: 'Hard-to-Abate Transition Finance',  badge: '6 Sectors · Green Bond/SLL/Transition Bond · Radar · GFANZ · 16 Deals · 6 Tabs',    code: 'EP-EG6' },
+  ]},
+  { label: '🌿 Carbon Dioxide Removal (CDR) Finance', icon: '🌿', color: '#0D9488', items: [
+    { path: '/direct-air-capture-finance',  label: 'Direct Air Capture Finance',         badge: '5 DAC Tech · Climeworks/CE/Verdox · IRA §45Q $180/t · LCOC · Frontier Buyers · 6 Tabs',   code: 'EP-EH1' },
+    { path: '/enhanced-weathering-finance', label: 'Enhanced Weathering Finance',        badge: 'Basalt/Olivine/Wollastonite/Slag · 20 Projects · MRV · Co-benefits +8–15% Yield · 6 Tabs', code: 'EP-EH2' },
+    { path: '/biochar-beccs-finance',       label: 'Biochar & BECCS Finance',            badge: 'Pyrolysis · IRA §45Q · 22 Projects · IRR · Permanence · Feedstock Economics · 6 Tabs',    code: 'EP-EH3' },
+    { path: '/ocean-cdr-finance',           label: 'Ocean CDR Finance',                  badge: 'OAE/Kelp/ElectroChem · 6 Approaches · MRV Maturity · Frontier Buyers · 6 Tabs',           code: 'EP-EH4' },
+    { path: '/cdr-credit-markets',          label: 'CDR Credit Markets & Permanence',   badge: '7 Credit Types · Permanence Tiers · Buyer Intelligence · OTC Price History · 6 Tabs',      code: 'EP-EH5' },
+    { path: '/cdr-portfolio-netzero',       label: 'CDR Portfolio & Net-Zero Integration', badge: 'Portfolio Builder · Oxford Principles · Cost Curve · Buyer Alignment · 6 Tabs',          code: 'EP-EH6' },
   ]},
   { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
     { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
@@ -3279,6 +3324,27 @@ function AppContent() {
             <Route path="/green-ammonia-country-intelligence"    element={<GreenAmmoniaCountryIntelligencePage />} />
             <Route path="/green-ammonia-policy-credits"          element={<GreenAmmoniaPolicyCreditPage />} />
             <Route path="/hydrogen-derivatives-comparison"       element={<HydrogenDerivativesComparisonPage />} />
+            {/* Sprint EF — SAF Finance */}
+            <Route path="/saf-lcof-engine"                     element={<SafLcofEnginePage />} />
+            <Route path="/saf-project-finance"                 element={<SafProjectFinancePage />} />
+            <Route path="/saf-feedstock-supply-chain"          element={<SafFeedstockSupplyChainPage />} />
+            <Route path="/saf-policy-mandate"                  element={<SafPolicyMandatePage />} />
+            <Route path="/airline-saf-procurement"             element={<AirlineSafProcurementPage />} />
+            <Route path="/saf-carbon-credits"                  element={<SafCarbonCreditsPage />} />
+            {/* Sprint EG — Green Steel & Industrial Decarbonization */}
+            <Route path="/green-steel-lcop-engine"             element={<GreenSteelLcopEnginePage />} />
+            <Route path="/industrial-hydrogen-integration"     element={<IndustrialHydrogenIntegrationPage />} />
+            <Route path="/cbam-analytics-compliance"           element={<CbamAnalyticsCompliancePage />} />
+            <Route path="/green-cement-concrete-finance"       element={<GreenCementConcreteFinancePage />} />
+            <Route path="/industrial-electrification-finance"  element={<IndustrialElectrificationFinancePage />} />
+            <Route path="/hard-to-abate-transition"            element={<HardToAbateTransitionPage />} />
+            {/* Sprint EH — Carbon Dioxide Removal Finance */}
+            <Route path="/direct-air-capture-finance"          element={<DirectAirCaptureFinancePage />} />
+            <Route path="/enhanced-weathering-finance"         element={<EnhancedWeatheringFinancePage />} />
+            <Route path="/biochar-beccs-finance"               element={<BiocharBeccsFinancePage />} />
+            <Route path="/ocean-cdr-finance"                   element={<OceanCdrFinancePage />} />
+            <Route path="/cdr-credit-markets"                  element={<CdrCreditMarketsPage />} />
+            <Route path="/cdr-portfolio-netzero"               element={<CdrPortfolioNetzeroPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
