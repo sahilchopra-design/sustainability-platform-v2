@@ -874,6 +874,13 @@ const HeatAdaptationFinancePage             = React.lazy(() => import("./feature
 const ResilienceBondAnalyticsPage           = React.lazy(() => import("./features/resilience-bond-analytics/pages/ResilienceBondAnalyticsPage"));
 const ClimateAdaptationPortfolioPage        = React.lazy(() => import("./features/climate-adaptation-portfolio/pages/ClimateAdaptationPortfolioPage"));
 const JustTransitionAdaptationPage          = React.lazy(() => import("./features/just-transition-adaptation/pages/JustTransitionAdaptationPage"));
+// Sprint EL — Utility Infrastructure Assets Finance
+const PowerGridTransmissionFinancePage      = React.lazy(() => import("./features/power-grid-transmission-finance/pages/PowerGridTransmissionFinancePage"));
+const WaterWastewaterUtilityFinancePage     = React.lazy(() => import("./features/water-wastewater-utility-finance/pages/WaterWastewaterUtilityFinancePage"));
+const RegulatedUtilityRateCasePage         = React.lazy(() => import("./features/regulated-utility-rate-case/pages/RegulatedUtilityRateCasePage"));
+const GasNetworkDecarbonisationPage        = React.lazy(() => import("./features/gas-network-decarbonisation/pages/GasNetworkDecarbonisationPage"));
+const UtilityPhysicalClimateResiliencePage = React.lazy(() => import("./features/utility-physical-climate-resilience/pages/UtilityPhysicalClimateResiliencePage"));
+const InfrastructureDebtUtilityBondsPage   = React.lazy(() => import("./features/infrastructure-debt-utility-bonds/pages/InfrastructureDebtUtilityBondsPage"));
 // Sprint RE — Solar & Renewable Energy Intelligence Suite (new deep modules)
 const RenewablePortfolioIntelligencePage = React.lazy(() => import("./features/renewable-portfolio-intelligence/pages/RenewablePortfolioIntelligencePage"));
 const SolarResourcePerformancePage    = React.lazy(() => import("./features/solar-resource-performance/pages/SolarResourcePerformancePage"));
@@ -1333,6 +1340,14 @@ const NAV_GROUPS = [
     { path: '/recycled-content-markets',      label: 'Recycled Content Markets',         badge: '10 Materials · rPET/rAl/rSteel · Price History · 20 Brand Buyers · 6 Tabs',      code: 'EP-EJ4' },
     { path: '/epr-compliance-intelligence',   label: 'EPR Compliance Intelligence',      badge: '8 Jurisdictions · 26 Cos · Gap Analysis · Regulatory Timeline 2030 · 6 Tabs',    code: 'EP-EJ5' },
     { path: '/circular-supply-chain-finance', label: 'Circular Supply Chain Finance',    badge: '6 CE Levers · 22 Companies · cSCF Instruments · Value Leakage · 6 Tabs',         code: 'EP-EJ6' },
+  ]},
+  { label: '🔌 Utility Infrastructure Assets Finance', icon: '🔌', color: '#0F4C81', items: [
+    { path: '/power-grid-transmission-finance',        label: 'Power Grid & Transmission Finance',     badge: '12 TSOs · RAB Model · Congestion Analytics · HVDC · Revenue Waterfall · 7 Tabs', code: 'EP-EL1' },
+    { path: '/water-wastewater-utility-finance',       label: 'Water & Wastewater Utility Finance',   badge: '12 Utilities · Ofwat PR24 · Totex Efficiency · ODI · Serviceability · 7 Tabs',   code: 'EP-EL2' },
+    { path: '/regulated-utility-rate-case',            label: 'Regulated Utility Rate Case Analytics', badge: '12 US IOUs · FERC/PUC · ROE History · Revenue Req · Lag Analytics · 7 Tabs',    code: 'EP-EL3' },
+    { path: '/gas-network-decarbonisation',            label: 'Gas Network Decarbonisation Finance',  badge: '8 Networks · H2 Blending · Biomethane · Stranded Asset Risk · RIIO · 7 Tabs',    code: 'EP-EL4' },
+    { path: '/utility-physical-climate-resilience',    label: 'Utility Physical Climate Resilience',  badge: '15 Assets · Multi-Peril · SAIDI · Hardening ROI · Insurance Gap · 7 Tabs',        code: 'EP-EL5' },
+    { path: '/infrastructure-debt-utility-bonds',      label: 'Infrastructure Debt & Utility Bonds',  badge: '24 Bonds · Green/SLB · Credit Curve · Covenant Analytics · Duration · 7 Tabs',    code: 'EP-EL6' },
   ]},
   { label: '🌊 Climate Adaptation & Resilience Finance', icon: '🌊', color: '#3B82F6', items: [
     { path: '/flood-resilience-finance',       label: 'Flood Resilience Finance',          badge: '10 Cities · AAL · BCR Screener · RCP 2.6/4.5/8.5 · CAT Bond · 6 Tabs',         code: 'EP-EK1' },
@@ -3410,6 +3425,13 @@ function AppContent() {
             <Route path="/resilience-bond-analytics"      element={<ResilienceBondAnalyticsPage />} />
             <Route path="/climate-adaptation-portfolio"   element={<ClimateAdaptationPortfolioPage />} />
             <Route path="/just-transition-adaptation"     element={<JustTransitionAdaptationPage />} />
+            {/* Sprint EL — Utility Infrastructure Assets Finance */}
+            <Route path="/power-grid-transmission-finance"       element={<PowerGridTransmissionFinancePage />} />
+            <Route path="/water-wastewater-utility-finance"      element={<WaterWastewaterUtilityFinancePage />} />
+            <Route path="/regulated-utility-rate-case"           element={<RegulatedUtilityRateCasePage />} />
+            <Route path="/gas-network-decarbonisation"           element={<GasNetworkDecarbonisationPage />} />
+            <Route path="/utility-physical-climate-resilience"   element={<UtilityPhysicalClimateResiliencePage />} />
+            <Route path="/infrastructure-debt-utility-bonds"     element={<InfrastructureDebtUtilityBondsPage />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
             <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
             <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
