@@ -15,7 +15,7 @@ const T = {
 };
 
 const ASSETS = [
-  { id:1, name:'Coastal Transmission Substation A', type:'Substation', region:'Gulf Coast', flood_risk:0.82, heat_risk:0.74, wind_risk:0.88, wildfire:0.12, ice_storm:0.08, rav:$85, hardening_capex:12.4, insurance_coverage:0.65, aep_loss_pct:3.2, saidi_impact:42, adaptation_roi:2.8, rcp45_loss:4.1, rcp85_loss:8.9 },
+  { id:1, name:'Coastal Transmission Substation A', type:'Substation', region:'Gulf Coast', flood_risk:0.82, heat_risk:0.74, wind_risk:0.88, wildfire:0.12, ice_storm:0.08, rav:85, hardening_capex:12.4, insurance_coverage:0.65, aep_loss_pct:3.2, saidi_impact:42, adaptation_roi:2.8, rcp45_loss:4.1, rcp85_loss:8.9 },
   { id:2, name:'Inland Gas Compressor Station B', type:'Gas Infra', region:'Texas Plains', flood_risk:0.28, heat_risk:0.91, wind_risk:0.62, wildfire:0.38, ice_storm:0.44, rav:62, hardening_capex:6.8, insurance_coverage:0.72, aep_loss_pct:1.8, saidi_impact:18, adaptation_roi:3.4, rcp45_loss:2.2, rcp85_loss:5.4 },
   { id:3, name:'Mountain Hydroelectric Dam C', type:'Generation', region:'Pacific NW', flood_risk:0.72, heat_risk:0.31, wind_risk:0.22, wildfire:0.68, ice_storm:0.15, rav:210, hardening_capex:28.2, insurance_coverage:0.80, aep_loss_pct:2.4, saidi_impact:0, adaptation_roi:2.1, rcp45_loss:3.2, rcp85_loss:7.8 },
   { id:4, name:'Urban Water Treatment Plant D', type:'Water', region:'Northeast US', flood_risk:0.68, heat_risk:0.55, wind_risk:0.48, wildfire:0.05, ice_storm:0.72, rav:145, hardening_capex:18.6, insurance_coverage:0.58, aep_loss_pct:2.1, saidi_impact:0, adaptation_roi:3.1, rcp45_loss:2.8, rcp85_loss:6.5 },
