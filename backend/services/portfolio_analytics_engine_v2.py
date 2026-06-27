@@ -67,7 +67,7 @@ GLOBAL_FALLBACK = {"avg_pd": 0.025, "avg_lgd": 0.45, "avg_scope1_intensity": 40,
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "postgresql://postgres.kytzcbipsghprsqoalvi:Zeek%40%402025%40%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres",
+    os.environ.get("DATABASE_URL", ""),
 )
 
 _db_engine = None

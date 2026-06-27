@@ -49,6 +49,13 @@ def company_rows(companies):
         }
 
 
+# Plausibility cap: no single company-scope can exceed ~500 Mt CO2e (Saudi Aramco
+# total ~ 300 Mt). Upstream BRSR extraction has rare unit/parsing errors (e.g. a
+# small-cap showing 99 Gt) — drop those so demos never surface garbage.
+GHG_SCOPE = {"scope1_tco2e", "scope2_tco2e", "scope3_tco2e"}
+GHG_CAP = 5e8  # tCO2e
+
+
 def metric_points(metrics, name_by_cin):
     for m in metrics:
         cin = m.get("cin")
@@ -62,6 +69,8 @@ def metric_points(metrics, name_by_cin):
             v = to_float(m.get(col))
             if v is None:
                 continue
+            if col in GHG_SCOPE and (v > GHG_CAP or v < 0):
+                continue  # implausible — drop the outlier
             yield {"entity_code": cin, "entity_name": name_by_cin.get(cin, cin),
                    "year": year, "metric": col, "value": v, "unit": unit}
 

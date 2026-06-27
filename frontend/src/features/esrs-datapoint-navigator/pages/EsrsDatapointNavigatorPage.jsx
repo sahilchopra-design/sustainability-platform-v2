@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { useReferenceRecords } from '../../../lib/useReferenceData';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area, ComposedChart,
   ScatterChart, Scatter, PieChart, Pie, RadarChart, Radar, PolarGrid,
@@ -185,6 +186,16 @@ export default function EsrsDatapointNavigatorPage() {
 
   const COLORS = [T.indigo, T.green, T.teal, T.purple, T.blue, T.orange, T.amber, T.red, T.navy, '#059669', '#7c3aed'];
 
+  // Live EFRAG ESRS datapoint registry from the reference-data layer (esrs_datapoints).
+  // Falls back to the hardcoded standard estimates when the API is unreachable.
+  const { data: liveDps = [] } = useReferenceRecords('esrs_datapoints', { limit: 2000, fallback: [] });
+  const liveByStd = useMemo(() => {
+    const m = {};
+    (liveDps || []).forEach(d => { const k = (d.category || '').replace('ESRS_', '').replace('ESRS ', ''); if (k) m[k] = (m[k] || 0) + 1; });
+    return m;
+  }, [liveDps]);
+  const liveTotal = liveDps.length;
+
   const totalDatapoints = useMemo(() => ESRS_STANDARDS.reduce((s,e)=>s+e.datapoints,0), []);
   const materialDatapoints = useMemo(() => ESRS_STANDARDS.filter((_,i)=>materialTopics[i]).reduce((s,e)=>s+e.datapoints,0), [materialTopics]);
 
@@ -248,6 +259,7 @@ export default function EsrsDatapointNavigatorPage() {
           <h1 style={{ fontSize: 28, fontWeight: 700, color: T.navy, margin: 0 }}>ESRS Datapoint Navigator</h1>
           <p style={{ color: T.sub, fontSize: 14, margin: '4px 0 0', fontFamily: T.mono }}>
             {ESRS_STANDARDS.length} Standards | {totalDatapoints}+ Datapoints | Double Materiality | Omnibus Simplification
+            {liveTotal > 0 && <span style={{ color: T.green, fontWeight: 700 }}> | ● {liveTotal} EFRAG datapoints (live)</span>}
           </p>
         </div>
 
@@ -289,7 +301,7 @@ export default function EsrsDatapointNavigatorPage() {
                   <h4 style={{ margin: '0 0 4px', fontSize: 14, color: T.navy }}>{s.name}</h4>
                   <p style={{ fontSize: 11, color: T.sub, margin: '0 0 8px' }}>{s.description}</p>
                   <div style={{ display: 'flex', gap: 12, fontSize: 11, fontFamily: T.mono }}>
-                    <span>{s.datapoints} datapoints</span>
+                    <span>{s.datapoints} datapoints{liveByStd[s.code.replace('ESRS ','')] ? <span style={{ color: T.green }}> · {liveByStd[s.code.replace('ESRS ','')]} live</span> : null}</span>
                     <span>{s.drs} DRs</span>
                     <span style={{ color: s.mandatory ? T.green : T.sub }}>{s.mandatory ? 'Always mandatory' : 'Materiality-based'}</span>
                   </div>

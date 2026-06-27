@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime, date
 from decimal import Decimal
 
-os.environ['DATABASE_URL'] = 'postgresql://postgres.kytzcbipsghprsqoalvi:Zeek%40%402025%40%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres'
+os.environ['DATABASE_URL'] = os.environ.get("DATABASE_URL", "")
 
 from sqlalchemy import create_engine, text, Column, String, Integer, Numeric, Boolean, DateTime, Date, Text
 from sqlalchemy.dialects.postgresql import UUID, JSONB

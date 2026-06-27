@@ -1,3 +1,4 @@
+import os
 """
 Sprint 7 Seed Script — Nature Risk + Sector Assessments + Regulatory
 =====================================================================
@@ -30,7 +31,7 @@ import uuid
 import json
 from datetime import date
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 
 
 def new_id():

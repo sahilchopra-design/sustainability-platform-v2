@@ -1,3 +1,4 @@
+import os
 """
 Sprint 8 Seed Script — ESRS/ISSB + FI Sector + Energy Sector + Portfolio Analytics
 Covers: fi_entities, fi_financials, fi_financed_emissions, fi_paris_alignment,
@@ -22,7 +23,7 @@ Anchor entities from csrd_entity_registry (pre-existing from CSRD pipeline):
 import psycopg2, json, uuid
 from datetime import datetime, date
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 
 # ── csrd_entity_registry IDs (pre-existing) ──────────────────────────────────
 ER_ABN   = "24042b91-c1e4-49e9-8c2b-87c00795c189"

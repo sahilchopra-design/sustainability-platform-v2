@@ -72,7 +72,7 @@ def assess_brsr_company(cin: str, reporting_year: int = 2025):
     # Fetch company + submission from BRSR Supabase
     # Note: BRSR data is on the DME project (ynxmxgjdivriakhxxptk)
     brsr_url = f"https://ynxmxgjdivriakhxxptk.supabase.co/rest/v1/dme_brsr_submissions?cin=eq.{cin}&report_year=eq.{reporting_year}&select=*"
-    brsr_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlueG14Z2pkaXZyaWFraHh4cHRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNDkyNjcsImV4cCI6MjA4NzgyNTI2N30.D0KNid2ZzPisgCoilH66VxhJlvCJJSwAx8WGoSgvVUk"
+    brsr_key = os.environ.get("DME_SUPABASE_KEY", "")
 
     headers = {"apikey": brsr_key, "Authorization": f"Bearer {brsr_key}"}
     req = urllib.request.Request(brsr_url, headers=headers)

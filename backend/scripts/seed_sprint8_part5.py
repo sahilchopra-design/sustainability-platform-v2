@@ -1,8 +1,9 @@
+import os
 """Part 5: issb_s1_general, issb_s2_climate, and update csrd_entity_registry FK links"""
 import psycopg2, json, uuid
 from datetime import datetime
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 conn = psycopg2.connect(DB_URL)
 cur = conn.cursor()
 

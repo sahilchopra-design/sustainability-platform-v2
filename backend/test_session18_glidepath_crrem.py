@@ -1,3 +1,4 @@
+import os
 """
 Session 18 Smoke Tests -- NZBA Glidepath + CRREM Pathway Wiring (F4 + F5)
 Tests glidepath_serve.py and glidepath.py endpoints for live-data wiring.
@@ -28,7 +29,7 @@ def wait_for_server(max_wait=15):
 def setup_auth():
     """Create test user + session via DB, return Bearer token."""
     import sqlalchemy as sa
-    engine = sa.create_engine("postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres")
+    engine = sa.create_engine(os.environ.get("DATABASE_URL", ""))
     import uuid
     from datetime import datetime, timedelta, timezone
     user_id = str(uuid.uuid4())

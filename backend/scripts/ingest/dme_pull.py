@@ -111,6 +111,20 @@ RECORD_SOURCES = [
      "ref": "id", "name": "natural_capital_asset", "category": "data_quality", "country": None,
      "meta": dict(name="ENCORE Entity Nature Assessments (DME)", provider="ENCORE / TNFD",
                   license="Public (ENCORE)", url="https://encorenature.org", cadence="annual")},
+
+    # ── Materiality / sector / impact ─────────────────────────────────────────
+    {"key": "sasb_materiality", "table": "dme_sasb_materiality_map",
+     "ref": "id", "name": "esg_issue", "category": "esg_category", "country": None,
+     "meta": dict(name="SASB Materiality Map (DME)", provider="SASB / ISSB",
+                  license="Public (SASB)", url="https://sasb.ifrs.org", cadence="static")},
+    {"key": "sector_classification", "table": "dme_sector_classification_map",
+     "ref": "id", "name": "nace_description", "category": "isic_group", "country": None,
+     "meta": dict(name="Sector Classification Crosswalk (DME)", provider="A² DME store (NACE/ISIC/NAICS/SIC)",
+                  license="Public-domain derived", url="", cadence="static")},
+    {"key": "unepfi_scores", "table": "dme_unepfi_entity_scores",
+     "ref": "id", "name": "impact_area_code", "category": "impact_area_code", "country": None,
+     "meta": dict(name="UNEP-FI Impact Scores (DME)", provider="UNEP FI Impact Protocol",
+                  license="Public (UNEP FI)", url="https://www.unepfi.org", cadence="annual")},
 ]
 
 
@@ -152,6 +166,9 @@ def record_rows(cfg, data):
 
 
 if __name__ == "__main__":
+    only = set(sys.argv[1:])  # optional: run only the named source keys
+    POINT_SOURCES = [c for c in POINT_SOURCES if not only or c["key"] in only]
+    RECORD_SOURCES = [c for c in RECORD_SOURCES if not only or c["key"] in only]
     for cfg in POINT_SOURCES:
         try:
             print(f"fetching {cfg['table']} ...")

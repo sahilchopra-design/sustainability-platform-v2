@@ -1,8 +1,9 @@
+import os
 """Part 2: fi_paris_alignment, fi_csrd_e1_climate, fi_green_finance, fi_loan_books"""
 import psycopg2, json, uuid
 from datetime import datetime, date
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 
 # ── FI entity IDs — must match Part 1 UUIDs; we re-query them from DB ─────────
 conn = psycopg2.connect(DB_URL)

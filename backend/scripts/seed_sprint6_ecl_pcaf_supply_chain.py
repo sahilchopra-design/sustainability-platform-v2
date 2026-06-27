@@ -1,3 +1,4 @@
+import os
 """
 Sprint 6 Seed Script — ECL/PCAF + Supply Chain Data
 =====================================================
@@ -28,7 +29,7 @@ import json
 from datetime import date, datetime
 from decimal import Decimal
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 
 
 def new_id():

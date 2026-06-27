@@ -13,7 +13,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.pool import NullPool
 
 # Database configuration
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres.kytzcbipsghprsqoalvi:Zeek%40%402025%40%40@aws-1-us-east-2.pooler.supabase.com:5432/postgres')
+DATABASE_URL = os.environ.get('DATABASE_URL', os.environ.get("DATABASE_URL", ""))
 
 
 def get_engine():

@@ -1,3 +1,4 @@
+import os
 """
 ingest_gri_catalog.py
 =====================
@@ -30,7 +31,7 @@ import openpyxl
 import psycopg2
 import psycopg2.extras
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 
 GRI_TAXONOMY_PATH = r"C:\Users\SahilChopra\Downloads\gri-sustainability-taxonomy_2025-06-23.xlsx"
 ESRS_GRI_MAPPING_PATH = r"C:\Users\SahilChopra\Downloads\draft-esrs-gri-standards-data-point-mapping.xlsx"

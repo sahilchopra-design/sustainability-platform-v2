@@ -31,7 +31,7 @@ from psycopg2.extras import execute_values
 # ---------------------------------------------------------------------------
 EXCEL_PATH = r"C:\Users\SahilChopra\Downloads\EFRAG IG 3 List of ESRS Data Points (1) (1).xlsx"
 ESRS_TXT_PATH = r"C:\Users\SahilChopra\Downloads\ESRS Set 1.txt"
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 
 # Sheets to process (skip Index)
 SHEETS = [

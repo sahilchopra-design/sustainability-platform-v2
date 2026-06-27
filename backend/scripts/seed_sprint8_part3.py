@@ -1,9 +1,10 @@
+import os
 """Part 3: energy_entities (already done in part1), energy_financials, energy_generation_mix,
 energy_csrd_e1_climate, energy_stranded_assets_register, energy_renewable_pipeline"""
 import psycopg2, json, uuid
 from datetime import datetime
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 conn = psycopg2.connect(DB_URL)
 cur = conn.cursor()
 

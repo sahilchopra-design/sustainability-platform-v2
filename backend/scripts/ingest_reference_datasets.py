@@ -24,7 +24,7 @@ from datetime import datetime, timezone
 import pandas as pd
 import sqlalchemy as sa
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 
 DATA_DIR = r"C:\Users\SahilChopra\Downloads\csv_data_downloads\csv_downloads"
 

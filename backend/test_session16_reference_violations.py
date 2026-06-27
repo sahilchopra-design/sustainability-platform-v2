@@ -1,3 +1,4 @@
+import os
 """
 Session 16 Smoke Tests -- Reference Data (IRENA/CRREM/Grid EF) + Violations
 Tests all endpoints from reference_data.py and violations.py
@@ -28,7 +29,7 @@ def wait_for_server(max_wait=15):
 def setup_auth():
     """Create test user + session via DB, return Bearer token."""
     import sqlalchemy as sa
-    engine = sa.create_engine("postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres")
+    engine = sa.create_engine(os.environ.get("DATABASE_URL", ""))
     import uuid
     from datetime import datetime, timedelta, timezone
     user_id = str(uuid.uuid4())

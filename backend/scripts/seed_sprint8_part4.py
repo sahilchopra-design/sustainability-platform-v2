@@ -1,3 +1,4 @@
+import os
 """Part 4: esrs2_general_disclosures, esrs_e1_ghg_emissions, esrs_e1_energy,
 esrs_e1_financial_effects, esrs_e2_pollution, esrs_e3_water, esrs_e4_biodiversity,
 esrs_e5_circular, esrs_s1_workforce, esrs_g1_conduct
@@ -6,7 +7,7 @@ Uses entity_registry_id from csrd_entity_registry (pre-existing).
 import psycopg2, json, uuid
 from datetime import datetime
 
-DB_URL = "postgresql://postgres.kytzcbipsghprsqoalvi:KimiaAImpact2026@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
+DB_URL = os.environ.get("DATABASE_URL", "")
 conn = psycopg2.connect(DB_URL)
 cur = conn.cursor()
 
