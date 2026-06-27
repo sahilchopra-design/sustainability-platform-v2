@@ -17,6 +17,7 @@ export default function useAdminApi() {
   const [presets, setPresets]         = useState([]);
   const [invites, setInvites]         = useState([]);
   const [moduleStatus, setModuleStatus] = useState([]);
+  const [assignments, setAssignments] = useState([]);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState(null);
 
@@ -25,16 +26,18 @@ export default function useAdminApi() {
     setLoading(true);
     setError(null);
     try {
-      const [usersRes, presetsRes, invitesRes, modulesRes] = await Promise.allSettled([
+      const [usersRes, presetsRes, invitesRes, modulesRes, assignRes] = await Promise.allSettled([
         axios.get('/api/admin/users'),
         axios.get('/api/admin/presets'),
         axios.get('/api/admin/invites'),
         axios.get('/api/admin/modules/status'),
+        axios.get('/api/admin/refinement/assignments'),
       ]);
       if (usersRes.status === 'fulfilled')   setUsers(usersRes.value.data || []);
       if (presetsRes.status === 'fulfilled') setPresets(presetsRes.value.data || []);
       if (invitesRes.status === 'fulfilled') setInvites(invitesRes.value.data || []);
       if (modulesRes.status === 'fulfilled') setModuleStatus(modulesRes.value.data || []);
+      if (assignRes.status === 'fulfilled')  setAssignments(assignRes.value.data || []);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -149,9 +152,29 @@ export default function useAdminApi() {
     return res.data;
   }, [loadAll]);
 
+  // ── Refinement assignments (per-module ownership) ─────────────
+  const assignModule = useCallback(async (data) => {
+    // data: { module_path, assignee_id?, status?, branch_name?, target_maturity?, alembic_revision_claim?, notes? }
+    const res = await axios.post('/api/admin/refinement/assignments', data);
+    await loadAll();
+    return res.data;
+  }, [loadAll]);
+
+  const unassignModule = useCallback(async (modulePath) => {
+    const res = await axios.delete(`/api/admin/refinement/assignments${modulePath}`);
+    await loadAll();
+    return res.data;
+  }, [loadAll]);
+
+  const validateModule = useCallback(async (modulePath, build = false) => {
+    // returns { pass, findings, buildOk } — used to gate maturity promotion
+    const res = await axios.post('/api/admin/refinement/validate', { module_path: modulePath, build });
+    return res.data;
+  }, []);
+
   return {
     // State
-    users, presets, invites, moduleStatus,
+    users, presets, invites, moduleStatus, assignments,
     loading, error,
     // Actions
     loadAll,
@@ -160,5 +183,6 @@ export default function useAdminApi() {
     createInvite, revokeInvite,
     grantModule, denyModule, removeAccess,
     reviewModule, bulkReviewModules, addModuleFeedback,
+    assignModule, unassignModule, validateModule,
   };
 }

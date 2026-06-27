@@ -109,6 +109,20 @@ class FeedbackReq(BaseModel):
     note: str
     rating: Optional[int] = None
 
+class AssignModuleReq(BaseModel):
+    module_path: str
+    assignee_id: Optional[str] = None
+    status: Optional[str] = None              # unassigned | in_progress | in_review | done
+    branch_name: Optional[str] = None
+    worktree_path: Optional[str] = None
+    target_maturity: Optional[str] = None     # beta | production
+    alembic_revision_claim: Optional[str] = None
+    notes: Optional[str] = None
+
+class ValidateModuleReq(BaseModel):
+    module_path: str
+    build: bool = False                       # run the (slow) production build too
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # USER MANAGEMENT
@@ -606,3 +620,116 @@ def bulk_review_modules(
 
     db.commit()
     return {"status": "bulk_updated", "action": body.action, "count": updated}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODULE REFINEMENT ASSIGNMENTS (per-module ownership board)
+# Orthogonal to module_review_status (maturity) — joined by module_path.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _assignment_row(r):
+    return {
+        "id": str(r[0]), "module_path": r[1], "assignee_id": str(r[2]) if r[2] else None,
+        "assignee_name": r[3], "assignee_email": r[4], "status": r[5],
+        "branch_name": r[6], "worktree_path": r[7], "target_maturity": r[8],
+        "alembic_revision_claim": r[9], "notes": r[10],
+        "created_at": r[11].isoformat() if r[11] else None,
+        "updated_at": r[12].isoformat() if r[12] else None,
+        "maturity_level": r[13], "review_tier": r[14],
+    }
+
+
+_ASSIGNMENT_SELECT = """
+    SELECT a.id, a.module_path, a.assignee_id, u.name, u.email, a.status,
+           a.branch_name, a.worktree_path, a.target_maturity,
+           a.alembic_revision_claim, a.notes, a.created_at, a.updated_at,
+           m.maturity_level, m.review_tier
+    FROM module_refinement_assignments a
+    LEFT JOIN users_pg u ON u.user_id = a.assignee_id
+    LEFT JOIN module_review_status m ON m.module_path = a.module_path
+"""
+
+
+@router.get("/refinement/assignments")
+def list_assignments(admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """List every module refinement assignment joined with its maturity status."""
+    rows = db.execute(text(_ASSIGNMENT_SELECT + " ORDER BY a.updated_at DESC")).fetchall()
+    return [_assignment_row(r) for r in rows]
+
+
+@router.get("/refinement/mine")
+def my_assignments(current=Depends(_get_current_user), db: Session = Depends(get_db)):
+    """Assignee-scoped view — what the signed-in teammate currently owns.
+
+    Available to any authenticated user (not just super_admin) so an analyst can
+    see their own module without admin rights."""
+    rows = db.execute(
+        text(_ASSIGNMENT_SELECT + " WHERE a.assignee_id = :uid ORDER BY a.updated_at DESC"),
+        {"uid": current["user_id"]},
+    ).fetchall()
+    return [_assignment_row(r) for r in rows]
+
+
+@router.post("/refinement/assignments")
+def upsert_assignment(body: AssignModuleReq, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Assign (or re-assign / update) a module to a teammate. Upsert by module_path."""
+    now = datetime.now(timezone.utc)
+    status = body.status or ("in_progress" if body.assignee_id else "unassigned")
+    db.execute(text("""
+        INSERT INTO module_refinement_assignments
+            (module_path, assignee_id, status, branch_name, worktree_path,
+             target_maturity, alembic_revision_claim, notes, assigned_by, created_at, updated_at)
+        VALUES (:mp, :aid, :st, :br, :wt, :tm, :rev, :notes, :by, :now, :now)
+        ON CONFLICT (module_path) DO UPDATE SET
+            assignee_id = EXCLUDED.assignee_id,
+            status = EXCLUDED.status,
+            branch_name = COALESCE(EXCLUDED.branch_name, module_refinement_assignments.branch_name),
+            worktree_path = COALESCE(EXCLUDED.worktree_path, module_refinement_assignments.worktree_path),
+            target_maturity = COALESCE(EXCLUDED.target_maturity, module_refinement_assignments.target_maturity),
+            alembic_revision_claim = COALESCE(EXCLUDED.alembic_revision_claim, module_refinement_assignments.alembic_revision_claim),
+            notes = COALESCE(EXCLUDED.notes, module_refinement_assignments.notes),
+            updated_at = :now
+    """), {
+        "mp": body.module_path, "aid": body.assignee_id, "st": status,
+        "br": body.branch_name, "wt": body.worktree_path, "tm": body.target_maturity or "beta",
+        "rev": body.alembic_revision_claim, "notes": body.notes, "by": admin["user_id"], "now": now,
+    })
+    db.commit()
+    row = db.execute(text(_ASSIGNMENT_SELECT + " WHERE a.module_path = :mp"), {"mp": body.module_path}).fetchone()
+    return _assignment_row(row)
+
+
+@router.delete("/refinement/assignments/{module_path:path}")
+def delete_assignment(module_path: str, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Remove an assignment (module returns to the unassigned pool)."""
+    mp = module_path if module_path.startswith("/") else "/" + module_path
+    db.execute(text("DELETE FROM module_refinement_assignments WHERE module_path = :mp"), {"mp": mp})
+    db.commit()
+    return {"status": "deleted", "module_path": mp}
+
+
+@router.post("/refinement/validate")
+def validate_module(body: ValidateModuleReq, admin=Depends(require_super_admin)):
+    """Run scripts/validate-module.js for a module and return the gate result.
+
+    Called before a maturity promotion so a module that fails the production-grade
+    contract (undefined T tokens, incomplete manifest, build break) cannot be
+    promoted. Static checks are fast; pass build=true to also run the CI build."""
+    import os
+    import json as _json
+    import subprocess
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    script = os.path.join(repo_root, "scripts", "validate-module.js")
+    if not os.path.exists(script):
+        return {"pass": False, "error": "validate-module.js not found on server"}
+    cmd = ["node", script, body.module_path, "--json"]
+    if body.build:
+        cmd.append("--build")
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=repo_root, timeout=600)
+        out = _json.loads(proc.stdout or "{}")
+        return {"pass": bool(out.get("pass")), "findings": out.get("findings", {}), "buildOk": out.get("buildOk")}
+    except FileNotFoundError:
+        return {"pass": False, "error": "node runtime not available on server"}
+    except Exception as e:  # pragma: no cover
+        return {"pass": False, "error": str(e)}

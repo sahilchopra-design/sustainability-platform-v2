@@ -8,6 +8,15 @@ import {
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 import sbtiData from '../../../data/sbti-companies.json';
 import { CDP_COMPANY_EMISSIONS } from '../../../data/publicDataSeed';
+import { useReferencePoints } from '../../../lib/useReferenceData';
+
+// iso2 -> iso3 for the tracked NDC countries (used to overlay live OWID emissions)
+const ISO2_TO_ISO3 = {
+  DE:'DEU', US:'USA', CN:'CHN', IN:'IND', JP:'JPN', GB:'GBR', FR:'FRA', BR:'BRA', AU:'AUS',
+  CA:'CAN', KR:'KOR', ZA:'ZAF', SA:'SAU', MX:'MEX', ID:'IDN', RU:'RUS', IT:'ITA', ES:'ESP',
+  TR:'TUR', NL:'NLD', PL:'POL', AR:'ARG', NG:'NGA', EG:'EGY', TH:'THA', VN:'VNM', MY:'MYS',
+  PK:'PAK', BD:'BGD', PH:'PHL', SE:'SWE', NO:'NOR', CH:'CHE', AE:'ARE', IR:'IRN', KZ:'KAZ',
+};
 
 /* ══════════════════════════════════════════════════════════════
    THEME
@@ -186,6 +195,18 @@ export default function ParisAlignmentPage() {
   const [scenarioSlider, setScenarioSlider] = useState(1.5);
   const [countryFilter, setCountryFilter] = useState('All');
   const [sectorFilter, setSectorFilter] = useState('All');
+
+  /* Live OWID territorial CO2 (latest full year) — overlays the hardcoded
+     emissions_mt with authoritative figures; falls back to the seed offline. */
+  const { data: owidCo2 = [] } = useReferencePoints('owid_co2', { metric: 'co2', year: 2023, fallback: [] });
+  const ndcCountries = useMemo(() => {
+    const live = {};
+    (owidCo2 || []).forEach(p => { if (p.entity_code) live[p.entity_code] = p.value; });
+    return COUNTRY_PARIS.map(c => {
+      const v = live[ISO2_TO_ISO3[c.iso2]];
+      return v != null ? { ...c, emissions_mt: Math.round(v), emissions_live: true } : c;
+    });
+  }, [owidCo2]);
 
   /* Load portfolio */
   const holdings = useMemo(() => {
@@ -612,10 +633,10 @@ export default function ParisAlignmentPage() {
         {/* ══════ TAB 3: COUNTRY NDCs ══════ */}
         {tab === 'Country NDCs' && (<>
           {/* ── S6: Country NDC Progress BarChart ── */}
-          <Section title="Country NDC Progress vs 2030 Target" sub={`${COUNTRY_PARIS.length} countries tracked`}>
+          <Section title="Country NDC Progress vs 2030 Target" sub={`${ndcCountries.length} countries tracked${ndcCountries.some(c => c.emissions_live) ? ' · ● live OWID emissions' : ''}`}>
             <Card style={{ overflow: 'auto' }}>
               <ResponsiveContainer width="100%" height={420}>
-                <BarChart data={COUNTRY_PARIS.slice().sort((a, b) => b.progress_pct - a.progress_pct)} layout="vertical">
+                <BarChart data={ndcCountries.slice().sort((a, b) => b.progress_pct - a.progress_pct)} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} />
                   <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Progress %', position: 'bottom', style: { fontSize: 11, fill: T.textMut } }} />
                   <YAxis dataKey="country" type="category" tick={{ fontSize: 10, fill: T.textSec }} width={110} />
@@ -625,7 +646,7 @@ export default function ParisAlignmentPage() {
                   }} />
                   <Legend wrapperStyle={{ fontSize: 12, fontFamily: T.font }} />
                   <Bar dataKey="progress_pct" name="Progress" radius={[0, 4, 4, 0]} stackId="a">
-                    {COUNTRY_PARIS.slice().sort((a, b) => b.progress_pct - a.progress_pct).map((c, i) => <Cell key={i} fill={c.on_track ? T.green : T.amber} />)}
+                    {ndcCountries.slice().sort((a, b) => b.progress_pct - a.progress_pct).map((c, i) => <Cell key={i} fill={c.on_track ? T.green : T.amber} />)}
                   </Bar>
                   <Bar dataKey="gap_pct" name="Gap" radius={[0, 4, 4, 0]} stackId="a" fill={`${T.red}40`} />
                 </BarChart>
@@ -645,7 +666,7 @@ export default function ParisAlignmentPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {COUNTRY_PARIS.map((c, i) => (
+                  {ndcCountries.map((c, i) => (
                     <tr key={i} style={{ borderBottom: `1px solid ${T.borderL}`, background: i % 2 === 0 ? T.surface : T.surfaceH }}>
                       <td style={{ padding: '8px 12px', fontWeight: 600, color: T.navy }}>{c.iso2} {c.country}</td>
                       <td style={{ padding: '8px 12px', color: T.textSec, fontSize: 11 }}>{c.ndc_target}</td>

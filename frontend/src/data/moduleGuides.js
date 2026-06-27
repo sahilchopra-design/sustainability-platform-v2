@@ -4,6 +4,8 @@
  * Each: title, epCode, sprint, description, calculationEngine, dataPoints[], userInteraction[], references[]
  */
 
+import { AUTO_GUIDES } from '../moduleRegistry.auto';
+
 function g(title, epCode, sprint, description, calc, dataPoints, steps, refs, acronyms, dataLineage, valueSummary) {
   return {
     title, epCode, sprint, description,
@@ -10620,3 +10622,9 @@ export const MODULE_GUIDES = {
   ),
 
 };
+
+// Merge auto-discovered guides from module.config.js manifests (additive — manual
+// entries above win on any duplicate key so nothing changes for existing modules).
+for (const [path, guide] of Object.entries(AUTO_GUIDES)) {
+  if (!(path in MODULE_GUIDES)) MODULE_GUIDES[path] = guide;
+}

@@ -83,5 +83,11 @@ def init_db():
     from db.models.cdm_tools import (  # noqa: F401
         CDMTool, CDMToolExecution, MethodologyToolDependency,
     )
+    # ── Refined DB-vertical modules (per-module ownership system) ──
+    from db.models.real_estate_carbon_analytics import RealEstateCarbonAnalyticsProperty  # noqa: F401
+    # ── Public reference-data layer (Tier-1 authoritative datasets) ──
+    from db.models.reference_data import (  # noqa: F401
+        ReferenceDataSource, ReferenceDataPoint, ReferenceDataRecord,
+    )
     Base.metadata.create_all(bind=engine)
     print("[OK] PostgreSQL database tables created")

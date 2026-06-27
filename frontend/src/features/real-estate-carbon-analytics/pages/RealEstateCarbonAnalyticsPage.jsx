@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import BuiltEnvironmentAdvancedAnalytics from '../../_shared/BuiltEnvironmentAdvancedAnalytics';
+import { useModuleData } from '../../../lib/useModuleData';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
@@ -50,8 +51,11 @@ const EMBODY_BENCH = {
 // EPC → operational carbon intensity base (kgCO₂/m²/yr)
 const EPC_OCI = { A:18, B:32, C:55, D:82, E:115, F:155, G:200 };
 
-// Generate 80 properties
-const PROPERTIES = Array.from({ length: 80 }, (_, i) => {
+// Seed fallback — the former hardcoded dataset, now also the DB seed
+// (backend/scripts/data/real_estate_carbon_analytics.json). When the API is
+// reachable the page renders DB rows; otherwise it falls back to this so the
+// view never breaks. See docs/MODULE_WORKFLOW.md.
+const PROPERTIES_SEED = Array.from({ length: 80 }, (_, i) => {
   const sector = SECTORS[Math.floor(sr(i * 7) * SECTORS.length)];
   const region = REGIONS[Math.floor(sr(i * 11) * REGIONS.length)];
   const epc = EPC_GRADES[Math.floor(sr(i * 13) * EPC_GRADES.length)];
@@ -167,11 +171,17 @@ export default function RealEstateCarbonAnalyticsPage() {
   const [carbonPx, setCarbonPx] = useState(100);  // £/tCO₂
   const [lifeYears, setLifeYears] = useState(60);  // assessment period
 
-  const filtered = useMemo(() => PROPERTIES.filter(p =>
+  // DB-backed: properties now flow database -> API -> hook -> UI, with the seed
+  // as offline fallback so the rendered view is identical pre/post conversion.
+  const { data: properties = PROPERTIES_SEED } = useModuleData(
+    'real-estate-carbon-analytics', 'properties', { fallback: PROPERTIES_SEED }
+  );
+
+  const filtered = useMemo(() => (properties || []).filter(p =>
     (filterSector === 'All' || p.sector === filterSector) &&
     (filterRegion === 'All' || p.region === filterRegion) &&
     (filterEpc === 'All' || p.epc === filterEpc)
-  ), [filterSector, filterRegion, filterEpc]);
+  ), [properties, filterSector, filterRegion, filterEpc]);
 
   const totals = useMemo(() => {
     const n = filtered.length || 1;
@@ -690,7 +700,9 @@ export default function RealEstateCarbonAnalyticsPage() {
               <KpiCard label="Avg Ownership Share" value={`${fmt1(filtered.reduce((s,p)=>s+p.ownershipPct,0)/(filtered.length||1))}%`} sub="Portfolio average" />
               <KpiCard label="Avg PCAF per m²" value={`${fmt1(filtered.reduce((s,p)=>s+p.pcafPerM2,0)/(filtered.length||1))} kgCO₂e/m²`} sub="Attributable intensity" color={T.amber} />
               <KpiCard label="Avg Whole-Life Carbon" value={`${fmt0(totals.avgWholeLife)} tCO₂e`} sub="60-year full lifecycle" />
-              <KpiCard label="Top Contributor" value={`${filtered.sort((a,b)=>b.pcafAttr-a.pcafAttr)[0]?.name||'—'}`} sub={`${fmt0(filtered[0]?.pcafAttr||0)} tCO₂e`} color={T.red} />
+              {(() => { const top = [...filtered].sort((a, b) => b.pcafAttr - a.pcafAttr)[0]; return (
+                <KpiCard label="Top Contributor" value={top?.name || '—'} sub={`${fmt0(top?.pcafAttr || 0)} tCO₂e`} color={T.red} />
+              ); })()}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>

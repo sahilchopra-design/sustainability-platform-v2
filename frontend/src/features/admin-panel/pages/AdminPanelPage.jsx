@@ -1717,6 +1717,7 @@ const MAIN_TABS = [
   { id: 'roles',     label: 'Role Matrix',    icon: '🔐' },
   { id: 'modules',   label: 'Module Manager', icon: '📦' },
   { id: 'maturity',  label: 'Module Maturity',icon: '🚀' },
+  { id: 'refinement',label: 'Refinement Board',icon: '🛠️' },
   { id: 'invites',   label: 'Invites',        icon: '✉️' },
   { id: 'presets',   label: 'Presets',        icon: '🎛️' },
   { id: 'audit',     label: 'Audit Log',      icon: '📋' },
@@ -1785,6 +1786,22 @@ function MaturityTab({ api }) {
     if (selected.size === 0) return;
     setBusy(true);
     try {
+      // Gate forward promotions (approve→beta, promote→production) on the
+      // production-grade validator. A module that fails the contract is blocked.
+      if ((action === 'approve' || action === 'promote') && api.validateModule) {
+        const failed = [];
+        for (const path of selected) {
+          try {
+            const v = await api.validateModule(path);
+            if (v && v.pass === false) failed.push(path);
+          } catch { /* validator unreachable (e.g. no node on server) — do not hard-block */ }
+        }
+        if (failed.length) {
+          setBusy(false);
+          alert(`Blocked: ${failed.length} module(s) fail the production-grade contract:\n` + failed.join('\n') + '\n\nRun  node scripts/validate-module.js <path>  to see findings.');
+          return;
+        }
+      }
       await api.bulkReviewModules([...selected], action);
       setSelected(new Set());
     } catch (e) { alert('Error: ' + (e.response?.data?.detail || e.message)); }
@@ -1877,6 +1894,115 @@ const thStyle = { textAlign: 'left', padding: '10px 12px', fontSize: 11, color: 
 const tdStyle = { padding: '8px 12px', verticalAlign: 'middle' };
 const btnStyle = { padding: '6px 14px', borderRadius: 6, fontSize: 11, fontFamily: T.font, cursor: 'pointer', fontWeight: 600, border: 'none' };
 
+/* ─── Refinement Board Tab — per-module ownership ─── */
+const REFINE_STATUSES = [
+  { id: 'unassigned',  label: 'Unassigned',  color: T.muted },
+  { id: 'in_progress', label: 'In Progress', color: T.orange },
+  { id: 'in_review',   label: 'In Review',   color: T.blue },
+  { id: 'done',        label: 'Done',        color: T.green },
+];
+const inStyle = { padding: '8px 10px', borderRadius: 6, background: T.card, border: `1px solid ${T.border}`, color: T.text, fontSize: 12, fontFamily: T.font, outline: 'none' };
+
+function RefinementBoardTab({ api }) {
+  const assignments = api.assignments || [];
+  const users = api.users || [];
+  const [form, setForm] = useState({ module_path: '', assignee_id: '', status: 'in_progress', branch_name: '', alembic_revision_claim: '', target_maturity: 'beta', notes: '' });
+  const [busy, setBusy] = useState(false);
+  const [search, setSearch] = useState('');
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const submit = async () => {
+    if (!form.module_path) { alert('Pick a module path first.'); return; }
+    setBusy(true);
+    try {
+      await api.assignModule({ ...form, assignee_id: form.assignee_id || null });
+      setForm(f => ({ ...f, module_path: '', branch_name: '', alembic_revision_claim: '', notes: '' }));
+    } catch (e) { alert('Error: ' + (e.response?.data?.detail || e.message)); }
+    setBusy(false);
+  };
+  const unassign = async (mp) => {
+    if (!window.confirm(`Remove the assignment for ${mp}?`)) return;
+    setBusy(true);
+    try { await api.unassignModule(mp); } catch (e) { alert('Error: ' + (e.response?.data?.detail || e.message)); }
+    setBusy(false);
+  };
+
+  const matchSearch = (a) => !search || a.module_path.toLowerCase().includes(search.toLowerCase()) || (a.assignee_name || '').toLowerCase().includes(search.toLowerCase());
+  const byStatus = (st) => assignments.filter(a => (a.status || 'unassigned') === st && matchSearch(a));
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* assign / update form */}
+      <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 2, minWidth: 220 }}>
+          <label style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Module</label>
+          <input list="refine-modules" value={form.module_path} onChange={e => set('module_path', e.target.value)} placeholder="/module-path" style={inStyle} />
+          <datalist id="refine-modules">
+            {ALL_MODULE_PATHS.map(p => <option key={p} value={p}>{getModuleLabel(p)}</option>)}
+          </datalist>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 160 }}>
+          <label style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Assignee</label>
+          <select value={form.assignee_id} onChange={e => set('assignee_id', e.target.value)} style={inStyle}>
+            <option value="">— unassigned —</option>
+            {users.map(u => <option key={u.user_id || u.id} value={u.user_id || u.id}>{u.name || u.email}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 130 }}>
+          <label style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Status</label>
+          <select value={form.status} onChange={e => set('status', e.target.value)} style={inStyle}>
+            {REFINE_STATUSES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 150 }}>
+          <label style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Branch</label>
+          <input value={form.branch_name} onChange={e => set('branch_name', e.target.value)} placeholder="module/…" style={inStyle} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 130 }}>
+          <label style={{ fontSize: 10, color: T.muted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Revision claim</label>
+          <input value={form.alembic_revision_claim} onChange={e => set('alembic_revision_claim', e.target.value)} placeholder="e.g. recarb1" style={inStyle} />
+        </div>
+        <button onClick={submit} disabled={busy} style={{ ...btnStyle, background: T.accent, color: '#fff', padding: '9px 18px', opacity: busy ? 0.5 : 1 }}>Assign / Update</button>
+      </div>
+
+      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search assignments…" style={{ ...inStyle, maxWidth: 280 }} />
+
+      {/* kanban columns */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        {REFINE_STATUSES.map(col => {
+          const items = byStatus(col.id);
+          return (
+            <div key={col.id} style={{ background: T.surface, borderRadius: 8, border: `1px solid ${T.border}`, padding: 10, minHeight: 120 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: col.color, textTransform: 'uppercase', letterSpacing: 0.5 }}>{col.label}</span>
+                <span style={{ fontSize: 11, fontFamily: T.mono, color: T.muted }}>{items.length}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {items.map(a => (
+                  <div key={a.module_path} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 6, padding: 10 }}>
+                    <div style={{ fontWeight: 600, fontSize: 12, color: T.text }}>{getModuleLabel(a.module_path)}</div>
+                    <div style={{ fontSize: 10, color: T.muted, fontFamily: T.mono, marginBottom: 6 }}>{a.module_path}</div>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                      <span style={{ fontSize: 10, color: T.accent }}>{a.assignee_name || '—'}</span>
+                      {a.maturity_level && (
+                        <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 8, background: (MATURITY_COLORS[a.maturity_level] || T.muted) + '22', color: MATURITY_COLORS[a.maturity_level] || T.muted, fontFamily: T.mono }}>{MATURITY_LABELS[a.maturity_level] || a.maturity_level}</span>
+                      )}
+                      {a.alembic_revision_claim && <span style={{ fontSize: 9, color: T.muted, fontFamily: T.mono }}>rev:{a.alembic_revision_claim}</span>}
+                    </div>
+                    {a.branch_name && <div style={{ fontSize: 9, color: T.muted, fontFamily: T.mono, marginTop: 4 }}>{a.branch_name}</div>}
+                    <button onClick={() => unassign(a.module_path)} disabled={busy} style={{ ...btnStyle, marginTop: 8, padding: '3px 8px', fontSize: 10, background: T.card, color: T.muted, border: `1px solid ${T.border}` }}>Unassign</button>
+                  </div>
+                ))}
+                {items.length === 0 && <div style={{ fontSize: 11, color: T.muted, fontStyle: 'italic', padding: 8 }}>none</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminPanelPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const { store, update, addAudit } = useStore();
@@ -1938,6 +2064,7 @@ export default function AdminPanelPage() {
          : t.id === 'presets'  ? effectiveStore.presets.length
          : t.id === 'audit'    ? (store.auditLog || []).length
          : t.id === 'maturity' ? (api.moduleStatus || []).length
+         : t.id === 'refinement' ? (api.assignments || []).length
          : undefined,
   }));
 
@@ -1977,6 +2104,7 @@ export default function AdminPanelPage() {
       {activeTab === 'roles'     && <RoleMatrixTab />}
       {activeTab === 'modules'   && <ModuleManagerTab store={effectiveStore} update={update} addAudit={addAudit} />}
       {activeTab === 'maturity'  && <MaturityTab api={api} />}
+      {activeTab === 'refinement'&& <RefinementBoardTab api={api} />}
       {activeTab === 'invites'   && <InvitesTab store={effectiveStore} update={update} addAudit={addAudit} />}
       {activeTab === 'presets'   && <PresetsTab store={effectiveStore} update={update} addAudit={addAudit} />}
       {activeTab === 'audit'     && <AuditLogTab store={store} />}

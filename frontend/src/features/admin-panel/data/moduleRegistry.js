@@ -4,6 +4,8 @@
  * No DB dependency — this is the authoritative front-end registry.
  */
 
+import { AUTO_NAV } from '../../../moduleRegistry.auto';
+
 export const MODULE_REGISTRY = [
   {
     group: 'Disclosure & Reporting',
@@ -202,6 +204,20 @@ export const MODULE_REGISTRY = [
     ],
   },
 ];
+
+// Merge auto-discovered modules (module.config.js manifests) into the registry,
+// additive and deduped by path, so the admin panel sees refined modules without
+// anyone editing this file.
+(() => {
+  const known = new Set(MODULE_REGISTRY.flatMap(g => g.modules.map(m => m.path)));
+  for (const ag of AUTO_NAV) {
+    const newMods = (ag.modules || ag.items || []).filter(m => !known.has(m.path));
+    if (!newMods.length) continue;
+    const existing = MODULE_REGISTRY.find(g => g.group === ag.group || g.group === ag.label);
+    if (existing) existing.modules.push(...newMods.map(m => ({ path: m.path, label: m.label })));
+    else MODULE_REGISTRY.push({ group: ag.group || ag.label, icon: ag.icon, color: ag.color, modules: newMods.map(m => ({ path: m.path, label: m.label })) });
+  }
+})();
 
 // Flattened list of all paths for quick lookups
 export const ALL_MODULE_PATHS = MODULE_REGISTRY.flatMap(g => g.modules.map(m => m.path));

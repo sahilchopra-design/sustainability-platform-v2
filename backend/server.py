@@ -651,6 +651,32 @@ app.include_router(comprehensive_reporting_router)    # E119 Comprehensive Repor
 app.include_router(rbac_admin_router)
 app.include_router(admin_rbac_router)
 
+# ── Auto-router discovery ─────────────────────────────────────────────────────
+# Additively include any router under api/v1/routes that the manual block above
+# did NOT already register. This lets a refined module drop a new route file in
+# without editing this file (the de-confliction layer for parallel module work).
+# Dedup is by route-path overlap, so a manually-included router is never doubled.
+# A broken module is logged and skipped — it no longer crashes startup.
+import importlib as _importlib
+import pkgutil as _pkgutil
+import logging as _logging
+import api.v1.routes as _routes_pkg
+
+_registered_paths = {getattr(r, "path", None) for r in app.routes}
+for _finder, _name, _ispkg in sorted(_pkgutil.iter_modules(_routes_pkg.__path__)):
+    try:
+        _mod = _importlib.import_module(f"api.v1.routes.{_name}")
+        _router = getattr(_mod, "router", None)
+        if _router is None:
+            continue
+        _paths = {getattr(r, "path", None) for r in _router.routes}
+        if _paths & _registered_paths:        # already manually included
+            continue
+        app.include_router(_router)
+        _registered_paths |= _paths
+    except Exception as _e:                    # pragma: no cover
+        _logging.getLogger("server").warning("Skipped auto-router %s: %s", _name, _e)
+
 # ── Global error handlers ─────────────────────────────────────────────────────
 from middleware.error_handler import register_error_handlers
 register_error_handlers(app)

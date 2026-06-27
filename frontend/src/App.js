@@ -18,6 +18,7 @@ import DataDepthOverlay from './components/DataDepthOverlay';
 import DataDepthToggle from './components/DataDepthToggle';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { AUTO_ROUTES, AUTO_NAV, AUTO_PATHS } from './moduleRegistry.auto';
 import DemoBanner from './components/auth/DemoBanner';
 const LoginPage = React.lazy(() => import('./features/auth/pages/LoginPage'));
 const InviteAcceptPage = React.lazy(() => import('./features/auth/pages/InviteAcceptPage'));
@@ -535,7 +536,7 @@ const RealEstateClimateRiskPage          = React.lazy(() => import("./features/r
 const ClimateMortgageAnalyticsPage       = React.lazy(() => import("./features/climate-mortgage-analytics/pages/ClimateMortgageAnalyticsPage"));
 const InfrastructureClimateResiliencePage = React.lazy(() => import("./features/infrastructure-climate-resilience/pages/InfrastructureClimateResiliencePage"));
 const UrbanClimateAdaptationPage         = React.lazy(() => import("./features/urban-climate-adaptation/pages/UrbanClimateAdaptationPage"));
-const RealEstateCarbonAnalyticsPage      = React.lazy(() => import("./features/real-estate-carbon-analytics/pages/RealEstateCarbonAnalyticsPage"));
+/* real-estate-carbon-analytics: route now provided by its module.config.js (auto-discovery pilot) */
 // Sprint DF — Climate Technology & Innovation Finance
 const CleanTechInvestmentPage            = React.lazy(() => import("./features/cleantech-investment/pages/CleanTechInvestmentPage"));
 const GreenHydrogenEconomicsPage2        = React.lazy(() => import("./features/green-hydrogen-economics/pages/GreenHydrogenEconomicsPage"));
@@ -2142,6 +2143,19 @@ const NAV_GROUPS = [
     { path: '/csrd-ixbrl',            label: 'CSRD / iXBRL Builder',   badge: 'EFRAG ESRS 2024 · 5 FW',   code: 'EP-D3' },
   ]},
 ];
+// Merge auto-discovered module manifests into the manual nav (additive, dedup by
+// path). Lets a refined module declare its nav entry in its own folder instead of
+// editing this array. Runs once at import.
+(() => {
+  const manualPaths = new Set(NAV_GROUPS.flatMap(g => g.items.map(i => i.path)));
+  for (const ag of AUTO_NAV) {
+    const newItems = ag.items.filter(i => !manualPaths.has(i.path));
+    if (!newItems.length) continue;
+    const existing = NAV_GROUPS.find(g => g.label === ag.label);
+    if (existing) existing.items.push(...newItems);
+    else NAV_GROUPS.push({ label: ag.label, icon: ag.icon, color: ag.color, items: newItems });
+  }
+})();
 const ALL_ITEMS = NAV_GROUPS.flatMap(g => g.items);
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -3094,7 +3108,7 @@ function AppContent() {
             <Route path="/climate-mortgage-analytics"        element={<ClimateMortgageAnalyticsPage />} />
             <Route path="/infrastructure-climate-resilience" element={<InfrastructureClimateResiliencePage />} />
             <Route path="/urban-climate-adaptation"          element={<UrbanClimateAdaptationPage />} />
-            <Route path="/real-estate-carbon-analytics"      element={<RealEstateCarbonAnalyticsPage />} />
+            {/* /real-estate-carbon-analytics route now auto-discovered from its module.config.js */}
             {/* Sprint DF — Climate Technology & Innovation Finance */}
             <Route path="/cleantech-investment"              element={<CleanTechInvestmentPage />} />
             <Route path="/green-hydrogen-economics-df"       element={<GreenHydrogenEconomicsPage2 />} />
@@ -3558,6 +3572,12 @@ function AppContent() {
             <Route path="/report-quality-engine" element={<ReportQualityEnginePage />} />
             <Route path="/metrics-data-architecture" element={<MetricsDataArchitecturePage />} />
             <Route path="/narrative-intelligence" element={<NarrativeIntelligencePage />} />
+            {/* Auto-discovered modules (module.config.js manifests). Rendered after
+                the manual routes so a manual <Route> wins on any duplicate path —
+                this is the safe incremental-migration fallback. */}
+            {AUTO_ROUTES.map((r) => (
+              <Route key={r.path} path={r.path} element={<r.element />} />
+            ))}
             <Route path="*" element={<Dashboard />} />
           </Routes>
             </Suspense>

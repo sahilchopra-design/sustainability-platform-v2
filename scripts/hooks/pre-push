@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# pre-push hook — block pushing a module branch that fails the production-grade gate.
+#
+# Install once per worktree:
+#   git config core.hooksPath scripts/hooks
+# (or copy this file to .git/hooks/pre-push and chmod +x).
+#
+# Only enforces on branches named module/<slug>; other branches push normally.
+set -euo pipefail
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+case "$branch" in
+  module/*)
+    slug="${branch#module/}"
+    echo "[pre-push] validating module /${slug} ..."
+    if node scripts/validate-module.js "/${slug}"; then
+      echo "[pre-push] ✓ module gate passed"
+    else
+      echo "[pre-push] ✗ module gate FAILED — fix findings above or push --no-verify to override (discouraged)." >&2
+      exit 1
+    fi
+    ;;
+  *)
+    : # non-module branch, no gate
+    ;;
+esac
