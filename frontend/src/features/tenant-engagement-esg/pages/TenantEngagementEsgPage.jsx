@@ -193,7 +193,7 @@ export default function TenantEngagementEsgPage(){
       {tab===1&&(
         <div>
           <div style={sty.kpiRow}>
-            {[{v:`${greenLeaseRate}%`,l:'Green Lease Rate'},{v:filtered.filter(t=>t.greenLeaseActive).length,l:'Active Green Leases'},{v:`${Math.floor(clauseAdoption.reduce((s,c)=>s+c.rate,0)/clauseAdoption.length)}%`,l:'Avg Clause Adoption'},{v:clauseAdoption.sort((a,b)=>b.rate-a.rate)[0]?.clause||'',l:'Most Adopted Clause'},{v:filtered.filter(t=>t.leaseExpiry<=2026).length,l:'Expiring by 2026'}].map((k,i)=>(
+            {[{v:`${greenLeaseRate}%`,l:'Green Lease Rate'},{v:filtered.filter(t=>t.greenLeaseActive).length,l:'Active Green Leases'},{v:`${Math.floor(clauseAdoption.reduce((s,c)=>s+c.rate,0)/clauseAdoption.length)}%`,l:'Avg Clause Adoption'},{v:[...clauseAdoption].sort((a,b)=>b.rate-a.rate)[0]?.clause||'',l:'Most Adopted Clause'},{v:filtered.filter(t=>t.leaseExpiry<=2026).length,l:'Expiring by 2026'}].map((k,i)=>(
               <div key={i} style={sty.kpi}><div style={{...sty.kpiVal,fontSize:i===3?13:24}}>{k.v}</div><div style={sty.kpiLabel}>{k.l}</div></div>
             ))}
           </div>
@@ -336,7 +336,7 @@ export default function TenantEngagementEsgPage(){
             <div style={sty.scrollBox}>
               <table style={sty.table}>
                 <thead><tr><th style={sty.th}>Tenant</th><th style={sty.th}>Sector</th><th style={sty.th}>Energy (MWh)</th><th style={sty.th}>Scope 3 (tCO₂)</th><th style={sty.th}>Target (%)</th><th style={sty.th}>Data Quality</th><th style={sty.th}>Renewable %</th><th style={sty.th}>Progress</th></tr></thead>
-                <tbody>{filtered.sort((a,b)=>b.scope3Contribution-a.scope3Contribution).slice(0,50).map(t=>(
+                <tbody>{[...filtered].sort((a,b)=>b.scope3Contribution-a.scope3Contribution).slice(0,50).map(t=>(
                   <tr key={t.id}><td style={sty.td}>{t.name}</td><td style={sty.td}>{t.sector}</td>
                     <td style={sty.td}>{(t.energyConsumption/1000).toFixed(0)}</td>
                     <td style={sty.td}>{t.scope3Contribution}</td>

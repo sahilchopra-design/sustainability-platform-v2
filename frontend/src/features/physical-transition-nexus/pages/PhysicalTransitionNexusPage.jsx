@@ -330,7 +330,7 @@ export default function PhysicalTransitionNexusPage() {
           <div style={s.cardTitle}>Sector Interaction Coefficient Matrix</div>
           <table style={s.tbl}>
             <thead><tr><th style={s.th}>Sector</th><th style={s.th}>Phys Score</th><th style={s.th}>Trans Score</th><th style={s.th}>rho</th><th style={s.th}>IntCVaR</th><th style={s.th}>Weight %</th><th style={s.th}>Loss ($M)</th><th style={s.th}>Watchlist</th></tr></thead>
-            <tbody>{sectorData.sort((a, b) => b.intCvar - a.intCvar).map((d, i) => (
+            <tbody>{[...sectorData].sort((a, b) => b.intCvar - a.intCvar).map((d, i) => (
               <tr key={i} style={{ background: d.intCvar > 12 ? '#fef2f2' : 'transparent' }}>
                 <td style={{ ...s.td, fontWeight:600 }}>{d.name}</td>
                 <td style={{ ...s.td, fontFamily:T.mono }}>{d.physScore}</td>
@@ -348,7 +348,7 @@ export default function PhysicalTransitionNexusPage() {
           <div style={s.card}>
             <div style={s.cardTitle}>Interaction Coefficient Distribution</div>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={sectorData.sort((a, b) => b.rho - a.rho)}>
+              <BarChart data={[...sectorData].sort((a, b) => b.rho - a.rho)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize:10 }} />
                 <YAxis domain={[0, 1]} tick={{ fontSize:11 }} />

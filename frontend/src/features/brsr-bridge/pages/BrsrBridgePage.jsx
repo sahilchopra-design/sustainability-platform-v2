@@ -373,7 +373,7 @@ const BrsrBridgePage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredMappings.sort(sortFn).map((m, i) => (
+                  {[...filteredMappings].sort(sortFn).map((m, i) => (
                     <tr key={m.brsr} style={{ background: i % 2 === 0 ? T.surface : T.surfaceH }}>
                       <td style={{ padding: '10px 12px', fontWeight: 600, color: T.navy }}>{m.brsr}</td>
                       <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: 12 }}>{m.platform}</td>

@@ -361,7 +361,7 @@ export default function EmbodiedCarbonPage(){
             <div style={sty.scrollBox}>
               <table style={sty.table}>
                 <thead><tr><th style={sty.th}>Project</th><th style={sty.th}>Circular Score</th><th style={sty.th}>Waste %</th><th style={sty.th}>Recycled %</th><th style={sty.th}>Reuse Score</th><th style={sty.th}>Material Passport</th><th style={sty.th}>End-of-Life</th><th style={sty.th}>Demo. Waste (t)</th></tr></thead>
-                <tbody>{circularData.sort((a,b)=>b.circularScore-a.circularScore).slice(0,40).map((d,i)=>(
+                <tbody>{[...circularData].sort((a,b)=>b.circularScore-a.circularScore).slice(0,40).map((d,i)=>(
                   <tr key={i}><td style={sty.td}>{d.name}</td>
                     <td style={sty.td}><span style={sty.badge(d.circularScore>60?T.green:d.circularScore>40?T.amber:T.red)}>{d.circularScore}</span></td>
                     <td style={sty.td}>{d.wastePerc}%</td><td style={sty.td}>{d.recycledContent}%</td><td style={sty.td}>{d.reuseScore}/100</td>

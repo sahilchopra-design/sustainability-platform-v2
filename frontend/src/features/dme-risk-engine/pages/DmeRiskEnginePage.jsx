@@ -788,7 +788,7 @@ export default function DmeRiskEnginePage() {
               <th style={th}>EAD ($M)</th><th style={th}>EL ($M)</th>
             </tr></thead>
             <tbody>
-              {allAssessments.sort((a, b) => b.ifrs9Stage - a.ifrs9Stage || b.primaryPD - a.primaryPD).map((a, i) => (
+              {[...allAssessments].sort((a, b) => b.ifrs9Stage - a.ifrs9Stage || b.primaryPD - a.primaryPD).map((a, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : T.surfaceH }}>
                   <td style={{ ...td, fontWeight: 600 }}>{(a.company.company_name || '').substring(0, 25)}</td>
                   <td style={{ ...td, fontSize: 11 }}>{a.company.sector}</td>

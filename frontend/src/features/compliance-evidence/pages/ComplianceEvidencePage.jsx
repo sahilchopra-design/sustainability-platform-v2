@@ -208,7 +208,7 @@ export default function ComplianceEvidencePage() {
     const autoPct = evidence.length ? Math.round(evidence.filter(e => e.collection_type === 'auto').length / evidence.length * 100) : 0;
     const manual = evidence.filter(e => e.collection_type === 'manual').length;
     const pending = evidence.filter(e => !e.reviewed).length;
-    const lastAudit = audits.length ? audits.sort((a, b) => new Date(b.date) - new Date(a.date))[0].date : null;
+    const lastAudit = audits.length ? [...audits].sort((a, b) => new Date(b.date) - new Date(a.date))[0].date : null;
     const avgQuality = evidence.length ? Math.round(evidence.reduce((s, e) => s + e.quality_score, 0) / evidence.length) : 0;
     return [
       { label:'Evidence Items', value: evidence.length, color:T.navy },

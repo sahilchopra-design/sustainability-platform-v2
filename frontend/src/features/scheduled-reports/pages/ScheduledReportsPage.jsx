@@ -335,7 +335,7 @@ export default function ScheduledReportsPage() {
         <KPI label="Due This Month" value={dueThisMonth.length} sub={`${dueThisMonth.filter(s=>s.auto_send).length} auto-send`} color={T.gold} />
         <KPI label="Due This Week" value={dueThisWeek.length} sub={dueThisWeek.length > 0 ? 'Action needed' : 'Clear'} color={T.amber} />
         <KPI label="Overdue" value={overdue.length} sub={overdue.length > 0 ? 'Requires attention' : 'None'} color={overdue.length > 0 ? T.red : T.green} />
-        <KPI label="Auto-Send Enabled" value={autoSendCount} sub={`${Math.round((autoSendCount/schedules.length)*100)}% of schedules`} color={T.sage} />
+        <KPI label="Auto-Send Enabled" value={autoSendCount} sub={`${Math.round((schedules.length ? autoSendCount/schedules.length : 0)*100)}% of schedules`} color={T.sage} />
         <KPI label="Avg Gen Time" value={`${avgGenTime}s`} sub={`${(avgGenTime/60).toFixed(1)} min`} color={T.textSec} />
         <KPI label="Success Rate" value={`${successRate}%`} sub={`${execLog.filter(e=>e.status==='completed').length} successful`} color={successRate >= 95 ? T.green : T.amber} />
         <KPI label="Total Reports/Year" value={totalReportsYear} sub={`Across ${schedules.length} schedules`} color={T.navyL} />

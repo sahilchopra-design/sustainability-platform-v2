@@ -301,7 +301,7 @@ function MigrationTracker(){
                       return <td key={pi} style={sty.td}><span style={sty.badge(diff>0?T.green:diff<0?T.red:T.textMut)}>{from}\u2192{to}</span></td>;
                     })}
                     <td style={sty.td}>{(()=>{
-                      const avg=activeProviders.reduce((s,pi)=>s+(c.ratings[pi][qPair]-c.ratings[pi][qPair+1]),0)/activeProviders.length;
+                      const avg=activeProviders.length?activeProviders.reduce((s,pi)=>s+(c.ratings[pi][qPair]-c.ratings[pi][qPair+1]),0)/activeProviders.length:0;
                       return <span style={{color:avg>0?T.green:avg<0?T.red:T.textMut,fontWeight:600,fontFamily:T.mono}}>{avg>0?'+':''}{avg.toFixed(2)}</span>;
                     })()}</td>
                     <td style={sty.td}><span style={{fontSize:11,color:T.navyL}}>{isExp?'\u25B2':'\u25BC'}</span></td>

@@ -394,7 +394,7 @@ function RegulatoryGapPage() {
   /* ── Filtered requirements ─────────────────────────────────────── */
   const filteredReqs = useMemo(() => {
     let items = selectedFramework === 'ALL' ? allReqs : allReqs.filter(r => r.frameworkId === selectedFramework);
-    return items.sort((a, b) => {
+    return [...items].sort((a, b) => {
       const po = { P1: 0, P2: 1, P3: 2 };
       const so = { gap: 0, partial: 1, compliant: 2 };
       if (po[a.priority] !== po[b.priority]) return po[a.priority] - po[b.priority];

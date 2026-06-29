@@ -371,7 +371,7 @@ export default function EnergySecurityTransitionPage(){
         <div style={sty.card}>
           <div style={sty.cardTitle}>Renewable Potential vs Deployment (Top 20)</div>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={countries.sort((a,b)=>(b.renewPotential-b.currentDeployment)-(a.renewPotential-a.currentDeployment)).slice(0,20)} layout="vertical">
+            <BarChart data={[...countries].sort((a,b)=>(b.renewPotential-b.currentDeployment)-(a.renewPotential-a.currentDeployment)).slice(0,20)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:9,fill:T.textSec}} width={90}/>
@@ -385,13 +385,13 @@ export default function EnergySecurityTransitionPage(){
         <div style={sty.card}>
           <div style={sty.cardTitle}>Critical Mineral Import Dependency for Renewables</div>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={countries.sort((a,b)=>b.criticalMineralDep-a.criticalMineralDep).slice(0,20)} layout="vertical">
+            <BarChart data={[...countries].sort((a,b)=>b.criticalMineralDep-a.criticalMineralDep).slice(0,20)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis type="number" domain={[0,100]} tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:9,fill:T.textSec}} width={90}/>
               <Tooltip contentStyle={{fontSize:11,borderRadius:8}}/>
               <Bar dataKey="criticalMineralDep" name="Mineral Dep %" radius={[0,4,4,0]}>
-                {countries.sort((a,b)=>b.criticalMineralDep-a.criticalMineralDep).slice(0,20).map((e,i)=>(<Cell key={i} fill={e.criticalMineralDep>70?T.red:e.criticalMineralDep>40?T.amber:T.green}/>))}
+                {[...countries].sort((a,b)=>b.criticalMineralDep-a.criticalMineralDep).slice(0,20).map((e,i)=>(<Cell key={i} fill={e.criticalMineralDep>70?T.red:e.criticalMineralDep>40?T.amber:T.green}/>))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -435,13 +435,13 @@ export default function EnergySecurityTransitionPage(){
         <div style={sty.card}>
           <div style={sty.cardTitle}>Sovereign Spread Energy Premium (Top 20)</div>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={countries.sort((a,b)=>b.sovSpreadPremium-a.sovSpreadPremium).slice(0,20)} layout="vertical">
+            <BarChart data={[...countries].sort((a,b)=>b.sovSpreadPremium-a.sovSpreadPremium).slice(0,20)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:9,fill:T.textSec}} width={90}/>
               <Tooltip formatter={v=>`${v} bps`} contentStyle={{fontSize:11,borderRadius:8}}/>
               <Bar dataKey="sovSpreadPremium" name="Premium bps" radius={[0,4,4,0]}>
-                {countries.sort((a,b)=>b.sovSpreadPremium-a.sovSpreadPremium).slice(0,20).map((e,i)=>(<Cell key={i} fill={e.sovSpreadPremium>100?T.red:e.sovSpreadPremium>50?T.amber:T.green}/>))}
+                {[...countries].sort((a,b)=>b.sovSpreadPremium-a.sovSpreadPremium).slice(0,20).map((e,i)=>(<Cell key={i} fill={e.sovSpreadPremium>100?T.red:e.sovSpreadPremium>50?T.amber:T.green}/>))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>

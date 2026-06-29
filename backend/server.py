@@ -657,23 +657,27 @@ app.include_router(admin_rbac_router)
 # without editing this file (the de-confliction layer for parallel module work).
 # Dedup is by route-path overlap, so a manually-included router is never doubled.
 # A broken module is logged and skipped — it no longer crashes startup.
+import sys as _sys
 import importlib as _importlib
 import pkgutil as _pkgutil
 import logging as _logging
 import api.v1.routes as _routes_pkg
 
-_registered_paths = {getattr(r, "path", None) for r in app.routes}
+# Dedup by MODULE NAME, not route path: any route module the manual block above
+# already imported is in sys.modules → skip it. Only genuinely-new modules get
+# auto-included. (Path-based dedup is unreliable — included routers nest and
+# expose no flat .path — and re-including the ~260 manual routers would stack
+# that many merged_lifespan layers and blow Python's recursion limit at startup.)
+_manual = {_n for _n in _sys.modules if _n.startswith("api.v1.routes.")}
 for _finder, _name, _ispkg in sorted(_pkgutil.iter_modules(_routes_pkg.__path__)):
+    _full = f"api.v1.routes.{_name}"
+    if _full in _manual:                       # already manually imported + included
+        continue
     try:
-        _mod = _importlib.import_module(f"api.v1.routes.{_name}")
+        _mod = _importlib.import_module(_full)
         _router = getattr(_mod, "router", None)
-        if _router is None:
-            continue
-        _paths = {getattr(r, "path", None) for r in _router.routes}
-        if _paths & _registered_paths:        # already manually included
-            continue
-        app.include_router(_router)
-        _registered_paths |= _paths
+        if _router is not None:
+            app.include_router(_router)
     except Exception as _e:                    # pragma: no cover
         _logging.getLogger("server").warning("Skipped auto-router %s: %s", _name, _e)
 

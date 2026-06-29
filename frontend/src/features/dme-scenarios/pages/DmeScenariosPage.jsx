@@ -577,7 +577,7 @@ export default function DmeScenariosPage() {
           <KpiCard label="Max PD" value={pct(Math.max(...scenarioResults.map(r => r.avgPD)) * 100, 2)} sub="Worst-case avg PD" accent={T.red} />
           <KpiCard label="Max VaR" value={usd(Math.max(...scenarioResults.map(r => r.totalVaR)))} sub="Worst-case VaR 95%" accent={T.red} />
           <KpiCard label="Holdings" value={holdings.length} sub={mode === 'entity' ? `Focused: ${selectedEntity}` : 'Full portfolio'} accent={T.navy} />
-          <KpiCard label="Worst Scenario" value={scenarioResults.sort((a, b) => b.totalVaR - a.totalVaR)[0]?.scenario.name.split(' ')[0]} sub="By total VaR" accent={T.amber} />
+          <KpiCard label="Worst Scenario" value={[...scenarioResults].sort((a, b) => b.totalVaR - a.totalVaR)[0]?.scenario.name.split(' ')[0]} sub="By total VaR" accent={T.amber} />
         </div>
       )}
 

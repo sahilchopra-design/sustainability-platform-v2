@@ -108,7 +108,7 @@ const strandedAssetTypes = [
 ];
 const totalStrandedExposure = strandedAssetTypes.reduce((s, a) => s + a.exposureM, 0);
 const earliestWritedown = Math.min(...strandedAssetTypes.map(a => a.writedownYr));
-const largestWritedown = strandedAssetTypes.sort((a, b) => b.exposureM - a.exposureM)[0];
+const largestWritedown = [...strandedAssetTypes].sort((a, b) => b.exposureM - a.exposureM)[0];
 
 const writedownTimeline = Array.from({ length: 16 }, (_, i) => {
   const yr = 2025 + i;

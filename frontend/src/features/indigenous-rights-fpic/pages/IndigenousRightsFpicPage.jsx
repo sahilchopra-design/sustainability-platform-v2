@@ -151,7 +151,7 @@ export default function IndigenousRightsFpicPage() {
           <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginBottom:16 }}>
             <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Sacred Sites at Risk by Project</h3>
             <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={filtered.sort((a, b) => b.sacredSites - a.sacredSites)}>
+              <BarChart data={[...filtered].sort((a, b) => b.sacredSites - a.sacredSites)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize:9, fontFamily:T.mono, angle:-30, textAnchor:'end' }} height={70} />
                 <YAxis tick={{ fontSize:11, fontFamily:T.mono }} />

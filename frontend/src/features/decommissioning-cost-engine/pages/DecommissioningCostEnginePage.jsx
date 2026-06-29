@@ -100,7 +100,7 @@ export default function DecommissioningCostEnginePage(){
         <Card>
           <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Liability by Asset Type</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={costs.sort((a,b)=>b.estimated-a.estimated)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
+            <BarChart data={[...costs].sort((a,b)=>b.estimated-a.estimated)}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis dataKey="type" tick={{fontSize:10}} angle={-15}/><YAxis tick={{fontSize:11}} tickFormatter={v=>`$${v}M`}/>
               <Tooltip contentStyle={{fontFamily:T.mono,fontSize:11}}/><Legend/>
               <Bar dataKey="estimated" name="Estimated Cost" fill={T.orange}/><Bar dataKey="provision" name="Current Provision" fill={T.green}/>

@@ -245,7 +245,7 @@ export default function ImpactAttributionPage(){
 
   const renderTab2=()=>{
     const scatterData=holdings.map(h=>({name:h.name,x:h.investedM,y:h.impactPerM,sector:h.sector,rating:h.impactRating}));
-    const topEfficient=holdings.sort((a,b)=>b.impactPerM-a.impactPerM).slice(0,20);
+    const topEfficient=[...holdings].sort((a,b)=>b.impactPerM-a.impactPerM).slice(0,20);
     return(
       <div>
         <div style={st.card}>

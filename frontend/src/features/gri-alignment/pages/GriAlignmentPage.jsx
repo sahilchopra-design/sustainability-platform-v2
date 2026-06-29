@@ -523,7 +523,7 @@ const GriAlignmentPage = () => {
               <tr><Th>Standard</Th><Th>Name</Th><Th>Category</Th><Th>Total Disc</Th><Th>Avg Available</Th><Th>Avg Gap</Th><Th>Gap %</Th><Th>Holdings</Th><Th>Priority</Th></tr>
             </thead>
             <tbody>
-              {discGap.sort((a, b) => b.gapPct - a.gapPct).map((std, i) => (
+              {[...discGap].sort((a, b) => b.gapPct - a.gapPct).map((std, i) => (
                 <tr key={std.id} style={{ background: i % 2 ? T.surfaceH : T.surface }}>
                   <Td bold>{std.id}</Td><Td>{std.name}</Td>
                   <Td><Badge label={std.category} color={std.category === 'Environmental' ? 'green' : std.category === 'Economic' ? 'amber' : 'blue'} /></Td>

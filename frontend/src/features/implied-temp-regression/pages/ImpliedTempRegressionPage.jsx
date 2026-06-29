@@ -524,7 +524,7 @@ export default function ImpliedTempRegressionPage() {
         <SectionHeader title="ITR vs GHG Intensity Regression" sub={`${diagnostics.equation}  |  R\u00B2 = ${regressionData.reg.r2.toFixed(4)}  |  Adj R\u00B2 = ${diagnostics.adjR2.toFixed(4)}`} />
         <div style={{ height: 360 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={regressionData.points.sort((a, b) => a.intensity - b.intensity)} margin={{ top: 10, right: 30, left: 10, bottom: 5 }}>
+            <BarChart data={[...regressionData.points].sort((a, b) => a.intensity - b.intensity)} margin={{ top: 10, right: 30, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="intensity" tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'Intensity (tCO\u2082e/USD Mn)', position: 'bottom', offset: -2, fontSize: 12, fill: T.textSec }} />
               <YAxis domain={[0, 4]} tick={{ fontSize: 11, fill: T.textSec }} label={{ value: 'ITR (\u00B0C)', angle: -90, position: 'left', offset: 0, fontSize: 12, fill: T.textSec }} />

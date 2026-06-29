@@ -381,7 +381,7 @@ const NatureDependencyTab=()=>{
           <th style={S.th}>Total Species</th>
           <th style={S.th}>30x30 Progress</th>
         </tr></thead>
-        <tbody>{regionSummary.sort((a,b)=>b.avgNatGdp-a.avgNatGdp).map((r,i)=>(
+        <tbody>{[...regionSummary].sort((a,b)=>b.avgNatGdp-a.avgNatGdp).map((r,i)=>(
           <tr key={r.region} style={{background:i%2===0?'transparent':T.surfaceH}}>
             <td style={{...S.td,fontWeight:700}}>{r.region}</td>
             <td style={{...S.td,fontFamily:T.mono}}>{r.count}</td>
@@ -1053,7 +1053,7 @@ const PortfolioNatureTab=()=>{
               <th style={S.th}>Avg Nature Risk</th>
               <th style={S.th}>Countries</th>
             </tr></thead>
-            <tbody>{regionDiv.sort((a,b)=>b.totalHolding-a.totalHolding).map((r,i)=>(
+            <tbody>{[...regionDiv].sort((a,b)=>b.totalHolding-a.totalHolding).map((r,i)=>(
               <tr key={r.region} style={{background:i%2===0?'transparent':T.surfaceH}}>
                 <td style={{...S.td,fontWeight:600}}>{r.region}</td>
                 <td style={{...S.td,fontFamily:T.mono}}>${r.totalHolding.toFixed(0)}M</td>

@@ -116,7 +116,7 @@ export default function HealthAdaptationFinancePage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Adaptation vs Mitigation Spending by Country ($M)</div>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={filtered.sort((a,b)=>(b.adaptSpendM+b.mitigSpendM)-(a.adaptSpendM+a.mitigSpendM)).slice(0,20).map(c=>({name:c.name,adapt:c.adaptSpendM,mitig:c.mitigSpendM}))} layout="vertical" margin={{left:90,right:20,top:5,bottom:5}}>
+            <BarChart data={[...filtered].sort((a,b)=>(b.adaptSpendM+b.mitigSpendM)-(a.adaptSpendM+a.mitigSpendM)).slice(0,20).map(c=>({name:c.name,adapt:c.adaptSpendM,mitig:c.mitigSpendM}))} layout="vertical" margin={{left:90,right:20,top:5,bottom:5}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:10,fill:T.textSec}} width={85}/>
@@ -139,7 +139,7 @@ export default function HealthAdaptationFinancePage(){
           </ResponsiveContainer>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8,marginTop:12}}>Financing Gap by Country</div>
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={filtered.sort((a,b)=>b.financingGapM-a.financingGapM).slice(0,10).map(c=>({name:c.name,gap:c.financingGapM}))} margin={{top:5,right:10,bottom:30,left:5}}>
+            <BarChart data={[...filtered].sort((a,b)=>b.financingGapM-a.financingGapM).slice(0,10).map(c=>({name:c.name,gap:c.financingGapM}))} margin={{top:5,right:10,bottom:30,left:5}}>
               <XAxis dataKey="name" tick={{fontSize:8,fill:T.textSec,angle:-30,textAnchor:'end'}} height={50}/>
               <YAxis tick={{fontSize:9,fill:T.textSec}}/>
               <Tooltip contentStyle={{fontSize:12,borderRadius:8}}/>
@@ -184,20 +184,20 @@ export default function HealthAdaptationFinancePage(){
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Avg Hospital Score',Math.floor(infraAgg.find(x=>x.category==='Hospital Cooling')?.avgScore||0)+'/100','Cooling systems readiness',T.amber)}
         {kpiBox('Total Infra Need',`$${fmt(infraAgg.reduce((s,x)=>s+x.totalNeedM,0)*1e6)}`,'Across all categories',T.red)}
-        {kpiBox('Lowest Scoring','Disease Surveillance',`${infraAgg.sort((a,b)=>a.avgScore-b.avgScore)[0]?.avgScore}/100`,T.red)}
+        {kpiBox('Lowest Scoring','Disease Surveillance',`${[...infraAgg].sort((a,b)=>a.avgScore-b.avgScore)[0]?.avgScore}/100`,T.red)}
         {kpiBox('Categories Tracked',INFRA_CATEGORIES.length,'Health infrastructure types',T.navy)}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Average Infrastructure Resilience Score</div>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={infraAgg.sort((a,b)=>a.avgScore-b.avgScore)} layout="vertical" margin={{left:130,right:20,top:5,bottom:5}}>
+            <BarChart data={[...infraAgg].sort((a,b)=>a.avgScore-b.avgScore)} layout="vertical" margin={{left:130,right:20,top:5,bottom:5}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}} domain={[0,100]}/>
               <YAxis dataKey="category" type="category" tick={{fontSize:10,fill:T.textSec}} width={125}/>
               <Tooltip contentStyle={{fontSize:12,borderRadius:8}}/>
               <Bar dataKey="avgScore" radius={[0,4,4,0]} name="Avg Score">
-                {infraAgg.sort((a,b)=>a.avgScore-b.avgScore).map((d,i)=>(<Cell key={i} fill={d.avgScore>60?T.green:d.avgScore>40?T.gold:T.red}/>))}
+                {[...infraAgg].sort((a,b)=>a.avgScore-b.avgScore).map((d,i)=>(<Cell key={i} fill={d.avgScore>60?T.green:d.avgScore>40?T.gold:T.red}/>))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -205,7 +205,7 @@ export default function HealthAdaptationFinancePage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Investment Need by Category ($M)</div>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={infraAgg.sort((a,b)=>b.totalNeedM-a.totalNeedM)} layout="vertical" margin={{left:130,right:20,top:5,bottom:5}}>
+            <BarChart data={[...infraAgg].sort((a,b)=>b.totalNeedM-a.totalNeedM)} layout="vertical" margin={{left:130,right:20,top:5,bottom:5}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="category" type="category" tick={{fontSize:10,fill:T.textSec}} width={125}/>
@@ -261,7 +261,7 @@ export default function HealthAdaptationFinancePage(){
         <div style={card()}>
           <div style={{fontSize:13,fontWeight:600,color:T.navy,marginBottom:8}}>Investment Need by EWS Type ($M)</div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={ewsAgg.sort((a,b)=>b.totalInvestM-a.totalInvestM)} margin={{top:5,right:20,bottom:5,left:10}}>
+            <BarChart data={[...ewsAgg].sort((a,b)=>b.totalInvestM-a.totalInvestM)} margin={{top:5,right:20,bottom:5,left:10}}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/>
               <XAxis dataKey="type" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis tick={{fontSize:10,fill:T.textSec}}/>

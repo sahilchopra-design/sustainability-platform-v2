@@ -1016,7 +1016,7 @@ const DataStackBuilder=()=>{
     <Card style={{marginBottom:20}}>
       <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:14}}>Integration Timeline & Phasing</div>
       <div style={{display:'flex',flexDirection:'column',gap:6}}>
-        {filteredByBudget.providers.sort((a,b)=>(a.priority==='Core'?0:1)-(b.priority==='Core'?0:1)).map((p,i)=>{
+        {[...filteredByBudget.providers].sort((a,b)=>(a.priority==='Core'?0:1)-(b.priority==='Core'?0:1)).map((p,i)=>{
           const startDay=filteredByBudget.providers.slice(0,i).filter(x=>x.priority===p.priority).reduce((a,x)=>a+Math.ceil(x.integrationDays*0.6),0);
           const barWidth=Math.max(5,p.integrationDays/Math.max(1,complexityScore.days)*100);
           const barLeft=startDay/Math.max(1,complexityScore.days+20)*100;

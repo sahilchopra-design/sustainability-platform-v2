@@ -240,7 +240,7 @@ export default function FiClientPortfolioAnalyzerPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {geoExposure.sort((a, b) => b.exposure - a.exposure).map((g, i) => (
+                  {[...geoExposure].sort((a, b) => b.exposure - a.exposure).map((g, i) => (
                     <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
                       <td style={{ padding: 6 }}>{g.region}</td>
                       <td style={{ padding: 6, textAlign: 'right', fontFamily: T.mono }}>{g.exposure}</td>

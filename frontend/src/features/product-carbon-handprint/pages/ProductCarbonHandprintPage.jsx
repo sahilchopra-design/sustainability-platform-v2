@@ -690,7 +690,7 @@ const CategoryBenchmarks=()=>{
     <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:16}}>
       <MiniKPI label="Total Categories" value="10" color={T.navy} sub="product groups"/>
       <MiniKPI label="Avg Handprint" value={`${(catStats.reduce((a,c)=>a+c.avg,0)/10).toFixed(1)}`} color={T.green} sub="kgCO2e across all"/>
-      <MiniKPI label="Best Category" value={catStats.sort((a,b)=>b.avg-a.avg)[0]?.name||''} color={T.gold} sub={`avg ${catStats.sort((a,b)=>b.avg-a.avg)[0]?.avg} kgCO2e`}/>
+      <MiniKPI label="Best Category" value={[...catStats].sort((a,b)=>b.avg-a.avg)[0]?.name||''} color={T.gold} sub={`avg ${[...catStats].sort((a,b)=>b.avg-a.avg)[0]?.avg} kgCO2e`}/>
       <MiniKPI label="Total Avoided" value={`${catStats.reduce((a,c)=>a+c.totalAvoided,0).toFixed(0)}`} color={T.sage} sub="kgCO2e all positive"/>
       <MiniKPI label="Products Analyzed" value="80" color={T.navyL} sub="across 30 companies"/>
     </div>

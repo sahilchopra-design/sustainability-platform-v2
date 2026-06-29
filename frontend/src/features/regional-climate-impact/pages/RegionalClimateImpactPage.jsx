@@ -265,7 +265,7 @@ export default function RegionalClimateImpactPage() {
         <div style={s.card}>
           <div style={s.cardTitle}>GDP Impact by Region ({SSP[ssp]})</div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={regionsAdj.sort((a, b) => a.gdpImpact - b.gdpImpact).slice(0, 15)} layout="vertical">
+            <BarChart data={[...regionsAdj].sort((a, b) => a.gdpImpact - b.gdpImpact).slice(0, 15)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis type="number" tick={{ fontSize:11 }} />
               <YAxis dataKey="name" type="category" width={110} tick={{ fontSize:11 }} />
@@ -297,7 +297,7 @@ export default function RegionalClimateImpactPage() {
           <div style={s.card}>
             <div style={s.cardTitle}>Agriculture Yield Loss by Region</div>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={regionsAdj.sort((a, b) => b.agriLoss - a.agriLoss).slice(0, 10)}>
+              <BarChart data={[...regionsAdj].sort((a, b) => b.agriLoss - a.agriLoss).slice(0, 10)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize:10 }} />
                 <YAxis tick={{ fontSize:11 }} />

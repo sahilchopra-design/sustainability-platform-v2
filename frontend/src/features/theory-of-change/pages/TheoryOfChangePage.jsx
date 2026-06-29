@@ -235,7 +235,7 @@ export default function TheoryOfChangePage(){
       <div style={st.card}>
         <h4 style={{margin:'0 0 12px',fontSize:'14px',color:T.navy}}>Additionality Distribution</h4>
         <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={investments.sort((a,b)=>b.additionality-a.additionality).map(i=>({name:i.name.split(' ')[0],additionality:i.additionality,baseline:i.counterfactualBase,withInv:i.withInvestment}))} margin={{top:10,right:30,left:10,bottom:40}}>
+          <BarChart data={[...investments].sort((a,b)=>b.additionality-a.additionality).map(i=>({name:i.name.split(' ')[0],additionality:i.additionality,baseline:i.counterfactualBase,withInv:i.withInvestment}))} margin={{top:10,right:30,left:10,bottom:40}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
             <XAxis dataKey="name" tick={{fontSize:9,fill:T.textSec,angle:-30,textAnchor:'end'}}/>
             <YAxis tick={{fontSize:11,fill:T.textSec}} label={{value:'Impact Units',angle:-90,position:'insideLeft',fill:T.textSec,fontSize:11}}/>
@@ -252,7 +252,7 @@ export default function TheoryOfChangePage(){
       </div>
       <table style={st.table}>
         <thead><tr><th style={st.th}>Investment</th><th style={st.th}>Sector</th><th style={st.th}>Baseline</th><th style={st.th}>With Investment</th><th style={st.th}>Additionality</th><th style={st.th}>Evidence</th></tr></thead>
-        <tbody>{investments.sort((a,b)=>b.additionality-a.additionality).map(inv=>(
+        <tbody>{[...investments].sort((a,b)=>b.additionality-a.additionality).map(inv=>(
           <tr key={inv.id}>
             <td style={{...st.td,fontWeight:600,color:T.navy}}>{inv.name}</td><td style={st.td}>{inv.sector}</td>
             <td style={st.td}>{inv.counterfactualBase}</td><td style={st.td}>{inv.withInvestment}</td>

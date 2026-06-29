@@ -103,13 +103,13 @@ export default function AdditionalityAssessmentPage(){
       <div style={st.card}>
         <h4 style={{margin:'0 0 12px',fontSize:'14px',color:T.navy}}>Composite Additionality Score Distribution</h4>
         <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={filtered.sort((a,b)=>b.compositeScore-a.compositeScore).slice(0,30).map(i=>({name:i.name.split(' ')[0],composite:i.compositeScore,financial:i.financialScore,strategic:i.strategicScore}))} margin={{top:10,right:30,left:10,bottom:40}}>
+          <BarChart data={[...filtered].sort((a,b)=>b.compositeScore-a.compositeScore).slice(0,30).map(i=>({name:i.name.split(' ')[0],composite:i.compositeScore,financial:i.financialScore,strategic:i.strategicScore}))} margin={{top:10,right:30,left:10,bottom:40}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
             <XAxis dataKey="name" tick={{fontSize:9,fill:T.textSec,angle:-30,textAnchor:'end'}}/>
             <YAxis domain={[0,100]} tick={{fontSize:11,fill:T.textSec}}/>
             <Tooltip contentStyle={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:'6px',fontSize:'12px'}}/>
             <Bar dataKey="composite" name="Composite Score" radius={[4,4,0,0]}>
-              {filtered.sort((a,b)=>b.compositeScore-a.compositeScore).slice(0,30).map((e,i)=>(<Cell key={i} fill={e.compositeScore>=75?T.green:e.compositeScore>=60?T.gold:e.compositeScore>=45?T.amber:T.red}/>))}
+              {[...filtered].sort((a,b)=>b.compositeScore-a.compositeScore).slice(0,30).map((e,i)=>(<Cell key={i} fill={e.compositeScore>=75?T.green:e.compositeScore>=60?T.gold:e.compositeScore>=45?T.amber:T.red}/>))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -224,7 +224,7 @@ export default function AdditionalityAssessmentPage(){
           <th style={st.th} onClick={()=>toggleSort('financialScore')}>Score</th>
           <th style={st.th}>Evidence</th>
         </tr></thead>
-        <tbody>{investments.sort((a,b)=>a.irrGap-b.irrGap).map(inv=>(
+        <tbody>{[...investments].sort((a,b)=>a.irrGap-b.irrGap).map(inv=>(
           <tr key={inv.id}>
             <td style={{...st.td,fontWeight:600,color:T.navy}}>{inv.name}</td><td style={st.td}>{inv.sector}</td>
             <td style={st.td}>{inv.projectIRR}%</td><td style={st.td}>{inv.benchmarkIRR}%</td>
@@ -265,7 +265,7 @@ export default function AdditionalityAssessmentPage(){
         <thead><tr>
           <th style={st.th}>Investment</th><th style={st.th}>Board Seat</th><th style={st.th}>Tech Assistance</th><th style={st.th}>ESG Governance</th><th style={st.th}>Capacity</th><th style={st.th}>Strategic Score</th><th style={st.th}>Evidence Items</th>
         </tr></thead>
-        <tbody>{investments.sort((a,b)=>b.strategicScore-a.strategicScore).map(inv=>(
+        <tbody>{[...investments].sort((a,b)=>b.strategicScore-a.strategicScore).map(inv=>(
           <tr key={inv.id}>
             <td style={{...st.td,fontWeight:600,color:T.navy}}>{inv.name}</td>
             <td style={st.td}>{inv.engagement.boardSeat?<span style={st.badge(T.green)}>Yes</span>:<span style={st.badge(T.textMut)}>No</span>}</td>

@@ -209,13 +209,13 @@ export default function SovereignPhysicalRiskPage(){
       return {name:r.length>12?r.slice(0,12)+'..':r,risk:+(rc.reduce((s,c)=>s+c.compositePhysicalRisk,0)/Math.max(1,rc.length)).toFixed(1),adapt:+(rc.reduce((s,c)=>s+c.adaptationCapacity,0)/Math.max(1,rc.length)).toFixed(1),count:rc.length};
     });
     const kpis=[
-      {l:'Universe',v:'70 countries'},{l:'High Risk (>70)',v:COUNTRIES_PHY.filter(c=>c.compositePhysicalRisk>70).length},
-      {l:'Avg Composite Risk',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.compositePhysicalRisk,0)/70).toFixed(1)},
-      {l:'Avg Adaptation Cap',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.adaptationCapacity,0)/70).toFixed(1)},
+      {l:'Universe',v:`${COUNTRIES_PHY.length} countries`},{l:'High Risk (>70)',v:COUNTRIES_PHY.filter(c=>c.compositePhysicalRisk>70).length},
+      {l:'Avg Composite Risk',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.compositePhysicalRisk,0)/COUNTRIES_PHY.length).toFixed(1)},
+      {l:'Avg Adaptation Cap',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.adaptationCapacity,0)/COUNTRIES_PHY.length).toFixed(1)},
       {l:'Total L&D Est $B',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.lossAndDamageEstimateBnUSD,0)/1000).toFixed(1)+'T'},
       {l:'Total Adapt Need $B',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.adaptationFinancingNeedBnUSD,0)/1000).toFixed(1)+'T'},
       {l:'Coastal Pop Exposed',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.coastalPopExposedM,0)).toFixed(0)+'M'},
-      {l:'Avg GDP@Risk 2050',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.gdpAtRisk2050Pct,0)/70).toFixed(1)+'%'},
+      {l:'Avg GDP@Risk 2050',v:(COUNTRIES_PHY.reduce((s,c)=>s+c.gdpAtRisk2050Pct,0)/COUNTRIES_PHY.length).toFixed(1)+'%'},
     ];
     return (<>
       <div style={S.grid(4)}>
@@ -476,7 +476,7 @@ export default function SovereignPhysicalRiskPage(){
       avgGdpImpact2050:+(COUNTRIES_PHY.reduce((s,c,ci)=>{
         const mult=scen==='Current Policies'?1.0:scen==='NDC Scenario'?0.7:scen==='1.5C Orderly'?0.4:scen==='Disorderly Transition'?0.85:'Hot House World'===scen?1.2:0.9;
         return s+c.gdpAtRisk2050Pct*mult;
-      },0)/70).toFixed(1),
+      },0)/COUNTRIES_PHY.length).toFixed(1),
       atRisk:COUNTRIES_PHY.filter(c=>c.gdpAtRisk2050Pct>10).length,
     }));
     return (<>
@@ -605,7 +605,7 @@ export default function SovereignPhysicalRiskPage(){
       <div style={S.card}>
         <div style={S.cardTitle}>Hazard Breakdown vs Global Average</div>
         <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={HAZARDS.map(h=>{const key={Flood:'floodRisk',Drought:'droughtRisk','Heat Stress':'heatStressRisk',Cyclone:'cycloneRisk','Sea Level Rise':'seaLevelRiskRating',Wildfire:'wildfireRisk'}[h];return {name:h,country:selCountry[key],global:+(COUNTRIES_PHY.reduce((s,c)=>s+c[key],0)/70).toFixed(1)};})}>
+          <BarChart data={HAZARDS.map(h=>{const key={Flood:'floodRisk',Drought:'droughtRisk','Heat Stress':'heatStressRisk',Cyclone:'cycloneRisk','Sea Level Rise':'seaLevelRiskRating',Wildfire:'wildfireRisk'}[h];return {name:h,country:selCountry[key],global:+(COUNTRIES_PHY.reduce((s,c)=>s+c[key],0)/COUNTRIES_PHY.length).toFixed(1)};})}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
             <XAxis dataKey="name" tick={{fontSize:10,fill:T.textSec}} interval={0}/>
             <YAxis domain={[0,10]} tick={{fontSize:10,fill:T.textSec}}/>

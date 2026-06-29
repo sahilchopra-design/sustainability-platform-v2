@@ -179,7 +179,7 @@ export default function SocialLicenseRiskPage() {
           <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginBottom:16 }}>
             <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Social Opposition Delay (Years Added)</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={filtered.sort((a, b) => b.delayYrs - a.delayYrs)}>
+              <BarChart data={[...filtered].sort((a, b) => b.delayYrs - a.delayYrs)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize:9, fontFamily:T.mono, angle:-30, textAnchor:'end' }} height={70} />
                 <YAxis tick={{ fontSize:11, fontFamily:T.mono }} label={{ value:'Years', angle:-90, position:'insideLeft' }} />
@@ -209,7 +209,7 @@ export default function SocialLicenseRiskPage() {
           <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, marginBottom:16 }}>
             <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Protests & Litigations by Project</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={filtered.sort((a, b) => b.protests - a.protests)}>
+              <BarChart data={[...filtered].sort((a, b) => b.protests - a.protests)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize:9, fontFamily:T.mono, angle:-30, textAnchor:'end' }} height={70} />
                 <YAxis tick={{ fontSize:11, fontFamily:T.mono }} />
@@ -222,7 +222,7 @@ export default function SocialLicenseRiskPage() {
           <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
             <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Benefit Delivery vs Social License Score</h3>
             <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={filtered.sort((a, b) => a.slScore - b.slScore)}>
+              <LineChart data={[...filtered].sort((a, b) => a.slScore - b.slScore)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="name" tick={{ fontSize:9, fontFamily:T.mono, angle:-20, textAnchor:'end' }} height={60} />
                 <YAxis tick={{ fontSize:11, fontFamily:T.mono }} />

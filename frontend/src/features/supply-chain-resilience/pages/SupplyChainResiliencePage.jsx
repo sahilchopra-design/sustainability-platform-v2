@@ -263,7 +263,7 @@ function Tab3(){
             {HAZARDS.map(h=><th key={h} onClick={()=>setSelHazard(selHazard===h?null:h)} style={{padding:'6px 8px',textAlign:'center',fontFamily:T.mono,color:selHazard===h?T.gold:T.textSec,borderBottom:`1px solid ${T.border}`,cursor:'pointer',fontWeight:selHazard===h?700:500}}>{h}</th>)}
             <th style={{padding:'6px 8px',textAlign:'center',fontFamily:T.mono,color:T.navy,borderBottom:`1px solid ${T.border}`,fontWeight:700}}>Composite</th>
           </tr></thead>
-          <tbody>{adjustedCountryData.sort((a,b)=>selHazard?b[selHazard]-a[selHazard]:b.composite-a.composite).map(r=>(
+          <tbody>{[...adjustedCountryData].sort((a,b)=>selHazard?b[selHazard]-a[selHazard]:b.composite-a.composite).map(r=>(
             <tr key={r.country} style={{borderBottom:`1px solid ${T.border}`}}>
               <td style={{padding:'5px 8px',fontWeight:600,color:T.navy,position:'sticky',left:0,background:T.surface}}>{r.country}</td>
               {HAZARDS.map(h=>{const v=r[h];const bg=v>75?'#fecaca':v>50?'#fed7aa':v>25?'#fef9c3':'#d1fae5';return<td key={h} style={{padding:'5px 8px',textAlign:'center',fontFamily:T.mono,fontWeight:selHazard===h?700:400,background:bg,color:v>75?T.red:v>50?T.amber:v>25?'#854d0e':T.green}}>{v}</td>;})}

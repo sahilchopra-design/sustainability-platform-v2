@@ -902,7 +902,7 @@ function PartBTab(){
   const totalExposure=useMemo(()=>lobData.reduce((s,l)=>s+l.exposureM,0),[lobData]);
   const avgDqs=useMemo(()=>lobData.length?(lobData.reduce((s,l)=>s+l.dqs,0)/lobData.length).toFixed(1):'—',[lobData]);
   const lobFE=useMemo(()=>lobData.map(l=>({lob:l.lob,fe:Math.round(l.premiumM*l.efPerPremium),premium:l.premiumM,intensity:(l.efPerPremium).toFixed(2)})),[lobData]);
-  const lossRatio=useMemo(()=>(totalClaims/totalPremium*100).toFixed(1),[totalClaims,totalPremium]);
+  const lossRatio=useMemo(()=>(totalPremium ? totalClaims/totalPremium*100 : 0).toFixed(1),[totalClaims,totalPremium]);
 
   function startLobEdit(l){setEditId(l.id);setEditForm({premiumM:l.premiumM,claimsM:l.claimsM,exposureM:l.exposureM,efPerPremium:l.efPerPremium,dqs:l.dqs});}
   function applyLobEdit(id){setLobData(prev=>prev.map(l=>l.id===id?{...l,premiumM:+editForm.premiumM,claimsM:+editForm.claimsM,exposureM:+editForm.exposureM,efPerPremium:+editForm.efPerPremium,dqs:+editForm.dqs}:l));setEditId(null);}
@@ -1050,7 +1050,7 @@ function DataQualityTab({positions,setPositions}){
   const simulatedAvg=useMemo(()=>{let t=0;positions.forEach(p=>{t+=Math.min(p.dqs,targetDqs[p.assetClass]||p.dqs);});return(positions.length ? t/positions.length : 0).toFixed(2);},[positions,targetDqs]);
   const improved=Object.values(actionStatus).filter(v=>v==='complete').length;
   const dqsByAC=useMemo(()=>{const m={};positions.forEach(p=>{if(!m[p.assetClass])m[p.assetClass]={ac:p.assetClass,avg:0,n:0,t:0};m[p.assetClass].t+=p.dqs;m[p.assetClass].n++;});Object.values(m).forEach(v=>v.avg=+(v.t/v.n).toFixed(1));return Object.values(m).sort((a,b)=>b.avg-a.avg);},[positions]);
-  const coverageByScope=useMemo(()=>[{scope:'Scope 1',pct:Math.round(positions.filter(p=>p.scope1>0).length/positions.length*100)},{scope:'Scope 2',pct:Math.round(positions.filter(p=>p.scope2>0).length/positions.length*100)},{scope:'Scope 3',pct:Math.round(positions.filter(p=>p.scope3>0).length/positions.length*100)}],[positions]);
+  const coverageByScope=useMemo(()=>[{scope:'Scope 1',pct:Math.round(positions.filter(p=>p.scope1>0).length/(positions.length||1)*100)},{scope:'Scope 2',pct:Math.round(positions.filter(p=>p.scope2>0).length/(positions.length||1)*100)},{scope:'Scope 3',pct:Math.round(positions.filter(p=>p.scope3>0).length/(positions.length||1)*100)}],[positions]);
 
   function markAction(id,st){setActionStatus(prev=>({...prev,[id]:st}));if(st==='complete')setPositions(prev=>prev.map(p=>p.id===id?computeRow({...p,dqs:Math.max(1,p.dqs-1)}):p));}
 

@@ -102,7 +102,7 @@ export default function ScenarioBlendingOptimizerPage() {
   const customNorm = useMemo(() => {
     const total = Object.values(customWeights).reduce((s, v) => s + v, 0);
     const norm = {};
-    Object.entries(customWeights).forEach(([k, v]) => { norm[k] = v / total; });
+    Object.entries(customWeights).forEach(([k, v]) => { norm[k] = total ? v / total : 0; });
     return norm;
   }, [customWeights]);
   const customBlend = useMemo(() => blendPaths(customNorm), [customNorm]);

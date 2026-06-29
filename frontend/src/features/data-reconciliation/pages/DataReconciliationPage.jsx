@@ -234,7 +234,7 @@ export default function DataReconciliationPage() {
     let list = conflictsList;
     if (searchTerm) { const s = searchTerm.toLowerCase(); list = list.filter(c => c.company.toLowerCase().includes(s) || c.ticker.toLowerCase().includes(s)); }
     if (fieldFilter !== 'all') list = list.filter(c => c.field === fieldFilter);
-    list.sort((a, b) => {
+    list = [...list].sort((a, b) => {
       if (sortCol === 'company') return sortDir === 'asc' ? a.company.localeCompare(b.company) : b.company.localeCompare(a.company);
       if (sortCol === 'field') return sortDir === 'asc' ? a.field.localeCompare(b.field) : b.field.localeCompare(a.field);
       if (sortCol === 'confidence') return sortDir === 'asc' ? a.confidence - b.confidence : b.confidence - a.confidence;
@@ -285,7 +285,7 @@ export default function DataReconciliationPage() {
     let count = 0;
     conflictsList.forEach(c => {
       if (c.allValues.length > 1 && !overrides[`${c.ticker}:${c.field}`]) {
-        const best = c.allValues.sort((a, b) => a.priority - b.priority)[0];
+        const best = [...c.allValues].sort((a, b) => a.priority - b.priority)[0];
         const key = `${c.ticker}:${c.field}`;
         overrides[key] = best.value;
         count++;

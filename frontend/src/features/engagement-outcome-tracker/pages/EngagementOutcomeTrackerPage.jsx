@@ -163,12 +163,12 @@ export default function EngagementOutcomeTrackerPage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>NZ Score by Escalation Level</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={filtered.sort((a, b) => a.nzScore - b.nzScore)}>
+            <BarChart data={[...filtered].sort((a, b) => a.nzScore - b.nzScore)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="company" tick={{ fontSize:9, fontFamily:T.mono, angle:-25, textAnchor:'end' }} height={60} />
               <YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0, 100]} />
               <Tooltip />
-              <Bar dataKey="nzScore" name="NZ Score">{filtered.sort((a, b) => a.nzScore - b.nzScore).map((e, i) => <Cell key={i} fill={e.escalation==='Dialogue'?T.green:e.escalation==='Enhanced'?T.amber:T.red} />)}</Bar>
+              <Bar dataKey="nzScore" name="NZ Score">{[...filtered].sort((a, b) => a.nzScore - b.nzScore).map((e, i) => <Cell key={i} fill={e.escalation==='Dialogue'?T.green:e.escalation==='Enhanced'?T.amber:T.red} />)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -204,7 +204,7 @@ export default function EngagementOutcomeTrackerPage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Indicators Met by Company</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={filtered.sort((a, b) => b.indicators - a.indicators)}>
+            <BarChart data={[...filtered].sort((a, b) => b.indicators - a.indicators)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="company" tick={{ fontSize:9, fontFamily:T.mono, angle:-25, textAnchor:'end' }} height={60} />
               <YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0, 10]} />

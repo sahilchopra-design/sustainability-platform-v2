@@ -87,17 +87,17 @@ export default function BoardClimateCompetencePage() {
             {card('Companies Scored', filtered.length.toString(), 'With board data', T.navy)}
             {card('Avg Competence Score', avgScore + '/100', avgScore >= 70 ? 'Good' : 'Needs improvement', avgScore >= 70 ? T.green : T.amber)}
             {card('With Climate Committee', filtered.filter(c => c.committee).length.toString(), 'Dedicated committee', T.green)}
-            {card('Top Scorer', filtered.sort((a, b) => b.score - a.score)[0]?.company || '-', filtered.sort((a, b) => b.score - a.score)[0]?.score + '/100', T.gold)}
+            {card('Top Scorer', [...filtered].sort((a, b) => b.score - a.score)[0]?.company || '-', [...filtered].sort((a, b) => b.score - a.score)[0]?.score + '/100', T.gold)}
           </div>
           <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
             <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Competence Score by Company</h3>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={filtered.sort((a, b) => b.score - a.score)} layout="vertical">
+              <BarChart data={[...filtered].sort((a, b) => b.score - a.score)} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis type="number" domain={[0, 100]} tick={{ fontSize:11, fontFamily:T.mono }} />
                 <YAxis type="category" dataKey="company" width={120} tick={{ fontSize:10, fontFamily:T.mono }} />
                 <Tooltip />
-                <Bar dataKey="score" name="Score">{filtered.sort((a, b) => b.score - a.score).map((c, i) => <Cell key={i} fill={c.score >= 80 ? T.green : c.score >= 60 ? T.gold : c.score >= 40 ? T.amber : T.red} />)}</Bar>
+                <Bar dataKey="score" name="Score">{[...filtered].sort((a, b) => b.score - a.score).map((c, i) => <Cell key={i} fill={c.score >= 80 ? T.green : c.score >= 60 ? T.gold : c.score >= 40 ? T.amber : T.red} />)}</Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -155,12 +155,12 @@ export default function BoardClimateCompetencePage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Diversity Score for Climate Decision-Making</h3>
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={filtered.sort((a, b) => b.diversityScore - a.diversityScore)}>
+            <BarChart data={[...filtered].sort((a, b) => b.diversityScore - a.diversityScore)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="company" tick={{ fontSize:9, fontFamily:T.mono, angle:-25, textAnchor:'end' }} height={60} />
               <YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0, 100]} />
               <Tooltip />
-              <Bar dataKey="diversityScore" name="Diversity Score">{filtered.sort((a, b) => b.diversityScore - a.diversityScore).map((c, i) => <Cell key={i} fill={c.diversityScore >= 75 ? T.green : c.diversityScore >= 60 ? T.gold : T.amber} />)}</Bar>
+              <Bar dataKey="diversityScore" name="Diversity Score">{[...filtered].sort((a, b) => b.diversityScore - a.diversityScore).map((c, i) => <Cell key={i} fill={c.diversityScore >= 75 ? T.green : c.diversityScore >= 60 ? T.gold : T.amber} />)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -170,7 +170,7 @@ export default function BoardClimateCompetencePage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Peer Benchmarking: Expertise + Structure + Accountability</h3>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={filtered.sort((a, b) => b.score - a.score)} layout="vertical">
+            <BarChart data={[...filtered].sort((a, b) => b.score - a.score)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis type="number" domain={[0, 100]} tick={{ fontSize:11, fontFamily:T.mono }} />
               <YAxis type="category" dataKey="company" width={120} tick={{ fontSize:10, fontFamily:T.mono }} />

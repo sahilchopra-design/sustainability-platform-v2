@@ -847,9 +847,9 @@ const IssbMaterialityPage = () => {
          ═══════════════════════════════════════════════════════ */}
       {activeTab === 'threshold' && (() => {
         const buckets = [
-          { label:'Top 5 Holdings', filter: enriched.sort((a,b) => b.weight - a.weight).slice(0,5) },
-          { label:'Mid Holdings (6-15)', filter: enriched.sort((a,b) => b.weight - a.weight).slice(5,15) },
-          { label:'Tail Holdings (16+)', filter: enriched.sort((a,b) => b.weight - a.weight).slice(15) },
+          { label:'Top 5 Holdings', filter: [...enriched].sort((a,b) => b.weight - a.weight).slice(0,5) },
+          { label:'Mid Holdings (6-15)', filter: [...enriched].sort((a,b) => b.weight - a.weight).slice(5,15) },
+          { label:'Tail Holdings (16+)', filter: [...enriched].sort((a,b) => b.weight - a.weight).slice(15) },
         ];
         return (
           <Section title="Materiality by Weight Bucket" badge="top / mid / tail">

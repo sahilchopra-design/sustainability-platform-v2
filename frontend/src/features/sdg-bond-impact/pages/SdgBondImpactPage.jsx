@@ -820,7 +820,7 @@ function SdgBondImpactPage() {
         <Section title="Impact Intensity Ranking" badge="Impact per $M Invested">
           <Card>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:12 }}>
-              {bonds.sort((a,b) => b.impactScore - a.impactScore).slice(0, 10).map((b, rank) => {
+              {[...bonds].sort((a,b) => b.impactScore - a.impactScore).slice(0, 10).map((b, rank) => {
                 const cat = BOND_IMPACT_METRICS[b.category];
                 const primaryMetric = cat?.metrics[0];
                 const impactVal = primaryMetric ? primaryMetric.benchmark * b.size_mn : 0;

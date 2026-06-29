@@ -349,7 +349,7 @@ export default function TechDisplacementModelerPage() {
               <p style={{ color: T.textSec, fontSize: 12, margin: '0 0 20px' }}>Year when new technology reaches 50% market share, displacing incumbent.</p>
               <div style={{ position: 'relative', paddingLeft: 20 }}>
                 <div style={{ position: 'absolute', left: 20, top: 0, bottom: 0, width: 2, background: T.border }} />
-                {disruption.sort((a, b) => a.crossover - b.crossover).map((d, i) => (
+                {[...disruption].sort((a, b) => a.crossover - b.crossover).map((d, i) => (
                   <div key={d.name} style={{ display: 'flex', gap: 16, marginBottom: 20, position: 'relative', paddingLeft: 40 }}>
                     <div style={{ position: 'absolute', left: 12, top: 8, width: 18, height: 18, borderRadius: '50%', background: d.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10 }}>
                       {d.icon}

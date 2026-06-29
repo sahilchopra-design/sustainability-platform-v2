@@ -194,7 +194,7 @@ export default function PandemicClimateNexusPage(){
         {kpiBox('Diseases Tracked',DISEASES.length,'Vector-borne',T.navy)}
         {kpiBox('Current Pop at Risk',fmt(diseaseAgg.reduce((s,d)=>s+d.totalCurrent,0)*1e6)+'M','All diseases combined',T.red)}
         {kpiBox(`Proj. at Risk (${HORIZONS[horizonIdx]})`,fmt(diseaseAgg.reduce((s,d)=>s+d.projections[rcpIdx][horizonIdx],0)*1e6)+'M',RCP_SCENARIOS[rcpIdx],T.amber)}
-        {kpiBox('Highest Risk Disease',diseaseAgg.sort((a,b)=>b.totalCurrent-a.totalCurrent)[0]?.disease||'-','By current population',T.red)}
+        {kpiBox('Highest Risk Disease',[...diseaseAgg].sort((a,b)=>b.totalCurrent-a.totalCurrent)[0]?.disease||'-','By current population',T.red)}
       </div>
       <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center',flexWrap:'wrap'}}>
         <div style={{display:'flex',gap:4}}>{RCP_SCENARIOS.map((r,i)=>(<button key={i} onClick={()=>setRcpIdx(i)} style={{padding:'5px 14px',borderRadius:6,border:`1px solid ${rcpIdx===i?T.navy:T.border}`,background:rcpIdx===i?T.navy:'transparent',color:rcpIdx===i?'#fff':T.text,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.mono}}>{r}</button>))}</div>

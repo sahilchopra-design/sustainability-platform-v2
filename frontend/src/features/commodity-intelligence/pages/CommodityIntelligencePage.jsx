@@ -1700,7 +1700,7 @@ export default function CommodityIntelligencePage(){
           <Section title={`Sector Impact: ${selectedObj.name}`} badge="11 GICS Sectors">
             <Card>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={SECTOR_IMPACT_MATRIX[selectedComm].sort((a,b)=>b.impact-a.impact)} layout="vertical">
+                <BarChart data={[...SECTOR_IMPACT_MATRIX[selectedComm]].sort((a,b)=>b.impact-a.impact)} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
                   <XAxis type="number" domain={[0,100]} tick={{fontSize:10}} tickFormatter={v=>`${v}`}/>
                   <YAxis dataKey="sector" type="category" width={160} tick={{fontSize:11}}/>

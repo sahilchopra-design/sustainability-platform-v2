@@ -418,7 +418,7 @@ export default function PortfolioClimatePulsePage() {
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
               <h3 style={{ margin: '0 0 12px', fontSize: 14 }}>Carbon Intensity by Sector (Avg tCO2e/$M)</h3>
               <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={sectorBreakdown.sort((a,b)=>b.avgCI-a.avgCI)}>
+                <BarChart data={[...sectorBreakdown].sort((a,b)=>b.avgCI-a.avgCI)}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="sector" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" height={50} />
                   <YAxis tick={{ fontSize: 10 }} />

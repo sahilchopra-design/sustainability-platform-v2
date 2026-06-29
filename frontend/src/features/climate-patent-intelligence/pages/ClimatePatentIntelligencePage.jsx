@@ -307,7 +307,7 @@ export default function ClimatePatentIntelligencePage() {
               <Card title="Patent CAGR 2019–2024 by Domain (%)">
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart
-                    data={domainRows.sort((a,b)=>b.cagr-a.cagr)}
+                    data={[...domainRows].sort((a,b)=>b.cagr-a.cagr)}
                     layout="vertical" margin={{ top:5, right:60, left:120, bottom:5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.borderL} horizontal={false} />
                     <XAxis type="number" tick={{ fontSize:10, fontFamily:T.mono }} unit="%" />

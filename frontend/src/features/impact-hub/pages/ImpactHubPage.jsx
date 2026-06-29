@@ -475,7 +475,7 @@ export default function ImpactHubPage() {
           <div style={{ marginTop:10 }}>
             <div style={{ fontSize:12, fontWeight:600, color:T.navy, marginBottom:6 }}>Highest Deviation (Inconsistent Assessment)</div>
             <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-              {consistency.sort((a, b) => b.deviation - a.deviation).slice(0, 5).map(c => (
+              {[...consistency].sort((a, b) => b.deviation - a.deviation).slice(0, 5).map(c => (
                 <span key={c.company} style={{ fontSize:11, padding:'3px 10px', borderRadius:8, background:c.deviation > 40 ? '#fee2e2' : '#fef3c7', color:c.deviation > 40 ? '#991b1b' : '#92400e', fontWeight:600 }}>{c.company}: {c.deviation}pt gap</span>
               ))}
             </div>

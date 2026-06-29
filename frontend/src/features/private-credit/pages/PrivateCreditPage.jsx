@@ -841,7 +841,7 @@ export default function PrivateCreditPage() {
             <div style={{ background:T.surfaceH, borderRadius:8, padding:14 }}>
               <div style={{ fontSize:10, color:T.textMut, textTransform:'uppercase' }}>Undrawn Capacity</div>
               <div style={{ fontSize:22, fontWeight:700, color:T.navy }}>{fmtM(facilities.reduce((s, f) => s + (f.commitment_mn - f.drawn_mn), 0))}</div>
-              <div style={{ fontSize:11, color:T.textSec }}>{pct(facilities.reduce((s, f) => s + (f.commitment_mn - f.drawn_mn), 0) / kpis.totalCommit * 100)} of total commitment</div>
+              <div style={{ fontSize:11, color:T.textSec }}>{pct(facilities.reduce((s, f) => s + (f.commitment_mn - f.drawn_mn), 0) / (kpis.totalCommit || 1) * 100)} of total commitment</div>
             </div>
             {/* Largest single exposure */}
             <div style={{ background:T.surfaceH, borderRadius:8, padding:14 }}>
@@ -851,7 +851,7 @@ export default function PrivateCreditPage() {
                 return (
                   <>
                     <div style={{ fontSize:16, fontWeight:700, color:T.navy }}>{largest?.borrower}</div>
-                    <div style={{ fontSize:11, color:T.textSec }}>{fmtM(largest?.commitment_mn)} ({pct(largest?.commitment_mn / kpis.totalCommit * 100)} of portfolio)</div>
+                    <div style={{ fontSize:11, color:T.textSec }}>{fmtM(largest?.commitment_mn)} ({pct((largest?.commitment_mn || 0) / (kpis.totalCommit || 1) * 100)} of portfolio)</div>
                   </>
                 );
               })()}

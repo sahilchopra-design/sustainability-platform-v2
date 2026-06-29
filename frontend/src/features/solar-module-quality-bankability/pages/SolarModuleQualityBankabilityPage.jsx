@@ -427,7 +427,7 @@ export default function SolarModuleQualityBankabilityPage() {
                 <YAxis type="category" dataKey="manufacturer" width={90} tick={{ fontSize: 10 }} />
                 <Tooltip formatter={(v) => [`${v}%`, 'P90 Power at Year 25']} />
                 <Bar dataKey="p90" radius={[0, 4, 4, 0]}>
-                  {filtered.sort((a, b) => {
+                  {[...filtered].sort((a, b) => {
                     const pa = Math.max((1 - a.degradYr1 / 100) * Math.pow(1 - a.degradSubseq / 100, 24) * 100 - 2.5, 0);
                     const pb = Math.max((1 - b.degradYr1 / 100) * Math.pow(1 - b.degradSubseq / 100, 24) * 100 - 2.5, 0);
                     return pb - pa;

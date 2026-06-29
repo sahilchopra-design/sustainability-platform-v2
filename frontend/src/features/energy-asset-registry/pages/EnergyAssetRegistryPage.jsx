@@ -281,7 +281,7 @@ export default function EnergyAssetRegistryPage() {
                 </tr>
               </thead>
               <tbody>
-                {watchlist.sort((a, b) => b.carbon_intensity - a.carbon_intensity).map(a => (
+                {[...watchlist].sort((a, b) => b.carbon_intensity - a.carbon_intensity).map(a => (
                   <tr key={a.id} style={{ borderBottom: `1px solid ${T.border}` }}>
                     <td style={{ padding: '6px 10px', fontWeight: 600 }}>{a.name}</td>
                     <td style={{ padding: '6px 10px' }}>{a.fuel}</td>

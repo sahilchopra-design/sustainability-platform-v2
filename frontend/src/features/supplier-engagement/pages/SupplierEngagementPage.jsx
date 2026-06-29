@@ -545,7 +545,7 @@ function PipelineTab(){
       <thead><tr style={{background:T.surfaceH,borderBottom:`2px solid ${T.border}`}}>
         {['ID','Supplier','Industry','Stage','Priority','Days','Assignee','Spend','Risk','Gaps','Actions'].map(h=><th key={h} style={{padding:'8px 6px',textAlign:'left',fontSize:11}}>{h}</th>)}
       </tr></thead>
-      <tbody>{filteredData.sort((a,b)=>b.priority-a.priority).map(e=>(
+      <tbody>{[...filteredData].sort((a,b)=>b.priority-a.priority).map(e=>(
         <tr key={e.id} style={{borderBottom:`1px solid ${T.border}`,cursor:'pointer',background:selectedEng?.id===e.id?T.surfaceH:'transparent'}} onClick={()=>setSelectedEng(selectedEng?.id===e.id?null:e)}>
           <td style={{padding:'6px',fontFamily:T.mono,fontSize:11}}>{e.id}</td>
           <td style={{padding:'6px',fontWeight:600,color:T.navy}}>{e.supplierName}</td>

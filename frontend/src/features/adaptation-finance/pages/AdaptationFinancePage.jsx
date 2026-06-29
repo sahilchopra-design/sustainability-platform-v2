@@ -224,7 +224,7 @@ export default function AdaptationFinancePage() {
               <KpiCard label="GFMA Alignment %" value={`${gfmaAlignment}%`} sub="Against GFMA 2023 taxonomy" accent />
               <KpiCard label="Total Portfolio (€M)" value={`€ ${gfmaTotal}M`} sub="Committed + pipeline" />
               <KpiCard label="Categories Active" value={gfmaCategoryData.length} sub="Across 8 GFMA sectors" />
-              <KpiCard label="Top Category" value={gfmaCategoryData.sort((a, b) => b.value - a.value)[0].name} sub="By portfolio weight" />
+              <KpiCard label="Top Category" value={[...gfmaCategoryData].sort((a, b) => b.value - a.value)[0].name} sub="By portfolio weight" />
             </Row>
           </Section>
 
@@ -350,7 +350,7 @@ export default function AdaptationFinancePage() {
             <Row gap={12}>
               <KpiCard label="GARI Composite Score" value={`${gariComposite}/100`} sub="6-criteria weighted average" accent />
               <KpiCard label="GARI Tier" value={<Badge label={gariTier} color={gariTierColor} />} sub="Grant Allocation & Access criteria" />
-              <KpiCard label="Highest Criterion" value={gariCriteria.sort((a, b) => b.score - a.score)[0].criterion} sub={`Score: ${gariCriteria[0].score}/100`} />
+              <KpiCard label="Highest Criterion" value={[...gariCriteria].sort((a, b) => b.score - a.score)[0].criterion} sub={`Score: ${gariCriteria[0].score}/100`} />
               <KpiCard label="Gap Criteria" value={gariCriteria.filter(c => c.score < 55).length} sub="Below threshold (55/100)" />
             </Row>
           </Section>

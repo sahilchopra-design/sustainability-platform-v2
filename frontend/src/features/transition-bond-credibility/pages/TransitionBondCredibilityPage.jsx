@@ -101,12 +101,12 @@ export default function TransitionBondCredibilityPage() {
           <div style={{ flex:1, background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, minWidth:350 }}>
             <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>KPI Strength Score by Issuer</h3>
             <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={filtered.sort((a,b)=>b.kpiScore-a.kpiScore)}>
+              <BarChart data={[...filtered].sort((a,b)=>b.kpiScore-a.kpiScore)}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="issuer" tick={{ fontSize:10, fontFamily:T.mono }} />
                 <YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0,100]} />
                 <Tooltip />
-                <Bar dataKey="kpiScore" name="KPI Score">{filtered.sort((a,b)=>b.kpiScore-a.kpiScore).map((b,i)=><Cell key={i} fill={b.kpiScore>=75?T.green:b.kpiScore>=50?T.amber:T.red}/>)}</Bar>
+                <Bar dataKey="kpiScore" name="KPI Score">{[...filtered].sort((a,b)=>b.kpiScore-a.kpiScore).map((b,i)=><Cell key={i} fill={b.kpiScore>=75?T.green:b.kpiScore>=50?T.amber:T.red}/>)}</Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -142,12 +142,12 @@ export default function TransitionBondCredibilityPage() {
         <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16 }}>
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Use of Proceeds Deployment %</h3>
           <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={filtered.sort((a,b)=>b.uopDeployed-a.uopDeployed)}>
+            <BarChart data={[...filtered].sort((a,b)=>b.uopDeployed-a.uopDeployed)}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
               <XAxis dataKey="issuer" tick={{ fontSize:11, fontFamily:T.mono }} />
               <YAxis tick={{ fontSize:11, fontFamily:T.mono }} domain={[0,100]} />
               <Tooltip />
-              <Bar dataKey="uopDeployed" name="Deployed %">{filtered.sort((a,b)=>b.uopDeployed-a.uopDeployed).map((b,i)=><Cell key={i} fill={b.uopDeployed>=80?T.green:b.uopDeployed>=50?T.amber:T.red}/>)}</Bar>
+              <Bar dataKey="uopDeployed" name="Deployed %">{[...filtered].sort((a,b)=>b.uopDeployed-a.uopDeployed).map((b,i)=><Cell key={i} fill={b.uopDeployed>=80?T.green:b.uopDeployed>=50?T.amber:T.red}/>)}</Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

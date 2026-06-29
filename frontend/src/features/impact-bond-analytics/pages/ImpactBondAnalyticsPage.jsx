@@ -89,9 +89,9 @@ export default function ImpactBondAnalyticsPage() {
             <div style={{ flex:2, background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, minWidth:400 }}>
               <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>SROI by Bond</h3>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={filtered.sort((a,b)=>b.sroi-a.sroi)}>
+                <BarChart data={[...filtered].sort((a,b)=>b.sroi-a.sroi)}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{ fontSize:8, fontFamily:T.mono, angle:-25, textAnchor:'end' }} height={60}/><YAxis tick={{ fontSize:11, fontFamily:T.mono }}/><Tooltip/>
-                  <Bar dataKey="sroi" name="SROI (x)">{filtered.sort((a,b)=>b.sroi-a.sroi).map((b,i)=><Cell key={i} fill={b.sroi>=4?T.green:b.sroi>=2.5?T.gold:T.amber}/>)}</Bar>
+                  <Bar dataKey="sroi" name="SROI (x)">{[...filtered].sort((a,b)=>b.sroi-a.sroi).map((b,i)=><Cell key={i} fill={b.sroi>=4?T.green:b.sroi>=2.5?T.gold:T.amber}/>)}</Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>

@@ -111,7 +111,6 @@ const getFinancialData = (country, assetClass, assetValue, ngfs) => {
   const val = parseFloat(assetValue) || 10000000;
   const ealPct = s(1) * 0.8 + 0.1;
   const pml100 = s(2) * 0.15 + 0.05;
-  const climateVaR = s(3) * 0.12 + 0.04;
   const riskPremium = Math.round(s(4) * 80 + 20);
   const lossDistData = [10, 25, 50, 100, 200, 500].map((rp, i) => ({
     rp: `${rp}yr`,
@@ -125,7 +124,7 @@ const getFinancialData = (country, assetClass, assetValue, ngfs) => {
   return {
     eal: `$${(ealPct * val / 1e6).toFixed(2)}M`,
     pml100: `$${(pml100 * val / 1e6).toFixed(2)}M`,
-    climateVaR: `${(climateVaR * 100).toFixed(1)}%`,
+    climateVaR: `${((lossDistData[1].loss * 1e6 / val) * 100).toFixed(1)}%`,
     riskPremium: `${riskPremium} bps`,
     lossDistData,
     insurancePie,

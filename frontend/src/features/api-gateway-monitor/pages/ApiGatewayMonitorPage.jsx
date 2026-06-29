@@ -422,7 +422,7 @@ export default function ApiGatewayMonitorPage(){
         <div style={ss.card}>
           <div style={{fontSize:13,fontWeight:700,marginBottom:12}}>Throughput by Domain (Top 10)</div>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={domainStats.sort((a,b)=>b.totalCalls-a.totalCalls).slice(0,10).map(d=>({name:d.domain.slice(0,12),calls:d.totalCalls}))} layout="vertical">
+            <BarChart data={[...domainStats].sort((a,b)=>b.totalCalls-a.totalCalls).slice(0,10).map(d=>({name:d.domain.slice(0,12),calls:d.totalCalls}))} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.borderL}/><XAxis type="number" tick={{fontSize:10,fill:T.textSec}} tickFormatter={fmt}/><YAxis dataKey="name" type="category" tick={{fontSize:9,fill:T.textSec}} width={90}/><Tooltip {...tip}/><Bar dataKey="calls" fill={T.sage} radius={[0,4,4,0]}/>
             </BarChart>
           </ResponsiveContainer>

@@ -229,7 +229,7 @@ export default function MaterialityTrendsPage() {
     const increasing = topicForecasts.filter(t => t.trend === 'increasing').length;
     const decreasing = topicForecasts.filter(t => t.trend === 'decreasing').length;
     const avgStrength = (ALL_DRIVERS.reduce((s, d) => s + STRENGTH_MAP[d.strength], 0) / ALL_DRIVERS.length).toFixed(1);
-    const mostDynamic = topicForecasts.sort((a, b) => Math.abs(b.delta2035) - Math.abs(a.delta2035))[0];
+    const mostDynamic = [...topicForecasts].sort((a, b) => Math.abs(b.delta2035) - Math.abs(a.delta2035))[0];
     const emergingCount = topicForecasts.filter(t => t.emerging).length;
     return { increasing, decreasing, avgStrength, mostDynamic, emergingCount };
   }, [topicForecasts]);

@@ -833,7 +833,7 @@ export default function DmePortfolioPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {riskReturnData.sort((a, b) => b.x - a.x).slice(0, 10).map((r, i) => (
+                  {[...riskReturnData].sort((a, b) => b.x - a.x).slice(0, 10).map((r, i) => (
                     <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.surfaceH }}>
                       <td style={{ ...td, fontWeight: 600 }}>{r.name}</td>
                       <td style={{ ...td, color: r.x > 60 ? T.red : r.x > 35 ? T.amber : T.sage, fontWeight: 700 }}>{fmt(r.x)}</td>

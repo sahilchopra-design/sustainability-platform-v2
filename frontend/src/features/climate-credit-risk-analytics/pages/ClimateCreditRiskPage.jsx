@@ -1438,7 +1438,7 @@ const EPCRealEstateTab=({properties})=>{
               </tr>
             </thead>
             <tbody>
-              {crremAnalysis.sort((a,b)=>(b.epc||'').localeCompare(a.epc||'')).map(p=>(
+              {[...crremAnalysis].sort((a,b)=>(b.epc||'').localeCompare(a.epc||'')).map(p=>(
                 <tr key={p.id}>
                   <td style={{...S.td,fontWeight:600}}>{p.name}</td>
                   <td style={S.td}>{p.type}</td>

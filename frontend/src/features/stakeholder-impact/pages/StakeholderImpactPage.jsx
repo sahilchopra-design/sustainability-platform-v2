@@ -593,7 +593,7 @@ export default function StakeholderImpactPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {companyProfile.sort((a, b) => b.impact_score - a.impact_score).map(g => (
+                          {[...companyProfile].sort((a, b) => b.impact_score - a.impact_score).map(g => (
                             <tr key={g.id}>
                               <td style={{ ...td, fontWeight: 600 }}>{g.icon} {g.name}</td>
                               <td style={td}>

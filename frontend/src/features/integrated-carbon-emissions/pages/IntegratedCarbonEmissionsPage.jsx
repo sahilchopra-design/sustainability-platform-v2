@@ -985,7 +985,7 @@ export default function IntegratedCarbonEmissionsPage(){
                 </tr>
               </thead>
               <tbody>
-                {portfolioData.sort((a,b)=>b.total-a.total).slice(0,20).map((r,i)=>(
+                {[...portfolioData].sort((a,b)=>b.total-a.total).slice(0,20).map((r,i)=>(
                   <tr key={i} style={{borderBottom:`1px solid ${T.surfaceH}`}}>
                     <td style={{padding:'5px 8px',fontFamily:T.mono,fontSize:10,color:T.textMut}}>{i+1}</td>
                     <td style={{padding:'5px 8px',fontWeight:600,color:T.navy}}>{r.ticker} <span style={{fontWeight:400,color:T.textSec}}>{r.name.substring(0,20)}</span></td>
@@ -1252,7 +1252,7 @@ export default function IntegratedCarbonEmissionsPage(){
 
       {/* WACI contribution waterfall */}
       <Panel title="WACI Contribution Waterfall \u2014 Top 20 Holdings">
-        <BarChart data={portfolioData.sort((a,b)=>b.waci_contrib-a.waci_contrib).slice(0,20).map(r=>({label:r.ticker,value:r.waci_contrib,color:T.navyL}))} height={140}/>
+        <BarChart data={[...portfolioData].sort((a,b)=>b.waci_contrib-a.waci_contrib).slice(0,20).map(r=>({label:r.ticker,value:r.waci_contrib,color:T.navyL}))} height={140}/>
       </Panel>
 
       {/* Attribution analysis */}

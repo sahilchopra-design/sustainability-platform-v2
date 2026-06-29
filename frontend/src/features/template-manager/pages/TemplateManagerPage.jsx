@@ -767,7 +767,7 @@ export default function TemplateManagerPage() {
                 </tr>
               </thead>
               <tbody>
-                {allTemplates.sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0)).map((t, i) => (
+                {[...allTemplates].sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0)).map((t, i) => (
                   <tr key={t.id} style={{ background: i % 2 ? T.surfaceH : T.surface }}>
                     <td style={S.td}><span style={{ fontWeight: 700, color: i < 3 ? T.gold : T.textMut }}>{i + 1}</span></td>
                     <td style={{ ...S.td, fontWeight: 600 }}>{t.name}</td>

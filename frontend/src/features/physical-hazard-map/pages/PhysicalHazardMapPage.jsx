@@ -183,7 +183,7 @@ export default function PhysicalHazardMapPage() {
             <KpiCard label="Assets Monitored" value={filteredAssets.length} sub="Across 15 countries" />
             <KpiCard label="Total Exposure" value={`$${(totalExposure / 1e9).toFixed(1)}B`} sub="Across all asset classes" />
             <KpiCard label="Avg Composite Hazard" value={`${avgComposite}/100`} sub={`${scenarioObj?.label}`} color={avgComposite > 60 ? T.red : avgComposite > 40 ? T.amber : T.green} />
-            <KpiCard label="High Risk Assets" value={highRisk} sub={`${((highRisk / filteredAssets.length) * 100).toFixed(0)}% of portfolio`} color={T.red} />
+            <KpiCard label="High Risk Assets" value={highRisk} sub={`${(filteredAssets.length ? (highRisk / filteredAssets.length) * 100 : 0).toFixed(0)}% of portfolio`} color={T.red} />
             <KpiCard label="Perils Modelled" value="8" sub="IPCC AR6 aligned" color={T.blue} />
             <KpiCard label="Scenarios" value="5" sub="Current → SSP5-8.5 (2100)" color={T.teal} />
           </div>
@@ -215,7 +215,7 @@ export default function PhysicalHazardMapPage() {
                   const adj = Math.min(100, Math.round(a.composite * scenarioMult));
                   return tier === 'High' ? adj > 65 : tier === 'Medium' ? adj >= 40 && adj <= 65 : adj < 40;
                 }).length;
-                const pct = ((count / filteredAssets.length) * 100).toFixed(0);
+                const pct = (filteredAssets.length ? (count / filteredAssets.length) * 100 : 0).toFixed(0);
                 return (
                   <div key={tier} style={{ marginBottom: 14 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>

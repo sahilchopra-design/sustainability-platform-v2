@@ -201,13 +201,13 @@ export default function CriticalMineralGeopoliticsPage(){
         <div style={sty.card}>
           <div style={sty.cardTitle}>China Processing Dominance</div>
           <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={mineralHHI.sort((a,b)=>b.chinaProcess-a.chinaProcess)} layout="vertical">
+            <BarChart data={[...mineralHHI].sort((a,b)=>b.chinaProcess-a.chinaProcess)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis type="number" domain={[0,100]} tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:9,fill:T.textSec}} width={90}/>
               <Tooltip contentStyle={{fontSize:11,borderRadius:8}} formatter={v=>`${v}%`}/>
               <Bar dataKey="chinaProcess" name="China %" radius={[0,4,4,0]}>
-                {mineralHHI.sort((a,b)=>b.chinaProcess-a.chinaProcess).map((e,i)=>(<Cell key={i} fill={e.chinaProcess>80?T.red:e.chinaProcess>60?T.amber:T.green}/>))}
+                {[...mineralHHI].sort((a,b)=>b.chinaProcess-a.chinaProcess).map((e,i)=>(<Cell key={i} fill={e.chinaProcess>80?T.red:e.chinaProcess>60?T.amber:T.green}/>))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -215,7 +215,7 @@ export default function CriticalMineralGeopoliticsPage(){
         <div style={sty.card}>
           <div style={sty.cardTitle}>Demand Growth to 2030 (multiplier)</div>
           <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={mineralHHI.sort((a,b)=>b.demand2030-a.demand2030)} layout="vertical">
+            <BarChart data={[...mineralHHI].sort((a,b)=>b.demand2030-a.demand2030)} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
               <XAxis type="number" tick={{fontSize:10,fill:T.textSec}}/>
               <YAxis dataKey="name" type="category" tick={{fontSize:9,fill:T.textSec}} width={90}/>
