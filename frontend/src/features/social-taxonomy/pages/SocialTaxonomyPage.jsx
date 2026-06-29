@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const SOCIAL_OBJECTIVES = [
   { id: 'affordable-housing', name: 'Affordable Housing', sdg: 11, budget: 320, alignedPct: 38, eligiblePct: 62 },

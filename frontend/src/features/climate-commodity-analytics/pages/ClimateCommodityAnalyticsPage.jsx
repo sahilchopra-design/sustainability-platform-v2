@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const COMMODITIES = [
   { id: 'wheat', name: 'Wheat', type: 'Grain', exchange: 'CBOT', basePrice: 550, unit: 'bu', climateVaR95: 18.2, yieldSens: -4.2, heatThresh: 30, waterNeed: 'Medium' },

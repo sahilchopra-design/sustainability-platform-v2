@@ -31,7 +31,7 @@ const T = {
   mono: "'JetBrains Mono', monospace",
 };
 
-const sr = (s) => { let x = Math.sin(s * 9301 + 49297) * 233280; return (x - Math.floor(x)); };
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 /* ═══════════════════════════════════════════════════════════════════
    UNDP 6-PILLAR FRAMEWORK DATA

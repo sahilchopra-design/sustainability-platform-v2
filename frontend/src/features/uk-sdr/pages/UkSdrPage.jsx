@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const SDR_LABELS = [
   { id: 'focus', name: 'Sustainability Focus', description: 'Invests in assets with positive sustainability characteristics', products: 142, aum: 38200, consumers: false, disclosure: 'Full' },

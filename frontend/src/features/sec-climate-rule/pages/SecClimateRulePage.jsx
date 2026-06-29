@@ -9,7 +9,7 @@ const T = {
   amber: '#fb923c', font: "'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",
   mono: "'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
-const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const COLORS = [T.navy, T.gold, T.sage, T.teal, T.amber, T.red, T.navyL, T.goldL, '#a78bfa', '#f472b6'];
 const tip = { contentStyle: { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, fontSize: 11, fontFamily: T.font }, labelStyle: { color: T.textSec, fontSize: 10 } };
 

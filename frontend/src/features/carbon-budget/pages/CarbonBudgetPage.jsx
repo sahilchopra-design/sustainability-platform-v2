@@ -9,7 +9,7 @@ const T = {
   amber: '#f59e0b', font: 'Inter,sans-serif', mono: 'JetBrains Mono,monospace'
 };
 
-const sr = (s) => Math.abs(Math.sin(s * 9301 + 49297) * 233280) % 1;
+const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const KpiCard = ({ label, value, sub, color = T.navy }) => (
   <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: '16px 20px', flex: 1, minWidth: 160 }}>
