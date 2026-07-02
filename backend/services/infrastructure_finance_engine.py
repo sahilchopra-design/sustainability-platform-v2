@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import math
 import uuid
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -283,8 +282,8 @@ class EPResult:
     country: str
     total_cost_usd: float
     category: str
-    principle_scores: dict
-    overall_score: float
+    principle_scores: dict  # values are per-principle score or None (insufficient_data)
+    overall_score: Optional[float]  # None when no per-principle scores supplied
     esap_required: bool
     compliant: bool
     key_gaps: list[str]
@@ -293,8 +292,8 @@ class EPResult:
 class IFCPSResult:
     entity_id: str
     sector: str
-    ps_scores: dict
-    composite_score: float
+    ps_scores: dict  # values are per-PS score or None (insufficient_data)
+    composite_score: Optional[float]  # None when no PS scores supplied
     compliant: bool
     gaps: list[str]
 
@@ -313,13 +312,13 @@ class OECDResult:
 class ParisAlignmentResult:
     entity_id: str
     sector: str
-    alignment_score: float
+    alignment_score: Optional[float]  # None when no sub-criteria supplied
     mitigation_aligned: bool
     adaptation_aligned: bool
     governance_aligned: bool
     overall_aligned: bool
-    ghg_reduction_pa: float
-    sub_scores: dict
+    ghg_reduction_pa: Optional[float]  # None when mitigation not scored
+    sub_scores: dict  # dimension/component values are score or None
 
 @dataclass
 class DSCRStressResult:
@@ -339,12 +338,12 @@ class BlendedFinanceResult:
     entity_id: str
     total_cost_usd: float
     structure_type: str
-    tranche_breakdown: dict
-    crowding_in_ratio: float
-    private_finance_mobilised: float
-    blended_irr: float
-    oecd_additionality_score: float
-    mdb_share_pct: float
+    tranche_breakdown: dict  # tranche amounts None when mdb_share_pct not supplied
+    crowding_in_ratio: float  # deal override or published central estimate
+    private_finance_mobilised: Optional[float]  # None when MDB share not supplied
+    blended_irr: Optional[float]  # None when concessional uplift not supplied
+    oecd_additionality_score: Optional[float]
+    mdb_share_pct: Optional[float]  # None when not supplied
 
 @dataclass
 class ClimateLabelResult:
@@ -376,8 +375,6 @@ class InfrastructureFinanceEngine:
         total_cost_usd: float,
         e_s_data: dict,
     ) -> EPResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         # Determine category
         default_cat = EP_SECTOR_RISKS.get(sector, "B")
         # Override if e_s_data provides explicit category
@@ -386,27 +383,34 @@ class InfrastructureFinanceEngine:
         principle_scores = {}
         key_gaps = []
         total_score = 0.0
+        supplied_weight = 0.0
 
         for p in EP_10_PRINCIPLES:
             pid = f"P{p['id']}"
-            # Score based on e_s_data inputs or seeded random
+            # Score only from caller-supplied e_s_data; otherwise honest null.
+            # A principle compliance score is an entity-specific assessment and
+            # cannot be fabricated when no per-principle input is provided.
             if pid in e_s_data:
-                score = float(e_s_data[pid])
+                score = min(100.0, max(0.0, float(e_s_data[pid])))
+                principle_scores[pid] = round(score, 1)
+                total_score += score * p["weight"]
+                supplied_weight += p["weight"]
+                if score < 60.0:
+                    key_gaps.append(f"{pid}: {p['name']} — below threshold ({score:.0f}/100)")
             else:
-                # Higher category → harder to achieve full scores
-                base_score = 85.0 if category == "C" else (75.0 if category == "B" else 65.0)
-                score = rng.uniform(base_score - 15.0, 100.0)
+                principle_scores[pid] = None  # insufficient_data — no score supplied
 
-            score = min(100.0, max(0.0, score))
-            principle_scores[pid] = round(score, 1)
-            total_score += score * p["weight"]
+        # Overall score is the weight-normalised mean of supplied principle
+        # scores only; None (insufficient_data) when no per-principle inputs given.
+        if supplied_weight > 0.0:
+            overall_score = round(total_score / supplied_weight, 2)
+        else:
+            overall_score = None
 
-            if score < 60.0:
-                key_gaps.append(f"{pid}: {p['name']} — below threshold ({score:.0f}/100)")
-
-        overall_score = round(total_score, 2)
         esap_required = category in ("A", "B")
-        compliant = overall_score >= 70.0 and len(key_gaps) == 0
+        # Compliance requires a computed score and no identified gaps; when the
+        # overall score is unknown, compliance cannot be asserted.
+        compliant = overall_score is not None and overall_score >= 70.0 and len(key_gaps) == 0
 
         return EPResult(
             entity_id=entity_id,
@@ -435,37 +439,49 @@ class InfrastructureFinanceEngine:
         land_acquisition: bool,
         indigenous_peoples_present: bool,
         cultural_heritage: bool,
+        ps_data: Optional[dict] = None,
     ) -> IFCPSResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # ps_data: optional caller-supplied mapping {ps_id -> 0..100 compliance
+        # score}. A Performance Standard compliance score is an entity-specific
+        # assessment; when not supplied it is reported as insufficient_data (None)
+        # rather than fabricated. Project-characteristic flags (workforce size,
+        # land acquisition, biodiversity/indigenous/cultural-heritage presence)
+        # are surfaced as qualitative applicability gaps, not synthetic scores.
+        ps_data = ps_data or {}
 
         ps_scores = {}
         gaps = []
         composite = 0.0
+        supplied_weight = 0.0
+
+        # Map PS -> the project-characteristic that makes it high-attention.
+        elevated_attention = {
+            "PS2": workforce_size > 500,
+            "PS5": land_acquisition,
+            "PS6": biodiversity_sensitive,
+            "PS7": indigenous_peoples_present,
+            "PS8": cultural_heritage,
+        }
 
         for ps_id, ps in IFC_PS_DESCRIPTIONS.items():
-            base = rng.uniform(60.0, 95.0)
+            if ps_id in ps_data:
+                score = min(100.0, max(0.0, float(ps_data[ps_id])))
+                ps_scores[ps_id] = round(score, 1)
+                composite += score * ps["weight"]
+                supplied_weight += ps["weight"]
+                if score < 60.0:
+                    gaps.append(f"{ps_id}: {ps['name']} ({score:.0f}/100)")
+            else:
+                ps_scores[ps_id] = None  # insufficient_data — no score supplied
+                if elevated_attention.get(ps_id):
+                    gaps.append(
+                        f"{ps_id}: {ps['name']} — elevated attention "
+                        "(project characteristic present); no score supplied"
+                    )
 
-            # Adjust based on project characteristics
-            if ps_id == "PS2" and workforce_size > 500:
-                base = min(base, rng.uniform(55.0, 85.0))
-            if ps_id == "PS5" and land_acquisition:
-                base = rng.uniform(40.0, 80.0)
-            if ps_id == "PS6" and biodiversity_sensitive:
-                base = rng.uniform(45.0, 75.0)
-            if ps_id == "PS7" and indigenous_peoples_present:
-                base = rng.uniform(35.0, 75.0)
-            if ps_id == "PS8" and cultural_heritage:
-                base = rng.uniform(50.0, 85.0)
-
-            base = min(100.0, max(0.0, base))
-            ps_scores[ps_id] = round(base, 1)
-            composite += base * ps["weight"]
-
-            if base < 60.0:
-                gaps.append(f"{ps_id}: {ps['name']} ({base:.0f}/100)")
-
-        composite = round(composite, 2)
-        compliant = composite >= 70.0 and len(gaps) == 0
+        # Weight-normalised mean of supplied scores; None when none supplied.
+        composite = round(composite / supplied_weight, 2) if supplied_weight > 0.0 else None
+        compliant = composite is not None and composite >= 70.0 and len(gaps) == 0
 
         return IFCPSResult(
             entity_id=entity_id,
@@ -519,41 +535,65 @@ class InfrastructureFinanceEngine:
         annual_ghg_tco2: float,
         project_lifetime_yrs: int,
         climate_vulnerability_score: float,
+        criteria_scores: Optional[dict] = None,
     ) -> ParisAlignmentResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # criteria_scores: optional caller-supplied mapping of sub-criteria
+        # scores keyed as "{dim}_{sub_criteria_name}" (0..100), e.g.
+        # "mitigation_emissions_trajectory". A Paris-alignment sub-score is an
+        # entity-specific assessment; unsupplied sub-criteria are omitted and
+        # a dimension score is None (insufficient_data) when none of its
+        # sub-criteria are supplied. No scores are fabricated.
+        criteria_scores = criteria_scores or {}
 
         sub_scores = {}
         dim_scores = {}
 
         for dim, dim_cfg in PARIS_ALIGNMENT_CRITERIA.items():
             dim_total = 0.0
-            sub_count = len(dim_cfg["sub_criteria"])
+            supplied = 0
             for sc in dim_cfg["sub_criteria"]:
                 sc_name = sc["name"]
-                base = rng.uniform(50.0, 95.0)
-                # Adjust for sector risk
-                if sector in ("oil_gas", "coal_power") and dim == "mitigation":
-                    base = rng.uniform(20.0, 55.0)
-                if climate_vulnerability_score > 7.0 and dim == "adaptation":
-                    base = rng.uniform(40.0, 70.0)
-                sc_score = min(100.0, max(0.0, base))
-                sub_scores[f"{dim}_{sc_name}"] = round(sc_score, 1)
-                dim_total += sc_score
-            dim_scores[dim] = round(dim_total / max(sub_count, 1), 2)
+                key = f"{dim}_{sc_name}"
+                if key in criteria_scores:
+                    sc_score = min(100.0, max(0.0, float(criteria_scores[key])))
+                    sub_scores[key] = round(sc_score, 1)
+                    dim_total += sc_score
+                    supplied += 1
+                else:
+                    sub_scores[key] = None  # insufficient_data — no score supplied
+            dim_scores[dim] = round(dim_total / supplied, 2) if supplied > 0 else None
 
-        alignment_score = sum(
-            dim_scores[d] * PARIS_ALIGNMENT_CRITERIA[d]["weight"]
-            for d in dim_scores
+        # Weight-normalise the overall score across dimensions that have a value.
+        aligned_weight = sum(
+            PARIS_ALIGNMENT_CRITERIA[d]["weight"]
+            for d in dim_scores if dim_scores[d] is not None
         )
-        alignment_score = round(alignment_score, 2)
+        if aligned_weight > 0.0:
+            alignment_score = round(
+                sum(
+                    dim_scores[d] * PARIS_ALIGNMENT_CRITERIA[d]["weight"]
+                    for d in dim_scores if dim_scores[d] is not None
+                ) / aligned_weight,
+                2,
+            )
+        else:
+            alignment_score = None
 
-        mitigation_aligned = dim_scores.get("mitigation", 0.0) >= 65.0
-        adaptation_aligned = dim_scores.get("adaptation", 0.0) >= 60.0
-        governance_aligned = dim_scores.get("governance", 0.0) >= 65.0
-        overall_aligned = alignment_score >= 65.0
+        # Null-guarded thresholds: alignment cannot be asserted without a score.
+        mit = dim_scores.get("mitigation")
+        adp = dim_scores.get("adaptation")
+        gov = dim_scores.get("governance")
+        mitigation_aligned = mit is not None and mit >= 65.0
+        adaptation_aligned = adp is not None and adp >= 60.0
+        governance_aligned = gov is not None and gov >= 65.0
+        overall_aligned = alignment_score is not None and alignment_score >= 65.0
 
-        # GHG reduction estimate
-        ghg_reduction_pa = annual_ghg_tco2 * (dim_scores.get("mitigation", 50.0) / 100.0) * 0.3
+        # GHG reduction estimate derives from the mitigation alignment score;
+        # None (insufficient_data) when mitigation was not scored.
+        if mit is not None:
+            ghg_reduction_pa = round(annual_ghg_tco2 * (mit / 100.0) * 0.3, 2)
+        else:
+            ghg_reduction_pa = None
 
         return ParisAlignmentResult(
             entity_id=entity_id,
@@ -563,7 +603,7 @@ class InfrastructureFinanceEngine:
             adaptation_aligned=adaptation_aligned,
             governance_aligned=governance_aligned,
             overall_aligned=overall_aligned,
-            ghg_reduction_pa=round(ghg_reduction_pa, 2),
+            ghg_reduction_pa=ghg_reduction_pa,
             sub_scores={**dim_scores, "components": sub_scores},
         )
 
@@ -627,10 +667,27 @@ class InfrastructureFinanceEngine:
         country: str,
         target_private_irr_pct: float,
         mdb_participation: bool,
+        mdb_share_pct: Optional[float] = None,
+        crowding_in_ratio_override: Optional[float] = None,
+        concessional_irr_uplift_pct: Optional[float] = None,
     ) -> BlendedFinanceResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # Optional caller-supplied deal terms (all entity-specific):
+        #   mdb_share_pct               — MDB/DFI share of total (0..100). Drives
+        #                                 the tranche split and mobilisation; when
+        #                                 absent the tranche breakdown and private
+        #                                 finance mobilised are insufficient_data.
+        #   crowding_in_ratio_override  — deal-specific crowding-in ratio. When
+        #                                 absent we fall back to the structure's
+        #                                 documented central estimate ("typical")
+        #                                 from CROWDING_IN_RATIOS (OECD Blended
+        #                                 Finance Toolkit) — a published model
+        #                                 constant, not an entity measurement.
+        #   concessional_irr_uplift_pct — the concessional uplift (pp) added to
+        #                                 the target private IRR to obtain the
+        #                                 blended IRR. When absent the blended IRR
+        #                                 is insufficient_data (not fabricated).
 
-        # Select structure based on sector and risk profile
+        # Select structure based on sector and risk profile (deterministic).
         sector_cat = EP_SECTOR_RISKS.get(sector, "B")
         if sector_cat == "A" or target_private_irr_pct < 8.0:
             structure_type = "first_loss"
@@ -643,24 +700,52 @@ class InfrastructureFinanceEngine:
 
         struct = BLENDED_FINANCE_STRUCTURES[structure_type]
         ci_data = CROWDING_IN_RATIOS[structure_type]
-        crowding_in = rng.uniform(ci_data["min"], ci_data["max"])
+        # Deal-specific override if provided, else published central estimate.
+        crowding_in = (
+            float(crowding_in_ratio_override)
+            if crowding_in_ratio_override is not None
+            else ci_data["typical"]
+        )
 
-        # Tranche breakdown
-        mdb_pct = rng.uniform(0.20, 0.40) if mdb_participation else rng.uniform(0.10, 0.20)
-        private_pct = 1.0 - mdb_pct
-        mdb_amount = total_cost_usd * mdb_pct
+        # Tranche breakdown — requires a caller-supplied MDB share; no default
+        # capital structure is fabricated when the share is unknown.
+        if mdb_share_pct is not None:
+            mdb_pct = min(1.0, max(0.0, float(mdb_share_pct) / 100.0))
+            private_pct = 1.0 - mdb_pct
+            mdb_amount = total_cost_usd * mdb_pct
+            tranche_breakdown = {
+                "mdb_dfi_tranche_usd": round(mdb_amount, 0),
+                "private_tranche_usd": round(total_cost_usd * private_pct, 0),
+                "mdb_share_pct": round(mdb_pct * 100.0, 1),
+                "structure": structure_type,
+                "components": struct["typical_components"],
+            }
+            private_finance_mobilised = round(mdb_amount * crowding_in, 0)
+            mdb_share_out = round(mdb_pct * 100.0, 1)
+        else:
+            tranche_breakdown = {
+                "mdb_dfi_tranche_usd": None,
+                "private_tranche_usd": None,
+                "mdb_share_pct": None,
+                "structure": structure_type,
+                "components": struct["typical_components"],
+                "note": "insufficient_data — mdb_share_pct not supplied",
+            }
+            private_finance_mobilised = None
+            mdb_share_out = None
 
-        tranche_breakdown = {
-            "mdb_dfi_tranche_usd": round(mdb_amount, 0),
-            "private_tranche_usd": round(total_cost_usd * private_pct, 0),
-            "mdb_share_pct": round(mdb_pct * 100.0, 1),
-            "structure": structure_type,
-            "components": struct["typical_components"],
-        }
+        # Blended IRR = target private IRR + supplied concessional uplift; None
+        # when the uplift is not supplied.
+        if concessional_irr_uplift_pct is not None:
+            blended_irr = round(target_private_irr_pct + float(concessional_irr_uplift_pct), 2)
+        else:
+            blended_irr = None
 
-        private_finance_mobilised = mdb_amount * crowding_in
-        blended_irr = target_private_irr_pct + rng.uniform(1.5, 4.0)
-        oecd_additionality_score = min(100.0, crowding_in * 12.0)
+        # OECD additionality proxy is a deterministic function of the crowding-in
+        # ratio (mobilisation leverage); reported when a ratio is available.
+        oecd_additionality_score = (
+            round(min(100.0, crowding_in * 12.0), 1) if crowding_in is not None else None
+        )
 
         return BlendedFinanceResult(
             entity_id=entity_id,
@@ -668,10 +753,10 @@ class InfrastructureFinanceEngine:
             structure_type=structure_type,
             tranche_breakdown=tranche_breakdown,
             crowding_in_ratio=round(crowding_in, 2),
-            private_finance_mobilised=round(private_finance_mobilised, 0),
-            blended_irr=round(blended_irr, 2),
-            oecd_additionality_score=round(oecd_additionality_score, 1),
-            mdb_share_pct=round(mdb_pct * 100.0, 1),
+            private_finance_mobilised=private_finance_mobilised,
+            blended_irr=blended_irr,
+            oecd_additionality_score=oecd_additionality_score,
+            mdb_share_pct=mdb_share_out,
         )
 
     # ------------------------------------------------------------------
@@ -743,8 +828,6 @@ class InfrastructureFinanceEngine:
         entity_id: str,
         project_data: dict,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         sector = project_data.get("sector", "renewables")
         country = project_data.get("country", "IN")
         total_cost_usd = project_data.get("total_cost_usd", 200_000_000.0)
@@ -764,19 +847,26 @@ class InfrastructureFinanceEngine:
         cultural_heritage = project_data.get("cultural_heritage", False)
 
         ep = self.assess_equator_principles(entity_id, project_type, sector, country, total_cost_usd, project_data.get("e_s_data", {}))
-        ifc_ps = self.assess_ifc_ps(entity_id, sector, country, workforce_size, biodiversity_sensitive, land_acquisition, indigenous_peoples, cultural_heritage)
+        ifc_ps = self.assess_ifc_ps(entity_id, sector, country, workforce_size, biodiversity_sensitive, land_acquisition, indigenous_peoples, cultural_heritage, ps_data=project_data.get("ps_data"))
         oecd = self.assess_oecd(entity_id, sector, country, project_type)
-        paris = self.assess_paris_alignment(entity_id, sector, country, annual_ghg, lifetime_yrs, vulnerability)
+        paris = self.assess_paris_alignment(entity_id, sector, country, annual_ghg, lifetime_yrs, vulnerability, criteria_scores=project_data.get("paris_criteria_scores"))
         dscr = self.calculate_dscr_climate_stress(entity_id, sector, baseline_dscr, debt_service, project_data.get("physical_risk_level", "medium"), project_data.get("transition_risk_level", "medium"))
-        blended = self.structure_blended_finance(entity_id, total_cost_usd, sector, country, target_irr, mdb_participation)
+        blended = self.structure_blended_finance(entity_id, total_cost_usd, sector, country, target_irr, mdb_participation, mdb_share_pct=project_data.get("mdb_share_pct"), crowding_in_ratio_override=project_data.get("crowding_in_ratio"), concessional_irr_uplift_pct=project_data.get("concessional_irr_uplift_pct"))
         label = self.assess_climate_label(entity_id, sector, ghg_reduction, project_type)
 
-        overall_compliance = round(
-            ep.overall_score * 0.20
-            + ifc_ps.composite_score * 0.20
-            + paris.alignment_score * 0.30
-            + (100.0 if not dscr.breaches_covenant else 40.0) * 0.30,
-            2,
+        # Weighted compliance over available score components; the DSCR covenant
+        # component is always deterministic. Missing score components (None /
+        # insufficient_data) are excluded and the remaining weights renormalised.
+        _components = [
+            (ep.overall_score, 0.20),
+            (ifc_ps.composite_score, 0.20),
+            (paris.alignment_score, 0.30),
+            (100.0 if not dscr.breaches_covenant else 40.0, 0.30),
+        ]
+        _avail = [(v, w) for v, w in _components if v is not None]
+        _wsum = sum(w for _, w in _avail)
+        overall_compliance = (
+            round(sum(v * w for v, w in _avail) / _wsum, 2) if _wsum > 0.0 else None
         )
 
         return {

@@ -8,9 +8,8 @@ TNFD LEAP scoring (0-100)
 SBTN 5-step readiness assessment
 """
 from __future__ import annotations
-from typing import Any
+from typing import Any, Optional
 import math
-import random
 
 # ---------------------------------------------------------------------------
 # SEEA Ecosystem Account Reference Data
@@ -486,18 +485,23 @@ class NatureCapitalAccountingEngine:
         entity_data: dict[str, Any],
         land_area_ha: float,
         ecosystem_types: dict[str, float],
+        condition_observations: Optional[dict[str, dict[str, float]]] = None,
     ) -> dict[str, Any]:
         """
         Produce SEEA Ecosystem Accounts for an entity.
         ecosystem_types: {eco_type: fraction_of_total_area} — must sum to ~1.0
+        condition_observations (optional): {eco_type: {indicator_code: score 0-1}}
+            Caller-supplied measured/monitored SEEA condition indicator scores.
+            When provided, the condition index is computed deterministically from
+            these real observations. When absent, the ecosystem-type baseline
+            condition index (documented SEEA reference calibration) is used for all
+            12 indicators and flagged as 'reference_baseline'.
         Returns extent accounts, condition indices, service flows (physical + monetary), total asset value.
         """
-        seed = abs(hash(entity_data.get("entity_id", "default"))) % 10_000
-        rng = random.Random(seed)
-
         # Normalise fractions
         total_frac = sum(ecosystem_types.values()) or 1.0
         normalised = {k: v / total_frac for k, v in ecosystem_types.items()}
+        condition_observations = condition_observations or {}
 
         # --- Extent Accounts ---
         extent_accounts: dict[str, dict[str, Any]] = {}
@@ -516,11 +520,16 @@ class NatureCapitalAccountingEngine:
         for eco, frac in normalised.items():
             meta = SEEA_ECOSYSTEM_TYPES.get(eco, SEEA_ECOSYSTEM_TYPES["forest"])
             base_ci = meta["avg_condition_index_baseline"]
+            obs = condition_observations.get(eco, {})
             indicator_scores: dict[str, float] = {}
             weighted_sum = 0.0
             for ind_code, ind_meta in SEEA_CONDITION_INDICATORS.items():
-                noise = rng.uniform(-0.08, 0.08)
-                raw_score = max(0.0, min(1.0, base_ci + noise))
+                # Use caller-supplied measured indicator score when available;
+                # otherwise fall back to the SEEA reference-baseline condition
+                # index for this ecosystem type (documented calibration, not a
+                # random draw).
+                raw_score = obs.get(ind_code, base_ci)
+                raw_score = max(0.0, min(1.0, float(raw_score)))
                 indicator_scores[ind_code] = round(raw_score, 3)
                 weighted_sum += raw_score * ind_meta["weight"]
             condition_index = round(weighted_sum, 3)
@@ -534,6 +543,7 @@ class NatureCapitalAccountingEngine:
                 "condition_index": condition_index,
                 "condition_grade": condition_grade,
                 "indicator_scores": indicator_scores,
+                "indicator_source": "observed" if obs else "reference_baseline",
             }
 
         # --- Ecosystem Services Flow Accounts ---
@@ -548,17 +558,31 @@ class NatureCapitalAccountingEngine:
                     b for b in VALUATION_BENCHMARKS
                     if b["ecosystem"] == eco and b["service"] == svc
                 ]
-                if bench_entries:
-                    bench = bench_entries[0]
-                    mid_rate = bench["mid_usd_ha_yr"]
-                else:
-                    mid_rate = rng.uniform(50, 300)
-
                 ci = condition_accounts[eco]["condition_index"]
-                physical_flow = round(area * ci * rng.uniform(0.85, 1.15), 1)  # unit-less index units
+                svc_key = f"{eco}::{svc}"
+
+                if not bench_entries:
+                    # No published unit-value benchmark for this ecosystem×service
+                    # pair — report an honest null rather than fabricating a rate.
+                    service_flows[svc_key] = {
+                        "ecosystem": eco,
+                        "service": svc,
+                        "area_ha": round(area, 2),
+                        "condition_index": ci,
+                        "physical_flow_units": round(area * ci, 1),
+                        "monetary_flow_usd_yr": None,
+                        "valuation_method": "benefit_transfer",
+                        "benchmark_source": None,
+                        "note": "insufficient_data: no published unit-value benchmark for this ecosystem-service pair",
+                    }
+                    continue
+
+                mid_rate = bench_entries[0]["mid_usd_ha_yr"]
+                # Physical flow proxy = condition-adjusted area (index units). No
+                # random multiplier — deterministic condition weighting only.
+                physical_flow = round(area * ci, 1)
                 monetary_flow = round(area * mid_rate * ci, 0)
                 total_monetary_value_usd += monetary_flow
-                svc_key = f"{eco}::{svc}"
                 service_flows[svc_key] = {
                     "ecosystem": eco,
                     "service": svc,
@@ -567,7 +591,7 @@ class NatureCapitalAccountingEngine:
                     "physical_flow_units": physical_flow,
                     "monetary_flow_usd_yr": monetary_flow,
                     "valuation_method": "benefit_transfer",
-                    "benchmark_source": bench_entries[0]["source"] if bench_entries else "internal_estimate",
+                    "benchmark_source": bench_entries[0]["source"],
                 }
 
         # --- Total Ecosystem Asset Value ---
@@ -613,15 +637,25 @@ class NatureCapitalAccountingEngine:
         entity_data: dict[str, Any],
         scope: dict[str, Any],
         assessment_type: str = "direct",
+        impact_score: Optional[float] = None,
+        dependency_trend: Optional[str] = None,
+        business_case_score: Optional[int] = None,
+        social_value_usd_per_ha: Optional[float] = None,
     ) -> dict[str, Any]:
         """
         NCP 2016 — 4-step assessment.
         Returns business value (revenue at risk / dependency), social value, material issues.
-        """
-        seed = abs(hash(str(entity_data.get("entity_id", "")) + assessment_type)) % 10_000
-        rng = random.Random(seed)
 
-        revenue_usd = entity_data.get("annual_revenue_usd", 10_000_000)
+        Optional caller-supplied inputs (default None → honest null when unknown):
+          impact_score: measured/assessed impact intensity on nature (0-1).
+          dependency_trend: observed state trend, e.g. 'declining' | 'stable' | 'improving'.
+          business_case_score: NCP business-case maturity score (0-100).
+          social_value_usd_per_ha: local social value density (USD/ha/yr) for the
+            landscape; multiplied by land area to derive total social value.
+        Dependency scores and revenue-at-risk are computed deterministically from
+        the ENCORE dependency ratings — no random component.
+        """
+        revenue_usd = entity_data.get("annual_revenue_usd") or 10_000_000
         sector = entity_data.get("sector", "food_beverage")
         land_ha = scope.get("land_area_ha", 1000.0)
 
@@ -634,7 +668,11 @@ class NatureCapitalAccountingEngine:
                 "secondary": ["suppliers", "customers", "NGOs"],
                 "tertiary": ["media", "academia"],
             },
-            "business_case_score": rng.randint(60, 95),
+            # Business-case maturity is an entity attribute — only reported when
+            # supplied by the caller; otherwise an honest null.
+            "business_case_score": business_case_score,
+            "business_case_score_note": None if business_case_score is not None
+                else "insufficient_data: supply business_case_score to populate",
         }
 
         # Step 2 — Scope
@@ -648,26 +686,40 @@ class NatureCapitalAccountingEngine:
         }
 
         # Step 3 — Measure
+        # Deterministic ENCORE rating → dependency score lookup (documented
+        # ENCORE VH/H/M/L midpoint calibration; no random perturbation).
         dependency_scores: dict[str, float] = {}
         for svc, strength in encore_deps.items():
             dep_val = {"VH": 0.90, "H": 0.65, "M": 0.40, "L": 0.20}.get(strength, 0.10)
-            dependency_scores[svc] = round(dep_val + rng.uniform(-0.05, 0.05), 3)
+            dependency_scores[svc] = round(dep_val, 3)
 
         weighted_dep = sum(dependency_scores.values()) / max(len(dependency_scores), 1)
-        impact_score = round(rng.uniform(0.3, 0.8), 3)
 
         measure_result = {
             "dependency_scores": dependency_scores,
             "weighted_dependency_index": round(weighted_dep, 3),
-            "impact_score": impact_score,
-            "trend": rng.choice(["declining", "stable", "improving"]),
+            # Impact score and state trend are observed inputs — null when absent.
+            "impact_score": round(impact_score, 3) if impact_score is not None else None,
+            "impact_score_note": None if impact_score is not None
+                else "insufficient_data: supply impact_score to populate",
+            "trend": dependency_trend if dependency_trend is not None else "insufficient_data",
         }
 
         # Step 4 — Value
-        revenue_at_risk_pct = weighted_dep * 0.25 * rng.uniform(0.8, 1.2)
+        # Deterministic: revenue-at-risk = weighted dependency × 25% max exposure
+        # (documented NCP sensitivity factor). No random multiplier.
+        revenue_at_risk_pct = weighted_dep * 0.25
         revenue_at_risk_usd = round(revenue_usd * revenue_at_risk_pct, 0)
-        social_value_usd = round(land_ha * rng.uniform(200, 1500), 0)
         dependency_value_usd = round(revenue_usd * weighted_dep * 0.15, 0)
+
+        # Social value requires a caller-supplied per-hectare density — otherwise
+        # honest null rather than a fabricated figure.
+        if social_value_usd_per_ha is not None:
+            social_value_usd: Optional[float] = round(land_ha * social_value_usd_per_ha, 0)
+            social_value_note: Optional[str] = None
+        else:
+            social_value_usd = None
+            social_value_note = "insufficient_data: supply social_value_usd_per_ha to populate"
 
         material_issues = []
         for svc in high_deps[:4]:
@@ -683,6 +735,7 @@ class NatureCapitalAccountingEngine:
             "revenue_at_risk_pct": round(revenue_at_risk_pct * 100, 2),
             "dependency_value_usd": dependency_value_usd,
             "social_value_usd": social_value_usd,
+            "social_value_note": social_value_note,
             "total_ncp_business_value_usd": revenue_at_risk_usd + dependency_value_usd,
             "material_issues": material_issues,
             "action_recommendations": [
@@ -715,14 +768,21 @@ class NatureCapitalAccountingEngine:
         ecosystem_type: str,
         land_area_ha: float,
         country_iso: str = "USA",
+        option_rate: Optional[float] = None,
+        existence_rate: Optional[float] = None,
+        bequest_rate: Optional[float] = None,
     ) -> dict[str, Any]:
         """
         TEV decomposition: direct use + indirect use + option + existence + bequest.
         Returns value breakdown, method mix, uncertainty range.
-        """
-        seed = abs(hash(f"{ecosystem_type}{land_area_ha:.0f}{country_iso}")) % 10_000
-        rng = random.Random(seed)
 
+        option_rate / existence_rate / bequest_rate (optional): caller-supplied
+        non-use-value ratios (fraction of use value). When omitted, documented TEV
+        MODEL calibration midpoints of the published TEEB ranges are applied
+        (option 27.5% of 20-35%, existence 17.5% of 10-25%, bequest 13% of 8-18%)
+        and flagged as model constants. Use values are computed directly from the
+        published unit-value benchmarks × country multiplier — no random component.
+        """
         country_mult = COUNTRY_RISK_MULTIPLIERS.get(country_iso.upper(), 1.0)
         eco_meta = SEEA_ECOSYSTEM_TYPES.get(ecosystem_type, SEEA_ECOSYSTEM_TYPES["forest"])
 
@@ -738,8 +798,18 @@ class NatureCapitalAccountingEngine:
         direct_use_breakdown: list[dict] = []
         for svc in du_services:
             benches = [b for b in eco_benches if b["service"] == svc]
-            mid = benches[0]["mid_usd_ha_yr"] if benches else rng.uniform(50, 300)
-            val = land_area_ha * mid * country_mult * rng.uniform(0.9, 1.1)
+            if not benches:
+                # No published benchmark — report honest null, do not fabricate.
+                direct_use_breakdown.append({
+                    "service": svc,
+                    "usd_ha_yr": None,
+                    "total_usd_yr": None,
+                    "method": "market_price" if svc in ("food_provisioning", "timber", "fisheries") else "travel_cost",
+                    "note": "insufficient_data: no published unit-value benchmark",
+                })
+                continue
+            mid = benches[0]["mid_usd_ha_yr"]
+            val = land_area_ha * mid * country_mult
             direct_use_usd_yr += val
             direct_use_breakdown.append({
                 "service": svc,
@@ -757,8 +827,18 @@ class NatureCapitalAccountingEngine:
         indirect_use_breakdown: list[dict] = []
         for svc in iu_services:
             benches = [b for b in eco_benches if b["service"] == svc]
-            mid = benches[0]["mid_usd_ha_yr"] if benches else rng.uniform(100, 800)
-            val = land_area_ha * mid * country_mult * rng.uniform(0.85, 1.15)
+            if not benches:
+                # No published benchmark — report honest null, do not fabricate.
+                indirect_use_breakdown.append({
+                    "service": svc,
+                    "usd_ha_yr": None,
+                    "total_usd_yr": None,
+                    "method": "replacement_cost",
+                    "note": "insufficient_data: no published unit-value benchmark",
+                })
+                continue
+            mid = benches[0]["mid_usd_ha_yr"]
+            val = land_area_ha * mid * country_mult
             indirect_use_usd_yr += val
             indirect_use_breakdown.append({
                 "service": svc,
@@ -767,15 +847,19 @@ class NatureCapitalAccountingEngine:
                 "method": "replacement_cost",
             })
 
-        # Option value (20-35% of direct+indirect use)
-        option_rate = rng.uniform(0.20, 0.35)
-        option_value_usd_yr = (direct_use_usd_yr + indirect_use_usd_yr) * option_rate
+        # Option value (documented TEV midpoint of published 20-35% range, or
+        # caller override). MODEL calibration constant when caller value absent.
+        option_rate_used = option_rate if option_rate is not None else 0.275
+        option_rate_source = "caller_supplied" if option_rate is not None else "model_constant_midpoint_20_35pct"
+        option_value_usd_yr = (direct_use_usd_yr + indirect_use_usd_yr) * option_rate_used
 
-        # Non-use values
-        existence_rate = rng.uniform(0.10, 0.25)
-        bequest_rate = rng.uniform(0.08, 0.18)
-        existence_value_usd_yr = (direct_use_usd_yr + indirect_use_usd_yr) * existence_rate
-        bequest_value_usd_yr = (direct_use_usd_yr + indirect_use_usd_yr) * bequest_rate
+        # Non-use values (documented TEV midpoints, or caller overrides).
+        existence_rate_used = existence_rate if existence_rate is not None else 0.175
+        existence_rate_source = "caller_supplied" if existence_rate is not None else "model_constant_midpoint_10_25pct"
+        bequest_rate_used = bequest_rate if bequest_rate is not None else 0.13
+        bequest_rate_source = "caller_supplied" if bequest_rate is not None else "model_constant_midpoint_8_18pct"
+        existence_value_usd_yr = (direct_use_usd_yr + indirect_use_usd_yr) * existence_rate_used
+        bequest_value_usd_yr = (direct_use_usd_yr + indirect_use_usd_yr) * bequest_rate_used
 
         total_usd_yr = (
             direct_use_usd_yr + indirect_use_usd_yr +
@@ -805,19 +889,22 @@ class NatureCapitalAccountingEngine:
                 },
                 "option_value": {
                     "total_usd_yr": round(option_value_usd_yr, 0),
-                    "rate_applied_pct": round(option_rate * 100, 1),
+                    "rate_applied_pct": round(option_rate_used * 100, 1),
+                    "rate_source": option_rate_source,
                     "method": "contingent_valuation",
                 },
             },
             "non_use_values": {
                 "existence_value": {
                     "total_usd_yr": round(existence_value_usd_yr, 0),
-                    "rate_applied_pct": round(existence_rate * 100, 1),
+                    "rate_applied_pct": round(existence_rate_used * 100, 1),
+                    "rate_source": existence_rate_source,
                     "method": "contingent_valuation",
                 },
                 "bequest_value": {
                     "total_usd_yr": round(bequest_value_usd_yr, 0),
-                    "rate_applied_pct": round(bequest_rate * 100, 1),
+                    "rate_applied_pct": round(bequest_rate_used * 100, 1),
+                    "rate_source": bequest_rate_source,
                     "method": "contingent_valuation",
                 },
             },

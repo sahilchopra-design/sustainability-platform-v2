@@ -17,11 +17,20 @@ References:
   - ISAE 3410 Assurance Engagements on GHG Statements
   - ISSA 5000 (IAASB, 2024) Sustainability Assurance Standard
   - PCAF Data Quality Score (DQS) framework
+
+Data-integrity policy
+---------------------
+Every RETURNED metric is either a REAL computation from reference data and
+caller-supplied inputs, or an HONEST NULL (``None`` / a note flag) when the
+required input is absent. No entity metric is fabricated from a random draw.
+Where an entity-specific measurement is not supplied, the engine falls back to
+the published IPCC / MRV-tier *typical* value for the relevant tier and flags
+it as a class-average estimate (``*_is_estimate = True``) rather than inventing
+a facility-specific figure.
 """
 from __future__ import annotations
 
-import random
-from typing import Any
+from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
 # Reference Data
@@ -217,17 +226,33 @@ MRV_UPGRADE_TECHNOLOGIES: dict[str, dict] = {
     },
 }
 
+# Deterministic MODEL calibration constants (documented; not entity metrics).
+# Typical elapsed months to implement a single tier upgrade step, from MRV
+# vendor deployment benchmarks. Used only when the caller does not supply an
+# entity-specific project timeline.
+_TIER_STEP_DURATION_MONTHS: dict[int, int] = {2: 6, 3: 9, 4: 10, 5: 8}
+# Default number of measurement points per technology when the caller does not
+# provide a facility-specific deployment plan (conservative single-point basis).
+_DEFAULT_POINTS_PER_TECHNOLOGY = 1
+
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
-
 def _clamp(v: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, v))
+
+
+def _tier_midpoint_uncertainty(tier: int) -> float:
+    """Midpoint of the published typical-uncertainty range for an MRV tier.
+
+    This is a documented class-average (per MRV_TIERS reference data), NOT a
+    facility-specific measurement. Callers that surface it must flag it as an
+    estimate.
+    """
+    lo, hi = MRV_TIERS[tier]["typical_uncertainty_pct"]
+    return (lo + hi) / 2.0
 
 
 def _dqs_from_uncertainty(uncertainty_pct: float) -> int:
@@ -245,15 +270,20 @@ def assess_mrv_tier(
     entity_id: str,
     facility_type: str,
     current_capabilities: dict,
+    measured_uncertainty_pct: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Assess MRV tier (1-5) and generate upgrade roadmap.
 
     Covers ISO 14064-3:2019 verification requirements, gap analysis,
     and IPCC uncertainty tiers for each capability level.
-    """
-    rng = _rng(entity_id)
 
+    ``measured_uncertainty_pct`` (optional): the facility's actual reported
+    inventory uncertainty. When supplied, the DQS score is computed from it.
+    When absent, the tier's published typical-range midpoint is used and
+    flagged (``current_uncertainty_is_estimate = True``) — no facility-specific
+    figure is fabricated.
+    """
     # Infer current tier from capabilities
     has_erp = current_capabilities.get("erp_integrated", False)
     has_sensors = current_capabilities.get("iot_sensors", False)
@@ -273,8 +303,15 @@ def assess_mrv_tier(
         current_tier = 1
 
     current_tier_data = MRV_TIERS[current_tier]
-    unc_lo, unc_hi = current_tier_data["typical_uncertainty_pct"]
-    current_uncertainty = rng.uniform(unc_lo, unc_hi)
+
+    # Uncertainty: real measurement if supplied, else class-average estimate
+    # from the tier's published typical range (flagged as an estimate).
+    if measured_uncertainty_pct is not None:
+        current_uncertainty = _clamp(float(measured_uncertainty_pct), 0.0, 100.0)
+        uncertainty_is_estimate = False
+    else:
+        current_uncertainty = _tier_midpoint_uncertainty(current_tier)
+        uncertainty_is_estimate = True
 
     # Gap analysis: what's missing for tier+1 and tier+2
     gaps = []
@@ -315,6 +352,7 @@ def assess_mrv_tier(
         "current_tier_name": current_tier_data["name"],
         "current_tier_description": current_tier_data["description"],
         "current_uncertainty_pct": round(current_uncertainty, 1),
+        "current_uncertainty_is_estimate": uncertainty_is_estimate,
         "ipcc_tier": current_tier_data["ipcc_tier"],
         "iso_14064_level": iso_level,
         "iso_14064_requirements": iso_requirements,
@@ -337,19 +375,44 @@ def calculate_data_quality(
     entity_id: str,
     emission_sources: list[dict],
     measurement_methods: list[str],
+    cdp_disclosures: Optional[dict] = None,
+    ai_anomaly_report: Optional[dict] = None,
 ) -> dict[str, Any]:
     """
     Score MRV data quality using IPCC uncertainty tiers, PCAF DQS 1-5,
     CDP CDSB compliance, and AI-assisted anomaly detection.
-    """
-    rng = _rng(entity_id)
 
+    Uncertainty per source is taken from a caller-supplied ``uncertainty_pct``
+    on the source dict when present, otherwise from the published IPCC typical
+    uncertainty for the source's method tier (a documented class-average, NOT a
+    random draw).
+
+    ``cdp_disclosures`` (optional): ``{category: bool}`` map of which CDP CDSB
+    requirement categories the entity has disclosed. When absent, CDP
+    compliance is reported as ``None`` / ``insufficient_data`` — never guessed.
+
+    ``ai_anomaly_report`` (optional): output of a real anomaly-detection run,
+    e.g. ``{"score": 0-100, "anomalies_detected": int,
+    "anomaly_types": [...]}``. When absent, the AI assessment is reported as
+    ``None`` / ``insufficient_data`` — never fabricated.
+    """
     if not emission_sources:
-        emission_sources = [
-            {"source": "stationary_combustion", "method": "Tier2", "value_tco2e": round(rng.uniform(100, 5000), 1)},
-            {"source": "fugitive_emissions", "method": "Tier1", "value_tco2e": round(rng.uniform(10, 500), 1)},
-            {"source": "process_emissions", "method": "Tier3", "value_tco2e": round(rng.uniform(50, 2000), 1)},
-        ]
+        # No fabricated sources: return an explicit insufficient-data result.
+        return {
+            "entity_id": entity_id,
+            "source_quality_scores": [],
+            "portfolio": {
+                "total_tco2e": 0.0,
+                "weighted_uncertainty_pct": None,
+                "portfolio_dqs": None,
+                "dqs_label": None,
+                "status": "insufficient_data",
+                "note": "No emission_sources supplied; provide sources with method (Tier1/2/3) and value_tco2e.",
+            },
+            "ai_quality_assessment": _build_ai_assessment(ai_anomaly_report),
+            "cdp_cdsb_compliance": _build_cdp_compliance(cdp_disclosures),
+            "measurement_methods": measurement_methods,
+        }
 
     source_scores = []
     total_tco2e = 0.0
@@ -358,8 +421,15 @@ def calculate_data_quality(
     for src in emission_sources:
         ipcc_tier = src.get("method", "Tier2")
         tier_data = IPCC_UNCERTAINTY_TIERS.get(ipcc_tier, IPCC_UNCERTAINTY_TIERS["Tier2"])
-        base_unc = tier_data["typical_uncertainty_pct"]
-        actual_unc = _clamp(rng.gauss(base_unc, base_unc * 0.15), 1.0, 70.0)
+        # Real per-source uncertainty if supplied; else published IPCC typical
+        # value for the tier (documented class-average, flagged as estimate).
+        supplied_unc = src.get("uncertainty_pct")
+        if supplied_unc is not None:
+            actual_unc = _clamp(float(supplied_unc), 1.0, 70.0)
+            unc_is_estimate = False
+        else:
+            actual_unc = _clamp(float(tier_data["typical_uncertainty_pct"]), 1.0, 70.0)
+            unc_is_estimate = True
         dqs = _dqs_from_uncertainty(actual_unc)
         value = float(src.get("value_tco2e", 0))
         total_tco2e += value
@@ -369,50 +439,88 @@ def calculate_data_quality(
             "ipcc_tier": ipcc_tier,
             "value_tco2e": value,
             "uncertainty_pct": round(actual_unc, 1),
+            "uncertainty_is_estimate": unc_is_estimate,
             "dqs_score": dqs,
             "quality_label": DQS_MAPPING[dqs]["label"],
         })
 
-    portfolio_uncertainty = (
-        weighted_uncertainty / total_tco2e if total_tco2e > 0 else 20.0
-    )
-    portfolio_dqs = _dqs_from_uncertainty(portfolio_uncertainty)
-
-    # AI anomaly detection score (0-100, higher = fewer anomalies detected)
-    ai_quality_score = round(rng.uniform(55.0, 97.0), 1)
-    anomalies_detected = rng.randint(0, 5)
-
-    # CDP CDSB compliance check
-    cdp_compliance: dict[str, bool] = {}
-    for category, requirements in CDP_CDSB_REQUIREMENTS.items():
-        score = rng.uniform(0, 1)
-        cdp_compliance[category] = score > 0.35
-
-    cdp_overall = sum(cdp_compliance.values()) / len(cdp_compliance) * 100
+    if total_tco2e > 0:
+        portfolio_uncertainty: Optional[float] = weighted_uncertainty / total_tco2e
+        portfolio_dqs: Optional[int] = _dqs_from_uncertainty(portfolio_uncertainty)
+        portfolio_dqs_label: Optional[str] = DQS_MAPPING[portfolio_dqs]["label"]
+    else:
+        # Sources present but no positive tonnage → cannot weight; be honest.
+        portfolio_uncertainty = None
+        portfolio_dqs = None
+        portfolio_dqs_label = None
 
     return {
         "entity_id": entity_id,
         "source_quality_scores": source_scores,
         "portfolio": {
             "total_tco2e": round(total_tco2e, 1),
-            "weighted_uncertainty_pct": round(portfolio_uncertainty, 1),
-            "portfolio_dqs": portfolio_dqs,
-            "dqs_label": DQS_MAPPING[portfolio_dqs]["label"],
-        },
-        "ai_quality_assessment": {
-            "score": ai_quality_score,
-            "anomalies_detected": anomalies_detected,
-            "anomaly_types": rng.sample(
-                ["spike", "gap_fill", "factor_outlier", "boundary_mismatch", "unit_error"],
-                k=min(anomalies_detected, 5),
+            "weighted_uncertainty_pct": (
+                round(portfolio_uncertainty, 1) if portfolio_uncertainty is not None else None
             ),
+            "portfolio_dqs": portfolio_dqs,
+            "dqs_label": portfolio_dqs_label,
         },
-        "cdp_cdsb_compliance": {
-            "category_compliance": cdp_compliance,
-            "overall_score_pct": round(cdp_overall, 1),
-            "status": "compliant" if cdp_overall >= 70 else "partial",
-        },
+        "ai_quality_assessment": _build_ai_assessment(ai_anomaly_report),
+        "cdp_cdsb_compliance": _build_cdp_compliance(cdp_disclosures),
         "measurement_methods": measurement_methods,
+    }
+
+
+def _build_ai_assessment(ai_anomaly_report: Optional[dict]) -> dict[str, Any]:
+    """Build the AI quality-assessment block from a real anomaly report, or an
+    honest insufficient-data block when none is supplied."""
+    if not ai_anomaly_report:
+        return {
+            "score": None,
+            "anomalies_detected": None,
+            "anomaly_types": [],
+            "status": "insufficient_data",
+            "note": "No ai_anomaly_report supplied; connect an anomaly-detection run to populate this.",
+        }
+    score = ai_anomaly_report.get("score")
+    anomalies_detected = ai_anomaly_report.get("anomalies_detected")
+    anomaly_types = ai_anomaly_report.get("anomaly_types", []) or []
+    return {
+        "score": round(float(score), 1) if score is not None else None,
+        "anomalies_detected": (
+            int(anomalies_detected) if anomalies_detected is not None else None
+        ),
+        "anomaly_types": list(anomaly_types),
+        "status": "reported",
+    }
+
+
+def _build_cdp_compliance(cdp_disclosures: Optional[dict]) -> dict[str, Any]:
+    """Build the CDP CDSB compliance block from caller-supplied disclosure
+    flags, or an honest insufficient-data block when none is supplied.
+
+    ``cdp_disclosures`` maps CDP_CDSB_REQUIREMENTS category names to booleans
+    indicating whether the entity has disclosed that category. Categories not
+    present in the map are treated as not disclosed (False)."""
+    if cdp_disclosures is None:
+        return {
+            "category_compliance": {c: None for c in CDP_CDSB_REQUIREMENTS},
+            "overall_score_pct": None,
+            "status": "insufficient_data",
+            "note": "No cdp_disclosures supplied; provide a {category: bool} disclosure map.",
+        }
+    category_compliance: dict[str, bool] = {
+        category: bool(cdp_disclosures.get(category, False))
+        for category in CDP_CDSB_REQUIREMENTS
+    }
+    cdp_overall = (
+        sum(category_compliance.values()) / len(category_compliance) * 100
+        if category_compliance else 0.0
+    )
+    return {
+        "category_compliance": category_compliance,
+        "overall_score_pct": round(cdp_overall, 1),
+        "status": "compliant" if cdp_overall >= 70 else "partial",
     }
 
 
@@ -421,29 +529,44 @@ def verify_satellite_coverage(
     lat: float,
     lng: float,
     facility_size_ha: float,
+    cloud_cover_pct: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Assess satellite GHG detection coverage for a facility location.
 
     Evaluates TROPOMI, GHGSat, Sentinel-5P and Carbon Mapper against
     facility size and location-specific revisit frequencies.
+
+    ``cloud_cover_pct`` (optional): mean annual cloud cover at the site (0-100),
+    e.g. from a climatology dataset. When supplied, effective coverage days per
+    year are derived from it. When absent, effective coverage days are reported
+    as ``None`` (``cloud_cover_pct`` is ``None``) — the deterministic
+    revisit/detectability geometry is still fully computed and returned.
     """
-    rng = _rng(entity_id)
+    have_cloud = cloud_cover_pct is not None
+    cc_value = _clamp(float(cloud_cover_pct), 0.0, 100.0) if have_cloud else None
 
     coverage: dict[str, dict] = {}
     for platform_name, platform in SATELLITE_PLATFORMS.items():
         detectable = facility_size_ha >= platform["min_facility_size_ha"]
 
-        # Latitude affects revisit due to orbit geometry
+        # Latitude affects revisit due to orbit geometry (deterministic)
         orbit_factor = 1.0 + abs(lat) / 90.0 * 0.5
         effective_revisit = round(platform["revisit_days"] * orbit_factor, 1)
 
-        # Cloud cover reduction (latitude proxy)
-        cloud_cover_pct = round(rng.uniform(10, 50), 0)
-        effective_coverage_days_pa = max(0, int(365 / effective_revisit * (1 - cloud_cover_pct / 100)))
+        # Effective coverage days require a real cloud-cover input; else null.
+        if have_cloud and effective_revisit > 0:
+            effective_coverage_days_pa: Optional[int] = max(
+                0, int(365 / effective_revisit * (1 - cc_value / 100))
+            )
+        else:
+            effective_coverage_days_pa = None
 
         detection_limits = platform.get("detection_limit_ppb", {})
-        cost_per_year = platform.get("cost_per_pass_usd", 0) * (365 / effective_revisit)
+        cost_per_year = (
+            platform.get("cost_per_pass_usd", 0) * (365 / effective_revisit)
+            if effective_revisit > 0 else 0
+        )
 
         coverage[platform_name] = {
             "detectable": detectable,
@@ -451,7 +574,7 @@ def verify_satellite_coverage(
             "spatial_resolution_km": platform["spatial_resolution_km"],
             "revisit_days_nominal": platform["revisit_days"],
             "revisit_days_effective": effective_revisit,
-            "cloud_cover_pct": cloud_cover_pct,
+            "cloud_cover_pct": cc_value,
             "effective_coverage_days_pa": effective_coverage_days_pa,
             "detection_limits_ppb": detection_limits,
             "open_access": platform.get("open_access", True),
@@ -459,7 +582,7 @@ def verify_satellite_coverage(
             "min_facility_size_ha": platform["min_facility_size_ha"],
         }
 
-    # Best platform recommendation
+    # Best platform recommendation (highest spatial resolution among detectable)
     detectable_platforms = [p for p, d in coverage.items() if d["detectable"]]
     best_platform = min(
         detectable_platforms,
@@ -470,6 +593,7 @@ def verify_satellite_coverage(
         "entity_id": entity_id,
         "facility_location": {"lat": lat, "lng": lng},
         "facility_size_ha": facility_size_ha,
+        "cloud_cover_pct_input": cc_value,
         "platform_coverage": coverage,
         "recommendation": {
             "best_platform": best_platform,
@@ -487,43 +611,92 @@ def score_verification_readiness(
     entity_id: str,
     standard: str,
     scope_1_2_3: dict,
+    readiness_inputs: Optional[dict] = None,
+    issa_requirements_met: Optional[int] = None,
 ) -> dict[str, Any]:
     """
     Score verification readiness against ISO 14064-3, ISAE 3410, ISSA 5000.
 
     Returns assurance level achievable, verifier qualification requirements,
     and ISSA 5000 preparation score.
+
+    ``readiness_inputs`` (optional): ``{criterion: score_0_to_10}`` map of the
+    eight readiness dimensions (``boundary_documentation``,
+    ``methodology_disclosure``, ``data_management_system``, ``internal_qa_qc``,
+    ``scope3_coverage``, ``prior_year_comparative``, ``management_sign_off``,
+    ``verifier_access``). Criteria the caller does not score are reported as
+    ``None``. If no criterion is scored at all, the overall readiness score and
+    achievable assurance level are ``None`` / ``insufficient_data`` — never
+    fabricated.
+
+    ``issa_requirements_met`` (optional): count (0-24) of ISSA 5000 requirements
+    the entity meets. When absent, the ISSA 5000 preparation score is ``None``.
+
+    Missing scope figures are reported as ``None`` (not random draws); only
+    supplied scope values contribute to the emissions boundary total.
     """
-    rng = _rng(entity_id)
+    # Only real, caller-supplied scope figures contribute; missing → None.
+    scope1 = _opt_float(scope_1_2_3.get("scope1_tco2e"))
+    scope2 = _opt_float(scope_1_2_3.get("scope2_tco2e"))
+    scope3 = _opt_float(scope_1_2_3.get("scope3_tco2e"))
+    supplied = [s for s in (scope1, scope2, scope3) if s is not None]
+    total: Optional[float] = sum(supplied) if supplied else None
 
-    scope1 = float(scope_1_2_3.get("scope1_tco2e", rng.uniform(100, 5000)))
-    scope2 = float(scope_1_2_3.get("scope2_tco2e", rng.uniform(50, 2000)))
-    scope3 = float(scope_1_2_3.get("scope3_tco2e", rng.uniform(200, 20000)))
-    total = scope1 + scope2 + scope3
+    # Readiness criteria dimensions (all eight).
+    criteria_keys = [
+        "boundary_documentation",
+        "methodology_disclosure",
+        "data_management_system",
+        "internal_qa_qc",
+        "scope3_coverage",
+        "prior_year_comparative",
+        "management_sign_off",
+        "verifier_access",
+    ]
+    inputs = readiness_inputs or {}
+    criteria: dict[str, Optional[float]] = {}
+    for key in criteria_keys:
+        raw = inputs.get(key)
+        criteria[key] = round(_clamp(float(raw), 0.0, 10.0), 1) if raw is not None else None
 
-    # Criteria scored 0-10 per dimension
-    criteria = {
-        "boundary_documentation": round(rng.uniform(4.0, 10.0), 1),
-        "methodology_disclosure": round(rng.uniform(4.0, 10.0), 1),
-        "data_management_system": round(rng.uniform(3.0, 10.0), 1),
-        "internal_qa_qc": round(rng.uniform(3.0, 10.0), 1),
-        "scope3_coverage": round(rng.uniform(2.0, 9.0), 1),
-        "prior_year_comparative": round(rng.uniform(3.0, 10.0), 1),
-        "management_sign_off": round(rng.uniform(5.0, 10.0), 1),
-        "verifier_access": round(rng.uniform(4.0, 10.0), 1),
-    }
+    scored_values = [v for v in criteria.values() if v is not None]
+    if scored_values:
+        overall_score: Optional[float] = round(sum(scored_values) / len(scored_values), 1)
+        achievable_assurance = (
+            "reasonable" if overall_score >= 7.5
+            else ("limited" if overall_score >= 5.5 else "none")
+        )
+        iso_equiv = achievable_assurance != "none"
+        isae_equiv = achievable_assurance == "reasonable"
+    else:
+        overall_score = None
+        achievable_assurance = "insufficient_data"
+        iso_equiv = None
+        isae_equiv = None
 
-    overall_score = round(sum(criteria.values()) / len(criteria), 1)
-    achievable_assurance = (
-        "reasonable" if overall_score >= 7.5
-        else ("limited" if overall_score >= 5.5 else "none")
-    )
+    # ISSA 5000 preparation — requires a real count; else honest null.
+    if issa_requirements_met is not None:
+        met = int(_clamp(float(issa_requirements_met), 0, 24))
+        issa_score: Optional[float] = round(met / 24 * 100, 1)
+        issa_readiness = (
+            "ready" if issa_score >= 80 else ("nearly_ready" if issa_score >= 60 else "requires_work")
+        )
+        issa_block: dict[str, Any] = {
+            "requirements_met": met,
+            "total_requirements": 24,
+            "score_pct": issa_score,
+            "readiness": issa_readiness,
+        }
+    else:
+        issa_block = {
+            "requirements_met": None,
+            "total_requirements": 24,
+            "score_pct": None,
+            "readiness": "insufficient_data",
+            "note": "No issa_requirements_met supplied; provide a count (0-24).",
+        }
 
-    # ISSA 5000 preparation (24 requirements)
-    issa_requirements_met = round(rng.uniform(8, 24))
-    issa_score = round(issa_requirements_met / 24 * 100, 1)
-
-    # Verifier qualification
+    # Verifier qualification (deterministic filter on accreditation)
     suitable_verifiers = [
         vb for vb in VERIFICATION_BODIES
         if standard in vb["accreditation"] or "ISO_14064_3" in vb["accreditation"]
@@ -533,27 +706,32 @@ def score_verification_readiness(
         "entity_id": entity_id,
         "standard": standard,
         "emissions_boundary": {
-            "scope1_tco2e": round(scope1, 1),
-            "scope2_tco2e": round(scope2, 1),
-            "scope3_tco2e": round(scope3, 1),
-            "total_tco2e": round(total, 1),
+            "scope1_tco2e": round(scope1, 1) if scope1 is not None else None,
+            "scope2_tco2e": round(scope2, 1) if scope2 is not None else None,
+            "scope3_tco2e": round(scope3, 1) if scope3 is not None else None,
+            "total_tco2e": round(total, 1) if total is not None else None,
         },
         "readiness_criteria": criteria,
         "overall_readiness_score": overall_score,
         "achievable_assurance_level": achievable_assurance,
-        "iso_14064_3_equivalence": achievable_assurance != "none",
-        "isae_3410_equivalence": achievable_assurance == "reasonable",
-        "issa_5000_preparation": {
-            "requirements_met": issa_requirements_met,
-            "total_requirements": 24,
-            "score_pct": issa_score,
-            "readiness": "ready" if issa_score >= 80 else ("nearly_ready" if issa_score >= 60 else "requires_work"),
-        },
+        "iso_14064_3_equivalence": iso_equiv,
+        "isae_3410_equivalence": isae_equiv,
+        "issa_5000_preparation": issa_block,
         "suitable_verifiers": suitable_verifiers[:3],
         "blocking_issues": [
-            k for k, v in criteria.items() if v < 5.0
+            k for k, v in criteria.items() if v is not None and v < 5.0
         ],
     }
+
+
+def _opt_float(value: Any) -> Optional[float]:
+    """Coerce to float if a real value is present; else None (no fabrication)."""
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def generate_mrv_improvement_plan(
@@ -561,17 +739,35 @@ def generate_mrv_improvement_plan(
     current_tier: int,
     target_tier: int,
     budget_usd: float,
+    points_per_technology: Optional[dict] = None,
+    data_quality_uplift_usd_pa: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Generate MRV upgrade plan from current_tier to target_tier.
 
-    Models technology costs, timeline, ROI from data quality improvement,
-    and uncertainty reduction across 12-36 month roadmap.
-    """
-    rng = _rng(entity_id)
+    Models technology costs, timeline, and uncertainty reduction from the
+    published MRV_UPGRADE_TECHNOLOGIES reference data across the roadmap.
 
+    ``points_per_technology`` (optional): ``{technology_name: n_points}`` map of
+    how many measurement points the entity will deploy per technology. When a
+    technology is not specified, a conservative single-point basis
+    (``_DEFAULT_POINTS_PER_TECHNOLOGY``) is used — a documented model default,
+    not a random draw.
+
+    ``data_quality_uplift_usd_pa`` (optional): the entity's estimated annual
+    financial benefit from improved data quality (lower audit cost + carbon
+    credit premium). ROI/payback are computed only when this is supplied;
+    otherwise they are reported as ``None`` / ``insufficient_data`` — never
+    invented.
+
+    Timelines use documented per-tier-step deployment benchmarks
+    (``_TIER_STEP_DURATION_MONTHS``), a model calibration constant, not a random
+    draw. Current/target uncertainty are the published tier typical-range
+    midpoints (class-averages, flagged ``*_is_estimate``).
+    """
     current_tier = max(1, min(5, current_tier))
     target_tier = max(current_tier + 1, min(5, target_tier))
+    points_map = points_per_technology or {}
 
     steps = []
     cumulative_cost = 0.0
@@ -596,7 +792,13 @@ def generate_mrv_improvement_plan(
             if tech_name not in MRV_UPGRADE_TECHNOLOGIES:
                 continue
             tech = MRV_UPGRADE_TECHNOLOGIES[tech_name]
-            n_points = rng.randint(2, 8)
+            # Deployment size: caller-supplied per-technology point count, else
+            # documented single-point default (not a random draw).
+            raw_points = points_map.get(tech_name, _DEFAULT_POINTS_PER_TECHNOLOGY)
+            try:
+                n_points = max(1, int(raw_points))
+            except (TypeError, ValueError):
+                n_points = _DEFAULT_POINTS_PER_TECHNOLOGY
             capex = tech["capex_per_point_usd"] * n_points
             annual_opex = tech["annual_opex_usd"]
             total_3yr = capex + annual_opex * 3
@@ -605,13 +807,15 @@ def generate_mrv_improvement_plan(
             tech_details.append({
                 "technology": tech_name,
                 "description": tech["description"],
+                "points_deployed": n_points,
                 "capex_usd": round(capex, 0),
                 "annual_opex_usd": annual_opex,
                 "3yr_total_usd": round(total_3yr, 0),
                 "uncertainty_improvement_pct": tech["uncertainty_improvement_pct"],
             })
 
-        duration_months = rng.randint(6, 12) * (tier_step - current_tier)
+        # Deterministic timeline from documented per-step benchmark.
+        duration_months = _TIER_STEP_DURATION_MONTHS.get(tier_step, 9)
         month += duration_months
         cumulative_cost += tier_cost
         cumulative_uncertainty_reduction += tier_unc_reduction
@@ -631,13 +835,27 @@ def generate_mrv_improvement_plan(
             "cumulative_uncertainty_reduction_pct": round(cumulative_uncertainty_reduction, 1),
         })
 
-    # ROI estimation: cost saving from reduced data uncertainty
-    # Data quality improvement → lower audit costs + stronger carbon credit prices
-    current_unc = rng.uniform(*MRV_TIERS[current_tier]["typical_uncertainty_pct"])
-    target_unc = rng.uniform(*MRV_TIERS[target_tier]["typical_uncertainty_pct"])
-    data_quality_uplift_usd_pa = round(
-        rng.uniform(0.5, 2.5) * budget_usd * 0.05, 0
-    )
+    # Uncertainty endpoints: published tier typical-range midpoints (documented
+    # class-averages, flagged as estimates — not facility measurements).
+    current_unc = _tier_midpoint_uncertainty(current_tier)
+    target_unc = _tier_midpoint_uncertainty(target_tier)
+
+    # ROI: only computed from a real, caller-supplied uplift figure; else null.
+    if data_quality_uplift_usd_pa is not None:
+        uplift = float(data_quality_uplift_usd_pa)
+        roi_analysis: dict[str, Any] = {
+            "data_quality_uplift_usd_pa": round(uplift, 0),
+            "payback_years": round(cumulative_cost / uplift, 1) if uplift > 0 else None,
+            "3yr_net_benefit_usd": round(uplift * 3 - cumulative_cost, 0),
+        }
+    else:
+        roi_analysis = {
+            "data_quality_uplift_usd_pa": None,
+            "payback_years": None,
+            "3yr_net_benefit_usd": None,
+            "status": "insufficient_data",
+            "note": "No data_quality_uplift_usd_pa supplied; provide the estimated annual benefit to compute ROI.",
+        }
 
     return {
         "entity_id": entity_id,
@@ -648,14 +866,10 @@ def generate_mrv_improvement_plan(
         "within_budget": cumulative_cost <= budget_usd,
         "total_duration_months": month,
         "current_uncertainty_pct": round(current_unc, 1),
+        "current_uncertainty_is_estimate": True,
         "target_uncertainty_pct": round(target_unc, 1),
+        "target_uncertainty_is_estimate": True,
         "uncertainty_reduction_pct": round(current_unc - target_unc, 1),
         "roadmap_steps": steps,
-        "roi_analysis": {
-            "data_quality_uplift_usd_pa": data_quality_uplift_usd_pa,
-            "payback_years": round(
-                cumulative_cost / data_quality_uplift_usd_pa if data_quality_uplift_usd_pa > 0 else 99, 1
-            ),
-            "3yr_net_benefit_usd": round(data_quality_uplift_usd_pa * 3 - cumulative_cost, 0),
-        },
+        "roi_analysis": roi_analysis,
     }

@@ -19,8 +19,7 @@ References:
 from __future__ import annotations
 
 import math
-import random
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -457,6 +456,54 @@ class NbSProjectRequest(BaseModel):
     has_mrv_system: bool = Field(True, description="Monitoring, Reporting, Verification system in place")
     ndc_aligned: bool = Field(True, description="Aligned with host country NDC")
 
+    # --- Optional measured/project-supplied inputs (None => honest null, never fabricated) ---
+    sequestration_rate_tco2_ha_yr: Optional[float] = Field(
+        None, gt=0,
+        description="Measured/verified sequestration rate (tCO2e/ha/yr). "
+                    "If None, the category empirical 'typical' rate is used as a documented model default.",
+    )
+    vcm_credit_price_usd: Optional[float] = Field(
+        None, gt=0,
+        description="Contracted/observed VCM credit price (USD/tCO2e). "
+                    "If None, the standard's 'typical' reference price is used as a documented model default.",
+    )
+    species_density_per_100ha: Optional[float] = Field(
+        None, ge=0,
+        description="Surveyed species density per 100 ha. If None, species metrics report null (not fabricated).",
+    )
+    iucn_red_list_species_supported: Optional[int] = Field(
+        None, ge=0, description="Verified count of IUCN Red List species supported. If None, reported null.",
+    )
+    habitat_quality_score: Optional[float] = Field(
+        None, ge=0, le=100, description="Assessed habitat quality score (0-100). If None, reported null.",
+    )
+    flood_risk_reduction_ha: Optional[float] = Field(
+        None, ge=0, description="Modelled hectares with flood-risk reduction. If None, reported null.",
+    )
+    groundwater_recharge_m3_yr: Optional[float] = Field(
+        None, ge=0, description="Estimated groundwater recharge (m3/yr). If None, reported null.",
+    )
+    erosion_reduction_tonnes_yr: Optional[float] = Field(
+        None, ge=0, description="Estimated erosion reduction (tonnes/yr). If None, reported null.",
+    )
+    livelihoods_supported: Optional[int] = Field(
+        None, ge=0, description="Verified number of livelihoods supported. If None, reported null.",
+    )
+    gender_inclusion_score: Optional[float] = Field(
+        None, ge=0, le=100, description="Assessed gender inclusion score (0-100). If None, reported null.",
+    )
+    jobs_created_direct: Optional[int] = Field(
+        None, ge=0, description="Reported direct jobs created. If None, reported null.",
+    )
+    jobs_created_indirect: Optional[int] = Field(
+        None, ge=0, description="Reported indirect jobs created. If None, reported null.",
+    )
+    ecosystem_service_revenue_m_yr: Optional[float] = Field(
+        None, ge=0,
+        description="Annual non-carbon ecosystem-service revenue (USD millions). "
+                    "If None, treated as 0 in economics (not fabricated).",
+    )
+
 
 class BlendedFinanceRequest(BaseModel):
     model_config = {"protected_namespaces": ()}
@@ -473,15 +520,16 @@ class BlendedFinanceRequest(BaseModel):
     country: str = Field("Brazil")
     project_duration_years: int = Field(30)
     gcf_eligible: bool = Field(False, description="Project eligible for GCF funding")
+    annual_operating_cost_m: Optional[float] = Field(
+        None, ge=0,
+        description="Annual operating/maintenance cost (USD millions). "
+                    "Required to compute a real expected IRR; if None, expected IRR is reported null.",
+    )
 
 
 # ---------------------------------------------------------------------------
 # Core Engine Functions
 # ---------------------------------------------------------------------------
-
-def _seed(entity_id: str, salt: str = "") -> random.Random:
-    return random.Random(hash(entity_id + salt) & 0xFFFFFFFF)
-
 
 def _iucn_composite(scores: IUCNCriteriaScores) -> tuple[float, str]:
     """Calculate IUCN composite score and assign NbS tier."""
@@ -515,21 +563,31 @@ def _carbon_cobenefit(
     area_ha: float,
     duration_years: int,
     standard_key: str,
-    rng: random.Random,
+    seq_rate_override: Optional[float] = None,
+    credit_price_override: Optional[float] = None,
 ) -> dict:
-    """Calculate carbon co-benefit metrics."""
-    seq_rate = rng.uniform(
-        category["sequestration_tco2_ha_yr"]["min"],
-        category["sequestration_tco2_ha_yr"]["max"],
-    )
+    """Calculate carbon co-benefit metrics.
+
+    Sequestration rate and credit price default to the category/standard empirical
+    'typical' values (documented model defaults from the reference tables above) and
+    can be overridden with measured/contracted values supplied by the caller.
+    """
+    if seq_rate_override is not None:
+        seq_rate = seq_rate_override
+        seq_rate_basis = "measured"
+    else:
+        seq_rate = category["sequestration_tco2_ha_yr"]["typical"]
+        seq_rate_basis = "category_typical_default"
     annual_seq = seq_rate * area_ha
     total_seq = annual_seq * duration_years
 
     std_info = CARBON_CREDIT_STANDARDS.get(standard_key, CARBON_CREDIT_STANDARDS["VCS"])
-    credit_price = rng.uniform(
-        std_info["price_range_usd_tco2"]["min"],
-        std_info["price_range_usd_tco2"]["max"],
-    )
+    if credit_price_override is not None:
+        credit_price = credit_price_override
+        credit_price_basis = "contracted"
+    else:
+        credit_price = std_info["price_range_usd_tco2"]["typical"]
+        credit_price_basis = "standard_typical_default"
 
     # Buffer pool deduction for permanence
     buffer_pct = 0.15 if standard_key == "VCS" else 0.10
@@ -537,6 +595,7 @@ def _carbon_cobenefit(
 
     return {
         "sequestration_rate_tco2_ha_yr": round(seq_rate, 2),
+        "sequestration_rate_basis": seq_rate_basis,
         "carbon_sequestration_tco2_yr": round(annual_seq, 1),
         "carbon_sequestration_total": round(total_seq, 1),
         "creditable_carbon_tco2": round(creditable_seq, 1),
@@ -544,6 +603,7 @@ def _carbon_cobenefit(
         "carbon_credit_standard": standard_key,
         "buffer_pool_pct": round(buffer_pct * 100, 1),
         "vcm_credit_price_usd": round(credit_price, 2),
+        "vcm_credit_price_basis": credit_price_basis,
         "icvcm_ccp_eligible": std_info["icvcm_ccp_eligible"],
         "art6_eligible": std_info["art6_eligible"],
     }
@@ -553,41 +613,71 @@ def _biodiversity_cobenefit(
     category: dict,
     area_ha: float,
     iucn_tier: str,
-    rng: random.Random,
+    species_density_per_100ha: Optional[float] = None,
+    red_list_species: Optional[int] = None,
+    habitat_quality_score: Optional[float] = None,
 ) -> dict:
-    """Calculate biodiversity co-benefit metrics."""
+    """Calculate biodiversity co-benefit metrics.
+
+    MSA uplift is a deterministic function of the category biodiversity rating and the
+    IUCN tier (documented model constants). Species counts and habitat-quality require a
+    survey input; when absent they are reported as null rather than fabricated.
+    """
     level_to_msa = {"low": 0.05, "medium": 0.10, "high": 0.20, "very_high": 0.30}
     bio_level = category.get("co_benefit_biodiversity", "medium")
-    msa_uplift = level_to_msa[bio_level] * rng.uniform(0.8, 1.2)
+    msa_uplift = level_to_msa[bio_level]
 
     tier_multiplier = {"not_eligible": 0.5, "bronze": 0.7, "silver": 0.9, "gold": 1.1}
     msa_uplift *= tier_multiplier.get(iucn_tier, 1.0)
 
-    species_per_100ha = rng.randint(8, 45)
-    species_protected = int(species_per_100ha * area_ha / 100)
+    species_protected = (
+        int(species_density_per_100ha * area_ha / 100)
+        if species_density_per_100ha is not None
+        else None
+    )
 
     return {
         "habitat_area_ha": round(area_ha, 1),
         "msa_uplift_pct": round(msa_uplift * 100, 2),
         "species_protected_count": species_protected,
+        "species_protected_basis": "surveyed" if species_protected is not None else "insufficient_data",
         "gbf_target_2_contribution": round(min(area_ha / 30000, 1.0) * 100, 2),  # % towards 30x30
-        "iucn_red_list_species_supported": rng.randint(1, max(1, species_protected // 20)),
-        "habitat_quality_score": round(rng.uniform(55, 92), 1),
+        "iucn_red_list_species_supported": red_list_species,
+        "habitat_quality_score": habitat_quality_score,
         "connectivity_improvement": bio_level in ["high", "very_high"],
     }
 
 
-def _water_cobenefit(category: dict, area_ha: float, rng: random.Random) -> dict:
+def _water_cobenefit(
+    category: dict,
+    area_ha: float,
+    flood_risk_reduction_ha: Optional[float] = None,
+    groundwater_recharge_m3_yr: Optional[float] = None,
+    erosion_reduction_tonnes_yr: Optional[float] = None,
+) -> dict:
+    """Calculate water co-benefit metrics.
+
+    Watershed protection uses a per-hectare yield keyed to the category water rating
+    (documented model constant). Flood/groundwater/erosion figures require a hydrological
+    estimate; when absent they are reported as null rather than fabricated.
+    """
     level_to_m3 = {"low": 500, "medium": 1200, "high": 2500, "very_high": 4500}
     water_level = category.get("co_benefit_water", "medium")
-    watershed_m3_ha = level_to_m3[water_level] * rng.uniform(0.85, 1.15)
+    watershed_m3_ha = level_to_m3[water_level]
 
     return {
         "watershed_protection_m3_yr": round(watershed_m3_ha * area_ha, 0),
+        "watershed_protection_basis": "category_yield_default",
         "water_quality_improvement": water_level in ["high", "very_high"],
-        "flood_risk_reduction_ha": round(area_ha * rng.uniform(0.3, 0.7), 1),
-        "groundwater_recharge_m3_yr": round(area_ha * rng.uniform(200, 900), 0),
-        "erosion_reduction_tonnes_yr": round(area_ha * rng.uniform(0.5, 3.5), 1),
+        "flood_risk_reduction_ha": (
+            round(flood_risk_reduction_ha, 1) if flood_risk_reduction_ha is not None else None
+        ),
+        "groundwater_recharge_m3_yr": (
+            round(groundwater_recharge_m3_yr, 0) if groundwater_recharge_m3_yr is not None else None
+        ),
+        "erosion_reduction_tonnes_yr": (
+            round(erosion_reduction_tonnes_yr, 1) if erosion_reduction_tonnes_yr is not None else None
+        ),
     }
 
 
@@ -596,32 +686,45 @@ def _social_cobenefit(
     area_ha: float,
     has_indigenous_lands: bool,
     fpic_obtained: bool,
-    rng: random.Random,
+    livelihoods_supported: Optional[int] = None,
+    gender_inclusion_score: Optional[float] = None,
+    jobs_created_direct: Optional[int] = None,
+    jobs_created_indirect: Optional[int] = None,
 ) -> dict:
+    """Calculate social co-benefit metrics.
+
+    'communities_benefited' uses the category social rating (documented model constant).
+    Livelihoods, gender score, and job counts are project-reported figures; when absent
+    they are reported as null rather than fabricated.
+    """
     level_to_communities = {"low": 2, "medium": 5, "high": 12, "very_high": 25}
     soc_level = category.get("co_benefit_social", "medium")
-    communities = level_to_communities[soc_level] + rng.randint(0, 5)
-    livelihoods = int(communities * rng.uniform(15, 60))
+    communities = level_to_communities[soc_level]
 
     return {
         "communities_benefited": communities,
-        "livelihoods_supported": livelihoods,
+        "communities_benefited_basis": "category_rating_default",
+        "livelihoods_supported": livelihoods_supported,
         "indigenous_peoples_involved": has_indigenous_lands,
         "fpic_status": "obtained" if fpic_obtained else ("pending" if has_indigenous_lands else "not_required"),
-        "gender_inclusion_score": round(rng.uniform(45, 88), 1),
-        "jobs_created_direct": int(area_ha * rng.uniform(0.02, 0.08)),
-        "jobs_created_indirect": int(area_ha * rng.uniform(0.05, 0.20)),
+        "gender_inclusion_score": gender_inclusion_score,
+        "jobs_created_direct": jobs_created_direct,
+        "jobs_created_indirect": jobs_created_indirect,
         "benefit_sharing_mechanism": soc_level in ["high", "very_high"],
     }
 
 
-def _vcmi_assessment(iucn_composite: float, has_mrv: bool, ndc_aligned: bool, rng: random.Random) -> dict:
-    """Derive VCMI integrity score and claim tier."""
+def _vcmi_assessment(iucn_composite: float, has_mrv: bool, ndc_aligned: bool) -> dict:
+    """Derive VCMI integrity score and claim tier.
+
+    Deterministic: score = 0.7*IUCN composite + MRV bonus + NDC bonus. The former
+    random +/-5 noise term (which made the headline integrity score non-reproducible)
+    has been removed.
+    """
     base = iucn_composite * 0.7
     mrv_bonus = 15 if has_mrv else 0
     ndc_bonus = 10 if ndc_aligned else 0
-    noise = rng.uniform(-5, 5)
-    vcmi_score = min(100, max(0, base + mrv_bonus + ndc_bonus + noise))
+    vcmi_score = min(100, max(0, base + mrv_bonus + ndc_bonus))
 
     claim = "no_claim"
     for tier_key, tier_data in VCMI_CLAIMS.items():
@@ -645,10 +748,12 @@ def _economics(
     vcm_price: float,
     area_ha: float,
     duration_years: int,
-    rng: random.Random,
+    ecosystem_service_revenue_m_yr: Optional[float] = None,
 ) -> dict:
     carbon_rev_yr = carbon_seq_tco2_yr * vcm_price / 1_000_000  # USD M
-    ecosystem_rev_yr = area_ha * rng.uniform(20, 120) / 1_000_000  # water, tourism, etc.
+    # Non-carbon ecosystem-service revenue (water, tourism, etc.) is entity-specific.
+    # It is only counted when the caller supplies it; otherwise treated as 0 (never fabricated).
+    ecosystem_rev_yr = ecosystem_service_revenue_m_yr if ecosystem_service_revenue_m_yr is not None else 0.0
     annual_income = carbon_rev_yr + ecosystem_rev_yr
     annual_cost = annual_maintenance_m
 
@@ -708,7 +813,6 @@ def _blended_finance_structure(
     gcf_eligible: bool,
     category_key: str,
     country: str,
-    rng: random.Random,
 ) -> dict:
     committed = public_m + private_m + philanthropic_m
     gap_m = max(0.0, total_cost_m - committed)
@@ -793,20 +897,48 @@ def _nbs_quality_score(
 
 def assess_nbs_project(req: NbSProjectRequest) -> dict[str, Any]:
     """Full IUCN NbS v2.0 assessment with all co-benefits and economics."""
-    rng = _seed(req.entity_id, req.project_name)
     category = NBS_CATEGORIES.get(req.nbs_category, NBS_CATEGORIES["reforestation"])
 
     # IUCN scoring
     iucn_composite, iucn_tier = _iucn_composite(req.iucn_scores)
 
     # Co-benefits
-    carbon = _carbon_cobenefit(category, req.area_ha, req.project_duration_years, req.carbon_credit_standard, rng)
-    biodiversity = _biodiversity_cobenefit(category, req.area_ha, iucn_tier, rng)
-    water = _water_cobenefit(category, req.area_ha, rng)
-    social = _social_cobenefit(category, req.area_ha, req.has_indigenous_lands, req.fpic_obtained, rng)
+    carbon = _carbon_cobenefit(
+        category,
+        req.area_ha,
+        req.project_duration_years,
+        req.carbon_credit_standard,
+        seq_rate_override=req.sequestration_rate_tco2_ha_yr,
+        credit_price_override=req.vcm_credit_price_usd,
+    )
+    biodiversity = _biodiversity_cobenefit(
+        category,
+        req.area_ha,
+        iucn_tier,
+        species_density_per_100ha=req.species_density_per_100ha,
+        red_list_species=req.iucn_red_list_species_supported,
+        habitat_quality_score=req.habitat_quality_score,
+    )
+    water = _water_cobenefit(
+        category,
+        req.area_ha,
+        flood_risk_reduction_ha=req.flood_risk_reduction_ha,
+        groundwater_recharge_m3_yr=req.groundwater_recharge_m3_yr,
+        erosion_reduction_tonnes_yr=req.erosion_reduction_tonnes_yr,
+    )
+    social = _social_cobenefit(
+        category,
+        req.area_ha,
+        req.has_indigenous_lands,
+        req.fpic_obtained,
+        livelihoods_supported=req.livelihoods_supported,
+        gender_inclusion_score=req.gender_inclusion_score,
+        jobs_created_direct=req.jobs_created_direct,
+        jobs_created_indirect=req.jobs_created_indirect,
+    )
 
     # VCMI
-    vcmi = _vcmi_assessment(iucn_composite, req.has_mrv_system, req.ndc_aligned, rng)
+    vcmi = _vcmi_assessment(iucn_composite, req.has_mrv_system, req.ndc_aligned)
 
     # Economics
     econ = _economics(
@@ -816,7 +948,7 @@ def assess_nbs_project(req: NbSProjectRequest) -> dict[str, Any]:
         carbon["vcm_credit_price_usd"],
         req.area_ha,
         req.project_duration_years,
-        rng,
+        ecosystem_service_revenue_m_yr=req.ecosystem_service_revenue_m_yr,
     )
 
     # Quality
@@ -933,7 +1065,6 @@ def _generate_recommendations(
 
 def calculate_blended_finance(req: BlendedFinanceRequest) -> dict[str, Any]:
     """Blended finance structuring for NbS projects."""
-    rng = _seed(req.entity_id, "blended")
     category = NBS_CATEGORIES.get(req.nbs_category, NBS_CATEGORIES["reforestation"])
 
     structure = _blended_finance_structure(
@@ -944,25 +1075,40 @@ def calculate_blended_finance(req: BlendedFinanceRequest) -> dict[str, Any]:
         req.gcf_eligible,
         req.nbs_category,
         req.country,
-        rng,
     )
 
-    # Carbon revenue projection
+    # Carbon revenue projection. Uses the caller-supplied annual carbon revenue when
+    # provided; otherwise a documented model default (category typical sequestration ×
+    # 1000 ha reference project × $9.5 VCU reference price).
     seq_typical = category["sequestration_tco2_ha_yr"]["typical"]
     annual_carbon_rev = req.carbon_revenue_m_yr if req.carbon_revenue_m_yr > 0 else (
         seq_typical * 1000 * 9.5 / 1_000_000  # assume 1000 ha typical, $9.5 VCU
     )
 
-    # Multi-year cashflow
+    # Multi-year cashflow (flat projection; per-year carbon revenue is not randomised).
+    annual_rev = annual_carbon_rev + req.ecosystem_service_revenue_m
     cashflows = []
     for yr in range(1, req.project_duration_years + 1):
-        rev = annual_carbon_rev + req.ecosystem_service_revenue_m
         cashflows.append({
             "year": yr,
-            "revenue_m": round(rev, 4),
-            "carbon_revenue_m": round(annual_carbon_rev * (1 + rng.uniform(-0.05, 0.05)), 4),
+            "revenue_m": round(annual_rev, 4),
+            "carbon_revenue_m": round(annual_carbon_rev, 4),
             "ecosystem_revenue_m": round(req.ecosystem_service_revenue_m, 4),
         })
+
+    # Expected IRR: a real cashflow-based IRR computed via bisection, using the total
+    # project cost as capex and (annual revenue - operating cost) as the net cashflow.
+    # Requires a supplied annual operating cost; otherwise reported as null (not fabricated).
+    if req.annual_operating_cost_m is not None:
+        net_cashflow_m = annual_rev - req.annual_operating_cost_m
+        expected_irr_pct = round(
+            _irr_estimate(req.total_project_cost_m, net_cashflow_m, req.project_duration_years) * 100,
+            2,
+        )
+        expected_irr_basis = "cashflow_computed"
+    else:
+        expected_irr_pct = None
+        expected_irr_basis = "insufficient_data"
 
     return {
         "entity_id": req.entity_id,
@@ -976,12 +1122,13 @@ def calculate_blended_finance(req: BlendedFinanceRequest) -> dict[str, Any]:
         "revenue_projections": {
             "annual_carbon_revenue_m": round(annual_carbon_rev, 4),
             "annual_ecosystem_revenue_m": round(req.ecosystem_service_revenue_m, 4),
-            "total_annual_revenue_m": round(annual_carbon_rev + req.ecosystem_service_revenue_m, 4),
-            "30yr_cumulative_revenue_m": round((annual_carbon_rev + req.ecosystem_service_revenue_m) * req.project_duration_years, 3),
+            "total_annual_revenue_m": round(annual_rev, 4),
+            "30yr_cumulative_revenue_m": round(annual_rev * req.project_duration_years, 3),
         },
         "cashflow_schedule": cashflows[:10],  # first 10 years
         "investor_return_profile": {
-            "expected_irr_pct": round(rng.uniform(5.5, 14.0), 2),
+            "expected_irr_pct": expected_irr_pct,
+            "expected_irr_basis": expected_irr_basis,
             "risk_tier": "medium" if structure["blended_finance_ready"] else "high",
             "esg_label_eligible": True,
             "green_bond_eligible": True,

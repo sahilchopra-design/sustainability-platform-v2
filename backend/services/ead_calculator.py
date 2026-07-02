@@ -589,11 +589,15 @@ class EADCalculator:
         ead_post_climate = ead_pre_climate + climate_ead_uplift
         notes.append(f"EAD post-climate: {ead_post_climate:,.2f}")
 
-        # --- 10. Final regulatory EAD with maturity adjustment ---
-        regulatory_ead = max(ead_post_climate * maturity_adj, 0.0)
+        # --- 10. Final regulatory EAD ---
+        # EAD = drawn + CCF*undrawn (+ add-ons). The maturity adjustment belongs to the
+        # RWA risk-weight (inside K), NOT to EAD (Basel CRR Art. 166). Multiplying it here
+        # overstated EAD by up to ~70% for long-dated exposures and double-counted the
+        # maturity term when this EAD fed RW*EAD. maturity_adj is retained for reference.
+        regulatory_ead = max(ead_post_climate, 0.0)
         notes.append(
-            f"Regulatory EAD (with maturity adj): {ead_post_climate:,.2f} * "
-            f"{maturity_adj:.4f} = {regulatory_ead:,.2f}"
+            f"Regulatory EAD: {regulatory_ead:,.2f} "
+            f"(maturity adjustment {maturity_adj:.4f} excluded — belongs in RWA/K, not EAD)"
         )
 
         return EADResult(

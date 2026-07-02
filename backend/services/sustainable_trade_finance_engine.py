@@ -22,7 +22,6 @@ References:
 """
 from __future__ import annotations
 
-import random
 from typing import Any, List, Optional
 from pydantic import BaseModel, Field
 
@@ -39,7 +38,7 @@ class EP4ComplianceResult(BaseModel):
     category_rationale: str
     applicable_standards: list
     compliance_checklist: list
-    overall_score: float
+    overall_score: Optional[float]
     esap_required: bool
     esap_requirements: list
     independent_review_required: bool
@@ -55,7 +54,7 @@ class ECAGreenResult(BaseModel):
     technology: str
     country: str
     oecd_classification: str
-    environmental_review_score: float
+    environmental_review_score: Optional[float]
     sector_sustainability_standard: str
     oecd_common_approaches_tier: str
     cre_arrangement_applicable: bool
@@ -69,12 +68,12 @@ class ESGLinkedMarginResult(BaseModel):
         extra = "allow"
     entity_id: str
     base_margin_bps: float
-    adjusted_margin_bps: float
-    margin_adjustment_bps: float
+    adjusted_margin_bps: Optional[float]
+    margin_adjustment_bps: Optional[float]
     kpi_results: list
     icc_stf_principles_assessment: list
     spt_calibration: str
-    overall_kpi_score: float
+    overall_kpi_score: Optional[float]
     margin_step_schedule: list
     covenants: list
 
@@ -272,9 +271,6 @@ SECTOR_SUSTAINABILITY_STANDARDS = {
 # Helper utilities
 # ---------------------------------------------------------------------------
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
 def _get_eca_risk_rating(country: str) -> int:
     return ECA_COUNTRY_RISK_RATINGS.get(country, 4)
 
@@ -288,12 +284,26 @@ def assess_ep4_compliance(
     sector: str,
     country: str,
     total_cost_usd: float,
+    principle_scores: Optional[dict] = None,
 ) -> dict:
     """
     Assess EP4 compliance: category A/B/C, IFC PS 1-8 applicability,
     10-requirement compliance checklist, ESAP requirements.
+
+    `principle_scores` (optional): mapping of EP4 principle number (1-10, as int
+    or str) to an assessed compliance score (0-100) sourced from the caller's E&S
+    review. When absent, per-principle scores are reported as an honest null
+    ("not_assessed") rather than fabricated — the category/standards/ESAP logic
+    is fully deterministic and unaffected.
     """
-    rng = _rng(entity_id + project_name)
+    # Normalise caller-supplied principle scores to {int: float}
+    scores_in: dict = {}
+    if principle_scores:
+        for k, v in principle_scores.items():
+            try:
+                scores_in[int(k)] = float(v)
+            except (TypeError, ValueError):
+                continue
 
     # Determine EP4 category
     country_risk = _get_eca_risk_rating(country)
@@ -352,20 +362,38 @@ def assess_ep4_compliance(
         "10. Reporting and Transparency",
     ]
     compliance_checklist = []
-    total_score = 0.0
+    scored_total = 0.0
+    scored_count = 0
     for p in principles:
-        base_score = rng.uniform(55.0, 95.0)
-        if ep4_category == "C" and int(p.split(".")[0]) in [2, 3, 4]:
-            base_score = 100.0  # Not applicable for Cat C
-        score = round(base_score, 1)
-        total_score += score
+        p_num = int(p.split(".")[0])
+        applicable = not (ep4_category == "C" and p_num in [2, 3, 4, 7, 9])
+        # Cat C: E&S assessment principles (2,3,4) are not applicable -> full marks by rule.
+        if ep4_category == "C" and p_num in [2, 3, 4]:
+            score: Optional[float] = 100.0
+        elif p_num in scores_in:
+            score = round(max(0.0, min(100.0, scores_in[p_num])), 1)
+        else:
+            score = None  # Honest null: no assessed score supplied by caller.
+
+        if score is not None and applicable:
+            scored_total += score
+            scored_count += 1
+
+        if score is None:
+            status = "not_assessed"
+        elif score >= 70.0:
+            status = "compliant"
+        else:
+            status = "non_compliant"
+
         compliance_checklist.append({
             "principle": p,
             "score": score,
-            "status": "compliant" if score >= 70.0 else "non_compliant",
-            "applicable": not (ep4_category == "C" and int(p.split(".")[0]) in [2, 3, 4, 7, 9]),
+            "status": status,
+            "applicable": applicable,
         })
-    overall_score = round(total_score / len(principles), 1)
+    # Overall score only where genuine principle scores exist; else honest null.
+    overall_score: Optional[float] = round(scored_total / scored_count, 1) if scored_count else None
 
     # ESAP requirements
     esap_required = cat_info["esap_required"]
@@ -389,14 +417,26 @@ def assess_ep4_compliance(
     # Designated country
     designated_country = country_risk <= 1
 
-    # Critical gaps
-    critical_gaps = [item["principle"] for item in compliance_checklist if not item["status"] == "compliant" and item["applicable"]]
+    # Critical gaps — only genuinely assessed principles that failed (never nulls).
+    critical_gaps = [
+        item["principle"] for item in compliance_checklist
+        if item["status"] == "non_compliant" and item["applicable"]
+    ]
 
-    compliance_status = (
-        "compliant" if overall_score >= 80.0 and len(critical_gaps) == 0
-        else "substantially_compliant" if overall_score >= 65.0
-        else "non_compliant"
+    # Number of applicable principles still awaiting an assessed score.
+    unassessed_count = sum(
+        1 for item in compliance_checklist
+        if item["status"] == "not_assessed" and item["applicable"]
     )
+
+    if overall_score is None:
+        compliance_status = "insufficient_data"
+    elif overall_score >= 80.0 and len(critical_gaps) == 0 and unassessed_count == 0:
+        compliance_status = "compliant"
+    elif overall_score >= 65.0:
+        compliance_status = "substantially_compliant"
+    else:
+        compliance_status = "non_compliant"
 
     return EP4ComplianceResult(
         entity_id=entity_id,
@@ -421,13 +461,18 @@ def score_eca_green_classification(
     technology: str,
     country: str,
     oecd_classification: str,
+    environmental_review_score: Optional[float] = None,
 ) -> dict:
     """
     Score ECA green classification: OECD Common Approaches 2016,
     OECD CRE 2023 revision, sector sustainability standards, ECA review score.
-    """
-    rng = _rng(entity_id + sector + technology)
 
+    `environmental_review_score` (optional): the caller's assessed 0-100 OECD
+    Common Approaches environmental review score. When provided, deterministic
+    sector adjustments (renewables/coal) are applied on top. When absent, the
+    score is reported as an honest null and the green-tier is derived from the
+    deterministic reference-data rules alone (sector exclusions), never fabricated.
+    """
     eca_risk_rating = _get_eca_risk_rating(country)
     sector_std = SECTOR_SUSTAINABILITY_STANDARDS.get(sector, SECTOR_SUSTAINABILITY_STANDARDS["general"])
 
@@ -439,25 +484,32 @@ def score_eca_green_classification(
     else:
         ca_tier = "Tier_C_Basic_Screening"
 
-    # Environmental review score
-    env_review_score = round(
-        rng.uniform(55.0, 92.0)
-        + (5.0 if sector in ["renewable_energy", "solar", "wind", "energy_efficiency"] else 0.0)
-        - (5.0 if sector in ["coal", "oil_gas"] else 0.0),
-        1
-    )
-    env_review_score = max(25.0, min(100.0, env_review_score))
+    # Environmental review score — deterministic sector adjustment applied to the
+    # caller-supplied base score; honest null when no base score is provided.
+    if environmental_review_score is not None:
+        env_review_score: Optional[float] = round(
+            float(environmental_review_score)
+            + (5.0 if sector in ["renewable_energy", "solar", "wind", "energy_efficiency"] else 0.0)
+            - (5.0 if sector in ["coal", "oil_gas"] else 0.0),
+            1
+        )
+        env_review_score = max(25.0, min(100.0, env_review_score))
+    else:
+        env_review_score = None
 
     # CRE Arrangement applicability
     cre_applicable = sector in ["power", "water", "transport", "agriculture", "climate_smart"] and eca_risk_rating <= 5
 
-    # Green classification tier
-    if env_review_score >= 80.0 and sector in ["renewable_energy", "energy_efficiency", "sustainable_agriculture"]:
+    # Green classification tier (score-driven tiers require an assessed score;
+    # sector exclusions are rule-based and apply regardless).
+    if sector in ["coal"]:
+        green_tier = "excluded"
+    elif env_review_score is None:
+        green_tier = "pending_environmental_review"
+    elif env_review_score >= 80.0 and sector in ["renewable_energy", "energy_efficiency", "sustainable_agriculture"]:
         green_tier = "green_eligible"
     elif env_review_score >= 65.0:
         green_tier = "conditionally_green"
-    elif sector in ["coal"]:
-        green_tier = "excluded"
     else:
         green_tier = "standard"
 
@@ -478,7 +530,9 @@ def score_eca_green_classification(
         requirements.append("OECD CRE Arrangement 2023 — sustainable lending terms applicable")
 
     recommendations = []
-    if env_review_score < 70.0:
+    if env_review_score is None:
+        recommendations.append("Supply an OECD Common Approaches environmental review score to finalise green classification")
+    elif env_review_score < 70.0:
         recommendations.append("Strengthen environmental management plan to meet OECD Common Approaches Tier A requirements")
     if green_tier == "conditionally_green":
         recommendations.append("Obtain independent sustainability certification to qualify for green ECA pricing")
@@ -509,12 +563,26 @@ def calculate_esg_linked_margin(
     base_margin_bps: float,
     kpis: Optional[list] = None,
     performance_data: Optional[dict] = None,
+    icc_principle_scores: Optional[dict] = None,
 ) -> dict:
     """
     Calculate ESG-linked margin: KPI materiality scoring, margin step-up/step-down
     (±5-15 bps), SPT calibration, ICC STF Principles 4 components.
+
+    `performance_data` (optional): mapping of kpi_id -> observed current value. KPIs
+    without an observed value are reported with a null current_value/performance_score
+    and contribute nothing to the margin (honest null, never a random draw).
+    `icc_principle_scores` (optional): mapping of ICC STF principle number (1-4) to an
+    assessed 0-100 score. When absent, ICC principle scores are reported as null.
     """
-    rng = _rng(entity_id + "esg_margin")
+    # Normalise caller-supplied ICC principle scores to {int: float}
+    icc_scores_in: dict = {}
+    if icc_principle_scores:
+        for k, v in icc_principle_scores.items():
+            try:
+                icc_scores_in[int(k)] = float(v)
+            except (TypeError, ValueError):
+                continue
 
     if not kpis:
         kpis = [
@@ -529,16 +597,33 @@ def calculate_esg_linked_margin(
     if not performance_data:
         performance_data = {}
 
-    # Score KPIs
+    # Score KPIs. Only KPIs with an observed current value are scored; the rest are
+    # reported as honest nulls and excluded from the weighted score/margin.
     kpi_results = []
     total_weighted_score = 0.0
+    scored_weight = 0.0
     margin_adjustment = 0.0
 
     for kpi in kpis:
-        current = performance_data.get(kpi["kpi_id"], rng.uniform(
-            min(kpi["baseline"], kpi["target"]),
-            max(kpi["baseline"], kpi["target"])
-        ))
+        current = performance_data.get(kpi["kpi_id"])
+        if current is None:
+            # No observed value — do not fabricate. Report null, contribute nothing.
+            kpi_results.append({
+                "kpi_id": kpi["kpi_id"],
+                "name": kpi["name"],
+                "unit": kpi["unit"],
+                "baseline": kpi["baseline"],
+                "target": kpi["target"],
+                "current_value": None,
+                "performance_score": None,
+                "weight": kpi["weight"],
+                "margin_adjustment_bps": 0.0,
+                "target_met": None,
+                "data_available": False,
+            })
+            continue
+
+        current = float(current)
         # Performance: 0-100 scale where 100 = met target
         if kpi["target"] < kpi["baseline"]:  # Reduction KPI
             if current <= kpi["target"]:
@@ -558,8 +643,8 @@ def calculate_esg_linked_margin(
         # Margin impact: -15 bps (outperform) to +15 bps (underperform)
         kpi_margin_adj = round((50.0 - performance_score) / 50.0 * 10.0 * kpi["weight"], 2)
         margin_adjustment += kpi_margin_adj
-        weighted_score = performance_score * kpi["weight"]
-        total_weighted_score += weighted_score
+        total_weighted_score += performance_score * kpi["weight"]
+        scored_weight += kpi["weight"]
 
         kpi_results.append({
             "kpi_id": kpi["kpi_id"],
@@ -572,52 +657,69 @@ def calculate_esg_linked_margin(
             "weight": kpi["weight"],
             "margin_adjustment_bps": round(kpi_margin_adj, 2),
             "target_met": performance_score >= 80.0,
+            "data_available": True,
         })
 
-    overall_kpi_score = round(total_weighted_score, 1)
-    margin_adjustment = max(-15.0, min(15.0, round(margin_adjustment, 2)))
-    adjusted_margin_bps = round(base_margin_bps + margin_adjustment, 2)
+    # Overall weighted score is renormalised over the scored weight; honest null when
+    # no KPI has observed data. Margin adjustment likewise only reflects scored KPIs.
+    if scored_weight > 0:
+        overall_kpi_score: Optional[float] = round(total_weighted_score / scored_weight, 1)
+        margin_adjustment = max(-15.0, min(15.0, round(margin_adjustment, 2)))
+        adjusted_margin_bps: Optional[float] = round(base_margin_bps + margin_adjustment, 2)
+    else:
+        overall_kpi_score = None
+        margin_adjustment = 0.0
+        adjusted_margin_bps = None
 
     # SPT calibration
-    if overall_kpi_score >= 80.0:
+    if overall_kpi_score is None:
+        spt_calibration = "insufficient_data"
+    elif overall_kpi_score >= 80.0:
         spt_calibration = "ambitious"
     elif overall_kpi_score >= 60.0:
         spt_calibration = "credible"
     else:
         spt_calibration = "requires_strengthening"
 
-    # ICC STF Principles assessment
+    # ICC STF Principles assessment — scores come from the caller's assessment
+    # (icc_principle_scores) or are reported as honest nulls. Requirements are the
+    # full published requirement list per principle; met/gap classification is only
+    # asserted when a score is supplied (never guessed).
     icc_assessment = []
     for p_num, p_info in ICC_STF_PRINCIPLES.items():
-        score = round(rng.uniform(55.0, 92.0), 1)
+        score = icc_scores_in.get(p_num)
+        if score is not None:
+            score = round(max(0.0, min(100.0, score)), 1)
+            status = "met" if score >= 65.0 else "not_met"
+        else:
+            status = "not_assessed"
         icc_assessment.append({
             "principle": p_num,
             "name": p_info["principle"],
             "description": p_info["description"],
             "score": score,
-            "requirements_met": [r for r in p_info["requirements"] if rng.random() > 0.3],
-            "requirements_gaps": [r for r in p_info["requirements"] if rng.random() <= 0.3],
-            "status": "met" if score >= 65.0 else "not_met",
+            "requirements": list(p_info["requirements"]),
+            "status": status,
         })
 
-    # Margin step schedule (annual observation dates)
+    # Margin step schedule (annual observation dates). Forward KPI trajectories are
+    # not fabricated; projected fields are null pending a caller-supplied trajectory.
     step_schedule = []
     for year_offset in range(1, 4):
-        projected_score = round(min(100.0, overall_kpi_score + rng.uniform(5.0, 15.0) * year_offset), 1)
-        proj_adj = round((50.0 - projected_score) / 50.0 * 10.0, 2)
-        proj_adj = max(-15.0, min(15.0, proj_adj))
         step_schedule.append({
             "observation_year": 2024 + year_offset,
-            "projected_kpi_score": projected_score,
-            "projected_margin_bps": round(base_margin_bps + proj_adj, 2),
-            "projected_adjustment_bps": round(proj_adj, 2),
+            "projected_kpi_score": None,
+            "projected_margin_bps": None,
+            "projected_adjustment_bps": None,
+            "note": "Projection requires forward KPI trajectory input",
         })
 
+    _step = f"{abs(margin_adjustment):.1f}" if margin_adjustment is not None else "N/A"
     covenants = [
         f"Annual KPI reporting within 120 days of financial year end",
         f"KPI verification by independent third party (Auditor or Rating Agency)",
-        f"Margin step-up of {abs(margin_adjustment):.1f} bps if KPI targets missed",
-        f"Margin step-down of {abs(margin_adjustment):.1f} bps if KPI targets exceeded by ≥10%",
+        f"Margin step-up of {_step} bps if KPI targets missed",
+        f"Margin step-down of {_step} bps if KPI targets exceeded by ≥10%",
         "ICC STF Principles annual compliance report",
     ]
 
@@ -646,8 +748,6 @@ def screen_supply_chain_esg(
     Screen supply chain ESG: OECD DD Guidance, EUDR overlay, modern slavery risk
     (UK MSA/Australia MSA), deforestation risk, conflict minerals (3TG+cobalt), RBA.
     """
-    rng = _rng(entity_id + commodity + origin_country)
-
     if not certifications:
         certifications = []
 
@@ -691,9 +791,9 @@ def screen_supply_chain_esg(
     if commodity in ["cobalt", "tin", "tantalum", "tungsten", "gold", "tin_tantalum_tungsten_gold"]:
         conflict_minerals_risk = "very_high"
 
-    # RBA alignment score
-    rba_score_base = 100.0 - (country_risk * 8.0)
-    rba_score = round(rba_score_base + rng.uniform(-10.0, 10.0), 1)
+    # RBA alignment score — deterministic function of OECD country risk (0-7).
+    # Higher country risk lowers the baseline Responsible Business Alliance alignment.
+    rba_score = round(100.0 - (country_risk * 8.0), 1)
     rba_score = max(20.0, min(100.0, rba_score))
 
     # OECD DD compliance
@@ -768,13 +868,47 @@ def screen_supply_chain_esg(
     ).dict()
 
 
-def generate_trade_finance_report(entity_id: str) -> dict:
+def generate_trade_finance_report(
+    entity_id: str,
+    portfolio_data: Optional[dict] = None,
+) -> dict:
     """
     Generate comprehensive sustainable trade finance report: ICC STF Principles (2019),
     WTO Aid for Trade, OECD Arrangement on Export Credits, IFC PS cross-reference,
     UNCTAD sustainable trade metrics.
+
+    `portfolio_data` (optional): dict of pre-aggregated portfolio metrics keyed by the
+    field names below. Any value not supplied is reported as an honest null rather than
+    a fabricated figure; the framework descriptions/reference structures are always
+    populated deterministically. Recognised keys mirror each output field, e.g.
+    "entity_alignment_score", "esg_screened_transactions_pct", "total_transactions_assessed".
     """
-    rng = _rng(entity_id + "report")
+    pd_in: dict = portfolio_data or {}
+
+    def _num(key: str) -> Optional[float]:
+        """Return a rounded numeric portfolio input, or None if not supplied/invalid."""
+        v = pd_in.get(key)
+        if v is None:
+            return None
+        try:
+            return round(float(v), 1)
+        except (TypeError, ValueError):
+            return None
+
+    def _int(key: str) -> Optional[int]:
+        v = pd_in.get(key)
+        if v is None:
+            return None
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            return None
+
+    def _bool(key: str) -> Optional[bool]:
+        v = pd_in.get(key)
+        return bool(v) if v is not None else None
+
+    data_status = "reported" if pd_in else "insufficient_data"
 
     icc_stf_principles = {
         "publication": "ICC Sustainable Trade Finance Principles (ICC Publication No. 908E, 2019)",
@@ -783,23 +917,25 @@ def generate_trade_finance_report(entity_id: str) -> dict:
             str(num): {"name": p["principle"], "description": p["description"]}
             for num, p in ICC_STF_PRINCIPLES.items()
         },
-        "entity_alignment_score": round(rng.uniform(55.0, 88.0), 1),
+        "entity_alignment_score": _num("entity_alignment_score"),
         "key_metrics": {
-            "esg_screened_transactions_pct": round(rng.uniform(40.0, 85.0), 1),
-            "esg_linked_transactions_pct": round(rng.uniform(15.0, 45.0), 1),
-            "supply_chain_engagements": rng.randint(5, 30),
+            "esg_screened_transactions_pct": _num("esg_screened_transactions_pct"),
+            "esg_linked_transactions_pct": _num("esg_linked_transactions_pct"),
+            "supply_chain_engagements": _int("supply_chain_engagements"),
         },
+        "data_status": data_status,
     }
 
     oecd_arrangement = {
         "regulation": "OECD Arrangement on Officially Supported Export Credits",
         "common_approaches_year": 2016,
         "cre_revision_year": 2023,
-        "entity_compliance_score": round(rng.uniform(60.0, 90.0), 1),
-        "country_risk_profiles_assessed": rng.randint(8, 25),
-        "tier_a_transactions_pct": round(rng.uniform(10.0, 30.0), 1),
+        "entity_compliance_score": _num("entity_compliance_score"),
+        "country_risk_profiles_assessed": _int("country_risk_profiles_assessed"),
+        "tier_a_transactions_pct": _num("tier_a_transactions_pct"),
         "coal_exclusion_policy": True,
-        "fossil_fuel_phaseout_committed": rng.random() > 0.4,
+        "fossil_fuel_phaseout_committed": _bool("fossil_fuel_phaseout_committed"),
+        "data_status": data_status,
     }
 
     ifc_performance_standards = {
@@ -809,29 +945,32 @@ def generate_trade_finance_report(entity_id: str) -> dict:
             str(num): {"name": info["name"], "mandatory": info["mandatory"]}
             for num, info in IFC_PERFORMANCE_STANDARDS.items()
         },
-        "entity_average_compliance_score": round(rng.uniform(58.0, 88.0), 1),
-        "cat_a_transactions_reviewed": rng.randint(2, 8),
-        "independent_monitor_engaged": rng.random() > 0.5,
+        "entity_average_compliance_score": _num("entity_average_compliance_score"),
+        "cat_a_transactions_reviewed": _int("cat_a_transactions_reviewed"),
+        "independent_monitor_engaged": _bool("independent_monitor_engaged"),
+        "data_status": data_status,
     }
 
     unctad_metrics = {
         "framework": "UNCTAD Sustainable Trade Metrics 2023",
-        "sustainable_trade_finance_volume_usd_mn": round(rng.uniform(50.0, 500.0), 1),
-        "share_of_green_trade_finance_pct": round(rng.uniform(15.0, 50.0), 1),
-        "developing_country_trade_supported_pct": round(rng.uniform(20.0, 60.0), 1),
-        "sdg_aligned_transactions_pct": round(rng.uniform(30.0, 70.0), 1),
-        "wto_aid_for_trade_contribution_usd_mn": round(rng.uniform(5.0, 50.0), 1),
+        "sustainable_trade_finance_volume_usd_mn": _num("sustainable_trade_finance_volume_usd_mn"),
+        "share_of_green_trade_finance_pct": _num("share_of_green_trade_finance_pct"),
+        "developing_country_trade_supported_pct": _num("developing_country_trade_supported_pct"),
+        "sdg_aligned_transactions_pct": _num("sdg_aligned_transactions_pct"),
+        "wto_aid_for_trade_contribution_usd_mn": _num("wto_aid_for_trade_contribution_usd_mn"),
+        "data_status": data_status,
     }
 
     platform_summary = {
-        "total_transactions_assessed": rng.randint(10, 50),
-        "total_value_assessed_usd_mn": round(rng.uniform(100.0, 2000.0), 1),
-        "ep4_category_a_pct": round(rng.uniform(5.0, 20.0), 1),
-        "ep4_category_b_pct": round(rng.uniform(30.0, 55.0), 1),
-        "ep4_category_c_pct": round(rng.uniform(30.0, 60.0), 1),
-        "avg_esg_supply_chain_score": round(rng.uniform(52.0, 78.0), 1),
-        "avg_eca_green_score": round(rng.uniform(58.0, 82.0), 1),
-        "esg_linked_facilities": rng.randint(3, 15),
+        "total_transactions_assessed": _int("total_transactions_assessed"),
+        "total_value_assessed_usd_mn": _num("total_value_assessed_usd_mn"),
+        "ep4_category_a_pct": _num("ep4_category_a_pct"),
+        "ep4_category_b_pct": _num("ep4_category_b_pct"),
+        "ep4_category_c_pct": _num("ep4_category_c_pct"),
+        "avg_esg_supply_chain_score": _num("avg_esg_supply_chain_score"),
+        "avg_eca_green_score": _num("avg_eca_green_score"),
+        "esg_linked_facilities": _int("esg_linked_facilities"),
+        "data_status": data_status,
     }
 
     recommendations = [

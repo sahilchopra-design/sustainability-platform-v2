@@ -18,7 +18,6 @@ Cross-framework linkage:
 from __future__ import annotations
 
 import math
-import random
 from datetime import datetime
 from typing import Optional
 
@@ -152,8 +151,6 @@ class AvoidedEmissionsEngine:
         avoided_per_unit = baseline_factor - solution_factor (kgCO2e/unit)
         total_avoided = avoided_per_unit x quantity x attribution_factor (tCO2e)
         """
-        rng = random.Random(hash(entity_id + activity_type) & 0xFFFFFFFF)
-
         avoided_per_unit_kgco2e = max(0.0, baseline_factor - solution_factor)
         total_avoided_tco2e = round(avoided_per_unit_kgco2e * quantity * attribution_factor / 1000, 4)
 
@@ -195,19 +192,31 @@ class AvoidedEmissionsEngine:
     ) -> dict:
         """
         Score additionality across five criteria (0-100 each, averaged).
-        """
-        rng = random.Random(hash(entity_id + activity_type + "add") & 0xFFFFFFFF)
 
-        criteria_scores: dict[str, float] = {}
+        Each criterion is scored only when the caller supplies a
+        ``{criterion}_score`` value in ``activity_data``. Criteria without
+        supplied data are reported as unscored (honest null) rather than
+        filled with a fabricated value, and are excluded from the average.
+        """
+        criteria_scores: dict[str, Optional[float]] = {}
         criteria_met: list[str] = []
+        criteria_unscored: list[str] = []
 
         for criterion in ADDITIONALITY_CRITERIA:
-            score = float(activity_data.get(f"{criterion}_score", rng.uniform(40, 90)))
-            criteria_scores[criterion] = round(score, 2)
+            raw = activity_data.get(f"{criterion}_score")
+            if raw is None:
+                criteria_scores[criterion] = None
+                criteria_unscored.append(criterion)
+                continue
+            score = round(float(raw), 2)
+            criteria_scores[criterion] = score
             if score >= 60:
                 criteria_met.append(criterion)
 
-        additionality_score = round(sum(criteria_scores.values()) / len(criteria_scores), 2)
+        scored_values = [v for v in criteria_scores.values() if v is not None]
+        additionality_score = (
+            round(sum(scored_values) / len(scored_values), 2) if scored_values else None
+        )
 
         assessment_basis = AVOIDED_EMISSION_CATEGORIES.get(
             activity_data.get("category", "enabled"), {}
@@ -218,9 +227,18 @@ class AvoidedEmissionsEngine:
             "activity_type": activity_type,
             "criteria_scores": criteria_scores,
             "criteria_met": criteria_met,
-            "criteria_not_met": [c for c in ADDITIONALITY_CRITERIA if c not in criteria_met],
+            "criteria_not_met": [
+                c for c in ADDITIONALITY_CRITERIA
+                if c not in criteria_met and c not in criteria_unscored
+            ],
+            "criteria_unscored": criteria_unscored,
             "additionality_score": additionality_score,
-            "additionality_strong": additionality_score >= 70 and len(criteria_met) >= 4,
+            "additionality_strong": (
+                additionality_score is not None
+                and additionality_score >= 70
+                and len(criteria_met) >= 4
+            ),
+            "data_sufficient": len(scored_values) > 0,
             "assessment_basis": assessment_basis,
             "assessed_at": datetime.utcnow().isoformat(),
         }
@@ -234,21 +252,39 @@ class AvoidedEmissionsEngine:
         entity_id: str,
         activity_data: dict,
     ) -> dict:
-        """Check Paris Agreement Article 6 ITMO eligibility."""
-        rng = random.Random(hash(entity_id + "art6") & 0xFFFFFFFF)
+        """
+        Check Paris Agreement Article 6 ITMO eligibility.
 
+        Each criterion is treated as met only when the caller explicitly
+        confirms it in ``activity_data``; unconfirmed criteria default to
+        False (conservative — Article 6 requires all criteria). ITMO
+        potential is computed only when a real ``annual_avoided_tco2e`` is
+        supplied, otherwise it is reported as None (insufficient data).
+        """
         criteria_results: dict[str, bool] = {}
+        criteria_unconfirmed: list[str] = []
         for criterion in ARTICLE6_CRITERIA:
-            criteria_results[criterion] = bool(
-                activity_data.get(criterion, rng.random() > 0.4)
-            )
+            if criterion in activity_data:
+                criteria_results[criterion] = bool(activity_data.get(criterion))
+            else:
+                criteria_results[criterion] = False
+                criteria_unconfirmed.append(criterion)
 
         criteria_met = [c for c, v in criteria_results.items() if v]
         article6_eligible = len(criteria_met) == len(ARTICLE6_CRITERIA)
 
-        annual_avoided_tco2e = float(activity_data.get("annual_avoided_tco2e", rng.uniform(100, 5000)))
-        attribution_factor = float(activity_data.get("attribution_factor", rng.uniform(0.3, 1.0)))
-        itmo_potential_units = round(annual_avoided_tco2e * attribution_factor, 2) if article6_eligible else 0.0
+        annual_avoided_raw = activity_data.get("annual_avoided_tco2e")
+        attribution_factor = (
+            float(activity_data["attribution_factor"])
+            if activity_data.get("attribution_factor") is not None
+            else 1.0
+        )
+        if annual_avoided_raw is not None and article6_eligible:
+            itmo_potential_units = round(float(annual_avoided_raw) * attribution_factor, 2)
+        elif annual_avoided_raw is not None:
+            itmo_potential_units = 0.0
+        else:
+            itmo_potential_units = None
 
         return {
             "entity_id": entity_id,
@@ -256,6 +292,7 @@ class AvoidedEmissionsEngine:
             "criteria_results": criteria_results,
             "criteria_met": criteria_met,
             "criteria_not_met": [c for c, v in criteria_results.items() if not v],
+            "criteria_unconfirmed": criteria_unconfirmed,
             "itmo_potential_units": itmo_potential_units,
             "corresponding_adjustment_required": True,
             "host_country": activity_data.get("host_country", "Unknown"),
@@ -272,14 +309,21 @@ class AvoidedEmissionsEngine:
         entity_id: str,
         activity_data: dict,
     ) -> dict:
-        """Check SBTi Beyond Value Chain Mitigation (BVCM) eligibility."""
-        rng = random.Random(hash(entity_id + "bvcm") & 0xFFFFFFFF)
+        """
+        Check SBTi Beyond Value Chain Mitigation (BVCM) eligibility.
 
+        Each requirement is treated as met only when the caller explicitly
+        confirms it in ``activity_data``; unconfirmed requirements default
+        to False (conservative — an unproven requirement is not a met one).
+        """
         requirements_results: dict[str, bool] = {}
+        requirements_unconfirmed: list[str] = []
         for req in BVCM_REQUIREMENTS:
-            requirements_results[req] = bool(
-                activity_data.get(req, rng.random() > 0.35)
-            )
+            if req in activity_data:
+                requirements_results[req] = bool(activity_data.get(req))
+            else:
+                requirements_results[req] = False
+                requirements_unconfirmed.append(req)
 
         requirements_met = [r for r, v in requirements_results.items() if v]
         sbti_bvcm_eligible = len(requirements_met) >= 4
@@ -300,6 +344,7 @@ class AvoidedEmissionsEngine:
             "requirements_results": requirements_results,
             "requirements_met": requirements_met,
             "requirements_not_met": [r for r, v in requirements_results.items() if not v],
+            "requirements_unconfirmed": requirements_unconfirmed,
             "science_based_claim": science_based_claim,
             "warnings": warnings,
             "sbti_guidance_version": "SBTi_BVCM_Guidance_2023",
@@ -314,28 +359,42 @@ class AvoidedEmissionsEngine:
         self,
         entity_id: str,
         activities: list,
+        own_emissions_tco2e: Optional[float] = None,
     ) -> dict:
         """
         Aggregate avoided emissions across all activities.
 
         Returns total by category, net benefit vs own Scope 1+2+3.
-        """
-        rng = random.Random(hash(entity_id + "port") & 0xFFFFFFFF)
 
+        ``own_emissions_tco2e`` is an entity-level figure that must be
+        supplied by the caller (the entity's own Scope 1+2+3). When it is
+        not provided, ``net_benefit_tco2e`` and ``avoidance_ratio`` are
+        reported as None (insufficient data) rather than fabricated.
+        Activities without a computed ``total_avoided_tco2e`` contribute 0
+        and are counted in ``activities_missing_avoided``.
+        """
         by_category: dict[str, float] = {cat: 0.0 for cat in AVOIDED_EMISSION_CATEGORIES}
         total_avoided = 0.0
         activity_count = len(activities)
+        activities_missing_avoided = 0
 
         for act in activities:
             cat = act.get("category", "enabled")
-            avoided = float(act.get("total_avoided_tco2e", rng.uniform(100, 2000)))
+            raw_avoided = act.get("total_avoided_tco2e")
+            if raw_avoided is None:
+                activities_missing_avoided += 1
+                avoided = 0.0
+            else:
+                avoided = float(raw_avoided)
             by_category[cat] = by_category.get(cat, 0.0) + avoided
             total_avoided += avoided
 
-        own_emissions_tco2e = float(
-            rng.uniform(total_avoided * 0.5, total_avoided * 2.5)
+        own_emissions = (
+            float(own_emissions_tco2e) if own_emissions_tco2e is not None else None
         )
-        net_benefit_tco2e = round(total_avoided - own_emissions_tco2e, 2)
+        net_benefit_tco2e = (
+            round(total_avoided - own_emissions, 2) if own_emissions is not None else None
+        )
 
         attribution_summary = {
             cat: {"total_tco2e": round(v, 2), "share_pct": round(v / total_avoided * 100, 2) if total_avoided > 0 else 0}
@@ -345,12 +404,17 @@ class AvoidedEmissionsEngine:
         return {
             "entity_id": entity_id,
             "activity_count": activity_count,
+            "activities_missing_avoided": activities_missing_avoided,
             "total_avoided_tco2e": round(total_avoided, 2),
             "avoided_by_category": {k: round(v, 2) for k, v in by_category.items()},
             "attribution_summary": attribution_summary,
-            "own_emissions_tco2e": round(own_emissions_tco2e, 2),
+            "own_emissions_tco2e": round(own_emissions, 2) if own_emissions is not None else None,
             "net_benefit_tco2e": net_benefit_tco2e,
-            "avoidance_ratio": round(total_avoided / own_emissions_tco2e, 3) if own_emissions_tco2e > 0 else None,
+            "avoidance_ratio": (
+                round(total_avoided / own_emissions, 3)
+                if own_emissions is not None and own_emissions > 0
+                else None
+            ),
             "assessed_at": datetime.utcnow().isoformat(),
         }
 
@@ -365,33 +429,60 @@ class AvoidedEmissionsEngine:
         assessment_type: str,
         reporting_year: int,
         activities_data: dict,
+        own_emissions_tco2e: Optional[float] = None,
+        reporting_quality_score: Optional[float] = None,
     ) -> dict:
-        """Comprehensive Scope 4 avoided emissions assessment."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        """
+        Comprehensive Scope 4 avoided emissions assessment.
 
+        ``own_emissions_tco2e`` (entity Scope 1+2+3) and
+        ``reporting_quality_score`` are entity-level inputs. When not
+        supplied here they are read from ``activities_data``; if still
+        absent they are reported as None (insufficient data) rather than
+        fabricated. Net benefit / avoidance ratio require own emissions.
+        """
         activities: list = activities_data.get("activities", [])
+        illustrative = False
 
-        # Generate synthetic activities if none provided
+        # If no activities are provided, build an illustrative example set
+        # using a fixed unit quantity of 1.0 so the output transparently
+        # shows the per-unit avoidance factors (flagged illustrative).
+        # No random quantities are fabricated.
         if not activities:
+            illustrative = True
             sample_types = ["solar_panels", "EVs", "recycled_materials", "green_bonds"]
             for act_type in sample_types:
                 baseline = BASELINE_FACTORS.get("coal_electricity_kwh", 0.82)
                 solution = SOLUTION_FACTORS.get("solar_kwh", 0.04)
-                qty = rng.uniform(1e5, 5e6)
+                qty = 1.0
                 cat_result = self.calculate_avoided_per_activity(
                     entity_id, act_type, baseline, solution, qty, 1.0
                 )
+                cat_result["illustrative"] = True
                 activities.append(cat_result)
 
-        portfolio = self.aggregate_portfolio(entity_id, activities)
+        # Resolve entity-level own emissions: explicit arg > activities_data > None
+        resolved_own = own_emissions_tco2e
+        if resolved_own is None:
+            resolved_own = activities_data.get("own_emissions_tco2e")
 
-        # Reporting quality
-        reporting_score = float(activities_data.get("reporting_quality_score", rng.uniform(50, 90)))
-        quality_tier = "estimated"
-        for threshold, label in REPORTING_QUALITY_TIERS:
-            if reporting_score >= threshold:
-                quality_tier = label
-                break
+        portfolio = self.aggregate_portfolio(entity_id, activities, resolved_own)
+
+        # Reporting quality: explicit arg > activities_data > None (honest null)
+        resolved_reporting = reporting_quality_score
+        if resolved_reporting is None:
+            resolved_reporting = activities_data.get("reporting_quality_score")
+
+        if resolved_reporting is not None:
+            reporting_score: Optional[float] = float(resolved_reporting)
+            quality_tier: Optional[str] = "estimated"
+            for threshold, label in REPORTING_QUALITY_TIERS:
+                if reporting_score >= threshold:
+                    quality_tier = label
+                    break
+        else:
+            reporting_score = None
+            quality_tier = "insufficient_data"
 
         total_avoided = portfolio["total_avoided_tco2e"]
         own_emissions = portfolio["own_emissions_tco2e"]
@@ -405,12 +496,13 @@ class AvoidedEmissionsEngine:
             "reporting_year": reporting_year,
             "scope4_standard": "GHG_Protocol_Scope4_Guidance_2022",
             "activities_assessed": len(activities),
+            "illustrative_activities": illustrative,
             "total_avoided_tco2e": total_avoided,
             "avoided_by_category": portfolio["avoided_by_category"],
             "own_scope123_emissions_tco2e": own_emissions,
             "net_benefit_tco2e": portfolio["net_benefit_tco2e"],
             "avoidance_ratio": portfolio["avoidance_ratio"],
-            "reporting_quality_score": round(reporting_score, 2),
+            "reporting_quality_score": round(reporting_score, 2) if reporting_score is not None else None,
             "reporting_quality_tier": quality_tier,
             "activity_details": activities,
             "portfolio_summary": portfolio,

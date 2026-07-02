@@ -25,7 +25,6 @@ from __future__ import annotations
 
 import math
 import uuid
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -255,8 +254,8 @@ class AviationClimateEngine:
         actual_tco2: float,
         phase: str = "phase_2",
         eligible_routes_pct: float = 100.0,
+        unit_sourcing_mix: Optional[dict] = None,
     ) -> CORSIAResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         phase_data = CORSIA_PHASES.get(phase, CORSIA_PHASES["phase_2"])
 
         growth_tco2 = max(0.0, actual_tco2 - baseline_tco2)
@@ -264,18 +263,36 @@ class AviationClimateEngine:
         offset_factor = phase_data["offset_factor"]
         offsetting_obligation = eligible_growth * offset_factor
 
-        # Distribute across eligible units
+        # Allocate the obligation across eligible offset unit schemes.
+        # A genuine per-scheme split requires an operator-supplied procurement/
+        # sourcing mix (scheme -> fraction of tonnes). When provided, allocate
+        # proportionally to only the CORSIA-approved schemes for this phase.
+        # When absent, do NOT fabricate a split — report the full obligation as
+        # unallocated with an explicit note (honest null).
         schemes = phase_data["eligible_units"]
-        eligible_units_breakdown = {}
-        remaining = offsetting_obligation
-        for i, scheme in enumerate(schemes):
-            if i == len(schemes) - 1:
-                eligible_units_breakdown[scheme] = round(remaining, 2)
+        eligible_units_breakdown: dict = {}
+        if unit_sourcing_mix:
+            approved_mix = {
+                s: max(0.0, float(w))
+                for s, w in unit_sourcing_mix.items()
+                if s in schemes and float(w) > 0.0
+            }
+            weight_total = sum(approved_mix.values())
+            if weight_total > 0.0:
+                for scheme, weight in approved_mix.items():
+                    eligible_units_breakdown[scheme] = round(
+                        offsetting_obligation * weight / weight_total, 2
+                    )
             else:
-                share = rng.uniform(0.05, 0.25) * offsetting_obligation
-                share = min(share, remaining)
-                eligible_units_breakdown[scheme] = round(share, 2)
-                remaining -= share
+                eligible_units_breakdown = {
+                    "unallocated_tco2": round(offsetting_obligation, 2),
+                    "note": "insufficient_data: no approved schemes in supplied sourcing mix",
+                }
+        else:
+            eligible_units_breakdown = {
+                "unallocated_tco2": round(offsetting_obligation, 2),
+                "note": "insufficient_data: supply unit_sourcing_mix for per-scheme allocation",
+            }
 
         offset_cost_usd = offsetting_obligation * CORSIA_CREDIT_PRICE
 
@@ -304,8 +321,6 @@ class AviationClimateEngine:
         year: int = 2025,
         jurisdiction: str = "EU",
     ) -> SAFComplianceResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         blend_pct = saf_blended_t / max(total_fuel_uplift_t, 1.0) * 100.0
 
         # Get applicable mandate
@@ -394,9 +409,8 @@ class AviationClimateEngine:
         entity_id: str,
         intra_eea_co2_t: float,
         year: int = 2025,
+        eua_price_eur: Optional[float] = None,
     ) -> EUETSAviationResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         year_data = EU_ETS_AVIATION.get(year, EU_ETS_AVIATION.get(max(EU_ETS_AVIATION.keys())))
         free_alloc_pct = year_data["free_allocation_pct"]
 
@@ -404,7 +418,10 @@ class AviationClimateEngine:
         free_allocation = intra_eea_co2_t * free_alloc_pct / 100.0
         surrender_gap = max(0.0, obligation_allowances - free_allocation)
 
-        eua_price = rng.uniform(55.0, 80.0)
+        # Cost the surrender gap at the caller-supplied EUA settlement price when
+        # provided; otherwise use the module's documented EUA aviation reference
+        # price (published market reference, not a fabricated per-entity draw).
+        eua_price = eua_price_eur if eua_price_eur is not None else EUA_AVIATION_PRICE
         cost_eur = surrender_gap * eua_price
 
         return EUETSAviationResult(
@@ -476,8 +493,6 @@ class AviationClimateEngine:
         entity_id: str,
         fleet_data: list[dict],
     ) -> AircraftStrandingResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         stranding_events = []
         total_stranded_value = 0.0
         ages = []
@@ -543,8 +558,6 @@ class AviationClimateEngine:
         entity_id: str,
         operator_data: dict,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         icao = operator_data.get("icao_designator", "XXX")
         baseline_tco2 = operator_data.get("baseline_tco2", 500_000.0)
         actual_tco2 = operator_data.get("actual_tco2", 550_000.0)
@@ -563,11 +576,18 @@ class AviationClimateEngine:
         iata = self.assess_iata_nzc(entity_id, current_intensity, fleet_mix, saf_pct, 2030)
         stranding = self.model_aircraft_stranding(entity_id, fleet_data)
 
-        # Example SAF credit calc
+        # SAF credit calc — requires the operator's measured/certified lifecycle
+        # carbon intensity (gCO2eq/MJ). This is an entity-specific pathway metric
+        # that cannot be inferred; when not supplied we return insufficient_data
+        # rather than fabricating a CI value.
         saf_gge = saf_t * 1000.0 / 2.84  # approx kg → gge
         saf_pathway = operator_data.get("saf_pathway", "HEFA")
-        lifecycle_ci = rng.uniform(20.0, 45.0)
-        ira45z = self.calculate_ira_45z(entity_id, saf_gge, saf_pathway, lifecycle_ci)
+        lifecycle_ci = operator_data.get("lifecycle_ci")
+        ira45z = (
+            self.calculate_ira_45z(entity_id, saf_gge, saf_pathway, float(lifecycle_ci))
+            if lifecycle_ci is not None
+            else None
+        )
 
         total_cost_exposure = (
             corsia.offset_cost_usd
@@ -596,6 +616,11 @@ class AviationClimateEngine:
                 "eligible": ira45z.eligible,
                 "credit_per_gge": ira45z.credit_per_gge,
                 "total_credit_usd": ira45z.total_credit_usd,
+            } if ira45z is not None else {
+                "eligible": None,
+                "credit_per_gge": None,
+                "total_credit_usd": None,
+                "note": "insufficient_data: supply operator_data['lifecycle_ci'] (gCO2eq/MJ) for IRA 45Z credit",
             },
             "eu_ets": {
                 "obligation_allowances": eu_ets.obligation_allowances,

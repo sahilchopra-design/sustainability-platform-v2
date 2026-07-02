@@ -19,9 +19,12 @@ Data sources modelled:
 from __future__ import annotations
 
 import math
-import random
 from datetime import datetime
 from typing import Optional
+
+# When neither reference data nor a caller override supplies a hazard/vulnerability
+# value, the engine returns an honest null (source="insufficient_data") rather than a
+# neutral-prior stand-in — no entity-adjacent number is inferred where there is no data.
 
 # ---------------------------------------------------------------------------
 # Reference Data
@@ -188,18 +191,36 @@ class PhysicalHazardEngine:
         asset_type: str,
         climate_scenario: str = "RCP4.5",
         time_horizon: str = "2050",
+        base_hazard_override: Optional[float] = None,
+        vulnerability_override: Optional[float] = None,
     ) -> dict:
         """
         Score a single hazard for an asset in a given country.
 
         Returns hazard_score 0-100, scenario-adjusted intensities,
         exposure_level, vulnerability_score, and adaptation guidance.
-        """
-        rng = random.Random(hash(entity_id + hazard_type + country_code) & 0xFFFFFFFF)
 
-        # Base hazard score from country profile
+        base_hazard_override (0-100) supplies a real site-level hazard exposure
+        (e.g. from a WRI Aqueduct / JRC pixel lookup) when the country/hazard
+        pair is absent from COUNTRY_BASE_HAZARD; vulnerability_override (0-1)
+        supplies an asset-specific damage susceptibility. When neither a
+        reference-data entry nor an override is available the engine returns an
+        honest null (source="insufficient_data", data_available=False) — no
+        neutral-prior or random stand-in for the missing hazard/vulnerability.
+        """
+        # Base hazard score: reference-data lookup > caller override > flagged prior
         country_profile = COUNTRY_BASE_HAZARD.get(country_code.upper(), {})
-        base_score = float(country_profile.get(hazard_type, rng.uniform(20, 60)))
+        base_hazard_data_available = True
+        if hazard_type in country_profile:
+            base_score = float(country_profile[hazard_type])
+            base_hazard_source = "COUNTRY_BASE_HAZARD"
+        elif base_hazard_override is not None:
+            base_score = float(base_hazard_override)
+            base_hazard_source = "caller_override"
+        else:
+            base_score = None
+            base_hazard_source = "insufficient_data"
+            base_hazard_data_available = False
 
         # Scenario multiplier
         hp = HAZARD_PROFILES.get(hazard_type, {})
@@ -226,22 +247,36 @@ class PhysicalHazardEngine:
         years_forward = max(0, horizon_year - CURRENT_YEAR)
         time_factor = 1.0 + (years_forward / 100) * (multiplier - 1.0)
 
-        hazard_score = min(100.0, round(base_score * time_factor, 2))
+        # No base hazard data -> honest null (no neutral-prior stand-in)
+        if base_score is None:
+            hazard_score = None
+            exposure_level = "insufficient_data"
+        else:
+            hazard_score = min(100.0, round(base_score * time_factor, 2))
+            exposure_level = "very_low"
+            for threshold, label in EXPOSURE_LEVELS:
+                if hazard_score >= threshold:
+                    exposure_level = label
+                    break
 
-        # Exposure level
-        exposure_level = "very_low"
-        for threshold, label in EXPOSURE_LEVELS:
-            if hazard_score >= threshold:
-                exposure_level = label
-                break
-
-        # Vulnerability (asset-type specific)
+        # Vulnerability (asset-type specific): lookup > caller override > flagged prior
         vuln_map = ASSET_VULNERABILITY.get(asset_type, {})
-        vulnerability_score = round(vuln_map.get(hazard_type, rng.uniform(0.3, 0.7)) * 100, 2)
+        vulnerability_data_available = True
+        if hazard_type in vuln_map:
+            vuln_fraction = float(vuln_map[hazard_type])
+            vulnerability_source = "ASSET_VULNERABILITY"
+        elif vulnerability_override is not None:
+            vuln_fraction = float(vulnerability_override)
+            vulnerability_source = "caller_override"
+        else:
+            vuln_fraction = None
+            vulnerability_source = "insufficient_data"
+            vulnerability_data_available = False
+        vulnerability_score = round(vuln_fraction * 100, 2) if vuln_fraction is not None else None
 
-        # Return period intensities (illustrative)
-        return_period_20yr = round(base_score * 0.6 * multiplier, 2)
-        return_period_100yr = round(base_score * 1.0 * multiplier, 2)
+        # Return period intensities (illustrative) — null when no base hazard data
+        return_period_20yr = round(base_score * 0.6 * multiplier, 2) if base_score is not None else None
+        return_period_100yr = round(base_score * 1.0 * multiplier, 2) if base_score is not None else None
 
         return {
             "entity_id": entity_id,
@@ -250,7 +285,9 @@ class PhysicalHazardEngine:
             "asset_type": asset_type,
             "climate_scenario": climate_scenario,
             "time_horizon": str(time_horizon),
-            "base_hazard_score": round(base_score, 2),
+            "base_hazard_score": round(base_score, 2) if base_score is not None else None,
+            "base_hazard_source": base_hazard_source,
+            "base_hazard_data_available": base_hazard_data_available,
             "scenario_multiplier": multiplier,
             "time_factor": round(time_factor, 3),
             "hazard_score": hazard_score,
@@ -260,6 +297,8 @@ class PhysicalHazardEngine:
             "data_source": hp.get("data_source", "IPCC_AR6"),
             "exposure_level": exposure_level,
             "vulnerability_score": vulnerability_score,
+            "vulnerability_source": vulnerability_source,
+            "vulnerability_data_available": vulnerability_data_available,
             "adaptation_measure": ADAPTATION_MEASURES.get(hazard_type, "No specific measure defined"),
             "assessed_at": datetime.utcnow().isoformat(),
         }
@@ -278,36 +317,46 @@ class PhysicalHazardEngine:
 
         Weights: flood 20%, wildfire 15%, heat_stress 20%,
                  sea_level_rise 15%, cyclone 15%, drought 10%, subsidence 5%.
-        """
-        rng = random.Random(hash(entity_id + "comp") & 0xFFFFFFFF)
 
+        Hazards absent from ``hazard_scores`` are excluded and the remaining
+        weights are renormalised over the supplied subset (no fabricated
+        fill-in). Missing hazards are reported in ``missing_hazards``.
+        """
         weighted_sum = 0.0
         weight_used = 0.0
         scores_used: dict[str, float] = {}
+        missing_hazards: list[str] = []
 
         for hazard, weight in COMPOSITE_WEIGHTS.items():
-            score = float(hazard_scores.get(hazard, rng.uniform(20, 60)))
+            if hazard not in hazard_scores or hazard_scores[hazard] is None:
+                missing_hazards.append(hazard)
+                continue
+            score = float(hazard_scores[hazard])
             scores_used[hazard] = round(score, 2)
             weighted_sum += score * weight
             weight_used += weight
 
-        composite_hazard_score = round(
-            weighted_sum / weight_used if weight_used > 0 else 0, 2
+        composite_hazard_score = (
+            round(weighted_sum / weight_used, 2) if weight_used > 0 else None
         )
 
-        # Risk tier
-        risk_tier = "negligible"
-        for threshold, label in RISK_TIERS:
-            if composite_hazard_score >= threshold:
-                risk_tier = label
-                break
-
-        # Primary hazard = highest score
-        primary_hazard = max(scores_used, key=lambda h: scores_used[h])
+        # Risk tier (null-guarded: no supplied hazards -> insufficient_data)
+        if composite_hazard_score is None:
+            risk_tier = "insufficient_data"
+            primary_hazard = None
+        else:
+            risk_tier = "negligible"
+            for threshold, label in RISK_TIERS:
+                if composite_hazard_score >= threshold:
+                    risk_tier = label
+                    break
+            # Primary hazard = highest supplied score
+            primary_hazard = max(scores_used, key=lambda h: scores_used[h])
 
         return {
             "entity_id": entity_id,
             "hazard_scores_used": scores_used,
+            "missing_hazards": missing_hazards,
             "composite_hazard_score": composite_hazard_score,
             "risk_tier": risk_tier,
             "primary_hazard": primary_hazard,
@@ -322,35 +371,55 @@ class PhysicalHazardEngine:
     def estimate_financial_impact(
         self,
         entity_id: str,
-        composite_score: float,
+        composite_score: Optional[float],
         asset_type: str,
         asset_value_mn: float,
+        damage_curve_multiplier: Optional[float] = None,
     ) -> dict:
         """
         Estimate property damage, business interruption, and adaptation CAPEX.
+
+        Deterministic damage-function estimates driven by the composite hazard
+        score. ``damage_curve_multiplier`` optionally supplies a real
+        site/asset-specific damage-function calibration (e.g. from a vulnerability
+        curve library); when omitted it defaults to the model central estimate
+        (1.0). Returns an ``insufficient_data`` payload when composite_score is
+        None (e.g. no hazards were scored).
         """
-        rng = random.Random(hash(entity_id + "fin") & 0xFFFFFFFF)
+        if composite_score is None:
+            return {
+                "entity_id": entity_id,
+                "asset_type": asset_type,
+                "asset_value_mn": asset_value_mn,
+                "composite_score": None,
+                "property_damage_pct": None,
+                "property_damage_value_mn": None,
+                "business_interruption_days": None,
+                "stranded_value_risk_pct": None,
+                "stranded_value_mn": None,
+                "adaptation_capex_mn": None,
+                "status": "insufficient_data",
+                "note": "No composite hazard score available; financial impact not estimated.",
+                "assessed_at": datetime.utcnow().isoformat(),
+            }
+
+        # Damage-function calibration: caller-supplied real curve or model central estimate
+        curve = float(damage_curve_multiplier) if damage_curve_multiplier is not None else 1.0
 
         # Property damage fraction scales with composite score
-        property_damage_pct = round(
-            composite_score * 0.4 * rng.uniform(0.8, 1.2), 2
-        )
+        property_damage_pct = round(composite_score * 0.4 * curve, 2)
         property_damage_pct = min(property_damage_pct, 80.0)
 
         # Business interruption days
-        business_interruption_days = round(
-            composite_score * 0.5 * rng.uniform(0.8, 1.5)
-        )
+        business_interruption_days = round(composite_score * 0.5 * curve)
 
         # Stranded value risk
-        stranded_value_risk_pct = round(
-            composite_score * 0.25 * rng.uniform(0.8, 1.3), 2
-        )
+        stranded_value_risk_pct = round(composite_score * 0.25 * curve, 2)
         stranded_value_risk_pct = min(stranded_value_risk_pct, 50.0)
 
         # Adaptation CAPEX (million)
         adaptation_capex_mn = round(
-            asset_value_mn * composite_score / 100 * 0.08 * rng.uniform(0.7, 1.4), 3
+            asset_value_mn * composite_score / 100 * 0.08 * curve, 3
         )
 
         property_damage_value_mn = round(asset_value_mn * property_damage_pct / 100, 3)
@@ -361,6 +430,7 @@ class PhysicalHazardEngine:
             "asset_type": asset_type,
             "asset_value_mn": asset_value_mn,
             "composite_score": composite_score,
+            "damage_curve_multiplier": curve,
             "property_damage_pct": property_damage_pct,
             "property_damage_value_mn": property_damage_value_mn,
             "business_interruption_days": int(business_interruption_days),
@@ -436,8 +506,6 @@ class PhysicalHazardEngine:
         """
         Complete physical hazard assessment combining all methods.
         """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         # Score all seven hazards
         hazard_results: dict[str, dict] = {}
         hazard_scores: dict[str, float] = {}

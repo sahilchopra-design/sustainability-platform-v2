@@ -260,7 +260,7 @@ def list_assessments(
     try:
         rows = db.execute(
             text("""
-                SELECT a.id, e.entity_name, e.commodity, a.scenario, a.horizon_year,
+                SELECT a.id, e.entity_name, e.primary_commodity AS commodity, a.scenario, a.horizon_year,
                        a.overall_risk_score, a.overall_risk_category,
                        a.stranded_asset_risk_pct, a.assessed_at
                 FROM mining_risk_assessments a
@@ -284,7 +284,7 @@ def get_assessment(
     try:
         row = db.execute(
             text("""
-                SELECT a.*, e.entity_name, e.commodity, e.country_code, e.mine_type
+                SELECT a.*, e.entity_name, e.primary_commodity AS commodity, e.country_iso AS country_code, e.mine_type
                 FROM mining_risk_assessments a
                 JOIN mining_entities e ON e.id = a.entity_id
                 WHERE a.id = :aid

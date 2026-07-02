@@ -10,7 +10,6 @@ Regulatory basis:
 """
 from __future__ import annotations
 
-import random
 from dataclasses import dataclass, field, asdict
 from typing import Any
 
@@ -393,9 +392,14 @@ class CarbonCreditQualityEngine:
         project_type: str,
         vintage_year: int,
         volume_tco2e: float,
+        verification_confidence: float | None = None,
     ) -> CarbonCreditQuality:
-        rng = random.Random(hash(f"{entity_id}_{project_id}") & 0xFFFFFFFF)
-
+        # verification_confidence: optional caller-supplied VVB/ICVCM verification
+        # confidence in [0.0, 1.0] (e.g. from the project's validation/verification
+        # report). When provided it deterministically nudges the score within a
+        # +/-5 band (0.5 == neutral). When None, no perturbation is applied and the
+        # score is the honest deterministic rubric result (previously this was a
+        # fabricated random +/-5 jitter with no real basis).
         ccp_result = self.check_ccp_eligibility(standard, methodology, project_type)
         perm = PERMANENCE_RISK_BY_TYPE.get(project_type, {"risk_score": 0.5, "level": "medium"})
         std_info = STANDARDS.get(standard, {})
@@ -414,7 +418,10 @@ class CarbonCreditQualityEngine:
             base_score -= 10
         if standard == "cdm" and vintage_year < 2015:
             base_score -= 10
-        base_score += rng.uniform(-5, 5)
+        if verification_confidence is not None:
+            # Map [0,1] confidence onto a +/-5 adjustment (0.5 == neutral).
+            conf = min(1.0, max(0.0, verification_confidence))
+            base_score += (conf - 0.5) * 10
         quality_score = round(min(100.0, max(0.0, base_score)), 1)
 
         if quality_score >= 85:
@@ -493,6 +500,7 @@ class CarbonCreditQualityEngine:
                 project_type=item.get("project_type", "redd_plus"),
                 vintage_year=item.get("vintage_year", 2020),
                 volume_tco2e=item.get("volume_tco2e", 1000),
+                verification_confidence=item.get("verification_confidence"),
             )
             results.append(asdict(r))
 

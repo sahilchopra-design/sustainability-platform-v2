@@ -347,8 +347,8 @@ def assess_lksg(req: LksgRequest):
     id_document_retention, movement_restriction, denial_of_safe_conditions.
     """
     try:
-        rng = __import__("random").Random(hash(req.entity_id) & 0xFFFFFFFF)
         violations_found = []
+        practices_not_assessed = []
         for practice_key, practice_def in LKSG_PROHIBITED.items():
             val = req.operations_data.get(practice_key)
             if val is True or (isinstance(val, (int, float)) and float(val) > 0.5):
@@ -358,13 +358,12 @@ def assess_lksg(req: LksgRequest):
                     "ilo_indicator": practice_def.get("ilo_indicator", ""),
                     "severity": "critical",
                 })
-            elif val is None and rng.random() < 0.10:
-                violations_found.append({
-                    "practice": practice_key,
-                    "ilo_convention": practice_def.get("ilo_convention", ""),
-                    "ilo_indicator": practice_def.get("ilo_indicator", ""),
-                    "severity": "potential",
-                })
+            elif val is None:
+                # Absent data is a due-diligence GAP, not a violation. The prior code randomly
+                # flagged a "potential" LkSG §2 human-rights violation 10% of the time here —
+                # fabricating a binding compliance finding from a coin-flip on the entity_id.
+                # Track the unassessed practice honestly instead.
+                practices_not_assessed.append(practice_key)
 
         return {
             "entity_id": req.entity_id,
@@ -372,6 +371,8 @@ def assess_lksg(req: LksgRequest):
             "lksg_prohibited_practice_flag": len(violations_found) > 0,
             "violations_found": violations_found,
             "violations_count": len(violations_found),
+            "practices_not_assessed": practices_not_assessed,
+            "data_complete": len(practices_not_assessed) == 0,
             "remediation_required": len([v for v in violations_found if v["severity"] == "critical"]) > 0,
             "lksg_prohibited_practices_ref": LKSG_PROHIBITED,
             "cross_framework": {

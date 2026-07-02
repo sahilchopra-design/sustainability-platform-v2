@@ -968,7 +968,7 @@ async def get_csrd_biodiversity_data(
                 b.tnfd_assess_complete,
                 b.tnfd_prepare_complete,
                 b.biodiversity_financial_effects_risk_eur,
-                b.biodiversity_net_gain_score
+                b.bng_net_gain_pct AS biodiversity_net_gain_score
             FROM esrs_e4_biodiversity b
             JOIN csrd_entity_registry cer ON cer.id = b.entity_registry_id
             WHERE b.reporting_year = :yr
@@ -1043,11 +1043,11 @@ async def get_csrd_water_data(
                 w.total_water_consumption_m3,
                 w.withdrawal_high_stress_areas_m3,
                 w.withdrawal_high_stress_areas_pct,
-                w.discharge_high_stress_areas_m3,
-                w.water_recycled_m3,
-                w.water_intensity_revenue,
+                NULL::numeric AS discharge_high_stress_areas_m3,
+                w.total_water_recycled_reused_m3 AS water_recycled_m3,
+                w.water_intensity_m3_per_net_revenue AS water_intensity_revenue,
                 w.water_financial_effects_risk_eur,
-                w.water_financial_effects_opp_eur
+                NULL::numeric AS water_financial_effects_opp_eur
             FROM esrs_e3_water w
             JOIN csrd_entity_registry cer ON cer.id = w.entity_registry_id
             WHERE w.reporting_year = :yr

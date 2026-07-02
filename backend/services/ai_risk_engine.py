@@ -4,9 +4,8 @@ EU AI Act 2024/1689 | NIST AI RMF 1.0 | GDPR Art 22 | EU AI Liability Directive 
 EU Product Liability Directive 2023/2853 | EU AI Office Enforcement Timeline 2024-2027
 """
 from __future__ import annotations
-import random
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 # ── Reference Data ─────────────────────────────────────────────────────────────
 
@@ -133,8 +132,9 @@ def classify_ai_system(
     use_case: str,
     sector: str,
     automated_decision_making: bool,
+    training_compute_flops: Optional[float] = None,
+    global_annual_turnover_usd: Optional[float] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
     sector_lower = sector.lower()
     profile = SECTOR_AI_RISK_PROFILES.get(sector_lower, SECTOR_AI_RISK_PROFILES["ecommerce"])
 
@@ -164,12 +164,21 @@ def classify_ai_system(
 
     # GPAI flag: systems trained with >10^25 FLOPS
     gpai_flag = any(kw in use_case_lower for kw in ["foundation model", "large language", "gpt", "llm", "generative ai", "diffusion"])
-    gpai_systemic_risk = gpai_flag and rng.random() > 0.5
+    # AI Act Art 51(2): GPAI presumed systemic-risk when training compute > 10^25 FLOP.
+    # Determined only from a caller-supplied compute figure; None when unknown (no fabrication).
+    if not gpai_flag or training_compute_flops is None:
+        gpai_systemic_risk = None if gpai_flag else False
+    else:
+        gpai_systemic_risk = training_compute_flops > 1e25
 
     # Applicable Annex III categories
     applicable_annex3 = [c for c in ANNEX3_HIGH_RISK_CATEGORIES if c["id"] in profile["primary_categories"]]
 
     # High-risk requirements (if high_risk)
+    # AI Act Art 43 + Annex VI/VII: third-party (notified body) conformity assessment is
+    # required for Annex III point-1 biometric systems (A3-09); other Annex III high-risk
+    # systems use internal control (Annex VI). Deterministic from applicable categories.
+    notified_body_required = "A3-09" in profile["primary_categories"]
     high_risk_requirements: dict[str, Any] = {}
     if risk_category == "high_risk":
         high_risk_requirements = {
@@ -185,7 +194,7 @@ def classify_ai_system(
             "transparency_obligations": True,
             "human_oversight_measures": True,
             "accuracy_robustness_cybersecurity": True,
-            "notified_body_required": rng.random() > 0.4,
+            "notified_body_required": notified_body_required,
             "fundamental_rights_impact_assessment": automated_decision_making,
         }
 
@@ -201,7 +210,7 @@ def classify_ai_system(
         ]
 
     # GDPR Art 22 applicability
-    gdpr_art22_applicable = automated_decision_making and risk_category in ("high_right", "high_risk", "limited_risk")
+    gdpr_art22_applicable = automated_decision_making and risk_category in ("prohibited", "high_risk", "limited_risk")
 
     # Penalty exposure
     max_penalty_pct_global_turnover = {
@@ -210,8 +219,12 @@ def classify_ai_system(
         "limited_risk": 1.5,
         "minimal_risk": 0.0,
     }[risk_category]
-    estimated_global_turnover_usd = rng.uniform(50e6, 5e9)
-    max_penalty_usd = estimated_global_turnover_usd * max_penalty_pct_global_turnover / 100
+    # AI Act Art 99: fines are a % of total worldwide annual turnover. Computed only from a
+    # caller-supplied turnover figure; None when turnover is unknown (no fabricated turnover).
+    if global_annual_turnover_usd is None:
+        max_penalty_usd = None
+    else:
+        max_penalty_usd = round(global_annual_turnover_usd * max_penalty_pct_global_turnover / 100, 0)
 
     return {
         "entity_id": entity_id,
@@ -230,7 +243,8 @@ def classify_ai_system(
         "gdpr_art22_applicable": gdpr_art22_applicable,
         "regulatory_overlap": profile["regulatory_overlap"],
         "max_penalty_pct_global_turnover": max_penalty_pct_global_turnover,
-        "max_penalty_usd": round(max_penalty_usd, 0),
+        "global_annual_turnover_usd": global_annual_turnover_usd,
+        "max_penalty_usd": max_penalty_usd,
         "enforcement_timeline": ENFORCEMENT_TIMELINE,
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -240,8 +254,13 @@ def assess_nist_rmf(
     entity_id: str,
     system_name: str,
     functions: list[str],
+    subcategory_scores: Optional[dict[str, float]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    # Real assessment scores come only from the caller (`subcategory_scores`: {subcat_id: 0..1}).
+    # Subcategories without a supplied score are genuinely unassessed → None, excluded from all
+    # averages. No score is ever fabricated; `implemented` is derived solely from `functions`.
+    supplied_scores = subcategory_scores or {}
+    implemented_functions = {f.upper() for f in functions}
 
     function_scores: dict[str, Any] = {}
     all_subcategory_scores: dict[str, float] = {}
@@ -249,25 +268,56 @@ def assess_nist_rmf(
     total_count = 0
 
     for func_name, func_data in NIST_RMF_FUNCTIONS.items():
-        implemented = func_name in [f.upper() for f in functions] or rng.random() > 0.3
-        subcategory_scores: dict[str, float] = {}
+        implemented = func_name in implemented_functions
+        subcat_map: dict[str, Optional[float]] = {}
+        func_sum = 0.0
+        func_count = 0
         for subcat in func_data["subcategories"]:
-            base = rng.uniform(0.4, 1.0) if implemented else rng.uniform(0.1, 0.5)
-            score = round(base, 3)
-            subcategory_scores[subcat] = score
+            raw = supplied_scores.get(subcat)
+            if raw is None:
+                subcat_map[subcat] = None
+                continue
+            score = round(float(raw), 3)
+            subcat_map[subcat] = score
             all_subcategory_scores[subcat] = score
+            func_sum += score
+            func_count += 1
             total_score += score
             total_count += 1
 
-        func_avg = sum(subcategory_scores.values()) / len(subcategory_scores)
+        func_avg = round(func_sum / func_count, 3) if func_count else None
         function_scores[func_name] = {
             "description": func_data["description"],
             "implemented": implemented,
-            "average_score": round(func_avg, 3),
-            "subcategory_scores": subcategory_scores,
+            "average_score": func_avg,
+            "subcategories_scored": func_count,
+            "subcategory_scores": subcat_map,
         }
 
-    overall_score = total_score / total_count if total_count else 0
+    maturity_levels = {"critical": 1, "high": 2, "medium": 3, "low": 4}
+
+    if total_count == 0:
+        # No real evidence supplied — honest null rather than a fabricated posture.
+        return {
+            "entity_id": entity_id,
+            "system_name": system_name,
+            "nist_rmf_version": "1.0",
+            "overall_score": None,
+            "risk_tier": "insufficient_data",
+            "maturity_level": None,
+            "function_scores": function_scores,
+            "total_subcategories_assessed": 0,
+            "gap_analysis": {"top_10_gaps": []},
+            "recommended_actions": [],
+            "certification_readiness": {
+                "iso_42001_gap_pct": None,
+                "nist_ai_rmf_conformance_pct": None,
+            },
+            "data_status": "insufficient_data: no subcategory scores supplied",
+            "assessed_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    overall_score = total_score / total_count
 
     # Determine risk tier
     if overall_score >= 0.8:
@@ -279,7 +329,7 @@ def assess_nist_rmf(
     else:
         risk_tier = "critical"
 
-    # Gap analysis — identify lowest scoring subcategories
+    # Gap analysis — identify lowest scoring subcategories (from real scores only)
     sorted_gaps = sorted(all_subcategory_scores.items(), key=lambda x: x[1])
     top_gaps = sorted_gaps[:10]
 
@@ -297,13 +347,6 @@ def assess_nist_rmf(
             "priority": "high" if score < 0.4 else "medium",
         })
 
-    maturity_levels = {
-        "critical": 1,
-        "high": 2,
-        "medium": 3,
-        "low": 4,
-    }
-
     return {
         "entity_id": entity_id,
         "system_name": system_name,
@@ -319,6 +362,7 @@ def assess_nist_rmf(
             "iso_42001_gap_pct": round((1 - overall_score) * 100, 1),
             "nist_ai_rmf_conformance_pct": round(overall_score * 100, 1),
         },
+        "data_status": "ok",
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -329,28 +373,55 @@ def detect_algorithmic_bias(
     protected_attributes: list[str],
     performance_metrics: dict[str, float],
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    # Real fairness measurements come only from the caller-supplied `performance_metrics`.
+    # For each (attribute, metric) we look up "{attr}_{metric}" then fall back to a bare
+    # "{metric}" key. Missing measurements are honest nulls (value=None, violation=None) and
+    # are excluded from averages — no metric value is ever fabricated.
+    pm = performance_metrics or {}
+
+    def _lookup(attr: str, metric: str) -> Optional[float]:
+        for key in (f"{attr}_{metric}", f"{attr}.{metric}", metric):
+            if key in pm and pm[key] is not None:
+                try:
+                    return float(pm[key])
+                except (TypeError, ValueError):
+                    return None
+        return None
 
     bias_results: list[dict] = []
-    overall_bias_score = 0.0
+    overall_bias_sum = 0.0
+    overall_bias_count = 0
 
     for attr in protected_attributes:
-        attr_seed = rng.random()
-        attr_rng = random.Random(hash(f"{entity_id}_{attr}") & 0xFFFFFFFF)
-
         metric_results: list[dict] = []
         attr_bias_sum = 0.0
+        attr_measured = 0
 
         for bm in BIAS_METRICS:
             metric = bm["metric"]
             threshold = bm["threshold"]
-            # Simulate metric value
-            raw_value = attr_rng.uniform(0.0, 0.35)
+            raw_value = _lookup(attr, metric)
+
+            if raw_value is None:
+                # No measurement supplied — do not invent one.
+                metric_results.append({
+                    "metric": metric,
+                    "description": bm["description"],
+                    "value": None,
+                    "threshold": threshold,
+                    "violation": None,
+                    "severity": "not_measured",
+                    "gdpr_art22_relevant": bm["gdpr_relevant"],
+                    "mitigation_recommendations": [],
+                })
+                continue
+
             violation = raw_value > threshold
             severity = "critical" if raw_value > threshold * 3 else "high" if raw_value > threshold * 2 else "medium" if violation else "low"
             attr_bias_sum += raw_value
+            attr_measured += 1
 
-            mitigation = []
+            mitigation: list[str] = []
             if violation:
                 if "parity" in metric:
                     mitigation = ["Resampling (SMOTE/undersampling)", "Reweighing training data", "Threshold adjustment by group"]
@@ -374,41 +445,54 @@ def detect_algorithmic_bias(
                 "mitigation_recommendations": mitigation,
             })
 
-        attr_avg_bias = attr_bias_sum / len(BIAS_METRICS)
-        overall_bias_score += attr_avg_bias
+        attr_avg_bias = round(attr_bias_sum / attr_measured, 4) if attr_measured else None
+        if attr_avg_bias is not None:
+            overall_bias_sum += attr_avg_bias
+            overall_bias_count += 1
         bias_results.append({
             "protected_attribute": attr,
-            "attribute_bias_score": round(attr_avg_bias, 4),
+            "attribute_bias_score": attr_avg_bias,
+            "metrics_measured": attr_measured,
             "metrics": metric_results,
         })
 
-    overall_bias_score = overall_bias_score / len(protected_attributes) if protected_attributes else 0
-    disparate_impact_ratio = round(rng.uniform(0.6, 1.0), 3)
-    intersectionality_score = round(rng.uniform(0.0, 0.4), 4) if len(protected_attributes) > 1 else 0.0
+    overall_bias_score = round(overall_bias_sum / overall_bias_count, 4) if overall_bias_count else None
+
+    # Disparate-impact ratio and intersectionality score are used only if measured and supplied.
+    dir_raw = pm.get("disparate_impact_ratio")
+    disparate_impact_ratio = round(float(dir_raw), 3) if dir_raw is not None else None
+    if len(protected_attributes) > 1 and pm.get("intersectionality_score") is not None:
+        intersectionality_score = round(float(pm["intersectionality_score"]), 4)
+    else:
+        intersectionality_score = None
 
     gdpr_art22_flag = any(
-        m["gdpr_art22_relevant"] and m["violation"]
+        m["gdpr_art22_relevant"] and m["violation"] is True
         for group in bias_results
         for m in group["metrics"]
     )
+
+    total_measured = sum(g["metrics_measured"] for g in bias_results)
 
     return {
         "entity_id": entity_id,
         "model_type": model_type,
         "protected_attributes": protected_attributes,
-        "overall_bias_score": round(overall_bias_score, 4),
+        "overall_bias_score": overall_bias_score,
         "disparate_impact_ratio": disparate_impact_ratio,
         "intersectionality_score": intersectionality_score,
         "gdpr_article22_profiling_flag": gdpr_art22_flag,
         "bias_results_by_attribute": bias_results,
         "bias_metrics_used": [bm["metric"] for bm in BIAS_METRICS],
+        "total_metrics_measured": total_measured,
         "total_violations": sum(
-            1 for group in bias_results for m in group["metrics"] if m["violation"]
+            1 for group in bias_results for m in group["metrics"] if m["violation"] is True
         ),
+        "data_status": "ok" if total_measured else "insufficient_data: no fairness metrics supplied",
         "regulatory_exposure": {
             "gdpr_art22_automated_decision": gdpr_art22_flag,
-            "eu_ai_act_fundamental_rights": overall_bias_score > 0.15,
-            "eu_equality_directive": disparate_impact_ratio < 0.8,
+            "eu_ai_act_fundamental_rights": (overall_bias_score is not None and overall_bias_score > 0.15),
+            "eu_equality_directive": (disparate_impact_ratio is not None and disparate_impact_ratio < 0.8),
             "max_fine_gdpr_eur": 20_000_000 if gdpr_art22_flag else 0,
         },
         "assessed_at": datetime.now(timezone.utc).isoformat(),
@@ -419,8 +503,18 @@ def score_explainability(
     entity_id: str,
     model_type: str,
     explanation_methods: list[str],
+    compliance_attestations: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    # Checklist items that cannot be derived from the supplied XAI methods come only from
+    # caller-supplied attestations (`compliance_attestations`). Absent attestations default to
+    # False = "not demonstrated" (conservative, honest for a compliance checklist) — never a
+    # random draw. `compliance_attestations` = {"annex12": {...}, "gdpr_recital71": {...}}.
+    attest = compliance_attestations or {}
+    annex12_attest = attest.get("annex12", {}) if isinstance(attest.get("annex12"), dict) else {}
+    rec71_attest = attest.get("gdpr_recital71", {}) if isinstance(attest.get("gdpr_recital71"), dict) else {}
+
+    def _att(source: dict, key: str) -> bool:
+        return bool(source.get(key, False))
 
     method_lower = [m.lower() for m in explanation_methods]
     available_methods: dict[str, bool] = {
@@ -436,26 +530,28 @@ def score_explainability(
     method_count = sum(available_methods.values())
     method_coverage_score = min(method_count / 4, 1.0)
 
-    # Annex XII transparency requirements (EU AI Act)
+    # Annex XII transparency requirements (EU AI Act) — from attestations, not fabrication.
+    # This assessment artefact itself satisfies the technical-transparency-doc item.
     annex12_requirements = {
         "technical_transparency_doc": True,
-        "instructions_for_use": rng.random() > 0.2,
-        "intended_purpose_documented": rng.random() > 0.15,
-        "performance_metrics_disclosed": rng.random() > 0.25,
-        "training_data_described": rng.random() > 0.3,
-        "limitations_and_risks": rng.random() > 0.2,
-        "human_oversight_measures": rng.random() > 0.25,
-        "technical_accuracy_metrics": rng.random() > 0.2,
+        "instructions_for_use": _att(annex12_attest, "instructions_for_use"),
+        "intended_purpose_documented": _att(annex12_attest, "intended_purpose_documented"),
+        "performance_metrics_disclosed": _att(annex12_attest, "performance_metrics_disclosed"),
+        "training_data_described": _att(annex12_attest, "training_data_described"),
+        "limitations_and_risks": _att(annex12_attest, "limitations_and_risks"),
+        "human_oversight_measures": _att(annex12_attest, "human_oversight_measures"),
+        "technical_accuracy_metrics": _att(annex12_attest, "technical_accuracy_metrics"),
     }
     annex12_score = sum(annex12_requirements.values()) / len(annex12_requirements)
 
-    # GDPR Recital 71 — right to explanation
+    # GDPR Recital 71 — right to explanation. First two items are derived from actual XAI
+    # methods (real); the remaining three come from attestations (default False).
     gdpr_rec71_compliance = {
-        "meaningful_information_provided": available_methods.get("shap") or available_methods.get("lime"),
+        "meaningful_information_provided": bool(available_methods.get("shap") or available_methods.get("lime")),
         "logic_of_processing_explained": method_count >= 2,
-        "significance_and_consequences_explained": rng.random() > 0.3,
-        "right_to_contest_supported": rng.random() > 0.4,
-        "human_review_available": rng.random() > 0.3,
+        "significance_and_consequences_explained": _att(rec71_attest, "significance_and_consequences_explained"),
+        "right_to_contest_supported": _att(rec71_attest, "right_to_contest_supported"),
+        "human_review_available": _att(rec71_attest, "human_review_available"),
     }
     gdpr_rec71_score = sum(gdpr_rec71_compliance.values()) / len(gdpr_rec71_compliance)
 
@@ -512,9 +608,10 @@ def calculate_ai_liability(
     entity_id: str,
     system_type: str,
     harm_scenarios: list[dict[str, Any]],
+    standard_policy_coverage_usd: Optional[float] = None,
+    damage_severity_rates: Optional[dict[str, float]] = None,
+    do_inputs: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
     # Liability frameworks
     frameworks = {
         "eu_ai_liability_directive_2022": {
@@ -535,25 +632,47 @@ def calculate_ai_liability(
         },
     }
 
-    # Damage assessment by scenario
+    # Damage assessment by scenario.
+    # Severity fractions are documented deterministic model parameters (share of nominal harm
+    # magnitude that materialises as recoverable damage per category), overridable by the caller.
+    # These are NOT per-entity random draws.
+    DEFAULT_DAMAGE_SEVERITY_RATES = {
+        "physical": 0.55,
+        "property": 0.40,
+        "psychological": 0.25,
+        "fundamental_rights": 0.325,
+        "data_loss": 0.20,
+    }
+    damage_category_rates = {**DEFAULT_DAMAGE_SEVERITY_RATES, **(damage_severity_rates or {})}
+
     total_liability_usd = 0.0
     scenario_assessments: list[dict] = []
-
-    damage_category_rates = {
-        "physical": rng.uniform(0.3, 0.8),
-        "property": rng.uniform(0.2, 0.6),
-        "psychological": rng.uniform(0.1, 0.4),
-        "fundamental_rights": rng.uniform(0.15, 0.5),
-        "data_loss": rng.uniform(0.1, 0.3),
-    }
+    scenarios_missing_inputs = 0
 
     for scenario in harm_scenarios:
-        scenario_rng = random.Random(hash(f"{entity_id}_{scenario.get('name', '')}") & 0xFFFFFFFF)
-        probability = scenario.get("probability", scenario_rng.uniform(0.05, 0.4))
-        harm_magnitude_usd = scenario.get("harm_magnitude_usd", scenario_rng.uniform(100_000, 10_000_000))
         harm_type = scenario.get("harm_type", "physical")
-
+        probability = scenario.get("probability")
+        harm_magnitude_usd = scenario.get("harm_magnitude_usd")
         rate = damage_category_rates.get(harm_type, 0.3)
+
+        # Probability and harm magnitude must be supplied per scenario — never invented.
+        if probability is None or harm_magnitude_usd is None:
+            scenarios_missing_inputs += 1
+            scenario_assessments.append({
+                "scenario": scenario.get("name", f"Scenario_{len(scenario_assessments)+1}"),
+                "harm_type": harm_type,
+                "probability": probability,
+                "harm_magnitude_usd": harm_magnitude_usd,
+                "expected_loss_usd": None,
+                "strict_liability_exposure_usd": None,
+                "fault_based_likely": harm_type in ["fundamental_rights", "psychological"],
+                "strict_liable_under_pld": harm_type in ["physical", "property", "data_loss"],
+                "data_status": "insufficient_data: probability and harm_magnitude_usd required",
+            })
+            continue
+
+        probability = float(probability)
+        harm_magnitude_usd = float(harm_magnitude_usd)
         expected_loss = probability * harm_magnitude_usd * rate
         strict_liability_exposure = harm_magnitude_usd * rate  # no fault needed
         total_liability_usd += expected_loss
@@ -563,22 +682,34 @@ def calculate_ai_liability(
             "harm_type": harm_type,
             "probability": probability,
             "harm_magnitude_usd": harm_magnitude_usd,
+            "severity_rate": rate,
             "expected_loss_usd": round(expected_loss, 0),
             "strict_liability_exposure_usd": round(strict_liability_exposure, 0),
             "fault_based_likely": harm_type in ["fundamental_rights", "psychological"],
             "strict_liable_under_pld": harm_type in ["physical", "property", "data_loss"],
+            "data_status": "ok",
         })
 
-    # Insurance gap
-    standard_coverage_usd = rng.uniform(1e6, 20e6)
-    coverage_gap_usd = max(0, total_liability_usd - standard_coverage_usd)
+    # Insurance gap — computed only against a caller-supplied policy limit; None when unknown.
+    if standard_policy_coverage_usd is None:
+        coverage_gap_usd = None
+        recommended_additional_coverage_usd = None
+        gap_exists = None
+        standard_coverage_out = None
+    else:
+        standard_coverage_out = round(float(standard_policy_coverage_usd), 0)
+        coverage_gap_usd = round(max(0.0, total_liability_usd - float(standard_policy_coverage_usd)), 0)
+        recommended_additional_coverage_usd = round(coverage_gap_usd * 1.2, 0)
+        gap_exists = coverage_gap_usd > 0
 
-    # D&O exposure
+    # D&O exposure — quantitative fields come only from caller-supplied `do_inputs`; None otherwise.
+    doi = do_inputs or {}
+    est_do_claim = doi.get("estimated_do_claim_usd")
     do_exposure = {
-        "personal_liability_directors": rng.random() > 0.4,
+        "personal_liability_directors": doi.get("personal_liability_directors"),
         "ai_governance_failure_exposure": True,
-        "estimated_do_claim_usd": round(rng.uniform(500_000, 5_000_000), 0),
-        "coverage_adequate": rng.random() > 0.5,
+        "estimated_do_claim_usd": round(float(est_do_claim), 0) if est_do_claim is not None else None,
+        "coverage_adequate": doi.get("coverage_adequate"),
         "recommended_ai_riders": ["AI liability extension", "Cyber-AI combined rider", "Regulatory defence costs"],
     }
 
@@ -587,12 +718,13 @@ def calculate_ai_liability(
         "system_type": system_type,
         "liability_frameworks": frameworks,
         "total_expected_liability_usd": round(total_liability_usd, 0),
+        "scenarios_missing_inputs": scenarios_missing_inputs,
         "scenario_assessments": scenario_assessments,
         "insurance": {
-            "standard_policy_coverage_usd": round(standard_coverage_usd, 0),
-            "coverage_gap_usd": round(coverage_gap_usd, 0),
-            "gap_exists": coverage_gap_usd > 0,
-            "recommended_additional_coverage_usd": round(coverage_gap_usd * 1.2, 0),
+            "standard_policy_coverage_usd": standard_coverage_out,
+            "coverage_gap_usd": coverage_gap_usd,
+            "gap_exists": gap_exists,
+            "recommended_additional_coverage_usd": recommended_additional_coverage_usd,
         },
         "do_exposure": do_exposure,
         "mitigation_actions": [

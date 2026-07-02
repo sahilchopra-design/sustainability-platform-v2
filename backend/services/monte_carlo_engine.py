@@ -315,8 +315,12 @@ class MonteCarloEngine:
         z_q = float(stats.norm.ppf(quantile))
         pd_safe = np.clip(pd_adj, 1e-6, 1.0 - 1e-6)
         z_pd = stats.norm.ppf(pd_safe)                         # (N, M)
+        # Basel ASRF conditional PD at the q-quantile of the systematic factor:
+        # Phi[(Phi^-1(PD) + sqrt(rho)*Phi^-1(q)) / sqrt(1-rho)]. The sign is ADD:
+        # a worse systematic state (q=0.999, z_q=+3.09) must RAISE the conditional PD.
+        # (Previously subtracted -> conditional PD < PD -> the 99.9% "VaR" fell below EL.)
         conditional_pd = stats.norm.cdf(
-            (z_pd - math.sqrt(rho) * z_q) / math.sqrt(1.0 - rho)
+            (z_pd + math.sqrt(rho) * z_q) / math.sqrt(1.0 - rho)
         )                                                        # (N, M)
         var_portfolio = np.sum(ead_adj * lgd_adj * conditional_pd, axis=1)  # (N,)
         return var_portfolio

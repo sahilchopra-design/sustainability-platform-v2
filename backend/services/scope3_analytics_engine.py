@@ -13,7 +13,6 @@ Standards covered:
 """
 from __future__ import annotations
 
-import random
 from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
@@ -363,8 +362,6 @@ class Scope3AnalyticsEngine:
         total_scope3_tco2e: float,
         scope12_total_tco2e: float,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         all_categories = set(range(1, 16))
         reported_set = set(int(k) for k in reported_categories.keys())
         missing_set = all_categories - reported_set
@@ -412,9 +409,9 @@ class Scope3AnalyticsEngine:
         entity_id: str,
         sector: str,
         category_inputs: dict,
+        flag_share: Optional[float] = None,
+        revenue_musd: Optional[float] = None,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         profile = SECTOR_SCOPE3_PROFILES.get(sector, SECTOR_SCOPE3_PROFILES["technology"])
         category_breakdown: dict[str, Any] = {}
         total_tco2e = 0.0
@@ -423,29 +420,34 @@ class Scope3AnalyticsEngine:
             cat_key = str(cat_num)
             cat_meta = SCOPE3_CATEGORIES[cat_num]
             if cat_key in category_inputs:
-                raw = category_inputs[cat_key]
-                # Spend-based fallback: apply EF
-                tco2e = round(float(raw) * rng.uniform(0.9, 1.1), 2)
+                # Caller-supplied category emissions (already tCO2e); no fabricated jitter.
+                tco2e = round(float(category_inputs[cat_key]), 2)
+                method = "reported"
             else:
-                # Estimate based on sector dominance
-                is_dominant = cat_num in profile["dominant_categories"]
-                base = rng.uniform(500, 50000) if is_dominant else rng.uniform(10, 2000)
-                tco2e = round(base, 2)
+                # Not reported by the entity — honest null, not a fabricated estimate.
+                tco2e = 0.0
+                method = "not_reported"
 
             category_breakdown[cat_key] = {
                 "name": cat_meta["name"],
                 "tco2e": tco2e,
-                "method": "supplier-specific" if cat_key in category_inputs else "estimated",
+                "method": method,
                 "flag_relevant": cat_meta["flag_relevant"],
             }
             total_tco2e += tco2e
 
-        # FLAG emissions
+        # FLAG emissions: only when a caller supplies the FLAG share of the total
+        # (fraction 0..1). Absent an input, do not fabricate a share.
         flag_tco2e = 0.0
-        if profile["flag_materiality"]:
-            flag_tco2e = round(total_tco2e * 0.35 + rng.uniform(-100, 100), 2)
+        if profile["flag_materiality"] and flag_share is not None:
+            share = min(1.0, max(0.0, float(flag_share)))
+            flag_tco2e = round(total_tco2e * share, 2)
 
-        scope3_intensity = round(total_tco2e / max(1, sum(float(v) for v in category_inputs.values()) or 1), 4)
+        # Emissions intensity per $M revenue — only when a revenue denominator is
+        # supplied; otherwise honest null (no synthetic denominator).
+        scope3_intensity: Optional[float] = None
+        if revenue_musd is not None and float(revenue_musd) > 0:
+            scope3_intensity = round(total_tco2e / float(revenue_musd), 4)
         dominant_cats = sorted(
             category_breakdown.items(), key=lambda x: x[1]["tco2e"], reverse=True
         )[:3]
@@ -471,8 +473,6 @@ class Scope3AnalyticsEngine:
         sector: str,
         category_methods: dict,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         method_dqs_map = {
             "supplier-specific-verified": 1,
             "supplier-specific": 2,
@@ -535,17 +535,26 @@ class Scope3AnalyticsEngine:
         supplier_engagement_pct: float,
         downstream_coverage_pct: float,
         flag_tco2e: float,
+        current_reduction_rate_pa: Optional[float] = None,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         thresholds = SBTI_SCOPE3_THRESHOLDS.get(sector, SBTI_SCOPE3_THRESHOLDS["default"])
 
         engagement_target_met = supplier_engagement_pct >= thresholds["engagement_target_pct"]
         downstream_met = downstream_coverage_pct >= 67.0
 
-        # Absolute contraction: 4.2% pa over 5 years = ~19% total
-        current_reduction_rate = round(rng.uniform(1.0, 6.0), 2)
-        absolute_target_validated = current_reduction_rate >= thresholds["absolute_contraction_pct"]
+        # Absolute contraction: 4.2% pa over 5 years = ~19% total.
+        # The achieved annual reduction rate must come from the caller (measured
+        # year-over-year Scope 3 reduction). Absent it, the target cannot be
+        # validated — report an honest null rather than a fabricated rate.
+        current_reduction_rate: Optional[float] = (
+            round(float(current_reduction_rate_pa), 2)
+            if current_reduction_rate_pa is not None
+            else None
+        )
+        absolute_target_validated = (
+            current_reduction_rate is not None
+            and current_reduction_rate >= thresholds["absolute_contraction_pct"]
+        )
 
         # FLAG
         profile = SECTOR_SCOPE3_PROFILES.get(sector, {})
@@ -554,7 +563,11 @@ class Scope3AnalyticsEngine:
 
         sbti_scope3_compliant = engagement_target_met and absolute_target_validated
 
-        gap_to_sbti = round(max(0, scope3_tco2e * (thresholds["absolute_contraction_pct"] - current_reduction_rate) / 100), 2)
+        gap_to_sbti = (
+            round(max(0, scope3_tco2e * (thresholds["absolute_contraction_pct"] - current_reduction_rate) / 100), 2)
+            if current_reduction_rate is not None
+            else None
+        )
 
         return {
             "entity_id": entity_id,
@@ -583,18 +596,25 @@ class Scope3AnalyticsEngine:
         baseline_product_emission_factor: float,
         product_emission_factor: float,
         methodology: str = "displacement",
+        displacement_factor: Optional[float] = None,
+        additionality_score: Optional[float] = None,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         delta_ef = baseline_product_emission_factor - product_emission_factor
         avoided_emissions_tco2e = round(max(0, delta_ef * annual_units_sold), 2)
 
-        # Displacement factor: fraction of baseline actually displaced
-        displacement_factor = round(max(0.3, min(1.0, rng.uniform(0.5, 0.95))), 2)
-        adjusted_avoided = round(avoided_emissions_tco2e * displacement_factor, 2)
+        # Displacement factor: fraction of baseline actually displaced. This is a
+        # study-specific input, not a modellable default — when the caller does
+        # not supply it, report gross avoided emissions with no fabricated discount.
+        if displacement_factor is not None:
+            displacement_factor = round(max(0.0, min(1.0, float(displacement_factor))), 2)
+            adjusted_avoided = round(avoided_emissions_tco2e * displacement_factor, 2)
+        else:
+            adjusted_avoided = avoided_emissions_tco2e
 
-        # Additionality: would the baseline have changed anyway?
-        additionality_score = round(rng.uniform(0.4, 1.0), 2)
+        # Additionality: would the baseline have changed anyway? Assessed per project;
+        # honest null when not supplied rather than a fabricated score.
+        if additionality_score is not None:
+            additionality_score = round(max(0.0, min(1.0, float(additionality_score))), 2)
 
         # Methodology tier
         if methodology == "displacement":
@@ -632,8 +652,6 @@ class Scope3AnalyticsEngine:
         sector: str,
         category_data: dict,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         risk_pairs = []
         for pair_key, pair_meta in DOUBLE_COUNTING_RISKS.items():
             applies = (
@@ -656,7 +674,7 @@ class Scope3AnalyticsEngine:
 
         high_risk = sum(1 for p in risk_pairs if p["risk_level"] == "HIGH")
         estimated_double_count_pct = round(
-            min(30, high_risk * 8.0 + len(risk_pairs) * 2.5 + rng.uniform(-2, 2)), 2
+            min(30, high_risk * 8.0 + len(risk_pairs) * 2.5), 2
         )
 
         adjustment = "Subtract estimated overlap" if estimated_double_count_pct > 5 else "No material adjustment required"

@@ -6,8 +6,18 @@ OECD Ocean Finance Framework, Ocean Acidification (IPCC AR6 Chapter 3)
 """
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
-import random
 import math
+
+# ---------------------------------------------------------------------------
+# Model calibration constants (deterministic model parameters — NOT
+# entity-reported figures). Documented so they are auditable.
+# ---------------------------------------------------------------------------
+
+# Adaptation cost as a fraction of ocean-acidification VaR. Central estimate
+# used when the caller does not supply a project-specific adaptation ratio.
+# Source: OECD Ocean Finance Framework 2022 adaptation-cost guidance (~25% of
+# quantified loss). Applied to a computed VaR, so this is a model parameter.
+DEFAULT_ADAPTATION_COST_RATIO = 0.25
 
 # ---------------------------------------------------------------------------
 # Reference Data
@@ -257,44 +267,47 @@ class BlueBondScreeningResult:
     ineligible_categories: List[str]
     sof_pillar_coverage: Dict[str, float]
     use_of_proceeds_breakdown: Dict[str, float]
-    greenium_bps: float
+    greenium_bps: Optional[float]
     external_review_required: bool
     reporting_frequency: str
     overall_verdict: str  # fully_aligned | partially_aligned | not_aligned
     recommendations: List[str]
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
 class BlueCarbonResult:
     project_id: str
     ecosystem_type: str
-    area_hectares: float
+    area_hectares: Optional[float]
     sequestration_rate_tco2_ha_yr: float
-    total_annual_sequestration_tco2: float
+    total_annual_sequestration_tco2: Optional[float]
     project_lifetime_years: int
-    total_lifetime_sequestration_tco2: float
-    additionality_score: float
-    permanence_score: float
+    total_lifetime_sequestration_tco2: Optional[float]
+    additionality_score: Optional[float]
+    permanence_score: Optional[float]
     co_benefits: List[str]
-    verra_vcs_eligible: bool
-    gold_standard_eligible: bool
-    carbon_credit_value_usd: float
-    monitoring_cost_usd_yr: float
-    net_revenue_usd_yr: float
+    verra_vcs_eligible: Optional[bool]
+    gold_standard_eligible: Optional[bool]
+    carbon_credit_value_usd: Optional[float]
+    monitoring_cost_usd_yr: Optional[float]
+    net_revenue_usd_yr: Optional[float]
     verification_cycle_years: int
-    risk_buffer_pct: float
+    risk_buffer_pct: Optional[float]
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
 class BBNJComplianceResult:
     entity_id: str
     entity_type: str
-    article_scores: Dict[str, float]
-    overall_compliance_score: float
-    compliance_level: str  # compliant | partial | non_compliant
+    article_scores: Dict[str, Optional[float]]
+    overall_compliance_score: Optional[float]
+    compliance_level: str  # compliant | partial | non_compliant | insufficient_data
     gaps: List[str]
     priority_actions: List[str]
     bbnj_readiness_timeline: str
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -304,28 +317,30 @@ class OceanAcidificationRisk:
     ph_change_2100: float
     aragonite_saturation: float
     risk_level: str
-    ocean_economy_exposure_usd: float
-    fisheries_revenue_at_risk_usd: float
-    coral_reef_asset_at_risk_usd: float
-    aquaculture_at_risk_usd: float
-    total_oa_var_usd: float
-    adaptation_cost_estimate_usd: float
+    ocean_economy_exposure_usd: Optional[float]
+    fisheries_revenue_at_risk_usd: Optional[float]
+    coral_reef_asset_at_risk_usd: Optional[float]
+    aquaculture_at_risk_usd: Optional[float]
+    total_oa_var_usd: Optional[float]
+    adaptation_cost_estimate_usd: Optional[float]
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
 class OceanPortfolioResult:
     portfolio_id: str
-    total_blue_assets_usd: float
-    sof_score: float
-    sof_pillar_scores: Dict[str, float]
-    blue_bond_allocation_pct: float
-    blue_carbon_credits_tco2: float
-    mpa_financing_usd: float
-    ocean_risk_score: float
-    oa_risk_var_usd: float
+    total_blue_assets_usd: Optional[float]
+    sof_score: Optional[float]
+    sof_pillar_scores: Dict[str, Optional[float]]
+    blue_bond_allocation_pct: Optional[float]
+    blue_carbon_credits_tco2: Optional[float]
+    mpa_financing_usd: Optional[float]
+    ocean_risk_score: Optional[float]
+    oa_risk_var_usd: Optional[float]
     top_blue_economy_sectors: List[Dict]
-    sdg14_alignment_score: float
+    sdg14_alignment_score: Optional[float]
     recommendations: List[str]
+    data_flags: List[str] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -333,36 +348,56 @@ class OceanPortfolioResult:
 # ---------------------------------------------------------------------------
 
 def screen_blue_bond(bond_data: Dict[str, Any]) -> BlueBondScreeningResult:
-    """Screen a bond against ICMA Blue Bond Principles 2023 and SOF framework."""
-    entity_id = bond_data.get("entity_id", "default")
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Screen a bond against ICMA Blue Bond Principles 2023 and SOF framework.
 
-    bond_id = bond_data.get("bond_id", f"BB-{rng.randint(1000, 9999)}")
-    issuer = bond_data.get("issuer", "Unknown Issuer")
-    bond_amount_usd = float(bond_data.get("bond_amount_usd", 500_000_000))
-    declared_categories = bond_data.get("use_of_proceeds_categories", list(BLUE_BOND_USE_OF_PROCEEDS.keys())[:4])
+    ICMA alignment is computed deterministically from the reference alignment
+    scores of the declared eligible categories (BLUE_BOND_USE_OF_PROCEEDS).
+    ``greenium_bps`` is a market-observed figure: it is returned only when the
+    caller supplies ``observed_greenium_bps`` (or a target), otherwise None.
+    """
+    entity_id = bond_data.get("entity_id", "default")
+    data_flags: List[str] = []
+
+    raw_bond_id = bond_data.get("bond_id")
+    # Deterministic, stable synthetic label when no bond_id is provided.
+    bond_id = raw_bond_id if raw_bond_id else f"BB-{(hash(str(entity_id)) & 0xFFFF):04d}"
+    issuer = bond_data.get("issuer") or "Unknown Issuer"
+    bond_amount_usd = float(bond_data.get("bond_amount_usd") or 500_000_000)
+    declared_categories = bond_data.get("use_of_proceeds_categories") or list(BLUE_BOND_USE_OF_PROCEEDS.keys())[:4]
+
+    # Optional caller-supplied per-category allocation percentages (real data).
+    supplied_alloc = bond_data.get("use_of_proceeds_allocation_pct") or {}
 
     eligible_categories = []
     ineligible_categories = []
     weighted_alignment = 0.0
     sof_pillar_coverage: Dict[str, float] = {p: 0.0 for p in SOF_PILLARS}
     use_of_proceeds_breakdown: Dict[str, float] = {}
+    used_reference_allocation = False
 
+    n = len(declared_categories) if declared_categories else 0
     for cat in declared_categories:
         if cat in BLUE_BOND_USE_OF_PROCEEDS:
             cat_data = BLUE_BOND_USE_OF_PROCEEDS[cat]
-            score = cat_data["icma_alignment_score"]
-            noise = rng.uniform(-0.03, 0.03)
-            final_score = max(0.5, min(1.0, score + noise))
+            # Reference ICMA alignment score for the category (real reference data).
+            final_score = max(0.0, min(1.0, cat_data["icma_alignment_score"]))
             eligible_categories.append(cat)
-            weighted_alignment += final_score / len(declared_categories)
+            weighted_alignment += final_score / n
             pillar = cat_data["sof_pillar"]
             if pillar in sof_pillar_coverage:
-                sof_pillar_coverage[pillar] += 1.0 / len(declared_categories)
-            alloc_pct = cat_data["typical_allocation_pct"] + rng.uniform(-3, 3)
-            use_of_proceeds_breakdown[cat] = round(alloc_pct, 1)
+                sof_pillar_coverage[pillar] += 1.0 / n
+            # Use caller-supplied allocation when present, else the ICMA
+            # reference typical allocation. No random perturbation.
+            if cat in supplied_alloc and supplied_alloc[cat] is not None:
+                use_of_proceeds_breakdown[cat] = round(float(supplied_alloc[cat]), 1)
+            else:
+                use_of_proceeds_breakdown[cat] = round(float(cat_data["typical_allocation_pct"]), 1)
+                used_reference_allocation = True
         else:
             ineligible_categories.append(cat)
+
+    if used_reference_allocation:
+        data_flags.append("use_of_proceeds_breakdown uses ICMA reference typical allocations (no issuer-declared split supplied)")
 
     # Normalise sof pillar coverage
     total_pillar = sum(sof_pillar_coverage.values())
@@ -374,7 +409,17 @@ def screen_blue_bond(bond_data: Dict[str, Any]) -> BlueBondScreeningResult:
     if total_alloc > 0:
         use_of_proceeds_breakdown = {k: round(v / total_alloc * 100, 1) for k, v in use_of_proceeds_breakdown.items()}
 
-    greenium_bps = round(rng.uniform(2.0, 8.0) * weighted_alignment, 2)
+    # Greenium is a market/pricing observation, not derivable from alignment.
+    # Return the caller-supplied value if present, otherwise an honest null.
+    observed_greenium = bond_data.get("observed_greenium_bps")
+    if observed_greenium is None:
+        observed_greenium = bond_data.get("greenium_bps")
+    if observed_greenium is not None:
+        greenium_bps = round(float(observed_greenium), 2)
+    else:
+        greenium_bps = None
+        data_flags.append("greenium_bps unavailable: no observed/target greenium supplied (market-priced input)")
+
     external_review_required = bond_amount_usd >= 100_000_000 or weighted_alignment < 0.75
 
     if weighted_alignment >= 0.85:
@@ -396,7 +441,7 @@ def screen_blue_bond(bond_data: Dict[str, Any]) -> BlueBondScreeningResult:
         recommendations.append("Include marine conservation category to strengthen SDG14 alignment")
     if external_review_required:
         recommendations.append("Obtain external review per ICMA Blue Bond Principles Section 3")
-    if greenium_bps < 3.0:
+    if greenium_bps is not None and greenium_bps < 3.0:
         recommendations.append("Improve use-of-proceeds specificity to capture higher greenium")
 
     return BlueBondScreeningResult(
@@ -413,103 +458,161 @@ def screen_blue_bond(bond_data: Dict[str, Any]) -> BlueBondScreeningResult:
         reporting_frequency=reporting_freq,
         overall_verdict=verdict,
         recommendations=recommendations,
+        data_flags=data_flags,
     )
 
 
 def assess_blue_carbon(project_data: Dict[str, Any]) -> BlueCarbonResult:
-    """Calculate blue carbon sequestration, additionality, permanence, and credit economics."""
-    project_id = project_data.get("project_id", "default")
-    rng = random.Random(hash(str(project_id)) & 0xFFFFFFFF)
+    """Calculate blue carbon sequestration, additionality, permanence, and credit economics.
 
-    ecosystem_type = project_data.get("ecosystem_type", "mangrove")
+    Sequestration uses the ecosystem reference mean rate (IPCC/Blue Carbon
+    Initiative — a deterministic model parameter). Area, project quality
+    scores (threat/tenure/baseline/governance) and carbon price are
+    caller-supplied inputs; when absent the dependent metrics are returned as
+    honest nulls with a data flag rather than fabricated.
+    """
+    project_id = project_data.get("project_id", "default")
+    data_flags: List[str] = []
+
+    ecosystem_type = project_data.get("ecosystem_type") or "mangrove"
     if ecosystem_type not in BLUE_CARBON_ECOSYSTEMS:
         ecosystem_type = "mangrove"
     eco = BLUE_CARBON_ECOSYSTEMS[ecosystem_type]
 
-    area_ha = float(project_data.get("area_hectares", rng.uniform(100, 5000)))
-    seq_rate = rng.uniform(eco["sequestration_rate_min_tco2_ha_yr"], eco["sequestration_rate_max_tco2_ha_yr"])
+    # Sequestration rate: reference mean for the ecosystem (real reference data,
+    # deterministic model parameter).
+    seq_rate = eco["sequestration_rate_mean_tco2_ha_yr"]
     lifetime_years = eco["typical_project_lifetime_years"]
-    total_annual = area_ha * seq_rate
-    total_lifetime = total_annual * lifetime_years
 
-    # Additionality score: based on threat level, land tenure clarity, baseline documentation
-    threat_level = project_data.get("threat_level", rng.uniform(0.4, 0.9))
-    tenure_clarity = project_data.get("tenure_clarity", rng.uniform(0.5, 1.0))
-    baseline_quality = project_data.get("baseline_quality", rng.uniform(0.5, 1.0))
-    additionality_score = round((threat_level * 0.4 + tenure_clarity * 0.3 + baseline_quality * 0.3), 4)
+    # Area is a caller-supplied input; without it, sequestration volume and all
+    # downstream economics are indeterminate.
+    area_raw = project_data.get("area_hectares")
+    area_ha = float(area_raw) if area_raw is not None else None
+    if area_ha is not None:
+        total_annual = area_ha * seq_rate
+        total_lifetime = total_annual * lifetime_years
+    else:
+        total_annual = None
+        total_lifetime = None
+        data_flags.append("area_hectares not supplied: sequestration volumes and credit economics unavailable")
 
-    # Permanence score: ecosystem fragility, climate vulnerability, governance
+    # Additionality score: only computed when all component inputs are supplied.
+    threat_level = project_data.get("threat_level")
+    tenure_clarity = project_data.get("tenure_clarity")
+    baseline_quality = project_data.get("baseline_quality")
+    if None not in (threat_level, tenure_clarity, baseline_quality):
+        additionality_score = round(
+            (float(threat_level) * 0.4 + float(tenure_clarity) * 0.3 + float(baseline_quality) * 0.3), 4
+        )
+    else:
+        additionality_score = None
+        data_flags.append("additionality_score unavailable: requires threat_level, tenure_clarity, baseline_quality")
+
+    # Permanence score: ecosystem fragility (reference) + governance (input).
     eco_stability = 1.0 - (0.3 if eco["permanence_risk"] == "high" else 0.15 if eco["permanence_risk"] == "medium" else 0.05)
-    governance_score = project_data.get("governance_score", rng.uniform(0.5, 0.9))
-    permanence_score = round((eco_stability * 0.5 + governance_score * 0.5), 4)
+    governance_score = project_data.get("governance_score")
+    if governance_score is not None:
+        permanence_score = round((eco_stability * 0.5 + float(governance_score) * 0.5), 4)
+        # Risk buffer per Verra (typically 10-30% depending on permanence).
+        risk_buffer_pct = round(max(10.0, min(30.0, (1 - permanence_score) * 60)), 1)
+    else:
+        permanence_score = None
+        risk_buffer_pct = None
+        data_flags.append("permanence_score / risk_buffer_pct unavailable: requires governance_score")
 
-    # Risk buffer per Verra (typically 10-30% depending on permanence)
-    risk_buffer_pct = round(max(10.0, min(30.0, (1 - permanence_score) * 60)), 1)
-    net_sequestration = total_annual * (1 - risk_buffer_pct / 100)
+    # Credit economics — require area, risk buffer and a carbon price.
+    carbon_price_usd_tco2 = project_data.get("carbon_price_usd_tco2")
+    monitoring_cost = round(area_ha * eco["monitoring_cost_usd_ha_yr"], 2) if area_ha is not None else None
 
-    # Credit economics
-    carbon_price_usd_tco2 = project_data.get("carbon_price_usd_tco2", rng.uniform(15, 45))
-    carbon_credit_value_usd = net_sequestration * carbon_price_usd_tco2
-    monitoring_cost = area_ha * eco["monitoring_cost_usd_ha_yr"]
-    net_revenue = carbon_credit_value_usd - monitoring_cost
+    if area_ha is not None and risk_buffer_pct is not None and carbon_price_usd_tco2 is not None:
+        net_sequestration = total_annual * (1 - risk_buffer_pct / 100)
+        carbon_credit_value_usd = round(net_sequestration * float(carbon_price_usd_tco2), 2)
+        net_revenue = round(carbon_credit_value_usd - (monitoring_cost or 0.0), 2)
+    else:
+        carbon_credit_value_usd = None
+        net_revenue = None
+        if carbon_price_usd_tco2 is None:
+            data_flags.append("carbon_credit_value / net_revenue unavailable: no carbon_price_usd_tco2 supplied")
 
-    # Eligibility
-    verra_eligible = (additionality_score >= 0.6 and permanence_score >= 0.5
-                      and eco["verra_methodology"] not in ["Under development"])
-    gs_eligible = verra_eligible and additionality_score >= 0.70 and eco_stability >= 0.75
+    # Eligibility — determinable only when the driving scores exist.
+    methodology_available = eco["verra_methodology"] not in ["Under development"]
+    if additionality_score is not None and permanence_score is not None:
+        verra_eligible = (additionality_score >= 0.6 and permanence_score >= 0.5 and methodology_available)
+        gs_eligible = bool(verra_eligible and additionality_score >= 0.70 and eco_stability >= 0.75)
+    else:
+        verra_eligible = None
+        gs_eligible = None
+        data_flags.append("verra_vcs_eligible / gold_standard_eligible unavailable: additionality and permanence scores required")
 
     return BlueCarbonResult(
         project_id=str(project_id),
         ecosystem_type=ecosystem_type,
-        area_hectares=round(area_ha, 2),
+        area_hectares=round(area_ha, 2) if area_ha is not None else None,
         sequestration_rate_tco2_ha_yr=round(seq_rate, 3),
-        total_annual_sequestration_tco2=round(total_annual, 2),
+        total_annual_sequestration_tco2=round(total_annual, 2) if total_annual is not None else None,
         project_lifetime_years=lifetime_years,
-        total_lifetime_sequestration_tco2=round(total_lifetime, 2),
+        total_lifetime_sequestration_tco2=round(total_lifetime, 2) if total_lifetime is not None else None,
         additionality_score=additionality_score,
         permanence_score=permanence_score,
         co_benefits=eco["co_benefits"],
         verra_vcs_eligible=verra_eligible,
         gold_standard_eligible=gs_eligible,
-        carbon_credit_value_usd=round(carbon_credit_value_usd, 2),
-        monitoring_cost_usd_yr=round(monitoring_cost, 2),
-        net_revenue_usd_yr=round(net_revenue, 2),
+        carbon_credit_value_usd=carbon_credit_value_usd,
+        monitoring_cost_usd_yr=monitoring_cost,
+        net_revenue_usd_yr=net_revenue,
         verification_cycle_years=eco["verification_cycle_years"],
         risk_buffer_pct=risk_buffer_pct,
+        data_flags=data_flags,
     )
 
 
 def assess_bbnj_compliance(entity_data: Dict[str, Any]) -> BBNJComplianceResult:
-    """Assess compliance with the High Seas Treaty BBNJ 2023 across 5 key article areas."""
+    """Assess compliance with the High Seas Treaty BBNJ 2023 across 5 key article areas.
+
+    Article scores are entity-disclosed data. Only articles for which the
+    caller supplies a score are scored; undisclosed articles are returned as
+    None (honest null) and the overall score is the weight-renormalised
+    aggregate over disclosed articles. If nothing is disclosed the overall
+    score is None and the level is ``insufficient_data``.
+    """
     entity_id = entity_data.get("entity_id", "default")
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    entity_type = entity_data.get("entity_type") or "flag_state"  # flag_state | coastal_state | financial_institution
+    disclosed_scores = entity_data.get("article_scores") or {}
 
-    entity_type = entity_data.get("entity_type", "flag_state")  # flag_state | coastal_state | financial_institution
-    disclosed_scores = entity_data.get("article_scores", {})
-
-    article_scores: Dict[str, float] = {}
+    article_scores: Dict[str, Optional[float]] = {}
     gaps: List[str] = []
+    data_flags: List[str] = []
+    scored_keys: List[str] = []
 
     for art_key, art_data in BBNJ_ARTICLES.items():
         indicators = art_data["compliance_indicators"]
-        if art_key in disclosed_scores:
-            raw = float(disclosed_scores[art_key])
+        if art_key in disclosed_scores and disclosed_scores[art_key] is not None:
+            score = round(min(1.0, max(0.0, float(disclosed_scores[art_key]))), 4)
+            article_scores[art_key] = score
+            scored_keys.append(art_key)
+            if score < 0.6:
+                gaps.append(f"{art_data['title']}: score {score:.2f} — review indicators: {', '.join(indicators[:2])}")
         else:
-            base = rng.uniform(0.3, 0.85)
-            # Financial institutions score lower on governance articles
-            if entity_type == "financial_institution" and art_key in ["article_22_abmt", "article_9_mgbr"]:
-                base *= 0.7
-            raw = base
+            article_scores[art_key] = None
+            gaps.append(f"{art_data['title']}: not disclosed — provide article_scores['{art_key}'] to assess")
 
-        score = round(min(1.0, max(0.0, raw + rng.uniform(-0.05, 0.05))), 4)
-        article_scores[art_key] = score
+    undisclosed = [k for k in BBNJ_ARTICLES if k not in scored_keys]
+    if undisclosed:
+        data_flags.append(f"{len(undisclosed)} of {len(BBNJ_ARTICLES)} BBNJ articles not disclosed; overall score covers disclosed articles only")
 
-        if score < 0.6:
-            gaps.append(f"{art_data['title']}: score {score:.2f} — review indicators: {', '.join(indicators[:2])}")
+    if scored_keys:
+        weight_sum = sum(BBNJ_ARTICLES[k]["weight"] for k in scored_keys)
+        # Renormalise weights across disclosed articles so the aggregate stays on [0,1].
+        overall = round(
+            sum(article_scores[k] * BBNJ_ARTICLES[k]["weight"] for k in scored_keys) / weight_sum, 4
+        ) if weight_sum > 0 else None
+    else:
+        overall = None
 
-    overall = round(sum(article_scores[k] * BBNJ_ARTICLES[k]["weight"] for k in article_scores), 4)
-
-    if overall >= 0.75:
+    if overall is None:
+        level = "insufficient_data"
+        timeline = "Disclose BBNJ article compliance scores to enable assessment"
+    elif overall >= 0.75:
         level = "compliant"
         timeline = "Maintain current practices; update on treaty entry into force"
     elif overall >= 0.50:
@@ -521,7 +624,7 @@ def assess_bbnj_compliance(entity_data: Dict[str, Any]) -> BBNJComplianceResult:
 
     priority_actions = []
     sorted_gaps = sorted(
-        [(k, article_scores[k], BBNJ_ARTICLES[k]["weight"]) for k in article_scores],
+        [(k, article_scores[k], BBNJ_ARTICLES[k]["weight"]) for k in scored_keys],
         key=lambda x: x[1] * x[2]
     )
     for art_key, score, weight in sorted_gaps[:3]:
@@ -538,25 +641,62 @@ def assess_bbnj_compliance(entity_data: Dict[str, Any]) -> BBNJComplianceResult:
         gaps=gaps,
         priority_actions=priority_actions,
         bbnj_readiness_timeline=timeline,
+        data_flags=data_flags,
     )
 
 
 def assess_ocean_acidification_risk(portfolio_data: Dict[str, Any]) -> OceanAcidificationRisk:
-    """Assess portfolio exposure to ocean acidification under IPCC AR6 RCP scenarios."""
-    portfolio_id = portfolio_data.get("portfolio_id", "default")
-    rng = random.Random(hash(str(portfolio_id)) & 0xFFFFFFFF)
+    """Assess portfolio exposure to ocean acidification under IPCC AR6 RCP scenarios.
 
-    rcp_scenario = portfolio_data.get("rcp_scenario", "RCP4.5")
+    The physical impact factors (pH change, aragonite saturation, fisheries
+    revenue impact, coral mortality) are drawn from the IPCC AR6 RCP reference
+    table — the genuine core. Portfolio exposure and its sector split are
+    caller inputs; when exposure is absent all VaR figures are honest nulls.
+    ``adaptation_cost_ratio`` defaults to a documented OECD central estimate.
+    """
+    portfolio_id = portfolio_data.get("portfolio_id", "default")
+    data_flags: List[str] = []
+
+    rcp_scenario = portfolio_data.get("rcp_scenario") or "RCP4.5"
     if rcp_scenario not in OCEAN_ACIDIFICATION_RISK:
         rcp_scenario = "RCP4.5"
     oa = OCEAN_ACIDIFICATION_RISK[rcp_scenario]
 
-    total_ocean_economy_exposure = float(portfolio_data.get("ocean_economy_exposure_usd", rng.uniform(1e8, 5e9)))
+    exposure_raw = portfolio_data.get("ocean_economy_exposure_usd")
 
-    # Sector breakdown of ocean economy
-    fisheries_pct = portfolio_data.get("fisheries_pct", rng.uniform(0.2, 0.4))
-    coral_reef_pct = portfolio_data.get("coral_reef_pct", rng.uniform(0.1, 0.25))
-    aquaculture_pct = portfolio_data.get("aquaculture_pct", rng.uniform(0.1, 0.2))
+    if exposure_raw is None:
+        # No exposure supplied: physical scenario factors are still reported,
+        # but monetary VaR cannot be computed without an exposure base.
+        data_flags.append("ocean_economy_exposure_usd not supplied: VaR and adaptation cost unavailable")
+        return OceanAcidificationRisk(
+            portfolio_id=str(portfolio_id),
+            rcp_scenario=rcp_scenario,
+            ph_change_2100=oa["ph_change_by_2100"],
+            aragonite_saturation=oa["aragonite_saturation_omega"],
+            risk_level=oa["risk_level"],
+            ocean_economy_exposure_usd=None,
+            fisheries_revenue_at_risk_usd=None,
+            coral_reef_asset_at_risk_usd=None,
+            aquaculture_at_risk_usd=None,
+            total_oa_var_usd=None,
+            adaptation_cost_estimate_usd=None,
+            data_flags=data_flags,
+        )
+
+    total_ocean_economy_exposure = float(exposure_raw)
+
+    # Sector breakdown of ocean economy — caller-supplied shares. When a share
+    # is not provided its exposure is treated as 0 (not fabricated) and flagged.
+    def _share(key: str) -> float:
+        v = portfolio_data.get(key)
+        if v is None:
+            data_flags.append(f"{key} not supplied; treated as 0 exposure share")
+            return 0.0
+        return float(v)
+
+    fisheries_pct = _share("fisheries_pct")
+    coral_reef_pct = _share("coral_reef_pct")
+    aquaculture_pct = _share("aquaculture_pct")
 
     fisheries_exposure = total_ocean_economy_exposure * fisheries_pct
     coral_reef_exposure = total_ocean_economy_exposure * coral_reef_pct
@@ -570,7 +710,12 @@ def assess_ocean_acidification_risk(portfolio_data: Dict[str, Any]) -> OceanAcid
     aquaculture_at_risk = aquaculture_exposure * max(0, (2.5 - oa["aragonite_saturation_omega"]) / 2.0) * 0.5
 
     total_oa_var = fisheries_at_risk + coral_at_risk + aquaculture_at_risk
-    adaptation_cost = total_oa_var * rng.uniform(0.15, 0.35)
+
+    # Adaptation cost as a fraction of VaR — model parameter (documented),
+    # overridable by the caller.
+    adaptation_ratio = portfolio_data.get("adaptation_cost_ratio")
+    adaptation_ratio = float(adaptation_ratio) if adaptation_ratio is not None else DEFAULT_ADAPTATION_COST_RATIO
+    adaptation_cost = total_oa_var * adaptation_ratio
 
     return OceanAcidificationRisk(
         portfolio_id=str(portfolio_id),
@@ -584,116 +729,194 @@ def assess_ocean_acidification_risk(portfolio_data: Dict[str, Any]) -> OceanAcid
         aquaculture_at_risk_usd=round(aquaculture_at_risk, 2),
         total_oa_var_usd=round(total_oa_var, 2),
         adaptation_cost_estimate_usd=round(adaptation_cost, 2),
+        data_flags=data_flags,
     )
 
 
 def aggregate_ocean_portfolio(portfolio_data: Dict[str, Any]) -> OceanPortfolioResult:
-    """Aggregate portfolio-level SOF score, blue bond allocation, and ocean risk metrics."""
+    """Aggregate portfolio-level SOF score, blue bond allocation, and ocean risk metrics.
+
+    Every returned figure is derived from caller-supplied holdings and
+    disclosed data, or returned as an honest null. Holdings drive
+    total_blue_assets and the top-sector table; SOF pillar scores come from
+    caller-disclosed ``sof_pillar_scores``; blue-bond allocation, blue-carbon
+    credits and MPA financing are entity-reported inputs. Nothing is
+    fabricated with random draws.
+    """
     portfolio_id = portfolio_data.get("portfolio_id", "default")
-    rng = random.Random(hash(str(portfolio_id)) & 0xFFFFFFFF)
+    data_flags: List[str] = []
 
-    holdings = portfolio_data.get("holdings", [])
-    total_aum = float(portfolio_data.get("total_aum_usd", rng.uniform(1e9, 5e10)))
-
+    holdings = portfolio_data.get("holdings") or []
     if not holdings:
-        # Generate synthetic portfolio
-        sectors = ["offshore_wind", "sustainable_fisheries", "marine_conservation",
-                   "coastal_infrastructure", "blue_bonds", "aquaculture"]
-        holdings = [
-            {"sector": s, "exposure_usd": total_aum * rng.uniform(0.05, 0.20)}
-            for s in sectors
-        ]
+        data_flags.append("no holdings supplied: total_blue_assets, MPA financing and top sectors unavailable")
 
-    total_blue = sum(h.get("exposure_usd", 0) for h in holdings)
-    blue_bond_alloc_pct = portfolio_data.get("blue_bond_allocation_pct", rng.uniform(8, 25))
+    total_blue: Optional[float] = sum(h.get("exposure_usd", 0) or 0 for h in holdings) if holdings else None
 
-    # SOF pillar scores
-    pillar_scores: Dict[str, float] = {}
-    for pillar, pdata in SOF_PILLARS.items():
-        base = rng.uniform(0.40, 0.80)
-        pillar_scores[pillar] = round(base, 4)
+    # Blue-bond allocation — entity-reported.
+    blue_bond_alloc_pct = portfolio_data.get("blue_bond_allocation_pct")
+    if blue_bond_alloc_pct is None:
+        data_flags.append("blue_bond_allocation_pct not disclosed")
 
-    sof_score = round(sum(pillar_scores[p] * SOF_PILLARS[p]["weight"] for p in pillar_scores), 4)
+    # SOF pillar scores — disclosed by the entity; not fabricated.
+    disclosed_pillars = portfolio_data.get("sof_pillar_scores") or portfolio_data.get("declared_sof_scores") or {}
+    pillar_scores: Dict[str, Optional[float]] = {}
+    scored_pillars: List[str] = []
+    for pillar in SOF_PILLARS:
+        v = disclosed_pillars.get(pillar) if isinstance(disclosed_pillars, dict) else None
+        if v is not None:
+            pillar_scores[pillar] = round(float(v), 4)
+            scored_pillars.append(pillar)
+        else:
+            pillar_scores[pillar] = None
 
-    blue_carbon_credits = rng.uniform(5000, 200000)
-    mpa_financing = total_blue * rng.uniform(0.03, 0.12)
-    ocean_risk_score = round(1 - sof_score * 0.7, 4)
+    if scored_pillars:
+        weight_sum = sum(SOF_PILLARS[p]["weight"] for p in scored_pillars)
+        sof_score = round(
+            sum(pillar_scores[p] * SOF_PILLARS[p]["weight"] for p in scored_pillars) / weight_sum, 4
+        ) if weight_sum > 0 else None
+        if len(scored_pillars) < len(SOF_PILLARS):
+            data_flags.append(f"{len(SOF_PILLARS) - len(scored_pillars)} SOF pillar scores not disclosed; sof_score covers disclosed pillars only")
+    else:
+        sof_score = None
+        data_flags.append("no SOF pillar scores disclosed: sof_score, ocean_risk_score and sdg14 alignment unavailable")
+
+    # Blue carbon credits — entity-reported quantity.
+    blue_carbon_credits = portfolio_data.get("blue_carbon_credits_tco2")
+    if blue_carbon_credits is not None:
+        blue_carbon_credits = round(float(blue_carbon_credits), 2)
+    else:
+        data_flags.append("blue_carbon_credits_tco2 not disclosed")
+
+    # MPA financing — use disclosed value, or derive from disclosed MPA share
+    # of blue assets; otherwise null (no random fraction).
+    mpa_financing = portfolio_data.get("mpa_financing_usd")
+    if mpa_financing is not None:
+        mpa_financing = round(float(mpa_financing), 2)
+    else:
+        mpa_share = portfolio_data.get("mpa_financing_share")
+        if mpa_share is not None and total_blue is not None:
+            mpa_financing = round(total_blue * float(mpa_share), 2)
+        else:
+            mpa_financing = None
+            data_flags.append("mpa_financing_usd not disclosed and no mpa_financing_share to derive it")
+
+    ocean_risk_score = round(1 - sof_score * 0.7, 4) if sof_score is not None else None
 
     oa_risk = assess_ocean_acidification_risk({
         "portfolio_id": portfolio_id,
         "rcp_scenario": portfolio_data.get("rcp_scenario", "RCP4.5"),
         "ocean_economy_exposure_usd": total_blue,
+        "fisheries_pct": portfolio_data.get("fisheries_pct"),
+        "coral_reef_pct": portfolio_data.get("coral_reef_pct"),
+        "aquaculture_pct": portfolio_data.get("aquaculture_pct"),
     })
+    oa_var = round(oa_risk.total_oa_var_usd, 2) if oa_risk.total_oa_var_usd is not None else None
 
-    top_sectors = sorted(holdings, key=lambda h: h.get("exposure_usd", 0), reverse=True)[:5]
+    top_sectors = sorted(holdings, key=lambda h: h.get("exposure_usd", 0) or 0, reverse=True)[:5]
     top_sectors_out = [
-        {"sector": h.get("sector", "unknown"), "exposure_usd": round(h.get("exposure_usd", 0), 2)}
+        {"sector": h.get("sector", "unknown"), "exposure_usd": round(h.get("exposure_usd", 0) or 0, 2)}
         for h in top_sectors
     ]
 
-    sdg14_score = round(sof_score * 0.85 + rng.uniform(0, 0.1), 4)
+    # SDG14 alignment derived deterministically from the (disclosed) SOF score.
+    sdg14_score = round(sof_score * 0.85, 4) if sof_score is not None else None
 
     recommendations = []
-    if blue_bond_alloc_pct < 15:
+    if blue_bond_alloc_pct is not None and blue_bond_alloc_pct < 15:
         recommendations.append("Increase blue bond allocation to >=15% for SDG14 alignment")
-    if pillar_scores.get("ocean_health", 0) < 0.6:
+    if pillar_scores.get("ocean_health") is not None and pillar_scores["ocean_health"] < 0.6:
         recommendations.append("Strengthen ocean health pillar through MPA and pollution finance")
-    if blue_carbon_credits < 50000:
+    if blue_carbon_credits is not None and blue_carbon_credits < 50000:
         recommendations.append("Scale blue carbon credit procurement to offset portfolio OA risk")
-    if ocean_risk_score > 0.4:
+    if ocean_risk_score is not None and ocean_risk_score > 0.4:
         recommendations.append("Apply UNEP-FI SOF framework to reduce portfolio ocean risk score")
 
     return OceanPortfolioResult(
         portfolio_id=str(portfolio_id),
-        total_blue_assets_usd=round(total_blue, 2),
+        total_blue_assets_usd=round(total_blue, 2) if total_blue is not None else None,
         sof_score=sof_score,
         sof_pillar_scores=pillar_scores,
-        blue_bond_allocation_pct=round(blue_bond_alloc_pct, 2),
-        blue_carbon_credits_tco2=round(blue_carbon_credits, 2),
-        mpa_financing_usd=round(mpa_financing, 2),
+        blue_bond_allocation_pct=round(float(blue_bond_alloc_pct), 2) if blue_bond_alloc_pct is not None else None,
+        blue_carbon_credits_tco2=blue_carbon_credits,
+        mpa_financing_usd=mpa_financing,
         ocean_risk_score=ocean_risk_score,
-        oa_risk_var_usd=round(oa_risk.total_oa_var_usd, 2),
+        oa_risk_var_usd=oa_var,
         top_blue_economy_sectors=top_sectors_out,
         sdg14_alignment_score=sdg14_score,
         recommendations=recommendations,
+        data_flags=data_flags,
     )
 
 
 def assess_sof_alignment(entity_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Comprehensive UNEP-FI Sustainable Ocean Finance alignment assessment."""
+    """Comprehensive UNEP-FI Sustainable Ocean Finance alignment assessment.
+
+    Pillar scores are entity-disclosed (``declared_sof_scores``). Undisclosed
+    pillars carry a null score; the overall SOF score is the weight-
+    renormalised aggregate over disclosed pillars, or None if nothing is
+    disclosed. ``entity_contribution_pct`` is returned only when supplied.
+    """
     entity_id = entity_data.get("entity_id", "default")
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    declared = entity_data.get("declared_sof_scores") or entity_data.get("sof_pillar_scores") or {}
+    if not isinstance(declared, dict):
+        declared = {}
+    data_flags: List[str] = []
 
     pillar_assessments = {}
+    scored_pillars: List[str] = []
     for pillar, pdata in SOF_PILLARS.items():
-        score = rng.uniform(0.35, 0.90)
+        v = declared.get(pillar)
+        score = round(float(v), 4) if v is not None else None
+        if score is not None:
+            scored_pillars.append(pillar)
         pillar_assessments[pillar] = {
-            "score": round(score, 4),
+            "score": score,
             "description": pdata["description"],
             "key_indicators": pdata["key_indicators"],
             "financing_instruments": pdata["financing_instruments"],
             "contribution_weight": pdata["weight"],
         }
 
-    overall_sof = round(sum(
-        pillar_assessments[p]["score"] * SOF_PILLARS[p]["weight"]
-        for p in pillar_assessments
-    ), 4)
+    if scored_pillars:
+        weight_sum = sum(SOF_PILLARS[p]["weight"] for p in scored_pillars)
+        overall_sof = round(
+            sum(pillar_assessments[p]["score"] * SOF_PILLARS[p]["weight"] for p in scored_pillars) / weight_sum, 4
+        ) if weight_sum > 0 else None
+        if len(scored_pillars) < len(SOF_PILLARS):
+            data_flags.append(f"{len(SOF_PILLARS) - len(scored_pillars)} SOF pillars not disclosed; overall_sof_score covers disclosed pillars only")
+    else:
+        overall_sof = None
+        data_flags.append("no SOF pillar scores disclosed: overall_sof_score and derived flags unavailable")
 
-    sdg14_financing_gap_bn = 175  # OECD estimated annual SDG14 gap
-    entity_contribution_pct = rng.uniform(0.001, 0.05)
+    if overall_sof is None:
+        sof_tier = "insufficient_data"
+    elif overall_sof >= 0.75:
+        sof_tier = "leader"
+    elif overall_sof >= 0.50:
+        sof_tier = "progressing"
+    else:
+        sof_tier = "emerging"
+
+    sdg14_financing_gap_bn = 175  # OECD estimated annual SDG14 gap (reference figure)
+
+    contribution_raw = entity_data.get("entity_contribution_pct")
+    if contribution_raw is not None:
+        entity_contribution_pct = round(float(contribution_raw), 4)
+    else:
+        entity_contribution_pct = None
+        data_flags.append("entity_contribution_pct not supplied")
 
     return {
         "entity_id": entity_id,
         "overall_sof_score": overall_sof,
-        "sof_tier": "leader" if overall_sof >= 0.75 else "progressing" if overall_sof >= 0.50 else "emerging",
+        "sof_tier": sof_tier,
         "pillar_assessments": pillar_assessments,
         "sdg14_financing_gap_bn_usd": sdg14_financing_gap_bn,
-        "entity_contribution_pct": round(entity_contribution_pct, 4),
-        "poseidon_principles_aligned": overall_sof >= 0.65,
-        "sea_pledge_eligible": overall_sof >= 0.70,
+        "entity_contribution_pct": entity_contribution_pct,
+        "poseidon_principles_aligned": (overall_sof >= 0.65) if overall_sof is not None else None,
+        "sea_pledge_eligible": (overall_sof >= 0.70) if overall_sof is not None else None,
         "priority_pillars": [
-            p for p, d in pillar_assessments.items() if d["score"] < 0.55
+            p for p, d in pillar_assessments.items() if d["score"] is not None and d["score"] < 0.55
         ],
         "reference_frameworks": [
             "UNEP-FI Sustainable Ocean Finance 2021",
@@ -701,4 +924,5 @@ def assess_sof_alignment(entity_data: Dict[str, Any]) -> Dict[str, Any]:
             "OECD Ocean Finance Framework 2022",
             "Poseidon Principles 2019",
         ],
+        "data_flags": data_flags,
     }

@@ -18,7 +18,6 @@ Cross-framework linkage:
 from __future__ import annotations
 
 import math
-import random
 from datetime import datetime
 from typing import Optional
 
@@ -154,6 +153,30 @@ CROSS_FRAMEWORK_MAP = {
 }
 
 # ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _opt_float(value) -> Optional[float]:
+    """Coerce a supplied value to float, returning None when absent/invalid.
+
+    Used so that a missing assessment input yields an honest null rather than
+    a fabricated number.
+    """
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _round_opt(value: Optional[float], ndigits: int = 2) -> Optional[float]:
+    """Round a float, passing None through unchanged."""
+    return None if value is None else round(value, ndigits)
+
+
+# ---------------------------------------------------------------------------
 # Engine
 # ---------------------------------------------------------------------------
 
@@ -180,39 +203,53 @@ class CSRDDMAEngine:
 
         Severity = weighted average of scale, scope, irremediability (0-100 each).
         Positive impacts use likelihood x magnitude instead of severity.
+
+        Scores must be supplied in ``impact_data`` (scale_score, scope_score,
+        irremediability_score, likelihood_pct, and for positive impacts
+        magnitude_score). When the inputs needed for a score are absent the
+        derived metric is returned as ``None`` rather than a fabricated value —
+        materiality is a binding disclosure and must not be invented.
         """
-        rng = random.Random(hash(entity_id + topic_id) & 0xFFFFFFFF)
+        scale_score = _opt_float(impact_data.get("scale_score"))
+        scope_score = _opt_float(impact_data.get("scope_score"))
+        irremediability_score = _opt_float(impact_data.get("irremediability_score"))
+        likelihood_pct = _opt_float(impact_data.get("likelihood_pct"))
+        impact_type = impact_data.get("impact_type")
+        value_chain_location = impact_data.get("value_chain_location")
+        magnitude = _opt_float(impact_data.get("magnitude_score"))
 
-        scale_score = float(impact_data.get("scale_score", rng.uniform(20, 85)))
-        scope_score = float(impact_data.get("scope_score", rng.uniform(20, 85)))
-        irremediability_score = float(
-            impact_data.get("irremediability_score", rng.uniform(10, 80))
-        )
-        likelihood_pct = float(impact_data.get("likelihood_pct", rng.uniform(30, 90)))
-        impact_type = impact_data.get("impact_type", rng.choice(IMPACT_TYPES))
-        value_chain_location = impact_data.get(
-            "value_chain_location", rng.choice(VALUE_CHAIN_LOCATIONS)
-        )
-
-        # Severity for negative impacts (ESRS 1 section 43(a))
-        severity_score = (
-            scale_score * SEVERITY_CRITERIA["scale"]["weight"]
-            + scope_score * SEVERITY_CRITERIA["scope"]["weight"]
-            + irremediability_score * SEVERITY_CRITERIA["irremediability"]["weight"]
-        )
-
-        # For potential impacts multiply severity by likelihood
-        if "potential" in impact_type:
-            impact_materiality_score = severity_score * (likelihood_pct / 100)
-        elif "positive" in impact_type:
-            # Positive impacts: magnitude x likelihood
-            magnitude = float(impact_data.get("magnitude_score", rng.uniform(20, 80)))
-            impact_materiality_score = magnitude * (likelihood_pct / 100)
+        # Severity for negative impacts (ESRS 1 section 43(a)) — requires all
+        # three severity dimensions.
+        if None not in (scale_score, scope_score, irremediability_score):
+            severity_score = (
+                scale_score * SEVERITY_CRITERIA["scale"]["weight"]
+                + scope_score * SEVERITY_CRITERIA["scope"]["weight"]
+                + irremediability_score * SEVERITY_CRITERIA["irremediability"]["weight"]
+            )
         else:
+            severity_score = None
+
+        # Derive the impact materiality score from the supplied dimensions.
+        impact_materiality_score: Optional[float] = None
+        if impact_type and "potential" in impact_type:
+            # Potential impacts multiply severity by likelihood.
+            if severity_score is not None and likelihood_pct is not None:
+                impact_materiality_score = severity_score * (likelihood_pct / 100)
+        elif impact_type and "positive" in impact_type:
+            # Positive impacts: magnitude x likelihood.
+            if magnitude is not None and likelihood_pct is not None:
+                impact_materiality_score = magnitude * (likelihood_pct / 100)
+        else:
+            # Actual negative impact (or unspecified type): severity as-is.
             impact_materiality_score = severity_score
 
-        impact_materiality_score = min(100.0, round(impact_materiality_score, 2))
-        is_material = impact_materiality_score >= self.IMPACT_MATERIALITY_THRESHOLD
+        if impact_materiality_score is not None:
+            impact_materiality_score = min(100.0, round(impact_materiality_score, 2))
+            is_material: Optional[bool] = (
+                impact_materiality_score >= self.IMPACT_MATERIALITY_THRESHOLD
+            )
+        else:
+            is_material = None
 
         # Check sector-typical materiality
         sector_typical = SECTOR_MATERIALITY.get(sector, [])
@@ -223,11 +260,11 @@ class CSRDDMAEngine:
             "topic_id": topic_id,
             "topic_name": ESRS_TOPICS.get(topic_id, {}).get("name", "Unknown"),
             "sector": sector,
-            "scale_score": round(scale_score, 2),
-            "scope_score": round(scope_score, 2),
-            "irremediability_score": round(irremediability_score, 2),
-            "severity_score": round(severity_score, 2),
-            "likelihood_pct": round(likelihood_pct, 2),
+            "scale_score": _round_opt(scale_score),
+            "scope_score": _round_opt(scope_score),
+            "irremediability_score": _round_opt(irremediability_score),
+            "severity_score": _round_opt(severity_score),
+            "likelihood_pct": _round_opt(likelihood_pct),
             "impact_type": impact_type,
             "value_chain_location": value_chain_location,
             "impact_materiality_score": impact_materiality_score,
@@ -251,43 +288,48 @@ class CSRDDMAEngine:
         Score financial materiality per ESRS 1 section 47.
 
         financial_materiality_score = magnitude x likelihood (0-100 each).
+
+        Magnitude and likelihood must be supplied in ``financial_data``. When
+        absent, the derived materiality score is returned as ``None`` — no
+        fabricated risk figures.
         """
-        rng = random.Random(hash(entity_id + topic_id + "fin") & 0xFFFFFFFF)
+        financial_magnitude_score = _opt_float(
+            financial_data.get("financial_magnitude_score")
+        )
+        financial_likelihood_score = _opt_float(
+            financial_data.get("financial_likelihood_score")
+        )
+        financial_risk_type = financial_data.get("financial_risk_type")
+        time_horizon = financial_data.get("time_horizon")
+        revenue_at_risk_pct = _opt_float(financial_data.get("revenue_at_risk_pct"))
+        capex_implications_mn = _opt_float(financial_data.get("capex_implications_mn"))
 
-        financial_magnitude_score = float(
-            financial_data.get("financial_magnitude_score", rng.uniform(20, 90))
-        )
-        financial_likelihood_score = float(
-            financial_data.get("financial_likelihood_score", rng.uniform(20, 90))
-        )
-        financial_risk_type = financial_data.get(
-            "financial_risk_type",
-            rng.choice(list(FINANCIAL_RISK_TYPES.keys())),
-        )
-        time_horizon = financial_data.get("time_horizon", rng.choice(["short", "medium", "long"]))
-        revenue_at_risk_pct = float(financial_data.get("revenue_at_risk_pct", rng.uniform(1, 20)))
-        capex_implications_mn = float(
-            financial_data.get("capex_implications_mn", rng.uniform(0.5, 50))
-        )
-
-        financial_materiality_score = min(
-            100.0,
-            round(financial_magnitude_score * financial_likelihood_score / 100, 2),
-        )
-        is_material = financial_materiality_score >= self.FINANCIAL_MATERIALITY_THRESHOLD
+        if financial_magnitude_score is not None and financial_likelihood_score is not None:
+            financial_materiality_score: Optional[float] = min(
+                100.0,
+                round(financial_magnitude_score * financial_likelihood_score / 100, 2),
+            )
+            is_material: Optional[bool] = (
+                financial_materiality_score >= self.FINANCIAL_MATERIALITY_THRESHOLD
+            )
+        else:
+            financial_materiality_score = None
+            is_material = None
 
         return {
             "entity_id": entity_id,
             "topic_id": topic_id,
             "topic_name": ESRS_TOPICS.get(topic_id, {}).get("name", "Unknown"),
-            "financial_magnitude_score": round(financial_magnitude_score, 2),
-            "financial_likelihood_score": round(financial_likelihood_score, 2),
+            "financial_magnitude_score": _round_opt(financial_magnitude_score),
+            "financial_likelihood_score": _round_opt(financial_likelihood_score),
             "financial_materiality_score": financial_materiality_score,
             "financial_risk_type": financial_risk_type,
-            "financial_risk_description": FINANCIAL_RISK_TYPES.get(financial_risk_type, ""),
+            "financial_risk_description": FINANCIAL_RISK_TYPES.get(
+                financial_risk_type or "", ""
+            ),
             "time_horizon": time_horizon,
-            "revenue_at_risk_pct": round(revenue_at_risk_pct, 2),
-            "capex_implications_mn": round(capex_implications_mn, 2),
+            "revenue_at_risk_pct": _round_opt(revenue_at_risk_pct),
+            "capex_implications_mn": _round_opt(capex_implications_mn),
             "is_material": is_material,
             "assessment_basis": "ESRS_1_section_47",
             "assessed_at": datetime.utcnow().isoformat(),
@@ -305,40 +347,54 @@ class CSRDDMAEngine:
         """
         Score stakeholder engagement quality across 5 elements:
         identification, dialogue, documentation, integration, feedback.
+
+        ``engaged_types`` and the per-element scores must be supplied in
+        ``stakeholder_data``. Coverage is a real salience-weighted computation
+        over the engaged stakeholder types. The engagement quality score is the
+        average of whichever element scores are supplied; if none are supplied
+        it is returned as ``None`` (insufficient data) rather than fabricated.
         """
-        rng = random.Random(hash(entity_id + "stkh") & 0xFFFFFFFF)
+        engaged_types: list = stakeholder_data.get("engaged_types", []) or []
 
-        engaged_types: list = stakeholder_data.get("engaged_types", [])
-        if not engaged_types:
-            all_types = list(STAKEHOLDER_TYPES.keys())
-            k = rng.randint(3, len(all_types))
-            engaged_types = rng.sample(all_types, k)
-
-        # Five engagement quality elements (0-100 each, averaged)
-        element_scores = {
-            "identification": float(
-                stakeholder_data.get("identification_score", rng.uniform(40, 95))
-            ),
-            "dialogue": float(stakeholder_data.get("dialogue_score", rng.uniform(40, 95))),
-            "documentation": float(
-                stakeholder_data.get("documentation_score", rng.uniform(35, 90))
-            ),
-            "integration": float(
-                stakeholder_data.get("integration_score", rng.uniform(30, 85))
-            ),
-            "feedback": float(stakeholder_data.get("feedback_score", rng.uniform(25, 80))),
+        # Five engagement quality elements (0-100 each). Only include elements
+        # that were actually supplied — no invented quality scores.
+        element_keys = {
+            "identification": "identification_score",
+            "dialogue": "dialogue_score",
+            "documentation": "documentation_score",
+            "integration": "integration_score",
+            "feedback": "feedback_score",
         }
+        element_scores: dict[str, float] = {}
+        for element, key in element_keys.items():
+            val = _opt_float(stakeholder_data.get(key))
+            if val is not None:
+                element_scores[element] = val
 
-        engagement_quality_score = round(
-            sum(element_scores.values()) / len(element_scores), 2
-        )
+        if element_scores:
+            engagement_quality_score: Optional[float] = round(
+                sum(element_scores.values()) / len(element_scores), 2
+            )
+        else:
+            engagement_quality_score = None
 
-        # Salience-weighted coverage
+        # Salience-weighted coverage — real computation over engaged types.
         total_salience = sum(
             STAKEHOLDER_TYPES.get(t, {}).get("salience_weight", 0.05)
             for t in engaged_types
         )
         coverage_pct = round(min(100.0, total_salience * 100 / 1.0), 2)
+
+        if engagement_quality_score is None:
+            engagement_quality_tier: Optional[str] = None
+        elif engagement_quality_score >= 80:
+            engagement_quality_tier = "excellent"
+        elif engagement_quality_score >= 60:
+            engagement_quality_tier = "good"
+        elif engagement_quality_score >= 40:
+            engagement_quality_tier = "adequate"
+        else:
+            engagement_quality_tier = "insufficient"
 
         return {
             "entity_id": entity_id,
@@ -347,12 +403,7 @@ class CSRDDMAEngine:
             "coverage_pct": coverage_pct,
             "element_scores": {k: round(v, 2) for k, v in element_scores.items()},
             "engagement_quality_score": engagement_quality_score,
-            "engagement_quality_tier": (
-                "excellent" if engagement_quality_score >= 80
-                else "good" if engagement_quality_score >= 60
-                else "adequate" if engagement_quality_score >= 40
-                else "insufficient"
-            ),
+            "engagement_quality_tier": engagement_quality_tier,
             "assessment_basis": "ESRS_1_section_45_stakeholder_engagement",
             "assessed_at": datetime.utcnow().isoformat(),
         }
@@ -373,20 +424,28 @@ class CSRDDMAEngine:
         Rank topics by combined score and assign materiality_basis.
 
         combined_score = max(impact_score, financial_score) x stakeholder_weight
-        """
-        rng = random.Random(hash(entity_id + "prio") & 0xFFFFFFFF)
 
+        Only topics with a supplied impact or financial score are ranked; topics
+        with no supplied dimension are excluded rather than assigned fabricated
+        scores. The stakeholder score is a genuine salience input when supplied;
+        when absent, no stakeholder uplift is applied (neutral multiplier).
+        """
         all_topics = list(ESRS_TOPICS.keys())
         ranked: list[dict] = []
 
         for topic_id in all_topics:
-            imp = float(impact_scores.get(topic_id, rng.uniform(20, 85)))
-            fin = float(financial_scores.get(topic_id, rng.uniform(20, 85)))
-            stk = float(stakeholder_scores.get(topic_id, rng.uniform(30, 90)))
+            imp = _opt_float(impact_scores.get(topic_id))
+            fin = _opt_float(financial_scores.get(topic_id))
+            stk = _opt_float(stakeholder_scores.get(topic_id))
 
-            # Double materiality: material if either dimension is material
-            imp_material = imp >= self.IMPACT_MATERIALITY_THRESHOLD
-            fin_material = fin >= self.FINANCIAL_MATERIALITY_THRESHOLD
+            # A topic can only be ranked if at least one materiality dimension
+            # was actually assessed. Absent -> excluded (not fabricated).
+            if imp is None and fin is None:
+                continue
+
+            # Double materiality: material if either dimension is material.
+            imp_material = imp is not None and imp >= self.IMPACT_MATERIALITY_THRESHOLD
+            fin_material = fin is not None and fin >= self.FINANCIAL_MATERIALITY_THRESHOLD
 
             if imp_material and fin_material:
                 materiality_basis = "both"
@@ -397,19 +456,21 @@ class CSRDDMAEngine:
             else:
                 materiality_basis = "neither"
 
-            # Combined score: average of both dimensions, weighted by stakeholder salience
-            combined_score = round(
-                ((imp + fin) / 2) * (0.7 + 0.3 * stk / 100), 2
-            )
+            # Combined score: average of assessed dimensions, weighted by
+            # stakeholder salience (neutral 1.0 multiplier when stk absent).
+            present = [v for v in (imp, fin) if v is not None]
+            dim_avg = sum(present) / len(present)
+            stk_mult = 0.7 + 0.3 * stk / 100 if stk is not None else 1.0
+            combined_score = round(dim_avg * stk_mult, 2)
 
             ranked.append(
                 {
                     "topic_id": topic_id,
                     "topic_name": ESRS_TOPICS[topic_id]["name"],
                     "standard": ESRS_TOPICS[topic_id]["standard"],
-                    "impact_score": round(imp, 2),
-                    "financial_score": round(fin, 2),
-                    "stakeholder_score": round(stk, 2),
+                    "impact_score": _round_opt(imp),
+                    "financial_score": _round_opt(fin),
+                    "stakeholder_score": _round_opt(stk),
                     "combined_score": combined_score,
                     "impact_material": imp_material,
                     "financial_material": fin_material,
@@ -449,18 +510,24 @@ class CSRDDMAEngine:
         Assess completeness of the DMA process across 4 steps (25% each).
 
         Also derives applicable ESRS standards and assurance readiness.
-        """
-        rng = random.Random(hash(entity_id + "proc") & 0xFFFFFFFF)
 
+        Per-step scores and the documentation score must be supplied in
+        ``process_data``. Completeness is the average of supplied step scores;
+        if no step scores are supplied it (and the derived tier / assurance
+        readiness) are returned as ``None`` rather than fabricated.
+        """
         step_scores: dict[str, float] = {}
         for step in DMA_PROCESS_STEPS:
-            step_scores[step] = float(
-                process_data.get(f"{step}_score", rng.uniform(40, 95))
-            )
+            val = _opt_float(process_data.get(f"{step}_score"))
+            if val is not None:
+                step_scores[step] = val
 
-        dma_process_completeness_pct = round(
-            sum(step_scores.values()) / len(step_scores), 2
-        )
+        if step_scores:
+            dma_process_completeness_pct: Optional[float] = round(
+                sum(step_scores.values()) / len(step_scores), 2
+            )
+        else:
+            dma_process_completeness_pct = None
 
         sector = process_data.get("sector", "financial_services")
         material_topics = process_data.get(
@@ -473,28 +540,36 @@ class CSRDDMAEngine:
             {ESRS_TOPICS[t]["standard"] for t in material_topics if t in ESRS_TOPICS}
         )
 
-        # Assurance readiness — based on documentation and completeness
-        documentation_score = float(
-            process_data.get("documentation_score", rng.uniform(40, 90))
-        )
-        assurance_readiness_pct = round(
-            (dma_process_completeness_pct * 0.6 + documentation_score * 0.4), 2
-        )
+        # Assurance readiness — based on documentation and completeness. Only
+        # computed when both inputs are present.
+        documentation_score = _opt_float(process_data.get("documentation_score"))
+        if dma_process_completeness_pct is not None and documentation_score is not None:
+            assurance_readiness_pct: Optional[float] = round(
+                (dma_process_completeness_pct * 0.6 + documentation_score * 0.4), 2
+            )
+        else:
+            assurance_readiness_pct = None
+
+        if dma_process_completeness_pct is None:
+            process_tier: Optional[str] = None
+        elif dma_process_completeness_pct >= 80:
+            process_tier = "advanced"
+        elif dma_process_completeness_pct >= 60:
+            process_tier = "developing"
+        elif dma_process_completeness_pct >= 40:
+            process_tier = "initial"
+        else:
+            process_tier = "not_started"
 
         return {
             "entity_id": entity_id,
             "step_scores": {k: round(v, 2) for k, v in step_scores.items()},
             "dma_process_completeness_pct": dma_process_completeness_pct,
-            "process_tier": (
-                "advanced" if dma_process_completeness_pct >= 80
-                else "developing" if dma_process_completeness_pct >= 60
-                else "initial" if dma_process_completeness_pct >= 40
-                else "not_started"
-            ),
+            "process_tier": process_tier,
             "sector": sector,
             "material_topics": material_topics,
             "esrs_standards_applicable": esrs_standards_applicable,
-            "documentation_score": round(documentation_score, 2),
+            "documentation_score": _round_opt(documentation_score),
             "assurance_readiness_pct": assurance_readiness_pct,
             "assessment_basis": "ESRS_1_sections_42_to_49",
             "assessed_at": datetime.utcnow().isoformat(),
@@ -516,27 +591,23 @@ class CSRDDMAEngine:
         """
         Comprehensive DMA covering both materiality dimensions, stakeholder
         engagement, topic prioritisation and process completeness.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        Per-topic impact/financial/stakeholder scores must be supplied in
+        ``full_data`` (impact_scores, financial_scores, stakeholder_scores keyed
+        by ESRS topic id). Topics without a supplied score are not fabricated —
+        they are simply excluded from the prioritisation. When no materiality
+        inputs are supplied at all, the overall DMA score is returned as ``None``.
+        """
         sector_topics = SECTOR_MATERIALITY.get(sector, ["E1", "S1", "G1"])
         all_topics = list(ESRS_TOPICS.keys())
 
-        # Generate impact and financial scores for all topics
-        impact_scores: dict[str, float] = {}
-        financial_scores: dict[str, float] = {}
-        stakeholder_scores_map: dict[str, float] = {}
-
-        for t in all_topics:
-            base = 65.0 if t in sector_topics else 35.0
-            impact_scores[t] = round(base + rng.uniform(-15, 20), 2)
-            financial_scores[t] = round(base + rng.uniform(-15, 20), 2)
-            stakeholder_scores_map[t] = round(50.0 + rng.uniform(-10, 30), 2)
-
-        # Override with any provided data
-        impact_scores.update(full_data.get("impact_scores", {}))
-        financial_scores.update(full_data.get("financial_scores", {}))
-        stakeholder_scores_map.update(full_data.get("stakeholder_scores", {}))
+        # Impact/financial/stakeholder scores come only from supplied data —
+        # no fabricated base scores.
+        impact_scores: dict[str, float] = dict(full_data.get("impact_scores", {}))
+        financial_scores: dict[str, float] = dict(full_data.get("financial_scores", {}))
+        stakeholder_scores_map: dict[str, float] = dict(
+            full_data.get("stakeholder_scores", {})
+        )
 
         prioritisation = self.prioritise_topics(
             entity_id, sector, impact_scores, financial_scores, stakeholder_scores_map
@@ -563,14 +634,32 @@ class CSRDDMAEngine:
             r for r in prioritisation["prioritised_topics"] if r["is_material"]
         ]
 
-        overall_dma_score = round(
-            (
-                process_result["dma_process_completeness_pct"] * 0.4
-                + stakeholder_result["engagement_quality_score"] * 0.3
-                + min(100.0, len(material_topics) / len(all_topics) * 100) * 0.3
-            ),
-            2,
+        # Overall DMA score is a weighted blend of process completeness (0.4),
+        # engagement quality (0.3) and material-topic breadth (0.3). Components
+        # that could not be assessed (None) are dropped and the remaining
+        # weights renormalised — never substituted with a fabricated value.
+        # Material-topic breadth only counts when topics were actually assessed
+        # (a genuine "zero material topics" is a real signal; "no topics
+        # assessed" is not — it stays None).
+        topics_assessed = len(prioritisation["prioritised_topics"])
+        material_ratio_score: Optional[float] = (
+            min(100.0, len(material_topics) / len(all_topics) * 100)
+            if topics_assessed > 0
+            else None
         )
+        components = [
+            (process_result["dma_process_completeness_pct"], 0.4),
+            (stakeholder_result["engagement_quality_score"], 0.3),
+            (material_ratio_score, 0.3),
+        ]
+        available = [(v, w) for v, w in components if v is not None]
+        total_weight = sum(w for _, w in available)
+        if total_weight > 0:
+            overall_dma_score: Optional[float] = round(
+                sum(v * w for v, w in available) / total_weight, 2
+            )
+        else:
+            overall_dma_score = None
 
         cross_framework = {
             "TCFD": CROSS_FRAMEWORK_MAP["TCFD"],
@@ -589,7 +678,8 @@ class CSRDDMAEngine:
             "assessment_standard": "ESRS_1_Double_Materiality",
             "overall_dma_score": overall_dma_score,
             "dma_tier": (
-                "advanced" if overall_dma_score >= 75
+                None if overall_dma_score is None
+                else "advanced" if overall_dma_score >= 75
                 else "developing" if overall_dma_score >= 55
                 else "initial"
             ),

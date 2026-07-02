@@ -5,8 +5,7 @@ GHG Protocol Corporate Value Chain (Scope 3) Standard 2011
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Any
-import random
+from typing import Any, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -52,8 +51,8 @@ class CategoryResult:
     category_id: str = ""
     category_name: str = ""
     is_material: bool = False
-    tco2e: float = 0.0
-    pct_of_total: float = 0.0
+    tco2e: Optional[float] = None          # None when no entity intensity/total supplied
+    pct_of_total: float = 0.0              # published typical share (%) — benchmark default
     calculation_method: str = "average_data"
     dqs: int = 3
     data_gaps: list[str] = field(default_factory=list)
@@ -62,10 +61,10 @@ class CategoryResult:
 @dataclass
 class PortfolioScope3:
     """C15 — PCAF attribution for investment portfolios."""
-    total_attributed_tco2e: float = 0.0
+    total_attributed_tco2e: Optional[float] = None
     by_asset_class: dict[str, float] = field(default_factory=dict)
-    pcaf_dqs_weighted: float = 0.0
-    portfolio_temperature_score: float = 0.0
+    pcaf_dqs_weighted: Optional[float] = None
+    portfolio_temperature_score: Optional[float] = None
 
 
 @dataclass
@@ -78,7 +77,7 @@ class Scope3Assessment:
     headcount: int = 0
     material_categories: list[str] = field(default_factory=list)
     flag_applicable: bool = False
-    total_scope3_tco2e: float = 0.0
+    total_scope3_tco2e: Optional[float] = None   # None when no entity intensity/total supplied
     sbti_coverage_pct: float = 0.0
     meets_40pct_rule: bool = False
     category_results: list[CategoryResult] = field(default_factory=list)
@@ -105,8 +104,17 @@ class Scope3CategoriesEngine:
         headcount: int,
         sector_type: str = "non_flag",
         portfolio_aum_bn: float | None = None,
+        # --- Optional entity data (backward-compatible; all default None) ---
+        scope3_intensity_tco2e_per_eur_m: Optional[float] = None,
+        total_scope3_tco2e: Optional[float] = None,
+        category_shares: Optional[dict[str, float]] = None,
+        category_methods: Optional[dict[str, str]] = None,
+        flag_share: Optional[float] = None,
+        portfolio_intensity_tco2e_per_eur_m: Optional[float] = None,
+        portfolio_asset_class_shares: Optional[dict[str, float]] = None,
+        portfolio_pcaf_dqs: Optional[float] = None,
+        portfolio_temperature_score: Optional[float] = None,
     ) -> Scope3Assessment:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         result = Scope3Assessment(
             assessment_id=f"S3CAT-{entity_id[:8].upper()}-2024",
             entity_id=entity_id,
@@ -117,19 +125,35 @@ class Scope3CategoriesEngine:
             flag_applicable=sector_type in SBTI_SECTORS_FLAG,
         )
 
-        # Base scope3 estimate (tCO2e) from revenue
-        base_intensity = rng.uniform(80, 400)  # tCO2e per EUR M revenue
-        total = revenue_bn * 1_000 * base_intensity
-        result.total_scope3_tco2e = round(total, 0)
+        # Total Scope 3 (tCO2e). Real computation only when the caller supplies
+        # a measured/screened total or an intensity; otherwise honest null.
+        total: Optional[float] = None
+        if total_scope3_tco2e is not None:
+            total = float(total_scope3_tco2e)
+        elif scope3_intensity_tco2e_per_eur_m is not None:
+            # revenue_bn (EUR bn) * 1_000 = EUR M; * intensity (tCO2e/EUR M)
+            total = revenue_bn * 1_000 * float(scope3_intensity_tco2e_per_eur_m)
+        result.total_scope3_tco2e = round(total, 0) if total is not None else None
+        if total is None:
+            result.warnings.append(
+                "No entity Scope 3 total or intensity supplied — per-category tCO2e "
+                "reported as null; percentages reflect GHG Protocol typical shares only"
+            )
 
-        # Category results
+        # Category results.
+        # Share per category defaults to the published GHG Protocol typical share
+        # (documented benchmark, NOT a random draw); caller may override per category.
         cat_results: list[CategoryResult] = []
-        cumulative = 0.0
         for cat_id, cat_meta in SCOPE3_CATEGORIES.items():
-            fraction = cat_meta["typical_pct"] * rng.uniform(0.5, 1.8)
-            tco2e = round(total * fraction, 0)
-            cumulative += tco2e
-            method = rng.choice(list(CALCULATION_METHODS.keys()))
+            fraction = cat_meta["typical_pct"]
+            if category_shares is not None and cat_id in category_shares:
+                fraction = float(category_shares[cat_id])
+            tco2e = round(total * fraction, 0) if total is not None else None
+            # Calculation method: documented default is average (industry) data for
+            # screening; caller may specify the actual method used per category.
+            method = "average_data"
+            if category_methods is not None and category_methods.get(cat_id) in CALCULATION_METHODS:
+                method = category_methods[cat_id]
             cr = CategoryResult(
                 category_id=cat_id,
                 category_name=cat_meta["name"],
@@ -146,39 +170,74 @@ class Scope3CategoriesEngine:
         result.category_results = cat_results
         result.material_categories = [c.category_id for c in cat_results if c.is_material]
 
-        # SBTi coverage (material cats as pct of total)
-        material_tco2e = sum(c.tco2e for c in cat_results if c.is_material)
-        result.sbti_coverage_pct = round(material_tco2e / max(total, 1) * 100, 1)
+        # SBTi coverage (material cats as pct of total).
+        # Use tCO2e when a total is known; otherwise fall back to the published
+        # typical shares so the coverage check still reflects the benchmark boundary.
+        if total is not None and total > 0:
+            material_tco2e = sum(c.tco2e for c in cat_results if c.is_material and c.tco2e is not None)
+            result.sbti_coverage_pct = round(material_tco2e / total * 100, 1)
+        else:
+            material_share = sum(c.pct_of_total for c in cat_results if c.is_material)
+            result.sbti_coverage_pct = round(material_share, 1)
         result.meets_40pct_rule = result.sbti_coverage_pct >= (COVERAGE_THRESHOLD * 100)
 
-        # Weighted DQS
-        total_for_dqs = sum(c.tco2e for c in cat_results)
+        # Weighted DQS — weight by tCO2e when known, else by published share (equivalent
+        # ranking when shares proxy for mass).
+        if total is not None and total > 0:
+            weights = [(c.tco2e or 0.0) for c in cat_results]
+        else:
+            weights = [c.pct_of_total for c in cat_results]
+        total_w = sum(weights)
         result.weighted_avg_dqs = round(
-            sum(c.tco2e * c.dqs for c in cat_results) / max(total_for_dqs, 1), 2
+            sum(w * c.dqs for w, c in zip(weights, cat_results)) / max(total_w, 1e-9), 2
         )
 
-        # FLAG split (for FLAG-applicable sectors)
+        # FLAG split (for FLAG-applicable sectors).
+        # Real split only when the caller provides both a total and a FLAG share;
+        # otherwise leave empty and flag the gap (no fabricated split).
         if result.flag_applicable:
-            flag_pct = rng.uniform(0.15, 0.60)
-            result.flag_split = {
-                "flag_tco2e": round(total * flag_pct, 0),
-                "non_flag_tco2e": round(total * (1 - flag_pct), 0),
-                "flag_pct": round(flag_pct * 100, 1),
-            }
+            if total is not None and flag_share is not None:
+                flag_pct = float(flag_share)
+                result.flag_split = {
+                    "flag_tco2e": round(total * flag_pct, 0),
+                    "non_flag_tco2e": round(total * (1 - flag_pct), 0),
+                    "flag_pct": round(flag_pct * 100, 1),
+                }
+            else:
+                result.warnings.append(
+                    "FLAG-applicable sector but no FLAG share / total supplied — "
+                    "FLAG vs non-FLAG split not computed (insufficient_data)"
+                )
 
-        # C15 portfolio scope 3
+        # C15 portfolio scope 3 (PCAF attribution).
         if portfolio_aum_bn and portfolio_aum_bn > 0:
             ps = PortfolioScope3()
-            ps.total_attributed_tco2e = round(portfolio_aum_bn * 1_000 * rng.uniform(40, 120), 0)
-            ps.by_asset_class = {
-                "listed_equity":      round(ps.total_attributed_tco2e * rng.uniform(0.3, 0.5), 0),
-                "corporate_bonds":    round(ps.total_attributed_tco2e * rng.uniform(0.2, 0.35), 0),
-                "project_finance":    round(ps.total_attributed_tco2e * rng.uniform(0.05, 0.15), 0),
-                "real_estate":        round(ps.total_attributed_tco2e * rng.uniform(0.03, 0.12), 0),
-                "sovereign_bonds":    round(ps.total_attributed_tco2e * rng.uniform(0.02, 0.08), 0),
-            }
-            ps.pcaf_dqs_weighted = round(rng.uniform(2.5, 4.0), 2)
-            ps.portfolio_temperature_score = round(rng.uniform(1.8, 3.2), 1)
+            # Attributed emissions: real only when a portfolio carbon intensity is
+            # supplied; otherwise null (no random intensity).
+            if portfolio_intensity_tco2e_per_eur_m is not None:
+                ps.total_attributed_tco2e = round(
+                    portfolio_aum_bn * 1_000 * float(portfolio_intensity_tco2e_per_eur_m), 0
+                )
+                # Asset-class breakdown only from caller-supplied shares.
+                if portfolio_asset_class_shares:
+                    ps.by_asset_class = {
+                        ac: round(ps.total_attributed_tco2e * float(share), 0)
+                        for ac, share in portfolio_asset_class_shares.items()
+                    }
+            else:
+                result.warnings.append(
+                    "C15 portfolio present but no portfolio carbon intensity supplied — "
+                    "attributed emissions reported as null (insufficient_data)"
+                )
+            # PCAF DQS and portfolio temperature score are entity metrics: pass through
+            # when supplied, else honest null.
+            ps.pcaf_dqs_weighted = (
+                round(float(portfolio_pcaf_dqs), 2) if portfolio_pcaf_dqs is not None else None
+            )
+            ps.portfolio_temperature_score = (
+                round(float(portfolio_temperature_score), 1)
+                if portfolio_temperature_score is not None else None
+            )
             result.portfolio_scope3 = ps
 
         # Recommendations
@@ -195,13 +254,23 @@ class Scope3CategoriesEngine:
         return result
 
     def screen_materiality(
-        self, nace_code: str, revenue_bn: float
+        self,
+        nace_code: str,
+        revenue_bn: float,
+        sector_shares: Optional[dict[str, float]] = None,
     ) -> dict[str, Any]:
-        """Quick materiality screen before full assessment."""
-        rng = random.Random(hash(nace_code) & 0xFFFFFFFF)
+        """Quick materiality screen before full assessment.
+
+        Uses the published GHG Protocol typical category shares (documented
+        cross-sector benchmark) — deterministic, not a random draw. A caller may
+        pass ``sector_shares`` (cat_id -> fractional share) to screen against
+        sector-specific data instead of the generic benchmark.
+        """
         material = {}
         for cat_id, cat_meta in SCOPE3_CATEGORIES.items():
-            score = cat_meta["typical_pct"] * rng.uniform(0.8, 1.5)
+            score = cat_meta["typical_pct"]
+            if sector_shares is not None and cat_id in sector_shares:
+                score = float(sector_shares[cat_id])
             material[cat_id] = {
                 "name": cat_meta["name"],
                 "likely_material": score > 0.06,

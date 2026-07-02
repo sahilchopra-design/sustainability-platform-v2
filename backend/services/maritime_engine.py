@@ -11,7 +11,6 @@ Standards implemented:
 - Ship asset stranding risk modelling
 """
 
-import random
 import math
 from typing import Optional, List, Dict, Any
 
@@ -117,10 +116,6 @@ def _cii_rating(ratio: float) -> str:
     return "E"
 
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(entity_id) & 0xFFFFFFFF)
-
-
 def _eu_ets_cost(co2: float, coverage: float, route_share: float, price: float) -> float:
     return round(co2 * coverage * (route_share / 100.0) * price, 2)
 
@@ -154,7 +149,6 @@ class MaritimeEngine:
         fuel_type: str,
         year: int,
     ) -> dict:
-        rng = _rng(entity_id)
         ship = SHIP_TYPES.get(ship_type, SHIP_TYPES["bulk_carrier"])
         fuel = FUEL_EMISSION_FACTORS.get(fuel_type, FUEL_EMISSION_FACTORS["HFO"])
 
@@ -213,7 +207,6 @@ class MaritimeEngine:
         design_fuel_consumption_g_kwh: float,
         fuel_type: str,
     ) -> dict:
-        rng = _rng(entity_id)
         fuel = FUEL_EMISSION_FACTORS.get(fuel_type, FUEL_EMISSION_FACTORS["HFO"])
         cf = fuel["cf_t_co2_t_fuel"]
 
@@ -233,8 +226,9 @@ class MaritimeEngine:
         reduction_needed_pct = round(max(0.0, (eexi_attained - eexi_required) / max(eexi_required, 0.001) * 100.0), 2)
         compliant = eexi_attained <= eexi_required
 
-        # EEDI comparable (older metric for reference)
-        eedi_comparable = round(eexi_attained * 0.92 + rng.uniform(-0.05, 0.05), 4)
+        # EEDI comparable (older metric for reference): EEXI-equivalent design line
+        # scaled by the 0.92 model factor. Deterministic — no stochastic jitter.
+        eedi_comparable = round(eexi_attained * 0.92, 4)
 
         return {
             "entity_id": entity_id,
@@ -261,22 +255,30 @@ class MaritimeEngine:
         annual_co2_tonnes: float,
         eu_route_share_pct: float,
         year: int,
+        eua_price_eur: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
-
         coverage = EU_ETS_PHASE_COVERAGE.get(year, 1.0)
         route_share = _clamp(0.0, 100.0, eu_route_share_pct) / 100.0
 
         allowances_required = round(annual_co2_tonnes * coverage * route_share, 2)
 
-        # EUA price scenarios
-        price_base = 65.0 + rng.uniform(-5.0, 5.0)
-        price_high = price_base * 1.50
-        price_stress = price_base * 2.0
+        # EUA price scenarios are derived from the caller-supplied spot price.
+        # Without a live/observed EUA price we cannot honestly quote a cost, so
+        # price and cost fields are reported as None (insufficient data).
+        if eua_price_eur is not None and eua_price_eur >= 0.0:
+            price_base = float(eua_price_eur)
+            price_high = price_base * 1.50   # +50% scenario (model multiplier)
+            price_stress = price_base * 2.0  # +100% stress scenario (model multiplier)
 
-        cost_base = round(allowances_required * price_base, 2)
-        cost_high = round(allowances_required * price_high, 2)
-        cost_stress = round(allowances_required * price_stress, 2)
+            cost_base = round(allowances_required * price_base, 2)
+            cost_high = round(allowances_required * price_high, 2)
+            cost_stress = round(allowances_required * price_stress, 2)
+            eua_price_base_eur: Optional[float] = round(price_base, 2)
+        else:
+            cost_base = None
+            cost_high = None
+            cost_stress = None
+            eua_price_base_eur = None
 
         # Phase schedule
         if year < 2024:
@@ -294,10 +296,11 @@ class MaritimeEngine:
             "eu_route_share_pct": eu_route_share_pct,
             "phase_coverage_pct": round(coverage * 100.0, 1),
             "allowances_required": allowances_required,
-            "eua_price_base_eur": round(price_base, 2),
+            "eua_price_base_eur": eua_price_base_eur,
             "cost_eur_base": cost_base,
             "cost_eur_high": cost_high,
             "cost_eur_stress": cost_stress,
+            "cost_basis": "eua_price_eur input" if eua_price_base_eur is not None else "insufficient_data",
             "compliance_deadline": compliance_deadline,
             "regulatory_basis": "Regulation (EU) 2023/957",
         }
@@ -313,7 +316,6 @@ class MaritimeEngine:
         annual_energy_mj: float,
         year: int,
     ) -> dict:
-        rng = _rng(entity_id)
         fuel = FUEL_EMISSION_FACTORS.get(fuel_type, FUEL_EMISSION_FACTORS["HFO"])
 
         # WtW GHG intensity (tank-to-wake + well-to-tank)
@@ -368,8 +370,8 @@ class MaritimeEngine:
         build_year: int,
         fuel_type: str,
         gross_tonnage: float,
+        retrofit_cost_usd_per_gt: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
         ship = SHIP_TYPES.get(ship_type, SHIP_TYPES["bulk_carrier"])
         current_year = 2024
 
@@ -391,8 +393,11 @@ class MaritimeEngine:
 
         years_to_stranding = max(0, stranding_year - current_year)
 
-        # Retrofit cost (engine conversion, scrubbers, etc.)
-        retrofit_cost_usd = round(gross_tonnage * 120.0 * (1 + rng.uniform(-0.1, 0.1)), 2)
+        # Retrofit cost (engine conversion, scrubbers, etc.). Deterministic model:
+        # USD 120/GT default calibration constant; caller may override with an
+        # observed per-GT rate. No stochastic jitter.
+        retrofit_rate_per_gt = retrofit_cost_usd_per_gt if retrofit_cost_usd_per_gt is not None else 120.0
+        retrofit_cost_usd = round(gross_tonnage * retrofit_rate_per_gt, 2)
 
         # Alternative fuel CAPEX
         if fuel_type in high_carbon_fuels:
@@ -440,14 +445,18 @@ class MaritimeEngine:
     # ------------------------------------------------------------------
     # 6. Fleet Assessment
     # ------------------------------------------------------------------
-    def assess_fleet(self, entity_id: str, ships: List[Dict[str, Any]]) -> dict:
-        rng = _rng(entity_id)
-
+    def assess_fleet(
+        self,
+        entity_id: str,
+        ships: List[Dict[str, Any]],
+        eua_price_eur: Optional[float] = None,
+    ) -> dict:
         if not ships:
             return {"entity_id": entity_id, "error": "no ships provided"}
 
         cii_ratings = []
         eu_ets_total = 0.0
+        eu_ets_priced_count = 0
         fueleu_compliant_count = 0
         transition_capex_total = 0.0
         risk_scores = []
@@ -471,9 +480,12 @@ class MaritimeEngine:
             cii_res = self.assess_cii(ship_entity, ship_type, dwt, fuel_t, dist_nm, cargo_t, fuel_type, year)
             cii_ratings.append(cii_res["cii_rating"])
 
-            # EU ETS
-            ets_res = self.assess_eu_ets(ship_entity, ship_type, co2_t, eu_share, year)
-            eu_ets_total += ets_res["cost_eur_base"]
+            # EU ETS. Per-ship cost is None unless a EUA price is supplied; only
+            # priced ships contribute to the fleet total (kept honest below).
+            ets_res = self.assess_eu_ets(ship_entity, ship_type, co2_t, eu_share, year, eua_price_eur=eua_price_eur)
+            if ets_res["cost_eur_base"] is not None:
+                eu_ets_total += ets_res["cost_eur_base"]
+                eu_ets_priced_count += 1
 
             # FuelEU
             feu_res = self.assess_fueleu(ship_entity, ship_type, fuel_type, energy_mj, year)
@@ -514,7 +526,8 @@ class MaritimeEngine:
             "fleet_size": n,
             "fleet_cii_rating": fleet_cii_rating,
             "cii_rating_distribution": rating_counts,
-            "eu_ets_total_cost_eur": round(eu_ets_total, 2),
+            "eu_ets_total_cost_eur": round(eu_ets_total, 2) if eu_ets_priced_count > 0 else None,
+            "eu_ets_cost_basis": "eua_price_eur input" if eu_ets_priced_count > 0 else "insufficient_data",
             "fueleu_compliance_rate": fueleu_compliance_rate,
             "transition_capex_usd": round(transition_capex_total, 2),
             "portfolio_risk_score": portfolio_risk_score,

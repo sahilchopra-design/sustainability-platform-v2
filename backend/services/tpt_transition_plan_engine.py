@@ -24,7 +24,6 @@ References:
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -637,6 +636,31 @@ CROSS_FRAMEWORK_MAP: dict[str, dict] = {
 
 
 # ---------------------------------------------------------------------------
+# Model Calibration Constants — completion-to-score mapping
+# ---------------------------------------------------------------------------
+# TPT scoring is disclosure-completeness based: the genuine caller signals are
+# which elements / sub-elements have been disclosed. When a caller supplies a
+# named quality tier we map it to that tier's published score-range midpoint.
+# When only a completion flag is available (no per-item quality), we apply the
+# documented MODEL constants below — a completed item is scored at the
+# framework-typical "advanced" quality and an undisclosed item at the "initial"
+# floor. These are MODEL calibration constants (deterministic, not entity
+# measurements) and are flagged as such in the assessment `notes`.
+
+def _tier_midpoint(tier: str) -> float:
+    """Midpoint of a QUALITY_TIERS score range (deterministic)."""
+    score_range = QUALITY_TIERS.get(tier, {}).get("score_range")
+    if not score_range:
+        return 0.0
+    return (score_range[0] + score_range[1]) / 2.0
+
+
+# Completion-flag -> score when no per-item quality tier is supplied.
+_COMPLETED_ITEM_SCORE = _tier_midpoint("advanced")       # disclosed item (62.5)
+_UNDISCLOSED_ITEM_SCORE = _tier_midpoint("initial")      # not disclosed (12.5)
+
+
+# ---------------------------------------------------------------------------
 # Dataclass — TPT Assessment Output
 # ---------------------------------------------------------------------------
 
@@ -695,21 +719,42 @@ class TPTTransitionPlanEngine:
         interim_targets: Optional[dict] = None,
         financed_emissions_trajectory: Optional[list[dict]] = None,
         capex_green_pct: float = 0.0,
+        sub_elements_completed: Optional[dict[str, list[str]]] = None,
     ) -> TPTAssessment:
-        """Full TPT Disclosure Framework assessment."""
-        rng = random.Random(hash(entity_id + str(plan_year)))
+        """Full TPT Disclosure Framework assessment.
+
+        Scoring is disclosure-completeness based and fully deterministic.
+        ``sub_elements_completed`` (optional) maps an element key to the list of
+        its disclosed sub-element ids (e.g. ``{"foundations": ["1.1", "1.3"]}``);
+        when supplied, each element score is computed from the real per-element
+        disclosure fraction. When only ``elements_completed`` is available, each
+        element is scored with the documented MODEL calibration constants
+        (see ``_COMPLETED_ITEM_SCORE`` / ``_UNDISCLOSED_ITEM_SCORE``).
+        """
         elements_completed = elements_completed or []
         interim_targets = interim_targets or {}
+        sub_completed_map = sub_elements_completed or {}
+        used_model_constants = False
 
-        # Score each element
+        # Score each element from disclosure completeness (deterministic)
         element_scores: dict[str, float] = {}
         for el_key, el_data in TPT_ELEMENTS.items():
-            if el_key in elements_completed:
-                score = rng.uniform(60, 90)
+            all_sub = list(el_data.get("sub_elements", {}).keys())
+            if el_key in sub_completed_map:
+                # Real computation: fraction of this element's sub-elements disclosed
+                disclosed = {s for s in sub_completed_map[el_key] if s in all_sub}
+                score = sum(
+                    _COMPLETED_ITEM_SCORE if s in disclosed else _UNDISCLOSED_ITEM_SCORE
+                    for s in all_sub
+                ) / len(all_sub) if all_sub else _UNDISCLOSED_ITEM_SCORE
+            elif el_key in elements_completed:
+                score = _COMPLETED_ITEM_SCORE  # model calibration constant
+                used_model_constants = True
             else:
-                score = rng.uniform(10, 55)
+                score = _UNDISCLOSED_ITEM_SCORE  # model calibration constant
+                used_model_constants = True
 
-            # Boost for specific data availability
+            # Boost for specific data availability (real input-driven adjustments)
             if el_key == "foundations" and net_zero_target_year:
                 score = min(100, score + 10)
             if el_key == "metrics_targets" and interim_targets:
@@ -728,20 +773,39 @@ class TPTTransitionPlanEngine:
         # Quality tier
         quality_tier = self._get_quality_tier(overall)
 
-        # Completeness
-        sub_completed = sum(
-            1 for el_key in elements_completed
-            for _ in TPT_ELEMENTS.get(el_key, {}).get("sub_elements", {})
-        ) + rng.randint(0, 5)
+        # Completeness — count of genuinely disclosed sub-elements
+        if sub_completed_map:
+            sub_completed = sum(
+                len({s for s in sub_completed_map.get(el_key, [])
+                     if s in TPT_ELEMENTS.get(el_key, {}).get("sub_elements", {})})
+                for el_key in TPT_ELEMENTS
+            )
+        else:
+            sub_completed = sum(
+                1 for el_key in elements_completed
+                for _ in TPT_ELEMENTS.get(el_key, {}).get("sub_elements", {})
+            )
         sub_completed = min(sub_completed, self._TOTAL_SUB_ELEMENTS)
 
         # Gaps
         gaps = self._generate_gaps(element_scores, net_zero_target_year, interim_targets, capex_green_pct, entity_type)
 
-        # Cross-framework alignment
-        tcfd_pct = round(overall * 0.9 + rng.uniform(-5, 5), 1)
-        s2_pct = round(overall * 0.85 + rng.uniform(-5, 5), 1)
-        esrs_pct = round(overall * 0.88 + rng.uniform(-5, 5), 1)
+        # Cross-framework alignment — documented model mapping ratios applied to
+        # the overall TPT score (deterministic; no stochastic noise).
+        tcfd_pct = round(overall * 0.9, 1)
+        s2_pct = round(overall * 0.85, 1)
+        esrs_pct = round(overall * 0.88, 1)
+
+        notes = (
+            f"TPT Disclosure Framework assessment for {entity_name}. "
+            f"Entity type: {entity_type}. Plan year: {plan_year}."
+        )
+        if used_model_constants:
+            notes += (
+                " Element scores use model calibration constants "
+                "(disclosed=advanced-tier midpoint, undisclosed=initial-tier floor); "
+                "supply sub_elements_completed for disclosure-fraction scoring."
+            )
 
         return TPTAssessment(
             entity_id=entity_id,
@@ -764,7 +828,7 @@ class TPTTransitionPlanEngine:
             tcfd_alignment_pct=min(100, max(0, tcfd_pct)),
             ifrs_s2_alignment_pct=min(100, max(0, s2_pct)),
             csrd_esrs_e1_alignment_pct=min(100, max(0, esrs_pct)),
-            notes=f"TPT Disclosure Framework assessment for {entity_name}. Entity type: {entity_type}. Plan year: {plan_year}.",
+            notes=notes,
         )
 
     def _get_quality_tier(self, score: float) -> str:
@@ -828,24 +892,39 @@ class TPTTransitionPlanEngine:
         entity_id: str,
         element_id: str,
         sub_elements_completed: Optional[list[str]] = None,
+        sub_element_quality: Optional[dict[str, str]] = None,
     ) -> dict:
-        """Score a single TPT element based on sub-element completion."""
+        """Score a single TPT element based on sub-element completion.
+
+        Deterministic. When ``sub_element_quality`` maps a sub-element id to a
+        named QUALITY_TIERS tier (initial/developing/advanced/leading), that
+        sub-element is scored at the tier's published range midpoint (a real,
+        caller-supplied quality signal). Otherwise the disclosure-completion
+        flag is scored with the documented MODEL calibration constants
+        (disclosed=advanced-tier midpoint, undisclosed=initial-tier floor).
+        """
         if element_id not in TPT_ELEMENTS:
             return {"error": f"Element '{element_id}' not found. Valid: {list(TPT_ELEMENTS.keys())}"}
 
-        rng = random.Random(hash(entity_id + element_id))
         el = TPT_ELEMENTS[element_id]
         sub_elements_completed = sub_elements_completed or []
+        sub_element_quality = sub_element_quality or {}
         all_sub = list(el["sub_elements"].keys())
+        used_model_constants = False
 
         scored_sub_elements = []
         total_score = 0.0
         for sub_id in all_sub:
             sub = el["sub_elements"][sub_id]
-            if sub_id in sub_elements_completed:
-                sub_score = rng.uniform(60, 95)
+            if sub_id in sub_element_quality and sub_element_quality[sub_id] in QUALITY_TIERS:
+                # Real caller-supplied quality tier -> tier midpoint
+                sub_score = _tier_midpoint(sub_element_quality[sub_id])
+            elif sub_id in sub_elements_completed:
+                sub_score = _COMPLETED_ITEM_SCORE  # model calibration constant
+                used_model_constants = True
             else:
-                sub_score = rng.uniform(5, 45)
+                sub_score = _UNDISCLOSED_ITEM_SCORE  # model calibration constant
+                used_model_constants = True
             total_score += sub_score
             quality = "leading" if sub_score >= 75 else (
                 "advanced" if sub_score >= 50 else (
@@ -872,6 +951,10 @@ class TPTTransitionPlanEngine:
             "element_score": round(element_score, 1),
             "quality_tier": quality_tier,
             "weight_in_overall": el["weight"],
+            "scoring_basis": (
+                "model_calibration_constants" if used_model_constants
+                else "caller_supplied_quality"
+            ),
             "sub_elements": scored_sub_elements,
             "completed_count": len(sub_elements_completed),
             "total_count": len(all_sub),

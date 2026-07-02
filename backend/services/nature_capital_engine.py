@@ -4,9 +4,8 @@ SEEA EA 2021 | TNFD v1.0 | ENCORE 62 ecosystem services | TEEB/BES monetary valu
 WAVES Adjusted Savings | PBAF 2023 | CBD GBF Target 15 | CSRD ESRS E4
 """
 from __future__ import annotations
-import random
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 # ── Reference Data ─────────────────────────────────────────────────────────────
 
@@ -136,6 +135,33 @@ SECTOR_NATURE_DEPENDENCY = {
 }
 
 
+# ── Helpers ────────────────────────────────────────────────────────────────────
+
+def _bool_evidence_score(items: dict[str, Optional[bool]]) -> Optional[float]:
+    """Fraction of items marked True, scored ONLY over items with evidence.
+
+    Returns None (insufficient_data) when no item in the group has evidence,
+    so absence of data can never be reported as a 0% or fabricated score.
+    """
+    present = [v for v in items.values() if v is not None]
+    if not present:
+        return None
+    return sum(1 for v in present if v) / len(present)
+
+
+def _weighted_present_mean(pairs: list[tuple[Optional[float], float]]) -> Optional[float]:
+    """Weighted mean over (value, weight) pairs, skipping None values.
+
+    Weights are re-normalised across the present values so a missing framework
+    does not drag the composite toward zero. Returns None if nothing is present.
+    """
+    present = [(v, w) for v, w in pairs if v is not None and w > 0]
+    total_w = sum(w for _, w in present)
+    if total_w <= 0:
+        return None
+    return sum(v * w for v, w in present) / total_w
+
+
 # ── Core Engine Functions ──────────────────────────────────────────────────────
 
 def assess_natural_capital(
@@ -144,50 +170,88 @@ def assess_natural_capital(
     ecosystem_type: str,
     extent_ha: float,
     location_country: str,
+    condition_score: Optional[float] = None,
+    dependency_score: Optional[float] = None,
+    impact_score: Optional[float] = None,
+    msa_biodiversity_score: Optional[float] = None,
+    gbf_t15_sub_elements: Optional[dict[str, bool]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Assess natural capital for an ecosystem asset.
 
+    Monetary valuation is a genuine benefit-transfer computation from TEEB/IPBES
+    biome unit values scaled by the caller-supplied ecosystem *condition_score*
+    (0-1, reference state = 1.0). Entity-specific TNFD dependency/impact scores,
+    the MSA biodiversity index, and CBD GBF Target-15 sub-element status are
+    reported only when the caller supplies them; absent inputs return honest
+    nulls (never fabricated draws).
+    """
     eco_lower = ecosystem_type.lower().replace(" ", "_").replace("-", "_")
     biome_data = BIOME_UNIT_VALUES.get(eco_lower, BIOME_UNIT_VALUES["temperate_forest"])
 
-    # SEEA EA account type
-    seea_account = "EA-2" if rng.random() > 0.5 else "EA-3"
+    # Condition score (0-1, reference state = 1.0). Required for scaling service
+    # flows and monetary value; without it the assessment cannot be quantified.
+    condition_available = condition_score is not None
+    if condition_available:
+        condition_score = max(0.0, min(1.0, float(condition_score)))
 
-    # Condition score (0-1, reference state = 1.0)
-    condition_score = round(rng.uniform(0.45, 0.95), 3)
+    # SEEA EA account type: EA-4 (Monetary Ecosystem Services) is produced here
+    # when condition is known and monetary flows can be derived; otherwise EA-2
+    # (Condition Account) is the applicable account still to be populated.
+    seea_account = "EA-4" if condition_available else "EA-2"
 
-    # Ecosystem service flows
-    service_flows: dict[str, float] = {
-        "provisioning_usd_ha_yr": round(biome_data["provisioning"] * condition_score, 2),
-        "regulating_usd_ha_yr": round(biome_data["regulating"] * condition_score, 2),
-        "cultural_usd_ha_yr": round(biome_data["cultural"] * condition_score, 2),
-    }
+    # Ecosystem service flows (deterministic: biome unit value × condition)
+    if condition_available:
+        service_flows: dict[str, Optional[float]] = {
+            "provisioning_usd_ha_yr": round(biome_data["provisioning"] * condition_score, 2),
+            "regulating_usd_ha_yr": round(biome_data["regulating"] * condition_score, 2),
+            "cultural_usd_ha_yr": round(biome_data["cultural"] * condition_score, 2),
+        }
+        total_unit_value: Optional[float] = biome_data["total_usd_ha_yr"] * condition_score
+        monetary_value_usd: Optional[float] = total_unit_value * extent_ha
+    else:
+        service_flows = {
+            "provisioning_usd_ha_yr": None,
+            "regulating_usd_ha_yr": None,
+            "cultural_usd_ha_yr": None,
+        }
+        total_unit_value = None
+        monetary_value_usd = None
 
-    # Monetary value
-    total_unit_value = biome_data["total_usd_ha_yr"] * condition_score
-    monetary_value_usd = total_unit_value * extent_ha
+    # TNFD dependency/impact scores — entity-reported; null when not supplied
+    dependency_score = round(float(dependency_score), 3) if dependency_score is not None else None
+    impact_score = round(float(impact_score), 3) if impact_score is not None else None
 
-    # TNFD dependency/impact scores
-    dependency_score = round(rng.uniform(0.4, 0.9), 3)
-    impact_score = round(rng.uniform(0.3, 0.85), 3)
+    # TNFD pillar most relevant to a site-level natural-capital assessment is the
+    # Strategy pillar (S4: locations and direct operational footprint in biomes).
+    tnfd_pillar = "Strategy"
 
-    # TNFD pillar assignment
-    pillars = ["Governance", "Strategy", "Risk Management", "Metrics & Targets"]
-    tnfd_pillar = rng.choice(pillars)
+    # CBD GBF Target 15 alignment — entity self-assessment; null when absent
+    if gbf_t15_sub_elements is not None:
+        gbf_t15: Optional[dict[str, bool]] = {
+            k: bool(v) for k, v in gbf_t15_sub_elements.items()
+        }
+        gbf_t15_score: Optional[float] = (
+            sum(1 for v in gbf_t15.values() if v) / len(gbf_t15) if gbf_t15 else None
+        )
+    else:
+        gbf_t15 = None
+        gbf_t15_score = None
 
-    # CBD GBF Target 15 alignment
-    gbf_t15 = {
-        "sub_element_a": rng.random() > 0.3,  # assess nature-related dependencies
-        "sub_element_b": rng.random() > 0.4,  # monitor and disclose
-        "sub_element_c": rng.random() > 0.5,  # reduce negative impacts
-        "sub_element_d": rng.random() > 0.45, # restore biodiversity
-        "sub_element_e": rng.random() > 0.5,  # sustainable use of biodiversity
-        "sub_element_f": rng.random() > 0.4,  # ensure equitable sharing of benefits
-    }
-    gbf_t15_score = sum(gbf_t15.values()) / len(gbf_t15)
+    # Biodiversity condition index (MSA proxy) — measured input; null when absent
+    if msa_biodiversity_score is not None:
+        msa_score: Optional[float] = round(max(0.0, min(1.0, float(msa_biodiversity_score))), 3)
+    else:
+        msa_score = None
 
-    # Biodiversity condition index (MSA proxy)
-    msa_score = round(condition_score * rng.uniform(0.7, 1.0), 3)
+    notes = []
+    if not condition_available:
+        notes.append("condition_score not supplied — service flows and monetary valuation are insufficient_data")
+    if dependency_score is None or impact_score is None:
+        notes.append("dependency_score/impact_score not supplied — TNFD dependency-impact not scored")
+    if msa_score is None:
+        notes.append("msa_biodiversity_score not supplied")
+    if gbf_t15 is None:
+        notes.append("gbf_t15_sub_elements not supplied")
 
     return {
         "entity_id": entity_id,
@@ -196,18 +260,19 @@ def assess_natural_capital(
         "location_country": location_country,
         "extent_ha": extent_ha,
         "seea_ea_account": seea_account,
-        "condition_score": condition_score,
+        "condition_score": condition_score if condition_available else None,
         "msa_biodiversity_score": msa_score,
         "service_flows": service_flows,
-        "monetary_value_usd": round(monetary_value_usd, 0),
-        "monetary_value_per_ha_usd": round(total_unit_value, 2),
+        "monetary_value_usd": round(monetary_value_usd, 0) if monetary_value_usd is not None else None,
+        "monetary_value_per_ha_usd": round(total_unit_value, 2) if total_unit_value is not None else None,
         "biome_reference_values": biome_data,
         "dependency_score": dependency_score,
         "impact_score": impact_score,
         "tnfd_pillar": tnfd_pillar,
         "cbf_gbf_target15": gbf_t15,
-        "gbf_t15_alignment_score": round(gbf_t15_score, 3),
+        "gbf_t15_alignment_score": round(gbf_t15_score, 3) if gbf_t15_score is not None else None,
         "valuation_methodology": "TEEB/IPBES unit value transfer (WAVES Adjusted Savings framework)",
+        "data_notes": notes,
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -217,12 +282,26 @@ def valuate_ecosystem_services(
     ecosystem_type: str,
     extent_ha: float,
     services_list: list[str],
+    condition_multiplier: Optional[float] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Valuate ecosystem services via benefit transfer from TEEB/IPBES biome values.
 
+    Each service is priced by its ENCORE category's share of the biome total unit
+    value, split evenly across the services in that category (an explicit equal-
+    allocation model rule applied absent service-specific primary-study weights).
+    The result is scaled by the caller-supplied *condition_multiplier* (0-1); when
+    it is not supplied a reference-state multiplier of 1.0 is used and the output
+    is flagged as reference-state (uncalibrated to site condition).
+    """
     eco_lower = ecosystem_type.lower().replace(" ", "_").replace("-", "_")
     biome_data = BIOME_UNIT_VALUES.get(eco_lower, BIOME_UNIT_VALUES["temperate_forest"])
-    condition_multiplier = round(rng.uniform(0.6, 1.0), 3)
+
+    # Condition multiplier: caller-supplied site condition, else reference state 1.0
+    condition_supplied = condition_multiplier is not None
+    if condition_supplied:
+        condition_multiplier = round(max(0.0, min(1.0, float(condition_multiplier))), 3)
+    else:
+        condition_multiplier = 1.0
 
     services_valued: list[dict] = []
     total_annual_flow_usd = 0.0
@@ -233,30 +312,39 @@ def valuate_ecosystem_services(
         + ENCORE_ECOSYSTEM_SERVICES["cultural"]
     )
 
-    service_ids = set(services_list)
-    if not service_ids:
-        # Value all services for this ecosystem
-        service_ids = {s["id"] for s in all_services[:15]}
+    # Determine which services to value: explicit request set, or all services.
+    if services_list:
+        service_ids = set(services_list)
+        selected = [s for s in all_services if s["id"] in service_ids]
+    else:
+        selected = list(all_services)
 
-    for service in all_services:
-        if service["id"] not in service_ids and not (not services_list):
-            continue
-        if not services_list and rng.random() > 0.6:
-            continue
+    # Count selected services per category for even intra-category allocation.
+    cat_counts = {"provisioning": 0, "regulating_maintenance": 0, "cultural": 0}
+    for service in selected:
+        if service["id"].startswith("ES-P"):
+            cat_counts["provisioning"] += 1
+        elif service["id"].startswith("ES-R"):
+            cat_counts["regulating_maintenance"] += 1
+        else:
+            cat_counts["cultural"] += 1
 
-        # Determine category
+    total_uv = biome_data["total_usd_ha_yr"]
+    for service in selected:
+        # Determine category and that category's absolute biome unit value.
         if service["id"].startswith("ES-P"):
             cat = "provisioning"
-            base_pct = biome_data["provisioning"] / biome_data["total_usd_ha_yr"] if biome_data["total_usd_ha_yr"] else 0.2
+            cat_unit_value = biome_data["provisioning"]
         elif service["id"].startswith("ES-R"):
             cat = "regulating_maintenance"
-            base_pct = biome_data["regulating"] / biome_data["total_usd_ha_yr"] if biome_data["total_usd_ha_yr"] else 0.6
+            cat_unit_value = biome_data["regulating"]
         else:
             cat = "cultural"
-            base_pct = biome_data["cultural"] / biome_data["total_usd_ha_yr"] if biome_data["total_usd_ha_yr"] else 0.1
+            cat_unit_value = biome_data["cultural"]
 
-        service_rng = random.Random(hash(f"{entity_id}_{service['id']}") & 0xFFFFFFFF)
-        unit_value = biome_data["total_usd_ha_yr"] * base_pct * service_rng.uniform(0.05, 0.3) * condition_multiplier
+        # Even allocation of the category's unit value across its selected services.
+        n_in_cat = max(1, cat_counts[cat])
+        unit_value = (cat_unit_value / n_in_cat) * condition_multiplier
         annual_flow = unit_value * extent_ha
 
         total_annual_flow_usd += annual_flow
@@ -266,11 +354,11 @@ def valuate_ecosystem_services(
             "category": cat,
             "unit_value_usd_ha_yr": round(unit_value, 2),
             "annual_flow_usd": round(annual_flow, 0),
-            "valuation_method": "Benefit transfer (meta-analysis)",
-            "confidence": "medium" if condition_multiplier > 0.75 else "low",
+            "valuation_method": "Benefit transfer (biome unit value, equal intra-category allocation)",
+            "confidence": ("medium" if condition_multiplier > 0.75 else "low") if condition_supplied else "reference_state",
         })
 
-    services_valued.sort(key=lambda x: x["annual_flow_usd"], reverse=True)
+    services_valued = sorted(services_valued, key=lambda x: x["annual_flow_usd"], reverse=True)
 
     # WAVES / Adjusted Savings methodology components
     waves_metadata = {
@@ -287,6 +375,7 @@ def valuate_ecosystem_services(
         "ecosystem_type": ecosystem_type,
         "extent_ha": extent_ha,
         "condition_multiplier": condition_multiplier,
+        "condition_basis": "site_supplied" if condition_supplied else "reference_state_1.0_assumed",
         "total_annual_flow_value_usd": round(total_annual_flow_usd, 0),
         "total_unit_value_usd_ha_yr": round(total_annual_flow_usd / extent_ha if extent_ha else 0, 2),
         "services_count": len(services_valued),
@@ -305,17 +394,31 @@ def calculate_dependency_score(
     entity_id: str,
     sector: str,
     operations_description: str,
+    revenue_usd: Optional[float] = None,
+    substitutability_score: Optional[float] = None,
+    operations_in_sensitive_areas: Optional[bool] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Calculate sector nature-dependency score from the ENCORE sector matrix.
 
+    The sector dependency score, key services, and revenue-at-risk *percentage*
+    are genuine reference-data lookups (SECTOR_NATURE_DEPENDENCY). Revenue-at-risk
+    in USD is computed only when the caller supplies actual *revenue_usd*; without
+    it the amount is null. Entity/site-specific figures that are not in reference
+    data (per-dependency strength, physical/transition/systemic risk scores) are
+    reported as insufficient_data rather than fabricated. Unknown sectors return
+    a null dependency score.
+    """
     sector_lower = sector.lower().replace(" ", "_").replace("-", "_")
-    profile = SECTOR_NATURE_DEPENDENCY.get(sector_lower, {
-        "dependency_score": round(rng.uniform(0.3, 0.7), 2),
-        "key_services": ["ES-R01", "ES-P10"],
-        "revenue_at_risk_pct": round(rng.uniform(5, 25), 1),
-    })
+    profile = SECTOR_NATURE_DEPENDENCY.get(sector_lower)
+    sector_known = profile is not None
+    if profile is None:
+        # No reference profile for this sector — do not invent one.
+        profile = {"dependency_score": None, "key_services": [], "revenue_at_risk_pct": None}
 
-    # TNFD LEAP Step A — dependency identification
+    dep_score = profile.get("dependency_score")
+    rev_at_risk_pct = profile.get("revenue_at_risk_pct")
+
+    # TNFD LEAP Step A — dependency identification (from reference key services)
     all_services = (
         ENCORE_ECOSYSTEM_SERVICES["provisioning"]
         + ENCORE_ECOSYSTEM_SERVICES["regulating_maintenance"]
@@ -327,42 +430,50 @@ def calculate_dependency_score(
     for svc_id in profile["key_services"]:
         if svc_id in service_map:
             svc = service_map[svc_id]
-            dep_rng = random.Random(hash(f"{entity_id}_{svc_id}") & 0xFFFFFFFF)
             key_dependencies.append({
                 "service_id": svc_id,
                 "service_name": svc["name"],
-                "dependency_strength": round(dep_rng.uniform(0.5, 1.0), 3),
-                "substitutability": "low" if dep_rng.random() > 0.6 else "medium",
-                "criticality": "high" if dep_rng.random() > 0.5 else "medium",
+                # Strength/substitutability/criticality are site-specific empirical
+                # judgements not encoded in the sector reference matrix.
+                "dependency_strength": None,
+                "substitutability": "insufficient_data",
+                "criticality": "insufficient_data",
                 "tnfd_leap_step": "A - Locate",
             })
 
-    # Revenue at risk
-    estimated_revenue_usd = rng.uniform(10e6, 2e9)
-    revenue_at_risk_usd = estimated_revenue_usd * profile["revenue_at_risk_pct"] / 100
+    # Revenue at risk (USD): real product when actual revenue supplied, else null
+    if revenue_usd is not None and rev_at_risk_pct is not None:
+        revenue_at_risk_usd: Optional[float] = float(revenue_usd) * rev_at_risk_pct / 100
+    else:
+        revenue_at_risk_usd = None
 
-    # Substitutability score (0=easily substituted, 1=irreplaceable)
-    substitutability_score = round(rng.uniform(0.3, 0.9), 3)
+    # Substitutability score (0=easily substituted, 1=irreplaceable) — caller input
+    if substitutability_score is not None:
+        substitutability_score = round(max(0.0, min(1.0, float(substitutability_score))), 3)
+
+    dep_gt = (dep_score or 0)  # null-safe threshold comparisons below
 
     # TNFD LEAP Steps
     leap_assessment = {
         "L_locate": {
             "step": "Locate — Where does the organisation interface with nature?",
-            "operations_in_sensitive_areas": rng.random() > 0.5,
-            "supply_chain_exposure": "high" if profile.get("dependency_score", 0) > 0.75 else "medium",
-            "geographic_focus": ["tropical_forests", "freshwater_systems"] if profile.get("dependency_score", 0) > 0.8 else ["temperate_zones"],
+            "operations_in_sensitive_areas": operations_in_sensitive_areas,  # caller-supplied; None if unknown
+            "supply_chain_exposure": ("high" if dep_gt > 0.75 else "medium") if dep_score is not None else "insufficient_data",
+            "geographic_focus": (["tropical_forests", "freshwater_systems"] if dep_gt > 0.8 else ["temperate_zones"]) if dep_score is not None else [],
         },
         "E_evaluate": {
             "step": "Evaluate — What are the dependencies and impacts?",
             "top_dependencies": [d["service_name"] for d in key_dependencies],
-            "dependency_score": profile.get("dependency_score", 0.5),
-            "impact_drivers": ["land_use_change", "water_consumption", "pollution"] if profile.get("dependency_score", 0) > 0.7 else ["water_consumption"],
+            "dependency_score": dep_score,
+            "impact_drivers": (["land_use_change", "water_consumption", "pollution"] if dep_gt > 0.7 else ["water_consumption"]) if dep_score is not None else [],
         },
         "A_assess": {
             "step": "Assess — What are the nature-related risks and opportunities?",
-            "physical_risk": round(rng.uniform(0.3, 0.8), 3),
-            "transition_risk": round(rng.uniform(0.2, 0.7), 3),
-            "systemic_risk": round(rng.uniform(0.1, 0.5), 3),
+            # Risk-magnitude scores require site-level assessment data not held here.
+            "physical_risk": None,
+            "transition_risk": None,
+            "systemic_risk": None,
+            "risk_status": "insufficient_data",
             "opportunities": ["ecosystem_services_markets", "biodiversity_credits", "nature_based_solutions"],
         },
         "P_prepare": {
@@ -373,20 +484,27 @@ def calculate_dependency_score(
         },
     }
 
+    notes = []
+    if not sector_known:
+        notes.append(f"sector '{sector}' not in ENCORE reference matrix — dependency_score is insufficient_data")
+    if revenue_at_risk_usd is None:
+        notes.append("revenue_usd not supplied — revenue_at_risk_usd not computed")
+
     return {
         "entity_id": entity_id,
         "sector": sector,
-        "dependency_score": profile.get("dependency_score", 0.5),
+        "dependency_score": dep_score,
         "key_dependencies": key_dependencies,
-        "revenue_at_risk_pct": profile["revenue_at_risk_pct"],
-        "revenue_at_risk_usd": round(revenue_at_risk_usd, 0),
+        "revenue_at_risk_pct": rev_at_risk_pct,
+        "revenue_at_risk_usd": round(revenue_at_risk_usd, 0) if revenue_at_risk_usd is not None else None,
         "substitutability_score": substitutability_score,
         "tnfd_leap_assessment": leap_assessment,
         "sbtn_scope": "direct_operations_and_upstream",
         "nature_loss_scenario_2030": {
-            "business_as_usual_risk_pct": round(profile.get("revenue_at_risk_pct", 10) * 1.4, 1),
-            "1_5c_aligned_risk_pct": round(profile.get("revenue_at_risk_pct", 10) * 0.6, 1),
+            "business_as_usual_risk_pct": round(rev_at_risk_pct * 1.4, 1) if rev_at_risk_pct is not None else None,
+            "1_5c_aligned_risk_pct": round(rev_at_risk_pct * 0.6, 1) if rev_at_risk_pct is not None else None,
         },
+        "data_notes": notes,
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -394,90 +512,129 @@ def calculate_dependency_score(
 def score_natural_capital_disclosure(
     entity_id: str,
     reporting_standard: str,
+    disclosure_evidence: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Score natural-capital disclosure completeness from caller-supplied evidence.
 
-    # TNFD v1.0 completeness
+    This is an evidence-driven assessment: scores are computed only from a
+    *disclosure_evidence* mapping the caller provides. Expected shape::
+
+        {
+          "tnfd": {"TNFD-G1": 0.9, "TNFD-S1": 0.5, ...},  # per-disclosure 0-1
+          "seea": {"extent_account": True, "condition_account": False, ...},
+          "gri304": {"304-1_operational_sites": True, ...},
+          "esrs_e4": {"E4-1_transition_plan_biodiversity": True, ...},
+          "gbf_t15": {"a_assess_dependencies": True, ...},
+        }
+
+    Any framework absent from the evidence returns null scores and
+    status "insufficient_data" — never a fabricated completeness figure. The
+    reference framework structures (item keys) are always returned so callers
+    see exactly which items require evidence.
+    """
+    ev = disclosure_evidence or {}
+    tnfd_ev = ev.get("tnfd") or {}
+    seea_ev = ev.get("seea") or {}
+    gri_ev = ev.get("gri304") or {}
+    esrs_ev = ev.get("esrs_e4") or {}
+    gbf_ev = ev.get("gbf_t15") or {}
+
+    # ── TNFD v1.0 completeness (per-disclosure evidence scores 0-1) ──
     tnfd_scores: list[dict] = []
     for disc in TNFD_DISCLOSURE_TOPICS:
-        score = round(rng.uniform(0.2, 1.0), 2)
+        raw = tnfd_ev.get(disc["id"])
+        if raw is None:
+            score: Optional[float] = None
+            status = "insufficient_data"
+        else:
+            score = round(max(0.0, min(1.0, float(raw))), 2)
+            status = "complete" if score >= 0.8 else "partial" if score >= 0.5 else "missing"
         tnfd_scores.append({
             "id": disc["id"],
             "pillar": disc["pillar"],
             "topic": disc["topic"],
             "completeness_score": score,
-            "status": "complete" if score >= 0.8 else "partial" if score >= 0.5 else "missing",
+            "status": status,
         })
-    tnfd_overall = sum(s["completeness_score"] for s in tnfd_scores) / len(tnfd_scores)
+    tnfd_present = [s["completeness_score"] for s in tnfd_scores if s["completeness_score"] is not None]
+    tnfd_overall: Optional[float] = (sum(tnfd_present) / len(tnfd_present)) if tnfd_present else None
 
-    # SEEA EA adoption
-    seea_adoption = {
-        "extent_account": rng.random() > 0.3,
-        "condition_account": rng.random() > 0.45,
-        "services_physical_account": rng.random() > 0.5,
-        "services_monetary_account": rng.random() > 0.6,
-        "asset_account": rng.random() > 0.65,
-        "thematic_accounts": rng.random() > 0.7,
-    }
-    seea_score = sum(seea_adoption.values()) / len(seea_adoption)
+    # ── SEEA EA adoption (boolean evidence per account) ──
+    seea_keys = [
+        "extent_account", "condition_account", "services_physical_account",
+        "services_monetary_account", "asset_account", "thematic_accounts",
+    ]
+    seea_adoption = {k: (bool(seea_ev[k]) if k in seea_ev else None) for k in seea_keys}
+    seea_score = _bool_evidence_score(seea_adoption)
 
-    # GRI 304 biodiversity alignment
-    gri304_items = {
-        "304-1_operational_sites": rng.random() > 0.4,
-        "304-2_significant_impacts": rng.random() > 0.5,
-        "304-3_habitats_protected": rng.random() > 0.55,
-        "304-4_IUCN_red_list": rng.random() > 0.6,
-    }
-    gri304_score = sum(gri304_items.values()) / len(gri304_items)
+    # ── GRI 304 biodiversity alignment ──
+    gri304_keys = [
+        "304-1_operational_sites", "304-2_significant_impacts",
+        "304-3_habitats_protected", "304-4_IUCN_red_list",
+    ]
+    gri304_items = {k: (bool(gri_ev[k]) if k in gri_ev else None) for k in gri304_keys}
+    gri304_score = _bool_evidence_score(gri304_items)
 
-    # CSRD ESRS E4 coverage
-    esrs_e4_items = {
-        "E4-1_transition_plan_biodiversity": rng.random() > 0.5,
-        "E4-2_policies_biodiversity": rng.random() > 0.4,
-        "E4-3_biodiversity_and_ecosystem_actions": rng.random() > 0.45,
-        "E4-4_resource_use_targets": rng.random() > 0.55,
-        "E4-5_impact_metrics": rng.random() > 0.5,
-        "E4-6_anticipated_financial_effects": rng.random() > 0.65,
-    }
-    esrs_e4_score = sum(esrs_e4_items.values()) / len(esrs_e4_items)
+    # ── CSRD ESRS E4 coverage ──
+    esrs_e4_keys = [
+        "E4-1_transition_plan_biodiversity", "E4-2_policies_biodiversity",
+        "E4-3_biodiversity_and_ecosystem_actions", "E4-4_resource_use_targets",
+        "E4-5_impact_metrics", "E4-6_anticipated_financial_effects",
+    ]
+    esrs_e4_items = {k: (bool(esrs_ev[k]) if k in esrs_ev else None) for k in esrs_e4_keys}
+    esrs_e4_score = _bool_evidence_score(esrs_e4_items)
 
-    # CBD GBF Target 15 sub-elements
-    gbf_t15 = {
-        "a_assess_dependencies": rng.random() > 0.4,
-        "b_monitor_disclose": rng.random() > 0.5,
-        "c_reduce_negative": rng.random() > 0.55,
-        "d_restore_biodiversity": rng.random() > 0.6,
-        "e_sustainable_use": rng.random() > 0.5,
-        "f_equitable_sharing": rng.random() > 0.65,
-    }
-    gbf_score = sum(gbf_t15.values()) / len(gbf_t15)
+    # ── CBD GBF Target 15 sub-elements ──
+    gbf_keys = [
+        "a_assess_dependencies", "b_monitor_disclose", "c_reduce_negative",
+        "d_restore_biodiversity", "e_sustainable_use", "f_equitable_sharing",
+    ]
+    gbf_t15 = {k: (bool(gbf_ev[k]) if k in gbf_ev else None) for k in gbf_keys}
+    gbf_score = _bool_evidence_score(gbf_t15)
+
+    # Composite: weighted mean over frameworks that actually have a score.
+    composite = _weighted_present_mean([
+        (tnfd_overall, 0.35),
+        (seea_score, 0.20),
+        (gri304_score, 0.15),
+        (esrs_e4_score, 0.20),
+        (gbf_score, 0.10),
+    ])
+
+    pillars_status = {}
+    for p in ["Governance", "Strategy", "Risk Management", "Metrics & Targets"]:
+        vals = [s["completeness_score"] for s in tnfd_scores if s["pillar"] == p and s["completeness_score"] is not None]
+        pillars_status[p] = round(sum(vals) / len(vals), 3) if vals else None
 
     return {
         "entity_id": entity_id,
         "reporting_standard": reporting_standard,
+        "evidence_supplied": bool(disclosure_evidence),
         "tnfd_v1_disclosure": {
-            "overall_completeness": round(tnfd_overall, 3),
+            "overall_completeness": round(tnfd_overall, 3) if tnfd_overall is not None else None,
             "disclosures": tnfd_scores,
-            "pillars_status": {p: round(sum(s["completeness_score"] for s in tnfd_scores if s["pillar"] == p) / max(1, sum(1 for s in tnfd_scores if s["pillar"] == p)), 3) for p in ["Governance", "Strategy", "Risk Management", "Metrics & Targets"]},
+            "pillars_status": pillars_status,
         },
         "seea_ea_adoption": {
             "adoption_items": seea_adoption,
-            "adoption_score": round(seea_score, 3),
+            "adoption_score": round(seea_score, 3) if seea_score is not None else None,
         },
         "gri_304_biodiversity": {
             "items": gri304_items,
-            "score": round(gri304_score, 3),
+            "score": round(gri304_score, 3) if gri304_score is not None else None,
         },
         "csrd_esrs_e4": {
             "items": esrs_e4_items,
-            "coverage_score": round(esrs_e4_score, 3),
+            "coverage_score": round(esrs_e4_score, 3) if esrs_e4_score is not None else None,
         },
         "cbd_gbf_target15": {
             "sub_elements": gbf_t15,
-            "alignment_score": round(gbf_score, 3),
+            "alignment_score": round(gbf_score, 3) if gbf_score is not None else None,
         },
-        "composite_disclosure_score": round(
-            tnfd_overall * 0.35 + seea_score * 0.2 + gri304_score * 0.15 + esrs_e4_score * 0.2 + gbf_score * 0.1, 3
+        "composite_disclosure_score": round(composite, 3) if composite is not None else None,
+        "data_notes": (
+            [] if disclosure_evidence else
+            ["no disclosure_evidence supplied — all completeness scores are insufficient_data"]
         ),
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -486,24 +643,52 @@ def score_natural_capital_disclosure(
 def generate_nature_balance_sheet(
     entity_id: str,
     assets: list[dict[str, Any]],
+    restoration_investment_usd: Optional[float] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Generate a SEEA EA 2021 natural-capital balance sheet from reported assets.
 
+    Stock values are a genuine capitalisation (10× annual biome service flow) of
+    caller-reported extent and condition. Each asset must carry ``extent_ha`` and
+    an opening condition (``opening_condition`` or ``condition_score``, 0-1);
+    closing extent/condition default to the opening values (no-reported-change)
+    unless the asset supplies ``closing_extent_ha`` / ``closing_condition``.
+    Assets missing extent or condition are excluded and listed, never fabricated.
+    Restoration investment is included only when supplied by the caller.
+    """
     opening_stock_usd = 0.0
     closing_stock_usd = 0.0
     asset_accounts: list[dict] = []
+    excluded_assets: list[dict] = []
 
     for asset in assets:
         eco_type = asset.get("ecosystem_type", "temperate_forest")
-        extent = float(asset.get("extent_ha", rng.uniform(100, 10000)))
         biome = BIOME_UNIT_VALUES.get(eco_type.lower().replace(" ", "_"), BIOME_UNIT_VALUES["temperate_forest"])
 
-        open_condition = round(rng.uniform(0.5, 0.9), 3)
-        close_condition = round(open_condition + rng.uniform(-0.1, 0.05), 3)
-        close_condition = max(0.1, min(1.0, close_condition))
+        # Extent and opening condition are required — do not invent them.
+        extent_raw = asset.get("extent_ha")
+        open_condition_raw = (
+            asset.get("opening_condition")
+            if asset.get("opening_condition") is not None
+            else asset.get("condition_score")
+        )
+        if extent_raw is None or open_condition_raw is None:
+            excluded_assets.append({
+                "asset_name": asset.get("asset_name", eco_type),
+                "ecosystem_type": eco_type,
+                "reason": "insufficient_data: extent_ha and opening_condition (or condition_score) are required",
+            })
+            continue
 
-        open_extent = extent
-        close_extent = extent * rng.uniform(0.95, 1.02)
+        open_extent = float(extent_raw)
+        open_condition = round(max(0.0, min(1.0, float(open_condition_raw))), 3)
+
+        # Closing values default to opening (no reported change) unless supplied.
+        close_extent = float(asset["closing_extent_ha"]) if asset.get("closing_extent_ha") is not None else open_extent
+        close_condition_raw = asset.get("closing_condition")
+        close_condition = (
+            round(max(0.0, min(1.0, float(close_condition_raw))), 3)
+            if close_condition_raw is not None else open_condition
+        )
         extent_change = close_extent - open_extent
 
         open_value = biome["total_usd_ha_yr"] * open_condition * open_extent * 10  # capitalised at 10x annual flow
@@ -535,9 +720,17 @@ def generate_nature_balance_sheet(
     integrated_pl = {
         "ecosystem_service_revenue_recognised_usd": round(sum(a["annual_service_flow_usd"] for a in asset_accounts), 0),
         "natural_capital_depreciation_usd": round(sum(a["value_change_usd"] for a in asset_accounts if a["value_change_usd"] < 0), 0),
-        "restoration_investment_usd": round(rng.uniform(0, abs(net_change) * 0.1), 0),
+        "restoration_investment_usd": (
+            round(float(restoration_investment_usd), 0) if restoration_investment_usd is not None else None
+        ),
         "net_integrated_pl_impact_usd": round(net_change, 0),
     }
+
+    notes = []
+    if excluded_assets:
+        notes.append(f"{len(excluded_assets)} asset(s) excluded for missing extent/condition")
+    if restoration_investment_usd is None:
+        notes.append("restoration_investment_usd not supplied")
 
     return {
         "entity_id": entity_id,
@@ -548,11 +741,13 @@ def generate_nature_balance_sheet(
         "net_change_usd": round(net_change, 0),
         "net_change_pct": round(net_change / opening_stock_usd * 100, 2) if opening_stock_usd else 0,
         "asset_accounts": asset_accounts,
+        "excluded_assets": excluded_assets,
         "integrated_pl_impact": integrated_pl,
         "waves_metadata": {
             "methodology": "WAVES Adjusted Savings — capitalised ecosystem service flows",
             "capitalisation_multiple": 10,
             "discount_rate_pct": 4.0,
         },
+        "data_notes": notes,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }

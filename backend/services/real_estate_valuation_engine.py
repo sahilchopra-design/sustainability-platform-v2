@@ -279,17 +279,22 @@ class RealEstateValuationEngine:
         discount_rate = Decimal(str(inputs.discount_rate))
         equity_investment = Decimal(str(inputs.equity_investment))
         
+        # Seed revenue and expense streams from the current NOI via an explicit stabilized
+        # operating margin, then escalate each at its OWN growth rate so NOI = revenue -
+        # expenses emerges correctly. The prior code used bare 1.5x/0.5x magic factors and
+        # grew expenses at (expense_growth_rate + inflation_rate) — DOUBLE-COUNTING inflation,
+        # so expenses outran revenue and NOI compressed (or went negative) with no economic
+        # basis. Callers fold inflation into the nominal expense_growth_rate.
+        STABILIZED_NOI_MARGIN = Decimal("0.667")            # NOI / effective gross revenue (~33% OpEx)
+        base_revenue = current_noi / STABILIZED_NOI_MARGIN
+        base_expenses = base_revenue - current_noi
+
         # Generate cash flow projections
         for year in range(1, inputs.projection_years + 1):
-            # Revenue grows at specified rate
-            revenue_growth = (Decimal("1") + revenue_growth_rate) ** year
-            revenue = current_noi * Decimal("1.5") * revenue_growth  # Assume NOI is ~67% of revenue
-            
-            # Expenses grow with inflation
-            expense_growth = (Decimal("1") + expense_growth_rate + inflation_rate) ** year
-            expenses = current_noi * Decimal("0.5") * expense_growth
-            
-            # Calculate NOI
+            revenue = base_revenue * (Decimal("1") + revenue_growth_rate) ** year
+            expenses = base_expenses * (Decimal("1") + expense_growth_rate) ** year
+
+            # NOI grows from the net of the two independently-escalated streams
             noi = revenue - expenses
             
             # Cash Flow After Debt Service

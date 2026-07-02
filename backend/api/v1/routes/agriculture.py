@@ -251,7 +251,7 @@ def get_assessment(
     try:
         row = db.execute(
             text("""
-                SELECT a.*, e.entity_name, e.country_code, e.crop_types
+                SELECT a.*, e.entity_name, e.country_iso AS country_code, e.crops_grown AS crop_types
                 FROM agriculture_risk_assessments a
                 JOIN agriculture_entities e ON e.id = a.entity_id
                 WHERE a.id = :aid

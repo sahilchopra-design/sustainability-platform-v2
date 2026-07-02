@@ -491,6 +491,9 @@ class InsurancePortfolioInput:
     country_exposures: Optional[Dict[str, float]] = None  # country_code -> exposure USD m
     peril_exposures: Optional[Dict[str, float]] = None  # peril -> exposure USD m
     iais_scores: Optional[Dict[str, float]] = None  # pillar -> score 0-1
+    # Modelled 1-in-100yr PML as % of physical exposure (the 99th-percentile physical VaR).
+    # If None, a representative value is derived from the NatCat reference data.
+    portfolio_pml_100yr_pct: Optional[float] = None
     ngfs_scenario: str = "orderly"  # orderly | disorderly | hot_house | below_2c
     reporting_year: int = 2024
 
@@ -830,10 +833,20 @@ class ClimateInsuranceEngine:
         scenario = portfolio_input.ngfs_scenario
         params = self.NGFS_SCENARIOS.get(scenario, self.NGFS_SCENARIOS["orderly"])
 
-        # Physical risk VaR (average across country/peril mix)
-        avg_aal_pct = 0.0025  # 0.25% of insured exposure
+        # Physical risk VaR at the 99th percentile IS the modelled 1-in-100yr PML — the loss
+        # exceeded with 1% annual probability. The prior code used a hardcoded AAL (0.25%) × an
+        # arbitrary factor of 10 ("for VaR exceedance") with no statistical basis, then labelled
+        # it a 1-in-100yr figure. Use the portfolio's modelled 100yr PML ratio if supplied; else
+        # a representative ratio from the NatCat reference data (same PML table calculate_natcat
+        # uses), so the physical VaR is grounded in the loss-exceedance curve, not AAL×const.
+        if portfolio_input.portfolio_pml_100yr_pct is not None:
+            pml_100yr_ratio = portfolio_input.portfolio_pml_100yr_pct / 100.0
+        else:
+            _all_pml = [v for prof in NATCAT_COUNTRY_PROFILES.values()
+                        for v in prof.get("pml_100yr_pct", {}).values()]
+            pml_100yr_ratio = (sum(_all_pml) / len(_all_pml) / 100.0) if _all_pml else 0.012
         natcat_uplift = (1 + params["natcat_uplift_pct"] / 100.0)
-        physical_var = pc * avg_aal_pct * natcat_uplift * 10  # 10x for VaR exceedance
+        physical_var = pc * pml_100yr_ratio * natcat_uplift   # 1-in-100yr PML × climate loading
         physical_var_pct = physical_var / total * 100
 
         # Transition risk VaR (investment side)
@@ -878,7 +891,7 @@ class ClimateInsuranceEngine:
             "net_climate_var_usd_m": round(net_var, 2),
             "net_climate_var_pct": round(var_pct, 2),
             "var_confidence": "99th percentile (1-in-100yr)",
-            "methodology": "Physical AAL × climate loading + transition spread shock + liability reserve uplift",
+            "methodology": "Physical 1-in-100yr PML × climate loading + transition spread shock + liability reserve uplift",
         }
 
     def orsa_climate_stress(self, portfolio_input: InsurancePortfolioInput) -> Dict[str, Any]:

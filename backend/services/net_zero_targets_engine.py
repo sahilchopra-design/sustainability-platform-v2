@@ -4,7 +4,6 @@ NZBA (Net Zero Banking Alliance 2021), NZAMI (Net Zero Asset Managers 2021),
 NZAOA (Net Zero Asset Owner Alliance 2022)
 """
 
-import random
 import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date
@@ -257,15 +256,16 @@ class NetZeroTargetsEngine:
 
     Validates targets against SBTi/NZBA/NZAMI/NZAOA frameworks,
     generates decarbonisation pathways, and scores temperature alignment.
-    All outputs are deterministic for a given entity_id.
+
+    All returned metrics are deterministic functions of the caller-supplied
+    inputs (emissions, reduction targets, validation state). Metrics that
+    require data the caller has not provided (e.g. Scope-3 category coverage,
+    marginal abatement cost, achieved-vs-required projection) are returned as
+    an honest ``None`` / ``"insufficient_data"`` rather than fabricated.
     """
 
     def __init__(self) -> None:
         pass
-
-    def _rng(self, entity_id: str) -> random.Random:
-        seed = hash(entity_id) & 0xFFFFFFFF
-        return random.Random(seed)
 
     def _derive_temperature_score(self, reduction_pct_2030: float) -> Dict:
         temp = 4.0
@@ -286,6 +286,27 @@ class NetZeroTargetsEngine:
             return "2c"
         return "insufficient"
 
+    def _derive_validation_status(
+        self,
+        cfg: Dict,
+        validation_issues: List[str],
+        supplied_status: Optional[str],
+    ) -> str:
+        """Deterministic SBTi commitment-lifecycle stage.
+
+        Uses the caller-supplied status when given (must be one of
+        VALIDATION_STATUSES). Otherwise reports the earliest honest stage:
+        an entity that has set targets but not obtained third-party validation
+        is 'committed'; if the framework does not require validation and there
+        are no open issues, the targets are considered 'submitted'. Never a
+        random draw.
+        """
+        if supplied_status in VALIDATION_STATUSES:
+            return supplied_status
+        if not cfg.get("validation_required", False) and not validation_issues:
+            return "submitted"
+        return "committed"
+
     # ── assess_targets ────────────────────────────────────────────────────────
 
     def assess_targets(
@@ -303,8 +324,15 @@ class NetZeroTargetsEngine:
         near_term_reduction_pct: float,
         **kwargs,
     ) -> Dict:
-        """Validate targets and derive pathway classification."""
-        rng = self._rng(f"{entity_id}:assess")
+        """Validate targets and derive pathway classification.
+
+        Optional keyword inputs (all default to None → honest null when absent):
+          long_term_reduction_pct : entity's stated long-term reduction %
+          scope3_coverage_pct     : % of Scope-3 categories covered by targets
+          offset_reliance_pct     : % of the target met via offsets/removals
+          validation_status       : reported SBTi lifecycle stage
+          sbti_validated          : True only if third-party SBTi approval obtained
+        """
         cfg = FRAMEWORK_CONFIGS.get(framework, FRAMEWORK_CONFIGS["combined"])
         assessment_id = str(uuid.uuid4())
         now = datetime.utcnow().isoformat()
@@ -312,22 +340,32 @@ class NetZeroTargetsEngine:
         sbti_pathway = self._derive_pathway(near_term_reduction_pct)
         temp_result = self._derive_temperature_score(near_term_reduction_pct)
 
-        long_term_reduction = kwargs.get("long_term_reduction_pct", rng.uniform(75, 100))
+        # Long-term reduction: real caller input, else honest null.
+        long_term_reduction = kwargs.get("long_term_reduction_pct")
         pathway_gap_pct = max(0.0, cfg.get("near_term_min_reduction_pct", 42) - near_term_reduction_pct)
+
+        # Scope-3 category coverage and offset reliance are entity-reported data
+        # points, not derivable from emissions totals alone. Use real input, else null.
+        scope3_coverage_pct = kwargs.get("scope3_coverage_pct")
+        offset_reliance_pct = kwargs.get("offset_reliance_pct")
 
         # Validation checks
         validation_issues = []
         if near_term_reduction_pct < cfg.get("near_term_min_reduction_pct", 30):
             validation_issues.append(f"Near-term reduction {near_term_reduction_pct:.1f}% below {framework.upper()} minimum of {cfg['near_term_min_reduction_pct']}%")
-        if long_term_reduction < cfg.get("long_term_min_reduction_pct", 80):
+        if long_term_reduction is not None and long_term_reduction < cfg.get("long_term_min_reduction_pct", 80):
             validation_issues.append(f"Long-term reduction {long_term_reduction:.1f}% below {framework.upper()} minimum of {cfg['long_term_min_reduction_pct']}%")
         if entity_type not in cfg.get("allowed_entity_types", ENTITY_TYPES):
             validation_issues.append(f"Entity type '{entity_type}' not covered by {framework.upper()} framework")
         if net_zero_target_year > cfg.get("long_term_year", 2050):
             validation_issues.append(f"Net zero year {net_zero_target_year} exceeds {framework.upper()} long-term deadline of {cfg['long_term_year']}")
 
-        validation_status = rng.choice(VALIDATION_STATUSES)
-        sbti_validated = len(validation_issues) == 0 and cfg.get("validation_required", False) and rng.random() > 0.3
+        validation_status = self._derive_validation_status(
+            cfg, validation_issues, kwargs.get("validation_status")
+        )
+        # Third-party SBTi validation is an external fact — only True if the
+        # caller confirms it. Never inferred, never random.
+        sbti_validated = bool(kwargs.get("sbti_validated", False))
 
         return {
             "assessment_id": assessment_id,
@@ -342,7 +380,7 @@ class NetZeroTargetsEngine:
             "scope3_tco2e": scope3,
             "near_term_target_year": near_term_target_year,
             "near_term_reduction_pct": round(near_term_reduction_pct, 2),
-            "long_term_reduction_pct": round(long_term_reduction, 2),
+            "long_term_reduction_pct": round(long_term_reduction, 2) if long_term_reduction is not None else None,
             "net_zero_target_year": net_zero_target_year,
             "sbti_pathway": sbti_pathway,
             "temperature_score_c": temp_result["temperature_c"],
@@ -352,8 +390,8 @@ class NetZeroTargetsEngine:
             "sbti_validated": sbti_validated,
             "validation_issues": validation_issues,
             "framework_compliant": len(validation_issues) == 0,
-            "scope3_coverage_pct": round(rng.uniform(40, 95), 1),
-            "offset_reliance_pct": round(rng.uniform(0, 20), 1),
+            "scope3_coverage_pct": round(scope3_coverage_pct, 1) if scope3_coverage_pct is not None else None,
+            "offset_reliance_pct": round(offset_reliance_pct, 1) if offset_reliance_pct is not None else None,
             "assessment_date": now,
             "created_at": now,
             "updated_at": now,
@@ -370,18 +408,35 @@ class NetZeroTargetsEngine:
         net_zero_year: int,
         reduction_pct_2030: float,
         reduction_pct_2050: float,
+        projected_emissions_by_year: Optional[Dict[int, float]] = None,
+        offset_plan_by_year: Optional[Dict[int, float]] = None,
+        abatement_cost_by_year: Optional[Dict[int, float]] = None,
     ) -> List[Dict]:
-        """Generate year-by-year decarbonisation pathway records."""
-        rng = self._rng(f"{entity_id}:pathway")
+        """Generate year-by-year decarbonisation pathway records.
+
+        The REQUIRED pathway is computed deterministically by linear
+        interpolation between the base year, the 2030 milestone, and net-zero.
+
+        Optional caller inputs (default None → honest neutral / null):
+          projected_emissions_by_year : entity's own emissions projection per
+              year. When absent, the projection equals the required pathway
+              (on-track baseline, gap = 0) rather than a fabricated deviation.
+          offset_plan_by_year         : planned offset/removal volume per year.
+          abatement_cost_by_year      : marginal abatement cost ($/tCO2e) per
+              year. Entity/sector-specific; null when not provided.
+        """
         records = []
         years = list(range(base_year + 5, net_zero_year + 1, 5))
         if net_zero_year not in years:
             years.append(net_zero_year)
 
-        total_years = net_zero_year - base_year
+        total_years = max(1, net_zero_year - base_year)
+
+        projected_emissions_by_year = projected_emissions_by_year or {}
+        offset_plan_by_year = offset_plan_by_year or {}
+        abatement_cost_by_year = abatement_cost_by_year or {}
 
         for yr in years:
-            elapsed_pct = (yr - base_year) / total_years
             # Linear interpolation between base, 2030 milestone, and net zero
             if yr <= 2030:
                 frac = (yr - base_year) / max(1, 2030 - base_year)
@@ -393,11 +448,22 @@ class NetZeroTargetsEngine:
             required_reduction = min(100.0, required_reduction)
             required_emissions = base_emissions * (1 - required_reduction / 100)
 
-            # Projected = required ± some noise
-            noise = rng.uniform(-0.08, 0.12)
-            projected_emissions = max(0.0, required_emissions * (1 + noise))
+            # Projection: real caller input if provided, else assume on-track
+            # (projected == required). No fabricated noise.
+            if yr in projected_emissions_by_year:
+                projected_emissions = max(0.0, float(projected_emissions_by_year[yr]))
+            else:
+                projected_emissions = required_emissions
             gap = projected_emissions - required_emissions
             on_track = gap <= 0
+
+            # Offsets: real plan input, else 0 (no assumed offsetting).
+            offset_used = offset_plan_by_year.get(yr)
+            offset_used_tco2e = round(float(offset_used), 0) if offset_used is not None else 0
+
+            # Marginal abatement cost: real input, else honest null.
+            abatement_cost = abatement_cost_by_year.get(yr)
+            abatement_cost_usd = round(float(abatement_cost), 0) if abatement_cost is not None else None
 
             records.append({
                 "record_id": str(uuid.uuid4()),
@@ -409,8 +475,8 @@ class NetZeroTargetsEngine:
                 "projected_emissions_tco2e": round(projected_emissions, 0),
                 "gap_tco2e": round(gap, 0),
                 "on_track": on_track,
-                "offset_used_tco2e": round(rng.uniform(0, required_emissions * 0.1), 0) if yr > 2035 else 0,
-                "abatement_cost_usd_per_tco2e": round(rng.uniform(50, 250), 0),
+                "offset_used_tco2e": offset_used_tco2e,
+                "abatement_cost_usd_per_tco2e": abatement_cost_usd,
                 "created_at": datetime.utcnow().isoformat(),
             })
         return records
@@ -424,18 +490,49 @@ class NetZeroTargetsEngine:
         scope2: float,
         scope3: float,
         reduction_targets: Dict,
+        portfolio_coverage_pct: Optional[float] = None,
     ) -> Dict:
-        """Calculate implied portfolio/entity temperature score."""
-        rng = self._rng(f"{entity_id}:temp_score")
+        """Calculate implied portfolio/entity temperature score.
 
-        reduction_pct_2030 = reduction_targets.get("pct_2030", rng.uniform(10, 65))
-        reduction_pct_2050 = reduction_targets.get("pct_2050", rng.uniform(60, 100))
+        The implied temperature is driven by the 2030 reduction target. If the
+        caller supplies no reduction target, the score cannot be computed and an
+        honest ``insufficient_data`` result is returned rather than a fabricated
+        temperature derived from a random reduction figure.
 
-        temp_result = self._derive_temperature_score(reduction_pct_2030)
-        sbti_pathway = self._derive_pathway(reduction_pct_2030)
+        Optional:
+          portfolio_coverage_pct : % of AUM/portfolio covered by the target set.
+              Real caller input; null when not provided.
+        """
+        reduction_targets = reduction_targets or {}
+        reduction_pct_2030 = reduction_targets.get("pct_2030")
+        reduction_pct_2050 = reduction_targets.get("pct_2050")
 
         total_emissions = scope1 + scope2 + scope3
         scope3_share = (scope3 / total_emissions * 100) if total_emissions > 0 else 0
+        coverage = round(portfolio_coverage_pct, 1) if portfolio_coverage_pct is not None else None
+
+        # Without a 2030 reduction target the temperature score is undefined.
+        if reduction_pct_2030 is None:
+            return {
+                "entity_id": entity_id,
+                "total_emissions_tco2e": round(total_emissions, 0),
+                "scope1_tco2e": round(scope1, 0),
+                "scope2_tco2e": round(scope2, 0),
+                "scope3_tco2e": round(scope3, 0),
+                "scope3_share_pct": round(scope3_share, 1),
+                "reduction_pct_2030": None,
+                "reduction_pct_2050": round(reduction_pct_2050, 1) if reduction_pct_2050 is not None else None,
+                "implied_temperature_c": None,
+                "temperature_classification": "insufficient_data",
+                "sbti_pathway": "insufficient",
+                "alignment_status": "insufficient_data",
+                "warming_gap_c": None,
+                "portfolio_coverage_pct": coverage,
+                "calculated_at": datetime.utcnow().isoformat(),
+            }
+
+        temp_result = self._derive_temperature_score(reduction_pct_2030)
+        sbti_pathway = self._derive_pathway(reduction_pct_2030)
 
         alignment = "Paris aligned" if temp_result["temperature_c"] <= 1.7 else (
             "Below 2°C" if temp_result["temperature_c"] <= 2.0 else "Not aligned"
@@ -449,13 +546,13 @@ class NetZeroTargetsEngine:
             "scope3_tco2e": round(scope3, 0),
             "scope3_share_pct": round(scope3_share, 1),
             "reduction_pct_2030": round(reduction_pct_2030, 1),
-            "reduction_pct_2050": round(reduction_pct_2050, 1),
+            "reduction_pct_2050": round(reduction_pct_2050, 1) if reduction_pct_2050 is not None else None,
             "implied_temperature_c": temp_result["temperature_c"],
             "temperature_classification": temp_result["classification"],
             "sbti_pathway": sbti_pathway,
             "alignment_status": alignment,
             "warming_gap_c": round(max(0, temp_result["temperature_c"] - 1.5), 2),
-            "portfolio_coverage_pct": round(rng.uniform(40, 100), 1),
+            "portfolio_coverage_pct": coverage,
             "calculated_at": datetime.utcnow().isoformat(),
         }
 
@@ -469,30 +566,34 @@ class NetZeroTargetsEngine:
         assessment_data: Dict,
     ) -> Dict:
         """Check detailed compliance against a specific framework."""
-        rng = self._rng(f"{entity_id}:compliance:{framework}")
         cfg = FRAMEWORK_CONFIGS.get(framework, FRAMEWORK_CONFIGS["combined"])
 
         gaps = []
         warnings = []
 
         reduction_pct = assessment_data.get("near_term_reduction_pct", 0)
-        lt_pct = assessment_data.get("long_term_reduction_pct", 0)
-        scope3_cov = assessment_data.get("scope3_coverage_pct", 0)
+        lt_pct = assessment_data.get("long_term_reduction_pct")
+        scope3_cov = assessment_data.get("scope3_coverage_pct")
 
         min_near = cfg.get("near_term_min_reduction_pct", 42)
         min_long = cfg.get("long_term_min_reduction_pct", 90)
 
         if reduction_pct < min_near:
             gaps.append(f"Near-term reduction {reduction_pct:.1f}% is below {framework.upper()} minimum of {min_near}%")
-        if lt_pct < min_long:
+        if lt_pct is not None and lt_pct < min_long:
             gaps.append(f"Long-term reduction {lt_pct:.1f}% is below {framework.upper()} minimum of {min_long}%")
-        if scope3_cov < 67:
+        elif lt_pct is None:
+            warnings.append(f"Long-term reduction target not provided — cannot confirm {framework.upper()} long-term alignment")
+        if scope3_cov is None:
+            warnings.append(f"Scope 3 coverage not provided — recommend reporting coverage for full {framework.upper()} alignment")
+        elif scope3_cov < 67:
             warnings.append(f"Scope 3 coverage {scope3_cov:.1f}% — recommend >67% for full {framework.upper()} alignment")
         if not assessment_data.get("sbti_validated", False) and cfg.get("validation_required", False):
             gaps.append(f"{framework.upper()} requires third-party SBTi validation — not yet obtained")
 
+        # Deterministic compliance score: 100 minus penalties per open item.
         compliance_pct = max(0, 100 - len(gaps) * 20 - len(warnings) * 5)
-        compliance_pct = round(min(100, compliance_pct + rng.uniform(-5, 5)), 1)
+        compliance_pct = round(min(100, compliance_pct), 1)
 
         return {
             "entity_id": entity_id,
@@ -518,17 +619,51 @@ class NetZeroTargetsEngine:
         framework: str,
         **kwargs,
     ) -> Dict:
-        """Orchestrate full assessment including pathway generation."""
-        rng = self._rng(entity_id)
+        """Orchestrate full assessment including pathway generation.
 
-        base_year = kwargs.get("base_year", 2019)
-        base_emissions = kwargs.get("base_year_emissions", rng.uniform(50000, 5000000))
-        scope1 = kwargs.get("scope1_tco2e", base_emissions * rng.uniform(0.15, 0.35))
-        scope2 = kwargs.get("scope2_tco2e", base_emissions * rng.uniform(0.10, 0.25))
-        scope3 = kwargs.get("scope3_tco2e", base_emissions - scope1 - scope2)
-        net_zero_year = kwargs.get("net_zero_target_year", 2050)
-        near_term_year = kwargs.get("near_term_target_year", 2030)
-        near_term_pct = kwargs.get("near_term_reduction_pct", rng.uniform(25, 60))
+        All quantitative inputs (emissions, scope split, reduction targets) must
+        be supplied by the caller. Missing inputs are treated as honest zeros /
+        nulls rather than fabricated with random values, so an under-specified
+        request yields an under-specified (but truthful) assessment.
+        """
+        base_year = kwargs.get("base_year") or 2019
+
+        # Emissions inputs: real caller values, else honest zero (no fabrication).
+        base_emissions = kwargs.get("base_year_emissions")
+        if base_emissions is None:
+            base_emissions = 0.0
+        scope1 = kwargs.get("scope1_tco2e")
+        scope2 = kwargs.get("scope2_tco2e")
+        scope3 = kwargs.get("scope3_tco2e")
+        # If a scope split is not provided, do not invent one. Leave missing
+        # scopes at 0 and, when at least one scope is given, treat scope3 as the
+        # residual of the base total only if that keeps the sum non-negative.
+        s1 = scope1 if scope1 is not None else 0.0
+        s2 = scope2 if scope2 is not None else 0.0
+        if scope3 is not None:
+            s3 = scope3
+        elif base_emissions and (scope1 is not None or scope2 is not None):
+            s3 = max(0.0, base_emissions - s1 - s2)
+        else:
+            s3 = 0.0
+
+        net_zero_year = kwargs.get("net_zero_target_year") or 2050
+        near_term_year = kwargs.get("near_term_target_year") or 2030
+        # Near-term reduction target: real caller value, else 0 (no target set).
+        near_term_pct = kwargs.get("near_term_reduction_pct")
+        if near_term_pct is None:
+            near_term_pct = 0.0
+
+        # Strip inputs we consume explicitly so assess_targets kwargs stay clean,
+        # but preserve optional pass-through fields (entity_name, coverage, etc.).
+        passthrough = {
+            k: v for k, v in kwargs.items()
+            if k not in {
+                "base_year", "base_year_emissions", "scope1_tco2e", "scope2_tco2e",
+                "scope3_tco2e", "net_zero_target_year", "near_term_target_year",
+                "near_term_reduction_pct",
+            }
+        }
 
         assessment = self.assess_targets(
             entity_id=entity_id,
@@ -536,16 +671,18 @@ class NetZeroTargetsEngine:
             framework=framework,
             base_year=base_year,
             base_year_emissions=base_emissions,
-            scope1=scope1,
-            scope2=scope2,
-            scope3=scope3,
+            scope1=s1,
+            scope2=s2,
+            scope3=s3,
             net_zero_target_year=net_zero_year,
             near_term_target_year=near_term_year,
             near_term_reduction_pct=near_term_pct,
-            **kwargs,
+            **passthrough,
         )
 
-        reduction_2050 = kwargs.get("long_term_reduction_pct", rng.uniform(80, 100))
+        # Long-term reduction: real caller value, else the assessment's null.
+        reduction_2050 = kwargs.get("long_term_reduction_pct")
+
         pathway_records = self.generate_pathway(
             entity_id=entity_id,
             assessment_id=assessment["assessment_id"],
@@ -553,7 +690,13 @@ class NetZeroTargetsEngine:
             base_emissions=base_emissions,
             net_zero_year=net_zero_year,
             reduction_pct_2030=near_term_pct,
-            reduction_pct_2050=reduction_2050,
+            # Long-term pathway endpoint: use stated long-term target if given,
+            # else fall back to the near-term reduction (flat beyond 2030) so the
+            # pathway never invents deeper cuts than the entity has committed to.
+            reduction_pct_2050=reduction_2050 if reduction_2050 is not None else near_term_pct,
+            projected_emissions_by_year=kwargs.get("projected_emissions_by_year"),
+            offset_plan_by_year=kwargs.get("offset_plan_by_year"),
+            abatement_cost_by_year=kwargs.get("abatement_cost_by_year"),
         )
 
         compliance = self.check_framework_compliance(entity_id, entity_type, framework, assessment)

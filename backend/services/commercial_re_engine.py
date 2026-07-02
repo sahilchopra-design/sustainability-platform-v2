@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import math
 import uuid
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -261,17 +260,19 @@ class GRESBResult:
     performance_score: float
     total_score: float
     star_rating: int
-    peer_percentile: float
+    peer_percentile: Optional[float]
     component_scores: dict
+    data_completeness: str = "complete"
 
 @dataclass
 class REFIResult:
     entity_id: str
-    physical_score: float
-    transition_score: float
-    composite_score: float
+    physical_score: Optional[float]
+    transition_score: Optional[float]
+    composite_score: Optional[float]
     risk_tier: str
     risk_label: str
+    data_completeness: str = "complete"
 
 @dataclass
 class NABERSResult:
@@ -281,8 +282,8 @@ class NABERSResult:
     gross_area_m2: float
     energy_intensity_kwh_m2: float
     energy_stars: float
-    water_stars: float
-    indoor_stars: float
+    water_stars: Optional[float]
+    indoor_stars: Optional[float]
 
 @dataclass
 class GreenLeaseResult:
@@ -322,8 +323,6 @@ class CommercialREEngine:
         energy_intensity_kwh_m2: float,
         co2_intensity_kgco2_m2: float,
     ) -> CRREMResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         country_pathways = CRREM_PATHWAYS.get(asset_type, CRREM_PATHWAYS["office"]).get(
             country, CRREM_PATHWAYS.get(asset_type, CRREM_PATHWAYS["office"]).get("UK", {})
         )
@@ -423,20 +422,37 @@ class CommercialREEngine:
         entity_id: str,
         management_data: dict,
         performance_data: dict,
+        peer_percentile: Optional[float] = None,
     ) -> GRESBResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        """GRESB Real Estate score from supplied management/performance criteria.
+
+        Only criteria actually provided by the caller are scored; missing
+        criteria are omitted rather than fabricated. ``peer_percentile`` is an
+        honest passthrough of a caller-supplied GRESB cohort rank (0-100) and is
+        ``None`` when unknown — it is never invented from a random draw.
+        """
         component_scores = {}
         management_score = 0.0
         performance_score = 0.0
+        supplied = 0
+        expected = 0
 
         for criterion, cfg in GRESB_SCORING["management_criteria"].items():
-            raw = management_data.get(criterion, rng.uniform(4.0, 9.0))
+            expected += 1
+            if criterion not in management_data:
+                continue
+            supplied += 1
+            raw = management_data[criterion]
             weighted = raw * cfg["weight"] / 10.0
             component_scores[f"mgmt_{criterion}"] = round(weighted, 2)
             management_score += weighted
 
         for metric, cfg in GRESB_SCORING["performance_criteria"].items():
-            raw = performance_data.get(metric, rng.uniform(50.0, 90.0))
+            expected += 1
+            if metric not in performance_data:
+                continue
+            supplied += 1
+            raw = performance_data[metric]
             weighted = raw * cfg["weight"] / 100.0
             component_scores[f"perf_{metric}"] = round(weighted, 2)
             performance_score += weighted
@@ -456,7 +472,20 @@ class CommercialREEngine:
         else:
             star_rating = 1
 
-        peer_percentile = min(99.0, max(1.0, total_score * 0.95 + rng.uniform(-5, 5)))
+        # Peer percentile: honest passthrough of caller-supplied GRESB cohort
+        # rank. Never fabricated; None when the caller does not provide it.
+        peer_pct: Optional[float]
+        if peer_percentile is not None:
+            peer_pct = round(min(100.0, max(0.0, float(peer_percentile))), 1)
+        else:
+            peer_pct = None
+
+        if supplied == 0:
+            completeness = "insufficient_data"
+        elif supplied < expected:
+            completeness = "partial"
+        else:
+            completeness = "complete"
 
         return GRESBResult(
             entity_id=entity_id,
@@ -464,8 +493,9 @@ class CommercialREEngine:
             performance_score=round(performance_score, 2),
             total_score=round(total_score, 2),
             star_rating=star_rating,
-            peer_percentile=round(peer_percentile, 1),
+            peer_percentile=peer_pct,
             component_scores=component_scores,
+            data_completeness=completeness,
         )
 
     # ------------------------------------------------------------------
@@ -477,45 +507,90 @@ class CommercialREEngine:
         physical_risk_inputs: dict,
         transition_risk_inputs: dict,
     ) -> REFIResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        """REFI Protocol physical + transition risk tiering.
 
-        # Physical risk scoring (0-100)
-        flood_risk = physical_risk_inputs.get("flood_risk_score", rng.uniform(10.0, 60.0))
-        heat_stress = physical_risk_inputs.get("heat_stress_score", rng.uniform(10.0, 50.0))
-        subsidence = physical_risk_inputs.get("subsidence_score", rng.uniform(5.0, 30.0))
-        wind_risk = physical_risk_inputs.get("wind_risk_score", rng.uniform(5.0, 25.0))
-        physical_score = (flood_risk * 0.35 + heat_stress * 0.30 + subsidence * 0.20 + wind_risk * 0.15)
+        Each sub-factor is scored only when the caller supplies it; the REFI
+        weights are renormalised over the factors actually present so a partial
+        input set still yields a defensible 0-100 dimension score. A dimension
+        with no supplied factors is returned as ``None`` (insufficient data)
+        rather than filled with a random draw.
+        """
 
-        # Transition risk scoring (0-100)
-        epc_risk = transition_risk_inputs.get("epc_compliance_risk", rng.uniform(10.0, 70.0))
-        stranding_risk_val = transition_risk_inputs.get("stranding_risk_score", rng.uniform(10.0, 60.0))
-        carbon_tax_exp = transition_risk_inputs.get("carbon_tax_exposure", rng.uniform(5.0, 40.0))
-        retrofit_cost = transition_risk_inputs.get("retrofit_cost_score", rng.uniform(10.0, 55.0))
-        transition_score = (epc_risk * 0.30 + stranding_risk_val * 0.30 + carbon_tax_exp * 0.20 + retrofit_cost * 0.20)
+        def _weighted(inputs: dict, weights: dict[str, float]) -> Optional[float]:
+            present = {k: w for k, w in weights.items() if k in inputs}
+            total_w = sum(present.values())
+            if total_w <= 0.0:
+                return None
+            score = sum(float(inputs[k]) * w for k, w in present.items()) / total_w
+            return min(100.0, max(0.0, score))
 
-        composite_score = physical_score * 0.5 + transition_score * 0.5
-        composite_score = min(100.0, max(0.0, composite_score))
+        # Physical risk scoring (0-100) — REFI physical hazard weights
+        physical_score = _weighted(
+            physical_risk_inputs,
+            {
+                "flood_risk_score": 0.35,
+                "heat_stress_score": 0.30,
+                "subsidence_score": 0.20,
+                "wind_risk_score": 0.15,
+            },
+        )
 
-        risk_tier = "tier3"
-        risk_label = "Medium Risk"
-        for tier, bounds in REFI_RISK_TIERS.items():
-            if bounds["composite_min"] <= composite_score < bounds["composite_max"]:
-                risk_tier = tier
-                risk_label = bounds["label"]
-                break
+        # Transition risk scoring (0-100) — REFI transition risk weights
+        transition_score = _weighted(
+            transition_risk_inputs,
+            {
+                "epc_compliance_risk": 0.30,
+                "stranding_risk_score": 0.30,
+                "carbon_tax_exposure": 0.20,
+                "retrofit_cost_score": 0.20,
+            },
+        )
+
+        # Composite: mean of whichever dimensions are available; None only when
+        # neither physical nor transition inputs were supplied.
+        present_dims = [s for s in (physical_score, transition_score) if s is not None]
+        if present_dims:
+            composite_score = min(100.0, max(0.0, sum(present_dims) / len(present_dims)))
+        else:
+            composite_score = None
+
+        if composite_score is None:
+            risk_tier = "insufficient_data"
+            risk_label = "Insufficient Data"
+            completeness = "insufficient_data"
+        else:
+            risk_tier = "tier3"
+            risk_label = "Medium Risk"
+            for tier, bounds in REFI_RISK_TIERS.items():
+                if bounds["composite_min"] <= composite_score < bounds["composite_max"]:
+                    risk_tier = tier
+                    risk_label = bounds["label"]
+                    break
+            completeness = "complete" if len(present_dims) == 2 else "partial"
 
         return REFIResult(
             entity_id=entity_id,
-            physical_score=round(physical_score, 2),
-            transition_score=round(transition_score, 2),
-            composite_score=round(composite_score, 2),
+            physical_score=round(physical_score, 2) if physical_score is not None else None,
+            transition_score=round(transition_score, 2) if transition_score is not None else None,
+            composite_score=round(composite_score, 2) if composite_score is not None else None,
             risk_tier=risk_tier,
             risk_label=risk_label,
+            data_completeness=completeness,
         )
 
     # ------------------------------------------------------------------
     # 5. NABERS Rating
     # ------------------------------------------------------------------
+    # NABERS Water benchmark: kL/m²/yr thresholds for 1/3/5/6-star ratings.
+    # Sourced from NABERS Water for Offices rating scale; applied generically
+    # across asset types where a dedicated scale is not published.
+    NABERS_WATER_BENCHMARKS: dict[str, float] = {
+        "1_star_kl_m2": 1.4,
+        "3_star_kl_m2": 0.9,
+        "5_star_kl_m2": 0.55,
+        "6_star_kl_m2": 0.40,
+    }
+
     def calculate_nabers(
         self,
         entity_id: str,
@@ -523,9 +598,18 @@ class CommercialREEngine:
         annual_energy_kwh: float,
         gross_area_m2: float,
         hours_pa: float = 2500.0,
+        annual_water_kl: Optional[float] = None,
+        indoor_stars_rating: Optional[float] = None,
     ) -> NABERSResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        """NABERS star ratings.
 
+        Energy stars are computed from metered energy intensity against the
+        NABERS Energy benchmark. Water stars are computed from ``annual_water_kl``
+        (metered water) against the NABERS Water benchmark when supplied, else
+        ``None``. Indoor Environment stars require a certified IEQ assessment and
+        are an honest passthrough of ``indoor_stars_rating`` (``None`` when not
+        provided) — neither water nor indoor is ever fabricated.
+        """
         energy_intensity = annual_energy_kwh / max(gross_area_m2, 1.0)  # kWh/m²
         benchmarks = NABERS_BENCHMARKS.get(asset_type, NABERS_BENCHMARKS["office"])
 
@@ -547,9 +631,35 @@ class CommercialREEngine:
 
         energy_stars = round(min(6.0, max(1.0, energy_stars)), 1)
 
-        # Water and indoor environment: seeded estimates
-        water_stars = round(rng.uniform(2.5, 5.5), 1)
-        indoor_stars = round(rng.uniform(3.0, 5.5), 1)
+        # Water stars: computed from metered water intensity vs NABERS Water
+        # benchmark when supplied; honest None otherwise.
+        water_stars: Optional[float]
+        if annual_water_kl is not None:
+            wb = self.NABERS_WATER_BENCHMARKS
+            water_intensity = float(annual_water_kl) / max(gross_area_m2, 1.0)  # kL/m²
+            if water_intensity >= wb["1_star_kl_m2"]:
+                ws = 1.0
+            elif water_intensity >= wb["3_star_kl_m2"]:
+                t = (wb["1_star_kl_m2"] - water_intensity) / max(wb["1_star_kl_m2"] - wb["3_star_kl_m2"], 1e-9)
+                ws = 1.0 + t * 2.0
+            elif water_intensity >= wb["5_star_kl_m2"]:
+                t = (wb["3_star_kl_m2"] - water_intensity) / max(wb["3_star_kl_m2"] - wb["5_star_kl_m2"], 1e-9)
+                ws = 3.0 + t * 2.0
+            elif water_intensity >= wb["6_star_kl_m2"]:
+                t = (wb["5_star_kl_m2"] - water_intensity) / max(wb["5_star_kl_m2"] - wb["6_star_kl_m2"], 1e-9)
+                ws = 5.0 + t * 1.0
+            else:
+                ws = 6.0
+            water_stars = round(min(6.0, max(1.0, ws)), 1)
+        else:
+            water_stars = None
+
+        # Indoor Environment stars: passthrough of a certified IEQ rating; NABERS
+        # IEQ cannot be derived from energy/water data, so None when not supplied.
+        if indoor_stars_rating is not None:
+            indoor_stars = round(min(6.0, max(1.0, float(indoor_stars_rating))), 1)
+        else:
+            indoor_stars = None
 
         return NABERSResult(
             entity_id=entity_id,
@@ -615,8 +725,6 @@ class CommercialREEngine:
         discount_rate: float = 0.07,
         energy_price_kwh: float = 0.20,
     ) -> RetrofitResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         # Carbon intensity estimate (grid average 0.25 kgCO2/kWh)
         grid_co2_factor = 0.25
 
@@ -711,8 +819,6 @@ class CommercialREEngine:
         entity_id: str,
         asset_data: dict,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         asset_type = asset_data.get("asset_type", "office")
         country = asset_data.get("country", "UK")
         co2_intensity = asset_data.get("co2_intensity_kgco2_m2", 35.0)
@@ -727,9 +833,16 @@ class CommercialREEngine:
 
         crrem = self.assess_crrem(entity_id, asset_type, country, energy_intensity, co2_intensity)
         epc = self.assess_epc_epbd(entity_id, country, building_type, primary_energy)
-        gresb = self.calculate_gresb_score(entity_id, mgmt_data, perf_data)
+        gresb = self.calculate_gresb_score(
+            entity_id, mgmt_data, perf_data,
+            peer_percentile=asset_data.get("gresb_peer_percentile"),
+        )
         refi = self.assess_refi(entity_id, asset_data.get("physical_risk", {}), asset_data.get("transition_risk", {}))
-        nabers = self.calculate_nabers(entity_id, asset_type, annual_energy, floor_area)
+        nabers = self.calculate_nabers(
+            entity_id, asset_type, annual_energy, floor_area,
+            annual_water_kl=asset_data.get("annual_water_kl"),
+            indoor_stars_rating=asset_data.get("indoor_stars_rating"),
+        )
         green_lease = self.assess_green_lease(entity_id, lease_clauses)
         retrofit = self.model_retrofit(entity_id, asset_type, energy_intensity, floor_area)
 
@@ -738,10 +851,13 @@ class CommercialREEngine:
             asset_type, {"premium_pct": 5.0, "brown_discount_pct": 4.0}
         )
 
-        # Overall climate risk score
+        # Overall climate risk score. The REFI transition/physical term is only
+        # included when a composite score is available (real inputs supplied);
+        # its 0.30 weight is otherwise dropped rather than filled with a guess.
+        refi_term = refi.composite_score * 0.30 if refi.composite_score is not None else 0.0
         climate_risk_score = round(
             (crrem.overconsumption_gap / max(co2_intensity, 1.0)) * 40.0
-            + refi.composite_score * 0.30
+            + refi_term
             + (100.0 - gresb.total_score) * 0.30,
             2,
         )

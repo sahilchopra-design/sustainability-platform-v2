@@ -260,7 +260,7 @@ def get_assessment(
     try:
         row = db.execute(
             text("""
-                SELECT a.*, e.entity_name, e.entity_type, e.domicile_country
+                SELECT a.*, e.entity_name, e.insurer_type AS entity_type, e.country_iso AS domicile_country
                 FROM insurance_climate_assessments a
                 JOIN insurance_climate_entities e ON e.id = a.entity_id
                 WHERE a.id = :aid

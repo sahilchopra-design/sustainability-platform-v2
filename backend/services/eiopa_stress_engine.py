@@ -264,6 +264,43 @@ _SCR_MODULE_WEIGHTS = {
     "operational": 0.05,
 }
 
+# Solvency II standard-formula correlation matrix for the Basic SCR modules
+# (Commission Delegated Regulation (EU) 2015/35, Annex IV). Operational risk is
+# aggregated OUTSIDE the square root and is therefore excluded from the matrix.
+# Only the upper triangle is stored; the diagonal is 1.0 and lookups are symmetric.
+_SCR_CORR_MODULES = ("market_risk", "counterparty", "underwriting_life", "underwriting_nonlife")
+_SCR_CORR_MATRIX = {
+    ("market_risk", "counterparty"): 0.25,
+    ("market_risk", "underwriting_life"): 0.25,
+    ("market_risk", "underwriting_nonlife"): 0.25,
+    ("counterparty", "underwriting_life"): 0.25,
+    ("counterparty", "underwriting_nonlife"): 0.50,
+    ("underwriting_life", "underwriting_nonlife"): 0.00,
+}
+
+
+def _scr_corr(a: str, b: str) -> float:
+    """Symmetric lookup into the Solvency II SCR correlation matrix."""
+    if a == b:
+        return 1.0
+    v = _SCR_CORR_MATRIX.get((a, b))
+    if v is None:
+        v = _SCR_CORR_MATRIX.get((b, a))
+    return v if v is not None else 0.0
+
+
+def _aggregate_bscr(module_scr: Dict[str, float]) -> float:
+    """
+    Basic SCR via the Solvency II correlation-matrix square-root formula:
+        BSCR = sqrt( Σ_i Σ_j Corr_ij · SCR_i · SCR_j )
+    This captures diversification between risk modules; a naive linear sum does not.
+    """
+    total = 0.0
+    for i in _SCR_CORR_MODULES:
+        for j in _SCR_CORR_MODULES:
+            total += _scr_corr(i, j) * module_scr.get(i, 0.0) * module_scr.get(j, 0.0)
+    return math.sqrt(max(total, 0.0))
+
 # Duration assumption (years) for bond spread → price impact: ΔP ≈ -D × Δspread
 _BOND_DURATION_SOVEREIGN = 7.0
 _BOND_DURATION_IG_CORP = 5.0
@@ -686,23 +723,35 @@ class EiopaStressEngine:
         after_tax_loss = total_loss * 0.80
         post_of = ins.eligible_own_funds_eur - after_tax_loss
 
-        # Post-stress SCR: market risk component increases under stressed conditions
-        # Approximation: market risk SCR grows proportional to realised volatility
-        market_shock_intensity = asset_shock.total_asset_loss_pct / 100
-        market_scr_uplift = 1.0 + market_shock_intensity * _SCR_MODULE_WEIGHTS["market_risk"]
-
-        # NatCat module uplift
+        # Post-stress SCR: apply module-level stress uplifts, then RE-AGGREGATE with the
+        # Solvency II standard-formula correlation matrix (BSCR = √ΣΣ Corr·SCRi·SCRj)
+        # rather than a linear weighted sum. The prior linear sum ignored diversification
+        # AND malformed the NatCat term (it multiplied the non-life weight in twice and
+        # dropped the "1 +" uplift base), so a stress scenario could actually LOWER the
+        # SCR below its unstressed level — the opposite of correct behaviour.
+        #
+        # Method: decompose the reported SCR into standalone module charges via the
+        # module weights, stress the market and non-life modules, aggregate both the
+        # pre- and post-stress module vectors through the correlation matrix, add
+        # operational risk outside the root, and scale so the PRE-stress aggregation
+        # reproduces the reported input SCR (preserving the firm's own calibration).
         sc_params = EIOPA_SCENARIOS[sc_id]
-        natcat_uplift = sc_params["natcat_amplifier"] * _SCR_MODULE_WEIGHTS["underwriting_nonlife"]
-        other_scr = ins.scr_eur * (
-            _SCR_MODULE_WEIGHTS["underwriting_life"]
-            + _SCR_MODULE_WEIGHTS["counterparty"]
-            + _SCR_MODULE_WEIGHTS["operational"]
-        )
+        market_shock_intensity = asset_shock.total_asset_loss_pct / 100
+        market_mult = 1.0 + max(0.0, market_shock_intensity)          # market SCR grows with realised market loss
+        nonlife_mult = max(1.0, sc_params["natcat_amplifier"])        # NatCat amplifies the non-life module
+
+        mod_pre = {m: ins.scr_eur * _SCR_MODULE_WEIGHTS[m] for m in _SCR_CORR_MODULES}
+        op_charge = ins.scr_eur * _SCR_MODULE_WEIGHTS["operational"]
+
+        mod_post = dict(mod_pre)
+        mod_post["market_risk"] = mod_pre["market_risk"] * market_mult
+        mod_post["underwriting_nonlife"] = mod_pre["underwriting_nonlife"] * nonlife_mult
+
+        scr_pre_recon = _aggregate_bscr(mod_pre) + op_charge          # operational added outside the root
+        scr_post_recon = _aggregate_bscr(mod_post) + op_charge
         post_scr = (
-            ins.scr_eur * _SCR_MODULE_WEIGHTS["market_risk"] * market_scr_uplift
-            + ins.scr_eur * _SCR_MODULE_WEIGHTS["underwriting_nonlife"] * natcat_uplift
-            + other_scr
+            ins.scr_eur * (scr_post_recon / scr_pre_recon)
+            if scr_pre_recon > 0 else ins.scr_eur
         )
 
         post_ratio = post_of / max(post_scr, 1) * 100

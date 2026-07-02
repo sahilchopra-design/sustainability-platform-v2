@@ -29,7 +29,6 @@ References:
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -707,8 +706,8 @@ class PCAFSovereignAssessment:
 
     # NDC
     ndc_target_pct_vs_2010: Optional[float]
-    ndc_alignment: str   # aligned / partial / misaligned / no_target
-    current_trajectory_vs_target_pct: float
+    ndc_alignment: str   # aligned / partial / misaligned / no_target / insufficient_data
+    current_trajectory_vs_target_pct: Optional[float]  # None when no trajectory model supplied
 
     # Credit Context
     credit_rating_sp: str
@@ -736,10 +735,18 @@ class PCAFSovereignEngine:
         country_code: str,
         outstanding_amount_mn: float,
         use_lulucf_adjustment: bool = False,
+        current_trajectory_gap_pct: Optional[float] = None,
+        dqs_override: Optional[int] = None,
     ) -> PCAFSovereignAssessment:
-        """Full PCAF Part D sovereign assessment for a single country holding."""
-        rng = random.Random(hash(entity_id + country_code))
+        """Full PCAF Part D sovereign assessment for a single country holding.
 
+        Deterministic and reproducible. `current_trajectory_gap_pct` is the country's
+        assessed emissions trajectory vs its NDC 2030 target (% deviation, positive = off
+        track) from a real trajectory source (e.g. Climate Action Tracker / NGFS); when it
+        is not supplied the NDC alignment is returned as ``insufficient_data`` rather than
+        being fabricated. `dqs_override` lets a caller supply the true PCAF DQS (1-4) when
+        the data source is known.
+        """
         if country_code not in SOVEREIGN_COUNTRY_PROFILES:
             raise ValueError(f"Country code '{country_code}' not in sovereign profiles. "
                              f"Available: {sorted(SOVEREIGN_COUNTRY_PROFILES.keys())}")
@@ -764,12 +771,16 @@ class PCAFSovereignEngine:
             att_factor = (outstanding_amount_mn / 1000.0) / govt_debt_bn
             attributed_with_lulucf = round(att_factor * ghg_incl_lulucf, 2)
 
-        # DQS determination
-        dqs = self._determine_dqs(profile["annex_status"], rng)
+        # DQS determination — deterministic from UNFCCC reporting obligation (PCAF Part D),
+        # or the caller-supplied override; never randomised.
+        dqs = self._determine_dqs(profile["annex_status"], dqs_override)
 
-        # NDC alignment
+        # NDC alignment — computed from a caller-supplied trajectory gap; if none is
+        # provided we return an explicit "insufficient_data" rather than fabricating one.
         ndc_target = profile.get("ndc_target_pct_vs_2010")
-        alignment, trajectory_vs_target = self._assess_ndc_alignment(ndc_target, rng)
+        alignment, trajectory_vs_target = self._assess_ndc_alignment(
+            ndc_target, current_trajectory_gap_pct
+        )
 
         # Normalised metric
         att_per_mn = round(attribution["attributed_emissions_tco2e"] / max(outstanding_amount_mn, 1), 4)
@@ -792,7 +803,9 @@ class PCAFSovereignEngine:
             dqs_uncertainty_range=dqs["uncertainty_range"],
             ndc_target_pct_vs_2010=ndc_target,
             ndc_alignment=alignment,
-            current_trajectory_vs_target_pct=round(trajectory_vs_target, 2),
+            current_trajectory_vs_target_pct=(
+                round(trajectory_vs_target, 2) if trajectory_vs_target is not None else None
+            ),
             credit_rating_sp=profile["credit_rating_sp"],
             annex_status=profile["annex_status"],
             region=profile["region"],
@@ -826,6 +839,8 @@ class PCAFSovereignEngine:
                     country_code=cc,
                     outstanding_amount_mn=holding.get("outstanding_amount_mn", 0),
                     use_lulucf_adjustment=holding.get("use_lulucf_adjustment", False),
+                    current_trajectory_gap_pct=holding.get("current_trajectory_gap_pct"),
+                    dqs_override=holding.get("dqs_override"),
                 )
                 results.append(assessment)
             except Exception:
@@ -918,29 +933,45 @@ class PCAFSovereignEngine:
             "pcaf_reference": "PCAF Part D §3.2 Attribution Formula",
         }
 
-    def _determine_dqs(self, annex_status: str, rng: random.Random) -> dict:
-        """Determine PCAF DQS based on UNFCCC annex status and data availability."""
-        if annex_status == "annex2":
-            score = 1  # Annex II countries submit complete annual inventories
-        elif annex_status == "annex1":
-            score = rng.choice([1, 2])  # Annex I generally reliable
-        else:
-            score = rng.choice([2, 3])  # Non-Annex I use BURs; less frequent
+    def _determine_dqs(self, annex_status: str, dqs_override: Optional[int] = None) -> dict:
+        """PCAF Part D Data Quality Score — deterministic from the data source used.
+
+        The engine sources every emissions figure from UNFCCC national inventories. Per
+        PCAF Part D DQS, that maps to the country's reporting obligation:
+          * Annex I parties (annex1/annex2) submit *annual* national GHG inventories → DQS 1.
+          * Non-Annex I parties report via *biennial* update reports (BUR) → DQS 2.
+        A caller who knows the actual data vintage/source may pass `dqs_override` (1-4).
+        No randomness: the same country always yields the same DQS.
+        """
+        if dqs_override is not None and dqs_override in PCAF_DQS_SOVEREIGN:
+            return PCAF_DQS_SOVEREIGN[dqs_override]
+        score = 1 if annex_status in ("annex1", "annex2") else 2
         return PCAF_DQS_SOVEREIGN[score]
 
-    def _assess_ndc_alignment(self, ndc_target: Optional[float], rng: random.Random) -> tuple[str, float]:
-        """Assess whether country is on track to meet its NDC 2030 target."""
-        if ndc_target is None:
-            return "no_target", 0.0
+    def _assess_ndc_alignment(
+        self, ndc_target: Optional[float], current_trajectory_gap_pct: Optional[float] = None,
+    ) -> tuple[str, Optional[float]]:
+        """Classify NDC alignment from a *supplied* trajectory gap — never fabricated.
 
-        # Simulate trajectory vs target gap (positive = worse than target)
-        trajectory_gap = rng.uniform(-15, 30)  # % deviation from NDC target
-        alignment_status = (
-            "aligned" if trajectory_gap <= 5
-            else "partial" if trajectory_gap <= 20
+        `current_trajectory_gap_pct` is the country's assessed emissions trajectory vs its
+        NDC 2030 target (% deviation; positive = off track) from a real trajectory source.
+        Returns:
+          * ("no_target", None)         — country has no quantified NDC 2030 target;
+          * ("insufficient_data", None) — target exists but no trajectory model was supplied
+                                          (we do NOT invent a gap);
+          * (aligned/partial/misaligned, gap) — per NDC_ALIGNMENT_THRESHOLDS.
+        """
+        if ndc_target is None:
+            return "no_target", None
+        if current_trajectory_gap_pct is None:
+            return "insufficient_data", None
+        gap = float(current_trajectory_gap_pct)
+        status = (
+            "aligned" if gap <= 5
+            else "partial" if gap <= 20
             else "misaligned"
         )
-        return alignment_status, trajectory_gap
+        return status, gap
 
     # -----------------------------------------------------------------------
     # Reference Endpoints

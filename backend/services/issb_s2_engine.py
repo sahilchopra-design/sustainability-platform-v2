@@ -26,7 +26,6 @@ References:
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -799,19 +798,36 @@ class ISSBS2Engine:
         internal_carbon_price: Optional[float] = None,
         climate_capex_pct: float = 0.0,
         revenue_usd_mn: float = 1000.0,
+        governance_disclosures: Optional[list[str]] = None,
+        strategy_disclosures: Optional[list[str]] = None,
+        risk_mgmt_disclosures: Optional[list[str]] = None,
+        metrics_targets_disclosures: Optional[list[str]] = None,
+        physical_risk_score: Optional[float] = None,
+        transition_risk_score: Optional[float] = None,
+        sasb_metric_values: Optional[dict] = None,
     ) -> ISSBS2Assessment:
-        """Full IFRS S2 disclosure assessment."""
-        rng = random.Random(hash(entity_id + reporting_period))
+        """Full IFRS S2 disclosure assessment.
 
+        Pillar scores are computed deterministically from the evidence supplied:
+        - ``*_disclosures`` are lists of the disclosure-item keys (see
+          ``IFRS_S2_PILLARS``) the entity has actually reported. The pillar score
+          is the proportion of that pillar's disclosure items that are present.
+        - The ``metrics_targets`` pillar additionally credits the presence of real
+          quantitative inputs (Scope 1/2/3, financed emissions, internal carbon
+          price, climate CapEx) even when no disclosure-item list is supplied.
+
+        When no evidence is supplied for a qualitative pillar, its score is 0.0 and
+        an honest note is attached — never a fabricated value.
+        """
         total_ghg = scope1_tco2e + scope2_tco2e + scope3_tco2e
         ghg_intensity = (total_ghg / revenue_usd_mn) if revenue_usd_mn > 0 else 0.0
 
-        # Score each pillar based on data completeness + quality signals
-        gov_score = self._score_governance(entity_id, rng)
-        strat_score = self._score_strategy(entity_id, rng, scope3_tco2e > 0)
-        rm_score = self._score_risk_management(entity_id, rng)
+        # Score each pillar from disclosed evidence (deterministic).
+        gov_score = self._score_pillar_completeness("governance", governance_disclosures)
+        strat_score = self._score_pillar_completeness("strategy", strategy_disclosures)
+        rm_score = self._score_pillar_completeness("risk_management", risk_mgmt_disclosures)
         mt_score = self._score_metrics_targets(
-            entity_id, rng, scope1_tco2e, scope2_tco2e, scope3_tco2e,
+            metrics_targets_disclosures, scope1_tco2e, scope2_tco2e, scope3_tco2e,
             financed_emissions_tco2e, internal_carbon_price, climate_capex_pct,
         )
 
@@ -826,17 +842,35 @@ class ISSBS2Engine:
         total_disclosures = sum(self._PILLAR_DISCLOSURE_COUNTS.values())
         complete = round(overall / 100 * total_disclosures)
 
-        # Risk levels
-        physical_level = self._classify_risk(rng.uniform(3, 8))
-        transition_level = self._classify_risk(rng.uniform(2, 7))
+        # Risk levels — derived from supplied 0-10 hazard scores, else honest null.
+        physical_level = (
+            self._classify_risk(physical_risk_score)
+            if physical_risk_score is not None else "insufficient_data"
+        )
+        transition_level = (
+            self._classify_risk(transition_risk_score)
+            if transition_risk_score is not None else "insufficient_data"
+        )
 
         # SASB metrics for sector
-        sasb_metrics = self._build_sasb_metrics(industry_sector, rng)
+        sasb_metrics = self._build_sasb_metrics(industry_sector, sasb_metric_values)
 
         # Gaps and actions
         gaps = self._identify_gaps(gov_score, strat_score, rm_score, mt_score,
                                    scope3_tco2e, internal_carbon_price, climate_capex_pct)
         actions = self._priority_actions(gaps)
+
+        no_evidence = (
+            governance_disclosures is None and strategy_disclosures is None
+            and risk_mgmt_disclosures is None and metrics_targets_disclosures is None
+        )
+        note = f"Assessment generated for {entity_name} under IFRS S2 (June 2023). Sector: {industry_sector}."
+        if no_evidence:
+            note += (
+                " No qualitative disclosure evidence supplied; pillar scores reflect "
+                "only reported quantitative metrics. Provide *_disclosures inputs for a "
+                "complete four-pillar assessment."
+            )
 
         return ISSBS2Assessment(
             entity_id=entity_id,
@@ -866,41 +900,63 @@ class ISSBS2Engine:
             material_gaps=gaps,
             priority_actions=actions,
             assurance_level="limited" if overall >= 60 else "none",
-            notes=f"Assessment generated for {entity_name} under IFRS S2 (June 2023). Sector: {industry_sector}.",
+            notes=note,
         )
 
-    def _score_governance(self, entity_id: str, rng: random.Random) -> float:
-        base = rng.uniform(40, 90)
-        return min(100.0, base)
+    @staticmethod
+    def _pillar_disclosure_items(pillar: str) -> list[str]:
+        """Flat list of every disclosure-item key defined for a pillar in
+        ``IFRS_S2_PILLARS`` (the authoritative denominator for completeness)."""
+        items: list[str] = []
+        for sub in IFRS_S2_PILLARS.get(pillar, {}).get("sub_requirements", {}).values():
+            items.extend(sub.get("disclosure_items", []))
+        return items
 
-    def _score_strategy(self, entity_id: str, rng: random.Random, has_scope3: bool) -> float:
-        base = rng.uniform(35, 85)
-        if has_scope3:
-            base += 5
-        return min(100.0, base)
-
-    def _score_risk_management(self, entity_id: str, rng: random.Random) -> float:
-        return min(100.0, rng.uniform(45, 88))
+    def _score_pillar_completeness(
+        self, pillar: str, disclosed: Optional[list[str]],
+    ) -> float:
+        """Deterministic pillar score = % of the pillar's IFRS S2 disclosure items
+        that the entity has reported. Returns 0.0 (honest zero) when no evidence
+        is supplied — never a fabricated draw."""
+        if not disclosed:
+            return 0.0
+        catalog = self._pillar_disclosure_items(pillar)
+        if not catalog:
+            return 0.0
+        disclosed_set = set(disclosed)
+        matched = sum(1 for item in catalog if item in disclosed_set)
+        return round(min(100.0, matched / len(catalog) * 100.0), 4)
 
     def _score_metrics_targets(
-        self, entity_id: str, rng: random.Random,
+        self,
+        disclosed: Optional[list[str]],
         s1: float, s2: float, s3: float,
         financed: Optional[float], carbon_price: Optional[float], capex_pct: float,
     ) -> float:
-        base = rng.uniform(30, 75)
-        if s1 > 0:
-            base += 5
-        if s2 > 0:
-            base += 5
-        if s3 > 0:
-            base += 8
-        if financed is not None:
-            base += 5
-        if carbon_price is not None:
-            base += 4
-        if capex_pct > 20:
-            base += 3
-        return min(100.0, base)
+        """Metrics & Targets pillar score.
+
+        Combines (a) the proportion of the pillar's qualitative disclosure items
+        reported with (b) the presence of real quantitative metrics. Both signals
+        are objective and deterministic — no random component.
+        """
+        catalog = self._pillar_disclosure_items("metrics_targets")
+        # Quantitative-metric evidence: each present input is one satisfied signal.
+        quant_signals = [s1 > 0, s2 > 0, s3 > 0,
+                         financed is not None, carbon_price is not None,
+                         capex_pct > 0]
+        quant_pct = sum(1 for x in quant_signals if x) / len(quant_signals) * 100.0
+
+        if disclosed and catalog:
+            disclosed_set = set(disclosed)
+            matched = sum(1 for item in catalog if item in disclosed_set)
+            qual_pct = matched / len(catalog) * 100.0
+            # Blend qualitative disclosure completeness with quantitative coverage.
+            score = 0.6 * qual_pct + 0.4 * quant_pct
+        else:
+            # No disclosure-item evidence: score solely on quantitative metrics
+            # actually reported (objective, verifiable).
+            score = quant_pct
+        return round(min(100.0, score), 4)
 
     def _classify_risk(self, score: float) -> str:
         if score >= 7.5:
@@ -912,19 +968,45 @@ class ISSBS2Engine:
         else:
             return "low"
 
-    def _build_sasb_metrics(self, sector: str, rng: random.Random) -> list[dict]:
+    def _build_sasb_metrics(
+        self, sector: str, metric_values: Optional[dict] = None,
+    ) -> list[dict]:
+        """Build the SASB metric set for a sector.
+
+        ``metric_values`` maps a SASB metric code to a caller-supplied observation,
+        either a scalar (the reported value) or a dict with ``value`` /
+        ``data_quality`` / ``disclosure_status``. Any code not supplied yields an
+        honest null: ``estimated_value=None`` and ``disclosure_status="not_disclosed"``.
+        """
         if sector not in SASB_CLIMATE_SECTORS:
             sector = "financials"
+        metric_values = metric_values or {}
         metrics = []
         for m in SASB_CLIMATE_SECTORS[sector]["climate_metrics"]:
+            supplied = metric_values.get(m["code"])
+            if isinstance(supplied, dict):
+                value = supplied.get("value")
+                data_quality = supplied.get("data_quality", "primary" if value is not None else "insufficient_data")
+                disclosure_status = supplied.get(
+                    "disclosure_status", "disclosed" if value is not None else "not_disclosed"
+                )
+            elif supplied is not None:
+                # Scalar observation supplied by caller.
+                value = round(float(supplied), 2)
+                data_quality = "primary"
+                disclosure_status = "disclosed"
+            else:
+                value = None
+                data_quality = "insufficient_data"
+                disclosure_status = "not_disclosed"
             metrics.append({
                 "code": m["code"],
                 "name": m["name"],
                 "unit": m["unit"],
                 "description": m["description"],
-                "estimated_value": round(rng.uniform(1, 1000), 2),
-                "data_quality": rng.choice(["primary", "estimated", "modelled"]),
-                "disclosure_status": rng.choice(["disclosed", "partially_disclosed", "not_disclosed"]),
+                "estimated_value": value,
+                "data_quality": data_quality,
+                "disclosure_status": disclosure_status,
             })
         return metrics
 
@@ -971,23 +1053,85 @@ class ISSBS2Engine:
         entity_id: str,
         entity_type: str = "corporate",
         scenarios: Optional[list[str]] = None,
+        entity_financials: Optional[dict] = None,
     ) -> dict:
-        """Run 3-scenario climate resilience analysis per IFRS S2 §22-24."""
-        rng = random.Random(hash(entity_id + entity_type))
+        """Run 3-scenario climate resilience analysis per IFRS S2 §22-24.
+
+        Entity-level impacts are computed deterministically from the scenario
+        pathway (carbon price, transition intensity, temperature) applied to the
+        entity's own balance-sheet exposures, supplied via ``entity_financials``:
+
+          - ``revenue_usd_mn``                     revenue base
+          - ``carbon_intensity_tco2e_per_usd_mn``  GHG per USD mn revenue (drives
+                                                   carbon-cost pass-through)
+          - ``transition_capex_plan_usd_mn``       planned transition CapEx
+          - ``total_asset_value_usd_mn``           asset base
+          - ``stranded_asset_book_value_usd_mn``   book value at stranding risk
+          - ``physical_value_at_stake_usd_mn``     assets exposed to physical hazard
+
+        When an input required for a given impact is absent, that impact is
+        returned as ``None`` — never a fabricated number.
+        """
+        fin = entity_financials or {}
         if scenarios is None:
             scenarios = list(CLIMATE_SCENARIOS.keys())
+
+        revenue = fin.get("revenue_usd_mn")
+        carbon_intensity = fin.get("carbon_intensity_tco2e_per_usd_mn")
+        capex_plan = fin.get("transition_capex_plan_usd_mn")
+        total_assets = fin.get("total_asset_value_usd_mn")
+        stranded_book = fin.get("stranded_asset_book_value_usd_mn")
+        phys_at_stake = fin.get("physical_value_at_stake_usd_mn")
 
         results = {}
         for sc_key in scenarios:
             if sc_key not in CLIMATE_SCENARIOS:
                 continue
             sc = CLIMATE_SCENARIOS[sc_key]
-            revenue_impact_2030 = rng.uniform(-15, 5) * (sc["transition_intensity_2030"] + 0.2)
-            revenue_impact_2050 = rng.uniform(-30, 8) * (sc["transition_intensity_2050"] + 0.2)
-            capex_requirement = rng.uniform(50, 500)
-            stranded_asset_pct = max(0, rng.uniform(-5, 25) * (1 - sc["transition_intensity_2030"]))
-            physical_loss_2030 = rng.uniform(0, 20) * (sc["temperature_2030_c"] / 3.2)
-            physical_loss_2050 = rng.uniform(0, 45) * (sc["temperature_2050_c"] / 3.2)
+
+            # Revenue impact from carbon-cost pass-through:
+            #   added carbon cost per USD mn revenue = intensity * carbon_price
+            #   as % of revenue = -(intensity * price) / 1e6 * 100, scaled by the
+            #   share of the carbon price the transition actually imposes.
+            if carbon_intensity is not None:
+                rev_impact_2030 = -(carbon_intensity * sc["carbon_price_2030_usd"]) \
+                    * sc["transition_intensity_2030"] / 1e6 * 100.0
+                rev_impact_2050 = -(carbon_intensity * sc["carbon_price_2050_usd"]) \
+                    * sc["transition_intensity_2050"] / 1e6 * 100.0
+                rev_impact_2030 = round(rev_impact_2030, 2)
+                rev_impact_2050 = round(rev_impact_2050, 2)
+            else:
+                rev_impact_2030 = None
+                rev_impact_2050 = None
+
+            # Additional CapEx: entity plan scaled by transition ambition of scenario.
+            if capex_plan is not None:
+                capex_requirement = round(capex_plan * sc["transition_intensity_2030"], 1)
+            else:
+                capex_requirement = None
+
+            # Stranded asset exposure: book value at risk / total assets, scaled by
+            # transition intensity (more ambitious transition strands more assets).
+            if stranded_book is not None and total_assets and total_assets > 0:
+                stranded_pct = round(
+                    stranded_book / total_assets * sc["transition_intensity_2030"] * 100.0, 2
+                )
+            else:
+                stranded_pct = None
+
+            # Physical loss: value at stake scaled by warming relative to the
+            # high-end (3.2C) reference pathway.
+            if phys_at_stake is not None:
+                physical_loss_2030 = round(phys_at_stake * (sc["temperature_2030_c"] / 3.2), 1)
+                physical_loss_2050 = round(phys_at_stake * (sc["temperature_2050_c"] / 3.2), 1)
+            else:
+                physical_loss_2030 = None
+                physical_loss_2050 = None
+
+            if rev_impact_2030 is None:
+                resilience = "insufficient_data"
+            else:
+                resilience = "adequate" if rev_impact_2030 > -10 else "at_risk"
 
             results[sc_key] = {
                 "scenario_name": sc["name"],
@@ -997,17 +1141,27 @@ class ISSBS2Engine:
                 "carbon_price_2030_usd": sc["carbon_price_2030_usd"],
                 "carbon_price_2050_usd": sc["carbon_price_2050_usd"],
                 "entity_impacts": {
-                    "revenue_impact_2030_pct": round(revenue_impact_2030, 2),
-                    "revenue_impact_2050_pct": round(revenue_impact_2050, 2),
-                    "additional_capex_required_usd_mn": round(capex_requirement, 1),
-                    "stranded_asset_exposure_pct": round(stranded_asset_pct, 2),
-                    "physical_loss_2030_usd_mn": round(physical_loss_2030, 1),
-                    "physical_loss_2050_usd_mn": round(physical_loss_2050, 1),
+                    "revenue_impact_2030_pct": rev_impact_2030,
+                    "revenue_impact_2050_pct": rev_impact_2050,
+                    "additional_capex_required_usd_mn": capex_requirement,
+                    "stranded_asset_exposure_pct": stranded_pct,
+                    "physical_loss_2030_usd_mn": physical_loss_2030,
+                    "physical_loss_2050_usd_mn": physical_loss_2050,
                 },
                 "transition_risk_level": sc["transition_risk_level"],
                 "physical_risk_level": sc["physical_risk_level"],
-                "strategic_resilience": "adequate" if revenue_impact_2030 > -10 else "at_risk",
+                "strategic_resilience": resilience,
             }
+
+        # Most-severe scenario ranks only over scenarios with a computed impact.
+        ranked = [
+            k for k in results
+            if results[k]["entity_impacts"]["revenue_impact_2050_pct"] is not None
+        ]
+        most_severe = (
+            max(ranked, key=lambda k: abs(results[k]["entity_impacts"]["revenue_impact_2050_pct"]))
+            if ranked else None
+        )
 
         return {
             "entity_id": entity_id,
@@ -1016,9 +1170,7 @@ class ISSBS2Engine:
             "ifrs_s2_reference": "S2-22 to S2-24",
             "scenarios": results,
             "summary": {
-                "most_severe_scenario": max(
-                    results, key=lambda k: abs(results[k]["entity_impacts"]["revenue_impact_2050_pct"])
-                ) if results else None,
+                "most_severe_scenario": most_severe,
                 "key_vulnerability": "transition_risk" if entity_type in ["bank", "insurer"] else "physical_risk",
             },
         }
@@ -1028,14 +1180,39 @@ class ISSBS2Engine:
         entity_id: str,
         sector: str = "financials",
         include_opportunities: bool = True,
+        risk_scores: Optional[dict] = None,
+        opportunity_values: Optional[dict] = None,
     ) -> dict:
-        """Identify physical and transition risks per IFRS S2 §10-12."""
-        rng = random.Random(hash(entity_id + sector))
+        """Identify physical and transition risks per IFRS S2 §10-12.
+
+        Risk inclusion is determined objectively from the SASB sector-exposure
+        taxonomy: a risk is surfaced when ``sector`` is in its
+        ``sectors_most_exposed`` list. Such a risk is flagged ``material`` for that
+        sector by construction.
+
+        ``risk_scores`` optionally maps a ``risk_key`` to
+        ``{"likelihood": float, "impact": float}`` (entity-specific assessed
+        scores). ``opportunity_values`` optionally maps an opportunity name to its
+        estimated USD-mn potential. Any score not supplied is returned as ``None``
+        rather than a fabricated value.
+        """
+        risk_scores = risk_scores or {}
+        opportunity_values = opportunity_values or {}
+
+        def _scores(risk_key: str) -> tuple[Optional[float], Optional[float]]:
+            s = risk_scores.get(risk_key) or {}
+            like = s.get("likelihood")
+            imp = s.get("impact")
+            return (
+                round(float(like), 1) if like is not None else None,
+                round(float(imp), 1) if imp is not None else None,
+            )
 
         physical_risks = []
         for risk_type, type_data in PHYSICAL_RISK_TYPES.items():
             for risk_key, risk_data in type_data["risks"].items():
-                if sector in risk_data["sectors_most_exposed"] or rng.random() > 0.5:
+                if sector in risk_data["sectors_most_exposed"]:
+                    like, imp = _scores(risk_key)
                     physical_risks.append({
                         "risk_key": risk_key,
                         "risk_category": risk_type,
@@ -1043,35 +1220,42 @@ class ISSBS2Engine:
                         "time_horizon": risk_data.get("time_horizon", "medium"),
                         "sectors_exposed": risk_data["sectors_most_exposed"],
                         "financial_impact_channels": risk_data["financial_impact_channels"],
-                        "materiality": rng.choice(["material", "potentially_material", "not_material"]),
-                        "likelihood_score": round(rng.uniform(1, 5), 1),
-                        "impact_score": round(rng.uniform(1, 5), 1),
+                        "materiality": "material",
+                        "likelihood_score": like,
+                        "impact_score": imp,
                     })
 
         transition_risks = []
         for risk_type, type_data in TRANSITION_RISK_TYPES.items():
             for risk_key, risk_data in type_data["risks"].items():
-                if sector in risk_data["sectors_most_exposed"] or rng.random() > 0.6:
+                if sector in risk_data["sectors_most_exposed"]:
+                    like, imp = _scores(risk_key)
                     transition_risks.append({
                         "risk_key": risk_key,
                         "risk_category": risk_type,
                         "name": risk_data["name"],
                         "impact": risk_data["impact"],
                         "sectors_exposed": risk_data["sectors_most_exposed"],
-                        "materiality": rng.choice(["material", "potentially_material", "not_material"]),
-                        "likelihood_score": round(rng.uniform(1, 5), 1),
-                        "impact_score": round(rng.uniform(1, 5), 1),
+                        "materiality": "material",
+                        "likelihood_score": like,
+                        "impact_score": imp,
                     })
 
         opportunities = []
         if include_opportunities:
-            opp_list = [
-                {"name": "Green Product Innovation", "category": "products_services", "potential_usd_mn": round(rng.uniform(5, 200), 1)},
-                {"name": "Energy Efficiency CapEx Savings", "category": "resource_efficiency", "potential_usd_mn": round(rng.uniform(2, 80), 1)},
-                {"name": "Green Bond / Sustainability-Linked Finance", "category": "financing", "potential_usd_mn": round(rng.uniform(50, 500), 1)},
-                {"name": "Carbon Credit Revenue", "category": "carbon_markets", "potential_usd_mn": round(rng.uniform(1, 50), 1)},
+            opp_catalog = [
+                {"name": "Green Product Innovation", "category": "products_services"},
+                {"name": "Energy Efficiency CapEx Savings", "category": "resource_efficiency"},
+                {"name": "Green Bond / Sustainability-Linked Finance", "category": "financing"},
+                {"name": "Carbon Credit Revenue", "category": "carbon_markets"},
             ]
-            opportunities = [o for o in opp_list if rng.random() > 0.3]
+            for o in opp_catalog:
+                potential = opportunity_values.get(o["name"])
+                opportunities.append({
+                    "name": o["name"],
+                    "category": o["category"],
+                    "potential_usd_mn": round(float(potential), 1) if potential is not None else None,
+                })
 
         return {
             "entity_id": entity_id,

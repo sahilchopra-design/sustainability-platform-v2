@@ -200,8 +200,13 @@ def calculate_landfill_gas(inputs: Dict[str, Any], scenario: ScenarioType = Scen
     
     gwp_ch4 = IPCC_DEFAULT_FACTORS["gwp"]["ch4"]
     
-    # Methane generation (tCH4/year)
-    methane_generated = waste_tons * methane_potential * (1 - oxidation_factor) / 1000
+    # Methane generation (tCH4/year). methane_potential is a VOLUME (m3/ton), so the
+    # volume must be converted to mass with CH4 density ~0.717 kg/m3 at STP before the
+    # kg->tonne divide. The prior code omitted density (implicitly 1 kg/m3), overstating
+    # CH4 mass — and hence every downstream credit — by 1/0.717 ≈ 1.4x. This now matches
+    # calculate_methane_destruction, which already applies the 0.717 density.
+    ch4_density_kg_m3 = 0.717
+    methane_generated = waste_tons * methane_potential * (1 - oxidation_factor) * ch4_density_kg_m3 / 1000
     
     # Baseline emissions (uncontrolled methane vented)
     baseline_emissions = methane_generated * gwp_ch4
@@ -272,7 +277,7 @@ def calculate_forestry_redd(inputs: Dict[str, Any], scenario: ScenarioType = Sce
     - Total Baseline Stock = Area × Baseline Carbon Stock per ha
     - Total Project Stock = Area × Project Carbon Stock per ha
     - Annual Stock Change = (Project Stock - Baseline Stock) / Lifetime
-    - Baseline Emissions = max(0, -Annual Stock Change × Lifetime)
+    - Baseline Emissions (avoided) = max(0, Annual Stock Change × Lifetime)
     - Leakage = Baseline × Leakage Rate
     - Emission Reductions = Baseline - Project - Leakage
     """
@@ -287,14 +292,23 @@ def calculate_forestry_redd(inputs: Dict[str, Any], scenario: ScenarioType = Sce
     total_baseline = area_ha * baseline_stock_ha
     total_project = area_ha * project_stock_ha
     
-    # Annual carbon stock change
+    # Annual carbon stock change: POSITIVE when the project retains more carbon than
+    # the BAU/deforestation baseline (which is the normal, additional REDD+ case).
     annual_stock_change = (total_project - total_baseline) / lifetime
-    
-    # Baseline emissions (avoided deforestation)
-    baseline_emissions = max(0, -(annual_stock_change * lifetime))
-    
-    # Project emissions
-    project_emissions = max(0, annual_stock_change * lifetime)
+
+    # Avoided-deforestation credit = the carbon PRESERVED by protecting the forest
+    # relative to the BAU baseline = (project_stock - baseline_stock). The prior code
+    # inverted these two signs, yielding ZERO baseline emissions (and NEGATIVE net
+    # reductions) exactly when the project preserved carbon — i.e. it zeroed out every
+    # genuine avoided-deforestation project. Signs corrected below.
+    carbon_preserved = annual_stock_change * lifetime  # == total_project - total_baseline
+
+    # Baseline (BAU) emissions avoided by the project.
+    baseline_emissions = max(0, carbon_preserved)
+
+    # Residual project-scenario emissions (only non-zero if the project itself loses
+    # stock vs the baseline — a non-additional/degrading project).
+    project_emissions = max(0, -carbon_preserved)
     
     # Leakage (activity displacement)
     leakage = baseline_emissions * leakage_rate

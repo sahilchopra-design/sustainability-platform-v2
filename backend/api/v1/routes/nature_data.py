@@ -242,7 +242,7 @@ def nature_overlaps(
     params = {"limit": limit}
 
     if asset_id:
-        conditions.append("asset_id = :asset_id::uuid")
+        conditions.append("asset_id = CAST(:asset_id AS uuid)")
         params["asset_id"] = asset_id
     if wdpa_id:
         conditions.append("wdpa_id = :wdpa_id")

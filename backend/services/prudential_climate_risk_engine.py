@@ -15,7 +15,6 @@ References:
 from __future__ import annotations
 
 import math
-import random
 import uuid
 from datetime import date
 from typing import Any, Optional
@@ -286,8 +285,8 @@ class PrudentialClimateRiskEngine:
         market_portfolio: Optional[dict] = None,
         institution_type: str = "bank",
         bes_round: str = "BES_2025",
+        cet1_ratio_start_pct: Optional[float] = None,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         bes_params = BOE_BES_ROUNDS.get(bes_round, BOE_BES_ROUNDS["BES_2025"])
 
         def _stress_segment(seg: dict, scenario_key: str) -> dict:
@@ -302,7 +301,8 @@ class PrudentialClimateRiskEngine:
             else:
                 pd_uplift = sector_tr["pd_uplift_orderly_bps"] / 10000 + sector_ph["pd_uplift_acute_bps"] / 10000
 
-            stressed_pd = min(1.0, base_pd + pd_uplift * rng.uniform(0.8, 1.2))
+            # Deterministic stressed PD: base PD + sector-specific climate PD uplift (bps → decimal).
+            stressed_pd = min(1.0, base_pd + pd_uplift)
             lgd = float(seg.get("lgd", 0.45))
             el_stressed = exposure * stressed_pd * lgd
             return {
@@ -316,7 +316,12 @@ class PrudentialClimateRiskEngine:
             }
 
         total_exposure = sum(float(s.get("exposure", 0)) for s in loan_book_segments)
-        cet1_ratio_start = float((market_portfolio or {}).get("cet1_ratio_pct", rng.uniform(14, 18)))
+
+        # Starting CET1 ratio: caller-supplied (explicit arg or market_portfolio). No fabrication.
+        cet1_raw = cet1_ratio_start_pct
+        if cet1_raw is None:
+            cet1_raw = (market_portfolio or {}).get("cet1_ratio_pct")
+        cet1_ratio_start = float(cet1_raw) if cet1_raw is not None else None
 
         llt_results = [_stress_segment(s, "llt") for s in loan_book_segments]
         elt_results = [_stress_segment(s, "elt") for s in loan_book_segments]
@@ -324,31 +329,54 @@ class PrudentialClimateRiskEngine:
         llt_el = sum(r["expected_loss_stressed"] for r in llt_results)
         elt_el = sum(r["expected_loss_stressed"] for r in elt_results)
 
-        rwa_proxy = total_exposure * rng.uniform(0.6, 0.9)
-        llt_cet1_depletion = min(cet1_ratio_start * 0.7, (llt_el / max(rwa_proxy, 1)) * 100 * rng.uniform(0.8, 1.2))
-        elt_cet1_depletion = min(llt_cet1_depletion * 0.6, (elt_el / max(rwa_proxy, 1)) * 100 * rng.uniform(0.7, 1.0))
+        # RWA from supplied segment risk-weight densities (Basel standardised/IRB density in %).
+        # If no segment carries a density, RWA is unknown → CET1 depletion is an honest null.
+        rwa_from_density = sum(
+            float(s.get("exposure", 0)) * float(s["rwa_density_pct"]) / 100
+            for s in loan_book_segments
+            if s.get("rwa_density_pct") is not None
+        )
+        rwa_proxy: Optional[float] = rwa_from_density if rwa_from_density > 0 else None
+
+        if rwa_proxy is not None and rwa_proxy > 0:
+            # CET1 depletion (pp) = stressed expected loss / RWA × 100, absorbed against capital.
+            llt_cet1_depletion: Optional[float] = (llt_el / rwa_proxy) * 100
+            elt_cet1_depletion: Optional[float] = (elt_el / rwa_proxy) * 100
+        else:
+            llt_cet1_depletion = None
+            elt_cet1_depletion = None
+
+        def _post(dep: Optional[float]) -> Optional[float]:
+            if cet1_ratio_start is None or dep is None:
+                return None
+            return round(cet1_ratio_start - dep, 2)
 
         return {
             "entity_id": entity_id,
             "bes_round": bes_round,
             "institution_type": institution_type,
             "total_loan_book_exposure": round(total_exposure, 2),
-            "cet1_ratio_start_pct": round(cet1_ratio_start, 2),
+            "cet1_ratio_start_pct": round(cet1_ratio_start, 2) if cet1_ratio_start is not None else None,
+            "rwa_estimate": round(rwa_proxy, 2) if rwa_proxy is not None else None,
+            "cet1_data_status": (
+                "ok" if (cet1_ratio_start is not None and rwa_proxy is not None)
+                else "insufficient_data"
+            ),
             "llt_scenario": {
                 "scenario_name": bes_params["llt_scenario"]["name"],
                 "total_el_stressed": round(llt_el, 2),
-                "cet1_depletion_pct": round(llt_cet1_depletion, 2),
-                "cet1_ratio_post_stress": round(cet1_ratio_start - llt_cet1_depletion, 2),
+                "cet1_depletion_pct": round(llt_cet1_depletion, 2) if llt_cet1_depletion is not None else None,
+                "cet1_ratio_post_stress": _post(llt_cet1_depletion),
                 "segment_results": llt_results,
             },
             "elt_scenario": {
                 "scenario_name": bes_params["elt_scenario"]["name"],
                 "total_el_stressed": round(elt_el, 2),
-                "cet1_depletion_pct": round(elt_cet1_depletion, 2),
-                "cet1_ratio_post_stress": round(cet1_ratio_start - elt_cet1_depletion, 2),
+                "cet1_depletion_pct": round(elt_cet1_depletion, 2) if elt_cet1_depletion is not None else None,
+                "cet1_ratio_post_stress": _post(elt_cet1_depletion),
                 "segment_results": elt_results,
             },
-            "worst_case_cet1_post": round(cet1_ratio_start - llt_cet1_depletion, 2),
+            "worst_case_cet1_post": _post(llt_cet1_depletion),
             "assessment_id": str(uuid.uuid4()),
         }
 
@@ -361,41 +389,78 @@ class PrudentialClimateRiskEngine:
         entity_id: str,
         loan_book_segments: list[dict],
         cst_round: str = "CST_2024",
+        cet1_ratio_start_pct: Optional[float] = None,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         cst = ECB_CST_ROUNDS.get(cst_round, ECB_CST_ROUNDS["CST_2024"])
         scenarios = cst.get("scenarios", ["net_zero", "delayed_transition", "current_policies"])
 
         total_exposure = sum(float(s.get("exposure", 0)) for s in loan_book_segments)
-        cet1_start = rng.uniform(14.0, 18.5)
-        rwa_proxy = total_exposure * rng.uniform(0.55, 0.85)
+
+        # Starting CET1 ratio: caller-supplied only. No random draw.
+        cet1_start = float(cet1_ratio_start_pct) if cet1_ratio_start_pct is not None else None
+
+        # ECB severity ordering: transition-heavy vs physical-heavy per scenario key.
+        # Determines whether the disorderly (transition) or acute (physical) sector uplift dominates.
+        transition_led = {"net_zero", "delayed_transition", "orderly", "disorderly"}
+
+        def _portfolio_el(use_disorderly: bool) -> tuple[float, float]:
+            """Deterministic expected loss from sector PD-uplift tables and segment LGD."""
+            el_tr = 0.0
+            el_ph = 0.0
+            for s in loan_book_segments:
+                sector = s.get("sector", "manufacturing")
+                exposure = float(s.get("exposure", 0))
+                lgd = float(s.get("lgd", 0.45))
+                tr = SECTOR_TRANSITION_RISK.get(sector, {"pd_uplift_disorderly_bps": 50, "pd_uplift_orderly_bps": 25})
+                ph = SECTOR_PHYSICAL_RISK.get(sector, {"pd_uplift_chronic_bps": 40, "pd_uplift_acute_bps": 30})
+                tr_bps = tr["pd_uplift_disorderly_bps"] if use_disorderly else tr["pd_uplift_orderly_bps"]
+                ph_bps = ph["pd_uplift_acute_bps"] if use_disorderly else ph["pd_uplift_chronic_bps"]
+                el_tr += exposure * (tr_bps / 10000) * lgd
+                el_ph += exposure * (ph_bps / 10000) * lgd
+            return el_tr, el_ph
 
         scenario_results = {}
         for sc in scenarios:
+            use_disorderly = sc in transition_led and sc not in ("net_zero", "orderly")
+            el_transition, el_physical = _portfolio_el(use_disorderly)
+
+            # CET1 depletion: ECB-published sample impact for this scenario when available;
+            # otherwise an honest null (no fabricated percentage).
             sc_key = f"sample_cet1_impact_{sc}_pct"
-            base_impact = cst.get(sc_key, rng.uniform(2.0, 6.0))
-            sector_adjustment = rng.uniform(0.85, 1.15)
-            cet1_impact = round(base_impact * sector_adjustment, 2)
-            el_transition = total_exposure * rng.uniform(0.005, 0.04)
-            el_physical = total_exposure * rng.uniform(0.003, 0.025)
+            base_impact = cst.get(sc_key)
+            cet1_impact = round(float(base_impact), 2) if base_impact is not None else None
+
             scenario_results[sc] = {
                 "total_el_transition": round(el_transition, 2),
                 "total_el_physical": round(el_physical, 2),
                 "total_el_combined": round(el_transition + el_physical, 2),
                 "cet1_depletion_pct": cet1_impact,
-                "cet1_post_stress": round(cet1_start - cet1_impact, 2),
+                "cet1_post_stress": (
+                    round(cet1_start - cet1_impact, 2)
+                    if (cet1_start is not None and cet1_impact is not None) else None
+                ),
             }
 
-        worst_scenario = min(scenario_results, key=lambda s: scenario_results[s]["cet1_post_stress"])
+        # Worst case by published CET1 depletion; fall back to combined EL when depletion is null.
+        scored = {s: r for s, r in scenario_results.items() if r["cet1_depletion_pct"] is not None}
+        if scored:
+            worst_scenario = max(scored, key=lambda s: scored[s]["cet1_depletion_pct"])
+        elif scenario_results:
+            worst_scenario = max(scenario_results, key=lambda s: scenario_results[s]["total_el_combined"])
+        else:
+            worst_scenario = None
 
         return {
             "entity_id": entity_id,
             "cst_round": cst_round,
             "total_exposure": round(total_exposure, 2),
-            "cet1_ratio_start": round(cet1_start, 2),
+            "cet1_ratio_start": round(cet1_start, 2) if cet1_start is not None else None,
+            "cet1_data_status": "ok" if cet1_start is not None else "insufficient_data",
             "scenario_results": scenario_results,
             "worst_case_scenario": worst_scenario,
-            "worst_case_cet1_post": scenario_results[worst_scenario]["cet1_post_stress"],
+            "worst_case_cet1_post": (
+                scenario_results[worst_scenario]["cet1_post_stress"] if worst_scenario is not None else None
+            ),
             "assessment_id": str(uuid.uuid4()),
         }
 
@@ -403,18 +468,24 @@ class PrudentialClimateRiskEngine:
     # 3. NGFS v4 Multi-Scenario Assessment
     # ------------------------------------------------------------------
 
+    # NGFS trajectory drag coefficients (pp of CET1 per unit risk multiplier, cumulative to 2050).
+    # Midpoint calibration of the transition/physical risk drag applied linearly over the horizon.
+    _NGFS_TRANSITION_DRAG_COEF = 0.05
+    _NGFS_PHYSICAL_DRAG_COEF = 0.035
+
     def assess_ngfs_v4(
         self,
         entity_id: str,
         portfolio_data: dict,
         scenarios: Optional[list[str]] = None,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         if scenarios is None:
             scenarios = list(NGFS_V4_SCENARIOS.keys())
 
         total_exposure = float(portfolio_data.get("total_exposure", 1_000_000_000))
-        cet1_start = float(portfolio_data.get("cet1_ratio_pct", rng.uniform(14.0, 18.0)))
+        # Starting CET1 ratio: caller-supplied only; honest null when absent.
+        cet1_raw = portfolio_data.get("cet1_ratio_pct")
+        cet1_start = float(cet1_raw) if cet1_raw is not None else None
         years = list(range(2025, 2055, 5))
 
         scenario_trajectories = {}
@@ -423,36 +494,51 @@ class PrudentialClimateRiskEngine:
             if sc is None:
                 continue
             trajectory = []
-            cet1_current = cet1_start
             tr_mult = sc["transition_risk_multiplier"]
             ph_mult = sc["physical_risk_multiplier"]
             for yr in years:
-                phase = (yr - 2025) / 25.0
-                tr_drag = tr_mult * rng.uniform(0.02, 0.08) * phase
-                ph_drag = ph_mult * rng.uniform(0.01, 0.06) * phase
-                cet1_current = max(5.0, cet1_start - tr_drag - ph_drag)
-                trajectory.append({"year": yr, "cet1_ratio": round(cet1_current, 2)})
+                phase = (yr - 2025) / 25.0  # 0 at 2025 → 1 at 2050
+                # Deterministic cumulative CET1 drag driven by the scenario risk multipliers.
+                tr_drag = tr_mult * self._NGFS_TRANSITION_DRAG_COEF * phase
+                ph_drag = ph_mult * self._NGFS_PHYSICAL_DRAG_COEF * phase
+                if cet1_start is not None:
+                    cet1_current: Optional[float] = round(max(5.0, cet1_start - tr_drag - ph_drag), 2)
+                else:
+                    cet1_current = None
+                trajectory.append({
+                    "year": yr,
+                    "cet1_ratio": cet1_current,
+                    "cumulative_cet1_drag_pp": round(tr_drag + ph_drag, 3),
+                })
             scenario_trajectories[sc_name] = {
                 "category": sc["category"],
                 "cet1_trajectory": trajectory,
                 "cet1_2050": trajectory[-1]["cet1_ratio"],
+                "cumulative_drag_2050_pp": trajectory[-1]["cumulative_cet1_drag_pp"],
                 "carbon_price_2030": sc["carbon_price_2030_usd"],
                 "warming_2050": sc["2050_temp_c"],
             }
 
-        worst_case = min(
-            scenario_trajectories,
-            key=lambda s: scenario_trajectories[s]["cet1_2050"],
-        )
+        # Worst case = largest cumulative drag (well-defined even when CET1 start is null).
+        if scenario_trajectories:
+            worst_case: Optional[str] = max(
+                scenario_trajectories,
+                key=lambda s: scenario_trajectories[s]["cumulative_drag_2050_pp"],
+            )
+        else:
+            worst_case = None
 
         return {
             "entity_id": entity_id,
             "total_exposure": total_exposure,
-            "cet1_start": cet1_start,
+            "cet1_start": round(cet1_start, 2) if cet1_start is not None else None,
+            "cet1_data_status": "ok" if cet1_start is not None else "insufficient_data",
             "scenarios_assessed": scenarios,
             "scenario_trajectories": scenario_trajectories,
             "worst_case_scenario": worst_case,
-            "worst_case_cet1_2050": scenario_trajectories[worst_case]["cet1_2050"],
+            "worst_case_cet1_2050": (
+                scenario_trajectories[worst_case]["cet1_2050"] if worst_case is not None else None
+            ),
             "time_horizon": "2025-2050",
             "assessment_id": str(uuid.uuid4()),
         }
@@ -467,40 +553,54 @@ class PrudentialClimateRiskEngine:
         stressed_results: dict,
         institution_type: str = "bank",
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # Both drivers come from the upstream stress result. No random fallback:
+        # missing inputs yield honest nulls rather than fabricated capital add-ons.
+        _wcd = stressed_results.get("worst_cet1_depletion_pct")
+        _rwa = stressed_results.get("rwa_impact_pct")
+        worst_cet1_depletion = float(_wcd) if _wcd is not None else None
+        rwa_impact_pct = float(_rwa) if _rwa is not None else None
 
-        worst_cet1_depletion = float(stressed_results.get("worst_cet1_depletion_pct", rng.uniform(1.5, 5.0)))
-        rwa_impact_pct = float(stressed_results.get("rwa_impact_pct", rng.uniform(2.0, 8.0)))
-
-        # Pillar 2a: specific risk add-on
         p2a_floor = ICAAP_GUIDANCE["pillar2a_add_on_range"]["min_pct"]
         p2a_cap = ICAAP_GUIDANCE["pillar2a_add_on_range"]["max_pct"]
-        p2a_add_on = round(min(p2a_cap, max(p2a_floor, worst_cet1_depletion * 0.30)), 2)
-
-        # Pillar 2b: capital planning buffer
         p2b_floor = ICAAP_GUIDANCE["pillar2b_buffer_range"]["min_pct"]
         p2b_cap = ICAAP_GUIDANCE["pillar2b_buffer_range"]["max_pct"]
-        p2b_buffer = round(min(p2b_cap, max(p2b_floor, worst_cet1_depletion * 0.50 - p2a_add_on)), 2)
 
-        total_climate_overlay = round(p2a_add_on + p2b_buffer, 2)
-
-        # SREP category
-        if rwa_impact_pct >= 5.0:
-            srep_score = 4
-        elif rwa_impact_pct >= 3.0:
-            srep_score = 3
-        elif rwa_impact_pct >= 1.0:
-            srep_score = 2
+        if worst_cet1_depletion is not None:
+            # Pillar 2a: specific climate risk add-on (30% of stressed CET1 depletion, bounded).
+            p2a_add_on: Optional[float] = round(min(p2a_cap, max(p2a_floor, worst_cet1_depletion * 0.30)), 2)
+            # Pillar 2b: capital planning buffer for tail risk beyond the P2a add-on.
+            p2b_buffer: Optional[float] = round(min(p2b_cap, max(p2b_floor, worst_cet1_depletion * 0.50 - p2a_add_on)), 2)
+            total_climate_overlay: Optional[float] = round(p2a_add_on + p2b_buffer, 2)
         else:
-            srep_score = 1
+            p2a_add_on = None
+            p2b_buffer = None
+            total_climate_overlay = None
 
-        srep_finding = EBA_SREP_SCORING[f"score_{srep_score}"]
+        # SREP category from RWA impact (EBA/GL/2020/06 climate integration).
+        srep_score: Optional[int]
+        if rwa_impact_pct is None:
+            srep_score = None
+            srep_finding: Optional[dict] = None
+        else:
+            if rwa_impact_pct >= 5.0:
+                srep_score = 4
+            elif rwa_impact_pct >= 3.0:
+                srep_score = 3
+            elif rwa_impact_pct >= 1.0:
+                srep_score = 2
+            else:
+                srep_score = 1
+            srep_finding = EBA_SREP_SCORING[f"score_{srep_score}"]
 
         return {
             "entity_id": entity_id,
             "institution_type": institution_type,
             "worst_cet1_depletion_pct": worst_cet1_depletion,
             "rwa_impact_pct": rwa_impact_pct,
+            "data_status": (
+                "ok" if (worst_cet1_depletion is not None and rwa_impact_pct is not None)
+                else "insufficient_data"
+            ),
             "pillar_2a_add_on_pct": p2a_add_on,
             "pillar_2b_buffer_pct": p2b_buffer,
             "total_climate_capital_overlay_pct": total_climate_overlay,
@@ -521,8 +621,6 @@ class PrudentialClimateRiskEngine:
         rwa_data: dict,
         climate_rwa_impact: float,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         total_rwa = float(rwa_data.get("total_rwa", 1_000_000_000))
         impact_pct = (climate_rwa_impact / max(total_rwa, 1)) * 100
 
@@ -564,8 +662,12 @@ class PrudentialClimateRiskEngine:
         loan_book_segments: list[dict],
         scenario: str = "delayed_transition",
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         sc_params = NGFS_V4_SCENARIOS.get(scenario, NGFS_V4_SCENARIOS["delayed_transition"])
+
+        # Deterministic stranded-asset fraction of brown exposure by transition-risk rating.
+        # Reflects that high-transition-risk sectors carry a larger share of assets at risk of
+        # stranding under a disorderly pathway. Overridable per segment via 'stranded_asset_pct'.
+        _stranded_of_brown = {"high": 0.25, "medium": 0.08, "low": 0.02, "very_high": 0.30}
 
         segment_overlays = []
         total_exposure = 0.0
@@ -575,7 +677,6 @@ class PrudentialClimateRiskEngine:
         for seg in loan_book_segments:
             sector = seg.get("sector", "manufacturing")
             exposure = float(seg.get("exposure", 0))
-            base_rwa_pct = float(seg.get("rwa_density_pct", rng.uniform(50, 110)))
 
             tr_info = SECTOR_TRANSITION_RISK.get(sector, {"rating": "medium", "pd_uplift_disorderly_bps": 50, "pd_uplift_orderly_bps": 25})
             ph_info = SECTOR_PHYSICAL_RISK.get(sector, {"rating": "medium", "pd_uplift_chronic_bps": 40, "pd_uplift_acute_bps": 30})
@@ -601,8 +702,13 @@ class PrudentialClimateRiskEngine:
             total_exposure += exposure
             total_capital_add_on += capital_add_on
 
-            # Stranded asset exposure
-            stranded_pct = rng.uniform(0.05, 0.35) if tr_rating == "high" else rng.uniform(0, 0.10)
+            # Stranded asset exposure: caller-supplied if present, else deterministic
+            # rating-based fraction of the segment's brown share (no random draw).
+            _override = seg.get("stranded_asset_pct")
+            if _override is not None:
+                stranded_pct = float(_override) / 100 if float(_override) > 1 else float(_override)
+            else:
+                stranded_pct = brown_share * _stranded_of_brown.get(tr_rating, 0.08)
 
             segment_overlays.append({
                 "sector": sector,
@@ -638,31 +744,38 @@ class PrudentialClimateRiskEngine:
         entity_id: str,
         institution_data: dict,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         loan_book = institution_data.get("loan_book_segments", [
             {"sector": "real_estate", "exposure": 500_000_000, "base_pd": 0.015, "lgd": 0.35, "rwa_density_pct": 60},
             {"sector": "utilities", "exposure": 300_000_000, "base_pd": 0.025, "lgd": 0.45, "rwa_density_pct": 85},
             {"sector": "fossil_fuels", "exposure": 200_000_000, "base_pd": 0.04, "lgd": 0.50, "rwa_density_pct": 100},
         ])
-        market_portfolio = institution_data.get("market_portfolio", {"cet1_ratio_pct": rng.uniform(14.5, 17.0)})
+        # CET1 is entity-specific and never fabricated: pass through only if the caller supplied it.
+        market_portfolio = institution_data.get("market_portfolio", {})
+        cet1_supplied = market_portfolio.get("cet1_ratio_pct")
         institution_type = institution_data.get("institution_type", "bank")
         bes_round = institution_data.get("bes_round", "BES_2025")
         cst_round = institution_data.get("cst_round", "CST_2024")
         total_rwa = sum(s.get("exposure", 0) * s.get("rwa_density_pct", 75) / 100 for s in loan_book)
 
         bes = self.assess_boe_bes(entity_id, loan_book, market_portfolio, institution_type, bes_round)
-        ecb = self.assess_ecb_dfast(entity_id, loan_book, cst_round)
-        ngfs = self.assess_ngfs_v4(entity_id, {"total_exposure": sum(s.get("exposure", 0) for s in loan_book), "cet1_ratio_pct": market_portfolio.get("cet1_ratio_pct", 15.5)})
+        ecb = self.assess_ecb_dfast(entity_id, loan_book, cst_round, cet1_ratio_start_pct=cet1_supplied)
+        ngfs_pd: dict[str, Any] = {"total_exposure": sum(s.get("exposure", 0) for s in loan_book)}
+        if cet1_supplied is not None:
+            ngfs_pd["cet1_ratio_pct"] = cet1_supplied
+        ngfs = self.assess_ngfs_v4(entity_id, ngfs_pd)
         overlays = self.generate_capital_overlays(entity_id, loan_book)
+
+        # Climate RWA impact derived deterministically from the capital overlays:
+        # implied climate RWA increment = capital add-on / 8% minimum capital ratio.
+        climate_rwa = overlays["total_capital_add_on"] / 0.08
+        rwa_impact_pct = round(climate_rwa / total_rwa * 100, 2) if total_rwa > 0 else None
 
         stressed_results = {
             "worst_cet1_depletion_pct": bes["llt_scenario"]["cet1_depletion_pct"],
-            "rwa_impact_pct": rng.uniform(2.0, 9.0),
+            "rwa_impact_pct": rwa_impact_pct,
         }
         icaap = self.calculate_icaap_overlay(entity_id, stressed_results, institution_type)
 
-        climate_rwa = total_rwa * icaap["rwa_impact_pct"] / 100
         srp431 = self.assess_sarp431(entity_id, {"total_rwa": total_rwa}, climate_rwa)
 
         return {

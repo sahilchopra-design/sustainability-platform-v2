@@ -7,8 +7,30 @@ Catastrophe-Deferred Payment Clauses (CDPC)
 """
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
-import random
 import math
+
+# ---------------------------------------------------------------------------
+# Model calibration constants (documented model parameters — NOT entity data).
+# These are deterministic structuring assumptions used only when the caller does
+# not supply a real deal-specific value. They are flagged in each result via the
+# `assumptions`/`data_flags` fields so consumers know a metric is model-derived
+# rather than sourced from the specific transaction.
+# ---------------------------------------------------------------------------
+
+# CRDC (Climate Resilience Debt Clause) structuring defaults
+DEFAULT_ANNUAL_DEBT_SERVICE_RATE = 0.06   # ~6% of principal p.a. (coupon + amortisation midpoint)
+DEFAULT_CRDC_DEFERRAL_FRACTION = 0.30     # 20-40% of debt service typically deferred; midpoint
+DEFAULT_CRDC_STRUCTURING_COST_RATE = 0.003  # legal/structuring cost ~30bps of principal
+DEFAULT_BASE_RETURN_PERIOD_YEARS = 15.0   # base climate-event return period before vulnerability scaling
+
+# Debt-for-Nature swap structuring defaults
+DEFAULT_DFN_SWAP_SHARE = 0.10             # share of eligible debt typically restructured via swap
+DEFAULT_CO2_SEQUESTRATION_INTENSITY = 100.0  # tCO2/yr per USD 1mn conservation fund (nature-based midpoint)
+DEFAULT_MDB_GUARANTEE_COVERAGE = 0.50    # MDB guarantee as fraction of conservation fund (when MDB involved)
+DEFAULT_CARBON_PRICE_USD_PER_TCO2 = 20.0  # nature-based carbon credit price midpoint (VCS/GS range)
+
+# IMF RST / portfolio model defaults
+DEFAULT_PORTFOLIO_CLIMATE_VAR_LOSS_FACTOR = 0.10  # loss-given-stress factor applied to vuln-weighted exposure
 
 # ---------------------------------------------------------------------------
 # Reference Data
@@ -199,36 +221,38 @@ PARIS_CLUB_CATEGORIES: Dict[str, Dict] = {
 class CRDCAssessment:
     country_iso: str
     country_name: str
-    debt_amount_usd: float
+    debt_amount_usd: Optional[float]
     crdc_eligible: bool
     trigger_type: str
     trigger_threshold: float
     trigger_probability_pct: float
-    deferred_amount_usd: float
+    deferred_amount_usd: Optional[float]
     deferred_period_months: int
     basis_risk_rating: str
     climate_event_return_period_years: float
     debt_relief_score: float
-    implementation_cost_usd: float
+    implementation_cost_usd: Optional[float]
     recommendations: List[str]
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
 class DebtForNatureResult:
     country_iso: str
     country_name: str
-    total_debt_usd: float
+    total_debt_usd: Optional[float]
     swap_framework: str
-    swap_amount_usd: float
+    swap_amount_usd: Optional[float]
     discount_pct: float
-    conservation_fund_usd: float
+    conservation_fund_usd: Optional[float]
     conservation_commitment_text: str
-    co2_sequestration_tco2_yr: float
-    mdb_guarantee_usd: float
-    carbon_credit_revenue_usd_yr: float
+    co2_sequestration_tco2_yr: Optional[float]
+    mdb_guarantee_usd: Optional[float]
+    carbon_credit_revenue_usd_yr: Optional[float]
     biodiversity_targets: List[str]
     imf_rst_linkage: bool
-    net_debt_reduction_usd: float
+    net_debt_reduction_usd: Optional[float]
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -237,11 +261,12 @@ class IMFRSTAssessment:
     rst_eligible: bool
     access_limit_pct_quota: float
     reform_area: str
-    resilience_score: float
+    resilience_score: Optional[float]
     reform_measures: List[str]
-    indicative_drawing_usd: float
+    indicative_drawing_usd: Optional[float]
     conditionality_met: bool
     disbursement_timeline: str
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -258,21 +283,23 @@ class SIDSVulnerabilityResult:
     paris_club_category: str
     climate_debt_relief_score: float
     priority_interventions: List[str]
+    data_flags: List[str] = field(default_factory=list)
 
 
 @dataclass
 class SovereignClimatePortfolioResult:
     portfolio_id: str
-    total_sovereign_exposure_usd: float
-    climate_adjusted_exposure_usd: float
-    weighted_vulnerability_score: float
-    weighted_debt_relief_score: float
+    total_sovereign_exposure_usd: Optional[float]
+    climate_adjusted_exposure_usd: Optional[float]
+    weighted_vulnerability_score: Optional[float]
+    weighted_debt_relief_score: Optional[float]
     crdc_eligible_exposure_usd: float
     dfn_eligible_exposure_usd: float
     sids_exposure_pct: float
     high_risk_country_concentration: float
-    portfolio_climate_var_usd: float
+    portfolio_climate_var_usd: Optional[float]
     recommendations: List[str]
+    data_flags: List[str] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -280,28 +307,71 @@ class SovereignClimatePortfolioResult:
 # ---------------------------------------------------------------------------
 
 def assess_crdc_eligibility(country_data: Dict[str, Any], debt_terms: Dict[str, Any]) -> CRDCAssessment:
-    """Assess eligibility and design of Climate Resilience Debt Clauses."""
-    country_iso = country_data.get("country_iso", "MDV")
-    rng = random.Random(hash(str(country_iso)) & 0xFFFFFFFF)
+    """Assess eligibility and design of Climate Resilience Debt Clauses.
 
-    country_name = country_data.get("country_name", SIDS_LIST.get(country_iso, {}).get("name", country_iso))
-    debt_amount = float(debt_terms.get("debt_amount_usd", rng.uniform(1e8, 5e9)))
+    Entity-specific figures (debt principal) are honest nulls when the caller does
+    not supply them. Structuring fractions (debt-service rate, deferral fraction,
+    structuring cost rate) accept caller inputs and otherwise fall back to
+    documented model constants that are flagged in `data_flags`.
+    """
+    country_iso = country_data.get("country_iso", "MDV")
+
+    country_name = country_data.get("country_name") or SIDS_LIST.get(country_iso, {}).get("name", country_iso)
     trigger_type = debt_terms.get("trigger_type", "cyclone_wind_speed")
     if trigger_type not in CRDC_TRIGGER_TYPES:
         trigger_type = "cyclone_wind_speed"
 
     trigger_info = CRDC_TRIGGER_TYPES[trigger_type]
-    trigger_threshold = float(debt_terms.get("trigger_threshold", trigger_info["typical_threshold"]))
+    trigger_threshold = float(debt_terms.get("trigger_threshold") or trigger_info["typical_threshold"])
 
-    # Climate event probability based on vulnerability
+    data_flags: List[str] = []
+
+    # Debt principal: real entity figure — honest null if not supplied by caller.
+    _debt_in = debt_terms.get("debt_amount_usd")
+    debt_amount: Optional[float] = float(_debt_in) if _debt_in is not None else None
+    if debt_amount is None:
+        data_flags.append("debt_amount_usd: no caller-supplied principal — dependent USD figures returned as null")
+
+    # Climate-event return period: derived deterministically from vulnerability.
+    # base_return_period scaled by (1 - vuln); more vulnerable => shorter return period.
     vuln_score = SIDS_LIST.get(country_iso, {}).get("vulnerability_score", 0.70)
-    return_period = rng.uniform(5, 25) * (1 - vuln_score + 0.2)
+    base_return_period = float(debt_terms.get("base_return_period_years") or DEFAULT_BASE_RETURN_PERIOD_YEARS)
+    if debt_terms.get("base_return_period_years") is None:
+        data_flags.append(
+            f"return_period: base {DEFAULT_BASE_RETURN_PERIOD_YEARS}yr model constant scaled by vulnerability"
+        )
+    return_period = max(1.0, base_return_period * (1 - vuln_score + 0.2))
     trigger_prob_pct = round(100 / return_period, 2)
 
-    # Deferred amount: typically 20-40% of annual debt service
-    annual_debt_service = debt_amount * rng.uniform(0.04, 0.08)
-    deferred_pct = rng.uniform(0.20, 0.40)
-    deferred_amount = annual_debt_service * deferred_pct * trigger_info["deferred_period_months"] / 12
+    # Structuring fractions: caller inputs preferred, else documented model constants.
+    ds_rate = debt_terms.get("annual_debt_service_rate")
+    if ds_rate is None:
+        ds_rate = DEFAULT_ANNUAL_DEBT_SERVICE_RATE
+        data_flags.append(f"annual_debt_service_rate: model constant {DEFAULT_ANNUAL_DEBT_SERVICE_RATE}")
+    ds_rate = float(ds_rate)
+
+    deferred_pct = debt_terms.get("deferred_fraction")
+    if deferred_pct is None:
+        deferred_pct = DEFAULT_CRDC_DEFERRAL_FRACTION
+        data_flags.append(f"deferred_fraction: model constant {DEFAULT_CRDC_DEFERRAL_FRACTION}")
+    deferred_pct = float(deferred_pct)
+
+    struct_rate = debt_terms.get("structuring_cost_rate")
+    if struct_rate is None:
+        struct_rate = DEFAULT_CRDC_STRUCTURING_COST_RATE
+        data_flags.append(f"structuring_cost_rate: model constant {DEFAULT_CRDC_STRUCTURING_COST_RATE}")
+    struct_rate = float(struct_rate)
+
+    # USD figures only when a real principal is known; otherwise honest nulls.
+    if debt_amount is not None:
+        annual_debt_service = debt_amount * ds_rate
+        deferred_amount: Optional[float] = round(
+            annual_debt_service * deferred_pct * trigger_info["deferred_period_months"] / 12, 2
+        )
+        implementation_cost: Optional[float] = round(debt_amount * struct_rate, 2)  # legal/structuring cost
+    else:
+        deferred_amount = None
+        implementation_cost = None
 
     # CRDC eligibility: climate-vulnerable countries with Commonwealth/bilateral creditors
     is_eligible = (
@@ -312,7 +382,6 @@ def assess_crdc_eligibility(country_data: Dict[str, Any], debt_terms: Dict[str, 
     )
 
     debt_relief_score = round(min(1.0, vuln_score * 0.6 + (deferred_pct) * 0.4), 4)
-    implementation_cost = debt_amount * rng.uniform(0.001, 0.005)  # legal/structuring cost
 
     recommendations = []
     if not is_eligible:
@@ -326,89 +395,174 @@ def assess_crdc_eligibility(country_data: Dict[str, Any], debt_terms: Dict[str, 
     return CRDCAssessment(
         country_iso=country_iso,
         country_name=country_name,
-        debt_amount_usd=round(debt_amount, 2),
+        debt_amount_usd=round(debt_amount, 2) if debt_amount is not None else None,
         crdc_eligible=is_eligible,
         trigger_type=trigger_type,
         trigger_threshold=trigger_threshold,
         trigger_probability_pct=trigger_prob_pct,
-        deferred_amount_usd=round(deferred_amount, 2),
+        deferred_amount_usd=deferred_amount,
         deferred_period_months=trigger_info["deferred_period_months"],
         basis_risk_rating=trigger_info["basis_risk"],
         climate_event_return_period_years=round(return_period, 1),
         debt_relief_score=debt_relief_score,
-        implementation_cost_usd=round(implementation_cost, 2),
+        implementation_cost_usd=implementation_cost,
         recommendations=recommendations,
+        data_flags=data_flags,
     )
 
 
 def assess_debt_for_nature(country_data: Dict[str, Any], deal_terms: Dict[str, Any]) -> DebtForNatureResult:
-    """Assess and design a Debt-for-Nature swap transaction."""
-    country_iso = country_data.get("country_iso", "SYC")
-    rng = random.Random(hash(str(country_iso) + "dfn") & 0xFFFFFFFF)
+    """Assess and design a Debt-for-Nature swap transaction.
 
-    country_name = country_data.get("country_name", SIDS_LIST.get(country_iso, {}).get("name", country_iso))
-    total_debt = float(deal_terms.get("total_eligible_debt_usd", rng.uniform(5e8, 5e9)))
+    Total eligible debt is a real entity figure (honest null if not supplied).
+    Deal structuring fractions accept caller inputs and otherwise default to
+    documented model constants (flagged in `data_flags`). The framework discount
+    default is the midpoint of the published framework discount range, which is
+    itself reference data.
+    """
+    country_iso = country_data.get("country_iso", "SYC")
+
+    country_name = country_data.get("country_name") or SIDS_LIST.get(country_iso, {}).get("name", country_iso)
     framework = deal_terms.get("swap_framework", "multilateral")
     if framework not in DFN_SWAP_FRAMEWORKS:
         framework = "multilateral"
     fw = DFN_SWAP_FRAMEWORKS[framework]
 
-    discount_pct = rng.uniform(fw["discount_range_pct"][0], fw["discount_range_pct"][1])
-    swap_amount = total_debt * rng.uniform(0.05, 0.20)
-    conservation_fund = swap_amount * (discount_pct / 100)
+    data_flags: List[str] = []
 
-    gdp = SIDS_LIST.get(country_iso, {}).get("gdp_usd_bn", 5.0) * 1e9
-    commitment_pct_gdp = conservation_fund / gdp * 100
+    # Total eligible debt: real entity figure — honest null if not supplied.
+    _debt_in = deal_terms.get("total_eligible_debt_usd")
+    total_debt: Optional[float] = float(_debt_in) if _debt_in is not None else None
+    if total_debt is None:
+        data_flags.append("total_eligible_debt_usd: no caller-supplied debt — dependent USD figures returned as null")
 
-    co2_seq = conservation_fund / 1e6 * rng.uniform(50, 200)  # rough conversion
-    mdb_guarantee = conservation_fund * rng.uniform(0.3, 0.7) if fw["mdb_involvement"] else 0
-    carbon_revenue = co2_seq * rng.uniform(10, 30) if fw["carbon_credit_linkage"] else 0
+    # Discount: caller input, else midpoint of published framework discount range (reference data).
+    _disc_in = deal_terms.get("discount_pct")
+    if _disc_in is not None:
+        discount_pct = float(_disc_in)
+    else:
+        discount_pct = (fw["discount_range_pct"][0] + fw["discount_range_pct"][1]) / 2
+        data_flags.append(
+            f"discount_pct: midpoint of {framework} framework range {fw['discount_range_pct']}"
+        )
+
+    # Structuring fractions: caller inputs preferred, else documented model constants.
+    swap_share = deal_terms.get("swap_share")
+    if swap_share is None:
+        swap_share = DEFAULT_DFN_SWAP_SHARE
+        data_flags.append(f"swap_share: model constant {DEFAULT_DFN_SWAP_SHARE}")
+    swap_share = float(swap_share)
+
+    co2_intensity = deal_terms.get("co2_sequestration_intensity")
+    if co2_intensity is None:
+        co2_intensity = DEFAULT_CO2_SEQUESTRATION_INTENSITY
+        data_flags.append(f"co2_sequestration_intensity: model constant {DEFAULT_CO2_SEQUESTRATION_INTENSITY} tCO2/yr per USD 1mn")
+    co2_intensity = float(co2_intensity)
+
+    mdb_coverage = deal_terms.get("mdb_guarantee_coverage")
+    if mdb_coverage is None:
+        mdb_coverage = DEFAULT_MDB_GUARANTEE_COVERAGE
+        data_flags.append(f"mdb_guarantee_coverage: model constant {DEFAULT_MDB_GUARANTEE_COVERAGE}")
+    mdb_coverage = float(mdb_coverage)
+
+    carbon_price = deal_terms.get("carbon_price_usd_per_tco2")
+    if carbon_price is None:
+        carbon_price = DEFAULT_CARBON_PRICE_USD_PER_TCO2
+        data_flags.append(f"carbon_price_usd_per_tco2: model constant {DEFAULT_CARBON_PRICE_USD_PER_TCO2}")
+    carbon_price = float(carbon_price)
+
+    imf_rst_linked = country_iso in IMF_RST_ELIGIBILITY and IMF_RST_ELIGIBILITY[country_iso]["approved"]
+
+    # USD/emissions figures only when a real eligible-debt figure is known.
+    if total_debt is not None:
+        swap_amount: Optional[float] = total_debt * swap_share
+        conservation_fund: Optional[float] = swap_amount * (discount_pct / 100)
+        gdp = SIDS_LIST.get(country_iso, {}).get("gdp_usd_bn", 5.0) * 1e9
+        commitment_pct_gdp = conservation_fund / gdp * 100 if gdp else 0.0
+        co2_seq: Optional[float] = conservation_fund / 1e6 * co2_intensity
+        mdb_guarantee: Optional[float] = conservation_fund * mdb_coverage if fw["mdb_involvement"] else 0.0
+        carbon_revenue: Optional[float] = co2_seq * carbon_price if fw["carbon_credit_linkage"] else 0.0
+        net_debt_reduction: Optional[float] = round(swap_amount * discount_pct / 100, 2)
+        commitment_text = f"Commit {commitment_pct_gdp:.2f}% of GDP to conservation per {fw['description']}"
+    else:
+        swap_amount = None
+        conservation_fund = None
+        co2_seq = None
+        mdb_guarantee = None
+        carbon_revenue = None
+        net_debt_reduction = None
+        commitment_text = (
+            f"Conservation commitment per {fw['description']} "
+            f"(quantify once eligible-debt figure is provided)"
+        )
 
     biodiversity_targets = [
         "30x30 Kunming-Montreal MPA target coverage",
-        f"Protect {rng.randint(50, 200)}k ha marine and terrestrial habitat",
         "Restore degraded mangrove/coral reef ecosystems",
         "Eliminate IUU fishing in EEZ within 5 years",
     ]
-
-    imf_rst_linked = country_iso in IMF_RST_ELIGIBILITY and IMF_RST_ELIGIBILITY[country_iso]["approved"]
+    # Habitat-protection hectare target: only stated when caller supplies a real figure.
+    _habitat_ha = deal_terms.get("conservation_area_target_ha")
+    if _habitat_ha is not None:
+        biodiversity_targets.insert(1, f"Protect {float(_habitat_ha)/1e3:.0f}k ha marine and terrestrial habitat")
 
     return DebtForNatureResult(
         country_iso=country_iso,
         country_name=country_name,
-        total_debt_usd=round(total_debt, 2),
+        total_debt_usd=round(total_debt, 2) if total_debt is not None else None,
         swap_framework=framework,
-        swap_amount_usd=round(swap_amount, 2),
+        swap_amount_usd=round(swap_amount, 2) if swap_amount is not None else None,
         discount_pct=round(discount_pct, 2),
-        conservation_fund_usd=round(conservation_fund, 2),
-        conservation_commitment_text=(
-            f"Commit {commitment_pct_gdp:.2f}% of GDP to conservation per {fw['description']}"
-        ),
-        co2_sequestration_tco2_yr=round(co2_seq, 2),
-        mdb_guarantee_usd=round(mdb_guarantee, 2),
-        carbon_credit_revenue_usd_yr=round(carbon_revenue, 2),
+        conservation_fund_usd=round(conservation_fund, 2) if conservation_fund is not None else None,
+        conservation_commitment_text=commitment_text,
+        co2_sequestration_tco2_yr=round(co2_seq, 2) if co2_seq is not None else None,
+        mdb_guarantee_usd=round(mdb_guarantee, 2) if mdb_guarantee is not None else None,
+        carbon_credit_revenue_usd_yr=round(carbon_revenue, 2) if carbon_revenue is not None else None,
         biodiversity_targets=biodiversity_targets,
         imf_rst_linkage=imf_rst_linked,
-        net_debt_reduction_usd=round(swap_amount * discount_pct / 100, 2),
+        net_debt_reduction_usd=net_debt_reduction,
+        data_flags=data_flags,
     )
 
 
 def assess_imf_rst(country_data: Dict[str, Any]) -> IMFRSTAssessment:
-    """Assess IMF Resilience and Sustainability Trust access and reform requirements."""
+    """Assess IMF Resilience and Sustainability Trust access and reform requirements.
+
+    The IMF quota is a real published entity figure — honest null if not supplied,
+    with the indicative drawing left null in that case. The resilience score is a
+    documented deterministic proxy derived from published vulnerability and RST
+    approval status (or a caller-supplied score), flagged in `data_flags`.
+    """
     country_iso = country_data.get("country_iso", "JAM")
-    rng = random.Random(hash(str(country_iso) + "rst") & 0xFFFFFFFF)
 
     rst_info = IMF_RST_ELIGIBILITY.get(country_iso)
     is_eligible = rst_info is not None
     access_limit = rst_info["access_limit_pct_quota"] if rst_info else 0
     reform_area = rst_info["reform_area"] if rst_info else "not_eligible"
 
-    # Resilience score: proxy for RST scoring
-    vuln = SIDS_LIST.get(country_iso, {}).get("vulnerability_score", 0.60)
-    resilience_score = round(rng.uniform(0.40, 0.75) + vuln * 0.15, 4)
+    data_flags: List[str] = []
 
-    quota_usd = float(country_data.get("imf_quota_usd", rng.uniform(5e8, 5e9)))
-    indicative_drawing = quota_usd * access_limit / 100
+    # Resilience score: caller input preferred; else deterministic proxy from
+    # published vulnerability (inverse) blended with RST approval status.
+    _score_in = country_data.get("resilience_score")
+    if _score_in is not None:
+        resilience_score: Optional[float] = round(float(_score_in), 4)
+    else:
+        vuln = SIDS_LIST.get(country_iso, {}).get("vulnerability_score", 0.60)
+        approval_bonus = 0.15 if (rst_info and rst_info.get("approved")) else 0.0
+        resilience_score = round(max(0.0, min(1.0, (1 - vuln) * 0.85 + approval_bonus)), 4)
+        data_flags.append(
+            "resilience_score: deterministic proxy = (1 - vulnerability)*0.85 + approval_bonus"
+        )
+
+    # IMF quota: real published entity figure — honest null if not supplied.
+    _quota_in = country_data.get("imf_quota_usd")
+    quota_usd: Optional[float] = float(_quota_in) if _quota_in is not None else None
+    if quota_usd is not None:
+        indicative_drawing: Optional[float] = round(quota_usd * access_limit / 100, 2)
+    else:
+        indicative_drawing = None
+        data_flags.append("imf_quota_usd: no caller-supplied quota — indicative_drawing_usd returned as null")
 
     reform_measures = []
     if reform_area == "climate_resilience":
@@ -428,7 +582,13 @@ def assess_imf_rst(country_data: Dict[str, Any]) -> IMFRSTAssessment:
     else:
         reform_measures = ["Country not currently RST-eligible; engage IMF Article IV dialogue"]
 
-    conditionality_met = is_eligible and rst_info.get("approved", False) and resilience_score >= 0.55
+    conditionality_met = bool(
+        is_eligible
+        and rst_info is not None
+        and rst_info.get("approved", False)
+        and resilience_score is not None
+        and resilience_score >= 0.55
+    )
 
     return IMFRSTAssessment(
         country_iso=country_iso,
@@ -437,15 +597,26 @@ def assess_imf_rst(country_data: Dict[str, Any]) -> IMFRSTAssessment:
         reform_area=reform_area,
         resilience_score=resilience_score,
         reform_measures=reform_measures,
-        indicative_drawing_usd=round(indicative_drawing, 2),
+        indicative_drawing_usd=indicative_drawing,
         conditionality_met=conditionality_met,
         disbursement_timeline="12-18 months from LOI submission" if conditionality_met else "Not currently eligible",
     )
 
 
-def assess_sids_vulnerability(country_iso: str) -> SIDSVulnerabilityResult:
-    """Assess SIDS vulnerability and CDPC eligibility using composite index."""
-    rng = random.Random(hash(str(country_iso) + "sids") & 0xFFFFFFFF)
+def assess_sids_vulnerability(
+    country_iso: str, overrides: Optional[Dict[str, Any]] = None
+) -> SIDSVulnerabilityResult:
+    """Assess SIDS vulnerability and CDPC eligibility using composite index.
+
+    Component sub-scores (INFORM / ND-GAIN / fiscal resilience) are, by default,
+    a documented DETERMINISTIC decomposition of the published composite
+    vulnerability score and GDP band — not random draws. A caller may supply
+    real sub-scores or a population via `overrides` to replace the model
+    decomposition and derive a real GNI-per-capita Paris Club classification;
+    otherwise classification falls back to the vulnerability tier and is flagged.
+    """
+    overrides = overrides or {}
+    data_flags: List[str] = []
 
     sids_data = SIDS_LIST.get(country_iso)
     if not sids_data:
@@ -462,13 +633,36 @@ def assess_sids_vulnerability(country_iso: str) -> SIDSVulnerabilityResult:
             paris_club_category="standard",
             climate_debt_relief_score=0.0,
             priority_interventions=[],
+            data_flags=["country not in SIDS reference list"],
         )
 
     vuln = sids_data["vulnerability_score"]
-    inform = round(rng.uniform(vuln - 0.1, vuln + 0.05), 4)
-    nd_gain = round(rng.uniform(0.3, 0.7) * (1 - vuln), 4)  # lower ND-GAIN for more vulnerable
     gdp = sids_data["gdp_usd_bn"]
-    fiscal_res = round(rng.uniform(0.2, 0.6) * (1 - vuln) + (0.05 if gdp < 5 else 0.15), 4)
+
+    # Deterministic component decomposition from published vulnerability + GDP band.
+    # INFORM risk tracks the published vulnerability directly.
+    _inform_in = overrides.get("inform_component")
+    if _inform_in is not None:
+        inform = round(float(_inform_in), 4)
+    else:
+        inform = round(vuln, 4)
+        data_flags.append("inform_component: model decomposition = published vulnerability_score")
+
+    # ND-GAIN readiness is inversely related to vulnerability (lower for more vulnerable).
+    _ndg_in = overrides.get("nd_gain_component")
+    if _ndg_in is not None:
+        nd_gain = round(float(_ndg_in), 4)
+    else:
+        nd_gain = round(0.5 * (1 - vuln), 4)
+        data_flags.append("nd_gain_component: model decomposition = 0.5*(1 - vulnerability)")
+
+    # Fiscal resilience: inverse of vulnerability with a small-economy (GDP < USD 5bn) penalty.
+    _fisc_in = overrides.get("fiscal_resilience_component")
+    if _fisc_in is not None:
+        fiscal_res = round(float(_fisc_in), 4)
+    else:
+        fiscal_res = round(0.4 * (1 - vuln) + (0.05 if gdp < 5 else 0.15), 4)
+        data_flags.append("fiscal_resilience_component: model decomposition from vulnerability + GDP band")
 
     composite = round(inform * 0.35 + (1 - nd_gain) * 0.35 + (1 - fiscal_res) * 0.30, 4)
 
@@ -483,12 +677,23 @@ def assess_sids_vulnerability(country_iso: str) -> SIDSVulnerabilityResult:
         cdpc_deferred = 10.0
 
     cdpc_eligible = composite >= 0.55
-    gdp_per_capita = gdp * 1e9 / rng.randint(50_000, 3_000_000)
-    paris_cat = (
-        "poorest" if gdp_per_capita < PARIS_CLUB_CATEGORIES["poorest"]["per_capita_gni_threshold_usd"]
-        else "vulnerable_middle_income" if gdp_per_capita < PARIS_CLUB_CATEGORIES["vulnerable_middle_income"]["per_capita_gni_threshold_usd"]
-        else "standard"
-    )
+
+    # Paris Club category: use a REAL GNI-per-capita when population is supplied;
+    # otherwise classify from the vulnerability tier (no fabricated population).
+    _population = overrides.get("population")
+    if _population is not None and float(_population) > 0:
+        gdp_per_capita = gdp * 1e9 / float(_population)
+        paris_cat = (
+            "poorest" if gdp_per_capita < PARIS_CLUB_CATEGORIES["poorest"]["per_capita_gni_threshold_usd"]
+            else "vulnerable_middle_income" if gdp_per_capita < PARIS_CLUB_CATEGORIES["vulnerable_middle_income"]["per_capita_gni_threshold_usd"]
+            else "standard"
+        )
+    else:
+        # Vulnerability-tier fallback (documented) — no synthetic per-capita income.
+        paris_cat = "vulnerable_middle_income" if cdpc_eligible else "standard"
+        data_flags.append(
+            "paris_club_category: no population supplied — classified from vulnerability tier, not GNI per capita"
+        )
 
     relief_score = round(composite * 0.6 + (cdpc_deferred / 40) * 0.4, 4)
 
@@ -515,56 +720,109 @@ def assess_sids_vulnerability(country_iso: str) -> SIDSVulnerabilityResult:
         paris_club_category=paris_cat,
         climate_debt_relief_score=round(relief_score, 4),
         priority_interventions=interventions,
+        data_flags=data_flags,
     )
 
 
 def aggregate_sovereign_climate_portfolio(holdings: List[Dict[str, Any]]) -> SovereignClimatePortfolioResult:
-    """Aggregate climate-linked sovereign debt metrics across a portfolio of sovereign holdings."""
+    """Aggregate climate-linked sovereign debt metrics across a portfolio of sovereign holdings.
+
+    Holdings with neither a SIDS-reference vulnerability nor a caller-supplied
+    `vulnerability_score` are excluded from vulnerability-weighted metrics (and
+    flagged) rather than assigned a random score. Weighted averages are computed
+    over the covered exposure so the weights are honest. With no exposure, USD and
+    weighted metrics are returned as null.
+    """
     portfolio_id = "portfolio_default"
     if holdings:
         portfolio_id = str(hash(tuple(h.get("country_iso", "") for h in holdings)) & 0xFFFFFFFF)
-    rng = random.Random(hash(portfolio_id) & 0xFFFFFFFF)
+
+    data_flags: List[str] = []
 
     total_exposure = sum(float(h.get("exposure_usd", 0)) for h in holdings)
     if total_exposure == 0:
-        total_exposure = rng.uniform(1e9, 5e10)
+        # Honest null — no synthetic exposure fabricated.
+        data_flags.append("total_sovereign_exposure_usd: no exposure supplied — USD and weighted metrics null")
+        return SovereignClimatePortfolioResult(
+            portfolio_id=portfolio_id,
+            total_sovereign_exposure_usd=None,
+            climate_adjusted_exposure_usd=None,
+            weighted_vulnerability_score=None,
+            weighted_debt_relief_score=None,
+            crdc_eligible_exposure_usd=0.0,
+            dfn_eligible_exposure_usd=0.0,
+            sids_exposure_pct=0.0,
+            high_risk_country_concentration=0.0,
+            portfolio_climate_var_usd=None,
+            recommendations=[],
+            data_flags=data_flags,
+        )
 
-    weighted_vuln = 0.0
-    weighted_relief = 0.0
+    weighted_vuln_num = 0.0   # numerator: sum(vuln * exposure) over covered holdings
+    weighted_relief_num = 0.0
+    covered_exposure = 0.0    # exposure with a known vulnerability
     crdc_eligible = 0.0
     dfn_eligible = 0.0
     sids_exposure = 0.0
     high_risk_exposure = 0.0
+    uncovered_count = 0
 
     for h in holdings:
         iso = h.get("country_iso", "")
         exp = float(h.get("exposure_usd", 0))
-        w = exp / total_exposure
         sids_data = SIDS_LIST.get(iso)
 
-        vuln = sids_data["vulnerability_score"] if sids_data else rng.uniform(0.3, 0.7)
-        weighted_vuln += vuln * w
+        # Vulnerability: SIDS reference data, else a caller-supplied score. No fabrication.
+        if sids_data:
+            vuln: Optional[float] = sids_data["vulnerability_score"]
+        elif h.get("vulnerability_score") is not None:
+            vuln = float(h["vulnerability_score"])
+        else:
+            vuln = None
 
-        relief = min(1.0, vuln * 0.7 + rng.uniform(0, 0.2))
-        weighted_relief += relief * w
+        if vuln is not None:
+            covered_exposure += exp
+            weighted_vuln_num += vuln * exp
+            relief = min(1.0, vuln * 0.7)  # deterministic; no random jitter
+            weighted_relief_num += relief * exp
+            if sids_data or vuln >= 0.65:
+                crdc_eligible += exp * 0.6
+                dfn_eligible += exp * 0.3
+            if vuln >= 0.80:
+                high_risk_exposure += exp
+        else:
+            uncovered_count += 1
 
-        if sids_data or vuln >= 0.65:
-            crdc_eligible += exp * 0.6
-            dfn_eligible += exp * 0.3
         if sids_data:
             sids_exposure += exp
-        if vuln >= 0.80:
-            high_risk_exposure += exp
 
-    climate_adjusted = total_exposure * (1 - weighted_vuln * 0.15)
-    climate_var = total_exposure * weighted_vuln * rng.uniform(0.05, 0.15)
+    if uncovered_count:
+        data_flags.append(
+            f"{uncovered_count} holding(s) lacked a vulnerability score and were excluded from weighted metrics"
+        )
+
+    if covered_exposure > 0:
+        weighted_vuln: Optional[float] = weighted_vuln_num / covered_exposure
+        weighted_relief: Optional[float] = weighted_relief_num / covered_exposure
+        climate_adjusted: Optional[float] = total_exposure * (1 - weighted_vuln * 0.15)
+        # Climate VaR: documented model loss factor applied to vuln-weighted exposure.
+        climate_var: Optional[float] = total_exposure * weighted_vuln * DEFAULT_PORTFOLIO_CLIMATE_VAR_LOSS_FACTOR
+        data_flags.append(
+            f"portfolio_climate_var_usd: loss factor {DEFAULT_PORTFOLIO_CLIMATE_VAR_LOSS_FACTOR} (model constant)"
+        )
+    else:
+        weighted_vuln = None
+        weighted_relief = None
+        climate_adjusted = None
+        climate_var = None
+        data_flags.append("no holding had a known vulnerability — weighted/VaR metrics null")
 
     recommendations = []
     if sids_exposure / total_exposure > 0.30:
         recommendations.append("High SIDS concentration — diversify or hedge with catastrophe instruments")
     if crdc_eligible / total_exposure > 0.50:
         recommendations.append("Proactively incorporate CRDC clauses in primary market issuance")
-    if weighted_vuln > 0.70:
+    if weighted_vuln is not None and weighted_vuln > 0.70:
         recommendations.append("Portfolio-level vulnerability above threshold — engage Paris Club MOU")
     if dfn_eligible > 5e8:
         recommendations.append(f"USD {dfn_eligible/1e6:.0f}M eligible for Debt-for-Nature structuring")
@@ -572,13 +830,14 @@ def aggregate_sovereign_climate_portfolio(holdings: List[Dict[str, Any]]) -> Sov
     return SovereignClimatePortfolioResult(
         portfolio_id=portfolio_id,
         total_sovereign_exposure_usd=round(total_exposure, 2),
-        climate_adjusted_exposure_usd=round(climate_adjusted, 2),
-        weighted_vulnerability_score=round(weighted_vuln, 4),
-        weighted_debt_relief_score=round(weighted_relief, 4),
+        climate_adjusted_exposure_usd=round(climate_adjusted, 2) if climate_adjusted is not None else None,
+        weighted_vulnerability_score=round(weighted_vuln, 4) if weighted_vuln is not None else None,
+        weighted_debt_relief_score=round(weighted_relief, 4) if weighted_relief is not None else None,
         crdc_eligible_exposure_usd=round(crdc_eligible, 2),
         dfn_eligible_exposure_usd=round(dfn_eligible, 2),
-        sids_exposure_pct=round(sids_exposure / total_exposure * 100, 2) if total_exposure else 0,
-        high_risk_country_concentration=round(high_risk_exposure / total_exposure, 4) if total_exposure else 0,
-        portfolio_climate_var_usd=round(climate_var, 2),
+        sids_exposure_pct=round(sids_exposure / total_exposure * 100, 2),
+        high_risk_country_concentration=round(high_risk_exposure / total_exposure, 4),
+        portfolio_climate_var_usd=round(climate_var, 2) if climate_var is not None else None,
         recommendations=recommendations,
+        data_flags=data_flags,
     )

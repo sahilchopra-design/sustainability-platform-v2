@@ -4,7 +4,6 @@ provider divergence analysis (Bloomberg/MSCI/Sustainalytics),
 ESG indicator coverage and quality scoring
 """
 
-import random
 import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date
@@ -177,13 +176,22 @@ class ESGDataQualityEngine:
     def __init__(self) -> None:
         pass
 
-    def _rng(self, entity_id: str) -> random.Random:
-        seed = hash(entity_id) & 0xFFFFFFFF
-        return random.Random(seed)
-
     def _dqs_weight(self, level: int) -> float:
         weights = {1: 1.0, 2: 0.8, 3: 0.5, 4: 0.3, 5: 0.0}
         return weights.get(level, 0.0)
+
+    @staticmethod
+    def _is_material(indicator: Dict, sector: Optional[str]) -> Optional[bool]:
+        """Determine indicator materiality from the reference material_sectors map.
+
+        Returns True/False when a sector is supplied (real lookup against
+        ESG_PILLARS), or None (honest null) when no sector context is available —
+        materiality is entity/sector-specific and cannot be inferred otherwise.
+        """
+        if not sector:
+            return None
+        mat = indicator.get("material_sectors", [])
+        return ("all" in mat) or (sector in mat)
 
     # ── score_pillar ──────────────────────────────────────────────────────────
 
@@ -192,9 +200,17 @@ class ESGDataQualityEngine:
         entity_id: str,
         pillar: str,
         indicators_data: Optional[Dict] = None,
+        sector: Optional[str] = None,
     ) -> Dict:
-        """Score a single ESG pillar (E/S/G) for coverage and quality."""
-        rng = self._rng(f"{entity_id}:pillar:{pillar}")
+        """Score a single ESG pillar (E/S/G) for coverage and quality.
+
+        Coverage and quality are computed from ``indicators_data`` — a mapping of
+        indicator_id -> {"value", "dqs_level", "method"}. An indicator is treated
+        as reported only when a caller-supplied value is present; absent
+        indicators are honestly "not reported" (no fabricated presence, DQS, or
+        value). ``sector`` (optional) drives real materiality lookup against
+        ESG_PILLARS.material_sectors; when omitted, ``material`` is None.
+        """
         indicators = ESG_PILLARS.get(pillar, [])
 
         total = len(indicators)
@@ -202,20 +218,28 @@ class ESGDataQualityEngine:
         reported_count = 0
         dqs_sum = 0.0
         estimated_count = 0
+        dqs_level_sum = 0
 
         for ind in indicators:
             data = (indicators_data or {}).get(ind["id"], {})
-            has_value = data.get("value") is not None or rng.random() > 0.35
-            dqs = data.get("dqs_level", rng.choices([1, 2, 3, 4, 5], weights=[15, 30, 25, 20, 10])[0])
-            method = data.get("method", rng.choice(ESTIMATION_METHODS))
-            value = data.get("value", round(rng.uniform(0, 1000), 2) if has_value else None)
+            reported_value = data.get("value")
+            has_value = reported_value is not None
+            # DQS level: use caller-supplied value; else honest null (level 5 =
+            # "Not available") only when the indicator is genuinely unreported.
+            dqs = data.get("dqs_level")
+            if dqs is None:
+                dqs = 5 if not has_value else None
+            method = data.get("method")  # honest null when not supplied
+            value = reported_value if has_value else None
 
             if has_value:
                 reported_count += 1
             if dqs in (3, 4):
                 estimated_count += 1
 
-            dqs_sum += self._dqs_weight(dqs) if has_value else 0
+            if has_value and dqs is not None:
+                dqs_sum += self._dqs_weight(dqs)
+                dqs_level_sum += dqs
 
             per_indicator.append({
                 "indicator_id": ind["id"],
@@ -224,10 +248,10 @@ class ESGDataQualityEngine:
                 "reported": has_value,
                 "value": value,
                 "dqs_level": dqs,
-                "dqs_description": DQS_LEVELS.get(dqs, "Unknown"),
+                "dqs_description": DQS_LEVELS.get(dqs, "Unknown") if dqs is not None else None,
                 "estimation_method": method,
                 "verified": dqs == 1,
-                "material": rng.random() > 0.4,
+                "material": self._is_material(ind, sector),
             })
 
         coverage_pct = round(reported_count / total * 100, 1) if total > 0 else 0
@@ -242,7 +266,7 @@ class ESGDataQualityEngine:
             "reported_count": reported_count,
             "total_indicators": total,
             "verified_count": sum(1 for i in per_indicator if i["verified"]),
-            "average_dqs": round(sum(i["dqs_level"] for i in per_indicator if i["reported"]) / max(1, reported_count), 2),
+            "average_dqs": round(dqs_level_sum / reported_count, 2) if reported_count > 0 else None,
             "per_indicator": per_indicator,
         }
 
@@ -255,48 +279,82 @@ class ESGDataQualityEngine:
         msci_data: Optional[Dict] = None,
         sustainalytics_data: Optional[Dict] = None,
     ) -> Dict:
-        """Analyse ESG score divergence across data providers."""
-        rng = self._rng(f"{entity_id}:divergence")
+        """Analyse ESG score divergence across data providers.
 
-        def _provider_scores(provider: str) -> Dict[str, float]:
-            r = random.Random(hash(f"{entity_id}:{provider}") & 0xFFFFFFFF)
-            return {
-                "E": round(r.uniform(20, 95), 1),
-                "S": round(r.uniform(20, 95), 1),
-                "G": round(r.uniform(20, 95), 1),
-                "overall": round(r.uniform(20, 95), 1),
-            }
-
-        bb = bloomberg_data or _provider_scores("bloomberg")
-        ms = msci_data or _provider_scores("msci")
-        sa = sustainalytics_data or _provider_scores("sustainalytics")
+        Divergence (spread, average, outlier flags) is computed only from the
+        provider score dicts actually supplied by the caller. When fewer than two
+        providers are available, no divergence can be measured and metrics are
+        returned as honest nulls with ``insufficient_data`` status — nothing is
+        fabricated to stand in for a missing provider feed.
+        """
+        provider_inputs = {
+            "bloomberg": bloomberg_data,
+            "msci": msci_data,
+            "sustainalytics": sustainalytics_data,
+        }
+        available = {name: d for name, d in provider_inputs.items() if d}
 
         pillar_divergence = {}
         outlier_flags = []
         for pillar in ["E", "S", "G", "overall"]:
-            scores = [bb.get(pillar, 50), ms.get(pillar, 50), sa.get(pillar, 50)]
-            spread = max(scores) - min(scores)
-            avg = sum(scores) / 3
-            benchmark = PROVIDER_DIVERGENCE_BENCHMARKS.get(pillar, {})
+            scores = [d.get(pillar) for d in available.values() if d.get(pillar) is not None]
+            if len(scores) >= 2:
+                spread = max(scores) - min(scores)
+                avg = sum(scores) / len(scores)
+                spread_r = round(spread, 1)
+                avg_r = round(avg, 1)
+                high_div = spread > 20
+                if spread > 25:
+                    outlier_flags.append(
+                        f"High {pillar} pillar divergence ({spread:.1f} points) — review underlying data sources"
+                    )
+            else:
+                spread_r = None
+                avg_r = None
+                high_div = None
             pillar_divergence[pillar] = {
-                "bloomberg": bb.get(pillar),
-                "msci": ms.get(pillar),
-                "sustainalytics": sa.get(pillar),
-                "spread": round(spread, 1),
-                "average": round(avg, 1),
-                "high_divergence": spread > 20,
+                "bloomberg": (bloomberg_data or {}).get(pillar),
+                "msci": (msci_data or {}).get(pillar),
+                "sustainalytics": (sustainalytics_data or {}).get(pillar),
+                "spread": spread_r,
+                "average": avg_r,
+                "high_divergence": high_div,
             }
-            if spread > 25:
-                outlier_flags.append(f"High {pillar} pillar divergence ({spread:.1f} points) — review underlying data sources")
 
-        overall_divergence = sum(v["spread"] for v in pillar_divergence.values() if v) / len(pillar_divergence)
+        measured_spreads = [v["spread"] for v in pillar_divergence.values() if v["spread"] is not None]
+        if measured_spreads:
+            overall_divergence = round(sum(measured_spreads) / len(measured_spreads), 1)
+            status = "measured"
+        else:
+            overall_divergence = None
+            status = "insufficient_data"
+
+        # Recommended primary provider: the one whose supplied scores diverge
+        # least from the cross-provider average (real computation). None when
+        # fewer than two providers are available.
+        recommended_primary_provider = None
+        if len(available) >= 2:
+            pillar_avgs = {p: pillar_divergence[p]["average"] for p in ["E", "S", "G"]}
+            best_name, best_dev = None, None
+            for name, d in available.items():
+                devs = [abs(d.get(p) - pillar_avgs[p])
+                        for p in ["E", "S", "G"]
+                        if d.get(p) is not None and pillar_avgs[p] is not None]
+                if not devs:
+                    continue
+                mean_dev = sum(devs) / len(devs)
+                if best_dev is None or mean_dev < best_dev:
+                    best_name, best_dev = name, mean_dev
+            recommended_primary_provider = best_name
 
         return {
             "entity_id": entity_id,
             "pillar_divergence": pillar_divergence,
-            "overall_divergence_score": round(overall_divergence, 1),
+            "overall_divergence_score": overall_divergence,
+            "divergence_status": status,
+            "providers_available": sorted(available.keys()),
             "outlier_flags": outlier_flags,
-            "recommended_primary_provider": rng.choice(["bloomberg", "msci", "sustainalytics"]),
+            "recommended_primary_provider": recommended_primary_provider,
             "benchmarks": PROVIDER_DIVERGENCE_BENCHMARKS,
             "assessed_at": datetime.utcnow().isoformat(),
         }
@@ -308,57 +366,92 @@ class ESGDataQualityEngine:
         entity_id: str,
         indicators_with_sources: Optional[List[Dict]] = None,
     ) -> Dict:
-        """Calculate PCAF-style DQS profile across all pillars."""
-        rng = self._rng(f"{entity_id}:dqs")
+        """Calculate PCAF-style DQS profile across all pillars.
+
+        The profile is built solely from ``indicators_with_sources`` — a list of
+        {"pillar", "dqs_level"} rows. Pillars with no supplied source rows yield
+        a null breakdown (``insufficient_data``); no synthetic DQS distribution is
+        fabricated. Improvement priorities are derived deterministically from
+        which pillars actually score poorly, drawn from a fixed action library.
+        """
+        pillar_inds = indicators_with_sources or []
+
+        # Recommended remediation actions per pillar (fixed reference library,
+        # not entity metrics — selected deterministically by pillar DQS).
+        pillar_actions = {
+            "E": [
+                "Obtain third-party verification for Scope 1 GHG data",
+                "Replace industry proxy for Scope 3 Category 1 with supplier data",
+                "Upgrade from spend-based to activity-based Scope 3 methodology",
+                "Implement direct water metering at all production sites",
+            ],
+            "S": [
+                "Engage top-20 suppliers for LTIFR and human rights data",
+                "Extend supply chain audit coverage to tier-2 suppliers",
+            ],
+            "G": [
+                "Commission independent board effectiveness review",
+                "Obtain external limited assurance over governance disclosures",
+            ],
+        }
 
         dqs_breakdown = {}
+        improvement_priorities: List[str] = []
+        measured_scores = []
         for pillar in ["E", "S", "G"]:
-            pillar_inds = indicators_with_sources or []
             pillar_subset = [i for i in pillar_inds if i.get("pillar") == pillar]
+            if not pillar_subset:
+                # Honest null: no source data supplied for this pillar.
+                dqs_breakdown[pillar] = {
+                    "level_counts": None,
+                    "weighted_dqs_score": None,
+                    "status": "insufficient_data",
+                }
+                continue
+
             counts = {lvl: 0 for lvl in range(1, 6)}
             for ind in pillar_subset:
-                lvl = ind.get("dqs_level", rng.randint(2, 4))
+                lvl = ind.get("dqs_level")
+                if lvl is None:
+                    lvl = 5  # unreported source -> "Not available"
                 counts[lvl] = counts.get(lvl, 0) + 1
-            # If no inputs, generate deterministic distribution
-            if not pillar_subset:
-                total = len(ESG_PILLARS[pillar])
-                counts = {
-                    1: int(total * rng.uniform(0.05, 0.25)),
-                    2: int(total * rng.uniform(0.25, 0.40)),
-                    3: int(total * rng.uniform(0.15, 0.30)),
-                    4: int(total * rng.uniform(0.05, 0.15)),
-                    5: 0,
-                }
-                counts[5] = total - sum(counts[k] for k in [1, 2, 3, 4])
 
             weighted = sum(self._dqs_weight(lvl) * cnt for lvl, cnt in counts.items())
             total_rep = sum(cnt for lvl, cnt in counts.items() if lvl < 5)
-            dqs_score = round(weighted / max(1, total_rep) * 5, 2)  # convert to 1-5 scale (1=best)
+            # Mean quality fraction q in [0,1] (1 = best); map to PCAF 1-5 scale
+            # where 1 = best and 5 = worst: dqs = 5 - 4*q.
+            q = weighted / max(1, total_rep)
+            pillar_score = round(5 - 4 * q, 2)
+            measured_scores.append(pillar_score)
             dqs_breakdown[pillar] = {
                 "level_counts": {DQS_LEVELS[k]: v for k, v in counts.items()},
-                "weighted_dqs_score": round(6 - dqs_score * 5, 2),  # invert: 1=best, 5=worst
+                "weighted_dqs_score": pillar_score,
+                "status": "measured",
             }
+            # Prioritise remediation for pillars scoring worse than "Good".
+            if pillar_score > 2.5:
+                improvement_priorities.extend(pillar_actions.get(pillar, []))
 
-        improvement_priorities = rng.sample([
-            "Obtain third-party verification for Scope 1 GHG data",
-            "Replace industry proxy for Scope 3 Category 1 with supplier data",
-            "Commission independent board effectiveness review",
-            "Implement direct water metering at all production sites",
-            "Engage top-20 suppliers for LTIFR and human rights data",
-            "Upgrade from spend-based to activity-based Scope 3 methodology",
-        ], rng.randint(2, 4))
-
-        overall_dqs = round(
-            sum(v["weighted_dqs_score"] for v in dqs_breakdown.values()) / 3, 2
-        )
+        if measured_scores:
+            overall_dqs = round(sum(measured_scores) / len(measured_scores), 2)
+            dqs_tier = (
+                "Good" if overall_dqs <= 2.5 else
+                ("Acceptable" if overall_dqs <= 3.5 else "Needs improvement")
+            )
+            pcaf_compliant = overall_dqs <= 3.0
+        else:
+            # No pillar had source data — the profile is not computable.
+            overall_dqs = None
+            dqs_tier = "insufficient_data"
+            pcaf_compliant = None
 
         return {
             "entity_id": entity_id,
             "dqs_breakdown": dqs_breakdown,
             "overall_weighted_dqs": overall_dqs,
-            "dqs_tier": "Good" if overall_dqs <= 2.5 else ("Acceptable" if overall_dqs <= 3.5 else "Needs improvement"),
+            "dqs_tier": dqs_tier,
             "improvement_priorities": improvement_priorities,
-            "pcaf_compliant": overall_dqs <= 3.0,
+            "pcaf_compliant": pcaf_compliant,
             "assessed_at": datetime.utcnow().isoformat(),
         }
 
@@ -369,17 +462,33 @@ class ESGDataQualityEngine:
         entity_id: str,
         data_governance_inputs: Optional[Dict] = None,
     ) -> Dict:
-        """Assess BCBS 239 data governance compliance across 14 principles."""
-        rng = self._rng(f"{entity_id}:bcbs239")
+        """Assess BCBS 239 data governance compliance across 14 principles.
 
+        Each principle is scored only from a caller-supplied
+        ``data_governance_inputs["principle_<id>"]["score"]``. Principles with no
+        supplied score are honestly marked ``not_assessed`` (score None) rather
+        than assigned a random value. The weighted compliance score is computed
+        over the assessed principles and re-normalised by their weight so a
+        partial assessment is not silently understated; when nothing is supplied
+        the score is a null with ``insufficient_data`` tier.
+        """
         principle_scores = []
         total_weighted = 0.0
+        assessed_weight = 0.0
         gaps = []
 
         for p in BCBS239_PRINCIPLES:
             inp = (data_governance_inputs or {}).get(f"principle_{p['id']}", {})
-            score = inp.get("score", round(rng.uniform(40, 95), 1))
-            status = "compliant" if score >= 80 else ("partial" if score >= 50 else "non_compliant")
+            score = inp.get("score")  # honest null when not supplied
+            if score is None:
+                status = "not_assessed"
+            elif score >= 80:
+                status = "compliant"
+            elif score >= 50:
+                status = "partial"
+            else:
+                status = "non_compliant"
+
             if status == "non_compliant":
                 gaps.append(f"Principle {p['id']} ({p['name']}): score {score:.0f}% — remediation required")
 
@@ -391,14 +500,22 @@ class ESGDataQualityEngine:
                 "score": score,
                 "status": status,
             })
-            total_weighted += score * p["weight"]
+            if score is not None:
+                total_weighted += score * p["weight"]
+                assessed_weight += p["weight"]
 
-        bcbs239_score = round(total_weighted, 1)
-        compliance_tier = (
-            "Fully compliant" if bcbs239_score >= 80 else
-            ("Largely compliant" if bcbs239_score >= 65 else
-             ("Partially compliant" if bcbs239_score >= 50 else "Non-compliant"))
-        )
+        if assessed_weight > 0:
+            # Re-normalise by assessed weight so an incomplete set of principles
+            # is not scored as if the unscored ones were zero.
+            bcbs239_score = round(total_weighted / assessed_weight, 1)
+            compliance_tier = (
+                "Fully compliant" if bcbs239_score >= 80 else
+                ("Largely compliant" if bcbs239_score >= 65 else
+                 ("Partially compliant" if bcbs239_score >= 50 else "Non-compliant"))
+            )
+        else:
+            bcbs239_score = None
+            compliance_tier = "insufficient_data"
 
         return {
             "entity_id": entity_id,
@@ -409,6 +526,7 @@ class ESGDataQualityEngine:
             "num_compliant": sum(1 for p in principle_scores if p["status"] == "compliant"),
             "num_partial": sum(1 for p in principle_scores if p["status"] == "partial"),
             "num_non_compliant": sum(1 for p in principle_scores if p["status"] == "non_compliant"),
+            "num_not_assessed": sum(1 for p in principle_scores if p["status"] == "not_assessed"),
             "assessed_at": datetime.utcnow().isoformat(),
         }
 
@@ -424,18 +542,41 @@ class ESGDataQualityEngine:
         g_data: Optional[Dict] = None,
         **kwargs,
     ) -> Dict:
-        """Run full ESG data quality assessment and return report dict."""
-        rng = self._rng(entity_id)
+        """Run full ESG data quality assessment and return report dict.
+
+        Optional keyword args (all backward-compatible, default absent):
+          - ``sector``: drives real indicator materiality lookup.
+          - ``data_governance_inputs``: per-principle BCBS 239 scores.
+          - ``provider_scores``: mapping of provider name -> {"E","S","G","overall"}
+            for real divergence analysis.
+        Sections without supplied inputs return honest nulls rather than
+        fabricated values.
+        """
         report_id = str(uuid.uuid4())
         now = datetime.utcnow().isoformat()
+        sector = kwargs.get("sector")
 
-        e_result = self.score_pillar(entity_id, "E", e_data)
-        s_result = self.score_pillar(entity_id, "S", s_data)
-        g_result = self.score_pillar(entity_id, "G", g_data)
+        e_result = self.score_pillar(entity_id, "E", e_data, sector=sector)
+        s_result = self.score_pillar(entity_id, "S", s_data, sector=sector)
+        g_result = self.score_pillar(entity_id, "G", g_data, sector=sector)
 
-        dqs_profile = self.calculate_dqs_profile(entity_id)
+        # Build DQS source rows from the reported indicators just scored, so the
+        # DQS profile reflects real supplied data (not a fabricated distribution).
+        dqs_sources = [
+            {"pillar": p, "dqs_level": ind["dqs_level"]}
+            for p, res in (("E", e_result), ("S", s_result), ("G", g_result))
+            for ind in res["per_indicator"]
+            if ind["reported"]
+        ]
+        dqs_profile = self.calculate_dqs_profile(entity_id, dqs_sources or None)
         bcbs = self.assess_bcbs239_compliance(entity_id, kwargs.get("data_governance_inputs"))
-        divergence = self.analyse_provider_divergence(entity_id)
+        provider_scores = kwargs.get("provider_scores") or {}
+        divergence = self.analyse_provider_divergence(
+            entity_id,
+            bloomberg_data=provider_scores.get("bloomberg"),
+            msci_data=provider_scores.get("msci"),
+            sustainalytics_data=provider_scores.get("sustainalytics"),
+        )
 
         total_indicators = (
             e_result["total_indicators"] +

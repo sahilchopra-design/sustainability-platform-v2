@@ -12,7 +12,6 @@ Standards implemented:
 - IMO alternative fuel pathway (FuelEU Maritime / LNG/NH3/H2)
 """
 
-import random
 import math
 from typing import List, Dict, Any, Optional
 
@@ -185,10 +184,6 @@ def _clamp(lo: float, hi: float, val: float) -> float:
     return max(lo, min(hi, val))
 
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(entity_id) & 0xFFFFFFFF)
-
-
 def _annuity_factor(rate: float, years: int) -> float:
     """Annuity factor for CAPEX annualisation."""
     if rate == 0.0:
@@ -220,7 +215,6 @@ class HydrogenEconomyEngine:
         financing_cost_pct: float,
         year: int,
     ) -> dict:
-        rng = _rng(entity_id)
         pathway = PRODUCTION_PATHWAYS.get(production_pathway, PRODUCTION_PATHWAYS["electrolysis_solar"])
         country = COUNTRY_ELECTRICITY_COST.get(country_code, COUNTRY_ELECTRICITY_COST["DE"])
 
@@ -290,8 +284,8 @@ class HydrogenEconomyEngine:
         hourly_matching: bool,
         temporal_correlation: bool,
         year: int,
+        measured_ghg_intensity_kgco2e_kgh2: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
         country = COUNTRY_ELECTRICITY_COST.get(country_code, COUNTRY_ELECTRICITY_COST["DE"])
         pathway_key = production_pathway.lower()
 
@@ -317,11 +311,20 @@ class HydrogenEconomyEngine:
         # Geographical (same bidding zone — simplified: RE country == electrolysis country)
         geographical_met = True  # assumed same zone for this assessment
 
-        # GHG intensity check
+        # GHG intensity check — deterministic RFNBO eligibility gate.
+        # If a measured/certified lifecycle carbon intensity is supplied, the gate
+        # tests that real value. Absent a measurement, fall back to the documented
+        # colour-pathway reference intensity from H2_COLOURS (a published reference
+        # constant, not an entity-specific figure) and flag the source.
         colour = "green" if re_source in ("new_solar", "new_wind", "new_hydro", "ppa_new_re") else "yellow"
-        ghg_intensity = H2_COLOURS.get(colour, H2_COLOURS["yellow"])["ghg_intensity_kgco2e_kgh2"]
-        ghg_intensity += rng.uniform(-0.05, 0.10)
-        ghg_intensity = round(max(0.1, ghg_intensity), 3)
+        if measured_ghg_intensity_kgco2e_kgh2 is not None:
+            ghg_intensity = round(max(0.0, float(measured_ghg_intensity_kgco2e_kgh2)), 3)
+            ghg_intensity_source = "measured"
+        else:
+            ghg_intensity = round(
+                H2_COLOURS.get(colour, H2_COLOURS["yellow"])["ghg_intensity_kgco2e_kgh2"], 3
+            )
+            ghg_intensity_source = "reference_pathway_estimate"
         ghg_threshold_met = ghg_intensity <= RFNBO_CRITERIA["ghg_threshold_kgco2e_kgh2"]
 
         rfnbo_compliant = additionality_met and temporal_met and geographical_met and ghg_threshold_met
@@ -334,6 +337,11 @@ class HydrogenEconomyEngine:
             notes.append("Temporal correlation not met: hourly matching required (monthly until 2030)")
         if not ghg_threshold_met:
             notes.append(f"GHG intensity {ghg_intensity} kgCO2e/kgH2 exceeds threshold {RFNBO_CRITERIA['ghg_threshold_kgco2e_kgh2']}")
+        if ghg_intensity_source == "reference_pathway_estimate":
+            notes.append(
+                f"GHG intensity is a reference-pathway estimate for '{colour}' H2, not a measured value; "
+                "supply measured_ghg_intensity_kgco2e_kgh2 for a certified RFNBO assessment"
+            )
 
         return {
             "entity_id": entity_id,
@@ -346,6 +354,7 @@ class HydrogenEconomyEngine:
             "geographical_met": geographical_met,
             "ghg_threshold_met": ghg_threshold_met,
             "ghg_intensity_kgco2e_kgh2": ghg_intensity,
+            "ghg_intensity_source": ghg_intensity_source,
             "ghg_threshold_kgco2e_kgh2": RFNBO_CRITERIA["ghg_threshold_kgco2e_kgh2"],
             "eu_taxonomy_eligible": eu_taxonomy_eligible,
             "grid_derogation_applicable": grid_derogation,
@@ -363,8 +372,8 @@ class HydrogenEconomyEngine:
         annual_h2_demand_t: float,
         country_code: str,
         current_fuel_type: str,
+        green_lcoh_usd_kg: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
         sector = DEMAND_SECTOR_ABATEMENT.get(demand_sector, DEMAND_SECTOR_ABATEMENT["ammonia"])
 
         # Abatement calculation
@@ -378,9 +387,17 @@ class HydrogenEconomyEngine:
         }
         incumbent_cost = incumbent_costs.get(current_fuel_type, 1.80)
 
-        # Green H2 cost premium
+        # Green H2 cost premium — derived from the supplied green LCOH when available,
+        # otherwise from the IRENA/BNEF reference green-H2 LCOH (~USD 3.5/kg, a documented
+        # reference constant for present-day green H2, not an entity-specific figure).
         country = COUNTRY_ELECTRICITY_COST.get(country_code, COUNTRY_ELECTRICITY_COST["DE"])
-        green_premium_base = 3.5 + rng.uniform(-0.3, 0.3)  # approx LCOH
+        REFERENCE_GREEN_LCOH_USD_KG = 3.5
+        if green_lcoh_usd_kg is not None:
+            green_premium_base = float(green_lcoh_usd_kg)
+            green_premium_source = "supplied_lcoh"
+        else:
+            green_premium_base = REFERENCE_GREEN_LCOH_USD_KG
+            green_premium_source = "reference_lcoh_estimate"
         green_premium_usd_kg = round(green_premium_base - incumbent_cost, 2)
 
         # Break-even carbon price
@@ -410,6 +427,7 @@ class HydrogenEconomyEngine:
             "incumbent_fuel": current_fuel_type,
             "abatement_tco2_pa": abatement_tco2_pa,
             "green_premium_usd_kg": green_premium_usd_kg,
+            "green_lcoh_source": green_premium_source,
             "incumbent_cost_usd_kg": round(incumbent_cost, 2),
             "break_even_carbon_price_usd_tco2": breakeven_carbon,
             "sdg_alignment": sdg_alignment,
@@ -427,9 +445,8 @@ class HydrogenEconomyEngine:
         capacity_mw_el: float,
         country_code: str,
         lcoh_usd_kg: float,
+        competitive_bid_price_eur_kg: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
-
         is_electrolysis = "electrolysis" in production_pathway.lower()
         meets_min_capacity = capacity_mw_el >= EU_H2_BANK_ELIGIBILITY["minimum_capacity_mw"]
 
@@ -448,7 +465,13 @@ class HydrogenEconomyEngine:
         annual_h2_kg = capacity_mw_el * 1000 * 8760 * 0.30 * 0.70 / self.H2_LHV_KWH_PER_KG
         total_subsidy_eur = round(subsidy_eur_kg * annual_h2_kg * 10 / 1e6, 2)  # 10-year contract
 
-        competitive_bid_price = round(target_price + rng.uniform(-0.1, 0.2), 3)
+        # Competitive/clearing bid price is a market outcome — only reported when the
+        # caller supplies an observed bid; otherwise honest-null (never fabricated).
+        competitive_bid_price = (
+            round(float(competitive_bid_price_eur_kg), 3)
+            if competitive_bid_price_eur_kg is not None
+            else None
+        )
 
         gap_to_grid_parity = round(lcoh_eur_kg - target_price, 3)
 
@@ -482,19 +505,23 @@ class HydrogenEconomyEngine:
         entity_id: str,
         production_pathway: str,
         country_code: str,
+        base_lcoh_2024_usd_kg: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
         country = COUNTRY_ELECTRICITY_COST.get(country_code, COUNTRY_ELECTRICITY_COST["DE"])
         pathway = PRODUCTION_PATHWAYS.get(production_pathway, PRODUCTION_PATHWAYS["electrolysis_solar"])
 
-        # Base LCOH estimate for 2024
-        base_lcoh = 4.0 + rng.uniform(-0.5, 0.5)
-        if "smr_no_ccs" in production_pathway:
-            base_lcoh = 1.6
-        elif "smr_ccs" in production_pathway:
-            base_lcoh = 2.2
-        elif "coal" in production_pathway:
-            base_lcoh = 2.0
+        # Base 2024 LCOH: caller-supplied when available, otherwise the documented
+        # reference starting point per pathway (IRENA/BNEF 2024 reference constants).
+        if base_lcoh_2024_usd_kg is not None:
+            base_lcoh = float(base_lcoh_2024_usd_kg)
+        else:
+            base_lcoh = 4.0  # reference green-electrolysis LCOH, 2024
+            if "smr_no_ccs" in production_pathway:
+                base_lcoh = 1.6
+            elif "smr_ccs" in production_pathway:
+                base_lcoh = 2.2
+            elif "coal" in production_pathway:
+                base_lcoh = 2.0
 
         trajectory = []
         cumulative_gw = 10.0  # 2024 baseline global electrolyser capacity
@@ -542,8 +569,6 @@ class HydrogenEconomyEngine:
     # 6. Portfolio Assessment
     # ------------------------------------------------------------------
     def assess_portfolio(self, entity_id: str, projects: List[Dict[str, Any]]) -> dict:
-        rng = _rng(entity_id)
-
         if not projects:
             return {"entity_id": entity_id, "error": "no projects provided"}
 
@@ -559,7 +584,6 @@ class HydrogenEconomyEngine:
             country = proj.get("country_code", "DE")
             lcoh = float(proj.get("lcoh_usd_kg", 4.0))
             abatement = float(proj.get("annual_abatement_ktco2", capacity * 0.8))
-            irr = float(proj.get("project_irr_pct", 8.0 + rng.uniform(-2.0, 3.0)))
 
             total_capacity_mw += capacity
             if "electrolysis_solar" in pathway or "electrolysis_wind" in pathway:
@@ -567,12 +591,16 @@ class HydrogenEconomyEngine:
 
             lcoh_values.append(lcoh)
             abatement_total += abatement
-            irr_values.append(irr)
+            # IRR is an entity metric: only aggregate projects that actually report one;
+            # never substitute a random draw for a missing IRR.
+            proj_irr = proj.get("project_irr_pct")
+            if proj_irr is not None:
+                irr_values.append(float(proj_irr))
 
         green_share_pct = round(green_capacity_mw / max(total_capacity_mw, 1.0) * 100.0, 2)
         avg_lcoh = round(sum(lcoh_values) / len(lcoh_values), 3)
         total_abatement_mt = round(abatement_total / 1000.0, 3)
-        portfolio_irr = round(sum(irr_values) / len(irr_values), 2)
+        portfolio_irr = round(sum(irr_values) / len(irr_values), 2) if irr_values else None
 
         return {
             "entity_id": entity_id,
@@ -582,6 +610,7 @@ class HydrogenEconomyEngine:
             "avg_lcoh_usd_kg": avg_lcoh,
             "total_abatement_mtco2pa": total_abatement_mt,
             "portfolio_irr_pct": portfolio_irr,
+            "portfolio_irr_project_count": len(irr_values),
             "eu_h2_bank_eligible_count": sum(
                 1 for p in projects
                 if "electrolysis" in p.get("production_pathway", "") and float(p.get("capacity_mw_el", 0)) >= 5.0

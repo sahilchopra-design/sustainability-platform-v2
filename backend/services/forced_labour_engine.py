@@ -22,8 +22,6 @@ References:
 """
 from __future__ import annotations
 
-import math
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -213,9 +211,11 @@ class ILOScreeningResult:
     entity_id: str
     assessment_date: str
     ilo_indicator_flags: dict = field(default_factory=dict)
-    ilo_aggregate_risk_score: float = 0.0
+    ilo_aggregate_risk_score: Optional[float] = None
     triggered_indicators: list = field(default_factory=list)
     risk_level: str = ""
+    indicators_assessed: int = 0
+    data_completeness: str = "insufficient_data"
     notes: list = field(default_factory=list)
 
 
@@ -248,15 +248,15 @@ class UKMSAResult:
 class ComplianceProgrammeResult:
     entity_id: str
     assessment_date: str
-    policy_commitment_score: float = 0.0
-    due_diligence_process_score: float = 0.0
-    grievance_mechanism_score: float = 0.0
-    remediation_capacity_score: float = 0.0
-    monitoring_review_score: float = 0.0
-    overall_programme_score: float = 0.0
+    policy_commitment_score: Optional[float] = None
+    due_diligence_process_score: Optional[float] = None
+    grievance_mechanism_score: Optional[float] = None
+    remediation_capacity_score: Optional[float] = None
+    monitoring_review_score: Optional[float] = None
+    overall_programme_score: Optional[float] = None
     compliance_programme_maturity: str = ""
-    audit_coverage_pct: float = 0.0
-    remediation_cases_open: int = 0
+    audit_coverage_pct: Optional[float] = None
+    remediation_cases_open: Optional[int] = None
     notes: list = field(default_factory=list)
 
 
@@ -277,34 +277,74 @@ class ForcedLabourEngine:
         entity_id: str,
         supplier_data: dict,
     ) -> ILOScreeningResult:
-        """Score all 11 ILO forced labour indicators (0-10 risk each)."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        """Score all 11 ILO forced labour indicators (0-10 risk each).
 
+        Each indicator score MUST be supplied in ``supplier_data`` keyed by the
+        indicator name (e.g. ``{"debt_bondage": 7.5}``). Indicators with no
+        supplied value are recorded as "not assessed" (score ``None``) and are
+        excluded from the weighted aggregate rather than fabricated. If no
+        indicator is assessed, the aggregate risk score is returned as ``None``
+        (honest null) with ``risk_level`` = ``"insufficient_data"``.
+        """
         indicator_flags: dict = {}
         triggered: list = []
         aggregate = 0.0
+        assessed_weight = 0.0
+        assessed_count = 0
 
         for ind_key, ind_def in ILO_INDICATORS.items():
             raw_score = supplier_data.get(ind_key)
-            if raw_score is not None:
-                score = min(10.0, max(0.0, float(raw_score)))
-            else:
-                score = rng.uniform(0.0, 8.0)
+            if raw_score is None:
+                # No input for this indicator — record honestly, do not fabricate.
+                indicator_flags[ind_key] = {
+                    "score": None,
+                    "triggered": False,
+                    "assessed": False,
+                    "description": ind_def["description"],
+                    "ilo_reference": ind_def["ilo_reference"],
+                    "weight": ind_def["weight"],
+                }
+                continue
+
+            score = min(10.0, max(0.0, float(raw_score)))
             triggered_flag = score > 6.0
             indicator_flags[ind_key] = {
                 "score": round(score, 1),
                 "triggered": triggered_flag,
+                "assessed": True,
                 "description": ind_def["description"],
                 "ilo_reference": ind_def["ilo_reference"],
                 "weight": ind_def["weight"],
             }
             aggregate += score * ind_def["weight"]
+            assessed_weight += ind_def["weight"]
+            assessed_count += 1
             if triggered_flag:
                 triggered.append(ind_key)
 
-        # Normalise aggregate to 0-10
         total_weight = sum(v["weight"] for v in ILO_INDICATORS.values())
-        agg_score = aggregate / total_weight if total_weight > 0 else 0.0
+
+        if assessed_count == 0:
+            # Honest null — no assessed indicators, no basis for a score.
+            return ILOScreeningResult(
+                entity_id=entity_id,
+                assessment_date=self._today,
+                ilo_indicator_flags=indicator_flags,
+                ilo_aggregate_risk_score=None,
+                triggered_indicators=[],
+                risk_level="insufficient_data",
+                indicators_assessed=0,
+                data_completeness="insufficient_data",
+                notes=[
+                    "ILO aggregate risk score: insufficient_data — no indicator "
+                    f"scores supplied (0 of {len(ILO_INDICATORS)} indicators assessed)",
+                    "Supply per-indicator scores (0-10) keyed by indicator name to "
+                    "compute a real ILO forced-labour risk score.",
+                ],
+            )
+
+        # Renormalise over the weights of assessed indicators only.
+        agg_score = aggregate / assessed_weight if assessed_weight > 0 else 0.0
 
         if agg_score >= 7:
             risk_level = "critical"
@@ -315,6 +355,9 @@ class ForcedLabourEngine:
         else:
             risk_level = "low"
 
+        completeness = "complete" if assessed_count == len(ILO_INDICATORS) else "partial"
+        coverage_pct = round(assessed_weight / total_weight * 100, 1) if total_weight > 0 else 0.0
+
         return ILOScreeningResult(
             entity_id=entity_id,
             assessment_date=self._today,
@@ -322,9 +365,13 @@ class ForcedLabourEngine:
             ilo_aggregate_risk_score=round(agg_score, 2),
             triggered_indicators=triggered,
             risk_level=risk_level,
+            indicators_assessed=assessed_count,
+            data_completeness=completeness,
             notes=[
                 f"ILO aggregate risk score: {round(agg_score, 2)}/10 ({risk_level})",
-                f"Indicators triggered (>6): {len(triggered)} of {len(ILO_INDICATORS)}",
+                f"Indicators triggered (>6): {len(triggered)} of {assessed_count} assessed",
+                f"Data completeness: {completeness} — {assessed_count} of "
+                f"{len(ILO_INDICATORS)} indicators assessed ({coverage_pct}% of ILO weight)",
             ],
         )
 
@@ -339,8 +386,6 @@ class ForcedLabourEngine:
         audit_evidence: dict,
     ) -> EUFLRResult:
         """EU Forced Labour Regulation 2024/3015 — import risk assessment."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         risk_factors: list = []
         risk_points = 0
 
@@ -365,13 +410,23 @@ class ForcedLabourEngine:
                 risk_points += 2
             risk_factors.append(f"Sector '{sector}' flagged as high-risk: {sector_def['description']}")
 
-        # Audit evidence quality
-        audit_score = audit_evidence.get("audit_score", rng.uniform(20.0, 80.0))
-        if audit_score < 40:
+        # Audit evidence quality. Absence of audit evidence is itself an
+        # elevated-risk signal under EU FLR (importer cannot demonstrate the
+        # absence of forced labour) — never substitute a fabricated score.
+        audit_score = audit_evidence.get("audit_score")
+        if audit_score is None:
             risk_points += 2
-            risk_factors.append("Inadequate audit evidence (score <40)")
-        elif audit_score < 60:
-            risk_points += 1
+            risk_factors.append(
+                "No audit evidence supplied — cannot demonstrate absence of "
+                "forced labour (treated as elevated risk under EU FLR)"
+            )
+        else:
+            audit_score = float(audit_score)
+            if audit_score < 40:
+                risk_points += 2
+                risk_factors.append("Inadequate audit evidence (score <40)")
+            elif audit_score < 60:
+                risk_points += 1
 
         # Risk level determination
         if risk_points >= 7:
@@ -415,9 +470,13 @@ class ForcedLabourEngine:
         entity_id: str,
         disclosure_data: dict,
     ) -> UKMSAResult:
-        """UK Modern Slavery Act Section 54 — disclosure scoring (0-30)."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        """UK Modern Slavery Act Section 54 — disclosure scoring (0-30).
 
+        Scoring reflects only affirmatively disclosed criteria: a criterion is
+        credited only when its flag in ``disclosure_data`` is ``True``. Absent
+        (``None``) or falsy criteria earn no point — undisclosed is not credited
+        (never fabricated).
+        """
         area_scores: dict = {}
         total_score = 0
         areas_met = 0
@@ -428,8 +487,6 @@ class ForcedLabourEngine:
                 val = disclosure_data.get(criterion)
                 if val is True:
                     score += 1
-                elif val is None:
-                    score += 1 if rng.random() > 0.5 else 0
             area_score = min(area_def["max_score"], score)
             area_scores[area_key] = {
                 "score": area_score,
@@ -468,46 +525,88 @@ class ForcedLabourEngine:
         entity_id: str,
         programme_data: dict,
     ) -> ComplianceProgrammeResult:
-        """5-pillar compliance programme maturity assessment."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        """5-pillar compliance programme maturity assessment.
 
-        def get_score(key: str, default_range=(30.0, 80.0)) -> float:
+        Each pillar score (0-100) is read from ``programme_data``; unsupplied
+        pillars are returned as ``None`` (not fabricated) and excluded from the
+        weighted overall score, which is renormalised over the supplied pillars.
+        If no pillar is supplied, ``overall_programme_score`` is ``None`` and
+        maturity is ``"insufficient_data"``. Operational metrics
+        (``audit_coverage_pct``, ``remediation_cases_open``) are honest nulls
+        when absent.
+        """
+        def get_score(key: str) -> Optional[float]:
             val = programme_data.get(key)
-            if val is not None:
-                return min(100.0, max(0.0, float(val)))
-            return rng.uniform(*default_range)
+            if val is None:
+                return None
+            return min(100.0, max(0.0, float(val)))
 
-        policy = get_score("policy_commitment_score")
-        dd_proc = get_score("due_diligence_process_score")
-        grievance = get_score("grievance_mechanism_score")
-        remediation = get_score("remediation_capacity_score")
-        monitoring = get_score("monitoring_review_score")
+        pillar_weights = {
+            "policy_commitment_score": 0.20,
+            "due_diligence_process_score": 0.25,
+            "grievance_mechanism_score": 0.20,
+            "remediation_capacity_score": 0.20,
+            "monitoring_review_score": 0.15,
+        }
+        pillar_scores = {k: get_score(k) for k in pillar_weights}
 
-        overall = (policy * 0.20 + dd_proc * 0.25 + grievance * 0.20 + remediation * 0.20 + monitoring * 0.15)
+        supplied_weight = sum(
+            w for k, w in pillar_weights.items() if pillar_scores[k] is not None
+        )
+        if supplied_weight > 0:
+            weighted_sum = sum(
+                pillar_scores[k] * w
+                for k, w in pillar_weights.items()
+                if pillar_scores[k] is not None
+            )
+            overall: Optional[float] = weighted_sum / supplied_weight
+        else:
+            overall = None
 
-        maturity = "initial"
-        for level_key, level_def in COMPLIANCE_MATURITY_LEVELS.items():
-            low, high = level_def["range"]
-            if low <= overall <= high:
-                maturity = level_def["label"]
-                break
+        if overall is None:
+            maturity = "insufficient_data"
+        else:
+            maturity = "initial"
+            for level_key, level_def in COMPLIANCE_MATURITY_LEVELS.items():
+                low, high = level_def["range"]
+                if low <= overall <= high:
+                    maturity = level_def["label"]
+                    break
 
-        audit_coverage = programme_data.get("audit_coverage_pct", rng.uniform(30.0, 90.0))
-        open_cases = programme_data.get("remediation_cases_open", rng.randint(0, 15))
+        raw_coverage = programme_data.get("audit_coverage_pct")
+        audit_coverage = round(float(raw_coverage), 1) if raw_coverage is not None else None
+        raw_cases = programme_data.get("remediation_cases_open")
+        open_cases = int(raw_cases) if raw_cases is not None else None
+
+        supplied_pillars = sum(1 for v in pillar_scores.values() if v is not None)
+        if overall is None:
+            note = (
+                "Compliance programme maturity: insufficient_data — no pillar "
+                f"scores supplied (0 of {len(pillar_weights)} pillars)"
+            )
+        else:
+            note = (
+                f"Compliance programme maturity: {maturity} (overall score: "
+                f"{round(overall, 1)}/100; {supplied_pillars} of "
+                f"{len(pillar_weights)} pillars supplied)"
+            )
+
+        def _round(v: Optional[float]) -> Optional[float]:
+            return round(v, 1) if v is not None else None
 
         return ComplianceProgrammeResult(
             entity_id=entity_id,
             assessment_date=self._today,
-            policy_commitment_score=round(policy, 1),
-            due_diligence_process_score=round(dd_proc, 1),
-            grievance_mechanism_score=round(grievance, 1),
-            remediation_capacity_score=round(remediation, 1),
-            monitoring_review_score=round(monitoring, 1),
-            overall_programme_score=round(overall, 1),
+            policy_commitment_score=_round(pillar_scores["policy_commitment_score"]),
+            due_diligence_process_score=_round(pillar_scores["due_diligence_process_score"]),
+            grievance_mechanism_score=_round(pillar_scores["grievance_mechanism_score"]),
+            remediation_capacity_score=_round(pillar_scores["remediation_capacity_score"]),
+            monitoring_review_score=_round(pillar_scores["monitoring_review_score"]),
+            overall_programme_score=_round(overall),
             compliance_programme_maturity=maturity,
-            audit_coverage_pct=round(float(audit_coverage), 1),
-            remediation_cases_open=int(open_cases),
-            notes=[f"Compliance programme maturity: {maturity} (overall score: {round(overall, 1)}/100)"],
+            audit_coverage_pct=audit_coverage,
+            remediation_cases_open=open_cases,
+            notes=[note],
         )
 
     # ── Supplier Network Screening ─────────────────────────────────────────
@@ -521,14 +620,23 @@ class ForcedLabourEngine:
         results = []
         for supplier in suppliers:
             supplier_id = supplier.get("supplier_id", assessment_id + "_sup")
-            rng = random.Random(hash(supplier_id) & 0xFFFFFFFF)
 
             ilo_r = self.screen_ilo_indicators(supplier_id, supplier.get("supplier_data", {}))
 
             eu_flr_risk = ilo_r.risk_level
             if supplier.get("country_code", "") in EU_FLR_HIGH_RISK_COUNTRIES:
-                if eu_flr_risk == "low":
+                # A high-risk sourcing country floors residual risk at "medium".
+                # This applies whether or not ILO indicators were assessed.
+                if eu_flr_risk in ("low", "insufficient_data"):
                     eu_flr_risk = "medium"
+
+            # Audit / certification status is taken as supplied. When absent, use
+            # the truthful default (not audited / not certified) — never a random
+            # draw, since these feed regulatory audit-coverage metrics.
+            audit_status = supplier.get("audit_status") or "not_audited"
+            sa8000 = supplier.get("sa8000_certified")
+            if sa8000 is None:
+                sa8000 = False
 
             results.append({
                 "supplier_id": supplier_id,
@@ -538,8 +646,8 @@ class ForcedLabourEngine:
                 "ilo_risk_score": ilo_r.ilo_aggregate_risk_score,
                 "eu_flr_risk_level": eu_flr_risk,
                 "ilo_indicators_triggered": ilo_r.triggered_indicators,
-                "audit_status": supplier.get("audit_status", rng.choice(["audited", "pending", "not_audited"])),
-                "sa8000_certified": supplier.get("sa8000_certified", rng.random() > 0.7),
+                "audit_status": audit_status,
+                "sa8000_certified": bool(sa8000),
                 "last_audit_date": supplier.get("last_audit_date", ""),
             })
         return results
@@ -560,8 +668,6 @@ class ForcedLabourEngine:
         suppliers: Optional[list] = None,
     ) -> dict:
         """Full forced labour risk assessment."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         ilo_r = self.screen_ilo_indicators(entity_id, supplier_data or {})
         eu_flr_r = self.assess_eu_flr(entity_id, country_code, sector, products or [], audit_evidence or {})
         uk_msa_r = self.assess_uk_msa(entity_id, disclosure_data or {})

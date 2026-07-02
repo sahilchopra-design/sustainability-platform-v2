@@ -6,9 +6,8 @@ IPCC AR6 health chapter · ILO heat stress productivity model · WHO air quality
 OSHA heat illness prevention · Costello et al. 2009 health climate framework
 """
 
-import random
 import math
-from typing import Optional
+from typing import Optional, List
 
 
 # ---------------------------------------------------------------------------
@@ -78,11 +77,19 @@ FOOD_SECURITY_COUNTRY_SCORES = {
 
 
 # ---------------------------------------------------------------------------
-# Helper utilities
+# Model-calibration constants (documented; NOT entity-specific data)
 # ---------------------------------------------------------------------------
+# Used as deterministic defaults ONLY when the caller supplies no measured input.
+# These stand in for MODEL structure, never for an entity's observed metric.
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(entity_id) & 0xFFFFFFFF)
+# NO2:PM2.5 ratio — typical urban co-pollutant ratio (WHO GBD 2019 exposure work;
+# NO2 annual means run ~0.3× PM2.5 across the profiled economies). Used only when
+# no measured NO2 is provided.
+NO2_PM25_RATIO_DEFAULT = 0.30
+
+# Healthcare cost as a multiple of the daily wage for a climate-attributed lost
+# day (ILO/WHO cost-of-illness convention: direct medical ≈ 1× daily earnings).
+HEALTHCARE_COST_WAGE_MULTIPLE = 1.0
 
 
 def _clamp(val: float, lo: float = 0.0, hi: float = 100.0) -> float:
@@ -106,12 +113,16 @@ def assess_heat_stress_risk(
     country_code: str,
     outdoor_worker_pct: float,
     sector: str,
+    wbgt_observed_c: Optional[float] = None,
 ) -> dict:
-    rng = _rng(entity_id + "heat")
     cp = _country_profile(country_code)
 
-    # WBGT proxy: based on country heat mortality data as proxy
-    wbgt_max = _round(WBGT_PRODUCTIVITY_BASE + cp["heat_mortality_100k"] * 1.5 + rng.uniform(-1, 2), 1)
+    # WBGT: use caller-supplied measured value when available; otherwise derive
+    # deterministically from country heat-mortality burden (model proxy).
+    if wbgt_observed_c is not None:
+        wbgt_max = _round(float(wbgt_observed_c), 1)
+    else:
+        wbgt_max = _round(WBGT_PRODUCTIVITY_BASE + cp["heat_mortality_100k"] * 1.5, 1)
     heat_stress_score = _round(_clamp(
         (wbgt_max - WBGT_PRODUCTIVITY_BASE) / (WBGT_SEVERE - WBGT_PRODUCTIVITY_BASE) * 100
     ), 1)
@@ -130,7 +141,7 @@ def assess_heat_stress_risk(
 
     # OSHA compliance (2024 proposed rule: heat illness prevention plan required >80°F WBGT equiv)
     wbgt_f = wbgt_max * 9 / 5 + 32
-    osha_compliant = wbgt_f < 90 or rng.random() > 0.5  # simplified heuristic
+    osha_compliant = wbgt_f < 90  # deterministic 90°F WBGT-equiv threshold
 
     adaptation_measures = [
         "Cool rest areas and acclimatisation programme for new outdoor workers",
@@ -164,19 +175,26 @@ def assess_air_quality_risk(
     country_code: str,
     sector: str,
     annual_production: float,
+    pm25_observed_ugm3: Optional[float] = None,
+    no2_observed_ugm3: Optional[float] = None,
 ) -> dict:
-    rng = _rng(entity_id + "airquality")
     cp = _country_profile(country_code)
 
-    pm25 = _round(cp["pm25_ugm3"] * rng.uniform(0.85, 1.15), 1)
-    # NO2 proxy: lower than PM2.5 in most countries
-    no2 = _round(pm25 * rng.uniform(0.2, 0.45), 1)
+    # PM2.5: measured value if supplied, else country annual mean (reference data).
+    pm25 = _round(
+        float(pm25_observed_ugm3) if pm25_observed_ugm3 is not None else cp["pm25_ugm3"], 1
+    )
+    # NO2: measured value if supplied, else typical urban co-pollutant ratio (model constant).
+    no2 = _round(
+        float(no2_observed_ugm3) if no2_observed_ugm3 is not None
+        else pm25 * NO2_PM25_RATIO_DEFAULT, 1
+    )
 
     who_met = pm25 <= WHO_AQG_PM25
     eu_met = pm25 <= EU_AQD_PM25
 
-    # Respiratory mortality per 100k (WHO GBD 2019 proxy)
-    mortality_per_100k = _round(pm25 * 0.6 + rng.uniform(0, 5), 1)
+    # Respiratory mortality per 100k (WHO GBD 2019 concentration-response proxy)
+    mortality_per_100k = _round(pm25 * 0.6, 1)
 
     # Compliance cost proxy: abatement to reach EU standard
     pm25_excess = max(0.0, pm25 - EU_AQD_PM25)
@@ -213,20 +231,22 @@ def assess_vector_disease_risk(
     entity_id: str,
     country_code: str,
     rcp_scenario: str = "rcp45",
+    prevention_cost_per_worker_usd: Optional[float] = None,
+    workforce_at_risk: Optional[int] = None,
 ) -> dict:
-    rng = _rng(entity_id + "vector")
     cp = _country_profile(country_code)
 
     scenario_key = "rcp45_2050" if "4" in rcp_scenario else "rcp85_2050"
 
     disease_risks = {}
     for disease, data in VECTOR_DISEASE_CLIMATE_SENSITIVITY.items():
-        change_pct = _round(data[scenario_key] * 100 * rng.uniform(0.8, 1.2), 1)
+        # Published per-scenario 2050 range-change sensitivity (reference data).
+        change_pct = _round(data[scenario_key] * 100, 1)
         disease_risks[f"{disease}_risk_change_pct"] = change_pct
 
     # Composite score: higher heat/humidity index = higher vector disease risk
     country_risk_base = (100 - cp["health_resilience"]) * 0.5 + cp["who_ccs_score"] * 0.3
-    composite_score = _round(_clamp(country_risk_base + rng.uniform(-5, 5)), 1)
+    composite_score = _round(_clamp(country_risk_base), 1)
 
     # Workforce vulnerability
     if composite_score >= 65:
@@ -238,8 +258,14 @@ def assess_vector_disease_risk(
 
     country_health_resilience = _round(cp["health_resilience"], 1)
 
-    # Prevention cost
-    prevention_cost = _round(composite_score * rng.uniform(500, 2000), 0)
+    # Prevention cost: real figure only if the caller supplies a per-worker
+    # prevention budget and exposed-workforce size; otherwise honest null.
+    if prevention_cost_per_worker_usd is not None and workforce_at_risk is not None:
+        prevention_cost: Optional[float] = _round(
+            float(prevention_cost_per_worker_usd) * float(workforce_at_risk), 0
+        )
+    else:
+        prevention_cost = None  # insufficient_data: no prevention budget/workforce input supplied
 
     return {
         "country_code": country_code,
@@ -261,11 +287,10 @@ def model_food_security_health(
     entity_id: str,
     country_code: str,
     supply_chain_exposure: list,
+    commodity_climate_scores: Optional[dict] = None,
 ) -> dict:
-    rng = _rng(entity_id + "food")
-
-    food_score = FOOD_SECURITY_COUNTRY_SCORES.get(country_code.upper(), 52)
-    food_score = _clamp(food_score + rng.uniform(-5, 5))
+    # Country food-security score (reference data).
+    food_score = _clamp(FOOD_SECURITY_COUNTRY_SCORES.get(country_code.upper(), 52))
 
     # IPCC AR6: 2-3% per decade yield decline
     decade = (2050 - 2024) / 10
@@ -274,14 +299,23 @@ def model_food_security_health(
     # Malnutrition → productivity loss (stunting)
     malnutrition_productivity_loss = _round(_clamp(caloric_deficit_risk * 1.5), 1)
 
+    # Per-commodity climate vulnerability: real score only if the caller supplies a
+    # measured 0-100 score for that commodity; otherwise honest null for that entry.
+    scores = commodity_climate_scores or {}
     supply_chain_vulnerability = []
     for item in supply_chain_exposure:
         commodity = item if isinstance(item, str) else str(item)
-        risk_score = _round(rng.uniform(20, 70) * (1 + (100 - food_score) / 200), 1)
+        raw = scores.get(commodity)
+        if raw is not None:
+            risk_score: Optional[float] = _round(_clamp(float(raw)), 1)
+            risk_level = "High" if risk_score > 55 else "Medium" if risk_score > 35 else "Low"
+        else:
+            risk_score = None  # insufficient_data: no measured vulnerability supplied
+            risk_level = "insufficient_data"
         supply_chain_vulnerability.append({
             "commodity": commodity,
             "climate_vulnerability_score": risk_score,
-            "risk_level": "High" if risk_score > 55 else "Medium" if risk_score > 35 else "Low",
+            "risk_level": risk_level,
         })
 
     adaptation_options = [
@@ -314,13 +348,23 @@ def calculate_health_financial_impact(
     employee_count: int,
     outdoor_pct: float,
     sector: str,
+    daily_wage_usd: Optional[float] = None,
+    healthcare_daily_cost_usd: Optional[float] = None,
 ) -> dict:
-    rng = _rng(entity_id + "financial")
     cp = _country_profile(country_code)
 
     outdoor_fraction = outdoor_pct / 100
-    daily_wage = rng.uniform(30, 250)  # country-sector proxy
-    healthcare_daily_cost = daily_wage * rng.uniform(0.5, 1.5)
+
+    # Wage / healthcare unit costs are entity-specific: use only caller-supplied
+    # values. Healthcare day cost defaults to the ILO/WHO cost-of-illness multiple
+    # of the daily wage (model constant) when a wage is given but a cost is not.
+    daily_wage = float(daily_wage_usd) if daily_wage_usd is not None else None
+    if healthcare_daily_cost_usd is not None:
+        healthcare_daily_cost: Optional[float] = float(healthcare_daily_cost_usd)
+    elif daily_wage is not None:
+        healthcare_daily_cost = daily_wage * HEALTHCARE_COST_WAGE_MULTIPLE
+    else:
+        healthcare_daily_cost = None
 
     # Climate-attributed sick days per employee per year
     heat_sick_days = _round(cp["heat_mortality_100k"] * outdoor_fraction * 0.8, 2)
@@ -328,27 +372,43 @@ def calculate_health_financial_impact(
     total_sick_days = heat_sick_days + air_quality_sick_days
     climate_attribution_frac = 0.30  # 30% of sick days climate-attributable
 
-    healthcare_cost_uplift = _round(
-        employee_count * total_sick_days * climate_attribution_frac * healthcare_daily_cost, 0
-    )
+    # Monetary uplifts require a unit cost; honest null when not supplied.
+    if healthcare_daily_cost is not None:
+        healthcare_cost_uplift: Optional[float] = _round(
+            employee_count * total_sick_days * climate_attribution_frac * healthcare_daily_cost, 0
+        )
+    else:
+        healthcare_cost_uplift = None  # insufficient_data: no wage/healthcare cost supplied
 
-    # Productivity loss: heat-adjusted working hours
+    # Productivity loss: heat-adjusted working hours (days is a real computation;
+    # its USD value needs a wage).
     productivity_loss_days = _round(total_sick_days * outdoor_fraction * 0.6 * employee_count, 1)
-    productivity_loss_usd = _round(productivity_loss_days * daily_wage, 0)
+    if daily_wage is not None:
+        productivity_loss_usd: Optional[float] = _round(productivity_loss_days * daily_wage, 0)
+    else:
+        productivity_loss_usd = None  # insufficient_data: no wage supplied
 
-    # Insurance premium uplift (5-20%)
+    # Insurance premium uplift (5-20%): deterministic from country heat mortality.
     insurance_uplift_pct = _round(
-        _clamp(5 + cp["heat_mortality_100k"] * 2 + rng.uniform(-2, 5), 5, 20), 1
+        _clamp(5 + cp["heat_mortality_100k"] * 2, 5, 20), 1
     )
 
-    # Litigation: employer duty of care for heat illness
+    # Litigation: employer duty of care for heat illness ($500/worker duty-of-care
+    # model constant).
     litigation_exposure = _round(employee_count * outdoor_fraction * 500 * cp["heat_mortality_100k"], 0)
 
-    total_impact = _round(healthcare_cost_uplift + productivity_loss_usd + litigation_exposure * 0.1, 0)
-
-    # ROI on adaptation investment
-    adaptation_cost = _round(employee_count * 200, 0)  # ~$200/employee per year
-    roi_adaptation = _round((total_impact - adaptation_cost) / max(adaptation_cost, 1), 2)
+    # Total impact and ROI are only defined when the wage-dependent components exist.
+    adaptation_cost = _round(employee_count * 200, 0)  # ~$200/employee per year (model constant)
+    if healthcare_cost_uplift is not None and productivity_loss_usd is not None:
+        total_impact: Optional[float] = _round(
+            healthcare_cost_uplift + productivity_loss_usd + litigation_exposure * 0.1, 0
+        )
+        roi_adaptation: Optional[float] = _round(
+            (total_impact - adaptation_cost) / max(adaptation_cost, 1), 2
+        )
+    else:
+        total_impact = None  # insufficient_data: wage-dependent components missing
+        roi_adaptation = None
 
     return {
         "country_code": country_code,
@@ -370,10 +430,9 @@ def calculate_health_financial_impact(
 # ---------------------------------------------------------------------------
 
 def assess_who_climate_health(entity_id: str, country_code: str) -> dict:
-    rng = _rng(entity_id + "who")
     cp = _country_profile(country_code)
 
-    ccs_score = _round(cp["who_ccs_score"] * rng.uniform(0.95, 1.05), 1)
+    ccs_score = _round(cp["who_ccs_score"], 1)
 
     if cp["health_resilience"] >= 75:
         readiness = "High — well-funded health system with climate adaptation plans"
@@ -385,7 +444,7 @@ def assess_who_climate_health(entity_id: str, country_code: str) -> dict:
         readiness = "Very Low — critical health system gaps; urgent support needed"
 
     adaptation_finance_gap = _round(
-        _clamp(100 - cp["health_resilience"] - rng.uniform(5, 15)), 1
+        _clamp(100 - cp["health_resilience"]), 1
     )
 
     peer_codes = ["IN", "BD", "BR", "ZA", "CN"]
@@ -420,37 +479,51 @@ def compute_health_climate_composite(
     country_code: str,
     sector: str,
     employee_count: int,
+    annual_production: Optional[float] = None,
+    daily_wage_usd: Optional[float] = None,
 ) -> dict:
-    rng = _rng(entity_id + "composite")
     cp = _country_profile(country_code)
 
     outdoor_pct = SECTOR_OUTDOOR_WORKER_FRACTION.get(sector.lower(), 0.2) * 100
-    annual_production = rng.uniform(1e6, 1e9)
+    # annual_production is entity-specific; pass through only if supplied (0.0 => no
+    # abatement cost / liability rather than a fabricated turnover).
+    annual_production_val = float(annual_production) if annual_production is not None else 0.0
 
     # Component results
     heat = assess_heat_stress_risk(entity_id, country_code, outdoor_pct, sector)
-    air = assess_air_quality_risk(entity_id, country_code, sector, annual_production)
+    air = assess_air_quality_risk(entity_id, country_code, sector, annual_production_val)
     vector = assess_vector_disease_risk(entity_id, country_code)
     food = model_food_security_health(entity_id, country_code, [sector, "grains", "proteins"])
-    financial = calculate_health_financial_impact(entity_id, country_code, employee_count, outdoor_pct, sector)
+    financial = calculate_health_financial_impact(
+        entity_id, country_code, employee_count, outdoor_pct, sector, daily_wage_usd=daily_wage_usd
+    )
 
     # Normalise component scores to 0-100
     heat_score = heat["heat_stress_risk_score"]
     air_score = _clamp((air["pm25_exposure_ugm3"] - WHO_AQG_PM25) / max(WHO_AQG_PM25, 1) * 30, 0, 100)
     vector_score = vector["composite_score"]
     food_score = _clamp(100 - food["food_security_score"], 0, 100)
-    financial_score = _clamp(financial["total_financial_impact_usd_pa"] / max(employee_count * 1000, 1) * 10, 0, 100)
+    # Financial component only exists when a wage was supplied; otherwise it is
+    # excluded from the composite (weights renormalised) rather than fabricated.
+    total_impact_usd = financial["total_financial_impact_usd_pa"]
+    financial_score = (
+        _clamp(total_impact_usd / max(employee_count * 1000, 1) * 10, 0, 100)
+        if total_impact_usd is not None else None
+    )
 
     component_scores = {
         "heat_stress": _round(heat_score, 1),
         "air_quality": _round(air_score, 1),
         "vector_disease": _round(vector_score, 1),
         "food_security": _round(food_score, 1),
-        "financial_impact": _round(financial_score, 1),
+        "financial_impact": _round(financial_score, 1) if financial_score is not None else None,
     }
 
     weights = {"heat_stress": 0.25, "air_quality": 0.25, "vector_disease": 0.15, "food_security": 0.15, "financial_impact": 0.20}
-    overall_score = sum(weights[k] * component_scores[k] for k in weights)
+    # Renormalise over components that have a value (drop null financial_impact).
+    active = {k: v for k, v in component_scores.items() if v is not None}
+    weight_sum = sum(weights[k] for k in active) or 1.0
+    overall_score = sum(weights[k] * active[k] for k in active) / weight_sum
     overall_score = _round(overall_score, 1)
 
     if overall_score >= 75:
@@ -462,7 +535,8 @@ def compute_health_climate_composite(
     else:
         risk_rating = "Low"
 
-    priority_hazards = sorted(component_scores.items(), key=lambda x: -x[1])[:3]
+    # Rank only components that have a value (null financial_impact excluded).
+    priority_hazards = sorted(active.items(), key=lambda x: -x[1])[:3]
     priority_hazards = [k for k, _ in priority_hazards]
 
     key_interventions = [
@@ -475,8 +549,8 @@ def compute_health_climate_composite(
 
     total_cost = financial["total_financial_impact_usd_pa"]
 
-    # SDG 3 alignment score (health targets)
-    sdg3_alignment = _round(_clamp(100 - overall_score + rng.uniform(-5, 5)), 1)
+    # SDG 3 alignment score (health targets): inverse of the composite risk score.
+    sdg3_alignment = _round(_clamp(100 - overall_score), 1)
 
     return {
         "entity_name": entity_name,

@@ -202,8 +202,14 @@ class VaRCalculator:
     
     @staticmethod
     def _normal_cdf(x: np.ndarray) -> np.ndarray:
-        """Standard normal CDF using error function."""
-        return 0.5 * (1 + np.tanh(x / np.sqrt(2)))
+        """Standard normal CDF via the true error function (vectorised).
+
+        Previously used a tanh approximation which is badly wrong in the tails
+        (~3.6x error at the 1% quantile, ~12x at 0.1%), corrupting the Gaussian-copula
+        default trigger and understating Monte-Carlo losses by 3-55x. Uses scipy erf.
+        """
+        from scipy.special import erf
+        return 0.5 * (1.0 + erf(x / np.sqrt(2.0)))
     
     @staticmethod
     def _standard_normal_pdf(x: float) -> float:

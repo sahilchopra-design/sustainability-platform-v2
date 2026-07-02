@@ -12,7 +12,6 @@ Standards covered:
 """
 from __future__ import annotations
 
-import random
 from typing import Any
 
 # ---------------------------------------------------------------------------
@@ -237,7 +236,6 @@ class ClimateStressTestEngine:
         cet1_ratio_pct: float,
         scenario: str,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         scen_mult = _scenario_multiplier(scenario)
         ngfs = NGFS_PHASE4_SCENARIOS.get(scenario, NGFS_PHASE4_SCENARIOS["current_policies"])
 
@@ -261,19 +259,19 @@ class ClimateStressTestEngine:
         base_market = 0.015
         base_op = 0.005
 
-        credit_loss_pct = round(max(0, min(30, base_credit * weighted_credit * scen_mult * 100 + rng.uniform(-0.3, 0.3))), 2)
-        market_loss_pct = round(max(0, min(20, base_market * weighted_market * scen_mult * 100 + rng.uniform(-0.2, 0.2))), 2)
-        operational_loss_pct = round(max(0, min(10, base_op * weighted_op * scen_mult * 100 + rng.uniform(-0.1, 0.1))), 2)
+        credit_loss_pct = round(max(0, min(30, base_credit * weighted_credit * scen_mult * 100)), 2)
+        market_loss_pct = round(max(0, min(20, base_market * weighted_market * scen_mult * 100)), 2)
+        operational_loss_pct = round(max(0, min(10, base_op * weighted_op * scen_mult * 100)), 2)
 
-        physical_loss_pct = round(ngfs["physical_damage_2100"] * 100 * rng.uniform(0.3, 0.7), 2)
+        physical_loss_pct = round(ngfs["physical_damage_2100"] * 100 * 0.5, 2)  # deterministic mid-horizon factor
         total_loss_pct = round(credit_loss_pct + market_loss_pct + operational_loss_pct + physical_loss_pct, 2)
-        climate_var_pct = round(total_loss_pct * 1.15 + rng.uniform(-0.5, 0.5), 2)
+        climate_var_pct = round(total_loss_pct * 1.15, 2)
 
         cet1_post = round(cet1_ratio_pct - total_loss_pct, 2)
         floor = CAPITAL_ADEQUACY_FLOORS["bcbs_517"]["cet1_floor_pct"]
 
         # BCBS Principles compliance score (18 principles)
-        bcbs_compliance_score = round(max(30, min(100, 70 - scen_mult * 10 + rng.uniform(-5, 5))), 2)
+        bcbs_compliance_score = round(max(30, min(100, 70 - scen_mult * 10)), 2)
 
         return {
             "entity_id": entity_id,
@@ -305,7 +303,6 @@ class ClimateStressTestEngine:
         uk_corporate_exposure_pct: float,
         scenario: str,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
         scen_config = {
             "early_action": {"physical": 0.5, "transition": 0.9, "liquidity": 0.4, "label": "Early Action"},
@@ -314,16 +311,16 @@ class ClimateStressTestEngine:
         }.get(scenario, {"physical": 1.5, "transition": 1.2, "liquidity": 0.7, "label": scenario})
 
         physical_loss_pct = round(
-            max(0, min(15, scen_config["physical"] * (0.02 * uk_mortgage_exposure_pct / 100 + 0.01) * 100 + rng.uniform(-0.2, 0.2))),
+            max(0, min(15, scen_config["physical"] * (0.02 * uk_mortgage_exposure_pct / 100 + 0.01) * 100)),
             2,
         )
         transition_loss_pct = round(
-            max(0, min(20, scen_config["transition"] * (0.03 * uk_corporate_exposure_pct / 100 + 0.015) * 100 + rng.uniform(-0.3, 0.3))),
+            max(0, min(20, scen_config["transition"] * (0.03 * uk_corporate_exposure_pct / 100 + 0.015) * 100)),
             2,
         )
-        liquidity_stress_pct = round(max(0, min(10, scen_config["liquidity"] * 2.0 + rng.uniform(-0.2, 0.2))), 2)
-        nim_compression_bps = round(max(0, min(100, scen_config["transition"] * 15 + rng.uniform(-5, 5))), 2)
-        npl_uplift_ppts = round(max(0, min(8, scen_config["physical"] * 1.5 + scen_config["transition"] * 0.8 + rng.uniform(-0.3, 0.3))), 2)
+        liquidity_stress_pct = round(max(0, min(10, scen_config["liquidity"] * 2.0)), 2)
+        nim_compression_bps = round(max(0, min(100, scen_config["transition"] * 15)), 2)
+        npl_uplift_ppts = round(max(0, min(8, scen_config["physical"] * 1.5 + scen_config["transition"] * 0.8)), 2)
         cet1_impact_ppts = round(physical_loss_pct + transition_loss_pct * 0.6, 2)
 
         floor = CAPITAL_ADEQUACY_FLOORS["boe_cbes"]["cet1_floor_pct"]
@@ -356,7 +353,6 @@ class ClimateStressTestEngine:
         total_rwa_usd: float,
         scenario: str,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
         scen_map = {
             "orderly": {"nii_factor": 0.95, "npe_factor": 0.5, "cet1_factor": 0.7, "green_prem": 0.05},
@@ -364,20 +360,20 @@ class ClimateStressTestEngine:
             "hot_house_world": {"nii_factor": 0.75, "npe_factor": 3.0, "cet1_factor": 3.5, "green_prem": -0.01},
         }.get(scenario, {"nii_factor": 0.90, "npe_factor": 1.0, "cet1_factor": 1.5, "green_prem": 0.03})
 
-        nii_impact_pct = round(max(-25, min(0, -(1 - scen_map["nii_factor"]) * 100 + rng.uniform(-2, 2))), 2)
-        npe_impact_ppts = round(max(0, min(10, scen_map["npe_factor"] * 1.2 + rng.uniform(-0.2, 0.2))), 2)
-        cet1_impact_ppts = round(max(0, min(8, scen_map["cet1_factor"] * 0.9 + rng.uniform(-0.2, 0.2))), 2)
+        nii_impact_pct = round(max(-25, min(0, -(1 - scen_map["nii_factor"]) * 100)), 2)
+        npe_impact_ppts = round(max(0, min(10, scen_map["npe_factor"] * 1.2)), 2)
+        cet1_impact_ppts = round(max(0, min(8, scen_map["cet1_factor"] * 0.9)), 2)
 
         # Stranded asset loss
         high_carbon_exposure = sum(
             w for s, w in eu_sector_exposures.items()
             if s in ("oil_gas", "coal_mining", "utilities_fossil")
         )
-        stranded_asset_loss_pct = round(max(0, min(15, high_carbon_exposure * scen_map["cet1_factor"] * 0.5 + rng.uniform(-0.3, 0.3))), 2)
+        stranded_asset_loss_pct = round(max(0, min(15, high_carbon_exposure * scen_map["cet1_factor"] * 0.5)), 2)
 
         # Taxonomy alignment proxy
         green_exposure = sum(w for s, w in eu_sector_exposures.items() if "renew" in s or "ev" in s)
-        taxonomy_alignment_pct = round(min(100, green_exposure * 100 + rng.uniform(5, 20)), 2)
+        taxonomy_alignment_pct = round(min(100, green_exposure * 100), 2)
 
         pillar2_add_on = round(max(0, cet1_impact_ppts - 2.0), 2)
 
@@ -405,7 +401,6 @@ class ClimateStressTestEngine:
         australian_exposure_pct: float,
         scenario: str,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
         scen_map = {
             "net_zero_2050": {"physical": 0.6, "transition": 0.9},
@@ -418,14 +413,14 @@ class ClimateStressTestEngine:
         # Australian exposure amplifies physical risk (bushfire, drought)
         au_factor = max(0, min(2, australian_exposure_pct / 50))
 
-        physical_risk_score = round(max(0, min(100, scen_map["physical"] * 40 * au_factor + rng.uniform(-5, 5))), 2)
-        transition_risk_score = round(max(0, min(100, scen_map["transition"] * 40 + rng.uniform(-5, 5))), 2)
+        physical_risk_score = round(max(0, min(100, scen_map["physical"] * 40 * au_factor)), 2)
+        transition_risk_score = round(max(0, min(100, scen_map["transition"] * 40)), 2)
 
         capital_impact_ppts = round(
-            max(0, min(6, (physical_risk_score + transition_risk_score) / 100 * 4 + rng.uniform(-0.2, 0.2))),
+            max(0, min(6, (physical_risk_score + transition_risk_score) / 100 * 4)),
             2,
         )
-        liquidity_impact_pct = round(max(0, min(15, capital_impact_ppts * 2.5 + rng.uniform(-0.3, 0.3))), 2)
+        liquidity_impact_pct = round(max(0, min(15, capital_impact_ppts * 2.5)), 2)
 
         floor = CAPITAL_ADEQUACY_FLOORS["apra_clt"]["cet1_floor_pct"]
         apra_adequacy_met = capital_impact_ppts <= 3.0
@@ -455,7 +450,6 @@ class ClimateStressTestEngine:
         cet1_pct: float,
         scenario: str,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
         bcbs = self.run_bcbs_517(entity_id, institution_type, portfolio_sectors, total_assets_usd, cet1_pct, scenario)
         boe = self.run_boe_cbes(entity_id, institution_type, 35.0, 30.0, scenario)
@@ -481,7 +475,7 @@ class ClimateStressTestEngine:
         aggregated_capital_impact = round(sum(losses.values()) / len(losses), 2)
         stress_test_passed = all([bcbs["capital_adequate"], boe["test_passed"], apra["apra_adequacy_met"]])
 
-        resilience_score = round(max(0, min(100, 100 - aggregated_capital_impact * 5 + rng.uniform(-3, 3))), 2)
+        resilience_score = round(max(0, min(100, 100 - aggregated_capital_impact * 5)), 2)
 
         return {
             "entity_id": entity_id,
@@ -499,8 +493,6 @@ class ClimateStressTestEngine:
     # 6. Portfolio resilience
     # ------------------------------------------------------------------
     def assess_portfolio_resilience(self, entity_id: str, portfolios: list) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         if not portfolios:
             return {
                 "entity_id": entity_id,
@@ -510,13 +502,35 @@ class ClimateStressTestEngine:
                 "portfolio_count": 0,
             }
 
+        def _portfolio_loss_pct(portfolio: dict, scen_mult: float) -> float:
+            """Deterministic transition loss for one portfolio from its real sector mix,
+            mirroring the run_bcbs_517 core (base rates × sector sensitivity × scenario)."""
+            sectors = portfolio.get("portfolio_sectors") or portfolio.get("sectors") or {}
+            if sectors:
+                wsum = tot = 0.0
+                for sector, weight in sectors.items():
+                    sens = SECTOR_TRANSITION_SENSITIVITY.get(
+                        sector, SECTOR_TRANSITION_SENSITIVITY["financials"])
+                    wsum += weight * (sens["credit_loss_multiplier"]
+                                      + sens["market_loss_multiplier"]
+                                      + sens["operational_loss_multiplier"])
+                    tot += weight
+                weighted = wsum / tot if tot > 0 else 0.0
+                return (0.025 + 0.015 + 0.005) * weighted * scen_mult * 100
+            # No sector detail supplied — deterministic scenario-scaled base loss.
+            return 0.045 * scen_mult * 100
+
         resilience_by_scenario: dict[str, dict] = {}
         for scenario in ["net_zero_2050", "delayed_transition", "current_policies"]:
-            avg_loss = round(rng.uniform(1, 15) * _scenario_multiplier(scenario), 2)
+            scen_mult = _scenario_multiplier(scenario)
+            losses = [_portfolio_loss_pct(p, scen_mult) for p in portfolios]
+            avg_loss = round(sum(losses) / len(losses), 2)
             resilience_by_scenario[scenario] = {
                 "avg_loss_pct": avg_loss,
-                "max_loss_pct": round(avg_loss * 1.5, 2),
-                "portfolios_failing": sum(1 for p in portfolios if p.get("cet1_pct", 10) - avg_loss < 4.5),
+                "max_loss_pct": round(max(losses), 2),
+                "portfolios_failing": sum(
+                    1 for p, l in zip(portfolios, losses)
+                    if p.get("cet1_pct", 10) - l < 4.5),
             }
 
         capital_buffer_adequacy = all(

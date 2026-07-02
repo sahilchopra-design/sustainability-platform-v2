@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import math
 import uuid
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -275,7 +274,7 @@ class ETSResult:
     obligation_allowances: float
     free_allocation: float
     surrender_gap: float
-    cost_eur: float
+    cost_eur: Optional[float]  # None when no EUA carbon price supplied
 
 @dataclass
 class FuelSwitchResult:
@@ -285,10 +284,10 @@ class FuelSwitchResult:
     target_fuel: str
     fleet_size: int
     capex_usd: float
-    opex_delta_usd_pa: float
+    opex_delta_usd_pa: Optional[float]  # None when no fuel price supplied
     co2_reduction_tpa: float
-    payback_yrs: float
-    npv_usd: float
+    payback_yrs: Optional[float]        # None when no fuel price supplied
+    npv_usd: Optional[float]            # None when no fuel price supplied
     technology_readiness: int
     availability_score: float
 
@@ -326,7 +325,6 @@ class ShippingMaritimeEngine:
         fuel_type: str = "HFO",
         year: int = 2025,
     ) -> CIIResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         vt = VESSEL_TYPES.get(vessel_type, VESSEL_TYPES["bulk_carrier"])
         fuel = FUEL_EMISSION_FACTORS.get(fuel_type, FUEL_EMISSION_FACTORS["HFO"])
 
@@ -400,7 +398,6 @@ class ShippingMaritimeEngine:
         epl_applied: bool = False,
         epl_power_kw: float = 0.0,
     ) -> EEXIResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         vt = VESSEL_TYPES.get(vessel_type, VESSEL_TYPES["bulk_carrier"])
 
         effective_power = epl_power_kw if (epl_applied and epl_power_kw > 0) else installed_power_kw
@@ -436,7 +433,6 @@ class ShippingMaritimeEngine:
         actual_intensity: float,
         pp_year: int = 2025,
     ) -> PoseidonResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         trajectory = PP_REQUIRED_TRAJECTORY.get(vessel_type, PP_REQUIRED_TRAJECTORY["bulk_carrier"])
 
         # Interpolate required for year
@@ -516,9 +512,8 @@ class ShippingMaritimeEngine:
         co2_tonne_pa: float,
         voyage_types: list[str],
         year: int = 2025,
+        eua_price_eur: Optional[float] = None,
     ) -> ETSResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         # Phase-in factor
         phase_in = ETS_SHIPPING_PHASE_IN.get(year, 1.0)
 
@@ -535,9 +530,12 @@ class ShippingMaritimeEngine:
         free_allocation = 0.0
         surrender_gap = max(0.0, obligation_allowances - free_allocation)
 
-        # EUA price assumption: EUR 65/tonne
-        eua_price = rng.uniform(55.0, 80.0)
-        cost_eur = surrender_gap * eua_price
+        # EUA cost requires a caller-supplied market carbon price (EUR/tCO2).
+        # No default is fabricated: without a live/assumed EUA price the monetary
+        # cost is an honest null. The physical surrender obligation above is real.
+        cost_eur: Optional[float] = (
+            round(surrender_gap * eua_price_eur, 2) if eua_price_eur is not None else None
+        )
 
         return ETSResult(
             entity_id=entity_id,
@@ -547,7 +545,7 @@ class ShippingMaritimeEngine:
             obligation_allowances=round(obligation_allowances, 2),
             free_allocation=round(free_allocation, 2),
             surrender_gap=round(surrender_gap, 2),
-            cost_eur=round(cost_eur, 2),
+            cost_eur=cost_eur,
         )
 
     # ------------------------------------------------------------------
@@ -561,9 +559,8 @@ class ShippingMaritimeEngine:
         target_fuel: str,
         fleet_size: int,
         voyage_profile: dict,
+        current_fuel_price_usd_t: Optional[float] = None,
     ) -> FuelSwitchResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         current_ef = FUEL_EMISSION_FACTORS.get(current_fuel, FUEL_EMISSION_FACTORS["HFO"])
         target_ef = FUEL_EMISSION_FACTORS.get(target_fuel, FUEL_EMISSION_FACTORS["HFO"])
         readiness = ALTERNATIVE_FUEL_READINESS.get(target_fuel, ALTERNATIVE_FUEL_READINESS["LNG"])
@@ -576,34 +573,46 @@ class ShippingMaritimeEngine:
         capex_per_vessel = vessel_value_usd * capex_premium
         capex_usd = capex_per_vessel * fleet_size
 
-        # OPEX delta: fuel cost difference
-        current_fuel_price = rng.uniform(500.0, 700.0)  # USD/t
         target_fuel_lcv_ratio = current_ef["lcv_mj_per_tonne"] / max(target_ef["lcv_mj_per_tonne"], 1.0)
-        # Price premium for alternative fuels
-        opex_premium = readiness["opex_premium_pct"] / 100.0
-        opex_delta_per_vessel = annual_fuel_t * current_fuel_price * opex_premium
-        opex_delta_usd_pa = opex_delta_per_vessel * fleet_size
 
-        # CO2 reduction
+        # CO2 reduction — independent of fuel price, always a real computation
         co2_current = annual_fuel_t * current_ef["co2_per_tonne"]
         co2_target = annual_fuel_t * target_ef["co2_per_tonne"] * target_fuel_lcv_ratio
         co2_reduction_pa = max(0.0, (co2_current - co2_target) * fleet_size)
 
-        # Payback (simple)
-        if opex_delta_usd_pa > 0:
-            payback_yrs = capex_usd / opex_delta_usd_pa
-        else:
-            co2_price = 65.0
-            carbon_saving_value = co2_reduction_pa * co2_price
-            payback_yrs = capex_usd / max(carbon_saving_value, 1.0)
-        payback_yrs = min(payback_yrs, 50.0)
+        # OPEX delta, payback and NPV all depend on the current market fuel price
+        # (USD/t). This is an entity/market input, not a model constant: source it
+        # from the explicit param or from voyage_profile. Without it, the monetary
+        # metrics are honest nulls rather than fabricated draws.
+        fuel_price = current_fuel_price_usd_t
+        if fuel_price is None:
+            fuel_price = voyage_profile.get("current_fuel_price_usd_t")
 
-        # NPV (15-year, 8% discount rate)
-        discount_rate = 0.08
-        npv = -capex_usd
-        annual_saving = co2_reduction_pa * 65.0 - opex_delta_usd_pa
-        for yr in range(1, 16):
-            npv += annual_saving / ((1 + discount_rate) ** yr)
+        opex_delta_usd_pa: Optional[float] = None
+        payback_yrs: Optional[float] = None
+        npv: Optional[float] = None
+
+        if fuel_price is not None:
+            # Price premium for alternative fuels
+            opex_premium = readiness["opex_premium_pct"] / 100.0
+            opex_delta_per_vessel = annual_fuel_t * fuel_price * opex_premium
+            opex_delta_usd_pa = opex_delta_per_vessel * fleet_size
+
+            # Payback (simple)
+            if opex_delta_usd_pa > 0:
+                payback_yrs = capex_usd / opex_delta_usd_pa
+            else:
+                co2_price = 65.0
+                carbon_saving_value = co2_reduction_pa * co2_price
+                payback_yrs = capex_usd / max(carbon_saving_value, 1.0)
+            payback_yrs = min(payback_yrs, 50.0)
+
+            # NPV (15-year, 8% discount rate)
+            discount_rate = 0.08
+            npv = -capex_usd
+            annual_saving = co2_reduction_pa * 65.0 - opex_delta_usd_pa
+            for yr in range(1, 16):
+                npv += annual_saving / ((1 + discount_rate) ** yr)
 
         return FuelSwitchResult(
             entity_id=entity_id,
@@ -612,10 +621,10 @@ class ShippingMaritimeEngine:
             target_fuel=target_fuel,
             fleet_size=fleet_size,
             capex_usd=round(capex_usd, 0),
-            opex_delta_usd_pa=round(opex_delta_usd_pa, 0),
+            opex_delta_usd_pa=round(opex_delta_usd_pa, 0) if opex_delta_usd_pa is not None else None,
             co2_reduction_tpa=round(co2_reduction_pa, 2),
-            payback_yrs=round(payback_yrs, 1),
-            npv_usd=round(npv, 0),
+            payback_yrs=round(payback_yrs, 1) if payback_yrs is not None else None,
+            npv_usd=round(npv, 0) if npv is not None else None,
             technology_readiness=readiness["technology_readiness"],
             availability_score=readiness["availability_score"],
         )
@@ -628,8 +637,6 @@ class ShippingMaritimeEngine:
         entity_id: str,
         vessel_list: list[dict],
     ) -> FleetPortfolioResult:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         cii_dist = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0}
         pp_aligned_count = 0
         total_fueleu_penalty = 0.0
@@ -697,8 +704,6 @@ class ShippingMaritimeEngine:
         entity_id: str,
         vessel_data: dict,
     ) -> dict:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         vessel_type = vessel_data.get("vessel_type", "bulk_carrier")
         dwt = vessel_data.get("dwt", 50000.0)
         fuel_type = vessel_data.get("fuel_type", "HFO")
@@ -714,7 +719,13 @@ class ShippingMaritimeEngine:
         eexi = self.calculate_eexi(entity_id, vessel_type, dwt, installed_power_kw, service_speed)
         pp = self.assess_poseidon_principles(entity_id, vessel_type, dwt, cii.cii_attained, year)
         fueleu = self.assess_fueleu(entity_id, annual_energy_mj, ghg_intensity_wtw, year)
-        ets = self.calculate_ets_obligation(entity_id, cii.co2_emitted_t, vessel_data.get("voyage_types", []), year)
+        ets = self.calculate_ets_obligation(
+            entity_id,
+            cii.co2_emitted_t,
+            vessel_data.get("voyage_types", []),
+            year,
+            eua_price_eur=vessel_data.get("eua_price_eur"),
+        )
 
         # Sea Cargo Charter AER
         scc_bench = SEA_CARGO_CHARTER_BENCHMARKS.get(vessel_type, {})

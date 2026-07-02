@@ -21,7 +21,6 @@ Climate-liquidity intersection:
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -268,7 +267,6 @@ class Basel3LiquidityEngine:
         climate_scenario: Optional[str] = None,
     ) -> LCRResult:
         """Compute Liquidity Coverage Ratio with optional climate haircut overlay."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
         # Apply standard haircuts
         l1_adj = hqla_l1 * (1.0 - 0.00)
@@ -305,8 +303,11 @@ class Basel3LiquidityEngine:
         climate_haircut_bps = 0.0
         climate_adj_lcr = lcr_pct
         if climate_scenario and climate_scenario in DISORDERLY_SCENARIOS:
-            l2a_extra_bps = rng.uniform(5.0, 15.0)
-            l2b_extra_bps = rng.uniform(10.0, 25.0)
+            # Deterministic disorderly-scenario haircut add-ons (bps) on L2A/L2B HQLA —
+            # midpoints of the supervisory stress range. The prior code drew these at random,
+            # making the climate-adjusted LCR non-reproducible run-to-run.
+            l2a_extra_bps = 10.0
+            l2b_extra_bps = 18.0
             climate_haircut_bps = round((l2a_extra_bps + l2b_extra_bps) / 2.0, 1)
             l2a_climate = hqla_l2a * (1.0 - 0.15 - l2a_extra_bps / 10000.0)
             l2b_climate = hqla_l2b * (1.0 - 0.50 - l2b_extra_bps / 10000.0)
@@ -350,12 +351,16 @@ class Basel3LiquidityEngine:
         rsf_breakdown: dict,
     ) -> NSFRResult:
         """Compute Net Stable Funding Ratio from ASF/RSF component breakdown."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
+        notes: list[str] = []
         asf_total = 0.0
         asf_computed = {}
         for component, amount in asf_breakdown.items():
-            factor = ASF_FACTORS.get(component, rng.uniform(0.5, 0.9))
+            # Unmapped ASF component: conservative supervisory treatment = 0% ASF credit
+            # (no stable-funding recognition), not a random factor.
+            factor = ASF_FACTORS.get(component)
+            if factor is None:
+                factor = 0.0
+                notes.append(f"Unmapped ASF component '{component}' — 0% ASF factor applied (conservative)")
             weighted = amount * factor
             asf_computed[component] = {"amount_mn": round(amount, 2), "factor": factor, "weighted_mn": round(weighted, 2)}
             asf_total += weighted
@@ -363,14 +368,18 @@ class Basel3LiquidityEngine:
         rsf_total = 0.0
         rsf_computed = {}
         for component, amount in rsf_breakdown.items():
-            factor = RSF_FACTORS.get(component, rng.uniform(0.5, 1.0))
+            # Unmapped RSF component: conservative supervisory treatment = 100% RSF
+            # (full stable-funding requirement), not a random factor.
+            factor = RSF_FACTORS.get(component)
+            if factor is None:
+                factor = 1.0
+                notes.append(f"Unmapped RSF component '{component}' — 100% RSF factor applied (conservative)")
             weighted = amount * factor
             rsf_computed[component] = {"amount_mn": round(amount, 2), "factor": factor, "weighted_mn": round(weighted, 2)}
             rsf_total += weighted
 
         nsfr_pct = (asf_total / rsf_total * 100.0) if rsf_total > 0 else 999.0
 
-        notes = []
         if nsfr_pct < NSFR_MINIMUM_PCT:
             shortfall = rsf_total - asf_total
             notes.append(f"NSFR breach: shortfall of EUR {round(shortfall, 1)} mn stable funding required")
@@ -400,7 +409,6 @@ class Basel3LiquidityEngine:
         time_buckets: list of dicts with keys:
             bucket (str), assets_mn (float), liabilities_mn (float)
         """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
         bucket_gaps = []
         cumulative = 0.0
@@ -440,7 +448,7 @@ class Basel3LiquidityEngine:
             gap = assets - liabs
             cumulative += gap
 
-            dur = duration_map.get(label, rng.uniform(0.5, 5.0))
+            dur = duration_map.get(label, 1.0)  # deterministic 1y default for unrecognised bucket
             total_asset_duration += assets * dur
             total_liability_duration += liabs * dur
             total_assets += assets
@@ -511,10 +519,10 @@ class Basel3LiquidityEngine:
         base_lcr: float,
         base_nsfr: float,
         scenario_id: str,
+        deposit_base_mn: Optional[float] = None,
+        wholesale_base_mn: Optional[float] = None,
     ) -> LiquidityStressResult:
         """Idiosyncratic + market-wide liquidity stress scenario."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         scenario_shocks = {
             "mild_idiosyncratic": {"deposit_runoff_mult": 1.2, "wholesale_runoff_mult": 1.3, "hqla_haircut_mult": 1.0},
             "severe_idiosyncratic": {"deposit_runoff_mult": 1.5, "wholesale_runoff_mult": 1.8, "hqla_haircut_mult": 1.1},
@@ -530,48 +538,55 @@ class Basel3LiquidityEngine:
         wholesale_mult = shock["wholesale_runoff_mult"]
         hqla_mult = shock["hqla_haircut_mult"]
 
-        base_deposit_exposure = rng.uniform(500.0, 5000.0)
-        base_wholesale_exposure = rng.uniform(200.0, 3000.0)
+        notes = [
+            f"Scenario: {scenario_id}",
+            f"Deposit runoff multiplier: {deposit_mult}x",
+            f"Wholesale runoff multiplier: {wholesale_mult}x",
+            f"HQLA haircut multiplier: {hqla_mult}x",
+        ]
 
-        stress_deposit = base_deposit_exposure * (deposit_mult - 1.0) * RUNOFF_RATES["retail_less_stable"]
-        stress_wholesale = base_wholesale_exposure * (wholesale_mult - 1.0) * RUNOFF_RATES["wholesale_non_operational_financial"]
-
-        total_stress_outflow = stress_deposit + stress_wholesale
+        # Stressed ratios derive from the real base LCR/NSFR inputs — always computable.
         stressed_lcr = base_lcr / hqla_mult * (1.0 / (1.0 + (deposit_mult - 1.0) * 0.2 + (wholesale_mult - 1.0) * 0.1))
         stressed_nsfr = base_nsfr * (0.95 - (wholesale_mult - 1.0) * 0.05)
 
-        liquidity_at_risk = total_stress_outflow * rng.uniform(0.3, 0.7)
-
-        if stressed_lcr >= 120:
-            survival_days = rng.randint(270, 365)
-            adequacy = "adequate"
-        elif stressed_lcr >= 100:
-            survival_days = rng.randint(180, 270)
-            adequacy = "borderline"
-        elif stressed_lcr >= 75:
-            survival_days = rng.randint(60, 180)
-            adequacy = "vulnerable"
+        # Stress outflows require REAL deposit/wholesale funding bases. The prior code
+        # invented them with rng.uniform; instead we compute from supplied bases, or return
+        # null outflow/LaR figures with a note when they are not provided (no fabrication).
+        if deposit_base_mn is not None and wholesale_base_mn is not None:
+            stress_deposit = deposit_base_mn * (deposit_mult - 1.0) * RUNOFF_RATES["retail_less_stable"]
+            stress_wholesale = wholesale_base_mn * (wholesale_mult - 1.0) * RUNOFF_RATES["wholesale_non_operational_financial"]
+            total_stress_outflow = stress_deposit + stress_wholesale
+            # Deterministic share-at-risk scaling with scenario severity (not random).
+            lar_factor = max(0.3, min(0.7, 0.3 + 0.2 * (wholesale_mult - 1.0)))
+            liquidity_at_risk = total_stress_outflow * lar_factor
         else:
-            survival_days = rng.randint(7, 60)
-            adequacy = "critical"
+            stress_deposit = None
+            stress_wholesale = None
+            liquidity_at_risk = None
+            notes.append("insufficient_data: deposit/wholesale funding bases not provided — stress outflows not computed")
+
+        # Survival horizon: deterministic monotone mapping from the stressed LCR (not random).
+        if stressed_lcr >= 120:
+            survival_days, adequacy = 365, "adequate"
+        elif stressed_lcr >= 100:
+            survival_days, adequacy = 210, "borderline"
+        elif stressed_lcr >= 75:
+            survival_days, adequacy = 120, "vulnerable"
+        else:
+            survival_days, adequacy = 30, "critical"
 
         return LiquidityStressResult(
             entity_id=entity_id,
             assessment_date=self._today,
             scenario_id=scenario_id,
             survival_horizon_days=survival_days,
-            liquidity_at_risk_mn=round(liquidity_at_risk, 2),
-            stress_outflow_deposit_mn=round(stress_deposit, 2),
-            stress_outflow_wholesale_mn=round(stress_wholesale, 2),
+            liquidity_at_risk_mn=round(liquidity_at_risk, 2) if liquidity_at_risk is not None else None,
+            stress_outflow_deposit_mn=round(stress_deposit, 2) if stress_deposit is not None else None,
+            stress_outflow_wholesale_mn=round(stress_wholesale, 2) if stress_wholesale is not None else None,
             stressed_lcr_pct=round(max(0.0, stressed_lcr), 1),
             stressed_nsfr_pct=round(max(0.0, stressed_nsfr), 1),
             liquidity_buffer_adequacy=adequacy,
-            notes=[
-                f"Scenario: {scenario_id}",
-                f"Deposit runoff multiplier: {deposit_mult}x",
-                f"Wholesale runoff multiplier: {wholesale_mult}x",
-                f"HQLA haircut multiplier: {hqla_mult}x",
-            ],
+            notes=notes,
         )
 
     # ── Full Assessment ─────────────────────────────────────────────────────
@@ -593,45 +608,50 @@ class Basel3LiquidityEngine:
         time_buckets: Optional[list] = None,
     ) -> dict:
         """Full Basel III liquidity risk assessment combining LCR, NSFR, ALM, and stress."""
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
-        # Default inputs if not provided
+        # Deterministic illustrative defaults when a caller omits the detailed breakdowns.
+        # The prior code fabricated these with rng.uniform, making the whole assessment
+        # non-reproducible; each synthesized breakdown is flagged in data_assumptions so no
+        # default is mistaken for a real balance sheet.
+        data_assumptions: list[str] = []
         if asf_breakdown is None:
             asf_breakdown = {
-                "stable_retail_deposits": rng.uniform(800.0, 2000.0),
-                "less_stable_retail_deposits": rng.uniform(200.0, 600.0),
-                "wholesale_funding_gt1y": rng.uniform(300.0, 1000.0),
-                "equity_tier1": rng.uniform(400.0, 800.0),
+                "stable_retail_deposits": 1400.0,
+                "less_stable_retail_deposits": 400.0,
+                "wholesale_funding_gt1y": 650.0,
+                "equity_tier1": 600.0,
             }
+            data_assumptions.append("ASF breakdown not supplied — illustrative default applied")
         if rsf_breakdown is None:
             rsf_breakdown = {
                 "level1_hqla": hqla_l1,
                 "level2a_hqla": hqla_l2a,
-                "unencumbered_residential_loans_lte35rw": rng.uniform(500.0, 1500.0),
-                "corporate_loans_gt1y": rng.uniform(300.0, 900.0),
+                "unencumbered_residential_loans_lte35rw": 1000.0,
+                "corporate_loans_gt1y": 600.0,
             }
+            data_assumptions.append("RSF breakdown not supplied — illustrative default applied")
         if time_buckets is None:
             buckets_def = ["overnight", "1m", "3m", "6m", "1y", "3y", "5y", "10y"]
             time_buckets = [
-                {
-                    "bucket": b,
-                    "assets_mn": rng.uniform(100.0, 800.0),
-                    "liabilities_mn": rng.uniform(100.0, 800.0),
-                }
+                {"bucket": b, "assets_mn": 450.0, "liabilities_mn": 450.0}
                 for b in buckets_def
             ]
+            data_assumptions.append("ALM time buckets not supplied — illustrative default applied")
 
         lcr_r = self.assess_lcr(entity_id, hqla_l1, hqla_l2a, hqla_l2b, gross_outflow, gross_inflow, climate_scenario)
         nsfr_r = self.assess_nsfr(entity_id, asf_breakdown, rsf_breakdown)
         alm_r = self.assess_alm_gap(entity_id, time_buckets)
-        stress_r = self.run_liquidity_stress(entity_id, lcr_r.lcr_pct, nsfr_r.nsfr_pct, scenario_id)
+        # Real funding bases for the stress from the ASF breakdown (deposits + wholesale >1y).
+        deposit_base = asf_breakdown.get("stable_retail_deposits", 0.0) + asf_breakdown.get("less_stable_retail_deposits", 0.0)
+        wholesale_base = asf_breakdown.get("wholesale_funding_gt1y", 0.0)
+        stress_r = self.run_liquidity_stress(
+            entity_id, lcr_r.lcr_pct, nsfr_r.nsfr_pct, scenario_id, deposit_base, wholesale_base)
 
         # Monitoring metrics (BCBS 238)
         monitoring = {
             tool: {
                 "description": meta["description"],
                 "frequency": meta.get("frequency", "monthly"),
-                "status": "reported" if rng.random() > 0.2 else "pending",
+                "status": "not_assessed",   # reporting status is not a random variable
             }
             for tool, meta in BCBS238_MONITORING.items()
         }
@@ -727,6 +747,7 @@ class Basel3LiquidityEngine:
                 "liquidity_buffer_adequacy": stress_r.liquidity_buffer_adequacy,
             },
             "monitoring_metrics": monitoring,
+            "data_assumptions": data_assumptions,
             "regulatory_breaches": breaches,
             "priority_actions": actions,
             "cross_framework": cross_framework,

@@ -4,9 +4,16 @@ Implements the full 4-step LEAP approach from TNFD Framework v1.0 (September 202
   E — Evaluate: dependencies & impacts using ENCORE
   A — Assess: material risks & opportunities; risk/opportunity magnitude
   P — Prepare: strategy response; targets; disclosure completeness
+
+Data-integrity note (remediation): this engine NO LONGER fabricates any returned
+metric with a random draw. Every returned figure is either (a) computed
+deterministically from caller-supplied observed data, or (b) an honest null
+("insufficient_data" / None / empty list) when the required input is absent.
+All public method signatures are backward-compatible: the new inputs are optional
+and default to None, so existing callers keep working (they now receive honest
+nulls instead of invented numbers).
 """
 
-import random
 import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date
@@ -213,22 +220,39 @@ CROSS_FRAMEWORK_MAP: Dict[str, Any] = {
     },
 }
 
+# TNFD recommends 14 disclosures across the four pillars (Governance, Strategy,
+# Risk & Impact Management, Metrics & Targets).
+TNFD_RECOMMENDED_DISCLOSURE_TOTAL: int = 14
+
+# Numeric magnitude proxy for qualitative dependency / impact / likelihood labels.
+# These are ordinal encodings of a caller-supplied qualitative rating, NOT random
+# draws — they let the engine derive a deterministic 0–100 magnitude when the
+# caller provides only a qualitative level.
+_LEVEL_MAGNITUDE: Dict[str, float] = {
+    "critical": 90.0,
+    "very_high": 90.0,
+    "high": 70.0,
+    "medium": 45.0,
+    "moderate": 45.0,
+    "low": 20.0,
+    "minimal": 10.0,
+}
+
 
 # ── Engine ────────────────────────────────────────────────────────────────────
 
 class TNFDLEAPEngine:
     """TNFD LEAP Process Assessment Engine.
 
-    All outputs are deterministic for a given entity_id using a seeded RNG.
-    No external data sources required; constants provide the reference framework.
+    Outputs are deterministic functions of the caller-supplied observed data.
+    When the observed data required for a metric is not provided, the engine
+    returns an honest null (None / "insufficient_data" / empty collection)
+    rather than an invented value. No external data sources are required;
+    constants provide the TNFD reference framework only.
     """
 
     def __init__(self) -> None:
         pass
-
-    def _rng(self, entity_id: str) -> random.Random:
-        seed = hash(entity_id) & 0xFFFFFFFF
-        return random.Random(seed)
 
     def _get_sector_profile(self, sector: str) -> Dict:
         return SECTOR_NATURE_MATERIALITY.get(
@@ -241,19 +265,44 @@ class TNFDLEAPEngine:
             },
         )
 
-    def _score_to_magnitude(self, score: float) -> str:
+    def _score_to_magnitude(self, score: Optional[float]) -> str:
+        if score is None:
+            return "insufficient_data"
         label = "low"
         for entry in RISK_MAGNITUDE_LABELS:
             if score >= entry["min_score"]:
                 label = entry["label"]
         return label
 
-    def _score_to_maturity(self, score: float) -> str:
+    def _score_to_maturity(self, score: Optional[float]) -> str:
+        if score is None:
+            return "insufficient_data"
         level = "initial"
         for entry in LEAP_MATURITY_LEVELS:
             if score >= entry["min_score"]:
                 level = entry["level"]
         return level
+
+    @staticmethod
+    def _level_to_magnitude(level: Optional[str]) -> Optional[float]:
+        """Map a caller-supplied qualitative level to an ordinal 0–100 magnitude.
+
+        Returns None when the level is missing/unrecognised so the caller keeps
+        an honest null rather than a fabricated number.
+        """
+        if not level:
+            return None
+        return _LEVEL_MAGNITUDE.get(str(level).strip().lower())
+
+    @staticmethod
+    def _num(value: Any) -> Optional[float]:
+        """Coerce a supplied value to float, or None if not numeric."""
+        if value is None:
+            return None
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
 
     # ── Step L: Locate ────────────────────────────────────────────────────────
 
@@ -264,49 +313,83 @@ class TNFDLEAPEngine:
         value_chain_scope: Optional[Dict] = None,
         locations: Optional[List] = None,
     ) -> Dict:
-        """Step L — Locate: identify interfaces with nature across value chain."""
-        rng = self._rng(f"{entity_id}:locate")
+        """Step L — Locate: identify interfaces with nature across value chain.
+
+        ``locations`` (optional): caller-supplied list of observed priority
+        locations. Each item may carry: location_id, location_name, country,
+        biome, sensitivity, protected_area_overlap, key_biodiversity_area,
+        proximity_km. Missing fields are passed through as None (never invented).
+
+        ``value_chain_scope`` (optional): caller-supplied coverage dict with
+        upstream_coverage_pct / operations_coverage_pct / downstream_coverage_pct.
+
+        When neither input is provided, the location list is empty and
+        ``locate_score`` is None (insufficient data) — no random draw.
+        """
         profile = self._get_sector_profile(sector)
 
-        locate_score = rng.uniform(30, 95)
-
-        # Priority locations
-        num_locations = rng.randint(3, 5)
-        sensitivity_options = ["Very High", "High", "Medium", "Low"]
-        countries = ["Brazil", "Indonesia", "DR Congo", "Australia", "India", "China", "USA", "Germany", "Vietnam", "Peru"]
-        priority_locations = []
-        for i in range(num_locations):
-            biome = rng.choice(profile["high_risk_biomes"] + BIOMES[:4])
+        # Priority locations — pass through exactly what the caller observed.
+        priority_locations: List[Dict] = []
+        for i, loc in enumerate(locations or []):
+            src = loc if isinstance(loc, dict) else {}
             priority_locations.append({
-                "location_id": f"LOC-{i+1:03d}",
-                "location_name": f"Site {chr(65+i)} — {rng.choice(countries)}",
-                "country": rng.choice(countries),
-                "biome": biome,
-                "sensitivity": rng.choice(sensitivity_options),
-                "protected_area_overlap": rng.choice([True, False]),
-                "key_biodiversity_area": rng.random() > 0.6,
-                "proximity_km": round(rng.uniform(0.5, 50.0), 1),
+                "location_id": src.get("location_id", f"LOC-{i + 1:03d}"),
+                "location_name": src.get("location_name"),
+                "country": src.get("country"),
+                "biome": src.get("biome"),
+                "sensitivity": src.get("sensitivity"),
+                "protected_area_overlap": src.get("protected_area_overlap"),
+                "key_biodiversity_area": src.get("key_biodiversity_area"),
+                "proximity_km": self._num(src.get("proximity_km")),
             })
 
-        # Value chain scope
-        vc = value_chain_scope or {
-            "upstream_coverage_pct": round(rng.uniform(30, 85), 1),
-            "operations_coverage_pct": round(rng.uniform(60, 98), 1),
-            "downstream_coverage_pct": round(rng.uniform(15, 60), 1),
-        }
+        # Value chain scope — honest nulls unless the caller provides coverage.
+        if value_chain_scope:
+            vc = {
+                "upstream_coverage_pct": self._num(value_chain_scope.get("upstream_coverage_pct")),
+                "operations_coverage_pct": self._num(value_chain_scope.get("operations_coverage_pct")),
+                "downstream_coverage_pct": self._num(value_chain_scope.get("downstream_coverage_pct")),
+            }
+        else:
+            vc = {
+                "upstream_coverage_pct": None,
+                "operations_coverage_pct": None,
+                "downstream_coverage_pct": None,
+            }
 
-        sensitive_ecosystems = rng.sample(BIOMES, min(4, rng.randint(2, 4)))
+        # Sensitive ecosystems present in the observed locations that intersect
+        # the sector's known high-risk biomes (deterministic set intersection).
+        high_risk = set(profile["high_risk_biomes"])
+        observed_biomes = [pl["biome"] for pl in priority_locations if pl.get("biome")]
+        sensitive_ecosystems = sorted({b for b in observed_biomes if b in high_risk})
+
+        # Locate score: coverage-weighted completeness of the location & value
+        # chain mapping. Derived only from supplied coverage percentages; None if
+        # the caller provided no coverage data at all.
+        coverage_vals = [v for v in vc.values() if v is not None]
+        if coverage_vals:
+            locate_score: Optional[float] = round(sum(coverage_vals) / len(coverage_vals), 1)
+        else:
+            locate_score = None
+
+        upstream = vc.get("upstream_coverage_pct")
+        if upstream is None:
+            completeness_notes = "insufficient_data — value chain coverage not provided"
+        elif upstream < 70:
+            completeness_notes = "Upstream Tier 2+ suppliers not fully mapped"
+        else:
+            completeness_notes = "Coverage adequate"
 
         return {
             "step": "L",
             "step_name": "Locate",
-            "locate_score": round(locate_score, 1),
+            "locate_score": locate_score,
             "priority_locations": priority_locations,
             "num_priority_locations": len(priority_locations),
             "value_chain_scope": vc,
             "sensitive_ecosystems": sensitive_ecosystems,
             "data_sources_used": ["Company site register", "IBAT (Integrated Biodiversity Assessment Tool)", "WDPA (Protected Planet)"],
-            "completeness_notes": "Upstream Tier 2+ suppliers not fully mapped" if vc.get("upstream_coverage_pct", 100) < 70 else "Coverage adequate",
+            "completeness_notes": completeness_notes,
         }
 
     # ── Step E: Evaluate ─────────────────────────────────────────────────────
@@ -316,58 +399,91 @@ class TNFDLEAPEngine:
         entity_id: str,
         sector: str,
         locate_result: Dict,
+        dependencies: Optional[List] = None,
+        impacts: Optional[List] = None,
     ) -> Dict:
-        """Step E — Evaluate: assess dependencies and impacts using ENCORE."""
-        rng = self._rng(f"{entity_id}:evaluate")
+        """Step E — Evaluate: assess dependencies and impacts using ENCORE.
+
+        ``dependencies`` (optional): caller-supplied observed dependencies. Each
+        item may carry ecosystem_service, dependency_level, business_process,
+        substitutability, encore_materiality.
+
+        ``impacts`` (optional): caller-supplied observed impacts. Each item may
+        carry impact_driver, magnitude (0–100) OR magnitude_label, scope,
+        irreversibility, value_chain_stage. If only a qualitative
+        magnitude_label is given, an ordinal magnitude is derived; otherwise
+        magnitude stays None.
+
+        When neither input is provided, both lists are empty and
+        ``evaluate_score`` is None — no random draw.
+        """
         profile = self._get_sector_profile(sector)
 
-        evaluate_score = rng.uniform(25, 90)
-
-        # Dependencies
-        dep_levels = ["Critical", "High", "Medium", "Low"]
-        num_deps = rng.randint(5, 8)
-        selected_deps = rng.sample(profile["key_dependencies"] + ENCORE_DEPENDENCIES[:6], min(num_deps, len(profile["key_dependencies"]) + 6))
-        dependencies = []
-        for dep in selected_deps:
-            dependencies.append({
-                "ecosystem_service": dep,
-                "dependency_level": rng.choice(dep_levels),
-                "business_process": rng.choice(["Core production", "Supply chain", "Operations", "Product delivery"]),
-                "substitutability": rng.choice(["Non-substitutable", "Partially substitutable", "Substitutable"]),
-                "encore_materiality": rng.choice(["High", "Medium", "Low"]),
+        # Dependencies — pass through observed data only.
+        out_deps: List[Dict] = []
+        for dep in dependencies or []:
+            src = dep if isinstance(dep, dict) else {"ecosystem_service": dep}
+            out_deps.append({
+                "ecosystem_service": src.get("ecosystem_service"),
+                "dependency_level": src.get("dependency_level"),
+                "business_process": src.get("business_process"),
+                "substitutability": src.get("substitutability"),
+                "encore_materiality": src.get("encore_materiality"),
             })
 
-        # Impacts
-        scope_options = ["Local", "Sub-national", "National", "Global"]
-        num_impacts = rng.randint(4, 7)
-        selected_drivers = rng.sample(profile["key_impacts"] + ENCORE_IMPACT_DRIVERS, min(num_impacts, len(ENCORE_IMPACT_DRIVERS)))
-        impacts = []
-        for driver in selected_drivers:
-            mag = rng.uniform(10, 90)
-            impacts.append({
-                "impact_driver": driver,
-                "magnitude": round(mag, 1),
+        # Impacts — use supplied magnitude, else derive from qualitative label.
+        out_impacts: List[Dict] = []
+        for imp in impacts or []:
+            src = imp if isinstance(imp, dict) else {"impact_driver": imp}
+            mag = self._num(src.get("magnitude"))
+            if mag is None:
+                mag = self._level_to_magnitude(src.get("magnitude_label"))
+            out_impacts.append({
+                "impact_driver": src.get("impact_driver"),
+                "magnitude": round(mag, 1) if mag is not None else None,
                 "magnitude_label": self._score_to_magnitude(mag),
-                "scope": rng.choice(scope_options),
-                "irreversibility": rng.choice(["Reversible", "Partially reversible", "Irreversible"]),
-                "value_chain_stage": rng.choice(["Upstream", "Own operations", "Downstream"]),
+                "scope": src.get("scope"),
+                "irreversibility": src.get("irreversibility"),
+                "value_chain_stage": src.get("value_chain_stage"),
             })
 
-        # Ecosystem condition
-        condition_states = ["Good", "Fair", "Poor", "Critical"]
-        ecosystem_condition = {
-            loc["biome"]: rng.choice(condition_states)
-            for loc in locate_result.get("priority_locations", [])
-        }
+        # Ecosystem condition — only from caller-supplied location condition data.
+        ecosystem_condition: Dict[str, Any] = {}
+        for loc in locate_result.get("priority_locations", []):
+            biome = loc.get("biome")
+            cond = loc.get("ecosystem_condition") if isinstance(loc, dict) else None
+            if biome:
+                ecosystem_condition[biome] = cond  # None when not observed
+
+        # Evaluate score: ENCORE coverage of the sector's known-material set,
+        # combined with the share of impacts that carry a graded magnitude.
+        key_deps = set(profile["key_dependencies"])
+        key_imps = set(profile["key_impacts"])
+        observed_dep_services = {d["ecosystem_service"] for d in out_deps if d.get("ecosystem_service")}
+        observed_imp_drivers = {i["impact_driver"] for i in out_impacts if i.get("impact_driver")}
+
+        components: List[float] = []
+        if key_deps:
+            components.append(100.0 * len(observed_dep_services & key_deps) / len(key_deps))
+        if key_imps:
+            components.append(100.0 * len(observed_imp_drivers & key_imps) / len(key_imps))
+        graded = [i for i in out_impacts if i.get("magnitude") is not None]
+        if out_impacts:
+            components.append(100.0 * len(graded) / len(out_impacts))
+
+        if components and (out_deps or out_impacts):
+            evaluate_score: Optional[float] = round(sum(components) / len(components), 1)
+        else:
+            evaluate_score = None
 
         return {
             "step": "E",
             "step_name": "Evaluate",
-            "evaluate_score": round(evaluate_score, 1),
-            "dependencies": dependencies,
-            "num_dependencies": len(dependencies),
-            "impacts": impacts,
-            "num_impacts": len(impacts),
+            "evaluate_score": evaluate_score,
+            "dependencies": out_deps,
+            "num_dependencies": len(out_deps),
+            "impacts": out_impacts,
+            "num_impacts": len(out_impacts),
             "ecosystem_condition": ecosystem_condition,
             "encore_tool_version": "ENCORE 2.0",
             "assessment_method": "TNFD ENCORE Methodology v1.1",
@@ -380,74 +496,98 @@ class TNFDLEAPEngine:
         entity_id: str,
         sector: str,
         evaluate_result: Dict,
+        risks: Optional[List] = None,
+        opportunities: Optional[List] = None,
     ) -> Dict:
-        """Step A — Assess: identify material nature-related risks and opportunities."""
-        rng = self._rng(f"{entity_id}:assess")
+        """Step A — Assess: identify material nature-related risks and opportunities.
 
-        assess_score = rng.uniform(25, 92)
+        ``risks`` (optional): caller-supplied observed nature-related risks. Each
+        item may carry risk_id, description, risk_type, time_horizon, likelihood,
+        magnitude (0–100) OR magnitude_label, financial_impact_mn, affected_assets.
 
-        risk_types = ["Physical — acute", "Physical — chronic", "Transition — policy", "Transition — market", "Systemic — tipping point"]
-        time_horizons = ["Short-term (0-3y)", "Medium-term (3-10y)", "Long-term (10y+)"]
-        likelihood_levels = ["Likely", "Possible", "Unlikely", "Remote"]
+        ``opportunities`` (optional): caller-supplied observed opportunities. Each
+        item may carry opp_id, description, opportunity_type, time_horizon,
+        estimated_value_mn, implementation_readiness.
 
-        num_risks = rng.randint(3, 5)
-        material_risks = []
-        for i in range(num_risks):
-            mag = rng.uniform(20, 95)
+        Aggregations (average magnitude, totals) are computed from the supplied
+        rows only. When no rows are supplied, lists are empty, scores/aggregates
+        are None, and magnitude labels read "insufficient_data" — no random draw.
+        """
+        material_risks: List[Dict] = []
+        for i, r in enumerate(risks or []):
+            src = r if isinstance(r, dict) else {"description": r}
+            mag = self._num(src.get("magnitude"))
+            if mag is None:
+                mag = self._level_to_magnitude(src.get("magnitude_label"))
             material_risks.append({
-                "risk_id": f"R{i+1:02d}",
-                "description": rng.choice([
-                    "Freshwater scarcity impacting operational cooling and processing",
-                    "Regulatory expansion of protected area corridors restricting site access",
-                    "Pollinator decline reducing crop yields in supply base",
-                    "Mangrove loss increasing coastal flood exposure at key facilities",
-                    "Soil degradation curtailing raw material availability",
-                    "Marine ecosystem collapse disrupting fishery supply chains",
-                    "Government nature-related taxes and levies on land use",
-                    "Loss of disease regulation services increasing biosecurity costs",
-                ]),
-                "risk_type": rng.choice(risk_types),
-                "time_horizon": rng.choice(time_horizons),
-                "likelihood": rng.choice(likelihood_levels),
-                "magnitude": round(mag, 1),
+                "risk_id": src.get("risk_id", f"R{i + 1:02d}"),
+                "description": src.get("description"),
+                "risk_type": src.get("risk_type"),
+                "time_horizon": src.get("time_horizon"),
+                "likelihood": src.get("likelihood"),
+                "magnitude": round(mag, 1) if mag is not None else None,
                 "magnitude_label": self._score_to_magnitude(mag),
-                "financial_impact_mn": round(rng.uniform(0.5, 50.0), 2),
-                "affected_assets": rng.randint(1, 8),
+                "financial_impact_mn": self._num(src.get("financial_impact_mn")),
+                "affected_assets": src.get("affected_assets"),
             })
 
-        opp_types = ["Resource efficiency", "New market", "Resilience", "Green premium", "Regulatory incentive"]
-        num_opps = rng.randint(2, 3)
-        material_opportunities = []
-        for i in range(num_opps):
+        material_opportunities: List[Dict] = []
+        for i, o in enumerate(opportunities or []):
+            src = o if isinstance(o, dict) else {"description": o}
             material_opportunities.append({
-                "opp_id": f"O{i+1:02d}",
-                "description": rng.choice([
-                    "Nature-based solutions reducing carbon liability and regulatory exposure",
-                    "Ecosystem restoration credits generating new revenue stream",
-                    "Water stewardship reducing operational costs and community risk",
-                    "Biodiversity net gain (BNG) credits from habitat enhancement",
-                    "Supply chain resilience premium from nature-positive sourcing",
-                ]),
-                "opportunity_type": rng.choice(opp_types),
-                "time_horizon": rng.choice(time_horizons),
-                "estimated_value_mn": round(rng.uniform(0.2, 20.0), 2),
-                "implementation_readiness": rng.choice(["Ready", "Requires investment", "Long-term"]),
+                "opp_id": src.get("opp_id", f"O{i + 1:02d}"),
+                "description": src.get("description"),
+                "opportunity_type": src.get("opportunity_type"),
+                "time_horizon": src.get("time_horizon"),
+                "estimated_value_mn": self._num(src.get("estimated_value_mn")),
+                "implementation_readiness": src.get("implementation_readiness"),
             })
 
-        avg_risk_mag = sum(r["magnitude"] for r in material_risks) / len(material_risks)
+        # Average risk magnitude over rows that carry a graded magnitude.
+        graded_mags = [r["magnitude"] for r in material_risks if r.get("magnitude") is not None]
+        avg_risk_mag: Optional[float] = (sum(graded_mags) / len(graded_mags)) if graded_mags else None
+
+        # Opportunity magnitude: qualitative label from the mean estimated value,
+        # only when value data exists (no arbitrary threshold on invented data).
+        opp_values = [o["estimated_value_mn"] for o in material_opportunities if o.get("estimated_value_mn") is not None]
+        if opp_values:
+            mean_opp = sum(opp_values) / len(opp_values)
+            opportunity_magnitude = "high" if mean_opp >= 10 else ("medium" if mean_opp >= 2 else "low")
+        else:
+            opportunity_magnitude = "insufficient_data"
+
+        risk_financials = [r["financial_impact_mn"] for r in material_risks if r.get("financial_impact_mn") is not None]
+        total_financial_exposure_mn: Optional[float] = round(sum(risk_financials), 2) if risk_financials else None
+        total_opportunity_value_mn: Optional[float] = round(sum(opp_values), 2) if opp_values else None
+
+        # Assess score: completeness of the risk register — share of risks that
+        # carry a graded magnitude, i.e. how well the material set is quantified.
+        if material_risks:
+            assess_score: Optional[float] = round(100.0 * len(graded_mags) / len(material_risks), 1)
+        else:
+            assess_score = None
+
+        # Double materiality is confirmed only when both an impact (from Evaluate)
+        # and a financial risk have been observed — a real logical condition.
+        has_impact = bool(evaluate_result.get("impacts"))
+        has_financial_risk = bool(risk_financials)
+        if material_risks or evaluate_result.get("impacts"):
+            double_materiality_confirmed: Optional[bool] = bool(has_impact and has_financial_risk)
+        else:
+            double_materiality_confirmed = None
 
         return {
             "step": "A",
             "step_name": "Assess",
-            "assess_score": round(assess_score, 1),
+            "assess_score": assess_score,
             "material_risks": material_risks,
             "material_opportunities": material_opportunities,
             "risk_magnitude": self._score_to_magnitude(avg_risk_mag),
-            "risk_magnitude_score": round(avg_risk_mag, 1),
-            "opportunity_magnitude": rng.choice(["low", "medium", "high"]),
-            "total_financial_exposure_mn": round(sum(r["financial_impact_mn"] for r in material_risks), 2),
-            "total_opportunity_value_mn": round(sum(o["estimated_value_mn"] for o in material_opportunities), 2),
-            "double_materiality_confirmed": rng.random() > 0.3,
+            "risk_magnitude_score": round(avg_risk_mag, 1) if avg_risk_mag is not None else None,
+            "opportunity_magnitude": opportunity_magnitude,
+            "total_financial_exposure_mn": total_financial_exposure_mn,
+            "total_opportunity_value_mn": total_opportunity_value_mn,
+            "double_materiality_confirmed": double_materiality_confirmed,
         }
 
     # ── Step P: Prepare ───────────────────────────────────────────────────────
@@ -456,63 +596,120 @@ class TNFDLEAPEngine:
         self,
         entity_id: str,
         assess_result: Dict,
+        strategy_response: Optional[Dict] = None,
+        targets: Optional[List] = None,
+        disclosures_met: Optional[int] = None,
     ) -> Dict:
-        """Step P — Prepare: strategy, targets, and disclosure completeness."""
-        rng = self._rng(f"{entity_id}:prepare")
+        """Step P — Prepare: strategy, targets, and disclosure completeness.
 
-        prepare_score = rng.uniform(20, 88)
+        ``strategy_response`` (optional): caller-supplied governance/strategy flags
+        (nature_policy_adopted, board_oversight, nature_in_risk_register,
+        nature_in_strategy, engagement_plan, nature_positive_commitment,
+        third_party_verification). Missing flags pass through as None.
 
-        strategy_response = {
-            "nature_policy_adopted": rng.random() > 0.4,
-            "board_oversight": rng.choice(["Full board", "Board committee", "Management only", "None"]),
-            "nature_in_risk_register": rng.random() > 0.5,
-            "nature_in_strategy": rng.random() > 0.45,
-            "engagement_plan": rng.random() > 0.55,
-            "nature_positive_commitment": rng.random() > 0.35,
-            "third_party_verification": rng.random() > 0.6,
-        }
+        ``targets`` (optional): caller-supplied nature targets. Each item may carry
+        target_description, target_year, baseline_year, progress_pct, sbtn_aligned,
+        verified.
 
-        target_types = [
-            "No net deforestation by 2025 across direct operations",
-            "50% reduction in freshwater withdrawal intensity by 2030",
-            "Net positive impact on biodiversity for new developments by 2027",
-            "Zero conversion of natural ecosystems in supply base by 2026",
-            "Science-Based Targets for Nature aligned pathway adopted by 2025",
-            "Achieve biodiversity net gain of 10% on all construction projects by 2030",
+        ``disclosures_met`` (optional): count (0–14) of TNFD recommended
+        disclosures the entity currently meets. Drives disclosure_completeness_pct.
+
+        When these inputs are absent, flags/targets are empty and completeness is
+        None — no random draw.
+        """
+        # Strategy response — pass through observed flags; unknowns stay None.
+        _strategy_keys = [
+            "nature_policy_adopted",
+            "board_oversight",
+            "nature_in_risk_register",
+            "nature_in_strategy",
+            "engagement_plan",
+            "nature_positive_commitment",
+            "third_party_verification",
         ]
-        num_targets = rng.randint(2, 3)
-        targets_set = []
-        for t in rng.sample(target_types, num_targets):
+        src_strategy = strategy_response or {}
+        out_strategy = {k: src_strategy.get(k) for k in _strategy_keys}
+
+        # Targets — pass through observed targets only.
+        targets_set: List[Dict] = []
+        for t in targets or []:
+            src = t if isinstance(t, dict) else {"target_description": t}
             targets_set.append({
-                "target_description": t,
-                "target_year": rng.choice([2025, 2026, 2027, 2028, 2030]),
-                "baseline_year": rng.choice([2019, 2020, 2021, 2022]),
-                "progress_pct": round(rng.uniform(0, 70), 1),
-                "sbtn_aligned": rng.random() > 0.5,
-                "verified": rng.random() > 0.6,
+                "target_description": src.get("target_description"),
+                "target_year": src.get("target_year"),
+                "baseline_year": src.get("baseline_year"),
+                "progress_pct": self._num(src.get("progress_pct")),
+                "sbtn_aligned": src.get("sbtn_aligned"),
+                "verified": src.get("verified"),
             })
 
-        disclosure_completeness_pct = round(rng.uniform(35, 92), 1)
+        # Disclosure completeness: real ratio of disclosures met to the TNFD 14.
+        if disclosures_met is not None:
+            met = max(0, min(int(disclosures_met), TNFD_RECOMMENDED_DISCLOSURE_TOTAL))
+            disclosure_completeness_pct: Optional[float] = round(
+                100.0 * met / TNFD_RECOMMENDED_DISCLOSURE_TOTAL, 1
+            )
+            tnfd_disclosures_met: Optional[int] = met
+        else:
+            disclosure_completeness_pct = None
+            tnfd_disclosures_met = None
+
+        # Prepare score: share of the seven governance/strategy flags satisfied,
+        # blended with disclosure completeness when available.
+        satisfied = sum(1 for k in _strategy_keys if k != "board_oversight" and out_strategy.get(k) is True)
+        # board_oversight counts as satisfied if it is a real oversight body.
+        board = out_strategy.get("board_oversight")
+        if isinstance(board, str) and board.strip().lower() in ("full board", "board committee"):
+            satisfied += 1
+        provided_flags = [k for k in _strategy_keys if out_strategy.get(k) is not None]
+
+        prep_components: List[float] = []
+        if provided_flags:
+            prep_components.append(100.0 * satisfied / len(_strategy_keys))
+        if disclosure_completeness_pct is not None:
+            prep_components.append(disclosure_completeness_pct)
+        if prep_components:
+            prepare_score: Optional[float] = round(sum(prep_components) / len(prep_components), 1)
+        else:
+            prepare_score = None
 
         return {
             "step": "P",
             "step_name": "Prepare",
-            "prepare_score": round(prepare_score, 1),
-            "strategy_response": strategy_response,
+            "prepare_score": prepare_score,
+            "strategy_response": out_strategy,
             "targets_set": targets_set,
             "num_targets": len(targets_set),
             "disclosure_completeness_pct": disclosure_completeness_pct,
-            "tnfd_recommended_disclosures_met": int(disclosure_completeness_pct / 100 * 14),
-            "tnfd_recommended_disclosures_total": 14,
-            "improvement_areas": rng.sample([
-                "Formalise nature policy with board sign-off",
-                "Expand ENCORE assessment to Tier 2 suppliers",
-                "Set quantitative biodiversity targets",
-                "Commission third-party verification of LEAP process",
-                "Integrate nature risks into financial risk management",
-                "Engage investors on TNFD disclosure timeline",
-            ], rng.randint(2, 4)),
+            "tnfd_recommended_disclosures_met": tnfd_disclosures_met,
+            "tnfd_recommended_disclosures_total": TNFD_RECOMMENDED_DISCLOSURE_TOTAL,
+            "improvement_areas": self._derive_improvement_areas(out_strategy, targets_set, disclosure_completeness_pct),
         }
+
+    @staticmethod
+    def _derive_improvement_areas(
+        strategy: Dict,
+        targets: List[Dict],
+        disclosure_pct: Optional[float],
+    ) -> List[str]:
+        """Deterministically flag improvement areas from observed gaps.
+
+        Returns an empty list when no observed data is available to judge gaps.
+        """
+        areas: List[str] = []
+        if strategy.get("nature_policy_adopted") is False:
+            areas.append("Formalise nature policy with board sign-off")
+        if not targets:
+            areas.append("Set quantitative biodiversity targets")
+        if strategy.get("third_party_verification") is False:
+            areas.append("Commission third-party verification of LEAP process")
+        if strategy.get("nature_in_risk_register") is False:
+            areas.append("Integrate nature risks into financial risk management")
+        if strategy.get("engagement_plan") is False:
+            areas.append("Engage investors on TNFD disclosure timeline")
+        if disclosure_pct is not None and disclosure_pct < 100:
+            areas.append("Expand ENCORE assessment to Tier 2 suppliers")
+        return areas
 
     # ── Full LEAP ─────────────────────────────────────────────────────────────
 
@@ -523,48 +720,67 @@ class TNFDLEAPEngine:
         reporting_period: Optional[str] = None,
         **kwargs,
     ) -> Dict:
-        """Run all 4 LEAP steps and return comprehensive assessment dict."""
-        rng = self._rng(entity_id)
+        """Run all 4 LEAP steps and return comprehensive assessment dict.
 
+        Observed data is threaded through via keyword arguments (all optional):
+          - value_chain_scope, locations           -> Locate
+          - dependencies, impacts                   -> Evaluate
+          - risks, opportunities                    -> Assess
+          - strategy_response, targets, disclosures_met -> Prepare
+          - priority_actions                        -> Prepare/overall (pass-through)
+          - entity_name                             -> metadata
+
+        Any metric whose observed input is absent is returned as an honest null
+        (None / "insufficient_data" / empty list). No metric is fabricated.
+        """
         period = reporting_period or str(date.today().year - 1)
         assessment_id = str(uuid.uuid4())
         now = datetime.utcnow().isoformat()
 
-        # Run each step
-        locate = self.locate_assessment(entity_id, sector, **{k: v for k, v in kwargs.items() if k in ("value_chain_scope", "locations")})
-        evaluate = self.evaluate_assessment(entity_id, sector, locate)
-        assess = self.assess_material_risks(entity_id, sector, evaluate)
-        prepare = self.prepare_response(entity_id, assess)
+        # Run each step, threading only the relevant observed inputs.
+        locate = self.locate_assessment(
+            entity_id, sector,
+            value_chain_scope=kwargs.get("value_chain_scope"),
+            locations=kwargs.get("locations"),
+        )
+        evaluate = self.evaluate_assessment(
+            entity_id, sector, locate,
+            dependencies=kwargs.get("dependencies"),
+            impacts=kwargs.get("impacts"),
+        )
+        assess = self.assess_material_risks(
+            entity_id, sector, evaluate,
+            risks=kwargs.get("risks"),
+            opportunities=kwargs.get("opportunities"),
+        )
+        prepare = self.prepare_response(
+            entity_id, assess,
+            strategy_response=kwargs.get("strategy_response"),
+            targets=kwargs.get("targets"),
+            disclosures_met=kwargs.get("disclosures_met"),
+        )
 
-        # Overall score
+        # Overall score = mean of the step scores that could actually be computed.
         step_scores = [
             locate["locate_score"],
             evaluate["evaluate_score"],
             assess["assess_score"],
             prepare["prepare_score"],
         ]
-        overall_score = round(sum(step_scores) / 4, 1)
+        present_scores = [s for s in step_scores if s is not None]
+        overall_score: Optional[float] = round(sum(present_scores) / len(present_scores), 1) if present_scores else None
         maturity = self._score_to_maturity(overall_score)
 
-        # Priority actions
-        priority_actions = [
-            {
-                "action": action,
-                "priority": rng.choice(["Critical", "High", "Medium"]),
-                "effort": rng.choice(["Low", "Medium", "High"]),
-                "timeframe": rng.choice(["Immediate (0-6m)", "Short-term (6-18m)", "Medium-term (18-36m)"]),
-            }
-            for action in rng.sample([
-                "Complete biodiversity baseline survey for all Tier 1 sites",
-                "Integrate TNFD disclosures into annual report",
-                "Establish nature-related KPIs and board reporting cadence",
-                "Conduct ENCORE dependency mapping for top 20 suppliers",
-                "Develop nature-positive transition plan",
-                "Assess exposure to high biodiversity value areas in supply chain",
-                "Set science-based targets for nature (SBTN)",
-                "Commission third-party LEAP process audit",
-            ], rng.randint(3, 5))
-        ]
+        # Priority actions — caller-supplied only; unknowns pass through as None.
+        priority_actions: List[Dict] = []
+        for action in kwargs.get("priority_actions", []) or []:
+            src = action if isinstance(action, dict) else {"action": action}
+            priority_actions.append({
+                "action": src.get("action"),
+                "priority": src.get("priority"),
+                "effort": src.get("effort"),
+                "timeframe": src.get("timeframe"),
+            })
 
         return {
             "assessment_id": assessment_id,

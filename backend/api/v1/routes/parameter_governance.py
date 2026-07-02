@@ -104,24 +104,24 @@ def list_parameters(
 ) -> List[Dict[str, Any]]:
     """List calculation parameters, optionally filtered by category and approval status."""
     try:
-        where_clauses = ["approval_status = :status"]
+        where_clauses = ["status = :status"]
         params: Dict[str, Any] = {"status": status, "lim": limit, "off": offset}
 
         if category:
-            where_clauses.append("parameter_category = :category")
+            where_clauses.append("category = :category")
             params["category"] = category
 
         where_sql = " AND ".join(where_clauses)
 
         rows = db.execute(
             text(f"""
-                SELECT id, parameter_name, parameter_category, description,
-                       value_numeric, value_text, unit, source,
-                       approval_status, version, effective_date, expiry_date,
+                SELECT id, parameter_name, category AS parameter_category, notes AS description,
+                       value AS value_numeric, NULL AS value_text, unit, source,
+                       status AS approval_status, version, effective_date, expiry_date,
                        created_at, org_id
                 FROM calculation_parameters
                 WHERE {where_sql}
-                ORDER BY parameter_category, parameter_name, version DESC
+                ORDER BY category, parameter_name, version DESC
                 LIMIT :lim OFFSET :off
             """),
             params,
@@ -262,10 +262,10 @@ def get_parameter(
     try:
         row = db.execute(
             text("""
-                SELECT id, parameter_name, parameter_category, description,
-                       value_numeric, value_text, unit, source,
-                       approval_status, version, effective_date, expiry_date,
-                       justification, created_at, org_id
+                SELECT id, parameter_name, category AS parameter_category, notes AS description,
+                       value AS value_numeric, NULL AS value_text, unit, source,
+                       status AS approval_status, version, effective_date, expiry_date,
+                       NULL AS justification, created_at, org_id
                 FROM calculation_parameters
                 WHERE id = :pid
             """),

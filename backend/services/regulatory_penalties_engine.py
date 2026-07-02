@@ -7,7 +7,6 @@ EU ESG enforcement framework:
 - CSDDD (Directive 2024/1760): Art 29-33 (up to 5% worldwide net turnover)
 """
 
-import random
 import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date
@@ -15,6 +14,23 @@ import uuid
 import math
 
 logger = logging.getLogger(__name__)
+
+# ── Model calibration constants (documented; NOT entity metrics) ────────────────
+# Regulators typically impose a fraction of the statutory maximum once
+# non-compliance is demonstrated. Absent an entity-specific enforcement history,
+# the model applies the midpoint of the commonly-observed 15–65% band. Callers
+# may override via the `enforcement_intensity` parameter with a supervised value.
+DEFAULT_ENFORCEMENT_INTENSITY: float = 0.40  # midpoint of documented 0.15–0.65 band
+
+# Share of an expected penalty that credible remediation is assumed to avoid,
+# by violation severity (higher severity → larger avoidable exposure). Documented
+# model calibration, not an entity measurement.
+PENALTY_AVOIDANCE_FRACTION: Dict[str, float] = {
+    "critical": 0.80,
+    "major":    0.70,
+    "moderate": 0.60,
+    "minor":    0.50,
+}
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -183,10 +199,6 @@ class RegulatoryPenaltiesEngine:
     def __init__(self) -> None:
         pass
 
-    def _rng(self, entity_id: str) -> random.Random:
-        seed = hash(entity_id) & 0xFFFFFFFF
-        return random.Random(seed)
-
     def _compliance_to_violation_severity(self, compliance_pct: float) -> str:
         if compliance_pct < 30:
             return "critical"
@@ -196,12 +208,26 @@ class RegulatoryPenaltiesEngine:
             return "moderate"
         return "minor"
 
-    def _expected_penalty_factor(self, compliance_pct: float, rng: random.Random) -> float:
-        """Fraction of max penalty likely to be imposed, given compliance level."""
+    def _expected_penalty_factor(
+        self,
+        compliance_pct: float,
+        enforcement_intensity: Optional[float] = None,
+    ) -> float:
+        """Fraction of max penalty likely to be imposed, given compliance level.
+
+        Deterministic: the non-compliance gap (a real input) is scaled by the
+        enforcement intensity. When the caller does not supply an entity-specific
+        `enforcement_intensity`, the documented model calibration constant
+        DEFAULT_ENFORCEMENT_INTENSITY (0.40, midpoint of the observed 0.15–0.65
+        band) is used — a model constant, not a fabricated entity measurement.
+        """
         base_non_compliance = max(0, (100 - compliance_pct) / 100)
-        # Regulators typically impose 20-60% of max when non-compliance is demonstrated
-        enforcement_factor = rng.uniform(0.15, 0.65) * base_non_compliance
-        return enforcement_factor
+        intensity = (
+            enforcement_intensity
+            if enforcement_intensity is not None
+            else DEFAULT_ENFORCEMENT_INTENSITY
+        )
+        return intensity * base_non_compliance
 
     # ── calculate_regulation_penalty ─────────────────────────────────────────
 
@@ -212,9 +238,14 @@ class RegulatoryPenaltiesEngine:
         annual_turnover_mn: float,
         compliance_pct: float,
         violation_details: Optional[Dict] = None,
+        enforcement_intensity: Optional[float] = None,
     ) -> Dict:
-        """Calculate penalty exposure for a single regulation."""
-        rng = self._rng(f"{entity_id}:{regulation}")
+        """Calculate penalty exposure for a single regulation.
+
+        `enforcement_intensity` (optional): entity-specific fraction of the
+        statutory maximum a supervisor is expected to impose. When omitted, the
+        documented model calibration constant is used (see _expected_penalty_factor).
+        """
         cfg = REGULATION_CONFIGS.get(regulation, REGULATION_CONFIGS["csrd"])
 
         severity_label = self._compliance_to_violation_severity(compliance_pct)
@@ -224,12 +255,15 @@ class RegulatoryPenaltiesEngine:
         max_fixed = cfg.get("fixed_max_mn")
         max_penalty_mn = min(max_pct_penalty, max_fixed) if max_fixed else max_pct_penalty
 
-        enforcement_factor = self._expected_penalty_factor(compliance_pct, rng)
+        enforcement_factor = self._expected_penalty_factor(compliance_pct, enforcement_intensity)
         expected_penalty_mn = round(max_penalty_mn * enforcement_factor * severity_mult, 3)
 
-        # Violation count estimate
+        # Violation count estimate: deterministic from the compliance gap.
+        # Uses the caller-supplied count when available; otherwise derives the
+        # number of violations from how far compliance falls below 100% (one
+        # violation per ~10 percentage-point shortfall). No random jitter.
         violation_count = violation_details.get("count", 0) if violation_details else int(
-            max(0, (100 - compliance_pct) / 10) + rng.randint(0, 3)
+            max(0, (100 - compliance_pct) / 10)
         )
 
         return {
@@ -255,18 +289,31 @@ class RegulatoryPenaltiesEngine:
         entity_id: str,
         annual_turnover_mn: float,
         compliance_scores: Dict[str, float],
+        enforcement_intensity: Optional[float] = None,
     ) -> Dict:
-        """Assess penalty exposure across all 5 regulations."""
-        rng = self._rng(f"{entity_id}:all")
+        """Assess penalty exposure across all 5 regulations.
 
+        Only regulations for which a compliance score is supplied are assessed.
+        Regulations without a score are reported as skipped (honest null) rather
+        than assigned an invented compliance level.
+        """
         results = {}
+        skipped_regulations = []
         total_max = 0.0
         total_expected = 0.0
         violations_found = []
 
         for reg in ["csrd", "sfdr", "taxonomy", "eudr", "csddd"]:
-            comp = compliance_scores.get(reg, rng.uniform(40, 90))
-            result = self.calculate_regulation_penalty(entity_id, reg, annual_turnover_mn, comp)
+            comp = compliance_scores.get(reg)
+            if comp is None:
+                # No supplied compliance score → insufficient data to compute a
+                # penalty exposure. Record as skipped instead of fabricating one.
+                skipped_regulations.append(reg)
+                continue
+            result = self.calculate_regulation_penalty(
+                entity_id, reg, annual_turnover_mn, comp,
+                enforcement_intensity=enforcement_intensity,
+            )
             results[reg] = result
             total_max += result["max_penalty_mn"]
             total_expected += result["expected_penalty_mn"]
@@ -285,6 +332,7 @@ class RegulatoryPenaltiesEngine:
             "entity_id": entity_id,
             "annual_turnover_mn": annual_turnover_mn,
             "penalty_by_regulation": results,
+            "skipped_regulations": skipped_regulations,
             "total_max_penalty_mn": round(total_max, 3),
             "total_expected_penalty_mn": round(effective_total, 3),
             "total_pct_of_turnover": round(effective_total / annual_turnover_mn * 100, 4) if annual_turnover_mn > 0 else 0,
@@ -301,20 +349,42 @@ class RegulatoryPenaltiesEngine:
         entity_id: str,
         compliance_scores: Dict[str, float],
         sector: Optional[str] = None,
+        jurisdiction: Optional[str] = None,
     ) -> Dict:
-        """Assess whistleblower / internal reporting risk."""
-        rng = self._rng(f"{entity_id}:whistleblower")
+        """Assess whistleblower / internal reporting risk.
 
-        avg_compliance = (
-            sum(compliance_scores.values()) / len(compliance_scores)
-            if compliance_scores else rng.uniform(50, 80)
-        )
+        Deterministic: the risk score is derived from the average compliance
+        score (real input), a fixed sector premium, and a jurisdiction premium
+        driven by whether `jurisdiction` is a documented high-risk enforcement
+        jurisdiction. When no compliance scores are supplied the risk score is an
+        honest null (insufficient data) rather than a random draw.
+        """
+        if compliance_scores:
+            avg_compliance = sum(compliance_scores.values()) / len(compliance_scores)
+        else:
+            avg_compliance = None  # insufficient data — cannot score
+
+        if avg_compliance is None:
+            return {
+                "entity_id": entity_id,
+                "whistleblower_risk": "insufficient_data",
+                "risk_score": None,
+                "average_compliance_pct": None,
+                "risk_factors": [
+                    "No compliance scores supplied — whistleblower risk cannot be assessed"
+                ],
+                "mitigation_actions": [],
+                "eu_directive_coverage": "EU Whistleblower Directive (2019/1937) — mandatory reporting channels for >50 FTE",
+                "assessed_at": datetime.utcnow().isoformat(),
+            }
 
         # Risk score inversely proportional to compliance
         base_risk = 100 - avg_compliance
         sector_premium = 15 if sector in ["financial", "energy", "chemicals", "retail"] else 5
-        jurisdiction_premium = rng.choice([0, 5, 10, 15])
-        risk_score = min(100, base_risk + sector_premium * rng.uniform(0.5, 1.5) + jurisdiction_premium)
+        # Jurisdiction premium: elevated for documented high-risk enforcement
+        # jurisdictions, otherwise none. Deterministic (no random draw).
+        jurisdiction_premium = 15 if jurisdiction in HIGH_RISK_JURISDICTIONS else 0
+        risk_score = min(100, base_risk + sector_premium + jurisdiction_premium)
 
         tier = "low"
         for t, cfg in WHISTLEBLOWER_RISK_THRESHOLDS.items():
@@ -334,14 +404,16 @@ class RegulatoryPenaltiesEngine:
         if not risk_factors:
             risk_factors.append("No material whistleblower risk factors identified at current compliance levels")
 
-        mitigation_actions = rng.sample([
+        # Standing set of recommended mitigations (deterministic, not a random
+        # subset). All are applicable ESG-compliance controls.
+        mitigation_actions = [
             "Establish anonymous ESG compliance hotline (EU Whistleblower Directive 2019/1937)",
             "Conduct internal ESG compliance audit before regulatory deadline",
             "Engage external legal counsel for SFDR / CSRD gap review",
             "Brief board audit committee on ESG compliance exposure",
             "Develop remediation roadmap with regulator-facing timeline",
             "Subscribe to regulatory enforcement tracker for early-warning alerts",
-        ], rng.randint(2, 4))
+        ]
 
         return {
             "entity_id": entity_id,
@@ -361,9 +433,11 @@ class RegulatoryPenaltiesEngine:
         entity_id: str,
         penalty_assessment: Dict,
     ) -> List[Dict]:
-        """Generate prioritised remediation actions from penalty assessment."""
-        rng = self._rng(f"{entity_id}:remediation")
+        """Generate prioritised remediation actions from penalty assessment.
 
+        Deterministic: action selection, effort, impact, timeframe and avoided
+        penalty are all derived from violation severity — no random draws.
+        """
         actions = []
         violations = penalty_assessment.get("violations_found", [])
 
@@ -403,23 +477,36 @@ class RegulatoryPenaltiesEngine:
             ],
         }
 
+        effort_map = {"critical": "High", "major": "High", "moderate": "Medium", "minor": "Low"}
+        impact_map = {"critical": 90, "major": 70, "moderate": 40, "minor": 15}
+        # Timeframe follows severity: the more severe the violation, the sooner
+        # remediation must start. Deterministic mapping (no random choice).
+        timeframe_map = {
+            "critical": "Immediate (0-3m)",
+            "major": "Immediate (0-3m)",
+            "moderate": "Short-term (3-6m)",
+            "minor": "Medium-term (6-12m)",
+        }
+
         for v in violations_sorted:
             reg = v.get("regulation", "")
             reg_actions = remediation_map.get(reg, [])
             if reg_actions:
-                action = rng.choice(reg_actions)
-                effort_map = {"critical": "High", "major": "High", "moderate": "Medium", "minor": "Low"}
-                impact_map = {"critical": 90, "major": 70, "moderate": 40, "minor": 15}
                 severity = v.get("severity", "moderate")
+                # Highest-priority action for this regulation (first listed).
+                action = reg_actions[0]
+                # Avoided penalty: documented severity-linked recovery fraction
+                # applied to the real expected-penalty input (model constant).
+                avoidance = PENALTY_AVOIDANCE_FRACTION.get(severity, 0.60)
                 actions.append({
                     "action_id": str(uuid.uuid4())[:8],
                     "regulation": reg,
                     "action": action,
                     "priority": severity.capitalize(),
                     "effort": effort_map.get(severity, "Medium"),
-                    "impact_score": impact_map.get(severity, 40) + rng.randint(-5, 10),
-                    "expected_penalty_avoided_mn": round(v.get("expected_penalty_mn", 0) * rng.uniform(0.5, 0.9), 3),
-                    "timeframe": rng.choice(["Immediate (0-3m)", "Short-term (3-6m)", "Medium-term (6-12m)"]),
+                    "impact_score": impact_map.get(severity, 40),
+                    "expected_penalty_avoided_mn": round(v.get("expected_penalty_mn", 0) * avoidance, 3),
+                    "timeframe": timeframe_map.get(severity, "Short-term (3-6m)"),
                 })
 
         # Add generic actions if few violations
@@ -447,28 +534,42 @@ class RegulatoryPenaltiesEngine:
         compliance_scores: Dict[str, float],
         **kwargs,
     ) -> Dict:
-        """Orchestrate full penalty assessment."""
-        rng = self._rng(entity_id)
+        """Orchestrate full penalty assessment.
+
+        Optional kwargs: `sector`, `jurisdiction`, `reporting_period`,
+        `enforcement_intensity`. When `jurisdiction` is not supplied it is
+        reported as None (honest null) rather than an invented country.
+        """
         assessment_id = str(uuid.uuid4())
         now = datetime.utcnow().isoformat()
 
-        sector = kwargs.get("sector", "general")
-        jurisdiction = kwargs.get("jurisdiction", rng.choice(HIGH_RISK_JURISDICTIONS))
+        sector = kwargs.get("sector") or "general"
+        # No fabricated jurisdiction — None when the caller does not supply one.
+        jurisdiction = kwargs.get("jurisdiction")
+        enforcement_intensity = kwargs.get("enforcement_intensity")
 
         # Main assessments
-        all_regs = self.assess_all_regulations(entity_id, annual_turnover_mn, compliance_scores)
-        whistleblower = self.assess_whistleblower_risk(entity_id, compliance_scores, sector)
+        all_regs = self.assess_all_regulations(
+            entity_id, annual_turnover_mn, compliance_scores,
+            enforcement_intensity=enforcement_intensity,
+        )
+        whistleblower = self.assess_whistleblower_risk(
+            entity_id, compliance_scores, sector, jurisdiction=jurisdiction,
+        )
         remediation = self.generate_remediation_priorities(entity_id, all_regs)
 
-        avg_compliance = round(
-            sum(compliance_scores.values()) / max(1, len(compliance_scores)), 1
-        )
-
-        overall_risk = (
-            "Critical" if avg_compliance < 40 else
-            ("High" if avg_compliance < 60 else
-             ("Medium" if avg_compliance < 80 else "Low"))
-        )
+        # Average compliance is an honest null when no scores were supplied
+        # (avoids a fabricated 0 that would mis-flag the entity as "Critical").
+        if compliance_scores:
+            avg_compliance = round(sum(compliance_scores.values()) / len(compliance_scores), 1)
+            overall_risk = (
+                "Critical" if avg_compliance < 40 else
+                ("High" if avg_compliance < 60 else
+                 ("Medium" if avg_compliance < 80 else "Low"))
+            )
+        else:
+            avg_compliance = None
+            overall_risk = "insufficient_data"
 
         return {
             "assessment_id": assessment_id,

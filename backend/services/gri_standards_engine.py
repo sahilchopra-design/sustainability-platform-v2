@@ -27,7 +27,6 @@ References:
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
@@ -612,20 +611,20 @@ class GRIReport:
     assessment_date: str
     service_level: str
 
-    gri2_disclosures_submitted: int
+    gri2_disclosures_submitted: Optional[int]
     gri2_disclosures_required: int
-    gri2_completeness_pct: float
+    gri2_completeness_pct: Optional[float]
     gri2_gaps: list[str] = field(default_factory=list)
 
     material_topics: list[str] = field(default_factory=list)
     material_topics_with_management_approach: list[str] = field(default_factory=list)
     gri300_topics_disclosed: list[str] = field(default_factory=list)
-    gri300_completeness_pct: float = 0.0
+    gri300_completeness_pct: Optional[float] = 0.0
 
-    overall_score: float = 0.0
-    governance_score: float = 0.0
-    environment_score: float = 0.0
-    completeness_score: float = 0.0
+    overall_score: Optional[float] = 0.0
+    governance_score: Optional[float] = 0.0
+    environment_score: Optional[float] = 0.0
+    completeness_score: Optional[float] = 0.0
 
     assurance_level: str = "none"
     assurance_provider: Optional[str] = None
@@ -633,6 +632,7 @@ class GRIReport:
     priority_gaps: list[str] = field(default_factory=list)
     recommendations: list[str] = field(default_factory=list)
 
+    data_completeness_flag: str = "complete"
     notes: str = ""
 
 
@@ -644,6 +644,11 @@ class GRIStandardsEngine:
     """GRI Standards reporting assessment and content index generation engine."""
 
     _GRI2_REQUIRED_COUNT = 30
+    # GRI 2 governance-body disclosures (2-9 through 2-21) — the "ethics_integrity" group.
+    # Used to derive a governance completeness score from actually-submitted disclosures.
+    _GRI2_GOVERNANCE_IDS = [
+        d_id for d_id, d in GRI_2_DISCLOSURES.items() if d["group"] == "ethics_integrity"
+    ]
 
     def assess(
         self,
@@ -654,34 +659,111 @@ class GRIStandardsEngine:
         gri_2_disclosures_submitted: Optional[list[str]] = None,
         gri_300_data: Optional[dict] = None,
     ) -> GRIReport:
-        """Full GRI Standards compliance assessment."""
-        rng = random.Random(hash(entity_id + reporting_period))
+        """Full GRI Standards compliance assessment.
+
+        All scores are derived deterministically from caller-supplied evidence:
+          - ``gri_2_disclosures_submitted``: list of GRI 2 disclosure IDs actually reported.
+          - ``gri_300_data``: dict keyed by GRI 300 topic (e.g. "GRI_305") holding the
+            reported environmental data for that topic.
+
+        When the required evidence is absent the corresponding metric is returned as
+        ``None`` (honest null) rather than a fabricated value, and
+        ``data_completeness_flag`` signals the missing inputs.
+        """
         material_topics = material_topics or ["GRI_302", "GRI_305", "GRI_306"]
         gri_2_submitted = gri_2_disclosures_submitted or []
+        gri_300_data = gri_300_data or {}
+        missing_inputs: list[str] = []
 
-        submitted_count = len(gri_2_submitted) if gri_2_submitted else rng.randint(18, 30)
-        gri2_completeness = round(submitted_count / self._GRI2_REQUIRED_COUNT * 100, 1)
-        gri2_gaps = self._identify_gri2_gaps(gri_2_submitted, rng)
+        # --- GRI 2 completeness (deterministic from submitted list) ---
+        if gri_2_disclosures_submitted is not None:
+            # Count only recognised GRI 2 disclosure IDs to avoid inflating completeness.
+            valid_submitted = [d for d in gri_2_submitted if d in GRI_2_DISCLOSURES]
+            submitted_count: Optional[int] = len(valid_submitted)
+            gri2_completeness: Optional[float] = round(
+                submitted_count / self._GRI2_REQUIRED_COUNT * 100, 1
+            )
+        else:
+            # No disclosure inventory supplied -> cannot measure completeness. Honest null.
+            submitted_count = None
+            gri2_completeness = None
+            missing_inputs.append("gri_2_disclosures_submitted")
 
-        gri300_disclosed = [t for t in material_topics if t in GRI_300_STANDARDS]
-        gri300_completeness = self._score_gri300(gri300_disclosed, gri_300_data, rng)
+        gri2_gaps = self._identify_gri2_gaps(gri_2_submitted) if gri_2_disclosures_submitted is not None else []
 
-        governance_score = rng.uniform(50, 95)
-        environment_score = rng.uniform(40, 90) if gri300_disclosed else rng.uniform(20, 55)
-        completeness_score = gri2_completeness * 0.6 + gri300_completeness * 0.4
-        overall_score = governance_score * 0.3 + environment_score * 0.3 + completeness_score * 0.4
+        # --- GRI 300 completeness (deterministic from material topics + reported data) ---
+        gri300_disclosed = [
+            t for t in material_topics if t in GRI_300_STANDARDS and gri_300_data.get(t)
+        ]
+        gri300_completeness = self._score_gri300(material_topics, gri_300_data)
 
-        service_level = "with_reference" if submitted_count >= 28 else (
-            "core" if submitted_count >= 18 else "partial"
+        # --- Governance score: share of governance-body disclosures (2-9..2-21) reported ---
+        if gri_2_disclosures_submitted is not None and self._GRI2_GOVERNANCE_IDS:
+            gov_reported = sum(1 for d in self._GRI2_GOVERNANCE_IDS if d in gri_2_submitted)
+            governance_score: Optional[float] = round(
+                gov_reported / len(self._GRI2_GOVERNANCE_IDS) * 100, 1
+            )
+        else:
+            governance_score = None
+
+        # --- Environment score: GRI 300 coverage weighted by reported-data quality ---
+        # Derived from the deterministic completeness measure (no random noise).
+        environment_score: Optional[float] = (
+            round(gri300_completeness, 1) if gri300_completeness is not None else None
         )
 
-        assurance_level = "limited" if overall_score >= 70 else "none"
-        assurance_provider = "Deloitte Sustainability" if assurance_level != "none" and rng.random() > 0.5 else None
+        # --- Composite scores: only computed when component inputs are present ---
+        if gri2_completeness is not None and gri300_completeness is not None:
+            completeness_score: Optional[float] = round(
+                gri2_completeness * 0.6 + gri300_completeness * 0.4, 1
+            )
+        else:
+            completeness_score = None
 
-        ma_covered = [t for t in material_topics if rng.random() > 0.3]
+        score_parts = [governance_score, environment_score, completeness_score]
+        if all(p is not None for p in score_parts):
+            overall_score: Optional[float] = round(
+                governance_score * 0.3 + environment_score * 0.3 + completeness_score * 0.4, 1
+            )
+        else:
+            overall_score = None
 
-        gaps = gri2_gaps + self._identify_gri300_gaps(material_topics, gri300_disclosed, rng)
+        # --- Service level: derived from measured completeness (null-guarded) ---
+        if submitted_count is None:
+            service_level = "insufficient_data"
+        elif submitted_count >= 28:
+            service_level = "with_reference"
+        elif submitted_count >= 18:
+            service_level = "core"
+        else:
+            service_level = "partial"
+
+        # --- Assurance: reported evidence only; never fabricated ---
+        # Assurance provider must come from the source report; absent input -> honest null.
+        assurance_provider = None
+        assurance_level = "none"
+
+        # --- Management approach coverage: a topic is covered iff its GRI 300 data is reported ---
+        ma_covered = [
+            t for t in material_topics if t in GRI_300_STANDARDS and gri_300_data.get(t)
+        ]
+
+        gaps = gri2_gaps + self._identify_gri300_gaps(material_topics, gri300_disclosed)
         recommendations = self._build_recommendations(gaps, overall_score)
+
+        data_completeness_flag = "complete" if not missing_inputs else (
+            "insufficient_data: " + ", ".join(missing_inputs)
+        )
+        notes = (
+            f"GRI Standards assessment for {entity_name}. Reporting period: {reporting_period}. "
+            f"Framework: GRI 2021."
+        )
+        if missing_inputs:
+            notes += (
+                " Scores requiring "
+                + ", ".join(missing_inputs)
+                + " are reported as null pending disclosure evidence."
+            )
 
         return GRIReport(
             entity_id=entity_id,
@@ -696,36 +778,46 @@ class GRIStandardsEngine:
             material_topics=material_topics,
             material_topics_with_management_approach=ma_covered,
             gri300_topics_disclosed=gri300_disclosed,
-            gri300_completeness_pct=round(gri300_completeness, 1),
-            overall_score=round(overall_score, 1),
-            governance_score=round(governance_score, 1),
-            environment_score=round(environment_score, 1),
-            completeness_score=round(completeness_score, 1),
+            gri300_completeness_pct=(round(gri300_completeness, 1) if gri300_completeness is not None else None),
+            overall_score=overall_score,
+            governance_score=governance_score,
+            environment_score=environment_score,
+            completeness_score=completeness_score,
             assurance_level=assurance_level,
             assurance_provider=assurance_provider,
             priority_gaps=gaps[:5],
             recommendations=recommendations[:5],
-            notes=f"GRI Standards assessment for {entity_name}. Reporting period: {reporting_period}. Framework: GRI 2021.",
+            data_completeness_flag=data_completeness_flag,
+            notes=notes,
         )
 
-    def _identify_gri2_gaps(self, submitted: list[str], rng: random.Random) -> list[str]:
+    def _identify_gri2_gaps(self, submitted: list[str]) -> list[str]:
+        """Gaps = required GRI 2 disclosures not present in the submitted list (deterministic)."""
         gaps = []
         for disc_id, disc in GRI_2_DISCLOSURES.items():
-            if disc_id not in submitted and rng.random() > 0.65:
+            if disc_id not in submitted:
                 gaps.append(f"{disc_id} — {disc['title']} not disclosed")
         return gaps[:6]
 
     def _score_gri300(
-        self, disclosed_topics: list[str], gri_300_data: Optional[dict], rng: random.Random
-    ) -> float:
-        if not disclosed_topics:
-            return rng.uniform(10, 35)
-        base = (len(disclosed_topics) / len(GRI_300_STANDARDS)) * 100
-        data_quality_boost = 10 if gri_300_data else 0
-        return min(100.0, base + data_quality_boost + rng.uniform(-5, 10))
+        self, material_topics: list[str], gri_300_data: Optional[dict]
+    ) -> Optional[float]:
+        """Deterministic GRI 300 completeness.
+
+        Measures the share of GRI 300 environmental standards that are (a) flagged material
+        and (b) have reported data. Returns ``None`` when no material GRI 300 topics are
+        provided (nothing to measure) rather than fabricating a score.
+        """
+        gri_300_data = gri_300_data or {}
+        material_env = [t for t in material_topics if t in GRI_300_STANDARDS]
+        if not material_env:
+            return None
+        reported = [t for t in material_env if gri_300_data.get(t)]
+        # Completeness = reported material env topics / all GRI 300 standards, expressed as %.
+        return round(len(reported) / len(GRI_300_STANDARDS) * 100, 1)
 
     def _identify_gri300_gaps(
-        self, material_topics: list[str], disclosed: list[str], rng: random.Random
+        self, material_topics: list[str], disclosed: list[str]
     ) -> list[str]:
         gaps = []
         for topic in material_topics:
@@ -737,9 +829,11 @@ class GRIStandardsEngine:
                 )
         return gaps
 
-    def _build_recommendations(self, gaps: list[str], score: float) -> list[str]:
+    def _build_recommendations(self, gaps: list[str], score: Optional[float]) -> list[str]:
         recs = []
-        if score < 60:
+        if score is None:
+            recs.append("Provide a GRI 2 disclosure inventory and GRI 300 topic data to enable a scored assessment")
+        if score is not None and score < 60:
             recs.append("Prioritise completing all 30 GRI 2 disclosures to reach 'in accordance with GRI Standards' level")
         if any("GRI_305" in g for g in gaps):
             recs.append("Disclose Scope 1 and Scope 2 GHG emissions per GRI 305-1/305-2 using GHG Protocol Corporate Standard")
@@ -747,7 +841,7 @@ class GRIStandardsEngine:
             recs.append("Complete GRI 302-1 (energy consumption) with renewable/non-renewable breakdown and GJ unit reporting")
         if any("management approach" in g.lower() for g in gaps):
             recs.append("Develop GRI 3-3 Management Approach disclosures for all material topics — required for GRI Standards compliance")
-        if score < 75:
+        if score is not None and score < 75:
             recs.append("Commission limited assurance engagement (ISAE 3000) to strengthen credibility of GRI report")
         return recs
 
@@ -757,8 +851,14 @@ class GRIStandardsEngine:
         material_topics: Optional[list[str]] = None,
         disclosures_status: Optional[dict] = None,
     ) -> dict:
-        """Generate GRI Content Index per GRI 101:2023 requirements."""
-        rng = random.Random(hash(entity_id + "content_index"))
+        """Generate GRI Content Index per GRI 101:2023 requirements.
+
+        ``disclosures_status`` maps a GRI disclosure ID to a dict describing its reported
+        state, e.g. ``{"2-1": {"status": "disclosed", "location": "...", "assurance": "limited"}}``.
+        A plain string status (``{"2-1": "disclosed"}``) is also accepted. Any disclosure
+        not present in the input is marked ``"not_reported"`` with a null location — the
+        engine never invents a status, location, or assurance conclusion.
+        """
         material_topics = material_topics or ["GRI_302", "GRI_305"]
         statuses = disclosures_status or {}
 
@@ -772,14 +872,14 @@ class GRIStandardsEngine:
 
         gri2_entries = []
         for disc_id, disc_data in GRI_2_DISCLOSURES.items():
-            status = statuses.get(disc_id, rng.choice(["disclosed", "partially_omitted", "omitted"]))
+            entry = self._content_index_entry(disc_id, statuses.get(disc_id))
             gri2_entries.append({
                 "disclosure_id": disc_id,
                 "disclosure_title": disc_data["title"],
-                "location": f"Annual Report 2024, Section: {disc_data['group'].replace('_', ' ').title()}" if status == "disclosed" else None,
-                "status": status,
-                "omission_reason": "Not applicable to our business model" if status == "omitted" else None,
-                "assurance": "limited" if status == "disclosed" and rng.random() > 0.5 else "none",
+                "location": entry["location"],
+                "status": entry["status"],
+                "omission_reason": entry["omission_reason"],
+                "assurance": entry["assurance"],
             })
         content_index["sections"]["GRI_2"] = {
             "standard": "GRI 2: General Disclosures 2021",
@@ -792,25 +892,54 @@ class GRIStandardsEngine:
             std = GRI_300_STANDARDS[topic_key]
             topic_entries = []
             for disc_id, disc_data in std["disclosures"].items():
-                status = statuses.get(disc_id, rng.choice(["disclosed", "partially_omitted"]))
+                entry = self._content_index_entry(disc_id, statuses.get(disc_id))
                 topic_entries.append({
                     "disclosure_id": disc_id,
                     "disclosure_title": disc_data["title"],
                     "unit": disc_data["unit"],
-                    "location": f"Sustainability Report 2024, {std['topic']} section" if status == "disclosed" else None,
-                    "status": status,
-                    "omission_reason": None,
-                    "assurance": "limited" if rng.random() > 0.6 else "none",
+                    "location": entry["location"],
+                    "status": entry["status"],
+                    "omission_reason": entry["omission_reason"],
+                    "assurance": entry["assurance"],
                 })
             content_index["sections"][topic_key] = {
                 "standard": std["standard"],
                 "topic": std["topic"],
                 "material": True,
-                "management_approach": f"GRI 3-3 Management Approach disclosed in Sustainability Report 2024, Section: {std['topic']}",
+                "management_approach": None,
                 "disclosures": topic_entries,
             }
 
         return {"status": "ok", "content_index": content_index}
+
+    @staticmethod
+    def _content_index_entry(disc_id: str, supplied) -> dict:
+        """Normalise a caller-supplied status into a content-index row (no fabrication).
+
+        Accepts either a status string or a dict with keys among
+        {status, location, omission_reason, assurance}. Missing fields default to honest
+        nulls / "not_reported".
+        """
+        if supplied is None:
+            return {"status": "not_reported", "location": None, "omission_reason": None, "assurance": "none"}
+        if isinstance(supplied, str):
+            status = supplied
+            location = None
+            omission_reason = None
+            assurance = "none"
+        elif isinstance(supplied, dict):
+            status = supplied.get("status", "not_reported")
+            location = supplied.get("location")
+            omission_reason = supplied.get("omission_reason")
+            assurance = supplied.get("assurance", "none")
+        else:
+            return {"status": "not_reported", "location": None, "omission_reason": None, "assurance": "none"}
+        return {
+            "status": status,
+            "location": location,
+            "omission_reason": omission_reason,
+            "assurance": assurance if assurance in ("none", "limited", "reasonable") else "none",
+        }
 
     def screen_material_topics(
         self,
@@ -818,8 +947,11 @@ class GRIStandardsEngine:
         sector: str = "financials",
         stakeholder_inputs: Optional[list[str]] = None,
     ) -> dict:
-        """Screen and prioritise material GRI topics using double materiality lens."""
-        rng = random.Random(hash(entity_id + sector))
+        """Screen and prioritise material GRI topics using double materiality lens.
+
+        Materiality scores are derived deterministically from the GRI sector-materiality
+        weighting table plus explicit stakeholder inputs — no random noise is added.
+        """
         stakeholder_inputs = stakeholder_inputs or []
 
         sector_topic_weights: dict[str, dict[str, float]] = {
@@ -831,14 +963,17 @@ class GRIStandardsEngine:
         }
 
         base_weights = sector_topic_weights.get(sector, sector_topic_weights["financials"])
+        # Neutral default weight for a topic without a sector-specific mapping (defined
+        # constant, not a per-entity random draw).
+        _DEFAULT_WEIGHT = 0.5
 
         screened_topics = []
         for topic_key, std in GRI_300_STANDARDS.items():
-            base_weight = base_weights.get(topic_key, rng.uniform(0.3, 0.7))
+            base_weight = base_weights.get(topic_key, _DEFAULT_WEIGHT)
             stakeholder_boost = 0.1 if any(std["topic"].lower() in inp.lower() for inp in stakeholder_inputs) else 0
 
-            impact_materiality = min(1.0, base_weight + rng.uniform(-0.1, 0.1) + stakeholder_boost)
-            financial_materiality = min(1.0, base_weight * 0.8 + rng.uniform(-0.1, 0.15))
+            impact_materiality = min(1.0, base_weight + stakeholder_boost)
+            financial_materiality = min(1.0, base_weight * 0.8)
             double_materiality = max(impact_materiality, financial_materiality)
             is_material = double_materiality >= 0.55
 

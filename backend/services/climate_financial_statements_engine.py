@@ -12,8 +12,7 @@ Standards covered:
 """
 from __future__ import annotations
 
-import random
-from typing import Any
+from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
 # Reference data
@@ -545,9 +544,13 @@ SCENARIO_FINANCIAL_MULTIPLIERS: dict[str, dict[str, Any]] = {
 # Helper utilities
 # ---------------------------------------------------------------------------
 
-def _rng(seed_str: str) -> random.Random:
-    return random.Random(hash(seed_str) & 0xFFFF_FFFF)
-
+# NOTE (E86 remediation): every returned metric is now a deterministic computation
+# from caller-supplied inputs + documented model-calibration constants, or an honest
+# null where an entity input is absent. No pseudo-random draws are used to produce any
+# returned figure. Where a single point estimate is taken from a published/regulatory
+# range, the RANGE MIDPOINT is used as a documented MODEL calibration constant (flagged
+# inline as "# model midpoint"), and callers may override it with a real entity value via
+# the optional *_overrides / assumption parameters added to each public method.
 
 def _safe_float(val: Any, default: float = 0.0) -> float:
     try:
@@ -576,10 +579,20 @@ class ClimateFinancialStatementsEngine:
     # ------------------------------------------------------------------
     # 1. IFRS S2 Financial Effects
     # ------------------------------------------------------------------
-    def assess_ifrs_s2_financial_effects(self, entity_data: dict) -> dict:
+    def assess_ifrs_s2_financial_effects(
+        self,
+        entity_data: dict,
+        category_impact_overrides: Optional[dict] = None,
+    ) -> dict:
         """
         Identify and quantify the 8 IFRS S2 financial effect categories.
         Returns disclosure completeness score (0-100) and gap identification.
+
+        Magnitude estimates are deterministic: base_magnitude = driver input
+        (revenue / EBITDA / total_assets / emissions) × documented sector-relevance
+        model factor. Where a caller has a genuine entity estimate for a category it
+        may be supplied via ``category_impact_overrides`` as
+        ``{category_key: {"income_m": float, "bs_m": float}}`` and is used verbatim.
         """
         entity_id = entity_data.get("entity_id", "unknown")
         sector = entity_data.get("sector", "industrials").lower().replace(" ", "_")
@@ -589,8 +602,19 @@ class ClimateFinancialStatementsEngine:
         carbon_intensity = _safe_float(entity_data.get("carbon_intensity_tco2_per_mrevenue", 80))
         disclosed_categories = entity_data.get("disclosed_categories", [])
         eua_spot = _safe_float(entity_data.get("eua_spot_price_eur", 88.0))
+        overrides = category_impact_overrides or entity_data.get("category_impact_overrides") or {}
 
-        rng = _rng(entity_id + sector)
+        # Real allowance-deficit ratio for the carbon_provision magnitude (deterministic).
+        # Prefer explicit verified-emissions vs free-allocation inputs; else fall back to the
+        # caller-supplied allowance_deficit_pct. No random draw substitutes for this ratio.
+        _emiss_kt = _safe_float(entity_data.get("annual_verified_emissions_kt", 0.0))
+        _free_kt = _safe_float(entity_data.get("free_allocation_kt", 0.0))
+        if _emiss_kt > 0:
+            provision_deficit_pct = max(0.0, (_emiss_kt - _free_kt)) / _emiss_kt
+        else:
+            provision_deficit_pct = _clamp(
+                _safe_float(entity_data.get("allowance_deficit_pct", 15.0)), 0.0, 100.0
+            ) / 100.0
 
         effects: list[dict] = []
         total_income_impact_m = 0.0
@@ -609,46 +633,58 @@ class ClimateFinancialStatementsEngine:
             ]
             base_relevance = 0.80 if sector_relevant else 0.35
 
-            # Estimate magnitude per category
+            # Estimate magnitude per category — deterministic: driver input × sector-relevance
+            # model factor. The scalar coefficients below (0.12, 0.03, 0.05, ...) are documented
+            # model-calibration constants (share-of-driver estimates), not random draws.
             if cat_key == "transition_risk_revenue":
-                income_m = abs(revenue_m * abs(_safe_float(mult.get("2c_impact_pct", -10))) / 100 * base_relevance * rng.uniform(0.7, 1.3))
+                income_m = abs(revenue_m * abs(_safe_float(mult.get("2c_impact_pct", -10))) / 100 * base_relevance)
                 bs_m = 0.0
 
             elif cat_key == "transition_risk_cost":
-                income_m = abs(ebitda_m * 0.12 * base_relevance * rng.uniform(0.8, 1.4))
+                income_m = abs(ebitda_m * 0.12 * base_relevance)  # model coefficient
                 bs_m = income_m * 0.6  # CapEx component capitalised
 
             elif cat_key == "physical_risk_asset":
-                income_m = abs(total_assets_m * 0.03 * base_relevance * rng.uniform(0.5, 1.5)) * 0.4
-                bs_m = abs(total_assets_m * 0.03 * base_relevance * rng.uniform(0.5, 1.5))
+                _phys_base = abs(total_assets_m * 0.03 * base_relevance)  # model coefficient
+                income_m = _phys_base * 0.4
+                bs_m = _phys_base
 
             elif cat_key == "climate_opportunity_revenue":
-                income_m = abs(revenue_m * 0.05 * base_relevance * rng.uniform(0.6, 1.2))
+                income_m = abs(revenue_m * 0.05 * base_relevance)  # model coefficient
                 bs_m = 0.0
 
             elif cat_key == "carbon_provision":
                 ets_profile = CARBON_PROVISION_THRESHOLDS.get(sector, CARBON_PROVISION_THRESHOLDS["industrials"])
-                price_mid = ets_profile["typical_provision_range_eur_per_tonne"]["mid"]
+                price_mid = ets_profile["typical_provision_range_eur_per_tonne"]["mid"]  # published range midpoint
                 annual_emissions_kt = carbon_intensity * revenue_m / 1_000
-                provision_deficit_pct = rng.uniform(0.05, 0.25)
+                # provision_deficit_pct derived above from real emissions/allocation inputs
                 income_m = annual_emissions_kt * 1_000 * provision_deficit_pct * price_mid / 1_000_000
                 bs_m = income_m
 
             elif cat_key == "stranded_asset_write_down":
-                income_m = abs(total_assets_m * 0.08 * base_relevance * rng.uniform(0.4, 1.2))
+                income_m = abs(total_assets_m * 0.08 * base_relevance)  # model coefficient
                 bs_m = income_m
 
             elif cat_key == "climate_capex":
                 income_m = 0.0  # Capitalised — no immediate P&L hit
-                bs_m = abs(total_assets_m * 0.04 * base_relevance * rng.uniform(0.8, 1.6))
+                bs_m = abs(total_assets_m * 0.04 * base_relevance)  # model coefficient
 
             elif cat_key == "climate_litigation":
-                income_m = abs(revenue_m * 0.015 * base_relevance * rng.uniform(0.3, 1.0)) * 0.5
-                bs_m = abs(revenue_m * 0.015 * base_relevance * rng.uniform(0.3, 1.0)) * 0.3
+                _lit_base = abs(revenue_m * 0.015 * base_relevance)  # model coefficient
+                income_m = _lit_base * 0.5
+                bs_m = _lit_base * 0.3
 
             else:
                 income_m = 0.0
                 bs_m = 0.0
+
+            # Caller-supplied genuine entity estimate takes precedence over the model proxy.
+            _ov = overrides.get(cat_key) if isinstance(overrides, dict) else None
+            if isinstance(_ov, dict):
+                if _ov.get("income_m") is not None:
+                    income_m = _safe_float(_ov.get("income_m"))
+                if _ov.get("bs_m") is not None:
+                    bs_m = _safe_float(_ov.get("bs_m"))
 
             is_disclosed = cat_key in disclosed_categories
             if not is_disclosed and cat["disclosure_required"]:
@@ -704,10 +740,24 @@ class ClimateFinancialStatementsEngine:
     # ------------------------------------------------------------------
     # 2. IAS 36 Climate Impairment
     # ------------------------------------------------------------------
-    def assess_ias36_climate_impairment(self, entity_data: dict) -> dict:
+    def assess_ias36_climate_impairment(
+        self,
+        entity_data: dict,
+        indicator_overrides: Optional[dict] = None,
+    ) -> dict:
         """
         Evaluate all 12 IAS 36 climate impairment indicators.
         Returns triggered indicators, estimated impairment amount and impairment-tested assets.
+
+        Triggering is deterministic: an indicator is flagged as triggered when its
+        climate-adjusted probability reaches the IAS 36 / IAS 37 "probable" threshold
+        (>= 0.50). Estimated impairment per triggered indicator is the documented
+        write-down range MIDPOINT (model constant) applied to the entity's real carrying
+        amounts (PP&E / goodwill+intangibles). No pseudo-random draw is used.
+
+        Callers with a genuine impairment-test result may pass
+        ``indicator_overrides`` as ``{indicator_name: {"triggered": bool,
+        "impairment_m": float}}``; supplied values are used verbatim.
         """
         entity_id = entity_data.get("entity_id", "unknown")
         sector = entity_data.get("sector", "industrials").lower().replace(" ", "_")
@@ -720,8 +770,9 @@ class ClimateFinancialStatementsEngine:
         ])
         eua_price = _safe_float(entity_data.get("eua_price_eur", 88.0))
         allowance_deficit_pct = _safe_float(entity_data.get("allowance_deficit_pct", 15.0))
+        overrides = indicator_overrides or entity_data.get("indicator_overrides") or {}
 
-        rng = _rng(entity_id + "ias36")
+        PROBABLE_THRESHOLD = 0.50  # IAS 36/37 "probable" recognition threshold
 
         high_risk_sectors = {"oil_gas", "utilities_fossil", "coal", "industrials", "real_estate", "aviation", "shipping"}
         triggered: list[dict] = []
@@ -751,20 +802,36 @@ class ClimateFinancialStatementsEngine:
             if ind["indicator_name"] == "stranded_fossil_reserve" and sector == "oil_gas":
                 adjusted_prob = min(0.92, adjusted_prob * 1.20)
 
-            triggered_flag = rng.random() < adjusted_prob
+            iname = ind["indicator_name"]
+
+            # Deterministic trigger: indicator fires when climate-adjusted probability
+            # reaches the IAS 36/37 "probable" threshold. Estimated impairment uses the
+            # MIDPOINT of the documented indicator write-down band (model constants below)
+            # applied to the entity's real carrying amounts.
+            triggered_flag = adjusted_prob >= PROBABLE_THRESHOLD
 
             impairment_m = 0.0
             if triggered_flag:
-                iname = ind["indicator_name"]
                 if "reserve" in iname or "fossil" in iname or "stranded" in iname:
-                    impairment_m = ppe_m * rng.uniform(0.12, 0.35)
+                    impairment_m = ppe_m * 0.235          # midpoint of 0.12–0.35
                 elif "building" in iname or "real_estate" in iname or "green_premium" in iname:
-                    impairment_m = ppe_m * 0.40 * rng.uniform(0.08, 0.22)
+                    impairment_m = ppe_m * 0.40 * 0.15     # midpoint of 0.08–0.22
                 elif "goodwill" in iname or "demand" in iname or "revenue" in iname:
-                    impairment_m = (goodwill_m + intangibles_m) * rng.uniform(0.10, 0.30)
+                    impairment_m = (goodwill_m + intangibles_m) * 0.20  # midpoint of 0.10–0.30
                 else:
-                    impairment_m = ppe_m * rng.uniform(0.05, 0.18)
+                    impairment_m = ppe_m * 0.115           # midpoint of 0.05–0.18
 
+            # Caller-supplied genuine impairment-test result overrides the model proxy.
+            _ov = overrides.get(iname) if isinstance(overrides, dict) else None
+            if isinstance(_ov, dict):
+                if _ov.get("triggered") is not None:
+                    triggered_flag = bool(_ov.get("triggered"))
+                if _ov.get("impairment_m") is not None:
+                    impairment_m = _safe_float(_ov.get("impairment_m"))
+                elif not triggered_flag:
+                    impairment_m = 0.0
+
+            if triggered_flag:
                 triggered.append({
                     "indicator_name": ind["indicator_name"],
                     "indicator_id": ind.get("indicator_id", ""),
@@ -830,10 +897,20 @@ class ClimateFinancialStatementsEngine:
     # ------------------------------------------------------------------
     # 3. Carbon Provisions
     # ------------------------------------------------------------------
-    def calculate_carbon_provisions(self, entity_data: dict) -> dict:
+    def calculate_carbon_provisions(
+        self,
+        entity_data: dict,
+        carbon_price_cagr_pct: Optional[float] = None,
+    ) -> dict:
         """
         Calculate IAS 37 carbon provision for ETS allowance deficit.
         Returns provision amount, basis, probability and ETS compliance cost.
+
+        The 3-year forward provision uses a deterministic carbon-price CAGR.
+        Supply a real forward assumption via ``carbon_price_cagr_pct`` (or
+        ``entity_data['carbon_price_cagr_pct']``); when absent a documented model
+        midpoint of 13%/yr (EU ETS Phase IV analyst-consensus band 8–18%) is applied.
+        No random draw is used.
         """
         entity_id = entity_data.get("entity_id", "unknown")
         sector = entity_data.get("sector", "industrials").lower().replace(" ", "_")
@@ -844,7 +921,13 @@ class ClimateFinancialStatementsEngine:
         carbon_tax_rate = _safe_float(entity_data.get("carbon_tax_rate_eur_per_t", 0.0))
         has_corsia_obligation = bool(entity_data.get("has_corsia_obligation", False))
 
-        rng = _rng(entity_id + "provision")
+        # Deterministic forward carbon-price CAGR (fraction). Caller value wins; else model midpoint.
+        _cagr_input = carbon_price_cagr_pct
+        if _cagr_input is None:
+            _cagr_input = entity_data.get("carbon_price_cagr_pct")
+        carbon_price_cagr = (
+            _safe_float(_cagr_input) / 100.0 if _cagr_input is not None else 0.13  # model midpoint 13%/yr
+        )
 
         profile = CARBON_PROVISION_THRESHOLDS.get(sector, CARBON_PROVISION_THRESHOLDS["industrials"])
 
@@ -884,8 +967,8 @@ class ClimateFinancialStatementsEngine:
             else 0.0
         )
 
-        # 3-year forward cost (10-18% annual carbon price appreciation)
-        forward_carbon_price = eua_spot_price * rng.uniform(1.08, 1.18) ** 3
+        # 3-year forward cost — deterministic compounding at carbon_price_cagr
+        forward_carbon_price = eua_spot_price * (1.0 + carbon_price_cagr) ** 3
         forward_provision_m = deficit_kt * 1_000 * forward_carbon_price / 1_000_000
 
         return {
@@ -907,6 +990,7 @@ class ClimateFinancialStatementsEngine:
             "provision_recognition_threshold": profile["provision_recognition_threshold"],
             "forward_provision_3yr_m": round(forward_provision_m, 3),
             "forward_carbon_price_eur": round(forward_carbon_price, 2),
+            "forward_carbon_price_cagr_pct": round(carbon_price_cagr * 100, 2),
             "ias37_recognition": "recognised" if provision_required else "contingent_disclosure_only",
             "ias37_reference": profile.get("ias37_reference", "IAS 37 para 14"),
             "standard": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
@@ -915,10 +999,24 @@ class ClimateFinancialStatementsEngine:
     # ------------------------------------------------------------------
     # 4. Stranded Assets
     # ------------------------------------------------------------------
-    def assess_stranded_assets(self, entity_data: dict) -> dict:
+    def assess_stranded_assets(
+        self,
+        entity_data: dict,
+        trigger_overrides: Optional[dict] = None,
+    ) -> dict:
         """
         Identify triggered stranded asset write-down scenarios.
         Returns write-down estimate, timeline and affected assets.
+
+        Triggering is deterministic: a scenario fires when its scenario-scaled
+        write-down probability reaches the "probable" threshold (>= 0.50). The
+        write-down percentage applied is the MIDPOINT of each trigger's documented
+        ``write_down_range_pct_of_carrying_value`` band (published range midpoint),
+        applied to the entity's real carrying amounts. No random draw is used.
+
+        Callers may pass ``trigger_overrides`` as
+        ``{trigger_name: {"fired": bool, "write_down_m": float}}`` to substitute a
+        genuine entity assessment.
         """
         entity_id = entity_data.get("entity_id", "unknown")
         sector = entity_data.get("sector", "oil_gas").lower().replace(" ", "_")
@@ -927,8 +1025,9 @@ class ClimateFinancialStatementsEngine:
         reserves_m = _safe_float(entity_data.get("reserves_carrying_value_m", 0.0))
         asset_types_held = entity_data.get("asset_types_held", [])
         scenario = entity_data.get("scenario", "below_2c")
+        overrides = trigger_overrides or entity_data.get("trigger_overrides") or {}
 
-        rng = _rng(entity_id + "stranded")
+        PROBABLE_THRESHOLD = 0.50  # "probable" recognition threshold
 
         scenario_severity = {
             "net_zero_2050": 1.40,
@@ -967,19 +1066,31 @@ class ClimateFinancialStatementsEngine:
             else:
                 adjusted_prob = base_prob * 0.20 * scenario_severity
 
-            if rng.random() < adjusted_prob:
-                if "reserve" in t_name or "nze" in t_name:
-                    asset_base = max(reserves_m, ppe_m * 0.30)
-                elif "building" in t_name or "epc" in t_name:
-                    asset_base = ppe_m * 0.35
-                elif "gas_infra" in t_name:
-                    asset_base = ppe_m * 0.25
-                else:
-                    asset_base = ppe_m * 0.20
+            # Deterministic firing at the "probable" threshold.
+            fired = adjusted_prob >= PROBABLE_THRESHOLD
 
-                wd_range = trigger["write_down_range_pct_of_carrying_value"]
-                wd_pct = rng.uniform(wd_range["low"] / 100, wd_range["high"] / 100)
-                write_down_m = asset_base * wd_pct
+            if "reserve" in t_name or "nze" in t_name:
+                asset_base = max(reserves_m, ppe_m * 0.30)  # model coefficients on real carrying amounts
+            elif "building" in t_name or "epc" in t_name:
+                asset_base = ppe_m * 0.35
+            elif "gas_infra" in t_name:
+                asset_base = ppe_m * 0.25
+            else:
+                asset_base = ppe_m * 0.20
+
+            wd_range = trigger["write_down_range_pct_of_carrying_value"]
+            wd_pct = (wd_range["low"] + wd_range["high"]) / 2 / 100  # published range midpoint
+            write_down_m = asset_base * wd_pct
+
+            # Caller-supplied genuine assessment overrides the model proxy.
+            _ov = overrides.get(t_name) if isinstance(overrides, dict) else None
+            if isinstance(_ov, dict):
+                if _ov.get("fired") is not None:
+                    fired = bool(_ov.get("fired"))
+                if _ov.get("write_down_m") is not None:
+                    write_down_m = _safe_float(_ov.get("write_down_m"))
+
+            if fired:
                 total_write_down_m += write_down_m
 
                 triggered_list.append({
@@ -1038,18 +1149,15 @@ class ClimateFinancialStatementsEngine:
         carbon_provision_m = _safe_float(entity_data.get("carbon_provision_m", 0.0))
         climate_capex_annual_m = _safe_float(entity_data.get("climate_capex_annual_m", 0.0))
 
-        rng = _rng(entity_id + "financials")
-
         mult = SCENARIO_FINANCIAL_MULTIPLIERS.get(
             sector,
             {"1_5c_impact_pct": -8.0, "2c_impact_pct": -5.0, "3c_impact_pct": -12.0},
         )
 
         def _adj(base: float, impact_pct: float, lever: float = 1.0) -> float:
-            return round(
-                base * (1 + impact_pct / 100 * lever) * (1 + rng.uniform(-0.05, 0.05)),
-                2,
-            )
+            # Deterministic scenario application of the sector damage multiplier
+            # (no random noise term).
+            return round(base * (1 + impact_pct / 100 * lever), 2)
 
         # Revenue
         rev_1_5c = _adj(revenue_m, mult["1_5c_impact_pct"])

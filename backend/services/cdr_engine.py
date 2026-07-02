@@ -12,7 +12,6 @@ Standards implemented:
 - Science Based Targets Network — Net-Zero Standard v1.1 residual emissions criteria
 """
 
-import random
 import math
 from typing import List, Dict, Any, Optional, Tuple
 
@@ -218,10 +217,6 @@ def _clamp(lo: float, hi: float, val: float) -> float:
     return max(lo, min(hi, val))
 
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(entity_id) & 0xFFFFFFFF)
-
-
 def _bezero_rating(score: float) -> str:
     for rating, threshold in sorted(BEZERO_RATING_THRESHOLDS.items(), key=lambda x: -x[1]):
         if score >= threshold:
@@ -232,6 +227,37 @@ def _bezero_rating(score: float) -> str:
 def _npv(cashflows: List[float], rate: float) -> float:
     r = rate / 100.0
     return sum(cf / (1.0 + r) ** (i + 1) for i, cf in enumerate(cashflows))
+
+
+def _irr(cashflows: List[float]) -> Optional[float]:
+    """Internal rate of return (as a decimal) via bisection.
+
+    Returns None when no sign change exists (e.g. never profitable / never
+    loss-making), i.e. when the IRR is undefined for the given cashflows.
+    Cashflows are period-indexed with cashflows[0] at t=0.
+    """
+    def npv_at(rate: float) -> float:
+        return sum(cf / (1.0 + rate) ** i for i, cf in enumerate(cashflows))
+
+    lo, hi = -0.9999, 10.0
+    f_lo, f_hi = npv_at(lo), npv_at(hi)
+    if f_lo == 0.0:
+        return lo
+    if f_hi == 0.0:
+        return hi
+    if (f_lo > 0.0) == (f_hi > 0.0):
+        # No sign change in the bracket → IRR undefined.
+        return None
+    for _ in range(200):
+        mid = (lo + hi) / 2.0
+        f_mid = npv_at(mid)
+        if abs(f_mid) < 1e-9:
+            return mid
+        if (f_mid > 0.0) == (f_lo > 0.0):
+            lo, f_lo = mid, f_mid
+        else:
+            hi, f_hi = mid, f_mid
+    return (lo + hi) / 2.0
 
 
 # ---------------------------------------------------------------------------
@@ -253,8 +279,8 @@ class CDREngine:
         verification_standard: str,
         additionality_score: float,
         leakage_risk_pct: float,
+        additional_buffer_pct: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
         method = CDR_METHODS.get(cdr_method, CDR_METHODS["afforestation"])
         vstd = VERIFICATION_STANDARDS.get(verification_standard, VERIFICATION_STANDARDS["gold_standard"])
 
@@ -301,8 +327,9 @@ class CDREngine:
 
         bezero_rating = _bezero_rating(quality_score)
 
-        # Buffer pool requirement
-        buffer_pool_pct = vstd["permanence_buffer_pct"] + round(rng.uniform(0.0, 2.0), 2)
+        # Buffer pool requirement — published standard buffer, plus any
+        # caller-supplied project-specific add-on (deterministic; 0 when absent).
+        buffer_pool_pct = vstd["permanence_buffer_pct"] + max(0.0, additional_buffer_pct or 0.0)
         buffer_pool_tco2 = round(annual_removal_tco2 * buffer_pool_pct / 100.0, 2)
         net_credits_tco2 = round(annual_removal_tco2 - buffer_pool_tco2, 2)
 
@@ -356,9 +383,8 @@ class CDREngine:
         opex_usd_pa: float,
         lifetime_yrs: int,
         discount_rate_pct: float,
+        carbon_price_usd_tco2: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
-
         r = discount_rate_pct / 100.0
         lifetime = max(1, lifetime_yrs)
 
@@ -389,10 +415,17 @@ class CDREngine:
         # Break-even carbon price
         breakeven = lcor  # LCOR equals minimum carbon price for economic viability
 
-        # Project IRR (simplified: revenue must cover costs)
-        # Assume breakeven carbon price scenario
-        irr_base = round((opex_usd_pa / max(capex_usd, 1.0)) * 100.0 + rng.uniform(2.0, 8.0), 2)
-        irr_base = round(_clamp(-5.0, 30.0, irr_base), 2)
+        # Project IRR: solved from real project cashflows only when the caller
+        # supplies a revenue assumption (carbon price). IRR is undefined without
+        # revenue, so it is an honest null when the price is not provided.
+        irr_base: Optional[float] = None
+        if carbon_price_usd_tco2 is not None:
+            annual_revenue = carbon_price_usd_tco2 * capacity_tco2_pa
+            annual_net = annual_revenue - opex_usd_pa
+            cashflows = [-capex_usd] + [annual_net] * lifetime
+            irr_base = _irr(cashflows)
+            if irr_base is not None:
+                irr_base = round(irr_base * 100.0, 2)
 
         return {
             "entity_id": entity_id,
@@ -425,8 +458,6 @@ class CDREngine:
         shift_to_durable_plan: bool,
         avoid_locking_in_emissions: bool,
     ) -> dict:
-        rng = _rng(entity_id)
-
         method = CDR_METHODS.get(cdr_method, CDR_METHODS["afforestation"])
         durable = method["permanence_yrs"] >= 200
 
@@ -507,9 +538,8 @@ class CDREngine:
         host_country_authorised: bool,
         corresponding_adjustment_agreed: bool,
         sustainable_dev_safeguards: bool,
+        itmo_premium_pct: Optional[float] = None,
     ) -> dict:
-        rng = _rng(entity_id)
-
         # Host country risk (simplified: some countries have higher reversal/policy risk)
         high_risk_countries = {"MM", "VE", "AF", "SD", "YE", "LY", "SO"}
         medium_risk_countries = {"MG", "CD", "CF", "GN", "NE", "ML"}
@@ -534,11 +564,17 @@ class CDREngine:
             and sustainable_dev_safeguards
         )
 
-        # ITMO value premium (corresponding adjustment reduces double-counting → premium)
-        if corresponding_adjustment_agreed:
-            itmo_premium = round(15.0 + rng.uniform(-3.0, 5.0), 2)
-        else:
+        # ITMO value premium. A corresponding adjustment is a precondition for any
+        # premium; without it the premium is 0.0. When a CA is agreed the actual
+        # premium is a market-observed input — return the caller-supplied figure,
+        # or an honest null when it is not provided (never fabricated).
+        itmo_premium: Optional[float]
+        if not corresponding_adjustment_agreed:
             itmo_premium = 0.0
+        elif itmo_premium_pct is not None:
+            itmo_premium = round(itmo_premium_pct, 2)
+        else:
+            itmo_premium = None
 
         # Supervisory body approval score
         method = CDR_METHODS.get(cdr_method, CDR_METHODS["afforestation"])
@@ -583,8 +619,6 @@ class CDREngine:
         cdr_credits_tco2: float,
         credit_quality_score: float,
     ) -> dict:
-        rng = _rng(entity_id)
-
         sbti_prerequisite_met = scope1_sbti_aligned and scope2_sbti_aligned
         residual_coverage_pct = round(
             _clamp(0.0, 200.0, (cdr_credits_tco2 / max(residual_emissions_tco2, 1.0)) * 100.0), 2
@@ -660,8 +694,6 @@ class CDREngine:
     # 6. Portfolio Assessment
     # ------------------------------------------------------------------
     def assess_portfolio(self, entity_id: str, projects: List[Dict[str, Any]]) -> dict:
-        rng = _rng(entity_id)
-
         if not projects:
             return {"entity_id": entity_id, "error": "no projects provided"}
 
@@ -675,10 +707,10 @@ class CDREngine:
         for proj in projects:
             method = proj.get("cdr_method", "afforestation")
             removal = float(proj.get("annual_removal_tco2", 1000.0))
-            quality = float(proj.get("quality_score", 60.0 + rng.uniform(-10.0, 10.0)))
-            verification = proj.get("verification_standard", "gold_standard")
-            additionality = float(proj.get("additionality_score", 70.0))
-            leakage = float(proj.get("leakage_risk_pct", 5.0))
+            # Only real, caller-supplied quality scores feed the aggregate.
+            # Missing scores are tracked (not fabricated) so the average is honest.
+            raw_quality = proj.get("quality_score")
+            quality = float(raw_quality) if raw_quality is not None else None
 
             method_data = CDR_METHODS.get(method, CDR_METHODS["afforestation"])
             perm_yrs = method_data["permanence_yrs"]
@@ -688,7 +720,8 @@ class CDREngine:
                 durable_removal += removal
 
             permanence_values.append(perm_yrs)
-            bezero_scores.append(quality)
+            if quality is not None:
+                bezero_scores.append(quality)
             method_set.add(method)
 
             oxford_result = self.assess_oxford_principles(
@@ -703,13 +736,21 @@ class CDREngine:
         n = len(projects)
         durable_share_pct = round(durable_removal / max(total_removal, 1.0) * 100.0, 2)
         avg_permanence = round(sum(permanence_values) / n, 0)
-        weighted_bezero_score = round(sum(bezero_scores) / n, 2)
-        portfolio_bezero_rating = _bezero_rating(weighted_bezero_score)
+        # Quality aggregate over only the projects that supplied a real score;
+        # honest null when none did (rather than an invented default).
+        rated_count = len(bezero_scores)
+        if rated_count > 0:
+            weighted_bezero_score = round(sum(bezero_scores) / rated_count, 2)
+            portfolio_bezero_rating = _bezero_rating(weighted_bezero_score)
+        else:
+            weighted_bezero_score = None
+            portfolio_bezero_rating = "insufficient_data"
         oxford_pct = round(sum(1 for s in oxford_scores if s >= 60) / n * 100.0, 2)
 
         return {
             "entity_id": entity_id,
             "project_count": n,
+            "quality_rated_project_count": rated_count,
             "total_removal_tco2pa": round(total_removal, 2),
             "durable_share_pct": durable_share_pct,
             "avg_permanence_yrs": avg_permanence,

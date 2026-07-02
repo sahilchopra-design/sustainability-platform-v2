@@ -25,7 +25,6 @@ References:
 """
 from __future__ import annotations
 
-import random
 from typing import Optional
 
 
@@ -87,6 +86,32 @@ CO_BENEFIT_CERTIFICATIONS: list[str] = [
     "Rainforest Alliance",
 ]
 
+# ---------------------------------------------------------------------------
+# Documented model-calibration constants (methodology defaults, NOT entity data)
+# Used only when the caller does not supply the corresponding project-specific
+# value; each is flagged in the output via an *_estimated / *_source field so
+# callers know the figure is a conservative default rather than measured data.
+# ---------------------------------------------------------------------------
+
+# VCS VM0007 REDD+ — conservative default deductions used when the project
+# monitoring report does not supply measured values.
+#   Leakage belt: VCS AFOLU Non-Permanence Risk Tool typical primary-forest
+#   leakage discount; buffer pool: AFOLU risk-rating buffer allocation.
+REDD_DEFAULT_LEAKAGE_BELT_PCT: float = 10.0
+REDD_DEFAULT_BUFFER_POOL_PCT: dict[bool, float] = {
+    True: 15.0,   # jurisdictional programme (lower buffer)
+    False: 20.0,  # project-level (higher buffer)
+}
+
+# IPCC 2006 GL Vol 4 above-ground biomass accumulation defaults (tCO2/ha/yr)
+# for young ARR stands, by species class. Model default when no site-specific
+# growth curve (MAI/yield table) is supplied by the caller.
+ARR_DEFAULT_AG_RATE_TCO2_HA_PA: dict[str, float] = {
+    "native": 3.0,
+    "mixed": 3.0,
+    "exotic": 3.5,   # faster-growing exotics accumulate AGB quicker
+}
+
 
 # ---------------------------------------------------------------------------
 # Engine Class
@@ -107,36 +132,61 @@ class NatureBasedSolutionsEngine:
         """
         IUCN GS v2.0 — 8 criteria, each scored 0-100.
         Returns composite score, tier, and ICVCM compatibility flag.
+
+        Only the criteria scores actually supplied by the caller are used;
+        missing criteria are reported as null rather than fabricated. If fewer
+        than all 8 criteria are provided the assessment is marked incomplete
+        and tier/compatibility are returned as null (insufficient data).
         """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # Use only supplied scores; do not fabricate missing criteria.
+        supplied = [round(float(s), 1) for s in criteria_scores[:8]]
+        criteria_supplied = len(supplied)
+        # Report per-criterion scores aligned to the 8 IUCN criteria, null where absent.
+        scores: list[Optional[float]] = list(supplied) + [None] * (8 - criteria_supplied)
 
-        # Pad/trim to 8 criteria; fill missing with rng if fewer supplied
-        while len(criteria_scores) < 8:
-            criteria_scores.append(round(rng.uniform(40.0, 85.0), 1))
-        scores = [round(float(s), 1) for s in criteria_scores[:8]]
+        complete = criteria_supplied == 8
 
-        composite = round(sum(scores) / len(scores), 2)
-        safeguards_score = round(min(scores), 2)
-        standard_met = composite >= 70.0
-
-        if composite >= 85.0:
-            tier = "Gold"
-        elif composite >= 70.0:
-            tier = "Silver"
+        if criteria_supplied == 0:
+            composite: Optional[float] = None
+            safeguards_score: Optional[float] = None
+            standard_met: Optional[bool] = None
+            tier: Optional[str] = None
+            icvcm_compatible: Optional[bool] = None
         else:
-            tier = "Bronze"
-
-        icvcm_compatible = standard_met and safeguards_score >= 55.0
+            composite = round(sum(supplied) / criteria_supplied, 2)
+            safeguards_score = round(min(supplied), 2)
+            if complete:
+                standard_met = composite >= 70.0
+                if composite >= 85.0:
+                    tier = "Gold"
+                elif composite >= 70.0:
+                    tier = "Silver"
+                else:
+                    tier = "Bronze"
+                icvcm_compatible = bool(standard_met and safeguards_score >= 55.0)
+            else:
+                # Partial submission: composite is provisional, but the IUCN GS
+                # standard-met / tier / ICVCM determinations require all 8 criteria.
+                standard_met = None
+                tier = None
+                icvcm_compatible = None
 
         return {
             "entity_id": entity_id,
             "criteria_names": IUCN_CRITERIA,
             "criteria_scores": scores,
+            "criteria_supplied": criteria_supplied,
+            "assessment_complete": complete,
             "composite_score": composite,
             "safeguards_score": safeguards_score,
             "standard_met": standard_met,
             "tier": tier,
             "icvcm_compatible": icvcm_compatible,
+            "data_note": (
+                None if complete
+                else "insufficient_data: IUCN GS v2.0 requires all 8 criteria; "
+                     "tier and ICVCM compatibility withheld until complete."
+            ),
             "methodology": "IUCN Global Standard v2.0",
             "assessment_version": "2020",
         }
@@ -152,26 +202,35 @@ class NatureBasedSolutionsEngine:
         reference_level_tco2_pa: float,
         actual_emissions_tco2_pa: float,
         jurisdictional: bool = False,
+        leakage_belt_pct: Optional[float] = None,
+        buffer_pool_pct: Optional[float] = None,
     ) -> dict:
         """
         VCS VM0007 REDD+ avoided deforestation methodology.
         Returns net credits after leakage belt and buffer pool deductions.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        ``leakage_belt_pct`` and ``buffer_pool_pct`` are project-specific
+        deductions from the VCS monitoring report / AFOLU Non-Permanence Risk
+        Tool. When not supplied, conservative documented methodology defaults
+        are applied and flagged via ``deductions_estimated``.
+        """
         avoided_deforestation = reference_level_tco2_pa - actual_emissions_tco2_pa
 
-        leakage_belt_pct = round(rng.uniform(5.0, 15.0), 2)
+        # Track whether deductions came from the caller (measured) or defaults.
+        leakage_supplied = leakage_belt_pct is not None
+        buffer_supplied = buffer_pool_pct is not None
 
-        # Jurisdictional programmes have smaller buffer requirements
-        buf_min = 10.0 if jurisdictional else 15.0
-        buf_max = 20.0 if jurisdictional else 25.0
-        buffer_pool_pct = round(rng.uniform(buf_min, buf_max), 2)
+        leakage = float(leakage_belt_pct) if leakage_supplied else REDD_DEFAULT_LEAKAGE_BELT_PCT
+        buffer = float(buffer_pool_pct) if buffer_supplied else REDD_DEFAULT_BUFFER_POOL_PCT[bool(jurisdictional)]
+        leakage = round(max(0.0, leakage), 2)
+        buffer = round(max(0.0, buffer), 2)
 
-        net_credits = avoided_deforestation * (1 - leakage_belt_pct / 100) * (1 - buffer_pool_pct / 100)
+        net_credits = avoided_deforestation * (1 - leakage / 100) * (1 - buffer / 100)
         net_credits = round(max(0.0, net_credits), 2)
 
         per_ha = round(net_credits / area_ha, 2) if area_ha > 0 else 0.0
+
+        deductions_estimated = (not leakage_supplied) or (not buffer_supplied)
 
         return {
             "entity_id": entity_id,
@@ -179,8 +238,14 @@ class NatureBasedSolutionsEngine:
             "reference_level_tco2_pa": round(reference_level_tco2_pa, 2),
             "actual_emissions_tco2_pa": round(actual_emissions_tco2_pa, 2),
             "avoided_deforestation_tco2_pa": round(avoided_deforestation, 2),
-            "leakage_belt_pct": leakage_belt_pct,
-            "buffer_pool_pct": buffer_pool_pct,
+            "leakage_belt_pct": leakage,
+            "buffer_pool_pct": buffer,
+            "deductions_estimated": deductions_estimated,
+            "deductions_source": (
+                "caller-supplied VCS monitoring report"
+                if not deductions_estimated
+                else "VCS VM0007 / AFOLU Non-Permanence Risk Tool conservative default"
+            ),
             "net_credits_tco2_pa": net_credits,
             "net_credits_per_ha": per_ha,
             "methodology": "VM0007",
@@ -198,25 +263,32 @@ class NatureBasedSolutionsEngine:
         entity_id: str,
         ecosystem_type: str,
         area_ha: float,
+        tidal_hydrology_restored: Optional[bool] = None,
+        co_benefit_score: Optional[float] = None,
     ) -> dict:
         """
         Blue carbon accounting for coastal/marine ecosystems.
         Methodology: VM0033 (mangrove/saltmarsh) or VM0024 (seagrass/tidal_flat).
+
+        ``tidal_hydrology_restored`` (project design attribute) and
+        ``co_benefit_score`` (0-100, from a co-benefit assessment) are
+        project-specific inputs; when not supplied they are reported as null
+        rather than fabricated.
         """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         eco = ecosystem_type.lower() if ecosystem_type.lower() in BLUE_CARBON_RATES else "mangrove"
 
         seq_rate = BLUE_CARBON_RATES[eco]
         total_seq = round(area_ha * seq_rate, 2)
         permanence_risk = BLUE_CARBON_PERMANENCE[eco]
         methodology = BLUE_CARBON_METHODOLOGY[eco]
-        tidal_hydrology_restored = rng.random() > 0.4
 
-        # Additionality / buffer adjustments
+        # Additionality / buffer adjustments (deterministic from permanence risk)
         buffer_pct = 12.0 if permanence_risk == "low" else (18.0 if permanence_risk == "medium" else 25.0)
         net_credits = round(total_seq * (1 - buffer_pct / 100), 2)
 
-        co_benefit_score = round(rng.uniform(55.0, 90.0), 1)
+        co_benefit_out: Optional[float] = (
+            round(float(co_benefit_score), 1) if co_benefit_score is not None else None
+        )
 
         return {
             "entity_id": entity_id,
@@ -229,7 +301,11 @@ class NatureBasedSolutionsEngine:
             "net_credits_tco2_pa": net_credits,
             "methodology": methodology,
             "tidal_hydrology_restored": tidal_hydrology_restored,
-            "co_benefit_score": co_benefit_score,
+            "co_benefit_score": co_benefit_out,
+            "co_benefit_note": (
+                None if co_benefit_out is not None
+                else "insufficient_data: co-benefit score not supplied"
+            ),
             "blue_carbon_standard": "Verra VCS",
         }
 
@@ -286,31 +362,52 @@ class NatureBasedSolutionsEngine:
         entity_id: str,
         area_ha: float,
         species_type: str = "mixed",
+        above_ground_rate_tco2_ha_pa: Optional[float] = None,
+        co_benefit_score: Optional[float] = None,
     ) -> dict:
         """
         ARR carbon accounting: above-ground, below-ground, soil.
-        Species type (native/mixed/exotic) affects co-benefit scoring.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        Species type (native/mixed/exotic) affects buffer and co-benefit context.
 
-        above_ground_rate = round(rng.uniform(2.5, 4.0), 3)
+        ``above_ground_rate_tco2_ha_pa`` is the site-specific AGB accumulation
+        rate (from a MAI/yield table); when not supplied a documented IPCC 2006
+        GL default for the species class is used and flagged via
+        ``above_ground_rate_estimated``. ``co_benefit_score`` (0-100) is a
+        project-specific input reported as null when not supplied.
+        """
+        species = species_type.lower()
+        native_species = species in ["native", "mixed"]
+
+        rate_supplied = above_ground_rate_tco2_ha_pa is not None
+        if rate_supplied:
+            above_ground_rate = round(float(above_ground_rate_tco2_ha_pa), 3)
+        else:
+            above_ground_rate = ARR_DEFAULT_AG_RATE_TCO2_HA_PA.get(species, ARR_DEFAULT_AG_RATE_TCO2_HA_PA["mixed"])
+
         above_ground = round(area_ha * above_ground_rate, 2)
         below_ground = round(above_ground * 0.26, 2)  # IPCC root-to-shoot ratio
         soil_carbon = round(area_ha * 0.5, 2)
         total = round(above_ground + below_ground + soil_carbon, 2)
 
-        native_species = species_type.lower() in ["native", "mixed"]
-        co_benefit_score = round(rng.uniform(60.0, 90.0) if native_species else rng.uniform(30.0, 60.0), 1)
+        co_benefit_out: Optional[float] = (
+            round(float(co_benefit_score), 1) if co_benefit_score is not None else None
+        )
 
-        # Buffer and net credits
+        # Buffer and net credits (deterministic from species class)
         buffer_pct = 10.0 if native_species else 15.0
         net_credits = round(total * (1 - buffer_pct / 100), 2)
 
         return {
             "entity_id": entity_id,
             "area_ha": round(area_ha, 2),
-            "species_type": species_type.lower(),
+            "species_type": species,
             "above_ground_rate_tco2_ha_pa": above_ground_rate,
+            "above_ground_rate_estimated": not rate_supplied,
+            "above_ground_rate_source": (
+                "caller-supplied site MAI/yield table"
+                if rate_supplied
+                else "IPCC 2006 GL Vol 4 default AGB accumulation (species class)"
+            ),
             "above_ground_tco2_pa": above_ground,
             "below_ground_tco2_pa": below_ground,
             "soil_carbon_tco2_pa": soil_carbon,
@@ -318,7 +415,11 @@ class NatureBasedSolutionsEngine:
             "net_credits_tco2_pa": net_credits,
             "buffer_pct": buffer_pct,
             "native_species": native_species,
-            "co_benefit_score": co_benefit_score,
+            "co_benefit_score": co_benefit_out,
+            "co_benefit_note": (
+                None if co_benefit_out is not None
+                else "insufficient_data: co-benefit score not supplied"
+            ),
             "methodology": "VCS VM0047 / Gold Standard IFM",
             "permanence_years": 40,
         }
@@ -372,45 +473,70 @@ class NatureBasedSolutionsEngine:
         """
         Credit quality rating combining IUCN score, co-benefits, and volume.
         Derives ICVCM CCP-compatible rating and USD price range.
+
+        Co-benefit sub-scores (biodiversity/water/livelihoods, 0-100) are taken
+        only from the caller-supplied ``co_benefits`` mapping; dimensions that
+        are absent are reported as null and excluded from the average rather
+        than fabricated. If no co-benefit dimensions are supplied the quality
+        score, ICVCM flag and price are returned as null (insufficient data).
         """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # Co-benefit scoring — only use dimensions actually supplied.
+        def _get(key: str) -> Optional[float]:
+            v = co_benefits.get(key)
+            return float(v) if v is not None else None
 
-        # Co-benefit scoring
-        bio_score = float(co_benefits.get("biodiversity", rng.uniform(40, 90)))
-        water_score = float(co_benefits.get("water", rng.uniform(40, 90)))
-        livelihoods_score = float(co_benefits.get("livelihoods", rng.uniform(40, 90)))
-        cobenefit_avg = (bio_score + water_score + livelihoods_score) / 3.0
-        cobenefit_premium_pct = round(cobenefit_avg / 10.0, 2)  # 0-10%
+        bio_score = _get("biodiversity")
+        water_score = _get("water")
+        livelihoods_score = _get("livelihoods")
 
-        overall_quality = round((iucn_score * 0.4 + cobenefit_avg * 0.3 + 30.0) / 100.0 * 100.0, 2)
-        overall_quality = min(100.0, max(0.0, overall_quality))
+        supplied_scores = [s for s in (bio_score, water_score, livelihoods_score) if s is not None]
 
-        icvcm_compatible = overall_quality >= 65.0
+        if supplied_scores:
+            cobenefit_avg: Optional[float] = sum(supplied_scores) / len(supplied_scores)
+            cobenefit_premium_pct: Optional[float] = round(cobenefit_avg / 10.0, 2)  # 0-10%
 
-        # Pricing model
-        base_price = 8.0 + (overall_quality - 40.0) / 60.0 * 27.0 if overall_quality > 40 else 8.0
-        price_usd = round(base_price * (1 + cobenefit_premium_pct / 100.0), 2)
-        price_usd = round(max(8.0, min(35.0, price_usd)), 2)
-        price_min = round(price_usd * 0.85, 2)
-        price_max = round(price_usd * 1.20, 2)
+            overall_quality: Optional[float] = round((iucn_score * 0.4 + cobenefit_avg * 0.3 + 30.0), 2)
+            overall_quality = min(100.0, max(0.0, overall_quality))
 
-        # Eligible certifications
-        eligible = list(CERTIFICATION_SCHEMES)
-        if icvcm_compatible:
-            eligible += ICVCM_CCP_SCHEMES
-        if cobenefit_avg >= 70:
-            eligible += CO_BENEFIT_CERTIFICATIONS
-        eligible = list(dict.fromkeys(eligible))  # deduplicate preserving order
+            icvcm_compatible: Optional[bool] = overall_quality >= 65.0
+
+            # Pricing model
+            base_price = 8.0 + (overall_quality - 40.0) / 60.0 * 27.0 if overall_quality > 40 else 8.0
+            price_usd: Optional[float] = round(base_price * (1 + cobenefit_premium_pct / 100.0), 2)
+            price_usd = round(max(8.0, min(35.0, price_usd)), 2)
+            price_min: Optional[float] = round(price_usd * 0.85, 2)
+            price_max: Optional[float] = round(price_usd * 1.20, 2)
+
+            # Eligible certifications
+            eligible = list(CERTIFICATION_SCHEMES)
+            if icvcm_compatible:
+                eligible += ICVCM_CCP_SCHEMES
+            if cobenefit_avg >= 70:
+                eligible += CO_BENEFIT_CERTIFICATIONS
+            eligible = list(dict.fromkeys(eligible))  # deduplicate preserving order
+            data_note: Optional[str] = None
+        else:
+            # No co-benefit data supplied — do not fabricate a quality score.
+            cobenefit_avg = None
+            cobenefit_premium_pct = None
+            overall_quality = None
+            icvcm_compatible = None
+            price_usd = None
+            price_min = None
+            price_max = None
+            eligible = list(CERTIFICATION_SCHEMES)  # baseline schemes only
+            data_note = ("insufficient_data: no co-benefit dimensions supplied; "
+                         "quality score, ICVCM compatibility and price withheld.")
 
         return {
             "entity_id": entity_id,
             "iucn_score": round(iucn_score, 2),
             "co_benefits": {
-                "biodiversity": round(bio_score, 1),
-                "water": round(water_score, 1),
-                "livelihoods": round(livelihoods_score, 1),
+                "biodiversity": round(bio_score, 1) if bio_score is not None else None,
+                "water": round(water_score, 1) if water_score is not None else None,
+                "livelihoods": round(livelihoods_score, 1) if livelihoods_score is not None else None,
             },
-            "cobenefit_avg": round(cobenefit_avg, 2),
+            "cobenefit_avg": round(cobenefit_avg, 2) if cobenefit_avg is not None else None,
             "cobenefit_premium_pct": cobenefit_premium_pct,
             "overall_quality_score": overall_quality,
             "icvcm_ccp_compatible": icvcm_compatible,
@@ -418,6 +544,7 @@ class NatureBasedSolutionsEngine:
             "estimated_price_usd": price_usd,
             "price_range": {"min": price_min, "max": price_max},
             "certification_eligible": eligible,
+            "data_note": data_note,
         }
 
     # ------------------------------------------------------------------
@@ -429,19 +556,24 @@ class NatureBasedSolutionsEngine:
         entity_id: str,
         annual_seq_tco2: float,
         project_years: int = 30,
+        annual_variation_pct: Optional[list[float]] = None,
     ) -> list[dict]:
         """
-        30-year project-level sequestration projection with ramp-up and
-        small annual variability.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        Project-level sequestration projection with a deterministic ramp-up
+        capacity curve (VCS crediting-period convention: reduced early
+        establishment yield, full yield once the stand matures).
 
+        The projection is deterministic: no synthetic noise is injected. An
+        optional ``annual_variation_pct`` list (one signed fraction per year,
+        e.g. from a monitoring record or a calibrated scenario) can be supplied
+        to apply real per-year deviations to the central sequestration path.
+        """
         cumulative = 0.0
         timeseries: list[dict] = []
         buffer_pool_total = 0.0
 
         for year in range(1, project_years + 1):
-            # Ramp-up capacity factor
+            # Ramp-up capacity factor (deterministic establishment curve)
             if year <= 5:
                 capacity = 0.60
             elif year <= 10:
@@ -449,8 +581,12 @@ class NatureBasedSolutionsEngine:
             else:
                 capacity = 1.00
 
-            # Annual variation ±5%
-            variation = rng.uniform(-0.05, 0.05)
+            # Apply caller-supplied per-year deviation if provided; else central path.
+            variation = 0.0
+            variation_supplied = False
+            if annual_variation_pct is not None and year <= len(annual_variation_pct) and annual_variation_pct[year - 1] is not None:
+                variation = float(annual_variation_pct[year - 1])
+                variation_supplied = True
             raw_seq = annual_seq_tco2 * capacity * (1 + variation)
 
             # Non-CO2 emissions (small fraction)
@@ -465,8 +601,9 @@ class NatureBasedSolutionsEngine:
             credits_issued = round(net_balance * 0.90, 4)
             cumulative += credits_issued
 
-            # Reversal risk flag in early ramp-up or high variability years
-            reversal_risk_flag = year <= 3 or abs(variation) > 0.04
+            # Reversal risk flag: elevated during early establishment years, or
+            # when a supplied deviation indicates a material shortfall in yield.
+            reversal_risk_flag = year <= 3 or (variation_supplied and variation < -0.04)
 
             timeseries.append({
                 "year": year,

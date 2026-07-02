@@ -304,7 +304,7 @@ def _persist_pcaf_portfolio(db, entity_name, reporting_year, asset_class, respon
                     pcaf_dq_scope1, pcaf_dq_scope2,
                     attribution_method
                 ) VALUES (
-                    :pid::uuid, :name, :sector, :country,
+                    CAST(:pid AS uuid), :name, :sector, :country,
                     :inv_val, :evic, :rev,
                     :attr, :s1, :s2, :s3,
                     :fs1, :fs2, :fs3, :total_fe,
@@ -786,13 +786,13 @@ def list_pcaf_portfolios(
 def get_pcaf_portfolio(portfolio_id: str, db: Session = Depends(get_db)):
     """Get a single PCAF portfolio with investee detail."""
     row = db.execute(text("""
-        SELECT * FROM pcaf_portfolios WHERE id = :pid::uuid
+        SELECT * FROM pcaf_portfolios WHERE id = CAST(:pid AS uuid)
     """), {"pid": portfolio_id}).fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="PCAF portfolio not found")
     portfolio = dict(row._mapping)
     investees = db.execute(text("""
-        SELECT * FROM pcaf_investees WHERE portfolio_id = :pid::uuid
+        SELECT * FROM pcaf_investees WHERE portfolio_id = CAST(:pid AS uuid)
         ORDER BY total_financed_emissions_tco2e DESC NULLS LAST
     """), {"pid": portfolio_id}).fetchall()
     portfolio["investees"] = [dict(r._mapping) for r in investees]
@@ -829,7 +829,7 @@ def list_sfdr_disclosures(
 def get_sfdr_disclosure(disclosure_id: str, db: Session = Depends(get_db)):
     """Get a single SFDR PAI disclosure with full indicator detail."""
     row = db.execute(text("""
-        SELECT * FROM sfdr_pai_disclosures WHERE id = :did::uuid
+        SELECT * FROM sfdr_pai_disclosures WHERE id = CAST(:did AS uuid)
     """), {"did": disclosure_id}).fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="SFDR PAI disclosure not found")
@@ -865,13 +865,13 @@ def list_eu_taxonomy_assessments(
 def get_eu_taxonomy_assessment(assessment_id: str, db: Session = Depends(get_db)):
     """Get a single EU Taxonomy assessment with activity detail."""
     row = db.execute(text("""
-        SELECT * FROM eu_taxonomy_assessments WHERE id = :aid::uuid
+        SELECT * FROM eu_taxonomy_assessments WHERE id = CAST(:aid AS uuid)
     """), {"aid": assessment_id}).fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="EU Taxonomy assessment not found")
     assessment = dict(row._mapping)
     activities = db.execute(text("""
-        SELECT * FROM eu_taxonomy_activities WHERE assessment_id = :aid::uuid
+        SELECT * FROM eu_taxonomy_activities WHERE assessment_id = CAST(:aid AS uuid)
         ORDER BY activity_code
     """), {"aid": assessment_id}).fetchall()
     assessment["activities"] = [dict(r._mapping) for r in activities]

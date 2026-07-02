@@ -14,11 +14,23 @@ References:
   - ILO Core Labour Standards
   - OECD Guidelines for Multinational Enterprises (2023)
   - PCAF Part C — Facilitated Emissions (investment banking)
+
+Data-integrity note (2026-07 remediation)
+------------------------------------------
+Every RETURNED metric is either a real, deterministic computation from
+caller-supplied inputs (reference-data lookups + documented formulas) or an
+explicit honest null (``None`` / ``"insufficient_data"``) accompanied by a
+note. No metric is drawn from a random number generator. Entity-specific
+scores (EP principle scores, grievance scores, supplier ESG scores, ILO
+standards, climate-compatibility, STF alignment, pricing point estimates)
+must be supplied by the caller via the optional, backward-compatible
+parameters documented below; when absent they resolve to null rather than a
+fabricated value. Documented model/policy constants (reference risk bands,
+neutral grid-intensity default) are used only where flagged.
 """
 from __future__ import annotations
 
-import random
-from typing import Any
+from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
 # Reference Data
@@ -258,23 +270,25 @@ GREEN_INSTRUMENT_CRITERIA: dict[str, dict] = {
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
-
 def _clamp(v: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, v))
 
 
-def _assign_ep_category(project_type: str, country: str, project_cost_usd: float, rng: random.Random) -> str:
-    """Assign EP category A/B/C based on project characteristics."""
+def _assign_ep_category(project_type: str, country: str, project_cost_usd: float) -> str:
+    """Assign EP category A/B/C based on project characteristics.
+
+    Deterministic rule set. For medium-risk projects that could fall in either
+    A or B, the precautionary category "A" is assigned (never a random draw) so
+    the higher assurance regime governs until finer characterisation is provided.
+    """
     high_risk_types = {"mining", "dam", "large_hydro", "oil_gas", "petrochemical", "smelter", "port_expansion"}
     medium_risk_types = {"manufacturing", "agro_industrial", "transport_infrastructure", "power_plant"}
 
     if project_type in high_risk_types or country in EP4_HIGH_RISK_COUNTRIES:
         return "A"
     elif project_type in medium_risk_types or project_cost_usd >= 50_000_000:
-        return rng.choice(["A", "B"])
+        # Precautionary default: the more conservative category governs.
+        return "A"
     elif project_cost_usd >= 10_000_000:
         return "B"
     return "C"
@@ -288,6 +302,22 @@ def _esg_tier_from_score(score: float) -> str:
     return "E"
 
 
+def _discount_bps_from_score(score: float, tier: str) -> float:
+    """Locate the dynamic-discounting margin within the tier's reference band.
+
+    Deterministic linear interpolation: a supplier at the top of its ESG band
+    receives the lower (better) discount bps, at the bottom the higher bps.
+    Both the band and the interpolation are documented reference-data policy —
+    no random component.
+    """
+    lo_score, hi_score = ESG_TIERS[tier]["esg_score_range"]
+    lo_bps, hi_bps = ESG_TIERS[tier]["discount_rate_bps"]
+    span = hi_score - lo_score
+    # position: 0.0 at top of band (best), 1.0 at bottom of band (worst)
+    pos = 0.0 if span <= 0 else _clamp((hi_score - score) / span, 0.0, 1.0)
+    return round(lo_bps + pos * (hi_bps - lo_bps), 1)
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -298,6 +328,8 @@ def assess_equator_principles(
     project_cost_usd: float,
     country: str,
     sector: str,
+    principle_assessments: Optional[dict[str, float]] = None,
+    grievance_data: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
     """
     Assess Equator Principles v4 compliance.
@@ -305,27 +337,66 @@ def assess_equator_principles(
     Returns EP categorisation (A/B/C), 10 principle scores,
     ESIA requirements, IESC requirement, grievance mechanism,
     and IFC Performance Standard applicability.
-    """
-    rng = _rng(entity_id)
 
-    ep_category = _assign_ep_category(project_type, country, project_cost_usd, rng)
+    Optional inputs (backward-compatible; default ``None``):
+      - ``principle_assessments``: mapping of EP id (``"EP1"``..``"EP10"``) to a
+        real 0-100 compliance score. Only supplied principles are scored; the
+        weighted EP4 score is computed from supplied principles only. When a
+        principle is not supplied its ``score`` is ``None`` / ``"insufficient_data"``.
+      - ``grievance_data``: dict with ``score`` (0-100) and/or ``channels``
+        (list of grievance channels). Absent fields resolve to null.
+
+    The EP categorisation, ESIA regime, IFC PS applicability and OECD CRC are
+    deterministic reference-data derivations and are always returned.
+    """
+    ep_category = _assign_ep_category(project_type, country, project_cost_usd)
     cat_data = EP4_CATEGORISATION[ep_category]
 
-    # Score each of the 10 EP principles
+    principle_assessments = principle_assessments or {}
+    notes: list[str] = []
+
+    # Score each of the 10 EP principles from supplied assessments only.
     principle_scores = []
+    supplied_any = False
     for p in EP4_PRINCIPLES:
-        cat_mod = {"A": -10.0, "B": -3.0, "C": 5.0}.get(ep_category, 0.0)
-        score = round(_clamp(rng.uniform(55.0, 95.0) + cat_mod, 0.0, 100.0), 1)
+        raw = principle_assessments.get(p["id"])
+        if raw is None:
+            score: Optional[float] = None
+            status = "insufficient_data"
+        else:
+            score = round(_clamp(float(raw), 0.0, 100.0), 1)
+            status = "compliant" if score >= 70 else ("partial" if score >= 50 else "non_compliant")
+            supplied_any = True
         principle_scores.append({
             "id": p["id"],
             "name": p["name"],
             "weight": p["weight"],
             "score": score,
-            "status": "compliant" if score >= 70 else ("partial" if score >= 50 else "non_compliant"),
+            "status": status,
         })
 
-    weighted_score = sum(p["score"] * p["weight"] for p in principle_scores)
-    overall_status = "compliant" if weighted_score >= 70 else ("partial" if weighted_score >= 55 else "non_compliant")
+    if supplied_any:
+        # Weight the supplied principles, renormalising over the supplied weight mass.
+        supplied_weight = sum(p["weight"] for p in principle_scores if p["score"] is not None)
+        weighted_raw = sum(
+            p["score"] * p["weight"] for p in principle_scores if p["score"] is not None
+        )
+        weighted_score: Optional[float] = round(weighted_raw / supplied_weight, 1) if supplied_weight > 0 else None
+        if weighted_score is None:
+            overall_status = "insufficient_data"
+        elif weighted_score >= 70:
+            overall_status = "compliant"
+        elif weighted_score >= 55:
+            overall_status = "partial"
+        else:
+            overall_status = "non_compliant"
+    else:
+        weighted_score = None
+        overall_status = "insufficient_data"
+        notes.append(
+            "EP principle scores: insufficient_data — no principle assessments supplied; "
+            "provide principle_assessments={EP1..EP10: 0-100} to compute the weighted EP4 score."
+        )
 
     # ESIA requirements
     esia_type = {
@@ -338,11 +409,21 @@ def assess_equator_principles(
     host_country_in_high_risk = country in EP4_HIGH_RISK_COUNTRIES
     ifc_ps_applicable = ep_category in {"A", "B"}
 
-    # Grievance mechanism requirements
-    grievance_score = round(rng.uniform(50.0, 95.0), 1)
-    grievance_channels = rng.sample(
-        ["community_liaison", "hotline", "email_portal", "ombudsman", "SMS"], k=rng.randint(2, 4)
-    )
+    # Grievance mechanism — from supplied data only.
+    grievance_data = grievance_data or {}
+    g_score_raw = grievance_data.get("score")
+    grievance_score: Optional[float] = round(_clamp(float(g_score_raw), 0.0, 100.0), 1) if g_score_raw is not None else None
+    grievance_channels = grievance_data.get("channels")
+    if grievance_score is None and grievance_channels is None:
+        grievance_status = "insufficient_data"
+        notes.append(
+            "Grievance mechanism: insufficient_data — supply grievance_data={score, channels} to assess."
+        )
+    else:
+        grievance_status = (
+            "insufficient_data" if grievance_score is None
+            else ("adequate" if grievance_score >= 70 else "needs_improvement")
+        )
 
     return {
         "entity_id": entity_id,
@@ -353,7 +434,7 @@ def assess_equator_principles(
         "ep4_category": ep_category,
         "category_description": cat_data["description"],
         "principle_scores": principle_scores,
-        "weighted_ep4_score": round(weighted_score, 1),
+        "weighted_ep4_score": weighted_score,
         "overall_status": overall_status,
         "esia_required": cat_data["esia_required"],
         "esia_type": esia_type,
@@ -364,11 +445,12 @@ def assess_equator_principles(
         "grievance_mechanism": {
             "score": grievance_score,
             "channels": grievance_channels,
-            "status": "adequate" if grievance_score >= 70 else "needs_improvement",
+            "status": grievance_status,
         },
         "ifc_performance_standards_applicable": ifc_ps_applicable,
         "host_country_high_risk": host_country_in_high_risk,
-        "oecd_crc": OECD_COUNTRY_RISK.get(country, 5),
+        "oecd_crc": OECD_COUNTRY_RISK.get(country, None),
+        "notes": notes,
     }
 
 
@@ -376,65 +458,98 @@ def evaluate_eca_standards(
     entity_id: str,
     export_credit_type: str,
     oecd_sector: str,
+    country: Optional[str] = None,
+    climate_compatibility_score: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Evaluate ECA standards under OECD Arrangement on export credits.
 
     Returns sector understanding thresholds, coal exclusion assessment,
     OECD CRC country risk classification, and premium calculation.
-    """
-    rng = _rng(entity_id)
 
+    Optional inputs (backward-compatible; default ``None``):
+      - ``country``: host/buyer country used to look up the real OECD CRC
+        (``OECD_COUNTRY_RISK``) that drives the CRC premium adjustment. When
+        absent, CRC and the CRC-derived premium components are ``None`` and the
+        total premium falls back to the sector's reference base premium only.
+      - ``climate_compatibility_score``: a real 0-100 climate-compatibility
+        assessment for the transaction. When absent it is ``None`` — the
+        qualitative sector understanding (``su_status``) is still returned as it
+        is reference data. A ``RESTRICTED`` sector always scores 0.0 by rule.
+    """
+    notes: list[str] = []
     sector_data = OECD_ARRANGEMENT_SECTORS.get(oecd_sector, OECD_ARRANGEMENT_SECTORS["manufacturing"])
     is_excluded = sector_data["restriction_type"] == "full_exclusion"
 
-    # Premium calculation
+    # Premium calculation — base premium is reference data; CRC adjustment needs a real country.
     base_premium_pct = sector_data.get("min_premium_pct") or 0.0
-    crc_country = rng.randint(0, 7)  # generic country risk
-    crc_premium_adj = crc_country * 0.05
-    total_premium_pct = round(base_premium_pct + crc_premium_adj, 3)
+    crc_country: Optional[int] = OECD_COUNTRY_RISK.get(country) if country else None
+    if crc_country is None:
+        crc_premium_adj: Optional[float] = None
+        total_premium_pct: Optional[float] = round(base_premium_pct, 3)
+        annual_cost_per_100m: Optional[float] = round((total_premium_pct or 0.0) * 1_000_000, 0)
+        notes.append(
+            "OECD CRC: insufficient_data — supply country to derive the CRC premium adjustment; "
+            "total premium reflects the sector base premium only."
+        )
+    else:
+        crc_premium_adj = round(crc_country * 0.05, 3)
+        total_premium_pct = round(base_premium_pct + crc_premium_adj, 3)
+        annual_cost_per_100m = round(total_premium_pct * 1_000_000, 0)
 
-    # Climate change sector understanding scoring
+    # Climate change sector understanding (reference data) + optional real score.
     su_status = sector_data["climate_change_su"]
-    climate_compatibility_score = {
-        "PREFERRED": round(rng.uniform(80.0, 100.0), 1),
-        "PERMITTED": round(rng.uniform(55.0, 80.0), 1),
-        "STANDARD": round(rng.uniform(40.0, 70.0), 1),
-        "RESTRICTED": 0.0,
-    }.get(su_status, 50.0)
+    if su_status == "RESTRICTED":
+        climate_score: Optional[float] = 0.0
+    elif climate_compatibility_score is not None:
+        climate_score = round(_clamp(float(climate_compatibility_score), 0.0, 100.0), 1)
+    else:
+        climate_score = None
+        notes.append(
+            "Climate compatibility score: insufficient_data — supply climate_compatibility_score (0-100) "
+            "to quantify; sector understanding classification is provided as reference data."
+        )
 
-    # Paris alignment check
+    # Paris alignment check (qualitative, reference-data driven).
     paris_aligned = su_status in {"PREFERRED", "PERMITTED"} and not is_excluded
 
     # Maximum repayment terms
     max_repayment = sector_data.get("max_repayment_years", 10)
 
+    crc_description = (
+        f"OECD CRC {crc_country} — "
+        f"{'low risk' if crc_country <= 2 else 'medium risk' if crc_country <= 5 else 'high risk'}"
+        if crc_country is not None else "insufficient_data — country not supplied"
+    )
+
     return {
         "entity_id": entity_id,
         "export_credit_type": export_credit_type,
         "oecd_sector": oecd_sector,
+        "country": country,
         "sector_data": sector_data,
         "is_coal_excluded": is_excluded,
         "restriction_type": sector_data["restriction_type"],
         "climate_change_sector_understanding": su_status,
-        "climate_compatibility_score": climate_compatibility_score,
+        "climate_compatibility_score": climate_score,
         "paris_aligned": paris_aligned,
         "max_repayment_years": max_repayment,
         "country_risk_classification": {
             "oecd_crc": crc_country,
-            "description": f"OECD CRC {crc_country} — {'low risk' if crc_country <= 2 else 'medium risk' if crc_country <= 5 else 'high risk'}",
+            "description": crc_description,
         },
         "premium_calculation": {
             "base_premium_pct": base_premium_pct,
-            "crc_adjustment_pct": round(crc_premium_adj, 3),
+            "crc_adjustment_pct": crc_premium_adj,
             "total_premium_pct": total_premium_pct,
-            "annual_cost_per_100m_usd": round(total_premium_pct * 1_000_000, 0),
+            "annual_cost_per_100m_usd": annual_cost_per_100m,
         },
         "oecd_arrangement_2023": {
             "version": "2023 revision",
             "applicable": True,
             "reporting_required": True,
         },
+        "notes": notes,
     }
 
 
@@ -446,61 +561,110 @@ def score_supply_chain_esg(
     """
     Score supplier ESG tiers and model dynamic discounting ratchet.
 
-    Returns supplier ESG tier (A-E), dynamic discounting margin (0-75bps),
+    Returns supplier ESG tier (A-E), dynamic discounting margin (0-300bps),
     Scope 3 Cat 1 attribution per supplier, reverse factoring eligibility,
     and ILO labour standards compliance.
-    """
-    rng = _rng(entity_id)
 
+    Each supplier dict may carry (all optional; missing → honest null):
+      - ``supplier_id``, ``supplier_name``, ``country``
+      - ``annual_spend_usd``, ``revenue_usd`` — drive PCAF-style Cat 1 attribution
+      - ``esg_score`` (0-100) — real ESG score; drives tier, discount bps and
+        reverse-factoring eligibility. Absent → tier/discount are null and
+        ``esg_status`` = ``"insufficient_data"``.
+      - ``ilo_standards`` — dict of the four ILO core standards to booleans
+        (``freedom_of_association``, ``forced_labour_free``, ``child_labour_free``,
+        ``non_discrimination``). Absent → ``ilo_compliant`` is ``None``.
+
+    No supplier attributes are fabricated: when ``suppliers`` is empty the
+    result is an explicit empty portfolio with a note.
+    """
+    notes: list[str] = []
     if not suppliers:
-        countries_pool = ["China", "India", "Bangladesh", "Vietnam", "Indonesia",
-                          "Brazil", "Mexico", "Turkey", "Poland", "Thailand"]
-        n = rng.randint(3, 10)
-        suppliers = [
-            {
-                "supplier_id": f"sup_{i}",
-                "supplier_name": f"Supplier {chr(65+i)}",
-                "country": rng.choice(countries_pool),
-                "annual_spend_usd": round(rng.uniform(500_000, 50_000_000), 0),
-                "revenue_usd": round(rng.uniform(10_000_000, 500_000_000), 0),
-            }
-            for i in range(n)
-        ]
+        notes.append(
+            "Supplier portfolio: insufficient_data — no suppliers supplied. Provide a "
+            "suppliers list (supplier_id, country, annual_spend_usd, revenue_usd, esg_score, "
+            "ilo_standards) to score ESG tiers and Scope 3 Cat 1 attribution."
+        )
+        return {
+            "entity_id": entity_id,
+            "product_category": product_category,
+            "supplier_results": [],
+            "portfolio_summary": {
+                "total_suppliers": 0,
+                "total_annual_spend_usd": 0.0,
+                "total_scope3_cat1_tco2e": None,
+                "weighted_avg_discount_bps": None,
+                "pct_reverse_factoring_eligible": None,
+                "tier_distribution": {},
+            },
+            "icc_stf_compliance": {
+                "principles_assessed": [p["name"] for p in ICC_STF_PRINCIPLES[:4]],
+                "overall_score": None,
+                "status": "insufficient_data",
+            },
+            "notes": notes,
+        }
 
     product_ghg = PRODUCT_GHG_INTENSITY.get(product_category, 2500.0)
     supplier_results = []
-    total_scope3_cat1 = 0.0
+    total_scope3_cat1: Optional[float] = 0.0
     total_spend = 0.0
+    discount_weight_sum = 0.0   # spend of suppliers that HAVE a discount, for weighted avg
 
     for sup in suppliers:
-        s_rng = random.Random(hash(f"{entity_id}_{sup.get('supplier_id', '')}") & 0xFFFFFFFF)
-        esg_score = round(s_rng.uniform(20.0, 98.0), 1)
-        tier = _esg_tier_from_score(esg_score)
-        tier_data = ESG_TIERS[tier]
+        # Real ESG score → tier + discount. Absent → honest null.
+        esg_raw = sup.get("esg_score")
+        if esg_raw is None:
+            esg_score: Optional[float] = None
+            tier: Optional[str] = None
+            tier_data = None
+            discount_bps: Optional[float] = None
+            reverse_factoring_eligible: Optional[bool] = None
+            due_diligence_level: Optional[str] = None
+            monitoring_frequency: Optional[str] = None
+            esg_status = "insufficient_data"
+        else:
+            esg_score = round(_clamp(float(esg_raw), 0.0, 100.0), 1)
+            tier = _esg_tier_from_score(esg_score)
+            tier_data = ESG_TIERS[tier]
+            discount_bps = _discount_bps_from_score(esg_score, tier)
+            reverse_factoring_eligible = tier_data["reverse_factoring_eligible"]
+            due_diligence_level = tier_data["due_diligence_level"]
+            monitoring_frequency = tier_data["monitoring_frequency"]
+            esg_status = "scored"
 
-        disc_lo, disc_hi = tier_data["discount_rate_bps"]
-        discount_bps = round(s_rng.uniform(disc_lo, disc_hi), 1)
-
-        spend = float(sup.get("annual_spend_usd", 5_000_000))
+        spend = float(sup.get("annual_spend_usd", 0.0) or 0.0)
         total_spend += spend
-        revenue = float(sup.get("revenue_usd", 50_000_000))
+        revenue = float(sup.get("revenue_usd", 0.0) or 0.0)
 
-        # PCAF-style Scope 3 Cat 1 attribution
-        # Attribution ratio = spend / supplier revenue
-        attribution_ratio = min(spend / max(revenue, 1), 1.0)
-        # Proxy volume from spend
-        proxy_volume_tonnes = spend / max(product_ghg * 0.5, 1)
-        scope3_cat1 = round(proxy_volume_tonnes * product_ghg * attribution_ratio, 1)
-        total_scope3_cat1 += scope3_cat1
+        # PCAF-style Scope 3 Cat 1 attribution (deterministic; needs spend & revenue).
+        if spend > 0 and revenue > 0:
+            attribution_ratio: Optional[float] = min(spend / max(revenue, 1.0), 1.0)
+            proxy_volume_tonnes = spend / max(product_ghg * 0.5, 1.0)
+            scope3_cat1: Optional[float] = round(proxy_volume_tonnes * product_ghg * attribution_ratio, 1)
+            if total_scope3_cat1 is not None:
+                total_scope3_cat1 += scope3_cat1
+        else:
+            attribution_ratio = None
+            scope3_cat1 = None
+            total_scope3_cat1 = None  # portfolio total is incomplete if any supplier lacks spend/revenue
 
-        # ILO labour standards
-        ilo_standards = {
-            "freedom_of_association": s_rng.uniform(0, 1) > 0.2,
-            "forced_labour_free": s_rng.uniform(0, 1) > 0.05,
-            "child_labour_free": s_rng.uniform(0, 1) > 0.10,
-            "non_discrimination": s_rng.uniform(0, 1) > 0.15,
-        }
-        ilo_compliant = all(ilo_standards.values())
+        # ILO labour standards — from supplied assessment only.
+        ilo_in = sup.get("ilo_standards")
+        if isinstance(ilo_in, dict) and ilo_in:
+            ilo_standards: Optional[dict] = {
+                "freedom_of_association": bool(ilo_in.get("freedom_of_association", False)),
+                "forced_labour_free": bool(ilo_in.get("forced_labour_free", False)),
+                "child_labour_free": bool(ilo_in.get("child_labour_free", False)),
+                "non_discrimination": bool(ilo_in.get("non_discrimination", False)),
+            }
+            ilo_compliant: Optional[bool] = all(ilo_standards.values())
+        else:
+            ilo_standards = None
+            ilo_compliant = None
+
+        if discount_bps is not None and spend > 0:
+            discount_weight_sum += spend
 
         supplier_results.append({
             "supplier_id": sup.get("supplier_id", "unknown"),
@@ -508,32 +672,52 @@ def score_supply_chain_esg(
             "country": sup.get("country", "Unknown"),
             "esg_score": esg_score,
             "esg_tier": tier,
-            "tier_description": tier_data["description"],
+            "esg_status": esg_status,
+            "tier_description": tier_data["description"] if tier_data else None,
             "dynamic_discount_bps": discount_bps,
-            "reverse_factoring_eligible": tier_data["reverse_factoring_eligible"],
-            "due_diligence_level": tier_data["due_diligence_level"],
+            "reverse_factoring_eligible": reverse_factoring_eligible,
+            "due_diligence_level": due_diligence_level,
             "scope3_cat1_tco2e": scope3_cat1,
-            "attribution_ratio": round(attribution_ratio, 4),
+            "attribution_ratio": round(attribution_ratio, 4) if attribution_ratio is not None else None,
             "ilo_labour_standards": ilo_standards,
             "ilo_compliant": ilo_compliant,
             "annual_spend_usd": spend,
-            "monitoring_frequency": tier_data["monitoring_frequency"],
+            "monitoring_frequency": monitoring_frequency,
         })
 
-    # Weighted average discount
-    if total_spend > 0:
-        weighted_discount = sum(
-            s["dynamic_discount_bps"] * s["annual_spend_usd"] / total_spend
+    # Weighted average discount over suppliers that carry a discount (real ESG score).
+    if discount_weight_sum > 0:
+        weighted_discount: Optional[float] = round(sum(
+            s["dynamic_discount_bps"] * s["annual_spend_usd"] / discount_weight_sum
             for s in supplier_results
-        )
+            if s["dynamic_discount_bps"] is not None and s["annual_spend_usd"] > 0
+        ), 1)
     else:
-        weighted_discount = 0.0
+        weighted_discount = None
+        notes.append(
+            "Weighted-average discount: insufficient_data — no supplier supplied both an ESG "
+            "score and annual spend."
+        )
 
-    # ESG tier distribution
+    # ESG tier distribution (scored suppliers only).
     tier_distribution: dict[str, int] = {}
+    scored = 0
+    rf_eligible = 0
     for s in supplier_results:
-        t = s["esg_tier"]
-        tier_distribution[t] = tier_distribution.get(t, 0) + 1
+        if s["esg_tier"] is not None:
+            scored += 1
+            t = s["esg_tier"]
+            tier_distribution[t] = tier_distribution.get(t, 0) + 1
+            if s["reverse_factoring_eligible"]:
+                rf_eligible += 1
+
+    pct_rf: Optional[float] = round(rf_eligible / scored * 100, 1) if scored > 0 else None
+
+    if total_scope3_cat1 is None:
+        notes.append(
+            "Total Scope 3 Cat 1: insufficient_data — one or more suppliers lack annual_spend_usd "
+            "or revenue_usd required for PCAF attribution."
+        )
 
     return {
         "entity_id": entity_id,
@@ -542,18 +726,18 @@ def score_supply_chain_esg(
         "portfolio_summary": {
             "total_suppliers": len(supplier_results),
             "total_annual_spend_usd": total_spend,
-            "total_scope3_cat1_tco2e": round(total_scope3_cat1, 1),
-            "weighted_avg_discount_bps": round(weighted_discount, 1),
-            "pct_reverse_factoring_eligible": round(
-                sum(1 for s in supplier_results if s["reverse_factoring_eligible"]) /
-                max(len(supplier_results), 1) * 100, 1
-            ),
+            "total_scope3_cat1_tco2e": round(total_scope3_cat1, 1) if total_scope3_cat1 is not None else None,
+            "weighted_avg_discount_bps": weighted_discount,
+            "pct_reverse_factoring_eligible": pct_rf,
             "tier_distribution": tier_distribution,
         },
         "icc_stf_compliance": {
             "principles_assessed": [p["name"] for p in ICC_STF_PRINCIPLES[:4]],
-            "overall_score": round(rng.uniform(55.0, 90.0), 1),
+            "overall_score": None,
+            "status": "insufficient_data",
+            "note": "ICC STF overall score requires a supplied per-principle assessment; not fabricated.",
         },
+        "notes": notes,
     }
 
 
@@ -562,31 +746,55 @@ def calculate_trade_flow_emissions(
     trade_lanes: list[dict],
     commodity_type: str,
     volume_tonnes: float,
+    grid_intensity_factors: Optional[dict[str, float]] = None,
 ) -> dict[str, Any]:
     """
     Calculate GHG emissions for trade flows.
 
     Returns Scope 3 Cat 4 (upstream transport) + Cat 1 (purchased goods),
     emission factors per transport mode, lifecycle GHG intensity.
+
+    ``trade_lanes`` items: ``from_country``, ``to_country``, ``transport_mode``,
+    ``distance_km``, ``volume_pct``. When empty, an explicit empty result with a
+    note is returned — no synthetic lanes are fabricated.
+
+    Optional ``grid_intensity_factors`` (default ``None``): mapping of origin
+    country to a Cat 1 grid-intensity multiplier (>= 1.0). When a country is not
+    supplied, a neutral multiplier of 1.0 is applied (documented model default —
+    Cat 1 then reflects pure product lifecycle intensity with no origin uplift),
+    and the fact is flagged per lane via ``grid_intensity_source``.
     """
-    rng = _rng(entity_id)
+    notes: list[str] = []
+    grid_intensity_factors = grid_intensity_factors or {}
 
     if not trade_lanes:
-        modes_pool = list(TRANSPORT_EMISSION_FACTORS.keys())
-        trade_lanes = [
-            {
-                "from_country": rng.choice(["China", "India", "Vietnam", "Bangladesh"]),
-                "to_country": rng.choice(["Germany", "United States", "United Kingdom"]),
-                "transport_mode": rng.choice(modes_pool),
-                "distance_km": round(rng.uniform(500, 20_000), 0),
-                "volume_pct": round(rng.uniform(0.1, 0.5), 2),
-            }
-            for _ in range(rng.randint(2, 5))
-        ]
-        # Normalise volume_pct
-        total_pct = sum(l.get("volume_pct", 0.2) for l in trade_lanes)
-        for lane in trade_lanes:
-            lane["volume_pct"] = round(lane.get("volume_pct", 0.2) / total_pct, 3)
+        notes.append(
+            "Trade lanes: insufficient_data — no trade lanes supplied. Provide a trade_lanes list "
+            "(from_country, to_country, transport_mode, distance_km, volume_pct) to compute emissions."
+        )
+        return {
+            "entity_id": entity_id,
+            "commodity_type": commodity_type,
+            "total_volume_tonnes": volume_tonnes,
+            "product_ghg_intensity_kgco2e_tonne": PRODUCT_GHG_INTENSITY.get(commodity_type, 2500.0),
+            "trade_lanes": [],
+            "summary": {
+                "total_scope3_cat4_tco2e": None,
+                "total_scope3_cat1_tco2e": None,
+                "combined_tco2e": None,
+                "emission_intensity_tco2e_per_tonne": None,
+            },
+            "optimisation": {
+                "current_cat4_tco2e": None,
+                "minimum_possible_cat4_tco2e": None,
+                "reduction_potential_pct": None,
+                "recommended_mode": min(
+                    TRANSPORT_EMISSION_FACTORS.items(), key=lambda x: x[1]["kgco2e_per_tonne_km"]
+                )[0],
+            },
+            "ghg_protocol_references": ["GHG Protocol Corporate Value Chain Std 2011", "ISO 14083:2023"],
+            "notes": notes,
+        }
 
     product_ghg = PRODUCT_GHG_INTENSITY.get(commodity_type, 2500.0)
 
@@ -603,15 +811,20 @@ def calculate_trade_flow_emissions(
         distance_km = float(lane.get("distance_km", 10000))
         lane_volume = volume_tonnes * float(lane.get("volume_pct", 1.0))
 
-        # Scope 3 Cat 4: upstream transport
+        # Scope 3 Cat 4: upstream transport (deterministic physical formula).
         cat4_tco2e = lane_volume * distance_km * ef_data["kgco2e_per_tonne_km"] / 1000.0
 
-        # Country of origin grid intensity adjustment (proxy)
-        origin_country = lane.get("from_country", "China")
-        origin_hash = hash(origin_country) % 100
-        grid_intensity_factor = 1.0 + origin_hash / 200.0  # +0 to +50% uplift
+        # Country-of-origin grid intensity: use supplied factor, else neutral 1.0.
+        origin_country = lane.get("from_country", "Unknown")
+        supplied_gif = grid_intensity_factors.get(origin_country)
+        if supplied_gif is not None:
+            grid_intensity_factor = max(1.0, float(supplied_gif))
+            gif_source = "supplied"
+        else:
+            grid_intensity_factor = 1.0  # documented neutral model default (no fabricated uplift)
+            gif_source = "default_neutral_1.0"
 
-        # Scope 3 Cat 1: purchased goods (lifecycle-based)
+        # Scope 3 Cat 1: purchased goods (lifecycle-based).
         cat1_tco2e = lane_volume * product_ghg * grid_intensity_factor / 1000.0
 
         total_scope3_cat4 += cat4_tco2e
@@ -628,9 +841,16 @@ def calculate_trade_flow_emissions(
             "scope3_cat4_transport_tco2e": round(cat4_tco2e, 2),
             "scope3_cat1_purchased_goods_tco2e": round(cat1_tco2e, 2),
             "grid_intensity_factor": round(grid_intensity_factor, 3),
+            "grid_intensity_source": gif_source,
         })
 
-    # Mode comparison (what if all sea freight)
+    if any(l["grid_intensity_source"] == "default_neutral_1.0" for l in lane_results):
+        notes.append(
+            "Cat 1 grid-intensity uplift: neutral 1.0 applied for origins without a supplied factor "
+            "(no fabricated uplift). Provide grid_intensity_factors={country: >=1.0} to refine."
+        )
+
+    # Mode comparison (what if all lowest-emission mode).
     best_mode = min(TRANSPORT_EMISSION_FACTORS.items(), key=lambda x: x[1]["kgco2e_per_tonne_km"])
     avg_distance = sum(l["distance_km"] for l in lane_results) / max(len(lane_results), 1)
     min_cat4 = volume_tonnes * avg_distance * best_mode[1]["kgco2e_per_tonne_km"] / 1000.0
@@ -658,6 +878,7 @@ def calculate_trade_flow_emissions(
             "recommended_mode": best_mode[0],
         },
         "ghg_protocol_references": ["GHG Protocol Corporate Value Chain Std 2011", "ISO 14083:2023"],
+        "notes": notes,
     }
 
 
@@ -666,41 +887,96 @@ def generate_green_instrument(
     instrument_type: str,
     use_of_proceeds: str,
     counterparty_country: str,
+    stf_principle_scores: Optional[dict[str, float]] = None,
+    esg_performance_score: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Generate green trade finance instrument assessment.
 
     Returns green LC/SBLC/trade loan criteria, ICC STF Principles alignment,
     ICMA Green Bond linkage, documentation requirements, pricing benefit.
+
+    Optional inputs (backward-compatible; default ``None``):
+      - ``stf_principle_scores``: mapping of ICC STF principle id (``"P1"``..``"P8"``)
+        to a real 0-100 score. The weighted STF score is computed over the
+        supplied principles only; when none are supplied it is ``None`` /
+        ``"insufficient_data"``.
+      - ``esg_performance_score`` (0-100): locates the pricing benefit within the
+        instrument's reference bps band (documented policy band) via linear
+        interpolation (higher performance → larger benefit). When absent the
+        point estimate is ``None`` and the reference band is exposed instead —
+        no midpoint is fabricated.
+
+    An unknown ``instrument_type`` is reported as an explicit error result
+    (never resolved to a random instrument).
     """
-    rng = _rng(entity_id)
+    notes: list[str] = []
 
     if instrument_type not in GREEN_INSTRUMENT_CRITERIA:
-        instrument_type = rng.choice(list(GREEN_INSTRUMENT_CRITERIA.keys()))
+        return {
+            "entity_id": entity_id,
+            "instrument_type": instrument_type,
+            "error": "unknown_instrument_type",
+            "valid_instrument_types": list(GREEN_INSTRUMENT_CRITERIA.keys()),
+            "notes": [
+                f"Instrument type '{instrument_type}' is not recognised. Supply one of "
+                f"{list(GREEN_INSTRUMENT_CRITERIA.keys())}."
+            ],
+        }
     instrument = GREEN_INSTRUMENT_CRITERIA[instrument_type]
 
-    # Eligibility check
+    # Eligibility check (deterministic reference-data logic).
     eligible_sectors = instrument["eligible_sectors"]
     eligible = "any" in eligible_sectors or use_of_proceeds in eligible_sectors
 
-    # ICC STF Principles scoring
+    # ICC STF Principles scoring — from supplied assessments only.
+    stf_principle_scores = stf_principle_scores or {}
     stf_scores = []
+    stf_supplied_any = False
     for principle in ICC_STF_PRINCIPLES:
-        score = round(rng.uniform(50.0, 95.0), 1)
+        raw = stf_principle_scores.get(principle["id"])
+        if raw is None:
+            s_score: Optional[float] = None
+        else:
+            s_score = round(_clamp(float(raw), 0.0, 100.0), 1)
+            stf_supplied_any = True
         stf_scores.append({
             "id": principle["id"],
             "name": principle["name"],
             "weight": principle["weight"],
-            "score": score,
+            "score": s_score,
         })
-    stf_weighted = sum(s["score"] * s["weight"] for s in stf_scores)
-    stf_aligned = stf_weighted >= 70
 
-    # Pricing benefit
+    if stf_supplied_any:
+        supplied_weight = sum(s["weight"] for s in stf_scores if s["score"] is not None)
+        stf_weighted: Optional[float] = round(sum(
+            s["score"] * s["weight"] for s in stf_scores if s["score"] is not None
+        ) / supplied_weight, 1) if supplied_weight > 0 else None
+        stf_aligned: Optional[bool] = (stf_weighted >= 70) if stf_weighted is not None else None
+    else:
+        stf_weighted = None
+        stf_aligned = None
+        notes.append(
+            "ICC STF alignment: insufficient_data — supply stf_principle_scores={P1..P8: 0-100} "
+            "to compute the weighted STF score."
+        )
+
+    # Pricing benefit — reference band always exposed; point estimate needs a real ESG score.
     bps_lo, bps_hi = instrument["pricing_benefit_bps_range"]
-    pricing_benefit_bps = round(rng.uniform(bps_lo, bps_hi), 1) if eligible else 0.0
+    if not eligible:
+        pricing_benefit_bps: Optional[float] = 0.0
+    elif esg_performance_score is not None:
+        perf = _clamp(float(esg_performance_score), 0.0, 100.0)
+        # Higher ESG performance → larger benefit within the reference band.
+        pricing_benefit_bps = round(bps_lo + (perf / 100.0) * (bps_hi - bps_lo), 1)
+    else:
+        pricing_benefit_bps = None
+        notes.append(
+            "Pricing benefit: insufficient_data — supply esg_performance_score (0-100) to locate the "
+            f"benefit within the reference band {bps_lo}-{bps_hi} bps; the band is returned as reference."
+        )
 
-    # ICMA Green Bond linkage
+    # ICMA Green Bond linkage (deterministic reference-data logic).
     icma_eligible_use_of_proceeds = use_of_proceeds in [
         "renewable_energy", "energy_efficiency", "clean_transport", "sustainable_water",
         "green_building", "sustainable_agriculture", "climate_adaptation",
@@ -711,15 +987,22 @@ def generate_green_instrument(
         else "Not Eligible"
     )
 
-    # Country risk and documentation requirements
-    counterparty_crc = OECD_COUNTRY_RISK.get(counterparty_country, 4)
+    # Country risk and documentation requirements.
+    counterparty_crc = OECD_COUNTRY_RISK.get(counterparty_country, None)
     additional_docs = []
-    if counterparty_crc >= 5:
+    if counterparty_crc is not None and counterparty_crc >= 5:
         additional_docs.append("Enhanced KYC / country risk assessment")
-    if counterparty_crc >= 6:
+    if counterparty_crc is not None and counterparty_crc >= 6:
         additional_docs.append("Export control compliance sign-off")
+    if counterparty_crc is None:
+        additional_docs.append("Counterparty country risk assessment required (country not in OECD CRC table)")
     if not eligible:
         additional_docs.append("Use of proceeds re-assessment required")
+
+    risk_level = (
+        "insufficient_data" if counterparty_crc is None
+        else ("low" if counterparty_crc <= 2 else ("medium" if counterparty_crc <= 5 else "high"))
+    )
 
     return {
         "entity_id": entity_id,
@@ -734,12 +1017,13 @@ def generate_green_instrument(
         },
         "pricing": {
             "pricing_benefit_bps": pricing_benefit_bps,
+            "pricing_benefit_bps_reference_band": {"low": bps_lo, "high": bps_hi},
             "use_of_proceeds_required": instrument["use_of_proceeds_required"],
             "icma_gbs_aligned": instrument["icma_gbs_aligned"],
         },
         "icc_stf_principles": {
             "principle_scores": stf_scores,
-            "weighted_score": round(stf_weighted, 1),
+            "weighted_score": stf_weighted,
             "aligned": stf_aligned,
         },
         "icma_classification": icma_category,
@@ -747,6 +1031,7 @@ def generate_green_instrument(
         "counterparty_risk": {
             "country": counterparty_country,
             "oecd_crc": counterparty_crc,
-            "risk_level": "low" if counterparty_crc <= 2 else ("medium" if counterparty_crc <= 5 else "high"),
+            "risk_level": risk_level,
         },
+        "notes": notes,
     }

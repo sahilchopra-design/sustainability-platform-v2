@@ -21,8 +21,7 @@ References:
 from __future__ import annotations
 
 import math
-import random
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -622,10 +621,6 @@ class DNSHRequest(BaseModel):
 # Engine Functions
 # ---------------------------------------------------------------------------
 
-def _seed(entity_id: str, salt: str = "") -> random.Random:
-    return random.Random(hash(entity_id + salt) & 0xFFFFFFFF)
-
-
 def _rts_annex_completeness(
     investment_objective_score: float,
     impact_strategy_score: float,
@@ -669,61 +664,76 @@ def _is_sustainable_investment(holding: HoldingInput) -> bool:
 def _pai_aggregate_from_holdings(
     holdings: list[HoldingInput],
     total_aum: float,
-    rng: random.Random,
 ) -> dict:
-    """Aggregate 14 mandatory PAI indicators across portfolio holdings."""
+    """Aggregate 14 mandatory PAI indicators across portfolio holdings.
+
+    Every returned value is a REAL computation from supplied holding data, or an
+    honest null (``value: None`` with ``data_available: False``) when the required
+    inputs are not present. No indicator is ever fabricated — SFDR Annex I PAI are
+    binding regulatory disclosures and must not display invented numbers.
+    Indicators PAI 5/6/7/8/9/11 have no corresponding source fields on
+    ``HoldingInput`` and are therefore always reported as insufficient_data until
+    the caller supplies the underlying data points.
+    """
     total_alloc = sum(h.allocation_eur_m for h in holdings)
 
-    # PAI 1: Scope 1+2 weighted average
+    # PAI 1: Scope 1+2 weighted average (real when Scope data + AUM present)
     pai1_num = sum(h.allocation_eur_m * (h.scope1_tco2e + h.scope2_tco2e) for h in holdings)
-    pai1 = pai1_num / total_aum if total_aum > 0 else rng.uniform(85, 320)
+    has_s12 = any((h.scope1_tco2e + h.scope2_tco2e) > 0 for h in holdings)
+    pai1 = round(pai1_num / total_aum, 2) if (total_aum > 0 and has_s12) else None
 
     # PAI 2: Carbon footprint (portfolio share × S1+2 / total AUM €M)
-    pai2_num = sum((h.allocation_eur_m / total_aum) * (h.scope1_tco2e + h.scope2_tco2e) for h in holdings)
-    pai2 = pai2_num if pai2_num > 0 else rng.uniform(60, 200)
+    pai2 = None
+    if total_aum > 0 and has_s12:
+        pai2_num = sum((h.allocation_eur_m / total_aum) * (h.scope1_tco2e + h.scope2_tco2e) for h in holdings)
+        pai2 = round(pai2_num, 2)
 
-    # PAI 3: GHG intensity per revenue
+    # PAI 3: GHG intensity per revenue (real when revenue reported)
     pai3_vals = [
         (h.scope1_tco2e + h.scope2_tco2e + h.scope3_tco2e) / max(h.revenue_eur_m, 0.001)
         for h in holdings if h.revenue_eur_m > 0
     ]
-    pai3 = sum(pai3_vals) / len(pai3_vals) if pai3_vals else rng.uniform(50, 400)
+    pai3 = round(sum(pai3_vals) / len(pai3_vals), 2) if pai3_vals else None
 
-    # PAI 4: Fossil fuel %
+    # PAI 4: Fossil fuel % (real when allocations present)
     fossil_alloc = sum(h.allocation_eur_m for h in holdings if h.fossil_fuel_revenue_pct > 5)
-    pai4 = (fossil_alloc / total_alloc * 100) if total_alloc > 0 else rng.uniform(0, 15)
+    pai4 = round(fossil_alloc / total_alloc * 100, 2) if total_alloc > 0 else None
 
-    # PAI 12: Gender pay gap
+    # PAI 12: Gender pay gap (real when any holding reports a gap)
     gpg_vals = [h.gender_pay_gap_pct for h in holdings if h.gender_pay_gap_pct > 0]
-    pai12 = sum(gpg_vals) / len(gpg_vals) if gpg_vals else rng.uniform(8, 22)
+    pai12 = round(sum(gpg_vals) / len(gpg_vals), 2) if gpg_vals else None
 
-    # PAI 13: Board gender diversity
+    # PAI 13: Board gender diversity (real when any holding reports board data)
     bfem_vals = [h.board_female_pct for h in holdings if h.board_female_pct > 0]
-    pai13 = sum(bfem_vals) / len(bfem_vals) if bfem_vals else rng.uniform(28, 48)
+    pai13 = round(sum(bfem_vals) / len(bfem_vals), 2) if bfem_vals else None
 
-    # PAI 10: UNGC violations
+    # PAI 10: UNGC violations (real — 0% when no flagged holdings is a true result)
     ungc_alloc = sum(h.allocation_eur_m for h in holdings if h.ungc_violations)
-    pai10 = (ungc_alloc / total_alloc * 100) if total_alloc > 0 else 0.0
+    pai10 = round(ungc_alloc / total_alloc * 100, 2) if total_alloc > 0 else None
 
-    # PAI 14: Controversial weapons
+    # PAI 14: Controversial weapons (real — 0% when none flagged is a true result)
     cw_alloc = sum(h.allocation_eur_m for h in holdings if h.controversial_weapons)
-    pai14 = (cw_alloc / total_alloc * 100) if total_alloc > 0 else 0.0
+    pai14 = round(cw_alloc / total_alloc * 100, 2) if total_alloc > 0 else None
+
+    def _pt(value, unit, name):
+        return {"value": value, "unit": unit, "name": name, "data_available": value is not None}
 
     return {
-        "PAI_1": {"value": round(pai1, 2), "unit": "tCO2e/€M invested", "name": "GHG Emissions"},
-        "PAI_2": {"value": round(pai2, 2), "unit": "tCO2e/€M invested", "name": "Carbon Footprint"},
-        "PAI_3": {"value": round(pai3, 2), "unit": "tCO2e/€M revenue", "name": "GHG Intensity"},
-        "PAI_4": {"value": round(pai4, 2), "unit": "%", "name": "Fossil Fuel Exposure"},
-        "PAI_5": {"value": round(rng.uniform(35, 75), 2), "unit": "%", "name": "Non-Renewable Energy"},
-        "PAI_6": {"value": round(rng.uniform(120, 450), 2), "unit": "GJ/€M revenue", "name": "Energy Intensity"},
-        "PAI_7": {"value": round(rng.uniform(0, 8), 2), "unit": "%", "name": "Biodiversity-Sensitive Areas"},
-        "PAI_8": {"value": round(rng.uniform(0.1, 4.5), 4), "unit": "tonnes/€M invested", "name": "Water Emissions"},
-        "PAI_9": {"value": round(rng.uniform(0.05, 2.5), 4), "unit": "tonnes/€M invested", "name": "Hazardous Waste"},
-        "PAI_10": {"value": round(pai10, 2), "unit": "%", "name": "UNGC Violations"},
-        "PAI_11": {"value": round(rng.uniform(5, 30), 2), "unit": "%", "name": "UNGC Compliance Process Lack"},
-        "PAI_12": {"value": round(pai12, 2), "unit": "%", "name": "Gender Pay Gap"},
-        "PAI_13": {"value": round(pai13, 2), "unit": "%", "name": "Board Gender Diversity"},
-        "PAI_14": {"value": round(pai14, 2), "unit": "%", "name": "Controversial Weapons"},
+        "PAI_1": _pt(pai1, "tCO2e/€M invested", "GHG Emissions"),
+        "PAI_2": _pt(pai2, "tCO2e/€M invested", "Carbon Footprint"),
+        "PAI_3": _pt(pai3, "tCO2e/€M revenue", "GHG Intensity"),
+        "PAI_4": _pt(pai4, "%", "Fossil Fuel Exposure"),
+        # PAI 5/6/7/8/9/11 — no source fields on HoldingInput: honest null
+        "PAI_5": _pt(None, "%", "Non-Renewable Energy"),
+        "PAI_6": _pt(None, "GJ/€M revenue", "Energy Intensity"),
+        "PAI_7": _pt(None, "%", "Biodiversity-Sensitive Areas"),
+        "PAI_8": _pt(None, "tonnes/€M invested", "Water Emissions"),
+        "PAI_9": _pt(None, "tonnes/€M invested", "Hazardous Waste"),
+        "PAI_10": _pt(pai10, "%", "UNGC Violations"),
+        "PAI_11": _pt(None, "%", "UNGC Compliance Process Lack"),
+        "PAI_12": _pt(pai12, "%", "Gender Pay Gap"),
+        "PAI_13": _pt(pai13, "%", "Board Gender Diversity"),
+        "PAI_14": _pt(pai14, "%", "Controversial Weapons"),
     }
 
 
@@ -756,9 +766,12 @@ def _art9_eligibility_score(
     add_map = {"real": 10.0, "likely": 7.5, "plausible": 5.0, "none": 0.0}
     add_score = add_map.get(additionality_claim, 5.0)
 
-    # PAI data quality bonus (up to 10 pts)
-    ungc_penalty = -5.0 if pai_aggregate["PAI_10"]["value"] > 0 else 0.0
-    cw_penalty = -10.0 if pai_aggregate["PAI_14"]["value"] > 0 else 0.0
+    # PAI data quality bonus (up to 10 pts). PAI 10/14 values may be None
+    # (insufficient data) — treat null as "no confirmed violation", no penalty.
+    pai10_val = pai_aggregate["PAI_10"]["value"]
+    pai14_val = pai_aggregate["PAI_14"]["value"]
+    ungc_penalty = -5.0 if (pai10_val is not None and pai10_val > 0) else 0.0
+    cw_penalty = -10.0 if (pai14_val is not None and pai14_val > 0) else 0.0
 
     raw = si_score + dnsh_score + gov_score + rts_score + add_score + ungc_penalty + cw_penalty
     return round(min(100.0, max(0.0, raw)), 2)
@@ -783,11 +796,13 @@ def _downgrade_risk(
         risk += dnsh_fail_count * 8
         triggers.append(f"{dnsh_fail_count} holdings fail DNSH check — must remediate or divest under ESMA Q25")
 
-    if pai_aggregate["PAI_10"]["value"] > 0:
+    pai10_val = pai_aggregate["PAI_10"]["value"]
+    if pai10_val is not None and pai10_val > 0:
         risk += 15
         triggers.append("UNGC violations in portfolio (PAI 10 > 0%) — governance screen failure per ESMA Q18")
 
-    if pai_aggregate["PAI_14"]["value"] > 0:
+    pai14_val = pai_aggregate["PAI_14"]["value"]
+    if pai14_val is not None and pai14_val > 0:
         risk += 20
         triggers.append("Controversial weapons exposure (PAI 14 > 0%) — hard exclusion criterion violation")
 
@@ -811,26 +826,31 @@ def _compliance_tier(score: float, eligible: bool) -> str:
         return "non_compliant"
 
 
-def _generate_impact_kpis(strategy: str, rng: random.Random) -> list[dict]:
-    """Generate example impact KPIs based on fund strategy."""
+def _generate_impact_kpis(strategy: str) -> list[dict]:
+    """Return the impact-KPI *framework* (IRIS+/GIIN-aligned metric definitions)
+    for the fund strategy. Actual measured values are honest nulls — Art 9 impact
+    figures are regulated disclosures and must be sourced from real measurement,
+    never fabricated. Each entry keeps the kpi/unit/baseline framework shape with
+    ``value: None`` until the caller supplies measured impact data.
+    """
     kpi_bank = {
         "impact": [
-            {"kpi": "GHG_avoided_tco2e_yr", "value": round(rng.uniform(5000, 50000), 0), "unit": "tCO2e/yr", "baseline": "2020"},
-            {"kpi": "MW_clean_energy_financed", "value": round(rng.uniform(50, 500), 1), "unit": "MW", "baseline": "2020"},
-            {"kpi": "ha_ecosystem_restored", "value": round(rng.uniform(1000, 20000), 0), "unit": "ha", "baseline": "2020"},
-            {"kpi": "beneficiaries_reached", "value": round(rng.uniform(10000, 500000), 0), "unit": "persons", "baseline": "2020"},
+            {"kpi": "GHG_avoided_tco2e_yr", "value": None, "unit": "tCO2e/yr", "baseline": "2020"},
+            {"kpi": "MW_clean_energy_financed", "value": None, "unit": "MW", "baseline": "2020"},
+            {"kpi": "ha_ecosystem_restored", "value": None, "unit": "ha", "baseline": "2020"},
+            {"kpi": "beneficiaries_reached", "value": None, "unit": "persons", "baseline": "2020"},
         ],
         "thematic": [
-            {"kpi": "renewable_energy_capacity_mw", "value": round(rng.uniform(100, 2000), 1), "unit": "MW", "baseline": "2021"},
-            {"kpi": "green_building_sqm_financed", "value": round(rng.uniform(50000, 500000), 0), "unit": "m²", "baseline": "2021"},
+            {"kpi": "renewable_energy_capacity_mw", "value": None, "unit": "MW", "baseline": "2021"},
+            {"kpi": "green_building_sqm_financed", "value": None, "unit": "m²", "baseline": "2021"},
         ],
         "best_in_class": [
-            {"kpi": "esg_score_weighted_avg", "value": round(rng.uniform(65, 85), 1), "unit": "score 0-100", "baseline": "sector median"},
-            {"kpi": "carbon_intensity_reduction_pct", "value": round(rng.uniform(15, 45), 1), "unit": "%", "baseline": "2020"},
+            {"kpi": "esg_score_weighted_avg", "value": None, "unit": "score 0-100", "baseline": "sector median"},
+            {"kpi": "carbon_intensity_reduction_pct", "value": None, "unit": "%", "baseline": "2020"},
         ],
         "engagement": [
-            {"kpi": "companies_engaged_count", "value": rng.randint(20, 150), "unit": "companies", "baseline": "N/A"},
-            {"kpi": "shareholder_resolutions_supported_pct", "value": round(rng.uniform(75, 98), 1), "unit": "%", "baseline": "N/A"},
+            {"kpi": "companies_engaged_count", "value": None, "unit": "companies", "baseline": "N/A"},
+            {"kpi": "shareholder_resolutions_supported_pct", "value": None, "unit": "%", "baseline": "N/A"},
         ],
     }
     return kpi_bank.get(strategy, kpi_bank["impact"])
@@ -841,10 +861,14 @@ def _generate_impact_kpis(strategy: str, rng: random.Random) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 def assess_art9_eligibility(req: Art9AssessmentRequest) -> dict[str, Any]:
-    """Full SFDR Art 9 eligibility assessment."""
-    rng = _seed(req.entity_id, req.fund_name)
+    """Full SFDR Art 9 eligibility assessment.
 
-    # RTS completeness
+    Portfolio-level eligibility metrics are computed from supplied holdings only.
+    When no holdings are provided the fund cannot be assessed, so the eligibility
+    metrics, score and downgrade risk are returned as honest nulls (with
+    ``compliance_tier: "insufficient_data"``) rather than fabricated numbers.
+    """
+    # RTS completeness (real — derived from supplied pre-contractual scores)
     rts_completeness = _rts_annex_completeness(
         req.investment_objective_score,
         req.impact_strategy_score,
@@ -853,66 +877,95 @@ def assess_art9_eligibility(req: Art9AssessmentRequest) -> dict[str, Any]:
         req.engagement_policy_score,
     )
 
-    # Holdings analysis
+    # PAI aggregate (real computations / honest nulls per indicator)
+    pai_agg = _pai_aggregate_from_holdings(req.holdings, req.total_aum_eur_m)
+
+    # Impact KPI framework (definitions only; measured values are honest nulls)
+    impact_kpis = _generate_impact_kpis(req.fund_strategy)
+
+    # Holdings analysis — only assessable when holdings are supplied
     if req.holdings:
         total_alloc = sum(h.allocation_eur_m for h in req.holdings)
         si_alloc = sum(h.allocation_eur_m for h in req.holdings if _is_sustainable_investment(h))
-        sustainable_pct = (si_alloc / total_alloc * 100) if total_alloc > 0 else rng.uniform(92, 105)
+        # HoldingInput.allocation_eur_m is gt=0, so total_alloc > 0 whenever holdings exist.
+        sustainable_pct = (si_alloc / total_alloc * 100) if total_alloc > 0 else 0.0
         taxonomy_pct = _taxonomy_aligned_portfolio_pct(req.holdings, req.total_aum_eur_m)
         dnsh_pass = [h for h in req.holdings if _dnsh_all_pass(h)]
         dnsh_fail = [h for h in req.holdings if not _dnsh_all_pass(h)]
         gov_pass = [h for h in req.holdings if _governance_pass(h)]
-        gov_pct = (len(gov_pass) / len(req.holdings) * 100) if req.holdings else 100.0
-        dnsh_pct = (len(dnsh_pass) / len(req.holdings) * 100) if req.holdings else 100.0
+        gov_pct = len(gov_pass) / len(req.holdings) * 100
+        dnsh_pct = len(dnsh_pass) / len(req.holdings) * 100
         dnsh_fail_count = len(dnsh_fail)
+
+        art9_score = _art9_eligibility_score(
+            rts_completeness,
+            min(sustainable_pct, 100),
+            taxonomy_pct,
+            dnsh_pct,
+            gov_pct,
+            req.additionality_claim,
+            pai_agg,
+        )
+        art9_eligible = sustainable_pct >= 100.0 and dnsh_fail_count == 0 and gov_pct >= 95.0
+
+        dnsh_results = {
+            "dnsh_climate_mitigation": dnsh_pct >= 95,
+            "dnsh_climate_adaptation": dnsh_pct >= 95,
+            "dnsh_water": dnsh_pct >= 95,
+            "dnsh_circular": dnsh_pct >= 95,
+            "dnsh_pollution": dnsh_pct >= 95,
+            "dnsh_biodiversity": dnsh_pct >= 95,
+            "dnsh_all_pass": dnsh_fail_count == 0,
+        }
+
+        downgrade_risk, downgrade_triggers = _downgrade_risk(
+            min(sustainable_pct, 100),
+            dnsh_fail_count,
+            pai_agg,
+            req.additionality_claim,
+        )
+        esma_pass = art9_eligible and downgrade_risk < 20
+        tier = _compliance_tier(art9_score, art9_eligible)
+        sustainable_pct_out = round(min(sustainable_pct, 100), 2)
+        taxonomy_pct_out = round(taxonomy_pct, 2)
+        gov_pct_out = round(gov_pct, 2)
+        dnsh_pct_out = round(dnsh_pct, 2)
+        # Real PAI data coverage = share of holdings reporting Scope 1/2 emissions.
+        holdings_with_scope = sum(
+            1 for h in req.holdings if (h.scope1_tco2e > 0 or h.scope2_tco2e > 0)
+        )
+        pai_coverage_pct_out = round(holdings_with_scope / len(req.holdings) * 100, 1)
+        estimated_data_pct_out = round(100 - pai_coverage_pct_out, 1)
+        recommendations = _art9_recommendations(
+            art9_eligible, sustainable_pct, dnsh_fail_count, downgrade_risk, rts_completeness
+        )
     else:
-        sustainable_pct = rng.uniform(95, 102)
-        taxonomy_pct = rng.uniform(15, 55)
-        gov_pct = rng.uniform(88, 100)
-        dnsh_pct = rng.uniform(88, 100)
-        dnsh_fail_count = 0
-
-    # PAI aggregate
-    pai_agg = _pai_aggregate_from_holdings(req.holdings, req.total_aum_eur_m, rng)
-
-    # Scores
-    art9_score = _art9_eligibility_score(
-        rts_completeness,
-        min(sustainable_pct, 100),
-        taxonomy_pct,
-        dnsh_pct,
-        gov_pct,
-        req.additionality_claim,
-        pai_agg,
-    )
-    art9_eligible = sustainable_pct >= 100.0 and dnsh_fail_count == 0 and gov_pct >= 95.0
-
-    # DNSH flags
-    dnsh_results = {
-        "dnsh_climate_mitigation": dnsh_pct >= 95,
-        "dnsh_climate_adaptation": dnsh_pct >= 95,
-        "dnsh_water": dnsh_pct >= 95,
-        "dnsh_circular": dnsh_pct >= 95,
-        "dnsh_pollution": dnsh_pct >= 95,
-        "dnsh_biodiversity": dnsh_pct >= 95,
-        "dnsh_all_pass": dnsh_fail_count == 0,
-    }
-
-    # Downgrade risk
-    downgrade_risk, downgrade_triggers = _downgrade_risk(
-        min(sustainable_pct, 100),
-        dnsh_fail_count,
-        pai_agg,
-        req.additionality_claim,
-    )
-
-    # ESMA compliance
-    esma_pass = art9_eligible and downgrade_risk < 20
-
-    # Impact KPIs
-    impact_kpis = _generate_impact_kpis(req.fund_strategy, rng)
-
-    tier = _compliance_tier(art9_score, art9_eligible)
+        # No holdings supplied — cannot assess eligibility. Honest nulls only.
+        sustainable_pct_out = None
+        taxonomy_pct_out = None
+        gov_pct_out = None
+        dnsh_pct_out = None
+        art9_score = None
+        art9_eligible = False
+        dnsh_results = {
+            "dnsh_climate_mitigation": None,
+            "dnsh_climate_adaptation": None,
+            "dnsh_water": None,
+            "dnsh_circular": None,
+            "dnsh_pollution": None,
+            "dnsh_biodiversity": None,
+            "dnsh_all_pass": None,
+        }
+        downgrade_risk = None
+        downgrade_triggers = ["No holdings supplied — Art 9 eligibility cannot be assessed (insufficient_data)"]
+        esma_pass = None
+        tier = "insufficient_data"
+        pai_coverage_pct_out = None
+        estimated_data_pct_out = None
+        recommendations = [
+            "No holdings supplied — provide portfolio holdings to assess Art 9 eligibility, "
+            "sustainable investment %, DNSH pass rate and PAI indicators."
+        ]
 
     return {
         "entity_id": req.entity_id,
@@ -930,10 +983,10 @@ def assess_art9_eligibility(req: Art9AssessmentRequest) -> dict[str, Any]:
             "rts_annex_completeness_pct": rts_completeness,
         },
         "art9_eligibility": {
-            "sustainable_investment_pct": round(min(sustainable_pct, 100), 2),
-            "taxonomy_aligned_pct": round(taxonomy_pct, 2),
-            "governance_screen_pass_pct": round(gov_pct, 2),
-            "dnsh_pass_pct": round(dnsh_pct, 2),
+            "sustainable_investment_pct": sustainable_pct_out,
+            "taxonomy_aligned_pct": taxonomy_pct_out,
+            "governance_screen_pass_pct": gov_pct_out,
+            "dnsh_pass_pct": dnsh_pct_out,
             "dnsh_results": dnsh_results,
             "art9_eligibility_score": art9_score,
             "art9_eligible": art9_eligible,
@@ -947,16 +1000,18 @@ def assess_art9_eligibility(req: Art9AssessmentRequest) -> dict[str, Any]:
         },
         "impact_kpis": {
             "impact_kpis_defined": len(impact_kpis) > 0,
-            "impact_kpis_measured": True,
+            # Measured impact values are honest nulls until real data is supplied.
+            "impact_kpis_measured": any(k.get("value") is not None for k in impact_kpis),
             "impact_kpis": impact_kpis,
         },
         "data_quality": {
             "pai_data_provider": req.third_party_data_provider,
             "holdings_count": len(req.holdings),
-            "pai_coverage_pct": round(rng.uniform(65, 95), 1),
-            "estimated_data_pct": round(rng.uniform(15, 45), 1),
+            # Real coverage = share of holdings that actually report Scope 1/2 data.
+            "pai_coverage_pct": pai_coverage_pct_out,
+            "estimated_data_pct": estimated_data_pct_out,
         },
-        "recommendations": _art9_recommendations(art9_eligible, sustainable_pct, dnsh_fail_count, downgrade_risk, rts_completeness),
+        "recommendations": recommendations,
     }
 
 
@@ -988,7 +1043,6 @@ def _art9_recommendations(
 
 def analyse_portfolio_holdings(req: PortfolioHoldingsRequest) -> dict[str, Any]:
     """Portfolio holdings composition analysis for Art 9 purposes."""
-    rng = _seed(req.entity_id, "holdings")
     total_alloc = sum(h.allocation_eur_m for h in req.holdings)
 
     holding_results = []
@@ -1057,8 +1111,7 @@ def analyse_portfolio_holdings(req: PortfolioHoldingsRequest) -> dict[str, Any]:
 
 def calculate_pai_aggregate(req: PAIAggregateRequest) -> dict[str, Any]:
     """Aggregate PAI indicators across portfolio for SFDR reporting."""
-    rng = _seed(req.entity_id, "pai")
-    pai_agg = _pai_aggregate_from_holdings(req.holdings, req.total_aum_eur_m, rng)
+    pai_agg = _pai_aggregate_from_holdings(req.holdings, req.total_aum_eur_m)
 
     # Data coverage assessment
     holdings_with_scope = sum(1 for h in req.holdings if h.scope1_tco2e > 0 or h.scope2_tco2e > 0)
@@ -1068,22 +1121,27 @@ def calculate_pai_aggregate(req: PAIAggregateRequest) -> dict[str, Any]:
     pai_with_quality = {}
     for key, data in pai_agg.items():
         ref = PAI_MANDATORY.get(key, {})
+        # Only a reported (non-null) indicator can meet a DQS benchmark; null => None.
+        meets_dqs = None if data.get("value") is None else True
         pai_with_quality[key] = {
             **data,
             "dqs_benchmark": ref.get("dqs_benchmark", 3),
             "data_proxy_acceptable": ref.get("data_proxy_acceptable", True),
-            "meets_dqs_benchmark": True,  # simplified
+            "meets_dqs_benchmark": meets_dqs,
             "esrs_link": ref.get("esrs_link", ""),
         }
 
     optional_pai = {}
     if req.include_optional_pai:
+        # Optional PAI (OPT 1-4) have no corresponding source fields on HoldingInput,
+        # so no real value can be computed — report honest nulls, never fabricate.
         for key, data in PAI_OPTIONAL.items():
             optional_pai[key] = {
-                "value": round(rng.uniform(0, 15), 2),
+                "value": None,
                 "unit": "%",
                 "name": data["name"],
                 "applicable_to": data["applicable_to"],
+                "data_available": False,
             }
 
     return {

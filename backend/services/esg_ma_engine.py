@@ -5,9 +5,8 @@ OECD Due Diligence Guidance for RBC | ESG Valuation Adjustments
 Post-Merger Integration | ILO 8 Core Conventions | SFDR/EU Taxonomy
 """
 from __future__ import annotations
-import random
 from datetime import datetime, timezone, timedelta
-from typing import Any
+from typing import Any, Optional
 
 # ── Reference Data ─────────────────────────────────────────────────────────────
 
@@ -179,38 +178,91 @@ ILO_CORE_CONVENTIONS = [
 
 # ── Core Engine Functions ──────────────────────────────────────────────────────
 
+_STATUS_TO_SCORE = {
+    "satisfactory": (1.0, "low"),
+    "requires_attention": (0.65, "medium"),
+    "material_gap": (0.3, "high"),
+    "critical_finding": (0.0, "critical"),
+}
+
+
+def _resolve_checklist_status(raw: Any) -> Optional[tuple[str, str, float]]:
+    """Map a caller-supplied checklist finding to (status, risk_level, score).
+
+    Accepts either an explicit status string ("satisfactory" / "requires_attention"
+    / "material_gap" / "critical_finding"), a mapping containing a "status" key, or
+    a numeric 0-1 completeness/quality score. Returns None when the input is absent
+    or unrecognised so the item can be reported as an honest non-assessment.
+    """
+    if raw is None:
+        return None
+    if isinstance(raw, dict):
+        raw = raw.get("status", raw.get("score"))
+        if raw is None:
+            return None
+    if isinstance(raw, str):
+        key = raw.strip().lower()
+        if key in _STATUS_TO_SCORE:
+            score, risk = _STATUS_TO_SCORE[key]
+            return key, risk, score
+        return None
+    if isinstance(raw, bool):  # guard: bool is an int subclass
+        raw = 1.0 if raw else 0.0
+    if isinstance(raw, (int, float)):
+        val = float(raw)
+        if val >= 0.75:
+            return "satisfactory", "low", 1.0
+        if val >= 0.45:
+            return "requires_attention", "medium", 0.65
+        if val >= 0.2:
+            return "material_gap", "high", 0.3
+        return "critical_finding", "critical", 0.0
+    return None
+
+
 def assess_esg_due_diligence(
     entity_id: str,
     deal_name: str,
     target_sector: str,
     target_country: str,
     deal_value_usd: float,
+    checklist_assessments: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Assess ESG due diligence across the 85-item checklist.
+
+    ``checklist_assessments`` maps a checklist item ``id`` (e.g. "DD-E01") to a
+    caller-supplied finding — either a status string, a numeric 0-1 quality score,
+    or a mapping with a "status"/"score" key (see ``_resolve_checklist_status``).
+    Items without a supplied finding are reported as ``not_assessed`` and excluded
+    from the E/S/G scoring so headline scores reflect only evidenced findings.
+    """
+    assessments = checklist_assessments or {}
 
     checklist_results: list[dict] = []
     red_flags: list[dict] = []
     e_score_sum, s_score_sum, g_score_sum = 0.0, 0.0, 0.0
     e_count, s_count, g_count = 0, 0, 0
+    assessed_count = 0
 
     for item in ESG_DD_CHECKLIST:
-        item_rng = random.Random(hash(f"{entity_id}_{item['id']}") & 0xFFFFFFFF)
-        status_val = item_rng.random()
-        if status_val >= 0.75:
-            status = "satisfactory"
-            risk = "low"
-        elif status_val >= 0.45:
-            status = "requires_attention"
-            risk = "medium"
-        elif status_val >= 0.2:
-            status = "material_gap"
-            risk = "high"
-        else:
-            status = "critical_finding"
-            risk = "critical"
-
-        score = 1.0 if status == "satisfactory" else 0.65 if status == "requires_attention" else 0.3 if status == "material_gap" else 0.0
         cat = item["category"]
+        resolved = _resolve_checklist_status(assessments.get(item["id"]))
+
+        if resolved is None:
+            # Honest non-assessment — no data supplied for this checklist item.
+            checklist_results.append({
+                "id": item["id"],
+                "category": cat,
+                "item": item["item"],
+                "status": "not_assessed",
+                "risk_level": "insufficient_data",
+                "score": None,
+                "weight": item["weight"],
+            })
+            continue
+
+        status, risk, score = resolved
+        assessed_count += 1
 
         if cat in ("GHG_Climate", "Biodiversity", "Water", "Pollution_Circular", "Supply_Chain_E"):
             e_score_sum += score * item["weight"]
@@ -235,17 +287,35 @@ def assess_esg_due_diligence(
             "weight": item["weight"],
         })
 
-    e_score = e_score_sum / e_count if e_count else 0
-    s_score = s_score_sum / s_count if s_count else 0
-    g_score = g_score_sum / g_count if g_count else 0
-    overall_esg_score = (e_score * 0.35 + s_score * 0.35 + g_score * 0.30)
+    e_score = e_score_sum / e_count if e_count else None
+    s_score = s_score_sum / s_count if s_count else None
+    g_score = g_score_sum / g_count if g_count else None
 
-    # ESG premium/discount on deal value
-    adj_pct = (overall_esg_score - 0.5) * 20  # -10% to +10% base
-    esg_valuation_adjustment_pct = round(adj_pct, 2)
-    esg_valuation_adjustment_usd = deal_value_usd * esg_valuation_adjustment_pct / 100
+    # Overall score is a genuine weighted blend of the evidenced pillars only.
+    pillar_weights = []
+    if e_score is not None:
+        pillar_weights.append((e_score, 0.35))
+    if s_score is not None:
+        pillar_weights.append((s_score, 0.35))
+    if g_score is not None:
+        pillar_weights.append((g_score, 0.30))
+    weight_total = sum(w for _, w in pillar_weights)
+    overall_esg_score = (
+        sum(v * w for v, w in pillar_weights) / weight_total if weight_total else None
+    )
 
-    # CSDDD Art 3 scope
+    # ESG premium/discount on deal value — only when a real overall score exists.
+    if overall_esg_score is not None:
+        adj_pct = (overall_esg_score - 0.5) * 20  # -10% to +10% base
+        esg_valuation_adjustment_pct: Optional[float] = round(adj_pct, 2)
+        esg_valuation_adjustment_usd: Optional[float] = round(
+            deal_value_usd * esg_valuation_adjustment_pct / 100, 0
+        )
+    else:
+        esg_valuation_adjustment_pct = None
+        esg_valuation_adjustment_usd = None
+
+    # CSDDD Art 3 scope — deterministic from the deal value (genuine core logic).
     csddd_scope_group = "EU_group_2" if deal_value_usd > 500e6 else "EU_group_3"
     csddd_scope = CSDDD_SCOPE_THRESHOLDS.get(csddd_scope_group, {})
 
@@ -256,108 +326,164 @@ def assess_esg_due_diligence(
         "target_country": target_country,
         "deal_value_usd": round(deal_value_usd, 0),
         "esg_score_breakdown": {
-            "environmental": round(e_score, 3),
-            "social": round(s_score, 3),
-            "governance": round(g_score, 3),
-            "overall": round(overall_esg_score, 3),
+            "environmental": round(e_score, 3) if e_score is not None else None,
+            "social": round(s_score, 3) if s_score is not None else None,
+            "governance": round(g_score, 3) if g_score is not None else None,
+            "overall": round(overall_esg_score, 3) if overall_esg_score is not None else None,
         },
         "esg_valuation_adjustment_pct": esg_valuation_adjustment_pct,
-        "esg_valuation_adjustment_usd": round(esg_valuation_adjustment_usd, 0),
+        "esg_valuation_adjustment_usd": esg_valuation_adjustment_usd,
         "red_flags": red_flags,
         "red_flag_count": len(red_flags),
         "deal_breaker_check": any(f["severity"] == "critical" for f in red_flags),
-        "checklist_items_assessed": len(checklist_results),
+        "checklist_items_assessed": assessed_count,
+        "checklist_items_total": len(ESG_DD_CHECKLIST),
+        "data_completeness": (
+            "complete" if assessed_count == len(ESG_DD_CHECKLIST)
+            else "partial" if assessed_count > 0
+            else "insufficient_data"
+        ),
         "csddd_art3_scope": {"scope_group": csddd_scope_group, "thresholds": csddd_scope},
         "ungp_dd_required": any(f["category"] == "Human_Rights" for f in red_flags),
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
 
 
+_OECD_RBC_STEP_KEYS = (
+    "step1_embed_rbc",
+    "step2_identify_impacts",
+    "step3_cease_prevent",
+    "step4_track_implementation",
+    "step5_communicate",
+    "step6_provide_remedy",
+)
+
+
 def score_ungp_alignment(
     entity_id: str,
     target_company: str,
     sector: str,
+    principle_scores_input: Optional[dict[str, float]] = None,
+    ilo_compliance_input: Optional[dict[str, bool]] = None,
+    oecd_rbc_input: Optional[dict[str, float]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Score UNGP 31-principle alignment from caller-supplied evidence.
+
+    ``principle_scores_input`` maps a UNGP id (e.g. "UNGP-11") to a 0-1 alignment
+    score; ``ilo_compliance_input`` maps an ILO convention (e.g. "C29") to a
+    compliance boolean; ``oecd_rbc_input`` maps an OECD RBC step key to a 0-1 score.
+    Any principle/convention/step without supplied evidence is reported with a null
+    score and excluded from the aggregates rather than being fabricated.
+    """
+    principle_input = principle_scores_input or {}
+    ilo_input = ilo_compliance_input or {}
+    oecd_input = oecd_rbc_input or {}
 
     principle_scores: list[dict] = []
     pillar_sums: dict[str, float] = {"I": 0, "II": 0, "III": 0}
     pillar_counts: dict[str, int] = {"I": 0, "II": 0, "III": 0}
 
     for p in UNGP_PRINCIPLES:
-        p_rng = random.Random(hash(f"{entity_id}_{p['id']}") & 0xFFFFFFFF)
-        score = round(p_rng.uniform(0.2, 1.0), 2)
-        pillar_sums[p["pillar"]] += score
-        pillar_counts[p["pillar"]] += 1
+        raw = principle_input.get(p["id"])
+        score = round(float(raw), 2) if isinstance(raw, (int, float)) and not isinstance(raw, bool) else None
+        if score is not None:
+            pillar_sums[p["pillar"]] += score
+            pillar_counts[p["pillar"]] += 1
         principle_scores.append({
             "id": p["id"],
             "pillar": p["pillar"],
             "category": p["category"],
             "principle": p["principle"],
             "alignment_score": score,
-            "evidence_available": score >= 0.7,
-            "gap_identified": score < 0.5,
+            "evidence_available": score is not None and score >= 0.7,
+            "gap_identified": score is not None and score < 0.5,
         })
 
     pillar_averages = {
-        "Pillar_I_State_Protect": round(pillar_sums["I"] / pillar_counts["I"], 3) if pillar_counts["I"] else 0,
-        "Pillar_II_Business_Respect": round(pillar_sums["II"] / pillar_counts["II"], 3) if pillar_counts["II"] else 0,
-        "Pillar_III_Access_Remedy": round(pillar_sums["III"] / pillar_counts["III"], 3) if pillar_counts["III"] else 0,
+        "Pillar_I_State_Protect": round(pillar_sums["I"] / pillar_counts["I"], 3) if pillar_counts["I"] else None,
+        "Pillar_II_Business_Respect": round(pillar_sums["II"] / pillar_counts["II"], 3) if pillar_counts["II"] else None,
+        "Pillar_III_Access_Remedy": round(pillar_sums["III"] / pillar_counts["III"], 3) if pillar_counts["III"] else None,
     }
-    overall_ungp = sum(pillar_averages.values()) / 3
+    scored_pillars = [v for v in pillar_averages.values() if v is not None]
+    overall_ungp = round(sum(scored_pillars) / len(scored_pillars), 3) if scored_pillars else None
 
-    # ILO core conventions check
+    # ILO core conventions check — only reflect conventions with supplied evidence.
     ilo_compliance: list[dict] = []
     for conv in ILO_CORE_CONVENTIONS:
-        c_rng = random.Random(hash(f"{entity_id}_{conv['convention']}") & 0xFFFFFFFF)
-        compliant = c_rng.random() > 0.25
+        raw = ilo_input.get(conv["convention"])
+        compliant = bool(raw) if isinstance(raw, bool) else None
         ilo_compliance.append({
             "convention": conv["convention"],
             "name": conv["name"],
             "subject": conv["subject"],
             "compliant": compliant,
-            "evidence_type": "audit_certificate" if compliant else "none",
-            "salient_issue": not compliant,
+            "evidence_type": (
+                "audit_certificate" if compliant is True else "none" if compliant is False else "not_assessed"
+            ),
+            "salient_issue": compliant is False,
         })
 
-    # HRIA requirement flag
+    # HRIA requirement flag — triggered by high-risk sector, or by a low UNGP score
+    # when one is available. With no score, sector alone drives the flag.
     high_risk_sectors = ["mining", "agriculture", "garments", "construction", "electronics", "fishing"]
-    hria_required = sector.lower() in high_risk_sectors or overall_ungp < 0.6
+    hria_required = sector.lower() in high_risk_sectors or (overall_ungp is not None and overall_ungp < 0.6)
 
-    # OECD Due Diligence Guidance 6 steps
-    oecd_rbc_steps = {
-        "step1_embed_rbc": round(rng.uniform(0.3, 1.0), 2),
-        "step2_identify_impacts": round(rng.uniform(0.3, 1.0), 2),
-        "step3_cease_prevent": round(rng.uniform(0.3, 1.0), 2),
-        "step4_track_implementation": round(rng.uniform(0.2, 0.9), 2),
-        "step5_communicate": round(rng.uniform(0.2, 0.9), 2),
-        "step6_provide_remedy": round(rng.uniform(0.2, 0.85), 2),
-    }
-    oecd_overall = sum(oecd_rbc_steps.values()) / len(oecd_rbc_steps)
+    # OECD Due Diligence Guidance 6 steps — sourced from supplied evidence only.
+    oecd_rbc_steps = {}
+    for key in _OECD_RBC_STEP_KEYS:
+        raw = oecd_input.get(key)
+        oecd_rbc_steps[key] = (
+            round(float(raw), 2) if isinstance(raw, (int, float)) and not isinstance(raw, bool) else None
+        )
+    scored_steps = [v for v in oecd_rbc_steps.values() if v is not None]
+    oecd_overall = round(sum(scored_steps) / len(scored_steps), 3) if scored_steps else None
 
+    remedy_avg = pillar_averages["Pillar_III_Access_Remedy"]
     return {
         "entity_id": entity_id,
         "target_company": target_company,
         "sector": sector,
-        "overall_ungp_score": round(overall_ungp, 3),
+        "overall_ungp_score": overall_ungp,
         "pillar_scores": pillar_averages,
         "principle_scores": principle_scores,
+        "principles_assessed": sum(pillar_counts.values()),
+        "principles_total": len(UNGP_PRINCIPLES),
         "ilo_core_conventions": ilo_compliance,
-        "ilo_violations": [c for c in ilo_compliance if not c["compliant"]],
+        "ilo_violations": [c for c in ilo_compliance if c["compliant"] is False],
         "hria_required": hria_required,
         "oecd_rbc_6_steps": oecd_rbc_steps,
-        "oecd_rbc_overall": round(oecd_overall, 3),
-        "remedy_mechanism_adequate": pillar_averages["Pillar_III_Access_Remedy"] >= 0.65,
+        "oecd_rbc_overall": oecd_overall,
+        "remedy_mechanism_adequate": (remedy_avg >= 0.65) if remedy_avg is not None else None,
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+def _opt_num(source: dict[str, Any], key: str) -> Optional[float]:
+    """Return a numeric input from ``source`` or None (bool excluded)."""
+    v = source.get(key)
+    if isinstance(v, bool):
+        return None
+    return float(v) if isinstance(v, (int, float)) else None
 
 
 def calculate_esg_valuation_impact(
     entity_id: str,
     base_valuation_usd: float,
     esg_findings: dict[str, Any],
+    quant_inputs: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Quantify ESG purchase-price adjustments.
+
+    ``esg_findings`` (already caller-supplied) drives the finding-level adjustments
+    via the ESG_VALUATION_RANGES benchmark table — genuine core, preserved as-is.
+    ``quant_inputs`` optionally supplies the entity-specific quant drivers:
+        stranded_asset_pct, carbon_cost_usd, climate_litigation_usd,
+        wage_gap_adj_pct, turnover_adj_pct, board_composition_score,
+        ownership_concentration, warranty_coverage_usd, integration_cost_usd.
+    Any driver not supplied is reported as null (not fabricated) and omitted from
+    the adjusted-valuation roll-up.
+    """
+    q = quant_inputs or {}
 
     adjustments: list[dict] = []
     total_adjustment_usd = 0.0
@@ -374,60 +500,77 @@ def calculate_esg_valuation_impact(
             "driver": val_range["driver"],
         })
 
-    # Climate liability quantification
-    stranded_asset_pct = rng.uniform(0.05, 0.25)
-    carbon_cost_usd = rng.uniform(1e6, 50e6)
-    litigation_risk_usd = rng.uniform(0, 30e6)
-    climate_liability_total = (base_valuation_usd * stranded_asset_pct + carbon_cost_usd + litigation_risk_usd)
+    # Climate liability quantification — from supplied drivers only.
+    stranded_asset_pct = _opt_num(q, "stranded_asset_pct")
+    carbon_cost_usd = _opt_num(q, "carbon_cost_usd")
+    litigation_risk_usd = _opt_num(q, "climate_litigation_usd")
+    stranded_asset_usd = base_valuation_usd * stranded_asset_pct if stranded_asset_pct is not None else None
+    climate_components = [c for c in (stranded_asset_usd, carbon_cost_usd, litigation_risk_usd) if c is not None]
+    climate_liability_total = sum(climate_components) if climate_components else None
 
-    # S pillar adjustments
-    wage_gap_adj_pct = rng.uniform(-3, 0)
-    turnover_adj_pct = rng.uniform(-2, 0.5)
-    s_adjustment_usd = base_valuation_usd * (wage_gap_adj_pct + turnover_adj_pct) / 100
+    # S pillar adjustments.
+    wage_gap_adj_pct = _opt_num(q, "wage_gap_adj_pct")
+    turnover_adj_pct = _opt_num(q, "turnover_adj_pct")
+    s_components = [c for c in (wage_gap_adj_pct, turnover_adj_pct) if c is not None]
+    s_adjustment_usd = (
+        base_valuation_usd * sum(s_components) / 100 if s_components else None
+    )
 
-    # G pillar adjustments
-    board_score = rng.uniform(0.3, 1.0)
-    ownership_conc = rng.uniform(0.1, 0.8)
-    g_adj_pct = (board_score - 0.5) * 6 - (ownership_conc - 0.3) * 4
-    g_adjustment_usd = base_valuation_usd * g_adj_pct / 100
+    # G pillar adjustments — genuine formula, computed only when both drivers exist.
+    board_score = _opt_num(q, "board_composition_score")
+    ownership_conc = _opt_num(q, "ownership_concentration")
+    if board_score is not None and ownership_conc is not None:
+        g_adj_pct = (board_score - 0.5) * 6 - (ownership_conc - 0.3) * 4
+        g_adjustment_usd: Optional[float] = base_valuation_usd * g_adj_pct / 100
+    else:
+        g_adjustment_usd = None
 
-    # W&I coverage
-    wi_coverage_usd = rng.uniform(base_valuation_usd * 0.05, base_valuation_usd * 0.2)
+    # W&I coverage.
+    wi_coverage_usd = _opt_num(q, "warranty_coverage_usd")
     wi_esg_excluded = ["environmental_contamination", "modern_slavery", "sanctions"]
 
-    # Integration costs
-    integration_cost_usd = base_valuation_usd * rng.uniform(0.02, 0.08)
+    # Integration costs.
+    integration_cost_usd = _opt_num(q, "integration_cost_usd")
 
-    adjusted_valuation = base_valuation_usd + total_adjustment_usd - climate_liability_total + s_adjustment_usd + g_adjustment_usd
+    adjusted_valuation = base_valuation_usd + total_adjustment_usd
+    if climate_liability_total is not None:
+        adjusted_valuation -= climate_liability_total  # liability reduces value
+    if s_adjustment_usd is not None:
+        adjusted_valuation += s_adjustment_usd  # signed S adjustment
+    if g_adjustment_usd is not None:
+        adjusted_valuation += g_adjustment_usd  # signed G adjustment
 
     return {
         "entity_id": entity_id,
         "base_valuation_usd": round(base_valuation_usd, 0),
         "adjusted_valuation_usd": round(adjusted_valuation, 0),
-        "total_esg_adjustment_pct": round((adjusted_valuation - base_valuation_usd) / base_valuation_usd * 100, 2),
+        "total_esg_adjustment_pct": (
+            round((adjusted_valuation - base_valuation_usd) / base_valuation_usd * 100, 2)
+            if base_valuation_usd else None
+        ),
         "esg_finding_adjustments": adjustments,
         "climate_liability": {
-            "stranded_asset_exposure_usd": round(base_valuation_usd * stranded_asset_pct, 0),
-            "carbon_cost_exposure_usd": round(carbon_cost_usd, 0),
-            "climate_litigation_risk_usd": round(litigation_risk_usd, 0),
-            "total_climate_liability_usd": round(climate_liability_total, 0),
+            "stranded_asset_exposure_usd": round(stranded_asset_usd, 0) if stranded_asset_usd is not None else None,
+            "carbon_cost_exposure_usd": round(carbon_cost_usd, 0) if carbon_cost_usd is not None else None,
+            "climate_litigation_risk_usd": round(litigation_risk_usd, 0) if litigation_risk_usd is not None else None,
+            "total_climate_liability_usd": round(climate_liability_total, 0) if climate_liability_total is not None else None,
         },
         "social_adjustments": {
-            "wage_gap_adj_pct": round(wage_gap_adj_pct, 2),
-            "turnover_adj_pct": round(turnover_adj_pct, 2),
-            "s_total_usd": round(s_adjustment_usd, 0),
+            "wage_gap_adj_pct": round(wage_gap_adj_pct, 2) if wage_gap_adj_pct is not None else None,
+            "turnover_adj_pct": round(turnover_adj_pct, 2) if turnover_adj_pct is not None else None,
+            "s_total_usd": round(s_adjustment_usd, 0) if s_adjustment_usd is not None else None,
         },
         "governance_adjustments": {
-            "board_composition_score": round(board_score, 3),
-            "ownership_concentration": round(ownership_conc, 3),
-            "g_total_usd": round(g_adjustment_usd, 0),
+            "board_composition_score": round(board_score, 3) if board_score is not None else None,
+            "ownership_concentration": round(ownership_conc, 3) if ownership_conc is not None else None,
+            "g_total_usd": round(g_adjustment_usd, 0) if g_adjustment_usd is not None else None,
         },
         "warranty_indemnity": {
-            "coverage_usd": round(wi_coverage_usd, 0),
+            "coverage_usd": round(wi_coverage_usd, 0) if wi_coverage_usd is not None else None,
             "esg_reps_excluded": wi_esg_excluded,
             "bespoke_esg_reps_recommended": True,
         },
-        "integration_cost_estimate_usd": round(integration_cost_usd, 0),
+        "integration_cost_estimate_usd": round(integration_cost_usd, 0) if integration_cost_usd is not None else None,
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -437,9 +580,16 @@ def plan_post_merger_integration(
     acquirer_profile: dict[str, Any],
     target_profile: dict[str, Any],
     close_date: str,
+    integration_cost_usd: Optional[float] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Build a 100-day post-merger ESG integration plan.
 
+    The plan structure and its milestone dates are deterministic (genuine core).
+    Cultural-gap and SBTi-trigger logic derive from the supplied acquirer/target
+    profiles; when a profile omits ``esg_maturity`` / ``has_sbti`` / ``revenue_share``
+    the corresponding driver is treated as unknown (null) rather than fabricated.
+    ``integration_cost_usd`` may be passed to report a costed estimate.
+    """
     try:
         close_dt = datetime.fromisoformat(close_date)
     except Exception:
@@ -451,10 +601,21 @@ def plan_post_merger_integration(
     month6 = (close_dt + timedelta(days=180)).strftime("%Y-%m-%d")
     year1 = (close_dt + timedelta(days=365)).strftime("%Y-%m-%d")
 
-    # Cultural ESG gap score
-    acquirer_esg_maturity = acquirer_profile.get("esg_maturity", rng.uniform(0.4, 0.9))
-    target_esg_maturity = target_profile.get("esg_maturity", rng.uniform(0.3, 0.8))
-    cultural_esg_gap = round(abs(acquirer_esg_maturity - target_esg_maturity), 3)
+    # Cultural ESG gap score — only when both maturity inputs are supplied.
+    aq_raw = acquirer_profile.get("esg_maturity")
+    tg_raw = target_profile.get("esg_maturity")
+    acquirer_esg_maturity = float(aq_raw) if isinstance(aq_raw, (int, float)) and not isinstance(aq_raw, bool) else None
+    target_esg_maturity = float(tg_raw) if isinstance(tg_raw, (int, float)) and not isinstance(tg_raw, bool) else None
+    if acquirer_esg_maturity is not None and target_esg_maturity is not None:
+        cultural_esg_gap: Optional[float] = round(abs(acquirer_esg_maturity - target_esg_maturity), 3)
+    else:
+        cultural_esg_gap = None
+
+    gap_action = (
+        f"Cultural gap closure plan: training for {round(cultural_esg_gap * 100, 0):.0f}% gap in ESG maturity"
+        if cultural_esg_gap is not None
+        else "Cultural gap closure plan: quantify ESG maturity gap once acquirer/target maturity data collected"
+    )
 
     plan = {
         "days_1_30": {
@@ -498,92 +659,162 @@ def plan_post_merger_integration(
                 "Combined entity first CSRD double materiality assessment",
                 "ESRS disclosure consolidation in first integrated sustainability report",
                 "ESG-linked financing terms review: SLL covenants, green bond allocation",
-                f"Cultural gap closure plan: training for {round(cultural_esg_gap * 100, 0):.0f}% gap in ESG maturity",
+                gap_action,
             ],
         },
     }
 
-    sbti_revision_required = (
-        acquirer_profile.get("has_sbti", rng.random() > 0.4)
-        and abs(target_profile.get("revenue_share", rng.uniform(0.1, 0.5))) > 0.1
+    # SBTi revision trigger — evaluated only when the acquirer SBTi flag and target
+    # revenue share are both supplied; otherwise honestly unknown.
+    has_sbti_raw = acquirer_profile.get("has_sbti")
+    rev_share_raw = target_profile.get("revenue_share")
+    has_sbti = has_sbti_raw if isinstance(has_sbti_raw, bool) else None
+    revenue_share = (
+        float(rev_share_raw) if isinstance(rev_share_raw, (int, float)) and not isinstance(rev_share_raw, bool) else None
+    )
+    if has_sbti is not None and revenue_share is not None:
+        sbti_revision_required: Optional[bool] = has_sbti and abs(revenue_share) > 0.1
+    else:
+        sbti_revision_required = None
+
+    if cultural_esg_gap is None:
+        integration_complexity: Optional[str] = None
+    elif cultural_esg_gap > 0.3:
+        integration_complexity = "high"
+    elif cultural_esg_gap > 0.15:
+        integration_complexity = "medium"
+    else:
+        integration_complexity = "low"
+
+    cost_input = (
+        float(integration_cost_usd)
+        if isinstance(integration_cost_usd, (int, float)) and not isinstance(integration_cost_usd, bool)
+        else None
     )
 
     return {
         "entity_id": entity_id,
         "close_date": close_date,
-        "acquirer_esg_maturity": round(acquirer_esg_maturity, 3),
-        "target_esg_maturity": round(target_esg_maturity, 3),
+        "acquirer_esg_maturity": round(acquirer_esg_maturity, 3) if acquirer_esg_maturity is not None else None,
+        "target_esg_maturity": round(target_esg_maturity, 3) if target_esg_maturity is not None else None,
         "cultural_esg_gap_score": cultural_esg_gap,
-        "integration_complexity": "high" if cultural_esg_gap > 0.3 else "medium" if cultural_esg_gap > 0.15 else "low",
+        "integration_complexity": integration_complexity,
         "sbti_revision_required": sbti_revision_required,
         "csrd_scope_expansion": True,
         "csddd_supply_chain_expansion": True,
         "100_day_plan": plan,
-        "estimated_integration_cost_usd": round(rng.uniform(500_000, 5_000_000), 0),
+        "estimated_integration_cost_usd": round(cost_input, 0) if cost_input is not None else None,
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+# Standing ESG value-creation levers considered in an M&A DD report. The lever
+# descriptions are reference content; the dollar value is entity-specific and must
+# be supplied by the caller (keyed by "id") rather than fabricated.
+_VALUE_CREATION_LEVERS = [
+    {"id": "carbon_credit_monetisation", "opportunity": "Carbon credit monetisation from renewable energy assets"},
+    {"id": "cbam_savings", "opportunity": "CBAM border adjustment savings from EU supply chain integration"},
+    {"id": "green_bond_issuance", "opportunity": "Green bond issuance for EU Taxonomy-aligned capex"},
+    {"id": "sfdr_relabelling", "opportunity": "Premium ESG labelling for SFDR Art 9 product reclassification"},
+    {"id": "sll_repricing", "opportunity": "Sustainability-linked loan repricing at lower coupon"},
+]
 
 
 def generate_dd_report(
     entity_id: str,
     deal_name: str,
+    target_sector: str = "industrials",
+    target_country: str = "DE",
+    deal_value_usd: Optional[float] = None,
+    checklist_assessments: Optional[dict[str, Any]] = None,
+    ungp_principle_scores: Optional[dict[str, float]] = None,
+    ungp_ilo_compliance: Optional[dict[str, bool]] = None,
+    ungp_oecd_rbc: Optional[dict[str, float]] = None,
+    category_rag_scores: Optional[dict[str, float]] = None,
+    value_creation_estimates_usd: Optional[dict[str, float]] = None,
+    deal_breaker_findings: Optional[dict[str, bool]] = None,
+    additional_regulatory_flags: Optional[list[str]] = None,
+    comparable_deals: Optional[list[dict[str, Any]]] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """Compose an investment-committee ESG DD report from real sub-assessments.
 
-    # Simulate an assessment
-    dd = assess_esg_due_diligence(entity_id, deal_name, "industrials", "DE", rng.uniform(200e6, 2e9))
-    ungp = score_ungp_alignment(entity_id, deal_name, "manufacturing")
+    All entity-specific quantities are sourced from the optional inputs and default
+    to honest nulls / empty sections when not supplied — no figures are fabricated.
+    The DD checklist, UNGP, RAG, value-creation, deal-breaker and regulatory sections
+    all flow from caller-supplied evidence via the same helpers used elsewhere here.
+    """
+    # Sub-assessments compose the real underlying engine functions.
+    dd = assess_esg_due_diligence(
+        entity_id, deal_name, target_sector, target_country,
+        deal_value_usd if deal_value_usd is not None else 0.0,
+        checklist_assessments=checklist_assessments,
+    )
+    ungp = score_ungp_alignment(
+        entity_id, deal_name, target_sector,
+        principle_scores_input=ungp_principle_scores,
+        ilo_compliance_input=ungp_ilo_compliance,
+        oecd_rbc_input=ungp_oecd_rbc,
+    )
 
-    # RAG status by category
-    categories = list({item["category"] for item in ESG_DD_CHECKLIST})
+    # RAG status by category — from supplied 0-1 category scores only.
+    rag_input = category_rag_scores or {}
+    categories = sorted({item["category"] for item in ESG_DD_CHECKLIST})
     rag_status: list[dict] = []
     for cat in categories:
-        cat_rng = random.Random(hash(f"{entity_id}_{cat}") & 0xFFFFFFFF)
-        score = cat_rng.uniform(0.2, 0.95)
-        rag = "green" if score >= 0.75 else "amber" if score >= 0.5 else "red"
-        rag_status.append({"category": cat, "score": round(score, 3), "rag": rag})
+        raw = rag_input.get(cat)
+        score = round(float(raw), 3) if isinstance(raw, (int, float)) and not isinstance(raw, bool) else None
+        if score is None:
+            rag = "not_assessed"
+        else:
+            rag = "green" if score >= 0.75 else "amber" if score >= 0.5 else "red"
+        rag_status.append({"category": cat, "score": score, "rag": rag})
 
-    # Value creation opportunities
-    value_creation = [
-        {"opportunity": "Carbon credit monetisation from renewable energy assets", "value_usd": round(rng.uniform(1e6, 20e6), 0)},
-        {"opportunity": "CBAM border adjustment savings from EU supply chain integration", "value_usd": round(rng.uniform(500_000, 5e6), 0)},
-        {"opportunity": "Green bond issuance for EU Taxonomy-aligned capex", "value_usd": round(rng.uniform(50e6, 500e6), 0)},
-        {"opportunity": "Premium ESG labelling for SFDR Art 9 product reclassification", "value_usd": round(rng.uniform(2e6, 15e6), 0)},
-        {"opportunity": "Sustainability-linked loan repricing at lower coupon", "value_usd": round(rng.uniform(1e6, 8e6), 0)},
-    ]
+    # Value creation opportunities — lever descriptions are reference content; the
+    # dollar value comes from caller estimates or is left null.
+    vc_estimates = value_creation_estimates_usd or {}
+    value_creation: list[dict] = []
+    for lever in _VALUE_CREATION_LEVERS:
+        raw = vc_estimates.get(lever["id"])
+        val = round(float(raw), 0) if isinstance(raw, (int, float)) and not isinstance(raw, bool) else None
+        value_creation.append({"id": lever["id"], "opportunity": lever["opportunity"], "value_usd": val})
+    quantified_vc = [v["value_usd"] for v in value_creation if v["value_usd"] is not None]
+    total_value_creation = sum(quantified_vc) if quantified_vc else None
 
-    # Regulatory risk flags
-    regulatory_flags = []
-    if dd["deal_breaker_check"]:
-        regulatory_flags.append("DEAL-BREAKER: Critical ESG finding — deal requires remediation prior to close")
-    if rng.random() > 0.6:
-        regulatory_flags.append("CSDDD Art 29 civil liability exposure identified in supply chain")
-    if rng.random() > 0.7:
-        regulatory_flags.append("EUDR deforestation-free documentation incomplete — Regulation (EU) 2023/1115")
-    if rng.random() > 0.65:
-        regulatory_flags.append("SFDR Article reclassification risk post-acquisition (Art 8 → Art 6)")
-
-    # Comparable benchmarks
-    comparables = [
-        {"deal": "Industrial Corp A - ESG DD 2023", "esg_score": round(rng.uniform(0.45, 0.85), 2), "adj_pct": round(rng.uniform(-8, 6), 1)},
-        {"deal": "Manufacturing Ltd B - ESG DD 2024", "esg_score": round(rng.uniform(0.5, 0.9), 2), "adj_pct": round(rng.uniform(-5, 8), 1)},
-        {"deal": "Sector Peer C - ESG DD 2024", "esg_score": round(rng.uniform(0.4, 0.8), 2), "adj_pct": round(rng.uniform(-10, 5), 1)},
-    ]
-
-    # Deal-breaker assessment
+    # Deal-breaker assessment — only conclusive when a finding is supplied.
+    db_findings = deal_breaker_findings or {}
     db_assessment = []
     for db in DEAL_BREAKER_CRITERIA:
-        db_rng = random.Random(hash(f"{entity_id}_{db['id']}") & 0xFFFFFFFF)
-        triggered = db_rng.random() < 0.08  # 8% chance each
+        raw = db_findings.get(db["id"])
+        triggered = bool(raw) if isinstance(raw, bool) else None
         db_assessment.append({
             "id": db["id"],
             "criterion": db["criterion"],
             "category": db["category"],
             "triggered": triggered,
-            "evidence": "Audit finding ref: " + db["id"] if triggered else "No evidence found",
+            "evidence": (
+                "Finding supplied for ref: " + db["id"] if triggered is True
+                else "No trigger reported" if triggered is False
+                else "Not assessed — no finding supplied"
+            ),
         })
+    deal_breakers_triggered = [d for d in db_assessment if d["triggered"] is True]
+    db_assessed = any(d["triggered"] is not None for d in db_assessment)
 
-    deal_breakers_triggered = [d for d in db_assessment if d["triggered"]]
+    # Regulatory risk flags — derived from real DD signals + caller-supplied flags.
+    regulatory_flags: list[str] = []
+    if dd["deal_breaker_check"] or deal_breakers_triggered:
+        regulatory_flags.append("DEAL-BREAKER: Critical ESG finding — deal requires remediation prior to close")
+    if additional_regulatory_flags:
+        regulatory_flags.extend(str(f) for f in additional_regulatory_flags)
+
+    # Recommendation: escalate on any triggered deal-breaker; otherwise proceed with
+    # conditions only when the assessment actually ran, else flag insufficient data.
+    if deal_breakers_triggered:
+        recommendation = "escalate_to_board"
+    elif db_assessed:
+        recommendation = "proceed_with_conditions"
+    else:
+        recommendation = "insufficient_data"
 
     return {
         "entity_id": entity_id,
@@ -595,18 +826,21 @@ def generate_dd_report(
             "deal_breakers_triggered": len(deal_breakers_triggered),
             "esg_valuation_adjustment_pct": dd["esg_valuation_adjustment_pct"],
             "ungp_score": ungp["overall_ungp_score"],
-            "recommendation": "proceed_with_conditions" if not deal_breakers_triggered else "escalate_to_board",
+            "recommendation": recommendation,
         },
-        "material_findings_rag": sorted(rag_status, key=lambda x: x["score"]),
+        "material_findings_rag": sorted(
+            rag_status, key=lambda x: x["score"] if x["score"] is not None else 1.0
+        ),
         "value_creation_opportunities": value_creation,
-        "total_value_creation_usd": sum(v["value_usd"] for v in value_creation),
+        "total_value_creation_usd": total_value_creation,
         "regulatory_risk_flags": regulatory_flags,
         "deal_breaker_assessment": {
             "items": db_assessment,
             "triggered": deal_breakers_triggered,
             "any_triggered": bool(deal_breakers_triggered),
+            "assessed": db_assessed,
         },
-        "comparable_deals": comparables,
+        "comparable_deals": comparable_deals or [],
         "esg_reps_warranties_recommended": [
             "Seller warrants: no undisclosed environmental contamination >$1M",
             "Seller warrants: no ongoing modern slavery in Tier 1 supply chain",

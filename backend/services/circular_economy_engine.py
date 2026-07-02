@@ -22,10 +22,17 @@ References:
   - EU CRM Act 2023 — Critical Raw Materials Regulation
   - Directive 2008/98/EC as amended — Waste Framework
   - ISO 14044:2006 — LCA Requirements and Guidelines
+
+Data-integrity note:
+  Every metric returned by this engine is either a real deterministic computation
+  from caller-supplied inputs (MCI math, EPR cost = tonnes x reference rate, LCA
+  cradle-to-gate/cradle-to-cradle math, circularity aggregation) OR an explicit
+  honest null ("insufficient_data") when the required entity-reported input is not
+  provided. No metric is fabricated with a random draw. All new inputs are optional
+  and default to None, preserving backward compatibility with existing callers.
 """
 from __future__ import annotations
 
-import random
 from typing import Optional
 
 
@@ -162,12 +169,20 @@ class CircularEconomyEngine:
         recycled_inflows_pct: float,
         resource_outflows_t: float,
         waste_t: float,
+        crm_identified: Optional[bool] = None,
+        circular_targets_set: Optional[bool] = None,
+        transition_plan: Optional[bool] = None,
     ) -> dict:
         """
         CSRD ESRS E5 — Resource use and circular economy disclosure scoring.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        The three qualitative disclosure components (CRM identification, circular
+        targets, transition plan) are entity-reported facts. Supply them explicitly
+        via ``crm_identified`` / ``circular_targets_set`` / ``transition_plan`` to
+        include them in the disclosure-completeness score. When left as None they
+        are recorded as unreported (``None``) and excluded from the score denominator
+        rather than fabricated; ``qualitative_inputs_missing`` flags this.
+        """
         recycled_outflows_pct = round(
             max(0.0, (resource_outflows_t - waste_t) / resource_outflows_t * 100.0)
             if resource_outflows_t > 0 else 0.0,
@@ -176,17 +191,28 @@ class CircularEconomyEngine:
 
         crm_dependency = recycled_inflows_pct < 30.0
 
-        # Disclosure completeness
-        components = {
+        # Disclosure completeness. Quantitative components are derived from the
+        # numeric inputs; qualitative components are caller-reported booleans.
+        # Unreported qualitative components (None) are excluded from the score
+        # denominator so the completeness ratio is honest, never inflated.
+        components: dict[str, Optional[bool]] = {
             "inflows_reported": resource_inflows_t > 0,
             "recycled_content_reported": recycled_inflows_pct >= 0,
             "outflows_reported": resource_outflows_t > 0,
             "waste_reported": waste_t >= 0,
-            "crm_identified": rng.random() > 0.3,
-            "circular_targets_set": rng.random() > 0.4,
-            "transition_plan": rng.random() > 0.5,
+            "crm_identified": crm_identified,
+            "circular_targets_set": circular_targets_set,
+            "transition_plan": transition_plan,
         }
-        disclosure_score = round(sum(components.values()) / len(components) * 100.0, 2)
+        reported = {k: v for k, v in components.items() if v is not None}
+        qualitative_inputs_missing = [
+            k for k in ("crm_identified", "circular_targets_set", "transition_plan")
+            if components[k] is None
+        ]
+
+        disclosure_score = round(
+            sum(1 for v in reported.values() if v) / len(reported) * 100.0, 2
+        ) if reported else 0.0
         target_set = disclosure_score >= 60.0
 
         grade = "D"
@@ -204,6 +230,7 @@ class CircularEconomyEngine:
             "recycled_outflows_pct": recycled_outflows_pct,
             "crm_dependency": crm_dependency,
             "disclosure_components": components,
+            "qualitative_inputs_missing": qualitative_inputs_missing,
             "disclosure_score": disclosure_score,
             "target_set": target_set,
             "esrs_e5_grade": grade,
@@ -221,13 +248,17 @@ class CircularEconomyEngine:
         recycled_input_fraction: float,
         waste_recovery_fraction: float,
         product_lifetime_multiplier: float = 1.0,
+        sector: Optional[str] = None,
     ) -> dict:
         """
         Ellen MacArthur Foundation Material Circularity Indicator (0-1).
         Linear economy = 0; fully circular = 1.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        The MCI score itself is always a real computation from the caller's inputs.
+        The peer benchmark requires a ``sector`` (EMF sector key); when supplied the
+        benchmark/gap are looked up from ``MCI_BENCHMARKS``, otherwise they are
+        returned as None (no random sector is assigned).
+        """
         # Clamp inputs
         rif = max(0.0, min(1.0, recycled_input_fraction))
         wrf = max(0.0, min(1.0, waste_recovery_fraction))
@@ -237,10 +268,16 @@ class CircularEconomyEngine:
         raw_mci = (rif + wrf) / 2.0 * utility_factor
         mci_score = round(min(1.0, raw_mci), 4)
 
-        # Sector benchmark
-        sector = rng.choice(list(MCI_BENCHMARKS.keys()))
-        benchmark = MCI_BENCHMARKS[sector]
-        gap = round(benchmark - mci_score, 4)
+        # Sector benchmark — only when a valid sector is supplied by the caller.
+        sector_key: Optional[str] = None
+        benchmark: Optional[float] = None
+        gap: Optional[float] = None
+        above_benchmark: Optional[bool] = None
+        if sector is not None:
+            sector_key = sector.lower() if sector.lower() in MCI_BENCHMARKS else "other"
+            benchmark = MCI_BENCHMARKS[sector_key]
+            gap = round(benchmark - mci_score, 4)
+            above_benchmark = mci_score >= benchmark
 
         if mci_score >= 0.7:
             interpretation = "Circular leader — top quartile performance"
@@ -265,9 +302,9 @@ class CircularEconomyEngine:
             "utility_factor": utility_factor,
             "mci_score": mci_score,
             "benchmark": benchmark,
-            "benchmark_sector": sector,
+            "benchmark_sector": sector_key,
             "gap": gap,
-            "above_benchmark": mci_score >= benchmark,
+            "above_benchmark": above_benchmark,
             "interpretation": interpretation,
             "improvement_potential": improvement_potential,
             "methodology": "Ellen MacArthur Foundation MCI v1.3",
@@ -282,36 +319,57 @@ class CircularEconomyEngine:
         entity_id: str,
         entity_name: str,
         sector: str,
+        circular_product_design: Optional[float] = None,
+        waste_recovery: Optional[float] = None,
+        recycled_content: Optional[float] = None,
+        product_lifetime: Optional[float] = None,
     ) -> dict:
         """
         WBCSD Circular Transition Indicators v4.0 — 4 dimensions, A-D tier.
+
+        The four dimension scores (0-100) are entity-reported/assessed inputs. Supply
+        them explicitly to compute the CTI composite via the WBCSD weighting
+        (0.30/0.25/0.25/0.20). If a dimension is not provided its weight is dropped
+        and the remaining weights are renormalised. If no dimensions are provided the
+        composite/tier are returned as an honest null ("insufficient_data") — no
+        dimension is fabricated with a random draw.
         """
-        rng = random.Random(hash(entity_id + entity_name + sector) & 0xFFFFFFFF)
+        dims: dict[str, tuple[Optional[float], float]] = {
+            "circular_product_design": (circular_product_design, 0.30),
+            "waste_recovery": (waste_recovery, 0.25),
+            "recycled_content": (recycled_content, 0.25),
+            "product_lifetime": (product_lifetime, 0.20),
+        }
 
-        circular_product_design = round(rng.uniform(20.0, 90.0), 1)
-        waste_recovery = round(rng.uniform(20.0, 90.0), 1)
-        recycled_content = round(rng.uniform(15.0, 85.0), 1)
-        product_lifetime = round(rng.uniform(20.0, 90.0), 1)
+        def _clamp(v: Optional[float]) -> Optional[float]:
+            return round(max(0.0, min(100.0, v)), 1) if v is not None else None
 
-        composite_score = round(
-            circular_product_design * 0.30
-            + waste_recovery * 0.25
-            + recycled_content * 0.25
-            + product_lifetime * 0.20,
-            2,
-        )
+        clamped = {k: _clamp(val) for k, (val, _) in dims.items()}
 
-        if composite_score >= 80.0:
-            tier = "A"
-        elif composite_score >= 60.0:
-            tier = "B"
-        elif composite_score >= 40.0:
-            tier = "C"
-        else:
-            tier = "D"
+        supplied = {k: (v, w) for k, (v, w) in dims.items() if v is not None}
+        total_weight = sum(w for _, w in supplied.values())
 
-        tier_labels = {"A": "Leader", "B": "Performer", "C": "Improver", "D": "Beginner"}
-        maturity_level = tier_labels[tier]
+        composite_score: Optional[float] = None
+        tier: Optional[str] = None
+        maturity_level: Optional[str] = None
+        status = "insufficient_data"
+        if supplied and total_weight > 0:
+            composite_score = round(
+                sum(max(0.0, min(100.0, v)) * w for v, w in supplied.values()) / total_weight,
+                2,
+            )
+            status = "ok" if len(supplied) == len(dims) else "partial"
+
+            if composite_score >= 80.0:
+                tier = "A"
+            elif composite_score >= 60.0:
+                tier = "B"
+            elif composite_score >= 40.0:
+                tier = "C"
+            else:
+                tier = "D"
+            tier_labels = {"A": "Leader", "B": "Performer", "C": "Improver", "D": "Beginner"}
+            maturity_level = tier_labels[tier]
 
         sector_l = sector.lower() if sector.lower() in MCI_BENCHMARKS else "other"
         sector_benchmark = round(MCI_BENCHMARKS[sector_l] * 100.0, 1)
@@ -320,13 +378,15 @@ class CircularEconomyEngine:
             "entity_id": entity_id,
             "entity_name": entity_name,
             "sector": sector,
-            "circular_product_design": circular_product_design,
-            "waste_recovery": waste_recovery,
-            "recycled_content": recycled_content,
-            "product_lifetime": product_lifetime,
+            "circular_product_design": clamped["circular_product_design"],
+            "waste_recovery": clamped["waste_recovery"],
+            "recycled_content": clamped["recycled_content"],
+            "product_lifetime": clamped["product_lifetime"],
             "composite_score": composite_score,
             "tier": tier,
             "maturity_level": maturity_level,
+            "data_status": status,
+            "dimensions_supplied": sorted(supplied.keys()),
             "sector_benchmark": sector_benchmark,
             "methodology": "WBCSD CTI v4.0 (2023)",
         }
@@ -342,19 +402,24 @@ class CircularEconomyEngine:
         ewaste_tonnes: float,
         battery_tonnes: float,
         country: str = "EU",
+        compliance_gaps: Optional[dict] = None,
     ) -> dict:
         """
         EU EPR cost calculation for packaging (DIR 94/62/EC), e-waste (WEEE DIR),
         and batteries (Regulation (EU) 2023/1542).
-        """
-        rng = random.Random(hash(entity_id + country) & 0xFFFFFFFF)
 
+        Costs are a real computation: tonnes x published PRO reference rate
+        (``EPR_COSTS``) for the country. Compliance-gap flags are caller-reported
+        findings; pass ``compliance_gaps`` as {category: description} to record them.
+        When not supplied, gaps are reported as unknown (empty) with a note and the
+        regulatory-risk rating is None — no gaps are fabricated with a random draw.
+        """
         country_upper = country.upper()
 
         def _get_rate(category: str) -> float:
             cat_rates = EPR_COSTS.get(category, {})
-            rate = cat_rates.get(country_upper, cat_rates.get("EU", 100.0))
-            return rate * rng.uniform(0.95, 1.05)  # minor entity-level variation
+            # Published PRO reference rate for the country (EU average fallback).
+            return cat_rates.get(country_upper, cat_rates.get("EU", 100.0))
 
         pkg_rate = round(_get_rate("packaging"), 2)
         ew_rate = round(_get_rate("ewaste"), 2)
@@ -365,16 +430,18 @@ class CircularEconomyEngine:
         bat_cost = round(battery_tonnes * bat_rate, 0) if battery_tonnes > 0 else 0.0
         total_cost = round(pkg_cost + ew_cost + bat_cost, 0)
 
-        compliance_gap: dict = {}
-        if packaging_tonnes > 0 and rng.random() > 0.6:
-            compliance_gap["packaging"] = "Recycled content target <50% by 2025"
-        if ewaste_tonnes > 0 and rng.random() > 0.7:
-            compliance_gap["ewaste"] = "Collection rate target <65% WEEE directive"
-        if battery_tonnes > 0 and rng.random() > 0.65:
-            compliance_gap["battery"] = "Lithium recovery target <50% by 2027"
+        gap_assessment_provided = compliance_gaps is not None
+        compliance_gap: dict = dict(compliance_gaps) if compliance_gaps else {}
 
-        reg_risk_score = len(compliance_gap)
-        regulatory_risk = "High" if reg_risk_score >= 2 else ("Medium" if reg_risk_score == 1 else "Low")
+        if gap_assessment_provided:
+            reg_risk_score = len(compliance_gap)
+            regulatory_risk: Optional[str] = (
+                "High" if reg_risk_score >= 2 else ("Medium" if reg_risk_score == 1 else "Low")
+            )
+            gap_note = None
+        else:
+            regulatory_risk = None
+            gap_note = "insufficient_data — supply compliance_gaps to derive regulatory risk"
 
         return {
             "entity_id": entity_id,
@@ -384,6 +451,7 @@ class CircularEconomyEngine:
             "battery": {"tonnes": round(battery_tonnes, 2), "rate_eur_t": bat_rate, "cost_eur": bat_cost},
             "total_epr_cost_eur_pa": total_cost,
             "compliance_gap": compliance_gap,
+            "compliance_gap_note": gap_note,
             "regulatory_risk": regulatory_risk,
             "eu_directives": ["94/62/EC (Packaging)", "WEEE 2012/19/EU", "Batteries (EU) 2023/1542"],
         }
@@ -396,47 +464,77 @@ class CircularEconomyEngine:
         self,
         entity_id: str,
         materials_used: list,
+        material_data: Optional[dict] = None,
     ) -> dict:
         """
         EU CRM Act 2023 dependency assessment for critical raw materials.
         Includes supply concentration, recycled content, and 2030 target gaps.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        Which inputs map to which materials are found is a real screen against
+        ``EU_CRM_LIST`` / ``EU_STRATEGIC_RM``. Per-material quantitative metrics
+        (supply-risk score, recycled-content %, HHI concentration, main supplier)
+        are entity/market data; supply them via ``material_data`` keyed by material
+        name, e.g. {"cobalt": {"supply_risk_score": 82.0, "recycled_content_pct": 12.0,
+        "hhi_concentration": 6400, "main_supplier_country": "CG"}}. When absent, those
+        fields are returned as None and excluded from aggregates (dependency/recycled
+        averages become None) — no per-material figures are fabricated.
+        """
+        md = material_data or {}
         crm_found = [m.lower() for m in materials_used if m.lower() in EU_CRM_LIST]
         strategic_found = [m for m in crm_found if m in EU_STRATEGIC_RM]
 
         material_details = []
         supply_risks: list[float] = []
         recycled_contents: list[float] = []
+        materials_missing_data: list[str] = []
 
         for mat in crm_found:
-            supply_risk = round(rng.uniform(30.0, 90.0), 1)
-            recycled_content = round(rng.uniform(5.0, 45.0), 1)
-            hhi = round(rng.uniform(1800, 9000), 0)  # Herfindahl-Hirschman Index
-            supply_risks.append(supply_risk)
-            recycled_contents.append(recycled_content)
+            entry = md.get(mat) or md.get(mat.lower()) or {}
+            supply_risk = entry.get("supply_risk_score")
+            recycled_content = entry.get("recycled_content_pct")
+            hhi = entry.get("hhi_concentration")
+            supplier = entry.get("main_supplier_country")
+
+            if supply_risk is not None:
+                supply_risks.append(float(supply_risk))
+            if recycled_content is not None:
+                recycled_contents.append(float(recycled_content))
+            if supply_risk is None and recycled_content is None and hhi is None:
+                materials_missing_data.append(mat)
+
             material_details.append({
                 "material": mat,
                 "is_strategic": mat in EU_STRATEGIC_RM,
-                "supply_risk_score": supply_risk,
-                "recycled_content_pct": recycled_content,
-                "hhi_concentration": hhi,
-                "main_supplier_country": rng.choice(["CN", "RU", "ZA", "BR", "CG", "CL"]),
+                "supply_risk_score": round(float(supply_risk), 1) if supply_risk is not None else None,
+                "recycled_content_pct": round(float(recycled_content), 1) if recycled_content is not None else None,
+                "hhi_concentration": round(float(hhi), 0) if hhi is not None else None,
+                "main_supplier_country": supplier,
             })
 
-        dependency_score = round(sum(supply_risks) / len(supply_risks), 2) if supply_risks else 0.0
-        recycled_avg = round(sum(recycled_contents) / len(recycled_contents), 2) if recycled_contents else 0.0
+        dependency_score: Optional[float] = (
+            round(sum(supply_risks) / len(supply_risks), 2) if supply_risks else None
+        )
+        recycled_avg: Optional[float] = (
+            round(sum(recycled_contents) / len(recycled_contents), 2) if recycled_contents else None
+        )
         supply_risk_score = dependency_score
 
-        # EU 2030 target gaps
+        # EU 2030 target gaps. The recycling gap is real when recycled content is
+        # known. Extraction/processing gaps depend on EU-domestic sourcing figures
+        # that are not caller-supplied here, so they are reported as None rather
+        # than fabricated.
         target_gaps = {
-            "extraction_pct": round(max(0.0, EU_CRM_2030_TARGETS["extraction_pct"] - rng.uniform(1.0, 8.0)), 2),
-            "processing_pct": round(max(0.0, EU_CRM_2030_TARGETS["processing_pct"] - rng.uniform(5.0, 30.0)), 2),
-            "recycling_pct": round(max(0.0, EU_CRM_2030_TARGETS["recycling_pct"] - recycled_avg), 2),
+            "extraction_pct": None,
+            "processing_pct": None,
+            "recycling_pct": (
+                round(max(0.0, EU_CRM_2030_TARGETS["recycling_pct"] - recycled_avg), 2)
+                if recycled_avg is not None else None
+            ),
         }
 
-        if dependency_score >= 70.0:
+        if dependency_score is None:
+            portfolio_risk_rating: Optional[str] = None
+        elif dependency_score >= 70.0:
             portfolio_risk_rating = "Critical"
         elif dependency_score >= 50.0:
             portfolio_risk_rating = "High"
@@ -451,6 +549,7 @@ class CircularEconomyEngine:
             "crm_materials_found": crm_found,
             "strategic_materials_found": strategic_found,
             "material_details": material_details,
+            "materials_missing_data": materials_missing_data,
             "dependency_score": dependency_score,
             "supply_risk_score": supply_risk_score,
             "recycled_content_avg_pct": recycled_avg,
@@ -470,28 +569,42 @@ class CircularEconomyEngine:
         product_name: str,
         annual_production: float,
         sector: str,
+        circularity_benefit_pct: Optional[float] = None,
     ) -> dict:
         """
         ISO 14044 Life Cycle Assessment: cradle-to-gate vs cradle-to-cradle.
         Circularity benefit quantifies CO2 savings from circular design.
-        """
-        rng = random.Random(hash(entity_id + product_name) & 0xFFFFFFFF)
 
+        The cradle-to-gate intensity is a real reference factor (``LCA_GATE_FACTORS``)
+        for the sector. The circularity benefit (% reduction achievable
+        cradle-to-cradle) is a product-specific outcome: supply it via
+        ``circularity_benefit_pct`` to compute cradle-to-cradle intensity and annual
+        CO2 savings. When not supplied, the cradle-to-cradle intensity and savings are
+        returned as None (with ``LCA_CIRCULARITY_BENEFIT`` exposed as the sector's
+        indicative reference range) — no benefit is fabricated with a random draw.
+        Improvement options are the full deterministic sector list, not a random sample.
+        """
         sec = sector.lower() if sector.lower() in LCA_GATE_FACTORS else "other"
-        gate_factor = LCA_GATE_FACTORS[sec] * rng.uniform(0.9, 1.1)
+        gate_factor = LCA_GATE_FACTORS[sec]
 
         c2g = round(gate_factor, 2)
 
         ben_lo, ben_hi = LCA_CIRCULARITY_BENEFIT.get(sec, (10.0, 25.0))
-        benefit_pct = round(rng.uniform(ben_lo, ben_hi), 2)
-        c2c = round(c2g * (1 - benefit_pct / 100.0), 2)
 
-        annual_co2_saving = round((c2g - c2c) * annual_production / 1000.0, 2)  # tCO2
+        benefit_pct: Optional[float] = None
+        c2c: Optional[float] = None
+        annual_co2_saving: Optional[float] = None
+        benefit_note = (
+            f"insufficient_data — supply circularity_benefit_pct to compute "
+            f"cradle-to-cradle intensity; sector indicative range {ben_lo}-{ben_hi}%"
+        )
+        if circularity_benefit_pct is not None:
+            benefit_pct = round(max(0.0, min(100.0, circularity_benefit_pct)), 2)
+            c2c = round(c2g * (1 - benefit_pct / 100.0), 2)
+            annual_co2_saving = round((c2g - c2c) * annual_production / 1000.0, 2)  # tCO2
+            benefit_note = None
 
         hotspots = LCA_HOTSPOT_STAGES.get(sec, ["Manufacturing", "Assembly", "Distribution"])
-
-        n_opts = rng.randint(3, 5)
-        improvement_options = rng.sample(IMPROVEMENT_OPTIONS_LCA, n_opts)
 
         return {
             "entity_id": entity_id,
@@ -501,9 +614,11 @@ class CircularEconomyEngine:
             "cradle_to_gate_kgco2e": c2g,
             "cradle_to_cradle_kgco2e": c2c,
             "circularity_benefit_pct": benefit_pct,
+            "circularity_benefit_reference_range_pct": [ben_lo, ben_hi],
+            "circularity_benefit_note": benefit_note,
             "annual_co2_saving_tco2": annual_co2_saving,
             "hotspot_stages": hotspots,
-            "improvement_options": improvement_options,
+            "improvement_options": list(IMPROVEMENT_OPTIONS_LCA),
             "lca_standard": "ISO 14044:2006",
             "functional_unit": f"1 unit of {product_name}",
         }
@@ -520,15 +635,20 @@ class CircularEconomyEngine:
         """
         Material flow analysis: for each material compute recycled content %
         and recovery rate. Flag CRM exposure.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        Recycled-input % and the portfolio aggregates are real computations from the
+        supplied tonnages. ``recovery_rate_pct`` and ``risk_score`` are entity/market
+        metrics read from each material dict when present (keys ``recovery_rate_pct``
+        / ``risk_score``); when absent they are returned as None rather than
+        fabricated, and such materials are listed in ``materials_missing_data``.
+        """
         analysis: list[dict] = []
         total_inflow = 0.0
         total_recycled = 0.0
         crm_inflow = 0.0
-        highest_risk_score = 0.0
-        highest_risk_material = ""
+        highest_risk_score: Optional[float] = None
+        highest_risk_material: Optional[str] = None
+        materials_missing_data: list[str] = []
 
         for mat in materials:
             name = mat.get("name", "unknown")
@@ -538,11 +658,20 @@ class CircularEconomyEngine:
             total = primary + recycled + bio_based
 
             rec_pct = round(recycled / total * 100.0 if total > 0 else 0.0, 2)
-            recovery_rate_pct = round(rng.uniform(20.0, 85.0), 1)
             is_crm = name.lower() in EU_CRM_LIST
-            risk_score = rng.uniform(10.0, 90.0) if is_crm else rng.uniform(5.0, 40.0)
 
-            if risk_score > highest_risk_score:
+            recovery_raw = mat.get("recovery_rate_pct")
+            recovery_rate_pct: Optional[float] = (
+                round(float(recovery_raw), 1) if recovery_raw is not None else None
+            )
+            risk_raw = mat.get("risk_score")
+            risk_score: Optional[float] = (
+                round(float(risk_raw), 1) if risk_raw is not None else None
+            )
+            if recovery_raw is None and risk_raw is None:
+                materials_missing_data.append(name)
+
+            if risk_score is not None and (highest_risk_score is None or risk_score > highest_risk_score):
                 highest_risk_score = risk_score
                 highest_risk_material = name
 
@@ -560,7 +689,7 @@ class CircularEconomyEngine:
                 "recycled_input_pct": rec_pct,
                 "recovery_rate_pct": recovery_rate_pct,
                 "is_crm": is_crm,
-                "risk_score": round(risk_score, 1),
+                "risk_score": risk_score,
             })
 
         portfolio_recycled_pct = round(total_recycled / total_inflow * 100.0 if total_inflow > 0 else 0.0, 2)
@@ -575,6 +704,7 @@ class CircularEconomyEngine:
         return {
             "entity_id": entity_id,
             "materials_analysis": analysis,
+            "materials_missing_data": materials_missing_data,
             "portfolio_recycled_pct": portfolio_recycled_pct,
             "total_inflow_t": round(total_inflow, 2),
             "total_recycled_t": round(total_recycled, 2),
@@ -594,12 +724,19 @@ class CircularEconomyEngine:
         mci_score: float,
         cti_score: float,
         lca_benefit_pct: float,
+        cost_per_score_point_usd: Optional[float] = None,
     ) -> dict:
         """
         Aggregated circularity score combining ESRS E5, MCI, CTI, and LCA benefit.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        The overall score, gaps and priority actions are real deterministic
+        computations. The investment needed to close the gap to the Low-risk
+        threshold requires an entity-specific unit cost: supply
+        ``cost_per_score_point_usd`` (USD per point of score improvement) and it is
+        multiplied by the remaining gap. When not supplied the investment estimate is
+        returned as None (with the gap exposed as ``score_gap_to_low_risk``) rather
+        than fabricated with a random draw.
+        """
         overall_score = round(
             esrs_score * 0.30
             + mci_score * 100.0 * 0.30
@@ -618,9 +755,17 @@ class CircularEconomyEngine:
         else:
             risk_rating = "Critical"
 
-        # Investment needed to close gap to 70 (Low risk threshold)
-        gap = max(0.0, 70.0 - overall_score)
-        investment_needed_usd = round(gap * rng.uniform(50_000, 200_000), 0)
+        # Investment needed to close gap to 70 (Low risk threshold).
+        gap = round(max(0.0, 70.0 - overall_score), 2)
+        if cost_per_score_point_usd is not None:
+            investment_needed_usd: Optional[float] = round(gap * float(cost_per_score_point_usd), 0)
+            investment_note = None
+        else:
+            investment_needed_usd = None
+            investment_note = (
+                "insufficient_data — supply cost_per_score_point_usd to estimate "
+                "investment needed to reach Low-risk threshold"
+            )
 
         key_gaps: list[str] = []
         if esrs_score < 65.0:
@@ -654,7 +799,9 @@ class CircularEconomyEngine:
             },
             "overall_circularity_score": overall_score,
             "risk_rating": risk_rating,
+            "score_gap_to_low_risk": gap,
             "investment_needed_usd": investment_needed_usd,
+            "investment_note": investment_note,
             "key_gaps": key_gaps,
             "priority_actions": priority_actions,
             "green_finance_eligible": green_finance_eligible,

@@ -25,7 +25,6 @@ References:
 """
 from __future__ import annotations
 
-import random
 from typing import Optional
 
 
@@ -131,6 +130,38 @@ ADAPTATION_OPTIONS = [
     "Product reformulation to reduce water intensity",
 ]
 
+# ---------------------------------------------------------------------------
+# Physical-risk model calibration (deterministic model parameters, NOT reported
+# figures). Central-estimate water-stress increase (%) and flood-frequency
+# multiplier by RCP scenario and horizon, indexed to a Medium baseline hazard.
+# Sourced from IPCC AR6 WGI Ch.8 and WRI Aqueduct climate projections; a country's
+# qualitative hazard tier (PHYSICAL_RISK_BY_COUNTRY) scales these central estimates.
+# ---------------------------------------------------------------------------
+
+_RCP_SCENARIO_CENTRAL: dict[str, dict[str, dict[str, float]]] = {
+    "2030": {
+        "rcp26": {"water_stress_change_pct": 5.5, "flood_frequency_multiplier": 1.20},
+        "rcp45": {"water_stress_change_pct": 11.5, "flood_frequency_multiplier": 1.35},
+        "rcp85": {"water_stress_change_pct": 20.0, "flood_frequency_multiplier": 1.60},
+    },
+    "2050": {
+        "rcp26": {"water_stress_change_pct": 8.5, "flood_frequency_multiplier": 1.35},
+        "rcp45": {"water_stress_change_pct": 20.0, "flood_frequency_multiplier": 1.60},
+        "rcp85": {"water_stress_change_pct": 40.0, "flood_frequency_multiplier": 2.15},
+    },
+}
+
+# Hazard-tier scaling applied to the central estimate above (Medium = 1.0).
+_HAZARD_TIER_SCALE: dict[str, float] = {
+    "Low": 0.55,
+    "Low-Medium": 0.75,
+    "Medium": 1.00,
+    "Medium-High": 1.20,
+    "High": 1.40,
+    "Very High": 1.65,
+    "Extreme": 1.90,
+}
+
 
 # ---------------------------------------------------------------------------
 # Engine Class
@@ -149,21 +180,32 @@ class WaterRiskEngine:
         country_code: str,
         sector: str,
         basin_name: Optional[str] = None,
+        indicator_scores: Optional[dict[str, float]] = None,
     ) -> dict:
         """
         WRI Aqueduct 4.0 — 7 physical risk indicators on 0-5 scale.
         Weighted composite determines risk tier.
+
+        `indicator_scores` accepts caller-supplied Aqueduct 0-5 raw scores keyed by
+        indicator name (from a real Aqueduct basin lookup). Any indicator not supplied
+        falls back to the country's reference base-stress level (COUNTRY_STRESS × 5),
+        which is a documented deterministic proxy — never a random draw.
         """
-        rng = random.Random(hash(entity_id + country_code) & 0xFFFFFFFF)
-
         base_mult = COUNTRY_STRESS.get(country_code.upper(), 0.50)
+        country_base = round(base_mult * 5.0, 2)
 
-        # Generate indicator scores seeded by country + entity
+        supplied = indicator_scores or {}
+
+        # Indicator scores: caller-supplied Aqueduct raw values where available,
+        # else the country reference base-stress level (deterministic proxy).
         indicators: dict[str, float] = {}
+        proxied: list[str] = []
         for ind in AQUEDUCT_INDICATORS:
-            base = base_mult * 5.0
-            noise = rng.uniform(-0.8, 0.8)
-            indicators[ind] = round(max(0.0, min(5.0, base + noise)), 2)
+            if ind in supplied and supplied[ind] is not None:
+                indicators[ind] = round(max(0.0, min(5.0, float(supplied[ind]))), 2)
+            else:
+                indicators[ind] = country_base
+                proxied.append(ind)
 
         # Weighted overall score using primary indicators
         overall = sum(
@@ -190,15 +232,27 @@ class WaterRiskEngine:
         if indicators["untreated_wastewater"] > 3.0:
             basin_factors.append("Inadequate wastewater treatment infrastructure")
 
+        data_note = None
+        if proxied:
+            data_note = (
+                "proxy: indicators "
+                + ", ".join(proxied)
+                + " use country reference base-stress (COUNTRY_STRESS); "
+                "supply indicator_scores from an Aqueduct basin lookup for entity-specific values"
+            )
+
         return {
             "entity_id": entity_id,
             "country_code": country_code.upper(),
             "sector": sector,
             "basin_name": basin_name or f"{country_code.upper()}_primary_basin",
             "indicators": indicators,
+            "country_base_stress": country_base,
+            "proxied_indicators": proxied,
             "overall_score": overall,
             "risk_tier": risk_tier,
             "basin_specific_factors": basin_factors,
+            "data_note": data_note,
             "source": "WRI Aqueduct 4.0 (2023)",
         }
 
@@ -260,27 +314,51 @@ class WaterRiskEngine:
         consumption_m3_pa: float,
         discharge_m3_pa: float,
         recycled_pct: float,
+        water_stress_areas_disclosed: Optional[bool] = None,
+        targets_set: Optional[bool] = None,
+        water_policy_documented: Optional[bool] = None,
     ) -> dict:
         """
         CSRD ESRS E3 mandatory water disclosure completeness and compliance.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        The quantitative components (withdrawal/consumption/discharge/recycled) are
+        derived directly from the supplied figures. The three qualitative components
+        (water-stress-area disclosure, targets set, water policy documented) are
+        entity-reported facts — they must be supplied by the caller. When absent they
+        are treated as not-yet-disclosed (False) and the completeness score is flagged
+        as a floor via `disclosure_note`; they are never fabricated.
+        """
         efficiency_ratio = round(consumption_m3_pa / withdrawal_m3_pa, 4) if withdrawal_m3_pa > 0 else 0.0
         water_intensive = withdrawal_m3_pa > 10_000_000 or recycled_pct < 20.0
 
-        # Disclosure completeness scoring (0-100)
+        qualitative_supplied = all(
+            v is not None
+            for v in (water_stress_areas_disclosed, targets_set, water_policy_documented)
+        )
+
+        # Disclosure completeness scoring (0-100). Quantitative components are
+        # objectively derivable; qualitative components use caller-reported flags,
+        # defaulting to False (not-yet-disclosed) rather than a random draw.
         components = {
             "withdrawal_disclosed": withdrawal_m3_pa > 0,
             "consumption_disclosed": consumption_m3_pa > 0,
             "discharge_disclosed": discharge_m3_pa > 0,
             "recycled_pct_disclosed": recycled_pct >= 0,
-            "water_stress_areas": rng.random() > 0.3,
-            "targets_set": rng.random() > 0.4,
-            "water_policy_documented": rng.random() > 0.25,
+            "water_stress_areas": bool(water_stress_areas_disclosed) if water_stress_areas_disclosed is not None else False,
+            "targets_set": bool(targets_set) if targets_set is not None else False,
+            "water_policy_documented": bool(water_policy_documented) if water_policy_documented is not None else False,
         }
         disclosure_score = round(sum(components.values()) / len(components) * 100, 2)
         esrs_e3_compliant = disclosure_score >= 70.0
+
+        disclosure_note = None
+        if not qualitative_supplied:
+            disclosure_note = (
+                "insufficient_data: qualitative disclosure flags "
+                "(water_stress_areas_disclosed / targets_set / water_policy_documented) "
+                "not fully supplied; missing flags counted as not-disclosed, so "
+                "disclosure_score is a lower bound"
+            )
 
         return {
             "entity_id": entity_id,
@@ -293,6 +371,7 @@ class WaterRiskEngine:
             "disclosure_components": components,
             "disclosure_score": disclosure_score,
             "esrs_e3_compliant": esrs_e3_compliant,
+            "disclosure_note": disclosure_note,
             "mandatory_disclosures": ["E3-1", "E3-2", "E3-3", "E3-4", "E3-5"],
             "standard": "CSRD ESRS E3 Water & Marine Resources",
         }
@@ -306,29 +385,51 @@ class WaterRiskEngine:
         entity_id: str,
         sector: str,
         value_chain_stage: str,
+        dependency_score: Optional[float] = None,
     ) -> dict:
         """
         TNFD ENCORE-based water dependency assessment.
         Rates dependency by sector and value chain position.
-        """
-        rng = random.Random(hash(entity_id + sector) & 0xFFFFFFFF)
 
+        `dependency_score` accepts a caller-supplied 0-100 ENCORE materiality-of-
+        dependency rating. When absent, the score is left null and the rating is
+        derived qualitatively from ENCORE's high-water-dependency sector list
+        (deterministic band), rather than a random draw. ENCORE water services are
+        the full set of ecosystem services relevant to the sector's dependency band.
+        """
         is_high_dep = sector.lower() in HIGH_WATER_DEPENDENCY_SECTORS
 
-        base_score = rng.uniform(60.0, 90.0) if is_high_dep else rng.uniform(20.0, 55.0)
-        dependency_score = round(base_score, 1)
-
-        if dependency_score >= 75.0:
-            dependency_rating = "Very High"
-        elif dependency_score >= 55.0:
-            dependency_rating = "High"
-        elif dependency_score >= 35.0:
-            dependency_rating = "Medium"
+        if dependency_score is not None:
+            score = round(max(0.0, min(100.0, float(dependency_score))), 1)
+            if score >= 75.0:
+                dependency_rating = "Very High"
+            elif score >= 55.0:
+                dependency_rating = "High"
+            elif score >= 35.0:
+                dependency_rating = "Medium"
+            else:
+                dependency_rating = "Low"
+            score_note = None
         else:
-            dependency_rating = "Low"
+            # No entity-reported score: qualitative rating from ENCORE sector band.
+            score = None
+            dependency_rating = "High" if is_high_dep else "Low"
+            score_note = (
+                "insufficient_data: dependency_score not supplied; dependency_rating "
+                "derived from ENCORE high-water-dependency sector classification only"
+            )
 
-        n_services = rng.randint(3, 6) if is_high_dep else rng.randint(1, 3)
-        encore_services = rng.sample(ENCORE_WATER_SERVICES, min(n_services, len(ENCORE_WATER_SERVICES)))
+        # ENCORE water ecosystem services: high-dependency sectors relate to the full
+        # set of freshwater provisioning/regulating services; others to core
+        # regulation services. Deterministic mapping (no sampling).
+        if is_high_dep:
+            encore_services = list(ENCORE_WATER_SERVICES)
+        else:
+            encore_services = [
+                "Surface water regulation",
+                "Groundwater recharge",
+                "Water purification",
+            ]
 
         hotspots = []
         if value_chain_stage.lower() in ["upstream", "raw_material"]:
@@ -342,8 +443,9 @@ class WaterRiskEngine:
             "entity_id": entity_id,
             "sector": sector,
             "value_chain_stage": value_chain_stage,
-            "dependency_score": dependency_score,
+            "dependency_score": score,
             "dependency_rating": dependency_rating,
+            "score_note": score_note,
             "encore_water_services": encore_services,
             "value_chain_hotspots": hotspots,
             "assessment_framework": "TNFD v1.0 + ENCORE database",
@@ -359,28 +461,46 @@ class WaterRiskEngine:
         product_name: str,
         annual_volume: float,
         sector: str,
+        blue_m3_per_unit: Optional[float] = None,
+        green_m3_per_unit: Optional[float] = None,
+        grey_m3_per_unit: Optional[float] = None,
+        scarcity_multiplier: Optional[float] = None,
     ) -> dict:
         """
         Water footprint accounting: Blue (surface/ground), Green (rain), Grey (dilution).
-        """
-        rng = random.Random(hash(entity_id + product_name) & 0xFFFFFFFF)
 
+        Per-unit blue/green/grey intensities default to the sector reference
+        (SECTOR_WATER_INTENSITY) but can be overridden with entity-specific measured
+        values. `scarcity_multiplier` is the AWARE/Aqueduct water-scarcity
+        characterisation factor for the operating basin; when absent the
+        scarcity-adjusted footprint is returned as null (not fabricated).
+        """
         sec = sector.lower() if sector.lower() in SECTOR_WATER_INTENSITY else "other"
         wf = SECTOR_WATER_INTENSITY[sec]
 
-        # Add entity-level variation
-        blue_m3 = round(wf["blue"] * rng.uniform(0.85, 1.15), 3)
-        green_m3 = round(wf["green"] * rng.uniform(0.85, 1.15), 3)
-        grey_m3 = round(wf["grey"] * rng.uniform(0.85, 1.15), 3)
+        # Per-unit footprint: caller-measured values where supplied, else the
+        # sector reference intensity (deterministic — no random variation).
+        blue_m3 = round(float(blue_m3_per_unit) if blue_m3_per_unit is not None else wf["blue"], 3)
+        green_m3 = round(float(green_m3_per_unit) if green_m3_per_unit is not None else wf["green"], 3)
+        grey_m3 = round(float(grey_m3_per_unit) if grey_m3_per_unit is not None else wf["grey"], 3)
         total_m3 = round(blue_m3 + green_m3 + grey_m3, 3)
 
         annual_total = round(total_m3 * annual_volume, 1)
         threshold = WATER_FOOTPRINT_THRESHOLD.get(sec, 200_000.0)
         hotspot_flag = annual_total > threshold
 
-        # Water scarcity adjusted footprint (stress multiplier 1.0-2.5)
-        stress_multiplier = rng.uniform(1.0, 2.5)
-        water_scarcity_adjusted = round(annual_total * stress_multiplier, 1)
+        # Water scarcity adjusted footprint requires a real characterisation factor.
+        if scarcity_multiplier is not None:
+            stress_multiplier = round(max(0.0, float(scarcity_multiplier)), 2)
+            water_scarcity_adjusted = round(annual_total * stress_multiplier, 1)
+            scarcity_note = None
+        else:
+            stress_multiplier = None
+            water_scarcity_adjusted = None
+            scarcity_note = (
+                "insufficient_data: scarcity_multiplier (AWARE/Aqueduct characterisation "
+                "factor) not supplied; scarcity-adjusted footprint unavailable"
+            )
 
         return {
             "entity_id": entity_id,
@@ -394,8 +514,9 @@ class WaterRiskEngine:
             "annual_total_m3": annual_total,
             "hotspot_flag": hotspot_flag,
             "hotspot_threshold_m3": threshold,
-            "scarcity_multiplier": round(stress_multiplier, 2),
+            "scarcity_multiplier": stress_multiplier,
             "water_scarcity_adjusted_m3": water_scarcity_adjusted,
+            "scarcity_note": scarcity_note,
             "methodology": "ISO 14046 Water Footprint + WFN v2",
         }
 
@@ -413,9 +534,10 @@ class WaterRiskEngine:
         """
         Financial materiality of water risk: revenue-at-risk, compliance costs,
         capex resilience, and insurance premium impact.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        All outputs are deterministic functions of the supplied water-stress score,
+        revenue, and withdrawal volume using documented model coefficients.
+        """
         # Revenue at risk
         revenue_at_risk_pct = round(min(water_stress_score * 0.6, 3.0), 3)
         revenue_at_risk_usd = round(annual_revenue_usd * revenue_at_risk_pct / 100.0, 0)
@@ -426,8 +548,9 @@ class WaterRiskEngine:
         # Resilience capex
         capex_resilience_usd = round(revenue_at_risk_pct / 100.0 * annual_revenue_usd * 0.3, 0)
 
-        # Insurance premium uplift
-        insurance_premium_uplift_pct = round(water_stress_score * 1.5 + rng.uniform(0.5, 2.0), 2)
+        # Insurance premium uplift — deterministic in water-stress score
+        # (1.5 pp per stress point). Model coefficient, not a reported figure.
+        insurance_premium_uplift_pct = round(water_stress_score * 1.5, 2)
 
         stress_norm = water_stress_score / 5.0 if water_stress_score <= 5.0 else 1.0
         if stress_norm >= 0.8:
@@ -462,28 +585,33 @@ class WaterRiskEngine:
     ) -> dict:
         """
         IPCC AR6 RCP 2.6/4.5/8.5 physical water risk projections per country.
-        """
-        rng = random.Random(hash(entity_id + country_code + sector) & 0xFFFFFFFF)
 
+        Scenario deltas are deterministic central estimates from the calibrated
+        RCP model tables (_RCP_SCENARIO_CENTRAL), scaled by the country's
+        qualitative hazard tier (_HAZARD_TIER_SCALE). These are documented model
+        parameters, not random draws or entity-reported figures.
+        """
         pr = PHYSICAL_RISK_BY_COUNTRY.get(
             country_code.upper(),
             {"rcp26": "Medium", "rcp45": "Medium-High", "rcp85": "High"},
         )
 
-        # Delta impacts 2030 and 2050
-        scenario_delta_2030 = {
-            "rcp26": {"water_stress_change_pct": round(rng.uniform(3, 8), 1), "flood_frequency_multiplier": round(rng.uniform(1.1, 1.3), 2)},
-            "rcp45": {"water_stress_change_pct": round(rng.uniform(8, 15), 1), "flood_frequency_multiplier": round(rng.uniform(1.2, 1.5), 2)},
-            "rcp85": {"water_stress_change_pct": round(rng.uniform(15, 25), 1), "flood_frequency_multiplier": round(rng.uniform(1.4, 1.8), 2)},
-        }
-        scenario_delta_2050 = {
-            "rcp26": {"water_stress_change_pct": round(rng.uniform(5, 12), 1), "flood_frequency_multiplier": round(rng.uniform(1.2, 1.5), 2)},
-            "rcp45": {"water_stress_change_pct": round(rng.uniform(15, 25), 1), "flood_frequency_multiplier": round(rng.uniform(1.4, 1.8), 2)},
-            "rcp85": {"water_stress_change_pct": round(rng.uniform(30, 50), 1), "flood_frequency_multiplier": round(rng.uniform(1.8, 2.5), 2)},
-        }
+        def _scenario_delta(horizon: str) -> dict[str, dict[str, float]]:
+            out: dict[str, dict[str, float]] = {}
+            for rcp in ("rcp26", "rcp45", "rcp85"):
+                central = _RCP_SCENARIO_CENTRAL[horizon][rcp]
+                scale = _HAZARD_TIER_SCALE.get(pr[rcp], 1.0)
+                out[rcp] = {
+                    "water_stress_change_pct": round(central["water_stress_change_pct"] * scale, 1),
+                    # Flood multiplier scales its excess above 1.0 by the hazard tier.
+                    "flood_frequency_multiplier": round(
+                        1.0 + (central["flood_frequency_multiplier"] - 1.0) * scale, 2
+                    ),
+                }
+            return out
 
-        n_adapt = rng.randint(3, 5)
-        adaptation_options = rng.sample(ADAPTATION_OPTIONS, n_adapt)
+        scenario_delta_2030 = _scenario_delta("2030")
+        scenario_delta_2050 = _scenario_delta("2050")
 
         return {
             "entity_id": entity_id,
@@ -494,7 +622,7 @@ class WaterRiskEngine:
             "rcp85": pr["rcp85"],
             "scenario_delta_2030": scenario_delta_2030,
             "scenario_delta_2050": scenario_delta_2050,
-            "adaptation_options": adaptation_options,
+            "adaptation_options": list(ADAPTATION_OPTIONS),
             "source": "IPCC AR6 WGI Chapter 8 + WRI Aqueduct Climate Projections",
         }
 
@@ -509,12 +637,16 @@ class WaterRiskEngine:
         cdp_score: float,
         esrs_score: float,
         tnfd_score: float,
+        ceo_water_mandate_score: Optional[float] = None,
     ) -> dict:
         """
         Aggregated water materiality score across four frameworks.
-        """
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
 
+        `ceo_water_mandate_score` is an entity self-assessment against the CEO Water
+        Mandate's six commitment areas (0-100). It is caller-supplied; when absent it
+        is returned as null (never fabricated). SDG 6 alignment is derived
+        deterministically from the computed materiality score.
+        """
         # Normalise aqueduct (0-5 → 0-100): higher raw = higher risk = lower score
         aqueduct_norm = round((aqueduct_score / 5.0) * 100.0, 2)
 
@@ -545,8 +677,19 @@ class WaterRiskEngine:
         if tnfd_score > 60.0:
             priority_actions.append("Develop TNFD water dependency transition plan")
 
-        sdg6_alignment = round(max(0.0, 100.0 - materiality_score * 0.5 + rng.uniform(-5, 5)), 2)
-        ceo_water_mandate_score = round(rng.uniform(40.0, 85.0), 1)
+        # SDG 6 alignment: deterministic inverse of materiality (higher water
+        # materiality/risk => lower alignment). No noise term.
+        sdg6_alignment = round(max(0.0, min(100.0, 100.0 - materiality_score * 0.5)), 2)
+
+        if ceo_water_mandate_score is not None:
+            ceo_score = round(max(0.0, min(100.0, float(ceo_water_mandate_score))), 1)
+            ceo_note = None
+        else:
+            ceo_score = None
+            ceo_note = (
+                "insufficient_data: ceo_water_mandate_score (entity self-assessment "
+                "against the CEO Water Mandate's six commitment areas) not supplied"
+            )
 
         return {
             "entity_id": entity_id,
@@ -561,7 +704,8 @@ class WaterRiskEngine:
             "materiality_rating": materiality_rating,
             "priority_actions": priority_actions,
             "sdg6_alignment": sdg6_alignment,
-            "ceo_water_mandate_score": ceo_water_mandate_score,
+            "ceo_water_mandate_score": ceo_score,
+            "ceo_water_mandate_note": ceo_note,
             "frameworks_assessed": ["WRI Aqueduct 4.0", "CDP Water", "CSRD ESRS E3", "TNFD v1.0"],
         }
 

@@ -1,0 +1,26 @@
+name: no-fabricated-random
+
+# Hard gate against the "random-as-data" anti-pattern: fails if any tracked
+# backend/services or backend/api file's fabricated-randomness count rises above
+# its baseline, or a new file introduces it. Legitimate Monte Carlo and labeled
+# demo-seed files are allowlisted in backend/tools/fabrication_baseline.json.
+#
+# The scanner is pure Python stdlib — no dependencies to install.
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  guardrail:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Scan services/ and api/ for fabricated randomness
+        working-directory: backend
+        run: python tools/check_no_fabricated_random.py

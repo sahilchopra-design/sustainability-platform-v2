@@ -265,7 +265,7 @@ BASEL_IRB_PARAMETERS: dict[str, object] = {
         "qualifying_revolving": {"R_fixed": 0.04},
         "other_retail": {"R_min": 0.03, "R_max": 0.16},
     },
-    "floor_pd": 0.0003,  # 3 bps PD floor for corporates under Basel III.1
+    "floor_pd": 0.0005,  # 5 bps PD floor — Basel III.1 (BCBS d424) / CRR3 Art 160(1) input floor
     "floor_lgd_unsecured": 0.25,  # 25% LGD floor for unsecured corporate (FIRB)
     "floor_lgd_secured_re": 0.10,  # 10% LGD floor for residential mortgage
     "floor_lgd_secured_commercial": 0.15,  # 15% LGD floor for commercial RE
@@ -584,8 +584,14 @@ class CapitalRequirementResult:
     cet1_surplus_deficit: float
     tier1_surplus_deficit: float
     total_surplus_deficit: float
-    # Climate add-on
+    # Climate add-on (Pillar-2 overlay — NOT included in total_rwa or the ratios above)
     climate_rwa_addon: float
+    # Basel III.1 output floor (memo; applies under IRB)
+    rwa_credit_standardised: float = 0.0     # SA-computed credit RWA (the floor basis)
+    output_floor_applied: bool = False       # True when 72.5%·SA floor binds over modelled IRB
+    output_floor_uplift: float = 0.0         # EUR uplift added to credit RWA when the floor binds
+    # Climate-adjusted RWA (Pillar-2 informational): total_rwa + climate_rwa_addon
+    climate_adjusted_rwa: float = 0.0
     # Breakdown
     exposure_class_breakdown: list = field(default_factory=list)
     regulatory_breaches: list = field(default_factory=list)
@@ -795,15 +801,20 @@ class BaselCapitalEngine:
         float
             Risk weight as decimal. Multiply by EAD for RWA contribution.
         """
-        # Apply PD floor (Basel III.1: 3 bps for corporates)
-        pd = max(pd, 0.0003)
+        # Apply PD input floor (Basel III.1 / CRR3 Art 160(1): 5 bps)
+        pd = max(pd, BASEL_IRB_PARAMETERS["floor_pd"])
 
         # Clamp maturity
         maturity = max(1.0, min(maturity, 5.0))
 
-        # Retail: use fixed correlation, no maturity adjustment
-        if exposure_class == "retail":
-            return self._irb_retail_rw(pd, lgd)
+        # Retail: routed by sub-class correlation, no maturity adjustment (CRR Art 154).
+        # Residential mortgage R=0.15 and QRRE R=0.04 are distinct from other-retail's
+        # PD-dependent 0.03–0.16 curve; the prior code applied other-retail to ALL retail.
+        _RETAIL_CLASSES = {"retail", "other_retail", "residential_mortgage",
+                           "qualifying_revolving", "qrre", "retail_revolving"}
+        if exposure_class in _RETAIL_CLASSES:
+            subclass = "other_retail" if exposure_class == "retail" else exposure_class
+            return self._irb_retail_rw(pd, lgd, subclass)
 
         # Corporate / institution / sovereign formula
         # Asset correlation R
@@ -834,13 +845,23 @@ class BaselCapitalEngine:
         # Risk weight = K * 12.5
         return k * 12.5
 
-    def _irb_retail_rw(self, pd: float, lgd: float) -> float:
-        """IRB risk weight for qualifying retail (fixed correlation, no maturity adj)."""
-        # Other retail correlation: R = 0.03 * f(PD) + 0.16 * (1 - f(PD))
-        exp_neg35 = math.exp(-35.0)
-        denom = 1.0 - exp_neg35
-        f_pd = (1.0 - math.exp(-35.0 * pd)) / denom
-        r = 0.03 * f_pd + 0.16 * (1.0 - f_pd)
+    def _irb_retail_rw(self, pd: float, lgd: float, subclass: str = "other_retail") -> float:
+        """
+        IRB risk weight for retail exposures (CRR Art 154), routed by sub-class:
+          - residential_mortgage : R = 0.15 fixed          (Art 154(3))
+          - qualifying_revolving / qrre : R = 0.04 fixed    (Art 154(4))
+          - other_retail : R = 0.03·f(PD) + 0.16·(1-f(PD)), f uses the -35 exponent (Art 154(1))
+        No maturity adjustment applies to any retail sub-class.
+        """
+        if subclass == "residential_mortgage":
+            r = 0.15
+        elif subclass in ("qualifying_revolving", "qrre", "retail_revolving"):
+            r = 0.04
+        else:  # other_retail
+            exp_neg35 = math.exp(-35.0)
+            denom = 1.0 - exp_neg35
+            f_pd = (1.0 - math.exp(-35.0 * pd)) / denom
+            r = 0.03 * f_pd + 0.16 * (1.0 - f_pd)
 
         g_pd = _norm_inv(pd)
         g_999 = _norm_inv(0.999)
@@ -954,8 +975,9 @@ class BaselCapitalEngine:
         """
         buffers = buffers or {}
         exposure_results: list[ExposureRiskWeight] = []
-        total_rwa_credit = 0.0
-        total_climate_addon = 0.0
+        total_rwa_credit = 0.0            # Pillar-1 regulatory credit RWA (climate-clean)
+        total_rwa_credit_sa = 0.0         # standardised credit RWA (output-floor basis)
+        total_climate_addon = 0.0         # Pillar-2 climate overlay (quarantined)
 
         # Per-exposure class aggregation
         class_agg: dict[str, dict] = {}
@@ -972,37 +994,42 @@ class BaselCapitalEngine:
             is_green = exp.get("is_green", False)
             cpty_name = exp.get("counterparty_name", f"Exposure_{idx+1}")
 
-            # Risk weight
+            # Regulatory risk weight (Pillar 1). Under IRB we ALSO compute the standardised
+            # RW for the Basel III.1 output floor (72.5% of SA RWA).
+            sa_rw = self.calculate_sa_risk_weight(
+                exp_class, cqs, secured_by_property=exp.get("secured_by_property"),
+            )
             if approach == "irb":
                 rw = self.calculate_irb_risk_weight(pd_val, lgd_val, mat, exp_class)
             else:
-                rw = self.calculate_sa_risk_weight(
-                    exp_class, cqs,
-                    secured_by_property=exp.get("secured_by_property"),
-                )
+                rw = sa_rw
 
-            # Climate adjustment
+            # Pure Pillar-1 regulatory RWA — NO climate multiplier baked in.
+            rwa_reg = ead * rw
+            rwa_sa = ead * sa_rw
+
+            # Climate is a Pillar-2 overlay (EBA GL/2022/02), QUARANTINED from the Pillar-1
+            # regulatory RWA and the CET1/T1/Total ratios. Basel Pillar 1 has no climate
+            # multiplier and no green-supporting-factor capital relief; applying either to
+            # the regulatory RWA fabricates the solvency ratios. It is tracked separately.
             climate_mult = 1.0
             if climate_adjusted:
                 trans_mult = BASEL_CLIMATE_ADJUSTMENTS["transition_risk_multiplier"].get(sector, 1.0)
                 phys_mult = BASEL_CLIMATE_ADJUSTMENTS["physical_risk_multiplier"].get(phys_zone, 1.0)
                 climate_mult = trans_mult * phys_mult
-
-                # Green supporting factor
                 if is_green:
                     climate_mult *= BASEL_CLIMATE_ADJUSTMENTS["green_supporting_factor"]
+            climate_addon = rwa_reg * (climate_mult - 1.0)
 
-            rwa = ead * rw * climate_mult
-            climate_addon = ead * rw * (climate_mult - 1.0) if climate_mult != 1.0 else 0.0
-
-            total_rwa_credit += rwa
+            total_rwa_credit += rwa_reg
+            total_rwa_credit_sa += rwa_sa
             total_climate_addon += climate_addon
 
-            # Aggregate by class
+            # Aggregate by class (regulatory RWA)
             if exp_class not in class_agg:
                 class_agg[exp_class] = {"ead": 0.0, "rwa": 0.0, "count": 0}
             class_agg[exp_class]["ead"] += ead
-            class_agg[exp_class]["rwa"] += rwa
+            class_agg[exp_class]["rwa"] += rwa_reg
             class_agg[exp_class]["count"] += 1
 
             exposure_results.append(ExposureRiskWeight(
@@ -1014,10 +1041,10 @@ class BaselCapitalEngine:
                 pd=pd_val,
                 lgd=lgd_val,
                 maturity_years=mat,
-                risk_weight=round(rw * climate_mult, 6),
-                rwa_eur=round(rwa, 2),
+                risk_weight=round(rw, 6),                 # regulatory RW (climate quarantined)
+                rwa_eur=round(rwa_reg, 2),
                 approach=approach,
-                climate_adjustment=round(climate_mult, 6),
+                climate_adjustment=round(climate_mult, 6),  # memo only
                 sector=sector,
             ))
 
@@ -1032,6 +1059,18 @@ class BaselCapitalEngine:
                 "avg_risk_weight": round(avg_rw, 4),
                 "count": agg["count"],
             })
+
+        # Basel III.1 output floor (BCBS d424 / CRR3): under IRB, credit RWA cannot fall
+        # below 72.5% of the standardised credit RWA. Applied to the credit component
+        # (market/operational RWA are supplied pre-computed and left unchanged).
+        output_floor_applied = False
+        output_floor_uplift = 0.0
+        if approach == "irb":
+            floor_rwa = (BASEL_CAPITAL_REQUIREMENTS["output_floor_pct"] / 100.0) * total_rwa_credit_sa
+            if floor_rwa > total_rwa_credit:
+                output_floor_uplift = floor_rwa - total_rwa_credit
+                total_rwa_credit = floor_rwa
+                output_floor_applied = True
 
         # Total RWA
         total_rwa = total_rwa_credit + market_risk_rwa + operational_risk_rwa
@@ -1105,8 +1144,14 @@ class BaselCapitalEngine:
             )
         if total_climate_addon > 0:
             recommendations.append(
-                f"Climate risk adds EUR {total_climate_addon:,.0f} to RWA — "
-                "review high-carbon exposures for transition risk mitigation"
+                f"Climate risk (Pillar-2 overlay) implies EUR {total_climate_addon:,.0f} of "
+                "additional notional RWA — review high-carbon exposures for transition risk "
+                "(not included in the Pillar-1 regulatory ratios above)"
+            )
+        if output_floor_applied:
+            recommendations.append(
+                f"Basel III.1 output floor binding: credit RWA floored to 72.5% of standardised "
+                f"(EUR {output_floor_uplift:,.0f} uplift over modelled IRB)"
             )
         if not breaches and not recommendations:
             recommendations.append("All capital ratios above minimum + buffer requirements")
@@ -1136,6 +1181,10 @@ class BaselCapitalEngine:
             tier1_surplus_deficit=round(tier1_surplus, 2),
             total_surplus_deficit=round(total_surplus, 2),
             climate_rwa_addon=round(total_climate_addon, 2),
+            rwa_credit_standardised=round(total_rwa_credit_sa, 2),
+            output_floor_applied=output_floor_applied,
+            output_floor_uplift=round(output_floor_uplift, 2),
+            climate_adjusted_rwa=round(total_rwa + total_climate_addon, 2),
             exposure_class_breakdown=ec_breakdown,
             regulatory_breaches=breaches,
             recommendations=recommendations,

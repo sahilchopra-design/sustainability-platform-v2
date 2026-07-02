@@ -1002,50 +1002,106 @@ const ReferenceDataExplorerPage = React.lazy(() => import("./features/reference-
    THEME — Institutional Light · Navy / Gold / Sage (AA Impact brand)
    Font: DM Sans (headlines) + JetBrains Mono (data)
    ═══════════════════════════════════════════════════════════════════ */
-// Font loader — non-blocking Google Fonts injection
+// Font loader — non-blocking Google Fonts injection (with preconnect)
 if (typeof window !== 'undefined' && !document.querySelector('link[href*="DM+Sans"]')) {
+  const _pc1 = document.createElement('link'); _pc1.rel = 'preconnect'; _pc1.href = 'https://fonts.googleapis.com';
+  const _pc2 = document.createElement('link'); _pc2.rel = 'preconnect'; _pc2.href = 'https://fonts.gstatic.com'; _pc2.crossOrigin = 'anonymous';
   const _fl = document.createElement('link'); _fl.rel = 'stylesheet';
   _fl.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300..800&family=JetBrains+Mono:wght@400;500;600;700&display=swap';
-  document.head.appendChild(_fl);
+  document.head.appendChild(_pc1); document.head.appendChild(_pc2); document.head.appendChild(_fl);
+}
+
+// Global base styles — focus rings, motion system, refined scrollbars (injected once)
+if (typeof window !== 'undefined' && !document.getElementById('a2-base-styles')) {
+  const _st = document.createElement('style'); _st.id = 'a2-base-styles';
+  _st.textContent = `
+    :root { color-scheme: light; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { background: #f4f6f9; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    ::selection { background: rgba(37,99,168,0.16); }
+    /* Accessible keyboard focus — visible ring, suppressed on mouse */
+    :focus { outline: none; }
+    :focus-visible { outline: 2px solid #2563a8; outline-offset: 2px; border-radius: 5px; }
+    input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offset: 1px; }
+    /* Refined scrollbars — light surfaces */
+    .a2-scroll { scrollbar-width: thin; scrollbar-color: rgba(120,134,153,0.38) transparent; }
+    .a2-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+    .a2-scroll::-webkit-scrollbar-thumb { background: rgba(120,134,153,0.30); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+    .a2-scroll::-webkit-scrollbar-thumb:hover { background: rgba(120,134,153,0.48); background-clip: padding-box; }
+    /* Refined scrollbars — dark navy sidebar */
+    .a2-scroll-dark { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.16) transparent; }
+    .a2-scroll-dark::-webkit-scrollbar { width: 9px; }
+    .a2-scroll-dark::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+    .a2-scroll-dark::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.26); background-clip: padding-box; }
+    @keyframes a2-fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    @keyframes a2-spin { to { transform: rotate(360deg); } }
+    @keyframes a2-pulse-ring { 0% { transform: scale(1); opacity: 0.45; } 70%, 100% { transform: scale(2.4); opacity: 0; } }
+    .a2-view { animation: a2-fade-in 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+      .a2-view { animation: none; }
+    }
+  `;
+  document.head.appendChild(_st);
 }
 
 
 const LoadingFallback = () => (
   <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',
-    background:'#f6f4f0',fontFamily:"'DM Sans',system-ui,sans-serif"}}>
+    background:'#f4f6f9',fontFamily:"'DM Sans',system-ui,sans-serif"}}>
     <div style={{textAlign:'center'}}>
-      <div style={{fontSize:28,fontWeight:700,color:'#1b3a5c',marginBottom:8}}>AA Impact Platform</div>
-      <div style={{fontSize:14,color:'#5c6b7e'}}>Loading module...</div>
+      <div style={{display:'inline-flex',alignItems:'center',gap:11,marginBottom:14}}>
+        <div style={{width:30,height:30,borderRadius:8,background:'#1b3a5c',display:'flex',alignItems:'center',justifyContent:'center',
+          fontSize:11,fontWeight:800,color:'#c5a96a',fontFamily:"'JetBrains Mono',monospace",letterSpacing:'-0.02em'}}>A²</div>
+        <div style={{width:18,height:18,border:'2px solid #e3e8ef',borderTopColor:'#2563a8',borderRadius:'50%',animation:'a2-spin 0.7s linear infinite'}} />
+      </div>
+      <div style={{fontSize:13,color:'#566373',fontWeight:500,letterSpacing:'0.01em'}}>Loading module…</div>
     </div>
   </div>
 );
 const T = {
-  bg:       '#f6f4f0',       // warm cream
-  surface:  '#ffffff',
-  surfaceH: '#f0ede7',       // hover tint
-  border:   '#e5e0d8',
-  borderL:  '#d5cfc5',
+  // ── Surfaces — cool neutral (institutional, not warm cream) ──
+  bg:       '#f4f6f9',       // cool app background
+  surface:  '#ffffff',       // cards / panels
+  surfaceAlt:'#f7f9fc',      // subtle alternate panel
+  surfaceH: '#eef1f6',       // hover tint (cool)
+  border:   '#e3e8ef',       // hairline border
+  borderL:  '#cfd6e0',       // stronger border
+  // ── Brand — navy anchor ──
   navy:     '#1b3a5c',       // brand primary
-  navyD:    '#122a44',       // deep navy
+  navyD:    '#12273d',       // deep navy (chrome)
   navyL:    '#2c5a8c',
-  gold:     '#c5a96a',       // brand accent
-  goldL:    '#d4be8a',
-  goldD:    '#a8903a',
-  sage:     '#5a8a6a',       // leaf green
+  ink:      '#1a2433',       // cool near-black for headings
+  // ── Accent — gold (brand) ──
+  gold:     '#c5a96a',       // brand accent (use on dark / as fill)
+  goldL:    '#d8c391',
+  goldD:    '#8a6f2e',       // gold for text on light (AA-safe ~4.8:1)
+  // ── Interactive — institutional blue (actions, focus, links) ──
+  accent:   '#2563a8',
+  accentL:  '#3b7bc4',
+  accentBg: 'rgba(37,99,168,0.08)',
+  // ── Status ──
+  sage:     '#4f8a68',       // success / positive
   sageL:    '#7ba67d',
-  teal:     '#5a8a6a',       // alias for backward compat
-  text:     '#1b3a5c',       // navy text
-  textSec:  '#5c6b7e',
-  textMut:  '#9aa3ae',
+  teal:     '#4f8a68',       // alias for backward compat
+  // ── Text — cool slate ramp (AA-verified) ──
+  text:     '#1a2433',       // body / headings (~15:1 on white)
+  textSec:  '#566373',       // secondary (~5.5:1, body-safe)
+  textMut:  '#8a94a3',       // meta labels only (large/decorative)
   red:      '#dc2626',
-  green:    '#16a34a',
+  green:    '#15a34a',
   amber:    '#d97706',
-  card:     '0 1px 3px rgba(27,58,92,0.04), 0 0 0 1px rgba(27,58,92,0.03)',
-  cardH:    '0 8px 24px rgba(27,58,92,0.08), 0 0 0 1px rgba(27,58,92,0.06)',
+  // ── Elevation — cool, soft ──
+  card:     '0 1px 2px rgba(16,24,40,0.04), 0 0 0 1px rgba(16,24,40,0.05)',
+  cardH:    '0 10px 28px -6px rgba(16,24,40,0.14), 0 0 0 1px rgba(16,24,40,0.06)',
+  // ── Radius scale ──
+  rSm: 6, rMd: 8, rLg: 12,
   font:     "'DM Sans', 'SF Pro Display', system-ui, -apple-system, sans-serif",
   mono:     "'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace",
 };
-const PASTEL = ['#4a7faa','#5a9aaa','#5a8a6a','#7ba67d','#8a7a5a','#a08a5a','#c5a96a'];
+// Cohesive cool→warm institutional categorical ramp (charts / domain colors)
+const PASTEL = ['#3d6ea8','#4d8a93','#4f8a68','#7d9a4e','#a8843c','#c5a96a','#7b6ca8'];
 
 /* ═══════════════════════════════════════════════════════════════════
    NAVIGATION DATA — 38 domains, 180+ modules
@@ -2180,16 +2236,18 @@ const TIP = { background: T.surface, border: `1px solid ${T.border}`, borderRadi
 /* ── Panel wrapper ── */
 const Panel = ({ children, style, pad = true }) => (
   <div style={{
-    background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, boxShadow: T.card,
+    background: T.surface, border: `1px solid ${T.border}`, borderRadius: T.rMd, boxShadow: T.card,
     ...(pad ? { padding: '16px 18px' } : {}), ...style,
   }}>{children}</div>
 );
 /* ── Section label ── */
 const SectionLabel = ({ children, count, right }) => (
-  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
-    <span style={{ fontSize: 10, fontWeight: 700, color: T.navy, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{children}</span>
-    {count != null && <span style={{ fontSize: 10, fontFamily: T.mono, color: T.gold, fontWeight: 600 }}>{count}</span>}
-    {right && <span style={{ marginLeft: 'auto', fontSize: 10, color: T.textMut }}>{right}</span>}
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+    <span style={{ fontSize: 11, fontWeight: 700, color: T.text, letterSpacing: '-0.01em' }}>{children}</span>
+    {count != null && (
+      <span style={{ fontSize: 10, fontFamily: T.mono, color: T.textSec, fontWeight: 600, background: T.surfaceH, border: `1px solid ${T.border}`, padding: '1px 6px', borderRadius: 999 }}>{count}</span>
+    )}
+    {right && <span style={{ marginLeft: 'auto', fontSize: 10, color: T.textMut, fontWeight: 500 }}>{right}</span>}
   </div>
 );
 
@@ -2207,18 +2265,21 @@ function Dashboard() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: T.navy, margin: 0, letterSpacing: '-0.03em' }}>Platform Command Center</h1>
-            <div style={{ height: 16, width: 1, background: T.border }} />
-            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textMut, fontWeight: 500 }}>{dateStr}</span>
+            <h1 style={{ fontSize: 23, fontWeight: 700, color: T.ink, margin: 0, letterSpacing: '-0.025em' }}>Platform Command Center</h1>
+            <div style={{ height: 16, width: 1, background: T.borderL }} />
+            <span style={{ fontSize: 11, fontFamily: T.mono, color: T.textSec, fontWeight: 500 }}>{dateStr}</span>
           </div>
-          <p style={{ color: T.textSec, fontSize: 12, marginTop: 4, fontWeight: 400 }}>
-            AA Impact Inc. — A2 Intelligence Risk Analytics
+          <p style={{ color: T.textSec, fontSize: 12, marginTop: 5, fontWeight: 400 }}>
+            AA Impact Inc. — A² Intelligence Risk Analytics
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 4, border: `1px solid ${T.border}`, background: T.surface }}>
-            <div style={{ width: 7, height: 7, borderRadius: '50%', background: T.sage, boxShadow: `0 0 6px ${T.sage}` }} />
-            <span style={{ fontSize: 10, fontFamily: T.mono, color: T.sage, fontWeight: 600, letterSpacing: '0.06em' }}>SYSTEMS NOMINAL</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 12px', borderRadius: 999, border: `1px solid ${T.border}`, background: T.surface }}>
+            <span style={{ position: 'relative', display: 'inline-flex', width: 7, height: 7 }}>
+              <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: T.sage, opacity: 0.4, animation: 'a2-pulse-ring 2s ease-out infinite' }} />
+              <span style={{ position: 'relative', width: 7, height: 7, borderRadius: '50%', background: T.sage }} />
+            </span>
+            <span style={{ fontSize: 10, fontFamily: T.mono, color: T.sage, fontWeight: 600, letterSpacing: '0.04em' }}>SYSTEMS NOMINAL</span>
           </div>
         </div>
       </div>
@@ -2234,15 +2295,19 @@ function Dashboard() {
           { label: 'COVERAGE', value: '82%', delta: '+3%', deltaUp: true, sub: 'Regulatory avg.' },
         ].map((s) => (
           <div key={s.label} style={{
-            background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 16px',
-            borderBottom: `2px solid ${T.gold}`, boxShadow: T.card,
+            background: T.surface, border: `1px solid ${T.border}`, borderRadius: T.rMd, padding: '14px 16px',
+            boxShadow: T.card,
           }}>
-            <div style={{ fontSize: 9, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 6 }}>{s.label}</div>
+            <div style={{ fontSize: 9, fontFamily: T.mono, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, marginBottom: 8 }}>{s.label}</div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <span style={{ fontSize: 24, fontWeight: 700, color: T.navy, fontFamily: T.mono, fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{s.value}</span>
-              {s.delta && <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 600, color: s.deltaUp ? T.sage : T.red }}>{s.delta}</span>}
+              <span style={{ fontSize: 25, fontWeight: 700, color: T.ink, fontFamily: T.mono, fontVariantNumeric: 'tabular-nums', lineHeight: 1, letterSpacing: '-0.02em' }}>{s.value}</span>
+              {s.delta && (
+                <span style={{ fontSize: 10, fontFamily: T.mono, fontWeight: 600, color: s.deltaUp ? T.sage : T.red, display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+                  <span style={{ fontSize: 8 }}>{s.deltaUp ? '▲' : '▼'}</span>{s.delta.replace(/^[+]/, '')}
+                </span>
+              )}
             </div>
-            <div style={{ fontSize: 10, color: T.textMut, marginTop: 4 }}>{s.sub}</div>
+            <div style={{ fontSize: 10, color: T.textSec, marginTop: 5 }}>{s.sub}</div>
           </div>
         ))}
       </div>
@@ -2307,34 +2372,37 @@ function Dashboard() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <SectionLabel count={NAV_GROUPS.length}>Domains</SectionLabel>
         <input type="text" placeholder="Filter domains..." value={domainFilter} onChange={e => setDomainFilter(e.target.value)}
-          style={{ padding: '5px 10px', fontSize: 11, borderRadius: 4, border: `1px solid ${T.border}`, background: T.surface, color: T.text, fontFamily: T.font, outline: 'none', width: 180 }}
-          onFocus={e => e.target.style.borderColor = T.gold} onBlur={e => e.target.style.borderColor = T.border} />
+          style={{ padding: '6px 11px', fontSize: 11, borderRadius: T.rSm, border: `1px solid ${T.border}`, background: T.surface, color: T.text, fontFamily: T.font, outline: 'none', width: 180, transition: 'border-color 0.15s, box-shadow 0.15s' }}
+          onFocus={e => { e.target.style.borderColor = T.accent; e.target.style.boxShadow = `0 0 0 3px ${T.accentBg}`; }} onBlur={e => { e.target.style.borderColor = T.border; e.target.style.boxShadow = 'none'; }} />
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10, marginBottom: 28 }}>
         {filteredGroups.map((g) => (
-          <div key={g.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, overflow: 'hidden', boxShadow: T.card, transition: 'box-shadow 0.18s, transform 0.18s', borderLeft: `3px solid ${g.color}` }}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = T.cardH; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = T.card; e.currentTarget.style.transform = 'none'; }}>
+          <div key={g.label} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: T.rMd, overflow: 'hidden', boxShadow: T.card, transition: 'box-shadow 0.18s cubic-bezier(0.22,1,0.36,1), transform 0.18s cubic-bezier(0.22,1,0.36,1), border-color 0.18s' }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = T.cardH; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = T.borderL; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = T.card; e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = T.border; }}>
             <div style={{ padding: '12px 14px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 14 }}>{g.icon}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: T.navy }}>{g.label}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
+                <span style={{ width: 26, height: 26, borderRadius: 7, background: `${g.color}1f`, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 }}>{g.icon}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{g.label}</span>
               </div>
-              <span style={{ fontSize: 16, fontFamily: T.mono, fontWeight: 700, color: g.color }}>{g.items.length}</span>
+              <span style={{ fontSize: 12, fontFamily: T.mono, fontWeight: 700, color: T.textSec, background: T.surfaceH, border: `1px solid ${T.border}`, borderRadius: 999, padding: '1px 8px', flexShrink: 0 }}>{g.items.length}</span>
             </div>
-            <div style={{ padding: '6px 10px' }}>
+            <div style={{ padding: '6px 8px' }}>
               {g.items.slice(0, 3).map(item => (
                 <div key={item.code || item.path} onClick={() => navigate(item.path)} style={{
-                  padding: '5px 6px', borderRadius: 3, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  fontSize: 11, color: T.textSec, transition: 'background 0.12s',
-                }} onMouseEnter={e => { e.currentTarget.style.background = T.surfaceH; }}
-                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>{item.label}</span>
-                  <span style={{ fontSize: 8, fontFamily: T.mono, color: g.color, fontWeight: 700, flexShrink: 0 }}>{item.code}</span>
+                  padding: '6px 8px', borderRadius: 6, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8,
+                  fontSize: 11, color: T.textSec, transition: 'background 0.12s, color 0.12s',
+                }} onMouseEnter={e => { e.currentTarget.style.background = T.surfaceH; e.currentTarget.style.color = T.text; }}
+                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = T.textSec; }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, overflow: 'hidden' }}>
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: g.color, flexShrink: 0 }} />
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
+                  </span>
+                  <span style={{ fontSize: 8, fontFamily: T.mono, color: T.textMut, fontWeight: 600, flexShrink: 0 }}>{item.code}</span>
                 </div>
               ))}
               {g.items.length > 3 && (
-                <div onClick={() => navigate(g.items[0].path)} style={{ padding: '4px 6px', fontSize: 10, fontFamily: T.mono, color: T.textMut, cursor: 'pointer' }}>+{g.items.length - 3} more →</div>
+                <div onClick={() => navigate(g.items[0].path)} style={{ padding: '5px 8px', fontSize: 10, fontFamily: T.mono, color: T.accent, fontWeight: 600, cursor: 'pointer' }}>+{g.items.length - 3} more →</div>
               )}
             </div>
           </div>
@@ -2348,14 +2416,17 @@ function Dashboard() {
           const grp = NAV_GROUPS.find(g => g.items.includes(n));
           return (
             <div key={n.code || n.path} onClick={() => navigate(n.path)} style={{
-              padding: '10px 12px', borderRadius: 4, border: `1px solid ${T.border}`, background: T.surface, cursor: 'pointer',
-              borderLeft: `3px solid ${grp?.color || T.textMut}`, transition: 'box-shadow 0.15s, background 0.15s', boxShadow: 'none',
-            }} onMouseEnter={e => { e.currentTarget.style.boxShadow = T.cardH; e.currentTarget.style.background = T.surfaceH; }}
-               onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = T.surface; }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: T.navy, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.label}</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              padding: '10px 12px', borderRadius: T.rSm, border: `1px solid ${T.border}`, background: T.surface, cursor: 'pointer',
+              transition: 'box-shadow 0.15s, background 0.15s, border-color 0.15s', boxShadow: 'none',
+            }} onMouseEnter={e => { e.currentTarget.style.boxShadow = T.card; e.currentTarget.style.background = T.surfaceH; e.currentTarget.style.borderColor = T.borderL; }}
+               onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = T.surface; e.currentTarget.style.borderColor = T.border; }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 3 }}>
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: grp?.color || T.textMut, flexShrink: 0 }} />
+                <span style={{ fontSize: 11, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.label}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: 12 }}>
                 <span style={{ fontSize: 9, color: T.textMut, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '70%' }}>{n.badge}</span>
-                <span style={{ fontSize: 8, fontFamily: T.mono, color: grp?.color, fontWeight: 700 }}>{n.code}</span>
+                <span style={{ fontSize: 8, fontFamily: T.mono, color: T.textMut, fontWeight: 600, flexShrink: 0 }}>{n.code}</span>
               </div>
             </div>
           );
@@ -2410,41 +2481,46 @@ function Sidebar({ search, setSearch, sidebarOpen }) {
       </div>
 
       {/* Nav Groups */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 6px 12px' }}>
+      <div className="a2-scroll-dark" style={{ flex: 1, overflowY: 'auto', padding: '2px 8px 12px' }}>
         {filtered.map(group => {
           const isGroupActive = group.items.some(i => i.path === location.pathname);
           return (
-            <div key={group.label} style={{ marginBottom: 1 }}>
+            <div key={group.label} style={{ marginBottom: 2 }}>
               <div onClick={() => toggle(group.label)} style={{
-                padding: '7px 8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
-                borderRadius: 4, userSelect: 'none', borderLeft: isGroupActive ? `2px solid ${T.gold}` : '2px solid transparent',
+                padding: '7px 9px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
+                borderRadius: 7, userSelect: 'none',
+                background: isGroupActive ? 'rgba(255,255,255,0.05)' : 'transparent',
                 transition: 'background 0.12s',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                <span style={{ fontSize: 12, width: 18, textAlign: 'center' }}>{group.icon}</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: isGroupActive ? T.gold : 'rgba(255,255,255,0.6)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.label}</span>
+              onMouseEnter={e => { if (!isGroupActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+              onMouseLeave={e => { if (!isGroupActive) e.currentTarget.style.background = 'transparent'; }}>
+                <span style={{ fontSize: 12, width: 16, textAlign: 'center', filter: isGroupActive ? 'none' : 'saturate(0.85)' }}>{group.icon}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: isGroupActive ? '#fff' : 'rgba(255,255,255,0.62)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.label}</span>
                 <span style={{ fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.3)', fontWeight: 600, minWidth: 16, textAlign: 'right' }}>{group.items.length}</span>
-                <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.2)', transform: collapsed[group.label] ? 'rotate(-90deg)' : '', transition: 'transform 0.12s', marginLeft: 2 }}>▾</span>
+                <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.28)', transform: collapsed[group.label] ? 'rotate(-90deg)' : 'none', transition: 'transform 0.16s cubic-bezier(0.22,1,0.36,1)', marginLeft: 2 }}>▾</span>
               </div>
-              {!collapsed[group.label] && group.items.map(n => {
-                const isActive = location.pathname === n.path;
-                return (
-                  <NavLink key={n.code || n.path} to={n.path} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '5px 8px 5px 30px', borderRadius: 3, marginBottom: 0, textDecoration: 'none',
-                    background: isActive ? 'rgba(197,169,106,0.15)' : 'transparent',
-                    borderLeft: isActive ? `2px solid ${T.gold}` : '2px solid transparent',
-                    transition: 'background 0.1s, border-color 0.1s',
-                  }}
-                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
-                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <span style={{ fontSize: 11, fontWeight: isActive ? 600 : 400, color: isActive ? T.gold : 'rgba(255,255,255,0.55)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.label}</span>
-                    <span style={{ fontSize: 8, fontFamily: T.mono, fontWeight: 600, color: isActive ? T.gold : 'rgba(255,255,255,0.18)', flexShrink: 0, marginLeft: 6 }}>{n.code}</span>
-                  </NavLink>
-                );
-              })}
+              {!collapsed[group.label] && (
+                <div style={{ paddingLeft: 4 }}>
+                  {group.items.map(n => {
+                    const isActive = location.pathname === n.path;
+                    return (
+                      <NavLink key={n.code || n.path} to={n.path} style={{
+                        position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '6px 8px 6px 26px', borderRadius: 7, marginTop: 1, textDecoration: 'none',
+                        background: isActive ? 'rgba(197,169,106,0.16)' : 'transparent',
+                        transition: 'background 0.12s',
+                      }}
+                      onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.045)'; }}
+                      onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+                      >
+                        {isActive && <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 3, height: 14, borderRadius: 3, background: T.gold }} />}
+                        <span style={{ fontSize: 11, fontWeight: isActive ? 600 : 400, color: isActive ? T.goldL : 'rgba(255,255,255,0.56)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.label}</span>
+                        <span style={{ fontSize: 8, fontFamily: T.mono, fontWeight: 600, color: isActive ? 'rgba(216,195,145,0.8)' : 'rgba(255,255,255,0.2)', flexShrink: 0, marginLeft: 6 }}>{n.code}</span>
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
@@ -2494,11 +2570,12 @@ function HeaderBar({ sidebarOpen, setSidebarOpen }) {
         >{'\u2630'}</button>
 
         {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9, borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: 14 }}>
           <div style={{
-            width: 26, height: 26, borderRadius: 4, background: `linear-gradient(135deg, ${T.gold}, ${T.goldD})`,
+            width: 27, height: 27, borderRadius: 7, background: T.gold,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 9, fontWeight: 800, color: T.navy, fontFamily: T.mono,
+            fontSize: 10, fontWeight: 800, color: T.navyD, fontFamily: T.mono, letterSpacing: '-0.03em',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25)',
           }}>A²</div>
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '0.03em' }}>AA Impact Inc.</div>
@@ -2532,17 +2609,17 @@ function HeaderBar({ sidebarOpen, setSidebarOpen }) {
         <DataDepthToggle />
 
         {/* Status Indicators */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL, boxShadow: `0 0 4px ${T.sageL}` }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.03em' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 8px', borderRadius: 999, background: 'rgba(255,255,255,0.06)' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: T.sageL }} />
             <span style={{ color: T.sageL, fontWeight: 600 }}>API</span>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>:8001</span>
           </div>
-          <span>:8001</span>
-          <span style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{time}</span>
+          <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{time}</span>
         </div>
       </div>
-      {/* Gold accent line */}
-      <div style={{ height: 2, background: `linear-gradient(90deg, ${T.gold}, ${T.goldL} 40%, transparent 80%)` }} />
+      {/* Refined accent hairline */}
+      <div style={{ height: 2, background: T.gold, opacity: 0.9 }} />
     </header>
   );
 }
@@ -2555,27 +2632,27 @@ function StatusBar() {
   const current = ALL_ITEMS.find(i => i.path === location.pathname);
   return (
     <div style={{
-      height: 24, background: T.navy, borderTop: `1px solid ${T.navyD}`,
-      display: 'flex', alignItems: 'center', padding: '0 14px', gap: 3,
-      fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.3)', flexShrink: 0, letterSpacing: '0.04em',
+      height: 24, background: T.navyD, borderTop: '1px solid rgba(255,255,255,0.06)',
+      display: 'flex', alignItems: 'center', padding: '0 14px', gap: 10,
+      fontSize: 9, fontFamily: T.mono, color: 'rgba(255,255,255,0.34)', flexShrink: 0, letterSpacing: '0.03em',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginRight: 8 }}>
-        <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL, boxShadow: `0 0 3px ${T.sageL}` }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+        <span style={{ width: 5, height: 5, borderRadius: '50%', background: T.sageL }} />
         <span style={{ color: T.sageL, fontWeight: 600 }}>CONNECTED</span>
       </div>
-      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
-      <span style={{ padding: '0 6px' }}>{ALL_ITEMS.length} MODULES</span>
-      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
-      <span style={{ padding: '0 6px' }}>{NAV_GROUPS.length} DOMAINS</span>
-      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
-      <span style={{ padding: '0 6px' }}>10 REGIONS</span>
-      <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
-      <span style={{ padding: '0 6px' }}>60+ FW</span>
+      <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
+      <span>{ALL_ITEMS.length} MODULES</span>
+      <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
+      <span>{NAV_GROUPS.length} DOMAINS</span>
+      <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
+      <span>10 REGIONS</span>
+      <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
+      <span>60+ FRAMEWORKS</span>
       {current && <>
-        <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
-        <span style={{ padding: '0 6px', color: T.goldL, fontWeight: 500, maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{current.badge}</span>
+        <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
+        <span style={{ color: 'rgba(216,195,145,0.85)', fontWeight: 500, maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{current.badge}</span>
       </>}
-      <span style={{ marginLeft: 'auto', color: T.gold, fontWeight: 600, letterSpacing: '0.08em' }}>A² INTELLIGENCE</span>
+      <span style={{ marginLeft: 'auto', color: 'rgba(197,169,106,0.85)', fontWeight: 600, letterSpacing: '0.1em' }}>A² INTELLIGENCE</span>
     </div>
   );
 }
@@ -2587,6 +2664,7 @@ function AppContent() {
   const [search, setSearch] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user, loading, daysRemaining } = useAuth();
+  const location = useLocation();
 
   if (loading) return <LoadingFallback />;
 
@@ -2618,7 +2696,7 @@ function AppContent() {
       <DemoBanner />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar search={search} setSearch={setSearch} sidebarOpen={sidebarOpen} />
-        <main style={{ flex: 1, overflowY: 'auto', background: T.bg, color: T.text }}>
+        <main key={location.pathname} className="a2-scroll a2-view" style={{ flex: 1, overflowY: 'auto', background: T.bg, color: T.text }}>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
             <Route path="/admin" element={<AdminPanelPage />} />

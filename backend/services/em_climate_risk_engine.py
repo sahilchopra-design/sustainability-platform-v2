@@ -15,8 +15,7 @@ Standards covered:
 """
 from __future__ import annotations
 
-import random
-from typing import Any
+from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
 # Reference data
@@ -872,10 +871,6 @@ NDC_AMBITION_CATEGORIES: dict[str, dict[str, Any]] = {
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _rng(seed: str) -> random.Random:
-    return random.Random(hash(seed) & 0xFFFF_FFFF)
-
-
 def _safe_float(val: Any, default: float = 0.0) -> float:
     try:
         return float(val)
@@ -928,8 +923,6 @@ class EMClimateRiskEngine:
         entity_id = entity_data.get("entity_id", "unknown")
         exposure_m = _safe_float(entity_data.get("exposure_m", 100))
 
-        rng = _rng(entity_id + country_code)
-
         physical = _safe_float(profile["physical_risk_score"])
         transition_rev = 100 - _safe_float(profile["transition_readiness_score"])
         ndc_gap = 100 - _safe_float(profile["ndc_ambition_score"])
@@ -955,11 +948,18 @@ class EMClimateRiskEngine:
 
         region = profile.get("region", "Sub-Saharan Africa")
         gems_uplift_pct = GEMS_LOSS_MULTIPLIERS.get(region, 25.0)
-        gems_base_loss = _safe_float(profile["gems_historical_loss_bn"]) * rng.uniform(0.8, 1.2)
+        # PCAF GEMS: forward-looking loss = published historical GEMS loss for the
+        # country scaled by the region's IPCC-AR6-derived climate uplift multiplier.
+        # Deterministic — no stochastic jitter (previously an rng.uniform(0.8,1.2)
+        # fabrication was applied to the historical figure).
+        gems_base_loss = _safe_float(profile["gems_historical_loss_bn"])
         gems_climate_adjusted_loss_bn = round(gems_base_loss * (1 + gems_uplift_pct / 100), 3)
+        # Allocate the country-level climate-adjusted loss to the entity's exposure.
+        # The /(exposure_m*50) term models exposure as a proxy for the ~2% national
+        # asset-base share captured per $M of exposure; deterministic (previously
+        # multiplied by an rng.uniform(0.5,1.5) fabrication).
         entity_loss_m = round(
-            exposure_m * (gems_climate_adjusted_loss_bn / max(exposure_m * 50, 1))
-            * rng.uniform(0.5, 1.5),
+            exposure_m * (gems_climate_adjusted_loss_bn / max(exposure_m * 50, 1)),
             3,
         )
 
@@ -1023,7 +1023,17 @@ class EMClimateRiskEngine:
         has_bio_plan = bool(entity_data.get("has_biodiversity_plan", False))
         has_offset_plan = bool(entity_data.get("has_offset_plan", False))
 
-        rng = _rng(entity_id + country_code + "ps6")
+        # Caller-supplied evidence for the remaining PS6 criteria. Each defaults to
+        # None ("not assessed") — the engine never fabricates a compliance outcome.
+        # (Previously these were rng.random()<threshold coin-flips.)
+        def _opt_bool(key: str) -> Optional[bool]:
+            v = entity_data.get(key, None)
+            return None if v is None else bool(v)
+
+        mitigation_hierarchy = _opt_bool("mitigation_hierarchy_applied")
+        third_party_verification = _opt_bool("has_third_party_verification")
+        community_engagement = _opt_bool("has_community_engagement")
+        monitoring_plan = _opt_bool("has_monitoring_plan")
 
         is_critical = iucn_km < 5 or endangered_present or habitat_type == "critical_habitat"
         is_natural = (
@@ -1041,21 +1051,28 @@ class EMClimateRiskEngine:
         )
         ps6_profile = IFC_PS6_THRESHOLDS[applicable_tier]
 
-        criteria_scores: dict[str, bool] = {
+        criteria_scores: dict[str, Optional[bool]] = {
             "biodiversity_management_plan": has_bio_plan,
-            "mitigation_hierarchy_applied": rng.random() < 0.65,
+            "mitigation_hierarchy_applied": mitigation_hierarchy,
             "offset_plan_in_place": has_offset_plan if ps6_profile["offset_requirement"] else True,
-            "third_party_verification": rng.random() < 0.50,
-            "community_engagement": rng.random() < 0.70,
-            "monitoring_plan": rng.random() < 0.60,
+            "third_party_verification": third_party_verification,
+            "community_engagement": community_engagement,
+            "monitoring_plan": monitoring_plan,
         }
-        compliance_score = round(
-            sum(1 for v in criteria_scores.values() if v) / len(criteria_scores) * 100, 1
+        # Score only over criteria with determinate (non-None) evidence. If no
+        # criterion was assessed, the score is an honest null rather than fabricated.
+        assessed = [v for v in criteria_scores.values() if v is not None]
+        compliance_score: Optional[float] = (
+            round(sum(1 for v in assessed if v) / len(assessed) * 100, 1)
+            if assessed else None
         )
+        not_assessed = [c for c, v in criteria_scores.items() if v is None]
 
         offset_ratio = 3.0 if is_critical else 1.5 if is_natural else 0.0
         offset_area_ha = max(0.0, habitat_ha * offset_ratio)
-        gaps = [c for c, met in criteria_scores.items() if not met]
+        # Gaps = criteria with explicit non-compliance evidence (False), not
+        # criteria that were simply never assessed (None).
+        gaps = [c for c, met in criteria_scores.items() if met is False]
 
         return {
             "entity_id": entity_id,
@@ -1067,6 +1084,7 @@ class EMClimateRiskEngine:
             "natural_habitat_exposure": is_natural,
             "compliance_score": compliance_score,
             "criteria_scores": criteria_scores,
+            "criteria_not_assessed": not_assessed,
             "compliance_gaps": gaps,
             "offset_required": ps6_profile["offset_requirement"],
             "offset_ratio": offset_ratio,
@@ -1095,8 +1113,6 @@ class EMClimateRiskEngine:
         climate_rationale = bool(entity_data.get("climate_rationale", True))
         region = EM_COUNTRY_PROFILES.get(country_code, {}).get("region", "Sub-Saharan Africa")
 
-        rng = _rng(entity_id + country_code + "concession")
-
         eligible: list[dict] = []
         ineligible: list[dict] = []
 
@@ -1120,7 +1136,9 @@ class EMClimateRiskEngine:
             score += 20 if climate_rationale else 0
             score += 15 if govt_endorsement else 0
             score += 20 if country_income in ["low", "lower_middle"] else 0
-            score = _clamp(score + rng.uniform(-5, 5))
+            # Deterministic eligibility rubric from caller-supplied project facts.
+            # (Previously perturbed by an rng.uniform(-5,5) fabrication.)
+            score = _clamp(score)
 
             grant_el = facility["grant_element_pct_range"]
             entry = {
@@ -1169,10 +1187,19 @@ class EMClimateRiskEngine:
     # ------------------------------------------------------------------
     # 4. Green Finance Market
     # ------------------------------------------------------------------
-    def assess_green_finance_market(self, country_code: str) -> dict:
+    def assess_green_finance_market(
+        self,
+        country_code: str,
+        pipeline_to_market_ratio: Optional[float] = None,
+    ) -> dict:
         """
         Assess EM green bond market depth, local currency risk, sustainable
         finance depth and pipeline vs market size ratio.
+
+        pipeline_to_market_ratio: caller-supplied forward green-bond pipeline as a
+            multiple of current market size (e.g. from an issuance pipeline
+            database). When None, pipeline metrics are returned as null rather
+            than fabricated — there is no reference-data anchor for a pipeline.
         """
         profile = EM_COUNTRY_PROFILES.get(country_code)
         if not profile:
@@ -1180,8 +1207,6 @@ class EMClimateRiskEngine:
                 "error": f"Country code '{country_code}' not found",
                 "available_count": len(EM_COUNTRY_PROFILES),
             }
-
-        rng = _rng(country_code + "green_finance")
 
         gb_size = _safe_float(profile["green_bond_market_size_bn"])
         gcf = _safe_float(profile["gcf_allocation_bn"])
@@ -1194,18 +1219,29 @@ class EMClimateRiskEngine:
             else "pre-market"
         )
 
-        pipeline_mult = rng.uniform(3.0, 6.0)
-        pipeline_bn = round(gb_size * pipeline_mult, 2)
+        # Forward pipeline is only reported when a caller supplies an actual
+        # pipeline-to-market ratio; otherwise honest nulls (previously an
+        # rng.uniform(3.0,6.0) fabrication).
+        pipeline_mult: Optional[float] = (
+            pipeline_to_market_ratio if pipeline_to_market_ratio is not None else None
+        )
+        pipeline_bn: Optional[float] = (
+            round(gb_size * pipeline_mult, 2) if pipeline_mult is not None else None
+        )
 
+        # Sustainable-finance depth from three real reference-data components
+        # (green-bond market size, GCF allocation, renewable capacity; max 75).
+        # Previously padded with an rng.uniform(5,25) filler.
         sf_depth = round(_clamp(
             min(gb_size / 0.5, 30)
             + min(gcf / 0.05, 25)
             + min(re_gw / 10, 20)
-            + rng.uniform(5, 25)
         ), 1)
 
+        # Local-currency risk proxied by inverted ND-GAIN readiness score.
+        # Previously perturbed by an rng.uniform(-5,5) fabrication.
         local_ccy_risk = round(_clamp(
-            100 - _safe_float(profile["nd_gain_score"]) + rng.uniform(-5, 5)
+            100 - _safe_float(profile["nd_gain_score"])
         ), 1)
 
         recommendations: list[str] = []
@@ -1233,7 +1269,9 @@ class EMClimateRiskEngine:
             "green_bond_market_size_bn": gb_size,
             "market_depth": market_depth,
             "estimated_pipeline_bn": pipeline_bn,
-            "pipeline_to_market_ratio": round(pipeline_mult, 1),
+            "pipeline_to_market_ratio": (
+                round(pipeline_mult, 1) if pipeline_mult is not None else None
+            ),
             "sustainable_finance_depth_score": sf_depth,
             "local_currency_risk_score": local_ccy_risk,
             "gcf_allocation_bn": gcf,

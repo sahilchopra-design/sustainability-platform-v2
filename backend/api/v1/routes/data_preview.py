@@ -242,7 +242,7 @@ def list_tables(schema: str = "public", db: Session = Depends(get_db)):
 
         # Get column details
         cols_query = text("""
-            SELECT column_name, data_type, is_nullable,
+            SELECT c.column_name, c.data_type, c.is_nullable,
                    CASE WHEN pk.column_name IS NOT NULL THEN true ELSE false END as is_pk
             FROM information_schema.columns c
             LEFT JOIN (

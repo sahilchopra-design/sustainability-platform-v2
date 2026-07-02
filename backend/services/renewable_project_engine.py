@@ -398,11 +398,17 @@ class RenewableProjectEngine:
 
         lcoe_base = (total_capex_eur * crf + annual_opex_eur) / annual_generation_mwh
 
-        # With degradation: average generation lower over lifetime
+        # With degradation: canonical LCOE (NREL/IEA) discounts BOTH cost and the
+        # ENERGY denominator, and energy decays geometrically. The prior code divided
+        # by a naive undiscounted linear-average of output, biasing LCOE.
+        # LCOE = [capex + Σ opex/(1+r)^t] / [Σ E_yr1·(1-d)^(t-1)/(1+r)^t]
         if degradation_pct_yr > 0:
-            avg_factor = 1 - degradation_pct_yr / 100 * (n - 1) / 2
-            gen_avg = annual_generation_mwh * avg_factor
-            lcoe_deg = (total_capex_eur * crf + annual_opex_eur) / gen_avg
+            d = degradation_pct_yr / 100
+            disc_energy = sum(annual_generation_mwh * (1 - d) ** (t - 1) / (1 + r) ** t
+                              for t in range(1, n + 1))
+            disc_cost = total_capex_eur + sum(annual_opex_eur / (1 + r) ** t
+                                              for t in range(1, n + 1))
+            lcoe_deg = disc_cost / disc_energy if disc_energy > 0 else lcoe_base
         else:
             lcoe_deg = lcoe_base
 
@@ -504,14 +510,52 @@ class RenewableProjectEngine:
             (annual_cf + carbon_rev) / (1 + r) ** t for t in range(1, lifetime + 1)
         )
 
-        # IRR (simplified from MOIC)
-        total_cf = annual_cf * lifetime
-        moic = total_cf / total_capex if total_capex > 0 else 0
-        irr = round((moic ** (1 / lifetime) - 1) * 100, 2) if moic > 0 else 0
+        # IRR — real internal rate of return on the project cash-flow vector
+        # [-capex, cf_1, ..., cf_n]. Newton-Raphson with a bisection fallback.
+        # (The prior MOIC^(1/n) proxy ignores cash-flow timing and materially
+        #  understates the return, e.g. 7.2% vs a true ~15% for a 10yr/2x project.)
+        def _irr(cashflows):
+            # Require at least one sign change for a solution to exist.
+            if not any(c < 0 for c in cashflows) or not any(c > 0 for c in cashflows):
+                return None
 
-        total_cf_carbon = (annual_cf + carbon_rev) * lifetime
-        moic_c = total_cf_carbon / total_capex if total_capex > 0 else 0
-        irr_c = round((moic_c ** (1 / lifetime) - 1) * 100, 2) if moic_c > 0 else 0
+            def npv_at(rate):
+                return sum(cf / (1.0 + rate) ** t for t, cf in enumerate(cashflows))
+
+            # Newton-Raphson
+            rate = 0.10
+            for _ in range(100):
+                f = npv_at(rate)
+                df = sum(-t * cf / (1.0 + rate) ** (t + 1) for t, cf in enumerate(cashflows))
+                if abs(df) < 1e-12:
+                    break
+                step = f / df
+                rate -= step
+                if rate <= -0.9999:
+                    rate = -0.99
+                if abs(step) < 1e-9:
+                    return rate
+            # Bisection fallback over a wide bracket if Newton didn't converge
+            lo, hi = -0.9999, 10.0
+            f_lo, f_hi = npv_at(lo), npv_at(hi)
+            if f_lo * f_hi > 0:
+                return rate  # best Newton estimate
+            for _ in range(200):
+                mid = (lo + hi) / 2.0
+                f_mid = npv_at(mid)
+                if abs(f_mid) < 1e-9:
+                    return mid
+                if f_lo * f_mid < 0:
+                    hi, f_hi = mid, f_mid
+                else:
+                    lo, f_lo = mid, f_mid
+            return (lo + hi) / 2.0
+
+        _irr_val = _irr([-total_capex] + [annual_cf] * lifetime) if total_capex > 0 else None
+        irr = round(_irr_val * 100, 2) if _irr_val is not None else 0
+
+        _irr_c_val = _irr([-total_capex] + [annual_cf + carbon_rev] * lifetime) if total_capex > 0 else None
+        irr_c = round(_irr_c_val * 100, 2) if _irr_c_val is not None else 0
 
         # Payback
         payback = total_capex / annual_cf if annual_cf > 0 else 99

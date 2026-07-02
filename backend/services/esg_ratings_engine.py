@@ -6,7 +6,6 @@ MIT/ECGI divergence research · MIT Florian Berg divergence taxonomy ·
 SASB/MSCI methodology transparency
 """
 
-import random
 import math
 import statistics
 from typing import Optional
@@ -67,10 +66,6 @@ SECTOR_BIAS_ADJUSTMENTS = {"services": -3.0, "manufacturing": +2.5, "extractives
 # Helper utilities
 # ---------------------------------------------------------------------------
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(entity_id) & 0xFFFFFFFF)
-
-
 def _clamp(val: float, lo: float = 0.0, hi: float = 100.0) -> float:
     return max(lo, min(hi, val))
 
@@ -108,37 +103,64 @@ def assess_esra_compliance(
     methodology_published: bool,
     conflict_mgmt: bool,
     regulatory_supervised: bool,
+    requirement_status: Optional[dict] = None,
 ) -> dict:
-    rng = _rng(entity_id + "esra")
+    # Each of the 8 ESRA requirements is a documented attestation about the
+    # rating provider. R02/R04/R07 derive directly from the three headline
+    # attestation inputs. R01/R03/R05/R06/R08 are only assessable from explicit
+    # evidence supplied by the caller via `requirement_status` (mapping of
+    # requirement id -> bool). Absent that evidence a requirement is treated as
+    # not-yet-attested (not met) and surfaced in `requirements_unverified` — we
+    # never fabricate a compliance attestation.
+    supplied = requirement_status or {}
 
-    # Assess each of 8 requirements
-    # Some auto-derive from inputs, others from seeded random
+    def _attested(req_id: str, derived: Optional[bool]) -> Optional[bool]:
+        # Explicit caller evidence wins; otherwise fall back to the derived
+        # value (for gated requirements) or None (genuinely unknown).
+        if req_id in supplied:
+            return bool(supplied[req_id])
+        return derived
+
+    # Derived values: gated requirements can be no better than their gate.
+    # A gate that is False makes the sub-requirement False (real logical
+    # consequence); a gate that is True leaves it unknown (None) unless the
+    # caller attests to it explicitly.
     req_status = {
-        "R01": rng.random() > 0.3,  # ancillary separation — structural
+        "R01": _attested("R01", None),  # ancillary separation — structural, needs evidence
         "R02": methodology_published,
-        "R03": methodology_published and rng.random() > 0.2,
+        "R03": _attested("R03", False if not methodology_published else None),
         "R04": conflict_mgmt,
-        "R05": conflict_mgmt and rng.random() > 0.25,
-        "R06": methodology_published and rng.random() > 0.35,
+        "R05": _attested("R05", False if not conflict_mgmt else None),
+        "R06": _attested("R06", False if not methodology_published else None),
         "R07": regulatory_supervised,
-        "R08": regulatory_supervised and rng.random() > 0.4,
+        "R08": _attested("R08", False if not regulatory_supervised else None),
     }
 
     requirements_met = []
     requirements_failed = []
+    requirements_unverified = []
     weighted_score = 0.0
+    assessable_weight = 0.0
 
     for req in ESRA_REQUIREMENTS:
-        met = req_status.get(req["id"], False)
+        met = req_status.get(req["id"], None)
+        if met is None:
+            requirements_unverified.append(f"{req['id']}: {req['requirement']}")
+            continue
+        assessable_weight += req["weight"]
         if met:
             requirements_met.append(f"{req['id']}: {req['requirement']}")
             weighted_score += req["weight"] * 100
         else:
             requirements_failed.append(f"{req['id']}: {req['requirement']}")
 
-    compliance_score = _round(weighted_score, 1)
+    # Score is expressed over the assessable (evidenced) weight only, so
+    # unverified requirements neither inflate nor deflate the result.
+    compliance_score = _round(weighted_score / assessable_weight, 1) if assessable_weight > 0 else None
 
-    if compliance_score >= 85:
+    if compliance_score is None:
+        esra_grade = "insufficient_data — no assessable requirements evidenced"
+    elif compliance_score >= 85:
         esra_grade = "A — Authorisation eligible"
     elif compliance_score >= 70:
         esra_grade = "B — Remediation required"
@@ -147,20 +169,26 @@ def assess_esra_compliance(
     else:
         esra_grade = "D — Non-compliant"
 
-    authorisation_eligible = compliance_score >= 80 and regulatory_supervised
+    authorisation_eligible = (
+        compliance_score is not None and compliance_score >= 80 and regulatory_supervised
+    )
 
     timeline_compliance = {
         "ESRA_entry_into_force": "2024-07-02",
         "authorisation_deadline": "2025-07-02",
         "full_compliance_required": "2026-01-01",
         "current_status": esra_grade,
-        "months_to_deadline": max(0, _round((2025 - 2024) * 12 * (1 - compliance_score / 100), 0)),
+        "months_to_deadline": (
+            max(0, _round((2025 - 2024) * 12 * (1 - compliance_score / 100), 0))
+            if compliance_score is not None else None
+        ),
     }
 
     return {
         "provider_name": provider_name,
         "requirements_met": requirements_met,
         "requirements_failed": requirements_failed,
+        "requirements_unverified": requirements_unverified,
         "compliance_score": compliance_score,
         "esra_grade": esra_grade,
         "authorisation_eligible": authorisation_eligible,
@@ -173,12 +201,20 @@ def assess_esra_compliance(
 # Method 2: Rating Divergence Analysis
 # ---------------------------------------------------------------------------
 
-def analyse_rating_divergence(entity_id: str, ratings: dict) -> dict:
-    rng = _rng(entity_id + "divergence")
-
+def analyse_rating_divergence(
+    entity_id: str,
+    ratings: dict,
+    provider_correlations: Optional[dict] = None,
+) -> dict:
     normalised = {}
+    missing_scores = []
     for provider, data in ratings.items():
-        raw = data.get("score", rng.uniform(30, 80))
+        raw = data.get("score")
+        if raw is None:
+            # No fabricated fallback: a provider that supplied no score is
+            # excluded from the divergence set and surfaced honestly.
+            missing_scores.append(provider)
+            continue
         normalised[provider] = _round(_normalise_score(provider, raw), 1)
 
     scores = list(normalised.values())
@@ -197,19 +233,27 @@ def analyse_rating_divergence(entity_id: str, ratings: dict) -> dict:
         "measurement_21pct": _round(divergence_score * measurement_share, 2),
     }
 
-    # Correlation matrix (seeded)
+    # Correlation matrix. A genuine pairwise correlation between two providers
+    # requires a cross-sectional panel of ratings across many entities; it
+    # cannot be inferred from a single entity's snapshot. If the caller supplies
+    # such panel correlations via `provider_correlations` ({p1: {p2: rho}}), we
+    # use them; otherwise every off-diagonal cell is an honest None.
+    supplied_corr = provider_correlations or {}
     providers = list(normalised.keys())
     correlation_matrix = {}
+    correlation_data_available = bool(supplied_corr)
     for i, p1 in enumerate(providers):
         correlation_matrix[p1] = {}
         for j, p2 in enumerate(providers):
             if i == j:
                 correlation_matrix[p1][p2] = 1.0
             else:
-                # Higher divergence = lower correlation on average
-                base_corr = max(0.1, 0.75 - divergence_score / 100)
-                noise = rng.uniform(-0.15, 0.15)
-                correlation_matrix[p1][p2] = _round(_clamp(base_corr + noise, -1, 1), 3)
+                rho = supplied_corr.get(p1, {}).get(p2)
+                if rho is None:
+                    rho = supplied_corr.get(p2, {}).get(p1)
+                correlation_matrix[p1][p2] = (
+                    _round(_clamp(rho, -1, 1), 3) if rho is not None else None
+                )
 
     avg_score = statistics.mean(scores) if scores else 50.0
     consensus_rating = _composite_rating(avg_score)
@@ -226,9 +270,11 @@ def analyse_rating_divergence(entity_id: str, ratings: dict) -> dict:
         "divergence_score": divergence_score,
         "divergence_sources": divergence_sources,
         "correlation_matrix": correlation_matrix,
+        "correlation_data_available": correlation_data_available,
         "consensus_rating": consensus_rating,
         "average_normalised_score": _round(avg_score, 1),
         "confidence_interval": confidence_interval,
+        "missing_scores": missing_scores,
     }
 
 
@@ -242,9 +288,9 @@ def detect_rating_bias(
     entity_size: str,
     region: str,
     sector: str,
+    reporting_bias_adjustment: Optional[float] = None,
+    peer_stats: Optional[dict] = None,
 ) -> dict:
-    rng = _rng(entity_id + "bias")
-
     normalised = {p: _round(_normalise_score(p, v), 1) for p, v in scores.items()}
     raw_composite = _round(statistics.mean(normalised.values()) if normalised else 50.0, 1)
 
@@ -284,12 +330,27 @@ def detect_rating_bias(
         })
         total_adjustment += sector_adj
 
-    # Voluntary disclosure inflation
-    report_adj = rng.uniform(-4.0, -1.0)
+    # Voluntary disclosure inflation. This is a documented MODEL calibration
+    # (not an entity measurement): Berg, Kolbel & Rigobon (2022) find voluntary
+    # disclosure systematically inflates ESG scores vs independently verified
+    # data. We apply the central point estimate of the published -4.0..-1.0
+    # range (-2.5) as a fixed calibration constant; callers with an entity-
+    # specific verified-vs-disclosed delta may override via
+    # `reporting_bias_adjustment`.
+    REPORTING_BIAS_MODEL_CONSTANT = -2.5  # midpoint of Berg et al. (2022) -4.0..-1.0 range
+    report_adj = (
+        float(reporting_bias_adjustment)
+        if reporting_bias_adjustment is not None
+        else REPORTING_BIAS_MODEL_CONSTANT
+    )
     biases_detected.append({
         "bias_type": "reporting_bias",
         "description": "Voluntary disclosure inflates scores vs independently verified data",
         "adjustment": _round(report_adj, 1),
+        "adjustment_basis": (
+            "entity_supplied" if reporting_bias_adjustment is not None
+            else "model_calibration_constant"
+        ),
         "source": "Berg, Kolbel & Rigobon (2022), JFE",
     })
     total_adjustment += report_adj
@@ -297,12 +358,29 @@ def detect_rating_bias(
     bias_adjusted_score = _round(_clamp(raw_composite + total_adjustment), 1)
     adjustment_magnitude = _round(abs(total_adjustment), 1)
 
+    # Peer comparison figures (sector averages, entity percentiles) are real
+    # measurable quantities that require an actual peer panel. They cannot be
+    # inferred from a single entity's scores, so we surface caller-supplied
+    # values when present (`peer_stats`) and honest None otherwise.
+    ps = peer_stats or {}
     peer_comparison = {
         "sector": sector,
-        "sector_avg_raw": _round(rng.uniform(45, 65), 1),
-        "sector_avg_bias_adjusted": _round(rng.uniform(40, 60), 1),
-        "entity_percentile_raw": _round(rng.uniform(30, 80), 1),
-        "entity_percentile_adjusted": _round(rng.uniform(25, 75), 1),
+        "sector_avg_raw": (
+            _round(float(ps["sector_avg_raw"]), 1) if ps.get("sector_avg_raw") is not None else None
+        ),
+        "sector_avg_bias_adjusted": (
+            _round(float(ps["sector_avg_bias_adjusted"]), 1)
+            if ps.get("sector_avg_bias_adjusted") is not None else None
+        ),
+        "entity_percentile_raw": (
+            _round(float(ps["entity_percentile_raw"]), 1)
+            if ps.get("entity_percentile_raw") is not None else None
+        ),
+        "entity_percentile_adjusted": (
+            _round(float(ps["entity_percentile_adjusted"]), 1)
+            if ps.get("entity_percentile_adjusted") is not None else None
+        ),
+        "data_available": bool(ps),
     }
 
     return {
@@ -323,19 +401,31 @@ def compute_composite_rating(
     entity_id: str,
     provider_scores: dict,
     methodology: str = "equal_weight",
+    provider_market_weights: Optional[dict] = None,
 ) -> dict:
-    rng = _rng(entity_id + "composite")
-
     normalised = {p: _round(_normalise_score(p, v), 1) for p, v in provider_scores.items()}
     providers = list(normalised.keys())
     n = len(providers)
+    weighting_note = None
 
     if methodology == "equal_weight":
         weights = {p: _round(1.0 / n, 4) for p in providers} if n else {}
     elif methodology == "market_cap_weight":
-        raw_w = {p: rng.uniform(0.1, 0.4) for p in providers}
-        total = sum(raw_w.values())
-        weights = {p: _round(raw_w[p] / total, 4) for p in providers}
+        # Market-cap weights reflect each provider's market share/AUM — an
+        # external fact, not something derivable here. Use caller-supplied
+        # weights when provided; otherwise fall back to equal weight and say so
+        # rather than fabricating a market-share distribution.
+        supplied_w = provider_market_weights or {}
+        usable = {p: float(supplied_w[p]) for p in providers if supplied_w.get(p) is not None}
+        total = sum(usable.values())
+        if usable and total > 0 and len(usable) == n:
+            weights = {p: _round(usable[p] / total, 4) for p in providers}
+        else:
+            weights = {p: _round(1.0 / n, 4) for p in providers} if n else {}
+            weighting_note = (
+                "market_cap_weight requested but no complete provider_market_weights "
+                "supplied; defaulted to equal_weight"
+            )
     elif methodology == "specialisation_weight":
         # MSCI for governance, Sustainalytics for risk, others equal
         spec = {"msci": 0.30, "sustainalytics": 0.30}
@@ -368,6 +458,7 @@ def compute_composite_rating(
         "provider_weights": weights,
         "normalised_scores": normalised,
         "sensitivity_analysis": sensitivity_analysis,
+        "weighting_note": weighting_note,
     }
 
 
@@ -376,8 +467,6 @@ def compute_composite_rating(
 # ---------------------------------------------------------------------------
 
 def assess_e_pillar_divergence(entity_id: str, scores_by_pillar: dict) -> dict:
-    rng = _rng(entity_id + "epillar")
-
     pillar_divergence = {}
     data_gaps = []
 
@@ -393,23 +482,28 @@ def assess_e_pillar_divergence(entity_id: str, scores_by_pillar: dict) -> dict:
                 "avg": _round(statistics.mean(vals), 1) if vals else 0.0,
             }
         else:
-            div = _round(rng.uniform(8, 22), 2)
+            # No provider scores for this sub-pillar: divergence and average are
+            # genuinely unknown. Emit honest nulls rather than a fabricated draw.
             pillar_divergence[pillar] = {
-                "divergence": div,
+                "divergence": None,
                 "scores": {},
-                "avg": _round(rng.uniform(40, 70), 1),
+                "avg": None,
             }
             data_gaps.append(f"{pillar}: no provider scores supplied")
 
-    if pillar_divergence:
-        most_divergent = max(pillar_divergence, key=lambda k: pillar_divergence[k]["divergence"])
-        least_divergent = min(pillar_divergence, key=lambda k: pillar_divergence[k]["divergence"])
+    # Rank only over pillars that actually have a computed divergence; nulls are
+    # excluded so comparisons never raise and rankings are not driven by
+    # fabricated values.
+    ranked = [k for k in pillar_divergence if pillar_divergence[k]["divergence"] is not None]
+    if ranked:
+        most_divergent = max(ranked, key=lambda k: pillar_divergence[k]["divergence"])
+        least_divergent = min(ranked, key=lambda k: pillar_divergence[k]["divergence"])
     else:
-        most_divergent = "carbon_E1"
-        least_divergent = "waste_E4"
+        most_divergent = None
+        least_divergent = None
 
     improvement_priorities = sorted(
-        pillar_divergence.keys(),
+        ranked,
         key=lambda k: pillar_divergence[k]["divergence"],
         reverse=True,
     )[:3]
@@ -432,27 +526,57 @@ def benchmark_against_peers(
     sector: str,
     composite_score: float,
     n_peers: int = 20,
+    peer_scores: Optional[list] = None,
 ) -> dict:
-    rng = _rng(entity_id + "benchmark")
+    # Percentile rank, sector median/p75/leader and the gaps are all real
+    # measurable quantities — but they require an actual panel of peer composite
+    # scores. We compute them genuinely from a caller-supplied `peer_scores`
+    # list; without it every peer-derived metric is an honest None (no
+    # synthetic distribution is fabricated).
+    entity_score = _round(_clamp(composite_score), 1)
 
-    dist = SECTOR_PEER_DISTRIBUTION.get(sector.lower(), SECTOR_PEER_DISTRIBUTION["other"])
-    peer_scores = sorted([
-        _round(_clamp(rng.gauss(dist["mean"], dist["std"])), 1)
-        for _ in range(n_peers)
-    ])
+    clean_peers = None
+    if peer_scores:
+        clean_peers = sorted(
+            _round(_clamp(float(s)), 1) for s in peer_scores if s is not None
+        )
+        if not clean_peers:
+            clean_peers = None
 
-    entity_score = _clamp(composite_score)
-    rank = sum(1 for s in peer_scores if s < entity_score) + 1
-    percentile = _round(rank / (n_peers + 1) * 100, 1)
+    improvement_roadmap = []
 
-    sector_median = _round(statistics.median(peer_scores), 1)
-    sector_p75 = _round(peer_scores[int(n_peers * 0.75)], 1)
-    sector_leader = _round(max(peer_scores), 1)
+    if clean_peers is None:
+        result = {
+            "percentile_rank": None,
+            "sector": sector,
+            "sector_median": None,
+            "sector_p75": None,
+            "sector_leader": None,
+            "entity_score": entity_score,
+            "gap_to_median": None,
+            "gap_to_leader": None,
+            "n_peers": 0,
+            "peer_data_available": False,
+            "improvement_roadmap": [
+                "Supply a peer composite-score panel to enable percentile and gap analysis",
+                "Align CSRD ESRS E1-E5 reporting with provider data requirements",
+                "Engage Sustainalytics/MSCI for analyst engagement meetings",
+            ],
+        }
+        return result
+
+    actual_n = len(clean_peers)
+    rank = sum(1 for s in clean_peers if s < entity_score) + 1
+    percentile = _round(rank / (actual_n + 1) * 100, 1)
+
+    sector_median = _round(statistics.median(clean_peers), 1)
+    p75_idx = min(actual_n - 1, int(actual_n * 0.75))
+    sector_p75 = _round(clean_peers[p75_idx], 1)
+    sector_leader = _round(max(clean_peers), 1)
 
     gap_to_median = _round(sector_median - entity_score, 1)
     gap_to_leader = _round(sector_leader - entity_score, 1)
 
-    improvement_roadmap = []
     if gap_to_median > 5:
         improvement_roadmap.append(f"Close {gap_to_median:.0f}pt gap to sector median via enhanced E-pillar reporting")
     if gap_to_leader > 15:
@@ -466,10 +590,11 @@ def benchmark_against_peers(
         "sector_median": sector_median,
         "sector_p75": sector_p75,
         "sector_leader": sector_leader,
-        "entity_score": _round(entity_score, 1),
+        "entity_score": entity_score,
         "gap_to_median": gap_to_median,
         "gap_to_leader": gap_to_leader,
-        "n_peers": n_peers,
+        "n_peers": actual_n,
+        "peer_data_available": True,
         "improvement_roadmap": improvement_roadmap,
     }
 
@@ -483,22 +608,28 @@ def generate_divergence_report(
     entity_name: str,
     sector: str,
     ratings: dict,
+    peer_scores: Optional[list] = None,
 ) -> dict:
-    rng = _rng(entity_id + "report")
+    # Only include providers that actually supplied a score; do not fabricate a
+    # placeholder score for missing providers.
+    real_scores = {p: d.get("score") for p, d in ratings.items() if d.get("score") is not None}
 
     # Run sub-analyses
     divergence_result = analyse_rating_divergence(entity_id, ratings)
-    composite_result = compute_composite_rating(entity_id, {p: d.get("score", 50) for p, d in ratings.items()})
+    composite_result = compute_composite_rating(entity_id, real_scores)
 
-    bias_scores = {p: d.get("score", 50) for p, d in ratings.items()}
     bias_result = detect_rating_bias(
-        entity_id, bias_scores,
+        entity_id, real_scores,
         entity_size="large",
         region="western_europe",
         sector=sector,
     )
 
-    benchmark_result = benchmark_against_peers(entity_id, sector, composite_result["composite_score"])
+    # Peer benchmark is genuine only when a peer panel is supplied; otherwise it
+    # returns honest nulls (see benchmark_against_peers).
+    benchmark_result = benchmark_against_peers(
+        entity_id, sector, composite_result["composite_score"], peer_scores=peer_scores,
+    )
 
     top_divergence_driver = max(
         divergence_result["divergence_sources"].items(),
@@ -514,12 +645,15 @@ def generate_divergence_report(
     ]
 
     action_items = []
-    if divergence_result["divergence_score"] > 15:
+    div_score = divergence_result["divergence_score"]
+    if div_score is not None and div_score > 15:
         action_items.append("Engage top-3 divergent providers with unified data submission package")
-    if bias_result["adjustment_magnitude"] > 5:
+    adj_mag = bias_result["adjustment_magnitude"]
+    if adj_mag is not None and adj_mag > 5:
         action_items.append("Correct for reporting bias by providing third-party verified data")
-    if benchmark_result["gap_to_median"] > 5:
-        action_items.append(f"Prioritise {benchmark_result['gap_to_median']:.0f}-point improvement vs sector median")
+    gap_median = benchmark_result["gap_to_median"]
+    if gap_median is not None and gap_median > 5:
+        action_items.append(f"Prioritise {gap_median:.0f}-point improvement vs sector median")
     action_items.append("Subscribe to ESRA-authorised provider update notifications")
     action_items.append("Implement annual provider gap analysis as part of IR calendar")
 

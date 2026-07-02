@@ -9,8 +9,8 @@ PBAF 2023 Standard
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Any
-import random, math
+from typing import Any, Optional
+import math
 
 
 # ---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ ASSESSMENT_TYPES = ["tnfd", "msa", "sbtn", "cbd_gbf", "combined"]
 @dataclass
 class TNFDPillarScore:
     pillar: str = ""
-    score: int = 0   # 1-5 maturity
+    score: Optional[int] = None   # 1-5 maturity; None = not supplied by caller
     metrics_assessed: list[str] = field(default_factory=list)
     gaps: list[str] = field(default_factory=list)
 
@@ -88,13 +88,15 @@ class MSAFootprint:
     by_land_use: dict[str, float] = field(default_factory=dict)  # land_use -> msa_km2
     by_land_use_area: dict[str, float] = field(default_factory=dict)
     hotspot_areas: list[str] = field(default_factory=list)
-    sensitive_ecosystems_pct: float = 0.0
+    # None = not supplied by caller (was previously fabricated via rng)
+    sensitive_ecosystems_pct: Optional[float] = None
 
 
 @dataclass
 class SBTNReadiness:
-    overall_readiness_score: float = 0.0
-    steps_complete: int = 0
+    # None steps_complete = caller did not supply real SBTN progress (was rng-fabricated)
+    overall_readiness_score: Optional[float] = None
+    steps_complete: Optional[int] = None
     step_status: dict[int, str] = field(default_factory=dict)  # 1-5 -> complete/partial/not_started
     target_types: list[str] = field(default_factory=list)
     next_priority_step: int = 1
@@ -102,9 +104,10 @@ class SBTNReadiness:
 
 @dataclass
 class CBDGBFAlignment:
-    overall_alignment: str = "early-stage"  # aligned/progressing/early-stage
+    # "insufficient_data" when caller supplies no per-sub-element scores (was rng-fabricated)
+    overall_alignment: str = "insufficient_data"  # aligned/progressing/early-stage/insufficient_data
     sub_element_scores: dict[str, float] = field(default_factory=dict)
-    average_score: float = 0.0
+    average_score: Optional[float] = None
     target15_gap: list[str] = field(default_factory=list)
 
 
@@ -115,8 +118,8 @@ class BiodiversityAssessment:
     entity_name: str = ""
     sector: str = ""
     assessment_type: str = "combined"
-    # TNFD
-    tnfd_overall_maturity: int = 0
+    # TNFD (None maturity = no real pillar-maturity inputs supplied; was rng-fabricated)
+    tnfd_overall_maturity: Optional[int] = None
     tnfd_pillar_scores: list[TNFDPillarScore] = field(default_factory=list)
     tnfd_gaps: list[str] = field(default_factory=list)
     # MSA
@@ -125,9 +128,9 @@ class BiodiversityAssessment:
     sbtn_readiness: SBTNReadiness = field(default_factory=SBTNReadiness)
     # CBD GBF
     cbd_gbf: CBDGBFAlignment = field(default_factory=CBDGBFAlignment)
-    # Finance
-    transition_finance_pct: float = 0.0
-    nature_positive_score: float = 0.0
+    # Finance (None = caller-supplied metric absent; both were rng-fabricated)
+    transition_finance_pct: Optional[float] = None
+    nature_positive_score: Optional[float] = None
     # Cross-framework
     cross_framework: dict[str, Any] = field(default_factory=dict)
     priority_actions: list[str] = field(default_factory=list)
@@ -149,8 +152,18 @@ class BiodiversityFinanceEngine:
         assessment_type: str = "combined",
         operational_area_km2: float | None = None,
         land_use_breakdown: dict[str, float] | None = None,
+        # ---- Real caller-supplied entity metrics (all optional, backward-compatible) ----
+        # Previously each of these was fabricated via random.Random(hash(entity_id)).
+        # When None, the corresponding metric is reported as an honest null instead.
+        tnfd_pillar_maturity: dict[str, int] | None = None,      # pillar -> 1-5 maturity
+        tnfd_assessed_metrics: dict[str, list[str]] | None = None,  # pillar -> assessed metric ids
+        sensitive_ecosystems_pct: float | None = None,          # % operational area in sensitive ecosystems
+        sbtn_steps_complete: int | None = None,                 # 0-5 SBTN steps completed
+        sbtn_target_types: list[str] | None = None,             # declared SBTN target types
+        cbd_sub_element_scores: dict[str, float] | None = None, # 15a-15f -> 0-100 score
+        transition_finance_pct: float | None = None,            # % nature-positive transition finance
+        cross_framework_inputs: dict[str, Any] | None = None,   # real ESRS/taxonomy/GRI/ENCORE values
     ) -> BiodiversityAssessment:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         result = BiodiversityAssessment(
             assessment_id=f"BIO-{entity_id[:8].upper()}-2024",
             entity_id=entity_id,
@@ -159,106 +172,149 @@ class BiodiversityFinanceEngine:
             assessment_type=assessment_type,
         )
 
-        # TNFD pillar scores
+        # TNFD pillar scores — real when caller supplies per-pillar maturity; else honest null.
+        # Gaps are derived deterministically from which metrics the caller reports as assessed;
+        # if that mapping is absent, an unassessed pillar's metrics are all treated as gaps.
+        pillar_maturity = tnfd_pillar_maturity or {}
+        assessed_map = tnfd_assessed_metrics or {}
         pillar_scores: list[TNFDPillarScore] = []
         all_gaps: list[str] = []
         for pillar, cfg in TNFD_PILLARS.items():
-            score = int(rng.uniform(1, 5.9))
-            gaps = [m for m in cfg["metrics"] if rng.random() < (0.6 - score * 0.10)]
+            score = pillar_maturity.get(pillar)
+            if score is not None:
+                score = int(max(1, min(5, score)))
+            assessed = assessed_map.get(pillar)
+            if assessed is not None:
+                gaps = [m for m in cfg["metrics"] if m not in assessed]
+                metrics_assessed = [m for m in cfg["metrics"] if m in assessed]
+            elif score is not None:
+                # Maturity known but per-metric detail absent: no metric-level gap claim.
+                gaps = []
+                metrics_assessed = []
+            else:
+                # Nothing supplied for this pillar -> all metrics unassessed (honest gap).
+                gaps = list(cfg["metrics"])
+                metrics_assessed = []
             pillar_scores.append(TNFDPillarScore(
                 pillar=pillar,
                 score=score,
-                metrics_assessed=[m for m in cfg["metrics"] if m not in gaps],
+                metrics_assessed=metrics_assessed,
                 gaps=gaps,
             ))
             all_gaps.extend(gaps)
         result.tnfd_pillar_scores = pillar_scores
         result.tnfd_gaps = all_gaps
-        result.tnfd_overall_maturity = int(
-            sum(p.score for p in pillar_scores) / len(pillar_scores)
-        )
+        scored = [p.score for p in pillar_scores if p.score is not None]
+        result.tnfd_overall_maturity = int(sum(scored) / len(scored)) if scored else None
+        if not scored:
+            result.warnings.append("TNFD maturity not supplied (tnfd_pillar_maturity) — overall maturity reported as null")
 
-        # MSA footprint
-        area = operational_area_km2 or rng.uniform(100, 50_000)
-        breakdown = land_use_breakdown or {
-            lt: rng.uniform(0.02, 0.35) for lt in list(LAND_USE_MSA.keys())[:5]
-        }
-        # Normalise
-        total_fraction = sum(breakdown.values())
+        # MSA footprint — genuine ecological computation (area x (1 - MSA factor)).
+        # Requires a caller-supplied operational area; no area is fabricated.
         msa = MSAFootprint()
-        for lt, frac in breakdown.items():
-            area_lt = area * frac / total_fraction
-            msa_factor = LAND_USE_MSA.get(lt, {"msa_factor": 0.5})["msa_factor"]
-            msa_loss = area_lt * (1 - msa_factor)
-            msa.by_land_use_area[lt] = round(area_lt, 1)
-            msa.by_land_use[lt] = round(msa_loss, 2)
-        msa.total_footprint_km2 = round(sum(msa.by_land_use.values()), 2)
-        msa.sensitive_ecosystems_pct = round(rng.uniform(5, 40), 1)
-        msa.hotspot_areas = [lt for lt, v in msa.by_land_use.items() if v > msa.total_footprint_km2 * 0.25]
+        area = operational_area_km2
+        breakdown = land_use_breakdown
+        if area is not None and area > 0 and breakdown:
+            total_fraction = sum(breakdown.values())
+            if total_fraction > 0:
+                for lt, frac in breakdown.items():
+                    area_lt = area * frac / total_fraction
+                    msa_factor = LAND_USE_MSA.get(lt, {"msa_factor": 0.5})["msa_factor"]
+                    msa_loss = area_lt * (1 - msa_factor)
+                    msa.by_land_use_area[lt] = round(area_lt, 1)
+                    msa.by_land_use[lt] = round(msa_loss, 2)
+                msa.total_footprint_km2 = round(sum(msa.by_land_use.values()), 2)
+                msa.hotspot_areas = [
+                    lt for lt, v in msa.by_land_use.items()
+                    if v > msa.total_footprint_km2 * 0.25
+                ]
+        else:
+            result.warnings.append("MSA footprint not computed — operational_area_km2 and land_use_breakdown required")
+        # % sensitive ecosystems: caller-supplied real value, else honest null.
+        msa.sensitive_ecosystems_pct = (
+            round(sensitive_ecosystems_pct, 1) if sensitive_ecosystems_pct is not None else None
+        )
         result.msa_footprint = msa
 
-        # SBTN readiness
+        # SBTN readiness — deterministic status ladder from real step count; else honest null.
         sbtn = SBTNReadiness()
-        steps_done = int(rng.uniform(0, 5.9))
-        sbtn.steps_complete = steps_done
-        sbtn.overall_readiness_score = round(steps_done / 5 * 100, 1)
-        for step_n in range(1, 6):
-            if step_n <= steps_done:
-                sbtn.step_status[step_n] = "complete"
-            elif step_n == steps_done + 1:
-                sbtn.step_status[step_n] = "partial"
-            else:
-                sbtn.step_status[step_n] = "not_started"
-        sbtn.next_priority_step = min(steps_done + 1, 5)
-        sbtn.target_types = rng.choices(
-            ["no-net-loss", "net-gain", "no-go-zones", "restoration"], k=rng.randint(1, 3)
-        )
+        steps_done = sbtn_steps_complete
+        if steps_done is not None:
+            steps_done = int(max(0, min(5, steps_done)))
+            sbtn.steps_complete = steps_done
+            sbtn.overall_readiness_score = round(steps_done / 5 * 100, 1)
+            for step_n in range(1, 6):
+                if step_n <= steps_done:
+                    sbtn.step_status[step_n] = "complete"
+                elif step_n == steps_done + 1:
+                    sbtn.step_status[step_n] = "partial"
+                else:
+                    sbtn.step_status[step_n] = "not_started"
+            sbtn.next_priority_step = min(steps_done + 1, 5)
+        else:
+            result.warnings.append("SBTN readiness not supplied (sbtn_steps_complete) — reported as null")
+        sbtn.target_types = list(sbtn_target_types) if sbtn_target_types else []
         result.sbtn_readiness = sbtn
 
-        # CBD GBF Target 15
+        # CBD GBF Target 15 — tiering from real per-sub-element scores; else insufficient_data.
         cbd = CBDGBFAlignment()
-        sub_scores: dict[str, float] = {}
-        for elem, desc in CBD_GBF_TARGET15.items():
-            sub_scores[elem] = round(rng.uniform(10, 90), 1)
-        cbd.sub_element_scores = sub_scores
-        cbd.average_score = round(sum(sub_scores.values()) / len(sub_scores), 1)
-        if cbd.average_score >= 70:
-            cbd.overall_alignment = "aligned"
-        elif cbd.average_score >= 40:
-            cbd.overall_alignment = "progressing"
+        sub_scores = dict(cbd_sub_element_scores) if cbd_sub_element_scores else {}
+        if sub_scores:
+            cbd.sub_element_scores = {k: round(v, 1) for k, v in sub_scores.items()}
+            cbd.average_score = round(sum(sub_scores.values()) / len(sub_scores), 1)
+            if cbd.average_score >= 70:
+                cbd.overall_alignment = "aligned"
+            elif cbd.average_score >= 40:
+                cbd.overall_alignment = "progressing"
+            else:
+                cbd.overall_alignment = "early-stage"
+            cbd.target15_gap = [k for k, v in cbd.sub_element_scores.items() if v < 40]
         else:
-            cbd.overall_alignment = "early-stage"
-        cbd.target15_gap = [k for k, v in sub_scores.items() if v < 40]
+            result.warnings.append("CBD GBF Target 15 scores not supplied (cbd_sub_element_scores) — alignment reported as insufficient_data")
         result.cbd_gbf = cbd
 
         # Finance metrics
-        result.transition_finance_pct = round(rng.uniform(2, 25), 1)
-        result.nature_positive_score = round(
-            (result.tnfd_overall_maturity / 5 * 40)
-            + (sbtn.overall_readiness_score * 0.30)
-            + (cbd.average_score * 0.30),
-            1,
+        # transition_finance_pct: real caller value, else honest null.
+        result.transition_finance_pct = (
+            round(transition_finance_pct, 1) if transition_finance_pct is not None else None
         )
+        # nature_positive_score: genuine composite of the three framework signals.
+        # Computed only from components that are actually available (no fabricated fill).
+        np_components: list[float] = []
+        if result.tnfd_overall_maturity is not None:
+            np_components.append(result.tnfd_overall_maturity / 5 * 40)
+        if sbtn.overall_readiness_score is not None:
+            np_components.append(sbtn.overall_readiness_score * 0.30)
+        if cbd.average_score is not None:
+            np_components.append(cbd.average_score * 0.30)
+        result.nature_positive_score = round(sum(np_components), 1) if np_components else None
+        if result.nature_positive_score is None:
+            result.warnings.append("Nature-positive score not computed — no TNFD/SBTN/CBD inputs available")
 
-        # Cross-framework linkages
+        # Cross-framework linkages — real caller-supplied values, else honest nulls.
+        cfi = cross_framework_inputs or {}
         result.cross_framework = {
-            "esrs_e4_alignment": round(rng.uniform(40, 90), 1),
-            "eu_taxonomy_dnsh_biodiversity": round(rng.uniform(30, 80), 1),
-            "gri_304_material_topics": rng.randint(2, 8),
-            "encore_ecosystem_dependencies": rng.sample(ENCORE_ECOSYSTEM_SERVICES, k=4),
-            "pbaf_2023_standard": "partial" if steps_done < 3 else "compliant",
+            "esrs_e4_alignment": cfi.get("esrs_e4_alignment"),
+            "eu_taxonomy_dnsh_biodiversity": cfi.get("eu_taxonomy_dnsh_biodiversity"),
+            "gri_304_material_topics": cfi.get("gri_304_material_topics"),
+            "encore_ecosystem_dependencies": cfi.get("encore_ecosystem_dependencies"),
+            # PBAF status is a deterministic derivation from real SBTN progress when known.
+            "pbaf_2023_standard": (
+                ("partial" if steps_done < 3 else "compliant")
+                if steps_done is not None else "insufficient_data"
+            ),
         }
 
-        # Priority actions
-        if result.tnfd_overall_maturity < 3:
+        # Priority actions (null-guarded so None > x cannot raise)
+        if result.tnfd_overall_maturity is not None and result.tnfd_overall_maturity < 3:
             result.priority_actions.append("Advance TNFD disclosure from LEAP-framework assessment to full TNFD adoption")
-        if sbtn.steps_complete < 2:
+        if sbtn.steps_complete is not None and sbtn.steps_complete < 2:
             result.priority_actions.append("Complete SBTN Step 1 (Assess) to identify priority locations and value chain segments")
         if msa.total_footprint_km2 > 500:
             result.priority_actions.append("MSA footprint >500 km2 — initiate site-level biodiversity management plans")
         if cbd.overall_alignment == "early-stage":
             result.priority_actions.append("Develop CBD GBF Target 15 action plan — current alignment early-stage")
-        if result.transition_finance_pct < 5:
+        if result.transition_finance_pct is not None and result.transition_finance_pct < 5:
             result.priority_actions.append("Increase nature-positive transition finance allocation to >=5% of portfolio")
 
         return result

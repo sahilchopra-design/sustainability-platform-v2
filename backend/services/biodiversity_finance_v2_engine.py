@@ -17,7 +17,6 @@ References:
 from __future__ import annotations
 
 import math
-import random
 import uuid
 from datetime import date
 from typing import Any, Optional
@@ -195,6 +194,24 @@ BNG_HABITAT_CONDITION_MULTIPLIERS: dict[str, float] = {
     "n_a":         0.0,
 }
 
+# BNG Metric 4.0 distinctiveness bands (fixed scores by habitat distinctiveness
+# class — a reference-data lookup, NOT an entity-chosen value).
+BNG_DISTINCTIVENESS_SCORES: dict[str, float] = {
+    "very_high": 8.0,
+    "high":      6.0,
+    "medium":    4.0,
+    "low":       2.0,
+    "very_low":  0.0,
+}
+
+# BNG Metric 4.0 strategic significance multipliers (fixed by the site's
+# position in the Local Nature Recovery Strategy — a reference-data lookup).
+BNG_STRATEGIC_SIGNIFICANCE_MULTIPLIERS: dict[str, float] = {
+    "high":     1.15,  # within a formally identified strategic location
+    "location": 1.10,  # location ecologically desirable but not formally identified
+    "low":      1.00,  # area/compensation not in local strategy
+}
+
 # ---------------------------------------------------------------------------
 # PBAF Attribution Methods
 # ---------------------------------------------------------------------------
@@ -266,19 +283,36 @@ class BiodiversityFinanceV2Engine:
         locations: list[dict],
         financial_exposure: float,
         financial_year: int = 2024,
+        location_hazard_multiplier: Optional[float] = None,
+        disclosure_readiness_score: Optional[float] = None,
+        connectivity_score: Optional[float] = None,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # ------------------------------------------------------------------
+        # Locate step — sector × location hazard overlay.
+        # Sector impact scores come from the ENCORE impact reference table.
+        # The location hazard multiplier is a caller-supplied physical-hazard
+        # overlay (e.g. WWF Water Risk / protected-area proximity). When it is
+        # not supplied we apply a NEUTRAL 1.0 (no overlay) rather than
+        # fabricating a hazard — and flag that the overlay was absent.
+        # ------------------------------------------------------------------
+        data_flags: list[str] = []
 
-        # Locate step — sector × location hazard overlay
-        avg_sector_impact = "medium"
         sector_impact_scores = []
         for s in sectors:
             impact_info = SECTOR_ENCORE_IMPACTS.get(s, {"magnitude": "medium", "drivers": []})
             score_map = {"very_high": 90, "high": 70, "medium": 50, "low": 30, "very_low": 15}
             sector_impact_scores.append(score_map.get(impact_info["magnitude"], 50))
-        locate_raw = (sum(sector_impact_scores) / max(len(sector_impact_scores), 1)) if sector_impact_scores else rng.uniform(40, 75)
-        location_hazard = rng.uniform(0.7, 1.3)
-        locate_score = min(100.0, round(locate_raw * location_hazard, 1))
+
+        locate_score: Optional[float]
+        if sector_impact_scores:
+            locate_raw = sum(sector_impact_scores) / len(sector_impact_scores)
+            hazard = location_hazard_multiplier if location_hazard_multiplier is not None else 1.0
+            if location_hazard_multiplier is None:
+                data_flags.append("location_hazard_multiplier_absent_neutral_applied")
+            locate_score = min(100.0, round(locate_raw * hazard, 1))
+        else:
+            locate_score = None
+            data_flags.append("locate_insufficient_sector_impact_data")
 
         # Evaluate step — ENCORE dependency + impact scoring
         dep_scores = []
@@ -287,31 +321,59 @@ class BiodiversityFinanceV2Engine:
             dep_level_map = {"very_high": 9, "high": 7, "medium": 5, "low": 3, "very_low": 1}
             if deps:
                 dep_scores.append(sum(dep_level_map.get(lvl, 5) for _, lvl in deps) / len(deps) * 10)
-        evaluate_score = round(
-            (sum(dep_scores) / max(len(dep_scores), 1)) if dep_scores else rng.uniform(35, 70), 1
-        )
+        evaluate_score: Optional[float]
+        if dep_scores:
+            evaluate_score = round(sum(dep_scores) / len(dep_scores), 1)
+        else:
+            evaluate_score = None
+            data_flags.append("evaluate_insufficient_dependency_data")
 
-        # Assess step — materiality + connectivity
-        assess_score = round(min(100.0, (locate_score * 0.4 + evaluate_score * 0.4 + rng.uniform(20, 40) * 0.2)), 1)
+        # Assess step — materiality (locate + evaluate) plus an optional
+        # ecological-connectivity input. If connectivity is not supplied we
+        # blend only locate+evaluate (re-normalised) instead of inventing it.
+        assess_score: Optional[float]
+        if locate_score is not None and evaluate_score is not None:
+            if connectivity_score is not None:
+                conn = max(0.0, min(100.0, connectivity_score))
+                assess_score = round(min(100.0, locate_score * 0.4 + evaluate_score * 0.4 + conn * 0.2), 1)
+            else:
+                assess_score = round(min(100.0, locate_score * 0.5 + evaluate_score * 0.5), 1)
+                data_flags.append("connectivity_score_absent_locate_evaluate_only")
+        else:
+            assess_score = None
+            data_flags.append("assess_insufficient_upstream_scores")
 
-        # Prepare step — disclosure + target gap
-        prepare_score = round(rng.uniform(20, 65), 1)
+        # Prepare step — disclosure readiness / target-gap. This is an
+        # entity-reported figure; use the caller-supplied score or return null.
+        prepare_score: Optional[float]
+        if disclosure_readiness_score is not None:
+            prepare_score = round(max(0.0, min(100.0, disclosure_readiness_score)), 1)
+        else:
+            prepare_score = None
+            data_flags.append("prepare_disclosure_readiness_not_provided")
 
-        composite = round((locate_score + evaluate_score + assess_score + prepare_score) / 4, 1)
-        materiality = "high" if composite >= 65 else ("medium" if composite >= 40 else "low")
+        available = [v for v in (locate_score, evaluate_score, assess_score, prepare_score) if v is not None]
+        composite = round(sum(available) / len(available), 1) if available else None
+        if composite is None:
+            materiality = "insufficient_data"
+        else:
+            materiality = "high" if composite >= 65 else ("medium" if composite >= 40 else "low")
 
+        # Per-phase headline scores only — sub-step scores are NOT fabricated.
+        # Each phase reports its computed score (or null) plus the step labels
+        # that remain to be individually assessed.
         step_details: dict[str, Any] = {}
+        phase_score_map = {
+            "locate": locate_score,
+            "evaluate": evaluate_score,
+            "assess": assess_score,
+            "prepare": prepare_score,
+        }
         for phase, steps in TNFD_LEAP_STEPS.items():
-            phase_scores = [rng.uniform(30, 85) for _ in steps]
             step_details[phase] = {
-                s: round(v, 1) for s, v in zip(steps, phase_scores)
+                "_phase_score": phase_score_map.get(phase),
+                "steps_pending_detailed_assessment": list(steps),
             }
-
-        # Override aggregate sub-step scores with our computed phase scores
-        step_details["locate"]["_phase_score"] = locate_score
-        step_details["evaluate"]["_phase_score"] = evaluate_score
-        step_details["assess"]["_phase_score"] = assess_score
-        step_details["prepare"]["_phase_score"] = prepare_score
 
         top_dependencies = []
         for s in sectors:
@@ -336,6 +398,7 @@ class BiodiversityFinanceV2Engine:
             "step_details": step_details,
             "materiality_rating": materiality,
             "top_nature_dependencies": top_dependencies[:8],
+            "data_completeness_flags": data_flags,
             "cross_framework_links": [
                 "TNFD v1.0 Core Metrics", "ESRS E4 Biodiversity & Ecosystems",
                 "GRI 304 Biodiversity", "EU Taxonomy DNSH", "SBTN v1.0",
@@ -354,50 +417,95 @@ class BiodiversityFinanceV2Engine:
         portfolio_holdings: list[dict],
         method: str = "outstanding_amount",
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # PBAF attribution requires entity-reported denominators (enterprise
+        # value / total assets) and a company biodiversity footprint. These
+        # are NEVER fabricated — a holding missing the required inputs is
+        # reported with null attribution and an explicit reason.
         method_info = PBAF_METHODS.get(method, PBAF_METHODS["outstanding_amount"])
 
         total_exposure = sum(h.get("exposure", 0) for h in portfolio_holdings)
         attribution_results = []
         total_attributed_footprint = 0.0
+        attributed_exposure = 0.0
+        holdings_with_data = 0
 
         for holding in portfolio_holdings:
             h_id = holding.get("holding_id", str(uuid.uuid4()))
             exposure = holding.get("exposure", 0)
-            ev = holding.get("enterprise_value", exposure * rng.uniform(1.5, 3.5))
-            ownership_pct = holding.get("ownership_pct", exposure / max(ev, 1))
-            company_footprint = holding.get("biodiversity_footprint_pdf_m2yr", rng.uniform(1e6, 1e9))
+            ev = holding.get("enterprise_value")
+            ownership_pct = holding.get("ownership_pct")
+            company_footprint = holding.get("biodiversity_footprint_pdf_m2yr")
 
+            missing: list[str] = []
+
+            # Attribution factor per selected method (denominators must be real)
+            attr_factor: Optional[float] = None
             if method == "outstanding_amount":
-                attr_factor = exposure / max(ev, 1)
+                if ev is not None and ev > 0:
+                    attr_factor = exposure / ev
+                else:
+                    missing.append("enterprise_value")
             elif method == "equity_ownership":
-                attr_factor = min(ownership_pct, 1.0)
+                if ownership_pct is not None:
+                    attr_factor = min(ownership_pct, 1.0)
+                elif ev is not None and ev > 0:
+                    attr_factor = min(exposure / ev, 1.0)
+                else:
+                    missing.append("ownership_pct_or_enterprise_value")
             else:  # total_assets
-                total_assets = holding.get("total_assets", ev * rng.uniform(0.8, 1.2))
-                attr_factor = exposure / max(total_assets, 1)
+                total_assets = holding.get("total_assets")
+                if total_assets is not None and total_assets > 0:
+                    attr_factor = exposure / total_assets
+                else:
+                    missing.append("total_assets")
 
-            attributed_footprint = attr_factor * company_footprint
-            total_attributed_footprint += attributed_footprint
+            if company_footprint is None:
+                missing.append("biodiversity_footprint_pdf_m2yr")
 
-            attribution_results.append({
-                "holding_id": h_id,
-                "exposure_usd": exposure,
-                "attribution_factor": round(attr_factor, 6),
-                "company_footprint_pdf_m2yr": round(company_footprint, 0),
-                "attributed_footprint_pdf_m2yr": round(attributed_footprint, 0),
-                "footprint_intensity_per_musd": round(attributed_footprint / max(exposure / 1e6, 0.001), 2),
-            })
+            if attr_factor is not None and company_footprint is not None:
+                attributed_footprint = attr_factor * company_footprint
+                total_attributed_footprint += attributed_footprint
+                attributed_exposure += exposure
+                holdings_with_data += 1
+                attribution_results.append({
+                    "holding_id": h_id,
+                    "exposure_usd": exposure,
+                    "attribution_factor": round(attr_factor, 6),
+                    "company_footprint_pdf_m2yr": round(company_footprint, 0),
+                    "attributed_footprint_pdf_m2yr": round(attributed_footprint, 0),
+                    "footprint_intensity_per_musd": round(attributed_footprint / max(exposure / 1e6, 0.001), 2),
+                    "data_status": "computed",
+                })
+            else:
+                attribution_results.append({
+                    "holding_id": h_id,
+                    "exposure_usd": exposure,
+                    "attribution_factor": round(attr_factor, 6) if attr_factor is not None else None,
+                    "company_footprint_pdf_m2yr": round(company_footprint, 0) if company_footprint is not None else None,
+                    "attributed_footprint_pdf_m2yr": None,
+                    "footprint_intensity_per_musd": None,
+                    "data_status": "insufficient_data",
+                    "missing_inputs": missing,
+                })
 
-        portfolio_intensity = total_attributed_footprint / max(total_exposure / 1e6, 0.001)
+        # Portfolio intensity is only meaningful across holdings with real data.
+        portfolio_intensity: Optional[float]
+        if holdings_with_data > 0 and attributed_exposure > 0:
+            portfolio_intensity = round(total_attributed_footprint / (attributed_exposure / 1e6), 2)
+        else:
+            portfolio_intensity = None
 
         return {
             "entity_id": entity_id,
             "method_used": method,
             "method_description": method_info["description"],
             "holdings_count": len(portfolio_holdings),
+            "holdings_with_sufficient_data": holdings_with_data,
             "total_exposure_usd": total_exposure,
-            "total_attributed_footprint_pdf_m2yr": round(total_attributed_footprint, 0),
-            "portfolio_intensity_pdf_m2yr_per_musd": round(portfolio_intensity, 2),
+            "attributed_exposure_usd": round(attributed_exposure, 2),
+            "total_attributed_footprint_pdf_m2yr": round(total_attributed_footprint, 0) if holdings_with_data else None,
+            "portfolio_intensity_pdf_m2yr_per_musd": portfolio_intensity,
+            "coverage_note": "Attribution computed only for holdings with reported EV/total-assets and company footprint." if holdings_with_data < len(portfolio_holdings) else "Full data coverage.",
             "holdings": attribution_results,
             "assessment_id": str(uuid.uuid4()),
         }
@@ -412,10 +520,10 @@ class BiodiversityFinanceV2Engine:
         nace_sectors: list[str],
         company_revenue_split: Optional[dict[str, float]] = None,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
-        if company_revenue_split is None:
+        if company_revenue_split is None and nace_sectors:
             company_revenue_split = {s: 1.0 / len(nace_sectors) for s in nace_sectors}
+        elif company_revenue_split is None:
+            company_revenue_split = {}
 
         service_scores: dict[str, dict] = {}
         for svc_id in ENCORE_ECOSYSTEM_SERVICES:
@@ -433,7 +541,10 @@ class BiodiversityFinanceV2Engine:
             for svc, lvl in deps:
                 if svc in service_scores:
                     service_scores[svc]["dependency_score"] += dep_map[lvl] * weight
-                    service_scores[svc]["impact_score"] += mag_score * weight * rng.uniform(0.7, 1.0)
+                    # Impact score is the revenue-weighted ENCORE impact
+                    # magnitude for the sector — a deterministic reference-table
+                    # lookup, no stochastic jitter.
+                    service_scores[svc]["impact_score"] += mag_score * weight
                     service_scores[svc]["sectors_contributing"].append(sector)
 
         # normalise to 0-10
@@ -476,8 +587,6 @@ class BiodiversityFinanceV2Engine:
         entity_id: str,
         land_use_data: list[dict],
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         total_area_km2 = 0.0
         msa_preserved_km2 = 0.0
         hotspot_count = 0
@@ -526,30 +635,42 @@ class BiodiversityFinanceV2Engine:
         portfolio_data: dict,
         reporting_year: int = 2024,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
+        # All GBF alignment inputs are entity-reported figures. Scores are
+        # computed ONLY for targets whose underlying metric is supplied; every
+        # other target is reported as insufficient_data rather than fabricated.
+        protected_area_pct = portfolio_data.get("protected_area_pct")
+        restored_area_pct = portfolio_data.get("restored_area_pct")
+        t15_disclosure = portfolio_data.get("t15_disclosure")
+        pollution_reduction_pct = portfolio_data.get("pollution_reduction_pct")
 
-        protected_area_pct = portfolio_data.get("protected_area_pct", rng.uniform(5, 35))
-        restored_area_pct = portfolio_data.get("restored_area_pct", rng.uniform(3, 20))
-        t15_disclosure = portfolio_data.get("t15_disclosure", rng.random() > 0.4)
-        invasive_species_controls = portfolio_data.get("invasive_species_controls", rng.random() > 0.5)
-        pollution_reduction_pct = portfolio_data.get("pollution_reduction_pct", rng.uniform(5, 40))
+        cop15_30x30_contribution_pct = round(protected_area_pct, 1) if protected_area_pct is not None else None
+        # T15 alignment is directly the disclosure flag (no random gating).
+        gbf_target15_aligned = bool(t15_disclosure) if t15_disclosure is not None else None
 
-        cop15_30x30_contribution_pct = round(protected_area_pct, 1)
-        gbf_target15_aligned = t15_disclosure and (rng.random() > 0.35)
+        target_assessments: dict[str, dict] = {}
+        if protected_area_pct is not None:
+            target_assessments["T01"] = {
+                "score": round(min(100.0, protected_area_pct * 100 / 30), 1),
+                "gap": round(max(0.0, 30 - protected_area_pct), 1),
+            }
+        if restored_area_pct is not None:
+            target_assessments["T02"] = {
+                "score": round(min(100.0, restored_area_pct * 100 / 30), 1),
+                "gap": round(max(0.0, 30 - restored_area_pct), 1),
+            }
+        if pollution_reduction_pct is not None:
+            target_assessments["T07"] = {
+                "score": round(min(100.0, pollution_reduction_pct * 2.5), 1),
+                "gap": round(max(0.0, 40 - pollution_reduction_pct), 1),
+            }
+        if t15_disclosure is not None:
+            target_assessments["T15"] = {
+                "score": 80 if t15_disclosure else 20,
+                "gap": 0 if t15_disclosure else 60,
+            }
 
-        target_assessments = {
-            "T01": {"score": min(100, protected_area_pct * 100 / 30), "gap": max(0, 30 - protected_area_pct)},
-            "T02": {"score": min(100, restored_area_pct * 100 / 30), "gap": max(0, 30 - restored_area_pct)},
-            "T07": {"score": min(100, pollution_reduction_pct * 2.5), "gap": max(0, 40 - pollution_reduction_pct)},
-            "T15": {"score": 80 if t15_disclosure else 20, "gap": 0 if t15_disclosure else 60},
-        }
-        # add stochastic scores for remaining targets
-        for tid in GBF_TARGETS:
-            if tid not in target_assessments:
-                target_assessments[tid] = {
-                    "score": round(rng.uniform(10, 75), 1),
-                    "gap": round(rng.uniform(5, 50), 1),
-                }
+        # Remaining targets: no supplied metric -> honest insufficient_data.
+        targets_insufficient_data = [tid for tid in GBF_TARGETS if tid not in target_assessments]
 
         target_gaps = [
             {"target_id": tid, "description": GBF_TARGETS[tid], "gap_score": v["gap"]}
@@ -557,9 +678,13 @@ class BiodiversityFinanceV2Engine:
             if v["gap"] > 20
         ]
 
-        overall_score = round(
-            sum(v["score"] for v in target_assessments.values()) / len(target_assessments), 1
-        )
+        overall_score: Optional[float]
+        if target_assessments:
+            overall_score = round(
+                sum(v["score"] for v in target_assessments.values()) / len(target_assessments), 1
+            )
+        else:
+            overall_score = None
 
         return {
             "entity_id": entity_id,
@@ -567,7 +692,10 @@ class BiodiversityFinanceV2Engine:
             "gbf_target15_aligned": gbf_target15_aligned,
             "cop15_30x30_contribution_pct": cop15_30x30_contribution_pct,
             "overall_gbf_alignment_score": overall_score,
+            "overall_score_basis": "Computed over targets with reported metrics only." if target_assessments else "No target metrics supplied.",
             "target_assessments": target_assessments,
+            "targets_assessed": sorted(target_assessments.keys()),
+            "targets_insufficient_data": targets_insufficient_data,
             "target_gaps": target_gaps,
             "targets_on_track": len([v for v in target_assessments.values() if v["score"] >= 50]),
             "targets_off_track": len([v for v in target_assessments.values() if v["score"] < 50]),
@@ -586,23 +714,64 @@ class BiodiversityFinanceV2Engine:
         habitat_type: str,
         condition_before: str,
         condition_after: str,
+        distinctiveness_band: Optional[str] = None,
+        distinctiveness_band_after: Optional[str] = None,
+        strategic_significance: Optional[str] = None,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
+        # Condition, distinctiveness and strategic significance are Metric 4.0
+        # reference-table lookups keyed on caller-supplied classifications —
+        # none are random draws.
         cond_before = BNG_HABITAT_CONDITION_MULTIPLIERS.get(condition_before, 1.0)
         cond_after = BNG_HABITAT_CONDITION_MULTIPLIERS.get(condition_after, 1.0)
 
-        # Strategic significance multiplier (simplified)
-        strategic_multiplier = rng.choice([1.0, 1.15, 1.5])
-        distinctiveness = rng.choice([1.0, 2.0, 4.0, 6.0])
+        data_flags: list[str] = []
 
-        baseline_units = round(pre_development * cond_before * distinctiveness * strategic_multiplier, 3)
-        post_units = round(post_development * cond_after * distinctiveness * strategic_multiplier, 3)
+        # Strategic significance: default to the conservative "low" (not in a
+        # local nature strategy) baseline = 1.0 per Metric 4.0 when unspecified.
+        if strategic_significance is not None:
+            strategic_multiplier = BNG_STRATEGIC_SIGNIFICANCE_MULTIPLIERS.get(strategic_significance, 1.0)
+        else:
+            strategic_multiplier = 1.0
+            data_flags.append("strategic_significance_defaulted_to_low_baseline")
 
-        net_gain_pct = round(((post_units - baseline_units) / max(baseline_units, 0.001)) * 100, 2)
-        credit_required = net_gain_pct < 10.0  # 10% mandatory BNG requirement (Environment Act 2021)
+        # Distinctiveness band(s) are intrinsic to the habitat. Absolute
+        # habitat-unit counts require them; when absent we still report the
+        # net-gain % (which is invariant to a constant multiplier), but leave
+        # the absolute unit counts null instead of fabricating a band.
+        dist_before = BNG_DISTINCTIVENESS_SCORES.get(distinctiveness_band) if distinctiveness_band is not None else None
+        # Post-development distinctiveness defaults to the same band as baseline
+        # when the created/retained habitat class is not separately specified.
+        _band_after = distinctiveness_band_after if distinctiveness_band_after is not None else distinctiveness_band
+        dist_after = BNG_DISTINCTIVENESS_SCORES.get(_band_after) if _band_after is not None else None
 
-        deficit_units = max(0.0, round(baseline_units * 1.10 - post_units, 3))
+        baseline_units: Optional[float]
+        post_units: Optional[float]
+        deficit_units: Optional[float]
+        if dist_before is not None and dist_after is not None:
+            baseline_units = round(pre_development * cond_before * dist_before * strategic_multiplier, 3)
+            post_units = round(post_development * cond_after * dist_after * strategic_multiplier, 3)
+            deficit_units = max(0.0, round(baseline_units * 1.10 - post_units, 3))
+        else:
+            baseline_units = None
+            post_units = None
+            deficit_units = None
+            data_flags.append("distinctiveness_band_not_provided_absolute_units_null")
+
+        # Net-gain % — computed from the condition-weighted area change. When a
+        # distinctiveness band is supplied (and unchanged) it cancels; we use
+        # the condition-only proxy so the mandatory-threshold check is always
+        # available from area + condition alone.
+        base_proxy = pre_development * cond_before
+        post_proxy = post_development * cond_after
+        if base_proxy > 0:
+            net_gain_pct: Optional[float] = round(((post_proxy - base_proxy) / base_proxy) * 100, 2)
+            threshold_met: Optional[bool] = net_gain_pct >= 10.0
+            credit_required: Optional[bool] = net_gain_pct < 10.0  # 10% mandatory BNG (Environment Act 2021)
+        else:
+            net_gain_pct = None
+            threshold_met = None
+            credit_required = None
+            data_flags.append("net_gain_undefined_zero_baseline")
 
         return {
             "entity_id": entity_id,
@@ -613,14 +782,19 @@ class BiodiversityFinanceV2Engine:
             "condition_after": condition_after,
             "condition_multiplier_before": cond_before,
             "condition_multiplier_after": cond_after,
-            "distinctiveness_multiplier": distinctiveness,
+            "distinctiveness_band_before": distinctiveness_band,
+            "distinctiveness_band_after": _band_after,
+            "distinctiveness_multiplier_before": dist_before,
+            "distinctiveness_multiplier_after": dist_after,
+            "strategic_significance": strategic_significance,
             "strategic_significance_multiplier": strategic_multiplier,
             "baseline_habitat_units": baseline_units,
             "post_development_units": post_units,
             "net_gain_pct": net_gain_pct,
-            "mandatory_10pct_threshold_met": net_gain_pct >= 10.0,
+            "mandatory_10pct_threshold_met": threshold_met,
             "credit_required": credit_required,
             "deficit_units": deficit_units,
+            "data_completeness_flags": data_flags,
             "bng_standard": "Natural England Metric 4.0",
             "assessment_id": str(uuid.uuid4()),
         }
@@ -629,25 +803,39 @@ class BiodiversityFinanceV2Engine:
     # 7. BFFI Portfolio Score
     # ------------------------------------------------------------------
 
+    # Deterministic BFFI intensity model: revenue/exposure-based footprint
+    # proxy per unit exposure, calibrated by ENCORE sector impact magnitude.
+    # These are MODEL calibration constants, not entity-reported figures.
+    _BFFI_MAG_INTENSITY = {"very_high": 1.5, "high": 1.0, "medium": 0.6, "low": 0.3, "very_low": 0.1}
+    _BFFI_INTENSITY_SCALE = 10.0  # pdf.m2.yr per USD per unit magnitude intensity
+
     def calculate_bffi(
         self,
         entity_id: str,
         portfolio_holdings: list[dict],
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         asset_class_breakdown: dict[str, dict] = {}
         total_footprint = 0.0
         total_exposure = 0.0
+        holdings_reported = 0
+        holdings_modelled = 0
 
         for holding in portfolio_holdings:
             asset_class = holding.get("asset_class", "corporate_equity")
             exposure = float(holding.get("exposure", 0))
             sector = holding.get("nace_sector", "K")
-            impact_info = SECTOR_ENCORE_IMPACTS.get(sector, {"magnitude": "medium"})
-            mag_map = {"very_high": 1.5, "high": 1.0, "medium": 0.6, "low": 0.3, "very_low": 0.1}
-            base_intensity = mag_map.get(impact_info.get("magnitude", "medium"), 0.6)
-            footprint_pdf_m2yr = exposure * base_intensity * rng.uniform(0.8, 1.2) * 10  # simplified
+
+            reported_fp = holding.get("biodiversity_footprint_pdf_m2yr")
+            if reported_fp is not None:
+                # Use the entity-reported footprint when supplied.
+                footprint_pdf_m2yr = float(reported_fp)
+                holdings_reported += 1
+            else:
+                # Deterministic sector-magnitude model estimate (no jitter).
+                impact_info = SECTOR_ENCORE_IMPACTS.get(sector, {"magnitude": "medium"})
+                base_intensity = self._BFFI_MAG_INTENSITY.get(impact_info.get("magnitude", "medium"), 0.6)
+                footprint_pdf_m2yr = exposure * base_intensity * self._BFFI_INTENSITY_SCALE
+                holdings_modelled += 1
 
             if asset_class not in asset_class_breakdown:
                 asset_class_breakdown[asset_class] = {"exposure": 0.0, "footprint": 0.0, "holdings": 0}
@@ -657,7 +845,11 @@ class BiodiversityFinanceV2Engine:
             total_footprint += footprint_pdf_m2yr
             total_exposure += exposure
 
-        bffi_score = total_footprint / max(total_exposure / 1e6, 0.001)
+        bffi_score: Optional[float]
+        if total_exposure > 0:
+            bffi_score = round(total_footprint / (total_exposure / 1e6), 2)
+        else:
+            bffi_score = None
 
         for ac in asset_class_breakdown.values():
             ac["intensity_pdf_m2yr_per_musd"] = round(
@@ -666,14 +858,22 @@ class BiodiversityFinanceV2Engine:
             ac["exposure"] = round(ac["exposure"], 2)
             ac["footprint"] = round(ac["footprint"], 2)
 
+        if bffi_score is None:
+            bffi_rating = "insufficient_data"
+        else:
+            bffi_rating = "high_impact" if bffi_score > 5000 else ("medium_impact" if bffi_score > 1000 else "low_impact")
+
         return {
             "entity_id": entity_id,
-            "bffi_score_pdf_m2yr_per_musd": round(bffi_score, 2),
+            "bffi_score_pdf_m2yr_per_musd": bffi_score,
             "total_portfolio_footprint_pdf_m2yr": round(total_footprint, 0),
             "total_exposure_usd": round(total_exposure, 2),
             "asset_class_breakdown": asset_class_breakdown,
             "holdings_count": len(portfolio_holdings),
-            "bffi_rating": "high_impact" if bffi_score > 5000 else ("medium_impact" if bffi_score > 1000 else "low_impact"),
+            "holdings_reported_footprint": holdings_reported,
+            "holdings_modelled_footprint": holdings_modelled,
+            "footprint_basis": "reported where available, deterministic ENCORE sector-magnitude model otherwise",
+            "bffi_rating": bffi_rating,
             "assessment_id": str(uuid.uuid4()),
         }
 
@@ -686,8 +886,6 @@ class BiodiversityFinanceV2Engine:
         entity_id: str,
         portfolio_data: dict,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         sectors = portfolio_data.get("sectors", ["A01", "C10"])
         holdings = portfolio_data.get("holdings", [
             {"holding_id": "H001", "exposure": 5_000_000, "enterprise_value": 15_000_000,
@@ -697,40 +895,82 @@ class BiodiversityFinanceV2Engine:
         financial_exposure = portfolio_data.get("total_exposure", sum(h.get("exposure", 0) for h in holdings))
         reporting_year = portfolio_data.get("reporting_year", 2024)
 
-        land_use_data = portfolio_data.get("land_use_data", [
-            {"land_use_type": "intensive_ag", "area_km2": rng.uniform(10, 500)},
-            {"land_use_type": "extensive_ag", "area_km2": rng.uniform(5, 200)},
-            {"land_use_type": "urban", "area_km2": rng.uniform(1, 50)},
-        ])
+        data_flags: list[str] = []
 
-        leap = self.assess_tnfd_leap(entity_id, sectors, locations, financial_exposure, reporting_year)
+        leap = self.assess_tnfd_leap(
+            entity_id, sectors, locations, financial_exposure, reporting_year,
+            location_hazard_multiplier=portfolio_data.get("location_hazard_multiplier"),
+            disclosure_readiness_score=portfolio_data.get("disclosure_readiness_score"),
+            connectivity_score=portfolio_data.get("connectivity_score"),
+        )
         pbaf = self.calculate_pbaf_attribution(entity_id, holdings, "outstanding_amount")
         encore = self.score_encore_services(entity_id, sectors)
-        msa = self.calculate_msa_footprint(entity_id, land_use_data)
         gbf = self.assess_gbf_alignment(entity_id, portfolio_data, reporting_year)
         bffi = self.calculate_bffi(entity_id, holdings)
 
-        # BNG only if pre/post data provided
+        # MSA footprint only when real land-use data is supplied — no synthetic areas.
+        land_use_data = portfolio_data.get("land_use_data")
+        if land_use_data:
+            msa = self.calculate_msa_footprint(entity_id, land_use_data)
+        else:
+            msa = None
+            data_flags.append("msa_skipped_no_land_use_data")
+
+        # BNG only when BOTH real pre AND post development areas are provided.
         bng = None
-        if portfolio_data.get("pre_development_ha"):
+        if portfolio_data.get("pre_development_ha") is not None and portfolio_data.get("post_development_ha") is not None:
             bng = self.calculate_bng(
                 entity_id,
                 portfolio_data["pre_development_ha"],
-                portfolio_data.get("post_development_ha", portfolio_data["pre_development_ha"] * rng.uniform(0.6, 1.1)),
+                portfolio_data["post_development_ha"],
                 portfolio_data.get("habitat_type", "grassland"),
                 portfolio_data.get("condition_before", "moderate"),
                 portfolio_data.get("condition_after", "good"),
+                distinctiveness_band=portfolio_data.get("distinctiveness_band"),
+                distinctiveness_band_after=portfolio_data.get("distinctiveness_band_after"),
+                strategic_significance=portfolio_data.get("strategic_significance"),
             )
+        elif portfolio_data.get("pre_development_ha") is not None:
+            data_flags.append("bng_skipped_post_development_ha_missing")
 
-        composite_score = round(
-            leap["leap_scores"]["composite"] * 0.35
-            + (100 - msa["msa_loss_fraction"] * 100) * 0.20
-            + gbf["overall_gbf_alignment_score"] * 0.25
-            + (100 - min(bffi["bffi_score_pdf_m2yr_per_musd"] / 100, 100)) * 0.20,
-            1,
-        )
+        # Composite score — weighted blend over available (non-null) sub-scores,
+        # re-normalised. If nothing is available, report insufficient_data.
+        components: list[tuple[float, float]] = []  # (value, weight)
+        if leap["leap_scores"]["composite"] is not None:
+            components.append((leap["leap_scores"]["composite"], 0.35))
+        if msa is not None:
+            components.append((100 - msa["msa_loss_fraction"] * 100, 0.20))
+        if gbf["overall_gbf_alignment_score"] is not None:
+            components.append((gbf["overall_gbf_alignment_score"], 0.25))
+        if bffi["bffi_score_pdf_m2yr_per_musd"] is not None:
+            components.append((100 - min(bffi["bffi_score_pdf_m2yr_per_musd"] / 100, 100), 0.20))
 
-        materiality_rating = "high" if composite_score >= 65 else ("medium" if composite_score >= 40 else "low")
+        composite_score: Optional[float]
+        if components:
+            wsum = sum(w for _, w in components)
+            composite_score = round(sum(v * w for v, w in components) / wsum, 1)
+        else:
+            composite_score = None
+
+        if composite_score is None:
+            materiality_rating = "insufficient_data"
+        else:
+            materiality_rating = "high" if composite_score >= 65 else ("medium" if composite_score >= 40 else "low")
+
+        # Key risks — only include lines whose underlying metric is available.
+        key_risks: list[str] = []
+        if encore["top_5_high_dependency"]:
+            key_risks.append(f"High ENCORE dependency: {encore['top_5_high_dependency'][0]['service_name']}")
+        else:
+            key_risks.append("Dependency data insufficient")
+        if msa is not None:
+            key_risks.append(f"MSA loss fraction: {msa['msa_loss_fraction']:.1%}")
+        else:
+            key_risks.append("MSA loss: insufficient land-use data")
+        if gbf["cop15_30x30_contribution_pct"] is not None:
+            key_risks.append(f"GBF 30x30 gap: {max(0.0, 30 - gbf['cop15_30x30_contribution_pct']):.1f}pp to target")
+        else:
+            key_risks.append("GBF 30x30 gap: protected-area data not reported")
 
         return {
             "entity_id": entity_id,
@@ -738,7 +978,9 @@ class BiodiversityFinanceV2Engine:
             "assessment_id": str(uuid.uuid4()),
             "generated_at": date.today().isoformat(),
             "composite_biodiversity_score": composite_score,
+            "composite_score_basis": "Weighted over available module scores; missing modules excluded and weights re-normalised.",
             "materiality_rating": materiality_rating,
+            "data_completeness_flags": data_flags,
             "modules": {
                 "tnfd_leap": leap,
                 "pbaf_attribution": pbaf,
@@ -755,11 +997,7 @@ class BiodiversityFinanceV2Engine:
                 "EU_Taxonomy_DNSH": "Do Not Significantly Harm — biodiversity criterion",
                 "SBTN": "Science Based Targets for Nature v1.0 — steps 1-5",
             },
-            "key_risks": [
-                f"High ENCORE dependency: {encore['top_5_high_dependency'][0]['service_name']}" if encore["top_5_high_dependency"] else "Dependency data insufficient",
-                f"MSA loss fraction: {msa['msa_loss_fraction']:.1%}",
-                f"GBF 30x30 gap: {max(0, 30 - gbf['cop15_30x30_contribution_pct']):.1f}pp to target",
-            ],
+            "key_risks": key_risks,
             "recommendations": [
                 "Conduct site-level TNFD LEAP for top-3 high-impact locations",
                 "Adopt PBAF equity_ownership method for listed equity holdings",

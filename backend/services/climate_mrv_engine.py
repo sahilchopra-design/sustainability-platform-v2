@@ -17,7 +17,6 @@ References:
 """
 from __future__ import annotations
 
-import random
 from typing import Any, List, Optional
 from pydantic import BaseModel, Field
 
@@ -34,10 +33,10 @@ class MRVSystemResult(BaseModel):
     mrv_system_type: str
     annual_emissions_tco2e: float
     iso14064_level: str
-    data_quality_score: float
-    accuracy_pct: float
-    completeness_pct: float
-    timeliness_score: float
+    data_quality_score: Optional[float]
+    accuracy_pct: Optional[float]
+    completeness_pct: Optional[float]
+    timeliness_score: Optional[float]
     digital_mrv_maturity: int
     maturity_label: str
     verification_readiness: str
@@ -47,6 +46,7 @@ class MRVSystemResult(BaseModel):
     uk_secr_applicable: bool
     eu_ets_mrv_applicable: bool
     ghg_inventory_summary: dict
+    data_completeness_note: Optional[str] = None
     recommendations: list
 
 class SatelliteCoverageResult(BaseModel):
@@ -62,7 +62,7 @@ class SatelliteCoverageResult(BaseModel):
     overpass_frequency_days: float
     satellite_systems: list
     methane_detection_threshold_kg_hr: float
-    co2_detection_threshold_kt_yr: float
+    co2_detection_threshold_kt_yr: Optional[float]
     overall_satellite_coverage_score: float
     coverage_tier: str
     monitoring_gaps: list
@@ -78,9 +78,9 @@ class DataQualityResult(BaseModel):
     ipcc_tier: int
     ipcc_tier_label: str
     third_party_verified: bool
-    uncertainty_pct: float
+    uncertainty_pct: Optional[float]
     dimension_scores: dict
-    overall_dqs_score: float
+    overall_dqs_score: Optional[float]
     improvement_actions: list
 
 class DigitalMRVMaturityResult(BaseModel):
@@ -92,7 +92,7 @@ class DigitalMRVMaturityResult(BaseModel):
     target_maturity_level: int
     gap_analysis: list
     upgrade_roadmap: list
-    estimated_cost_usd: float
+    estimated_cost_usd: Optional[float]
     estimated_timeline_months: int
     capability_gaps: dict
     benefits_at_target: list
@@ -105,7 +105,8 @@ class MRVReportResult(BaseModel):
     emas_requirements: dict
     uk_secr_requirements: dict
     eu_ets_mrv_requirements: dict
-    overall_compliance_score: float
+    overall_compliance_score: Optional[float]
+    assessment_note: Optional[str] = None
     critical_gaps: list
     recommendations: list
 
@@ -211,6 +212,32 @@ MATURITY_DESCRIPTIONS = {
     5: "Fully autonomous; continuous satellite + IoT monitoring; blockchain attestation; predictive analytics",
 }
 
+# Definitional maturity level at which each MRV capability becomes available in
+# the 5-level model. Model constants (not per-entity metrics) — each capability
+# is introduced at a specific rung of the maturity ladder.
+CAPABILITY_REQUIRED_LEVEL = {
+    "Data collection automation": 2,
+    "API connectivity to source systems": 3,
+    "Third-party verification workflow": 3,
+    "Scope 3 supplier portal": 3,
+    "Real-time monitoring": 4,
+    "IoT sensor integration": 4,
+    "Uncertainty quantification": 4,
+    "AI anomaly detection": 5,
+    "Satellite data integration": 5,
+    "Blockchain attestation": 5,
+}
+
+# Indicative CapEx planning bands (USD) for advancing to each target maturity
+# level. Reference model bands keyed on target level — reported as low/high with
+# an indicative midpoint, never as a single fabricated point estimate.
+MATURITY_UPGRADE_COST_BAND = {
+    2: (50_000.0, 150_000.0),
+    3: (150_000.0, 500_000.0),
+    4: (500_000.0, 2_000_000.0),
+    5: (2_000_000.0, 8_000_000.0),
+}
+
 PCAF_DQS_MAPPING = {
     1: {"label": "Verified primary data", "confidence": 1.00, "description": "Third-party verified Scope 1/2/3 data per GHG Protocol"},
     2: {"label": "Reported primary data", "confidence": 0.90, "description": "Self-reported data not independently verified"},
@@ -231,13 +258,6 @@ SECTOR_EMISSION_FACTORS = {
 }
 
 # ---------------------------------------------------------------------------
-# Helper utilities
-# ---------------------------------------------------------------------------
-
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
-# ---------------------------------------------------------------------------
 # Core Engine Functions
 # ---------------------------------------------------------------------------
 
@@ -247,28 +267,63 @@ def assess_mrv_system(
     sector: str,
     mrv_type: str,
     annual_emissions_tco2e: float,
+    measured_accuracy_pct: Optional[float] = None,
+    measured_completeness_pct: Optional[float] = None,
+    measured_timeliness_score: Optional[float] = None,
+    checklist_scores: Optional[dict] = None,
+    scope2_location_tco2e: Optional[float] = None,
+    scope2_market_tco2e: Optional[float] = None,
+    scope3_material_tco2e: Optional[float] = None,
 ) -> dict:
     """
     Assess an MRV system: ISO 14064-3 level, data quality, digital MRV
     maturity index, verification readiness.
-    """
-    rng = _rng(entity_id + facility_name)
 
+    Data-quality dimensions (accuracy / completeness / timeliness) are entity
+    measurements: they are only reported when the caller supplies the measured
+    values. Absent measurements yield an honest ``None`` plus a note rather than
+    a fabricated figure. ``MRV_SYSTEM_TYPES`` accuracy/completeness ranges are
+    used purely as reference context in recommendations, never as stand-in
+    entity metrics.
+
+    Optional parameters (all default ``None``, backward-compatible):
+      measured_accuracy_pct / measured_completeness_pct / measured_timeliness_score
+        — measured data-quality dimension scores (0-100).
+      checklist_scores — mapping of ISO 14064-3 checklist item text (or its
+        leading index, e.g. "1") to a measured 0-100 conformance score.
+      scope2_location_tco2e / scope2_market_tco2e / scope3_material_tco2e
+        — reported/measured inventory figures for the GHG summary.
+    """
     mrv_info = MRV_SYSTEM_TYPES.get(mrv_type, MRV_SYSTEM_TYPES["dedicated_esg_platform"])
     maturity = mrv_info["maturity"]
 
-    # Data quality dimensions
+    # Reference calibration bands for this MRV system type (context only).
     acc_min, acc_max = mrv_info["accuracy_range"]
     comp_min, comp_max = mrv_info["completeness_range"]
-    accuracy_pct = round(rng.uniform(acc_min, acc_max), 1)
-    completeness_pct = round(rng.uniform(comp_min, comp_max), 1)
-    timeliness_score = round(rng.uniform(acc_min * 0.95, acc_max * 0.95), 1)
 
-    dqs_raw = (accuracy_pct + completeness_pct + timeliness_score) / 3.0
-    data_quality_score = round(dqs_raw, 1)
+    # Data-quality dimensions are entity measurements — real input or honest None.
+    accuracy_pct = round(measured_accuracy_pct, 1) if measured_accuracy_pct is not None else None
+    completeness_pct = round(measured_completeness_pct, 1) if measured_completeness_pct is not None else None
+    timeliness_score = round(measured_timeliness_score, 1) if measured_timeliness_score is not None else None
 
-    # ISO 14064-3 level
-    if maturity >= 4 and data_quality_score >= 88:
+    measured_dims = [d for d in (accuracy_pct, completeness_pct, timeliness_score) if d is not None]
+    if measured_dims:
+        data_quality_score = round(sum(measured_dims) / len(measured_dims), 1)
+        data_completeness_note = None
+    else:
+        data_quality_score = None
+        data_completeness_note = (
+            "No measured accuracy/completeness/timeliness supplied; data-quality "
+            "score omitted (insufficient_data). Supply measured dimension scores "
+            "to compute. Reference band for a '"
+            f"{mrv_type}' system: accuracy {acc_min}-{acc_max}%, "
+            f"completeness {comp_min}-{comp_max}%."
+        )
+
+    # ISO 14064-3 level — determinable only with a measured data-quality score.
+    if data_quality_score is None:
+        iso_level = "insufficient_data"
+    elif maturity >= 4 and data_quality_score >= 88:
         iso_level = "Level_1_Reasonable_Assurance"
     elif maturity >= 3 and data_quality_score >= 75:
         iso_level = "Level_2_Limited_Assurance"
@@ -276,7 +331,9 @@ def assess_mrv_system(
         iso_level = "Level_3_Compilation"
 
     # Verification readiness
-    if data_quality_score >= 88 and maturity >= 3:
+    if data_quality_score is None:
+        readiness = "insufficient_data"
+    elif data_quality_score >= 88 and maturity >= 3:
         readiness = "ready_for_third_party_verification"
     elif data_quality_score >= 72:
         readiness = "nearly_ready_minor_gaps"
@@ -285,23 +342,29 @@ def assess_mrv_system(
     else:
         readiness = "significant_remediation_required"
 
-    # ISO 14064-3 checklist
+    # ISO 14064-3 checklist — scored only from caller-supplied conformance data.
+    checklist_scores = checklist_scores or {}
     checklist_results = []
-    for item in ISO_14064_3_CHECKLIST:
-        base_score = rng.uniform(55.0, 98.0)
-        if maturity >= 4:
-            base_score = min(100.0, base_score + 5.0)
-        score = round(base_score, 1)
+    for idx, item in enumerate(ISO_14064_3_CHECKLIST, start=1):
+        raw = checklist_scores.get(item["item"], checklist_scores.get(str(idx)))
+        if raw is None:
+            score = None
+            status = "not_assessed"
+        else:
+            score = round(min(100.0, max(0.0, float(raw))), 1)
+            status = "compliant" if score >= 70.0 else "non_compliant"
         checklist_results.append({
             "item": item["item"],
             "standard_ref": item["standard_ref"],
             "score": score,
             "weight": item["weight"],
-            "status": "compliant" if score >= 70.0 else "non_compliant",
+            "status": status,
         })
 
-    # CDP submission status
-    if completeness_pct >= 85.0:
+    # CDP submission status — keyed on measured completeness only.
+    if completeness_pct is None:
+        cdp_status = "insufficient_data"
+    elif completeness_pct >= 85.0:
         cdp_status = "A_list_eligible"
     elif completeness_pct >= 70.0:
         cdp_status = "B_score_range"
@@ -316,31 +379,50 @@ def assess_mrv_system(
     emas_applicable = sector in ["manufacturing", "chemicals", "steel", "cement"]
     uk_secr_applicable = annual_emissions_tco2e >= 4000.0
 
-    # GHG inventory summary
-    scope2_factor = rng.uniform(0.25, 0.45)
-    scope3_factor = rng.uniform(1.5, 4.0)
+    # GHG inventory summary. Scope 1 is the supplied annual emissions; Scope 2/3
+    # are reported figures when provided, otherwise honest None (no proxy factor).
+    s2_loc = round(scope2_location_tco2e, 0) if scope2_location_tco2e is not None else None
+    s2_mkt = round(scope2_market_tco2e, 0) if scope2_market_tco2e is not None else None
+    s3_mat = round(scope3_material_tco2e, 0) if scope3_material_tco2e is not None else None
+    inventory_components = [annual_emissions_tco2e]
+    inventory_complete = True
+    for comp in (s2_loc, s3_mat):
+        if comp is None:
+            inventory_complete = False
+        else:
+            inventory_components.append(comp)
+    total_ghg = round(sum(inventory_components), 0) if inventory_complete else None
     ghg_inventory = {
         "scope1_tco2e": round(annual_emissions_tco2e, 0),
-        "scope2_location_tco2e": round(annual_emissions_tco2e * scope2_factor, 0),
-        "scope2_market_tco2e": round(annual_emissions_tco2e * scope2_factor * 0.85, 0),
-        "scope3_material_categories_tco2e": round(annual_emissions_tco2e * scope3_factor, 0),
-        "total_ghg_tco2e": round(annual_emissions_tco2e * (1.0 + scope2_factor + scope3_factor), 0),
+        "scope2_location_tco2e": s2_loc,
+        "scope2_market_tco2e": s2_mkt,
+        "scope3_material_categories_tco2e": s3_mat,
+        "total_ghg_tco2e": total_ghg,
         "reporting_year": 2024,
         "ghg_protocol_compliant": maturity >= 2,
-        "third_party_verified": maturity >= 3 and data_quality_score >= 80,
+        "third_party_verified": (
+            maturity >= 3 and data_quality_score is not None and data_quality_score >= 80
+        ),
     }
+    if s2_loc is None or s3_mat is None:
+        ghg_inventory["note"] = (
+            "Scope 2/3 figures not supplied; totals omitted rather than estimated "
+            "from a proxy factor."
+        )
 
     recommendations = []
     if maturity < 3:
         recommendations.append("Upgrade from manual spreadsheets to a dedicated ESG/MRV platform")
-    if completeness_pct < 80.0:
+    if completeness_pct is not None and completeness_pct < 80.0:
         recommendations.append("Improve Scope 3 category coverage to reach 80% completeness threshold")
-    if eu_ets_applicable and data_quality_score < 85.0:
+    if eu_ets_applicable and (data_quality_score is None or data_quality_score < 85.0):
         recommendations.append("Enhance measurement precision for EU ETS MRV Regulation 2018/2066 compliance")
     if uk_secr_applicable:
         recommendations.append("Ensure SECR annual reporting covers energy use and Scope 1+2 GHG emissions")
     if iso_level == "Level_3_Compilation":
         recommendations.append("Invest in verification infrastructure to achieve ISO 14064-3 Level 2 assurance")
+    if data_quality_score is None:
+        recommendations.append("Provide measured accuracy/completeness/timeliness scores to enable ISO 14064-3 grading")
 
     return MRVSystemResult(
         entity_id=entity_id,
@@ -362,6 +444,7 @@ def assess_mrv_system(
         uk_secr_applicable=uk_secr_applicable,
         eu_ets_mrv_applicable=eu_ets_applicable,
         ghg_inventory_summary=ghg_inventory,
+        data_completeness_note=data_completeness_note,
         recommendations=recommendations,
     ).dict()
 
@@ -371,13 +454,16 @@ def score_satellite_coverage(
     lat: float,
     lng: float,
     facility_type: str,
+    co2_detection_threshold_kt_yr: Optional[float] = None,
 ) -> dict:
     """
     Score satellite coverage: TROPOMI/Sentinel-5P methane detection,
     GHGSat point-source resolution, CarbonMapper sensitivity, overpass frequency.
-    """
-    rng = _rng(entity_id + str(lat) + str(lng))
 
+    Detection probability is computed deterministically from the facility's
+    typical emission rate versus each sensor's methane detection threshold and a
+    latitude coverage factor (no stochastic noise added).
+    """
     # Latitude-based factors (polar regions have lower coverage)
     lat_abs = abs(lat)
     lat_factor = 1.0 if lat_abs < 60 else 0.85 if lat_abs < 70 else 0.65
@@ -406,8 +492,7 @@ def score_satellite_coverage(
             98.0,
             max(5.0, (facility_rate_kg_hr / detection_threshold) * 60.0 * lat_factor)
         )
-        detection_probability = round(detection_probability + rng.uniform(-5.0, 5.0), 1)
-        detection_probability = max(5.0, min(98.0, detection_probability))
+        detection_probability = round(detection_probability, 1)
 
         satellite_results.append({
             "satellite": sat_name,
@@ -465,23 +550,46 @@ def score_satellite_coverage(
         ),
         satellite_systems=satellite_results,
         methane_detection_threshold_kg_hr=SATELLITE_SYSTEMS["GHGSat"]["methane_detection_kg_hr"],
-        co2_detection_threshold_kt_yr=round(rng.uniform(10.0, 50.0), 1),
+        co2_detection_threshold_kt_yr=(
+            round(co2_detection_threshold_kt_yr, 1)
+            if co2_detection_threshold_kt_yr is not None else None
+        ),
         overall_satellite_coverage_score=overall_score,
         coverage_tier=coverage_tier,
         monitoring_gaps=gaps,
     ).dict()
 
 
+# IPCC representative uncertainty by inventory tier (2006 IPCC Guidelines,
+# Vol.1 Ch.3 uncertainty ranges). These are METHODOLOGY model parameters keyed
+# on tier, not per-entity measurements, so a documented representative value per
+# tier is a legitimate model constant.
+IPCC_TIER_UNCERTAINTY = {
+    1: {"range_pct": (20.0, 60.0), "representative_pct": 40.0},
+    2: {"range_pct": (10.0, 25.0), "representative_pct": 17.5},
+    3: {"range_pct": (3.0, 12.0), "representative_pct": 7.5},
+}
+
+
 def calculate_data_quality_score(
     entity_id: str,
     data_sources: Optional[list] = None,
+    measured_timeliness_pct: Optional[float] = None,
+    measured_uncertainty_pct: Optional[float] = None,
 ) -> dict:
     """
     Calculate PCAF DQS 1-5 mapping, CDP completeness, IPCC Tier level,
-    uncertainty quantification.
-    """
-    rng = _rng(entity_id + "dqs")
+    uncertainty quantification — all derived deterministically from the supplied
+    ``data_sources`` (coverage %, verified flag, source type).
 
+    Optional parameters (default ``None``, backward-compatible):
+      measured_timeliness_pct — reported timeliness/recency score (0-100) for the
+        data-quality dimension breakdown. Omitted from the dimension average when
+        absent rather than fabricated.
+      measured_uncertainty_pct — measured overall inventory uncertainty (%). When
+        absent, the IPCC representative value for the derived tier is reported and
+        flagged as a methodology default.
+    """
     if not data_sources:
         data_sources = [
             {"type": "utility_bills", "verified": False, "coverage_pct": 75.0},
@@ -501,13 +609,14 @@ def calculate_data_quality_score(
         if ds.get("type") in ["utility_bills", "fuel_invoices", "meter_readings", "iot_sensors"]:
             primary_sources += 1
 
-    avg_coverage = total_coverage / len(data_sources) if data_sources else 50.0
-    third_party_verified = verified_sources >= len(data_sources) * 0.5
+    n_sources = len(data_sources)
+    avg_coverage = total_coverage / n_sources if n_sources else 50.0
+    third_party_verified = verified_sources >= n_sources * 0.5
 
     # PCAF DQS determination
     if third_party_verified and avg_coverage >= 90.0:
         pcaf_dqs = 1
-    elif avg_coverage >= 80.0 and primary_sources >= len(data_sources) * 0.6:
+    elif avg_coverage >= 80.0 and primary_sources >= n_sources * 0.6:
         pcaf_dqs = 2
     elif avg_coverage >= 65.0:
         pcaf_dqs = 3
@@ -519,35 +628,49 @@ def calculate_data_quality_score(
     dqs_info = PCAF_DQS_MAPPING[pcaf_dqs]
 
     # IPCC Tier determination
-    if primary_sources >= len(data_sources) * 0.7 and avg_coverage >= 80.0:
+    if primary_sources >= n_sources * 0.7 and avg_coverage >= 80.0:
         ipcc_tier = 3
         ipcc_label = "Facility-specific measurement data"
-    elif primary_sources >= len(data_sources) * 0.4:
+    elif primary_sources >= n_sources * 0.4:
         ipcc_tier = 2
         ipcc_label = "Country/sector specific emission factors"
     else:
         ipcc_tier = 1
         ipcc_label = "Default IPCC emission factors"
 
-    # Uncertainty quantification
-    uncertainty_by_tier = {1: rng.uniform(20.0, 60.0), 2: rng.uniform(10.0, 25.0), 3: rng.uniform(3.0, 12.0)}
-    uncertainty_pct = round(uncertainty_by_tier[ipcc_tier], 1)
+    # Uncertainty quantification — measured value if supplied, else the IPCC
+    # representative (documented methodology default for the derived tier).
+    tier_unc = IPCC_TIER_UNCERTAINTY[ipcc_tier]
+    if measured_uncertainty_pct is not None:
+        uncertainty_pct = round(measured_uncertainty_pct, 1)
+        uncertainty_basis = "measured"
+    else:
+        uncertainty_pct = tier_unc["representative_pct"]
+        uncertainty_basis = f"ipcc_tier{ipcc_tier}_representative"
 
-    # CDP completeness
-    cdp_completeness = round(avg_coverage * rng.uniform(0.85, 1.0), 1)
+    # CDP completeness = data-source coverage (deterministic, no noise).
+    cdp_completeness = round(avg_coverage, 1)
 
-    # Dimension scores
+    # Dimension scores — deterministic derivations from real inputs; timeliness
+    # only when a measured value is supplied (else omitted, not fabricated).
     dimension_scores = {
         "completeness": round(avg_coverage, 1),
-        "accuracy": round(95.0 - (5 - pcaf_dqs) * 7 + rng.uniform(-3, 3), 1),
-        "timeliness": round(rng.uniform(65.0, 92.0), 1),
-        "granularity": round(primary_sources / max(len(data_sources), 1) * 100.0 + rng.uniform(-10, 10), 1),
-        "verifiability": round(100.0 if third_party_verified else rng.uniform(40.0, 70.0), 1),
+        # Accuracy proxy anchored to the PCAF DQS ladder (higher DQS = lower quality).
+        "accuracy": round(95.0 - (5 - pcaf_dqs) * 7.0, 1),
+        # Granularity = share of primary (activity-level) sources.
+        "granularity": round(primary_sources / max(n_sources, 1) * 100.0, 1),
+        # Verifiability = share of independently verified sources.
+        "verifiability": round(verified_sources / max(n_sources, 1) * 100.0, 1),
     }
+    if measured_timeliness_pct is not None:
+        dimension_scores["timeliness"] = round(min(100.0, max(0.0, measured_timeliness_pct)), 1)
     for k in dimension_scores:
         dimension_scores[k] = max(0.0, min(100.0, dimension_scores[k]))
 
-    overall_dqs_score = round(sum(dimension_scores.values()) / len(dimension_scores), 1)
+    overall_dqs_score = (
+        round(sum(dimension_scores.values()) / len(dimension_scores), 1)
+        if dimension_scores else None
+    )
 
     # Improvement actions
     improvement_actions = []
@@ -559,6 +682,8 @@ def calculate_data_quality_score(
         improvement_actions.append("Expand data collection coverage to ≥80% of emission sources")
     if ipcc_tier < 3:
         improvement_actions.append(f"Upgrade from IPCC Tier {ipcc_tier} to Tier {ipcc_tier+1} measurement methods")
+    if "timeliness" not in dimension_scores:
+        improvement_actions.append("Supply a measured timeliness/recency score to complete the data-quality profile")
 
     return DataQualityResult(
         entity_id=entity_id,
@@ -570,6 +695,8 @@ def calculate_data_quality_score(
         ipcc_tier_label=ipcc_label,
         third_party_verified=third_party_verified,
         uncertainty_pct=uncertainty_pct,
+        uncertainty_basis=uncertainty_basis,
+        uncertainty_range_pct=list(tier_unc["range_pct"]),
         dimension_scores=dimension_scores,
         overall_dqs_score=overall_dqs_score,
         improvement_actions=improvement_actions,
@@ -579,13 +706,22 @@ def calculate_data_quality_score(
 def assess_digital_mrv_maturity(
     entity_id: str,
     current_systems: Optional[list] = None,
+    cost_overrides_usd: Optional[dict] = None,
 ) -> dict:
     """
     Assess digital MRV maturity: 5-level model (manual→autonomous),
     gap analysis, upgrade roadmap, cost estimate.
-    """
-    rng = _rng(entity_id + "maturity")
 
+    The required maturity level for each capability is a definitional property of
+    the maturity model (``CAPABILITY_REQUIRED_LEVEL``) — a documented model
+    constant, not a per-entity draw. Upgrade costs are reported as the model's
+    indicative planning bands (``MATURITY_UPGRADE_COST_BAND``) rather than a
+    single fabricated figure; totals use band midpoints flagged as indicative.
+
+    Optional ``cost_overrides_usd`` (default ``None``, backward-compatible): a
+    mapping of target maturity level (int) to a caller-supplied point cost (USD),
+    used in place of the indicative band midpoint when provided.
+    """
     if not current_systems:
         current_systems = ["spreadsheets", "erp_partial"]
 
@@ -606,24 +742,9 @@ def assess_digital_mrv_maturity(
 
     target_level = min(5, current_level + 2)
 
-    # Gap analysis by capability
-    capabilities = [
-        "Data collection automation",
-        "Real-time monitoring",
-        "IoT sensor integration",
-        "API connectivity to source systems",
-        "Uncertainty quantification",
-        "Third-party verification workflow",
-        "Satellite data integration",
-        "AI anomaly detection",
-        "Blockchain attestation",
-        "Scope 3 supplier portal",
-    ]
-
-    maturity_thresholds = {cap: rng.randint(2, 5) for cap in capabilities}
+    # Gap analysis by capability against the model's definitional required levels.
     capability_gaps = {}
-    for cap in capabilities:
-        threshold = maturity_thresholds[cap]
+    for cap, threshold in CAPABILITY_REQUIRED_LEVEL.items():
         if current_level < threshold:
             capability_gaps[cap] = {
                 "current": current_level,
@@ -633,14 +754,23 @@ def assess_digital_mrv_maturity(
             }
 
     # Upgrade roadmap
+    cost_overrides_usd = cost_overrides_usd or {}
     roadmap = []
     for step_level in range(current_level + 1, target_level + 1):
-        step_cost = {
-            2: rng.uniform(50_000, 150_000),
-            3: rng.uniform(150_000, 500_000),
-            4: rng.uniform(500_000, 2_000_000),
-            5: rng.uniform(2_000_000, 8_000_000),
-        }.get(step_level, 100_000)
+        band = MATURITY_UPGRADE_COST_BAND.get(step_level)
+        override = cost_overrides_usd.get(step_level, cost_overrides_usd.get(str(step_level)))
+        if override is not None:
+            step_cost = round(float(override), 0)
+            cost_basis = "caller_supplied"
+            cost_low = cost_high = step_cost
+        elif band is not None:
+            cost_low, cost_high = band
+            step_cost = round((cost_low + cost_high) / 2.0, 0)
+            cost_basis = "indicative_band_midpoint"
+        else:
+            step_cost = None
+            cost_low = cost_high = None
+            cost_basis = "insufficient_data"
         step_months = {2: 3, 3: 6, 4: 12, 5: 18}.get(step_level, 6)
         roadmap.append({
             "phase": f"Level {current_level} → Level {step_level}",
@@ -648,11 +778,15 @@ def assess_digital_mrv_maturity(
             "label": MATURITY_LABELS[step_level],
             "description": MATURITY_DESCRIPTIONS[step_level],
             "key_actions": _roadmap_actions(current_level, step_level),
-            "estimated_cost_usd": round(step_cost, 0),
+            "estimated_cost_usd": step_cost,
+            "cost_band_low_usd": cost_low,
+            "cost_band_high_usd": cost_high,
+            "cost_basis": cost_basis,
             "estimated_months": step_months,
         })
 
-    total_cost = sum(r["estimated_cost_usd"] for r in roadmap)
+    _step_costs = [r["estimated_cost_usd"] for r in roadmap if r["estimated_cost_usd"] is not None]
+    total_cost = round(sum(_step_costs), 0) if _step_costs else None
     total_months = sum(r["estimated_months"] for r in roadmap)
 
     benefits_at_target = [
@@ -690,24 +824,57 @@ def _roadmap_actions(from_level: int, to_level: int) -> list:
     return actions_map.get(to_level, ["Define requirements", "Select technology vendor"])
 
 
-def generate_mrv_report(entity_id: str) -> dict:
+def generate_mrv_report(
+    entity_id: str,
+    self_assessment: Optional[dict] = None,
+) -> dict:
     """
     Generate comprehensive MRV compliance report: ISO 14064-3 checklist,
     EMAS requirements, UK SECR, EU ETS MRV Regulation 2018/2066.
+
+    Compliance scores are entity self-assessment results, not computable from the
+    regulatory reference text alone. They are reported only when supplied via
+    ``self_assessment`` (default ``None``, backward-compatible); otherwise the
+    report returns the reference requirements with ``None`` scores and a
+    ``not_assessed`` status. Never fabricated.
+
+    ``self_assessment`` schema (all optional):
+      {"iso14064_3": {<checklist item text or leading index>: 0-100, ...},
+       "emas": 0-100, "uk_secr": 0-100, "eu_ets_mrv": 0-100}
     """
-    rng = _rng(entity_id + "mrv_report")
+    self_assessment = self_assessment or {}
+    iso_scores = self_assessment.get("iso14064_3") or {}
 
     iso14064_3_checklist = []
     total_weighted_score = 0.0
-    for item in ISO_14064_3_CHECKLIST:
-        score = round(rng.uniform(55.0, 98.0), 1)
-        total_weighted_score += score * item["weight"]
+    total_assessed_weight = 0.0
+    for idx, item in enumerate(ISO_14064_3_CHECKLIST, start=1):
+        raw = iso_scores.get(item["item"], iso_scores.get(str(idx)))
+        if raw is None:
+            score = None
+            status = "not_assessed"
+        else:
+            score = round(min(100.0, max(0.0, float(raw))), 1)
+            status = "compliant" if score >= 70.0 else "non_compliant"
+            total_weighted_score += score * item["weight"]
+            total_assessed_weight += item["weight"]
         iso14064_3_checklist.append({
             **item,
             "score": score,
-            "status": "compliant" if score >= 70.0 else "non_compliant",
+            "status": status,
         })
-    overall_iso_score = round(total_weighted_score, 1)
+    # Weighted mean over assessed items only (renormalised), else None.
+    overall_iso_score = (
+        round(total_weighted_score / total_assessed_weight, 1)
+        if total_assessed_weight > 0 else None
+    )
+
+    def _clip(v):
+        return round(min(100.0, max(0.0, float(v))), 1) if v is not None else None
+
+    emas_score = _clip(self_assessment.get("emas"))
+    uk_secr_score = _clip(self_assessment.get("uk_secr"))
+    eu_ets_score = _clip(self_assessment.get("eu_ets_mrv"))
 
     emas_requirements = {
         "regulation": "EU EMAS Regulation 1221/2009",
@@ -719,7 +886,7 @@ def generate_mrv_report(entity_id: str) -> dict:
             "EMAS verified environmental statement",
             "Registration with national competent body",
         ],
-        "compliance_score": round(rng.uniform(55.0, 88.0), 1),
+        "compliance_score": emas_score,
         "verification_cycle_years": 3,
         "accredited_verifier_required": True,
     }
@@ -737,7 +904,7 @@ def generate_mrv_report(entity_id: str) -> dict:
         ],
         "reporting_standard": "GHG Protocol Corporate Standard",
         "disclosure_vehicle": "Directors Report / Strategic Report",
-        "compliance_score": round(rng.uniform(60.0, 90.0), 1),
+        "compliance_score": uk_secr_score,
         "penalty_for_non_compliance": "Criminal offence for false or misleading statements",
     }
 
@@ -754,22 +921,26 @@ def generate_mrv_report(entity_id: str) -> dict:
             "Third-party accredited verifier (EN ISO 14065)",
             "Surrender of allowances by April 30",
         ],
-        "compliance_score": round(rng.uniform(58.0, 92.0), 1),
+        "compliance_score": eu_ets_score,
         "non_compliance_penalty_eur_tco2": 100.0,
     }
 
-    overall_compliance_score = round(
-        (overall_iso_score + emas_requirements["compliance_score"] +
-         uk_secr_requirements["compliance_score"] + eu_ets_mrv_requirements["compliance_score"]) / 4.0,
-        1
+    _assessed = [
+        s for s in (overall_iso_score, emas_score, uk_secr_score, eu_ets_score)
+        if s is not None
+    ]
+    overall_compliance_score = round(sum(_assessed) / len(_assessed), 1) if _assessed else None
+    assessment_note = None if _assessed else (
+        "No self-assessment scores supplied; compliance scores omitted "
+        "(not_assessed). Provide a 'self_assessment' mapping to compute."
     )
 
     critical_gaps = []
-    if overall_iso_score < 70.0:
+    if overall_iso_score is not None and overall_iso_score < 70.0:
         critical_gaps.append("ISO 14064-3 verification procedures below minimum threshold")
-    if eu_ets_mrv_requirements["compliance_score"] < 65.0:
+    if eu_ets_score is not None and eu_ets_score < 65.0:
         critical_gaps.append("EU ETS MRV monitoring plan deficiencies require immediate remediation")
-    if uk_secr_requirements["compliance_score"] < 65.0:
+    if uk_secr_score is not None and uk_secr_score < 65.0:
         critical_gaps.append("UK SECR mandatory disclosure elements incomplete")
 
     recommendations = [
@@ -787,6 +958,7 @@ def generate_mrv_report(entity_id: str) -> dict:
         uk_secr_requirements=uk_secr_requirements,
         eu_ets_mrv_requirements=eu_ets_mrv_requirements,
         overall_compliance_score=overall_compliance_score,
+        assessment_note=assessment_note,
         critical_gaps=critical_gaps,
         recommendations=recommendations,
     ).dict()

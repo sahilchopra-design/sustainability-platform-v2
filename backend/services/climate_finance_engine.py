@@ -2,11 +2,15 @@
 climate_finance_engine.py — E78 Climate Finance Flows
 OECD CRS Rio Markers | UNFCCC Art 2.1(c) | CPI Global Landscape 2023
 NCQG $300bn COP29 Baku | MDB Joint Tracking | OECD TOSSD | Convergence Blending
+
+Data-integrity policy: every RETURNED metric is either a REAL computation from
+caller-supplied inputs (OECD CRS marker counting, OECD DAC mobilisation
+multipliers, CPI/NCQG reference data) or an HONEST NULL when the required input
+is absent. No metric is drawn from a random number generator.
 """
 from __future__ import annotations
-import random
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 # ── Reference Data ─────────────────────────────────────────────────────────────
 
@@ -162,6 +166,11 @@ MOBILISATION_MULTIPLIERS = {
     "risk_sharing": {"min": 4.0, "max": 10.0, "typical": 6.5, "methodology": "First-loss provisions / MIGA"},
 }
 
+# Convergence "State of Blended Finance" — reported median private-finance
+# mobilisation leverage for blended climate finance vehicles (~4.0x). Used as a
+# fixed external comparison benchmark, not as an entity-specific figure.
+CONVERGENCE_BLENDED_FINANCE_MEDIAN_MULTIPLIER = 4.0
+
 
 # ── Core Engine Functions ──────────────────────────────────────────────────────
 
@@ -171,20 +180,22 @@ def track_climate_finance(
     year: int,
     instruments: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
     total_mitigation = 0.0
     total_adaptation = 0.0
     total_cross_cutting = 0.0
+    fossil_exposure = 0.0            # sum of caller-supplied fossil-fuel amounts
+    fossil_exposure_reported = False  # True once any instrument flags fossil exposure
     instrument_breakdown: list[dict] = []
 
     for inst in instruments:
-        inst_rng = random.Random(hash(f"{entity_id}_{inst.get('name', '')}") & 0xFFFFFFFF)
-        amount = float(inst.get("amount_usd", inst_rng.uniform(1e6, 100e6)))
-        flow_type = inst.get("flow_type", "mitigation")
+        # HONEST NULL: an instrument with no reported amount contributes 0, not a
+        # fabricated random figure.
+        amount = float(inst.get("amount_usd", 0) or 0)
 
-        ccm_marker = inst.get("ccm_marker", inst_rng.randint(0, 2))
-        cca_marker = inst.get("cca_marker", inst_rng.randint(0, 2))
+        # OECD CRS Rio markers default to 0 (not targeted) when unreported — the
+        # conservative, honest position rather than a random 0/1/2 draw.
+        ccm_marker = int(inst.get("ccm_marker", 0) or 0)
+        cca_marker = int(inst.get("cca_marker", 0) or 0)
 
         # CRS counting methodology: principal=100%, significant=50%
         mitigation_counted = amount if ccm_marker == 2 else amount * 0.5 if ccm_marker == 1 else 0
@@ -198,6 +209,18 @@ def track_climate_finance(
             total_mitigation += mitigation_counted
             total_adaptation += adaptation_counted
 
+        # Fossil-fuel exposure from caller-supplied signals only. Accepts an
+        # explicit fossil_fuel_amount_usd, or a boolean fossil_fuel flag meaning
+        # the full instrument amount is fossil-exposed.
+        inst_fossil = inst.get("fossil_fuel_amount_usd")
+        if inst_fossil is not None:
+            fossil_exposure += float(inst_fossil or 0)
+            fossil_exposure_reported = True
+        elif inst.get("fossil_fuel") is not None:
+            if bool(inst.get("fossil_fuel")):
+                fossil_exposure += amount
+            fossil_exposure_reported = True
+
         instrument_breakdown.append({
             "name": inst.get("name", f"instrument_{len(instrument_breakdown)+1}"),
             "amount_usd": amount,
@@ -205,23 +228,31 @@ def track_climate_finance(
             "ccm_marker": ccm_marker,
             "cca_marker": cca_marker,
             "climate_relevant_amount_usd": round(mitigation_counted + adaptation_counted, 0),
-            "sector": inst.get("sector", "energy"),
-            "recipient_country": inst.get("recipient_country", "IN"),
+            "sector": inst.get("sector", "unspecified"),
+            "recipient_country": inst.get("recipient_country", "unspecified"),
         })
 
     total_climate_finance = total_mitigation + total_adaptation + total_cross_cutting
 
-    # Paris alignment check
-    fossil_exposure = rng.uniform(0, total_climate_finance * 0.3)
-    paris_alignment_score = max(0, 1 - fossil_exposure / total_climate_finance) if total_climate_finance > 0 else 0
+    # Paris alignment check — computed only when fossil exposure is actually
+    # reported; otherwise returned as an HONEST NULL rather than a random draw.
+    if fossil_exposure_reported and total_climate_finance > 0:
+        paris_alignment_score: Optional[float] = round(max(0.0, 1 - fossil_exposure / total_climate_finance), 3)
+    else:
+        paris_alignment_score = None
 
-    # CPI methodology alignment
+    # CPI methodology alignment — these are properties of THIS engine's
+    # methodology, not entity-reported figures, so they are deterministic facts:
+    # the engine tracks the public/private split, uses Rio markers, reports the
+    # adaptation/mitigation split, and follows MDB joint-tracking methodology.
+    # Private-mobilisation coverage depends on whether the caller supplied the
+    # data needed to compute it (see measure_mobilisation).
     cpi_aligned = {
         "tracks_public_private_split": True,
         "uses_rio_markers": True,
         "reports_adaptation_mitigation_split": True,
-        "follows_mdb_tracking_methodology": rng.random() > 0.3,
-        "includes_private_mobilisation": rng.random() > 0.4,
+        "follows_mdb_tracking_methodology": True,
+        "includes_private_mobilisation": False,
     }
 
     return {
@@ -234,8 +265,14 @@ def track_climate_finance(
         "cross_cutting_finance_usd": round(total_cross_cutting, 0),
         "adaptation_share_pct": round(total_adaptation / total_climate_finance * 100, 1) if total_climate_finance else 0,
         "cpi_global_landscape_2023_reference": CPI_2023_DATA,
-        "paris_alignment_score": round(paris_alignment_score, 3),
-        "fossil_fuel_exposure_usd": round(fossil_exposure, 0),
+        "paris_alignment_score": paris_alignment_score,
+        "fossil_fuel_exposure_usd": round(fossil_exposure, 0) if fossil_exposure_reported else None,
+        "fossil_exposure_reported": fossil_exposure_reported,
+        "data_sufficiency_note": (
+            None if fossil_exposure_reported
+            else "Paris alignment / fossil exposure not computed: no instrument supplied "
+                 "fossil_fuel_amount_usd or fossil_fuel flag."
+        ),
         "instrument_breakdown": instrument_breakdown,
         "cpi_methodology_alignment": cpi_aligned,
         "oecd_crs_aligned": all(cpi_aligned.values()),
@@ -248,19 +285,36 @@ def assess_article21c_alignment(
     portfolio: dict[str, Any],
     financial_flows: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    total_flows = sum(float(f.get("amount_usd", 0) or 0) for f in financial_flows)
+    # HONEST classification: only flows the caller explicitly tags as
+    # climate_aligned / fossil_fuel are counted. An unflagged flow is neither
+    # green nor brown (previously a random coin flip decided its colour).
+    green_flows = sum(
+        float(f.get("amount_usd", 0) or 0)
+        for f in financial_flows
+        if bool(f.get("climate_aligned", False))
+    )
+    fossil_flows = sum(
+        float(f.get("amount_usd", 0) or 0)
+        for f in financial_flows
+        if bool(f.get("fossil_fuel", False))
+    )
 
-    total_flows = sum(float(f.get("amount_usd", 0)) for f in financial_flows)
-    green_flows = sum(float(f.get("amount_usd", 0)) for f in financial_flows if f.get("climate_aligned", rng.random() > 0.5))
-    fossil_flows = sum(float(f.get("amount_usd", 0)) for f in financial_flows if f.get("fossil_fuel", rng.random() > 0.7))
-
-    green_ratio = green_flows / total_flows if total_flows else rng.uniform(0.3, 0.8)
-    brown_ratio = fossil_flows / total_flows if total_flows else rng.uniform(0.1, 0.4)
-    alignment_score = min(100, round((green_ratio - brown_ratio * 2) * 100, 1))
+    has_flows = total_flows > 0
+    # HONEST NULL: with no reported flows there is nothing to score; ratios and
+    # the alignment score are null rather than a fabricated random range.
+    green_ratio: Optional[float] = green_flows / total_flows if has_flows else None
+    brown_ratio: Optional[float] = fossil_flows / total_flows if has_flows else None
+    alignment_score: Optional[float] = (
+        min(100.0, round((green_ratio - brown_ratio * 2) * 100, 1))
+        if has_flows else None
+    )
 
     pathway_alignment: list[dict] = []
     for path in IPCC_PATHWAYS:
-        compatible = alignment_score >= (90 if "1.5" in path["pathway"] else 70 if "well_below" in path["pathway"] else 50 if "2C" in path["pathway"] else 30)
+        threshold = 90 if "1.5" in path["pathway"] else 70 if "well_below" in path["pathway"] else 50 if "2C" in path["pathway"] else 30
+        # None-safe: compatibility is undetermined when there is no score.
+        compatible: Optional[bool] = (alignment_score >= threshold) if alignment_score is not None else None
         pathway_alignment.append({
             "pathway": path["pathway"],
             "description": path["description"],
@@ -282,10 +336,14 @@ def assess_article21c_alignment(
         "total_portfolio_flows_usd": round(total_flows, 0),
         "green_aligned_flows_usd": round(green_flows, 0),
         "fossil_fuel_flows_usd": round(fossil_flows, 0),
-        "green_ratio": round(green_ratio, 3),
-        "brown_ratio": round(brown_ratio, 3),
-        "alignment_score_0_100": max(0, alignment_score),
-        "article_21c_aligned": alignment_score >= 60,
+        "green_ratio": round(green_ratio, 3) if green_ratio is not None else None,
+        "brown_ratio": round(brown_ratio, 3) if brown_ratio is not None else None,
+        "alignment_score_0_100": max(0.0, alignment_score) if alignment_score is not None else None,
+        "article_21c_aligned": (alignment_score >= 60) if alignment_score is not None else None,
+        "data_sufficiency_note": (
+            None if has_flows
+            else "Alignment not computed: no financial_flows with amount_usd supplied."
+        ),
         "paris_article9_public_finance": art9_public_finance,
         "ipcc_pathway_alignment": pathway_alignment,
         "recommended_actions": [
@@ -302,45 +360,68 @@ def calculate_ncqg_contribution(
     entity_id: str,
     institution_type: str,
     baseline_finance_usd: float,
+    planned_uplift_pct: Optional[float] = None,
+    mobilisation_multiplier: Optional[float] = None,
+    guarantee_share_of_contribution: Optional[float] = None,
+    equity_share_of_contribution: Optional[float] = None,
+    grant_equivalent_pct: Optional[float] = None,
+    ldcs_sids_share_pct: Optional[float] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
+    """
+    All entity-specific figures (planned uplift over baseline, realised
+    mobilisation multiplier, guarantee/equity split, grant-equivalent share,
+    LDCs/SIDS earmark) must be supplied by the caller. When omitted they are
+    returned as HONEST NULLs — the previous version fabricated them via a
+    hash-seeded RNG. Contributor-tier logic and the $300bn core-goal share are
+    genuine deterministic computations and are preserved.
+    """
     # NCQG contributor tiers
     is_annex2 = institution_type.lower() in ["developed_country_dfi", "annex_ii_party", "oecd_member_mdb"]
     is_voluntary = institution_type.lower() in ["voluntary_contributor", "emerging_economy_mdb", "sovereign_wealth_fund"]
 
-    # Goal layer assignment
+    # Goal layer assignment (deterministic from contributor tier).
     if is_annex2:
         goal_layer = "core_goal"
-        contribution_pct = rng.uniform(0.5, 3.0)  # pct of core $300bn goal
     elif is_voluntary:
         goal_layer = "broader_goal"
-        contribution_pct = rng.uniform(0.1, 1.5)
     else:
         goal_layer = "observer"
-        contribution_pct = 0.0
 
     core_goal = NCQG_STRUCTURE["headline_goal_usd_bn_per_year"] * 1e9
-    contribution_usd = baseline_finance_usd * (1 + contribution_pct / 100)
 
-    # MDB mobilisation multiplier
-    mdb_multiplier = NCQG_STRUCTURE["goal_layers"]["core_goal"]["description"]
-    mobilisation_multiplier = rng.uniform(2.5, 5.0)
-    total_mobilised_usd = contribution_usd * mobilisation_multiplier
+    # Contribution = baseline plus any caller-declared planned uplift. With no
+    # declared plan the contribution equals the baseline (no fabricated growth).
+    effective_uplift_pct = float(planned_uplift_pct) if planned_uplift_pct is not None else 0.0
+    contribution_usd = baseline_finance_usd * (1 + effective_uplift_pct / 100)
 
-    # Private finance mobilisation (OECD DAC formula)
-    guarantee_amount = contribution_usd * rng.uniform(0.1, 0.3)
-    equity_amount = contribution_usd * rng.uniform(0.05, 0.2)
-    private_mobilised = (
-        guarantee_amount * MOBILISATION_MULTIPLIERS["guarantees"]["typical"]
-        + equity_amount * MOBILISATION_MULTIPLIERS["equity"]["typical"]
-    )
+    # Total mobilised requires a caller-supplied (or reported) mobilisation
+    # multiplier; otherwise HONEST NULL.
+    mob_mult = float(mobilisation_multiplier) if mobilisation_multiplier is not None else None
+    total_mobilised_usd: Optional[float] = contribution_usd * mob_mult if mob_mult is not None else None
 
-    # Grant equivalent calculation
-    grant_equiv_pct = rng.uniform(30, 60)
-    grant_equivalent_usd = contribution_usd * grant_equiv_pct / 100
+    # Private finance mobilisation via OECD DAC typical multipliers — computed
+    # only when the caller specifies how the contribution is split across
+    # guarantees and equity instruments. Otherwise HONEST NULL.
+    if guarantee_share_of_contribution is not None or equity_share_of_contribution is not None:
+        g_share = float(guarantee_share_of_contribution or 0)
+        e_share = float(equity_share_of_contribution or 0)
+        guarantee_amount = contribution_usd * g_share
+        equity_amount = contribution_usd * e_share
+        private_mobilised: Optional[float] = (
+            guarantee_amount * MOBILISATION_MULTIPLIERS["guarantees"]["typical"]
+            + equity_amount * MOBILISATION_MULTIPLIERS["equity"]["typical"]
+        )
+    else:
+        private_mobilised = None
 
-    # Gap to $300bn commitment
+    # Grant equivalent — real computation from a supplied grant-equivalent share.
+    grant_pct = float(grant_equivalent_pct) if grant_equivalent_pct is not None else None
+    grant_equivalent_usd: Optional[float] = contribution_usd * grant_pct / 100 if grant_pct is not None else None
+
+    # LDCs/SIDS earmark is an entity-reported figure — null unless supplied.
+    ldcs_share = float(ldcs_sids_share_pct) if ldcs_sids_share_pct is not None else None
+
+    # Gap to $300bn commitment (genuine deterministic math).
     share_of_core_goal_pct = contribution_usd / core_goal * 100
 
     return {
@@ -350,16 +431,22 @@ def calculate_ncqg_contribution(
         "goal_layer": goal_layer,
         "ncqg_structure": NCQG_STRUCTURE,
         "baseline_finance_usd": round(baseline_finance_usd, 0),
+        "planned_uplift_pct": round(effective_uplift_pct, 2),
         "ncqg_contribution_usd": round(contribution_usd, 0),
         "share_of_300bn_core_goal_pct": round(share_of_core_goal_pct, 4),
-        "mdb_mobilisation_multiplier": round(mobilisation_multiplier, 2),
-        "total_mobilised_usd": round(total_mobilised_usd, 0),
-        "private_finance_mobilised_usd": round(private_mobilised, 0),
-        "grant_equivalent_pct": round(grant_equiv_pct, 1),
-        "grant_equivalent_usd": round(grant_equivalent_usd, 0),
-        "ldcs_sids_share_pct": round(rng.uniform(20, 50), 1),
+        "mdb_mobilisation_multiplier": round(mob_mult, 2) if mob_mult is not None else None,
+        "total_mobilised_usd": round(total_mobilised_usd, 0) if total_mobilised_usd is not None else None,
+        "private_finance_mobilised_usd": round(private_mobilised, 0) if private_mobilised is not None else None,
+        "grant_equivalent_pct": round(grant_pct, 1) if grant_pct is not None else None,
+        "grant_equivalent_usd": round(grant_equivalent_usd, 0) if grant_equivalent_usd is not None else None,
+        "ldcs_sids_share_pct": round(ldcs_share, 1) if ldcs_share is not None else None,
         "tossd_eligible": is_annex2 or is_voluntary,
         "oecd_dac_reporting_required": is_annex2,
+        "data_sufficiency_note": (
+            "Mobilisation, private-finance, grant-equivalent and LDCs/SIDS figures "
+            "are null unless supplied by the caller (mobilisation_multiplier, "
+            "guarantee/equity shares, grant_equivalent_pct, ldcs_sids_share_pct)."
+        ),
         "assessed_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -369,19 +456,31 @@ def measure_mobilisation(
     public_finance_usd: float,
     instruments: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
     total_mobilised = 0.0
     additionality_score = 0.0
     instrument_results: list[dict] = []
+    any_observed_multiplier = False
 
     for inst in instruments:
-        inst_rng = random.Random(hash(f"{entity_id}_{inst.get('type', '')}") & 0xFFFFFFFF)
         inst_type = inst.get("type", "guarantees").lower().replace(" ", "_")
-        amount = float(inst.get("amount_usd", inst_rng.uniform(1e6, 50e6)))
+        # HONEST NULL: an instrument with no reported public finance contributes 0.
+        amount = float(inst.get("amount_usd", 0) or 0)
 
         mult_data = MOBILISATION_MULTIPLIERS.get(inst_type, MOBILISATION_MULTIPLIERS["guarantees"])
-        actual_multiplier = inst_rng.uniform(mult_data["min"], mult_data["max"])
+
+        # Prefer the caller's OBSERVED/realised mobilisation multiplier. When
+        # none is reported, fall back to the OECD DAC *typical* calibration
+        # constant for the instrument type (a documented model parameter, not a
+        # fabricated entity figure) and flag it as such.
+        reported_mult = inst.get("observed_multiplier", inst.get("mobilisation_multiplier"))
+        if reported_mult is not None:
+            actual_multiplier = float(reported_mult)
+            multiplier_basis = "reported"
+            any_observed_multiplier = True
+        else:
+            actual_multiplier = float(mult_data["typical"])
+            multiplier_basis = "oecd_dac_typical_assumption"
+
         mobilised = amount * actual_multiplier
 
         total_mobilised += mobilised
@@ -391,6 +490,7 @@ def measure_mobilisation(
             "instrument_type": inst_type,
             "public_finance_usd": amount,
             "mobilisation_multiplier": round(actual_multiplier, 2),
+            "multiplier_basis": multiplier_basis,
             "private_mobilised_usd": round(mobilised, 0),
             "methodology": mult_data["methodology"],
             "additionality_assessment": "high" if actual_multiplier >= mult_data["typical"] else "medium",
@@ -398,15 +498,23 @@ def measure_mobilisation(
 
     weighted_avg_multiplier = total_mobilised / public_finance_usd if public_finance_usd > 0 else 0
     additionality_avg = additionality_score / public_finance_usd if public_finance_usd > 0 else 0
-    convergence_benchmark = rng.uniform(3.0, 6.0)
 
-    # OECD TOSSD
+    # Fixed external benchmark (not an entity metric). Convergence's State of
+    # Blended Finance reports a ~4.0x median private mobilisation leverage for
+    # blended climate finance vehicles — used deterministically for comparison.
+    convergence_benchmark = CONVERGENCE_BLENDED_FINANCE_MEDIAN_MULTIPLIER
+
+    # OECD TOSSD. Portal readiness is a deterministic data-completeness check:
+    # the submission is ready only if every instrument carries a reported
+    # (non-assumed) mobilisation multiplier.
     tossd = {
         "total_official_support_usd": round(public_finance_usd + total_mobilised * 0.3, 0),
         "provider_perspective": round(public_finance_usd, 0),
         "recipient_perspective": round(total_mobilised, 0),
         "reporting_year": datetime.now(timezone.utc).year,
-        "tossd_portal_ready": rng.random() > 0.4,
+        "tossd_portal_ready": bool(instruments) and any_observed_multiplier and all(
+            r["multiplier_basis"] == "reported" for r in instrument_results
+        ),
     }
 
     return {
@@ -417,6 +525,7 @@ def measure_mobilisation(
         "additionality_score_0_1": round(min(additionality_avg, 1.0), 3),
         "convergence_benchmark_multiplier": round(convergence_benchmark, 2),
         "vs_convergence_benchmark": "above" if weighted_avg_multiplier >= convergence_benchmark else "below",
+        "multipliers_reported": any_observed_multiplier,
         "instrument_results": instrument_results,
         "tossd": tossd,
         "oecd_dac_methodology": "OECD DAC Converged Statistical Reporting Directives (2023)",
@@ -427,35 +536,76 @@ def measure_mobilisation(
 def generate_climate_finance_report(
     entity_id: str,
     year: int,
+    total_finance_usd: Optional[float] = None,
+    adaptation_finance_usd: Optional[float] = None,
+    private_mobilised_usd: Optional[float] = None,
+    carbon_pricing_coverage_pct: Optional[float] = None,
+    fossil_subsidies_usd_bn: Optional[float] = None,
+    green_budget_tagging_adopted: Optional[bool] = None,
+    grants_pct: Optional[float] = None,
+    technology_finance_usd: Optional[float] = None,
+    capacity_building_usd: Optional[float] = None,
+    mdb_contribution_usd: Optional[float] = None,
 ) -> dict[str, Any]:
-    rng = random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
+    """
+    Builds the UNFCCC Biennial Finance Report structure from CALLER-SUPPLIED
+    reported figures. Every entity-level flow is null unless provided (the
+    previous version fabricated the entire headline and all section figures with
+    a hash-seeded RNG). The reference blocks — $100bn commitment tracking, CPI
+    2023 gap analysis, and MDB joint tracking — are genuine, data-driven and
+    unchanged.
+    """
+    # Reported headline flows (HONEST NULL when absent).
+    total_finance: Optional[float] = float(total_finance_usd) if total_finance_usd is not None else None
+    adaptation: Optional[float] = float(adaptation_finance_usd) if adaptation_finance_usd is not None else None
+    # Mitigation is derived only when both total and adaptation are known.
+    mitigation: Optional[float] = (
+        total_finance - adaptation
+        if (total_finance is not None and adaptation is not None) else None
+    )
+    private_mobilised: Optional[float] = float(private_mobilised_usd) if private_mobilised_usd is not None else None
 
-    total_finance = rng.uniform(100e6, 5e9)
-    adaptation = total_finance * rng.uniform(0.15, 0.4)
-    mitigation = total_finance - adaptation
-    private_mobilised = total_finance * rng.uniform(0.3, 0.8)
+    # MDB contribution to private mobilisation: use reported figure if given.
+    # Otherwise leave null (previously assumed a fixed 60% of a random total).
+    mdb_contribution: Optional[float] = (
+        float(mdb_contribution_usd) if mdb_contribution_usd is not None else None
+    )
 
-    # UNFCCC Biennial Finance Report structure
+    def _r(v: Optional[float]) -> Optional[float]:
+        return round(v, 0) if v is not None else None
+
+    # UNFCCC Biennial Finance Report structure — every value is a reported input
+    # or HONEST NULL.
     bfr_sections = {
         "section_1_domestic_policy": {
-            "carbon_pricing_coverage_pct": round(rng.uniform(20, 80), 1),
-            "fossil_subsidies_usd_bn": round(rng.uniform(0.5, 5.0), 2),
-            "green_budget_tagging_adopted": rng.random() > 0.5,
+            "carbon_pricing_coverage_pct": (
+                round(float(carbon_pricing_coverage_pct), 1) if carbon_pricing_coverage_pct is not None else None
+            ),
+            "fossil_subsidies_usd_bn": (
+                round(float(fossil_subsidies_usd_bn), 2) if fossil_subsidies_usd_bn is not None else None
+            ),
+            "green_budget_tagging_adopted": (
+                bool(green_budget_tagging_adopted) if green_budget_tagging_adopted is not None else None
+            ),
         },
         "section_2_finance_to_developing": {
-            "total_usd": round(total_finance, 0),
-            "adaptation_usd": round(adaptation, 0),
-            "mitigation_usd": round(mitigation, 0),
-            "grants_pct": round(rng.uniform(20, 50), 1),
+            "total_usd": _r(total_finance),
+            "adaptation_usd": _r(adaptation),
+            "mitigation_usd": _r(mitigation),
+            "grants_pct": round(float(grants_pct), 1) if grants_pct is not None else None,
         },
         "section_3_private_mobilised": {
-            "private_mobilised_usd": round(private_mobilised, 0),
+            "private_mobilised_usd": _r(private_mobilised),
             "mobilisation_methodology": "OECD DAC converged",
-            "mdb_contribution_usd": round(private_mobilised * 0.6, 0),
+            "mdb_contribution_usd": _r(mdb_contribution),
         },
         "section_4_technology_transfer": {
-            "technology_finance_usd": round(total_finance * rng.uniform(0.05, 0.15), 0),
-            "capacity_building_usd": round(total_finance * rng.uniform(0.02, 0.08), 0),
+            "technology_finance_usd": (
+                round(float(technology_finance_usd), 0) if technology_finance_usd is not None else None
+            ),
+            "capacity_building_usd": (
+                round(float(capacity_building_usd), 0) if capacity_building_usd is not None else None
+            ),
         },
     }
 
@@ -481,10 +631,9 @@ def generate_climate_finance_report(
         "adaptation_gap_usd_bn": round(400 - CPI_2023_DATA["adaptation_usd_bn"], 0),
     }
 
-    # MDB joint tracking
+    # MDB joint tracking — genuine: climate finance = total × climate share.
     mdb_tracking = []
     for mdb in MDB_INSTITUTIONS[:4]:
-        mdb_rng = random.Random(hash(f"{entity_id}_{mdb['code']}") & 0xFFFFFFFF)
         climate_finance = mdb["total_finance_usd_bn"] * mdb["climate_share_pct"] / 100
         mdb_tracking.append({
             "mdb": mdb["name"],
@@ -496,22 +645,45 @@ def generate_climate_finance_report(
             "paris_aligned_since": mdb["paris_aligned_since"],
         })
 
+    # NCQG progress vs the $300bn/year goal — computed only when the entity's
+    # reported total finance is available; otherwise HONEST NULL.
+    if total_finance is not None:
+        ncqg_progress: dict[str, Any] = {
+            "goal_usd_bn": 300,
+            "current_trajectory_usd_bn": round(total_finance / 1e9, 1),
+            "gap_usd_bn": round(max(0.0, 300 - total_finance / 1e9), 1),
+            "on_track": total_finance >= 100e9,
+        }
+    else:
+        ncqg_progress = {
+            "goal_usd_bn": 300,
+            "current_trajectory_usd_bn": None,
+            "gap_usd_bn": None,
+            "on_track": None,
+        }
+
+    reported_any = any(
+        v is not None for v in (total_finance, adaptation, private_mobilised)
+    )
+
     return {
         "entity_id": entity_id,
         "reporting_year": year,
         "unfccc_biennial_finance_report": bfr_sections,
-        "total_climate_finance_usd": round(total_finance, 0),
-        "adaptation_finance_usd": round(adaptation, 0),
-        "mitigation_finance_usd": round(mitigation, 0),
-        "private_mobilised_usd": round(private_mobilised, 0),
+        "total_climate_finance_usd": _r(total_finance),
+        "adaptation_finance_usd": _r(adaptation),
+        "mitigation_finance_usd": _r(mitigation),
+        "private_mobilised_usd": _r(private_mobilised),
+        "reported_figures_provided": reported_any,
+        "data_sufficiency_note": (
+            None if reported_any
+            else "No entity finance figures supplied; headline flows and NCQG "
+                 "progress are null. Reference blocks (100bn tracking, CPI gap, "
+                 "MDB joint tracking) reflect published data only."
+        ),
         "commitment_tracking_100bn": commitment_tracking,
         "cpi_gap_analysis": cpi_gap,
         "mdb_joint_tracking": mdb_tracking,
-        "ncqg_progress": {
-            "goal_usd_bn": 300,
-            "current_trajectory_usd_bn": round(total_finance / 1e9, 1),
-            "gap_usd_bn": round(max(0, 300 - total_finance / 1e9), 1),
-            "on_track": total_finance >= 100e9,
-        },
+        "ncqg_progress": ncqg_progress,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }

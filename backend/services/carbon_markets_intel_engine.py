@@ -16,7 +16,6 @@ References:
 from __future__ import annotations
 
 import math
-import random
 import uuid
 from datetime import date
 from typing import Any, Optional
@@ -210,7 +209,6 @@ class CarbonMarketsIntelEngine:
         scope_coverage: list[str],
         mitigation_contribution_pct: float,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
         gaps = []
         credibility_score = 0.0
 
@@ -260,7 +258,8 @@ class CarbonMarketsIntelEngine:
         if mitigation_contribution_pct < VCMI_CLAIMS_CODE["bronze"]["mitigation_contribution_min"]:
             gaps.append(f"Mitigation contribution {mitigation_contribution_pct:.1%} below Bronze 5% minimum")
 
-        credibility_score += rng.uniform(-3, 3)
+        # Credibility score is deterministic from the VCMI tier logic above
+        # (Gold 95 / Silver 72 / Bronze 50 / Not Eligible 20). No random jitter.
         credibility_score = round(min(100, max(0, credibility_score)), 1)
 
         return {
@@ -285,26 +284,38 @@ class CarbonMarketsIntelEngine:
     # 2. ICVCM CCP Assessment
     # ------------------------------------------------------------------
 
+    # CCPs with no structural portfolio signal — a pass vote requires an explicit
+    # per-credit attestation (credit["ccp_attestations"][ccp_id] == True). Absent
+    # attestation is treated as NOT passing (no evidence), never a random draw.
+    _ATTESTATION_ONLY_CCPS = frozenset({"CCP03", "CCP06", "CCP07", "CCP09", "CCP10"})
+
     def assess_icvcm_ccps(
         self,
         entity_id: str,
         credit_portfolio: list[dict],
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         ccp_results = []
         category_scores: dict[str, list[float]] = {"governance": [], "emissions_impact": [], "sustainable_dev": []}
         total_credits = sum(c.get("volume_tco2e", 0) for c in credit_portfolio)
         passing_credits = 0.0
+        # Count credits missing attestation data for CCPs that require it, so the
+        # caller can distinguish a genuine fail from an unevaluated (data-gap) fail.
+        credits_missing_attestations = 0
+        for credit in credit_portfolio:
+            att = credit.get("ccp_attestations")
+            if not isinstance(att, dict) or not any(k in att for k in self._ATTESTATION_ONLY_CCPS):
+                credits_missing_attestations += 1
 
         for ccp in ICVCM_10_CCPS:
-            # Derive pass/fail from portfolio quality signals
+            # Derive pass/fail from portfolio quality signals (deterministic).
             pass_votes = 0
             for credit in credit_portfolio:
                 registry = credit.get("registry", "Verra VCS")
                 has_corsia = credit.get("corsia_eligible", False)
-                independent_audit = credit.get("independent_audit", rng.random() > 0.3)
+                # Missing audit field == not independently audited (conservative, honest).
+                independent_audit = credit.get("independent_audit", False)
                 vintage = int(credit.get("vintage_year", 2021))
+                attestations = credit.get("ccp_attestations") or {}
 
                 if ccp["id"] == "CCP01" and registry in REGISTRY_METHODOLOGY_TYPES:
                     pass_votes += 1
@@ -316,8 +327,10 @@ class CarbonMarketsIntelEngine:
                     pass_votes += (1 if vintage >= 2016 else 0)
                 elif ccp["id"] == "CCP08" and has_corsia:
                     pass_votes += 1
-                else:
-                    pass_votes += 1 if rng.random() > 0.25 else 0
+                elif ccp["id"] in self._ATTESTATION_ONLY_CCPS:
+                    # Only counts when the caller supplies an explicit attestation.
+                    pass_votes += 1 if attestations.get(ccp["id"]) is True else 0
+                # else: CCP01/02/04/08 without the required signal -> no vote.
 
             pass_rate = pass_votes / max(len(credit_portfolio), 1)
             ccp_pass = pass_rate >= 0.6
@@ -351,6 +364,8 @@ class CarbonMarketsIntelEngine:
             "sustainable_development_score": sd_score,
             "ccp_results": ccp_results,
             "ccp_approved_pct": round(len([r for r in ccp_results if r["pass"]]) / 10 * 100, 1),
+            "credits_missing_ccp_attestations": credits_missing_attestations,
+            "attestation_data_complete": credits_missing_attestations == 0,
             "assessment_id": str(uuid.uuid4()),
         }
 
@@ -363,8 +378,6 @@ class CarbonMarketsIntelEngine:
         entity_id: str,
         credit_records: list[dict],
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         eligible_volume = 0.0
         ineligible_volume = 0.0
         ineligible_reasons: list[str] = []
@@ -424,12 +437,11 @@ class CarbonMarketsIntelEngine:
         credit_records: list[dict],
         host_country: str = "GH",
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         total_volume = sum(float(c.get("volume_tco2e", 0)) for c in credit_records)
         art62_volume = 0.0
         art64_volume = 0.0
         ca_volume = 0.0
+        unclassified_volume = 0.0
 
         # Find bilateral agreement status
         agreement_key = None
@@ -441,13 +453,18 @@ class CarbonMarketsIntelEngine:
 
         for credit in credit_records:
             volume = float(credit.get("volume_tco2e", 0))
-            mechanism = credit.get("article6_mechanism", rng.choice(["art_6_2", "art_6_4", "other"]))
-            has_ca = credit.get("corresponding_adjustment", rng.random() > 0.35)
+            # Unspecified mechanism/CA are NOT fabricated: default to unclassified /
+            # no-CA (conservative). This correctly keeps double-counting risk "high"
+            # until the caller supplies corresponding-adjustment evidence.
+            mechanism = credit.get("article6_mechanism", "other")
+            has_ca = credit.get("corresponding_adjustment", False)
 
             if mechanism == "art_6_2":
                 art62_volume += volume
             elif mechanism == "art_6_4":
                 art64_volume += volume
+            else:
+                unclassified_volume += volume
             if has_ca:
                 ca_volume += volume
 
@@ -461,6 +478,7 @@ class CarbonMarketsIntelEngine:
             "itmo_volume_tco2e": round(itmo_volume, 2),
             "art6_2_volume_tco2e": round(art62_volume, 2),
             "art6_4_volume_tco2e": round(art64_volume, 2),
+            "unclassified_mechanism_volume_tco2e": round(unclassified_volume, 2),
             "art6_2_pct": round(art62_volume / max(total_volume, 1) * 100, 1),
             "art6_4_pct": round(art64_volume / max(total_volume, 1) * 100, 1),
             "corresponding_adjustment_pct": round(ca_volume / max(total_volume, 1) * 100, 1),
@@ -472,6 +490,12 @@ class CarbonMarketsIntelEngine:
     # 5. Credit Pricing
     # ------------------------------------------------------------------
 
+    # ICVCM additionality premium band (fraction of base price) observed for
+    # CCP-approved credits. MODEL calibration constant standing for the published
+    # 5-15% market band; midpoint used when the caller does not supply a
+    # project-specific rate. Not an entity-specific fabrication.
+    _ICVCM_ADDITIONALITY_PREMIUM_MIDPOINT = 0.10
+
     def price_credits(
         self,
         entity_id: str,
@@ -480,9 +504,8 @@ class CarbonMarketsIntelEngine:
         icvcm_pass: bool,
         co_benefits: list[str],
         registry: str = "Verra VCS",
+        additionality_premium_rate: Optional[float] = None,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         benchmarks = CARBON_PRICE_BENCHMARKS.get(project_type, CARBON_PRICE_BENCHMARKS["nature_based"])
         current_year = 2024
         if vintage_year >= 2022:
@@ -497,8 +520,18 @@ class CarbonMarketsIntelEngine:
         vintage_discount = round(min(0.40, vintage_age * 0.025), 3)
         price_after_vintage = base_price * (1 - vintage_discount)
 
-        # ICVCM additionality premium
-        additionality_premium = round(base_price * rng.uniform(0.05, 0.15) if icvcm_pass else 0.0, 2)
+        # ICVCM additionality premium: use the caller-supplied project-specific rate
+        # when provided; otherwise fall back to the documented model-band midpoint.
+        # Only applies to ICVCM-passing credits (else 0.0, unchanged).
+        if icvcm_pass:
+            premium_rate = (
+                additionality_premium_rate
+                if additionality_premium_rate is not None
+                else self._ICVCM_ADDITIONALITY_PREMIUM_MIDPOINT
+            )
+            additionality_premium = round(base_price * premium_rate, 2)
+        else:
+            additionality_premium = 0.0
 
         # Co-benefit premiums
         cb_premium_total = sum(CO_BENEFIT_PREMIUMS.get(cb, 0.0) / 100 * base_price for cb in co_benefits)
@@ -535,8 +568,6 @@ class CarbonMarketsIntelEngine:
         entity_id: str,
         credit_portfolio: list[dict],
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         total_volume = sum(float(c.get("volume_tco2e", 0)) for c in credit_portfolio)
         total_value = 0.0
         registry_mix: dict[str, float] = {}
@@ -549,7 +580,9 @@ class CarbonMarketsIntelEngine:
             registry = credit.get("registry", "Verra VCS")
             project_type = credit.get("project_type", "nature_based")
             vintage = int(credit.get("vintage_year", 2021))
-            icvcm = credit.get("icvcm_pass", rng.random() > 0.4)
+            # Missing ICVCM-pass flag defaults to False (no evidence of pass),
+            # never a random draw. Feeds both pricing and quality bucketing.
+            icvcm = credit.get("icvcm_pass", False)
             cb = credit.get("co_benefits", [])
 
             price_result = self.price_credits(entity_id, project_type, vintage, icvcm, cb, registry)
@@ -595,8 +628,6 @@ class CarbonMarketsIntelEngine:
         entity_id: str,
         portfolio_data: dict,
     ) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         credit_portfolio = portfolio_data.get("credit_portfolio", [
             {"volume_tco2e": 10000, "registry": "Verra VCS", "project_type": "nature_based",
              "vintage_year": 2022, "icvcm_pass": True, "co_benefits": ["biodiversity", "livelihoods"],
@@ -608,10 +639,17 @@ class CarbonMarketsIntelEngine:
              "article6_mechanism": "art_6_4", "independent_audit": True, "corsia_eligible": True},
         ])
         host_country = portfolio_data.get("host_country", "GH")
-        abatement_pct = portfolio_data.get("abatement_pct", rng.uniform(20, 95))
-        sbti_status = portfolio_data.get("sbti_status", rng.choice(["validated_1.5c", "validated_wb2c", "committed", "not_committed"]))
+        # VCMI inputs are entity metrics — never fabricated. When absent, fall back
+        # to the conservative "no data on record" defaults (0% abatement, no SBTi
+        # commitment, 0% mitigation contribution). screen_vcmi_claim() then correctly
+        # returns "not_eligible" rather than an invented claim level.
+        vcmi_inputs_present = all(
+            k in portfolio_data for k in ("abatement_pct", "sbti_status", "mitigation_contribution_pct")
+        )
+        abatement_pct = portfolio_data.get("abatement_pct", 0.0)
+        sbti_status = portfolio_data.get("sbti_status", "not_committed")
         scope_coverage = portfolio_data.get("scope_coverage", ["scope1", "scope2", "scope3"])
-        mitigation_contribution_pct = portfolio_data.get("mitigation_contribution_pct", rng.uniform(0.03, 0.25))
+        mitigation_contribution_pct = portfolio_data.get("mitigation_contribution_pct", 0.0)
 
         vcmi = self.screen_vcmi_claim(entity_id, abatement_pct, sbti_status, scope_coverage, mitigation_contribution_pct)
         icvcm = self.assess_icvcm_ccps(entity_id, credit_portfolio)
@@ -631,6 +669,11 @@ class CarbonMarketsIntelEngine:
                 "article6_corresponding_adjustment_pct": art6["corresponding_adjustment_pct"],
                 "weighted_avg_price_usd": portfolio_analysis["weighted_avg_price_usd_per_tco2e"],
                 "total_portfolio_value_usd": portfolio_analysis["total_fair_value_usd"],
+                "vcmi_inputs_provided": vcmi_inputs_present,
+                "vcmi_claim_note": (
+                    None if vcmi_inputs_present
+                    else "VCMI inputs (abatement_pct/sbti_status/mitigation_contribution_pct) not supplied — claim level reflects no-data defaults, not a measured position"
+                ),
             },
             "modules": {
                 "vcmi_claim": vcmi,

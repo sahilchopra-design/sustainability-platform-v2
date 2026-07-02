@@ -5,9 +5,8 @@ Regulatory basis: CSRD Directive 2022/2464; ESRS E2/E3/E4/E5 Delegated Acts 2023
 """
 from __future__ import annotations
 
-import random
 from dataclasses import dataclass, field, asdict
-from typing import Any
+from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
 # Reference data
@@ -290,26 +289,27 @@ class ESRSE2E5Engine:
     # ------------------------------------------------------------------
 
     def assess_e2_pollution(self, entity_id: str, pollution_data: dict) -> dict[str, Any]:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         provided_air = pollution_data.get("air", {})
         provided_water = pollution_data.get("water", {})
         provided_soil = pollution_data.get("soil", {})
 
-        air_emissions: dict[str, float] = {}
+        # Pollutant emissions are reported figures — never fabricated. Absent
+        # pollutants are surfaced as honest nulls (ESRS E2-4 requires measured
+        # or activity-based quantities, not synthetic values).
+        air_emissions: dict[str, Optional[float]] = {}
         for p in ["NOx", "SOx", "PM2.5", "NMVOC", "NH3", "HAPs"]:
-            air_emissions[p] = provided_air.get(p, round(rng.uniform(0.5, 150.0), 2))
+            air_emissions[p] = provided_air.get(p)
 
-        water_emissions: dict[str, float] = {}
+        water_emissions: dict[str, Optional[float]] = {}
         for p in ["Priority_substances", "Nitrates", "Phosphorus"]:
-            water_emissions[p] = provided_water.get(p, round(rng.uniform(10.0, 5000.0), 1))
+            water_emissions[p] = provided_water.get(p)
 
-        soil_emissions: dict[str, float] = {}
+        soil_emissions: dict[str, Optional[float]] = {}
         for p in ["POPs", "Heavy_metals_Pb", "Heavy_metals_Cd", "Heavy_metals_Hg"]:
-            soil_emissions[p] = provided_soil.get(p, round(rng.uniform(0.1, 20.0), 3))
+            soil_emissions[p] = provided_soil.get(p)
 
         svhcs = pollution_data.get("svhcs", [])
-        financial_effect_eur = pollution_data.get("financial_effect_eur", round(rng.uniform(50_000, 2_000_000), 0))
+        financial_effect_eur = pollution_data.get("financial_effect_eur")
 
         completeness_score = self._score_completeness({
             "air": bool(provided_air), "water": bool(provided_water),
@@ -319,10 +319,14 @@ class ESRSE2E5Engine:
 
         gaps = []
         if not provided_air:
-            gaps.append("E2-4: Air emissions not provided — estimated")
+            gaps.append("E2-4: Air emissions not provided — reported null")
+        if not provided_water:
+            gaps.append("E2-4: Water pollutant emissions not provided — reported null")
+        if not provided_soil:
+            gaps.append("E2-4: Soil pollutant emissions not provided — reported null")
         if not svhcs:
             gaps.append("E2-5: SVHC list not disclosed")
-        if not pollution_data.get("financial_effect_eur"):
+        if financial_effect_eur is None:
             gaps.append("E2-6: Financial effects from pollution not quantified")
 
         return {
@@ -332,6 +336,7 @@ class ESRSE2E5Engine:
             "soil_emissions_kg_per_year": soil_emissions,
             "substances_of_very_high_concern": svhcs,
             "financial_effect_eur": financial_effect_eur,
+            "data_status": "reported" if (provided_air or provided_water or provided_soil) else "insufficient_data",
             "completeness_pct": completeness_score,
             "disclosure_gaps": gaps,
             "regulatory_refs": ["ESRS E2-4", "ESRS E2-5", "ESRS E2-6"],
@@ -342,18 +347,30 @@ class ESRSE2E5Engine:
     # ------------------------------------------------------------------
 
     def assess_e3_water(self, entity_id: str, water_data: dict) -> dict[str, Any]:
-        rng = random.Random((hash(entity_id) ^ 0xABCD) & 0xFFFFFFFF)
+        # All volumetric figures are reported inputs (megalitres). Absent inputs
+        # yield honest nulls; derived metrics are computed only when their
+        # constituents are present.
+        withdrawal_total = water_data.get("withdrawal_total_ML")
+        withdrawal_stressed = water_data.get("withdrawal_stressed_ML")
+        discharge_total = water_data.get("discharge_total_ML")
+        # Genuine mass-balance: net consumption = withdrawal − discharge.
+        if withdrawal_total is not None and discharge_total is not None:
+            consumption = round(withdrawal_total - discharge_total, 1)
+        else:
+            consumption = None
+        recycled_pct = water_data.get("recycled_pct")
+        ops_in_stressed_pct = water_data.get("ops_in_stressed_area_pct")
+        financial_effect_eur = water_data.get("financial_effect_eur")
 
-        withdrawal_total = water_data.get("withdrawal_total_ML", round(rng.uniform(100, 50_000), 1))
-        withdrawal_stressed = water_data.get("withdrawal_stressed_ML",
-                                              round(withdrawal_total * rng.uniform(0.1, 0.6), 1))
-        discharge_total = water_data.get("discharge_total_ML", round(withdrawal_total * rng.uniform(0.5, 0.9), 1))
-        consumption = round(withdrawal_total - discharge_total, 1)
-        recycled_pct = water_data.get("recycled_pct", round(rng.uniform(5, 40), 1))
-        ops_in_stressed_pct = water_data.get("ops_in_stressed_area_pct", round(rng.uniform(10, 70), 1))
-        financial_effect_eur = water_data.get("financial_effect_eur", round(rng.uniform(20_000, 1_000_000), 0))
-
-        stress_tier = "high" if ops_in_stressed_pct > 40 else ("medium_high" if ops_in_stressed_pct > 20 else "low_medium")
+        # WRI Aqueduct baseline stress tiering — only when the driver is reported.
+        if ops_in_stressed_pct is None:
+            stress_tier = None
+        elif ops_in_stressed_pct > 40:
+            stress_tier = "high"
+        elif ops_in_stressed_pct > 20:
+            stress_tier = "medium_high"
+        else:
+            stress_tier = "low_medium"
 
         gaps = []
         for key, label in [
@@ -361,7 +378,7 @@ class ESRSE2E5Engine:
             ("recycled_pct", "E3-4: Recycled water percentage"),
         ]:
             if key not in water_data:
-                gaps.append(f"{label} not provided — estimated")
+                gaps.append(f"{label} not provided — reported null")
         if not water_data.get("financial_effect_eur"):
             gaps.append("E3-5: Financial effects from water not quantified")
 
@@ -382,6 +399,7 @@ class ESRSE2E5Engine:
             "ops_in_stressed_area_pct": ops_in_stressed_pct,
             "water_stress_tier": stress_tier,
             "financial_effect_eur": financial_effect_eur,
+            "data_status": "reported" if withdrawal_total is not None else "insufficient_data",
             "completeness_pct": completeness_score,
             "disclosure_gaps": gaps,
             "regulatory_refs": ["ESRS E3-4", "ESRS E3-5", "WRI Aqueduct baseline water stress"],
@@ -392,33 +410,31 @@ class ESRSE2E5Engine:
     # ------------------------------------------------------------------
 
     def assess_e4_biodiversity(self, entity_id: str, biodiversity_data: dict) -> dict[str, Any]:
-        rng = random.Random((hash(entity_id) ^ 0x1234) & 0xFFFFFFFF)
-
-        land_use_change_ha = biodiversity_data.get("land_use_change_ha", round(rng.uniform(0, 500), 1))
-        sensitive_areas_pct = biodiversity_data.get("sensitive_areas_pct", round(rng.uniform(0, 30), 1))
-        species_affected_iucn = biodiversity_data.get("species_affected_iucn", rng.randint(0, 15))
-        ecosystem_services = biodiversity_data.get("ecosystem_services_dependency", [
-            "Provisioning: raw materials",
-            "Regulating: pollination",
-            "Regulating: climate regulation",
-        ])
+        # Impact metrics are reported inputs (ha, %, IUCN counts). Absent metrics
+        # are surfaced as honest nulls; ecosystem-service dependency is only
+        # listed if the entity supplies its ENCORE mapping.
+        land_use_change_ha = biodiversity_data.get("land_use_change_ha")
+        sensitive_areas_pct = biodiversity_data.get("sensitive_areas_pct")
+        species_affected_iucn = biodiversity_data.get("species_affected_iucn")
+        ecosystem_services = biodiversity_data.get("ecosystem_services_dependency", [])
         no_net_loss = biodiversity_data.get("no_net_loss_commitment", False)
-        financial_effect_eur = biodiversity_data.get("financial_effect_eur", round(rng.uniform(30_000, 3_000_000), 0))
+        financial_effect_eur = biodiversity_data.get("financial_effect_eur")
 
+        # Risk flags fire only on reported figures (None-guarded).
         risks = []
-        if sensitive_areas_pct > 20:
+        if sensitive_areas_pct is not None and sensitive_areas_pct > 20:
             risks.append("MEDIUM-HIGH: Significant operations in/near protected areas (>20%)")
-        if species_affected_iucn > 5:
+        if species_affected_iucn is not None and species_affected_iucn > 5:
             risks.append("HIGH: Multiple IUCN Red List species potentially affected")
-        if land_use_change_ha > 100:
+        if land_use_change_ha is not None and land_use_change_ha > 100:
             risks.append("MEDIUM: Material land use change reported")
         if not no_net_loss:
             risks.append("GAP: No No-Net-Loss commitment in place")
 
         gaps = []
         for key, label in [
-            ("land_use_change_ha", "E4-5: Land use change not quantified — estimated"),
-            ("sensitive_areas_pct", "E4-5: % ops in sensitive areas not provided — estimated"),
+            ("land_use_change_ha", "E4-5: Land use change not quantified — reported null"),
+            ("sensitive_areas_pct", "E4-5: % ops in sensitive areas not provided — reported null"),
         ]:
             if key not in biodiversity_data:
                 gaps.append(label)
@@ -443,6 +459,7 @@ class ESRSE2E5Engine:
             "financial_effect_eur": financial_effect_eur,
             "risk_flags": risks,
             "kunming_montreal_alignment": "Partial" if no_net_loss else "Not declared",
+            "data_status": "reported" if (land_use_change_ha is not None or sensitive_areas_pct is not None or species_affected_iucn is not None) else "insufficient_data",
             "completeness_pct": completeness,
             "disclosure_gaps": gaps,
             "regulatory_refs": ["ESRS E4-5", "ESRS E4-6", "Kunming-Montreal GBF Target 15", "ENCORE (UNEP-WCMC)"],
@@ -453,23 +470,39 @@ class ESRSE2E5Engine:
     # ------------------------------------------------------------------
 
     def assess_e5_circular(self, entity_id: str, circular_data: dict) -> dict[str, Any]:
-        rng = random.Random((hash(entity_id) ^ 0x5678) & 0xFFFFFFFF)
+        # Resource inflow/outflow tonnages and recycled content are reported
+        # inputs. Absent inputs yield honest nulls; derived metrics (disposal
+        # split, diversion rate, circularity score) are computed only when their
+        # constituents are present.
+        material_inflows_t = circular_data.get("material_inflows_total_t")
+        recycled_content_pct = circular_data.get("recycled_content_pct")
+        waste_generated_t = circular_data.get("waste_generated_total_t")
+        diverted_t = circular_data.get("diverted_from_disposal_t")
+        hazardous_waste_t = circular_data.get("hazardous_waste_t")
+        financial_effect_eur = circular_data.get("financial_effect_eur")
 
-        material_inflows_t = circular_data.get("material_inflows_total_t", round(rng.uniform(500, 100_000), 0))
-        recycled_content_pct = circular_data.get("recycled_content_pct", round(rng.uniform(5, 40), 1))
-        waste_generated_t = circular_data.get("waste_generated_total_t", round(rng.uniform(100, 20_000), 0))
-        diverted_t = circular_data.get("diverted_from_disposal_t", round(waste_generated_t * rng.uniform(0.3, 0.8), 0))
-        directed_to_disposal_t = round(waste_generated_t - diverted_t, 0)
-        hazardous_waste_t = circular_data.get("hazardous_waste_t", round(rng.uniform(0, 50), 2))
-        financial_effect_eur = circular_data.get("financial_effect_eur", round(rng.uniform(10_000, 500_000), 0))
+        # Genuine mass-balance: directed-to-disposal = generated − diverted.
+        if waste_generated_t is not None and diverted_t is not None:
+            directed_to_disposal_t = round(waste_generated_t - diverted_t, 0)
+        else:
+            directed_to_disposal_t = None
 
-        diversion_rate_pct = round((diverted_t / waste_generated_t) * 100, 1) if waste_generated_t > 0 else 0
+        if waste_generated_t is not None and diverted_t is not None and waste_generated_t > 0:
+            diversion_rate_pct = round((diverted_t / waste_generated_t) * 100, 1)
+        else:
+            diversion_rate_pct = None
 
-        circularity_score = min(100, round(
-            recycled_content_pct * 0.4 + diversion_rate_pct * 0.4 +
-            (20 if circular_data.get("circular_design_policy") else 0) * 0.2,
-            1
-        ))
+        # Weighted circularity composite: recycled content (40%), diversion rate
+        # (40%), circular-design policy (20%). Requires both quantitative drivers
+        # to be reported; otherwise not computable (honest null).
+        if recycled_content_pct is not None and diversion_rate_pct is not None:
+            circularity_score = min(100, round(
+                recycled_content_pct * 0.4 + diversion_rate_pct * 0.4 +
+                (20 if circular_data.get("circular_design_policy") else 0) * 0.2,
+                1
+            ))
+        else:
+            circularity_score = None
 
         gaps = []
         for key, label in [
@@ -478,7 +511,7 @@ class ESRSE2E5Engine:
             ("waste_generated_total_t", "E5-5: Waste generated not provided"),
         ]:
             if key not in circular_data:
-                gaps.append(f"{label} — estimated")
+                gaps.append(f"{label} — reported null")
         if not circular_data.get("financial_effect_eur"):
             gaps.append("E5-6: Financial effects from resource use not quantified")
 
@@ -501,6 +534,7 @@ class ESRSE2E5Engine:
             "diversion_rate_pct": diversion_rate_pct,
             "financial_effect_eur": financial_effect_eur,
             "circularity_score": circularity_score,
+            "data_status": "reported" if (material_inflows_t is not None or waste_generated_t is not None) else "insufficient_data",
             "completeness_pct": completeness,
             "disclosure_gaps": gaps,
             "regulatory_refs": ["ESRS E5-4", "ESRS E5-5", "ESRS E5-6", "EU Waste Framework Directive 2008/98/EC"],

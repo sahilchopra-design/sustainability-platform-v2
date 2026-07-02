@@ -6,7 +6,6 @@ GWP-100 (29.8) · EPA OOOOa/OOOOb LDAR rules · IEA Methane Tracker ·
 UNEP IMEO (International Methane Emissions Observatory) · super-emitter event detection
 """
 
-import random
 import math
 from typing import Optional
 from datetime import date, timedelta
@@ -88,10 +87,6 @@ PENALTY_PER_T_EUR = 250.0  # €250/t methane for excess emissions (EU Methane R
 # Helper utilities
 # ---------------------------------------------------------------------------
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(entity_id) & 0xFFFFFFFF)
-
-
 def _clamp(val: float, lo: float = 0.0, hi: float = 100.0) -> float:
     return max(lo, min(hi, val))
 
@@ -158,8 +153,21 @@ def assess_eu_methane_regulation(
     sector: str,
     ch4_emissions_t_pa: float,
     country_code: str,
+    compliance_attestations: Optional[dict] = None,
+    emissions_allowance_t_pa: Optional[float] = None,
 ) -> dict:
-    rng = _rng(entity_id + "eu_methane")
+    """
+    Compliance requirement statuses are FACTS about the entity and cannot be
+    inferred deterministically from sector/emissions alone. Supply
+    ``compliance_attestations`` (a dict of requirement_key -> bool) to score
+    real attested status; requirements not attested are reported as None
+    ("insufficient_data") and excluded from the compliance score.
+
+    ``penalty_risk_eur`` is only computed when ``emissions_allowance_t_pa`` is
+    supplied (the €250/t excess-emissions penalty needs a real allowance);
+    otherwise it is None with penalty_status="insufficient_data".
+    """
+    attestations = compliance_attestations or {}
 
     sector_lower = sector.lower()
     in_scope = sector_lower in EU_METHANE_REG_SECTORS or any(s in sector_lower for s in ["oil", "gas", "coal"])
@@ -170,29 +178,46 @@ def assess_eu_methane_regulation(
     else:
         ldar_frequency = "Not applicable (sector out of scope)"
 
-    # Venting prohibition year
+    # Venting prohibition year (deterministic from regulation timeline)
     venting_deadline = EU_VENTING_PROHIBITION.get(sector_lower, EU_VENTING_PROHIBITION.get("oil_gas", 2025))
-    venting_compliant = date.today().year < venting_deadline or rng.random() > 0.4
+    # Only the fact that the deadline has not yet arrived is knowable here; actual
+    # operational compliance is an attested fact supplied by the caller.
+    if date.today().year < venting_deadline:
+        venting_compliant: Optional[bool] = True  # prohibition not yet in force
+    else:
+        venting_compliant = attestations.get("venting_prohibition")
 
-    flaring_compliant = rng.random() > 0.3  # emergency-only flaring
+    flaring_compliant: Optional[bool] = attestations.get("flaring_limit")
 
-    # Compliance score
+    # Requirement statuses. Scope-driven requirements (EMTS applicability) are
+    # deterministic; operational requirements come from caller attestations or
+    # are None ("insufficient_data") when not attested.
     requirements = {
         "emts_reporting": in_scope,
-        "ldar_programme": rng.random() > 0.35 if in_scope else True,
+        "ldar_programme": (attestations.get("ldar_programme") if in_scope else True),
         "venting_prohibition": venting_compliant,
         "flaring_limit": flaring_compliant,
-        "ogmp_reporting": rng.random() > 0.4 if in_scope else True,
-        "third_party_verification": rng.random() > 0.5 if in_scope else True,
+        "ogmp_reporting": (attestations.get("ogmp_reporting") if in_scope else True),
+        "third_party_verification": (attestations.get("third_party_verification") if in_scope else True),
     }
 
-    met_count = sum(1 for v in requirements.values() if v)
-    compliance_score = _round(met_count / len(requirements) * 100, 1)
+    # Score only over requirements with a known (non-None) status.
+    assessed = {k: v for k, v in requirements.items() if v is not None}
+    if assessed:
+        met_count = sum(1 for v in assessed.values() if v)
+        compliance_score: Optional[float] = _round(met_count / len(assessed) * 100, 1)
+    else:
+        compliance_score = None
 
-    # Penalty risk: €250/t methane for excess vs allowance
-    allowance_factor = rng.uniform(0.7, 1.3)
-    excess_t = max(0.0, ch4_emissions_t_pa * (1 - allowance_factor))
-    penalty_risk_eur = _round(excess_t * PENALTY_PER_T_EUR, 0)
+    # Penalty risk: €250/t methane for excess above the entity's allowance.
+    # Requires a real allowance — never fabricate one.
+    if emissions_allowance_t_pa is not None:
+        excess_t = max(0.0, ch4_emissions_t_pa - emissions_allowance_t_pa)
+        penalty_risk_eur: Optional[float] = _round(excess_t * PENALTY_PER_T_EUR, 0)
+        penalty_status = "computed"
+    else:
+        penalty_risk_eur = None
+        penalty_status = "insufficient_data"
 
     compliance_deadline = max(venting_deadline, 2026)
 
@@ -203,7 +228,9 @@ def assess_eu_methane_regulation(
         "venting_compliant": venting_compliant,
         "flaring_compliant": flaring_compliant,
         "compliance_score": compliance_score,
+        "assessed_requirement_count": len(assessed),
         "penalty_risk_eur": penalty_risk_eur,
+        "penalty_status": penalty_status,
         "compliance_deadline": compliance_deadline,
         "requirements_status": requirements,
         "regulation_reference": "EU Methane Regulation 2024/1787",
@@ -221,8 +248,6 @@ def assess_ogmp_level(
     third_party_verified: bool,
     company_level_data: bool,
 ) -> dict:
-    rng = _rng(entity_id + "ogmp")
-
     # Determine current level
     if third_party_verified and source_level_data:
         current_level = 5
@@ -280,16 +305,39 @@ def assess_ogmp_level(
 # ---------------------------------------------------------------------------
 
 def detect_super_emitters(entity_id: str, facilities: list) -> dict:
-    rng = _rng(entity_id + "superemit")
-
+    """
+    A facility's CH4 emission rate is a measured ENTITY metric. Facilities that
+    do not supply ``ch4_t_pa`` are reported with null metrics and
+    data_status="insufficient_data" rather than having a value fabricated; they
+    are excluded from super-emitter totals and counts.
+    """
     super_emitters = []
     remediation_priority = []
     total_super_emitter_ch4 = 0.0
+    facilities_missing_data = 0
 
     for fac in facilities:
         name = fac.get("name", "Unnamed")
         ftype = fac.get("type", "unknown")
-        ch4_t_pa = float(fac.get("ch4_t_pa", rng.uniform(10, 500)))
+        raw_ch4 = fac.get("ch4_t_pa")
+
+        if raw_ch4 is None:
+            # No measured emissions supplied — do NOT invent a value.
+            facilities_missing_data += 1
+            super_emitters.append({
+                "facility_name": name,
+                "facility_type": ftype,
+                "ch4_t_pa": None,
+                "ch4_kg_hr": None,
+                "super_emitter_flag": None,
+                "satellite_detectable": None,
+                "satellite_detection_probability": None,
+                "regulatory_notification_required": None,
+                "data_status": "insufficient_data",
+            })
+            continue
+
+        ch4_t_pa = float(raw_ch4)
 
         # Rate per hour equivalent
         ch4_kg_hr = ch4_t_pa * 1000 / 8760
@@ -309,6 +357,7 @@ def detect_super_emitters(entity_id: str, facilities: list) -> dict:
             "satellite_detectable": satellite_detectable,
             "satellite_detection_probability": satellite_prob,
             "regulatory_notification_required": notification_required,
+            "data_status": "measured",
         }
         super_emitters.append(facility_result)
 
@@ -328,15 +377,21 @@ def detect_super_emitters(entity_id: str, facilities: list) -> dict:
         else "Low"
     )
 
+    _measured_probs = [
+        f["satellite_detection_probability"]
+        for f in super_emitters
+        if f["satellite_detection_probability"] is not None
+    ]
     satellite_detection_prob = _round(
-        1 - math.prod(1 - f["satellite_detection_probability"] for f in super_emitters)
-        if super_emitters else 0.0, 3
+        1 - math.prod(1 - p for p in _measured_probs)
+        if _measured_probs else 0.0, 3
     )
 
     return {
         "super_emitters": super_emitters,
         "total_super_emitter_ch4_t": _round(total_super_emitter_ch4, 2),
         "super_emitter_count": sum(1 for f in super_emitters if f["super_emitter_flag"]),
+        "facilities_missing_data": facilities_missing_data,
         "regulatory_risk": regulatory_risk,
         "satellite_detection_probability": satellite_detection_prob,
         "remediation_priority": sorted(remediation_priority, key=lambda x: -x["ch4_t_pa"]),
@@ -352,9 +407,20 @@ def calculate_methane_abatement_curve(
     entity_id: str,
     sector: str,
     total_ch4_kt_pa: float,
+    methane_commodity_value_usd_per_t: Optional[float] = None,
+    carbon_price_usd_per_tco2e: Optional[float] = None,
 ) -> dict:
-    rng = _rng(entity_id + "abatement")
+    """
+    Per-measure cost and abatement potential come from the published IEA MACC
+    ranges in ABATEMENT_MEASURES (documented model calibration — the range
+    midpoint is used, no random jitter).
 
+    Recovered-commodity revenue and carbon value depend on live market prices,
+    which are ENTITY/market inputs and are NOT fabricated. Supply
+    ``methane_commodity_value_usd_per_t`` and/or ``carbon_price_usd_per_tco2e``
+    to compute them; when a price is absent the dependent outputs are None with
+    price_status flags marking them "insufficient_data".
+    """
     total_ch4_t = total_ch4_kt_pa * 1000
     sector_lower = sector.lower()
 
@@ -363,8 +429,8 @@ def calculate_methane_abatement_curve(
     if not relevant:
         relevant = ABATEMENT_MEASURES[:5]  # fallback
 
-    methane_value_usd_per_t = rng.uniform(3.0, 8.0)  # commodity value
-    carbon_price_usd_per_tco2e = rng.uniform(25.0, 75.0)
+    have_methane_price = methane_commodity_value_usd_per_t is not None
+    have_carbon_price = carbon_price_usd_per_tco2e is not None
 
     measures_output = []
     total_capex = 0.0
@@ -372,16 +438,23 @@ def calculate_methane_abatement_curve(
     zero_cost_t = 0.0
 
     for m in relevant:
-        mid_cost = (m["cost_lo"] + m["cost_hi"]) / 2
-        noise = rng.uniform(-2.0, 2.0)
-        cost_per_t = mid_cost + noise
+        # Documented MACC range midpoint (model calibration, not a random draw).
+        cost_per_t = (m["cost_lo"] + m["cost_hi"]) / 2
 
         potential_t = total_ch4_t * m["potential_pct"] / 100
         capex = max(0.0, cost_per_t * potential_t)
-        revenue = methane_value_usd_per_t * potential_t  # commodity recovery
-        carbon_value = potential_t * GWP_100_CH4 * carbon_price_usd_per_tco2e  # /1000 for t CO2e
 
-        net_cost = capex - revenue - carbon_value / 1000
+        # Commodity recovery revenue — only with a real gas price.
+        revenue = (methane_commodity_value_usd_per_t * potential_t) if have_methane_price else None
+        # Carbon value — only with a real carbon price. (kt-scale → /1000 for t CO2e)
+        carbon_value = (
+            potential_t * GWP_100_CH4 * carbon_price_usd_per_tco2e
+        ) if have_carbon_price else None
+
+        if revenue is not None or carbon_value is not None:
+            net_cost: Optional[float] = capex - (revenue or 0.0) - ((carbon_value or 0.0) / 1000)
+        else:
+            net_cost = None
 
         measures_output.append({
             "measure": m["measure"],
@@ -389,9 +462,9 @@ def calculate_methane_abatement_curve(
             "abatement_potential_pct": _round(m["potential_pct"], 1),
             "abatement_potential_t_pa": _round(potential_t, 1),
             "capex_usd": _round(capex, 0),
-            "payback_yrs": _round(m["payback_yrs"] * rng.uniform(0.8, 1.2), 1),
-            "carbon_value_usd": _round(carbon_value / 1000, 0),
-            "net_cost_usd": _round(net_cost, 0),
+            "payback_yrs": _round(m["payback_yrs"], 1),  # published payback (no jitter)
+            "carbon_value_usd": _round(carbon_value / 1000, 0) if carbon_value is not None else None,
+            "net_cost_usd": _round(net_cost, 0) if net_cost is not None else None,
         })
 
         total_capex += capex
@@ -401,8 +474,17 @@ def calculate_methane_abatement_curve(
 
     zero_cost_pct = _round(zero_cost_t / total_ch4_t * 100, 1) if total_ch4_t > 0 else 0.0
     total_potential_pct = _round(min(75.0, total_potential_t / total_ch4_t * 100), 1) if total_ch4_t > 0 else 0.0
-    total_carbon_value = sum(m["carbon_value_usd"] for m in measures_output)
-    payback = _round(total_capex / (total_carbon_value + 1), 1) if total_capex > 0 else 0.0
+
+    if have_carbon_price:
+        total_carbon_value: Optional[float] = sum(
+            m["carbon_value_usd"] for m in measures_output if m["carbon_value_usd"] is not None
+        )
+        payback: Optional[float] = _round(total_capex / (total_carbon_value + 1), 1) if total_capex > 0 else 0.0
+        net_cost_total: Optional[float] = _round(total_capex - total_carbon_value, 0)
+    else:
+        total_carbon_value = None
+        payback = None
+        net_cost_total = None
 
     return {
         "abatement_measures": sorted(measures_output, key=lambda x: x["cost_per_tch4_usd"]),
@@ -410,10 +492,16 @@ def calculate_methane_abatement_curve(
         "total_abatement_potential_pct": total_potential_pct,
         "total_capex_usd": _round(total_capex, 0),
         "payback_yrs": payback,
-        "carbon_value_usd": _round(total_carbon_value, 0),
-        "net_cost_usd": _round(total_capex - total_carbon_value, 0),
-        "methane_commodity_value_usd_per_t": _round(methane_value_usd_per_t, 2),
-        "carbon_price_usd_per_tco2e": _round(carbon_price_usd_per_tco2e, 2),
+        "carbon_value_usd": _round(total_carbon_value, 0) if total_carbon_value is not None else None,
+        "net_cost_usd": net_cost_total,
+        "methane_commodity_value_usd_per_t": (
+            _round(methane_commodity_value_usd_per_t, 2) if have_methane_price else None
+        ),
+        "carbon_price_usd_per_tco2e": (
+            _round(carbon_price_usd_per_tco2e, 2) if have_carbon_price else None
+        ),
+        "methane_price_status": "provided" if have_methane_price else "insufficient_data",
+        "carbon_price_status": "provided" if have_carbon_price else "insufficient_data",
     }
 
 
@@ -427,8 +515,6 @@ def assess_ldar_compliance(
     last_inspection_date: str,
     leak_detection_method: str,
 ) -> dict:
-    rng = _rng(entity_id + "ldar")
-
     days_since = _days_since(last_inspection_date)
 
     # EPA OOOOa/OOOOb: quarterly for wells, biannual for gathering/processing
@@ -483,8 +569,6 @@ def compute_methane_intensity(
     production_unit: str,
     ch4_emissions_t_pa: float,
 ) -> dict:
-    rng = _rng(entity_id + "intensity")
-
     sector_lower = sector.lower()
     bm_data = SECTOR_INTENSITY_BENCHMARKS.get(sector_lower, (0.15, "fraction", "IEA 2023"))
 

@@ -19,8 +19,18 @@ References:
 """
 from __future__ import annotations
 
-import random
-from typing import Any
+from typing import Any, Optional
+
+# ---------------------------------------------------------------------------
+# Data-integrity note (random-as-data remediation)
+# ---------------------------------------------------------------------------
+# Every RETURNED entity-level metric is either (a) a real deterministic
+# computation from a caller-supplied input, or (b) an honest null
+# ("insufficient_data" / None) when the required input is absent. No metric is
+# a random draw. Where a reference range (from CRREM/SBTi/IPCC/JLL literature)
+# has no entity-specific value, the deterministic midpoint of that documented
+# range is used as a MODEL parameter and flagged via a "*_basis" field.
+# All new inputs are optional and default to None (backward compatible).
 
 # ---------------------------------------------------------------------------
 # Reference Data
@@ -232,12 +242,15 @@ CRREM_PATHWAYS: dict[str, dict] = {
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _rng(entity_id: str) -> random.Random:
-    return random.Random(hash(str(entity_id)) & 0xFFFFFFFF)
-
-
 def _clamp(v: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, v))
+
+
+def _mid(rng: tuple[float, float]) -> float:
+    """Deterministic midpoint of a documented reference range (MODEL parameter,
+    not an entity metric). Used when no entity-specific value is supplied."""
+    lo, hi = rng
+    return (lo + hi) / 2.0
 
 
 def _npv(cash_flows: list[float], discount_rate: float) -> float:
@@ -254,17 +267,32 @@ def assess_lock_in_risk(
     age_years: float,
     capex_cycle_years: float,
     current_intensity: float,
+    asset_value_usd: Optional[float] = None,
+    floor_area_m2: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Assess stranded asset lock-in risk.
 
     Returns lock-in horizon, stranded cost, CRREM pathway divergence,
     SBTi sector decarbonisation rate, and carbon price risk.
-    """
-    rng = _rng(entity_id)
 
+    ``asset_value_usd`` (entity book/market value) and ``floor_area_m2``
+    (gross floor area) are optional. When supplied, stranded cost and
+    emissions-at-risk are computed deterministically from them; when absent
+    they are returned as honest nulls (``None`` / ``"insufficient_data"``)
+    rather than fabricated from a random draw.
+    """
     if asset_type not in ASSET_TYPES:
-        asset_type = rng.choice(list(ASSET_TYPES.keys()))
+        # Honest fallback: no valid asset type supplied. Do not fabricate a
+        # random asset — flag it and use the most conservative buildings default.
+        resolved_asset_type = asset_type
+        asset_type = "office"
+        asset_type_note: Optional[str] = (
+            f"unknown asset_type '{resolved_asset_type}'; defaulted to 'office' "
+            "reference profile"
+        )
+    else:
+        asset_type_note = None
     asset = ASSET_TYPES[asset_type]
 
     remaining_life = max(0.0, asset["typical_life_years"] - age_years)
@@ -285,12 +313,16 @@ def assess_lock_in_risk(
             stranding_year = year
             break
 
-    asset_value_proxy = current_intensity * rng.uniform(2000, 8000)
-    stranded_cost = round(
-        asset_value_proxy * (remaining_life / max(asset["typical_life_years"], 1))
-        * max(intensity_divergence, 0.0) / max(base_intensity, 1),
-        0,
-    )
+    # Stranded cost = fraction of asset value exposed via (a) remaining useful
+    # life still ahead and (b) the intensity gap above the CRREM pathway.
+    # Requires the entity's asset value; otherwise honest null.
+    stranded_cost: Optional[float] = None
+    if asset_value_usd is not None and asset_value_usd > 0:
+        stranded_cost = round(
+            asset_value_usd * (remaining_life / max(asset["typical_life_years"], 1))
+            * max(intensity_divergence, 0.0) / max(base_intensity, 1),
+            0,
+        )
 
     lock_in_score = _clamp(
         (max(intensity_divergence, 0.0) / max(base_intensity, 1)) * 50.0
@@ -299,13 +331,19 @@ def assess_lock_in_risk(
         0.0, 100.0,
     )
 
-    emissions_at_risk = current_intensity * rng.uniform(500, 5000)
+    # Emissions at risk (tCO2e/pa) = current intensity (kgCO2e/m²) × floor area
+    # (m²) ÷ 1000. Requires the entity's floor area; otherwise honest null.
     carbon_price_2030 = CARBON_PRICE_SCENARIOS["baseline"]["2030"]
-    carbon_price_risk_usd = round(emissions_at_risk * carbon_price_2030, 0)
+    emissions_at_risk: Optional[float] = None
+    carbon_price_risk_usd: Optional[float] = None
+    if floor_area_m2 is not None and floor_area_m2 > 0:
+        emissions_at_risk = current_intensity * floor_area_m2 / 1000.0
+        carbon_price_risk_usd = round(emissions_at_risk * carbon_price_2030, 0)
 
     return {
         "entity_id": entity_id,
         "asset_type": asset_type,
+        "asset_type_note": asset_type_note,
         "sector": asset["sector"],
         "age_years": age_years,
         "remaining_life_years": round(remaining_life, 1),
@@ -317,6 +355,10 @@ def assess_lock_in_risk(
         "sbti_decarb_rate_pa_pct": asset["sbti_decarb_rate_pa_pct"],
         "stranding_year": stranding_year,
         "stranded_cost_usd": stranded_cost,
+        "stranded_cost_status": (
+            "computed" if stranded_cost is not None
+            else "insufficient_data — supply asset_value_usd"
+        ),
         "lock_in_risk_score": round(lock_in_score, 1),
         "lock_in_risk_level": (
             "critical" if lock_in_score >= 75 else
@@ -325,9 +367,15 @@ def assess_lock_in_risk(
             "low"
         ),
         "carbon_price_risk": {
-            "emissions_at_risk_tco2e_pa": round(emissions_at_risk, 0),
+            "emissions_at_risk_tco2e_pa": (
+                round(emissions_at_risk, 0) if emissions_at_risk is not None else None
+            ),
             "carbon_price_2030_usd_tco2e": carbon_price_2030,
             "annual_carbon_cost_risk_usd": carbon_price_risk_usd,
+            "status": (
+                "computed" if emissions_at_risk is not None
+                else "insufficient_data — supply floor_area_m2"
+            ),
         },
         "stranded_threshold_kgco2_m2": asset["stranded_threshold_kgco2_m2"],
         "above_stranding_threshold": current_intensity > asset["stranded_threshold_kgco2_m2"],
@@ -340,17 +388,31 @@ def plan_capex_transition(
     current_emissions: float,
     target_year: int,
     budget_usd: float,
+    floor_area_m2: Optional[float] = None,
+    brown_asset_disposal_value_usd: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Build capex transition plan with abatement cost curve.
 
     Returns capex stack by technology, year-by-year trajectory,
     and capital recycling from brown-to-green conversion.
-    """
-    rng = _rng(entity_id)
 
+    Abatement costs and green-exit premium use the documented midpoint of the
+    IPCC AR6 / JLL reference ranges as MODEL parameters (flagged via
+    ``*_basis`` fields), not random draws. ``floor_area_m2`` and
+    ``brown_asset_disposal_value_usd`` are optional entity inputs; the
+    remaining-gap (converted to absolute tCO2e) and capital-recycling figures
+    are computed when supplied and returned as honest nulls otherwise.
+    """
     if asset_type not in ASSET_TYPES:
-        asset_type = rng.choice(list(ASSET_TYPES.keys()))
+        resolved_asset_type = asset_type
+        asset_type = "office"
+        asset_type_note: Optional[str] = (
+            f"unknown asset_type '{resolved_asset_type}'; defaulted to 'office' "
+            "reference profile"
+        )
+    else:
+        asset_type_note = None
     asset = ASSET_TYPES[asset_type]
 
     base_year = 2025
@@ -365,8 +427,9 @@ def plan_capex_transition(
     for tech_name, tech in CAPEX_ABATEMENT_TECHNOLOGIES.items():
         if remaining_emissions <= 0 or remaining_budget <= 0:
             break
-        abate_lo, abate_hi = tech["abatement_cost_usd_per_tco2e"]
-        abatement_cost = rng.uniform(abate_lo, abate_hi)
+        # MODEL parameter: midpoint of the documented IPCC AR6 abatement-cost
+        # range for this technology (deterministic, not an entity metric).
+        abatement_cost = _mid(tech["abatement_cost_usd_per_tco2e"])
         max_red = min(remaining_emissions * tech["max_reduction_pct"] / 100.0, remaining_emissions)
         invest_req = max_red * abatement_cost
 
@@ -377,6 +440,7 @@ def plan_capex_transition(
         tech_stack.append({
             "technology": tech_name,
             "abatement_cost_usd_per_tco2e": round(abatement_cost, 1),
+            "abatement_cost_basis": "ipcc_ar6_range_midpoint",
             "emissions_reduction_tco2e": round(max_red, 1),
             "investment_required_usd": round(invest_req, 0),
             "deployment_years": tech["deployment_time_years"],
@@ -389,31 +453,50 @@ def plan_capex_transition(
         remaining_budget = max(0.0, remaining_budget - invest_req)
         cumulative_investment += invest_req
 
-    # Year-by-year trajectory
+    # Year-by-year trajectory. Capex is spread evenly across the horizon
+    # (deterministic straight-line), not a random per-year profile. The
+    # remaining gap vs the CRREM 2030 pathway requires floor area to convert
+    # the pathway intensity (kgCO2e/m²) into absolute tCO2e; otherwise the gap
+    # is reported relative to the pathway intensity with an honest flag.
+    annual_capex = round(budget_usd / max(horizon, 1), 0)
+    crrem_2030_intensity = asset["crrem_2030_intensity_kgco2_m2"]
+    crrem_2030_budget_tco2e: Optional[float] = (
+        crrem_2030_intensity * floor_area_m2 / 1000.0
+        if floor_area_m2 is not None and floor_area_m2 > 0 else None
+    )
     years = list(range(base_year, base_year + horizon + 1))
     trajectory = []
     running = current_emissions
     for y in years:
         annual_red = running * sbti_rate
-        capex_y = round(budget_usd / max(horizon, 1) * rng.uniform(0.7, 1.3), 0)
-        remaining_gap = max(0.0, running - asset["crrem_2030_intensity_kgco2_m2"] * rng.uniform(800, 2000))
+        remaining_gap: Optional[float] = (
+            max(0.0, running - crrem_2030_budget_tco2e)
+            if crrem_2030_budget_tco2e is not None else None
+        )
         trajectory.append({
             "year": y,
             "emissions_tco2e": round(running, 1),
             "annual_reduction_tco2e": round(annual_red, 1),
-            "capex_usd": capex_y,
-            "cumulative_investment_usd": round(budget_usd / max(horizon, 1) * (y - base_year + 1), 0),
-            "remaining_gap_tco2e": round(remaining_gap, 1),
+            "capex_usd": annual_capex,
+            "cumulative_investment_usd": round(annual_capex * (y - base_year + 1), 0),
+            "remaining_gap_tco2e": round(remaining_gap, 1) if remaining_gap is not None else None,
         })
         running = max(0.0, running - annual_red)
 
-    glo, ghi = asset["green_premium_pct_range"]
-    green_premium_pct = rng.uniform(glo, ghi)
-    capital_recycling = round(budget_usd * rng.uniform(0.15, 0.35), 0)
+    # Green-exit premium: MODEL parameter (midpoint of JLL/CBRE reference range).
+    green_premium_pct = _mid(asset["green_premium_pct_range"])
+    # Capital recycling requires the entity's brown-asset disposal proceeds;
+    # honest null otherwise (no random fraction of budget is fabricated).
+    capital_recycling: Optional[float] = (
+        round(brown_asset_disposal_value_usd, 0)
+        if brown_asset_disposal_value_usd is not None and brown_asset_disposal_value_usd > 0
+        else None
+    )
 
     return {
         "entity_id": entity_id,
         "asset_type": asset_type,
+        "asset_type_note": asset_type_note,
         "current_emissions_tco2e": current_emissions,
         "target_year": target_year,
         "budget_usd": budget_usd,
@@ -421,11 +504,20 @@ def plan_capex_transition(
         "total_investment_planned_usd": round(cumulative_investment, 0),
         "remaining_emissions_after_investment_tco2e": round(max(0.0, remaining_emissions), 1),
         "emissions_trajectory": trajectory,
+        "remaining_gap_status": (
+            "computed" if crrem_2030_budget_tco2e is not None
+            else "insufficient_data — supply floor_area_m2 to convert CRREM intensity to tCO2e"
+        ),
         "capital_recycling": {
             "from_brown_asset_sales_usd": capital_recycling,
-            "reinvestment_eligible": True,
+            "reinvestment_eligible": capital_recycling is not None,
+            "status": (
+                "computed" if capital_recycling is not None
+                else "insufficient_data — supply brown_asset_disposal_value_usd"
+            ),
         },
         "green_exit_premium_pct": round(green_premium_pct, 1),
+        "green_exit_premium_basis": "jll_cbre_range_midpoint",
     }
 
 
@@ -433,33 +525,59 @@ def calculate_retrofit_npv(
     entity_id: str,
     building_type: str,
     retrofit_measures: list[str],
+    floor_area_m2: Optional[float] = None,
+    energy_intensity_kwh_m2: Optional[float] = None,
+    energy_cost_per_kwh: Optional[float] = None,
 ) -> dict[str, Any]:
     """
     Calculate NPV of building retrofit measures.
 
     Returns energy savings %, CAPEX/OPEX, payback period, NPV at 5/7/10%
     discount rates, and CRREM alignment post-retrofit.
-    """
-    rng = _rng(entity_id)
 
+    Per-measure energy-saving % and capex/m² use the documented midpoint of the
+    measure's reference range as MODEL parameters (flagged ``*_basis``). The
+    absolute economics (capex, annual saving, NPV, payback) require the
+    entity's ``floor_area_m2``, ``energy_intensity_kwh_m2`` and
+    ``energy_cost_per_kwh``; when any is absent these monetary fields are
+    returned as honest nulls and ``economics_status`` = ``"insufficient_data"``.
+    Payback is COMPUTED (capex ÷ annual saving), never a random draw.
+    """
     if building_type not in ASSET_TYPES:
-        building_type = rng.choice(["office", "retail", "residential"])
+        resolved_building_type = building_type
+        building_type = "office"
+        building_type_note: Optional[str] = (
+            f"unknown building_type '{resolved_building_type}'; defaulted to 'office' "
+            "reference profile"
+        )
+    else:
+        building_type_note = None
     asset = ASSET_TYPES[building_type]
 
-    floor_area_m2 = rng.uniform(1_000, 50_000)
-    energy_cost_per_kwh = rng.uniform(0.10, 0.25)
-    energy_intensity_kwh_m2 = rng.uniform(100, 350)
-    annual_energy_cost = floor_area_m2 * energy_intensity_kwh_m2 * energy_cost_per_kwh
+    # Absolute economics require entity floor area + energy baseline. If any is
+    # missing we still return the qualitative saving-% and capex/m² model
+    # parameters, but leave monetary fields null.
+    have_economics = (
+        floor_area_m2 is not None and floor_area_m2 > 0
+        and energy_intensity_kwh_m2 is not None and energy_intensity_kwh_m2 > 0
+        and energy_cost_per_kwh is not None and energy_cost_per_kwh > 0
+    )
+    annual_energy_cost: Optional[float] = (
+        floor_area_m2 * energy_intensity_kwh_m2 * energy_cost_per_kwh
+        if have_economics else None
+    )
 
     if not retrofit_measures:
-        applicable = [
+        # Honest default: all applicable measures for this building type
+        # (deterministic, sorted), not a random sample.
+        retrofit_measures = sorted(
             m for m, d in RETROFIT_MEASURES.items()
             if building_type in d["applicable_types"]
-        ]
-        retrofit_measures = rng.sample(applicable, k=min(4, len(applicable)))
+        )
 
     measure_results = []
     total_capex = 0.0
+    total_annual_saving = 0.0
     cumulative_saving_pct = 0.0
 
     for measure_name in retrofit_measures:
@@ -469,38 +587,51 @@ def calculate_retrofit_npv(
         if building_type not in m["applicable_types"]:
             continue
 
-        elo, ehi = m["energy_saving_pct"]
-        clo, chi = m["capex_per_m2_usd"]
-        plo, phi = m["payback_years_range"]
-
-        energy_saving = rng.uniform(elo, ehi)
-        capex_per_m2 = rng.uniform(clo, chi)
-        capex_total = floor_area_m2 * capex_per_m2
-        effective_saving = annual_energy_cost * (energy_saving / 100) * (1 - cumulative_saving_pct / 100)
-        payback = rng.uniform(plo, phi)
-
+        # MODEL parameters: midpoints of the documented reference ranges.
+        energy_saving = _mid(m["energy_saving_pct"])
+        capex_per_m2 = _mid(m["capex_per_m2_usd"])
         project_life = m["lifespan_years"]
-        cash_flows = [-capex_total] + [effective_saving] * project_life
-        npv_5 = _npv(cash_flows, 0.05)
-        npv_7 = _npv(cash_flows, 0.07)
-        npv_10 = _npv(cash_flows, 0.10)
 
-        total_capex += capex_total
+        capex_total: Optional[float] = None
+        effective_saving: Optional[float] = None
+        payback: Optional[float] = None
+        npv_5 = npv_7 = npv_10 = None
+        positive_npv_at_7pct: Optional[bool] = None
+
+        if have_economics:
+            capex_total = floor_area_m2 * capex_per_m2
+            effective_saving = (
+                annual_energy_cost * (energy_saving / 100) * (1 - cumulative_saving_pct / 100)
+            )
+            # Payback COMPUTED from capex ÷ annual saving (not random).
+            payback = (
+                capex_total / effective_saving if effective_saving > 0 else None
+            )
+            cash_flows = [-capex_total] + [effective_saving] * project_life
+            npv_5 = _npv(cash_flows, 0.05)
+            npv_7 = _npv(cash_flows, 0.07)
+            npv_10 = _npv(cash_flows, 0.10)
+            positive_npv_at_7pct = npv_7 > 0
+            total_capex += capex_total
+            total_annual_saving += effective_saving
+
         cumulative_saving_pct = min(100.0, cumulative_saving_pct + energy_saving * 0.7)
 
         measure_results.append({
             "measure": measure_name,
             "description": m["description"],
             "energy_saving_pct": round(energy_saving, 1),
+            "energy_saving_basis": "reference_range_midpoint",
             "capex_per_m2_usd": round(capex_per_m2, 2),
-            "total_capex_usd": round(capex_total, 0),
-            "annual_saving_usd": round(effective_saving, 0),
-            "simple_payback_years": round(payback, 1),
+            "capex_per_m2_basis": "reference_range_midpoint",
+            "total_capex_usd": round(capex_total, 0) if capex_total is not None else None,
+            "annual_saving_usd": round(effective_saving, 0) if effective_saving is not None else None,
+            "simple_payback_years": round(payback, 1) if payback is not None else None,
             "project_life_years": project_life,
-            "npv_at_5pct_usd": round(npv_5, 0),
-            "npv_at_7pct_usd": round(npv_7, 0),
-            "npv_at_10pct_usd": round(npv_10, 0),
-            "positive_npv_at_7pct": npv_7 > 0,
+            "npv_at_5pct_usd": round(npv_5, 0) if npv_5 is not None else None,
+            "npv_at_7pct_usd": round(npv_7, 0) if npv_7 is not None else None,
+            "npv_at_10pct_usd": round(npv_10, 0) if npv_10 is not None else None,
+            "positive_npv_at_7pct": positive_npv_at_7pct,
         })
 
     current_intensity = asset["current_avg_intensity_kgco2_m2"]
@@ -510,16 +641,21 @@ def calculate_retrofit_npv(
     return {
         "entity_id": entity_id,
         "building_type": building_type,
-        "floor_area_m2": round(floor_area_m2, 0),
+        "building_type_note": building_type_note,
+        "floor_area_m2": round(floor_area_m2, 0) if floor_area_m2 is not None else None,
+        "economics_status": (
+            "computed" if have_economics
+            else "insufficient_data — supply floor_area_m2, energy_intensity_kwh_m2 "
+            "and energy_cost_per_kwh"
+        ),
         "retrofit_measures": measure_results,
         "portfolio_totals": {
-            "total_capex_usd": round(total_capex, 0),
+            "total_capex_usd": round(total_capex, 0) if have_economics else None,
             "combined_energy_saving_pct": round(min(cumulative_saving_pct, 90.0), 1),
-            "total_annual_saving_usd": round(
-                sum(m["annual_saving_usd"] for m in measure_results), 0
-            ),
-            "simple_portfolio_payback_years": round(
-                total_capex / max(sum(m["annual_saving_usd"] for m in measure_results), 1), 1
+            "total_annual_saving_usd": round(total_annual_saving, 0) if have_economics else None,
+            "simple_portfolio_payback_years": (
+                round(total_capex / total_annual_saving, 1)
+                if have_economics and total_annual_saving > 0 else None
             ),
         },
         "crrem_alignment": {
@@ -541,50 +677,93 @@ def model_brown_to_green(
 
     Returns per-asset capex, stranded risk reduction, green value uplift,
     portfolio emissions trajectory across CRREM 1.5C/2C scenarios.
+
+    Each portfolio asset dict may supply ``book_value_usd``,
+    ``capex_required_usd``, ``stranded_risk_pre_usd`` and
+    ``stranded_risk_post_usd``. Per-asset capex and stranded-risk figures are
+    read from these inputs; when absent they are honest nulls (never a random
+    fraction of book value). Green value uplift is computed as
+    book_value × the documented JLL/CBRE green-premium midpoint (a MODEL
+    parameter, flagged ``green_value_uplift_basis``). An empty portfolio
+    returns an honest ``insufficient_data`` result rather than a fabricated
+    demo portfolio.
     """
-    rng = _rng(entity_id)
-
-    if not portfolio:
-        types_pool = list(ASSET_TYPES.keys())
-        portfolio = [
-            {
-                "asset_id": f"asset_{i}",
-                "asset_type": rng.choice(types_pool),
-                "book_value_usd": round(rng.uniform(5_000_000, 100_000_000), 0),
-                "floor_area_m2": round(rng.uniform(1_000, 30_000), 0),
-            }
-            for i in range(rng.randint(3, 8))
-        ]
-
     if not transition_scenarios:
         transition_scenarios = ["1_5C", "2C"]
 
     milestone_years = [2025, 2030, 2035, 2040, 2050]
-    total_value = sum(float(a.get("book_value_usd", 10_000_000)) for a in portfolio)
+
+    if not portfolio:
+        return {
+            "entity_id": entity_id,
+            "portfolio_assets": 0,
+            "total_portfolio_value_usd": None,
+            "status": "insufficient_data — supply portfolio of asset dicts",
+            "transition_analysis": {
+                "total_capex_required_usd": None,
+                "stranded_risk_pre_usd": None,
+                "stranded_risk_post_usd": None,
+                "stranded_risk_reduction_pct": None,
+                "green_value_uplift_total_usd": None,
+                "net_benefit_usd": None,
+            },
+            "asset_analysis": [],
+            "scenario_analysis": {},
+        }
+
+    # total_value only meaningful when every asset reports a book value.
+    book_values = [a.get("book_value_usd") for a in portfolio]
+    total_value: Optional[float] = (
+        sum(float(bv) for bv in book_values)
+        if all(bv is not None for bv in book_values) else None
+    )
+
     total_capex = 0.0
+    capex_reported_all = True
     stranded_pre = 0.0
     stranded_post = 0.0
+    stranded_reported_all = True
     green_uplift = 0.0
+    green_uplift_available = True
 
     asset_analysis = []
     for a in portfolio:
-        a_rng = random.Random(hash(f"{entity_id}_{a.get('asset_id','')}") & 0xFFFFFFFF)
         atype = a.get("asset_type", "office")
         if atype not in ASSET_TYPES:
             atype = "office"
         asset = ASSET_TYPES[atype]
-        bv = float(a.get("book_value_usd", 10_000_000))
 
-        capex_req = bv * a_rng.uniform(0.05, 0.25)
-        s_pre = bv * a_rng.uniform(0.05, 0.30)
-        s_post = s_pre * a_rng.uniform(0.10, 0.40)
-        glo, ghi = asset["green_premium_pct_range"]
-        uplift = bv * a_rng.uniform(glo, ghi) / 100.0
+        bv_raw = a.get("book_value_usd")
+        bv: Optional[float] = float(bv_raw) if bv_raw is not None else None
 
-        total_capex += capex_req
-        stranded_pre += s_pre
-        stranded_post += s_post
-        green_uplift += uplift
+        # Entity-reported figures — honest null when not provided.
+        capex_req: Optional[float] = (
+            float(a["capex_required_usd"]) if a.get("capex_required_usd") is not None else None
+        )
+        s_pre: Optional[float] = (
+            float(a["stranded_risk_pre_usd"]) if a.get("stranded_risk_pre_usd") is not None else None
+        )
+        s_post: Optional[float] = (
+            float(a["stranded_risk_post_usd"]) if a.get("stranded_risk_post_usd") is not None else None
+        )
+        # Green uplift = book value × JLL/CBRE reference-midpoint premium (model param).
+        uplift: Optional[float] = (
+            bv * _mid(asset["green_premium_pct_range"]) / 100.0 if bv is not None else None
+        )
+
+        if capex_req is not None:
+            total_capex += capex_req
+        else:
+            capex_reported_all = False
+        if s_pre is not None and s_post is not None:
+            stranded_pre += s_pre
+            stranded_post += s_post
+        else:
+            stranded_reported_all = False
+        if uplift is not None:
+            green_uplift += uplift
+        else:
+            green_uplift_available = False
 
         sbti_r = asset["sbti_decarb_rate_pa_pct"] / 100.0
         base_int = asset["current_avg_intensity_kgco2_m2"]
@@ -597,13 +776,23 @@ def model_brown_to_green(
             "asset_id": a.get("asset_id", "unknown"),
             "asset_type": atype,
             "book_value_usd": bv,
-            "capex_required_usd": round(capex_req, 0),
-            "stranded_risk_pre_usd": round(s_pre, 0),
-            "stranded_risk_post_usd": round(s_post, 0),
-            "stranded_risk_reduction_usd": round(s_pre - s_post, 0),
-            "green_value_uplift_usd": round(uplift, 0),
+            "capex_required_usd": round(capex_req, 0) if capex_req is not None else None,
+            "stranded_risk_pre_usd": round(s_pre, 0) if s_pre is not None else None,
+            "stranded_risk_post_usd": round(s_post, 0) if s_post is not None else None,
+            "stranded_risk_reduction_usd": (
+                round(s_pre - s_post, 0) if s_pre is not None and s_post is not None else None
+            ),
+            "green_value_uplift_usd": round(uplift, 0) if uplift is not None else None,
+            "green_value_uplift_basis": (
+                "jll_cbre_range_midpoint" if uplift is not None else None
+            ),
             "emissions_trajectory_kgco2_m2": emissions_traj,
         })
+
+    total_capex_out: Optional[float] = round(total_capex, 0) if capex_reported_all else None
+    stranded_pre_out: Optional[float] = round(stranded_pre, 0) if stranded_reported_all else None
+    stranded_post_out: Optional[float] = round(stranded_post, 0) if stranded_reported_all else None
+    green_uplift_out: Optional[float] = round(green_uplift, 0) if green_uplift_available else None
 
     scenario_analysis = {}
     for scenario in transition_scenarios:
@@ -614,7 +803,10 @@ def model_brown_to_green(
                 str(y): round(pathway.get(f"{y}_pct_of_2019", 0.0), 1)
                 for y in milestone_years
             },
-            "required_capex_usd": round(total_capex * (1.1 if scenario == "1_5C" else 1.0), 0),
+            "required_capex_usd": (
+                round(total_capex * (1.1 if scenario == "1_5C" else 1.0), 0)
+                if capex_reported_all else None
+            ),
         }
 
     return {
@@ -622,14 +814,26 @@ def model_brown_to_green(
         "portfolio_assets": len(portfolio),
         "total_portfolio_value_usd": total_value,
         "transition_analysis": {
-            "total_capex_required_usd": round(total_capex, 0),
-            "stranded_risk_pre_usd": round(stranded_pre, 0),
-            "stranded_risk_post_usd": round(stranded_post, 0),
-            "stranded_risk_reduction_pct": round(
-                (stranded_pre - stranded_post) / max(stranded_pre, 1) * 100, 1
+            "total_capex_required_usd": total_capex_out,
+            "capex_status": (
+                "computed" if capex_reported_all
+                else "insufficient_data — supply capex_required_usd for all assets"
             ),
-            "green_value_uplift_total_usd": round(green_uplift, 0),
-            "net_benefit_usd": round(green_uplift - total_capex, 0),
+            "stranded_risk_pre_usd": stranded_pre_out,
+            "stranded_risk_post_usd": stranded_post_out,
+            "stranded_risk_reduction_pct": (
+                round((stranded_pre - stranded_post) / max(stranded_pre, 1) * 100, 1)
+                if stranded_reported_all and stranded_pre > 0 else None
+            ),
+            "stranded_risk_status": (
+                "computed" if stranded_reported_all
+                else "insufficient_data — supply stranded_risk_pre_usd/stranded_risk_post_usd for all assets"
+            ),
+            "green_value_uplift_total_usd": green_uplift_out,
+            "net_benefit_usd": (
+                round(green_uplift - total_capex, 0)
+                if green_uplift_available and capex_reported_all else None
+            ),
         },
         "asset_analysis": asset_analysis,
         "scenario_analysis": scenario_analysis,
@@ -646,21 +850,30 @@ def generate_decarb_roadmap(
 
     Ranks by cost-effectiveness, identifies quick wins vs long-horizon,
     sets interim targets 2025/2030/2035/2040/2050, aligns with TCFD/IFRS S2.
-    """
-    rng = _rng(entity_id)
 
+    ``assets`` must carry real per-asset figures (current_emissions_tco2e,
+    abatement_potential_pct, capex_required_usd). An empty list returns an
+    honest ``insufficient_data`` result rather than a fabricated demo set.
+    """
     if not assets:
-        types_pool = list(ASSET_TYPES.keys())
-        assets = [
-            {
-                "asset_id": f"asset_{i}",
-                "asset_type": rng.choice(types_pool),
-                "current_emissions_tco2e": round(rng.uniform(200, 10_000), 0),
-                "abatement_potential_pct": round(rng.uniform(20, 80), 0),
-                "capex_required_usd": round(rng.uniform(500_000, 20_000_000), 0),
-            }
-            for i in range(rng.randint(4, 10))
-        ]
+        return {
+            "entity_id": entity_id,
+            "budget_constraint_usd": budget_constraint,
+            "total_base_emissions_tco2e": None,
+            "status": "insufficient_data — supply assets list",
+            "funded_actions": [],
+            "unfunded_actions": [],
+            "budget_utilisation": {
+                "total_funded_capex_usd": None,
+                "total_funded_reduction_tco2e": None,
+                "remaining_budget_usd": round(budget_constraint, 0),
+                "cost_per_tco2e_usd": None,
+            },
+            "interim_targets": {},
+            "framework_alignment": {"tcfd": True, "ifrs_s2": True, "sbti_sector": None},
+            "quick_wins": [],
+            "long_horizon": [],
+        }
 
     scored = []
     for a in assets:

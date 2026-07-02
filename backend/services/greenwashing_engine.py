@@ -8,7 +8,6 @@ Regulatory basis:
 """
 from __future__ import annotations
 
-import random
 import re
 from dataclasses import dataclass, field, asdict
 from typing import Any
@@ -288,7 +287,7 @@ class GreenwashingEngine:
     _instance: "GreenwashingEngine | None" = None
 
     def __init__(self) -> None:
-        self._rng_base = 42
+        pass
 
     @classmethod
     def get_instance(cls) -> "GreenwashingEngine":
@@ -417,8 +416,6 @@ class GreenwashingEngine:
         sfdr_classification: str,
         taxonomy_alignment_pct: float,
     ) -> GreenwashingAssessment:
-        rng = random.Random(hash(entity_id) & 0xFFFFFFFF)
-
         claims_assessed: list[dict] = []
         high_risk_claims: list[str] = []
         total_claim_risk = 0.0
@@ -431,7 +428,12 @@ class GreenwashingEngine:
             if screened["risk_level"] in ("high", "very_high"):
                 high_risk_claims.append(c.get("text", "")[:80])
 
-        avg_claim_risk = total_claim_risk / len(claims) if claims else rng.uniform(0.1, 0.4)
+        # With no claims supplied there is no claim-driven greenwashing risk to
+        # measure, so the claim-risk contribution is genuinely 0.0 (honest value,
+        # not a fabricated draw). The absence of assessed claims is flagged in
+        # remediation_actions below.
+        no_claims_assessed = not claims
+        avg_claim_risk = total_claim_risk / len(claims) if claims else 0.0
         label_result = self.verify_labels(entity_id, product_labels, sfdr_classification, taxonomy_alignment_pct)
 
         # EU compliance scoring
@@ -463,6 +465,8 @@ class GreenwashingEngine:
             overall_risk = "low"
 
         remediation: list[str] = []
+        if no_claims_assessed:
+            remediation.append("No sustainability claims supplied — claim-level greenwashing risk not assessed; scores reflect label/taxonomy checks only")
         if eu_gaps:
             remediation.append("Obtain independent third-party verification for all material sustainability claims (EU-GCD-5)")
         if fca_gaps:

@@ -1,0 +1,36 @@
+{
+  "files": {
+    "api/v1/routes/portfolio_pg.py": {
+      "count": 2,
+      "status": "legit_mc"
+    },
+    "services/builder_engine.py": {
+      "count": 2,
+      "status": "legit_mc"
+    },
+    "services/climate_derivatives_engine.py": {
+      "count": 2,
+      "status": "legit_mc"
+    },
+    "services/demo_portfolio_seeder.py": {
+      "count": 5,
+      "status": "legit_mc"
+    },
+    "services/monte_carlo_engine.py": {
+      "count": 2,
+      "status": "legit_mc"
+    },
+    "services/re_clvar_engine.py": {
+      "count": 4,
+      "status": "legit_mc"
+    },
+    "services/sub_parameter_engine.py": {
+      "count": 5,
+      "status": "legit_mc"
+    },
+    "services/var_calculator.py": {
+      "count": 1,
+      "status": "legit_mc"
+    }
+  }
+}
