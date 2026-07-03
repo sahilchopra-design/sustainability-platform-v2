@@ -8,7 +8,7 @@ import DataUploadPanel from '../../../components/DataUploadPanel';
 import { useTestData } from '../../../context/TestDataContext';
 
 const API = 'http://localhost:8001';
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',blue:'#2563eb',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',blue:'#2563eb',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const SCENARIO_TO_TOGGLE = {
   NGFS_P3_NET_ZERO_2050: 'nze',  NGFS_P3_BELOW_2C: 'nze', NGFS_P3_LOW_DEMAND: 'nze',
@@ -464,7 +464,7 @@ export default function StrandedAssetsPage() {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                     <thead>
-                      <tr style={{ background: '#f0ede7' }}>
+                      <tr style={{ background: '#eef1f6' }}>
                         {['Asset ID','Technology','Book Value','Phase-Out Yr','Remain Life','PV (Discounted)','Impairment $','Impairment %'].map(h => (
                           <th key={h} style={{ padding: '5px 10px', textAlign: 'left', fontSize: 9, fontWeight: 700,
                             color: T.sub, borderBottom: `1px solid ${T.border}`, whiteSpace: 'nowrap' }}>{h}</th>

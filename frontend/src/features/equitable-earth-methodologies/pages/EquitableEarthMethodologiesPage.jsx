@@ -10,7 +10,7 @@ import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 /* ── theme ──────────────────────────────────────────────────────── */
 const T = {
   navy:'#1b3a5c', navyD:'#122a44', gold:'#c5a96a', goldD:'#a8903a',
-  cream:'#f7f4ef', surface:'#ffffff', border:'#e5e0d8', borderL:'#d5cfc5',
+  cream:'#f7f4ef', surface:'#ffffff', border:'#e3e8ef', borderL:'#cfd6e0',
   text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae',
   sage:'#5a8a6a', sageL:'#7ba67d',
   red:'#dc2626', green:'#16a34a', amber:'#d97706',

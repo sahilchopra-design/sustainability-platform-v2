@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
    THEME & CONSTANTS
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const SECTOR_COLORS = [
   '#1b3a5c', '#c5a96a', '#5a8a6a', '#4f46e5', '#0891b2',
@@ -889,7 +889,7 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
         ${hList.map((h, i) => {
           const c = h.company || {};
           const ghgInt = c.revenue_usd_mn ? ((c.scope1_mt + c.scope2_mt) / c.revenue_usd_mn * 1000).toFixed(1) : 'N/A';
-          return `<tr style="border-bottom:1px solid #e5e0d8;${i % 2 === 1 ? 'background:#f9f8f5' : ''}">
+          return `<tr style="border-bottom:1px solid #e3e8ef;${i % 2 === 1 ? 'background:#f9f8f5' : ''}">
             <td style="padding:7px 8px;font-weight:600;color:#1b3a5c">${c.name || 'N/A'}</td>
             <td style="padding:7px 8px;text-align:center;color:#5c6b7e">${c.ticker || ''}</td>
             <td style="padding:7px 8px;text-align:center;color:#5c6b7e">${c.sector || ''}</td>
@@ -934,7 +934,7 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
           }
           const impactPct = (totalImpact * 100).toFixed(2);
           const varVal = (Math.abs(totalImpact) * totalExp).toFixed(1);
-          return `<tr style="border-bottom:1px solid #e5e0d8;${i % 2 === 1 ? 'background:#f9f8f5' : ''}">
+          return `<tr style="border-bottom:1px solid #e3e8ef;${i % 2 === 1 ? 'background:#f9f8f5' : ''}">
             <td style="padding:9px;font-weight:700;color:${sc.color}">${sc.name}</td>
             <td style="padding:9px;text-align:center">${sc.category}</td>
             <td style="padding:9px;text-align:center">${sc.temp}</td>
@@ -964,9 +964,9 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
         <th style="padding:10px;text-align:center">Trend</th>
       </tr></thead>
       <tbody>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:600">WACI (t CO\u2082e/Mn)</td>${yoyData.map(y => `<td style="padding:9px;text-align:right;font-weight:700">${y.waci}</td>`).join('')}<td style="padding:9px;text-align:center;color:#16a34a">\u2193 Improving</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:600">SBTi Coverage (%)</td>${yoyData.map(y => `<td style="padding:9px;text-align:right;font-weight:700">${y.sbtiPct}</td>`).join('')}<td style="padding:9px;text-align:center;color:#16a34a">\u2191 Improving</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:600">S1+S2 Emissions (Mt)</td>${yoyData.map(y => `<td style="padding:9px;text-align:right;font-weight:700">${y.scope12}</td>`).join('')}<td style="padding:9px;text-align:center;color:#16a34a">\u2193 Improving</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef"><td style="padding:9px;font-weight:600">WACI (t CO\u2082e/Mn)</td>${yoyData.map(y => `<td style="padding:9px;text-align:right;font-weight:700">${y.waci}</td>`).join('')}<td style="padding:9px;text-align:center;color:#16a34a">\u2193 Improving</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef;background:#f9f8f5"><td style="padding:9px;font-weight:600">SBTi Coverage (%)</td>${yoyData.map(y => `<td style="padding:9px;text-align:right;font-weight:700">${y.sbtiPct}</td>`).join('')}<td style="padding:9px;text-align:center;color:#16a34a">\u2191 Improving</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef"><td style="padding:9px;font-weight:600">S1+S2 Emissions (Mt)</td>${yoyData.map(y => `<td style="padding:9px;text-align:right;font-weight:700">${y.scope12}</td>`).join('')}<td style="padding:9px;text-align:center;color:#16a34a">\u2193 Improving</td></tr>
         <tr><td style="padding:9px;font-weight:600">Implied Temp. (\u00b0C)</td>${yoyData.map(y => `<td style="padding:9px;text-align:right;font-weight:700">${y.impliedTemp}</td>`).join('')}<td style="padding:9px;text-align:center;color:#16a34a">\u2193 Improving</td></tr>
       </tbody>
     </table>
@@ -985,7 +985,7 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
         <th style="padding:9px;text-align:left">Notes</th>
       </tr></thead>
       <tbody>
-        ${checklist.map((row, i) => `<tr style="border-bottom:1px solid #e5e0d8;${i % 2 === 1 ? 'background:#f9f8f5' : ''}">
+        ${checklist.map((row, i) => `<tr style="border-bottom:1px solid #e3e8ef;${i % 2 === 1 ? 'background:#f9f8f5' : ''}">
           <td style="padding:8px;font-weight:600;color:#1b3a5c">${row.requirement}</td>
           <td style="padding:8px;text-align:center">${statusIcon(row.status)}</td>
           <td style="padding:8px;color:#5c6b7e">${row.source}</td>
@@ -1006,7 +1006,7 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
     <h2 style="font-size:18px;font-weight:800;color:#1b3a5c;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid #c5a96a">${secCounter++}. Glossary of Terms</h2>
     <table style="width:100%;border-collapse:collapse;font-size:12px">
       <thead><tr style="background:#1b3a5c;color:#fff"><th style="padding:8px;text-align:left;width:120px">Term</th><th style="padding:8px;text-align:left">Definition</th></tr></thead>
-      <tbody>${GLOSSARY.map((g, i) => `<tr style="border-bottom:1px solid #e5e0d8;${i % 2 === 1 ? 'background:#f9f8f5' : ''}"><td style="padding:8px;font-weight:700;color:#1b3a5c">${g.term}</td><td style="padding:8px;color:#5c6b7e">${g.definition}</td></tr>`).join('')}</tbody>
+      <tbody>${GLOSSARY.map((g, i) => `<tr style="border-bottom:1px solid #e3e8ef;${i % 2 === 1 ? 'background:#f9f8f5' : ''}"><td style="padding:8px;font-weight:700;color:#1b3a5c">${g.term}</td><td style="padding:8px;color:#5c6b7e">${g.definition}</td></tr>`).join('')}</tbody>
     </table>
   </div>`;
 
@@ -1016,17 +1016,17 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
     <table style="width:100%;border-collapse:collapse;font-size:12px">
       <thead><tr style="background:#1b3a5c;color:#fff"><th style="padding:8px;text-align:left">Data Category</th><th style="padding:8px;text-align:left">Source</th><th style="padding:8px;text-align:left">Coverage</th><th style="padding:8px;text-align:left">Limitations</th></tr></thead>
       <tbody>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:8px;font-weight:600">GHG Emissions (S1+S2)</td><td style="padding:8px">Company disclosures, CDP</td><td style="padding:8px">${fmtNum(pm.dataCoverage)}%</td><td style="padding:8px;color:#5c6b7e">Gaps filled with sector estimates</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:8px;font-weight:600">Scope 3 Emissions</td><td style="padding:8px">Estimated (EXIOBASE)</td><td style="padding:8px">100% (est.)</td><td style="padding:8px;color:#5c6b7e">High uncertainty; sector multipliers</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:8px;font-weight:600">SBTi Commitments</td><td style="padding:8px">SBTi Database</td><td style="padding:8px">100%</td><td style="padding:8px;color:#5c6b7e">Point-in-time snapshot</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:8px;font-weight:600">ESG Scores</td><td style="padding:8px">Third-party ESG provider</td><td style="padding:8px">${fmtNum(pm.dataCoverage)}%</td><td style="padding:8px;color:#5c6b7e">Methodology varies by provider</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef"><td style="padding:8px;font-weight:600">GHG Emissions (S1+S2)</td><td style="padding:8px">Company disclosures, CDP</td><td style="padding:8px">${fmtNum(pm.dataCoverage)}%</td><td style="padding:8px;color:#5c6b7e">Gaps filled with sector estimates</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef;background:#f9f8f5"><td style="padding:8px;font-weight:600">Scope 3 Emissions</td><td style="padding:8px">Estimated (EXIOBASE)</td><td style="padding:8px">100% (est.)</td><td style="padding:8px;color:#5c6b7e">High uncertainty; sector multipliers</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef"><td style="padding:8px;font-weight:600">SBTi Commitments</td><td style="padding:8px">SBTi Database</td><td style="padding:8px">100%</td><td style="padding:8px;color:#5c6b7e">Point-in-time snapshot</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef;background:#f9f8f5"><td style="padding:8px;font-weight:600">ESG Scores</td><td style="padding:8px">Third-party ESG provider</td><td style="padding:8px">${fmtNum(pm.dataCoverage)}%</td><td style="padding:8px;color:#5c6b7e">Methodology varies by provider</td></tr>
         <tr><td style="padding:8px;font-weight:600">Financial Data</td><td style="padding:8px">Bloomberg, company filings</td><td style="padding:8px">100%</td><td style="padding:8px;color:#5c6b7e">FX conversion at period-end rates</td></tr>
       </tbody>
     </table>
   </div>`;
 
   // ── Disclaimer ──
-  const disclaimerHTML = `<div class="disclaimer" style="background:#f6f4f0;border:1px solid #e5e0d8;border-radius:8px;padding:20px 24px;font-size:11px;color:#9aa3ae;margin-top:40px;line-height:1.7">
+  const disclaimerHTML = `<div class="disclaimer" style="background:#f4f6f9;border:1px solid #e3e8ef;border-radius:8px;padding:20px 24px;font-size:11px;color:#9aa3ae;margin-top:40px;line-height:1.7">
     <strong style="color:#1b3a5c">Important Disclaimer:</strong> This report has been prepared for informational purposes only and does not constitute investment advice, a solicitation, or a recommendation to buy or sell any securities. Climate data is sourced from company disclosures, third-party providers, and estimation models and may be subject to revision. Scope 3 emissions are estimated using sector-based multipliers and carry higher uncertainty than reported Scope 1 and 2 data. Temperature alignment calculations use proprietary methodologies based on IEA sectoral decarbonisation pathways and may differ from other providers. ESG scores reflect the assessment of third-party data providers and may vary across methodologies. Past performance, climate metrics, and ESG ratings are not necessarily indicative of future outcomes. This report is generated by the AA Impact Risk Analytics Platform and should be read in conjunction with the fund's formal regulatory disclosures.
   </div>`;
 
@@ -1055,7 +1055,7 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
   <title>${clientDetails.fundName || 'ESG Report'} \u2014 ${fw.label} Disclosure</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f6f4f0; color: #1b3a5c; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #1b3a5c; }
     @media print {
       body { background: white; }
       .no-print { display: none; }
@@ -1071,19 +1071,19 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
     .meta-item span { font-size: 15px; font-weight: 600; color: white; }
     .cover-watermark { position: absolute; bottom: 24px; font-size: 11px; color: rgba(255,255,255,0.3); }
     .body-wrap { max-width: 900px; margin: 0 auto; padding: 40px 40px 60px; background: white; }
-    .section-page { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid #e5e0d8; }
+    .section-page { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid #e3e8ef; }
     .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
-    .kpi-box { background: #f6f4f0; border: 1px solid #e5e0d8; border-radius: 10px; padding: 16px; }
+    .kpi-box { background: #f4f6f9; border: 1px solid #e3e8ef; border-radius: 10px; padding: 16px; }
     .kpi-box .kpi-label { font-size: 11px; font-weight: 700; color: #9aa3ae; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
     .kpi-box .kpi-val { font-size: 26px; font-weight: 800; color: #1b3a5c; }
     .kpi-box .kpi-unit { font-size: 11px; color: #9aa3ae; margin-top: 4px; }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     th { background: #1b3a5c; color: white; padding: 10px 12px; font-size: 12px; font-weight: 700; text-align: left; }
-    td { padding: 9px 12px; font-size: 13px; border-bottom: 1px solid #e5e0d8; }
+    td { padding: 9px 12px; font-size: 13px; border-bottom: 1px solid #e3e8ef; }
     tr:nth-child(even) td { background: #f9f8f5; }
     p { color: #5c6b7e; line-height: 1.7; margin-bottom: 10px; }
     h3 { font-size: 16px; font-weight: 700; color: #1b3a5c; margin: 0 0 10px; padding-bottom: 6px; border-bottom: 2px solid #c5a96a; }
-    .disclaimer { background: #f6f4f0; border: 1px solid #e5e0d8; border-radius: 8px; padding: 16px 20px; font-size: 11px; color: #9aa3ae; margin-top: 40px; line-height: 1.6; }
+    .disclaimer { background: #f4f6f9; border: 1px solid #e3e8ef; border-radius: 8px; padding: 16px 20px; font-size: 11px; color: #9aa3ae; margin-top: 40px; line-height: 1.6; }
     .footer { background: #1b3a5c; color: rgba(255,255,255,0.5); padding: 20px 40px; text-align: center; font-size: 11px; margin-top: 40px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 20px; border-bottom: 2px solid #1b3a5c; margin-bottom: 28px; }
     .page-header-title { font-size: 13px; font-weight: 700; color: #1b3a5c; }
@@ -1131,12 +1131,12 @@ function generateHTMLReport(clientDetails, holdings, activeFramework, sections, 
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px">
       <thead><tr style="background:#1b3a5c"><th style="padding:8px 10px;color:#fff;text-align:left;font-size:10px">Dimension</th><th style="padding:8px 10px;color:#fff;text-align:left;font-size:10px">Key Metric</th><th style="padding:8px 10px;color:#fff;text-align:right;font-size:10px">Value</th><th style="padding:8px 10px;color:#fff;text-align:center;font-size:10px">Assessment</th></tr></thead>
       <tbody>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Climate</td><td style="padding:9px">Climate VaR (95% CI)</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.cvarPct.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.cvarPct > 15 ? '🔴 High' : advancedKPIs.cvarPct > 8 ? '🟡 Moderate' : '🟢 Low'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Transition</td><td style="padding:9px">Readiness Index</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.transitionReadinessIndex.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.transitionReadinessIndex > 60 ? '🟢 Strong' : '🟡 Developing'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Nature</td><td style="padding:9px">Dependency Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.natureDependencyScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.natureDependencyScore > 60 ? '🟡 High Dependency' : '🟢 Low Dependency'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Social</td><td style="padding:9px">Board Diversity</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.boardDiversity.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.boardDiversity > 30 ? '🟢 Above 30%' : '🟡 Below target'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8"><td style="padding:9px;font-weight:700">Governance</td><td style="padding:9px">ESG Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.esgScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.esgScore > 70 ? '🟢 Strong' : '🟡 Average'}</td></tr>
-        <tr style="border-bottom:1px solid #e5e0d8;background:#f9f8f5"><td style="padding:9px;font-weight:700">Risk</td><td style="padding:9px">HHI Concentration</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.hhi.toFixed(0)}</td><td style="padding:9px;text-align:center">${advancedKPIs.hhi < 1500 ? '🟢 Diversified' : '🟡 Moderate'}</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef"><td style="padding:9px;font-weight:700">Climate</td><td style="padding:9px">Climate VaR (95% CI)</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.cvarPct.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.cvarPct > 15 ? '🔴 High' : advancedKPIs.cvarPct > 8 ? '🟡 Moderate' : '🟢 Low'}</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef;background:#f9f8f5"><td style="padding:9px;font-weight:700">Transition</td><td style="padding:9px">Readiness Index</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.transitionReadinessIndex.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.transitionReadinessIndex > 60 ? '🟢 Strong' : '🟡 Developing'}</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef"><td style="padding:9px;font-weight:700">Nature</td><td style="padding:9px">Dependency Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.natureDependencyScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.natureDependencyScore > 60 ? '🟡 High Dependency' : '🟢 Low Dependency'}</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef;background:#f9f8f5"><td style="padding:9px;font-weight:700">Social</td><td style="padding:9px">Board Diversity</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.boardDiversity.toFixed(1)}%</td><td style="padding:9px;text-align:center">${advancedKPIs.boardDiversity > 30 ? '🟢 Above 30%' : '🟡 Below target'}</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef"><td style="padding:9px;font-weight:700">Governance</td><td style="padding:9px">ESG Score</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.esgScore.toFixed(0)}/100</td><td style="padding:9px;text-align:center">${advancedKPIs.esgScore > 70 ? '🟢 Strong' : '🟡 Average'}</td></tr>
+        <tr style="border-bottom:1px solid #e3e8ef;background:#f9f8f5"><td style="padding:9px;font-weight:700">Risk</td><td style="padding:9px">HHI Concentration</td><td style="padding:9px;text-align:right;font-weight:700">${advancedKPIs.hhi.toFixed(0)}</td><td style="padding:9px;text-align:center">${advancedKPIs.hhi < 1500 ? '🟢 Diversified' : '🟡 Moderate'}</td></tr>
       </tbody>
     </table>
   </div>

@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 
 const T = {
-  bg:'#f6f4f0', surface:'#ffffff', border:'#e5e0d8', navy:'#1b3a5c',
+  bg:'#f4f6f9', surface:'#ffffff', border:'#e3e8ef', navy:'#1b3a5c',
   navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae',
   red:'#dc2626', green:'#16a34a', amber:'#d97706', blue:'#2563eb',
   orange:'#ea580c', purple:'#7c3aed', teal:'#0891b2', sage:'#5a8a6a',

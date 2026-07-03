@@ -94,7 +94,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -102,7 +102,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -174,7 +174,7 @@ export default function CatBondILSPage() {
             <Section title="ILS Market Outstanding & Issuance Volume" badge="2013–2024">
               <ResponsiveContainer width="100%" height={280}>
                 <AreaChart data={MARKET_SIZE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => fmt(v)} />
@@ -200,7 +200,7 @@ export default function CatBondILSPage() {
           <Section title="Cat Bond Spread Index vs Issuance Volume" badge="bps">
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={MARKET_SIZE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip />
@@ -271,7 +271,7 @@ export default function CatBondILSPage() {
             <Section title="Spread vs Expected Loss (EL Multiple)">
               <ResponsiveContainer width="100%" height={240}>
                 <ScatterChart margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="eloss" name="EL %" tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} label={{ value: 'Expected Loss %', position: 'insideBottom', offset: -5, fontSize: 11 }} />
                   <YAxis dataKey="spread" name="Spread %" tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(v, n) => [`${v}%`, n]} />
@@ -286,7 +286,7 @@ export default function CatBondILSPage() {
                   total: filteredBonds.filter(b => b.trigger === trig).reduce((a, b) => a + b.size, 0),
                   count: filteredBonds.filter(b => b.trigger === trig).length,
                 }))} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="trigger" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10 }} />
                   <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => fmt(v)} />
@@ -348,7 +348,7 @@ export default function CatBondILSPage() {
                     industryIdx: Math.round(el * 3.2 * 0.88 * 100),
                     parametric:  Math.round(el * 3.2 * 0.82 * 100),
                   }))} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                     <XAxis dataKey="el" tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                     <YAxis tickFormatter={v => `${v}bps`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                     <Tooltip formatter={v => `${v}bps`} />
@@ -365,7 +365,7 @@ export default function CatBondILSPage() {
                 <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={TRIGGER_TYPES.map((t, i) => ({ trigger: t, discount: [0, 12, 18, 9][i] }))}
                     margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                     <XAxis dataKey="trigger" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                     <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                     <Tooltip formatter={v => `${v}% discount`} />
@@ -392,7 +392,7 @@ export default function CatBondILSPage() {
           <Section title="Historical Loss Events — Insured vs ILS Impact">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={LOSS_EVENTS} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="event" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} angle={-20} textAnchor="end" height={60} />
                 <YAxis tickFormatter={v => `$${v}B`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `$${v}B`} />
@@ -439,7 +439,7 @@ export default function CatBondILSPage() {
           <Section title="Spread Term Structure by Trigger Type" badge="bps">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={SPREAD_CURVE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="tenor" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `${v}bps`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}bps`} />
@@ -460,7 +460,7 @@ export default function CatBondILSPage() {
                   spread: Math.round(280 + sr(i * 7) * 400),
                   el:     Math.round(80 + sr(i * 11) * 120),
                 }))} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="peril" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <YAxis tickFormatter={v => `${v}bps`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v}bps`} />
@@ -476,7 +476,7 @@ export default function CatBondILSPage() {
                   range: `${bucket}×`,
                   count: activeBonds.filter(b => parseFloat(b.multipleOfEL) >= bucket && parseFloat(b.multipleOfEL) < bucket + 0.5).length,
                 }))} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="range" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v} bonds`} />

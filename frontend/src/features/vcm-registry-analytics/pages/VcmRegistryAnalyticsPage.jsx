@@ -99,7 +99,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -107,7 +107,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -164,7 +164,7 @@ export default function VcmRegistryAnalyticsPage() {
             <Section title="Credits Issued vs Retired by Registry" badge="tCO₂e">
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={REGISTRY_DATA} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="registry" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                   <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${fmt(v)} tCO₂e`} />
@@ -219,7 +219,7 @@ export default function VcmRegistryAnalyticsPage() {
           <Section title="Annual Issuance Trend by Registry (2016–2024)" badge="Million tCO₂e">
             <ResponsiveContainer width="100%" height={320}>
               <AreaChart data={ISSUANCE_TREND} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${fmt(v)} tCO₂e`} />
@@ -237,7 +237,7 @@ export default function VcmRegistryAnalyticsPage() {
             <Section title="Annual Retirements vs Issuance">
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={ISSUANCE_TREND} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${fmt(v)} tCO₂e`} />
@@ -250,7 +250,7 @@ export default function VcmRegistryAnalyticsPage() {
             <Section title="Retirements by Project Type (2022–2024)">
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={RETIREMENT_BY_TYPE} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="type" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10 }} />
                   <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${fmt(v)} tCO₂e`} />
@@ -311,7 +311,7 @@ export default function VcmRegistryAnalyticsPage() {
                       <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', color: T.gold }}>{usd(p.price)}</td>
                       <td style={{ padding: '7px 10px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <div style={{ width: 40, height: 6, background: '#e5e0d8', borderRadius: 3 }}>
+                          <div style={{ width: 40, height: 6, background: '#e3e8ef', borderRadius: 3 }}>
                             <div style={{ width: `${p.quality}%`, height: 6, background: p.quality > 70 ? T.emerald : p.quality > 50 ? T.gold : T.red, borderRadius: 3 }} />
                           </div>
                           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{p.quality}</span>
@@ -334,7 +334,7 @@ export default function VcmRegistryAnalyticsPage() {
             <Section title="Credits Issued by Project Type">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={PT_DATA} layout="vertical" margin={{ top: 5, right: 20, left: 140, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" horizontal={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" horizontal={false} />
                   <XAxis type="number" tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis type="category" dataKey="type" width={140} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <Tooltip formatter={v => `${fmt(v)} tCO₂e`} />
@@ -348,7 +348,7 @@ export default function VcmRegistryAnalyticsPage() {
             <Section title="Average Credit Price by Project Type" badge="USD/tCO₂e">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={PT_DATA} layout="vertical" margin={{ top: 5, right: 20, left: 140, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" horizontal={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" horizontal={false} />
                   <XAxis type="number" tickFormatter={v => `$${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis type="category" dataKey="type" width={140} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <Tooltip formatter={v => `$${v}/tCO₂e`} />
@@ -363,7 +363,7 @@ export default function VcmRegistryAnalyticsPage() {
           <Section title="Price vs Volume Scatter (Project Type)">
             <ResponsiveContainer width="100%" height={260}>
               <ScatterChart margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="credits" name="Credits (M tCO₂e)" tickFormatter={v => fmt(v)}
                   label={{ value: 'Volume (tCO₂e)', position: 'insideBottom', offset: -10, fontSize: 11 }}
                   style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
@@ -388,7 +388,7 @@ export default function VcmRegistryAnalyticsPage() {
                   issued:  Math.round((200 + sr(i * 5) * 800) * 1e6),
                   retired: Math.round((80  + sr(i * 7) * 400) * 1e6),
                 }))} margin={{ top: 5, right: 10, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="region" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10 }} />
                   <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${fmt(v)} tCO₂e`} />

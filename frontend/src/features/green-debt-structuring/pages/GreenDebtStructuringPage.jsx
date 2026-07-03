@@ -56,7 +56,7 @@ const TABS = ['Issuance Dashboard', 'Framework Analyzer', 'Use of Proceeds', 'KP
 const SECTOR_COLORS = { Energy: '#dc2626', Transport: '#2563eb', Buildings: '#d97706', Water: '#0891b2', Waste: '#7c3aed', Agri: '#059669', Industry: '#db2777', Technology: '#65a30d' };
 const TYPE_COLORS = { 'Green Bond': '#059669', 'Sustainability-Linked Bond': '#2563eb', 'Transition Bond': '#d97706', 'Blue Bond': '#0891b2', 'SDG Bond': '#7c3aed', 'Social Bond': '#db2777', 'Sustainability Bond': '#65a30d' };
 
-const T = { bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f6f4f0', navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280', green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f', teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c', surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace' };
+const T = { bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f4f6f9', navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', textPri: '#1a1a2e', textSec: '#6b7280', green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706', sage: '#4d7c5f', teal: '#0f766e', indigo: '#4f46e5', purple: '#7c3aed', orange: '#ea580c', surfaceH: '#f1ede4', fontMono: 'JetBrains Mono, monospace' };
 export default function GreenDebtStructuringPage() {
 
   const [tab, setTab] = useState(0);

@@ -8,11 +8,11 @@ import {
 
 // ── Theme ───────────────────────────────────────────────────────────────────
 const T = {
-  bg: '#f6f4f0',
+  bg: '#f4f6f9',
   surface: '#ffffff',
-  surfaceH: '#f0ede7',
-  border: '#e5e0d8',
-  borderL: '#d5cfc5',
+  surfaceH: '#eef1f6',
+  border: '#e3e8ef',
+  borderL: '#cfd6e0',
   navy: '#1b3a5c',
   navyL: '#2c5a8c',
   gold: '#c5a96a',

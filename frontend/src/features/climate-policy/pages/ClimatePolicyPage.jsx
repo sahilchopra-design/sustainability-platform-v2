@@ -7,7 +7,7 @@ import { EMISSIONS_TARGETS, DATASET_METADATA } from '../../../data/countryEmissi
 /* ══════════════════════════════════════════════════════════════
    THEME
    ══════════════════════════════════════════════════════════════ */
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const PIE_COLORS = [T.navy, T.sage, T.gold, T.red, T.amber, '#7c3aed', '#0d9488'];
 const loadLS = (key) => { try { return JSON.parse(localStorage.getItem(key)) || null; } catch { return null; } };
 const LS_PORTFOLIO = 'ra_portfolio_v1';
@@ -321,7 +321,7 @@ const ClimatePolicyPage = () => {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
               {EMISSIONS_TARGETS.map((t, i) => (
-                <div key={t.iso3 || i} style={{ border: `1px solid #e5e0d8`, borderRadius: 8, padding: 14, background: '#f6f4f0' }}>
+                <div key={t.iso3 || i} style={{ border: `1px solid #e3e8ef`, borderRadius: 8, padding: 14, background: '#f4f6f9' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                     <div style={{ fontWeight: 700, color: '#1b3a5c', fontSize: 14 }}>{t.country}</div>
                     <span style={{
@@ -350,7 +350,7 @@ const ClimatePolicyPage = () => {
                     </div>
                   </div>
                   {t.notes && (
-                    <div style={{ fontSize: 11, color: '#5c6b7e', lineHeight: 1.5, borderTop: '1px solid #e5e0d8', paddingTop: 8 }}>{t.notes}</div>
+                    <div style={{ fontSize: 11, color: '#5c6b7e', lineHeight: 1.5, borderTop: '1px solid #e3e8ef', paddingTop: 8 }}>{t.notes}</div>
                   )}
                 </div>
               ))}

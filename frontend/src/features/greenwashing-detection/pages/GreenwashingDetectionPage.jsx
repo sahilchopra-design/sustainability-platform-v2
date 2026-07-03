@@ -6,8 +6,8 @@ import {
 } from 'recharts';
 
 const T = {
-  bg: '#f6f4f0', surface: '#ffffff', surfaceH: '#f0ede7', border: '#e5e0d8',
-  borderL: '#d5cfc5', navy: '#1b3a5c', navyL: '#2c5a8c', gold: '#c5a96a',
+  bg: '#f4f6f9', surface: '#ffffff', surfaceH: '#eef1f6', border: '#e3e8ef',
+  borderL: '#cfd6e0', navy: '#1b3a5c', navyL: '#2c5a8c', gold: '#c5a96a',
   goldL: '#d4be8a', sage: '#5a8a6a', sageL: '#7ba67d', teal: '#5a8a6a',
   text: '#1b3a5c', textSec: '#5c6b7e', textMut: '#9aa3ae', red: '#dc2626',
   green: '#16a34a', amber: '#d97706', blue: '#2563eb', orange: '#ea580c',
@@ -381,7 +381,7 @@ export default function GreenwashingDetectionPage() {
                   <tbody>
                     {rankedCompanies.map((c, idx) => (
                       <tr key={c.id} onClick={() => setSelectedCompany(c.id)}
-                        style={{ cursor: 'pointer', background: c.id === selectedCompany ? '#f0ede7' : 'transparent', borderBottom: `1px solid ${T.borderL}` }}>
+                        style={{ cursor: 'pointer', background: c.id === selectedCompany ? '#eef1f6' : 'transparent', borderBottom: `1px solid ${T.borderL}` }}>
                         <td style={{ padding: '8px 12px', fontFamily: T.mono, color: T.textMut }}>{idx + 1}</td>
                         <td style={{ padding: '8px 12px', fontWeight: 600 }}>{c.name}</td>
                         <td style={{ padding: '8px 12px', fontFamily: T.mono, color: T.textSec }}>{c.ticker}</td>

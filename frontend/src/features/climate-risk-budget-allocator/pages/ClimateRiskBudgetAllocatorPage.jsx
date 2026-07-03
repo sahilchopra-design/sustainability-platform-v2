@@ -6,7 +6,7 @@ import {
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
-  sub: '#f6f4f0', muted: '#6b7280', indigo: '#4f46e5', gold: '#b8860b',
+  sub: '#f4f6f9', muted: '#6b7280', indigo: '#4f46e5', gold: '#b8860b',
   green: '#16a34a', red: '#dc2626', blue: '#0369a1', amber: '#d97706',
   navy: '#1e3a5f', teal: '#0f766e', purple: '#7c3aed', orange: '#ea580c',
 };

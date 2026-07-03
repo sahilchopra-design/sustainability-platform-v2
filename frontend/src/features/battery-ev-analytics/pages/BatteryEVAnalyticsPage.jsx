@@ -84,7 +84,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -92,7 +92,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -131,7 +131,7 @@ export default function BatteryEVAnalyticsPage() {
           <Section title="Battery Pack Cost Learning Curve (2010–2030)" badge="$/kWh">
             <ResponsiveContainer width="100%" height={320}>
               <LineChart data={COST_CURVE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis tickFormatter={v => `$${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => v ? `$${v}/kWh` : 'N/A'} />
@@ -149,7 +149,7 @@ export default function BatteryEVAnalyticsPage() {
           <Section title="Chemistry Cost Comparison (2024 vs 2030)" badge="$/kWh">
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={CHEMISTRIES} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="name" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => `$${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `$${v}/kWh`} />
@@ -175,7 +175,7 @@ export default function BatteryEVAnalyticsPage() {
           <Section title="Global EV Sales — BEV + PHEV (Millions)" badge="2018–2030">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={EV_SALES} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis tickFormatter={v => `${v}M`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}M units`} />
@@ -202,7 +202,7 @@ export default function BatteryEVAnalyticsPage() {
                     <td style={{ padding: '8px 14px', fontWeight: 700 }}>{r.region}</td>
                     <td style={{ padding: '8px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <div style={{ width: 60, height: 6, background: '#e5e0d8', borderRadius: 3 }}>
+                        <div style={{ width: 60, height: 6, background: '#e3e8ef', borderRadius: 3 }}>
                           <div style={{ width: `${r.pen2024}%`, height: 6, background: r.pen2024 > 25 ? T.emerald : r.pen2024 > 10 ? T.teal : T.orange, borderRadius: 3 }} />
                         </div>
                         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700 }}>{r.pen2024}%</span>
@@ -224,7 +224,7 @@ export default function BatteryEVAnalyticsPage() {
           <Section title="Battery Chemistry Mix — Global Market Share (2020–2030)" badge="% of GWh shipped">
             <ResponsiveContainer width="100%" height={320}>
               <AreaChart data={CHEM_MIX} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}%`} />
@@ -282,7 +282,7 @@ export default function BatteryEVAnalyticsPage() {
           <Section title="Gigafactory Capacity by Manufacturer" badge="GWh">
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={GIGAFACTORIES} layout="vertical" margin={{ top: 5, right: 30, left: 160, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" horizontal={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" horizontal={false} />
                 <XAxis type="number" tickFormatter={v => `${v} GWh`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis type="category" dataKey="name" width={160} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10 }} />
                 <Tooltip formatter={v => `${v} GWh`} />
@@ -342,7 +342,7 @@ export default function BatteryEVAnalyticsPage() {
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace' }}>{c.cycle.toLocaleString()}</td>
                     <td style={{ padding: '7px 10px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <div style={{ width: 40, height: 5, background: '#e5e0d8', borderRadius: 3 }}>
+                        <div style={{ width: 40, height: 5, background: '#e3e8ef', borderRadius: 3 }}>
                           <div style={{ width: `${c.safety}%`, height: 5, background: c.safety > 90 ? T.emerald : c.safety > 75 ? T.teal : T.orange, borderRadius: 3 }} />
                         </div>
                         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{c.safety}</span>

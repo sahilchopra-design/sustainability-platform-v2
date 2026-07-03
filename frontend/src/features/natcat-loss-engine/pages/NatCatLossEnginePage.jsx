@@ -75,7 +75,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: `1px solid #e5e0d8`, borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: `1px solid #e3e8ef`, borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -83,7 +83,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy, fontFamily: 'DM Sans, sans-serif' }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -161,7 +161,7 @@ export default function NatCatLossEnginePage() {
             <Section title="Loss Distribution by Return Period" badge={scenario}>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={epFiltered.slice(0, 8)} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="returnPeriod" tickFormatter={v => `${v}yr`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => fmt(v)} labelFormatter={l => `${l}-Year Return Period`} />
@@ -174,7 +174,7 @@ export default function NatCatLossEnginePage() {
             <Section title="Peril Risk Amplification (RCP 8.5)" badge="Radar">
               <ResponsiveContainer width="100%" height={280}>
                 <RadarChart data={RADAR_DATA}>
-                  <PolarGrid stroke="#e5e0d8" />
+                  <PolarGrid stroke="#e3e8ef" />
                   <PolarAngleAxis dataKey="peril" style={{ fontSize: 11, fontFamily: 'DM Sans, sans-serif' }} />
                   <PolarRadiusAxis angle={90} domain={[0, 150]} tick={false} />
                   <Radar dataKey="current" name="Current" stroke="#6b7280" fill="#6b7280" fillOpacity={0.2} />
@@ -219,7 +219,7 @@ export default function NatCatLossEnginePage() {
           <Section title="Occurrence Exceedance Probability (OEP) Curves" badge="All Perils Combined">
             <ResponsiveContainer width="100%" height={380}>
               <LineChart data={EP_DATA} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="returnPeriod" tickFormatter={v => `${v}yr`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => fmt(v)} labelFormatter={l => `${l}-Year Return Period`} />
@@ -261,7 +261,7 @@ export default function NatCatLossEnginePage() {
             <Section title="Loss Amplification vs Current Climate">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={EP_DATA.filter(d => [10, 50, 100, 250, 500].includes(d.returnPeriod))} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="returnPeriod" tickFormatter={v => `${v}yr`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v.toFixed(1)}%`} />
@@ -286,7 +286,7 @@ export default function NatCatLossEnginePage() {
           <Section title="Frequency vs Severity Impact by Scenario">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={SCENARIO_COMPARISON} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="scenario" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `+${v}%`} />
@@ -299,7 +299,7 @@ export default function NatCatLossEnginePage() {
           <Section title="PML Comparison Across Scenarios (100yr vs 250yr)">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={SCENARIO_COMPARISON} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="scenario" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `$${(v / 1000).toFixed(1)}B`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => fmt(v * 1e6)} />
@@ -317,7 +317,7 @@ export default function NatCatLossEnginePage() {
           <Section title="Average Annual Loss by Peril — Climate Scenario Comparison" badge="USD Millions">
             <ResponsiveContainer width="100%" height={340}>
               <BarChart data={AAL_BY_PERIL} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="peril" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => fmt(v)} />
@@ -366,7 +366,7 @@ export default function NatCatLossEnginePage() {
           <Section title="Regional TIV & Insured Value">
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={PORTFOLIO_EXPOSURE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="region" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => fmt(v)} />

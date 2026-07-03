@@ -100,7 +100,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -108,7 +108,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -126,7 +126,7 @@ const ScoreBar = ({ score, max = 100 }) => {
   const c = score >= 75 ? T.emerald : score >= 60 ? T.gold : score >= 45 ? T.orange : T.red;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <div style={{ width: 60, height: 6, background: '#e5e0d8', borderRadius: 3 }}>
+      <div style={{ width: 60, height: 6, background: '#e3e8ef', borderRadius: 3 }}>
         <div style={{ width: `${(score / max) * 100}%`, height: 6, background: c, borderRadius: 3 }} />
       </div>
       <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: c, fontWeight: 700 }}>{score}</span>
@@ -184,7 +184,7 @@ export default function CreditIntegrityDDPage() {
                   { range: '40–54',  count: CREDITS.filter(c => c.overall >= 40 && c.overall < 55).length, fill: T.orange },
                   { range: '<40',    count: CREDITS.filter(c => c.overall < 40).length, fill: T.red },
                 ]} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="range" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis allowDecimals={false} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v} credits`} />
@@ -204,7 +204,7 @@ export default function CreditIntegrityDDPage() {
                   { dim: 'Co-Benefits',   score: Math.round(CREDITS.reduce((a, c) => a + c.cobenefits, 0)    / Math.max(1, CREDITS.length)) },
                   { dim: 'Safeguards',    score: Math.round(CREDITS.reduce((a, c) => a + c.safeguards, 0)    / Math.max(1, CREDITS.length)) },
                 ]}>
-                  <PolarGrid stroke="#e5e0d8" />
+                  <PolarGrid stroke="#e3e8ef" />
                   <PolarAngleAxis dataKey="dim" style={{ fontSize: 11, fontFamily: 'DM Sans, sans-serif' }} />
                   <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} />
                   <Radar dataKey="score" name="Portfolio Avg" stroke={T.teal} fill={T.teal} fillOpacity={0.3} />
@@ -218,7 +218,7 @@ export default function CreditIntegrityDDPage() {
           <Section title="Integrity vs Price Scatter">
             <ResponsiveContainer width="100%" height={260}>
               <ScatterChart margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="overall" name="Integrity Score" domain={[30, 100]}
                   label={{ value: 'Integrity Score', position: 'insideBottom', offset: -10, fontSize: 11 }}
                   style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
@@ -293,7 +293,7 @@ export default function CreditIntegrityDDPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
                 <ResponsiveContainer width="100%" height={280}>
                   <RadarChart data={radarData}>
-                    <PolarGrid stroke="#e5e0d8" />
+                    <PolarGrid stroke="#e3e8ef" />
                     <PolarAngleAxis dataKey="dim" style={{ fontSize: 11 }} />
                     <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} />
                     <Radar dataKey="score"     name={selected.id}  stroke={T.teal} fill={T.teal} fillOpacity={0.3} />
@@ -338,7 +338,7 @@ export default function CreditIntegrityDDPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20, alignItems: 'center' }}>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={CCP_DIMS} layout="vertical" margin={{ top: 5, right: 30, left: 110, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" horizontal={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" horizontal={false} />
                   <XAxis type="number" domain={[0, 100]} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis type="category" dataKey="principle" width={110} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v}/100`} />
@@ -415,7 +415,7 @@ export default function CreditIntegrityDDPage() {
                     <td style={{ padding: '8px 14px', fontFamily: 'JetBrains Mono, monospace', color: T.teal }}>{f.frequency}%</td>
                     <td style={{ padding: '8px 14px' }}><RiskBadge level={f.severity} /></td>
                     <td style={{ padding: '8px 14px' }}>
-                      <div style={{ width: 80, height: 6, background: '#e5e0d8', borderRadius: 3 }}>
+                      <div style={{ width: 80, height: 6, background: '#e3e8ef', borderRadius: 3 }}>
                         <div style={{ width: `${f.frequency}%`, height: 6, borderRadius: 3,
                           background: f.severity === 'Very High' ? T.red : f.severity === 'High' ? T.orange : T.gold }} />
                       </div>
@@ -429,7 +429,7 @@ export default function CreditIntegrityDDPage() {
           <Section title="Greenwashing Flag Frequency by Type">
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={GREENWASH_FLAGS} margin={{ top: 5, right: 20, left: 10, bottom: 30 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="flag" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 9 }} angle={-25} textAnchor="end" height={70} />
                 <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}% of credits`} />
@@ -455,7 +455,7 @@ export default function CreditIntegrityDDPage() {
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={INTEGRITY_TIERS.map(t => ({ ...t, premiumNum: parseFloat(t.premium) }))}
                 margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="tier" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}% vs market avg`} />
@@ -471,7 +471,7 @@ export default function CreditIntegrityDDPage() {
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={CREDITS.slice(0, 12).map(c => ({ id: c.id, market: c.price, adjusted: c.adjustedPrice }))}
                 margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="id" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <YAxis tickFormatter={v => `$${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `$${v.toFixed(2)}/t`} />

@@ -92,7 +92,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -100,7 +100,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -175,7 +175,7 @@ export default function CarbonForwardCurvePage() {
             <Section title="ETS Price Comparison (Local Currency/t)">
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={ETS_MARKETS} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="name" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10 }} />
                   <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={(v, _, p) => [`${p.payload.currency}${v}/t`, 'Price']} />
@@ -212,7 +212,7 @@ export default function CarbonForwardCurvePage() {
           <Section title="EU ETS Spot Price History (2020Q1–2024Q4)" badge="€/tCO₂e">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={EU_PRICE_HISTORY} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="period" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} interval={3} />
                 <YAxis tickFormatter={v => `€${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `€${v}/t`} />
@@ -290,7 +290,7 @@ export default function CarbonForwardCurvePage() {
           <Section title="EU ETS Forward Curve — Scenario Paths (2024–2050)" badge="€/tCO₂e">
             <ResponsiveContainer width="100%" height={320}>
               <LineChart data={FORWARD_SCENARIOS} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `€${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `€${v}/t`} />
@@ -342,7 +342,7 @@ export default function CarbonForwardCurvePage() {
           <Section title="VCM Carbon Price Scenarios (NGFS × IEA, 2024–2040)" badge="$/tCO₂e">
             <ResponsiveContainer width="100%" height={320}>
               <LineChart data={VCM_PRICE_DATA} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `$${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `$${v}/t`} />
@@ -385,7 +385,7 @@ export default function CarbonForwardCurvePage() {
           <Section title="Annual Cap Reduction Schedule — EU ETS, California, RGGI (MtCO₂e)">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={CAP_SCHEDULE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${fmt(v)} tCO₂e`} />

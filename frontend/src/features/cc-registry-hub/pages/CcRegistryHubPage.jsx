@@ -126,7 +126,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -134,7 +134,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -158,7 +158,7 @@ const WorkflowTable = ({ steps, color }) => (
     </thead>
     <tbody>
       {steps.map((s, i) => (
-        <tr key={s.step} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+        <tr key={s.step} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
           <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{s.step}</td>
           <td style={{ padding: '6px 10px', fontWeight: 600 }}>{s.name}</td>
           <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{s.duration}</td>
@@ -237,7 +237,7 @@ export default function CcRegistryHubPage() {
               </thead>
               <tbody>
                 {REGISTRY_DETAILS.map((r, i) => (
-                  <tr key={r.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={r.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '6px 8px', fontWeight: 700, color: r.color }}>{r.short}</td>
                     <td style={{ padding: '6px 8px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{fmt(r.issued_total)}</td>
                     <td style={{ padding: '6px 8px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{fmt(r.retired_total)}</td>
@@ -266,7 +266,7 @@ export default function CcRegistryHubPage() {
               </thead>
               <tbody>
                 {PROJECTS.map((p, i) => (
-                  <tr key={p.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={p.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{p.id}</td>
                     <td style={{ padding: '6px 10px', fontWeight: 600 }}>{p.name}</td>
                     <td style={{ padding: '6px 10px' }}><Badge text={p.registry} color={REGISTRIES.find(r => r.short === p.registry)?.color} /></td>
@@ -334,7 +334,7 @@ export default function CcRegistryHubPage() {
               </thead>
               <tbody>
                 {PROJECTS.filter(p => p.registry === 'Verra').map((p, i) => (
-                  <tr key={p.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={p.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{p.id}</td>
                     <td style={{ padding: '6px 10px', fontWeight: 600 }}>{p.name}</td>
                     <td style={{ padding: '6px 10px', fontSize: 11 }}>{p.methodology}</td>
@@ -397,7 +397,7 @@ export default function CcRegistryHubPage() {
               </thead>
               <tbody>
                 {PROJECTS.filter(p => p.registry === 'GS').map((p, i) => (
-                  <tr key={p.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={p.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{p.id}</td>
                     <td style={{ padding: '6px 10px', fontWeight: 600 }}>{p.name}</td>
                     <td style={{ padding: '6px 10px', fontSize: 11 }}>{p.methodology}</td>
@@ -464,7 +464,7 @@ export default function CcRegistryHubPage() {
                   { method: 'Bio-oil Sequestration', registry: 'Puro', perm: '1000+ years', scale: 'Medium', cost: '$150-400/t', mrv: 'Emerging' },
                   { method: 'Ocean Alkalinity', registry: 'Isometric', perm: '10000+ years', scale: 'High (future)', cost: '$100-300/t', mrv: 'Early' },
                 ].map((m, i) => (
-                  <tr key={m.method} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={m.method} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '6px 10px', fontWeight: 700, color: T.navy }}>{m.method}</td>
                     <td style={{ padding: '6px 10px' }}><Badge text={m.registry} color={m.registry === 'Puro' ? REGISTRIES[3].color : REGISTRIES[4].color} /></td>
                     <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{m.perm}</td>
@@ -500,7 +500,7 @@ export default function CcRegistryHubPage() {
             <Section title="Methodology Coverage by Registry" badge="Projects">
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={methodologyCoverage}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="methodology" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 9 }} angle={-25} textAnchor="end" height={60} />
                   <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                   <Tooltip />
@@ -518,7 +518,7 @@ export default function CcRegistryHubPage() {
             <Section title="Fee Comparison (Registration $)" badge="USD">
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={feeComparison}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="registry" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                   <Tooltip formatter={v => `$${v.toLocaleString()}`} />
@@ -531,7 +531,7 @@ export default function CcRegistryHubPage() {
             <Section title="Average Processing Timeline (days)">
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={feeComparison} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <YAxis dataKey="registry" type="category" width={50} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <XAxis type="number" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                   <Tooltip formatter={v => `${v} days`} />
@@ -546,7 +546,7 @@ export default function CcRegistryHubPage() {
           <Section title="Issued vs Retired by Registry">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={REGISTRY_DETAILS}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="short" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip formatter={v => `${fmt(v)} tCO2e`} />
@@ -607,7 +607,7 @@ export default function CcRegistryHubPage() {
               </thead>
               <tbody>
                 {ERROR_LOG.map((e, i) => (
-                  <tr key={e.id} style={{ background: e.severity === 'Critical' ? '#fef2f2' : i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={e.id} style={{ background: e.severity === 'Critical' ? '#fef2f2' : i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{e.id}</td>
                     <td style={{ padding: '6px 10px' }}>{e.registry}</td>
                     <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{e.timestamp}</td>
@@ -628,7 +628,7 @@ export default function CcRegistryHubPage() {
           <Section title="Latency by Registry (ms)">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={API_STATUS}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="registry" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip formatter={v => `${v}ms`} />
@@ -641,7 +641,7 @@ export default function CcRegistryHubPage() {
         </>
       )}
 
-      <div style={{ marginTop: 16, padding: '10px 14px', background: '#fff', border: '1px solid #e5e0d8', borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.gray, fontFamily: 'JetBrains Mono, monospace' }}>
+      <div style={{ marginTop: 16, padding: '10px 14px', background: '#fff', border: '1px solid #e3e8ef', borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.gray, fontFamily: 'JetBrains Mono, monospace' }}>
         <span>EP-BV3 Registry Integration Hub</span>
         <span>{REGISTRIES.length} registries | {PROJECTS.length} projects | {API_STATUS.filter(a => a.status === 'Connected').length}/{REGISTRIES.length} connected</span>
         <span>Sprint BV - Credit Retirement & Certificates</span>

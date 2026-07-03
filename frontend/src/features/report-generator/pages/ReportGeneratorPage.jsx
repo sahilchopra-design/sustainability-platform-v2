@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -8,7 +8,7 @@ import {
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 
 /* ── Theme ──────────────────────────────────────────────────────────────── */
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 /* ── Deterministic helpers ──────────────────────────────────────────────── */
 const seed = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i); return Math.abs(h); };
@@ -80,8 +80,8 @@ const renderHTML = (report, branding) => {
 .cover h1{font-size:42px;margin-bottom:16px}.cover .meta{opacity:.85;font-size:16px}
 .section{padding:48px 72px;page-break-before:always}.section h2{color:${pc};font-size:28px;border-bottom:3px solid ${sc};padding-bottom:8px;margin-bottom:24px}
 .section p{margin-bottom:16px;font-size:14px}.finding{padding:8px 16px;background:${sc}15;border-left:4px solid ${sc};margin-bottom:8px;font-size:13px}
-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:12px}th{background:${pc};color:#fff;padding:10px 12px;text-align:left}td{padding:8px 12px;border-bottom:1px solid #e5e0d8}
-.footer{text-align:center;padding:24px;color:#9aa3ae;font-size:11px;border-top:1px solid #e5e0d8}
+table{width:100%;border-collapse:collapse;margin:24px 0;font-size:12px}th{background:${pc};color:#fff;padding:10px 12px;text-align:left}td{padding:8px 12px;border-bottom:1px solid #e3e8ef}
+.footer{text-align:center;padding:24px;color:#9aa3ae;font-size:11px;border-top:1px solid #e3e8ef}
 </style></head><body>`;
   html += `<div class="cover"><h1>${report.meta.title}</h1><div class="meta"><p>Framework: ${report.meta.framework}</p><p>Client: ${report.meta.client?.fundName || 'N/A'}</p><p>Portfolio: ${report.meta.portfolio}</p><p>Date: ${new Date(report.meta.date).toLocaleDateString()}</p><p>Prepared by: ${report.meta.client?.preparedBy || 'AA Impact Analytics'}</p></div></div>`;
   html += `<div class="section"><h2>Table of Contents</h2><ol>${report.sections.map((sec, i) => `<li style="margin:6px 0">${sec.title}</li>`).join('')}</ol></div>`;

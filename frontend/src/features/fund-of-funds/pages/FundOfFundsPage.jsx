@@ -6,7 +6,7 @@ import {
   ComposedChart, Line
 } from 'recharts';
 
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const LS_KEY = 'ra_fof_portfolio_v1';
 
@@ -175,7 +175,7 @@ export default function FundOfFundsPage() {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'fof_portfolio.json'; a.click();
   };
   const exportHTML = () => {
-    const html = `<html><head><title>FoF ESG Report</title><style>body{font-family:Inter,sans-serif;padding:40px;color:#1b3a5c}table{border-collapse:collapse;width:100%}th,td{border:1px solid #e5e0d8;padding:8px;text-align:left;font-size:12px}th{background:#f0ede7}</style></head><body><h1>Fund-of-Funds ESG Portfolio Report</h1><p>Generated: ${new Date().toISOString().slice(0,10)}</p><p>Total Funds: ${funds.length} | Total Commitment: $${kpis.totalCommit}M | Weighted ESG: ${kpis.wESG.toFixed(1)}</p><table><tr>${Object.keys(funds[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr>${filtered.map(f=>`<tr>${Object.values(f).map(v=>`<td>${v??'-'}</td>`).join('')}</tr>`).join('')}</table></body></html>`;
+    const html = `<html><head><title>FoF ESG Report</title><style>body{font-family:Inter,sans-serif;padding:40px;color:#1b3a5c}table{border-collapse:collapse;width:100%}th,td{border:1px solid #e3e8ef;padding:8px;text-align:left;font-size:12px}th{background:#eef1f6}</style></head><body><h1>Fund-of-Funds ESG Portfolio Report</h1><p>Generated: ${new Date().toISOString().slice(0,10)}</p><p>Total Funds: ${funds.length} | Total Commitment: $${kpis.totalCommit}M | Weighted ESG: ${kpis.wESG.toFixed(1)}</p><table><tr>${Object.keys(funds[0]||{}).map(k=>`<th>${k}</th>`).join('')}</tr>${filtered.map(f=>`<tr>${Object.values(f).map(v=>`<td>${v??'-'}</td>`).join('')}</tr>`).join('')}</table></body></html>`;
     const blob = new Blob([html], { type:'text/html' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'fof_report.html'; a.click();
   };

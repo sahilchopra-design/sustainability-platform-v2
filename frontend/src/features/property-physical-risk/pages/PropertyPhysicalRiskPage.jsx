@@ -9,7 +9,7 @@ import {
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 /* ── Theme ────────────────────────────────────────────────────────────────────── */
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 /* ── Hazards ──────────────────────────────────────────────────────────────────── */
 const HAZARDS = [
@@ -67,7 +67,7 @@ const Section = ({ title, badge, children }) => (
   <div style={{ background:T.surface, borderRadius:12, border:`1px solid ${T.border}`, padding:24, marginBottom:20 }}>
     <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
       <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:T.text, fontFamily:T.font }}>{title}</h3>
-      {badge && <span style={{ fontSize:10, fontWeight:600, padding:'2px 8px', borderRadius:6, background:'#f0ede7', color:T.textSec }}>{badge}</span>}
+      {badge && <span style={{ fontSize:10, fontWeight:600, padding:'2px 8px', borderRadius:6, background:'#eef1f6', color:T.textSec }}>{badge}</span>}
     </div>
     {children}
   </div>

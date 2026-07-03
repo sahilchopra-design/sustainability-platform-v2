@@ -1,9 +1,9 @@
-﻿import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell, PieChart, Pie, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ScatterChart, Scatter, ZAxis } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
 
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const PIE_COLORS = [T.navy, T.gold, T.sage, T.red, T.amber, '#7c3aed', '#0d9488', '#ec4899'];
 
 /* ================================================================
@@ -63,8 +63,8 @@ const DEP_MATRIX = {
 };
 
 const RATING_SCORES = { VH: 5, H: 4, M: 3, L: 2, N: 0 };
-const RATING_COLORS = { VH: '#dc2626', H: '#ea580c', M: '#d97706', L: '#16a34a', N: '#e5e0d8' };
-const RATING_BG = { VH: '#dc262620', H: '#ea580c18', M: '#d9770615', L: '#16a34a12', N: '#f6f4f0' };
+const RATING_COLORS = { VH: '#dc2626', H: '#ea580c', M: '#d97706', L: '#16a34a', N: '#e3e8ef' };
+const RATING_BG = { VH: '#dc262620', H: '#ea580c18', M: '#d9770615', L: '#16a34a12', N: '#f4f6f9' };
 const RATING_TEXT_COLORS = { VH: '#dc2626', H: '#ea580c', M: '#d97706', L: '#16a34a', N: '#9aa3ae' };
 
 /* ================================================================

@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 const T = {
   navy: '#1b3a5c', gold: '#c5a96a', sage: '#5a8a6a',
   card: '#ffffff', border: '#e2ddd5', sub: '#6b7280',
-  red: '#dc2626', amber: '#d97706', green: '#16a34a', bg: '#f6f4f0',
+  red: '#dc2626', amber: '#d97706', green: '#16a34a', bg: '#f4f6f9',
   font: "'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
 };
 
@@ -71,7 +71,7 @@ export default function DataUploadPanel({
       <div onClick={onToggle} style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '12px 18px', cursor: 'pointer',
-        background: isOpen ? T.navy : '#f0ede7',
+        background: isOpen ? T.navy : '#eef1f6',
         borderBottom: isOpen ? `1px solid #244a6e` : 'none',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

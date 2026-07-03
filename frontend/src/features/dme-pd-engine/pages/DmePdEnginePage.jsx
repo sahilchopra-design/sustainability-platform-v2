@@ -11,7 +11,7 @@ import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,
         LineChart,Line,ComposedChart,ReferenceLine} from 'recharts';
 
 /* ── Theme ─────────────────────────────────────────────────────────────────── */
-const T={bg:'#f7f4ef',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',
+const T={bg:'#f7f4ef',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',
   navy:'#1b3a5c',gold:'#c5a96a',slate:'#64748b',teal:'#0e7490',
   text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',
   red:'#dc2626',green:'#059669',amber:'#d97706',blue:'#2563eb',purple:'#7c3aed',

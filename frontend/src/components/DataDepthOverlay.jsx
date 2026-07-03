@@ -4,7 +4,7 @@ import { useDataDepth } from '../context/DataDepthContext';
 import { MODULE_METADATA, findMetricByText } from '../data/moduleMetadata';
 
 const T = {
-  bg: '#f6f4f0', surface: '#ffffff', border: '#e5e0d8', navy: '#1b3a5c',
+  bg: '#f4f6f9', surface: '#ffffff', border: '#e3e8ef', navy: '#1b3a5c',
   gold: '#c5a96a', textSec: '#5c6b7e', textMut: '#9aa3ae',
   red: '#dc2626', green: '#16a34a', amber: '#d97706', blue: '#2563eb',
   teal: '#0891b2', purple: '#7c3aed',

@@ -81,7 +81,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -89,7 +89,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -199,7 +199,7 @@ export default function CcRetirementWorkflowPage() {
             <Section title="Monthly Retirements (2024)" badge="tCO2e">
               <ResponsiveContainer width="100%" height={260}>
                 <ComposedChart data={monthlyRetirements}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="month" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <YAxis yAxisId="l" tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                   <YAxis yAxisId="r" orientation="right" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
@@ -249,7 +249,7 @@ export default function CcRetirementWorkflowPage() {
                 </thead>
                 <tbody>
                   {filtered.map((t, i) => (
-                    <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                    <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                       <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{t.id}</td>
                       <td style={{ padding: '7px 10px', fontWeight: 600 }}>{t.project}</td>
                       <td style={{ padding: '7px 10px' }}>{t.registry}</td>
@@ -321,7 +321,7 @@ export default function CcRetirementWorkflowPage() {
                   {BENEFICIARIES.map(b => (
                     <div key={b.id} onClick={() => setSelectedBeneficiary(b.id)}
                       style={{
-                        border: `2px solid ${selectedBeneficiary === b.id ? T.teal : '#e5e0d8'}`,
+                        border: `2px solid ${selectedBeneficiary === b.id ? T.teal : '#e3e8ef'}`,
                         borderRadius: 8, padding: 14, cursor: 'pointer',
                         background: selectedBeneficiary === b.id ? '#e0f2f1' : '#fff',
                       }}>
@@ -341,7 +341,7 @@ export default function CcRetirementWorkflowPage() {
                   {REGISTRIES.map((r, i) => (
                     <div key={r} onClick={() => setSelectedRegistry(r)}
                       style={{
-                        border: `2px solid ${selectedRegistry === r ? REG_COLORS[i] : '#e5e0d8'}`,
+                        border: `2px solid ${selectedRegistry === r ? REG_COLORS[i] : '#e3e8ef'}`,
                         borderRadius: 8, padding: 16, cursor: 'pointer', textAlign: 'center',
                         background: selectedRegistry === r ? `${REG_COLORS[i]}11` : '#fff',
                       }}>
@@ -361,7 +361,7 @@ export default function CcRetirementWorkflowPage() {
                   {PURPOSE_TYPES.map(p => (
                     <div key={p} onClick={() => setSelectedPurpose(p)}
                       style={{
-                        border: `2px solid ${selectedPurpose === p ? T.teal : '#e5e0d8'}`,
+                        border: `2px solid ${selectedPurpose === p ? T.teal : '#e3e8ef'}`,
                         borderRadius: 6, padding: 12, cursor: 'pointer',
                         background: selectedPurpose === p ? '#e0f2f1' : '#fff',
                       }}>
@@ -435,7 +435,7 @@ export default function CcRetirementWorkflowPage() {
             <Section title="Submission Pipeline by Registry">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={submissionByRegistry}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="registry" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                   <Tooltip />
@@ -450,7 +450,7 @@ export default function CcRetirementWorkflowPage() {
             <Section title="Average Processing Time (days)">
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={submissionByRegistry} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <YAxis dataKey="registry" type="category" width={100} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <XAxis type="number" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                   <Tooltip />
@@ -471,7 +471,7 @@ export default function CcRetirementWorkflowPage() {
               </thead>
               <tbody>
                 {TRANSACTIONS.filter(t => ['Pending', 'Processing'].includes(t.status)).map((t, i) => (
-                  <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{t.id}</td>
                     <td style={{ padding: '7px 10px', fontWeight: 600 }}>{t.project}</td>
                     <td style={{ padding: '7px 10px' }}>{t.registry}</td>
@@ -511,7 +511,7 @@ export default function CcRetirementWorkflowPage() {
                   const bTxns = TRANSACTIONS.filter(t => t.beneficiaryId === b.id);
                   const bVol = bTxns.reduce((a, t) => a + t.quantity, 0);
                   return (
-                    <tr key={b.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                    <tr key={b.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                       <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{b.id}</td>
                       <td style={{ padding: '7px 10px', fontWeight: 600 }}>{b.name}</td>
                       <td style={{ padding: '7px 10px' }}><Badge text={b.type} color={T.teal} /></td>
@@ -533,7 +533,7 @@ export default function CcRetirementWorkflowPage() {
                 volume: TRANSACTIONS.filter(t => t.beneficiaryId === b.id).reduce((a, t) => a + t.quantity, 0),
                 count: TRANSACTIONS.filter(t => t.beneficiaryId === b.id).length,
               }))}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="name" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip formatter={v => typeof v === 'number' ? v.toLocaleString() : v} />
@@ -567,7 +567,7 @@ export default function CcRetirementWorkflowPage() {
                 </thead>
                 <tbody>
                   {TRANSACTIONS.map((t, i) => (
-                    <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                    <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                       <td style={{ padding: '6px 8px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{t.id}</td>
                       <td style={{ padding: '6px 8px', fontWeight: 600, fontSize: 11 }}>{t.project}</td>
                       <td style={{ padding: '6px 8px' }}>{t.registry}</td>
@@ -622,7 +622,7 @@ export default function CcRetirementWorkflowPage() {
               </thead>
               <tbody>
                 {COMPLIANCE_FRAMEWORKS.map((f, i) => (
-                  <tr key={f.framework} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={f.framework} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '7px 12px', fontWeight: 700, color: T.navy }}>{f.framework}</td>
                     <td style={{ padding: '7px 12px' }}>{f.scope}</td>
                     <td style={{ padding: '7px 12px', fontSize: 11 }}>{f.eligible_registries}</td>
@@ -683,7 +683,7 @@ export default function CcRetirementWorkflowPage() {
         </>
       )}
 
-      <div style={{ marginTop: 16, padding: '10px 14px', background: '#fff', border: '1px solid #e5e0d8', borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.gray, fontFamily: 'JetBrains Mono, monospace' }}>
+      <div style={{ marginTop: 16, padding: '10px 14px', background: '#fff', border: '1px solid #e3e8ef', borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.gray, fontFamily: 'JetBrains Mono, monospace' }}>
         <span>EP-BV1 Retirement Workflow Engine</span>
         <span>{TRANSACTIONS.length} transactions | {BENEFICIARIES.length} beneficiaries | {REGISTRIES.length} registries</span>
         <span>Sprint BV - Credit Retirement & Certificates</span>

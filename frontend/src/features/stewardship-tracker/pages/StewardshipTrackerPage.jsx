@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { GLOBAL_COMPANY_MASTER, globalSearch } from '../../../data/globalCompanyMaster';
 
 /* ── Theme ───────────────────────────────────────────────────────────────────── */
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',blue:'#2563eb',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',card:'#ffffff',sub:'#5c6b7e',indigo:'#4f46e5',blue:'#2563eb',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const ESC_COLORS = { 1: '#16a34a', 2: '#65a30d', 3: '#d97706', 4: '#ea580c', 5: '#dc2626' };
 const ESC_LABELS = { 1: 'Monitoring', 2: 'Watching', 3: 'Engaging', 4: 'Escalating', 5: 'Divest-Ready' };
@@ -348,8 +348,8 @@ export default function StewardshipTrackerPage() {
           { label: 'Active', value: kpis.active, color: T.blue, bg: '#dbeafe' },
           { label: 'Success Rate', value: `${kpis.successRate}%`, color: T.green, bg: '#dcfce7' },
           { label: 'Avg Escalation', value: kpis.avgEsc, color: T.amber, bg: '#fef3c7' },
-          { label: 'Top Sector', value: kpis.topSector, color: T.navy, bg: '#f0ede7', small: true },
-          { label: 'Top Topic', value: kpis.topTopic, color: T.navy, bg: '#f0ede7', small: true },
+          { label: 'Top Sector', value: kpis.topSector, color: T.navy, bg: '#eef1f6', small: true },
+          { label: 'Top Topic', value: kpis.topTopic, color: T.navy, bg: '#eef1f6', small: true },
         ].map(k => (
           <div key={k.label} style={{ background: k.bg, border: `1px solid ${T.border}`, borderRadius: 10, padding: '14px 16px' }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: T.textMut, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{k.label}</div>

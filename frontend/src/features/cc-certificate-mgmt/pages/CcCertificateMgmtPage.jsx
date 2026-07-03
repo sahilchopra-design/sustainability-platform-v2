@@ -105,7 +105,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -113,7 +113,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -236,7 +236,7 @@ export default function CcCertificateMgmtPage() {
                 </thead>
                 <tbody>
                   {filtered.map((c, i) => (
-                    <tr key={c.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8', cursor: 'pointer' }}
+                    <tr key={c.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef', cursor: 'pointer' }}
                       onClick={() => setSelectedCert(c)}>
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{c.id}</td>
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 9 }}>{c.serial_start}...{c.serial_end.split('-').pop()}</td>
@@ -257,7 +257,7 @@ export default function CcCertificateMgmtPage() {
           <Section title="Inventory by Registry">
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={inventoryByRegistry}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="registry" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip formatter={v => `${fmt(v)} tCO2e`} />
@@ -282,7 +282,7 @@ export default function CcCertificateMgmtPage() {
 
           {selectedCert ? (
             <Section title="Certificate Preview" badge="DRAFT">
-              <div style={{ border: '2px solid #e5e0d8', borderRadius: 12, padding: 24, background: '#fefdfb', maxWidth: 640 }}>
+              <div style={{ border: '2px solid #e3e8ef', borderRadius: 12, padding: 24, background: '#fefdfb', maxWidth: 640 }}>
                 <div style={{ textAlign: 'center', marginBottom: 20 }}>
                   <div style={{ fontSize: 10, color: T.teal, fontFamily: 'JetBrains Mono, monospace', letterSpacing: 2, marginBottom: 4 }}>CARBON CREDIT RETIREMENT CERTIFICATE</div>
                   <div style={{ width: 60, height: 3, background: T.gold, margin: '0 auto 12px' }} />
@@ -317,7 +317,7 @@ export default function CcCertificateMgmtPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 12 }}>
                 {CREDITS.filter(c => c.status === 'Retired').slice(0, 6).map(c => (
                   <div key={c.id} onClick={() => setSelectedCert(c)}
-                    style={{ border: '1px solid #e5e0d8', borderRadius: 8, padding: 14, cursor: 'pointer', background: '#fff' }}>
+                    style={{ border: '1px solid #e3e8ef', borderRadius: 8, padding: 14, cursor: 'pointer', background: '#fff' }}>
                     <div style={{ fontWeight: 700, fontSize: 12, color: T.navy }}>{c.project}</div>
                     <div style={{ fontSize: 11, color: T.gray, marginTop: 4 }}>{c.registry} | {c.vintage} | {c.quantity.toLocaleString()} tCO2e</div>
                     <div style={{ fontSize: 10, color: T.teal, marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{c.id}</div>
@@ -350,7 +350,7 @@ export default function CcCertificateMgmtPage() {
               </thead>
               <tbody>
                 {BATCHES.map((b, i) => (
-                  <tr key={b.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={b.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 11 }}>{b.id}</td>
                     <td style={{ padding: '7px 10px' }}>{b.registry}</td>
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace' }}>{b.project_count}</td>
@@ -368,7 +368,7 @@ export default function CcCertificateMgmtPage() {
           <Section title="Batch Volume by Registry">
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={BATCHES}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="id" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip formatter={v => typeof v === 'number' ? v.toLocaleString() : v} />
@@ -402,7 +402,7 @@ export default function CcCertificateMgmtPage() {
               </thead>
               <tbody>
                 {TRANSFERS.map((t, i) => (
-                  <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={t.id} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{t.id}</td>
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{t.credit_id}</td>
                     <td style={{ padding: '7px 10px' }}>{t.from}</td>
@@ -425,7 +425,7 @@ export default function CcCertificateMgmtPage() {
                 { account: 'Retirement Acct', inbound: Math.round(40000 + sr(5) * 60000), outbound: 0 },
                 { account: 'Registry Direct', inbound: Math.round(30000 + sr(6) * 50000), outbound: Math.round(20000 + sr(7) * 40000) },
               ]}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="account" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip formatter={v => `${v.toLocaleString()} tCO2e`} />
@@ -451,7 +451,7 @@ export default function CcCertificateMgmtPage() {
           <Section title="Credits by Vintage Year (Stacked)" badge="tCO2e + Price">
             <ResponsiveContainer width="100%" height={300}>
               <ComposedChart data={vintageData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis yAxisId="l" tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <YAxis yAxisId="r" orientation="right" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
@@ -477,7 +477,7 @@ export default function CcCertificateMgmtPage() {
               </thead>
               <tbody>
                 {agingAnalysis.map((a, i) => (
-                  <tr key={a.vintage} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={a.vintage} style={{ background: i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '7px 12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{a.vintage}</td>
                     <td style={{ padding: '7px 12px', fontFamily: 'JetBrains Mono, monospace' }}>{a.age_years}</td>
                     <td style={{ padding: '7px 12px', fontFamily: 'JetBrains Mono, monospace' }}>{a.unsold_qty.toLocaleString()}</td>
@@ -494,7 +494,7 @@ export default function CcCertificateMgmtPage() {
           <Section title="Price by Vintage">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={vintageData.filter(v => v.avg_price > 0)}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip formatter={v => `$${v}/t`} />
@@ -526,7 +526,7 @@ export default function CcCertificateMgmtPage() {
               </thead>
               <tbody>
                 {AUDIT_ENTRIES.map((a, i) => (
-                  <tr key={a.id} style={{ background: a.action.includes('Flagged') || a.action.includes('Revoked') ? '#fef2f2' : i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e5e0d8' }}>
+                  <tr key={a.id} style={{ background: a.action.includes('Flagged') || a.action.includes('Revoked') ? '#fef2f2' : i % 2 ? '#faf9f6' : '#fff', borderBottom: '1px solid #e3e8ef' }}>
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{a.id}</td>
                     <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{a.timestamp}</td>
                     <td style={{ padding: '7px 10px', fontWeight: 600 }}>{a.action}</td>
@@ -546,7 +546,7 @@ export default function CcCertificateMgmtPage() {
                 AUDIT_ENTRIES.forEach(a => { counts[a.action] = (counts[a.action] || 0) + 1; });
                 return Object.entries(counts).map(([action, count]) => ({ action: action.length > 18 ? action.slice(0, 16) + '..' : action, count }));
               })()}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="action" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 9 }} angle={-30} textAnchor="end" height={60} />
                 <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <Tooltip />
@@ -557,7 +557,7 @@ export default function CcCertificateMgmtPage() {
         </>
       )}
 
-      <div style={{ marginTop: 16, padding: '10px 14px', background: '#fff', border: '1px solid #e5e0d8', borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.gray, fontFamily: 'JetBrains Mono, monospace' }}>
+      <div style={{ marginTop: 16, padding: '10px 14px', background: '#fff', border: '1px solid #e3e8ef', borderRadius: 6, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.gray, fontFamily: 'JetBrains Mono, monospace' }}>
         <span>EP-BV2 Certificate & Inventory Management</span>
         <span>{CREDITS.length} credits | {BATCHES.length} batches | Vintages {VINTAGES[0]}-{VINTAGES[VINTAGES.length - 1]}</span>
         <span>Sprint BV - Credit Retirement & Certificates</span>

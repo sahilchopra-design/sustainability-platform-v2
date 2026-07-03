@@ -99,7 +99,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -107,7 +107,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -167,7 +167,7 @@ export default function ETCommodityRiskPage() {
                       <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace' }}>{p.weight}%</td>
                       {[p.li_exposure, p.co_exposure, p.ni_exposure, p.cu_exposure, p.ree_exposure].map((v, vi) => (
                         <td key={vi} style={{ padding: '7px 10px' }}>
-                          <div style={{ width: 32, height: 6, background: '#e5e0d8', borderRadius: 3 }}>
+                          <div style={{ width: 32, height: 6, background: '#e3e8ef', borderRadius: 3 }}>
                             <div style={{ width: `${v}%`, height: 6, background: v > 25 ? T.red : v > 15 ? T.orange : T.teal, borderRadius: 3 }} />
                           </div>
                         </td>
@@ -176,7 +176,7 @@ export default function ETCommodityRiskPage() {
                       <td style={{ padding: '7px 10px', fontFamily: 'JetBrains Mono, monospace', color: +p.revenue_at_risk_pct > 10 ? T.red : T.orange }}>{p.revenue_at_risk_pct}%</td>
                       <td style={{ padding: '7px 10px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <div style={{ width: 36, height: 5, background: '#e5e0d8', borderRadius: 3 }}>
+                          <div style={{ width: 36, height: 5, background: '#e3e8ef', borderRadius: 3 }}>
                             <div style={{ width: `${p.transition_score}%`, height: 5, background: p.transition_score > 70 ? T.emerald : p.transition_score > 50 ? T.teal : T.orange, borderRadius: 3 }} />
                           </div>
                           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>{p.transition_score}</span>
@@ -213,7 +213,7 @@ export default function ETCommodityRiskPage() {
           <Section title="Demand Multiplier by Mineral — NGFS Scenarios (2030 vs 2024)">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={DEMAND_SURGE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="mineral" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `${v}×`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}× current demand`} />
@@ -228,7 +228,7 @@ export default function ETCommodityRiskPage() {
           <Section title="Price Impact by Scenario (% increase vs today)">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={PRICE_SCENARIOS} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="mineral" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `+${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `+${v}% price increase`} />
@@ -254,7 +254,7 @@ export default function ETCommodityRiskPage() {
           <Section title="Supply Chain Concentration by Stage (HHI & Geo Risk)" badge="HHI: 0=competitive, 1=monopoly">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={SUPPLY_CHAIN_RISK} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="stage" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                 <YAxis yAxisId="left"  domain={[0, 1]}   tickFormatter={v => v.toFixed(2)}       style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis yAxisId="right" orientation="right" domain={[0, 100]} tickFormatter={v => `${v}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
@@ -307,7 +307,7 @@ export default function ETCommodityRiskPage() {
           <Section title="Revenue at Risk — Mineral Price Shock Scenarios" badge="USD Billions">
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={REVENUE_AT_RISK} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="shock" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} angle={-15} textAnchor="end" height={60} />
                 <YAxis tickFormatter={v => `$${v}B`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `$${v}B`} />
@@ -351,7 +351,7 @@ export default function ETCommodityRiskPage() {
           <Section title="Mineral Exposure by Sector" badge="Exposure Score 0–100">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={SECTOR_EXPOSURE} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="sector" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10 }} angle={-15} textAnchor="end" height={60} />
                 <YAxis style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip />
@@ -368,7 +368,7 @@ export default function ETCommodityRiskPage() {
           <Section title="Transition Score vs Mineral Exposure (Portfolio Companies)">
             <ResponsiveContainer width="100%" height={260}>
               <ScatterChart margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="total_mineral_exposure" name="Mineral Exposure"
                   label={{ value: 'Mineral Exposure Score', position: 'insideBottom', offset: -10, fontSize: 11 }}
                   style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />

@@ -8,7 +8,7 @@ import { IEA_GLOBAL_JOBS, IEA_COUNTRY_CLEAN_ENERGY_JOBS, IRENA_RENEWABLE_CAPACIT
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 const T = {
-  bg: '#f8f6f0', surface: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', surfaceH: '#f6f4f0',
+  bg: '#f8f6f0', surface: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', surfaceH: '#f4f6f9',
   navy: '#1e3a5f', gold: '#b8860b', cream: '#faf8f3', text: '#1a1a2e', textSec: '#6b7280',
   green: '#16a34a', red: '#dc2626', amber: '#d97706', sage: '#4d7c5f',
   teal: '#0f766e', navyL: '#2c5a8c', fontMono: 'JetBrains Mono, monospace',

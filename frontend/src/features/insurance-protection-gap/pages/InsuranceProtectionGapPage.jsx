@@ -95,7 +95,7 @@ const TabBar = ({ tabs, active, onSelect }) => (
 );
 
 const Kpi = ({ label, value, sub, color }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: '14px 18px', flex: 1 }}>
     <div style={{ fontSize: 11, color: T.gray, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</div>
     <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: color || T.navy }}>{value}</div>
     {sub && <div style={{ fontSize: 11, color: T.gray, marginTop: 3 }}>{sub}</div>}
@@ -103,7 +103,7 @@ const Kpi = ({ label, value, sub, color }) => (
 );
 
 const Section = ({ title, children, badge }) => (
-  <div style={{ background: '#fff', border: '1px solid #e5e0d8', borderRadius: 8, padding: 20, marginBottom: 20 }}>
+  <div style={{ background: '#fff', border: '1px solid #e3e8ef', borderRadius: 8, padding: 20, marginBottom: 20 }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
       <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: T.navy }}>{title}</h3>
       {badge && <span style={{ fontSize: 10, background: T.navy, color: '#fff', padding: '2px 8px', borderRadius: 4, fontFamily: 'JetBrains Mono, monospace' }}>{badge}</span>}
@@ -157,7 +157,7 @@ export default function InsuranceProtectionGapPage() {
           <Section title="Global Protection Gap Trend (2010–2024)" badge="USD Billions">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={GAP_TREND} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => fmt(v)} />
@@ -173,7 +173,7 @@ export default function InsuranceProtectionGapPage() {
             <Section title="Protection Gap by Region" badge="USD Billions (uninsured)">
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={REGION_GAP} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" horizontal={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" horizontal={false} />
                   <XAxis type="number" tickFormatter={v => `$${v}B`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis type="category" dataKey="region" width={80} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <Tooltip formatter={v => `$${v}B`} />
@@ -187,7 +187,7 @@ export default function InsuranceProtectionGapPage() {
             <Section title="Climate Risk vs Insurance Penetration" badge="Bubble = Gap Size">
               <ResponsiveContainer width="100%" height={240}>
                 <ScatterChart margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="climate_risk" name="Climate Risk Score" tickFormatter={v => `${v}`}
                     label={{ value: 'Climate Risk Score', position: 'insideBottom', offset: -10, fontSize: 11 }}
                     style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
@@ -204,7 +204,7 @@ export default function InsuranceProtectionGapPage() {
           <Section title="Gap % Trend (Uninsured / Total Loss)">
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={GAP_TREND} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="year" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <YAxis tickFormatter={v => `${v}%`} domain={[50, 75]} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}%`} />
@@ -275,7 +275,7 @@ export default function InsuranceProtectionGapPage() {
           <Section title="Penetration Rate by Country">
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={filteredCountries} margin={{ top: 5, right: 20, left: 10, bottom: 30 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="name" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} angle={-30} textAnchor="end" height={60} />
                 <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}%`} />
@@ -294,7 +294,7 @@ export default function InsuranceProtectionGapPage() {
           <Section title="Insurance Penetration by Peril & Income Group" badge="% of Economic Loss Insured">
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={PERIL_PENETRATION} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="peril" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                 <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => `${v}%`} />
@@ -314,14 +314,14 @@ export default function InsuranceProtectionGapPage() {
                   avg_pen: Math.round(72 - i * 19 + sr(i * 7) * 8),
                   target:  Math.round(80 - i * 10),
                 }))} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="group" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v}%`} />
                   <Bar dataKey="avg_pen" name="Actual Penetration" radius={[3, 3, 0, 0]}>
                     {INCOME_GROUPS.map((_, i) => <Cell key={i} fill={INCOME_COLORS[i]} />)}
                   </Bar>
-                  <Bar dataKey="target" name="Target Penetration" fill="#e5e0d8" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="target" name="Target Penetration" fill="#e3e8ef" radius={[3, 3, 0, 0]} />
                   <Legend />
                 </BarChart>
               </ResponsiveContainer>
@@ -335,7 +335,7 @@ export default function InsuranceProtectionGapPage() {
                   { region: 'Lat Am',     pen: 12, mandated: false },
                   { region: 'ME & Africa', pen: 6, mandated: false },
                 ]} layout="vertical" margin={{ top: 5, right: 30, left: 60, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" horizontal={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" horizontal={false} />
                   <XAxis type="number" tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <YAxis type="category" dataKey="region" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v}%`} />
@@ -361,7 +361,7 @@ export default function InsuranceProtectionGapPage() {
           <Section title="Protection Gap Under Climate Scenarios" badge="USD Billions">
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={CLIMATE_STRESS} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                 <XAxis dataKey="scenario" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12 }} />
                 <YAxis tickFormatter={v => fmt(v)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                 <Tooltip formatter={v => fmt(v)} />
@@ -376,7 +376,7 @@ export default function InsuranceProtectionGapPage() {
             <Section title="Penetration Rate Under Scenarios">
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={CLIMATE_STRESS} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" />
                   <XAxis dataKey="scenario" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10 }} />
                   <YAxis tickFormatter={v => `${v}%`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
                   <Tooltip formatter={v => `${v}%`} />
@@ -393,7 +393,7 @@ export default function InsuranceProtectionGapPage() {
                 { market: 'Australian Coastal', risk: 'Cyclone + Surge',   trend: 'Premium spikes +180%' },
                 { market: 'Dutch Delta',        risk: 'Flood',             trend: 'Mandatory scheme' },
               ].map((r, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < 4 ? '1px solid #e5e0d8' : 'none' }}>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < 4 ? '1px solid #e3e8ef' : 'none' }}>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 13, color: T.navy }}>{r.market}</div>
                     <div style={{ fontSize: 12, color: T.purple }}>{r.risk}</div>
@@ -449,7 +449,7 @@ export default function InsuranceProtectionGapPage() {
           <Section title="Coverage Capacity by Scheme">
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={PP_SCHEMES} layout="vertical" margin={{ top: 5, right: 30, left: 120, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e0d8" horizontal={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e3e8ef" horizontal={false} />
                 <XAxis type="number" tickFormatter={v => fmt(v * 1e9)} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }} />
                 <YAxis type="category" dataKey="name" width={120} style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11 }} />
                 <Tooltip formatter={v => fmt(v * 1e9)} />

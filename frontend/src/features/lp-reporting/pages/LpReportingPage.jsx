@@ -6,7 +6,7 @@ import {
   PolarRadiusAxis, PieChart, Pie, Cell, ComposedChart, Line
 } from 'recharts';
 
-const T={bg:'#f6f4f0',surface:'#ffffff',surfaceH:'#f0ede7',border:'#e5e0d8',borderL:'#d5cfc5',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
+const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const LS_TEMPLATES = 'ra_lp_templates_v1';
 const LS_CONFIG = 'ra_lp_config_v1';
@@ -226,7 +226,7 @@ export default function LpReportingPage() {
   const exportHTML = () => {
     const edciRows = yoyData.map(d => `<tr><td>${d.id}</td><td>${d.category}</td><td>${d.metric}</td><td>${d.current}</td><td>${d.prior}</td><td>${d.benchmark??'-'}</td><td style="color:${d.better?'#16a34a':'#dc2626'}">${d.change!=null?(d.change>0?'+':'')+d.change.toFixed(1)+'%':'N/A'}</td><td>${d.quality}</td></tr>`).join('');
     const paiRows = PAI_INDICATORS.map(p => `<tr><td>${p.id}</td><td>${p.indicator}</td><td>${p.category}</td><td>${p.value}</td><td>${p.coverage}</td></tr>`).join('');
-    const html = `<!DOCTYPE html><html><head><title>LP ESG Report - ${clientName}</title><style>body{font-family:Inter,sans-serif;padding:40px;color:#1b3a5c;max-width:1000px;margin:auto}h1{color:#1b3a5c}h2{color:#2c5a8c;border-bottom:2px solid #e5e0d8;padding-bottom:8px}table{border-collapse:collapse;width:100%;margin-bottom:24px}th,td{border:1px solid #e5e0d8;padding:8px;text-align:left;font-size:12px}th{background:#f0ede7;font-weight:700}.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-right:6px}</style></head><body>
+    const html = `<!DOCTYPE html><html><head><title>LP ESG Report - ${clientName}</title><style>body{font-family:Inter,sans-serif;padding:40px;color:#1b3a5c;max-width:1000px;margin:auto}h1{color:#1b3a5c}h2{color:#2c5a8c;border-bottom:2px solid #e3e8ef;padding-bottom:8px}table{border-collapse:collapse;width:100%;margin-bottom:24px}th,td{border:1px solid #e3e8ef;padding:8px;text-align:left;font-size:12px}th{background:#eef1f6;font-weight:700}.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-right:6px}</style></head><body>
     <h1>LP ESG Report</h1><p><strong>Client:</strong> ${clientName} | <strong>Period:</strong> ${reportPeriod} | <strong>Generated:</strong> ${new Date().toISOString().slice(0,10)}</p><p><strong>Frameworks:</strong> ${activeFrameworks.join(', ')} | <strong>Funds:</strong> ${selFunds.length} | <strong>Total Commitment:</strong> $${totalCommit}M</p>
     <h2>EDCI Metrics</h2><table><tr><th>ID</th><th>Category</th><th>Metric</th><th>Current</th><th>Prior</th><th>Benchmark</th><th>YoY</th><th>Quality</th></tr>${edciRows}</table>
     <h2>SFDR PAI Indicators</h2><table><tr><th>ID</th><th>Indicator</th><th>Category</th><th>Value</th><th>Coverage</th></tr>${paiRows}</table>
